@@ -13,6 +13,6 @@
     "require-dev": {
         "zendframework/zend-developer-tools": "dev-master",
         "phpunit/phpunit": "4.0.*"
-    },
+    }
 
 }
