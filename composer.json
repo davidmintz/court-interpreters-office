@@ -1,0 +1,12 @@
+{
+    "name": "davidmintz/court-interpreters-office",
+    "description": "web application for managing a busy US District Court interpreters office",
+    "keywords": [
+        "court interpreters", "federal court","US District Court","zf2","zend framework"
+    ],
+    "homepage": "https://davidmintz.org/",
+    "require": {
+        "php": ">=5.5",
+        "zendframework/zendframework": "~2.5"
+    }
+}
