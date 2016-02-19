@@ -7,6 +7,12 @@
     "homepage": "https://davidmintz.org/",
     "require": {
         "php": ">=5.5",
-        "zendframework/zendframework": "~2.5"
+        "zendframework/zendframework": "~2.5",
+        
     }
+    "require-dev": {
+        "zendframework/zend-developer-tools": "dev-master",
+        "phpunit/phpunit": "4.0.*"
+    },
+
 }
