@@ -16,6 +16,13 @@ class IndexController extends AbstractActionController
 {
     public function indexAction()
     {
+        
+    	/*
+    	$sm = $this->getServiceLocator();
+    	$em = $sm->get('doctrine.entitymanager.orm_default');
+    	printf("Good news from %s:  we have a %s at line %d<br>",__CLASS__,get_class($em),__LINE__);
+    	printf("...and %s<br>",get_class($em->getConnection()));
+    	*/
         return new ViewModel();
     }
 }

@@ -11,5 +11,18 @@
  * credentials from accidentally being committed into version control.
  */
 
-return array(
-);
+return      
+	'doctrine' => array(
+        'connection' => array(
+            // default connection name
+            'orm_default' => array(
+                'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
+                'params' => array(
+                    'user'     => '__USERNAME__',
+                    'password' => '__PASSWORD__,
+                    'dbname'   => '__DATABASE_NAME',
+                    'driver'   => 'pdo_mysql',
+                )
+            )
+        )
+    );
