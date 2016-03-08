@@ -7,7 +7,7 @@ At this writing, this repo has little content aside from this file. The applicat
 
 # acknowledgments
 
-It will be written in PHP and we plan to rely heavily on [the Zend MVC Framework](http://framework.zend.com/), the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html) the [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
+It will be written in PHP and w will rely heavily on [the Zend MVC Framework](http://framework.zend.com/), the [Doctrine Object Relational Mapper], (http://www.doctrine-project.org/projects/orm.html) the [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
 
 # the author
 
