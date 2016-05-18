@@ -6,10 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity  @ORM\Table(name="people") 
+ * @ORM\InheritanceType("JOINED")
  *
  * @ORM\DiscriminatorColumn(name="discr", type="string")
- * @ORM\DiscriminatorMap({"person" = "Person", "judge" = "Judge", "user"="User", "interpreter"="Interpreter"})
+ * @ORM\DiscriminatorMap({"person" = "Person", "interpreter"="Interpreter"})
  */
+// to be added to DiscriminatorMap: "judge" = "Judge", "user"="User", 
 // Columns that have NOT NULL constraints have to be on the root entity of the single-table inheritance hierarchy.
 
 class Person 
@@ -32,6 +34,11 @@ class Person
      */
     protected $lastname;
 	
+    /**
+     * @ORM\Column(type="string",length=50,nullable=false)
+     * @var string
+     */
+    protected $firstname;
 
     /**
      * Get id
@@ -89,5 +96,29 @@ class Person
     public function getLastname()
     {
         return $this->lastname;
+    }
+
+    /**
+     * Set firstname
+     *
+     * @param string $firstname
+     *
+     * @return Person
+     */
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    /**
+     * Get firstname
+     *
+     * @return string
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
     }
 }
