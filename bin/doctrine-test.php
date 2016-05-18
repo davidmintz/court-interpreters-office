@@ -1,19 +1,50 @@
 <?php
 namespace Application\Entity;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+
 $em = require(__DIR__.'/../config/doctrine-bootstrap.php');
 
 printf("we have a %s\n",get_class($em));
+try {
 
+	$user = new User;
+	$user
+		->setPassword('boink')
+		->setEmail('david@davidmintz.org')
+		->setFirstname('David')
+		->setLastname('Mintz')
+		->setHat($em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'contract interpreter']));
+	$em->persist($user);
+	$em->flush();
+	
+} catch (UniqueConstraintViolationException $e) {
+
+	echo $e->getMessage();
+}
+
+/*
 $interpreter = new Interpreter;
+$person = new Person;
+$person->setLastname('Mintz')->setLastname('Mintz')->setFirstname('David')->setEmail('david@davidmintz.org');
+$hat = $em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'contract interpreter']);
+$interpreter->setDob(new \DateTime('1958-05-26'));
+$interpreter->setPerson($person);
+$person->setHat($hat);
+$em->persist($interpreter);
+$em->persist($person);
+$em->flush();
+*/
+exit("\nall good\n");
 
+
+/*
 $interpreter
 	->setLastname('Mintz')
 	->setDob(new \DateTime('1958-05-26'))
 	->setEmail('david@davidmintz.org')
 	->setPhone('201 978-0608')
-	->setFirstname("David");	
+	->setLastname('Mintz')	
 	$em->persist($interpreter);
 	$em->flush();
-
-exit("all good\n");
+*/
 

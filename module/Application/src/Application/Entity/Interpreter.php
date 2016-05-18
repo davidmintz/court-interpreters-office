@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 // Columns that have NOT NULL constraints have to be on the root entity of the single-table inheritance hierarchy.
 
-class Interpreter extends Person 
+class Interpreter 
 {
 
 	/**
@@ -29,6 +29,14 @@ class Interpreter extends Person
      */
     protected $dob;
 	
+    /**
+     * 
+     * @ORM\OneToOne(targetEntity="Person")
+     * @ORM\JoinColumn(name="person_id", referencedColumnName="id",onDelete="CASCADE",nullable=false)
+     * 
+     * @var Person
+     */
+    protected $person;
 
     /**
      * Set phone
@@ -40,7 +48,6 @@ class Interpreter extends Person
     public function setPhone($phone)
     {
         $this->phone = $phone;
-
         return $this;
     }
 
@@ -76,5 +83,39 @@ class Interpreter extends Person
     public function getDob()
     {
         return $this->dob;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set person
+     *
+     * @param \Application\Entity\Person $person
+     *
+     * @return Interpreter
+     */
+    public function setPerson(\Application\Entity\Person $person = null)
+    {
+        $this->person = $person;
+
+        return $this;
+    }
+
+    /**
+     * Get person
+     *
+     * @return \Application\Entity\Person
+     */
+    public function getPerson()
+    {
+        return $this->person;
     }
 }
