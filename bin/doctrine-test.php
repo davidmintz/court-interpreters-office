@@ -6,15 +6,24 @@ $em = require(__DIR__.'/../config/doctrine-bootstrap.php');
 
 printf("we have a %s\n",get_class($em));
 try {
-
-	$user = new User;
-	$user
-		->setPassword('boink')
-		->setEmail('david@davidmintz.org')
+	$person = new Person();
+	$hat = new Hat();
+	$hat->setType("staff interpreter");
+	$person->setEmail('david@davidmintz.org')
 		->setFirstname('David')
 		->setLastname('Mintz')
-		->setHat($em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'contract interpreter']));
+		->setHat($hat);
+	$user = new User;
+	$user
+		->setPassword('boink');
+		//->setEmail('david@davidmintz.org')
+		//->setFirstname('David')
+		//->setLastname('Mintz')
+		//->setHat($em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'contract interpreter']));
+	$user->setPerson($person);
 	$em->persist($user);
+	$em->persist($hat);
+	$em->persist($person);
 	$em->flush();
 	
 } catch (UniqueConstraintViolationException $e) {

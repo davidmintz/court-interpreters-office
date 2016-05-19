@@ -6,10 +6,23 @@ use Doctrine\ORM\Mapping as ORM;
 
 /** @ORM\Entity  @ORM\Table(name="users") */
 
-class User extends Person 
+class User // extends Person // no more
 {
 
 	/**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     * 
+     * @var int
+     */
+    protected $id;
+
+    /**
+    * @ORM\OneToOne(targetEntity="Person",fetch="EAGER")
+    * @ORM\JoinColumn(nullable=false)
+    */
+    protected $person;
+
+    /**
 	 * @ORM\Column(type="string",length=255,options={"nullable":false})
 	 * @var string
  	 */
@@ -42,27 +55,39 @@ class User extends Person
         return $this->password;
     }
 
+    
+
     /**
-     * Set hat
+     * Get id
      *
-     * @param \Application\Entity\Hat $hat
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set person
+     *
+     * @param \Application\Entity\Person $person
      *
      * @return User
      */
-    public function setHat(\Application\Entity\Hat $hat)
+    public function setPerson(\Application\Entity\Person $person = null)
     {
-        $this->hat = $hat;
+        $this->person = $person;
 
         return $this;
     }
 
     /**
-     * Get hat
+     * Get person
      *
-     * @return \Application\Entity\Hat
+     * @return \Application\Entity\Person
      */
-    public function getHat()
+    public function getPerson()
     {
-        return $this->hat;
+        return $this->person;
     }
 }
