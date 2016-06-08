@@ -10,17 +10,17 @@ use Doctrine\ORM\Mapping as ORM;
 class EventCategory
 {
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-	 */
-	protected $id;
+    /**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     */
+    protected $id;
 
-	/**
-	 * 
-	 * @ORM\Column(type="string",length=20,options={"nullable":false})
-	 * @var string
-	 */
-	protected $category;
+    /**
+     * 
+     * @ORM\Column(type="string",length=20,options={"nullable":false})
+     * @var string
+     */
+    protected $category;
 
 
 
