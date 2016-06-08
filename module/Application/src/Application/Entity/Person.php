@@ -13,15 +13,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 
 // to be added to DiscriminatorMap: "judge" = "Judge"
-// Columns that have NOT NULL constraints have to be on the root entity of the single-table inheritance hierarchy.
+
 
 class Person 
 {
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-	 */
-	protected $id;
+    /**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     */
+    protected $id;
 
     /**
      * @ORM\Column(type="string",length=50,nullable=true)

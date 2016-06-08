@@ -7,15 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity  @ORM\Table(name="interpreters") 
  */
-// Columns that have NOT NULL constraints have to be on the root entity of the single-table inheritance hierarchy.
 
-class Interpreter 
+class Interpreter extends Person
 {
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-	 */
-	protected $id;
+    /**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     */
+    protected $id;
 
     /**
      * @ORM\Column(type="string",length=16,nullable=true)
@@ -29,14 +28,15 @@ class Interpreter
      */
     protected $dob;
 	
-    /**
+    /*
      * 
-     * @ORM\OneToOne(targetEntity="Person")
-     * @ORM\JoinColumn(name="person_id", referencedColumnName="id",onDelete="CASCADE",nullable=false)
+     * ORM\OneToOne(targetEntity="Person")
+     * ORM\JoinColumn(name="person_id", referencedColumnName="id",onDelete="CASCADE",nullable=false)
      * 
-     * @var Person
+     * var Person
+     * protected $person;
      */
-    protected $person;
+    
 
     /**
      * Set phone
@@ -98,11 +98,10 @@ class Interpreter
     /**
      * Set person
      *
-     * @param \Application\Entity\Person $person
+     * param \Application\Entity\Person $person
      *
-     * @return Interpreter
-     */
-    public function setPerson(\Application\Entity\Person $person = null)
+     * return Interpreter
+         public function setPerson(\Application\Entity\Person $person = null)
     {
         $this->person = $person;
 
@@ -113,9 +112,11 @@ class Interpreter
      * Get person
      *
      * @return \Application\Entity\Person
-     */
     public function getPerson()
     {
+     
         return $this->person;
     }
+    */
+
 }

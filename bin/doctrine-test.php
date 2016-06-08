@@ -4,15 +4,21 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 $em = require(__DIR__.'/../config/doctrine-bootstrap.php');
 
-printf("we have a %s\n",get_class($em));
+$interpreter = $em->find('Application\Entity\Interpreter',1);
+echo get_class($interpreter);
+
+
+exit("\n");
 try {
-	$person = new Person();
+	$interpreter = new Interpreter();
 	$hat = new Hat();
 	$hat->setType("staff interpreter");
-	$person->setEmail('david@davidmintz.org')
+	$interpreter->setEmail('david@davidmintz.org')
 		->setFirstname('David')
 		->setLastname('Mintz')
-		->setHat($hat);
+		->setHat($hat)
+                ->setDob(new \DateTime('1958-05-26'));
+                    
 	$user = new User;
 	$user
 		->setPassword('boink');
@@ -20,10 +26,10 @@ try {
 		//->setFirstname('David')
 		//->setLastname('Mintz')
 		//->setHat($em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'contract interpreter']));
-	$user->setPerson($person);
+	$user->setPerson($interpreter);
 	$em->persist($user);
 	$em->persist($hat);
-	$em->persist($person);
+	$em->persist($interpreter);
 	$em->flush();
 	
 } catch (UniqueConstraintViolationException $e) {
