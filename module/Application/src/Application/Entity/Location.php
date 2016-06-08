@@ -9,35 +9,35 @@ use Doctrine\ORM\Mapping as ORM;
 class Location
 {
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-	 */
-	protected $id;
+    /**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     */
+    protected $id;
 
-	/**
-	 * @ORM\Column(type="string",length=60,options={"nullable":false})
-	 * @var string
- 	 */
-	protected $name;
+    /**
+     * @ORM\Column(type="string",length=60,options={"nullable":false})
+     * @var string
+     */
+    protected $name;
 
 
-	/**
-	 * 
-	 * @ORM\ManyToOne(targetEntity="LocationType")
-	 */
-	protected $type;
+    /**
+     * 
+     * @ORM\ManyToOne(targetEntity="LocationType")
+     */
+    protected $type;
 
-	/**
-	 * 
-	 * @ORM\ManyToOne(targetEntity="Location")
-	 */
-	protected $parent_location;
+    /**
+     * 
+     * @ORM\ManyToOne(targetEntity="Location")
+     */
+    protected $parent_location;
 
-	/**
-	 * @ORM\Column(type="string",length=200,options={"default":""})
-	 * @var string
- 	 */
-	protected $comments;
+    /**
+     * @ORM\Column(type="string",length=200,options={"default":""})
+     * @var string
+     */
+    protected $comments;
 
 
     /**
