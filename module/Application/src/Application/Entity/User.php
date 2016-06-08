@@ -23,10 +23,10 @@ class User // extends Person // no more
     protected $person;
 
     /**
-	 * @ORM\Column(type="string",length=255,options={"nullable":false})
-	 * @var string
- 	 */
-	protected $password;
+    * @ORM\Column(type="string",length=255,options={"nullable":false})
+    * @var string
+    */
+    protected $password;
 
 
     /* to be continued */

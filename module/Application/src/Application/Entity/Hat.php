@@ -19,16 +19,16 @@ use Doctrine\ORM\Mapping as ORM;
 class Hat
 {
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-	 */
-	protected $id;
+    /**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     */
+    protected $id;
 
-	/**
+    /**
      * @ORM\Column(type="string",length=50,nullable=false)
      * @var string
      */
-	protected $type;
+    protected $type;
 
     public function __toString() {
         return $this->hat;

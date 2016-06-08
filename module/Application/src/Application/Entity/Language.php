@@ -9,23 +9,28 @@ use Doctrine\ORM\Mapping as ORM;
 class Language 
 {
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-	 */
-	protected $id;
+    /**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     */
+    protected $id;
 
-	/**
-	 * @ORM\Column(type="string",length=50,nullable=false)
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @ORM\Column(type="string",length=50,nullable=false)
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @ORM\Column(type="string",length=200,nullable=false)
-	 * @var string
- 	 */
-	protected $comments;
+    /**
+     * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
+     * @var string
+     */
+    protected $comments;
 
+    /**
+     * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
+     * @var InterpreterLanguage[]
+     */
+    protected $interpreterLanguages;
 
     /**
      * Get id
@@ -83,5 +88,46 @@ class Language
     public function getComments()
     {
         return $this->comments;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->interpreterLanguages = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add interpreterLanguage
+     *
+     * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
+     *
+     * @return Language
+     */
+    public function addInterpreterLanguage(\Application\Entity\InterpreterLanguage $interpreterLanguage)
+    {
+        $this->interpreterLanguages[] = $interpreterLanguage;
+
+        return $this;
+    }
+
+    /**
+     * Remove interpreterLanguage
+     *
+     * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
+     */
+    public function removeInterpreterLanguage(\Application\Entity\InterpreterLanguage $interpreterLanguage)
+    {
+        $this->interpreterLanguages->removeElement($interpreterLanguage);
+    }
+
+    /**
+     * Get interpreterLanguages
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getInterpreterLanguages()
+    {
+        return $this->interpreterLanguages;
     }
 }

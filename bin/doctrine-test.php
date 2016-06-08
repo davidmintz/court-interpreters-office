@@ -4,8 +4,33 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 $em = require(__DIR__.'/../config/doctrine-bootstrap.php');
 
-$interpreter = $em->find('Application\Entity\Interpreter',1);
-echo get_class($interpreter);
+$interpreter =  $em->getRepository('Application\Entity\Interpreter')->findOneBy(['lastname'=>'Mintz']);
+
+$interpreterLanguage = $interpreter->getInterpreterLanguages()[0];
+
+$interpreter->removeInterpreterLanguage($interpreterLanguage);
+
+$em->flush();
+
+exit("\n");
+
+//$language = new Language();
+//$language->setName('Spanish');
+//$em->persist($language);
+
+//$hat = $em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'staff interpreter']);
+        
+$interpreterLanguage = new InterpreterLanguage();
+$interpreter = new Interpreter();
+$interpreter
+        ->setHat($hat)
+        ->setFirstname('David')
+        ->setDob(new \DateTime('1958-05-26'))
+        ->setLastname('Mintz');
+$interpreterLanguage->setLanguage($language)->setInterpreter($interpreter);
+$interpreter->addInterpreterLanguage($interpreterLanguage);
+$em->persist($interpreter);
+$em->flush();
 
 
 exit("\n");

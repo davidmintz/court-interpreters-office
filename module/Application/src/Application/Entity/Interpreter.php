@@ -28,15 +28,20 @@ class Interpreter extends Person
      */
     protected $dob;
 	
-    /*
-     * 
-     * ORM\OneToOne(targetEntity="Person")
-     * ORM\JoinColumn(name="person_id", referencedColumnName="id",onDelete="CASCADE",nullable=false)
-     * 
-     * var Person
-     * protected $person;
+    /**
+     * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="interpreter", cascade={"persist", "remove"})
+     * @var InterpreterLanguage[]
      */
-    
+    protected $interpreterLanguages;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->interpreterLanguages = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
 
     /**
      * Set phone
@@ -95,28 +100,41 @@ class Interpreter extends Person
         return $this->id;
     }
 
+    
     /**
-     * Set person
+     * Add interpreterLanguage
      *
-     * param \Application\Entity\Person $person
+     * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
      *
-     * return Interpreter
-         public function setPerson(\Application\Entity\Person $person = null)
+     * @return Interpreter
+     */
+    public function addInterpreterLanguage(\Application\Entity\InterpreterLanguage $interpreterLanguage)
     {
-        $this->person = $person;
+        $this->interpreterLanguages[] = $interpreterLanguage;
 
         return $this;
     }
 
     /**
-     * Get person
+     * Remove interpreterLanguage
      *
-     * @return \Application\Entity\Person
-    public function getPerson()
+     * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
+     */
+    public function removeInterpreterLanguage(\Application\Entity\InterpreterLanguage $interpreterLanguage)
     {
-     
-        return $this->person;
+        echo "running ".__FUNCTION__." ... ";
+        echo count($this->interpreterLanguages). " is our number of languages\n";        
+        $this->interpreterLanguages->removeElement($interpreterLanguage);
+        echo count($this->interpreterLanguages). " is now our number of languages\n";
     }
-    */
 
+    /**
+     * Get interpreterLanguages
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getInterpreterLanguages()
+    {
+        return $this->interpreterLanguages;
+    }
 }
