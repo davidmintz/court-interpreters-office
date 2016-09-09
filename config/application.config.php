@@ -22,3 +22,5 @@ return array(
         ),
     ),
 );
+/* this is merely a comment for testing our github thing */
+
