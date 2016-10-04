@@ -1,24 +1,45 @@
 {
-    "name": "davidmintz/court-interpreters-office",
-    "description": "web application for managing a busy US District Court interpreters office",
+    "name": "zendframework/skeleton-application",
+    "description": "Skeleton Application for Zend Framework zend-mvc applications",
+    "type": "project",
+    "license": "BSD-3-Clause",
     "keywords": [
-        "court interpreters", "federal court","US District Court","zf2","zend framework"
+        "framework",
+        "mvc",
+        "zf"
     ],
-    "homepage": "https://davidmintz.org/",
+    "homepage": "http://framework.zend.com/",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
-        "php": ">=5.5",
-        "zendframework/zendframework": "~2.5",
-        "doctrine/doctrine-orm-module": "^0.9.2",
-        "zendframework/zftool": "^0.1.0"
+        "php": "^5.6 || ^7.0",
+        "zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
+        "zendframework/zend-mvc": "^3.0.1",
+        "zfcampus/zf-development-mode": "^3.0",
+        "doctrine/doctrine-orm-module": "^1.1",
+        "zendframework/zend-developer-tools": "^1.1"
     },
-    "require-dev": {
-        "zendframework/zend-developer-tools": "dev-master",
-        "phpunit/phpunit": "4.*",
-	   "jhuet/zdt-logger-module": "^0.3.0"
-    },
-    "autoload": { 
+    "autoload": {
         "psr-4": {
-            "Application\\Entity\\": "module/Application/src/Application/Entity"
+            "Application\\": "module/Application/src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ApplicationTest\\": "module/Application/test/"
+        }
+    },
+    "extra": [],
+    "scripts": {
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "development-disable": "zf-development-mode disable",
+        "development-enable": "zf-development-mode enable",
+        "development-status": "zf-development-mode status",
+        "post-create-project-cmd": [
+            "@development-enable"
+        ],
+        "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
+        "test": "phpunit"
     }
 }
