@@ -1,14 +1,10 @@
 {
-    "name": "zendframework/skeleton-application",
-    "description": "Skeleton Application for Zend Framework zend-mvc applications",
-    "type": "project",
-    "license": "BSD-3-Clause",
+    "name": "davidmintz/court-interpreters-office",
+    "description": "web application for managing a busy US District Court interpreters office",
     "keywords": [
-        "framework",
-        "mvc",
-        "zf"
+        "court interpreters", "federal court","US District Court","zf3","zend framework"
     ],
-    "homepage": "http://framework.zend.com/",
+    "homepage": "https://davidmintz.org/",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
