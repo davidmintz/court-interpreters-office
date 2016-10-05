@@ -11,8 +11,8 @@ class TestTest extends PHPUnit_Framework_TestCase {
 	{
 		
 
-		$sm = \ApplicationTest\Bootstrap::getServiceManager();
-		$this->assertTrue($sm instanceof \Zend\ServiceManager\ServiceManager);
+		//$sm = \ApplicationTest\Bootstrap::getServiceManager();
+		//$this->assertTrue($sm instanceof \Zend\ServiceManager\ServiceManager);
 		
 	}
 
