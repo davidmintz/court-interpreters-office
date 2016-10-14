@@ -4,3 +4,6 @@
 	Just for argument's sake, we are demonstrating that we have a <?php echo get_class($entityManager) ?> 
 	in our view.
 </p>
+<p>
+    Our driver is: <?php echo  $entityManager->getConnection()->getDriver()->getName() ?>
+</p>
