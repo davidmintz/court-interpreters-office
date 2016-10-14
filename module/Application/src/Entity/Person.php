@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("JOINED")
  *
  * @ORM\DiscriminatorColumn(name="discr", type="string")
- * @ORM\DiscriminatorMap({"person" = "Person", "interpreter"="Interpreter"})
+ * @ORM\DiscriminatorMap({"person" = "Person", "interpreter"="Interpreter", "judge"="Judge"})
  */
 
 // to be added to DiscriminatorMap: "judge" = "Judge"
@@ -37,7 +37,7 @@ class Person
 	
     /**
      * @ORM\Column(type="string",length=50,nullable=false)
-     * @var string
+     * @var string first name, or given names
      */
     protected $firstname;
 
