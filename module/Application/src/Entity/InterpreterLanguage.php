@@ -15,6 +15,18 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class InterpreterLanguage {
     
+    
+    public function __construct(Interpreter $interpreter = null, Language $language = null)
+    {
+
+        if ($interpreter) {
+            $this->setInterpreter($interpreter);
+        }
+        if ($language) {
+            $this->setLanguage($language);
+        }
+    }
+
     /**
      * @ORM\ManyToOne(targetEntity="Interpreter",inversedBy="interpreterLanguages")
      * @ORM\Id
