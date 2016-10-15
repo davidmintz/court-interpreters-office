@@ -9,7 +9,7 @@ $loader = require (__DIR__. '/../vendor/autoload.php');
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-$params = require ('autoload/development.local.php');
+$params = require ('autoload/local.php');
 $dbParams = $params['doctrine']['connection']['orm_default']['params']; 
 $entitiesPath = [
 	__DIR__ .'/../module/Application/src/Entity/',
