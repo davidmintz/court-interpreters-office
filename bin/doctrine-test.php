@@ -6,6 +6,30 @@ echo "eat shit?\n";
 
 $em = require(__DIR__.'/../config/doctrine-bootstrap.php');
 
+echo "trying to insert an interpreter...\n";
+
+$interpreter = new Interpreter;
+try {
+	$hat_staff_interpreter = $em->getRepository('Application\Entity\Hat')->findOneBy(
+		['type' => 'staff interpreter'] );
+
+	$interpreter->setLastname('Mintz')
+		->setFirstname("David")
+		->setHat($hat_staff_interpreter)
+		->setEmail('david@davidmintz.org')->setDob(new \DateTime('1958-05-26'));
+
+	$spanish =  $em->getRepository('Application\Entity\Language')->findOneBy(["name"=>"Spanish"]);
+
+	$interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter,$spanish));
+	$em->persist($interpreter);
+	$em->flush();
+
+} catch (\Exception $e) {
+	printf("caught exception %s: %s\n",get_class($e),$e->getMessage());
+}
+
+exit("ok\n");
+
 $interpreter =  $em->getRepository('Application\Entity\Interpreter')->findOneBy(['lastname'=>'Mintz']);
 
 if (! $interpreter) {
