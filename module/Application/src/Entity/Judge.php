@@ -21,11 +21,7 @@ class Judge extends Person {
      */
     protected $defaultLocation;
     
-    /**
-     * @ORM\Column(type="string",length=10,nullable=false)
-     * @var string USMJ|USDJ
-     */
-    protected $flavor;
+    
     
     
     /**
@@ -62,29 +58,6 @@ class Judge extends Person {
         return $this->defaultLocation;
     }
 
-    /**
-     * Set flavor
-     *
-     * @param string $flavor
-     *
-     * @return Judge
-     */
-    public function setFlavor($flavor)
-    {
-        $this->flavor = $flavor;
-
-        return $this;
-    }
-
-    /**
-     * Get flavor
-     *
-     * @return string
-     */
-    public function getFlavor()
-    {
-        return $this->flavor;
-    }
-
+    
     
 }
