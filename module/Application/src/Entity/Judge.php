@@ -21,9 +21,8 @@ class Judge extends Person {
      */
     protected $defaultLocation;
     
-    /**
-     * @ORM\Column(type="string",length=10,nullable=false)
-     * @var string USMJ|USDJ
+     /**
+     * @ORM\ManyToOne(targetEntity="JudgeFlavor") 
      */
     protected $flavor;
     
@@ -65,11 +64,11 @@ class Judge extends Person {
     /**
      * Set flavor
      *
-     * @param string $flavor
+     * @param JudgeFlavor $flavor
      *
      * @return Judge
      */
-    public function setFlavor($flavor)
+    public function setFlavor(JudgeFlavor $flavor)
     {
         $this->flavor = $flavor;
 
@@ -79,7 +78,7 @@ class Judge extends Person {
     /**
      * Get flavor
      *
-     * @return string
+     * @return JudgeFlavor
      */
     public function getFlavor()
     {
