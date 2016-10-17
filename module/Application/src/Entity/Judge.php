@@ -21,7 +21,10 @@ class Judge extends Person {
      */
     protected $defaultLocation;
     
-    
+     /**
+     * @ORM\ManyToOne(targetEntity="JudgeFlavor") 
+     */
+    protected $flavor;
     
     
     /**
@@ -58,6 +61,28 @@ class Judge extends Person {
         return $this->defaultLocation;
     }
 
-    
+    /**
+     * Set flavor
+     *
+     * @param JudgeFlavor $flavor
+     *
+     * @return Judge
+     */
+    public function setFlavor(JudgeFlavor $flavor)
+    {
+        $this->flavor = $flavor;
+
+        return $this;
+    }
+
+    /**
+     * Get flavor
+     *
+     * @return JudgeFlavor
+     */
+    public function getFlavor()
+    {
+        return $this->flavor;
+    }
     
 }
