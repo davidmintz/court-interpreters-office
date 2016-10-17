@@ -4,7 +4,8 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /** 
-*  @ORM\Entity  @ORM\Table(name="defendant_names") 
+*  @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={
+    @uniqueConstraint(name="unique_deftname",columns="{given_names, surnamess}")}) 
 *  //ORM\Entity(repositoryClass="Application\Entity\DefendantNameRepository") 
 */
 class DefendantName 
