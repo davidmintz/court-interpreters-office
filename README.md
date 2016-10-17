@@ -13,6 +13,6 @@ It will be written in PHP and will rely heavily on [the Zend MVC Framework](http
 
 My name is [David Mintz](https://davidmintz.org) and I'm a Spanish interpreter on staff at the [Interpreters Office](https://sdnyinterpreters.org/) of the US District Court, Southern District of New York, located in New York City. And I like coding web applications.
 
-Feel free to contact me with qny questions.
+Feel free to contact me with any questions.
 
 
