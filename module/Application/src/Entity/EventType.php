@@ -1,38 +1,43 @@
 <?php
 
 namespace Application\Entity;
-
-
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="event_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name",columns={"name"})}) */
+/**
+ * Entity representing a type of court interpreter proceeding or event.
+ * 
+ * Examples include: attorney-client interview, pre-trial conference, 
+ * plea, sentence, probation pre-sentence interview, etc.
+ * 
+ * @ORM\Entity  @ORM\Table(name="event_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name",columns={"name"})})
+
+ */
 
 class EventType 
 {
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-	 */
-	protected $id;
+    /**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     */
+    protected $id;
 
-	/**
-	 * @ORM\ManyToOne(targetEntity="EventCategory") 
-	 */
-	protected $category;
+    /**
+     * @ORM\ManyToOne(targetEntity="EventCategory") 
+     * @see Application\Entity\EventCategory
+     */
+    protected $category;
 
-	/**
-	* @ORM\Column(type="string",length=60,options={"nullable":false})
-	* @var string
-	*/
-	protected $name;
+    /**
+    * @ORM\Column(type="string",length=60,options={"nullable":false})
+    * @var string
+    */
+    protected $name;
 
-	/**
-	* @ORM\Column(type="string",length=60,options={"nullable":false,"default":""})
-	* @var string
-	*/
-	protected $comments;
-
-
+    /**
+    * @ORM\Column(type="string",length=60,options={"nullable":false,"default":""})
+    * @var string
+    */
+    protected $comments;
 
 
     /**

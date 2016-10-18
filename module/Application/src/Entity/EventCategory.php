@@ -1,11 +1,16 @@
 <?php
-
 namespace Application\Entity;
-
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="event_categories",uniqueConstraints=@ORM\UniqueConstraint(name="unique_event_category",columns={"category"})) */
+/** 
+ * Entity representing an event "category," e.g., in-court, out-of-court
+ * 
+ * These categories should be set up once and for all at installation time.
+ * 
+ * @ORM\Entity  
+ * @ORM\Table(name="event_categories",uniqueConstraints=@ORM\UniqueConstraint(name="unique_event_category",columns={"category"}))
+ */
 
 class EventCategory
 {

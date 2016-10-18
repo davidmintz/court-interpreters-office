@@ -1,22 +1,26 @@
 <?php
 
-/*
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity  @ORM\Table(name="interpreters_languages") 
+ * Entity representing an Interpreter's Language.
+ * 
+ * Technically, it is a language *pair*, but in this system it is understood that
+ * the other language of the pair is English. There is a many-to-many relationship
+ * between interpreters and languages. But because there is also metadata to record
+ * about the language (federal certification), it is implemented as a Many-To-One
+ * relationship on either side.
+ * 
+ * @ORM\Entity  
+ * @ORM\Table(name="interpreters_languages") 
  *
- * @author david
  */
 class InterpreterLanguage {
     
     
-    public function __construct(Interpreter $interpreter = null, Language $language = null)
+    public function __construct(Interpreter $interpreter = null, 
+            Language $language = null)
     {
 
         if ($interpreter) {

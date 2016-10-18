@@ -6,7 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity  @ORM\Table(name="interpreters") 
+ * Entity representing an Interpreter.
+ * 
+ * @ORM\Entity  
+ * @ORM\Table(name="interpreters") 
  */
 
 class Interpreter extends Person

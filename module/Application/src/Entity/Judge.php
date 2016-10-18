@@ -1,9 +1,17 @@
 <?php
+
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
+
+ /**
+ * Entity representing a Judge.
+ * 
+ * Judge inherits from Person.
+ * 
+ * @see Application\Entity\Person
+ * 
  * @ORM\Entity @ORM\Table(name="judges") 
  */
 

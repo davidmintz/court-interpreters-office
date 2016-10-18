@@ -4,10 +4,14 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * entity representing a judge "flavor"
+ * Entity representing a judge "flavor"
  * 
- * for federal court, that means either USMJ or USDJ
- *  @ORM\Entity  @ORM\Table(name="judge_flavors",uniqueConstraints={@ORM\UniqueConstraint(name="unique_judge_flavor",columns={"flavor"})})
+ * For federal court, that means either USMJ or USDJ. This should be set up just
+ * once at installation time.
+ * 
+ * @ORM\Entity
+ * @ORM\Table(name="judge_flavors",uniqueConstraints={@ORM\UniqueConstraint(name="unique_judge_flavor",columns={"flavor"})})
+ * 
  */
 class JudgeFlavor {
     

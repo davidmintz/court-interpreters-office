@@ -4,12 +4,23 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="users") */
+/** 
+ * Entity representing a user of the application.
+ * 
+ * A user "has a" account owner, so it composes a Person. Inheritance is not 
+ * the best option because there will be cases where an Interpreter and a User
+ * will both point to the same Person, and Doctrine doesn't have an inheritance
+ * strategy that works well with that. 
+ * @see http://stackoverflow.com/questions/37306930/doctrine-inheritance-strategy-when-two-different-subclasses-extend-the-same-enti
+ * 
+ * @ORM\Entity  
+ * @ORM\Table(name="users") 
+ */
 
-class User // extends Person // no more
+class User
 {
 
-	/**
+    /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      * 
      * @var int
@@ -35,7 +46,7 @@ class User // extends Person // no more
      * Set password
      *
      * @param string $password
-     *
+     * @todo hash it
      * @return User
      */
     public function setPassword($password)
@@ -70,7 +81,7 @@ class User // extends Person // no more
     /**
      * Set person
      *
-     * @param \Application\Entity\Person $person
+     * @param Person $person
      *
      * @return User
      */
@@ -84,7 +95,7 @@ class User // extends Person // no more
     /**
      * Get person
      *
-     * @return \Application\Entity\Person
+     * @return Person
      */
     public function getPerson()
     {
