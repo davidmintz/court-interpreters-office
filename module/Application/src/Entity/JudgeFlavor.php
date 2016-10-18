@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
  * entity representing a judge "flavor"
  * 
  * for federal court, that means either USMJ or USDJ
- *  @ORM\Entity  @ORM\Table(name="judge_flavors")
+ *  @ORM\Entity  @ORM\Table(name="judge_flavors",uniqueConstraints={@ORM\UniqueConstraint(name="unique_judge_flavor",columns={"flavor"})})
  */
 class JudgeFlavor {
     

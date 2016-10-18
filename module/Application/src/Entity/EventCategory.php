@@ -5,7 +5,7 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="event_categories") */
+/** @ORM\Entity  @ORM\Table(name="event_categories",uniqueConstraints=@ORM\UniqueConstraint(name="unique_event_category",columns={"category"})) */
 
 class EventCategory
 {

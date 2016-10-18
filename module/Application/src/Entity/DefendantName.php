@@ -4,7 +4,7 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /** 
-*  @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={@uniqueConstraint(name="unique_deftname",columns="{given_names, surnamess}")}) 
+*  @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={@ORM\UniqueConstraint(name="unique_deftname",columns={"given_names", "surnames"})}) 
 *  //ORM\Entity(repositoryClass="Application\Entity\DefendantNameRepository") 
 */
 class DefendantName 
@@ -17,13 +17,13 @@ class DefendantName
     protected $id;
 
  	/**
-     * @ORM\Column(type="string",name="given_names")
+     * @ORM\Column(type="string",name="given_names",length=60,nullable=false)
      * @var string
      */
     protected $givenNames;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",length=60,nullable=false)
      * @var string
      */
     protected $surnames;

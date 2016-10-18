@@ -4,7 +4,7 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="location_types") */
+/** @ORM\Entity  @ORM\Table(name="location_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_type",columns={"type"})}) */
 
 class LocationType 
 {

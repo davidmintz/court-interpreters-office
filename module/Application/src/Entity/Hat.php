@@ -5,7 +5,7 @@
 /**
  * class representing the "hat" a person wears, e.g., 
  * staff interpreter, contract interpreter, AUSA, USPO, 
- * defense attorney
+ * defense attorney, etc
  */
 
 namespace Application\Entity;

@@ -3,6 +3,7 @@
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity  @ORM\Table(name="interpreters") 
@@ -39,7 +40,7 @@ class Interpreter extends Person
      */
     public function __construct()
     {
-        $this->interpreterLanguages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->interpreterLanguages = new ArrayCollection();
     }
 
 
@@ -121,7 +122,7 @@ class Interpreter extends Person
      * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
      * @return Interpreter
      */
-    public function removeInterpreterLanguage(\Application\Entity\InterpreterLanguage $interpreterLanguage)
+    public function removeInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
     {
         $this->interpreterLanguages->removeElement($interpreterLanguage);
         return $this;
@@ -137,5 +138,7 @@ class Interpreter extends Person
     {
         return $this->interpreterLanguages;
     }
+
+
     
 }

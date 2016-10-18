@@ -4,7 +4,7 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="languages") */
+/** @ORM\Entity  @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name",columns={"name"})}) */
 
 class Language 
 {
