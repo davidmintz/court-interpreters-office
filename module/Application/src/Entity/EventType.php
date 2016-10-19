@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Examples include: attorney-client interview, pre-trial conference, 
  * plea, sentence, probation pre-sentence interview, etc.
  * 
- * @ORM\Entity  @ORM\Table(name="event_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name",columns={"name"})})
+ * @ORM\Entity  @ORM\Table(name="event_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_event_type",columns={"name"})})
 
  */
 
