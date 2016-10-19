@@ -16,6 +16,36 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `anonymous_hats`
+--
+
+DROP TABLE IF EXISTS `anonymous_hats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `anonymous_hats` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_anon_hat` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cancellation_reasons`
+--
+
+DROP TABLE IF EXISTS `cancellation_reasons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cancellation_reasons` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `reason` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_cancel_reason` (`reason`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `defendant_names`
 --
 
@@ -24,9 +54,10 @@ DROP TABLE IF EXISTS `defendant_names`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `defendant_names` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `given_names` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `surnames` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  `given_names` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `surnames` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_deftname` (`given_names`,`surnames`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -40,8 +71,9 @@ DROP TABLE IF EXISTS `event_categories`;
 CREATE TABLE `event_categories` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `category` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_event_category` (`category`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,9 +89,10 @@ CREATE TABLE `event_types` (
   `name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `comments` varchar(60) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_event_type` (`name`),
   KEY `IDX_182B381C12469DE2` (`category_id`),
   CONSTRAINT `FK_182B381C12469DE2` FOREIGN KEY (`category_id`) REFERENCES `event_categories` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,9 +104,10 @@ DROP TABLE IF EXISTS `hats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `hats` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `can_be_anonymous` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `hat_idx` (`type`)
+  UNIQUE KEY `hat_idx` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -122,7 +156,8 @@ DROP TABLE IF EXISTS `judge_flavors`;
 CREATE TABLE `judge_flavors` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `flavor` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_judge_flavor` (`flavor`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -135,8 +170,8 @@ DROP TABLE IF EXISTS `judges`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `judges` (
   `id` smallint(5) unsigned NOT NULL,
-  `default_location_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `flavor_id` int(11) DEFAULT NULL,
+  `default_location_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_1C5E0B5FDDA6450` (`flavor_id`),
   CONSTRAINT `FK_1C5E0B5BF396750` FOREIGN KEY (`id`) REFERENCES `people` (`id`) ON DELETE CASCADE,
@@ -155,8 +190,9 @@ CREATE TABLE `languages` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `comments` varchar(200) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_language` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,8 +206,9 @@ CREATE TABLE `location_types` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `comments` varchar(200) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_type` (`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,11 +225,12 @@ CREATE TABLE `locations` (
   `name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `comments` varchar(200) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_name_and_parent` (`name`,`parent_location_id`),
   KEY `IDX_17E64ABAC54C8C93` (`type_id`),
   KEY `IDX_17E64ABA6D6133FE` (`parent_location_id`),
   CONSTRAINT `FK_17E64ABA6D6133FE` FOREIGN KEY (`parent_location_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `FK_17E64ABAC54C8C93` FOREIGN KEY (`type_id`) REFERENCES `location_types` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -213,37 +251,6 @@ CREATE TABLE `people` (
   UNIQUE KEY `hat_email_idx` (`email`,`hat_id`),
   KEY `IDX_28166A268C6A5980` (`hat_id`),
   CONSTRAINT `FK_28166A268C6A5980` FOREIGN KEY (`hat_id`) REFERENCES `hats` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `thing1`
---
-
-DROP TABLE IF EXISTS `thing1`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `thing1` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `thing2_id` int(11) DEFAULT NULL,
-  `shit` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UNIQ_F73671018CA8DD30` (`thing2_id`),
-  CONSTRAINT `FK_F73671018CA8DD30` FOREIGN KEY (`thing2_id`) REFERENCES `thing2` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `thing2`
---
-
-DROP TABLE IF EXISTS `thing2`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `thing2` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `other_shit` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -273,5 +280,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-10-17 16:47:40
->>>>>>> bd62c76e49b5b23900fec44106e953d0cebf419a
+-- Dump completed on 2016-10-19 16:05:13
