@@ -29,13 +29,27 @@ class Hat
      * @var string
      */
     protected $name;
+    
+    /**
+     * @ORM\Column(type="boolean",nullable=false,name="can_be_anonymous",options={"default":false})
+     * 
+     * @var boolean true if this Hat does not have to be identified
+     */
+    
+    protected $anonymous = false;
+    
+    /**
+     * returns string representation of the entity
+     * 
+     * @return string
+     */
 
     public function __toString() {
         return $this->name;
     }
     
     /**
-     * de facto alias for getType()
+     * de facto alias for getName()
      * @return string
      */
     public function getHat() {
@@ -74,5 +88,30 @@ class Hat
     public function getName()
     {
         return $this->name;
+    }
+    
+    /**
+     * get anonymous
+     * 
+     * @return boolean
+     */
+    function getAnonymous() {
+        return $this->anonymous;
+    }
+    
+    /**
+     * set anonymous property
+     * @return Hat
+     */
+    function setAnonymous($flag) {
+        $this->anonymous = $flag;
+        return $this;
+    }
+    
+    /**
+     * proxies to getAnonymous()
+     */
+    function anonymous() {
+        return $this->getAnonymous();
     }
 }
