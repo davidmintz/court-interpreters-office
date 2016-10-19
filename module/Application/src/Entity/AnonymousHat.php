@@ -11,13 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
  * require the user to identify personally. 
  * 
  * @ORM\Entity
- * @ORM\Table(name="anonymous_hats",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name",columns={"name"})})
+ * @ORM\Table(name="anonymous_hats",uniqueConstraints={@ORM\UniqueConstraint(name="unique_anon_hat",columns={"name"})})
  * 
  */
 class AnonymousHat 
 {
 
-	/**
+    /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
@@ -59,6 +59,14 @@ class AnonymousHat
      */
     public function getName()
     {
+        return $this->name;
+    }
+    
+    /**
+     * returns string representation
+     * @return string
+     */
+    public function __toString() {
         return $this->name;
     }
 
