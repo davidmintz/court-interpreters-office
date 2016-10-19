@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 //uniqueConstraints={@UniqueConstraint(name="search_idx", columns={"name", "email"})})
 
-/** @ORM\Entity  @ORM\Table(name="hats",uniqueConstraints={@ORM\UniqueConstraint(name="hat_idx",columns={"type"})}) */
+/** @ORM\Entity  @ORM\Table(name="hats",uniqueConstraints={@ORM\UniqueConstraint(name="hat_idx",columns={"name"})}) */
 
 class Hat
 {
@@ -28,10 +28,10 @@ class Hat
      * @ORM\Column(type="string",length=50,nullable=false)
      * @var string
      */
-    protected $type;
+    protected $name;
 
     public function __toString() {
-        return $this->hat;
+        return $this->name;
     }
     
     /**
@@ -39,7 +39,7 @@ class Hat
      * @return string
      */
     public function getHat() {
-        return $this->type;
+        return $this->name;
     }
 
     /**
@@ -53,26 +53,26 @@ class Hat
     }
 
     /**
-     * Set type
+     * Set name
      *
      * @param string $type
      *
      * @return Hat
      */
-    public function setType($type)
+    public function setName($type)
     {
-        $this->type = $type;
+        $this->name = $type;
 
         return $this;
     }
 
     /**
-     * Get type
+     * Get name
      *
      * @return string
      */
-    public function getType()
+    public function getName()
     {
-        return $this->type;
+        return $this->name;
     }
 }
