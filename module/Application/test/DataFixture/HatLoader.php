@@ -35,12 +35,7 @@ class HatLoader implements FixtureInterface {
             $entity->setName($hat[0])->setAnonymous($hat[1]);
             $objectManager->persist($entity);
         }
-        $anonymous_hats = [
-             'Magistrate',
-             'Pretrial',
-            
-        ];
-        
+      
         $objectManager->flush();
     }
 }
