@@ -20,8 +20,8 @@ to edit. Details will be in the README files and/or comments in the source files
 # features
 
 There will be an administrative interface with which authenticated users can manage the calendar for their office: view, add,
-update and delete events involving court interpreters. These "events" have attributes like date, time, language, judge,
-docket number, type of proceeding or ancillary event (such as an attorney-client interview), and of course, the interpreter(s) assigned. You will also  be able to record metadata such as the identity of the person making the request and the date and time it was made.
+update and delete events involving court interpreters. Events have attributes like date, time, language, judge,
+docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You will also  be able to record metadata such as the identity of the person making the request and the date and time it was made.
 
 You will be able to search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
 
