@@ -69,6 +69,7 @@ class FixtureSetupTest extends
         $fixtureExecutor->execute([
             new DataFixture\LanguageLoader(),
             new DataFixture\HatLoader(),
+            new DataFixture\EventTypeLoader(),
          ]);
         $entityManager = FixtureManager::getEntityManager();
         $this->assertTrue(is_object($entityManager));
