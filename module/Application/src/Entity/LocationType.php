@@ -9,22 +9,22 @@ use Doctrine\ORM\Mapping as ORM;
 class LocationType 
 {
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-	 */
-	protected $id;
+    /**
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     */
+    protected $id;
 
-	/**
-	 * @ORM\Column(type="string",length=60,nullable=false)
-	 * @var string
-	 */
-	protected $type;
+    /**
+     * @ORM\Column(type="string",length=60,nullable=false)
+     * @var string
+     */
+    protected $type;
 
-	/**
-	 * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
-	 * @var string
- 	 */
-	protected $comments;
+    /**
+     * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
+     * @var string
+     */
+    protected $comments;
 
 
     /**

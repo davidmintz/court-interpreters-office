@@ -38,6 +38,16 @@ class Hat
     
     protected $anonymous = false;
     
+    
+    
+     /**
+     * @ORM\ManyToOne(targetEntity="Role") 
+     * @ORM\JoinColumn(nullable=true)
+     * @see Application\Entity\Role
+     * @var Role
+     */
+    protected $role;
+    
     /**
      * returns string representation of the entity
      * 

@@ -24,12 +24,17 @@ class Judge extends Person {
     protected $id;
     
     /**
-     * @ORM\Column(name="default_location_id")
+     * A judge has a default Location, i.e., a courtroom.
+     * 
+     * @ORM\Column(name="default_location_id",nullable=true)
      * @ORM\ManyToOne(targetEntity="Location") 
      */
     protected $defaultLocation;
     
      /**
+     * A Judge has a JudgeFlavor, e.g., "USDJ" in US District Courts.
+     * 
+     * @ORM\JoinColumn(nullable=false)
      * @ORM\ManyToOne(targetEntity="JudgeFlavor") 
      */
     protected $flavor;

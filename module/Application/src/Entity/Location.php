@@ -26,15 +26,14 @@ class Location
      */
     protected $name;
 
-
     /**
-     *
+     * @ORM\JoinColumn(nullable=false)
      * @ORM\ManyToOne(targetEntity="LocationType")
      */
     protected $type;
 
     /**
-     * @ORM\Column(name="parent_location_id")
+     * @ORM\JoinColumn(name="parent_location_id",nullable=true)
      * @ORM\ManyToOne(targetEntity="Location")
      */
     protected $parentLocation;

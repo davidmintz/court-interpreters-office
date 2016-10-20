@@ -58,7 +58,7 @@ class InterpreterLanguage {
      *
      * @return InterpreterLanguage
      */
-    public function setInterpreter(\Application\Entity\Interpreter $interpreter)
+    public function setInterpreter(Interpreter $interpreter)
     {
         $this->interpreter = $interpreter;
 
@@ -68,7 +68,7 @@ class InterpreterLanguage {
     /**
      * Get interpreter
      *
-     * @return \Application\Entity\Interpreter
+     * @return Interpreter
      */
     public function getInterpreter()
     {
@@ -78,11 +78,11 @@ class InterpreterLanguage {
     /**
      * Set language
      *
-     * @param \Application\Entity\Language $language
+     * @param Language $language
      *
      * @return InterpreterLanguage
      */
-    public function setLanguage(\Application\Entity\Language $language)
+    public function setLanguage(Language $language)
     {
         $this->language = $language;
 
@@ -92,7 +92,7 @@ class InterpreterLanguage {
     /**
      * Get language
      *
-     * @return \Application\Entity\Language
+     * @return Language
      */
     public function getLanguage()
     {
@@ -122,4 +122,6 @@ class InterpreterLanguage {
     {
         return $this->federalCertification;
     }
+    
+    
 }

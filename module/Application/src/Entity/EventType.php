@@ -23,6 +23,7 @@ class EventType
 
     /**
      * @ORM\ManyToOne(targetEntity="EventCategory") 
+     * @ORM\JoinColumn(nullable=false)
      * @see Application\Entity\EventCategory
      */
     protected $category;

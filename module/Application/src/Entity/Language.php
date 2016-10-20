@@ -31,6 +31,25 @@ class Language
      * @var InterpreterLanguage[]
      */
     protected $interpreterLanguages;
+    
+    /**
+     * Is there a federal certification program for this language?
+     * 
+     * There are only three such languages and that is very unlikely to change. 
+     * So unlikely that we can hard-code them.
+     * 
+     * @return boolean
+     */
+    public function is_federally_certified() 
+    {
+        return in_array($this->name,[
+            'Spanish',
+            'Navajo',
+            'Haitian Creole',
+        ]);
+    }
+    
+    
 
     /**
      * Get id
