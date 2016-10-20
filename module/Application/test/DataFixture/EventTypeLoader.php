@@ -8,9 +8,8 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Application\Entity;
 
 
-
-
 class EventTypeLoader implements FixtureInterface {
+    
     public function load(ObjectManager $objectManager)
     {
         
