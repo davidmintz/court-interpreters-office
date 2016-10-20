@@ -4,7 +4,13 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})}) */
+/**
+* Entity class representing a location where an interpreting event takes place.
+*
+* @todo add aboolean property "active" for retiring (hiding) locations no longer in use 
+* 
+* @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})}) 
+*/
 
 class Location
 {
@@ -22,16 +28,16 @@ class Location
 
 
     /**
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="LocationType")
      */
     protected $type;
 
     /**
-     * 
+     * @ORM\Column(name="parent_location_id")
      * @ORM\ManyToOne(targetEntity="Location")
      */
-    protected $parent_location;
+    protected $parentLocation;
 
     /**
      * @ORM\Column(type="string",length=200,options={"default":""})
@@ -131,7 +137,7 @@ class Location
      */
     public function setParentLocation(\Application\Entity\Location $parentLocation = null)
     {
-        $this->parent_location = $parentLocation;
+        $this->parentLocation = $parentLocation;
 
         return $this;
     }
@@ -143,6 +149,6 @@ class Location
      */
     public function getParentLocation()
     {
-        return $this->parent_location;
+        return $this->parentLocation;
     }
 }
