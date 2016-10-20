@@ -1,7 +1,7 @@
 # InterpretersOffice	
 is a web application for managing busy court interpreters offices (in the English-speaking United States judicial system).
 
-At this writing, the application is far from complete and not yet useable. I am actively working on it. The intention is to make it available to any court interpreter offices that are interested in adopting it. The motivation is that there is no suitable software available, to my knowledge, for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote, and it works well, but it needs updating and has too many baked-in features that are peculiar only to our needs. So this one will become the world's finest by far (the competition being pretty scarce).
+At this writing, the application is far from complete and not yet useable. I am actively working on it. The intention is to make it available to any court interpreter offices that are interested in adopting it. The motivation is that there is to my knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote (and which sprang into being precisely because of this dearth of alternatives), and it works great, but needs updating and has too many baked-in features that are peculiar only to our Interpreters Office's needs. So this one will become the world's finest by far (the competition being pretty scarce).
 
 InterpretersOffice is designed primarily with US District Court in mind, but I'm trying to keep it flexible enough for use in state court as well.
 
