@@ -28,7 +28,7 @@ class HatLoader implements FixtureInterface {
         $submitter = $objectManager->getRepository('Application\Entity\Role')->findOneBy(['name'=>'submitter']);
         $manager = $objectManager->getRepository('Application\Entity\Role')->findOneBy(['name'=>'manager']);
 
-        // create the Hat entities
+        // create the Hat entities: name, can_be_anonymous, role
         $hats = [
             ['AUSA',false,null],
             ['contract court interpreter',false,null],
@@ -65,6 +65,14 @@ class HatLoader implements FixtureInterface {
         }
         $objectManager->flush();
 
+        $judge_flavors = ['USDJ','USMJ'];
+        foreach ($judge_flavors as $flavor) {
+
+            $entity = new Entity\JudgeFlavor();
+            $entity->setFlavor($flavor);
+            $objectManager->persist($entity);
+        }
+        $objectManager->flush();
 
     }
 }
