@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 * to a person. This is because we expect names to recur, and we recycle them.
 * We usually don't know or care about the actual identity of the defendant 
 * and don't attempt to associate directly a name with a docket number.
- * 
+* 
 * @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={@ORM\UniqueConstraint(name="unique_deftname",columns={"given_names", "surnames"})}) 
 * //ORM\Entity(repositoryClass="Application\Entity\DefendantNameRepository") 
 */
