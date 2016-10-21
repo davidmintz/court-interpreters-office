@@ -124,4 +124,22 @@ class Hat
     function anonymous() {
         return $this->getAnonymous();
     }
+    /**
+    * returns the Role of this Hat
+    * @return Role
+    */
+    public function getRole()
+    {
+        return $this->role;
+    }
+    /**
+    * set the Role of this Hat
+    * @return Hat
+    */
+    public function setRole(Role $role)
+    {
+        $this->role = $role;
+        return $this;
+    }
+
 }
