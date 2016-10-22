@@ -26,5 +26,46 @@ class JudgeFlavor {
     */
     protected $flavor;
 
-    
+    /**
+    * returns a string representation of this JudgeFlavor
+    * @return string
+    */
+    public function __toString()
+    {
+        return $this->getFlavor();
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+
+    public function getId()
+    {
+    	return $this->id;
+    }
+
+    /**
+     * Get flavor
+     *
+     * @return string
+     */
+
+    public function getFlavor()
+    {
+    	return $this->flavor;
+    }
+
+    /**
+     * set flavor
+     *
+     * @return JudgeFlavor
+     */
+
+    public function setFlavor($flavor)
+    {
+    	$this->flavor = $flavor;
+    	return $this;
+    }
 }
