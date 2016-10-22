@@ -34,7 +34,8 @@ class Interpreter extends Person
 	
     /**
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="interpreter", cascade={"persist", "remove"})
-     * @var InterpreterLanguage[]
+     * ORM\JoinColumn(onDelete="CASCADE")
+     * @var ArrayCollection of InterpreterLanguage
      */
     protected $interpreterLanguages;
 
@@ -104,6 +105,18 @@ class Interpreter extends Person
         return $this->id;
     }
 
+    /**
+    * shortcut for addInterpreterLanguage()
+    *
+    */
+    public function addLanguage(Language $language)
+    {
+
+        $this->addInterpreterLanguage(
+            new InterpreterLanguage($this,$language)
+        );
+        return $this;
+    }
     
     /**
      * Add interpreterLanguage
