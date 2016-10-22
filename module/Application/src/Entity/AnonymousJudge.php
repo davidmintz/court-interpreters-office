@@ -1,10 +1,11 @@
 <?php
 namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  * Entity representing a category of anonymous/generic judge
  *
- * Events typically have related Judge entity. A Judge is a Person with attributes
+ * Events typically have a related Judge entity. A Judge is a Person with attributes
  * like last name, firstname. But some events have a "generic" judge, e.g., the 
  * Magistrate who happens to be on duty when the event takes place. There are also 
  * occasionally "not applicable" cases, such as when some agency or department 
@@ -34,6 +35,9 @@ class AnonymousJudge {
      */
     protected $defaultLocation;
 
+    /**
+    * returns string representation of AnonymousJudge entity
+    */
     public function __toString() {
         return $this->name;
     }
