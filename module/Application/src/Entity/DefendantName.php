@@ -7,9 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 * Entity modeling a defendant for whom an interpreter is required.
 * 
 * In reality, the DefendantName entity models just that: a name, as opposed 
-* to a person. This is because we expect names to recur, and we recycle them.
-* We usually don't know or care about the actual identity of the defendant 
-* and don't attempt to associate directly a name with a docket number.
+* to a person. This is because we expect names to recur in the context of more than
+* one docket number, and we recycle them. We usually don't know or care about the 
+* actual identity of the defendant, so don't attempt to associate directly a name 
+* with a docket number.
 * 
 * @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={@ORM\UniqueConstraint(name="unique_deftname",columns={"given_names", "surnames"})}) 
 * //ORM\Entity(repositoryClass="Application\Entity\DefendantNameRepository") 
@@ -47,10 +48,26 @@ class DefendantName
         return $fullName;
     }
 
+    /**
+    * returns string representation of the entity
+    * @return string
+    */
     public function __toString() {
        return $this->getLastname(). ', ' . $this->getFirstname();
     }
 
+    /**
+    * convenience method to set full name in one shot
+    * @param string $surnames
+    * @params string $given_names
+    * @return DefendantName
+    */
+    public function setFullname($surnames, $givenNames)
+    {
+        $this->surnames = $surnames;
+        $this->givenNames = $givenName;
+        return $this;
+    }
     /**
      * Get deftId
      *
