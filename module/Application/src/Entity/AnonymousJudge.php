@@ -1,51 +1,54 @@
 <?php
+
 namespace Application\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity representing a category of anonymous/generic judge
+ * Entity representing a category of anonymous/generic judge.
  *
  * Events typically have a related Judge entity. A Judge is a Person with attributes
- * like last name, firstname. But some events have a "generic" judge, e.g., the 
- * Magistrate who happens to be on duty when the event takes place. There are also 
- * occasionally "not applicable" cases, such as when some agency or department 
- * requests a document translation for general use, rather than on behalf of a 
+ * like last name, firstname. But some events have a "generic" judge, e.g., the
+ * Magistrate who happens to be on duty when the event takes place. There are also
+ * occasionally "not applicable" cases, such as when some agency or department
+ * requests a document translation for general use, rather than on behalf of a
  * particular judge.
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(name="anonymous_judges",uniqueConstraints={@ORM\UniqueConstraint(name="unique_anon_judge",columns={"name"})})
- * 
  */
-class AnonymousJudge {
-    
-     /**
+class AnonymousJudge
+{
+    /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string",length=50,nullable=false)
+     *
      * @var string
      */
     protected $name;
-    
+
     /**
      * @ORM\Column(name="default_location_id",nullable=true)
-     * @ORM\ManyToOne(targetEntity="Location") 
+     * @ORM\ManyToOne(targetEntity="Location")
      */
     protected $defaultLocation;
 
     /**
-    * returns string representation of AnonymousJudge entity
-    */
-    public function __toString() {
+     * returns string representation of AnonymousJudge entity.
+     */
+    public function __toString()
+    {
         return $this->name;
     }
-    
+
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -53,7 +56,7 @@ class AnonymousJudge {
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $type
      *
@@ -67,7 +70,7 @@ class AnonymousJudge {
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -75,9 +78,9 @@ class AnonymousJudge {
     {
         return $this->name;
     }
-    
+
     /**
-     * Set defaultLocation
+     * Set defaultLocation.
      *
      * @param Location $defaultLocation
      *
@@ -91,7 +94,7 @@ class AnonymousJudge {
     }
 
     /**
-     * Get defaultLocation
+     * Get defaultLocation.
      *
      * @return string
      */

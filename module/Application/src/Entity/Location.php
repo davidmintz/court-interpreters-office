@@ -1,20 +1,18 @@
-<?php 
+<?php
 
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
-* Entity class representing a location where an interpreting event takes place.
-*
-* @todo add aboolean property "active" for retiring (hiding) locations no longer in use 
-* 
-* @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})}) 
-*/
-
+ * Entity class representing a location where an interpreting event takes place.
+ *
+ * @todo add aboolean property "active" for retiring (hiding) locations no longer in use
+ *
+ * @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})})
+ */
 class Location
 {
-
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
@@ -22,6 +20,7 @@ class Location
 
     /**
      * @ORM\Column(type="string",length=60,options={"nullable":false})
+     *
      * @var string
      */
     protected $name;
@@ -29,6 +28,7 @@ class Location
     /**
      * @ORM\JoinColumn(nullable=false)
      * @ORM\ManyToOne(targetEntity="LocationType")
+     *
      * @var LocationType;
      */
     protected $type;
@@ -41,15 +41,15 @@ class Location
 
     /**
      * @ORM\Column(type="string",length=200,options={"default":""})
+     *
      * @var string
      */
     protected $comments;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -57,7 +57,7 @@ class Location
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -71,7 +71,7 @@ class Location
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -81,7 +81,7 @@ class Location
     }
 
     /**
-     * Set comments
+     * Set comments.
      *
      * @param string $comments
      *
@@ -95,7 +95,7 @@ class Location
     }
 
     /**
-     * Get comments
+     * Get comments.
      *
      * @return string
      */
@@ -105,13 +105,13 @@ class Location
     }
 
     /**
-     * Set type
+     * Set type.
      *
      * @param \Application\Entity\LocationType $type
      *
      * @return Location
      */
-    public function setType(\Application\Entity\LocationType $type )
+    public function setType(\Application\Entity\LocationType $type)
     {
         $this->type = $type;
 
@@ -119,7 +119,7 @@ class Location
     }
 
     /**
-     * Get type
+     * Get type.
      *
      * @return \Application\Entity\LocationType
      */
@@ -129,7 +129,7 @@ class Location
     }
 
     /**
-     * Set parentLocation
+     * Set parentLocation.
      *
      * @param \Application\Entity\Location $parentLocation
      *
@@ -137,17 +137,15 @@ class Location
      */
     public function setParentLocation(\Application\Entity\Location $parentLocation = null)
     {
-        
         if ($parentLocation) {
-            $this->parentLocation = $parentLocation;    
+            $this->parentLocation = $parentLocation;
         }
-    
 
         return $this;
     }
 
     /**
-     * Get parentLocation
+     * Get parentLocation.
      *
      * @return \Application\Entity\Location
      */

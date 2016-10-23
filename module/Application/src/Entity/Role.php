@@ -1,62 +1,63 @@
 <?php
 
-
 namespace Application\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Entity representing a Role in the authorization system.
- * 
- * Every User has one and only one Role. The Roles are hard-coded in the 
- * 'roles' database table: administrator, manager, and submitter. A submitter 
- * can read/write requests for interpreting services. An administrator can do  
- * everything except read/write submitter requests. A manager can do everything 
- * an administrator can do except manage other users in the manager and 
+ *
+ * Every User has one and only one Role. The Roles are hard-coded in the
+ * 'roles' database table: administrator, manager, and submitter. A submitter
+ * can read/write requests for interpreting services. An administrator can do
+ * everything except read/write submitter requests. A manager can do everything
+ * an administrator can do except manage other users in the manager and
  * administrator roles.
  *
- * @ORM\Entity 
+ * @ORM\Entity
  * @ORM\Table(name="roles")
  */
-
-class Role {
-    
+class Role
+{
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
-    
+
     /**
      * @ORM\Column(type="string",length=40,nullable=false)
+     *
      * @var string
      */
     protected $name;
-    
+
     /**
-     * returns string representation of Role entity
+     * returns string representation of Role entity.
+     *
      * @return string
      */
-    public function __toString() 
+    public function __toString()
     {
         return $this->name;
     }
-    
+
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
-    
+
     /**
-     * Set name
-     * 
+     * Set name.
+     *
      * @todo consider if this method should even exist,
      * since roles are going to be hard-coded at installation
-     * and will not change thereafter.
-     * 
+     * and will not change thereafter
+     *
      * @param string $name
      *
      * @return Role
@@ -69,7 +70,7 @@ class Role {
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */

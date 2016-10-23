@@ -1,14 +1,12 @@
-<?php 
+<?php
 
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /** @ORM\Entity  @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})}) */
-
-class Language 
+class Language
 {
-
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
@@ -16,45 +14,46 @@ class Language
 
     /**
      * @ORM\Column(type="string",length=50,nullable=false)
+     *
      * @var string
      */
     protected $name;
 
     /**
      * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
+     *
      * @var string
      */
     protected $comments;
 
     /**
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
+     *
      * @var InterpreterLanguage[]
      */
     protected $interpreterLanguages;
-    
+
     /**
      * Is there a federal certification program for this language?
-     * 
-     * There are only three such languages and that is very unlikely to change. 
+     *
+     * There are only three such languages and that is very unlikely to change.
      * So unlikely that we can hard-code them.
-     * 
-     * @return boolean
+     *
+     * @return bool
      */
-    public function is_federally_certified() 
+    public function is_federally_certified()
     {
-        return in_array($this->name,[
+        return in_array($this->name, [
             'Spanish',
             'Navajo',
             'Haitian Creole',
         ]);
     }
-    
-    
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -62,7 +61,7 @@ class Language
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -76,7 +75,7 @@ class Language
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -86,7 +85,7 @@ class Language
     }
 
     /**
-     * Set comments
+     * Set comments.
      *
      * @param string $comments
      *
@@ -100,7 +99,7 @@ class Language
     }
 
     /**
-     * Get comments
+     * Get comments.
      *
      * @return string
      */
@@ -109,7 +108,7 @@ class Language
         return $this->comments;
     }
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -117,7 +116,7 @@ class Language
     }
 
     /**
-     * Add interpreterLanguage
+     * Add interpreterLanguage.
      *
      * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
      *
@@ -131,7 +130,7 @@ class Language
     }
 
     /**
-     * Remove interpreterLanguage
+     * Remove interpreterLanguage.
      *
      * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
      */
@@ -141,7 +140,7 @@ class Language
     }
 
     /**
-     * Get interpreterLanguages
+     * Get interpreterLanguages.
      *
      * @return \Doctrine\Common\Collections\Collection
      */

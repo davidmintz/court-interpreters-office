@@ -1,50 +1,51 @@
 <?php
 
 namespace Application\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Entity representing a type of court interpreter proceeding or event.
- * 
- * Examples include: attorney-client interview, pre-trial conference, 
+ *
+ * Examples include: attorney-client interview, pre-trial conference,
  * plea, sentence, probation pre-sentence interview, etc.
- * 
+ *
  * @ORM\Entity  @ORM\Table(name="event_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_event_type",columns={"name"})})
 
  */
-
-class EventType 
+class EventType
 {
-
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="EventCategory") 
+     * @ORM\ManyToOne(targetEntity="EventCategory")
      * @ORM\JoinColumn(nullable=false)
+     *
      * @see Application\Entity\EventCategory
      */
     protected $category;
 
     /**
-    * @ORM\Column(type="string",length=60,options={"nullable":false})
-    * @var string
-    */
+     * @ORM\Column(type="string",length=60,options={"nullable":false})
+     *
+     * @var string
+     */
     protected $name;
 
     /**
-    * @ORM\Column(type="string",length=60,options={"nullable":false,"default":""})
-    * @var string
-    */
+     * @ORM\Column(type="string",length=60,options={"nullable":false,"default":""})
+     *
+     * @var string
+     */
     protected $comments;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -52,7 +53,7 @@ class EventType
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -66,7 +67,7 @@ class EventType
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -76,7 +77,7 @@ class EventType
     }
 
     /**
-     * Set comments
+     * Set comments.
      *
      * @param string $comments
      *
@@ -90,7 +91,7 @@ class EventType
     }
 
     /**
-     * Get comments
+     * Get comments.
      *
      * @return string
      */
@@ -100,7 +101,7 @@ class EventType
     }
 
     /**
-     * Set category
+     * Set category.
      *
      * @param \Application\Entity\EventCategory $category
      *
@@ -114,7 +115,7 @@ class EventType
     }
 
     /**
-     * Get category
+     * Get category.
      *
      * @return \Application\Entity\EventCategory
      */

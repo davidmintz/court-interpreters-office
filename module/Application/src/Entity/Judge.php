@@ -4,47 +4,46 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
- /**
+/**
  * Entity representing a Judge.
- * 
+ *
  * Judge inherits from Person.
- * 
+ *
  * @see Application\Entity\Person
- * 
- * @ORM\Entity @ORM\Table(name="judges") 
+ *
+ * @ORM\Entity @ORM\Table(name="judges")
  */
-
-class Judge extends Person {
-    
+class Judge extends Person
+{
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-     * @var int 
+     *
+     * @var int
      */
     protected $id;
-    
+
     /**
      * A judge has a default Location, i.e., a courtroom.
-     * 
+     *
      * @ORM\JoinColumn(name="default_location_id",nullable=true)
-     * @ORM\ManyToOne(targetEntity="Location") 
+     * @ORM\ManyToOne(targetEntity="Location")
+     *
      * @var Location
      */
     protected $defaultLocation;
-    
-     /**
+
+    /**
      * A Judge has a JudgeFlavor, e.g., "USDJ" in US District Courts.
-     * 
+     *
      * @ORM\JoinColumn(nullable=false)
-     * @ORM\ManyToOne(targetEntity="JudgeFlavor") 
+     * @ORM\ManyToOne(targetEntity="JudgeFlavor")
      */
     protected $flavor;
-    
-    
+
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -52,7 +51,7 @@ class Judge extends Person {
     }
 
     /**
-     * Set defaultLocation
+     * Set defaultLocation.
      *
      * @param Location $defaultLocation
      *
@@ -66,7 +65,7 @@ class Judge extends Person {
     }
 
     /**
-     * Get defaultLocation
+     * Get defaultLocation.
      *
      * @return Location
      */
@@ -76,7 +75,7 @@ class Judge extends Person {
     }
 
     /**
-     * Set flavor
+     * Set flavor.
      *
      * @param JudgeFlavor $flavor
      *
@@ -90,7 +89,7 @@ class Judge extends Person {
     }
 
     /**
-     * Get flavor
+     * Get flavor.
      *
      * @return JudgeFlavor
      */
@@ -98,5 +97,4 @@ class Judge extends Person {
     {
         return $this->flavor;
     }
-    
 }

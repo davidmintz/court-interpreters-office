@@ -1,38 +1,35 @@
 <?php
+
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** 
- * Entity representing a reason why something was cancelled
- * 
+/**
+ * Entity representing a reason why something was cancelled.
+ *
  * These categories should be set up once and for all at installation time.
- * 
- * @ORM\Entity  
+ *
+ * @ORM\Entity
  * @ORM\Table(name="cancellation_reasons",uniqueConstraints=@ORM\UniqueConstraint(name="unique_cancel_reason",columns={"reason"}))
  */
-
 class ReasonForCancellation
 {
-
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
-     * 
      * @ORM\Column(type="string",length=40,options={"nullable":false})
+     *
      * @var string
      */
     protected $reason;
 
-
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -40,7 +37,7 @@ class ReasonForCancellation
     }
 
     /**
-     * Set reason
+     * Set reason.
      *
      * @param string $category
      *
@@ -54,7 +51,7 @@ class ReasonForCancellation
     }
 
     /**
-     * Get category
+     * Get category.
      *
      * @return string
      */
@@ -62,8 +59,9 @@ class ReasonForCancellation
     {
         return $this->reason;
     }
-    
-    public function __toString() {
+
+    public function __toString()
+    {
         return $this->reason;
     }
 }

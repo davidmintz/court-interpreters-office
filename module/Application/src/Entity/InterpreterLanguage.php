@@ -1,28 +1,26 @@
 <?php
 
 namespace Application\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Entity representing an Interpreter's Language.
- * 
+ *
  * Technically, it is a language *pair*, but in this system it is understood that
  * the other language of the pair is English. There is a many-to-many relationship
  * between interpreters and languages. But because there is also metadata to record
  * about the language (federal certification), it is implemented as a Many-To-One
  * relationship on either side.
- * 
- * @ORM\Entity  
- * @ORM\Table(name="interpreters_languages") 
  *
+ * @ORM\Entity
+ * @ORM\Table(name="interpreters_languages")
  */
-class InterpreterLanguage {
-    
-    
-    public function __construct(Interpreter $interpreter = null, 
+class InterpreterLanguage
+{
+    public function __construct(Interpreter $interpreter = null,
             Language $language = null)
     {
-
         if ($interpreter) {
             $this->setInterpreter($interpreter);
         }
@@ -34,25 +32,28 @@ class InterpreterLanguage {
     /**
      * @ORM\ManyToOne(targetEntity="Interpreter",inversedBy="interpreterLanguages")
      * @ORM\Id
+     *
      * @var Interpreter
      */
     protected $interpreter;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="Language",inversedBy="interpreterLanguages")
      * @ORM\Id
-     * @var Language 
+     *
+     * @var Language
      */
     protected $language;
-    
+
     /**
      * @ORM\Column(name="federal_certification",type="boolean",nullable=true)
-     * @var boolean
+     *
+     * @var bool
      */
     protected $federalCertification;
 
     /**
-     * Set interpreter
+     * Set interpreter.
      *
      * @param \Application\Entity\Interpreter $interpreter
      *
@@ -66,7 +67,7 @@ class InterpreterLanguage {
     }
 
     /**
-     * Get interpreter
+     * Get interpreter.
      *
      * @return Interpreter
      */
@@ -76,7 +77,7 @@ class InterpreterLanguage {
     }
 
     /**
-     * Set language
+     * Set language.
      *
      * @param Language $language
      *
@@ -90,7 +91,7 @@ class InterpreterLanguage {
     }
 
     /**
-     * Get language
+     * Get language.
      *
      * @return Language
      */
@@ -100,9 +101,9 @@ class InterpreterLanguage {
     }
 
     /**
-     * Set federalCertification
+     * Set federalCertification.
      *
-     * @param boolean $federalCertification
+     * @param bool $federalCertification
      *
      * @return InterpreterLanguage
      */
@@ -114,14 +115,12 @@ class InterpreterLanguage {
     }
 
     /**
-     * Get federalCertification
+     * Get federalCertification.
      *
-     * @return boolean
+     * @return bool
      */
     public function getFederalCertification()
     {
         return $this->federalCertification;
     }
-    
-    
 }

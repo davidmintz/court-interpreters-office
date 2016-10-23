@@ -5,209 +5,211 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/** 
+/**
  * Entity representing a event involving an interpreter.
- * 
- * 
- * @ORM\Entity  
+ *
+ *
+ * @ORM\Entity
  * @ORM\Table(name="events")
- * @ORM\HasLifecycleCallbacks 
+ * @ORM\HasLifecycleCallbacks
  */
-
-
-class Event {
-
+class Event
+{
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
-    
+
     /**
-     * date on which the event takes place
-     * 
+     * date on which the event takes place.
+     *
      * @ORM\Column(type="date",nullable=false)
      */
     protected $date;
-    
-    
+
     /**
-     * time at which the event takes place
-     * 
+     * time at which the event takes place.
+     *
      * The date and time are stored in separate columns because there are cases
      * where the date is known but the time is unknown or to-be-determined.
-     * 
+     *
      * @ORM\Column(type="time",nullable=true)
      */
     protected $time;
-    
-     /**
+
+    /**
      * time at which the event ended.
-     * 
+     *
      * The date and time are stored in separate columns because there are cases
      * where the date is known but the time is unknown or to-be-determined.
-     * 
+     *
      * @ORM\Column(type="time",nullable=true)
      */
     protected $end_time;
-    
+
     /**
      * Every interpreter event implies a language.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="Language")
      * @ORM\JoinColumn(nullable=false)
+     *
      * @var Language
      */
     protected $language;
-    
-    
+
     /**
      * Every event is of some type or other.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="EventType")
      * @ORM\JoinColumn(nullable=false)
+     *
      * @var EventType
      */
     protected $eventType;
-    
+
     /**
      * Most events have a Judge.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="Judge")
      * @ORM\JoinColumn(nullable=true)
+     *
      * @var Judge
      */
     protected $judge;
-    
+
     /**
      * While most events have a Judge, there are also cases where the identity of
-     * the judge/person is unknown, irrelevant or not applicable. 
-     * 
+     * the judge/person is unknown, irrelevant or not applicable.
+     *
      * @ORM\ManyToOne(targetEntity="AnonymousJudge")
      * @ORM\JoinColumn(nullable=true)
+     *
      * @var AnonymousJudge
      */
     protected $anonymousJudge;
-    
+
     /**
      * The interpreter is requested by a Person (submitter).
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="Person")
-     * @ORM\JoinColumn(nullable=true)    
+     * @ORM\JoinColumn(nullable=true)
+     *
      * @var Person
      */
     protected $submitter;
-    
+
     /**
      * "Hat" type of an anonymous submitter.
-     * 
+     *
      * In some cases we record only the generic person-type or agency
      * that submitted the request, rather than a specific Person.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="Hat")
-     * @ORM\JoinColumn(nullable=true)    
+     * @ORM\JoinColumn(nullable=true)
+     *
      * @var Hat
      */
     protected $anonymousSubmitter;
-    
+
     /**
      * @ORM\Column(type="string",length=15,nullable=false,options={"default":""})
+     *
      * @var string
      */
     protected $docket;
-    
-    
+
     /**
      * Reason (if any) for cancelling the event.
-     * 
-     * If an Event is cancelled with less than one business days' notice, it is 
-     * considered a belated cancellation, and we record the reason why. If it is 
-     * cancelled with more than one business day's notice, it should simply be 
+     *
+     * If an Event is cancelled with less than one business days' notice, it is
+     * considered a belated cancellation, and we record the reason why. If it is
+     * cancelled with more than one business day's notice, it should simply be
      * deleted.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="ReasonForCancellation")
      * @ORM\JoinColumn(nullable=true)
+     *
      * @var ReasonForCancellation
      */
     protected $cancellationReason;
-  
+
     /**
      * defendant(s) for whom an interpreter is required.
-     * 
+     *
      * @see DefendantName
      *
      * @ORM\ManyToMany(targetEntity="DefendantName")
      * @ORM\JoinTable(name="defendants_events",inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
+     *
      * @var DefendantName[]
      */
     protected $defendants;
-    
-    
+
     /**
-     * 
      * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event")
+     *
      * @var InterpreterEvents[]
      */
-    protected $interpretersAssigned;    
-    
+    protected $interpretersAssigned;
+
     /**
-     * comments for semi-public consumption
-     * 
+     * comments for semi-public consumption.
+     *
      * @ORM\Column(type="string",length=600,nullable=false,options={"default":""})
+     *
      * @var string
      */
     protected $comments;
-    
+
     /**
-     * comments for managers and admins only
-     * 
+     * comments for managers and admins only.
+     *
      * @ORM\Column(type="string",length=600,nullable=false,options={"default":""})
+     *
      * @var string
      */
     protected $admin_comments;
-    
-    
+
     /* ------------ metadata fields ------------------ */
-    
+
     /**
-     * date/time when Event was created
-     * 
+     * date/time when Event was created.
+     *
      * @ORM\Column(type="datetime",nullable=false)
+     *
      * @var \DateTime
      */
-    
     protected $created;
-    
+
     /**
-     * 
      * User who created the Event.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="User")
      * sadly, nullable because of some mismanaged legacy data
-     * @ORM\JoinColumn(nullable=true)   
-     * 
+     * @ORM\JoinColumn(nullable=true)
      */
     protected $createdBy;
-    
+
     /**
      * @ORM\Column(type="datetime")
+     *
      * @var \DateTime
      */
     protected $modified;
-    
+
     /**
      * last User who updated the Event.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="User")
      * sadly, nullable because of some mismanaged legacy data
-     * @ORM\JoinColumn(nullable=true)   
-     * 
+     * @ORM\JoinColumn(nullable=true)
      */
     protected $modifiedBy;
-    
+
     /* -------  setters and getter generated by Doctrine -------------- */
-    
+
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -216,9 +218,9 @@ class Event {
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -226,7 +228,7 @@ class Event {
     }
 
     /**
-     * Set date
+     * Set date.
      *
      * @param \DateTime $date
      *
@@ -240,7 +242,7 @@ class Event {
     }
 
     /**
-     * Get date
+     * Get date.
      *
      * @return \DateTime
      */
@@ -250,7 +252,7 @@ class Event {
     }
 
     /**
-     * Set time
+     * Set time.
      *
      * @param \DateTime $time
      *
@@ -264,7 +266,7 @@ class Event {
     }
 
     /**
-     * Get time
+     * Get time.
      *
      * @return \DateTime
      */
@@ -274,7 +276,7 @@ class Event {
     }
 
     /**
-     * Set endTime
+     * Set endTime.
      *
      * @param \DateTime $endTime
      *
@@ -288,7 +290,7 @@ class Event {
     }
 
     /**
-     * Get endTime
+     * Get endTime.
      *
      * @return \DateTime
      */
@@ -298,7 +300,7 @@ class Event {
     }
 
     /**
-     * Set docket
+     * Set docket.
      *
      * @param string $docket
      *
@@ -312,7 +314,7 @@ class Event {
     }
 
     /**
-     * Get docket
+     * Get docket.
      *
      * @return string
      */
@@ -322,7 +324,7 @@ class Event {
     }
 
     /**
-     * Set comments
+     * Set comments.
      *
      * @param string $comments
      *
@@ -336,7 +338,7 @@ class Event {
     }
 
     /**
-     * Get comments
+     * Get comments.
      *
      * @return string
      */
@@ -346,7 +348,7 @@ class Event {
     }
 
     /**
-     * Set adminComments
+     * Set adminComments.
      *
      * @param string $adminComments
      *
@@ -360,7 +362,7 @@ class Event {
     }
 
     /**
-     * Get adminComments
+     * Get adminComments.
      *
      * @return string
      */
@@ -370,7 +372,7 @@ class Event {
     }
 
     /**
-     * Set created
+     * Set created.
      *
      * @param \DateTime $created
      *
@@ -384,7 +386,7 @@ class Event {
     }
 
     /**
-     * Get created
+     * Get created.
      *
      * @return \DateTime
      */
@@ -394,7 +396,7 @@ class Event {
     }
 
     /**
-     * Set modified
+     * Set modified.
      *
      * @param \DateTime $modified
      *
@@ -408,7 +410,7 @@ class Event {
     }
 
     /**
-     * Get modified
+     * Get modified.
      *
      * @return \DateTime
      */
@@ -418,7 +420,7 @@ class Event {
     }
 
     /**
-     * Set language
+     * Set language.
      *
      * @param Language $language
      *
@@ -432,7 +434,7 @@ class Event {
     }
 
     /**
-     * Get language
+     * Get language.
      *
      * @return Language
      */
@@ -442,7 +444,7 @@ class Event {
     }
 
     /**
-     * Set eventType
+     * Set eventType.
      *
      * @param EventType $eventType
      *
@@ -456,7 +458,7 @@ class Event {
     }
 
     /**
-     * Get eventType
+     * Get eventType.
      *
      * @return EventType
      */
@@ -466,7 +468,7 @@ class Event {
     }
 
     /**
-     * Set judge
+     * Set judge.
      *
      * @param Judge $judge
      *
@@ -480,7 +482,7 @@ class Event {
     }
 
     /**
-     * Get judge
+     * Get judge.
      *
      * @return Judge
      */
@@ -490,7 +492,7 @@ class Event {
     }
 
     /**
-     * Set anonymousJudge
+     * Set anonymousJudge.
      *
      * @param AnonymousJudge $anonymousJudge
      *
@@ -504,7 +506,7 @@ class Event {
     }
 
     /**
-     * Get anonymousJudge
+     * Get anonymousJudge.
      *
      * @return AnonymousJudge
      */
@@ -514,7 +516,7 @@ class Event {
     }
 
     /**
-     * Set submitter
+     * Set submitter.
      *
      * @param Person $submitter
      *
@@ -528,7 +530,7 @@ class Event {
     }
 
     /**
-     * Get submitter
+     * Get submitter.
      *
      * @return Person
      */
@@ -538,7 +540,7 @@ class Event {
     }
 
     /**
-     * Set anonymousSubmitter
+     * Set anonymousSubmitter.
      *
      * @param Hat $anonymousSubmitter
      *
@@ -552,7 +554,7 @@ class Event {
     }
 
     /**
-     * Get anonymousSubmitter
+     * Get anonymousSubmitter.
      *
      * @return Hat
      */
@@ -562,7 +564,7 @@ class Event {
     }
 
     /**
-     * Set cancellationReason
+     * Set cancellationReason.
      *
      * @param ReasonForCancellation $cancellationReason
      *
@@ -576,7 +578,7 @@ class Event {
     }
 
     /**
-     * Get cancellationReason
+     * Get cancellationReason.
      *
      * @return ReasonForCancellation
      */
@@ -586,7 +588,7 @@ class Event {
     }
 
     /**
-     * Add defendant
+     * Add defendant.
      *
      * @param DefendantName $defendant
      *
@@ -600,7 +602,7 @@ class Event {
     }
 
     /**
-     * Remove defendant
+     * Remove defendant.
      *
      * @param DefendantName $defendant
      */
@@ -610,7 +612,7 @@ class Event {
     }
 
     /**
-     * Get defendants
+     * Get defendants.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -620,7 +622,7 @@ class Event {
     }
 
     /**
-     * Add interpretersAssigned
+     * Add interpretersAssigned.
      *
      * @param InterpreterEvent $interpretersAssigned
      *
@@ -634,7 +636,7 @@ class Event {
     }
 
     /**
-     * Remove interpretersAssigned
+     * Remove interpretersAssigned.
      *
      * @param InterpreterEvent $interpretersAssigned
      */
@@ -644,7 +646,7 @@ class Event {
     }
 
     /**
-     * Get interpretersAssigned
+     * Get interpretersAssigned.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -654,7 +656,7 @@ class Event {
     }
 
     /**
-     * Set createdBy
+     * Set createdBy.
      *
      * @param User $createdBy
      *
@@ -668,7 +670,7 @@ class Event {
     }
 
     /**
-     * Get createdBy
+     * Get createdBy.
      *
      * @return User
      */
@@ -678,7 +680,7 @@ class Event {
     }
 
     /**
-     * Set modifiedBy
+     * Set modifiedBy.
      *
      * @param User $modifiedBy
      *
@@ -692,7 +694,7 @@ class Event {
     }
 
     /**
-     * Get modifiedBy
+     * Get modifiedBy.
      *
      * @return User
      */
@@ -700,6 +702,4 @@ class Event {
     {
         return $this->modifiedBy;
     }
-
-    
 }

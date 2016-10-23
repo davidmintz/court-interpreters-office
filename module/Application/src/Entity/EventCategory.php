@@ -1,38 +1,35 @@
 <?php
+
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** 
- * Entity representing an event "category," e.g., in-court, out-of-court
- * 
+/**
+ * Entity representing an event "category," e.g., in-court, out-of-court.
+ *
  * These categories should be set up once and for all at installation time.
- * 
- * @ORM\Entity  
+ *
+ * @ORM\Entity
  * @ORM\Table(name="event_categories",uniqueConstraints=@ORM\UniqueConstraint(name="unique_event_category",columns={"category"}))
  */
-
 class EventCategory
 {
-
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
-     * 
      * @ORM\Column(type="string",length=20,options={"nullable":false})
+     *
      * @var string
      */
     protected $category;
 
-
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -40,7 +37,7 @@ class EventCategory
     }
 
     /**
-     * Set category
+     * Set category.
      *
      * @param string $category
      *
@@ -54,7 +51,7 @@ class EventCategory
     }
 
     /**
-     * Get category
+     * Get category.
      *
      * @return string
      */

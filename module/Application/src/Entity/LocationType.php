@@ -1,14 +1,12 @@
-<?php 
+<?php
 
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /** @ORM\Entity  @ORM\Table(name="location_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_type",columns={"type"})}) */
-
-class LocationType 
+class LocationType
 {
-
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
@@ -16,21 +14,22 @@ class LocationType
 
     /**
      * @ORM\Column(type="string",length=60,nullable=false)
+     *
      * @var string
      */
     protected $type;
 
     /**
      * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
+     *
      * @var string
      */
     protected $comments;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -38,7 +37,7 @@ class LocationType
     }
 
     /**
-     * Set type
+     * Set type.
      *
      * @param string $type
      *
@@ -52,7 +51,7 @@ class LocationType
     }
 
     /**
-     * Get type
+     * Get type.
      *
      * @return string
      */
@@ -62,7 +61,7 @@ class LocationType
     }
 
     /**
-     * Set comments
+     * Set comments.
      *
      * @param string $comments
      *
@@ -76,7 +75,7 @@ class LocationType
     }
 
     /**
-     * Get comments
+     * Get comments.
      *
      * @return string
      */

@@ -1,59 +1,59 @@
 <?php
 
 namespace Application\Entity;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
-/** 
- * @ORM\Entity 
- * @ORM\Table(name="interpreters_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_interp_event",columns={"interpreter_id","event_id"})}) 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="interpreters_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_interp_event",columns={"interpreter_id","event_id"})})
  * @ORM\HasLifecycleCallbacks
  */
-
 class InterpreterEvent
 {
-    
-    /** 
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Interpreter")
      * //ORM\JoinColumn(name="interp_id", referencedColumnName="interp_id")
+     *
      * @var Interpreter
      */
     protected $interpreter;
-    
+
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Event",inversedBy="interpretersAssigned")
      * //ORM\JoinColumn(name="event_id", referencedColumnName="event_id")
+     *
      * @var Event
      */
     protected $event;
 
-    
     /**
-     * date/time when interpreter was assigned was created
-     * 
+     * date/time when interpreter was assigned was created.
+     *
      * @ORM\Column(type="datetime",nullable=false)
+     *
      * @var \DateTime
      */
     protected $created;
-    
+
     /**
-     * User who assigned the interpreter
-     * 
+     * User who assigned the interpreter.
+     *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(nullable=false)
+     *
      * @var User
      */
     protected $createdBy;
-    
-    
-    public function __construct(Event $event=null,Interpreter $interpreter=null)
+
+    public function __construct(Event $event = null, Interpreter $interpreter = null)
     {
         $this->interpreter = $interpreter;
         $this->event = $event;
     }
-    
+
     /**
      * @ORM\PrePersist
      */
@@ -63,7 +63,7 @@ class InterpreterEvent
     }
 
     /**
-     * Set interpreter
+     * Set interpreter.
      *
      * @param \Application\Entity\Interpreter $interpreter
      *
@@ -72,11 +72,12 @@ class InterpreterEvent
     public function setInterpreter(\Application\Entity\Interpreter $interpreter)
     {
         $this->interpreter = $interpreter;
+
         return $this;
     }
 
     /**
-     * Get interpreter
+     * Get interpreter.
      *
      * @return \Application\Entity\Interpreter
      */
@@ -86,13 +87,13 @@ class InterpreterEvent
     }
 
     /**
-     * Set event
+     * Set event.
      *
      * @param \Application\Entity\Event $event
      *
      * @return InterpreterAssignment
      */
-    public function setEvent(\Application\Entity\Event $event = NULL)
+    public function setEvent(\Application\Entity\Event $event = null)
     {
         $this->event = $event;
 
@@ -100,7 +101,7 @@ class InterpreterEvent
     }
 
     /**
-     * Get event
+     * Get event.
      *
      * @return \Application\Entity\Event
      */
@@ -110,7 +111,7 @@ class InterpreterEvent
     }
 
     /**
-     * Set created
+     * Set created.
      *
      * @param \DateTime $created
      *
@@ -124,7 +125,7 @@ class InterpreterEvent
     }
 
     /**
-     * Get created
+     * Get created.
      *
      * @return \DateTime
      */
@@ -133,4 +134,3 @@ class InterpreterEvent
         return $this->created;
     }
 }
-

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Application\Entity;
 
@@ -7,14 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Entity representing an Interpreter.
- * 
- * @ORM\Entity  
- * @ORM\Table(name="interpreters") 
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="interpreters")
  */
-
 class Interpreter extends Person
 {
-
     /**
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
@@ -22,34 +20,36 @@ class Interpreter extends Person
 
     /**
      * @ORM\Column(type="string",length=16,nullable=true)
+     *
      * @var string
      */
     protected $phone;
 
     /**
      * @ORM\Column(type="date")
+     *
      * @var string
      */
     protected $dob;
-	
+
     /**
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="interpreter", cascade={"persist", "remove"})
      * ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @var ArrayCollection of InterpreterLanguage
      */
     protected $interpreterLanguages;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
         $this->interpreterLanguages = new ArrayCollection();
     }
 
-
     /**
-     * Set phone
+     * Set phone.
      *
      * @param string $phone
      *
@@ -58,11 +58,12 @@ class Interpreter extends Person
     public function setPhone($phone)
     {
         $this->phone = $phone;
+
         return $this;
     }
 
     /**
-     * Get phone
+     * Get phone.
      *
      * @return string
      */
@@ -72,7 +73,7 @@ class Interpreter extends Person
     }
 
     /**
-     * Set dob
+     * Set dob.
      *
      * @param \DateTime $dob
      *
@@ -86,7 +87,7 @@ class Interpreter extends Person
     }
 
     /**
-     * Get dob
+     * Get dob.
      *
      * @return \DateTime
      */
@@ -96,9 +97,9 @@ class Interpreter extends Person
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -106,20 +107,19 @@ class Interpreter extends Person
     }
 
     /**
-    * shortcut for addInterpreterLanguage()
-    *
-    */
+     * shortcut for addInterpreterLanguage().
+     */
     public function addLanguage(Language $language)
     {
-
         $this->addInterpreterLanguage(
-            new InterpreterLanguage($this,$language)
+            new InterpreterLanguage($this, $language)
         );
+
         return $this;
     }
-    
+
     /**
-     * Add interpreterLanguage
+     * Add interpreterLanguage.
      *
      * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
      *
@@ -133,20 +133,21 @@ class Interpreter extends Person
     }
 
     /**
-     * Remove interpreterLanguage
+     * Remove interpreterLanguage.
      *
      * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
+     *
      * @return Interpreter
      */
     public function removeInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
     {
         $this->interpreterLanguages->removeElement($interpreterLanguage);
-        return $this;
 
+        return $this;
     }
 
     /**
-     * Get interpreterLanguages
+     * Get interpreterLanguages.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -154,7 +155,4 @@ class Interpreter extends Person
     {
         return $this->interpreterLanguages;
     }
-
-
-    
 }
