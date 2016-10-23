@@ -26,8 +26,9 @@ class Judge extends Person {
     /**
      * A judge has a default Location, i.e., a courtroom.
      * 
-     * @ORM\Column(name="default_location_id",nullable=true)
+     * @ORM\JoinColumn(name="default_location_id",nullable=true)
      * @ORM\ManyToOne(targetEntity="Location") 
+     * @var Location
      */
     protected $defaultLocation;
     
@@ -67,7 +68,7 @@ class Judge extends Person {
     /**
      * Get defaultLocation
      *
-     * @return string
+     * @return Location
      */
     public function getDefaultLocation()
     {
