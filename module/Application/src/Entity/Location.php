@@ -29,6 +29,7 @@ class Location
     /**
      * @ORM\JoinColumn(nullable=false)
      * @ORM\ManyToOne(targetEntity="LocationType")
+     * @var LocationType;
      */
     protected $type;
 
@@ -110,7 +111,7 @@ class Location
      *
      * @return Location
      */
-    public function setType(\Application\Entity\LocationType $type = null)
+    public function setType(\Application\Entity\LocationType $type )
     {
         $this->type = $type;
 
@@ -136,7 +137,11 @@ class Location
      */
     public function setParentLocation(\Application\Entity\Location $parentLocation = null)
     {
-        $this->parentLocation = $parentLocation;
+        
+        if ($parentLocation) {
+            $this->parentLocation = $parentLocation;    
+        }
+    
 
         return $this;
     }
