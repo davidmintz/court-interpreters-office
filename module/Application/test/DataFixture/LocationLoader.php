@@ -44,6 +44,7 @@ class LocationLoader implements FixtureInterface {
     		->findOneBy(['name' => '500 Pearl']);
     	$foley = $objectManager->getRepository('Application\Entity\Location')
     		->findOneBy(['name' => '40 Foley']);
+        $courtroom = $repository->findOneBy(['type'=>'courtroom']);
     	$locations = [
     	
     		[ 'MCC',$repository->findOneBy(['type'=>'jail']),null,     ],
@@ -51,7 +52,9 @@ class LocationLoader implements FixtureInterface {
     		[ '7th floor',$repository->findOneBy(['type'=>'US Probation office']),$pearl     ],
     		[ '5th floor',$repository->findOneBy(['type'=>'Pretrial Services office']),$pearl     ],
     		[ '4th floor',$repository->findOneBy(['type'=>'holding cell']),$pearl     ],
-    		[ '618',$repository->findOneBy(['type'=>'courtroom']),$foley     ],
+            [ '618',$courtroom,$foley     ],
+    		[ '23A',$courtroom,$pearl     ],
+
 
     	];
 
@@ -61,6 +64,7 @@ class LocationLoader implements FixtureInterface {
     		$locationEntity->setName($p[0])->setType($p[1])->setParentLocation($p[2])->setComments('');
     		$objectManager->persist($locationEntity);
     	}
+        $objectManager->flush();
 
     }
 
