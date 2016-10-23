@@ -65,7 +65,7 @@ class DefendantName
     public function setFullname($surnames, $givenNames)
     {
         $this->surnames = $surnames;
-        $this->givenNames = $givenName;
+        $this->givenNames = $givenNames;
         return $this;
     }
     /**
