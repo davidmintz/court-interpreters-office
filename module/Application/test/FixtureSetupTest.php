@@ -74,6 +74,7 @@ class FixtureSetupTest extends
             new DataFixture\DefendantNameLoader(),
             new DataFixture\JudgeLoader(),
             new DataFixture\InterpreterLoader(),
+            new DataFixture\CancellationReasonLoader(),
          ]);
         $entityManager = FixtureManager::getEntityManager();
         $this->assertTrue(is_object($entityManager));
