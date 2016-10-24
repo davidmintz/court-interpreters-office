@@ -73,6 +73,7 @@ class FixtureSetupTest extends
             new DataFixture\LocationLoader(),
             new DataFixture\DefendantNameLoader(),
             new DataFixture\JudgeLoader(),
+            new DataFixture\InterpreterLoader(),
          ]);
         $entityManager = FixtureManager::getEntityManager();
         $this->assertTrue(is_object($entityManager));
