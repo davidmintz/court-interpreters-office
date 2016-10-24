@@ -17,8 +17,7 @@ class JudgeLoader implements FixtureInterface {
     	$courtroom_618 = $objectManager->getRepository('Application\Entity\Location')
     		->findOneBy(['name'=> '618']);
 
-    	echo "\n";
-    	echo get_class($courtroom_618). " is the class of shit...\n";
+    	//echo "\n"; echo get_class($courtroom_618). " is the class of shit...\n";
 
     	$judgeHat = $objectManager->getRepository('Application\Entity\Hat')
     		->findOneBy(['name'=> 'Judge']);
