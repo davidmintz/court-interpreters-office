@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Application\Entity;
 
 /**
-* loads test fixtures for "hats" and similar
+* loads test fixtures for "hats," roles, anonymous-judges
 *
 */
 
