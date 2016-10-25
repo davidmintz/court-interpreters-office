@@ -146,7 +146,7 @@ class Event
     protected $defendants;
 
     /**
-     * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event")
+     * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event",cascade="persist")
      *
      * @var ArrayCollection 
      */
@@ -185,8 +185,7 @@ class Event
      * User who created the Event.
      *
      * @ORM\ManyToOne(targetEntity="User")
-     * sadly, nullable because of some mismanaged legacy data
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=false)
      */
     protected $createdBy;
 
@@ -201,8 +200,7 @@ class Event
      * last User who updated the Event.
      *
      * @ORM\ManyToOne(targetEntity="User")
-     * sadly, nullable because of some mismanaged legacy data
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=false)
      */
     protected $modifiedBy;
 
@@ -662,7 +660,7 @@ class Event
      *
      * @return Event
      */
-    public function setCreatedBy(User $createdBy = null)
+    public function setCreatedBy(User $createdBy)
     {
         $this->createdBy = $createdBy;
 
@@ -701,5 +699,36 @@ class Event
     public function getModifiedBy()
     {
         return $this->modifiedBy;
+    }
+    
+    public function assignInterpreter(Interpreter $interpreter)
+    {
+        $this->addInterpretersAssigned(
+            new InterpreterEvent($this,$interpreter)
+        );
+    }
+    
+    /**
+     * Lifecycle callback/sanity check for submitter and judge properties. 
+     * 
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function onSave()
+    {
+        if (! $this->anonymousSubmitter == NULL xor $this->submitter === NULL)
+        {
+            throw new \RuntimeException(
+                'Event entity submitter and anonymousSubmitter properties: '
+                    . ' one must be null and the other not-null'
+            );
+        }
+        if (! $this->anonymousJudge === NULL xor $this->judge === NULL)
+        {
+            throw new \RuntimeException(
+                'Event entity judge and anonymousJudge properties: '
+                    . ' one must be null and the other not-null'
+            );
+        }
     }
 }
