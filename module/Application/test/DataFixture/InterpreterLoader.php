@@ -16,6 +16,7 @@ class InterpreterLoader implements FixtureInterface {
     	$interpreter
     		->setLastname('Mintz')
     		->setFirstname('David')
+                ->setActive(true)
     		->setEmail('david@davidmintz.org')
     		->setDob(new \DateTime('1958-05-26'))
     		->setHat(
@@ -26,10 +27,10 @@ class InterpreterLoader implements FixtureInterface {
     		->findOneBy(['name'=>'Spanish']);
     	$interpreterLanguage = (new Entity\InterpreterLanguage($interpreter,$spanish))
 			->setFederalCertification(true);
-		$interpreter->addInterpreterLanguage($interpreterLanguage);
+	$interpreter->addInterpreterLanguage($interpreterLanguage);
 
-		$objectManager->persist($interpreter);
-		$objectManager->flush();	    	
+	$objectManager->persist($interpreter);
+	$objectManager->flush();	    	
 
     }
 }
