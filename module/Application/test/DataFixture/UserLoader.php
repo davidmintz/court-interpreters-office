@@ -41,7 +41,9 @@ class UserLoader implements FixtureInterface {
                     )
                     ->setActive(true)
                     ->setPerson($person)
-                    ->setPassword('gack!');
+                    ->setPassword('gack!')
+                     ->addJudge($objectManager->getRepository('Application\Entity\Judge')
+			->findOneBy(['lastname'=>'Daniels']) );
                 $objectManager->persist($person);
                 $objectManager->persist($another_user);
 		$objectManager->flush();	
