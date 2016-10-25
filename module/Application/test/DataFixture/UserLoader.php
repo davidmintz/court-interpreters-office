@@ -25,10 +25,29 @@ class UserLoader implements FixtureInterface {
 		$user->setPerson($person)->setPassword('boink')->setRole($role)->setActive(true);
 		$objectManager->persist($user);
 
-		// to do make another Person(Hat Courtroom Deputy) and User with a Judge
-
+                $another_user = new Entity\User();
+                $person = new Entity\Person();
+                $person->setFirstname('John')
+                        ->setLastname('Somebody')
+                        ->setEmail('john_somebody@nysd.uscourts.gov')
+                        ->setActive(true)
+                        ->setHat(
+                             $objectManager->getRepository('Application\Entity\Hat')
+                                ->findOneBy(['name'=>'Law Clerk']) 
+                        );
+                $another_user->setRole(
+                       $objectManager->getRepository('Application\Entity\Role')
+			->findOneBy(['name'=>'submitter']) 
+                    )
+                    ->setActive(true)
+                    ->setPerson($person)
+                    ->setPassword('gack!');
+                $objectManager->persist($person);
+                $objectManager->persist($another_user);
 		$objectManager->flush();	
-
+                
+                //$another_user->setPassword("something else");
+                //$objectManager->flush();
 
 
     }
