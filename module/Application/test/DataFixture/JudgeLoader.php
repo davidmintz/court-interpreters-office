@@ -24,10 +24,25 @@ class JudgeLoader implements FixtureInterface {
 	  	$failla
     		->setHat($judgeHat)
     		->setFlavor($usdj)
+                 ->setActive(true)
     		->setFirstname('Katherine')
     		->setLastname('Failla');
         $failla->setDefaultLocation($courtroom_618);
     	$objectManager->persist($failla);
+        
+        $daniels = new Entity\Judge();
+        $daniels->setHat($judgeHat)
+                ->setFlavor($usdj)
+    		->setFirstname('George')
+    		->setLastname('Daniels')
+                ->setActive(true)
+                ->setDefaultLocation(
+                       $objectManager->getRepository('Application\Entity\Location')
+                            ->findOneBy(['name'=> '11A'])  
+                 );
+        
+        
+        $objectManager->persist($daniels);
     	$objectManager->flush();
     }
 }
