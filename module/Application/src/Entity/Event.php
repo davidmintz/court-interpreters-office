@@ -141,14 +141,14 @@ class Event
      * @ORM\ManyToMany(targetEntity="DefendantName")
      * @ORM\JoinTable(name="defendants_events",inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
      *
-     * @var DefendantName[]
+     * @var ArrayCollection
      */
     protected $defendants;
 
     /**
      * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event")
      *
-     * @var InterpreterEvents[]
+     * @var ArrayCollection 
      */
     protected $interpretersAssigned;
 
@@ -214,7 +214,7 @@ class Event
     public function __construct()
     {
         $this->defendants = new ArrayCollection();
-        $this->interpretersAssigned = ArrayCollection();
+        $this->interpretersAssigned = new ArrayCollection();
     }
 
     /**
