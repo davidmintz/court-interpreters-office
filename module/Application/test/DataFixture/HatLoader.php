@@ -22,6 +22,8 @@ class HatLoader implements FixtureInterface {
         foreach (['submitter','manager','administrator'] as $roleName) {
             $role = new Entity\Role;
             $role->setName($roleName);
+            $objectManager->persist($role);
+
         }
         $objectManager->flush();
 
