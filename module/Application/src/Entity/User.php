@@ -180,6 +180,37 @@ class User
     }
 
     /**
+     * Add judge
+     *
+     * @param \Requests\Entity\Judge $judge
+     *
+     * @return User
+     */
+    public function addJudge(Judge $judge) {
+        $this->judges[] = $judge;
+
+        return $this;
+    }
+
+    /**
+     * Remove judge
+     *
+     * @param Application\Entity\Judge $judge
+     */
+    public function removeJudge(Judge $judge) {
+        $this->judges->removeElement($judge);
+    }
+
+    /**
+     * Get judges
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getJudges() {
+        return $this->judges;
+    }
+
+    /**
      * Lifecycle callback to ensure User has an email address. 
      * 
      * This will also be enforced at the form validation level, but we do
