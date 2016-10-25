@@ -34,7 +34,7 @@ class EventTypeLoader implements FixtureInterface {
             ['plea','in'],
             ['presentment','in'],
             ['arraignment','in'],
-            ['pretrial service','out'],
+            ['pretrial services intake','out'],
             ['probation PSI interview','out'],
         ];
         foreach ($types as $type) {
