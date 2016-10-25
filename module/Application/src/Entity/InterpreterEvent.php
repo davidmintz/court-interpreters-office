@@ -14,7 +14,6 @@ class InterpreterEvent
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Interpreter")
-     * //ORM\JoinColumn(name="interp_id", referencedColumnName="interp_id")
      *
      * @var Interpreter
      */
@@ -48,7 +47,7 @@ class InterpreterEvent
      */
     protected $createdBy;
 
-    public function __construct(Event $event = null, Interpreter $interpreter = null)
+    public function __construct(Interpreter $interpreter = null,Event $event = null)
     {
         $this->interpreter = $interpreter;
         $this->event = $event;
@@ -132,5 +131,28 @@ class InterpreterEvent
     public function getCreated()
     {
         return $this->created;
+    }
+    
+    /* ------------------ */
+    /**
+     * sets createdBy property
+     * @param \Application\Entity\User $user
+     * @return InterpreterEvent
+     */
+    public function setCreatedBy(User $user)
+    {
+        $this->createdBy = $user;
+        return $this;
+    }
+    
+    /**
+     * gets createdBy property
+     * 
+     * @return User
+     */
+    public function sgtCreatedBy()
+    {
+        
+        return $this->createdBy;
     }
 }
