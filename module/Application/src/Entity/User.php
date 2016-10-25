@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\Table(name="users")
+ * @ORM\HasLifecycleCallbacks
  */
 class User
 {
@@ -77,7 +78,7 @@ class User
      protected $judges;
 
      /**
-     *
+     * constructor
      *
      */
      public function __construct()
@@ -90,8 +91,6 @@ class User
      * Set password.
      *
      * @param string $password
-     *
-     * @todo hash it
      *
      * @return User
      */
@@ -180,5 +179,23 @@ class User
         return $this;
     }
 
+    /**
+     * Lifecycle callback to ensure User has an email address. 
+     * 
+     * This will also be enforced at the form validation level, but we do
+     * this for redundancy's sake.
+     *  
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function onSave()
+    {
+       if ($this->getPerson()->getEmail() === NULL) {
+           throw new \RuntimeException(
+              'A user entity\'s related Person\'s email property cannot be null'
+           );
+       }
+    }
+    
 
 }
