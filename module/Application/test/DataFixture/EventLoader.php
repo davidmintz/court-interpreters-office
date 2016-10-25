@@ -11,36 +11,53 @@ class EventLoader implements FixtureInterface {
     
     public function load(ObjectManager $objectManager)
     {
-		$date = new \DateTime("next monday");
+        $date = new \DateTime("next monday");
 
-		$time = new \DateTime('10:00 am');
+        $time = new \DateTime('10:00 am');
 
-		$judge = $objectManager->getRepository('Application\Entity\Judge')
-			->findOneBy(['lastname'=>'Failla']);
+        $judge = $objectManager->getRepository('Application\Entity\Judge')
+                ->findOneBy(['lastname'=>'Failla']);
 
-		$location = $judge->getDefaultLocation();
+        $location = $judge->getDefaultLocation();
 
-		$language = $objectManager->getRepository('Application\Entity\Language')
-			->findOneBy(['name'=>'Spanish']);
-		
-		$eventType = $objectManager->getRepository('Application\Entity\EventType')
-			->findOneBy(['name'=>'pretrial conference']);
-		 
-		$comments = 'test one two';
+        $language = $objectManager->getRepository('Application\Entity\Language')
+                ->findOneBy(['name'=>'Spanish']);
 
-		$dql = "SELECT u FROM Application\Entity\User u JOIN u.person p WHERE p.lastname = 'Mintz'";
+        $eventType = $objectManager->getRepository('Application\Entity\EventType')
+                ->findOneBy(['name'=>'pretrial conference']);
 
-		$query = $objectManager->createQuery($dql);
+        $comments = 'test one two';
 
-		$user = $query->getSingleResult();
+        $dql = "SELECT u FROM Application\Entity\User u JOIN u.person p WHERE p.email = 'john_somebody@nysd.uscourts.gov'";
+        $query = $objectManager->createQuery($dql);
+        $user = $query->getSingleResult();
 
-		$event = new Entity\Event();
+        $interpreter = $objectManager->getRepository('Application\Entity\Interpreter')
+                ->findOneBy(['lastname'=>'Mintz']);
 
-		$interpreter = $objectManager->getRepository('Application\Entity\Interpreter')
-			->findOneBy(['lastname'=>'Mintz']);
-		  
+        $event = new Entity\Event();
+        $now = new \DateTime();
+        $event
+            ->setDate($date)
+            ->setTime($time)
+            ->setJudge($judge)
+            ->setLanguage($language)
+            ->setEventType($eventType)
+            ->setDocket('2016-CR-0123')
+            ->setComments($comments)
+            ->setAdminComments('')
+            ->setSubmitter($user->getPerson())
+            ->setModified($now)
+            ->setCreated($now)
+            ->setCreatedBy($user)
+            ->setModifiedBy($user)
+            ->addInterpretersAssigned(
+                 (new Entity\InterpreterEvent($interpreter,$event))->setCreatedBy($user)
+             );
 
-		//$objectManager->flush();	
+        $objectManager->persist($event);
+
+        $objectManager->flush();	
 
 
 
