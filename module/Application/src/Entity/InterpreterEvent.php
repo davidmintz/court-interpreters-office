@@ -163,7 +163,7 @@ class InterpreterEvent
      * 
      * @return User
      */
-    public function sgtCreatedBy()
+    public function getCreatedBy()
     {
         
         return $this->createdBy;
