@@ -120,7 +120,7 @@ class Event
      *
      * @var string
      */
-    protected $docket;
+    protected $docket = '';
 
     /**
      * Reason (if any) for cancelling the event.
@@ -164,7 +164,7 @@ class Event
      *
      * @var string
      */
-    protected $comments;
+    protected $comments = '';
 
     /**
      * comments for managers and admins only.
@@ -173,7 +173,7 @@ class Event
      *
      * @var string
      */
-    protected $admin_comments;
+    protected $admin_comments = '';
 
     /* ------------ metadata fields ------------------ */
 
