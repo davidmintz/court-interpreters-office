@@ -112,6 +112,7 @@ class FixtureSetupTest extends
      * with no Judge and no anonymous judge.
      */
     public function testExceptionThrownWhenNoJudgeOrAnonymousJudgeIsSet() {
+        
         $this->loadTestEventData();
         $event = new Entity\Event();
                 $date = new \DateTime("next monday");
@@ -163,7 +164,6 @@ class FixtureSetupTest extends
         // this should suffice to throw a RuntimeException
         // and prove our lifecycle callback works
         $objectManager->persist($event);
-        
         
     }
 }
