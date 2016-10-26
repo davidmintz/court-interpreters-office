@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @see Application\Entity\Person
  *
  * @ORM\Entity @ORM\Table(name="judges")
+ * @ORM\HasLifecycleCallbacks
+ * 
  */
 class Judge extends Person
 {
@@ -100,5 +102,20 @@ class Judge extends Person
     public function getFlavor()
     {
         return $this->flavor;
+    }
+    
+    /**
+     * lifecycle callback to ensure correct hat
+     * 
+     * @ORM\PrePersist 
+     * @throws \RuntimeException
+     */
+    public function onPrePersist()    {
+       
+       if ((string)$this->getHat() !== "Judge") {
+           throw new \RuntimeException(
+              'Judge entity must have Hat type "Judge"'
+           );
+       }
     }
 }
