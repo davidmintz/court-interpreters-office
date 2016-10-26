@@ -62,9 +62,10 @@ class FixtureSetupTest extends
     public function testDataFixtureSanity() {
         
         $this->assertTrue(class_exists('ApplicationTest\FixtureManager'));
-        $shit = FixtureManager::getFixtureExecutor();
-        $this->assertTrue(is_object($shit));
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
+        $this->assertTrue(is_object($fixtureExecutor));
+        $entityManager = FixtureManager::getEntityManager();
+        //$entityManager->getC
         //FixtureManager::start();
         $fixtureExecutor->execute([
             new DataFixture\LanguageLoader(),
@@ -78,7 +79,7 @@ class FixtureSetupTest extends
             new DataFixture\UserLoader(),
             new DataFixture\EventLoader(),
          ]);
-        $entityManager = FixtureManager::getEntityManager();
+        
         $this->assertTrue(is_object($entityManager));
         //echo get_class($entityManager);
         $languages = $entityManager->getRepository('Application\Entity\Language')->findAll();

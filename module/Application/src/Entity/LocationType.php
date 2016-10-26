@@ -1,18 +1,29 @@
 <?php
+/** module/Application/src/Entity/LocationType.php */
 
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="location_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_type",columns={"type"})}) */
+/** 
+ * Entity class representing a type of location where interpreter events occur.
+ * 
+ * Examples: courtroom, courthouse, jail.
+ * 
+ * @see Application\Entity\Locations
+ * @ORM\Entity  @ORM\Table(name="location_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_type",columns={"type"})}) 
+ */
 class LocationType
 {
     /**
+     * location-type id
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
+     * type of location
+     * 
      * @ORM\Column(type="string",length=60,nullable=false)
      *
      * @var string
@@ -20,6 +31,8 @@ class LocationType
     protected $type;
 
     /**
+     * comments describing the location type.
+     * 
      * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
      *
      * @var string

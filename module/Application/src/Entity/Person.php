@@ -1,4 +1,5 @@
 <?php
+/** module/Application/src/Entity/Person.php */
 
 namespace Application\Entity;
 
@@ -35,11 +36,15 @@ use Doctrine\ORM\Mapping as ORM;
 class Person
 {
     /**
+     * entity id
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
+     * the Person's email address.
+     * 
      * @ORM\Column(type="string",length=50,nullable=true)
      *
      * @var string
@@ -47,6 +52,8 @@ class Person
     protected $email;
 
     /**
+     * the Person's last name.
+     * 
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string
@@ -54,6 +61,8 @@ class Person
     protected $lastname;
 
     /**
+     * the Person's first name.
+     * 
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string first name, or given names
@@ -61,7 +70,7 @@ class Person
     protected $firstname;
 
     /**
-     *  everyone must where a hat in this life.
+     *  Everyone must where a hat in this life.
      *
      *  @ORM\ManyToOne(targetEntity="Hat",fetch="EAGER")
      *  @ORM\JoinColumn(nullable=false)
@@ -71,9 +80,9 @@ class Person
     protected $hat;
     
     /**
-     * is the person "active," or only of historical interest?
+     * Is the person "active," or only of historical interest?
      * 
-     * if false, the entity should not be displayed in dropdown menus.
+     * If false, the entity should not be displayed in dropdown menus.
      * 
      * @ORM\Column(type="boolean",nullable=false)
      * @var boolean

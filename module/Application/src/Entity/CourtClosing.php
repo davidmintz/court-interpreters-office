@@ -1,4 +1,5 @@
 <?php
+/** module/Application/src/Entity/CourtClosing.php */
 
 namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,17 +20,23 @@ use Doctrine\ORM\Mapping as ORM;
 class CourtClosing {
     
     /**
+     * entity id.
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
      */
     protected $id;
 
     /**
+     * the date on which the court is closed
+     * 
      * @ORM\Column(type="date")
      * @var string
      */
     protected $date;
 
     /**
+     * the official holiday for which the court is closed.
+     * 
      * @var Holiday
      *
      * @ORM\ManyToOne(targetEntity="Application\Entity\Holiday")
@@ -38,6 +45,8 @@ class CourtClosing {
     protected $holiday;
 
     /**
+     * a description of the reason for some other (non-holiday) ad hoc closing.
+     * 
      * @var string
      * @ORM\Column(type="string",length=75,nullable=true)
      */

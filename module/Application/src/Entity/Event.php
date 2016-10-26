@@ -1,4 +1,5 @@
 <?php
+/** module/Application/src/Entity/Event.php */
 
 namespace Application\Entity;
 
@@ -16,6 +17,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Event
 {
     /**
+     * entity id.
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
@@ -39,9 +42,6 @@ class Event
 
     /**
      * time at which the event ended.
-     *
-     * The date and time are stored in separate columns because there are cases
-     * where the date is known but the time is unknown or to-be-determined.
      *
      * @ORM\Column(type="time",nullable=true)
      */
@@ -78,6 +78,8 @@ class Event
     protected $judge;
 
     /**
+     * Anonymous or generic judge.
+     * 
      * While most events have a Judge, there are also cases where the identity of
      * the judge/person is unknown, irrelevant or not applicable.
      *
@@ -112,6 +114,8 @@ class Event
     protected $anonymousSubmitter;
 
     /**
+     * the docket number.
+     * 
      * @ORM\Column(type="string",length=15,nullable=false,options={"default":""})
      *
      * @var string
@@ -146,8 +150,9 @@ class Event
     protected $defendants;
 
     /**
+     * Interpreters assigned to this event.
+     * 
      * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event",cascade="persist")
-     *
      * @var ArrayCollection 
      */
     protected $interpretersAssigned;
@@ -190,8 +195,9 @@ class Event
     protected $createdBy;
 
     /**
+     * timestamp of last update.
+     * 
      * @ORM\Column(type="datetime")
-     *
      * @var \DateTime
      */
     protected $modified;
@@ -700,12 +706,18 @@ class Event
     {
         return $this->modifiedBy;
     }
-    
+    /**
+     * convenience method for assigning an interpreter.
+     * 
+     * @param Interpreter $interpreter
+     * @return Event
+     */
     public function assignInterpreter(Interpreter $interpreter)
     {
         $this->addInterpretersAssigned(
-            new InterpreterEvent($this,$interpreter)
+            new InterpreterEvent($interpreter,$this)
         );
+        return $this;
     }
     
     /**
@@ -713,6 +725,7 @@ class Event
      * 
      * @ORM\PrePersist
      * @ORM\PreUpdate
+     * @throws \RuntimeException
      */
     public function onSave()
     {

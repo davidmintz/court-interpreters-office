@@ -1,4 +1,5 @@
 <?php
+/** module/Application/src/Entity/Role.php */
 
 namespace Application\Entity;
 
@@ -20,11 +21,15 @@ use Doctrine\ORM\Mapping as ORM;
 class Role
 {
     /**
+     * entity id.
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
+     * name of the role.
+     * 
      * @ORM\Column(type="string",length=40,nullable=false)
      *
      * @var string

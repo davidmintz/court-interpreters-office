@@ -1,5 +1,5 @@
 <?php
-
+/** module/Application/src/Entity/Location.php */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -14,11 +14,15 @@ use Doctrine\ORM\Mapping as ORM;
 class Location
 {
     /**
+     * entity id.
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
+     * name of the location.
+     * 
      * @ORM\Column(type="string",length=60,options={"nullable":false})
      *
      * @var string
@@ -26,6 +30,8 @@ class Location
     protected $name;
 
     /**
+     * the LocationType of this Location
+     * 
      * @ORM\JoinColumn(nullable=false)
      * @ORM\ManyToOne(targetEntity="LocationType")
      *
@@ -34,14 +40,22 @@ class Location
     protected $type;
 
     /**
+     * the "parent" location of this location.
+     * 
+     * Our locations data model supports one level of nesting. A courtroom is in 
+     * a courthouse, so a location of type courtroom has a parent of type 
+     * courthouse. The parent's parent is simply null. This is implemented as 
+     * a self-referencing Many-To-One relationship.
+     * 
      * @ORM\JoinColumn(name="parent_location_id",nullable=true)
      * @ORM\ManyToOne(targetEntity="Location")
      */
     protected $parentLocation;
 
     /**
+     * comments about this location.
+     * 
      * @ORM\Column(type="string",length=200,options={"default":""})
-     *
      * @var string
      */
     protected $comments;

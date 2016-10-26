@@ -1,10 +1,13 @@
 <?php
+/** module/Application/src/Entity/InterpreterEvent.php */
 
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Entity representing an interpreter-event.
+ * 
  * @ORM\Entity
  * @ORM\Table(name="interpreters_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_interp_event",columns={"interpreter_id","event_id"})})
  * @ORM\HasLifecycleCallbacks
@@ -12,6 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
 class InterpreterEvent
 {
     /**
+     * The Interpreter.
+     * 
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Interpreter")
      *
@@ -20,16 +25,16 @@ class InterpreterEvent
     protected $interpreter;
 
     /**
+     * The Event.
+     * 
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Event",inversedBy="interpretersAssigned")
-     * //ORM\JoinColumn(name="event_id", referencedColumnName="event_id")
-     *
      * @var Event
      */
     protected $event;
 
     /**
-     * date/time when interpreter was assigned was created.
+     * date/time when interpreter was assigned (i.e., when entity was created).
      *
      * @ORM\Column(type="datetime",nullable=false)
      *
@@ -46,7 +51,13 @@ class InterpreterEvent
      * @var User
      */
     protected $createdBy;
-
+    
+    /**
+     * constructor
+     * 
+     * @param Interpreter $interpreter
+     * @param Event $event
+     */
     public function __construct(Interpreter $interpreter = null,Event $event = null)
     {
         $this->interpreter = $interpreter;
@@ -54,6 +65,8 @@ class InterpreterEvent
     }
 
     /**
+     * Automatically sets creation datetime.
+     * 
      * @ORM\PrePersist
      */
     public function onPrePersist()

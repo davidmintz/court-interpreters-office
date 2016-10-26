@@ -28,7 +28,8 @@ class EventLoader implements FixtureInterface {
 
         $comments = 'test one two';
 
-        $dql = "SELECT u FROM Application\Entity\User u JOIN u.person p WHERE p.email = 'john_somebody@nysd.uscourts.gov'";
+        $dql = "SELECT u FROM Application\Entity\User u JOIN u.person p "
+                . "WHERE p.email = 'john_somebody@nysd.uscourts.gov'";
         $query = $objectManager->createQuery($dql);
         $user = $query->getSingleResult();
 
@@ -38,7 +39,7 @@ class EventLoader implements FixtureInterface {
         $defendant =  $objectManager->getRepository('Application\Entity\DefendantName')
                 ->findOneBy(['surnames'=>'Fulano Mengano']);
         $event = new Entity\Event();
-        $now = new \DateTime();
+        $now = new \DateTime();              
         $event
             ->setDate($date)
             ->setTime($time)
@@ -60,7 +61,11 @@ class EventLoader implements FixtureInterface {
 
         $objectManager->persist($event);
 
-        $objectManager->flush();	
+        $objectManager->flush();
+        
+        //$objectManager->remove($event);
+        //$objectManager->flush();
+        
 
 
 

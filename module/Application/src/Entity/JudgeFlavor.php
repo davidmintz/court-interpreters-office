@@ -1,4 +1,5 @@
 <?php
+/** module/Application/src/Entity/JudgeFlavor.php */
 
 namespace Application\Entity;
 
@@ -16,11 +17,15 @@ use Doctrine\ORM\Mapping as ORM;
 class JudgeFlavor
 {
     /**
+     * entity id.
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
      */
     protected $id;
 
     /**
+     * the "flavor"
+     * 
      * @ORM\Column(type="string",length=60,options={"nullable":false})
      *
      * @var string
@@ -59,7 +64,8 @@ class JudgeFlavor
 
     /**
      * set flavor.
-     *
+     * 
+     * @param string $flavor
      * @return JudgeFlavor
      */
     public function setFlavor($flavor)

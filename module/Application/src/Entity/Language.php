@@ -1,18 +1,31 @@
 <?php
 
+/** module/Application/src/Application/Entity/Language.php */
+
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 
-/** @ORM\Entity  @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})}) */
+/** 
+ * Entity class representing a language used by an Interpreter.
+ * 
+ * @ORM\Entity  
+ * @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})}) 
+ */
+
 class Language
 {
     /**
-     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     * entity id
+     * @ORM\Id 
+     * @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
+     * name of the language.
+     * 
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string
@@ -20,6 +33,8 @@ class Language
     protected $name;
 
     /**
+     * comments.
+     * 
      * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
      *
      * @var string
@@ -27,9 +42,14 @@ class Language
     protected $comments;
 
     /**
+     * 
+     * The Interpreter(Language)s who work in this Language.
+     * 
+     * @todo consider if we even need this and its setter/getter methods.
+     * 
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
      *
-     * @var InterpreterLanguage[]
+     * @var Collection of InterpreterLanguage entities
      */
     protected $interpreterLanguages;
 

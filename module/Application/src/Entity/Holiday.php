@@ -1,21 +1,31 @@
 <?php
-
+/** module/Application/src/Entity/Holiday.php */
 namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity  @ORM\Table(name="holidays")   */
+/** 
+ * Entity representing an official court holiday.
+ * 
+ * 
+ * @ORM\Entity  @ORM\Table(name="holidays")
+ * @see Application\Entity\CourtClosing
+ */
 class Holiday {
 
 
-	/**
-	 * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
-	 */
-	protected $id;
+    /**
+     * entity id.
+     * 
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
+     */
+    protected $id;
 
-	/**
-	 *  @ORM\Column(type="string")
-	 */
-	protected $name;
+    /**
+     * name of the holiday.
+     *  
+     * @ORM\Column(type="string")
+     */
+    protected $name;
 
     /**
      * Get id

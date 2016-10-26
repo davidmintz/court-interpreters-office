@@ -1,28 +1,34 @@
 <?php
-
-// module/Application/src/Application/Entity/Hat.php
-
-/**
- * class representing the "hat" a person wears, e.g.,
- * staff interpreter, contract interpreter, AUSA, USPO,
- * defense attorney, etc.
- */
+/** module/Application/src/Application/Entity/Hat.php */
 
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-//uniqueConstraints={@UniqueConstraint(name="search_idx", columns={"name", "email"})})
+/**
+ * Entity class representing the "hat" (job description, title) a Person wears.
+ * 
+ * Examples: staff interpreter, contract interpreter, AUSA, USPO, defense 
+ * attorney, etc. These should be set up at installation and rarely if ever 
+ * changed thereafter.
+ * 
+ * @ORM\Entity  
+ * @ORM\Table(name="hats",uniqueConstraints={@ORM\UniqueConstraint(name="hat_idx",columns={"name"})}) 
+ */
 
-/** @ORM\Entity  @ORM\Table(name="hats",uniqueConstraints={@ORM\UniqueConstraint(name="hat_idx",columns={"name"})}) */
+
 class Hat
 {
     /**
+     * entity id
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
+     * name of the Hat.
+     * 
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string
@@ -30,6 +36,7 @@ class Hat
     protected $name;
 
     /**
+     * 
      * @ORM\Column(type="boolean",nullable=false,name="can_be_anonymous",options={"default":false})
      *
      * @var bool true if this Hat does not have to be identified
@@ -37,6 +44,10 @@ class Hat
     protected $anonymous = false;
 
     /**
+     * The Role corresponding to this Hat.
+     * 
+     * The Role is relevant to User authorization. For most Hats, it is null.
+     * 
      * @ORM\ManyToOne(targetEntity="Role")
      * @ORM\JoinColumn(nullable=true)
      *
@@ -112,7 +123,8 @@ class Hat
 
     /**
      * set anonymous property.
-     *
+     * 
+     * @param boolean $flag
      * @return Hat
      */
     public function setAnonymous($flag)
@@ -140,7 +152,7 @@ class Hat
     }
     /**
      * set the Role of this Hat.
-     *
+     * @param Role $role
      * @return Hat
      */
     public function setRole(Role $role)

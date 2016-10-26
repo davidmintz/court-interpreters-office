@@ -1,4 +1,5 @@
 <?php
+/** module/Application/src/Entity/Judge.php */
 
 namespace Application\Entity;
 
@@ -16,6 +17,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Judge extends Person
 {
     /**
+     * 
+     * entity id
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      *
      * @var int

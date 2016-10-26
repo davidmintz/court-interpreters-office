@@ -1,5 +1,5 @@
 <?php
-
+/** module/Application/src/Entity/DefendantName.php */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -19,11 +19,15 @@ use Doctrine\ORM\Mapping as ORM;
 class DefendantName
 {
     /**
+     * entity id.
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
      */
     protected $id;
 
     /**
+     * given name(s), a/k/a first name(s).
+     * 
      * @ORM\Column(type="string",name="given_names",length=60,nullable=false)
      *
      * @var string
@@ -31,6 +35,8 @@ class DefendantName
     protected $givenNames;
 
     /**
+     * surname(s), a/k/a last name.
+     * 
      * @ORM\Column(type="string",length=60,nullable=false)
      *
      * @var string
@@ -66,14 +72,14 @@ class DefendantName
      * convenience method to set full name in one shot.
      *
      * @param string $surnames
-     * @params string $given_names
+     * @param string $given_names
      *
      * @return DefendantName
      */
-    public function setFullname($surnames, $givenNames)
+    public function setFullname($surnames, $given_names)
     {
         $this->surnames = $surnames;
-        $this->givenNames = $givenNames;
+        $this->givenNames = $given_names;
 
         return $this;
     }
@@ -112,7 +118,8 @@ class DefendantName
     }
 
     /**
-     * Set lastname
+     * Set lastname.
+     * 
      * proxies to setSurnames().
      *
      * @param string $lastname
@@ -146,8 +153,9 @@ class DefendantName
     }
 
     /**
-     * set given names.
-     *
+     * set surnames.
+     * 
+     * @param string $surnames
      * @return DefendantName
      */
     public function setSurnames($surnames)
@@ -168,7 +176,8 @@ class DefendantName
     }
     /**
      * set given names.
-     *
+     * 
+     * @param string $given_names
      * @return DefendantName
      */
     public function setGivenNames($given_names)

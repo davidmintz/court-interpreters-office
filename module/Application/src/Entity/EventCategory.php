@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * module/Application/src/Entity/EventCategory.php
+ */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -15,11 +17,15 @@ use Doctrine\ORM\Mapping as ORM;
 class EventCategory
 {
     /**
+     * category id
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
+     * the category 
+     * 
      * @ORM\Column(type="string",length=20,options={"nullable":false})
      *
      * @var string

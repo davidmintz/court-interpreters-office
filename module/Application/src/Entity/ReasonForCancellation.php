@@ -1,5 +1,5 @@
 <?php
-
+/** module/Application/src/Entity/ReasonForCancellation.php */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -15,11 +15,15 @@ use Doctrine\ORM\Mapping as ORM;
 class ReasonForCancellation
 {
     /**
+     * entity id
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
+     * terse textual name of the reason, e.g., "defendant not produced"
+     * 
      * @ORM\Column(type="string",length=40,options={"nullable":false})
      *
      * @var string
@@ -39,7 +43,7 @@ class ReasonForCancellation
     /**
      * Set reason.
      *
-     * @param string $category
+     * @param string 
      *
      * @return ReasonForCancellation
      */
@@ -59,7 +63,11 @@ class ReasonForCancellation
     {
         return $this->reason;
     }
-
+    /**
+     * returns a string representation
+     * 
+     * @return string
+     */
     public function __toString()
     {
         return $this->reason;
