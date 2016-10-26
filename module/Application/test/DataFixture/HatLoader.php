@@ -46,7 +46,6 @@ class HatLoader implements FixtureInterface {
             ['Magistrates',true,null],
             ['Pretrial',true,null],
             ['Judge',false,null],
-           
         ];
         foreach ($hats as $hat) {
             
