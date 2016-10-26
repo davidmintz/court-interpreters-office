@@ -53,6 +53,7 @@ class EventLoader implements FixtureInterface {
             ->setModified($now)
             ->setCreated($now)
             ->setCreatedBy($user)
+            ->setLocation($location)
             ->setModifiedBy($user)
             ->addInterpretersAssigned(
                  (new Entity\InterpreterEvent($interpreter,$event))->setCreatedBy($user)
