@@ -17,29 +17,27 @@ class JudgeLoader implements FixtureInterface {
     	$courtroom_618 = $objectManager->getRepository('Application\Entity\Location')
     		->findOneBy(['name'=> '618']);
 
-    	//echo "\n"; echo get_class($courtroom_618). " is the class of shit...\n";
-
     	$judgeHat = $objectManager->getRepository('Application\Entity\Hat')
     		->findOneBy(['name'=> 'Judge']);
 	  	$failla
-    		->setHat($judgeHat)
-    		->setFlavor($usdj)
-                 ->setActive(true)
-    		->setFirstname('Katherine')
-    		->setLastname('Failla');
+            ->setHat($judgeHat)
+            ->setFlavor($usdj)
+            ->setActive(true)
+            ->setFirstname('Katherine')
+            ->setLastname('Failla');
         $failla->setDefaultLocation($courtroom_618);
     	$objectManager->persist($failla);
         
         $daniels = new Entity\Judge();
         $daniels->setHat($judgeHat)
-                ->setFlavor($usdj)
+            ->setFlavor($usdj)
     		->setFirstname('George')
     		->setLastname('Daniels')
-                ->setActive(true)
-                ->setDefaultLocation(
-                       $objectManager->getRepository('Application\Entity\Location')
-                            ->findOneBy(['name'=> '11A'])  
-                 );
+            ->setActive(true)
+            ->setDefaultLocation(
+                   $objectManager->getRepository('Application\Entity\Location')
+                        ->findOneBy(['name'=> '11A'])  
+             );
         
         
         $objectManager->persist($daniels);
