@@ -39,7 +39,7 @@ class Language
      *
      * @var string
      */
-    protected $comments;
+    protected $comments = '';
 
     /**
      * 
