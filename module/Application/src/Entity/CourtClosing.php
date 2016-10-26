@@ -8,8 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
  * 
  * The CourtClosing is used for computing the difference between business dates.
  * It could also be used for disabling certain dates on calendar controls or for
- * date input validation.The Court is closed mostly for official holidays but 
- * occasionally on ad-hoc occasions like blizzards and terror attacks.
+ * date input validation.The Court is closed mostly for official holidays, but 
+ * also, occasionally, for _ad hoc_ events like blizzards and terror attacks. It 
+ * is up to the user to keep the list of holidays up to date. 
  * 
  * @see Application\Entity\Holiday
  * @ORM\Entity
