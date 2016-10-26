@@ -7,8 +7,14 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
+use Zend\Form\Annotation;
+
 /** 
  * Entity class representing a language used by an Interpreter.
+ * 
+ * @Annotation\Name("language")
+ * // this will not work, so inject it some other way
+ * //Annotation\Hydrator("DoctrineModule\Stdlib\Hydrator\DoctrineObject")
  * 
  * @ORM\Entity  
  * @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})}) 
@@ -18,6 +24,7 @@ class Language
 {
     /**
      * entity id
+     * @Annotation\Exclude()
      * @ORM\Id 
      * @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
@@ -26,6 +33,14 @@ class Language
     /**
      * name of the language.
      * 
+     * @Attributes({"type":"text","placeholder":"name of the language","size":36})
+     * @Annotation\Options({"label":"name"})
+     * @Annotation\Filter({"name":"StringTrim"})
+     * @Annotation\Filter({"name":"StripTags"})
+     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
+     *  "messages":{"stringLengthTooLong":"language name must be at least 2 characters long",
+     *   "stringLengthTooShort":"language name exceeds maximum length of 50 characters"}}})
+     * @Annotation\Validator({"name":"NotEmpty","options":{"messages":{"isEmpty":"language name is required"}}})
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string
