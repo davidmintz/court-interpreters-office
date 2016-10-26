@@ -121,6 +121,15 @@ class Event
      * @var string
      */
     protected $docket = '';
+    
+    /**
+     * event location
+     * 
+     * @ORM\ManyToOne(targetEntity="Location")
+     * @ORM\JoinColumn(nullable=true)
+     * @var Location
+     */
+    protected $location;
 
     /**
      * Reason (if any) for cancelling the event.
@@ -326,7 +335,28 @@ class Event
     {
         return $this->docket;
     }
-
+    
+    /**
+     * set Location
+     * 
+     * @param Location
+     * @return Event
+     */
+    public function setLocation(Location $location)        
+    {
+        $this->location = $location;
+        return $this;
+    }
+    
+    /**
+     * get Location
+     * @return Location
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+    
     /**
      * Set comments.
      *
