@@ -1,9 +1,15 @@
 <h1>this is index.phtml</h1>
 
 <p>
-	Just for argument's sake, we are demonstrating that we have a <?php echo get_class($entityManager) ?> 
-	in our view.
+	we have a <?php echo get_class($form) ?>. It has an element 
+    <?php $element = $form->get("name") ; echo get_class($element)?>
 </p>
 <p>
-    Our driver is: <?php echo  $entityManager->getConnection()->getDriver()->getName() ?>
+    
 </p>
+<form>
+    <dl>
+        <dt><?php echo $element->getLabel()?></dt>
+        <dd><?php echo $this->formElement($element) ?></dd>
+    </dl>
+</form>

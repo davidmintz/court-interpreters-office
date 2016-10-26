@@ -42,8 +42,11 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        
-        return new ViewModel(['entityManager'=>$this->serviceManager->get('entity-manager')]);
+        $builder = new  \Zend\Form\Annotation\AnnotationBuilder($this->serviceManager->get('entity-manager'));
+        $form    = $builder->createForm(\Application\Entity\Language::class);
+        $em      = $this->serviceManager->get('entity-manager');
+        $form->setHydrator(new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em));
+        return new ViewModel(['form'=>$form]);
     }
 
 }
