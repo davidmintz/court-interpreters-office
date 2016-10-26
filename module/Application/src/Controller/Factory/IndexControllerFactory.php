@@ -10,7 +10,6 @@ use Application\Controller\IndexController;
 /**
  * Factory class for instanating IndexController.
  * 
- * @implements FactoryInterface
  */
 class IndexControllerFactory implements FactoryInterface {
     
