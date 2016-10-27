@@ -1,8 +1,6 @@
 <?php
 /**
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * module/Application/config/module.config.php
  */
 
 namespace Application;
@@ -23,6 +21,8 @@ return [
                     ],
                 ],
             ],
+            // this comes out of the box with the Skeleton Application;
+            // no reason not to remove it at some point.
             'application' => [
                 'type'    => Segment::class,
                 'options' => [
