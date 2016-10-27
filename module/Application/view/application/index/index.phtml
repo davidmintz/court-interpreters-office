@@ -1,15 +1,6 @@
-<h1>this is index.phtml</h1>
 
+<h1>this is index.phtml</h1>
+<?php echo $this->flashMessenger()->render();?>
 <p>
-	we have a <?php echo get_class($form) ?>. It has an element 
-    <?php $element = $form->get("name") ; echo get_class($element)?>
+We hope you enjoy it.
 </p>
-<p>
-    
-</p>
-<form>
-    <dl>
-        <dt><?php echo $element->getLabel()?></dt>
-        <dd><?php echo $this->formElement($element) ?></dd>
-    </dl>
-</form>
