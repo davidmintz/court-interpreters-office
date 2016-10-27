@@ -8,7 +8,7 @@ use Interop\Container\ContainerInterface;
 use Application\Controller\IndexController;
 
 /**
- * Factory class for instanating IndexController.
+ * Factory class for instantiating IndexController.
  * 
  */
 class IndexControllerFactory implements FactoryInterface {
