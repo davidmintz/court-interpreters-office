@@ -33,14 +33,17 @@ class Language
     /**
      * name of the language.
      * 
-     * @Attributes({"type":"text","placeholder":"name of the language","size":36})
+     * @Annotation\Attributes({"type":"text","placeholder":"name of the language","size":36})
      * @Annotation\Options({"label":"name"})
      * @Annotation\Filter({"name":"StringTrim"})
      * @Annotation\Filter({"name":"StripTags"})
+     * @Annotation\Validator({"name":"NotEmpty",
+     *  "break_chain_on_failure": true,
+     *  "options":{"messages":{"isEmpty":"language name is required"}
+     *  }})
      * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
-     *  "messages":{"stringLengthTooLong":"language name must be at least 2 characters long",
-     *   "stringLengthTooShort":"language name exceeds maximum length of 50 characters"}}})
-     * @Annotation\Validator({"name":"NotEmpty","options":{"messages":{"isEmpty":"language name is required"}}})
+     *  "messages":{"stringLengthTooShort":"language name must be at least 2 characters long",
+     *   "stringLengthTooLong":"language name exceeds maximum length of 50 characters"}}})
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string
@@ -50,6 +53,10 @@ class Language
     /**
      * comments.
      * 
+     * 
+     * @Annotation\Attributes({"type":"textarea", "cols":36,"rows":4})
+     * @Annotation\Options({"label":"notes"})
+     * @var string
      * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
      *
      * @var string
@@ -85,6 +92,16 @@ class Language
         ]);
     }
 
+    /**
+     * returns a string representation 
+     *  
+     * @return string
+     * 
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
     /**
      * Get id.
      *
