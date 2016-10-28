@@ -66,7 +66,9 @@ class IndexController extends AbstractActionController
         */
         $form =  $builder->createForm(\Application\Entity\Person::class);
         $form->setHydrator(new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em));
-        
+        // the firstname, middlename and lastname elements have already been 
+        // added and configured. 
+        // this demonstrates that we can add more after the fact
         $element = new \DoctrineModule\Form\Element\ObjectSelect('hat',
         [
                     'object_manager' => $em,
@@ -77,6 +79,19 @@ class IndexController extends AbstractActionController
         ]);
         $filter = $form->getInputFilter();
         \Zend\Debug\Debug::dump(get_class_methods($filter));
+        $filter->add([
+            'name' => 'hat',
+            'validators' =>[
+                [
+                    'name' => 'Zend\Validator\NotEmpty',
+                    'options' => [
+                        'messages' => [
+                            'isEmpty' => "the shit is empty, yo!"
+                        ],
+                    ],
+                ],
+            ],
+        ]);
         //https://docs.zendframework.com/zend-inputfilter/intro/
         $form->add($element);
         
