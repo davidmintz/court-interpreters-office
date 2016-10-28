@@ -53,10 +53,13 @@ class Language
     /**
      * comments.
      * 
-     * 
      * @Annotation\Attributes({"type":"textarea", "cols":36,"rows":4})
      * @Annotation\Options({"label":"notes"})
-     * @var string
+     * @Annotation\AllowEmpty()
+     * @Annotation\Validator({"name":"StringLength", "options":{"max":200,
+     * "messages":{ "stringLengthTooLong":
+     *      "comments exceed the maximum length of 200 characters"}
+     * }})
      * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
      *
      * @var string
@@ -67,7 +70,7 @@ class Language
      * 
      * The Interpreter(Language)s who work in this Language.
      * 
-     * @todo consider if we even need this and its setter/getter methods.
+     * @todo maybe get rid of this and its setter/getter methods. not needed.
      * 
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
      *
