@@ -4,25 +4,31 @@
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Zend\Form\Annotation;
 /**
  * Entity representing a person in the court interpreters office management 
  * system.
  * 
- * The Hat property identifies the "hat" that the Person wears. People --
- * plural form of person :-) -- have been known to change Hats in the course 
- * of the underlying databases' lifetime. For example, a Law Clerk becomes an 
- * AUSA who becomes a Judge; a contract interpreter becomes a staff interpreter.
- * Our strategy for dealing with this is reincarnation: set former hat-person's 
- * active property to <code>false</code> and the new hat-person's active 
- * property to <code>true</code>. The database table's unique index constraint 
+ * The Person's Hat property identifies the "hat" that the Person wears. People 
+ * have been known to change Hats in the course  of the underlying databases' 
+ * lifetime. For example, a Law Clerk becomes an AUSA who becomes a Judge; a 
+ * contract interpreter becomes a staff interpreter. Our strategy for dealing 
+ * with this is reincarnation: set the former hat-person's active property 
+ * to <code>false</code> and the new hat-person's active  property to 
+ * <code>true</code>. The database table's unique index constraint 
  * ensures that no two rows can have the same hat_id and email. But because we 
  * have to permit emails to be NULL in some instances, the uniqueness of the 
  * active Person has to be further enforced at the application level.
  * 
+ * Note to self: try Annotation/Type("Fieldset") and see if it works. 
+ * http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
+ * 
  * @see Application\Entity\Hat
  * @see Application\Entity\Judge
  * @see Application\Entity\Interpreter
+ * 
+ * @Annotation\Name("person")
+ * @Annotation\Type("Form")
  * 
  * @ORM\Entity  @ORM\Table(name="people",uniqueConstraints={@ORM\UniqueConstraint(name="hat_email_idx",columns={"email","hat_id"})})
  * @ORM\InheritanceType("JOINED")
@@ -37,7 +43,7 @@ class Person
 {
     /**
      * entity id
-     * 
+     * @Annotation\Exclude()
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
@@ -54,8 +60,22 @@ class Person
     /**
      * the Person's last name.
      * 
+     * @Annotation\Options({"label":"last name"})
+     * @Annotation\Filter({"name":"StringTrim"})
+     * @Annotation\Validator({"name":"NotEmpty",
+     *  "break_chain_on_failure": true,
+     *  "options":{"messages":{"isEmpty":"last name is required"}
+     *  }}) 
+     * @Annotation\Validator({
+     *  "break_chain_on_failure": true,
+     *  "name":"Application\Form\Validator\ProperName",
+     *  "options" : {"type":"last"}
+     * })
+     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
+     *  "messages":{"stringLengthTooShort":"name must be at least 2 characters long",
+     *   "stringLengthTooLong":"name exceeds maximum length of 50 characters"}}})
+     * 
      * @ORM\Column(type="string",length=50,nullable=false)
-     *
      * @var string
      */
     protected $lastname;
@@ -63,6 +83,21 @@ class Person
     /**
      * the Person's first name.
      * 
+     * @Annotation\Options({"label":"first name"})
+     * @Annotation\Filter({"name":"StringTrim"})
+     * @Annotation\Validator({"name":"NotEmpty",
+     *  "break_chain_on_failure": true,
+     *  "options":{"messages":{"isEmpty":"first name is required"}
+     *  }}) 
+     * @Annotation\Validator({
+     *  "break_chain_on_failure": true,
+     *  "name":"Application\Form\Validator\ProperName",
+     *  "options" : {"type":"first"}
+     * })
+     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
+     *  "messages":{"stringLengthTooShort":"name must be at least 2 characters long",
+     *   "stringLengthTooLong":"name exceeds maximum length of 50 characters"}}})
+     *      
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string first name, or given names
@@ -71,7 +106,17 @@ class Person
     
      /**
      * the Person's middle name or initial
-     * 
+     * @Annotation\Options({"label":"middle name"})
+     * @Annotation\Filter({"name":"StringTrim"})
+     * @Annotation\AllowEmpty()
+     * @Annotation\Validator({
+     *  "break_chain_on_failure": true,
+     *  "name":"Application\Form\Validator\ProperName",
+     *  "options" : {"type":"middle"}
+     * })
+     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
+     *  "messages":{"stringLengthTooShort":"name must be at least 2 characters long",
+     *   "stringLengthTooLong":"name exceeds maximum length of 50 characters"}}})
      * @ORM\Column(type="string",length=50,nullable=false,options={"default":""})
      *
      * @var string middle name or initial
@@ -80,10 +125,10 @@ class Person
 
     /**
      *  Everyone must where a hat in this life.
-     *
+     *  
      *  @ORM\ManyToOne(targetEntity="Hat",fetch="EAGER")
      *  @ORM\JoinColumn(nullable=false)
-     *
+     *  
      *  @var Hat
      */
     protected $hat;
