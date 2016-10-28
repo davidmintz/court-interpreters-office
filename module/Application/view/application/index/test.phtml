@@ -20,10 +20,13 @@ $form->add([
 
 $form->setAttribute('method', 'post');
 
+//$fieldset = $form->get('person');
 // Render the opening tag
 echo $this->form()->openTag($form);
-echo $this->formRow($form->get('name')),"<br>";
-echo $this->formRow($form->get('comments')),"<br>";
+echo $this->formRow($form->get('lastname')),"<br>";
+echo $this->formRow($form->get('firstname')),"<br>";
+echo $this->formRow($form->get('middlename')),"<br>";
+echo $this->formRow($form->get('hat')),"<br>";
 echo $this->formSubmit($form->get('submit'));
 echo $this->form()->closeTag();
 
