@@ -9,3 +9,5 @@ nbproject
 .settings
 vendor
 composer.phar
+court-interpreters-office.sublime-*
+data/*
