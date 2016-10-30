@@ -6,10 +6,27 @@
  * security-sensitive configuration information. Copy this file without the
  * .dist extension at the end and populate values as needed.
  *
- * @NOTE: This file is ignored from Git by default with the .gitignore included
- * in ZendSkeletonApplication. This is a good practice, as it prevents sensitive
- * credentials from accidentally being committed into version control.
+ * @NOTE: This file is ignored from Git by default with the .gitignore included. 
+ * This is a good practice, as it prevents sensitive credentials from accidentally 
+ * being committed into version control.
  */
 
-return [
+return [     
+	'doctrine' => array(
+        'connection' => array(
+            // default connection name
+            'orm_default' => array(
+                'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
+                'params' => array(
+                	// set your database connection parameters here
+                    'user'     => 'user',
+                    'password' => 'password',
+                    'dbname'   => 'database_name',
+                    'driver'   => 'pdo_mysql',
+                    'host'     => 'localhost',
+                    'port'     => '3306',
+                )
+            )
+        )
+    )
 ];
