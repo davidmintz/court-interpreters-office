@@ -52,8 +52,11 @@ class IndexController extends AbstractActionController
      */
     public function testAction()
     {
-        // http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
+        
         $em      = $this->serviceManager->get('entity-manager');
+        $thing = new \Application\Form\TestFieldset();
+        $thing->setObjectManager($em);
+        // http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
         $builder = new  \Zend\Form\Annotation\AnnotationBuilder($this->serviceManager->get('entity-manager'));
         // could not get validators to run when person stuff was added as a 
         // fieldset.
@@ -64,6 +67,9 @@ class IndexController extends AbstractActionController
         $form->add($fieldset);
         $fieldset->setUseAsBaseFieldset(true);
         */
+        //http://stackoverflow.com/questions/29335878/zend-framework-2-form-issues-using-doctrine-as-a-hydrator
+        //  you should invoke setHydrator() on form itself after adding the base fieldset.
+
         $form =  $builder->createForm(\Application\Entity\Person::class);
         $form->setHydrator(new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em));
         // the firstname, middlename and lastname elements have already been 
@@ -78,7 +84,7 @@ class IndexController extends AbstractActionController
                     'display_empty_item' => true,        
         ]);
         $filter = $form->getInputFilter();
-        \Zend\Debug\Debug::dump(get_class_methods($filter));
+        //\Zend\Debug\Debug::dump(get_class_methods($filter));
         $filter->add([
             'name' => 'hat',
             'validators' =>[
@@ -118,14 +124,19 @@ class IndexController extends AbstractActionController
     
     public function otherTestAction()
     {
+        
+
         $em      = $this->serviceManager->get('entity-manager');
         $form = new \Application\Form\Test($em);
+
+        //echo "ok."; return new ViewModel;
+
         $viewModel = new ViewModel(['form' => $form]);
-        $person = new \Application\Entity\Person();
+        $hat = new \Application\Entity\Hat();   
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            $form->bind($person);
+            $form->bind($hat);
             $form->setData($data);
             if (! $form->isValid()) {
                 return $viewModel;
