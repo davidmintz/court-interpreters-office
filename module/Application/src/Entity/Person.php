@@ -20,8 +20,11 @@ use Zend\Form\Annotation;
  * have to permit emails to be NULL in some instances, the uniqueness of the 
  * active Person has to be further enforced at the application level.
  * 
- * Note to self: try Annotation/Type("Fieldset") and see if it works. 
+ * Note to self: we have tried Annotation/Type("Fieldset") and not been able to 
+ * make it work properly. Validators don't run.
  * http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
+ * The annotations on some of the instance variables were part of this effort 
+ * create a Fieldset with Zend\Form\Annotation\AnnotationBuilder.
  * 
  * @see Application\Entity\Hat
  * @see Application\Entity\Judge
@@ -30,7 +33,7 @@ use Zend\Form\Annotation;
  * @Annotation\Name("person")
  * @Annotation\Type("Form")
  * 
- * @ORM\Entity  @ORM\Table(name="people",uniqueConstraints={@ORM\UniqueConstraint(name="hat_email_idx",columns={"email","hat_id"})})
+ * @ORM\Entity @ORM\Table(name="people",uniqueConstraints={@ORM\UniqueConstraint(name="hat_email_idx",columns={"email","hat_id"})})
  * @ORM\InheritanceType("JOINED")
  *
  * @ORM\DiscriminatorColumn(name="discr", type="string")
