@@ -24,12 +24,18 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 			'options'=>[
 				'label' => 'last name'
 			],
+			'attributes' => [
+				'class' => 'form-control',
+			],
 		],
 		'firstname' => [
 			'type' => 'Zend\Form\Element\Text',
 			'name' => 'firstname',
 			'options'=>[
 				'label' => 'first name',
+			],
+			'attributes' => [
+				'class' => 'form-control',
 			],
 		],
 
