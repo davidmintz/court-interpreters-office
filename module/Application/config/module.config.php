@@ -36,6 +36,7 @@ return [
             'languages' => [
                 
                 'type' => Segment::class,
+                'may_terminate' => true,
                 'options' => [
                     'route'    => '/admin/languages',
                     'defaults' => [
@@ -48,9 +49,9 @@ return [
                         'type' => 'segment',
                          'may_terminate' => true,
                          'options' =>[
-                             'route'=> '/add',
+                            'route'=> '/add',
                             'defaults' => [
-                            'action' => 'create',
+                                'action' => 'create',
                             ],
                          ],
 
@@ -59,6 +60,19 @@ return [
             ]
         ],
     ],
+    'view_helpers' => [
+        'invokables' => [
+            'formElementErrors'=> 'Application\Form\View\Helper\FormElementErrors',
+        ]
+    ],
+    
+    'view_helper_config' => array(
+        'flashmessenger' => array(
+            'message_open_format'      => '<div%s><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>',
+            'message_separator_string' => '</p><p>',
+            'message_close_string'     => '</p></div>',
+        )
+    ),
     'form_elements' => [
         'factories' => [
             
