@@ -34,6 +34,7 @@ class IndexController extends AbstractActionController
     public function __construct(ContainerInterface $serviceManager)
     {
         $this->serviceManager = $serviceManager;
+        
     }
     /**
      * index action
@@ -126,15 +127,32 @@ class IndexController extends AbstractActionController
     {
         $form = new \Zend\Form\Form('person-form');
         $em = $this->serviceManager->get('entity-manager');
-        $form->setHydrator(
-            new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em)
-        );   
+        $hydrator = new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em);
+        $form->setHydrator($hydrator);
+             
         $fieldset = new \Application\Form\PersonFieldset($em) ;
         $person = new \Application\Entity\Person();
-        $fieldset->setObject($person);
+        $fieldset->setObject($person)->setHydrator($hydrator);
         $form->add($fieldset);
         $viewModel = new ViewModel(['form' => $form]);
-
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->bind($person);
+            $form->setData($data);
+            if (! $form->isValid()) {
+                return $viewModel;
+            } else {
+                echo "SHIT IS VALID ?!?";
+                try {
+                    $em->persist($person);
+                    $em->flush();
+                } catch (\Exception $e) {
+                    echo $e->getMessage();
+                }
+                return $viewModel;
+            }
+        }
         return $viewModel;
 
     }

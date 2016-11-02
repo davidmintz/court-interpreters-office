@@ -54,9 +54,23 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 		return [
 			'lastname' => [
 				'validators' => [
-
+					[
+						'name' => 'NotEmpty',
+						'options' => [
+							'messages' => [
+								'isEmpty' => 'last name is required'
+							],
+						],
+						'break_chain_on_failure' => true,
+					],
+					[
+                        'name' => 'Application\Form\Validator\ProperName',
+                        'options' => ['type' => 'last'],
+                        
+                    ],
 				],
 				'filters' => [
+                    ['name' => 'StringTrim']
 
 				],
 			],
@@ -78,6 +92,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ],
 				],
 				'filters' => [
+                    ['name' => 'StringTrim']
 
 				],
 			],
