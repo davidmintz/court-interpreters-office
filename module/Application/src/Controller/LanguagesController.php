@@ -9,6 +9,9 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Interop\Container\ContainerInterface;
 
+use Application\Form\Factory\AnnotatedFormFactory;
+use Application\Entity\Language;
+
 /**
  *  IndexController
  * 
@@ -34,6 +37,8 @@ class LanguagesController extends AbstractActionController
     public function __construct(ContainerInterface $serviceManager)
     {
         $this->serviceManager = $serviceManager;
+        /** @todo make this an invokable we can get out of the container? */
+        $this->factory = new AnnotatedFormFactory();
         
     }
     /**
@@ -46,7 +51,38 @@ class LanguagesController extends AbstractActionController
         
     }
     public function createAction() {
-        echo "Hi!";
-        return false;
+        
+        $language = new Language();
+        $factory = $this->factory;
+        $form = $factory($this->serviceManager,'language',['object'=>$language]);
+        
+        $viewModel = new ViewModel(['form'=>$form,'title'=>'add a language']);
+        $viewModel->setTemplate('application/languages/form.phtml');
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->bind($language);
+            $form->setData($data);
+            if (! $form->isValid()) {
+                echo "shit NOT valid";
+                \Zend\Debug\Debug::dump($form->getMessages());
+                return $viewModel;
+            } else {
+                echo "SHIT IS VALID ?!?";
+                try {
+                    $em = $this->serviceManager->get('entity-manager');
+                    $em->persist($language);
+                    $em->flush();
+                    $this->flashMessenger()
+                            ->addSuccessMessage("This language has been added.");
+                    $this->redirect()->toRoute('languages');
+                } catch (\Exception $e) {
+                    echo $e->getMessage();
+                }
+                return $viewModel;
+            }
+            
+        }
+        return $viewModel;
     }
 }
