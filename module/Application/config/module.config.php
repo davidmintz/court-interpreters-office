@@ -21,18 +21,42 @@ return [
                     ],
                 ],
             ],
-            // this comes out of the box with the Skeleton Application;
-            // no reason not to remove it at some point.
+            // based on one that comes out of the box with the 
+            // Skeleton Application; no reason not to remove it at some point.
             'application' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/application[/:action]',
+                    'route'    => '/app[/:action]',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
                         'action'     => 'index',
                     ],
                 ],
             ],
+            'languages' => [
+                
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/admin/languages',
+                    'defaults' => [
+                        'controller' => Controller\LanguagesController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'child_routes' =>[
+                        [
+                        'type' => 'segment',
+                         'may_terminate' => true,
+                         'options' =>[
+                             'route'=> '/add',
+                            'defaults' => [
+                            'action' => 'create',
+                            ],
+                         ],
+
+                    ]
+                ]
+            ]
         ],
     ],
     'form_elements' => [
@@ -43,6 +67,7 @@ return [
     'controllers' => [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+           Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
         ],
     ],
     'view_manager' => [
