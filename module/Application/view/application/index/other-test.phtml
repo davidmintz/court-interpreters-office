@@ -21,12 +21,13 @@ $form->add([
 
 //$form->setAttribute('method', 'post');
 
-$fieldset = $form->get('person');
+$fieldset = $form->get('person-fieldset');
 // Render the opening tag
 echo $this->form()->openTag($form);
 echo $this->formRow($fieldset->get('lastname')),"<br>";
 echo $this->formRow($fieldset->get('firstname')),"<br>";
-echo $this->formRow($fieldset->get('middlename')),"<br>";
+//echo $this->formRow($fieldset->get('middlename')),"<br>";
 echo $this->formSubmit($form->get('submit'));
 echo $this->form()->closeTag();
-
+?>
+shit?

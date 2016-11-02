@@ -124,8 +124,21 @@ class IndexController extends AbstractActionController
     
     public function otherTestAction()
     {
-        
+        $form = new \Zend\Form\Form('person-form');
+        $em = $this->serviceManager->get('entity-manager');
+        $form->setHydrator(
+            new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em)
+        );   
+        $fieldset = new \Application\Form\PersonFieldset($em) ;
+        $person = new \Application\Entity\Person();
+        $fieldset->setObject($person);
+        $form->add($fieldset);
+        $viewModel = new ViewModel(['form' => $form]);
 
+        return $viewModel;
+
+    }
+    /*
         $em      = $this->serviceManager->get('entity-manager');
         $form = new \Application\Form\Test($em);
 
@@ -145,5 +158,8 @@ class IndexController extends AbstractActionController
                 return $viewModel;
             }
         }
-    }
+
+
+
+    */
 }
