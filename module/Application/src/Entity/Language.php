@@ -13,9 +13,6 @@ use Zend\Form\Annotation;
  * Entity class representing a language used by an Interpreter.
  * 
  * @Annotation\Name("language")
- * // this will not work, so inject it some other way
- * //Annotation\Hydrator("DoctrineModule\Stdlib\Hydrator\DoctrineObject")
- * 
  * @ORM\Entity  
  * @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})}) 
  */
@@ -24,7 +21,7 @@ class Language
 {
     /**
      * entity id
-     * //Annotation\Exclude()
+     * 
      * @Annotation\Attributes({"type":"hidden"})
      * @ORM\Id 
      * @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
@@ -67,18 +64,7 @@ class Language
      */
     protected $comments = '';
 
-    /**
-     * 
-     * The Interpreter(Language)s who work in this Language.
-     * 
-     * @todo maybe get rid of this and its setter/getter methods. not needed.
-     * 
-     * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
-     *
-     * @var Collection of InterpreterLanguage entities
-     */
-    protected $interpreterLanguages;
-
+    
     /**
      * Is there a federal certification program for this language?
      *
@@ -163,45 +149,7 @@ class Language
     {
         return $this->comments;
     }
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->interpreterLanguages = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    
 
-    /**
-     * Add interpreterLanguage.
-     *
-     * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
-     *
-     * @return Language
-     */
-    public function addInterpreterLanguage(\Application\Entity\InterpreterLanguage $interpreterLanguage)
-    {
-        $this->interpreterLanguages[] = $interpreterLanguage;
-
-        return $this;
-    }
-
-    /**
-     * Remove interpreterLanguage.
-     *
-     * @param \Application\Entity\InterpreterLanguage $interpreterLanguage
-     */
-    public function removeInterpreterLanguage(\Application\Entity\InterpreterLanguage $interpreterLanguage)
-    {
-        $this->interpreterLanguages->removeElement($interpreterLanguage);
-    }
-
-    /**
-     * Get interpreterLanguages.
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getInterpreterLanguages()
-    {
-        return $this->interpreterLanguages;
-    }
+    
 }
