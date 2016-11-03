@@ -27,7 +27,8 @@ class SimpleEntityControllerFactory implements FactoryInterface {
         switch ($what) {
             case 'languages':
                 return new $requestedName($container);
-            
+            break;
+            // to be continued
         }
         
         
