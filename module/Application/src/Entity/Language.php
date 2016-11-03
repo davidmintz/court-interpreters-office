@@ -24,7 +24,8 @@ class Language
 {
     /**
      * entity id
-     * @Annotation\Exclude()
+     * //Annotation\Exclude()
+     * @Annotation\Attributes({"type":"hidden"})
      * @ORM\Id 
      * @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
