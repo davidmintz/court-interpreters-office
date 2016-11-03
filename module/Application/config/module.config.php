@@ -11,6 +11,7 @@ use Zend\Router\Http\Segment;
 return [
     'router' => [
         'routes' => [
+            ///*
             'home' => [
                 'type' => Literal::class,
                 'options' => [
@@ -33,8 +34,28 @@ return [
                     ],
                 ],
             ],
-            'languages' => [
+            // can't get this to work, an effort to make multiple controllers
+            // match this route
+            /*
+            'example' => [
                 
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/admin/:controller[/:action]',
+                    'constraints' => [
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]+',
+                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]+',
+                    ],
+                    'defaults' => [
+                        'controller' => 'Application\Controller\IndexController',
+                        'action'     => 'index',
+                    ],
+                ],
+                
+             ],*/
+            
+            'languages' => [
+           
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
@@ -45,7 +66,7 @@ return [
                     ],
                 ],
                 'child_routes' =>[
-                        [
+                    [
                         'type' => 'segment',
                          'may_terminate' => true,
                          'options' =>[
@@ -53,8 +74,18 @@ return [
                             'defaults' => [
                                 'action' => 'create',
                             ],
-                         ],
-
+                        ],
+                    ],
+                    [
+                        'type' => 'segment',
+                         'may_terminate' => true,
+                         'options' =>[
+                            'route'=> '/edit/:id',
+                            'defaults' => [
+                                'action' => 'update',
+                            ],
+                            // constrain id to digits ?
+                        ],
                     ]
                 ]
             ]
@@ -75,7 +106,7 @@ return [
     ),
     'form_elements' => [
         'factories' => [
-            
+            Entity\Language::class => Form\Factory\AnnotatedEntityFormFactory::class,
         ],
     ],
     'controllers' => [
