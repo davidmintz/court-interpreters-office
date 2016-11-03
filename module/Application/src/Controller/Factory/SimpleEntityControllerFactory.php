@@ -20,7 +20,8 @@ class SimpleEntityControllerFactory implements FactoryInterface {
      */
     public function __invoke(ContainerInterface $container, $requestedName, Array $options = null) {
         
-        $baseName = end(explode('\\',$requestedName));
+        $array = explode('\\',$requestedName);
+        $baseName = end($array);
         $what = strtolower(substr($baseName,0,-10));
         
         switch ($what) {
