@@ -54,11 +54,11 @@ class Language
      * @Annotation\Attributes({"type":"textarea", "cols":36,"rows":4,"class":"form-control","placeholder":"optionally, a few notes about this language"})
      * @Annotation\Options({"label":"notes"})
      * @Annotation\AllowEmpty()
-     * @Annotation\Validator({"name":"StringLength", "options":{"max":200,
+     * @Annotation\Validator({"name":"StringLength", "options":{"max":300,
      * "messages":{ "stringLengthTooLong":
-     *      "comments exceed the maximum length of 200 characters"}
+     *      "comments exceed the maximum length of 300 characters"}
      * }})
-     * @ORM\Column(type="string",length=200,nullable=false,options={"default":""})
+     * @ORM\Column(type="string",length=300,nullable=false,options={"default":""})
      *
      * @var string
      */

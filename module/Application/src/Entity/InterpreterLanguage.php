@@ -53,7 +53,7 @@ class InterpreterLanguage
     /**
      * The language in which this interpreter works.
      * 
-     * @ORM\ManyToOne(targetEntity="Language",inversedBy="interpreterLanguages")
+     * @ORM\ManyToOne(targetEntity="Language")
      * @ORM\Id
      *
      * @var Language
