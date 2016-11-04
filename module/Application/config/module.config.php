@@ -53,7 +53,34 @@ return [
                 ],
                 
              ],*/
-            
+            'locations' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/admin/locations',
+                    'defaults' => [
+                        'controller' => Controller\LocationsController::class,
+                        'action'     => 'index',
+                    ],
+                    
+                ],
+                'constraints' => [],
+                'child_routes' =>[
+                    'action' => [
+                        'type' => 'segment',
+                        'may_terminate' => true,
+                        'options' =>[
+                            'route' => '/:action[/:id]',
+                            'defaults' => [],
+                        ],
+                        'constraints' => [
+                            'action' => 'add|edit|index|list|delete',
+                             'id' => '[1-9]\d*'
+                        ],
+                    ],
+                ]
+            ],
+            /** @todo rewrite this like the locations route */
             'languages' => [
            
                 'type' => Segment::class,
@@ -116,6 +143,7 @@ return [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
            Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
+           Controller\LocationsController::class => Controller\Factory\SimpleEntityControllerFactory::class,
         ],
     ],
     'view_manager' => [
