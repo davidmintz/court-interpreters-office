@@ -20,12 +20,17 @@ use Zend\Form\Annotation\AnnotationBuilder;
 
 
 /**
- * 
  * Factory for creating Form objects for our relatively simple 
- * entities from the entities' annotations
+ * entities from their annotations.
+ * 
+ * This also completes the initialization that can't be done via annotations or 
+ * until we know whether the action is create or update.
  */
 class AnnotatedEntityFormFactory implements FactoryInterface
 {
+    
+    /** @var ObjectManager */
+    protected $objectManager;
     
     /**
      * {@inheritdoc}
@@ -41,42 +46,31 @@ class AnnotatedEntityFormFactory implements FactoryInterface
                     'Factory cannot build a form from %s: class not found'
             );
         }
-        $em = $container->get('entity-manager');
+        $this->objectManager = $container->get('entity-manager');
         $builder = new AnnotationBuilder();
         $form = $builder->createForm($requestedName);
         
         switch ($requestedName) {
             case Entity\Language::class:
-                if ($options['action']=='create') {
-                    $validator = new NoObjectExistsValidator([
-                       'object_repository' => $em->getRepository('Application\Entity\Language'),
-                       'fields'            => 'name',
-                       'messages' =>[NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'this language is already in your database'],
-                   ]);
-                } else { // assume update
-                   
-                    $validator = new UniqueObject([
-                        'object_repository' => $em->getRepository('Application\Entity\Language'),
-                        'object_manager' => $em,
-                        'fields'        => 'name',
-                        'use_context' => true,
-                        'messages' =>[
-                            UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
-                                'another language by this name is already in your database'
-                          ],
-                    ]);
-                }
-                $input = $form->getInputFilter()->get('name');
-                $input->getValidatorChain()
-                   ->attach($validator);
+                $this->setupLanguageForm($form, $options);
+           // to be continued
         }
-        $form->setHydrator(new DoctrineHydrator($em))
+        $form->setHydrator(new DoctrineHydrator($this->objectManager))
              ->setObject($options['object']);
         return $form;
+         
+         
     }
-    
-    function setupLanguageForm(Form $form,ObjectManager $em,Array $options)
+    /**
+     * continues the initialization of the Language form
+     * 
+     * @param Form $form
+     * @param array $options
+     */
+    function setupLanguageForm(Form $form,Array $options)
     {
+        $em = $this->objectManager;
+        
         if ($options['action']=='create') {
             $validator = new NoObjectExistsValidator([
                'object_repository' => $em->getRepository('Application\Entity\Language'),
@@ -84,15 +78,13 @@ class AnnotatedEntityFormFactory implements FactoryInterface
                'messages' =>[NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'this language is already in your database'],
            ]);
        } else { // assume update
-           if (! $form->has('id')) {
-              // $form->add(['type'=>'Hidden','name'=>'id','value'=>$options['object']->getId()]);
-           }
+          
            $validator = new UniqueObject([
                'object_repository' => $em->getRepository('Application\Entity\Language'),
                'object_manager' => $em,
                'fields'        => 'name',
                'use_context' => true,
-               'messages' =>[ UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'language name is not unique; is already in your database'],
+               'messages' =>[ UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'language names must be unique; this is already in your database'],
            ]);
        }
        $input = $form->getInputFilter()->get('name');
