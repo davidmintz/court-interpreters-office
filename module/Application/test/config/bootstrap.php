@@ -5,9 +5,16 @@
 $loader = require (__DIR__. '/../../../../vendor/autoload.php');
 
 $loader->add('Application',__DIR__. '/../../../../module/Application/src');
-
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+
+//we could not get namespace autoloading to work, but this does work:
+$path =  __DIR__.'/../../../../vendor/zendframework/zend-form/src/Annotation/';
+$files = glob("$path/*php");
+foreach ($files as $file) {
+    AnnotationRegistry::registerFile( $file);
+}
 
 $config = require (__DIR__.'/../config/autoload/test.local.php');
 $dbParams = $config['doctrine']['connection']['orm_default']['params']; 
