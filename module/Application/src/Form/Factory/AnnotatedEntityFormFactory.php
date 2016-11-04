@@ -54,17 +54,16 @@ class AnnotatedEntityFormFactory implements FactoryInterface
                        'messages' =>[NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'this language is already in your database'],
                    ]);
                 } else { // assume update
-                    if (! $form->has('id')) {
-                       echo "NO ID?!?";
-                        //$form->add(['type'=>'Hidden','name'=>'id','value'=>$options['object']->getId()]);
-                       
-                    }
+                   
                     $validator = new UniqueObject([
                         'object_repository' => $em->getRepository('Application\Entity\Language'),
                         'object_manager' => $em,
                         'fields'        => 'name',
                         'use_context' => true,
-                        'messages' =>[ UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'language name is not unique; already in your database'],
+                        'messages' =>[
+                            UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
+                                'another language by this name is already in your database'
+                          ],
                     ]);
                 }
                 $input = $form->getInputFilter()->get('name');
