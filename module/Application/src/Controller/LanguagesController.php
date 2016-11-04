@@ -51,7 +51,10 @@ class LanguagesController extends AbstractActionController
      */
     public function indexAction()
     {
-        
+        $languages = $this->serviceManager->get('entity-manager')
+                ->getRepository('Application\Entity\Language')
+                ->findBy([],['name'=>'ASC']);
+        return ['languages'=>$languages];
     }
     /**
      * updates a language
@@ -89,7 +92,16 @@ class LanguagesController extends AbstractActionController
         }
         return $viewModel;
     }
-    
+    /**
+     * 
+     * Alias for createAction.
+     * 
+     * We might eliminate this.
+     */
+    public function addAction()
+    {
+        return $this->createAction();
+    }
     /**
      * adds a new language
      * @return ViewModel
