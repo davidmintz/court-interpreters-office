@@ -2,6 +2,21 @@
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',]); endif;
-?>
 
-[here to do: list languages]
+
+if (! $this->languages): 
+
+    ?><div class="alert alert-warning">There are no languages in your database. Go to <a href="/admin/languages/add">add</a> to start adding them.</div><?php
+return;
+endif;
+?>
+<table class="table table-hover table-bordered" style="max-width:700px">
+    <!-- <tr><th></th></tr> -->
+    <tbody>
+        <?php 
+foreach ($this->languages as $language):
+    ?><tr><td><?php echo $this->escapeHtml($language) ?></td></tr> <?php
+endforeach;
+        ?>
+    </tbody>
+</table>
