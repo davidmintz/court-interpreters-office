@@ -66,7 +66,7 @@ return [
                     ],
                 ],
                 'child_routes' =>[
-                    [
+                   'add' => [
                         'type' => 'segment',
                          'may_terminate' => true,
                          'options' =>[
@@ -76,16 +76,19 @@ return [
                             ],
                         ],
                     ],
-                    [
+                    'edit' => [
                         'type' => 'segment',
                          'may_terminate' => true,
                          'options' =>[
                             'route'=> '/edit/:id',
                             'defaults' => [
                                 'action' => 'update',
-                            ],
-                            // constrain id to digits ?
+                            ]
                         ],
+                        'constraints' => [
+                            'id' => '[1-9]\d*'
+                        ],
+                        
                     ]
                 ]
             ]
