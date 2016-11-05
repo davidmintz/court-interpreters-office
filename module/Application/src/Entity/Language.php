@@ -13,7 +13,7 @@ use Zend\Form\Annotation;
  * Entity class representing a language used by an Interpreter.
  * 
  * @Annotation\Name("language")
- * @ORM\Entity  
+ * @ORM\Entity(repositoryClass="LanguageRepository")
  * @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})}) 
  */
 
