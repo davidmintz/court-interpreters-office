@@ -49,5 +49,10 @@ class LocationsController extends AbstractActionController
     {
         echo "hurray."; return false;
     }
+
+    public function editAction()
+    {
+        echo "hurray for editAction!"; return false;
+    }
     
 }

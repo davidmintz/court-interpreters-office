@@ -51,17 +51,28 @@ class LanguagesController extends AbstractActionController
      */
     public function indexAction()
     {
+        /* // this will get them all, ordered
         $languages = $this->serviceManager->get('entity-manager')
                 ->getRepository('Application\Entity\Language')
                 ->findBy([],['name'=>'ASC']);
+        */
+        
+        $page = $this->params()->fromQuery('page',1);
+        $repository = $this->serviceManager->get('entity-manager')
+                ->getRepository('Application\Entity\Language');
+        
+        $languages = $repository->findAll($page); 
+
         return ['languages'=>$languages];
     }
+
+
     /**
      * updates a language
      * 
      * @return ViewModel
      */
-    public function updateAction()
+    public function editAction()
     {
        $id = $this->params()->fromRoute('id');
        if (! $id) {

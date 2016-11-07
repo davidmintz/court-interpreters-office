@@ -5,10 +5,12 @@ if ($this->errorMessage) : ?>
 return;
 endif;
 if (strstr($this->title,'add')) : 
-	$actionAttrib = $this->url('languages/add');
-else: 
-	$actionAttrib = $this->url('languages/edit',['id'=> $this->id]);
+	$actionAttrib = $this->url('languages',['action'=>'add']);
+else: echo "shit... ";
+	$actionAttrib = $this->url('languages',['id'=> $this->id ,'action'=>'edit'] );
 endif;
+
+echo "form action: $actionAttrib ... ";
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
     <h2><?php echo $this->title ?></h2>

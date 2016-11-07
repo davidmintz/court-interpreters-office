@@ -175,7 +175,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `people` WRITE;
 /*!40000 ALTER TABLE `people` DISABLE KEYS */;
-INSERT INTO `people` VALUES (22,14,NULL,'Failla','Katherine','judge');
+INSERT INTO `people` VALUES (22,14,NULL,'Failla','Katherine','',1,'judge');
 /*!40000 ALTER TABLE `people` ENABLE KEYS */;
 UNLOCK TABLES;
 
