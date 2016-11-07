@@ -7,41 +7,59 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\AbstractPluginManager;
+use Doctrine\ORM\EntityManagerInterface;
 
-use Application\Form\Factory\AnnotatedEntityFormFactory;
 use Application\Entity\Language;
+use Application\Form\AnnotatedFormCreationTrait;
 
 /**
  *  LanguagesController, for managing languages.
- * 
- * @todo get rid of ServiceManager dependency and become more specific about 
- * our dependencies.
- * @todo further, seriously consider a LanguageServiceInterface and LanguageService 
- * implementation that depends on the entity manager.
- *  
  */
 
 class LanguagesController extends AbstractActionController
 {
+    
+    use AnnotatedFormCreationTrait;
+    
     /** 
-     * service manager.
+     * FormElementManager
      * 
-     * @var ContainerInterface 
+     * for instantiating the Form
+     * 
+     * @var AbstractPluginManager
      */
-    protected $serviceManager;
+    protected $formElementManager;
+    
+    /**
+     * entity manager
+     * 
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+    
+    /**
+     * short name of the controller
+     * @var string 
+     */
+    protected $name;
     
     /**
      * constructor
      * 
+     * @param EntityManagerInterface $entityManager
+     * @param AbstractPluginManager $formElementManager 
+     * @param string $shortName this controller's short name/type of entity
+     * 
      * @see Application\Controller\Factory\SimpleEntityControllerFactory
-     * @param ContainerInterface $serviceManager
+     * 
      */
-    public function __construct(ContainerInterface $serviceManager)
+    public function __construct(EntityManagerInterface $entityManager, 
+            AbstractPluginManager $formElementManager, $shortName)
     {
-        $this->serviceManager = $serviceManager;
-        /** @todo make this an invokable we can get out of the container? */
-        $this->factory = new AnnotatedEntityFormFactory();
+        $this->entityManager = $entityManager;
+        $this->formElementManager = $formElementManager;
+        $this->name = $shortName;
         
     }
     /**
@@ -51,16 +69,14 @@ class LanguagesController extends AbstractActionController
      */
     public function indexAction()
     {
-        /* // this will get them all, ordered
+        /* // this gets them all, ordered
         $languages = $this->serviceManager->get('entity-manager')
                 ->getRepository('Application\Entity\Language')
                 ->findBy([],['name'=>'ASC']);
         */
         
         $page = $this->params()->fromQuery('page',1);
-        $repository = $this->serviceManager->get('entity-manager')
-                ->getRepository('Application\Entity\Language');
-        
+        $repository = $this->entityManager->getRepository('Application\Entity\Language');
         $languages = $repository->findAll($page); 
 
         return ['languages'=>$languages];
@@ -78,14 +94,13 @@ class LanguagesController extends AbstractActionController
        if (! $id) {
            return $this->getFormViewModel(['errorMessage' => "invalid or missing id parameter"]);
        }
-       $entity = $this->serviceManager->get('entity-manager')->find('Application\Entity\Language',$id);
+       $entity = $this->entityManager->find('Application\Entity\Language',$id);
        if (! $entity) {
            return $this->getFormViewModel(['errorMessage' => "language with id $id not found"]);
        }
+       $form = $this->getForm(Language::class,['object'=>$entity,'action'=>'update'])
+               ->bind($entity);
        
-       $manager = $this->serviceManager->get('FormElementManager');
-       $form = $manager->build(Language::class,['object'=>$entity,'action'=>'update']);
-       $form->bind($entity);
        $viewModel = $this->getFormViewModel(
               ['form'=>$form,'title'=>'edit a language','id'=>$id]
         );
@@ -95,8 +110,7 @@ class LanguagesController extends AbstractActionController
             if (! $form->isValid()) {
                 return $viewModel;
             } 
-            $em = $this->serviceManager->get('entity-manager');
-            $em->flush();
+            $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage("The language $entity has been updated.");
             $this->redirect()->toRoute('languages');
@@ -104,39 +118,40 @@ class LanguagesController extends AbstractActionController
         return $viewModel;
     }
     /**
+     * deletes a language
      * 
-     * Alias for createAction.
+     * @return boolean
+     */
+    public function deleteAction()
+    {
+        echo "YET TO BE IMPLEMENTED";
+        return false;
+    }
+    
+    /**
+     * adds a new language
      * 
-     * We might eliminate this.
+     * @return ViewModel
      */
     public function addAction()
     {
-        return $this->createAction();
-    }
-    /**
-     * adds a new language
-     * @return ViewModel
-     */
-    public function createAction()
-    {
         
         $language = new Language();
-        $manager = $this->serviceManager->get('FormElementManager');
-        $form = $manager->build(Language::class,['object'=>$language,'action'=>'create']);
+        
+        $form = $this->getForm(Language::class,['object'=>$language,'action'=>'create'])
+                ->bind($language);
         $viewModel = $this->getFormViewModel(
                 ['form'=>$form,'title'=>'add a language']);
-        $form->bind($language);
-
         $request = $this->getRequest();
+        
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 return $viewModel;
             } 
             try {
-                $em = $this->serviceManager->get('entity-manager');
-                $em->persist($language);
-                $em->flush();
+                $this->entityManager->persist($language);
+                $this->entityManager->flush();
                 $this->flashMessenger()
                       ->addSuccessMessage("The language $language has been added.");
                 $this->redirect()->toRoute('languages');

@@ -10,30 +10,55 @@ use Zend\View\Model\ViewModel;
 use Interop\Container\ContainerInterface;
 
 /**
- *  IndexController
+ *  LocationsController
  * 
- *  Currently, just for making sure the application runs, basic routing is 
- *  happening, service container is working, views are rendered, etc.
+ * For managing the locations to which interpreters are deployed
+  *  
  */
 
 class LocationsController extends AbstractActionController
 {
-     /** 
-      * service manager.
-      * 
-      * @var ContainerInterface 
-      */
-    protected $serviceManager;
+    
+    use AnnotatedFormCreationTrait;
+    
+    /** 
+     * FormElementManager
+     * 
+     * for instantiating the Form
+     * 
+     * @var AbstractPluginManager
+     */
+    protected $formElementManager;
+    
+    /**
+     * entity manager
+     * 
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+    
+    /**
+     * short name of this controller
+     * @var string 
+     */
+    protected $name;
     
     /**
      * constructor
      * 
-     * @see Application\Controller\Factory\IndexControllerFactory
-     * @param ContainerInterface $serviceManager
+     * @param EntityManagerInterface $entityManager
+     * @param AbstractPluginManager $formElementManager 
+     * @param string $shortName this controller's short name/type of entity
+     * 
+     * @see Application\Controller\Factory\SimpleEntityControllerFactory
+     * 
      */
-    public function __construct(ContainerInterface $serviceManager)
+    public function __construct(EntityManagerInterface $entityManager, 
+            AbstractPluginManager $formElementManager, $shortName)
     {
-        $this->serviceManager = $serviceManager;
+        $this->entityManager = $entityManager;
+        $this->formElementManager = $formElementManager;
+        $this->name = $shortName;
         
     }
     /**
@@ -43,13 +68,22 @@ class LocationsController extends AbstractActionController
      */
     public function indexAction()
     {
-        
+        echo "hurray for indexAction."; return false;
     }
+     /**
+     * adds a new Location
+     * 
+     * @return ViewModel
+     */
     public function addAction()
     {
-        echo "hurray."; return false;
+        echo "hurray for addAction."; return false;
     }
-
+    /**
+     * edits a Location
+     * 
+     * @return ViewModel
+     */
     public function editAction()
     {
         echo "hurray for editAction!"; return false;

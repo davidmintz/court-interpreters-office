@@ -122,7 +122,11 @@ class IndexController extends AbstractActionController
         }
         return new ViewModel(['form'=>$form]);
     }
-    
+    /**
+     * temporary; for doodling and experimenting
+     * 
+     * @return ViewModel
+     */
     public function otherTestAction()
     {
         $form = new \Zend\Form\Form('person-form');
