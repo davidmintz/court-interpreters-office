@@ -1,5 +1,6 @@
 <?php
 /** module/Application/src/Controller/Factory/IndexControllerFactory.php */
+
 namespace Application\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
@@ -9,6 +10,8 @@ use Application\Controller\IndexController;
 
 /**
  * Factory class for instantiating IndexController.
+ * 
+ * To be revised when we determine what its dependences are going to be.
  * 
  */
 class IndexControllerFactory implements FactoryInterface {
