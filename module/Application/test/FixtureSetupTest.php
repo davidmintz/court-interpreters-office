@@ -100,11 +100,14 @@ class FixtureSetupTest extends
         $this->assertTrue(is_object($entityManager));
         //echo get_class($entityManager);
         $languages = $entityManager->getRepository('Application\Entity\Language')->findAll();
-        $this->assertTrue(is_array($languages));
+        $this->assertTrue(is_object($languages));
         /** @var Doctrine\DBAL\Connection $connection */
         $connection = $entityManager->getConnection();
         $count = (int) $connection->fetchColumn("select count(*) from languages");
-        $this->assertEquals($count,count($languages));
+	
+
+	
+        $this->assertEquals($count,$languages->getTotalItemCount());
 
     }
     /**
