@@ -65,12 +65,14 @@ class LanguagesController extends AbstractActionController
 
         return ['languages'=>$languages];
     }
+
+
     /**
      * updates a language
      * 
      * @return ViewModel
      */
-    public function updateAction()
+    public function editAction()
     {
        $id = $this->params()->fromRoute('id');
        if (! $id) {

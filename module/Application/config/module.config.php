@@ -57,67 +57,34 @@ return [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route' => '/admin/locations',
+                    'route' => '/admin/locations[/:action[/:id]]',
                     'defaults' => [
                         'controller' => Controller\LocationsController::class,
                         'action'     => 'index',
                     ],
                     
                 ],
-                'constraints' => [],
-                'child_routes' =>[
-                    'action' => [
-                        'type' => 'segment',
-                        'may_terminate' => true,
-                        'options' =>[
-                            'route' => '/:action[/:id]',
-                            'defaults' => [],
-                        ],
-                        'constraints' => [
-                            'action' => 'add|edit|index|list|delete',
-                             'id' => '[1-9]\d*'
-                        ],
-                    ],
-                ]
+                 'constraints' => [
+                    'action' => 'add|edit|index|list|delete',
+                     'id' => '[1-9]\d*'
+                ],
             ],
-            /** @todo rewrite this like the locations route */
+            
             'languages' => [
            
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/admin/languages',
+                    'route'    => '/admin/languages[/:action[/:id]]',
                     'defaults' => [
                         'controller' => Controller\LanguagesController::class,
                         'action'     => 'index',
                     ],
                 ],
-                'child_routes' =>[
-                   'add' => [
-                        'type' => 'segment',
-                         'may_terminate' => true,
-                         'options' =>[
-                            'route'=> '/add',
-                            'defaults' => [
-                                'action' => 'create',
-                            ],
-                        ],
-                    ],
-                    'edit' => [
-                        'type' => 'segment',
-                         'may_terminate' => true,
-                         'options' =>[
-                            'route'=> '/edit/:id',
-                            'defaults' => [
-                                'action' => 'update',
-                            ]
-                        ],
-                        'constraints' => [
-                            'id' => '[1-9]\d*'
-                        ],
-                        
-                    ]
-                ]
+                'constraints' => [
+                    'action' => 'add|edit|index|list|delete',
+                     'id' => '[1-9]\d*'
+                ],
             ]
         ],
     ],
