@@ -92,16 +92,17 @@ return [
                     'edit' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/edit/:id',
+                            'route'    => '/:action/:id',
                             'defaults' => [
                                 'action' => 'edit',
 
                             ],
                             'constraints' => [
+                                'action' => 'edit|delete',
                                 'id' => '[1-9]\d*',
                             ],
                         ],
-                    ],
+                    ],/*
                     'delete' => [
                         'type' => Segment::class,
                         'options' => [
@@ -114,7 +115,7 @@ return [
                                 'id' => '[1-9]\d*',
                             ],
                         ],
-                    ],
+                    ],*/
                 ],
             ],
            

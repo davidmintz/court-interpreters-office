@@ -4,9 +4,12 @@ if ($this->errorMessage) : ?>
 <?php
 return;
 endif;
-if (strstr($this->title,'add')) : 
+$form = $this->form;
+if (strstr($this->title,'add')) :
+	$action = 'add' ;
 	$actionAttrib = $this->url('languages/add');//,['action'=>'add']
 else: 
+	$action = 'edit';
 	$actionAttrib = $this->url('languages/edit',['id'=> $this->id ] );
 endif;
 
