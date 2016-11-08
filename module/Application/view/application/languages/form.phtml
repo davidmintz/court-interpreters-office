@@ -6,7 +6,7 @@ return;
 endif;
 if (strstr($this->title,'add')) : 
 	$actionAttrib = $this->url('languages',['action'=>'add']);
-else: echo "shit... ";
+else: 
 	$actionAttrib = $this->url('languages',['id'=> $this->id ,'action'=>'edit'] );
 endif;
 
@@ -32,16 +32,12 @@ $name = $form->get('name');
 echo $this->formLabel($name),$this->formElement($name),$this->formElementErrors($name);
 ?>
 </div> 
-<div class="form-group">
-<?php 
+<div class="form-group"><?php 
 $comments = $form->get('comments');
-echo $this->formLabel($comments);
-echo $this->formElement($comments);
-echo $this->formElementErrors($comments);
+echo $this->formLabel($comments),$this->formElement($comments), $this->formElementErrors($comments);
 ?>		
 </div>
-<div class="form-group">
-<?php 
+<div class="form-group"><?php 
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
 echo $this->form()->closeTag();
