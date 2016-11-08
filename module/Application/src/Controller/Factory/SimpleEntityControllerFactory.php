@@ -4,30 +4,38 @@
 namespace Application\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Interop\Container\ContainerInterface;
-use Application\Controller\IndexController;
+
+
 
 /**
- * Factory for instantiating Controllers for managinag our relatively 
+ * Factory for instantiating Controllers for managing our relatively 
  * simple entities
  * 
  */
 class SimpleEntityControllerFactory implements FactoryInterface {
     
-    /** 
-     * {@inheritdoc}
-     */
+   /**
+    * instantiates and returns a concrete instance of AbstractActionController
+    * 
+    * @param ContainerInterface $container
+    * @param string $requestedName
+    * @param array $options
+    * @return Zend\Mvc\Controller\AbstractActionController
+    */
     public function __invoke(ContainerInterface $container, $requestedName, Array $options = null) {
         
         $array = explode('\\',$requestedName);
         $baseName = end($array);
-        $what = strtolower(substr($baseName,0,-10));
+        $shortName = strtolower(substr($baseName,0,-10));
         
-        switch ($what) {
+        switch ($shortName ) {
             case 'languages':
             case 'locations':
-                return new $requestedName($container);
+                $pluginManager = $container->get('FormElementManager');
+                $entityManager = $container->get('entity-manager');
+                
+                return new $requestedName($entityManager,$pluginManager,$shortName);
             break;
             // to be continued
         }
