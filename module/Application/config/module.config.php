@@ -104,6 +104,7 @@ return [
     'form_elements' => [
         'factories' => [
             Entity\Language::class => Form\Factory\AnnotatedEntityFormFactory::class,
+            Entity\Location::class => Form\Factory\AnnotatedEntityFormFactory::class,
         ],
     ],
     'controllers' => [
