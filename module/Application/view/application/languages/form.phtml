@@ -5,9 +5,9 @@ if ($this->errorMessage) : ?>
 return;
 endif;
 if (strstr($this->title,'add')) : 
-	$actionAttrib = $this->url('languages',['action'=>'add']);
+	$actionAttrib = $this->url('languages/add');//,['action'=>'add']
 else: 
-	$actionAttrib = $this->url('languages',['id'=> $this->id ,'action'=>'edit'] );
+	$actionAttrib = $this->url('languages/edit',['id'=> $this->id ] );
 endif;
 
 echo "form action: $actionAttrib ... ";

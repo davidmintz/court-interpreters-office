@@ -69,7 +69,56 @@ return [
                      'id' => '[1-9]\d*'
                 ],
             ],
+            'languages' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route'    => '/admin/languages',
+                    'defaults' => [
+                        'controller' => Controller\LanguagesController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'add' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/add',
+                            'defaults' => [
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/edit/:id',
+                            'defaults' => [
+                                'action' => 'edit',
+
+                            ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                    'delete' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/delete/:id',
+                            'defaults' => [
+                                'action' => 'delete',
+                                
+                            ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
            
+           /*
             'languages' => [
            
                 'type' => Segment::class,
@@ -79,13 +128,15 @@ return [
                     'defaults' => [
                         'controller' => Controller\LanguagesController::class,
                         'action'     => 'index',
+                        'id'         => null,
                     ],
                 ],
                 'constraints' => [
-                    'action' => 'add|edit|index|list|delete',
+                    'action' => 'add|edit|list|delete',
                      'id' => '[1-9]\d*'
                 ],
             ]
+            */
         ],
     ],
     'view_helpers' => [
