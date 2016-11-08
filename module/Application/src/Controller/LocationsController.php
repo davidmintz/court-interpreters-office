@@ -7,7 +7,13 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\AbstractPluginManager;
+use Doctrine\ORM\EntityManagerInterface;
+
+use Application\Entity\Location;
+use Application\Form\AnnotatedFormCreationTrait;
+
+
 
 /**
  *  LocationsController
@@ -68,7 +74,8 @@ class LocationsController extends AbstractActionController
      */
     public function indexAction()
     {
-        echo "hurray for indexAction."; return false;
+        echo "hurray for indexAction."; 
+        return [];
     }
      /**
      * adds a new Location
@@ -77,7 +84,14 @@ class LocationsController extends AbstractActionController
      */
     public function addAction()
     {
-        echo "hurray for addAction."; return false;
+        
+        
+        $entity = new Location();
+        $form = $this->getForm(Location::class,['object'=>$entity,'action'=>'create'])
+               ->bind($entity);
+        
+        return (new ViewModel(['form'=>$form, 'title'=>'add a location']))
+            ->setTemplate('application/locations/form.phtml');
     }
     /**
      * edits a Location
@@ -86,7 +100,24 @@ class LocationsController extends AbstractActionController
      */
     public function editAction()
     {
-        echo "hurray for editAction!"; return false;
+       $viewModel = (new ViewModel())
+        ->setTemplate('application/locations/form.phtml')
+        ->setVariables(['title' => 'edit a location']);
+
+       $id = $this->params()->fromRoute('id');
+       if (! $id) {
+           return $viewModel->setVariables(['errorMessage' => "invalid or missing id parameter"]);
+       }
+       $entity = $this->entityManager->find('Application\Entity\Location',$id);
+       if (! $entity) {
+           return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
+       }
+         
+        
+        $form = $this->getForm(Location::class,['object'=>$entity,'action'=>'create'])
+               ->bind($entity);
+           
+        return (new ViewModel(['form'=>$form, 'title'=>'edit a location']))
+            ->setTemplate('application/locations/form.phtml');
     }
-    
 }
