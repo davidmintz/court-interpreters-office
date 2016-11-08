@@ -1,4 +1,5 @@
 <?php
+/** module/Application/src/Entity/LanguageRepository.php */
 
 namespace Application\Entity;
 
@@ -9,18 +10,33 @@ use Zend\Paginator\Paginator as ZendPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 
+use Doctrine\ORM\EntityManagerInterface;
+
+/**
+ * custom EntityRepository class for Language entity.
+ */
+
 class LanguageRepository extends EntityRepository
 {
-
-	public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    /**
+     * constructor.
+     * 
+     * @param EntityManagerInterface $em
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     */
+	public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
     {
         parent::__construct($em,$class);
-        
-        //$cache = $em->getConfiguration()->getResultCacheImpl();
-        //$cache->setNamespace('requests');	
-        //$this->cache = $cache; 
     }
-
+    
+    /**
+     * returns all languages wrapped in a paginator.
+     * @todo rename, because it's misleading for findAll to return 
+     * a data type different from that of the method it overrides
+     * 
+     * @param int $page
+     * @return ZendPaginator
+     */
     public function findAll($page = 1) 
     {
 
@@ -33,12 +49,6 @@ class LanguageRepository extends EntityRepository
 		$paginator->setCurrentPageNumber($page)
 			->setItemCountPerPage(30);
 		return $paginator;
-		//$defendants = $this->getDefendantsForRequests($paginator);
-		//return ['requests'=>$paginator, 'defendants' => $defendants ];
-	
-
-
-
     }
 
 
