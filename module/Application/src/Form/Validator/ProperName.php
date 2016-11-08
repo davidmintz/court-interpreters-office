@@ -3,7 +3,9 @@
 namespace Application\Form\Validator;
 
 use Zend\Validator\AbstractValidator;
-
+/**
+ * class for validating proper names
+ */
 class ProperName extends AbstractValidator
 {
     /** @var string */
@@ -47,6 +49,10 @@ class ProperName extends AbstractValidator
     
     /**
      * constructor
+     * 
+     * @param $options 
+     * required key: type => first|middle|last
+     * optional key pattern => regular_expression to use
      */
     public function __construct(Array $options) { 
     	
