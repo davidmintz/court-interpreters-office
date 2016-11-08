@@ -3,28 +3,43 @@
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Zend\Form\Annotation;
 
 /**
  * Entity class representing a location where an interpreting event takes place.
  *
  * @todo add aboolean property "active" for retiring (hiding) locations no longer in use
- *
+ * 
+ * 
  * @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})})
+ * 
+ * @Annotation\Name("location")
  */
 class Location
 {
     /**
      * entity id.
      * 
+     * @Annotation\Attributes({"type":"hidden"})
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
      * name of the location.
-     * 
-     * @ORM\Column(type="string",length=60,options={"nullable":false})
+     * @Annotation\Attributes({"type":"text","placeholder":"the name of the location","size":36,"class":"form-control"})
+     * @Annotation\Options({"label":"name"})
+     * @Annotation\Filter({"name":"StringTrim"})
+     * @Annotation\Filter({"name":"StripTags"})
+     * @Annotation\Validator({"name":"NotEmpty",
+     *  "break_chain_on_failure": true,
+     *  "options":{"messages":{"isEmpty":"location name is required"}
+     *  }})
+     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
+     *  "messages":{"stringLengthTooShort":"language name must be at least 2 characters long",
+     *   "stringLengthTooLong":"language name exceeds maximum length of 60 characters"}}})
      *
+     * @ORM\Column(type="string",length=60,options={"nullable":false})
      * @var string
      */
     protected $name;
@@ -54,7 +69,13 @@ class Location
 
     /**
      * comments about this location.
-     * 
+     * @Annotation\Options({"label":"comments"})
+     * @Annotation\Filter({"name":"StringTrim"})
+     * @Annotation\Filter({"name":"StripTags"})
+     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
+     *  "messages":{"stringLengthTooShort":"comments must be at least 2 characters long",
+     *   "stringLengthTooLong":"language name exceeds maximum length of 200 characters"}}})
+
      * @ORM\Column(type="string",length=200,options={"default":""})
      * @var string
      */
