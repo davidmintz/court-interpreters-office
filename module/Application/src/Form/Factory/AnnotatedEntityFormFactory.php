@@ -56,6 +56,8 @@ class AnnotatedEntityFormFactory implements FactoryInterface
         switch ($requestedName) {
             case Entity\Language::class:
                 $this->setupLanguageForm($form, $options);
+           case Entity\Location::class:
+                $this->setupLocationForm($form,$options);
            // to be continued
         }
         $form->setHydrator(new DoctrineHydrator($this->objectManager))
@@ -96,5 +98,16 @@ class AnnotatedEntityFormFactory implements FactoryInterface
        $input = $form->getInputFilter()->get('name');
            $input->getValidatorChain()
           ->attach($validator);
+    }
+     /**
+     * completes the initialization of the Location form
+     * 
+     * @param Form $form
+     * @param array $options
+     */
+    public function setupLocationForm(Form $form, Array $options) 
+    {
+
+
     }
 }
