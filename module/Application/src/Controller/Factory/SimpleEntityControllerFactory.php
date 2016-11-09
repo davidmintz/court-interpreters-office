@@ -31,10 +31,11 @@ class SimpleEntityControllerFactory implements FactoryInterface
         switch ($shortName) {
             case 'languages':
             case 'locations':
-                $pluginManager = $container->get('FormElementManager');
+                //$pluginManager = $container->get('FormElementManager');
+                $factory = $container->get('annotated-form-factory');
                 $entityManager = $container->get('entity-manager');
 
-                return new $requestedName($entityManager, $pluginManager, $shortName);
+                return new $requestedName($entityManager, $factory, $shortName);
             break;
             // to be continued
         }

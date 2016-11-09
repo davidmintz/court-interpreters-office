@@ -7,7 +7,8 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\ServiceManager\AbstractPluginManager;
+//use Zend\ServiceManager\AbstractPluginManager;
+use Application\Form\Factory\FormFactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Application\Entity\Language;
 use Application\Form\AnnotatedFormCreationTrait;
@@ -24,9 +25,9 @@ class LanguagesController extends AbstractActionController
      *
      * for instantiating the Form
      *
-     * @var AbstractPluginManager
+     * @var FormFactoryInterface
      */
-    protected $formElementManager;
+    protected $formFactory;
 
     /**
      * entity manager.
@@ -51,11 +52,13 @@ class LanguagesController extends AbstractActionController
      *
      * @see Application\Controller\Factory\SimpleEntityControllerFactory
      */
-    public function __construct(EntityManagerInterface $entityManager,
-            AbstractPluginManager $formElementManager, $shortName)
+    public function __construct(
+            EntityManagerInterface $entityManager, 
+            FormFactoryInterface $formFactory, $shortName)
     {
         $this->entityManager = $entityManager;
-        $this->formElementManager = $formElementManager;
+        //$this->formElementManager = $formElementManager;
+        $this->formFactory = $formFactory;
         $this->name = $shortName;
     }
     /**

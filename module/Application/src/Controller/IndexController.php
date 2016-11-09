@@ -22,7 +22,7 @@ class IndexController extends AbstractActionController
      *
      * @var ContainerInterface
      */
-    protected $serviceManager;
+    //protected $serviceManager;
 
     /**
      * constructor.
@@ -31,9 +31,13 @@ class IndexController extends AbstractActionController
      *
      * @param ContainerInterface $serviceManager
      */
-    public function __construct(ContainerInterface $serviceManager)
+    
+    protected $formFactory;
+    
+    public function __construct($formFactory)
     {
-        $this->serviceManager = $serviceManager;
+        //$this->serviceManager = $serviceManager;
+        $this->formFactory = $formFactory;
     }
     /**
      * index action.
@@ -42,6 +46,20 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
+        // a little test
+        try {
+            
+            echo get_class($this->formFactory), " is the class";
+            $form = $this->formFactory->createForm(\Application\Entity\Language::class,[
+                'action' => 'create',
+                'object' => new \Application\Entity\Language()
+            ]);
+            echo get_class($form);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+        
+        
     }
     /**
      * temporary action for experimenting and doodling.

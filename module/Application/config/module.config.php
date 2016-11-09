@@ -226,7 +226,7 @@ return [
         ],
         'factories' => [
             'Zend\Authentication\AuthenticationService' => 'Application\Service\Factory\AuthenticationFactory',
-
+            'annotated-form-factory' => 'Application\Form\Factory\AlternativeAnnotatedEntityFormFactory',
         ],
 
    ],
