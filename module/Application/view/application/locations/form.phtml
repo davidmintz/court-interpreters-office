@@ -1,0 +1,19 @@
+<?php
+if ($this->errorMessage) : ?>
+<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
+<?php
+return;
+endif;
+$formAction = strstr($this->title,'add') ? $this->url('locations',['action'=>'add']) 
+	:  $this->url('locations',['action'=>'edit','id' => $this->id ]);
+$form = $this->form;
+$form->add([
+	'name'=>'submit',
+	'type'=>'Zend\Form\Element\Submit',
+	'attributes' => ['value'=>'submit'],
+])->setAttribute('method', 'post')->setAttribute('action', $actionAttrib);
+
+?>
+<h2><?php echo $this->title ?></h2>
+
+our form action with be <?=$formAction?>
