@@ -66,7 +66,7 @@ return [
                 ],
                  'constraints' => [
                     'action' => 'add|edit|index|list|delete',
-                     'id' => '[1-9]\d*'
+                     'id' => '^[1-9][0-9]*$'
                 ],
             ],
            
@@ -150,12 +150,31 @@ return [
                     __NAMESPACE__ . '\Entity' => 'application_annotation_driver',
                 )
             )
-        )
+        ),
+
+        'authentication' => [
+            'orm_default' => [
+                'object_manager' => 'Doctrine\ORM\EntityManager',
+                'identity_class' => 'Application\Entity\User',
+                'identity_property' => 'email',
+                'credential_property' => 'password',
+               // 'credential_callable' => function (User $user, $passwordGiven) {
+               //     return my_awesome_check_test($user->getPassword(), $passwordGiven);
+               // },
+            ],
+        ],
+ 
    ],
    'service_manager' => [
         'aliases' =>[
           'entity-manager' =>  'doctrine.entitymanager.orm_default',
+          'auth'           =>   'Zend\Authentication\AuthenticationService'
         ],
+        'factories' => [
+            'Zend\Authentication\AuthenticationService' => 'Application\Service\Factory\AuthenticationFactory',
+        
+        ]
+            
    ],
    
 ];
