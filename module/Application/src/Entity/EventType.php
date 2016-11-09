@@ -1,4 +1,5 @@
 <?php
+
 /** module/Application/src/Entity/EventType.php */
 
 namespace Application\Entity;
@@ -18,14 +19,14 @@ class EventType
 {
     /**
      * entity id.
-     * 
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
      * the "category" of this event-type, e.g., in-court, out-of-court.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="EventCategory")
      * @ORM\JoinColumn(nullable=false)
      *
@@ -35,7 +36,7 @@ class EventType
 
     /**
      * the name of this event-type (e.g., plea, sentencing, etc).
-     * 
+     *
      * @ORM\Column(type="string",length=60,options={"nullable":false})
      *
      * @var string
@@ -44,7 +45,7 @@ class EventType
 
     /**
      * comments.
-     * 
+     *
      * @ORM\Column(type="string",length=60,options={"nullable":false,"default":""})
      *
      * @var string

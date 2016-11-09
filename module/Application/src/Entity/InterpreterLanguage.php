@@ -1,4 +1,5 @@
 <?php
+
 /** module/Application/src/Entity/InterpreterLanguage.php  */
 
 namespace Application\Entity;
@@ -19,15 +20,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class InterpreterLanguage
 {
-    
     /**
-     * constructor
-     * 
+     * constructor.
+     *
      * @param Interpreter $interpreter
-     * @param Language $language
-     * 
+     * @param Language    $language
+     *
      * @todo a lifecycle callback to ensure certified languages have a boolean
-     * $federalCertification set.
+     * $federalCertification set
      */
     public function __construct(Interpreter $interpreter = null,
             Language $language = null)
@@ -42,7 +42,7 @@ class InterpreterLanguage
 
     /**
      * The Interpreter who works in this language.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="Interpreter",inversedBy="interpreterLanguages")
      * @ORM\Id
      *
@@ -52,7 +52,7 @@ class InterpreterLanguage
 
     /**
      * The language in which this interpreter works.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="Language")
      * @ORM\Id
      *
@@ -62,14 +62,14 @@ class InterpreterLanguage
 
     /**
      * Whether the Interpreter holds federal court interpreter certification in this language.
-     * 
+     *
      * The only certified languages in the US District Court system are Spanish,
-     * Navajo and Haitian Creole. Of these, only the Spanish certification 
-     * program is active. This field should be a boolean for the certified 
+     * Navajo and Haitian Creole. Of these, only the Spanish certification
+     * program is active. This field should be a boolean for the certified
      * languages and null for everything else.
-     * 
+     *
      * @link http://www.uscourts.gov/services-forms/federal-court-interpreters/federal-court-interpreter-certification-examination the federal court certification program
-     * 
+     *
      * @ORM\Column(name="federal_certification",type="boolean",nullable=true)
      *
      * @var bool

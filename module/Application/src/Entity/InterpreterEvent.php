@@ -1,4 +1,5 @@
 <?php
+
 /** module/Application/src/Entity/InterpreterEvent.php */
 
 namespace Application\Entity;
@@ -7,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Entity representing an interpreter-event.
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(name="interpreters_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_interp_event",columns={"interpreter_id","event_id"})})
  * @ORM\HasLifecycleCallbacks
@@ -16,7 +17,7 @@ class InterpreterEvent
 {
     /**
      * The Interpreter.
-     * 
+     *
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Interpreter")
      *
@@ -26,9 +27,10 @@ class InterpreterEvent
 
     /**
      * The Event.
-     * 
+     *
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Event",inversedBy="interpretersAssigned")
+     *
      * @var Event
      */
     protected $event;
@@ -51,14 +53,14 @@ class InterpreterEvent
      * @var User
      */
     protected $createdBy;
-    
+
     /**
-     * constructor
-     * 
+     * constructor.
+     *
      * @param Interpreter $interpreter
-     * @param Event $event
+     * @param Event       $event
      */
-    public function __construct(Interpreter $interpreter = null,Event $event = null)
+    public function __construct(Interpreter $interpreter = null, Event $event = null)
     {
         $this->interpreter = $interpreter;
         $this->event = $event;
@@ -66,7 +68,7 @@ class InterpreterEvent
 
     /**
      * Automatically sets creation datetime.
-     * 
+     *
      * @ORM\PrePersist
      */
     public function onPrePersist()
@@ -145,27 +147,29 @@ class InterpreterEvent
     {
         return $this->created;
     }
-    
+
     /* ------------------ */
     /**
-     * sets createdBy property
+     * sets createdBy property.
+     *
      * @param \Application\Entity\User $user
+     *
      * @return InterpreterEvent
      */
     public function setCreatedBy(User $user)
     {
         $this->createdBy = $user;
+
         return $this;
     }
-    
+
     /**
-     * gets createdBy property
-     * 
+     * gets createdBy property.
+     *
      * @return User
      */
     public function getCreatedBy()
     {
-        
         return $this->createdBy;
     }
 }

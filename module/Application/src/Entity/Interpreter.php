@@ -1,4 +1,5 @@
 <?php
+
 /** module/Application/src/Entity/Interpreter.php */
 
 namespace Application\Entity;
@@ -15,15 +16,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Interpreter extends Person
 {
     /**
-     * entity id
-     * 
+     * entity id.
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
-     * phone number
-     * 
+     * phone number.
+     *
      * @ORM\Column(type="string",length=16,nullable=true)
      *
      * @var string
@@ -31,8 +32,8 @@ class Interpreter extends Person
     protected $phone;
 
     /**
-     * date of birth
-     * 
+     * date of birth.
+     *
      * @ORM\Column(type="date")
      *
      * @var string
@@ -41,7 +42,7 @@ class Interpreter extends Person
 
     /**
      * working languages.
-     * 
+     *
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="interpreter", cascade={"persist", "remove"})
      * ORM\JoinColumn(onDelete="CASCADE")
      *
@@ -117,8 +118,9 @@ class Interpreter extends Person
 
     /**
      * shortcut for addInterpreterLanguage().
-     * 
+     *
      * @param Language $language
+     *
      * @return Interpreter
      */
     public function addLanguage(Language $language)
@@ -137,7 +139,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function addInterpreterLanguage( InterpreterLanguage $interpreterLanguage)
+    public function addInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
     {
         $this->interpreterLanguages[] = $interpreterLanguage;
 

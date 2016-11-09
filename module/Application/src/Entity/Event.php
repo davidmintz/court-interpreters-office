@@ -1,4 +1,5 @@
 <?php
+
 /** module/Application/src/Entity/Event.php */
 
 namespace Application\Entity;
@@ -18,7 +19,7 @@ class Event
 {
     /**
      * entity id.
-     * 
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
@@ -79,7 +80,7 @@ class Event
 
     /**
      * Anonymous or generic judge.
-     * 
+     *
      * While most events have a Judge, there are also cases where the identity of
      * the judge/person is unknown, irrelevant or not applicable.
      *
@@ -115,18 +116,19 @@ class Event
 
     /**
      * the docket number.
-     * 
+     *
      * @ORM\Column(type="string",length=15,nullable=false,options={"default":""})
      *
      * @var string
      */
     protected $docket = '';
-    
+
     /**
-     * event location
-     * 
+     * event location.
+     *
      * @ORM\ManyToOne(targetEntity="Location")
      * @ORM\JoinColumn(nullable=true)
+     *
      * @var Location
      */
     protected $location;
@@ -160,9 +162,10 @@ class Event
 
     /**
      * Interpreters assigned to this event.
-     * 
+     *
      * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event",cascade="persist")
-     * @var ArrayCollection 
+     *
+     * @var ArrayCollection
      */
     protected $interpretersAssigned;
 
@@ -205,8 +208,9 @@ class Event
 
     /**
      * timestamp of last update.
-     * 
+     *
      * @ORM\Column(type="datetime")
+     *
      * @var \DateTime
      */
     protected $modified;
@@ -335,28 +339,31 @@ class Event
     {
         return $this->docket;
     }
-    
+
     /**
-     * set Location
-     * 
+     * set Location.
+     *
      * @param Location
+     *
      * @return Event
      */
-    public function setLocation(Location $location)        
+    public function setLocation(Location $location)
     {
         $this->location = $location;
+
         return $this;
     }
-    
+
     /**
-     * get Location
+     * get Location.
+     *
      * @return Location
      */
     public function getLocation()
     {
         return $this->location;
     }
-    
+
     /**
      * Set comments.
      *
@@ -738,39 +745,40 @@ class Event
     }
     /**
      * convenience method for assigning an interpreter.
-     * 
+     *
      * @param Interpreter $interpreter
+     *
      * @return Event
      */
     public function assignInterpreter(Interpreter $interpreter)
     {
         $this->addInterpretersAssigned(
-            new InterpreterEvent($interpreter,$this)
+            new InterpreterEvent($interpreter, $this)
         );
+
         return $this;
     }
-    
+
     /**
-     * Lifecycle callback/sanity check for submitter and judge properties. 
-     * 
+     * Lifecycle callback/sanity check for submitter and judge properties.
+     *
      * @ORM\PrePersist
      * @ORM\PreUpdate
+     *
      * @throws \RuntimeException
      */
     public function onSave()
     {
-        if (! $this->anonymousSubmitter == NULL xor $this->submitter === NULL)
-        {
+        if (!$this->anonymousSubmitter == null xor $this->submitter === null) {
             throw new \RuntimeException(
                 'Event entity submitter and anonymousSubmitter properties: '
-                    . ' one must be null and the other not-null'
+                    .' one must be null and the other not-null'
             );
         }
-        if (! $this->anonymousJudge === NULL xor $this->judge === NULL)
-        {
+        if (!$this->anonymousJudge === null xor $this->judge === null) {
             throw new \RuntimeException(
                 'Event entity judge and anonymousJudge properties: '
-                    . ' one must be null and the other not-null'
+                    .' one must be null and the other not-null'
             );
         }
     }

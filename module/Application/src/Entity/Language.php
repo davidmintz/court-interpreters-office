@@ -5,32 +5,29 @@
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\Collection;
-
 use Zend\Form\Annotation;
 
-/** 
+/**
  * Entity class representing a language used by an Interpreter.
- * 
+ *
  * @Annotation\Name("language")
  * @ORM\Entity(repositoryClass="LanguageRepository")
- * @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})}) 
+ * @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})})
  */
-
 class Language
 {
     /**
-     * entity id
-     * 
+     * entity id.
+     *
      * @Annotation\Attributes({"type":"hidden"})
-     * @ORM\Id 
+     * @ORM\Id
      * @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
      * name of the language.
-     * 
+     *
      * @Annotation\Attributes({"type":"text","placeholder":"the name of the language","size":36,"class":"form-control"})
      * @Annotation\Options({"label":"name"})
      * @Annotation\Filter({"name":"StringTrim"})
@@ -50,7 +47,7 @@ class Language
 
     /**
      * comments.
-     * 
+     *
      * @Annotation\Attributes({"type":"textarea", "cols":36,"rows":4,"class":"form-control","placeholder":"optionally, a few notes about this language"})
      * @Annotation\Options({"label":"notes"})
      * @Annotation\AllowEmpty()
@@ -64,7 +61,6 @@ class Language
      */
     protected $comments = '';
 
-    
     /**
      * Is there a federal certification program for this language?
      *
@@ -83,10 +79,9 @@ class Language
     }
 
     /**
-     * returns a string representation 
-     *  
+     * returns a string representation.
+     *
      * @return string
-     * 
      */
     public function __toString()
     {
@@ -149,7 +144,4 @@ class Language
     {
         return $this->comments;
     }
-    
-
-    
 }

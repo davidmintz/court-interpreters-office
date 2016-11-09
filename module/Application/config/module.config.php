@@ -1,11 +1,13 @@
 <?php
 /**
- * module/Application/config/module.config.php
+ * module/Application/config/module.config.php.
  */
 
 namespace Application;
+
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
+
 //use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
@@ -15,22 +17,22 @@ return [
             'home' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/',
+                    'route' => '/',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
             ],
-            // based on one that comes out of the box with the 
+            // based on one that comes out of the box with the
             // Skeleton Application; no reason not to remove it at some point.
             'application' => [
-                'type'    => Segment::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/app[/:action]',
+                    'route' => '/app[/:action]',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
             ],
@@ -38,7 +40,7 @@ return [
             // match this route
             /*
             'example' => [
-                
+
                 'type' => Segment::class,
                 'options' => [
                     'route' => '/admin/:controller[/:action]',
@@ -51,7 +53,7 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-                
+
              ],*/
             'locations' => [
                 'type' => Segment::class,
@@ -61,29 +63,29 @@ return [
                     'route' => '/admin/locations[/:action[/:id]]',
                     'defaults' => [
                         'controller' => Controller\LocationsController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
                  'constraints' => [
                     'action' => 'add|edit|index|list|delete',
-                     'id' => '^[1-9][0-9]*$'
+                     'id' => '^[1-9][0-9]*$',
                 ],
             ],
             'languages' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route'    => '/admin/languages',
+                    'route' => '/admin/languages',
                     'defaults' => [
                         'controller' => Controller\LanguagesController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
                 'child_routes' => [
                     'add' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/add',
+                            'route' => '/add',
                             'defaults' => [
                                 'action' => 'add',
                             ],
@@ -92,7 +94,7 @@ return [
                     'edit' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/:action/:id',
+                            'route' => '/:action/:id',
                             'defaults' => [
                                 'action' => 'edit',
 
@@ -102,14 +104,14 @@ return [
                                 'id' => '[1-9]\d*',
                             ],
                         ],
-                    ],/*
+                    ], /*
                     'delete' => [
                         'type' => Segment::class,
                         'options' => [
                             'route'    => '/delete/:id',
                             'defaults' => [
                                 'action' => 'delete',
-                                
+
                             ],
                             'constraints' => [
                                 'id' => '[1-9]\d*',
@@ -118,10 +120,10 @@ return [
                     ],*/
                 ],
             ],
-           
+
            /*
             'languages' => [
-           
+
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
@@ -142,16 +144,16 @@ return [
     ],
     'view_helpers' => [
         'invokables' => [
-            'formElementErrors'=> 'Application\Form\View\Helper\FormElementErrors',
-        ]
+            'formElementErrors' => 'Application\Form\View\Helper\FormElementErrors',
+        ],
     ],
-    
+
     'view_helper_config' => array(
         'flashmessenger' => array(
-            'message_open_format'      => '<div%s><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>',
+            'message_open_format' => '<div%s><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>',
             'message_separator_string' => '</p><p>',
-            'message_close_string'     => '</p></div>',
-        )
+            'message_close_string' => '</p></div>',
+        ),
     ),
     'form_elements' => [
         'factories' => [
@@ -168,18 +170,18 @@ return [
     ],
     'view_manager' => [
         'display_not_found_reason' => true,
-        'display_exceptions'       => true,
-        'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/404',
-        'exception_template'       => 'error/index',
+        'display_exceptions' => true,
+        'doctype' => 'HTML5',
+        'not_found_template' => 'error/404',
+        'exception_template' => 'error/index',
         'template_map' => [
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
-            'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
-            'error/404'               => __DIR__ . '/../view/error/404.phtml',
-            'error/index'             => __DIR__ . '/../view/error/index.phtml',
+            'layout/layout' => __DIR__.'/../view/layout/layout.phtml',
+            'application/index/index' => __DIR__.'/../view/application/index/index.phtml',
+            'error/404' => __DIR__.'/../view/error/404.phtml',
+            'error/index' => __DIR__.'/../view/error/index.phtml',
         ],
         'template_path_stack' => [
-            __DIR__ . '/../view',
+            __DIR__.'/../view',
         ],
     ],
     'doctrine' => [
@@ -190,7 +192,7 @@ return [
                 'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                 'cache' => 'array',
                 'paths' => array(
-                    __DIR__ . '/../src/Entity',  
+                    __DIR__.'/../src/Entity',
                 ),
             ),
 
@@ -199,9 +201,9 @@ return [
             'orm_default' => array(
                 'drivers' => array(
                     // register `my_annotation_driver` for any entity under namespace `My\Namespace`
-                    __NAMESPACE__ . '\Entity' => 'application_annotation_driver',
-                )
-            )
+                    __NAMESPACE__.'\Entity' => 'application_annotation_driver',
+                ),
+            ),
         ),
 
         'authentication' => [
@@ -215,18 +217,18 @@ return [
                // },
             ],
         ],
- 
+
    ],
    'service_manager' => [
-        'aliases' =>[
-          'entity-manager' =>  'doctrine.entitymanager.orm_default',
-          'auth'           =>   'Zend\Authentication\AuthenticationService'
+        'aliases' => [
+          'entity-manager' => 'doctrine.entitymanager.orm_default',
+          'auth' => 'Zend\Authentication\AuthenticationService',
         ],
         'factories' => [
             'Zend\Authentication\AuthenticationService' => 'Application\Service\Factory\AuthenticationFactory',
-        
-        ]
-            
+
+        ],
+
    ],
-   
+
 ];

@@ -1,5 +1,7 @@
 <?php
+
 /** module/Application/src/Entity/DefendantName.php */
+
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -20,14 +22,14 @@ class DefendantName
 {
     /**
      * entity id.
-     * 
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
      */
     protected $id;
 
     /**
      * given name(s), a/k/a first name(s).
-     * 
+     *
      * @ORM\Column(type="string",name="given_names",length=60,nullable=false)
      *
      * @var string
@@ -36,7 +38,7 @@ class DefendantName
 
     /**
      * surname(s), a/k/a last name.
-     * 
+     *
      * @ORM\Column(type="string",length=60,nullable=false)
      *
      * @var string
@@ -119,7 +121,7 @@ class DefendantName
 
     /**
      * Set lastname.
-     * 
+     *
      * proxies to setSurnames().
      *
      * @param string $lastname
@@ -154,8 +156,9 @@ class DefendantName
 
     /**
      * set surnames.
-     * 
+     *
      * @param string $surnames
+     *
      * @return DefendantName
      */
     public function setSurnames($surnames)
@@ -176,8 +179,9 @@ class DefendantName
     }
     /**
      * set given names.
-     * 
+     *
      * @param string $given_names
+     *
      * @return DefendantName
      */
     public function setGivenNames($given_names)

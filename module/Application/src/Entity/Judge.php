@@ -1,4 +1,5 @@
 <?php
+
 /** module/Application/src/Entity/Judge.php */
 
 namespace Application\Entity;
@@ -14,14 +15,12 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity @ORM\Table(name="judges")
  * @ORM\HasLifecycleCallbacks
- * 
  */
 class Judge extends Person
 {
     /**
-     * 
-     * entity id
-     * 
+     * entity id.
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      *
      * @var int
@@ -103,19 +102,20 @@ class Judge extends Person
     {
         return $this->flavor;
     }
-    
+
     /**
-     * lifecycle callback to ensure correct hat
-     * 
-     * @ORM\PrePersist 
+     * lifecycle callback to ensure correct hat.
+     *
+     * @ORM\PrePersist
+     *
      * @throws \RuntimeException
      */
-    public function onPrePersist()    {
-       
-       if ((string)$this->getHat() !== "Judge") {
-           throw new \RuntimeException(
+    public function onPrePersist()
+    {
+        if ((string) $this->getHat() !== 'Judge') {
+            throw new \RuntimeException(
               'Judge entity must have Hat type "Judge"'
            );
-       }
+        }
     }
 }

@@ -1,42 +1,45 @@
 <?php
+
 /** module/Application/src/Entity/CourtClosing.php */
 
 namespace Application\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Entity class representing a date that the court is closed.
- * 
+ *
  * The CourtClosing is used for computing the difference between business dates.
  * It could also be used for disabling certain dates on calendar controls or for
- * date input validation. The Court is closed mostly for official holidays, but 
- * also, occasionally, for _ad hoc_ events like blizzards and terror attacks. It 
- * is up to the user to keep the list of holidays up to date. 
- * 
+ * date input validation. The Court is closed mostly for official holidays, but
+ * also, occasionally, for _ad hoc_ events like blizzards and terror attacks. It
+ * is up to the user to keep the list of holidays up to date.
+ *
  * @see Application\Entity\Holiday
  * @ORM\Entity
  * @ORM\Table(name="court_closings")
  */
-class CourtClosing {
-    
+class CourtClosing
+{
     /**
      * entity id.
-     * 
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
      */
     protected $id;
 
     /**
-     * the date on which the court is closed
-     * 
+     * the date on which the court is closed.
+     *
      * @ORM\Column(type="date")
+     *
      * @var string
      */
     protected $date;
 
     /**
      * the official holiday for which the court is closed.
-     * 
+     *
      * @var Holiday
      *
      * @ORM\ManyToOne(targetEntity="Application\Entity\Holiday")
@@ -46,17 +49,16 @@ class CourtClosing {
 
     /**
      * a description of the reason for some other (non-holiday) ad hoc closing.
-     * 
+     *
      * @var string
      * @ORM\Column(type="string",length=75,nullable=true)
      */
     protected $description_other;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -64,7 +66,7 @@ class CourtClosing {
     }
 
     /**
-     * Set date
+     * Set date.
      *
      * @param \DateTime $date
      *
@@ -78,7 +80,7 @@ class CourtClosing {
     }
 
     /**
-     * Get date
+     * Get date.
      *
      * @return \DateTime
      */
@@ -88,7 +90,7 @@ class CourtClosing {
     }
 
     /**
-     * Set descriptionOther
+     * Set descriptionOther.
      *
      * @param string $descriptionOther
      *
@@ -102,7 +104,7 @@ class CourtClosing {
     }
 
     /**
-     * Get descriptionOther
+     * Get descriptionOther.
      *
      * @return string
      */
@@ -112,7 +114,7 @@ class CourtClosing {
     }
 
     /**
-     * Set holiday
+     * Set holiday.
      *
      * @param \Application\Entity\Holiday $holiday
      *
@@ -126,7 +128,7 @@ class CourtClosing {
     }
 
     /**
-     * Get holiday
+     * Get holiday.
      *
      * @return \Application\Entity\Holiday
      */
@@ -135,6 +137,3 @@ class CourtClosing {
         return $this->holiday;
     }
 }
-
-
-

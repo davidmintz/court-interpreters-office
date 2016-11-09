@@ -1,6 +1,6 @@
 <?php
 /**
- * module/Application/src/Controller/LanguagesController.php
+ * module/Application/src/Controller/LanguagesController.php.
  */
 
 namespace Application\Controller;
@@ -9,62 +9,58 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\ServiceManager\AbstractPluginManager;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Application\Entity\Language;
 use Application\Form\AnnotatedFormCreationTrait;
 
 /**
  *  LanguagesController, for managing languages.
  */
-
 class LanguagesController extends AbstractActionController
 {
-    
     use AnnotatedFormCreationTrait;
-    
-    /** 
-     * FormElementManager
-     * 
+
+    /**
+     * FormElementManager.
+     *
      * for instantiating the Form
-     * 
+     *
      * @var AbstractPluginManager
      */
     protected $formElementManager;
-    
+
     /**
-     * entity manager
-     * 
+     * entity manager.
+     *
      * @var EntityManagerInterface
      */
     protected $entityManager;
-    
+
     /**
-     * short name of the controller
-     * @var string 
+     * short name of the controller.
+     *
+     * @var string
      */
     protected $name;
-    
+
     /**
-     * constructor
-     * 
+     * constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param AbstractPluginManager $formElementManager 
-     * @param string $shortName this controller's short name/type of entity
-     * 
+     * @param AbstractPluginManager  $formElementManager
+     * @param string                 $shortName          this controller's short name/type of entity
+     *
      * @see Application\Controller\Factory\SimpleEntityControllerFactory
-     * 
      */
-    public function __construct(EntityManagerInterface $entityManager, 
+    public function __construct(EntityManagerInterface $entityManager,
             AbstractPluginManager $formElementManager, $shortName)
     {
         $this->entityManager = $entityManager;
         $this->formElementManager = $formElementManager;
         $this->name = $shortName;
-        
     }
     /**
-     * index action
-     * 
+     * index action.
+     *
      * @return ViewModel
      */
     public function indexAction()
@@ -74,81 +70,81 @@ class LanguagesController extends AbstractActionController
                 ->getRepository('Application\Entity\Language')
                 ->findBy([],['name'=>'ASC']);
         */
-        
-        $page = $this->params()->fromQuery('page',1);
-        $repository = $this->entityManager->getRepository('Application\Entity\Language');
-        $languages = $repository->findAll($page); 
 
-        return ['languages'=>$languages];
+        $page = $this->params()->fromQuery('page', 1);
+        $repository = $this->entityManager->getRepository('Application\Entity\Language');
+        $languages = $repository->findAll($page);
+
+        return ['languages' => $languages];
     }
 
-
     /**
-     * updates a language
-     * 
+     * updates a language.
+     *
      * @return ViewModel
      */
     public function editAction()
     {
-       $id = $this->params()->fromRoute('id');
-       if (! $id) {
-           return $this->getFormViewModel(['errorMessage' => "invalid or missing id parameter"]);
-       }
-       $entity = $this->entityManager->find('Application\Entity\Language',$id);
-       if (! $entity) {
-           return $this->getFormViewModel(['errorMessage' => "language with id $id not found"]);
-       }
-       $form = $this->getForm(Language::class,['object'=>$entity,'action'=>'update'])
+        $id = $this->params()->fromRoute('id');
+        if (!$id) {
+            return $this->getFormViewModel(['errorMessage' => 'invalid or missing id parameter']);
+        }
+        $entity = $this->entityManager->find('Application\Entity\Language', $id);
+        if (!$entity) {
+            return $this->getFormViewModel(['errorMessage' => "language with id $id not found"]);
+        }
+        $form = $this->getForm(Language::class, ['object' => $entity, 'action' => 'update'])
                ->bind($entity);
-       
-       $viewModel = $this->getFormViewModel(
-              ['form'=>$form,'title'=>'edit a language','id'=>$id]
+
+        $viewModel = $this->getFormViewModel(
+              ['form' => $form, 'title' => 'edit a language', 'id' => $id]
         );
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
-            } 
+            }
             $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage("The language $entity has been updated.");
             $this->redirect()->toRoute('languages');
         }
+
         return $viewModel;
     }
     /**
-     * deletes a language
-     * 
-     * @return boolean
+     * deletes a language.
+     *
+     * @return bool
      */
     public function deleteAction()
     {
-        echo "YET TO BE IMPLEMENTED";
+        echo 'YET TO BE IMPLEMENTED';
+
         return false;
     }
-    
+
     /**
-     * adds a new language
-     * 
+     * adds a new language.
+     *
      * @return ViewModel
      */
     public function addAction()
     {
-        
         $language = new Language();
-        
-        $form = $this->getForm(Language::class,['object'=>$language,'action'=>'create'])
+
+        $form = $this->getForm(Language::class, ['object' => $language, 'action' => 'create'])
                 ->bind($language);
         $viewModel = $this->getFormViewModel(
-                ['form'=>$form,'title'=>'add a language']);
+                ['form' => $form, 'title' => 'add a language']);
         $request = $this->getRequest();
-        
+
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
-            } 
+            }
             try {
                 $this->entityManager->persist($language);
                 $this->entityManager->flush();
@@ -159,14 +155,18 @@ class LanguagesController extends AbstractActionController
                 echo $e->getMessage();
             }
         }
+
         return $viewModel;
     }
     /**
-     * get the viewModel
+     * get the viewModel.
+     *
      * @param array $data
+     *
      * @return ViewModel
      */
-    protected function getFormViewModel(Array $data) {
+    protected function getFormViewModel(array $data)
+    {
         return (new ViewModel($data))
                 ->setTemplate('application/languages/form.phtml');
     }

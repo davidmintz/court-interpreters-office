@@ -1,4 +1,5 @@
 <?php
+
 /** module/Application/src/Entity/AnonymousJudge.php */
 
 namespace Application\Entity;
@@ -22,15 +23,14 @@ class AnonymousJudge
 {
     /**
      * entity id.
-     * 
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
     /**
-     * 
-     * the name (i.e., type) of anonymous judge (e.g., Magistrate)
-     * 
+     * the name (i.e., type) of anonymous judge (e.g., Magistrate).
+     *
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string
@@ -38,17 +38,18 @@ class AnonymousJudge
     protected $name;
 
     /**
-     * the default Location (i.e., courtroom) of this Judge
-     * 
+     * the default Location (i.e., courtroom) of this Judge.
+     *
      * @ORM\Column(name="default_location_id",nullable=true)
      * @ORM\ManyToOne(targetEntity="Location")
+     *
      * @var Location
      */
     protected $defaultLocation;
 
     /**
      * returns string representation of AnonymousJudge entity.
-     * 
+     *
      * @return string
      */
     public function __toString()

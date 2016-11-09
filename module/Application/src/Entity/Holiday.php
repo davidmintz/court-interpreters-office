@@ -1,36 +1,39 @@
 <?php
+
 /** module/Application/src/Entity/Holiday.php */
+
 namespace Application\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
-/** 
+/**
  * Entity representing an official court holiday.
- * 
- * 
+ *
+ *
  * @ORM\Entity  @ORM\Table(name="holidays")
+ *
  * @see Application\Entity\CourtClosing
  */
-class Holiday {
-
-
+class Holiday
+{
     /**
      * entity id.
-     * 
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
      */
     protected $id;
 
     /**
      * name of the holiday.
-     *  
+     *
      * @ORM\Column(type="string")
      */
     protected $name;
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -38,7 +41,7 @@ class Holiday {
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -52,7 +55,7 @@ class Holiday {
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
