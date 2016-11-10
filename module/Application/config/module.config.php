@@ -60,15 +60,36 @@ return [
                 'may_terminate' => true,
                 'options' => [
 
-                    'route' => '/admin/locations[/:action[/:id]]',
+                    'route' => '/admin/locations',
                     'defaults' => [
                         'controller' => Controller\LocationsController::class,
                         'action' => 'index',
                     ],
                 ],
-                 'constraints' => [
-                    'action' => 'add|edit|index|list|delete',
-                     'id' => '^[1-9][0-9]*$',
+                'child_routes' => [
+                    'add' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/add',
+                            'defaults' => [
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:action/:id',
+                            'defaults' => [
+                                'action' => 'edit',
+
+                            ],
+                            'constraints' => [
+                                'action' => 'edit|delete',
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'languages' => [
@@ -104,7 +125,8 @@ return [
                                 'id' => '[1-9]\d*',
                             ],
                         ],
-                    ], /*
+                    ], 
+                    /*
                     'delete' => [
                         'type' => Segment::class,
                         'options' => [
@@ -120,26 +142,6 @@ return [
                     ],*/
                 ],
             ],
-
-           /*
-            'languages' => [
-
-                'type' => Segment::class,
-                'may_terminate' => true,
-                'options' => [
-                    'route'    => '/admin/languages[/:action[/:id]]',
-                    'defaults' => [
-                        'controller' => Controller\LanguagesController::class,
-                        'action'     => 'index',
-                        'id'         => null,
-                    ],
-                ],
-                'constraints' => [
-                    'action' => 'add|edit|list|delete',
-                     'id' => '[1-9]\d*'
-                ],
-            ]
-            */
         ],
     ],
     'view_helpers' => [
