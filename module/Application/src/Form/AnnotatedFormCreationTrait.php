@@ -21,16 +21,16 @@ trait AnnotatedFormCreationTrait
      * @param string $className FQCN of the entity corresponding to the form
      * @param array  $options
      *
-     * @see Factory\FormFactory::__invoke()
+     * @see Factory\FormFactory::createForm()
      *
      * @return Form
      */
     public function getForm($className, array $options)
     {
         if (!$this->form) {
-            ///$form = $this->formElementManager->build($className, $options);
-            $this->formFactory->createForm($className,$options);
-            $this->form = $form;
+            
+            $this->form = $this->formFactory->createForm($className,$options);
+            
         }
 
         return $this->form;
