@@ -39,6 +39,16 @@ class IndexController extends AbstractActionController
         //$this->serviceManager = $serviceManager;
         $this->formFactory = $formFactory;
     }
+
+    public function shitAction()
+    {
+        echo "shit is happening"; 
+        $service = new \Zend\Authentication\AuthenticationService();
+
+
+        return false; 
+    }
+
     /**
      * index action.
      *
@@ -49,17 +59,14 @@ class IndexController extends AbstractActionController
         // a little test
         try {
             
-            echo get_class($this->formFactory), " is the class";
             $form = $this->formFactory->createForm(\Application\Entity\Language::class,[
                 'action' => 'create',
                 'object' => new \Application\Entity\Language()
             ]);
-            echo get_class($form);
+            
         } catch (Exception $e) {
             echo $e->getMessage();
         }
-        
-        
     }
     /**
      * temporary action for experimenting and doodling.
@@ -200,4 +207,25 @@ class IndexController extends AbstractActionController
 
 
     */
+}
+
+namespace Application\Service;
+use Zend\Authentication\Adapter\AdapterInterface;
+use Zend\Authentication\Result;
+
+class AuthAdapter implements AdapterInterface
+{
+
+    public function __construct()
+    {
+
+        // to do: implement, inject our dependencies, write a factory
+
+    }
+    public function authenticate()
+    {
+
+    }
+
+
 }
