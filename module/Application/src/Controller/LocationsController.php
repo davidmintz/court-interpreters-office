@@ -7,13 +7,14 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\ServiceManager\AbstractPluginManager;
+
+use Application\Form\Factory\FormFactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Application\Entity\Location;
 use Application\Form\AnnotatedFormCreationTrait;
 
 /**
- *  LocationsController.
+ * LocationsController.
  *
  * For managing the locations to which interpreters are deployed
  */
@@ -22,13 +23,13 @@ class LocationsController extends AbstractActionController
     use AnnotatedFormCreationTrait;
 
     /**
-     * FormElementManager.
+     * implementation of FormFactoryInterface.
      *
      * for instantiating the Form
      *
-     * @var AbstractPluginManager
+     * @var FormFactoryInterface
      */
-    protected $formElementManager;
+    protected $formFactory;
 
     /**
      * entity manager.
@@ -44,20 +45,22 @@ class LocationsController extends AbstractActionController
      */
     protected $name;
 
-    /**
+     /**
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param AbstractPluginManager  $formElementManager
-     * @param string                 $shortName          this controller's short name/type of entity
+     * @param string $shortName this controller's short name/type of entity
      *
      * @see Application\Controller\Factory\SimpleEntityControllerFactory
      */
-    public function __construct(EntityManagerInterface $entityManager,
-            AbstractPluginManager $formElementManager, $shortName)
+    public function __construct(
+            EntityManagerInterface $entityManager, 
+            FormFactoryInterface $formFactory, $shortName)
     {
         $this->entityManager = $entityManager;
-        $this->formElementManager = $formElementManager;
+        //$this->formElementManager = $formElementManager;
+        $this->formFactory = $formFactory;
         $this->name = $shortName;
     }
     /**
