@@ -21,10 +21,13 @@ class AlternativeAnnotatedEntityFormFactory implements FormFactoryInterface
         $this->objectManager = $container->get('entity-manager');
         return $this;
     }
+
     /**
+     * creates a Zend\Form\Form
      * 
      * @param type $entity
      * @param array $options
+     * @todo check $options, throw exception
      * @return Form
      */
     function createForm($entity, Array $options)
@@ -33,13 +36,17 @@ class AlternativeAnnotatedEntityFormFactory implements FormFactoryInterface
         $form = $annotationBuilder->createForm($entity);
         switch ($entity) {
             case Entity\Language::class:
-                $this->setupLanguageForm($form, $options);
+            $this->setupLanguageForm($form, $options);
+            break;
+            
+            case Entity\Locations::class:
+            $this->setupLanguageForm($form, $options);
+            break;
             // etc
             
         }
         $form->setHydrator(new DoctrineHydrator($this->objectManager))
              ->setObject($options['object']);
-        echo "returning ",get_class($form);
         return $form;
     }
     /**
@@ -73,6 +80,12 @@ class AlternativeAnnotatedEntityFormFactory implements FormFactoryInterface
         $input = $form->getInputFilter()->get('name');
         $input->getValidatorChain()
           ->attach($validator);
+    }
+
+    public function setupLocationsForm(Form $form, Array $options)
+    {
+
+        // to be implemented
     }
 }
 
