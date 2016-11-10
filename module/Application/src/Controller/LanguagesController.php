@@ -21,7 +21,7 @@ class LanguagesController extends AbstractActionController
     use AnnotatedFormCreationTrait;
 
     /**
-     * FormElementManager.
+     * FormFactoryInterface
      *
      * for instantiating the Form
      *
