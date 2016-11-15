@@ -33,21 +33,16 @@ class IndexController extends AbstractActionController
      */
     
     protected $formFactory;
+
+    protected $em;
     
-    public function __construct($formFactory)
+    public function __construct($formFactory, $em)
     {
         //$this->serviceManager = $serviceManager;
         $this->formFactory = $formFactory;
+        $this->em = $em;
     }
 
-    public function shitAction()
-    {
-        echo "shit is happening"; 
-        $service = new \Zend\Authentication\AuthenticationService();
-
-
-        return false; 
-    }
 
     /**
      * index action.
@@ -207,24 +202,70 @@ class IndexController extends AbstractActionController
 
 
     */
+    public function shitAction()
+    {
+        echo "shit is happening...<br>"; 
+        $service = new \Zend\Authentication\AuthenticationService();
+        $adapter = new \Application\Service\AuthAdapter([
+            'object_manager' => $this->em,//'Doctrine\ORM\EntityManager',
+            //'identity_class' => '\Application\Entity\User',
+            // maybe change this to identity_properties, plural?
+            //'identity_property' => 'email',
+            'credential_property' => 'password',
+            // 'credential_callable' => function (User $user, $passwordGiven) {
+            //     return my_awesome_check_test($user->getPassword(), $passwordGiven);
+            // },
+
+            ]);
+        $adapter->setIdentity('davidshit')
+                ->setCredential('boink');
+        $service->setAdapter($adapter);
+        $result = $service->authenticate();
+        var_dump($result->isValid());
+        //\Zend\Debug\Debug::dump(get_class_methods($result));
+        return false; 
+    }
+
 }
 
 namespace Application\Service;
-use Zend\Authentication\Adapter\AdapterInterface;
+//use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Result;
+use DoctrineModule\Authentication\Adapter\ObjectRepository;
 
-class AuthAdapter implements AdapterInterface
+class AuthAdapter extends ObjectRepository
 {
 
-    public function __construct()
+    public function __construct($options = [])
     {
-
-        // to do: implement, inject our dependencies, write a factory
-
+        
+        parent::__construct($options);
     }
-    public function authenticate()
-    {
 
+   public function authenticate()
+    {
+        $this->setup();
+        $options  = $this->options;
+        $objectManager = $options->getObjectManager();
+        $query = $objectManager->createQuery("SELECT u FROM Application\Entity\User u JOIN u.person p WHERE p.email = 'david@davidmintz.org'");
+        // $identity = $query->get ....
+        $identity = $query->getOneOrNullResult();
+            //$options
+            //->getObjectRepository()
+            // we will override this part
+            //->findOneBy(array($options->getIdentityProperty() => $this->identity));
+        //  "SELECT p, u FROM Application\Entity\User u JOIN u.person p WHERE p.email = 'david@davidmintz.org'"
+
+        if (!$identity) {
+            $this->authenticationResultInfo['code']       = AuthenticationResult::FAILURE_IDENTITY_NOT_FOUND;
+            $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
+
+            return $this->createAuthenticationResult();
+        }
+
+        $authResult = $this->validateIdentity($identity);
+
+        return $authResult;
     }
 
 
