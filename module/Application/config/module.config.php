@@ -141,8 +141,7 @@ return [
                         ],
                     ],*/
                 ],
-            ],
-        ],
+            ]        ],
     ],
     'view_helpers' => [
         'invokables' => [
