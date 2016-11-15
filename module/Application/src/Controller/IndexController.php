@@ -71,9 +71,35 @@ class IndexController extends AbstractActionController
      */
     public function testAction()
     {
-        $em = $this->serviceManager->get('entity-manager');
-        $thing = new \Application\Form\TestFieldset();
-        $thing->setObjectManager($em);
+        $service = new \Zend\Authentication\AuthenticationService;
+        //echo get_class($shit)," ... ";
+        if ($service->hasIdentity()) {
+            //require('module/Application/src/Entity/Role.php');
+            
+        
+            $shit = $service->getStorage()->read();
+        
+            echo gettype($shit). "  is the type returned by read() ...<br>";
+            echo  "YES identity ";
+            $id = $service->getIdentity()->getId();
+            //$user = $shit;
+            $user = $this->em->find('Application\Entity\User',$id);
+            echo gettype($user). " is the data type... ";
+            echo get_class($user);
+            echo "...",$user->getUsername();
+            $person = $user->getPerson();
+        
+            echo " last name is ",$person->getLastname(), " role is ",
+                $user->getRole()->getName(), " hat is ",$person->getHat();
+        } else {
+            echo " NOT authenticated... ";
+        }
+            
+      
+        
+        $em = $this->em;
+        //$thing = new \Application\Form\TestFieldset();
+        //$thing->setObjectManager($em);
         // http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
         $builder = new  \Zend\Form\Annotation\AnnotationBuilder($this->serviceManager->get('entity-manager'));
         // could not get validators to run when person stuff was added as a
@@ -87,7 +113,7 @@ class IndexController extends AbstractActionController
         */
         //http://stackoverflow.com/questions/29335878/zend-framework-2-form-issues-using-doctrine-as-a-hydrator
         //  you should invoke setHydrator() on form itself after adding the base fieldset.
-
+        
         $form = $builder->createForm(\Application\Entity\Person::class);
         $form->setHydrator(new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em));
         // the firstname, middlename and lastname elements have already been
@@ -217,21 +243,30 @@ class IndexController extends AbstractActionController
             // },
 
             ]);
-        $adapter->setIdentity('davidshit')
+        $adapter->setIdentity('david')
                 ->setCredential('boink');
         $service->setAdapter($adapter);
         $result = $service->authenticate();
-        var_dump($result->isValid());
-        //\Zend\Debug\Debug::dump(get_class_methods($result));
+        echo $result->isValid() ? "authentication success" : "auth FAILED.";
+        //var_dump($result->getCode());
+        
         return false; 
     }
 
 }
+namespace Application\Service\Authentication;
+
+use Zend\Authentication\Result as AuthResult;
+
+class Result extends AuthResult {
+    const FAILURE_USER_ACCOUNT_DISABLED = -10;
+}
 
 namespace Application\Service;
 //use Zend\Authentication\Adapter\AdapterInterface;
-use Zend\Authentication\Result;
+
 use DoctrineModule\Authentication\Adapter\ObjectRepository;
+use Application\Service\Authentication\Result;
 
 class AuthAdapter extends ObjectRepository
 {
@@ -247,17 +282,16 @@ class AuthAdapter extends ObjectRepository
         $this->setup();
         $options  = $this->options;
         $objectManager = $options->getObjectManager();
-        $query = $objectManager->createQuery("SELECT u FROM Application\Entity\User u JOIN u.person p WHERE p.email = 'david@davidmintz.org'");
-        // $identity = $query->get ....
+        $query = $objectManager->createQuery("SELECT u FROM Application\Entity\User u JOIN u.person p "
+                . "WHERE p.email = :identity OR u.username = :identity")
+                ->setParameters([':identity'=>$this->identity]);
+        
         $identity = $query->getOneOrNullResult();
-            //$options
-            //->getObjectRepository()
-            // we will override this part
-            //->findOneBy(array($options->getIdentityProperty() => $this->identity));
-        //  "SELECT p, u FROM Application\Entity\User u JOIN u.person p WHERE p.email = 'david@davidmintz.org'"
+            // rather than:
+            //->getObjectRepository()->findOneBy(array($options->getIdentityProperty() => $this->identity));
 
-        if (!$identity) {
-            $this->authenticationResultInfo['code']       = AuthenticationResult::FAILURE_IDENTITY_NOT_FOUND;
+        if (!$identity) {            
+            $this->authenticationResultInfo['code']       = \Zend\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
 
             return $this->createAuthenticationResult();
@@ -267,6 +301,69 @@ class AuthAdapter extends ObjectRepository
 
         return $authResult;
     }
+    
+    protected function validateIdentity($identity) {
+        //parent::validateIdentity($identity);
+        $credentialProperty = $this->options->getCredentialProperty();
+        $getter             = 'get' . ucfirst($credentialProperty);
+        $documentCredential = null;
 
+        if (method_exists($identity, $getter)) {
+            $documentCredential = $identity->$getter();
+        } elseif (property_exists($identity, $credentialProperty)) {
+            $documentCredential = $identity->{$credentialProperty};
+        } else {
+            throw new Exception\UnexpectedValueException(
+                sprintf(
+                    'Property (%s) in (%s) is not accessible. You should implement %s::%s()',
+                    $credentialProperty,
+                    get_class($identity),
+                    get_class($identity),
+                    $getter
+                )
+            );
+        }
+        //$identity->getActive() ? " user is active ": " user is NOT active ";
+        $credentialValue = $this->credential;
+        $callable        = $this->options->getCredentialCallable();
+
+        if ($callable) {
+            $credentialValue = call_user_func($callable, $identity, $credentialValue);
+        }
+
+        if ($credentialValue !== true && $credentialValue !== $documentCredential) {
+            $this->authenticationResultInfo['code']       = Result::FAILURE_CREDENTIAL_INVALID;
+            $this->authenticationResultInfo['messages'][] = 'Supplied credential is invalid.';
+
+            return $this->createAuthenticationResult();
+        }
+        // this is in addition to the method we've overridden
+        if (! $identity->isActive()) {
+             $this->authenticationResultInfo['code']       = Result::FAILURE_USER_ACCOUNT_DISABLED;
+             $this->authenticationResultInfo['messages'][] = 'User account is disabled (inactive).';
+             
+             return $this->createAuthenticationResult();
+        }
+
+        $this->authenticationResultInfo['code']       = Result::SUCCESS;
+        $this->authenticationResultInfo['identity']   = $identity;
+        $this->authenticationResultInfo['messages'][] = 'Authentication successful.';
+
+        return $this->createAuthenticationResult();
+    }
+     /**
+     * Creates a Application\Service\Authentication\Result object from the information 
+     * that has been collected during the authenticate() attempt.
+     *
+     * @return Application\Service\Authentication\Result
+     */
+    protected function createAuthenticationResult()
+    {
+        return new Result(
+            $this->authenticationResultInfo['code'],
+            $this->authenticationResultInfo['identity'],
+            $this->authenticationResultInfo['messages']
+        );
+    }
 
 }

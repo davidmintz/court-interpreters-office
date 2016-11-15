@@ -49,6 +49,15 @@ class User
      * @var string
      */
     protected $password;
+    
+     /**
+     * username.
+     *
+     * @ORM\Column(type="string",length=50,nullable=true,options={"nullable":true})
+     *
+     * @var string
+     */
+    protected $username;
 
     /**
      * The user's role.
@@ -125,6 +134,29 @@ class User
     }
 
     /**
+     * Set password.
+     *
+     * @param string $username
+     *
+     * @return User
+     */
+    public function setUsername($username)
+    {
+        $this->username= $username;
+
+        return $this;
+    }
+
+    /**
+     * Get username.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+    /**
      * Get id.
      *
      * @return int
@@ -133,6 +165,7 @@ class User
     {
         return $this->id;
     }
+    
 
     /**
      * Set person.
@@ -237,7 +270,15 @@ class User
     {
         return $this->judges;
     }
-
+    /**
+     * de facto alias for getActive()
+     * 
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return $this->active;
+    }
     /**
      * Lifecycle callback to ensure User has an email address.
      *

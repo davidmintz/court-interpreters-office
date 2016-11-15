@@ -131,7 +131,7 @@ class Person
     /**
      *  Everyone must where a hat in this life.
      *
-     *  @ORM\ManyToOne(targetEntity="Hat",fetch="EAGER")
+     *  @ORM\ManyToOne(targetEntity="Hat")//,fetch="EAGER"
      *  @ORM\JoinColumn(nullable=false)
      *
      *  @var Hat
