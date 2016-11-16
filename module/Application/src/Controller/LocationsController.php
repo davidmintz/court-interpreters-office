@@ -40,7 +40,7 @@ class LocationsController extends AbstractActionController
 
     /**
      * short name of this controller.
-     *
+     * @todo do we really use this for anything?
      * @var string
      */
     protected $name;
@@ -56,11 +56,11 @@ class LocationsController extends AbstractActionController
      */
     public function __construct(
             EntityManagerInterface $entityManager, 
-            FormFactoryInterface $formFactory, $shortName)
+            FormFactoryInterface $formFactory, $shortName = null)
     {
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
-        $this->name = $shortName;
+       // $this->name = $shortName;
     }
     /**
      * index action.
@@ -109,9 +109,10 @@ class LocationsController extends AbstractActionController
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
         }
 
-        $form = $this->getForm(Location::class, ['object' => $entity, 'action' => 'create'])
+        $form = $this->getForm(Location::class, 
+                ['object' => $entity, 'action' => 'create'])
                ->bind($entity);
-
+        
         return (new ViewModel(['form' => $form, 'title' => 'edit a location']))
             ->setTemplate('application/locations/form.phtml');
         // to be continued

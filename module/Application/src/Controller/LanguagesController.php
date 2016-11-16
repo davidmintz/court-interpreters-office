@@ -54,12 +54,11 @@ class LanguagesController extends AbstractActionController
      */
     public function __construct(
             EntityManagerInterface $entityManager, 
-            FormFactoryInterface $formFactory, $shortName)
+            FormFactoryInterface $formFactory, $shortName = null)
     {
         $this->entityManager = $entityManager;
-        //$this->formElementManager = $formElementManager;
         $this->formFactory = $formFactory;
-        $this->name = $shortName;
+        //$this->name = $shortName;
     }
     /**
      * index action.
