@@ -36,10 +36,15 @@ class IndexController extends AbstractActionController
 
     protected $em;
     
+    /**
+     * 
+     * @param \Application\Form\Factory\AnnotatedEntityFormFactory $formFactory
+     * @param type $em
+     */
     public function __construct($formFactory, $em)
     {
         //$this->serviceManager = $serviceManager;
-        $this->formFactory = $formFactory;
+        $this->formFactory = $formFactory; 
         $this->em = $em;
     }
 
@@ -225,37 +230,7 @@ class IndexController extends AbstractActionController
             }
         }
     */
-
-
-    /**
-     * example to show authentication is working
-     */
-    public function shitAction()
-    {
-        echo "shit is happening...<br>"; 
-        //$service = new \Zend\Authentication\AuthenticationService();
-        $service = $this->auth;
-        $adapter = new \Application\Service\Authentication\Adapter([
-            'object_manager' => $this->em,//'Doctrine\ORM\EntityManager',
-            //'identity_class' => '\Application\Entity\User',
-            // maybe change this to identity_properties, plural?
-            //'identity_property' => 'email',
-            'credential_property' => 'password',
-            // 'credential_callable' => function (User $user, $passwordGiven) {
-            //     return my_awesome_check_test($user->getPassword(), $passwordGiven);
-            // },
-
-            ]);
-        $adapter->setIdentity('david')
-                ->setCredential('boink');
-        $service->setAdapter($adapter);
-        $result = $service->authenticate();
-        echo $result->isValid() ? "authentication success" : "auth FAILED.";
-        //var_dump($result->getCode());
-        
-        return false; 
-    }
-    public $auth; // temporary hack
+    
 }
 
 
