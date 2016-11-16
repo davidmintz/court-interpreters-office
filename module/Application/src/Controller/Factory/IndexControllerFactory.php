@@ -21,8 +21,8 @@ class IndexControllerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new IndexController(
-                $container->get('annotated-form-factory'),
-        		$container->get('entity-manager')
+            $container->get('annotated-form-factory'),
+            $container->get('entity-manager')
         );
     }
 }
