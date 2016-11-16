@@ -126,22 +126,21 @@ return [
                             ],
                         ],
                     ], 
-                    /*
-                    'delete' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route'    => '/delete/:id',
-                            'defaults' => [
-                                'action' => 'delete',
-
-                            ],
-                            'constraints' => [
-                                'id' => '[1-9]\d*',
-                            ],
-                        ],
-                    ],*/
                 ],
-            ]        ],
+            ],
+            'auth' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/login',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action' => 'test',
+                    ],
+                ],
+                // to be continued
+            ]
+        ],
     ],
     'view_helpers' => [
         'invokables' => [
@@ -165,6 +164,8 @@ return [
     'controllers' => [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+           Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
+           
            Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
            Controller\LocationsController::class => Controller\Factory\SimpleEntityControllerFactory::class,
         ],
@@ -206,7 +207,7 @@ return [
                 ),
             ),
         ),
-
+        /*
         'authentication' => [
             'orm_default' => [
                 'object_manager' => 'Doctrine\ORM\EntityManager',
@@ -218,6 +219,7 @@ return [
                // },
             ],
         ],
+         */
 
    ],
    'service_manager' => [
@@ -227,7 +229,7 @@ return [
         ],
         'factories' => [
             'Zend\Authentication\AuthenticationService' => 'Application\Service\Factory\AuthenticationFactory',
-            'annotated-form-factory' => 'Application\Form\Factory\AlternativeAnnotatedEntityFormFactory',
+            'annotated-form-factory' => 'Application\Form\Factory\AnnotatedEntityFormFactory',
         ],
 
    ],
