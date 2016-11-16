@@ -4,8 +4,8 @@ if ($this->errorMessage) : ?>
 <?php
 return;
 endif;
-$formAction = strstr($this->title,'add') ? $this->url('locations',['action'=>'add']) 
-	:  $this->url('locations',['action'=>'edit','id' => $this->id ]);
+$formAction = strstr($this->title,'add') ? $this->url('locations/add') 
+	:  $this->url('locations/edit',['id' => $this->id ]);
 $form = $this->form;
 $form->add([
 	'name'=>'submit',
@@ -26,7 +26,10 @@ echo $this->form()->openTag($form);?>
 $name = $form->get('name');
 echo $this->formLabel($name),$this->formElement($name),$this->formElementErrors($name);
 ?>
-
+<div class="form-group"><?php 
+$location_type = $form->get('type'); 
+echo $this->formLabel($location_type),$this->formElement($location_type),$this->formElementErrors($location_type);
+?>
 <div class="form-group"><?php 
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
