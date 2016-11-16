@@ -59,7 +59,6 @@ class LocationsController extends AbstractActionController
             FormFactoryInterface $formFactory, $shortName)
     {
         $this->entityManager = $entityManager;
-        //$this->formElementManager = $formElementManager;
         $this->formFactory = $formFactory;
         $this->name = $shortName;
     }
@@ -96,13 +95,15 @@ class LocationsController extends AbstractActionController
     public function editAction()
     {
         $viewModel = (new ViewModel())
-        ->setTemplate('application/locations/form.phtml')
-        ->setVariables(['title' => 'edit a location']);
+            ->setTemplate('application/locations/form.phtml')
+            ->setVariables(['title' => 'edit a location']);
 
         $id = $this->params()->fromRoute('id');
-        if (!$id) {
+        
+        if (!$id) { // get rid of this, since it will be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
+        
         $entity = $this->entityManager->find('Application\Entity\Location', $id);
         if (!$entity) {
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
@@ -113,5 +114,6 @@ class LocationsController extends AbstractActionController
 
         return (new ViewModel(['form' => $form, 'title' => 'edit a location']))
             ->setTemplate('application/locations/form.phtml');
+        // to be continued
     }
 }
