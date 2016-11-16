@@ -7,9 +7,14 @@ use Application\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use DoctrineModule\Validator\NoObjectExists as NoObjectExistsValidator;
 use DoctrineModule\Validator\UniqueObject;
+
+use DoctrineModule\Form\Element\ObjectSelect;
+
 use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
 use Zend\Form\Annotation\AnnotationBuilder;
+
+use Zend\InputFilter\Input;
 
 class AnnotatedEntityFormFactory implements FormFactoryInterface
 {
@@ -39,8 +44,8 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
             $this->setupLanguageForm($form, $options);
             break;
             
-            case Entity\Locations::class:
-            $this->setupLanguageForm($form, $options);
+            case Entity\Location::class:
+            $this->setupLocationsForm($form, $options);
             break;
             // etc
             
@@ -84,8 +89,34 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
     public function setupLocationsForm(Form $form, Array $options)
     {
-
-        // to be implemented
+        // first we need a LocationsType drop down menu
+        $element = new ObjectSelect('type',
+        [
+            'object_manager' => $this->objectManager,
+            'target_class' => 'Application\Entity\LocationType',
+            'property' => 'type',
+            'label' => 'location type',
+            'display_empty_item' => true,
+            'required' => true,
+            'attributes' => ['class' => 'form-control',],
+            
+        ]);
+       
+        
+        $filter = $form->getInputFilter();
+        $input = new Input('type');
+        $validator = new \Zend\Validator\NotEmpty([
+            'messages' => [
+                'isEmpty' => 'location type is required',
+            ],
+        ]);
+        $input->getValidatorChain()->attach($validator,true);
+        
+        $filter->add($input);
+        echo "hello ?!?";
+        
+         $form->add($element);
+        // to be continued
     }
 }
 
