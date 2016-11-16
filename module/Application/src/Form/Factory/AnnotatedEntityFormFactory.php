@@ -1,10 +1,7 @@
 <?php
 
-/** module/Application/src/Form/Factory/SimpleFormFactory.php */
-
 namespace Application\Form\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use Application\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -14,53 +11,42 @@ use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
 use Zend\Form\Annotation\AnnotationBuilder;
 
-/**
- * Factory for creating Form objects for our relatively simple
- * entities from their annotations.
- *
- * This also completes the initialization that can't be done via annotations or
- * until we know whether the action is create or update.
- */
-class AnnotatedEntityFormFactory implements FactoryInterface
+class AnnotatedEntityFormFactory implements FormFactoryInterface
 {
-    /**
-     * @var ObjectManager the object manager
-     */
+    /** @var ObjectManager */
     protected $objectManager;
+    
+    
+    function __invoke(ContainerInterface $container,$requestedName,$options = []){
+        $this->objectManager = $container->get('entity-manager');
+        return $this;
+    }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param ContainerInterface $container
-     * @param string             $requestedName
-     * @param array              $options
-     *     required keys:
-     *     'action' => string create|update,
-     *     'object' => entityInstance
-     *
+     * creates a Zend\Form\Form
+     * 
+     * @param type $entity
+     * @param array $options
+     * @todo check $options, throw exception
      * @return Form
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    function createForm($entity, Array $options)
     {
-        if (!class_exists($requestedName)) {
-            throw new \DomainException(
-                 'Factory cannot build a form from %s: class not found'
-            );
-        }
-        $this->objectManager = $container->get('entity-manager');
-        $builder = new AnnotationBuilder();
-        $form = $builder->createForm($requestedName);
-
-        switch ($requestedName) {
+        $annotationBuilder = new AnnotationBuilder();
+        $form = $annotationBuilder->createForm($entity);
+        switch ($entity) {
             case Entity\Language::class:
-                $this->setupLanguageForm($form, $options);
-            case Entity\Location::class:
-                $this->setupLocationForm($form, $options);
-           // to be continued
+            $this->setupLanguageForm($form, $options);
+            break;
+            
+            case Entity\Locations::class:
+            $this->setupLanguageForm($form, $options);
+            break;
+            // etc
+            
         }
         $form->setHydrator(new DoctrineHydrator($this->objectManager))
              ->setObject($options['object']);
-
         return $form;
     }
     /**
@@ -87,20 +73,19 @@ class AnnotatedEntityFormFactory implements FactoryInterface
                'object_manager' => $em,
                'fields' => 'name',
                'use_context' => true,
-               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'language names must be unique; this is already in your database'],
+               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
+                   'language names must be unique; this one is already in your database'],
            ]);
         }
         $input = $form->getInputFilter()->get('name');
         $input->getValidatorChain()
           ->attach($validator);
     }
-    /**
-     * completes the initialization of the Location form.
-     *
-     * @param Form  $form
-     * @param array $options
-     */
-    public function setupLocationForm(Form $form, array $options)
+
+    public function setupLocationsForm(Form $form, Array $options)
     {
+
+        // to be implemented
     }
 }
+
