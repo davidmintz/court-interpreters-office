@@ -233,7 +233,8 @@ class IndexController extends AbstractActionController
     public function shitAction()
     {
         echo "shit is happening...<br>"; 
-        $service = new \Zend\Authentication\AuthenticationService();
+        //$service = new \Zend\Authentication\AuthenticationService();
+        $service = $this->auth;
         $adapter = new \Application\Service\Authentication\Adapter([
             'object_manager' => $this->em,//'Doctrine\ORM\EntityManager',
             //'identity_class' => '\Application\Entity\User',
@@ -254,7 +255,7 @@ class IndexController extends AbstractActionController
         
         return false; 
     }
-
+    public $auth; // temporary hack
 }
 
 
