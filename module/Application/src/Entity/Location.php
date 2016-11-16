@@ -30,7 +30,7 @@ class Location
     /**
      * name of the location.
      *
-     * @Annotation\Attributes({"type":"text","placeholder":"the name of the location","size":36,"class":"form-control"})
+     * @Annotation\Attributes({"type":"text","placeholder":"the name of the location","size":36,"class":"form-control","id":"id"})
      * @Annotation\Options({"label":"name"})
      * @Annotation\Filter({"name":"StringTrim"})
      * @Annotation\Filter({"name":"StripTags"})

@@ -28,7 +28,7 @@ class Language
     /**
      * name of the language.
      *
-     * @Annotation\Attributes({"type":"text","placeholder":"the name of the language","size":36,"class":"form-control"})
+     * @Annotation\Attributes({"type":"text","placeholder":"the name of the language","size":36,"class":"form-control","id":"name" })
      * @Annotation\Options({"label":"name"})
      * @Annotation\Filter({"name":"StringTrim"})
      * @Annotation\Filter({"name":"StripTags"})
@@ -48,7 +48,7 @@ class Language
     /**
      * comments.
      *
-     * @Annotation\Attributes({"type":"textarea", "cols":36,"rows":4,"class":"form-control","placeholder":"optionally, a few notes about this language"})
+     * @Annotation\Attributes({"id":"comments","type":"textarea", "cols":36,"rows":4,"class":"form-control","placeholder":"optionally, a few notes about this language"})
      * @Annotation\Options({"label":"notes"})
      * @Annotation\AllowEmpty()
      * @Annotation\Validator({"name":"StringLength", "options":{"max":300,
