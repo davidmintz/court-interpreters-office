@@ -35,18 +35,16 @@ class Adapter extends ObjectRepository
 
             return $this->createAuthenticationResult();
         }
+        return $this->validateIdentity($identity);
 
-        $authResult = $this->validateIdentity($identity);
-
-        return $authResult;
     }
     
     /**
      * validates the identity
-     * @param User
-     * @return 
+     * @param User - not type-hinted for the sake of interface compatibility
+     * @return \Application\Service\Authentication\Result
      */
-    protected function validateIdentity(User $identity) {
+    protected function validateIdentity($identity) {
 
         //parent::validateIdentity($identity);
         $credentialProperty = $this->options->getCredentialProperty();

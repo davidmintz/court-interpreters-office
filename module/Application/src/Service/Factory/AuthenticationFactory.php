@@ -5,7 +5,7 @@ namespace Application\Service\Factory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Authentication\AuthenticationService;
-
+use Application\Service\Authentication\Adapter as AuthenticationAdapter;
 
 class AuthenticationFactory implements FactoryInterface
 {
@@ -13,6 +13,14 @@ class AuthenticationFactory implements FactoryInterface
     {
         //echo "shit? in ".__CLASS__ . " ... ";
         //return $container->get('doctrine.authenticationservice.orm_default');
-        return new AuthenticationService;
+        $adapter = new AuthenticationAdapter([
+            'object_manager' => $this->em,//'Doctrine\ORM\EntityManager',
+            'credential_property' => 'password',
+            // 'credential_callable' => function (User $user, $passwordGiven) {
+            //     return my_awesome_check_test($user->getPassword(), $passwordGiven);
+            // },
+
+            ]);
+        return new AuthenticationService(null, $adapter);
     }
 }
