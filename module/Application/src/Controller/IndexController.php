@@ -56,8 +56,7 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-       $repo = $this->em->getRepository('Application\Entity\LocationType');
-       echo get_class($repo);
+       
     }
     /**
      * temporary action for experimenting and doodling.
