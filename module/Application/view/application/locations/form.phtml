@@ -39,6 +39,11 @@ echo $this->formLabel($parentLocation),$this->formSelect($parentLocation),$this-
 ?>
 </div>
 <div class="form-group"><?php 
+$comments = $form->get('comments'); 
+echo $this->formLabel($comments),$this->formTextArea($comments),$this->formElementErrors($comments);
+?>
+</div>
+<div class="form-group"><?php 
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
 echo $this->form()->closeTag();
