@@ -151,6 +151,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'property' => 'type',
                 'label' => 'location type',
                 'display_empty_item' => true,
+                'empty_item_label' => '(required)',
                 'required' => true,
                 
             ],
@@ -179,14 +180,16 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
             ->attach($callbackValidator);
         
         $filter->add($input);
-        ///*
         $filter->add([
             'name' => 'parentLocation',
             'required' => true,
             'allow_empty' => true,
-            'validators' =>[
-               // $callbackValidator,
-            ],
+           
+        ]);
+        $filter->add([
+            'name' => 'comments',
+            'required'=> false,
+            'allow_empty' => true,
         ]);
          //*/
     }
