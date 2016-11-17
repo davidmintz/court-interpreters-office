@@ -11,7 +11,7 @@ $form->add([
 	'name'=>'submit',
 	'type'=>'Zend\Form\Element\Submit',
 	'attributes' => ['value'=>'submit'],
-])->setAttribute('method', 'post')->setAttribute('action', $actionAttrib);
+])->setAttribute('method', 'post')->setAttribute('action', $formAction);
 
 ?>
 
@@ -27,15 +27,22 @@ echo $this->form()->openTag($form);?>
 $name = $form->get('name');
 echo $this->formLabel($name),$this->formText($name),$this->formElementErrors($name);
 ?>
-</div><div class="form-group"><?php 
+</div>
+<div class="form-group"><?php 
 $location_type = $form->get('type'); 
 echo $this->formLabel($location_type),$this->formSelect($location_type),$this->formElementErrors($location_type);
 ?>
-</div><div class="form-group"><?php 
+</div>
+<div class="form-group"><?php 
+$parentLocation = $form->get('parentLocation'); 
+echo $this->formLabel($parentLocation),$this->formSelect($parentLocation),$this->formElementErrors($parentLocation);
+?>
+</div>
+<div class="form-group"><?php 
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
 echo $this->form()->closeTag();
 ?>
 </div>
 </div><!-- /wrapper -->
-
+<?php // \Zend\Debug\Debug::dump(get_class_methods($parentLocation)) ?>
