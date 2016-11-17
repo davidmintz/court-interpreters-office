@@ -2,7 +2,7 @@
 
 /** module/Application/src/Entity/LanguageRepository.php */
 
-namespace Application\Entity;
+namespace Application\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Zend\Paginator\Paginator as ZendPaginator;

@@ -7,11 +7,13 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Zend\Form\Annotation;
 
+
+
 /**
  * Entity class representing a language used by an Interpreter.
  *
  * @Annotation\Name("language")
- * @ORM\Entity(repositoryClass="LanguageRepository")
+ * @ORM\Entity(repositoryClass="Application\Entity\Repository\LanguageRepository")
  * @ORM\Table(name="languages",uniqueConstraints={@ORM\UniqueConstraint(name="unique_language",columns={"name"})})
  */
 class Language
