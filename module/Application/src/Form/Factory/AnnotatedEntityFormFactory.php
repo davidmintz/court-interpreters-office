@@ -8,20 +8,34 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use DoctrineModule\Validator\NoObjectExists as NoObjectExistsValidator;
 use DoctrineModule\Validator\UniqueObject;
 
-use DoctrineModule\Form\Element\ObjectSelect;
-
 use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
 use Zend\Form\Annotation\AnnotationBuilder;
 
+use Application\Form\Validator\ParentLocation as ParentLocationValidator;
+
 use Zend\InputFilter\Input;
 
+/**
+ * Factory for creating forms for the entities that are relatively simple.
+ * 
+ * Those entities' properties have some of their corresponding form elements 
+ * defined via annotations. This factory sets up the remaining elements that 
+ * cannnot be set up via annotations or whose complete configuration can't be 
+ * decided before the action is dispatched. 
+ */
 class AnnotatedEntityFormFactory implements FormFactoryInterface
 {
     /** @var ObjectManager */
     protected $objectManager;
     
-    
+    /**
+     * 
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array $options
+     * @return \Application\Form\Factory\AnnotatedEntityFormFactory
+     */
     function __invoke(ContainerInterface $container,$requestedName,$options = []){
         $this->objectManager = $container->get('entity-manager');
         return $this;
@@ -95,9 +109,42 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         // for how to add html attributes to options
 
         ///*
+        
+        $form->add([
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            'name' => 'parentLocation',
+            'required' => true,
+            'allow_empty' => true,
+            'options' => [
+                'object_manager' => $this->objectManager,
+                'target_class' => 'Application\Entity\Location',
+                'property' => 'name',
+                'label' => 'where this location itself is located, if anywhere',
+                'display_empty_item' => true,
+                'empty_item_label' =>  '(none)',
+               
+                'find_method' => ['name' => 'getParentLocations',],
+                'option_attributes' => [
+                    'data-location-type' => function(Entity\Location $location)
+                    {
+                        return $location->getType();
+                    }
+                    
+                ]
+                
+            ],
+             'attributes' => [
+                'class' => 'form-control',
+                'id' => 'parentLocation',
+
+             ],
+        ]);
+            
+        
         $form->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'type',
+            
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'Application\Entity\LocationType',
@@ -105,11 +152,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'label' => 'location type',
                 'display_empty_item' => true,
                 'required' => true,
-                'find_method' => [
-                    'name' => 'findAll',
-                    //'criteria' => [],
-                    'orderBy' => ['type' => 'ASC'],
-                ],
+                
             ],
              'attributes' => [
                 'class' => 'form-control',
@@ -118,47 +161,34 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
              ],
         ]);
         $filter = $form->getInputFilter();
+        
         $input = new Input('type');
-        /** @todo just pass an array to the input filter */
-        $validator = new \Zend\Validator\NotEmpty([
+        /** @todo just pass an array to the input filter? */
+        $notEmptyValidator = new \Zend\Validator\NotEmpty([
             'messages' => [
                 'isEmpty' => 'location type is required',
             ],
         ]);
-
-        $callbackValidator = new \Zend\Validator\Callback(
-            [
-                'callback' => function($value,$context) {
-                    echo "here's our callback";
-                    //print_r($context);
-                    return false;
-                },
-                // does not work:
-                'options' => [
-                    'messages' => [
-                        'callbackValue' => "shit is wrong",
-                    ],
-                ],
-
-            ]
-        );
-        $callbackValidator->setOptions(
-            [
-                    'messages' => [
-                        'callbackValue' => "shit is wrong"
-                    ]
-            ]);
-        /* to be continued: add validation rules constraining parent location types
-            .e.g., courtroom -> courthouse
-        */
+        
+        $callbackValidator = new ParentLocationValidator([
+            'parentLocations' => $form->get('parentLocation')->getValueOptions(),
+            'locationTypes'  => $form->get('type')->getValueOptions(),
+        ]);
         $input->getValidatorChain()
-            ->attach($validator,true)
+            ->attach($notEmptyValidator,true)
             ->attach($callbackValidator);
         
         $filter->add($input);
-        
-        
-            //$form->add($element);
-        }
+        ///*
+        $filter->add([
+            'name' => 'parentLocation',
+            'required' => true,
+            'allow_empty' => true,
+            'validators' =>[
+               // $callbackValidator,
+            ],
+        ]);
+         //*/
+    }
 }
 
