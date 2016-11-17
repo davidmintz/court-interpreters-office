@@ -84,8 +84,30 @@ class LocationsController extends AbstractActionController
         $form = $this->getForm(Location::class, ['object' => $entity, 'action' => 'create'])
                ->bind($entity);
 
-        return (new ViewModel(['form' => $form, 'title' => 'add a location']))
+        $viewModel = (new ViewModel(['form' => $form, 'title' => 'add a location']))
             ->setTemplate('application/locations/form.phtml');
+
+        $request = $this->getRequest();
+
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (!$form->isValid()) {
+                return $viewModel;
+            }
+            try {
+                $this->entityManager->persist($entity);
+                $this->entityManager->flush();
+                $this->flashMessenger()
+                      ->addSuccessMessage("The location has been added.");
+                $this->redirect()->toRoute('locations');
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        }
+
+
+
+        return $viewModel;
     }
     /**
      * edits a Location.

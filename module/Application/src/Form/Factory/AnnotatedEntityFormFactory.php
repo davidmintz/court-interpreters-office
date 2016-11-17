@@ -90,33 +90,75 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
     public function setupLocationsForm(Form $form, Array $options)
     {
         // first we need a LocationsType drop down menu
-        $element = new ObjectSelect('type',
-        [
-            'object_manager' => $this->objectManager,
-            'target_class' => 'Application\Entity\LocationType',
-            'property' => 'type',
-            'label' => 'location type',
-            'display_empty_item' => true,
-            'required' => true,
-            'attributes' => ['class' => 'form-control',],
-            
+
+        // see file:///opt/www/court-interpreters-office/vendor/doctrine/doctrine-module/docs/form-element.md
+        // for how to add html attributes to options
+
+        ///*
+        $form->add([
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            'name' => 'type',
+            'options' => [
+                'object_manager' => $this->objectManager,
+                'target_class' => 'Application\Entity\LocationType',
+                'property' => 'type',
+                'label' => 'location type',
+                'display_empty_item' => true,
+                'required' => true,
+                'find_method' => [
+                    'name' => 'findAll',
+                    //'criteria' => [],
+                    'orderBy' => ['type' => 'ASC'],
+                ],
+            ],
+             'attributes' => [
+                'class' => 'form-control',
+                'id' => 'type',
+
+             ],
         ]);
-       
-        
         $filter = $form->getInputFilter();
         $input = new Input('type');
+        /** @todo just pass an array to the input filter */
         $validator = new \Zend\Validator\NotEmpty([
             'messages' => [
                 'isEmpty' => 'location type is required',
             ],
         ]);
-        $input->getValidatorChain()->attach($validator,true);
+
+        $callbackValidator = new \Zend\Validator\Callback(
+            [
+                'callback' => function($value,$context) {
+                    echo "here's our callback";
+                    //print_r($context);
+                    return false;
+                },
+                // does not work:
+                'options' => [
+                    'messages' => [
+                        'callbackValue' => "shit is wrong",
+                    ],
+                ],
+
+            ]
+        );
+        $callbackValidator->setOptions(
+            [
+                    'messages' => [
+                        'callbackValue' => "shit is wrong"
+                    ]
+            ]);
+        /* to be continued: add validation rules constraining parent location types
+            .e.g., courtroom -> courthouse
+        */
+        $input->getValidatorChain()
+            ->attach($validator,true)
+            ->attach($callbackValidator);
         
         $filter->add($input);
-        echo "hello ?!?";
         
-         $form->add($element);
-        // to be continued
-    }
+        
+            //$form->add($element);
+        }
 }
 
