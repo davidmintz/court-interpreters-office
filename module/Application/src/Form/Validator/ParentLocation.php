@@ -64,7 +64,7 @@ class ParentLocation extends AbstractValidator {
         self::LOCATION_TYPE_MUST_HAVE_PARENT => 
             'this type of location has to have a parent location',
         self::INVALID_PARENT_TYPE => 
-            'type of location selected is incompatible with this parent location\'s type',
+            'this type of location is incompatible with this parent location\'s type (%value%)',
 
     ];
     /**
@@ -89,7 +89,7 @@ class ParentLocation extends AbstractValidator {
             return false;
         }
         if ( 'courtroom' == $type_submitted && 'holding cell' == $type_of_parent) {
-             $this->error(self::INVALID_PARENT_TYPE);
+             $this->error(self::INVALID_PARENT_TYPE,$type_of_parent);
              return false;
         }
         if ('holding cell' == $type_submitted && ! $type_of_parent) {
