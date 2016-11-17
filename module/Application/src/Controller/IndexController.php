@@ -56,17 +56,8 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        // a little test
-        try {
-            
-            $form = $this->formFactory->createForm(\Application\Entity\Language::class,[
-                'action' => 'create',
-                'object' => new \Application\Entity\Language()
-            ]);
-            
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
+       $repo = $this->em->getRepository('Application\Entity\LocationType');
+       echo get_class($repo);
     }
     /**
      * temporary action for experimenting and doodling.
