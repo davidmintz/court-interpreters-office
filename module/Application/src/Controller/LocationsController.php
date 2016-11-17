@@ -92,6 +92,8 @@ class LocationsController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
+                echo "SHIT NOT VALID?";
+                print_r($form->getMessages());
                 return $viewModel;
             }
             try {
@@ -99,7 +101,8 @@ class LocationsController extends AbstractActionController
                 $this->entityManager->flush();
                 $this->flashMessenger()
                       ->addSuccessMessage("The location has been added.");
-                $this->redirect()->toRoute('locations');
+                //$this->redirect()->toRoute('locations');
+                echo "YAY!!";
             } catch (\Exception $e) {
                 echo $e->getMessage();
             }
