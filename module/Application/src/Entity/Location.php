@@ -14,14 +14,13 @@ use Zend\Form\Annotation;
  *
  *
  * @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})})
- *
+ * @ORM\Entity(repositoryClass="Application\Entity\Repository\LocationRepository")
  * @Annotation\Name("location")
  */
 class Location
 {
     /**
      * entity id.
-     *
      * @Annotation\Attributes({"type":"hidden"})
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
