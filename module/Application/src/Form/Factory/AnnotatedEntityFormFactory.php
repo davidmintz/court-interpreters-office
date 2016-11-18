@@ -103,13 +103,11 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
     public function setupLocationsForm(Form $form, Array $options)
     {
-        // first we need a LocationsType drop down menu
+        // first, a LocationsType drop down menu
 
-        // see file:///opt/www/court-interpreters-office/vendor/doctrine/doctrine-module/docs/form-element.md
+        // file:///opt/www/court-interpreters-office/vendor/doctrine/doctrine-module/docs/form-element.md
         // for how to add html attributes to options
 
-        ///*
-        
         $form->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'parentLocation',
@@ -139,8 +137,9 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
              ],
         ]);
-            
         
+        // a dropdown for LocationType
+                
         $form->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'type',
@@ -162,7 +161,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
              ],
         ]);
         $filter = $form->getInputFilter();
-        
+        // location type is required
         $input = new Input('type');
         /** @todo just pass an array to the input filter? */
         $notEmptyValidator = new \Zend\Validator\NotEmpty([
@@ -170,14 +169,14 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'isEmpty' => 'location type is required',
             ],
         ]);
-        
-        $callbackValidator = new ParentLocationValidator([
+        // enforce rules as to location and parent locations
+        $locationValidator = new ParentLocationValidator([
             'parentLocations' => $form->get('parentLocation')->getValueOptions(),
             'locationTypes'  => $form->get('type')->getValueOptions(),
         ]);
         $input->getValidatorChain()
             ->attach($notEmptyValidator,true)
-            ->attach($callbackValidator);
+            ->attach($locationValidator);
         
         $filter->add($input);
         $filter->add([
@@ -185,13 +184,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
             'required' => true,
             'allow_empty' => true,
            
-        ]);
-        $filter->add([
-            'name' => 'comments',
-            'required'=> false,
-            'allow_empty' => true,
-        ]);
-         //*/
+        ]); 
     }
 }
 
