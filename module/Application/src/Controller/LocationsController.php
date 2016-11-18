@@ -69,9 +69,8 @@ class LocationsController extends AbstractActionController
      */
     public function indexAction()
     {
-        echo 'hurray for indexAction.';
-
-        return [];
+        $viewModel = new ViewModel;
+        return $viewModel;
     }
     /**
      * adds a new Location.
