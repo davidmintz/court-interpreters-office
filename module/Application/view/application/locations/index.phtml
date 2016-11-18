@@ -1,0 +1,8 @@
+<?php /**  locations/index view script */  ?>
+
+<h2>locations</h2>
+
+<?php
+$messenger = $this->flashMessenger();
+if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',]); endif;
+?>
