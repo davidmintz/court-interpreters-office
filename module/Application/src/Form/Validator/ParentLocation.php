@@ -48,6 +48,7 @@ class ParentLocation extends AbstractValidator {
                        gettype($options['locationTypes']))
              );
         }
+        
         $this->parentLocations = array_column($options['parentLocations'],NULL,'value');
         $this->locationTypes = array_column($options['locationTypes'],'label','value');
         parent::__construct($options);
