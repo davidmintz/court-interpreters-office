@@ -17,6 +17,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class LocationType
 {
+    
+    public function __construct()
+    {
+
+        $this->locations = new \Doctrine\Common\Collections\ArrayCollection();
+
+    }
     /**
      * location-type id.
      *
@@ -41,6 +48,13 @@ class LocationType
      * @var string
      */
     protected $comments;
+
+    /**
+     * // this is experimental. to see if we can make what should be 
+     * a simple DQL thing work
+     * @ORM\OneToMany(targetEntity="Location",mappedBy="type")
+     */
+    protected $locations;
 
     /**
      * Get id.
