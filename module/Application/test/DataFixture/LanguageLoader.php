@@ -16,7 +16,7 @@ class LanguageLoader implements FixtureInterface
     	 	[ 'name' => 'Spanish' ],
     	 	[ 'name' => 'Foochow' ],
     	 	[ 'name' => 'Russian' ],
-                [ 'name' => 'Cantonese' ],
+            [ 'name' => 'Cantonese' ],
     	 	[ 'name' => 'Mandarin' ],
     	 	[ 'name' => 'Arabic' ],
     	 	[ 'name' => 'French' ],
@@ -27,6 +27,6 @@ class LanguageLoader implements FixtureInterface
             $entity->setName($language['name'])->setComments('');
             $manager->persist($entity);
         }
-        $manager->flush();
+        $manager->flush();        
     }
 }
