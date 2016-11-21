@@ -46,6 +46,8 @@ class IndexController extends AbstractActionController
         //$this->serviceManager = $serviceManager;
         $this->formFactory = $formFactory; 
         $this->em = $em;
+       
+        
     }
 
 
@@ -56,7 +58,9 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-       
+        $connection = $this->em->getConnection();
+        $driver = $connection->getDriver()->getName();
+        return ['driver'=>$driver];
     }
     /**
      * temporary action for experimenting and doodling.
