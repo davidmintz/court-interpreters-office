@@ -15,15 +15,21 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
-        // The module configuration should still be applicable for tests.
-        // You can override configuration here with test case specific values,
-        // such as sample view templates, path stacks, module_listener_options,
-        // etc.
-        $configOverrides = [];
+        
+        
+        $configOverrides = [
+            'module_listener_options' => [
+                'config_glob_paths' => [
+                    //'/opt/www/court-interpreters-office/module/Application/test/config/autoload/{{,*.}global,{,*.}local}.php',
+                    '/opt/www/court-interpreters-office/module/Application/test/config/autoload/test.local.php'
+                ]
+            ]
+        ];
 
         $this->setApplicationConfig(ArrayUtils::merge(
             include __DIR__ . '/../../../../config/application.config.php',
             $configOverrides
+                
         ));
 
         parent::setUp();
@@ -37,6 +43,11 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerName(IndexController::class); // as specified in router's controller name alias
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
+        
+        //echo $this->getResponse()->getBody();
+        
+        
+        
     }
 
     public function testIndexActionViewModelTemplateRenderedWithinLayout()
@@ -50,4 +61,6 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/invalid/route', 'GET');
         $this->assertResponseStatusCode(404);
     }
+    
+    
 }
