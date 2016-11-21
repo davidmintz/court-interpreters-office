@@ -108,9 +108,6 @@ class LocationsController extends AbstractActionController
                 echo $e->getMessage();
             }
         }
-
-
-
         return $viewModel;
     }
     /**
@@ -126,7 +123,7 @@ class LocationsController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
         
-        if (!$id) { // get rid of this, since it will be 404?
+        if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
         
@@ -146,25 +143,23 @@ class LocationsController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                echo "SHIT NOT VALID?";  print_r($form->getMessages());
+                //echo "SHIT NOT VALID?";  print_r($form->getMessages());
                 return $viewModel;
             }
             try {
                 
                 $this->entityManager->flush();
                 $this->flashMessenger()
-                      ->addSuccessMessage("The location has been updated.");
-                //$this->redirect()->toRoute('locations');
-                echo "YAY. don't forget to redirect() ";
+                      ->addSuccessMessage("The location {$entity->getName()} has been updated.");
+                $this->redirect()->toRoute('locations');
+                //echo "YAY. don't forget to redirect() ";
             } catch (\Exception $e) {
                 echo $e->getMessage();
             }
         }
 
-
+        return $viewModel;
+        //(new ViewModel(['form' => $form,'id'=>$id, 'title' => 'edit a location']))->setTemplate('application/locations/form.phtml');
         
-        return (new ViewModel(['form' => $form,'id'=>$id, 'title' => 'edit a location']))
-            ->setTemplate('application/locations/form.phtml');
-        // to be continued
     }
 }
