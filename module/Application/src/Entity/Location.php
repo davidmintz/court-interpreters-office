@@ -51,7 +51,8 @@ class Location
      * the LocationType of this Location.
      *
      * @ORM\JoinColumn(nullable=false)
-     * @ORM\ManyToOne(targetEntity="LocationType")
+     * // this inversedBy is experimental!
+     * @ORM\ManyToOne(targetEntity="LocationType",inversedBy="locations")
      *
      * @var LocationType;
      */

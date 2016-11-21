@@ -69,6 +69,10 @@ class LocationsController extends AbstractActionController
      */
     public function indexAction()
     {
+        
+        // "SELECT t.type, COUNT(l.id) FROM Application\Entity\LocationType t 
+        //  LEFT JOIN t.locations l GROUP BY t.type"
+
         $viewModel = new ViewModel;
         return $viewModel;
     }
