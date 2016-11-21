@@ -5,8 +5,10 @@ namespace Application\Form\Factory;
 use Interop\Container\ContainerInterface;
 use Application\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-use DoctrineModule\Validator\NoObjectExists as NoObjectExistsValidator;
-use DoctrineModule\Validator\UniqueObject;
+
+use Application\Form\Validator\NoObjectExists as NoObjectExistsValidator;
+use Application\Form\Validator\UniqueObject;
+//use DoctrineModule\Validator\UniqueObject;
 
 use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -117,7 +119,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'object_manager' => $this->objectManager,
                 'target_class' => 'Application\Entity\Location',
                 'property' => 'name',
-                'label' => 'where this location itself is located, if anywhere',
+                'label' => 'where this location itself is located, if applicable',
                 'display_empty_item' => true,
                 'empty_item_label' =>  '(none)',
                
@@ -127,18 +129,15 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                     {
                         return $location->getType();
                     }
-                    
                 ]
-                
             ],
              'attributes' => [
                 'class' => 'form-control',
                 'id' => 'parentLocation',
-
              ],
         ]);
         
-        // a dropdown for LocationType
+        // add a dropdown for LocationType
                 
         $form->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
@@ -179,12 +178,45 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
             ->attach($locationValidator);
         
         $filter->add($input);
+        
+        /// https://github.com/doctrine/DoctrineModule/issues/252
+        /// https://kuldeep15.wordpress.com/2015/04/08/composite-key-type-duplicate-key-check-with-zf2-doctrine/
+        if ($options['action'] == 'create') {
+            $uniquenessValidator = new NoObjectExistsValidator([
+               'object_repository' =>  $this->objectManager->getRepository('Application\Entity\Location'),
+               'fields' => ['name','parentLocation'],
+               'object_manager' => $this->objectManager,
+               'use_context' => true,
+               'messages' => [
+                   NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'this location is already in your database', ],
+           ]);
+        } else { // assume this is an update
+       
+           $uniquenessValidator = new UniqueObject([
+               'object_repository' =>  $this->objectManager->getRepository('Application\Entity\Location'),
+               'object_manager' =>  $this->objectManager,
+               'fields' => ['name','parentLocation'],
+               'use_context' => true,
+               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
+                   'there is already an existing location with the same name and parent location'],
+           ]);
+        }
+        // ->attach($uniquenessValidator,true)
+        $nameInput = $filter->get('name');
+        $nameInput->getValidatorChain()->attach($uniquenessValidator,true);
+        
+        $input->getValidatorChain()
+            ->attach($notEmptyValidator,true)
+            ->attach($locationValidator,true);
+        
+        //////
         $filter->add([
             'name' => 'parentLocation',
             'required' => true,
             'allow_empty' => true,
            
         ]); 
+        
     }
 }
 
