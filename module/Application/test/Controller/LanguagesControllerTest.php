@@ -8,27 +8,58 @@
 namespace ApplicationTest\Controller;
 
 use Application\Controller\LanguagesController;
+
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+
+use ApplicationTest\FixtureManager;
+use ApplicationTest\DataFixture;
+
+use Application\Entity;
 
 class LanguagesControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
-        // The module configuration should still be applicable for tests.
-        // You can override configuration here with test case specific values,
-        // such as sample view templates, path stacks, module_listener_options,
-        // etc.
-        $configOverrides = [];
 
+        ///*
+        $configOverrides = [
+            
+            'module_listener_options' => [
+                'config_glob_paths' => [
+                    __DIR__.'/config/autoload/{{,*.}global,{,*.}local}.php'
+                ],
+            ],
+            
+        ];
+        
         $this->setApplicationConfig(ArrayUtils::merge(
             include __DIR__ . '/../../../../config/application.config.php',
             $configOverrides
         ));
-
+       // */
+        
+        $fixtureExecutor = FixtureManager::getFixtureExecutor();
+        $fixtureExecutor->execute([new DataFixture\LanguageLoader()]);
         parent::setUp();
     }
-
+        //$fixtureExecutor = FixtureManager::getFixtureExecutor();
+        //$fixtureExecutor->execute([new DataFixture\LanguageLoader()]);
+        //parent::setUp(); 
+    
+     public function testAddLanguage()
+    {
+        $entityManager = FixtureManager::getEntityManager();//$this->getApplicationServiceLocator()->get('entity-manager');
+        $repository = $entityManager->getRepository('Application\Entity\Language');
+        $languages = $repository->findAll()->getCurrentItems();
+        
+        $connection = $entityManager->getConnection();
+        $driver = $connection->getDriver();
+        $this->assertEquals('pdo_sqlite',$driver->getName());
+        echo "\ncount is ",count($languages);
+        
+    }
+    
     public function testLanguagesIndexActionCanBeAccessed()
     {
         $this->dispatch('/admin/languages', 'GET');
@@ -50,5 +81,6 @@ class LanguagesControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('languages/edit');
     }
 
+    
     
 }
