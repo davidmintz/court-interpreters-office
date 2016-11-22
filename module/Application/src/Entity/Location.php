@@ -92,8 +92,8 @@ class Location
     /**
      * @ORM\Column(type="boolean",options={"nullable":false,"default":true})
      * @Annotation\Type("Zend\Form\Element\Radio")
-     * @Annotation\Attributes({"class":"form-control"})
-     * @Annotation\Options({"label":"active", 
+     * @Annotation\Attributes({"class":"form-control","value":1})
+     * @Annotation\Options({"label":"is this location actively in use?", 
      *  "value_options" : {"1":"yes","0":"no"}
      * })
      * @Annotation\Validator({"name":"InArray",
@@ -211,4 +211,22 @@ class Location
     {
         return $this->parentLocation;
     }
+    
+    /**
+     * set 'active' property
+     * @return \Application\Entity\Location
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+    }
+    /**
+     * get 'active' property
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+    
 }
