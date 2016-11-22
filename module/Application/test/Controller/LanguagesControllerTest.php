@@ -56,7 +56,7 @@ class LanguagesControllerTest extends AbstractHttpControllerTestCase
         $connection = $entityManager->getConnection();
         $driver = $connection->getDriver();
         $this->assertEquals('pdo_sqlite',$driver->getName());
-        echo "\ncount is ",count($languages);
+        
         
     }
     

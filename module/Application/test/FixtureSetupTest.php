@@ -4,39 +4,17 @@ namespace ApplicationTest;
 
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+
 //use PHPUnit_Framework_TestCase;
 
 use Application\Entity;
 
-/** @todo put this bit in a bootstrap file and add it to phpunit.xml ? */
-
-//require __DIR__. '/../../../vendor/autoload.php';
     
-class FixtureSetupTest extends  
-   // PHPUnit_Framework_TestCase
-   AbstractHttpControllerTestCase
+class FixtureSetupTest extends AbstractControllerTest
+
 {
     
-    public function setUp()
-    {
-        ///*
-        $configOverrides = [
-            
-            'module_listener_options' => [
-                'config_glob_paths' => [
-                    __DIR__.'/config/autoload/{{,*.}global,{,*.}local}.php'
-                ],
-            ],
-            
-        ];
-        
-        $this->setApplicationConfig(ArrayUtils::merge(
-            include __DIR__ . '/../../../config/application.config.php',
-            $configOverrides
-        ));
-       // */
-        parent::setUp();
-    }
+   
     /**
      * @return Doctrine\ORM\EntityManager
      */

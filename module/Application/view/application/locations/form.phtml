@@ -20,7 +20,6 @@ our form action will be <?=$formAction?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
 <h2><?php echo $this->title ?></h2>
 <?php
-
 $form->prepare();
 echo $this->form()->openTag($form);?>
 <div class="form-group"><?php 
@@ -37,11 +36,15 @@ echo $this->formLabel($location_type),$this->formSelect($location_type),$this->f
 $parentLocation = $form->get('parentLocation'); 
 echo $this->formLabel($parentLocation),$this->formSelect($parentLocation),$this->formElementErrors($parentLocation);
 ?>
-
 </div>
 <div class="form-group"><?php 
- $active = $form->get('active');
- echo $this->formLabel($active),$this->formRadio($active),$this->formElementErrors($active);
+ $active = $form->get('active');$isActive = $active->getValue();
+ echo $this->formLabel($active); ?>
+    <br>
+    <input type="radio" name="active" value="1"<?php if ($isActive):?> checked="checked"<?php endif;?>> yes&nbsp;&nbsp;&nbsp;
+    <input type="radio" name="active" value="0"<?php if (! $isActive):?> checked="checked"<?php endif;?>> no
+<?php
+ echo $this->formElementErrors($active);
 ?>
 </div>
 <div class="form-group"><?php 
@@ -52,8 +55,8 @@ echo $this->formLabel($comments),$this->formTextArea($comments),$this->formEleme
 <div class="form-group"><?php 
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
-echo $this->form()->closeTag();
 ?>
 </div>
+<?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
-<?php // \Zend\Debug\Debug::dump(get_class_methods($parentLocation)) ?>
+
