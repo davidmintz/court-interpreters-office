@@ -102,7 +102,7 @@ class LocationsController extends AbstractActionController
                 $this->entityManager->persist($entity);
                 $this->entityManager->flush();
                 $this->flashMessenger()
-                      ->addSuccessMessage("The location has been added.");
+                      ->addSuccessMessage("The location  {$entity->getName()} has been added.");
                 $this->redirect()->toRoute('locations');
             } catch (\Exception $e) {
                 echo $e->getMessage();
