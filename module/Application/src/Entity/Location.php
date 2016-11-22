@@ -102,7 +102,7 @@ class Location
      * 
      */
 
-    protected $active;
+    protected $active = true;
 
     /**
      * Get id.
@@ -214,6 +214,7 @@ class Location
     
     /**
      * set 'active' property
+     * 
      * @return \Application\Entity\Location
      */
     public function setActive($active)
@@ -222,6 +223,7 @@ class Location
     }
     /**
      * get 'active' property
+     * 
      * @return boolean
      */
     public function getActive()
