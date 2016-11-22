@@ -9,32 +9,17 @@ namespace ApplicationTest\Controller;
 
 use Application\Controller\IndexController;
 use Zend\Stdlib\ArrayUtils;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use ApplicationTest\AbstractControllerTest;
 
-class IndexControllerTest extends AbstractHttpControllerTestCase
+class IndexControllerTest extends AbstractControllerTest
 {
+    /*
     public function setUp()
     {
-        
-        
-        $configOverrides = [
-            'module_listener_options' => [
-                'config_glob_paths' => [
-                    //'/opt/www/court-interpreters-office/module/Application/test/config/autoload/{{,*.}global,{,*.}local}.php',
-                    '/opt/www/court-interpreters-office/module/Application/test/config/autoload/test.local.php'
-                ]
-            ]
-        ];
-
-        $this->setApplicationConfig(ArrayUtils::merge(
-            include __DIR__ . '/../../../../config/application.config.php',
-            $configOverrides
-                
-        ));
-
         parent::setUp();
     }
-
+    */
+    
     public function testIndexActionCanBeAccessed()
     {
         $this->dispatch('/', 'GET');
