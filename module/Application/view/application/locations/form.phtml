@@ -37,6 +37,12 @@ echo $this->formLabel($location_type),$this->formSelect($location_type),$this->f
 $parentLocation = $form->get('parentLocation'); 
 echo $this->formLabel($parentLocation),$this->formSelect($parentLocation),$this->formElementErrors($parentLocation);
 ?>
+
+</div>
+<div class="form-group"><?php 
+ $active = $form->get('active');
+ echo $this->formLabel($active),$this->formRadio($active),$this->formElementErrors($active);
+?>
 </div>
 <div class="form-group"><?php 
 $comments = $form->get('comments'); 
