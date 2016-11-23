@@ -67,6 +67,18 @@ return [
                     ],
                 ],
                 'child_routes' => [
+                    'type'=> [ 
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/type/:id',
+                            'defaults' => [
+                                'action' => 'index'
+                            ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
                     'add' => [
                         'type' => Segment::class,
                         'options' => [
