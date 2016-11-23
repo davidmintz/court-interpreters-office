@@ -75,7 +75,7 @@ class LanguagesController extends AbstractActionController
 
         $page = $this->params()->fromQuery('page', 1);
         $repository = $this->entityManager->getRepository('Application\Entity\Language');
-        $languages = $repository->findAll($page);
+        $languages = $repository->findAllWithPagination($page);
 
         return ['languages' => $languages];
     }
