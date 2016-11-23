@@ -36,7 +36,7 @@ class LanguageRepository extends EntityRepository
      *
      * @return ZendPaginator
      */
-    public function findAllWithPagination($page = 1)
+    public function findAll($page = 1)
     {
         $dql = 'SELECT language FROM Application\Entity\Language language ORDER BY language.name';
         $query = $this->getEntityManager()->createQuery($dql)->setMaxResults(30);
