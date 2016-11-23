@@ -72,6 +72,11 @@ class LocationsController extends AbstractActionController
         
         $repo = $this->entityManager->getRepository('Application\Entity\LocationType');
         $locationTypes = $repo->findAllWithTotals();
+        if ($id = $this->params()->fromRoute('id')) {
+           // echo "$id is our id!";
+           // return a list of that type
+        }
+        return compact('locationTypes');
     }
     /**
      * adds a new Location.
