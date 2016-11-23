@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 /**
  * custom EntityRepository class for LocationType entity.
  */
+
 class LocationTypeRepository extends EntityRepository
 {
     /**
