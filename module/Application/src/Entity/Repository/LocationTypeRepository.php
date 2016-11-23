@@ -22,5 +22,12 @@ class LocationTypeRepository extends EntityRepository
         );
         return $query->getResult();
     }
+    public function findAllWithTotals()
+    {
 
+        $dql = 'SELECT t.id, t.type, COUNT(l.id) AS total FROM Application\Entity\LocationType t 
+                LEFT JOIN t.locations l GROUP BY t.type ORDER BY t.type';
+
+        return $this->getEntityManager()->createQuery($dql)->getResult();
+    }
 }
