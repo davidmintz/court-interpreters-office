@@ -37,31 +37,5 @@ class LocationRepository extends EntityRepository
         return $query->getResult();
     }
 
-    /*
-     * returns all languages wrapped in a paginator.
-     *
-     * @todo rename, because it's misleading for findAll to return
-     * a data type different from that of the method it overrides
-     *
-     * @param int $page
-     *
-     * @return ZendPaginator
-     
-    public function findAll($page = 1)
-    {
-        $dql = 'SELECT language FROM Application\Entity\Language language ORDER BY language.name';
-        $query = $this->getEntityManager()->createQuery($dql)->setMaxResults(30);
-
-        $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
-        if (!count($paginator)) {
-            return null;
-        }
-        $paginator->setCurrentPageNumber($page)
-            ->setItemCountPerPage(30);
-
-        return $paginator;
-    }
-     
-     */
+    
 }
