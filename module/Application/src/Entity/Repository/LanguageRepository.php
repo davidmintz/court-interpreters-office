@@ -29,9 +29,6 @@ class LanguageRepository extends EntityRepository
     /**
      * returns all languages wrapped in a paginator.
      *
-     * @todo rename, because it's misleading for findAll to return
-     * a data type different from that of the method it overrides
-     *
      * @param int $page
      *
      * @return ZendPaginator
