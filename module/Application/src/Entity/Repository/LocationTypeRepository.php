@@ -22,6 +22,12 @@ class LocationTypeRepository extends EntityRepository
         );
         return $query->getResult();
     }
+
+    /**
+     * returns all the location types with total number of each
+     * 
+     * @return array
+     */
     public function findAllWithTotals()
     {
 
