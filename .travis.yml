@@ -1,0 +1,16 @@
+
+
+# first stab at a .travis.yml 
+# this also gives us something to edit and thus contrive
+# a reason to `git push` and trigger a build 
+
+language: php
+
+php: 
+  - 5.6
+  - 7.0
+
+install:  composer install
+
+script: vendor/bin/phpunit
+
