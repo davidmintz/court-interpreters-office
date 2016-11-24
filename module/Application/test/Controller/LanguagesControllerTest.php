@@ -51,8 +51,12 @@ class LanguagesControllerTest extends AbstractHttpControllerTestCase
     {
         $entityManager = FixtureManager::getEntityManager();//$this->getApplicationServiceLocator()->get('entity-manager');
         $repository = $entityManager->getRepository('Application\Entity\Language');
-        $languages = $repository->findAll()->getCurrentItems();
-        
+        $languages = $repository->findAll(); 
+        $this->assertTrue(is_array($languages));
+
+        // to be continued
+
+        // sanity-check to be removed:
         $connection = $entityManager->getConnection();
         $driver = $connection->getDriver();
         $this->assertEquals('pdo_sqlite',$driver->getName());
