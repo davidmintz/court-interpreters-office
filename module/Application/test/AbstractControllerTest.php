@@ -21,7 +21,7 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
             
             'module_listener_options' => [
                 'config_glob_paths' => [
-                    __DIR__.'/config/autoload/{{,*.}global,{,*.}local}.php'
+                    __DIR__.'/config/autoload/{{,*.}test,{,*.}local}.php'
                 ],
             ],
             

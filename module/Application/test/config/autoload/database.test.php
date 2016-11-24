@@ -1,4 +1,5 @@
 <?php
+echo "SHIT IS REAL\n";
 $path = __DIR__.'/../../data/office.sqlite';
 return [
     
