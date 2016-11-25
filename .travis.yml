@@ -1,8 +1,8 @@
 
 
-# first stab at a .travis.yml 
-# this also gives us something to edit and thus contrive
-# a reason to `git push` and trigger a build 
+# this is .travis.yml 
+# comments also gives us something to edit and thus contrive
+# a reason to `git push` and trigger a build to see if it's working
 
 language: php
 
@@ -11,6 +11,8 @@ php:
   - 7.0
 
 install:  composer install
+
+before_script:  cp module/Application/test/config/autoload/doctrine.test.php config/autoload/doctrine.local.php
 
 script: vendor/bin/phpunit
 
