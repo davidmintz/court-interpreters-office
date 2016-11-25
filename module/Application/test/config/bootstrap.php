@@ -16,7 +16,7 @@ foreach ($files as $file) {
     AnnotationRegistry::registerFile( $file);
 }
 
-$config = require (__DIR__.'/../config/autoload/test.local.php');
+$config = require (__DIR__.'/../config/autoload/doctrine.test.php');
 $dbParams = $config['doctrine']['connection']['orm_default']['params']; 
 $dbParams['driver'] = 'pdo_sqlite';
 

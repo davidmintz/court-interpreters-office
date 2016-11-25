@@ -1,6 +1,8 @@
 <?php
-
-$path = __DIR__.'/../../data/office.sqlite';
+// echo getcwd(); exit();
+$path = getcwd() . '/module/Application/test/data/office.sqlite';
+// $path = __DIR__.'/../../data/office.sqlite';
+// echo "\$path is: $path !!\n";
 return [
     
     'service_manager' => [
