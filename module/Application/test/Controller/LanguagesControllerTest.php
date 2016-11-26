@@ -8,16 +8,16 @@
 namespace ApplicationTest\Controller;
 
 use Application\Controller\LanguagesController;
-
+use ApplicationTest\AbstractControllerTest;
 use Zend\Stdlib\ArrayUtils;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Zend\Stdlib\Parameters;
 
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 
 use Application\Entity;
 
-class LanguagesControllerTest extends AbstractHttpControllerTestCase
+class LanguagesControllerTest extends AbstractControllerTest
 {
     public function setUp()
     {
@@ -53,13 +53,21 @@ class LanguagesControllerTest extends AbstractHttpControllerTestCase
         $repository = $entityManager->getRepository('Application\Entity\Language');
         $languages = $repository->findAll(); 
         $this->assertTrue(is_array($languages));
+        $count_before = count($languages);
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters(
+                [
+                    'name' => 'Vulcan',
+                    'comments' => 'rarely used'
+                ]
+            )
+        );
+        $this->dispatch('/admin/languages/add');
 
-        // to be continued
-
-        // sanity-check to be removed:
-        $connection = $entityManager->getConnection();
-        $driver = $connection->getDriver();
-        $this->assertEquals('pdo_sqlite',$driver->getName());
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/languages');
+        $count_after = count($repository->findAll());
+        $this->assertEquals(1, $count_after - $count_before);
         
         
     }
