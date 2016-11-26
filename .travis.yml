@@ -12,6 +12,10 @@ php:
 
 install:  composer install
 
+# there may be a better way, but this is what we had to do 
+# to compel travis-ci to use our test config (sqlite)
+# instead of dev (mysql)
+
 before_script:  cp module/Application/test/config/autoload/doctrine.test.php config/autoload/doctrine.local.php
 
 script: vendor/bin/phpunit
