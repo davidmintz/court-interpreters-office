@@ -22,23 +22,7 @@ class LanguagesControllerTest extends AbstractControllerTest
     public function setUp()
     {
 
-        ///*
-        $configOverrides = [
-            
-            'module_listener_options' => [
-                'config_glob_paths' => [
-                    __DIR__.'/config/autoload/{{,*.}global,{,*.}local}.php'
-                ],
-            ],
-            
-        ];
-        
-        $this->setApplicationConfig(ArrayUtils::merge(
-            include __DIR__ . '/../../../../config/application.config.php',
-            $configOverrides
-        ));
-       // */
-        
+         
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute([new DataFixture\LanguageLoader()]);
         parent::setUp();
