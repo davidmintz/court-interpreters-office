@@ -63,6 +63,7 @@ class LanguagesControllerTest extends AbstractControllerTest
      * @depends testAddLanguage
      */
     public function testEditLanguage($vulcan) {
+        
         $entityManager = FixtureManager::getEntityManager();
         $entityManager->persist($vulcan);
         $entityManager->flush();
