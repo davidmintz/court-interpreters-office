@@ -33,7 +33,7 @@ class LanguagesControllerTest extends AbstractControllerTest
     
      public function testAddLanguage()
     {
-        $entityManager = FixtureManager::getEntityManager();//$this->getApplicationServiceLocator()->get('entity-manager');
+        $entityManager = FixtureManager::getEntityManager();
         $repository = $entityManager->getRepository('Application\Entity\Language');
         $languages = $repository->findAll(); 
         $this->assertTrue(is_array($languages));
@@ -53,7 +53,38 @@ class LanguagesControllerTest extends AbstractControllerTest
         $count_after = count($repository->findAll());
         $this->assertEquals(1, $count_after - $count_before);
         
+        $vulcan = $repository->findOneBy(['name'=>'Vulcan']);
+        $this->assertInstanceOf(Entity\Language::class, $vulcan);
+        return $vulcan;
         
+        
+    }
+    /**
+     * @depends testAddLanguage
+     */
+    public function testEditLanguage($vulcan) {
+        $entityManager = FixtureManager::getEntityManager();
+        $entityManager->persist($vulcan);
+        $entityManager->flush();
+        $id = $vulcan->getId();
+        $comments_before = $vulcan->getComments();
+        $this->dispatch('/admin/languages/edit/'.$id);
+        $this->assertResponseStatusCode(200);
+        $this->reset();
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters(
+                [
+                    'name' => 'Vulcan',
+                    'comments' => 'VERY rarely used',
+                    'id' => $id,
+                ]
+            )
+        );
+        $this->dispatch('/admin/languages/edit/'.$id);
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/languages');
+        $entityManager->refresh($vulcan);
+        $this->assertNotEquals($comments_before, $vulcan->getComments());
     }
     
     public function testLanguagesIndexActionCanBeAccessed()
