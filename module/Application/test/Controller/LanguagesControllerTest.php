@@ -9,7 +9,6 @@ namespace ApplicationTest\Controller;
 
 use Application\Controller\LanguagesController;
 use ApplicationTest\AbstractControllerTest;
-use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\Parameters;
 
 use ApplicationTest\FixtureManager;
