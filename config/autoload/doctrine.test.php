@@ -2,10 +2,10 @@
 // we need to fix this.
 
 // does NOT work when you are in module/Application/test !
-// $path = getcwd() . '/module/Application/test/data/office.sqlite';
+$path = getcwd() . '/module/Application/test/data/office.sqlite';
 
 //DOES work from module/Application/test 
-$path = __DIR__.'/../../data/office.sqlite';
+//$path = __DIR__.'/../../data/office.sqlite';
 
 
 return [
