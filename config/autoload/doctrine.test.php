@@ -1,12 +1,11 @@
 <?php
-// we need to fix this.
+/**
+ * config/autoload/doctrine.test.php
+ * used with travis-ci in 'before_script' irective
+ * 
+ */
 
-// does NOT work when you are in module/Application/test !
 $path = getcwd() . '/module/Application/test/data/office.sqlite';
-
-//DOES work from module/Application/test 
-//$path = __DIR__.'/../../data/office.sqlite';
-
 
 return [
     
