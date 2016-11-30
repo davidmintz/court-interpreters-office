@@ -16,6 +16,7 @@ use ApplicationTest\DataFixture;
 use Application\Entity;
 use Application\Service\Authentication;
 
+
 use Zend\Authentication\AuthenticationService;
 
 class AuthenticationTest extends AbstractControllerTest
