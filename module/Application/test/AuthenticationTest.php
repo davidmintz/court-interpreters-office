@@ -38,33 +38,44 @@ class AuthenticationTest extends AbstractControllerTest
         $adapter = new Authentication\Adapter([
             'object_manager' => FixtureManager::getEntityManager(),  //'Doctrine\ORM\EntityManager',
             'credential_property' => 'password',
-            // 'credential_callable' => function (User $user, $passwordGiven) {
-            //     return my_awesome_check_test($user->getPassword(), $passwordGiven);
-            // },
-
+            'credential_callable' => 'Application\Entity\User::verifyPassword',
             ]);
         $this->auth = new AuthenticationService(null, $adapter);
         parent::setUp();
     }
     
-    public function testTest()
+    public function testAuthenticateWithEmailAndWithUsername()
     {
         $adapter = $this->auth->getAdapter();//john_somebody@nysd.uscourts.gov
         $adapter->setIdentity('david@davidmintz.org')->setCredential('boink');
-        
-        // authentication will FAIL until we add the password_hash callback business
-        
         $this->assertInstanceOf(AuthenticationService::class, $this->auth);
         $this->assertInstanceOf(\Application\Service\Authentication\Adapter::class, $adapter);
-        //return ;
+
         $result = $this->auth->authenticate();
-        /*
-        echo "testing authentication... result is an instance of ";
-        echo get_class($result),"\n";
-        echo $result->isValid() ? "auth OK" : "auth FAILED";
-        echo "\n",$result->getCode(),"\n";
-        print_r($result->getMessages());
-        */
+        
+        $this->assertInstanceOf(\Application\Service\Authentication\Result::class, $result);
+        $this->assertTrue($result->isValid());
+        $this->auth->clearIdentity();
+        $adapter->setIdentity('david')->setCredential('boink');
+        $result = $this->auth->authenticate();
+        $this->assertTrue($result->isValid());
+        //echo "\n",$result->getCode(),"\n"; print_r($result->getMessages());
+    }
+    
+    public function testAuthenticationFailsIfAccountIsNotActive()
+    {
+        $adapter = $this->auth->getAdapter();
+        $adapter->setIdentity('david@davidmintz.org')->setCredential('boink');
+        $em = FixtureManager::getEntityManager();
+        $david =$em->getRepository('Application\Entity\User')
+                ->findOneBy(['username'=>'david']);
+        $david->setActive(false);
+        $em->flush();
+        $result = $this->auth->authenticate();
+        $this->assertFalse($result->isValid());
+        $this->assertEquals( 
+           \Application\Service\Authentication\Result::FAILURE_USER_ACCOUNT_DISABLED,  
+           $result->getCode());
     }
     
 }
