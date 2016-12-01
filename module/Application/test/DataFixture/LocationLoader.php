@@ -52,10 +52,9 @@ class LocationLoader implements FixtureInterface {
     		[ '7th floor',$repository->findOneBy(['type'=>'US Probation office']),$pearl     ],
     		[ '5th floor',$repository->findOneBy(['type'=>'Pretrial Services office']),$pearl     ],
     		[ '4th floor',$repository->findOneBy(['type'=>'holding cell']),$pearl     ],
-                [ '618',$courtroom,$foley     ],
-    		[ '23A',$courtroom,$pearl     ],
-                [ '11A',$courtroom,$pearl     ],
-
+            [ '618', $courtroom, $foley ],
+    		[ '23A', $courtroom, $pearl ],
+            [ '11A', $courtroom, $pearl ],
 
     	];
 
