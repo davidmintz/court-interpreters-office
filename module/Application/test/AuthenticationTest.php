@@ -56,10 +56,15 @@ class AuthenticationTest extends AbstractControllerTest
         
         $this->assertInstanceOf(AuthenticationService::class, $this->auth);
         $this->assertInstanceOf(\Application\Service\Authentication\Adapter::class, $adapter);
-        //$result = $this->auth->authenticate();
-        //echo "testing authentication... result is an instance of ";
-        //echo get_class($result),'<br>';
-        //echo $result->isValid() ? "auth OK" : "auth FAILED";
+        //return ;
+        $result = $this->auth->authenticate();
+        /*
+        echo "testing authentication... result is an instance of ";
+        echo get_class($result),"\n";
+        echo $result->isValid() ? "auth OK" : "auth FAILED";
+        echo "\n",$result->getCode(),"\n";
+        print_r($result->getMessages());
+        */
     }
     
 }

@@ -12,7 +12,8 @@ class Adapter extends ObjectRepository
 
     public function __construct($options = [])
     {
-        
+        //echo "\ncallable option passed? ";
+        // var_dump(isset($options['credential_callable']));
         parent::__construct($options);
     }
 
@@ -69,10 +70,10 @@ class Adapter extends ObjectRepository
         //$identity->getActive() ? " user is active ": " user is NOT active ";
         $credentialValue = $this->credential;
         $callable        = $this->options->getCredentialCallable();
-
+        //var_dump($callable);
         if ($callable) {
             $credentialValue = call_user_func($callable, $identity, $credentialValue);
-        }
+        } 
 
         if ($credentialValue !== true && $credentialValue !== $documentCredential) {
             $this->authenticationResultInfo['code']       = Result::FAILURE_CREDENTIAL_INVALID;

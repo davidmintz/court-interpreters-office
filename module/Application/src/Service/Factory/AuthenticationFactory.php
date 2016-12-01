@@ -16,7 +16,7 @@ class AuthenticationFactory implements FactoryInterface
         $adapter = new AuthenticationAdapter([
             'object_manager' => $this->em,//'Doctrine\ORM\EntityManager',
             'credential_property' => 'password',
-            //  'credential_callable' => User:static_method
+            'credential_callable' => Application\Entity\User::verifyPassword,
             // 'credential_callable' => function (User $user, $passwordGiven) {
             //     return my_awesome_check_test($user->getPassword(), $passwordGiven);
             // },

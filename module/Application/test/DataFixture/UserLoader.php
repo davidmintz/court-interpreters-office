@@ -11,7 +11,7 @@ class UserLoader implements FixtureInterface {
     
     public function load(ObjectManager $objectManager)
     {
-		
+		  
 
 		
         $person = $objectManager->getRepository('Application\Entity\Person')
@@ -22,7 +22,10 @@ class UserLoader implements FixtureInterface {
 
         $user = new Entity\User;
 
-        $user->setPerson($person)->setPassword('boink')->setRole($role)->setActive(true);
+        $user->setPerson($person)
+            ->setPassword('boink')
+            ->setRole($role)
+            ->setActive(true);
         $objectManager->persist($user);
 
         

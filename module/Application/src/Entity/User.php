@@ -110,6 +110,20 @@ class User
      }
 
     /**
+     * verifies password
+     * @param User $user
+     * @param string $submitted_password
+     * 
+     */
+    public static function verifyPassword(User $user, $submitted_password)
+    {
+
+        //exit("SHIT IS RUNNING HERE....\n");
+        return password_verify($submitted_password,$user->getPassword());
+
+    }
+
+    /**
      * Set password.
      *
      * @param string $password
