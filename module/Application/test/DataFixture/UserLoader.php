@@ -25,7 +25,8 @@ class UserLoader implements FixtureInterface {
         $user->setPerson($person)
             ->setPassword('boink')
             ->setRole($role)
-            ->setActive(true);
+            ->setActive(true)
+            ->setUsername('david');
         $objectManager->persist($user);
 
         
