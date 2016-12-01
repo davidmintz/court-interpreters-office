@@ -20,15 +20,11 @@ class LanguagesControllerTest extends AbstractControllerTest
 {
     public function setUp()
     {
-
-         
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute([new DataFixture\LanguageLoader()]);
         parent::setUp();
     }
-        //$fixtureExecutor = FixtureManager::getFixtureExecutor();
-        //$fixtureExecutor->execute([new DataFixture\LanguageLoader()]);
-        //parent::setUp(); 
+        
     
      public function testAddLanguage()
     {
