@@ -53,7 +53,7 @@ class AuthenticationTest extends AbstractControllerTest
 
         $result = $this->auth->authenticate();
         
-        $this->assertInstanceOf(\Application\Service\Authentication\Result::class, $result);
+        $this->assertInstanceOf(Authentication\Result::class, $result);
         $this->assertTrue($result->isValid());
         $this->auth->clearIdentity();
         $adapter->setIdentity('david')->setCredential('boink');
@@ -74,8 +74,18 @@ class AuthenticationTest extends AbstractControllerTest
         $result = $this->auth->authenticate();
         $this->assertFalse($result->isValid());
         $this->assertEquals( 
-           \Application\Service\Authentication\Result::FAILURE_USER_ACCOUNT_DISABLED,  
+           Authentication\Result::FAILURE_USER_ACCOUNT_DISABLED,  
            $result->getCode());
+    }
+    
+    public function testAuthenticationFailsIfPasswordIsWrong()
+    {
+        $adapter = $this->auth->getAdapter();
+        $adapter->setIdentity('david@davidmintz.org')->setCredential('not correct');
+        $result = $this->auth->authenticate();
+        $this->assertFalse($result->isValid());
+        $this->assertEquals(Authentication\Result::FAILURE_CREDENTIAL_INVALID,
+                $result->getCode());
     }
     
 }
