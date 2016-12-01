@@ -22,6 +22,9 @@ use Zend\Authentication\AuthenticationService;
 class AuthenticationTest extends AbstractControllerTest
 {
     
+    /**
+     * @var Zend\Authentication\AuthenticationService
+     */
     protected $auth;
     
     public function setUp()
@@ -37,7 +40,7 @@ class AuthenticationTest extends AbstractControllerTest
         ]);
         $adapter = new Authentication\Adapter([
             'object_manager' => FixtureManager::getEntityManager(),  //'Doctrine\ORM\EntityManager',
-            'credential_property' => 'password',
+            // 'credential_property' => 'password', // not required! 
             'credential_callable' => 'Application\Entity\User::verifyPassword',
             ]);
         $this->auth = new AuthenticationService(null, $adapter);
