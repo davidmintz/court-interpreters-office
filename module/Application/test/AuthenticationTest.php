@@ -67,7 +67,7 @@ class AuthenticationTest extends AbstractControllerTest
         $adapter = $this->auth->getAdapter();
         $adapter->setIdentity('david@davidmintz.org')->setCredential('boink');
         $em = FixtureManager::getEntityManager();
-        $david =$em->getRepository('Application\Entity\User')
+        $david = $em->getRepository('Application\Entity\User')
                 ->findOneBy(['username'=>'david']);
         $david->setActive(false);
         $em->flush();
