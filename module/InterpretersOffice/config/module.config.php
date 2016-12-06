@@ -1,14 +1,12 @@
 <?php
 /**
- * module/Application/config/module.config.php.
+ * module/InterpretersOffice/config/module.config.php.
  */
 
 namespace InterpretersOffice;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
-
-//use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
     'router' => [
@@ -219,20 +217,6 @@ return [
                 ),
             ),
         ),
-        /*
-        'authentication' => [
-            'orm_default' => [
-                'object_manager' => 'Doctrine\ORM\EntityManager',
-                'identity_class' => 'InterpretersOffice\Entity\User',
-                'identity_property' => 'email',
-                'credential_property' => 'password',
-               // 'credential_callable' => function (User $user, $passwordGiven) {
-               //     return my_awesome_check_test($user->getPassword(), $passwordGiven);
-               // },
-            ],
-        ],
-         */
-
    ],
    'service_manager' => [
         'aliases' => [
