@@ -64,7 +64,7 @@ class User
      *
      *
      * @ORM\JoinColumn(nullable=false)
-     * @ORM\ManyToOne(targetEntity="Role")
+     * @ORM\ManyToOne(targetEntity="Role",fetch="EAGER")
      *
      * @see InterpretersOffice\Entity\Role
      *
