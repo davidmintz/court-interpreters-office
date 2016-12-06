@@ -68,21 +68,19 @@ class AuthController extends AbstractActionController {
         }
         return ['form'=>$form,];
     }
-    /**
-     * quick and dirty test action, to be removed
-     * 
-     * @return boolean
-     */
-    public function testAction()
+    
+    
+    public function logoutAction()
     {
-        $adapter = $this->auth->getAdapter();
-        $adapter->setIdentity('david')->setCredential('boink');
-        $result = $this->auth->authenticate();
-        echo "testing authentication... result is an instance of ";
-        echo get_class($result),'<br>';
-        echo $result->isValid() ? "auth OK" : "auth FAILED";
-        
-        return false;
+        if ($this->auth->hasIdentity()) {
+            $this->auth->clearIdentity();
+              $this->flashMessenger()
+                 ->addSuccessMessage("You have logged out");
+              
+       } else {
+           $this->redirect()->toRoute('home');
+       }
+       $this->redirect()->toRoute('auth');
     }
     
 }
