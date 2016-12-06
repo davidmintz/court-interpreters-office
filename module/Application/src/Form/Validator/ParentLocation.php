@@ -101,13 +101,7 @@ class ParentLocation extends AbstractValidator {
              $this->error(self::LOCATION_TYPE_CANNOT_HAVE_PARENT);
              return false;
         }
-        
-        
-        
-        //printf("<pre>%s</pre>", print_r($context,true));
-        //printf("<pre>parent location type submitted: %s</pre>", print_r($this->parentLocations[$context['parentLocation']]['attributes']['data-location-type'],  true));
-        //printf("<pre>location type submitted: %s</pre>", print_r($this->locationTypes[$value],  true));
-        
+                
         return true;
         
         
