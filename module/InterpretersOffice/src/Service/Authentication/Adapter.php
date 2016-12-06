@@ -12,9 +12,8 @@ class Adapter extends ObjectRepository
 
     public function __construct($options = [])
     {
-        //echo "\ncallable option passed? ";
-        // var_dump(isset($options['credential_callable']));
         parent::__construct($options);
+        // maybe we will do something here
     }
 
    public function authenticate()
@@ -33,7 +32,7 @@ class Adapter extends ObjectRepository
         if (!$identity) {            
             $this->authenticationResultInfo['code']       = \Zend\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
-
+           
             return $this->createAuthenticationResult();
         }
         return $this->validateIdentity($identity);
@@ -58,11 +57,9 @@ class Adapter extends ObjectRepository
         // $documentCredential means the hashed password, as stored
         $credentialValue = $this->credential; // i.e., submitted password
         $callable        = $this->options->getCredentialCallable();
-        
         if ($callable) {
             $credentialValue = call_user_func($callable, $identity, $credentialValue);
         } 
-        
         if ($credentialValue !== true && $credentialValue !== $documentCredential) {
             $this->authenticationResultInfo['code']       = Result::FAILURE_CREDENTIAL_INVALID;
             $this->authenticationResultInfo['messages'][] = 'Supplied credential is invalid.';
