@@ -47,7 +47,23 @@ class AuthController extends AbstractActionController {
     public function loginAction()
     {
         $form = new \InterpretersOffice\Form\LoginForm();
-        return ['form' => $form];
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (! $form->isValid()) {
+                return ['form' => $form];
+            }
+            $data = $form->getData();
+            $this->auth->getAdapter()
+                 ->setIdentity($data['identity'])
+                 ->setCredential($data['password']);
+            $result = $this->auth->authenticate();
+            if ($result->isValid()) {
+                $this->redirect()->toRoute('home');
+            } else {
+                return ['form'=>$form,'status'=> $result->getCode()];
+            }
+        }
     }
     /**
      * quick and dirty test action, to be removed
