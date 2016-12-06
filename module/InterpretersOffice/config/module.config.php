@@ -149,7 +149,19 @@ return [
                     ],
                 ],
                 // to be continued
-            ]
+            ],
+            'logout' => [
+                'type' => Literal::class,
+                'route'=> '/logout',
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/logout',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action' => 'logout',
+                    ],
+                ],
+            ],
         ],
     ],
     'view_helpers' => [
