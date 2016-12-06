@@ -59,11 +59,14 @@ class AuthController extends AbstractActionController {
                  ->setCredential($data['password']);
             $result = $this->auth->authenticate();
             if ($result->isValid()) {
+                //echo "YAY !!!";
                 $this->redirect()->toRoute('home');
+                return;
             } else {
                 return ['form'=>$form,'status'=> $result->getCode()];
             }
         }
+        return ['form'=>$form,];
     }
     /**
      * quick and dirty test action, to be removed

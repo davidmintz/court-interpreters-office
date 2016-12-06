@@ -48,7 +48,39 @@ class LoginForm extends Form implements InputFilterProviderInterface
 	}
 	public function getInputFilterSpecification()
 	{
-		return[];
+		return[
+            
+            'identity' =>[
+                'validators' => [
+                    [
+                      'name' => 'NotEmpty',
+                      'options' =>[
+                           'messages' => [\Zend\Validator\NotEmpty::IS_EMPTY => 'identity is required']
+                        ],
+                    ],
+                ],
+                'filters' => [
+                    [
+                        'name' => 'StringTrim',
+                    ]
+                ],
+            ],
+            'password' => [
+                'validators' => [
+                    [
+                      'name' => 'NotEmpty',
+                       'options' =>[
+                           'messages' => [\Zend\Validator\NotEmpty::IS_EMPTY => 'password is required']
+                        ]
+                    ],
+                ],
+                'filters' => [
+                    [
+                       'name' => 'StringTrim',
+                    ]
+                ],
+            ]
+        ];
 	}
 
 
