@@ -22,13 +22,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Application\\": "module/Application/src/",
+            "InterpretersOffice\\": "module/InterpretersOffice/src/",
             "InterpretersOffice\\Admin\\": "module/Admin/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ApplicationTest\\": "module/Application/test/"
+            "ApplicationTest\\": "module/InterpretersOffice/test/"
         }
     },
     "extra": [],

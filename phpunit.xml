@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="module/Application/test/Bootstrap.php">
+<phpunit colors="true" bootstrap="module/InterpretersOffice/test/Bootstrap.php">
     <testsuites>
         <testsuite name="CourtInterpretersOffice Test Suite">
-            <directory>./module/Application/test</directory>
-            <exclude>./module/Application/test/AbstractControllerTest.php</exclude>
+            <directory>./module/InterpretersOffice/test</directory>
+            <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
         </testsuite>
     </testsuites>
 </phpunit>

@@ -28,7 +28,7 @@ foreach ($files as $file) {
 $params = require ('autoload/local.php');
 $dbParams = $params['doctrine']['connection']['orm_default']['params']; 
 $entitiesPath = [
-	__DIR__ .'/../module/Application/src/Entity/',
+	__DIR__ .'/../module/InterpretersOffice/src/Entity/',
 ];
 $config = Setup::createAnnotationMetadataConfiguration($entitiesPath,true,null, null, false);
 return EntityManager::create($dbParams, $config);
