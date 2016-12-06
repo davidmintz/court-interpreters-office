@@ -6,6 +6,7 @@ body {
 .validation-error {
     padding: 5px;
     color : #a9302a;
+    margin-bottom: 0;
 }
 
 /* stuff that came with the skeleton app*/
