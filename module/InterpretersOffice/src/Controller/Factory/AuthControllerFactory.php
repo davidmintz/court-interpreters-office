@@ -25,7 +25,8 @@ class AuthControllerFactory {
      {
          $adapter = new AuthAdapter([
             'object_manager' => $container->get('entity-manager'),
-            'credential_property' => 'password',
+             // we could hard-code this into our adapter
+            'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
          ]);
          $service = new AuthenticationService(null, $adapter);
          return new AuthController($service);
