@@ -43,6 +43,12 @@ class AuthController extends AbstractActionController {
         return false;
         
     }
+
+    public function loginAction()
+    {
+        $form = new \Application\Form\LoginForm();
+        return ['form' => $form];
+    }
     /**
      * quick and dirty test action, to be removed
      * 

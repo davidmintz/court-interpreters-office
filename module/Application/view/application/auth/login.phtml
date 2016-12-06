@@ -1,0 +1,33 @@
+<?php 
+//$this->headScript()->appendFile($this->basepath().'/js/query-ui.min.js');
+// $this->headScript()->appendFile($this->basepath().'/js/login.js');
+?>
+<?php // the following url() thing seems to work for now ?>
+<div class="panel-heading"><h2 class="navigation">user login</h2></div>
+<?php 
+foreach (['success','default','error','info','warning'] as $ns) {
+	echo $this->flashMessenger()->render($ns, array('alert', 'alert-dismissible', "alert-{$ns}"));	
+}
+
+?>
+<?php if ($this->status && $this->status != \Zend\Authentication\Result::SUCCESS) :?>
+<div class="alert alert-warning alert-dismissible">Authentication failed. Invalid email and/or password. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
+<?php else:?>
+<p style="margin:1em 0 2em 0;font-size:120%">Please log in to continue.</p>    
+<?php endif;?>
+<form class="form-inline well" style="max-width:900px;display:inline-block" id="form-login" action="<?php echo $this->url('auth',['action'=>'login']) ?>" method="post">
+  <div class="form-group">
+    <label class="sr-only" for="identity">email address</label>
+        <?php echo $this->formElementErrors($this->form->get('identity'))?>
+    <?php echo $this->formElement($this->form->get('identity')); //return; ?>
+  </div>
+  <div class="form-group">
+    <label class="sr-only" for="password">password</label>
+     <?php echo $this->formElementErrors($this->form->get('password')) ?>
+     <?php echo $this->formElement($this->form->get('password')); //return; ?>
+  </div>
+    <button type="submit" class="btn btn-default">log in</button>
+    <?php //echo $this->formElement($form->get('login_csrf')) ?>
+</form>
+<p style="margin-top:3em"><a href="<?php // echo $this->url('user/default',['action'=>'request-password'])?>">Forgot password?</a></p>
+<p><a href="<?php // echo $this->url('user/default',['action'=>'register'])?>">Need to create a user account?</a></p>

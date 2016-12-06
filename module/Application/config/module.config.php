@@ -147,7 +147,7 @@ return [
                     'route' => '/login',
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
-                        'action' => 'test',
+                        'action' => 'login',
                     ],
                 ],
                 // to be continued
