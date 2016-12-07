@@ -32,7 +32,13 @@ class MinimalUserLoader implements FixtureInterface {
                  ->setLastname('Somebody')
                  ->setHat(
                       $objectManager->getRepository('InterpretersOffice\Entity\Hat')
-                         ->findOneBy(['name'=>'staff, Interpreters Office'])
+                         ->findOneBy(
+                                 [
+                                     //'name'=>'staff, Interpreters Office',
+                                     'name' => 'staff Court Interpreter',
+                                     
+                                 ]
+                          )
                  )
                  ->setEmail('susie_somebody@nysd.uscourts.gov');
          $objectManager->persist($person);

@@ -62,6 +62,7 @@ return [
 
                     'route' => '/admin/locations',
                     'defaults' => [
+                        'module' => __NAMESPACE__,
                         'controller' => Controller\LocationsController::class,
                         'action' => 'index',
                     ],

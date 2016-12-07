@@ -23,12 +23,14 @@ class LocationsControllerTest extends AbstractControllerTest {
     
     public function setUp()
     {
+         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute([
             new DataFixture\LocationLoader(),
             new DataFixture\MinimalUserLoader(),
         ]);
-        parent::setUp();
+        $this->login('susie','boink');
+       
     }
     
     /**
@@ -43,6 +45,7 @@ class LocationsControllerTest extends AbstractControllerTest {
         $this->assertControllerName(LocationsController::class); // as specified in router's controller name alias
         $this->assertControllerClass('LocationsController');
         $this->assertMatchedRouteName('locations/add');
+        $this->assertResponseStatusCode(200);
         $this->assertQuery('form');
         $this->assertQuery('#name');
         $this->assertQuery('#type');
