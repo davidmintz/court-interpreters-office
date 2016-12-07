@@ -93,7 +93,7 @@ class FixtureSetupTest extends AbstractControllerTest
      * test that a RuntimeException will be thrown if we try to persist an Event
      * with no Judge and no anonymous judge.
      */
-    public function _testExceptionThrownWhenNoJudgeOrAnonymousJudgeIsSet() {
+    public function testExceptionThrownWhenNoJudgeOrAnonymousJudgeIsSet() {
         
         $this->loadTestEventData();
         $event = new Entity\Event();
