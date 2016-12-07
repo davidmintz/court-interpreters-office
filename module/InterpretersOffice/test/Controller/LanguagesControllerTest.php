@@ -7,7 +7,7 @@
 
 namespace ApplicationTest\Controller;
 
-use InterpretersOffice\Controller\LanguagesController;
+use InterpretersOffice\Admin\Controller\LanguagesController;
 use ApplicationTest\AbstractControllerTest;
 use Zend\Stdlib\Parameters;
 
@@ -20,9 +20,25 @@ class LanguagesControllerTest extends AbstractControllerTest
 {
     public function setUp()
     {
-        $fixtureExecutor = FixtureManager::getFixtureExecutor();
-        $fixtureExecutor->execute([new DataFixture\LanguageLoader()]);
         parent::setUp();
+        $fixtureExecutor = FixtureManager::getFixtureExecutor();
+        $fixtureExecutor->execute([
+            new DataFixture\LanguageLoader(),
+            new DataFixture\MinimalUserLoader(),
+            ]);
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters(
+                [
+                    'identity' => 'susie',
+                    'password' => 'boink'
+                ]
+            )
+        );
+        $this->dispatch('/login');
+        //echo "status code following login: ",$this->getResponseStatusCode(),"\n";
+        //echo $this->getResponse()->getBody();
+        $this->reset(true);
+        
     }
         
     
