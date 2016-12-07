@@ -1,9 +1,9 @@
 <?php
 /**
- * module/InterpretersOffice/src/Controller/LanguagesController.php.
+ * module/Admin/src/Controller/LanguagesController.php.
  */
 
-namespace InterpretersOffice\Controller;
+namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;

@@ -26,6 +26,7 @@ class Module
     
     public function enforceAuthentication(MvcEvent $event)
     {
+        
         $match = $event->getRouteMatch();
         if (!$match) { return; }
         $module  = $match->getParam('module');
@@ -37,7 +38,9 @@ class Module
                 $controller->flashMessenger()
                         ->addWarningMessage("Authentication is required.");
                 return $this->getRedirectionResponse($event);
+
             } else {
+
                 $allowed = ['manager','administrator'];
                 $user = $container->get('entity-manager')
                     ->find('InterpretersOffice\Entity\User',
@@ -46,9 +49,9 @@ class Module
                 $role = (string)$user->getRole();
                 if (! in_array($role, $allowed)) {
                     $controller->flashMessenger()
-                        ->addWarningMessage("Authorization denied.");
+                        ->addWarningMessage("Access denied.");
                     return $this->getRedirectionResponse($event);
-                } // else { echo "$role: you're cool ...";}
+                } //else { echo "... $role: you're cool ...";}
             }
         }
     }
@@ -71,6 +74,7 @@ class Module
      */
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
+        
         
         $eventManager        = $event->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();

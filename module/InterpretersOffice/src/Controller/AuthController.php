@@ -60,8 +60,7 @@ class AuthController extends AbstractActionController {
             $result = $this->auth->authenticate();
             if ($result->isValid()) {
                 //echo "YAY !!!";
-                $this->redirect()->toRoute('home');
-                return;
+                $this->redirect()->toRoute('home');                
             } else {
                 return ['form'=>$form,'status'=> $result->getCode()];
             }

@@ -7,6 +7,9 @@ namespace InterpretersOffice\Controller\Factory;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
+use Interpreters\Admin\Controller\LanguagesController;
+
+
 /**
  * Factory for instantiating Controllers for managing our relatively
  * simple entities.

@@ -18,12 +18,53 @@ return [
                     ],
                 ],
             ],
+            'languages' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/admin/languages',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\LanguagesController::class,
+                        'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'add' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/add',
+                            'defaults' => [
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:action/:id',
+                            'defaults' => [
+                                'action' => 'edit',
+
+                            ],
+                            'constraints' => [
+                                'action' => 'edit|delete',
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ], 
+                ],
+            ],
+
         ],
     ],
     'controllers' => [
         
         'invokables'  => [
             Controller\IndexController::class => Controller\IndexController::class,
+        ],
+        'factories' => [
+            Controller\LanguagesController::class => \InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory::class,
         ],
     ],
     

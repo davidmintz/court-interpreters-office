@@ -102,42 +102,6 @@ return [
                     ],
                 ],
             ],
-            'languages' => [
-                'type' => Segment::class,
-                'may_terminate' => true,
-                'options' => [
-                    'route' => '/admin/languages',
-                    'defaults' => [
-                        'controller' => Controller\LanguagesController::class,
-                        'action' => 'index',
-                    ],
-                ],
-                'child_routes' => [
-                    'add' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/add',
-                            'defaults' => [
-                                'action' => 'add',
-                            ],
-                        ],
-                    ],
-                    'edit' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/:action/:id',
-                            'defaults' => [
-                                'action' => 'edit',
-
-                            ],
-                            'constraints' => [
-                                'action' => 'edit|delete',
-                                'id' => '[1-9]\d*',
-                            ],
-                        ],
-                    ], 
-                ],
-            ],
             'auth' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
@@ -188,7 +152,7 @@ return [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
            
-           Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
+          
            Controller\LocationsController::class => Controller\Factory\SimpleEntityControllerFactory::class,
         ],
     ],
