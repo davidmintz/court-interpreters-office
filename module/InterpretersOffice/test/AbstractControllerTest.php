@@ -7,6 +7,7 @@
 namespace ApplicationTest;
 
 use Zend\Stdlib\ArrayUtils;
+use Zend\Stdlib\Parameters;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 
@@ -36,5 +37,25 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
        
        parent::setUp();
     }
-    
+    /**
+     * logs in a user through the AuthController
+     * 
+     * @param string $identity
+     * @param string $password
+     * @return AbstractControllerTest
+     */
+    public function login($identity,$password)
+    {
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters(
+                [
+                    'identity' => 'susie',
+                    'password' => 'boink'
+                ]
+            )
+        );
+        $this->dispatch('/login');
+        $this->reset(true);
+        
+    }
 }
