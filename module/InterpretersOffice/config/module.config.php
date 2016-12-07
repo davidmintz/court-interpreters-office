@@ -151,9 +151,6 @@ return [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
-           
-          
-           Controller\LocationsController::class => Controller\Factory\SimpleEntityControllerFactory::class,
         ],
     ],
     'view_manager' => [

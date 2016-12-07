@@ -26,18 +26,7 @@ class LanguagesControllerTest extends AbstractControllerTest
             new DataFixture\LanguageLoader(),
             new DataFixture\MinimalUserLoader(),
             ]);
-        $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters(
-                [
-                    'identity' => 'susie',
-                    'password' => 'boink'
-                ]
-            )
-        );
-        $this->dispatch('/login');
-        //echo "status code following login: ",$this->getResponseStatusCode(),"\n";
-        //echo $this->getResponse()->getBody();
-        $this->reset(true);
+        $this->login('susie','boink');
         
     }
         

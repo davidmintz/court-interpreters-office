@@ -55,6 +55,56 @@ return [
                     ], 
                 ],
             ],
+            'locations' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+
+                    'route' => '/admin/locations',
+                    'defaults' => [
+                        'controller' => Controller\LocationsController::class,
+                        'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'type'=> [ 
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/type/:id',
+                            'defaults' => [
+                                'action' => 'index'
+                            ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                    'add' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/add',
+                            'defaults' => [
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:action/:id',
+                            'defaults' => [
+                                'action' => 'edit',
+
+                            ],
+                            'constraints' => [
+                                'action' => 'edit|delete',
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            
 
         ],
     ],
@@ -65,6 +115,7 @@ return [
         ],
         'factories' => [
             Controller\LanguagesController::class => \InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\LocationsController::class => \InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory::class,
         ],
     ],
     

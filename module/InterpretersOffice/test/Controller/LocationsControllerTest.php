@@ -3,12 +3,12 @@
 namespace ApplicationTest\Controller;
 
 use ApplicationTest\AbstractControllerTest;
-use Zend\Stdlib\Parameters;
-use InterpretersOffice\Controller\LocationsController;
+use InterpretersOffice\Admin\Controller\LocationsController;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-
+use Zend\Stdlib\Parameters;
 use Zend\Dom\Query;
+
 use InterpretersOffice\Entity;
 
 /**
@@ -24,7 +24,10 @@ class LocationsControllerTest extends AbstractControllerTest {
     public function setUp()
     {
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
-        $fixtureExecutor->execute([new DataFixture\LocationLoader()]);
+        $fixtureExecutor->execute([
+            new DataFixture\LocationLoader(),
+            new DataFixture\MinimalUserLoader(),
+        ]);
         parent::setUp();
     }
     
