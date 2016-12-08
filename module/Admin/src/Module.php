@@ -24,9 +24,27 @@ class Module
         return include __DIR__.'/../config/module.config.php';
     }
     
+    /**
+     * callback to check authentication when module is bootstrapped.
+     * 
+     * If the routeMatch's "module" parameter is InterpretersOffice\Admin, 
+     * we test for authentication and redirect to login if the user is not 
+     * authenticated. Otherwise, we test whether the user is in the role 
+     * "manager" or "administrator" and redirect to login if not. This last
+     * is arguably something that should be handled by ACL but we are here now,
+     * so why not.
+     * 
+     * We could have attached this listener to the MvcEvent::EVENT_ROUTE event
+     * instead, which is earlier in the cycle, but could not figure out how 
+     * to acquire a FlashMessenger without the Controller instance. 
+     * 
+     * @todo maybe inject User entity, if found, into someplace for later access.
+     * e.g., the controller?
+     * 
+     * @param MvcEvent $event
+     */
     public function enforceAuthentication(MvcEvent $event)
     {
-        
         $match = $event->getRouteMatch();
         if (!$match) { return; }
         $module  = $match->getParam('module');
@@ -46,7 +64,7 @@ class Module
                     ->find('InterpretersOffice\Entity\User',
                     $auth->getIdentity()->getId()
                 );
-                $role = (string)$user->getRole();
+                $role = (string) $user->getRole();
                 if (! in_array($role, $allowed)) {
                     $controller->flashMessenger()
                         ->addWarningMessage("Access denied.");
@@ -56,6 +74,12 @@ class Module
         }
     }
     
+    /**
+     * returns a Response redirecting to the login page.
+     * 
+     * @param MvcEvent $event
+     * @return Zend\Http\PhpEnvironment\Response
+     */
     public function getRedirectionResponse(MvcEvent $event)
     {
         $response = $event->getResponse();
@@ -74,42 +98,13 @@ class Module
      */
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
-        
-        
-        $eventManager        = $event->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-        if (! $event->getRequest() instanceof \Zend\Http\PhpEnvironment\Request)  {
-            return;    
-        }
+        $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_DISPATCH,[$this,'enforceAuthentication']);
-        return;
-        $container =  $event->getTarget()->getServiceManager();
         
+        $log = $event->getApplication()->getServiceManager()->get("log");
+        $log->debug(sprintf("running %s at %d in %s",__FUNCTION__,__LINE__,basename(__FILE__)));
         
-        if ($auth->hasIdentity()) {
-            $user = $container->get('entity-manager')->find('InterpretersOffice\Entity\User',
-                $auth->getIdentity()->getId());
-        }
-        //  Assuming your login route has a name 'login', this will do the assembly
-            // (you can also use directly $url=/path/to/login)
-        $url = $e->getRouter()->assemble(array(), array('name' => 'login'));
-        $response=$e->getResponse();
-        $response->getHeaders()->addHeaderLine('Location', $url);
-        $response->setStatusCode(302);
-        $response->sendHeaders();
-            // When an MvcEvent Listener returns a Response object,
-            // It automatically short-circuit the Application running 
-            // -> true only for Route Event propagation see Zend\Mvc\Application::run
-
-            // To avoid additional processing
-            // we can attach a listener for Event Route with a high priority
-            $stopCallBack = function($event) use ($response){
-                $event->stopPropagation();
-                return $response;
-            };
-            //Attach the "break" as a listener with a high priority
-            $e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_ROUTE, $stopCallBack,-10000);
-            return $response;
+        //$container = $event->getApplication()->getServiceManager();
+        //echo get_class($container->get("SharedEventManager"));
     }
 }
