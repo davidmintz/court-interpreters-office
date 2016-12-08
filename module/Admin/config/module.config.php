@@ -7,14 +7,14 @@ return [
     'router'=>[
         'routes' => [
             
-            'test' => [
+            'admin' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/admin/test',
+                    'route' => '/admin[/]',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\IndexController::class,
-                        'action' => 'test',
+                        'action' => 'index',
                     ],
                 ],
             ],
@@ -118,7 +118,9 @@ return [
         ],
     ],
     'view_manager' => [
-      
+        'template_map' => [
+            'interpreters-office/admin/index/index' => __DIR__.'/../view/interpreters-office/admin/index/index.phtml',
+        ],
         'template_path_stack' => [
             'interpreters-office/admin' => __DIR__ . '/../view',
         ],
