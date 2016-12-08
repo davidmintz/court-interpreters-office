@@ -22,18 +22,6 @@ return [
                     ],
                 ],
             ],
-            // based on one that comes out of the box with the
-            // Skeleton Application; no reason not to remove it at some point.
-            'application' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/app[/:action]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action' => 'index',
-                    ],
-                ],
-            ],
             // can't get this to work, an effort to make multiple controllers
             // match this route
             /*
@@ -53,6 +41,18 @@ return [
                 ],
 
              ],*/
+            // based on one that comes out of the box with the
+            // Skeleton Application; no reason not to remove it at some point.
+            'application' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/app[/:action]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
             'auth' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
@@ -67,7 +67,6 @@ return [
             ],
             'logout' => [
                 'type' => Literal::class,
-                'route'=> '/logout',
                 'may_terminate' => true,
                 'options' => [
                     'route' => '/logout',
@@ -112,6 +111,7 @@ return [
         'exception_template' => 'error/index',
         'template_map' => [
             'layout/layout' => __DIR__.'/../view/layout/layout.phtml',
+            // maybe remove this next line?
             'application/index/index' => __DIR__.'/../view/application/index/index.phtml',
             'error/404' => __DIR__.'/../view/error/404.phtml',
             'error/index' => __DIR__.'/../view/error/index.phtml',
@@ -146,10 +146,12 @@ return [
         'aliases' => [
           'entity-manager' => 'doctrine.entitymanager.orm_default',
           'auth' => 'Zend\Authentication\AuthenticationService',
+          'log'  =>  \Zend\Log\Logger::class,
         ],
         'factories' => [
             'Zend\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
+            \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
         ],
 
    ],
