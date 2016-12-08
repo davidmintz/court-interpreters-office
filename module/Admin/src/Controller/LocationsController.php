@@ -90,7 +90,7 @@ class LocationsController extends AbstractActionController
                ->bind($entity);
 
         $viewModel = (new ViewModel(['form' => $form, 'title' => 'add a location']))
-            ->setTemplate('interpreters-office/locations/form.phtml');
+            ->setTemplate('interpreters-office/admin/locations/form.phtml');
 
         $request = $this->getRequest();
 
@@ -120,7 +120,7 @@ class LocationsController extends AbstractActionController
     public function editAction()
     {
         $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/locations/form.phtml')
+            ->setTemplate('interpreters-office/admin/locations/form.phtml')
             ->setVariables(['title' => 'edit a location']);
 
         $id = $this->params()->fromRoute('id');
@@ -161,7 +161,5 @@ class LocationsController extends AbstractActionController
         }
 
         return $viewModel;
-        //(new ViewModel(['form' => $form,'id'=>$id, 'title' => 'edit a location']))->setTemplate('interpreters-office/locations/form.phtml');
-        
     }
 }

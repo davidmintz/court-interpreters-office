@@ -170,6 +170,6 @@ class LanguagesController extends AbstractActionController
     protected function getFormViewModel(array $data)
     {
         return (new ViewModel($data))
-                ->setTemplate('interpreters-office/languages/form.phtml');
+                ->setTemplate('interpreters-office/admin/languages/form.phtml');
     }
 }
