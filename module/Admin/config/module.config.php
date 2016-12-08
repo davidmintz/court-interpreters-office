@@ -10,7 +10,7 @@ return [
             'test' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/admintest',
+                    'route' => '/admin/test',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\IndexController::class,
@@ -105,8 +105,6 @@ return [
                     ],
                 ],
             ],
-            
-
         ],
     ],
     'controllers' => [
@@ -117,6 +115,12 @@ return [
         'factories' => [
             Controller\LanguagesController::class => \InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory::class,
             Controller\LocationsController::class => \InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory::class,
+        ],
+    ],
+    'view_manager' => [
+      
+        'template_path_stack' => [
+            'interpreters-office/admin' => __DIR__ . '/../view',
         ],
     ],
     
