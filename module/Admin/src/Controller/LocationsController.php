@@ -49,7 +49,7 @@ class LocationsController extends AbstractActionController
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param AbstractPluginManager  $formElementManager
+     * @param FormFactoryInterface  $formFactory
      * @param string $shortName this controller's short name/type of entity
      *
      * @see InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory

@@ -93,6 +93,7 @@ class Module
     
     /**
      * {@inheritDoc}
+     * @param \Zend\EventManager\EventInterface $event
      * interesting discussion, albeit for ZF2
      * http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
      */
