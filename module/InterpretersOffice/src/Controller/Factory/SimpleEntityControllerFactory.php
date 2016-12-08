@@ -38,7 +38,7 @@ class SimpleEntityControllerFactory implements FactoryInterface
                 $factory = $container->get('annotated-form-factory');
                 $entityManager = $container->get('entity-manager');
                 
-                return new $requestedName($entityManager, $factory, $shortName);
+                return new $requestedName($entityManager, $factory);//, $shortName
             break;
             // to be continued
         }
