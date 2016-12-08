@@ -214,7 +214,7 @@ class Location
     
     /**
      * set 'active' property
-     * 
+     * @param boolean $active
      * @return \InterpretersOffice\Entity\Location
      */
     public function setActive($active)
