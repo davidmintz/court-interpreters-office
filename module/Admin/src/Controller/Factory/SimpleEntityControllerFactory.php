@@ -2,12 +2,12 @@
 
 /** module/InterpretersOffice/src/Controller/Factory/SimpleEntityControllerFactory.php */
 
-namespace InterpretersOffice\Controller\Factory;
+namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
-use Interpreters\Admin\Controller\LanguagesController;
+//use Interpreters\Admin\Controller\LanguagesController;
 
 
 /**

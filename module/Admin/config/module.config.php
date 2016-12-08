@@ -113,8 +113,8 @@ return [
             Controller\IndexController::class => Controller\IndexController::class,
         ],
         'factories' => [
-            Controller\LanguagesController::class => \InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory::class,
-            Controller\LocationsController::class => \InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\LocationsController::class => Controller\Factory\SimpleEntityControllerFactory::class,
         ],
     ],
     'view_manager' => [
