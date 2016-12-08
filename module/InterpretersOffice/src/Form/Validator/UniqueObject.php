@@ -16,6 +16,13 @@ use DoctrineModule\Validator\UniqueObject as DoctrineModuleUniqueObject;
  */
 class UniqueObject extends DoctrineModuleUniqueObject {
     
+    /**
+     * returns true if submitted value is not duplicated in the database
+     * 
+     * @param string $value
+     * @param array $context
+     * @return boolean
+     */
     public function isValid($value,$context = null)
     {
         foreach($this->fields as $name => $val)
