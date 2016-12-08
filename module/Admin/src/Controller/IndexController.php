@@ -1,4 +1,6 @@
 <?php
+/** module/Admin/src/Controller/IndexController */
+
 namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
