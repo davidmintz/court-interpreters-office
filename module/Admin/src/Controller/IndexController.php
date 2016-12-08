@@ -5,14 +5,19 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-//use Interop\Container\ContainerInterface;
+
+/**
+ * controller for admin/index
+ */
 
 class IndexController extends AbstractActionController {
     
+    /**
+     * index action
+     * @return ViewModel
+     */
     public function indexAction()
     {
-        //echo "HELLO!<br>";
-       //return false;
        return new ViewModel();   
     }
     
