@@ -25,7 +25,7 @@ class Module
     }
     
     /**
-     * callback to check authentication when module is bootstrapped.
+     * callback to check authentication on mvc dispatch event.
      * 
      * If the routeMatch's "module" parameter is InterpretersOffice\Admin, 
      * we test for authentication and redirect to login if the user is not 
