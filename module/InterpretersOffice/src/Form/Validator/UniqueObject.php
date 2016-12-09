@@ -1,5 +1,4 @@
 <?php
-
 /** module/InterpretersOffice/src/Form/Validator/UniqueObject.php */
 
 namespace InterpretersOffice\Form\Validator;
@@ -7,7 +6,7 @@ namespace InterpretersOffice\Form\Validator;
 
 use DoctrineModule\Validator\UniqueObject as DoctrineModuleUniqueObject;
 /**
- * workaround for the problem where the Doctrine validator will not handle
+ * workaround for the problem that the Doctrine validator will not handle
  * multiple fields. 
  * 
  * @see https://github.com/doctrine/DoctrineModule/issues/252
