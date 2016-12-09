@@ -1,4 +1,5 @@
 <?php
+/** module/InterpretersOffice/test/DataFixture/HatLoader.php */
 
 namespace ApplicationTest\DataFixture;
 
@@ -8,12 +9,15 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use InterpretersOffice\Entity;
 
 /**
-* loads test fixtures for "hats," roles, anonymous-judges
-*
-*/
-
-
+ * loads test fixtures for "hats," roles, anonymous-judges
+ * 
+ */
 class HatLoader implements FixtureInterface {
+    
+    /**
+     * @see FixtureInterface
+     * @param ObjectManager $objectManager
+     */
 
     public function load(ObjectManager $objectManager)
     {

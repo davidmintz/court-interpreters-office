@@ -17,7 +17,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class LocationType
 {
-    
+    /**
+     * constructor
+     */
     public function __construct()
     {
 
@@ -113,7 +115,11 @@ class LocationType
     {
         return $this->comments;
     }
-    
+    /**
+     * return string representation
+     * 
+     * @return string
+     */
     public function __toString() {
         return $this->type;
     }

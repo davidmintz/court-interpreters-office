@@ -43,7 +43,10 @@ class AuthController extends AbstractActionController {
         return false;
         
     }
-
+    /**
+     * 
+     * login action
+     */
     public function loginAction()
     {
         $form = new \InterpretersOffice\Form\LoginForm();
@@ -68,6 +71,9 @@ class AuthController extends AbstractActionController {
         return ['form'=>$form,];
     }
     
+    /**
+     * logout action
+     */
     
     public function logoutAction()
     {

@@ -90,6 +90,8 @@ class Location
     protected $comments;
 
     /**
+     * whether the account is "active" or disabled.
+     * 
      * @ORM\Column(type="boolean",options={"nullable":false,"default":true})
      * @Annotation\Type("Zend\Form\Element\Radio")
      * @Annotation\Attributes({"class":"form-control","value":1})

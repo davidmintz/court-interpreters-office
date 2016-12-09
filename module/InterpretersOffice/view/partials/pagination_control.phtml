@@ -1,9 +1,11 @@
 <?php 
 /**
-* pagination control
-* module/InterpretersOffice/view/application/defendants/pagination_control.phtml
-* based on https://zf2.readthedocs.org/en/latest/tutorials/tutorial.pagination.html
-*/
+ * module/InterpretersOffice/view/application/defendants/pagination_control.phtml
+ * pagination contro, partial view script for presented a page of paginated query 
+ * results. based on:
+ * https://zf2.readthedocs.org/en/latest/tutorials/tutorial.pagination.html
+ */
+
 if ($this->pageCount < 2):  return; endif;
 
 $url = $this->url($this->route, isset($params) ? $params: []);?>
