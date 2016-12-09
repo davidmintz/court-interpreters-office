@@ -1,4 +1,5 @@
 <?php
+/** module/InterpretersOffice/src/Form/PersonFieldset.php */
 
 namespace InterpretersOffice\Form;
 
@@ -7,11 +8,19 @@ use Zend\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+/**
+ * Fieldset for Person entity. still incomplete
+ */
 class PersonFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
-    /** @var ObjectManager */
-    protected $objectManager;
-
+   
+    use ObjectManagerAwareTrait;
+    
+    /**
+     * form elements
+     * 
+     * @var array
+     */
     protected $elements = [
         'lastname' => [
             'type' => 'Zend\Form\Element\Text',
@@ -33,9 +42,13 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'class' => 'form-control',
             ],
         ],
-
     ];
-
+    /**
+     * constructor
+     * 
+     * @param ObjectManager $objectManager
+     * @param array $options
+     */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
         parent::__construct('person-fieldset', $options);
@@ -44,7 +57,11 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             $this->add($element);
         }
     }
-
+    /**
+     * returns specification for input filter (per interface).
+     * 
+     * @return array
+     */
     public function getInputFilterSpecification()
     {
         return [
@@ -95,13 +112,5 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 
         ];
     }
-    public function setObjectManager(ObjectManager $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
-
-    public function getObjectManager()
-    {
-        return $this->objectManager;
-    }
+   
 }

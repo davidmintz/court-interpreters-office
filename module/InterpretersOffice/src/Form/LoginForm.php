@@ -1,15 +1,22 @@
 <?php 
+/** module/InterpretersOffice/src/Form/LoginForm.php */
+
 namespace InterpretersOffice\Form;
 
 use Zend\Form\Form;
-
-
 use Zend\InputFilter\InputFilterProviderInterface;
 
+/**
+ * login form
+ */
 class LoginForm extends Form implements InputFilterProviderInterface
 {
 
-
+    /**
+     * constructor
+     * 
+     * @param Array $options
+     */
 
 	public function __construct($options = null)
 	{
@@ -46,6 +53,11 @@ class LoginForm extends Form implements InputFilterProviderInterface
         ]
 		);
 	}
+    /**
+     * input filter specification
+     * 
+     * @return array
+     */
 	public function getInputFilterSpecification()
 	{
 		return[
@@ -82,7 +94,4 @@ class LoginForm extends Form implements InputFilterProviderInterface
             ]
         ];
 	}
-
-
-
 }
