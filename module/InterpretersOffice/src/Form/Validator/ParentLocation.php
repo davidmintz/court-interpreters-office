@@ -22,12 +22,24 @@ class ParentLocation extends AbstractValidator {
     /** @var string */
     const INVALID_PARENT_TYPE  = 'invalidParentType';
     
-    /** @var array */
+    /** 
+     * array of location (array )entities that have no parent
+     * @var array 
+     */
     protected $parentLocations;
     
-    /** @var array */
+    /** 
+     * array of locationType (array) entities
+     * @var array 
+     */
     protected $locationTypes;
     
+    /**
+     * constructor
+     * @param array|Traversable $options
+     * @throws \Exception
+     * @throws \InvalidArgumentException
+     */
     public function __construct($options) {
         
         if (! key_exists('parentLocations',$options)) {
@@ -60,6 +72,7 @@ class ParentLocation extends AbstractValidator {
      * @var array
      */
     protected $messageTemplates = [
+        
         self::LOCATION_TYPE_CANNOT_HAVE_PARENT => 
             'this type of location cannot have any parent location',
         self::LOCATION_TYPE_MUST_HAVE_PARENT => 

@@ -1,5 +1,7 @@
 <?php 
-
+/**
+ * module/InterpretersOffice/src/Service/Authentication/Adapter.php
+ */
 namespace InterpretersOffice\Service\Authentication;
 
 
@@ -7,23 +9,48 @@ use DoctrineModule\Authentication\Adapter\ObjectRepository;
 use InterpretersOffice\Service\Authentication\Result;
 use InterpretersOffice\Entity\User;
 
+/**
+ * Authentication adapter
+ * 
+ * Our own adapter is necessary because of the entities structure and 
+ * relationship. A simple query of a users table is not sufficient because 
+ * we want to allow users to provide either email or username. The User
+ * a one-to-one relationship with the Person entity, and the email is a property 
+ * of Person while the username is a property of User. We also return our own 
+ * subclass of Result that includes a constant meaning account not active 
+ * (i.e., disabled).
+ * 
+ * A work in progress. We might not really need to extend the Doctrine adapter 
+ * or pass in a credential_callable via the constructor -- we might as well 
+ * hard-code it.
+ */
 class Adapter extends ObjectRepository
 {
-
+    /**
+     * constructor
+     * 
+     * @param array|\DoctrineModule\Options\Authentication $options
+     */
     public function __construct($options = [])
     {
         parent::__construct($options);
-        // maybe we will do something here
+        // maybe we will do something here down the road.
+        // for now this is superfluous
     }
-
+    
+   /**
+    * authenticates the user
+    * @return Result
+    */
    public function authenticate()
-    {
+   {
         $this->setup();
         $options  = $this->options;
         $objectManager = $options->getObjectManager();
-        $query = $objectManager->createQuery("SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p "
-                . "WHERE p.email = :identity OR u.username = :identity")
-                ->setParameters([':identity'=>$this->identity]);
+        $query = $objectManager->createQuery(
+           "SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p "
+           . "WHERE p.email = :identity OR u.username = :identity")
+           ->setParameters([':identity'=>$this->identity]);
         
         $identity = $query->getOneOrNullResult();
             // rather than:
@@ -41,6 +68,7 @@ class Adapter extends ObjectRepository
     
     /**
      * validates the identity
+     * 
      * @param User $identity -- not type-hinted for the sake of interface compatibility
      * @return \InterpretersOffice\Service\Authentication\Result
      */

@@ -1,5 +1,5 @@
 <?php
-//  config/doctrine-bootstrap.php
+/** config/doctrine-bootstrap.php */
 
 /** @var Composer\Autoload\ClassLoader $loader */
 $loader = require (__DIR__. '/../vendor/autoload.php');

@@ -1,4 +1,7 @@
 <?php 
+/**
+ * configuration for InterpretersOffice\Admin module
+ */
 namespace InterpretersOffice\Admin;
 use Zend\Router\Http\Segment;
 

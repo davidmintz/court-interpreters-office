@@ -1,4 +1,5 @@
 <?php
+/** module/InterpretersOffice/src/Form/Factory/AnnotatedEntityFormFactory.php */
 
 namespace InterpretersOffice\Form\Factory;
 
@@ -28,10 +29,14 @@ use Zend\InputFilter\Input;
  */
 class AnnotatedEntityFormFactory implements FormFactoryInterface
 {
-    /** @var ObjectManager */
+    /** 
+     * Doctrine object manager instance
+     * @var ObjectManager 
+     */
     protected $objectManager;
     
     /**
+     * invocation, if you will
      * 
      * @param ContainerInterface $container
      * @param string $requestedName
@@ -71,7 +76,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         return $form;
     }
     /**
-     * continues the initialization of the Language form.
+     * completes the initialization of the Language create|update form.
      *
      * @param Form  $form
      * @param array $options
@@ -102,7 +107,12 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         $input->getValidatorChain()
           ->attach($validator);
     }
-
+    /**
+     * completes initialization of the Locations create|update form
+     * 
+     * @param Form $form
+     * @param array $options
+     */
     public function setupLocationsForm(Form $form, Array $options)
     {
         // first, a LocationsType drop down menu

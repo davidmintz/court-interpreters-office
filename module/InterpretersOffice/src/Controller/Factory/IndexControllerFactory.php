@@ -16,7 +16,12 @@ use InterpretersOffice\Controller\IndexController;
 class IndexControllerFactory implements FactoryInterface
 {
     /**
-     * {@inheritdoc}
+     * invocation, if you will
+     * 
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array $options
+     * @return IndexController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

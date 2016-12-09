@@ -19,7 +19,12 @@ use InterpretersOffice\Controller\AuthController;
 class AuthControllerFactory {
     
     /**
-     * {@inheritdoc}
+     * implements FactoryInterface
+     * 
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array $options
+     * @return AuthController
      */
      public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
      {

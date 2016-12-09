@@ -1,19 +1,17 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * /opt/www/court-interpreters-office/module/InterpretersOffice/src/Form/Factory/FormFactoryInterface.php
  */
 
 namespace InterpretersOffice\Form\Factory;
 
 /**
- *
- * @author david
+ * interface definition
+ * 
  */
 interface FormFactoryInterface {
     /**
+     * creates a Zend\Form\Form instance
      * 
      * @param object|string $entityObjectOrClassname entity instance or classname
      * @param array $options 

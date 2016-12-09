@@ -16,7 +16,11 @@ class NoObjectExists extends DoctrineModuleNoObjectExists
 {
 
     /**
-     * {@inheritDoc}
+     * returns true if submitted value is not already existing in the database
+     * 
+     * @param string $value
+     * @param array $context
+     * @return boolean
      */
     public function isValid($value, $context = null)
     {
