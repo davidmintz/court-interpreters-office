@@ -14,7 +14,7 @@ use InterpretersOffice\Entity\User;
  *
  * Our own adapter is necessary because of the entities structure and
  * relationship. A simple query of a users table is not sufficient because
- * we want to allow users to provide either email or username. The User
+ * we want to allow users to provide either email or username. The User has
  * a one-to-one relationship with the Person entity, and the email is a property
  * of Person while the username is a property of User. We also return our own
  * subclass of Result that includes a constant meaning account not active
