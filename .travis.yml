@@ -12,14 +12,13 @@ php:
 
 install:  composer install
 
-# there may be a better way, but this is what we had to do 
-# to compel travis-ci to use our test config (sqlite)
-# instead of dev (mysql)
+# there may be a better way, but to compel travis-ci to use our test 
+# config (sqlite) we replace the configuration file.
+# and create a data/log directory
 
-# setfacl is not necessary just yet but may be later
 before_script:  
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
-    - mkdir -p data/log && setfacl -m u:www-data:rwx data/log
+    - mkdir -p data/log 
 
 script: vendor/bin/phpunit
 
