@@ -17,36 +17,31 @@ use Interop\Container\ContainerInterface;
  */
 class IndexController extends AbstractActionController
 {
-    /**
-     * service manager.
-     *
-     * @var ContainerInterface
-     */
-    //protected $serviceManager;
-
-    /**
-     * constructor.
-     *
-     * @see InterpretersOffice\Controller\Factory\IndexControllerFactory
-     *
-     * @param ContainerInterface $serviceManager
-     */
-    
+ 
+   /**
+    * for informal testing/experimenting
+    * 
+    * @var \InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory
+    */ 
     protected $formFactory;
 
+    /**
+     * for informal testing/experimenting
+     * 
+     * @var Doctrine\ORM\EntityManagerInterface; 
+     */
     protected $em;
     
     /**
+     * constructor arguments are temporary, for informal testing/experimenting
      * 
      * @param \InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory $formFactory
-     * @param type $em
+     * @param EntityManagerInterface $em
      */
     public function __construct($formFactory, $em)
     {
-        //$this->serviceManager = $serviceManager;
         $this->formFactory = $formFactory; 
         $this->em = $em;
-       
         
     }
 
@@ -60,7 +55,7 @@ class IndexController extends AbstractActionController
     {
         $connection = $this->em->getConnection();
         $driver = $connection->getDriver()->getName();
-        return ['driver'=>$driver];
+        return new ViewModel(['driver'=>$driver]);
     }
     /**
      * temporary action for experimenting and doodling.
@@ -70,46 +65,11 @@ class IndexController extends AbstractActionController
      */
     public function testAction()
     {
-        $service = new \Zend\Authentication\AuthenticationService;
-        //echo get_class($shit)," ... ";
-        if ($service->hasIdentity()) {
-            //require('module/InterpretersOffice/src/Entity/Role.php');
-            
-        
-            $shit = $service->getStorage()->read();
-        
-            echo gettype($shit). "  is the type returned by read() ...<br>";
-            echo  "YES identity ";
-            $id = $service->getIdentity()->getId();
-            //$user = $shit;
-            $user = $this->em->find('InterpretersOffice\Entity\User',$id);
-            echo gettype($user). " is the data type... ";
-            echo get_class($user);
-            echo "...",$user->getUsername();
-            $person = $user->getPerson();
-        
-            echo " last name is ",$person->getLastname(), " role is ",
-                $user->getRole()->getName(), " hat is ",$person->getHat();
-        } else {
-            echo " NOT authenticated... ";
-        }
-            
-      
-        
+
         $em = $this->em;
-        //$thing = new \InterpretersOffice\Form\TestFieldset();
-        //$thing->setObjectManager($em);
         // http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
-        $builder = new  \Zend\Form\Annotation\AnnotationBuilder($this->serviceManager->get('entity-manager'));
-        // could not get validators to run when person stuff was added as a
-        // fieldset.
-        /*
-        $fieldset   = $builder->createForm(\InterpretersOffice\Entity\Person::class);
-        $form = new \Zend\Form\Form('whatever');
-        $form->setHydrator(new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em));
-        $form->add($fieldset);
-        $fieldset->setUseAsBaseFieldset(true);
-        */
+        $builder = new  \Zend\Form\Annotation\AnnotationBuilder($em);
+        
         //http://stackoverflow.com/questions/29335878/zend-framework-2-form-issues-using-doctrine-as-a-hydrator
         //  you should invoke setHydrator() on form itself after adding the base fieldset.
         
@@ -120,11 +80,11 @@ class IndexController extends AbstractActionController
         // this demonstrates that we can add more after the fact
         $element = new \DoctrineModule\Form\Element\ObjectSelect('hat',
         [
-                    'object_manager' => $em,
-                    'target_class' => 'InterpretersOffice\Entity\Hat',
-                    'property' => 'name',
-                    'label' => 'hat',
-                    'display_empty_item' => true,
+            'object_manager' => $em,
+            'target_class' => 'InterpretersOffice\Entity\Hat',
+            'property' => 'name',
+            'label' => 'hat',
+            'display_empty_item' => true,
         ]);
         $filter = $form->getInputFilter();
         //\Zend\Debug\Debug::dump(get_class_methods($filter));
@@ -148,7 +108,6 @@ class IndexController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            //$language = new \InterpretersOffice\Entity\Language();
             $person = new \InterpretersOffice\Entity\Person();
             $form->bind($person);
             $form->setData($data);
@@ -158,12 +117,11 @@ class IndexController extends AbstractActionController
             $em->persist($person);
             $em->flush();
             $this->flashMessenger()->addMessage('congratulations! you inserted an entity.');
-
             return $this->redirect()->toRoute('home');
         }
-
         return new ViewModel(['form' => $form]);
     }
+    
     /**
      * temporary; for doodling and experimenting.
      *
@@ -171,60 +129,9 @@ class IndexController extends AbstractActionController
      */
     public function otherTestAction()
     {
-        $form = new \Zend\Form\Form('person-form');
-        $em = $this->serviceManager->get('entity-manager');
-        $hydrator = new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em);
-        $form->setHydrator($hydrator);
-
-        $fieldset = new \InterpretersOffice\Form\PersonFieldset($em);
-        $person = new \InterpretersOffice\Entity\Person();
-        $fieldset->setObject($person)->setHydrator($hydrator);
-        $form->add($fieldset);
-        $viewModel = new ViewModel(['form' => $form]);
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->bind($person);
-            $form->setData($data);
-            if (!$form->isValid()) {
-                return $viewModel;
-            } else {
-                echo 'SHIT IS VALID ?!?';
-                try {
-                    $em->persist($person);
-                    $em->flush();
-                } catch (\Exception $e) {
-                    echo $e->getMessage();
-                }
-
-                return $viewModel;
-            }
-        }
+        
 
         return $viewModel;
     }
-    /*
-        $em      = $this->serviceManager->get('entity-manager');
-        $form = new \InterpretersOffice\Form\Test($em);
-
-        //echo "ok."; return new ViewModel;
-
-        $viewModel = new ViewModel(['form' => $form]);
-        $hat = new \InterpretersOffice\Entity\Hat();
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->bind($hat);
-            $form->setData($data);
-            if (! $form->isValid()) {
-                return $viewModel;
-            } else {
-                echo "SHIT IS VALID ?!?";
-                return $viewModel;
-            }
-        }
-    */
-    
+   
 }
-
-
