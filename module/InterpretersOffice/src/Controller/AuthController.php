@@ -3,49 +3,47 @@
 /** module/InterpretersOffice/src/Controller/AuthController.php   */
 
 namespace InterpretersOffice\Controller;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
 
+use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
- * controller for managing user authentication
- * 
- * to be continued
+ * controller for managing user authentication.
  *
+ * to be continued
  */
-class AuthController extends AbstractActionController {
-    
-    /** 
-     * authentication service
-     * 
-     * @var AuthenticationServiceInterface 
+class AuthController extends AbstractActionController
+{
+    /**
+     * authentication service.
+     *
+     * @var AuthenticationServiceInterface
      */
     protected $auth;
-    
+
     /**
-     * constructor
-     * 
+     * constructor.
+     *
      * @param AuthenticationServiceInterface $auth
      */
-    public function __construct(AuthenticationServiceInterface $auth) {
+    public function __construct(AuthenticationServiceInterface $auth)
+    {
         $this->auth = $auth;
     }
-    
+
     /**
-     * index action - to be developed or removed
-     * 
-     * @return boolean
+     * index action - to be developed or removed.
+     *
+     * @return bool
      */
-    public function indexAction() {
-        
-        echo "shit is working in AuthController indexAction<br>";
+    public function indexAction()
+    {
+        echo 'shit is working in AuthController indexAction<br>';
+
         return false;
-        
     }
     /**
-     * 
-     * login action
+     * login action.
      */
     public function loginAction()
     {
@@ -53,7 +51,7 @@ class AuthController extends AbstractActionController {
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return ['form' => $form];
             }
             $data = $form->getData();
@@ -63,29 +61,27 @@ class AuthController extends AbstractActionController {
             $result = $this->auth->authenticate();
             if ($result->isValid()) {
                 //echo "YAY !!!";
-                $this->redirect()->toRoute('home');                
+                $this->redirect()->toRoute('home');
             } else {
-                return ['form'=>$form,'status'=> $result->getCode()];
+                return ['form' => $form, 'status' => $result->getCode()];
             }
         }
-        return ['form'=>$form,];
+
+        return ['form' => $form];
     }
-    
+
     /**
-     * logout action
+     * logout action.
      */
-    
     public function logoutAction()
     {
         if ($this->auth->hasIdentity()) {
             $this->auth->clearIdentity();
-              $this->flashMessenger()
-                 ->addSuccessMessage("You have logged out");
-              
-       } else {
-           $this->redirect()->toRoute('home');
-       }
-       $this->redirect()->toRoute('auth');
+            $this->flashMessenger()
+                 ->addSuccessMessage('You have logged out');
+        } else {
+            $this->redirect()->toRoute('home');
+        }
+        $this->redirect()->toRoute('auth');
     }
-    
 }

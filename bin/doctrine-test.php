@@ -1,39 +1,40 @@
 <?php
+
 namespace Application\Entity;
+
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 echo "eat shit?\n";
 
-$em = require(__DIR__.'/../config/doctrine-bootstrap.php');
+$em = require __DIR__.'/../config/doctrine-bootstrap.php';
 
 echo "trying to insert an interpreter...\n";
 
-$interpreter = new Interpreter;
+$interpreter = new Interpreter();
 try {
-	$hat_staff_interpreter = $em->getRepository('Application\Entity\Hat')->findOneBy(
-		['type' => 'staff interpreter'] );
+    $hat_staff_interpreter = $em->getRepository('Application\Entity\Hat')->findOneBy(
+        ['type' => 'staff interpreter']);
 
-	$interpreter->setLastname('Mintz')
-		->setFirstname("David")
-		->setHat($hat_staff_interpreter)
-		->setEmail('david@davidmintz.org')->setDob(new \DateTime('1958-05-26'));
+    $interpreter->setLastname('Mintz')
+        ->setFirstname('David')
+        ->setHat($hat_staff_interpreter)
+        ->setEmail('david@davidmintz.org')->setDob(new \DateTime('1958-05-26'));
 
-	$spanish =  $em->getRepository('Application\Entity\Language')->findOneBy(["name"=>"Spanish"]);
+    $spanish = $em->getRepository('Application\Entity\Language')->findOneBy(['name' => 'Spanish']);
 
-	$interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter,$spanish));
-	$em->persist($interpreter);
-	$em->flush();
-
+    $interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter, $spanish));
+    $em->persist($interpreter);
+    $em->flush();
 } catch (\Exception $e) {
-	printf("caught exception %s: %s\n",get_class($e),$e->getMessage());
+    printf("caught exception %s: %s\n", get_class($e), $e->getMessage());
 }
 
 exit("ok\n");
 
-$interpreter =  $em->getRepository('Application\Entity\Interpreter')->findOneBy(['lastname'=>'Mintz']);
+$interpreter = $em->getRepository('Application\Entity\Interpreter')->findOneBy(['lastname' => 'Mintz']);
 
-if (! $interpreter) {
-	echo "no Mintz among the interpreters";
+if (!$interpreter) {
+    echo 'no Mintz among the interpreters';
 }
 
 $interpreterLanguage = $interpreter->getInterpreterLanguages()[0];
@@ -49,7 +50,7 @@ exit("\n");
 //$em->persist($language);
 
 //$hat = $em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'staff interpreter']);
-        
+
 $interpreterLanguage = new InterpreterLanguage();
 $interpreter = new Interpreter();
 $interpreter
@@ -62,34 +63,31 @@ $interpreter->addInterpreterLanguage($interpreterLanguage);
 $em->persist($interpreter);
 $em->flush();
 
-
 exit("\n");
 try {
-	$interpreter = new Interpreter();
-	$hat = new Hat();
-	$hat->setType("staff interpreter");
-	$interpreter->setEmail('david@davidmintz.org')
-		->setFirstname('David')
-		->setLastname('Mintz')
-		->setHat($hat)
+    $interpreter = new Interpreter();
+    $hat = new Hat();
+    $hat->setType('staff interpreter');
+    $interpreter->setEmail('david@davidmintz.org')
+        ->setFirstname('David')
+        ->setLastname('Mintz')
+        ->setHat($hat)
                 ->setDob(new \DateTime('1958-05-26'));
-                    
-	$user = new User;
-	$user
-		->setPassword('boink');
-		//->setEmail('david@davidmintz.org')
-		//->setFirstname('David')
-		//->setLastname('Mintz')
-		//->setHat($em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'contract interpreter']));
-	$user->setPerson($interpreter);
-	$em->persist($user);
-	$em->persist($hat);
-	$em->persist($interpreter);
-	$em->flush();
-	
-} catch (UniqueConstraintViolationException $e) {
 
-	echo $e->getMessage();
+    $user = new User();
+    $user
+        ->setPassword('boink');
+        //->setEmail('david@davidmintz.org')
+        //->setFirstname('David')
+        //->setLastname('Mintz')
+        //->setHat($em->getRepository('Application\Entity\Hat')->findOneBy(['type'=>'contract interpreter']));
+    $user->setPerson($interpreter);
+    $em->persist($user);
+    $em->persist($hat);
+    $em->persist($interpreter);
+    $em->flush();
+} catch (UniqueConstraintViolationException $e) {
+    echo $e->getMessage();
 }
 
 /*
@@ -106,15 +104,13 @@ $em->flush();
 */
 exit("\nall good\n");
 
-
 /*
 $interpreter
-	->setLastname('Mintz')
-	->setDob(new \DateTime('1958-05-26'))
-	->setEmail('david@davidmintz.org')
-	->setPhone('201 978-0608')
-	->setLastname('Mintz')	
-	$em->persist($interpreter);
-	$em->flush();
+    ->setLastname('Mintz')
+    ->setDob(new \DateTime('1958-05-26'))
+    ->setEmail('david@davidmintz.org')
+    ->setPhone('201 978-0608')
+    ->setLastname('Mintz')
+    $em->persist($interpreter);
+    $em->flush();
 */
-

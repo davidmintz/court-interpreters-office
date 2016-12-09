@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 /** module/InterpretersOffice/src/Form/LoginForm.php */
 
 namespace InterpretersOffice\Form;
@@ -7,24 +8,21 @@ use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
 
 /**
- * login form
+ * login form.
  */
 class LoginForm extends Form implements InputFilterProviderInterface
 {
-
     /**
-     * constructor
-     * 
-     * @param Array $options
+     * constructor.
+     *
+     * @param array $options
      */
-
-	public function __construct($options = null)
-	{
-		
-		parent::__construct($options);
-		///*
-		$this->add(
-		[
+    public function __construct($options = null)
+    {
+        parent::__construct($options);
+        ///*
+        $this->add(
+        [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'identity',
             'options' => [
@@ -36,10 +34,10 @@ class LoginForm extends Form implements InputFilterProviderInterface
                 'id' => 'identity',
             ],
         ]
-		);
-		//*/
-		$this->add(
-		[
+        );
+        //*/
+        $this->add(
+        [
             'type' => 'Zend\Form\Element\Password',
             'name' => 'password',
             'options' => [
@@ -48,50 +46,50 @@ class LoginForm extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'class' => 'form-control',
                 'placeholder' => 'password',
-                'id' => 'password'
+                'id' => 'password',
             ],
         ]
-		);
-	}
+        );
+    }
     /**
-     * input filter specification
-     * 
+     * input filter specification.
+     *
      * @return array
      */
-	public function getInputFilterSpecification()
-	{
-		return[
-            
-            'identity' =>[
+    public function getInputFilterSpecification()
+    {
+        return[
+
+            'identity' => [
                 'validators' => [
                     [
                       'name' => 'NotEmpty',
-                      'options' =>[
-                           'messages' => [\Zend\Validator\NotEmpty::IS_EMPTY => 'identity is required']
+                      'options' => [
+                           'messages' => [\Zend\Validator\NotEmpty::IS_EMPTY => 'identity is required'],
                         ],
                     ],
                 ],
                 'filters' => [
                     [
                         'name' => 'StringTrim',
-                    ]
+                    ],
                 ],
             ],
             'password' => [
                 'validators' => [
                     [
                       'name' => 'NotEmpty',
-                       'options' =>[
-                           'messages' => [\Zend\Validator\NotEmpty::IS_EMPTY => 'password is required']
-                        ]
+                       'options' => [
+                           'messages' => [\Zend\Validator\NotEmpty::IS_EMPTY => 'password is required'],
+                        ],
                     ],
                 ],
                 'filters' => [
                     [
                        'name' => 'StringTrim',
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
-	}
+    }
 }

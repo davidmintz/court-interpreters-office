@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Entity class representing a type of location where interpreter events occur.
  *
  * Examples: courtroom, courthouse, jail.
- * 
+ *
  * @see InterpretersOffice\Entity\Locations
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\LocationTypeRepository")
  * @ORM\Table(name="location_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_type",columns={"type"})})
@@ -18,13 +18,11 @@ use Doctrine\ORM\Mapping as ORM;
 class LocationType
 {
     /**
-     * constructor
+     * constructor.
      */
     public function __construct()
     {
-
         $this->locations = new \Doctrine\Common\Collections\ArrayCollection();
-
     }
     /**
      * location-type id.
@@ -52,8 +50,9 @@ class LocationType
     protected $comments;
 
     /**
-     * // this is experimental. to see if we can make what should be 
-     * a simple DQL thing work
+     * // this is experimental. to see if we can make what should be
+     * a simple DQL thing work.
+     *
      * @ORM\OneToMany(targetEntity="Location",mappedBy="type")
      */
     protected $locations;
@@ -116,11 +115,12 @@ class LocationType
         return $this->comments;
     }
     /**
-     * return string representation
-     * 
+     * return string representation.
+     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->type;
     }
 }

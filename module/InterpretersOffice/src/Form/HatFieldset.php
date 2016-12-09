@@ -1,4 +1,5 @@
 <?php
+
 /** module/InterpretersOffice/src/Form/HatFieldset.php */
 
 namespace InterpretersOffice\Form;
@@ -10,15 +11,15 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Entity;
 
 /**
- * Fieldset for the Hat entity, yet to be completed
+ * Fieldset for the Hat entity, yet to be completed.
  */
 class HatFieldset extends Fieldset implements ObjectManagerAwareInterface
 {
     use ObjectManagerAwareTrait;
 
     /**
-     * constructor
-     * 
+     * constructor.
+     *
      * @param ObjectManager $objectManager
      * @param type array
      */
@@ -46,5 +47,4 @@ class HatFieldset extends Fieldset implements ObjectManagerAwareInterface
         );
         $this->objectManager = $objectManager;
     }
-   
 }

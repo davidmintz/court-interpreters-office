@@ -1,15 +1,18 @@
-<?php 
+<?php
+
 /**
- * configuration for InterpretersOffice\Admin module
+ * configuration for InterpretersOffice\Admin module.
  */
+
 namespace InterpretersOffice\Admin;
+
 use Zend\Router\Http\Segment;
 
 return [
-    
-    'router'=>[
+
+    'router' => [
         'routes' => [
-            
+
             'admin' => [
                 'type' => Segment::class,
                 'options' => [
@@ -55,7 +58,7 @@ return [
                                 'id' => '[1-9]\d*',
                             ],
                         ],
-                    ], 
+                    ],
                 ],
             ],
             'locations' => [
@@ -71,12 +74,12 @@ return [
                     ],
                 ],
                 'child_routes' => [
-                    'type'=> [ 
+                    'type' => [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/type/:id',
                             'defaults' => [
-                                'action' => 'index'
+                                'action' => 'index',
                             ],
                             'constraints' => [
                                 'id' => '[1-9]\d*',
@@ -111,8 +114,8 @@ return [
         ],
     ],
     'controllers' => [
-        
-        'invokables'  => [
+
+        'invokables' => [
             Controller\IndexController::class => Controller\IndexController::class,
         ],
         'factories' => [
@@ -125,8 +128,8 @@ return [
             'interpreters-office/admin/index/index' => __DIR__.'/../view/interpreters-office/admin/index/index.phtml',
         ],
         'template_path_stack' => [
-            'interpreters-office/admin' => __DIR__ . '/../view',
+            'interpreters-office/admin' => __DIR__.'/../view',
         ],
     ],
-    
+
 ];

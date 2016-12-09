@@ -1,5 +1,7 @@
 <?php
+
 /** module/InterpretersOffice/src/Form/Hat.php */
+
 namespace InterpretersOffice\Form;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -8,13 +10,12 @@ use Zend\Form\Form;
 
 /**
  * form for "Hat" entity. still incomplete.
- * 
  */
 class Hat extends Form
 {
     /**
-     * constructor
-     * 
+     * constructor.
+     *
      * @param ObjectManager $objectManager
      */
     public function __construct(ObjectManager $objectManager)

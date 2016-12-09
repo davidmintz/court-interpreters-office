@@ -7,8 +7,6 @@ namespace InterpretersOffice\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Zend\Form\Annotation;
 
-
-
 /**
  * Entity class representing a language used by an Interpreter.
  *

@@ -21,7 +21,7 @@ class LanguagesController extends AbstractActionController
     use AnnotatedFormCreationTrait;
 
     /**
-     * FormFactoryInterface
+     * FormFactoryInterface.
      *
      * for instantiating the Form
      *
@@ -47,13 +47,13 @@ class LanguagesController extends AbstractActionController
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param FormFactoryInterface  $formFactory
-     * @param string                 $shortName          this controller's short name/type of entity
+     * @param FormFactoryInterface   $formFactory
+     * @param string                 $shortName     this controller's short name/type of entity
      *
      * @see InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory
      */
     public function __construct(
-            EntityManagerInterface $entityManager, 
+            EntityManagerInterface $entityManager,
             FormFactoryInterface $formFactory, $shortName = null)
     {
         $this->entityManager = $entityManager;

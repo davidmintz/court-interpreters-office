@@ -1,6 +1,6 @@
 <?php
 /**
- * module/InterpretersOffice/src/Form/ObjectManagerAwareTrait.php
+ * module/InterpretersOffice/src/Form/ObjectManagerAwareTrait.php.
  */
 
 namespace InterpretersOffice\Form;
@@ -8,22 +8,22 @@ namespace InterpretersOffice\Form;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * automates implementation of Doctrine ObjectManagerAwareInterface
- * 
+ * automates implementation of Doctrine ObjectManagerAwareInterface.
+ *
  * @see DoctrineModule\Persistence\ObjectManagerAwareInterface
  */
-trait ObjectManagerAwareTrait {
-
+trait ObjectManagerAwareTrait
+{
     /**
-     * sets ObjectManager instance
-     * 
+     * sets ObjectManager instance.
+     *
      * @var ObjectManager
      */
     protected $objectManager;
-    
+
     /**
-     * sets ObjectManager
-     * 
+     * sets ObjectManager.
+     *
      * @param ObjectManager
      */
     public function setObjectManager(ObjectManager $objectManager)
@@ -31,8 +31,8 @@ trait ObjectManagerAwareTrait {
         $this->objectManager = $objectManager;
     }
     /**
-     * gets ObjectManager instance
-     * 
+     * gets ObjectManager instance.
+     *
      * @return ObjectManager
      */
     public function getObjectManager()

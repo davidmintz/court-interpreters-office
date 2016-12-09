@@ -1,32 +1,24 @@
 <?php
 
-/** 
- * module/Application/test/AuthenticationTest.php
+/**
+ * module/Application/test/AuthenticationTest.php.
  */
+
 namespace ApplicationTest\Controller;
 
-
 use ApplicationTest\AbstractControllerTest;
-
-use Zend\Stdlib\Parameters;
-
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-
-use InterpretersOffice\Entity;
 use InterpretersOffice\Service\Authentication;
-
-
 use Zend\Authentication\AuthenticationService;
 
 class AuthenticationTest extends AbstractControllerTest
 {
-    
     /**
      * @var Zend\Authentication\AuthenticationService
      */
     protected $auth;
-    
+
     public function setUp()
     {
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
@@ -40,22 +32,22 @@ class AuthenticationTest extends AbstractControllerTest
         ]);
         $adapter = new Authentication\Adapter([
             'object_manager' => FixtureManager::getEntityManager(),  //'Doctrine\ORM\EntityManager',
-            // 'credential_property' => 'password', // not required! 
+            // 'credential_property' => 'password', // not required!
             'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
             ]);
         $this->auth = new AuthenticationService(null, $adapter);
         parent::setUp();
     }
-    
+
     public function testAuthenticateWithEmailAndWithUsername()
     {
-        $adapter = $this->auth->getAdapter();//john_somebody@nysd.uscourts.gov
+        $adapter = $this->auth->getAdapter(); //john_somebody@nysd.uscourts.gov
         $adapter->setIdentity('david@davidmintz.org')->setCredential('boink');
         $this->assertInstanceOf(AuthenticationService::class, $this->auth);
         $this->assertInstanceOf(\InterpretersOffice\Service\Authentication\Adapter::class, $adapter);
 
         $result = $this->auth->authenticate();
-        
+
         $this->assertInstanceOf(Authentication\Result::class, $result);
         $this->assertTrue($result->isValid());
         $this->auth->clearIdentity();
@@ -64,23 +56,23 @@ class AuthenticationTest extends AbstractControllerTest
         $this->assertTrue($result->isValid());
         //echo "\n",$result->getCode(),"\n"; print_r($result->getMessages());
     }
-    
+
     public function testAuthenticationFailsIfAccountIsNotActive()
     {
         $adapter = $this->auth->getAdapter();
         $adapter->setIdentity('david@davidmintz.org')->setCredential('boink');
         $em = FixtureManager::getEntityManager();
         $david = $em->getRepository('InterpretersOffice\Entity\User')
-                ->findOneBy(['username'=>'david']);
+                ->findOneBy(['username' => 'david']);
         $david->setActive(false);
         $em->flush();
         $result = $this->auth->authenticate();
         $this->assertFalse($result->isValid());
-        $this->assertEquals( 
-           Authentication\Result::FAILURE_USER_ACCOUNT_DISABLED,  
+        $this->assertEquals(
+           Authentication\Result::FAILURE_USER_ACCOUNT_DISABLED,
            $result->getCode());
     }
-    
+
     public function testAuthenticationFailsIfPasswordIsWrong()
     {
         $adapter = $this->auth->getAdapter();
@@ -90,5 +82,4 @@ class AuthenticationTest extends AbstractControllerTest
         $this->assertEquals(Authentication\Result::FAILURE_CREDENTIAL_INVALID,
                 $result->getCode());
     }
-    
 }

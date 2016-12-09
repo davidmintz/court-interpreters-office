@@ -1,31 +1,32 @@
 <?php
 /**
  * config/autoload/doctrine.test.php
- * used with travis-ci in 'before_script' irective
- * 
+ * used with travis-ci in 'before_script' irective.
  */
-
-$path = getcwd() . '/module/Application/test/data/office.sqlite';
+$path = getcwd().'/module/Application/test/data/office.sqlite';
 
 return [
-    
+
     'service_manager' => [
         'factories' => [
-             'doctrine.connection.orm_default' => function() use ($path) {
+             'doctrine.connection.orm_default' => function () use ($path) {
                  $config = new \Doctrine\DBAL\Configuration();
                  $params = [
                       'driver' => 'pdo_sqlite',
                       'path' => $path,
                        // we can do this if we need it:
-                      'driverOptions' =>[
+                      'driverOptions' => [
                         'userDefinedFunctions' => [
-                            'md5' => ['callback' => function($string) { return md5($string); },'numArgs' => 1,]
+                            'md5' => ['callback' => function ($string) {
+                                return md5($string);
+                            }, 'numArgs' => 1],
                         ],
                     ],
                  ];
+
                  return \Doctrine\DBAL\DriverManager::getConnection($params, $config);
-             }
-        ]
+             },
+        ],
     ],
     // it appears that we don't really need this, but maybe we will:
     ///*
@@ -33,7 +34,7 @@ return [
         'connection' => [
             'orm_default' => [
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOSqlite\Driver',
-                'params' => [ 'path' => $path,   ],
+                'params' => ['path' => $path],
             ],
         ],
         // this is used to inject dependencies into repository classes
@@ -44,6 +45,3 @@ return [
     ],
     // */
 ];
-
-
- 

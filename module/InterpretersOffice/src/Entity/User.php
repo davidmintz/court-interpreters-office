@@ -49,8 +49,8 @@ class User
      * @var string
      */
     protected $password;
-    
-     /**
+
+    /**
      * username.
      *
      * @ORM\Column(type="string",length=50,nullable=true,options={"nullable":true})
@@ -110,17 +110,16 @@ class User
      }
 
     /**
-     * verifies password
-     * @param User $user
+     * verifies password.
+     *
+     * @param User   $user
      * @param string $submitted_password
-     * 
      */
     public static function verifyPassword(User $user, $submitted_password)
     {
 
         //exit("SHIT IS RUNNING HERE....\n");
-        return password_verify($submitted_password,$user->getPassword());
-
+        return password_verify($submitted_password, $user->getPassword());
     }
 
     /**
@@ -156,7 +155,7 @@ class User
      */
     public function setUsername($username)
     {
-        $this->username= $username;
+        $this->username = $username;
 
         return $this;
     }
@@ -179,7 +178,6 @@ class User
     {
         return $this->id;
     }
-    
 
     /**
      * Set person.
@@ -285,9 +283,9 @@ class User
         return $this->judges;
     }
     /**
-     * de facto alias for getActive()
-     * 
-     * @return boolean
+     * de facto alias for getActive().
+     *
+     * @return bool
      */
     public function isActive()
     {

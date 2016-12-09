@@ -1,4 +1,5 @@
 <?php
+
 /** module/InterpretersOffice/src/Form/Factory/AnnotatedEntityFormFactory.php */
 
 namespace InterpretersOffice\Form\Factory;
@@ -6,7 +7,6 @@ namespace InterpretersOffice\Form\Factory;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-
 use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
 use InterpretersOffice\Form\Validator\UniqueObject;
 //use DoctrineModule\Validator\UniqueObject;
@@ -14,49 +14,53 @@ use InterpretersOffice\Form\Validator\UniqueObject;
 use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
 use Zend\Form\Annotation\AnnotationBuilder;
-
 use InterpretersOffice\Form\Validator\ParentLocation as ParentLocationValidator;
-
 use Zend\InputFilter\Input;
 
 /**
  * Factory for creating forms for the entities that are relatively simple.
- * 
- * Those entities' properties have some of their corresponding form elements 
- * defined via annotations. This factory sets up the remaining elements that 
- * cannnot be set up via annotations or whose complete configuration can't be 
- * decided before the action is dispatched. 
+ *
+ * Those entities' properties have some of their corresponding form elements
+ * defined via annotations. This factory sets up the remaining elements that
+ * cannnot be set up via annotations or whose complete configuration can't be
+ * decided before the action is dispatched.
  */
 class AnnotatedEntityFormFactory implements FormFactoryInterface
 {
-    /** 
-     * Doctrine object manager instance
-     * @var ObjectManager 
+    /**
+     * Doctrine object manager instance.
+     *
+     * @var ObjectManager
      */
     protected $objectManager;
-    
+
     /**
-     * invocation, if you will
-     * 
+     * invocation, if you will.
+     *
      * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array $options
+     * @param string             $requestedName
+     * @param array              $options
+     *
      * @return \InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory
      */
-    function __invoke(ContainerInterface $container,$requestedName,$options = []){
+    public function __invoke(ContainerInterface $container, $requestedName, $options = [])
+    {
         $this->objectManager = $container->get('entity-manager');
+
         return $this;
     }
 
     /**
-     * creates a Zend\Form\Form
-     * 
-     * @param type $entity
+     * creates a Zend\Form\Form.
+     *
+     * @param type  $entity
      * @param array $options
+     *
      * @todo check $options, throw exception
+     *
      * @return Form
      */
-    function createForm($entity, Array $options)
+    public function createForm($entity, array $options)
     {
         $annotationBuilder = new AnnotationBuilder();
         $form = $annotationBuilder->createForm($entity);
@@ -64,15 +68,16 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
             case Entity\Language::class:
             $this->setupLanguageForm($form, $options);
             break;
-            
+
             case Entity\Location::class:
             $this->setupLocationsForm($form, $options);
             break;
             // etc
-            
+
         }
         $form->setHydrator(new DoctrineHydrator($this->objectManager))
              ->setObject($options['object']);
+
         return $form;
     }
     /**
@@ -99,8 +104,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                'object_manager' => $em,
                'fields' => 'name',
                'use_context' => true,
-               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
-                   'language names must be unique; this one is already in your database'],
+               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'language names must be unique; this one is already in your database'],
            ]);
         }
         $input = $form->getInputFilter()->get('name');
@@ -108,12 +112,12 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
           ->attach($validator);
     }
     /**
-     * completes initialization of the Locations create|update form
-     * 
-     * @param Form $form
+     * completes initialization of the Locations create|update form.
+     *
+     * @param Form  $form
      * @param array $options
      */
-    public function setupLocationsForm(Form $form, Array $options)
+    public function setupLocationsForm(Form $form, array $options)
     {
         // first, a LocationsType drop down menu
 
@@ -131,28 +135,27 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'property' => 'name',
                 'label' => 'where this location itself is located, if applicable',
                 'display_empty_item' => true,
-                'empty_item_label' =>  '(none)',
-               
-                'find_method' => ['name' => 'getParentLocations',],
+                'empty_item_label' => '(none)',
+
+                'find_method' => ['name' => 'getParentLocations'],
                 'option_attributes' => [
-                    'data-location-type' => function(Entity\Location $location)
-                    {
+                    'data-location-type' => function (Entity\Location $location) {
                         return $location->getType();
-                    }
-                ]
+                    },
+                ],
             ],
              'attributes' => [
                 'class' => 'form-control',
                 'id' => 'parentLocation',
              ],
         ]);
-        
+
         // add a dropdown for LocationType
-                
+
         $form->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'type',
-            
+
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\LocationType',
@@ -161,7 +164,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'display_empty_item' => true,
                 'empty_item_label' => '(required)',
                 'required' => true,
-                
+
             ],
              'attributes' => [
                 'class' => 'form-control',
@@ -181,52 +184,49 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         // enforce rules as to location and parent locations
         $locationValidator = new ParentLocationValidator([
             'parentLocations' => $form->get('parentLocation')->getValueOptions(),
-            'locationTypes'  => $form->get('type')->getValueOptions(),
+            'locationTypes' => $form->get('type')->getValueOptions(),
         ]);
         $input->getValidatorChain()
-            ->attach($notEmptyValidator,true)
+            ->attach($notEmptyValidator, true)
             ->attach($locationValidator);
-        
+
         $filter->add($input);
-        
+
         /// https://github.com/doctrine/DoctrineModule/issues/252
         /// https://kuldeep15.wordpress.com/2015/04/08/composite-key-type-duplicate-key-check-with-zf2-doctrine/
         if ($options['action'] == 'create') {
             $uniquenessValidator = new NoObjectExistsValidator([
-               'object_repository' =>  $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
-               'fields' => ['name','parentLocation'],
+               'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
+               'fields' => ['name', 'parentLocation'],
                'object_manager' => $this->objectManager,
                'use_context' => true,
                'messages' => [
                    NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'this location is already in your database', ],
            ]);
         } else { // assume this is an update
-       
+
            $uniquenessValidator = new UniqueObject([
-               'object_repository' =>  $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
-               'object_manager' =>  $this->objectManager,
-               'fields' => ['name','parentLocation'],
+               'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
+               'object_manager' => $this->objectManager,
+               'fields' => ['name', 'parentLocation'],
                'use_context' => true,
-               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
-                   'there is already an existing location with the same name and parent location'],
+               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'there is already an existing location with the same name and parent location'],
            ]);
         }
         // ->attach($uniquenessValidator,true)
         $nameInput = $filter->get('name');
-        $nameInput->getValidatorChain()->attach($uniquenessValidator,true);
-        
+        $nameInput->getValidatorChain()->attach($uniquenessValidator, true);
+
         $input->getValidatorChain()
-            ->attach($notEmptyValidator,true)
-            ->attach($locationValidator,true);
-        
+            ->attach($notEmptyValidator, true)
+            ->attach($locationValidator, true);
+
         //////
         $filter->add([
             'name' => 'parentLocation',
             'required' => true,
             'allow_empty' => true,
-           
-        ]); 
-        
+
+        ]);
     }
 }
-

@@ -21,6 +21,7 @@ class Location
 {
     /**
      * entity id.
+     *
      * @Annotation\Attributes({"type":"hidden"})
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
@@ -73,6 +74,7 @@ class Location
 
     /**
      * comments about this location.
+     *
      * @Annotation\Attributes({"class":"form-control","placeholder":"optional comments about this location"})
      * @Annotation\Options({"label":"comments"})
      * @Annotation\Filter({"name":"StringTrim"})
@@ -91,19 +93,17 @@ class Location
 
     /**
      * whether the account is "active" or disabled.
-     * 
+     *
      * @ORM\Column(type="boolean",options={"nullable":false,"default":true})
      * @Annotation\Type("Zend\Form\Element\Radio")
      * @Annotation\Attributes({"class":"form-control","value":1})
-     * @Annotation\Options({"label":"is this location actively in use?", 
+     * @Annotation\Options({"label":"is this location actively in use?",
      *  "value_options" : {"1":"yes","0":"no"}
      * })
      * @Annotation\Validator({"name":"InArray",
      *    "options":{"haystack":{"0","1"},
      *      "messages":{"notInArray":"illegal value: only 0 or 1 are accepted"}}})
-     * 
      */
-
     protected $active = true;
 
     /**
@@ -213,10 +213,12 @@ class Location
     {
         return $this->parentLocation;
     }
-    
+
     /**
-     * set 'active' property
-     * @param boolean $active
+     * set 'active' property.
+     *
+     * @param bool $active
+     *
      * @return \InterpretersOffice\Entity\Location
      */
     public function setActive($active)
@@ -224,13 +226,12 @@ class Location
         $this->active = $active;
     }
     /**
-     * get 'active' property
-     * 
-     * @return boolean
+     * get 'active' property.
+     *
+     * @return bool
      */
     public function getActive()
     {
         return $this->active;
     }
-    
 }

@@ -2,8 +2,7 @@
 
 namespace ApplicationTest;
 
-
-class Bootstrap 
+class Bootstrap
 {
     // maybe later
 }

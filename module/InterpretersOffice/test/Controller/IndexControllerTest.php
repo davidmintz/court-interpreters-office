@@ -1,6 +1,7 @@
 <?php
 /**
  * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
+ *
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
@@ -8,7 +9,6 @@
 namespace ApplicationTest\Controller;
 
 use InterpretersOffice\Controller\IndexController;
-use Zend\Stdlib\ArrayUtils;
 use ApplicationTest\AbstractControllerTest;
 
 class IndexControllerTest extends AbstractControllerTest
@@ -19,7 +19,7 @@ class IndexControllerTest extends AbstractControllerTest
         parent::setUp();
     }
     */
-    
+
     public function testIndexActionCanBeAccessed()
     {
         $this->dispatch('/', 'GET');
@@ -28,11 +28,8 @@ class IndexControllerTest extends AbstractControllerTest
         $this->assertControllerName(IndexController::class); // as specified in router's controller name alias
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
-        
+
         //echo $this->getResponse()->getBody();
-        
-        
-        
     }
 
     public function testIndexActionViewModelTemplateRenderedWithinLayout()
@@ -46,6 +43,4 @@ class IndexControllerTest extends AbstractControllerTest
         $this->dispatch('/invalid/route', 'GET');
         $this->assertResponseStatusCode(404);
     }
-    
-    
 }

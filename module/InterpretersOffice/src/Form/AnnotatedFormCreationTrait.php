@@ -28,9 +28,7 @@ trait AnnotatedFormCreationTrait
     public function getForm($className, array $options)
     {
         if (!$this->form) {
-            
-            $this->form = $this->formFactory->createForm($className,$options);
-            
+            $this->form = $this->formFactory->createForm($className, $options);
         }
 
         return $this->form;

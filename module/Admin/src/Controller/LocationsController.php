@@ -7,7 +7,6 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-
 use InterpretersOffice\Form\Factory\FormFactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\Location;
@@ -40,22 +39,24 @@ class LocationsController extends AbstractActionController
 
     /**
      * short name of this controller.
+     *
      * @todo do we really use this for anything?
+     *
      * @var string
      */
     protected $name;
 
-     /**
+    /**
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param FormFactoryInterface  $formFactory
-     * @param string $shortName this controller's short name/type of entity
+     * @param FormFactoryInterface   $formFactory
+     * @param string                 $shortName     this controller's short name/type of entity
      *
      * @see InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory
      */
     public function __construct(
-            EntityManagerInterface $entityManager, 
+            EntityManagerInterface $entityManager,
             FormFactoryInterface $formFactory, $shortName = null)
     {
         $this->entityManager = $entityManager;
@@ -69,13 +70,13 @@ class LocationsController extends AbstractActionController
      */
     public function indexAction()
     {
-        
         $repo = $this->entityManager->getRepository('InterpretersOffice\Entity\LocationType');
         $locationTypes = $repo->findAllWithTotals();
         if ($id = $this->params()->fromRoute('id')) {
-           // echo "$id is our id!";
+            // echo "$id is our id!";
            // return a list of that type
         }
+
         return compact('locationTypes');
     }
     /**
@@ -97,7 +98,9 @@ class LocationsController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                echo "SHIT NOT VALID?";  print_r($form->getMessages());
+                echo 'SHIT NOT VALID?';
+                print_r($form->getMessages());
+
                 return $viewModel;
             }
             try {
@@ -110,6 +113,7 @@ class LocationsController extends AbstractActionController
                 echo $e->getMessage();
             }
         }
+
         return $viewModel;
     }
     /**
@@ -124,11 +128,11 @@ class LocationsController extends AbstractActionController
             ->setVariables(['title' => 'edit a location']);
 
         $id = $this->params()->fromRoute('id');
-        
+
         if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
-        
+
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Location', $id);
         if (!$entity) {
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
@@ -136,11 +140,11 @@ class LocationsController extends AbstractActionController
             $viewModel->id = $id;
         }
 
-        $form = $this->getForm(Location::class, 
+        $form = $this->getForm(Location::class,
                 ['object' => $entity, 'action' => 'update'])
                ->bind($entity);
         $viewModel->form = $form;
-        
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
@@ -149,7 +153,6 @@ class LocationsController extends AbstractActionController
                 return $viewModel;
             }
             try {
-                
                 $this->entityManager->flush();
                 $this->flashMessenger()
                       ->addSuccessMessage("The location {$entity->getName()} has been updated.");

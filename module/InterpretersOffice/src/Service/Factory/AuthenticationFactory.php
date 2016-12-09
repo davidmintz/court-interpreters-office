@@ -1,7 +1,8 @@
 <?php
 /**
- * module/InterpretersOffice/src/Service/Factory/AuthenticationFactory.php
+ * module/InterpretersOffice/src/Service/Factory/AuthenticationFactory.php.
  */
+
 namespace InterpretersOffice\Service\Factory;
 
 use Interop\Container\ContainerInterface;
@@ -10,17 +11,17 @@ use Zend\Authentication\AuthenticationService;
 use InterpretersOffice\Service\Authentication\Adapter as AuthenticationAdapter;
 
 /**
- * Factory for instantiating authentication service
+ * Factory for instantiating authentication service.
  */
 class AuthenticationFactory implements FactoryInterface
 {
-    
     /**
-     * implements FactoryInterface
-     * 
+     * implements FactoryInterface.
+     *
      * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array $options
+     * @param string             $requestedName
+     * @param array              $options
+     *
      * @return \InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
@@ -30,6 +31,7 @@ class AuthenticationFactory implements FactoryInterface
             'credential_property' => 'password',
             'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
             ]);
+
         return new AuthenticationService(null, $adapter);
     }
 }

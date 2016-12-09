@@ -6,26 +6,24 @@ namespace InterpretersOffice\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-
 use Zend\Authentication\AuthenticationService;
 use InterpretersOffice\Service\Authentication\Adapter as AuthAdapter;
 use InterpretersOffice\Controller\AuthController;
 
 /**
- * Factory for instantiating AuthController
- * 
- * 
+ * Factory for instantiating AuthController.
  */
-class AuthControllerFactory {
-    
+class AuthControllerFactory
+{
     /**
-     * implements FactoryInterface
-     * 
-     * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array $options
-     * @return AuthController
-     */
+      * implements FactoryInterface.
+      *
+      * @param ContainerInterface $container
+      * @param string $requestedName
+      * @param array $options
+      *
+      * @return AuthController
+      */
      public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
      {
          $adapter = new AuthAdapter([
@@ -34,7 +32,7 @@ class AuthControllerFactory {
             'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
          ]);
          $service = new AuthenticationService(null, $adapter);
+
          return new AuthController($service);
      }
-    
 }

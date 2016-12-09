@@ -9,7 +9,6 @@ use Interop\Container\ContainerInterface;
 
 //use Interpreters\Admin\Controller\LanguagesController;
 
-
 /**
  * Factory for instantiating Controllers for managing our relatively
  * simple entities.
@@ -34,11 +33,11 @@ class SimpleEntityControllerFactory implements FactoryInterface
         switch ($shortName) {
             case 'languages':
             case 'locations':
-                
+
                 $factory = $container->get('annotated-form-factory');
                 $entityManager = $container->get('entity-manager');
-                
-                return new $requestedName($entityManager, $factory);//, $shortName
+
+                return new $requestedName($entityManager, $factory); //, $shortName
             break;
             // to be continued
         }

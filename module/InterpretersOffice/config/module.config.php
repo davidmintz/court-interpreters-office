@@ -146,7 +146,7 @@ return [
         'aliases' => [
           'entity-manager' => 'doctrine.entitymanager.orm_default',
           'auth' => 'Zend\Authentication\AuthenticationService',
-          'log'  =>  \Zend\Log\Logger::class,
+          'log' => \Zend\Log\Logger::class,
         ],
         'factories' => [
             'Zend\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',

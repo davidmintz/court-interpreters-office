@@ -4,11 +4,10 @@ namespace ApplicationTest\DataFixture;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-
 use InterpretersOffice\Entity;
 
-class CancellationReasonLoader implements FixtureInterface {
-    
+class CancellationReasonLoader implements FixtureInterface
+{
     public function load(ObjectManager $objectManager)
     {
         $reasons = [
@@ -21,15 +20,10 @@ class CancellationReasonLoader implements FixtureInterface {
             'unknown',
         ];
         foreach ($reasons as $r) {
-
             $e = (new Entity\ReasonForCancellation())->setReason($r);
-            $objectManager->persist($e);	
+            $objectManager->persist($e);
         }
 
-        $objectManager->flush();	    	
-
+        $objectManager->flush();
     }
 }
-
-
-

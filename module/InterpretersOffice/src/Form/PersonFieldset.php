@@ -1,4 +1,5 @@
 <?php
+
 /** module/InterpretersOffice/src/Form/PersonFieldset.php */
 
 namespace InterpretersOffice\Form;
@@ -9,16 +10,15 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Fieldset for Person entity. still incomplete
+ * Fieldset for Person entity. still incomplete.
  */
 class PersonFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
-   
     use ObjectManagerAwareTrait;
-    
+
     /**
-     * form elements
-     * 
+     * form elements.
+     *
      * @var array
      */
     protected $elements = [
@@ -44,10 +44,10 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         ],
     ];
     /**
-     * constructor
-     * 
+     * constructor.
+     *
      * @param ObjectManager $objectManager
-     * @param array $options
+     * @param array         $options
      */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
@@ -59,7 +59,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
     }
     /**
      * returns specification for input filter (per interface).
-     * 
+     *
      * @return array
      */
     public function getInputFilterSpecification()
@@ -112,5 +112,4 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 
         ];
     }
-   
 }
