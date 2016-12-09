@@ -33,11 +33,13 @@ class SimpleEntityControllerFactory implements FactoryInterface
         switch ($shortName) {
             case 'languages':
             case 'locations':
-
+            case 'eventtypes':
+                //echo "WTF ... $shortName ";
                 $factory = $container->get('annotated-form-factory');
+                //echo "WTF? ". get_class($factory). "...." ;
                 $entityManager = $container->get('entity-manager');
-
-                return new $requestedName($entityManager, $factory); //, $shortName
+                //echo "returning a $requestedName instance... ";
+                return new $requestedName($entityManager, $factory,$shortName); //, $shortName
             break;
             // to be continued
         }

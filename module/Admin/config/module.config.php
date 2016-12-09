@@ -111,6 +111,43 @@ return [
                     ],
                 ],
             ],
+            'event-types' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/admin/event-types',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\EventTypesController::class,
+                        'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'add' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/add',
+                            'defaults' => [
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:action/:id',
+                            'defaults' => [
+                                'action' => 'edit',
+
+                            ],
+                            'constraints' => [
+                                'action' => 'edit|delete',
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -119,8 +156,9 @@ return [
             Controller\IndexController::class => Controller\IndexController::class,
         ],
         'factories' => [
-            Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
-            Controller\LocationsController::class => Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\LanguagesController::class  => Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\LocationsController::class  => Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\EventTypesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
         ],
     ],
     'view_manager' => [

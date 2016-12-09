@@ -41,7 +41,7 @@ class LanguagesController extends AbstractActionController
      *
      * @var string
      */
-    protected $name;
+    protected $name = 'languages';
 
     /**
      * constructor.
@@ -60,6 +60,7 @@ class LanguagesController extends AbstractActionController
         $this->formFactory = $formFactory;
         //$this->name = $shortName;
     }
+    
     /**
      * index action.
      *
@@ -77,7 +78,7 @@ class LanguagesController extends AbstractActionController
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
         $languages = $repository->findAllWithPagination($page);
 
-        return ['languages' => $languages];
+        return new ViewModel(['languages' => $languages]);
     }
 
     /**
@@ -170,6 +171,6 @@ class LanguagesController extends AbstractActionController
     protected function getFormViewModel(array $data)
     {
         return (new ViewModel($data))
-                ->setTemplate('interpreters-office/admin/languages/form.phtml');
+                ->setTemplate("interpreters-office/admin/{$this->name}/form.phtml");
     }
 }

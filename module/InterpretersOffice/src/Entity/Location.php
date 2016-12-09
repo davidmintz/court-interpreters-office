@@ -10,7 +10,7 @@ use Zend\Form\Annotation;
 /**
  * Entity class representing a location where an interpreting event takes place.
  *
- * @todo add aboolean property "active" for retiring (hiding) locations no longer in use
+ * @todo add a boolean property "active" for retiring (hiding) locations no longer in use
  *
  *
  * @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})})
@@ -83,7 +83,7 @@ class Location
      * @Annotation\Required(false)
      * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
      *  "messages":{"stringLengthTooShort":"comments must be at least 2 characters long",
-     *   "stringLengthTooLong":"language name exceeds maximum length of 200 characters"}}})
+     *   "stringLengthTooLong":"comments exceed maximum length of 200 characters"}}})
 
      * @ORM\Column(type="string",length=200,options={"default":""})
      *

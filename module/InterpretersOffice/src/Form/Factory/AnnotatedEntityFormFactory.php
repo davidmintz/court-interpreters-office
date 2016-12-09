@@ -64,6 +64,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
     {
         $annotationBuilder = new AnnotationBuilder();
         $form = $annotationBuilder->createForm($entity);
+       
         switch ($entity) {
             case Entity\Language::class:
             $this->setupLanguageForm($form, $options);
@@ -72,6 +73,10 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
             case Entity\Location::class:
             $this->setupLocationsForm($form, $options);
             break;
+        
+            case Entity\EventTypes::class:
+            break;
+            //$this->setUpEventTypesForm($form,$options);
             // etc
 
         }
