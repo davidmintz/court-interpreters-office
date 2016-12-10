@@ -96,9 +96,14 @@ class ParentLocation extends AbstractValidator
      */
     public function isValid($value, $context = null)
     {
-        $type_of_parent =
-            key_exists('attributes', $this->parentLocations[$context['parentLocation']]) ?
+        
+        if (! key_exists($context['parentLocation'], $this->parentLocations)) {
+            $type_of_parent = null;    
+        } else {
+            $type_of_parent = key_exists('attributes', $this->parentLocations[$context['parentLocation']]) ?
                 $this->parentLocations[$context['parentLocation']]['attributes']['data-location-type'] : null;
+        }
+        
         $type_submitted = $this->locationTypes[$value];
         if ('courtroom' == $type_submitted && !$type_of_parent) {
             $this->error(self::LOCATION_TYPE_MUST_HAVE_PARENT);
