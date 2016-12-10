@@ -132,4 +132,35 @@ class LocationsControllerTest extends AbstractControllerTest
 
         $this->assertNotEquals($before, $courtroom->getComments());
     }
+
+    public function testCourtroomFormValidation()
+    {
+
+        $em = FixtureManager::getEntityManager();
+        $courtroom_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
+                ->findOneBy(['type' => 'courtroom']);
+        
+        // try adding a courtroom with no parent
+        $data = [
+            'name' => '29F',
+            'parentLocation' => '',
+            'type' => $courtroom_type ->getId(),
+            'comments' => '',
+            'active' => 1,
+            //'id' => $courtroom->getId(),
+        ];
+         $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/locations/add');
+        $this->assertResponseStatusCode(200);
+        $this->assertNotRedirect();
+        $this->assertQuery('.validation-error');
+        $this->assertQueryCount('.validation-error',1);
+        $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
+        //$query = new Query($this->getResponse()->getBody());
+        //e$element = $query->execute('.validation-error')->current();
+        
+        // to be continued
+    }
 }
