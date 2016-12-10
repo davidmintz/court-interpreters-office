@@ -98,20 +98,16 @@ class LocationsController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                echo 'SHIT NOT VALID?';
-                print_r($form->getMessages());
-
+                //echo 'SHIT NOT VALID?';
+                // print_r($form->getMessages());
                 return $viewModel;
             }
-            try {
-                $this->entityManager->persist($entity);
-                $this->entityManager->flush();
-                $this->flashMessenger()
-                      ->addSuccessMessage("The location  {$entity->getName()} has been added.");
-                $this->redirect()->toRoute('locations');
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }
+            
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+            $this->flashMessenger()
+                  ->addSuccessMessage("The location  {$entity->getName()} has been added.");
+            $this->redirect()->toRoute('locations');            
         }
 
         return $viewModel;
