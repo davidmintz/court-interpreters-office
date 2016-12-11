@@ -162,7 +162,7 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
         
         //$query = new Query($this->getResponse()->getBody());
-        //e$element = $query->execute('.validation-error')->current();
+        //$element = $query->execute('.validation-error')->current();
 
         // try adding a courthouse with another courthouse as parent
         $pearl = $em->getRepository('InterpretersOffice\Entity\Location')
@@ -170,7 +170,7 @@ class LocationsControllerTest extends AbstractControllerTest
 
         $this->reset(true);
         $courthouse_type = $pearl->getType();
-        $data = $data = [
+        $data = [
             'name' => 'Some Courthouse',
             'parentLocation' =>  $pearl->getId(),
             'type' => $courthouse_type->getId(),
@@ -189,6 +189,55 @@ class LocationsControllerTest extends AbstractControllerTest
         $error = 'this type of location cannot have any parent location';
         $this->assertQueryContentContains('.validation-error',$error);
 
-        // to be continued
+        // interpreters office has to be somewhere
+        $interpretersoffice_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
+                ->findOneBy(['type' => 'interpreters office']);
+        $this->reset(true);
+
+        $data = [
+            'name' => 'Some Interpreters Office',
+            'parentLocation' =>  null,
+            'type' => $interpretersoffice_type->getId(),
+            'comments' => '',
+            'active' => 1,
+            //'id' => $courtroom->getId(),
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        ); 
+        $this->dispatch('/admin/locations/add');
+        $this->assertResponseStatusCode(200);
+        $this->assertNotRedirect();
+        $this->assertQuery('.validation-error');
+        $this->assertQueryCount('.validation-error',1);
+        $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
+        
+        // holding cell has to be somewhere
+
+        $holding_cell_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
+                ->findOneBy(['type' => 'holding cell']);
+        $this->reset(true);
+
+        $data = [
+            'name' => 'Some Interpreters Office',
+            'parentLocation' =>  null,
+            'type' => $holding_cell_type->getId(),
+            'comments' => '',
+            'active' => 1,
+            //'id' => $courtroom->getId(),
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        ); 
+        $this->dispatch('/admin/locations/add');
+        $this->assertResponseStatusCode(200);
+        $this->assertNotRedirect();
+        $this->assertQuery('.validation-error');
+        $this->assertQueryCount('.validation-error',1);
+        $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
+        
+
+
+
     }
 }
