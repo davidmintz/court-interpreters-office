@@ -88,8 +88,10 @@ class LocationsControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         $courtroom->setType($em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courtroom']));
-        $courtroom->setParentLocation($em->getRepository('InterpretersOffice\Entity\Location')
-                ->findOneBy(['name' => '500 Pearl']));
+        $pearl = $em->getRepository('InterpretersOffice\Entity\Location')
+                ->findOneBy(['name' => '500 Pearl']);
+
+        $courtroom->setParentLocation($pearl);
         $em->persist($courtroom);
         $em->flush();
 
@@ -149,7 +151,7 @@ class LocationsControllerTest extends AbstractControllerTest
             'active' => 1,
             //'id' => $courtroom->getId(),
         ];
-         $this->getRequest()->setMethod('POST')->setPost(
+        $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
         );
         $this->dispatch('/admin/locations/add');
@@ -158,9 +160,35 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->assertQuery('.validation-error');
         $this->assertQueryCount('.validation-error',1);
         $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
+        
         //$query = new Query($this->getResponse()->getBody());
         //e$element = $query->execute('.validation-error')->current();
-        
+
+        // try adding a courthouse with another courthouse as parent
+        $pearl = $em->getRepository('InterpretersOffice\Entity\Location')
+                ->findOneBy(['name' => '500 Pearl']);
+
+        $this->reset(true);
+        $courthouse_type = $pearl->getType();
+        $data = $data = [
+            'name' => 'Some Courthouse',
+            'parentLocation' =>  $pearl->getId(),
+            'type' => $courthouse_type->getId(),
+            'comments' => '',
+            'active' => 1,
+            //'id' => $courtroom->getId(),
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/locations/add');
+        $this->assertResponseStatusCode(200);
+        $this->assertNotRedirect();
+        $this->assertQuery('.validation-error');
+        $this->assertQueryCount('.validation-error',1);
+        $error = 'this type of location cannot have any parent location';
+        $this->assertQueryContentContains('.validation-error',$error);
+
         // to be continued
     }
 }
