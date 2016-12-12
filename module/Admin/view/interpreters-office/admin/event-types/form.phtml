@@ -1,0 +1,55 @@
+<?php 
+/** module/Admin/view/interpreters-office/admin/event-types/form.phtml */
+if ($this->errorMessage) : ?>
+<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
+<?php
+return;
+endif;
+$form = $this->form;
+if (strstr($this->title,'add')) :
+	$action = 'add' ;
+	$actionAttrib = $this->url('event-types/add');//,['action'=>'add']
+else: 
+	$action = 'edit';
+	$actionAttrib = $this->url('event-types/edit',['id'=> $this->id ] );
+endif;
+
+echo "form action: $actionAttrib ... ";
+?>
+<div class="center-block" style="max-width:750px"><!-- wrapper -->
+    <h2><?php echo $this->title ?></h2>
+<?php if ($action == 'add')  : ?>
+    <p>Use this form to add a new event type. Please be careful 
+      to avoid adding an type that is a subtype of one that already 
+    exists, or is too rare an occurence to warrant permanent storage.</p>
+<?php endif; 
+$form->add([
+	'name'=>'submit',
+	'type'=>'Zend\Form\Element\Submit',
+	'attributes' => ['value'=>'submit'],
+])->setAttribute('method', 'post')->setAttribute('action', $actionAttrib);
+
+$form->prepare();
+echo $this->form()->openTag($form);?>
+<div class="form-group"><?php 
+$name = $form->get('name');
+echo $this->formLabel($name),$this->formElement($name),$this->formElementErrors($name);
+?>
+</div>
+<div class="form-group"><?php 
+$category = $form->get('category');
+echo $this->formLabel($category),$this->formElement($category),$this->formElementErrors($category);
+?>
+</div> 
+<div class="form-group"><?php 
+$comments = $form->get('comments');
+echo $this->formLabel($comments),$this->formElement($comments), $this->formElementErrors($comments);
+?>		
+</div>
+<div class="form-group"><?php 
+echo $this->formSubmit($form->get('submit'));
+echo $this->formElement($form->get('id'));
+echo $this->form()->closeTag();
+?>
+</div>
+</div><!-- /wrapper -->
