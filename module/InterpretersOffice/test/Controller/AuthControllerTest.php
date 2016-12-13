@@ -82,5 +82,27 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(302);
         
     }
-    
+    /**
+     * asserts that the wrong identity or password fails to authenticate
+     */
+    public function testBadLoginNameOrPasswordFailsToAuthenticate()
+    {
+        // previous assertions established that the password is 'boink' 
+        // so anything else should fail
+        $this->dispatch('/login', 'POST', 
+                 ['identity'=>'susie','password'=>'notCorrect']
+        );
+        $this->assertNotRedirect();
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        $this->assertFalse($auth->hasIdentity());
+        $this->assertQuery('div.alert-warning');
+        $this->assertQueryContentRegex('div.alert-warning', '/authentication failed/i');
+        $this->dispatch('/login', 'POST', 
+                 ['identity'=>'nobody','password'=>'notCorrect']
+        );
+        $this->assertNotRedirect();
+        $this->assertFalse($auth->hasIdentity());
+        $this->assertQuery('div.alert-warning');
+        $this->assertQueryContentRegex('div.alert-warning', '/authentication failed/i');
+    }
 }
