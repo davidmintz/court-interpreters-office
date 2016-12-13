@@ -135,6 +135,8 @@ class LanguagesController extends AbstractActionController
      */
     public function addAction()
     {
+        
+        
         $language = new Language();
 
         $form = $this->getForm(Language::class, ['object' => $language, 'action' => 'create'])
@@ -148,15 +150,15 @@ class LanguagesController extends AbstractActionController
             if (!$form->isValid()) {
                 return $viewModel;
             }
-            try {
-                $this->entityManager->persist($language);
-                $this->entityManager->flush();
-                $this->flashMessenger()
-                      ->addSuccessMessage("The language $language has been added.");
-                $this->redirect()->toRoute('languages');
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }
+            
+            $this->entityManager->persist($language);
+            $this->entityManager->flush();
+            $this->flashMessenger()
+                  ->addSuccessMessage("The language $language has been added.");
+            $this->redirect()->toRoute('languages');
+
+            
+            
         }
 
         return $viewModel;
