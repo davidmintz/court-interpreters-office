@@ -6,6 +6,7 @@ namespace InterpretersOffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\View\Model\ViewModel;
 
 /**
  * controller for managing user authentication.
@@ -44,30 +45,45 @@ class AuthController extends AbstractActionController
     }
     /**
      * login action.
+     * 
+     * on a GET request or POSTed failed authentication, returns a 
+     * view; otherwise, redirect to admin main page or to main front
+     * page, depending on authenticated user's role.
+     * 
+     * @return ViewModel
      */
     public function loginAction()
     {
         $form = new \InterpretersOffice\Form\LoginForm();
+        
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                return ['form' => $form];
+                return new ViewModel(['form' => $form]);
             }
             $data = $form->getData();
             $this->auth->getAdapter()
                  ->setIdentity($data['identity'])
                  ->setCredential($data['password']);
             $result = $this->auth->authenticate();
-            if ($result->isValid()) {
-                //echo "YAY !!!";
-                $this->redirect()->toRoute('home');
-            } else {
-                return ['form' => $form, 'status' => $result->getCode()];
+            if (! $result->isValid()) {
+                 return new ViewModel(
+                        ['form' => $form, 'status' => $result->getCode()]
+                );
             }
+            $user = $this->auth->getIdentity();
+            // managers and administrators go to /admin
+            if (in_array((string)$user->getRole(),['administrator','manager'])) {
+                $route = 'admin';
+            } else {
+                // everyone else goes to the main page
+                $route = 'home';
+            }
+            $this->redirect()->toRoute($route);
         }
 
-        return ['form' => $form];
+        return new ViewModel(['form' => $form]);
     }
 
     /**
