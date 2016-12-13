@@ -59,6 +59,7 @@ return [
                 'options' => [
                     'route' => '/login',
                     'defaults' => [
+                        'module' => __NAMESPACE__,
                         'controller' => Controller\AuthController::class,
                         'action' => 'login',
                     ],
@@ -71,6 +72,7 @@ return [
                 'options' => [
                     'route' => '/logout',
                     'defaults' => [
+                         'module' => __NAMESPACE__,
                         'controller' => Controller\AuthController::class,
                         'action' => 'logout',
                     ],
