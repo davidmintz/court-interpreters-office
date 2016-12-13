@@ -29,13 +29,17 @@ class AuthControllerTest extends AbstractControllerTest
      */
     public function testLoginAdminUser()
     {
+        
+        $token = $this->getCsrfToken('/login');
         $auth = $this->getApplicationServiceLocator()->get('auth');
         $params =
         [
             'identity' => 'susie',
             'password' => 'boink',
+            'csrf'     => $token,
         ];
-        $this->dispatch('/login', 'POST', $params);
+        $this->dispatch('/login', 'POST', $params);        
+
         $this->assertTrue($auth->hasIdentity());
         $auth->clearIdentity();
         // just checking :-)
@@ -68,10 +72,12 @@ class AuthControllerTest extends AbstractControllerTest
         // sanity-check it first
         $this->assertEquals('submitter',(string)$susie->getRole());
         
+        $token = $this->getCsrfToken('/login');
         $params =
         [
             'identity' => 'susie',
             'password' => 'boink',
+            'csrf'    => $token,
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
@@ -90,7 +96,10 @@ class AuthControllerTest extends AbstractControllerTest
         // previous assertions established that the password is 'boink' 
         // so anything else should fail
         $this->dispatch('/login', 'POST', 
-                 ['identity'=>'susie','password'=>'notCorrect']
+               ['identity'=>'susie',
+                 'password'=>'notCorrect',
+                 'csrf' => $this->getCsrfToken('/login'),
+               ]
         );
         $this->assertNotRedirect();
         $auth = $this->getApplicationServiceLocator()->get('auth');
@@ -98,7 +107,10 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertQuery('div.alert-warning');
         $this->assertQueryContentRegex('div.alert-warning', '/authentication failed/i');
         $this->dispatch('/login', 'POST', 
-                 ['identity'=>'nobody','password'=>'notCorrect']
+                 [   'identity'=>'nobody',
+                     'password'=>'notCorrect',
+                     'csrf' => $this->getCsrfToken('/login'),
+                 ]
         );
         $this->assertNotRedirect();
         $this->assertFalse($auth->hasIdentity());
