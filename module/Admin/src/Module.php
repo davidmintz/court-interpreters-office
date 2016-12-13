@@ -35,6 +35,9 @@ class Module
      * We could have attached this listener to the MvcEvent::EVENT_ROUTE event
      * instead, which is earlier in the cycle, but could not figure out how
      * to acquire a FlashMessenger without the Controller instance.
+     * 
+     * NOTE TO SELF:  the trick is simply ->get(ControllerPluginManager), not
+     * PluginManager
      *
      * @todo maybe inject User entity, if found, into someplace for later access.
      * e.g., the controller?
