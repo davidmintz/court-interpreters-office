@@ -36,6 +36,7 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
 
         parent::setUp();
     }
+    
     /**
      * logs in a user through the AuthController.
      *
@@ -58,6 +59,7 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/login');
         $this->reset(true);
     }
+    
     /**
      * parses out a csrf token from a form
      * 
