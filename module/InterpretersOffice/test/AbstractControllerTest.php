@@ -47,16 +47,22 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
      */
     public function login($identity, $password)
     {
+        $token = $this->getCsrfToken('/login');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
                 [
                     'identity' => $identity,
                     'password' => $password,
-                    'csrf'     => $this->getCsrfToken('/login'),
+                    'csrf'     => $token,
                 ]
             )
         );
         $this->dispatch('/login');
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        if (! $auth->hasIdentity()) {
+            echo "\nWARNING:  failed authentication\n";
+        } 
+        
         $this->reset(true);
     }
     
