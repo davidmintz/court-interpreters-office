@@ -50,7 +50,22 @@ class LoginForm extends Form implements InputFilterProviderInterface
             ],
         ]
         );
+        $csrf = new \Zend\Form\Element\Csrf('csrf');
+        $csrf->setCsrfValidatorOptions(
+         ['messages'=>[            
+            'notSame' => 'security error: form submission failed CSRF token validation',
+        ]]);
+        
+       $this->add($csrf);
+       $inputFilter = $this->getInputFilter();
+       $validatorChain = $inputFilter->get('csrf')->getValidatorChain();
+       $validatorChain->prependByName('NotEmpty', ['messages'=>[
+           'isEmpty'=>'security error: missing CSRF token'
+       ]], true);
+      
+        
     }
+            
     /**
      * input filter specification.
      *
