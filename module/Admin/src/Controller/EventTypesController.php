@@ -99,16 +99,11 @@ class EventTypesController extends AbstractActionController {
                 print_r($form->getMessages());
                 return $view;
             }
-            echo "valid...";
-            try {
-                $this->entityManager->persist($entity);
-                $this->entityManager->flush();
-                $this->flashMessenger()
-                      ->addSuccessMessage("The event-type $entity has been added.");
-                //$this->redirect()->toRoute('event-types');
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+            $this->flashMessenger()
+                  ->addSuccessMessage("The event-type $entity has been added.");
+            $this->redirect()->toRoute('event-types');
         }
 
         return $view;
