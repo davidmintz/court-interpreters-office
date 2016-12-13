@@ -19,6 +19,7 @@ class LanguagesControllerTest extends AbstractControllerTest
 {
     public function setUp()
     {
+        
         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute([
@@ -30,11 +31,13 @@ class LanguagesControllerTest extends AbstractControllerTest
 
     public function testAddLanguage()
     {
+        
         $entityManager = FixtureManager::getEntityManager();
         $repository = $entityManager->getRepository('InterpretersOffice\Entity\Language');
         $languages = $repository->findAll();
         $this->assertTrue(is_array($languages));
         $count_before = count($languages);
+        
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
                 [
@@ -44,7 +47,6 @@ class LanguagesControllerTest extends AbstractControllerTest
             )
         );
         $this->dispatch('/admin/languages/add');
-
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/languages');
         $count_after = count($repository->findAll());
@@ -55,6 +57,7 @@ class LanguagesControllerTest extends AbstractControllerTest
 
         return $vulcan;
     }
+   
     /**
      * @depends testAddLanguage
      */
@@ -66,8 +69,9 @@ class LanguagesControllerTest extends AbstractControllerTest
         $id = $vulcan->getId();
         $comments_before = $vulcan->getComments();
         $this->dispatch('/admin/languages/edit/'.$id);
+        echo $this->getResponseHeader('Location');//return;
         $this->assertResponseStatusCode(200);
-        $this->reset();
+        //$this->reset();
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
                 [
@@ -84,7 +88,7 @@ class LanguagesControllerTest extends AbstractControllerTest
         $this->assertNotEquals($comments_before, $vulcan->getComments());
     }
 
-    public function testLanguagesIndexActionCanBeAccessed()
+    public function _testLanguagesIndexActionCanBeAccessed()
     {
         $this->dispatch('/admin/languages', 'GET');
         $this->assertResponseStatusCode(200);
