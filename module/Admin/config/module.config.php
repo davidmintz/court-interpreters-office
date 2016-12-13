@@ -16,7 +16,7 @@ return [
             'admin' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/admin[/]',
+                    'route' => '/admin',//[/]
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\IndexController::class,
