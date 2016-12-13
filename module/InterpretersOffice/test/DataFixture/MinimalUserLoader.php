@@ -26,22 +26,22 @@ class MinimalUserLoader implements FixtureInterface
          // create a Person
          $person = new Entity\Person();
         $person->setActive(true)
-                 ->setFirstname('Susie')
-                 ->setLastname('Somebody')
-                 ->setHat(
-                      $objectManager->getRepository('InterpretersOffice\Entity\Hat')
-                         ->findOneBy(
-                                 [
-                                     //'name'=>'staff, Interpreters Office',
-                                     'name' => 'staff Court Interpreter',
+            ->setFirstname('Susie')
+            ->setLastname('Somebody')
+            ->setHat(
+                 $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+                    ->findOneBy(
+                            [
+                                //'name'=>'staff, Interpreters Office',
+                                'name' => 'staff Court Interpreter',
 
-                                 ]
-                          )
-                 )
-                 ->setEmail('susie_somebody@nysd.uscourts.gov');
+                            ]
+                     )
+            )
+            ->setEmail('susie_somebody@nysd.uscourts.gov');
         $objectManager->persist($person);
-         // create a user entity
-         $user = new Entity\User();
+        // create a user entity
+        $user = new Entity\User();
         $user->setPerson($person)->setRole(
                   $objectManager->getRepository('InterpretersOffice\Entity\Role')
                          ->findOneBy(['name' => 'manager'])
