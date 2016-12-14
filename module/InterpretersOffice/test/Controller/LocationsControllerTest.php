@@ -63,6 +63,7 @@ class LocationsControllerTest extends AbstractControllerTest
             'type' => $type->getId(),
             'comments' => 'shit is real',
             'active' => 1,
+            'csrf' => $this->getCsrfToken('/admin/locations/add'),
         ];
 
         $this->getRequest()->setMethod('POST')->setPost(
@@ -122,6 +123,7 @@ class LocationsControllerTest extends AbstractControllerTest
             'comments' => 'shit is truly real',
             'active' => 1,
             'id' => $courtroom->getId(),
+            'csrf' => $this->getCsrfToken($url),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
@@ -149,7 +151,7 @@ class LocationsControllerTest extends AbstractControllerTest
             'type' => $courtroom_type ->getId(),
             'comments' => '',
             'active' => 1,
-            //'id' => $courtroom->getId(),
+            'csrf' => $this->getCsrfToken('/admin/locations/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
@@ -176,6 +178,7 @@ class LocationsControllerTest extends AbstractControllerTest
             'type' => $courthouse_type->getId(),
             'comments' => '',
             'active' => 1,
+            'csrf' => $this->getCsrfToken('/admin/locations/add'),
             //'id' => $courtroom->getId(),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
@@ -200,6 +203,7 @@ class LocationsControllerTest extends AbstractControllerTest
             'type' => $interpretersoffice_type->getId(),
             'comments' => '',
             'active' => 1,
+            'csrf' => $this->getCsrfToken('/admin/locations/add'),
             //'id' => $courtroom->getId(),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
@@ -224,6 +228,7 @@ class LocationsControllerTest extends AbstractControllerTest
             'type' => $holding_cell_type->getId(),
             'comments' => '',
             'active' => 1,
+            'csrf' => $this->getCsrfToken('/admin/locations/add'),
             //'id' => $courtroom->getId(),
         ];
         $this->getRequest()->setMethod('POST')->setPost(

@@ -37,12 +37,13 @@ class LanguagesControllerTest extends AbstractControllerTest
         $languages = $repository->findAll();
         $this->assertTrue(is_array($languages));
         $count_before = count($languages);
-        
+        $token = $this->getCsrfToken('/admin/languages/add');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
                 [
                     'name' => 'Vulcan',
                     'comments' => 'rarely used',
+                    'csrf' => $token,
                 ]
             )
         );
@@ -69,26 +70,28 @@ class LanguagesControllerTest extends AbstractControllerTest
         $id = $vulcan->getId();
         $comments_before = $vulcan->getComments();
         $this->dispatch('/admin/languages/edit/'.$id);
-        echo $this->getResponseHeader('Location');//return;
+        //echo $this->getResponseHeader('Location');//return;
         $this->assertResponseStatusCode(200);
-        //$this->reset();
+        $url = '/admin/languages/edit/'.$id;
+        $token =  $this->getCsrfToken($url);
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
                 [
                     'name' => 'Vulcan',
                     'comments' => 'VERY rarely used',
                     'id' => $id,
+                    'csrf' => $token,
                 ]
             )
         );
-        $this->dispatch('/admin/languages/edit/'.$id);
+        $this->dispatch($url);
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/languages');
         $entityManager->refresh($vulcan);
         $this->assertNotEquals($comments_before, $vulcan->getComments());
     }
 
-    public function _testLanguagesIndexActionCanBeAccessed()
+    public function testLanguagesIndexActionCanBeAccessed()
     {
         $this->dispatch('/admin/languages', 'GET');
         $this->assertResponseStatusCode(200);
