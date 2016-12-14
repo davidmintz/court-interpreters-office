@@ -21,9 +21,22 @@ class Module
     {
         return include __DIR__.'/../config/module.config.php';
     }
-
+    
     /**
-     * callback to check authentication on mvc dispatch event.
+     * {@inheritdoc}
+     *
+     * @param \Zend\EventManager\EventInterface $event
+     * interesting discussion, albeit for ZF2
+     * http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
+     */
+    public function onBootstrap(\Zend\EventManager\EventInterface $event)
+    {
+        $eventManager = $event->getApplication()->getEventManager();
+        $eventManager->attach(MvcEvent::EVENT_ROUTE , [$this, 'enforceAuthentication']);
+    }
+    
+    /**
+     * callback to check authentication on mvc route event.
      *
      * If the routeMatch's "module" parameter is InterpretersOffice\Admin,
      * we test for authentication and redirect to login if the user is not
@@ -31,13 +44,6 @@ class Module
      * "manager" or "administrator" and redirect to login if not. This last
      * is arguably something that should be handled by ACL but we are here now,
      * so why not.
-     *
-     * We could have attached this listener to the MvcEvent::EVENT_ROUTE event
-     * instead, which is earlier in the cycle, but could not figure out how
-     * to acquire a FlashMessenger without the Controller instance.
-     * 
-     * NOTE TO SELF:  the trick is simply ->get(ControllerPluginManager), not
-     * PluginManager
      *
      * @todo maybe inject User entity, if found, into someplace for later access.
      * e.g., the controller?
@@ -51,14 +57,14 @@ class Module
             return;
         }
         $module = $match->getParam('module');
-        $controller = $event->getTarget();
         if (__NAMESPACE__ == $module) {
             $container = $event->getApplication()->getServiceManager();
             $auth = $container->get('auth');
             if (!$auth->hasIdentity()) {
-                $controller->flashMessenger()
-                        ->addWarningMessage('Authentication is required.');
-
+                $flashMessenger = $container
+                        ->get('ControllerPluginManager')
+                        ->get('FlashMessenger');
+                $flashMessenger->addWarningMessage('Authentication is required.');
                 return $this->getRedirectionResponse($event);
             } else {
                 $allowed = ['manager', 'administrator'];
@@ -68,11 +74,13 @@ class Module
                 );
                 $role = (string) $user->getRole();
                 if (!in_array($role, $allowed)) {
-                    $controller->flashMessenger()
-                        ->addWarningMessage('Access denied.');
+                    $flashMessenger = $container
+                        ->get('ControllerPluginManager')
+                        ->get('FlashMessenger');
+                    $flashMessenger->addWarningMessage('Access denied.');
 
                     return $this->getRedirectionResponse($event);
-                } //else { echo "... $role: you're cool ...";}
+                } 
             }
         }
     }
@@ -89,29 +97,10 @@ class Module
         $response = $event->getResponse();
         $baseUrl = $event->getRequest()->getBaseurl();
         $response->getHeaders()
-            ->addHeaderLine('Location', $baseUrl.'/login');
+            ->addHeaderLine('Location', $baseUrl .'/login');
         $response->setStatusCode(302);
         $response->sendHeaders();
 
         return $response;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param \Zend\EventManager\EventInterface $event
-     *                                                 interesting discussion, albeit for ZF2
-     *                                                 http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
-     */
-    public function onBootstrap(\Zend\EventManager\EventInterface $event)
-    {
-        $eventManager = $event->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH, [$this, 'enforceAuthentication']);
-
-        $log = $event->getApplication()->getServiceManager()->get('log');
-        $log->debug(sprintf('running %s at %d in %s', __FUNCTION__, __LINE__, basename(__FILE__)));
-
-        //$container = $event->getApplication()->getServiceManager();
-        //echo get_class($container->get("SharedEventManager"));
     }
 }
