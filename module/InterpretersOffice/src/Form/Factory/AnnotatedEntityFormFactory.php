@@ -83,6 +83,27 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         $form->setHydrator(new DoctrineHydrator($this->objectManager))
              ->setObject($options['object']);
 
+        $csrf = new \Zend\Form\Element\Csrf('csrf');
+        $csrf->setCsrfValidatorOptions(
+         ['messages'=>[            
+            'notSame' => 'security error: form submission failed CSRF token validation',
+        ]]);
+        
+       $form->add($csrf);
+       
+       $inputFilter = $form->getInputFilter();
+       $inputFilter->add([
+            'csrf' => [
+
+            
+            ],
+        ]
+        );
+        $validatorChain = $inputFilter->get('csrf')->getValidatorChain();
+       /*$validatorChain->prependByName('NotEmpty', ['messages'=>[
+           'isEmpty'=>'security error: missing CSRF token'
+       ]], true);
+      */
         return $form;
     }
     /**
