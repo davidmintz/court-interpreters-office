@@ -15,15 +15,18 @@ use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
 use Zend\Form\Annotation\AnnotationBuilder;
 use InterpretersOffice\Form\Validator\ParentLocation as ParentLocationValidator;
-use Zend\InputFilter\Input;
+
+use Zend\InputFilter;//\Input;
+
+use Zend\Form\Element\Csrf;
 
 /**
  * Factory for creating forms for the entities that are relatively simple.
  *
  * Those entities' properties have some of their corresponding form elements
  * defined via annotations. This factory sets up the remaining elements that
- * cannnot be set up via annotations or whose complete configuration can't be
- * decided before the action is dispatched.
+ * cannnot be set up via annotations, or whose complete configuration can't be
+ * decided until the action is dispatched.
  */
 class AnnotatedEntityFormFactory implements FormFactoryInterface
 {
@@ -52,8 +55,11 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
     /**
      * creates a Zend\Form\Form.
+     * 
+     * factory method to instantiate and, if needed, complete initialization
+     * of a Form for creating or updating the entity
      *
-     * @param type  $entity
+     * @param string  $entity
      * @param array $options
      *
      * @todo check $options, throw exception
@@ -76,36 +82,44 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         
             case Entity\EventTypes::class:
             break;
-            //$this->setUpEventTypesForm($form,$options);
-            // etc
 
         }
         $form->setHydrator(new DoctrineHydrator($this->objectManager))
              ->setObject($options['object']);
-
-        $csrf = new \Zend\Form\Element\Csrf('csrf');
-        $csrf->setCsrfValidatorOptions(
-         ['messages'=>[            
-            'notSame' => 'security error: form submission failed CSRF token validation',
-        ]]);
         
-       $form->add($csrf);
-       
-       $inputFilter = $form->getInputFilter();
-       $inputFilter->add([
-            'csrf' => [
-
-            
-            ],
-        ]
+        // add the CSRF element to the form
+        $form->add(new Csrf('csrf'));
+        // and customize its validation error messages
+        $inputFilter = $form->getInputFilter();
+        $factory = new InputFilter\Factory();
+        $inputFilter->merge(
+            $factory->createInputFilter([
+                'csrf' => [
+                    'name' => 'csrf',
+                    'validators' => [
+                        [
+                            'name' => 'Zend\Validator\NotEmpty',
+                            'options' => [
+                                'messages' => [
+                                    'isEmpty' => 'security error: missing CSRF token',
+                                ],
+                            ],
+                        ],
+                        [
+                            'name' => 'Zend\Validator\Csrf',
+                            'options' => [
+                                'messages' => [
+                                    'notSame' => 'security error: invalid CSRF token',
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            ])
         );
-        $validatorChain = $inputFilter->get('csrf')->getValidatorChain();
-       /*$validatorChain->prependByName('NotEmpty', ['messages'=>[
-           'isEmpty'=>'security error: missing CSRF token'
-       ]], true);
-      */
         return $form;
     }
+    
     /**
      * completes the initialization of the Language create|update form.
      *
@@ -134,8 +148,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
            ]);
         }
         $input = $form->getInputFilter()->get('name');
-        $input->getValidatorChain()
-          ->attach($validator);
+        $input->getValidatorChain()->attach($validator);
     }
     /**
      * completes initialization of the Locations create|update form.
@@ -200,7 +213,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         ]);
         $filter = $form->getInputFilter();
         // location type is required
-        $input = new Input('type');
+        $input = new InputFilter\Input('type');
         /** @todo just pass an array to the input filter? */
         $notEmptyValidator = new \Zend\Validator\NotEmpty([
             'messages' => [
