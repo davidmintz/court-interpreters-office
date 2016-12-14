@@ -3,6 +3,10 @@
  *  module/Admin/view/interpreters-office/admin/locations/form.phtml 
  *  view script for rendering locations create|update form
  */ 
+
+
+var_dump($this->form->has('csrf'));
+
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -59,6 +63,10 @@ echo $this->formLabel($comments),$this->formTextArea($comments),$this->formEleme
 <div class="form-group"><?php 
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
+?>
+<?php
+$csrf = $form->get('csrf');
+echo $this->formElement($csrf),$this->formElementErrors($csrf);
 ?>
 </div>
 <?php echo $this->form()->closeTag(); ?>
