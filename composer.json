@@ -31,7 +31,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ApplicationTest\\": "module/InterpretersOffice/test/"
+            "ApplicationTest\\": [
+                "module/InterpretersOffice/test/",
+                "module/Admin/test/"
+            ]
         }
     },
     "extra": [],

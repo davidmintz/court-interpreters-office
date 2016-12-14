@@ -3,6 +3,7 @@
     <testsuites>
         <testsuite name="CourtInterpretersOffice Test Suite">
             <directory>./module/InterpretersOffice/test</directory>
+            <directory>./module/Admin/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
         </testsuite>
     </testsuites>
