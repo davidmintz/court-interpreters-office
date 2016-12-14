@@ -8,8 +8,6 @@ use ApplicationTest\AbstractControllerTest;
 use InterpretersOffice\Admin\Controller\AuthController;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use Zend\Stdlib\Parameters;
-use Zend\Dom\Query;
 use InterpretersOffice\Entity;
 
 class AuthControllerTest extends AbstractControllerTest
