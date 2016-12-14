@@ -156,11 +156,7 @@ class LanguagesController extends AbstractActionController
             $this->flashMessenger()
                   ->addSuccessMessage("The language $language has been added.");
             $this->redirect()->toRoute('languages');
-
-            
-            
         }
-
         return $viewModel;
     }
     /**
