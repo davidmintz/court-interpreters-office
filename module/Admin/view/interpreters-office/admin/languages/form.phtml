@@ -41,9 +41,12 @@ $comments = $form->get('comments');
 echo $this->formLabel($comments),$this->formElement($comments), $this->formElementErrors($comments);
 ?>		
 </div>
-<div class="form-group"><?php 
+<div class="form-group">
+<?php 
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
+$csrf = $form->get('csrf');
+echo $this->formElement($csrf),$this->formElementErrors($csrf);
 echo $this->form()->closeTag();
 ?>
 </div>
