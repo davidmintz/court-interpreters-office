@@ -78,6 +78,19 @@ return [
                     ],
                 ],
             ],
+            'example' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/example[/:action]',
+                    'defaults' => [
+                        //'module' => __NAMESPACE__,
+                        'controller' => Controller\ExampleController::class,
+                        'action' => 'index',
+                    ],
+                ],
+
+            ],
         ],
     ],
     'view_helpers' => [
@@ -103,7 +116,11 @@ return [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
+           Controller\ExampleController::class => Controller\Factory\ExampleControllerFactory::class,
         ],
+        'invokables' => [
+            //Controller\ExampleController::class => Controller\ExampleController::class,
+        ],        
     ],
     'view_manager' => [
         'display_not_found_reason' => true,
