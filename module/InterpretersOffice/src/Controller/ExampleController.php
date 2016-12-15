@@ -14,10 +14,10 @@ use Zend\View\Model\ViewModel;
  *  Currently, just for making sure the application runs, basic routing is
  *  happening, service container is working, views are rendered, etc.
  */
-class ExampleController extends AbstractActionController implements \Zend\EventManager\EventManagerAwareInterface
+class ExampleController extends AbstractActionController //implements \Zend\EventManager\EventManagerAwareInterface
 {
     
-    use \Zend\EventManager\EventManagerAwareTrait;
+    //use \Zend\EventManager\EventManagerAwareTrait;
 
     public function __construct()
     {
