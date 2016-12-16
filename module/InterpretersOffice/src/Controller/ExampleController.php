@@ -45,14 +45,16 @@ class ExampleController extends AbstractActionController //implements \Zend\Even
     /**
      * temporary action for experimenting and doodling.
      *
-     * this demonstrates that we can build a form from annotations
-     * and bind the form to a Doctrine entity, then add more elements
+     * this demonstrates a way to trigger an event. the listener was attached
+     * by the factory at instantiation .
      */
     public function testAction()
     {
        echo "testAction works; ";echo "<br>note: i am ".self::class."<br>";
-
-       $this->events->trigger("doShit",$this,["message" => "this is the message parameter"]) ;
+       //$this->events->trigger("doShit",$this,["message" => "this is the message parameter"]) ;
+       $this->events->trigger(__FUNCTION__, $this,
+               ["message" => "this is the message parameter"]
+        ) ;
 
        return false;
     }
@@ -67,3 +69,4 @@ class ExampleController extends AbstractActionController //implements \Zend\Even
         //return $viewModel;
     }
 }
+

@@ -8,6 +8,8 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Controller\ExampleController;
 
+use InterpretersOffice\Service\Listener\UserListener;
+
 /**
  * Factory class for instantiating IndexController.
  *
@@ -28,18 +30,17 @@ class ExampleControllerFactory implements FactoryInterface
     {
         $controller = new ExampleController();
         $sharedEvents = $container->get("SharedEventManager");
-        //$sharedEvents->attach("*","doShit",function($event){
-        //    echo "woo hoo ! I am the callback set by the factory.<br>";
-        //});    
-        $sharedEvents->attach(
-            $requestedName,
-
-            "doShit",function($event) use ($requestedName){
+        /*
+        $sharedEvents->attach($requestedName,"doShit",function($event) use ($requestedName){
             echo "woo hoo ! I am the event handler attached by the factory for target $requestedName.<br>";
             echo "event is a ".get_class($event);
         });
-
-
+        */
+        $sharedEvents->attach($requestedName,'testAction',
+        
+           [ $container->get(UserListener::class), 'onTest']
+            
+        );
         return $controller;
     }
 }
