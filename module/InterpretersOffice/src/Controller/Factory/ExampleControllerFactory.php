@@ -22,7 +22,7 @@ class ExampleControllerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return IndexController
+     * @return ExampleController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

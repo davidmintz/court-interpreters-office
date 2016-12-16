@@ -171,6 +171,7 @@ return [
             'Zend\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
             \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
+            Service\Listener\UserListener::class => Service\Factory\UserListenerFactory::class,
         ],
 
    ],
