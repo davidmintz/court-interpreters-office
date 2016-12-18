@@ -60,15 +60,43 @@ class UserListener
      */
     public function onLogin(Event $e)
     {
-    	$user = $e->getParams()['user'];
+        $params = $e->getParams();
+        $result = $params['result'];
+        $identity = $params['identity'];
+        $ip = isset($_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : 'N/A';
+        if ($result->isValid()) {
+        	$message = sprintf(
+	    		'user %s authenticated from IP address: %s',
+	    		$identity, $ip
+    		);	
+			/**
+			* @todo add last_login prop to entity ($result->getIdentity()) and update
+    	 	*/
+        } else {
+        	$message = sprintf(
+        		'login failed for user %s from IP address %s, reason: %s',
+        		$identity, $ip, json_encode($result->getMessages())
+        	);
+        }
+        $this->log->info($message);  	 
+    }
+
+    /**
+     * event handler for failed login
+     * 
+     * @param Event
+     * 
+     */
+    public function onAuthenticationFailure(Event $e)
+    {
+    	$result = $e->getParams()['result'];
     	$this->log->info(sprintf(
-    		'user %s authenticated. IP address: %s',
-    		$user->getPerson()->getEmail(),
+    		'authentication FAILED. identity: %s; reasons: %s; IP address: %s',
+    		$result->getIdentity(),
+    		json_encode($result->getMessages()),
     		isset($_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : 'N/A' 
 
     	));
-    	/**
-    	 * @todo add last_login prop to entity and update
-    	 */ 
+
     }
 }

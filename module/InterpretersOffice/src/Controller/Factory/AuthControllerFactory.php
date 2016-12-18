@@ -43,7 +43,11 @@ class AuthControllerFactory
         $sharedEvents->attach($requestedName,'loginAction',
            [ $listener, 'onLogin']
         );
-
+        /*
+        $sharedEvents->attach($requestedName,'authentication_failure',
+           [ $listener, 'onAuthenticationFailure']
+        );
+        */
         return new AuthController($service);
      }
 }

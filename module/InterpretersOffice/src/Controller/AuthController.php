@@ -67,9 +67,12 @@ class AuthController extends AbstractActionController
                  ->setIdentity($data['identity'])
                  ->setCredential($data['password']);
             $result = $this->auth->authenticate();
+            $event_params = ['result' => $result, 'identity' => $data['identity']];
             if (! $result->isValid()) {
-                 return new ViewModel(
-                        ['form' => $form, 'status' => $result->getCode()]
+
+                $this->events->trigger(__FUNCTION__,$this,$event_params);
+                return new ViewModel(
+                    ['form' => $form, 'status' => $result->getCode()]
                 );
             }
             $user = $this->auth->getIdentity();
@@ -80,9 +83,7 @@ class AuthController extends AbstractActionController
                 // everyone else goes to the main page
                 $route = 'home';
             }
-            $this->events->trigger(__FUNCTION__,$this,[
-                'user' => $user,
-            ]);
+            $this->events->trigger(__FUNCTION__,$this,$event_params);
             $this->redirect()->toRoute($route);
         }
 
