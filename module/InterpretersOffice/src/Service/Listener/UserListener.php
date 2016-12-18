@@ -40,7 +40,7 @@ class UserListener
 	 * @param EntityManager
 	 * 
 	 */
-	public function __construct(Logger $log, EntityManager $EntityManager)
+	public function __construct(Logger $log, EntityManager $entityManager)
 	{
 
 		$this->log = $log;

@@ -81,7 +81,7 @@ class AuthController extends AbstractActionController
                 $route = 'home';
             }
             $this->events->trigger(__FUNCTION__,$this,[
-                user => $user,
+                'user' => $user,
             ]);
             $this->redirect()->toRoute($route);
         }
