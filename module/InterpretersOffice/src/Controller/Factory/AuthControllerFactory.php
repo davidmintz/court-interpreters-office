@@ -7,8 +7,10 @@ namespace InterpretersOffice\Controller\Factory;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use Zend\Authentication\AuthenticationService;
+
 use InterpretersOffice\Service\Authentication\Adapter as AuthAdapter;
 use InterpretersOffice\Controller\AuthController;
+use InterpretersOffice\Service\Listener\UserListener;
 
 /**
  * Factory for instantiating AuthController.
@@ -31,8 +33,17 @@ class AuthControllerFactory
              // we could hard-code this into our adapter
             'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
          ]);
-         $service = new AuthenticationService(null, $adapter);
+         
+        $service = new AuthenticationService(null, $adapter);
 
-         return new AuthController($service);
+        // attach event listeners
+
+        $sharedEvents = $container->get("SharedEventManager");
+        $listener = $container->get(UserListener::class);        
+        $sharedEvents->attach($requestedName,'loginAction',
+           [ $listener, 'onLogin']
+        );
+
+        return new AuthController($service);
      }
 }

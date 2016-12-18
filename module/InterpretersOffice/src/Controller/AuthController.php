@@ -80,6 +80,9 @@ class AuthController extends AbstractActionController
                 // everyone else goes to the main page
                 $route = 'home';
             }
+            $this->events->trigger(__FUNCTION__,$this,[
+                user => $user,
+            ]);
             $this->redirect()->toRoute($route);
         }
 
