@@ -5,6 +5,8 @@
 
 namespace InterpretersOffice\Service\Factory;
 
+/** module/InterpretersOffice/src/Factory/UserListenerFactory */
+
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
@@ -28,7 +30,10 @@ class UserListenerFactory implements FactoryInterface {
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
 
-    	return new UserListener;
+    	return new UserListener(
+            $container->get('log'),
+            $container->get('entity-manager')
+        );
 
     }
 
