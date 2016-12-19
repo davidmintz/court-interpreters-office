@@ -172,6 +172,8 @@ return [
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
             \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\UserListener::class => Service\Factory\UserListenerFactory::class,
+
+            Form\PersonForm::class  => Form\Factory\PersonFormFactory::class,
         ],
 
    ],
