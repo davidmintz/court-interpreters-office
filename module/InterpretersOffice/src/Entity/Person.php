@@ -26,7 +26,7 @@ use Zend\Form\Annotation;
  * make it work properly. Validators don't run.
  * http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
  * The annotations on some of the instance variables were part of this effort
- * create a Fieldset with Zend\Form\Annotation\AnnotationBuilder.
+ * to create a Fieldset with Zend\Form\Annotation\AnnotationBuilder.
  *
  * @see InterpretersOffice\Entity\Hat
  * @see InterpretersOffice\Entity\Judge
