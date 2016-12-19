@@ -8,6 +8,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\View\Model\ViewModel;
 
+use InterpretersOffice\Form\LoginForm;
+
 /**
  * controller for managing user authentication.
  *
@@ -54,7 +56,7 @@ class AuthController extends AbstractActionController
      */
     public function loginAction()
     {
-        $form = new \InterpretersOffice\Form\LoginForm();
+        $form = new LoginForm();
         
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -96,12 +98,14 @@ class AuthController extends AbstractActionController
     public function logoutAction()
     {
         if ($this->auth->hasIdentity()) {
+            $user = $this->auth->getIdentity();
             $this->auth->clearIdentity();
             $this->flashMessenger()
                  ->addSuccessMessage('You have logged out');
         } else {
             $this->redirect()->toRoute('home');
         }
+        $this->events->trigger(__FUNCTION__,$this,['user'=>$user]);
         $this->redirect()->toRoute('auth');
     }
 }

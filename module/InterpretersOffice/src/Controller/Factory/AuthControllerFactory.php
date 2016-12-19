@@ -30,24 +30,20 @@ class AuthControllerFactory
      {
          $adapter = new AuthAdapter([
             'object_manager' => $container->get('entity-manager'),
-             // we could hard-code this into our adapter
+             // we should hard-code this into the adapter
             'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
          ]);
-         
         $service = new AuthenticationService(null, $adapter);
 
         // attach event listeners
-
         $sharedEvents = $container->get("SharedEventManager");
-        $listener = $container->get(UserListener::class);        
+        $listener = $container->get(UserListener::class); 
         $sharedEvents->attach($requestedName,'loginAction',
            [ $listener, 'onLogin']
+        );        
+        $sharedEvents->attach($requestedName,'logoutAction',
+           [ $listener, 'onLogout']
         );
-        /*
-        $sharedEvents->attach($requestedName,'authentication_failure',
-           [ $listener, 'onAuthenticationFailure']
-        );
-        */
         return new AuthController($service);
      }
 }

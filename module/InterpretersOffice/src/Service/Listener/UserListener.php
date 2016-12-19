@@ -42,19 +42,12 @@ class UserListener
 	 */
 	public function __construct(Logger $log, EntityManager $entityManager)
 	{
-
 		$this->log = $log;
 		$this->entityManager = $entityManager;
 	}
 
-    public function onTest(Event $e)
-    {
-        echo "Hello! This is the handler that fires on the ".$e->getName(). " event!<br>";
-        
-    }
-
     /**
-     * event handler for user login
+     * event handler for user login success or failure
      * 
      * @param Event 
      */
@@ -82,21 +75,14 @@ class UserListener
     }
 
     /**
-     * event handler for failed login
+     * event listener for user logout
      * 
-     * @param Event
-     * 
+     * @param Event 
      */
-    public function onAuthenticationFailure(Event $e)
+    public function onLogout(Event $e)
     {
-    	$result = $e->getParams()['result'];
-    	$this->log->info(sprintf(
-    		'authentication FAILED. identity: %s; reasons: %s; IP address: %s',
-    		$result->getIdentity(),
-    		json_encode($result->getMessages()),
-    		isset($_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : 'N/A' 
-
-    	));
-
+    	$user = $e->getParam('user');
+    	$message = sprintf('user %s logged out',$user->getPerson()->getEmail());
+    	$this->log->info($message); 
     }
 }
