@@ -6,8 +6,8 @@ namespace InterpretersOffice\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-use InterpretersOffice\Controller\ExampleController;
 
+use InterpretersOffice\Controller\ExampleController;
 use InterpretersOffice\Service\Listener\UserListener;
 
 /**
@@ -28,18 +28,8 @@ class ExampleControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $controller = new ExampleController();
-        $sharedEvents = $container->get("SharedEventManager");
-        /*
-        $sharedEvents->attach($requestedName,"doShit",function($event) use ($requestedName){
-            echo "woo hoo ! I am the event handler attached by the factory for target $requestedName.<br>";
-            echo "event is a ".get_class($event);
-        });
-        */
-        $sharedEvents->attach($requestedName,'testAction',
-        
-           [ $container->get(UserListener::class), 'onTest']
-            
+        $controller = new ExampleController(
+            $container->get('entity-manager')
         );
         return $controller;
     }

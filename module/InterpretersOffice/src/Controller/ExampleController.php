@@ -8,6 +8,10 @@ namespace InterpretersOffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
+use InterpretersOffice\Form\PersonForm;
+
 /**
  *  ExampleController.
  *
@@ -17,10 +21,50 @@ use Zend\View\Model\ViewModel;
 class ExampleController extends AbstractActionController //implements \Zend\EventManager\EventManagerAwareInterface
 {
     
-    //use \Zend\EventManager\EventManagerAwareTrait;
+    protected $objectManager;
 
-    public function __construct()
+    public function __construct(ObjectManager $objectManager)
     {
+        $this->objectManager = $objectManager;
+    }
+    /**
+     * fool around with person form and fieldset
+     */
+    public function formAction()
+    {
+
+        echo "shit works in formAction ... ";
+
+        $form = new PersonForm($this->objectManager);
+
+        $entity = new \InterpretersOffice\Entity\Person;
+
+        $form->bind($entity);
+
+        $form->setData([
+            'person-fieldset' => [
+                'firstname' => "Wank",'lastname'=> "Gackersly", 'email'=>'wank@gacker.com',
+                'active' => 1,
+                ]
+            ]
+         );
+        echo "valid? ";
+        var_dump($form->isValid());
+        echo "<br>",$entity->getEmail(), " is the entity's email...";
+
+        $this->objectManager->persist($entity);
+
+        try {
+
+           //$this->objectManager->flush();            
+        } catch (\Exception  $e) {
+            echo "<br>".$e->getMessage();
+        }
+        $something = $form->getObject();
+
+        echo get_class($something) . " comes from \$form->getObject()...";
+        return false;
+
     }
 
     /**
