@@ -8,6 +8,10 @@ use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+
+use InterpretersOffice\Entity;
+
 
 /**
  * Fieldset for Person entity. still incomplete.
@@ -22,6 +26,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      * @var array
      */
     protected $elements = [
+
         'lastname' => [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'lastname',
@@ -42,7 +47,18 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'class' => 'form-control',
             ],
         ],
+        'email' => [
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'email',
+            'attributes' => [
+                'class' => 'form-control',
+            ],
+            'options' => [
+                'label' => 'email',
+            ],
+        ],
     ];
+
     /**
      * constructor.
      *
@@ -53,6 +69,10 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
     {
         parent::__construct('person-fieldset', $options);
         $this->objectManager = $objectManager;
+        $this->setHydrator(new DoctrineHydrator($objectManager))
+                //->setObject(new Entity\Person())
+                ->setUseAsBaseFieldset(true);
+
         foreach ($this->elements as $element) {
             $this->add($element);
         }
