@@ -8,7 +8,9 @@ body {
     color : #a9302a;
     margin-bottom: 0;
 }
-
+.form-group label {
+    padding-right: 1em;
+}
 /* stuff that came with the skeleton app*/
 /*
 .btn-success {
