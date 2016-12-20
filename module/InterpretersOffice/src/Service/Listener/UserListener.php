@@ -55,12 +55,11 @@ class UserListener
     {
         $params = $e->getParams();
         $result = $params['result'];
-        $identity = $params['identity'];
-        $ip = isset($_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : 'N/A';
+        $ip = \filter_input(\INPUT_SERVER,'REMOTE_ADDR',\FILTER_VALIDATE_IP) ?:'N/A';
         if ($result->isValid()) {
         	$message = sprintf(
 	    		'user %s authenticated from IP address: %s',
-	    		$identity, $ip
+	    		 $params['identity'], $ip
     		);	
 			/**
 			* @todo add last_login prop to entity ($result->getIdentity()) and update
@@ -68,7 +67,7 @@ class UserListener
         } else {
         	$message = sprintf(
         		'login failed for user %s from IP address %s, reason: %s',
-        		$identity, $ip, json_encode($result->getMessages())
+        		 $params['identity'], $ip, json_encode($result->getMessages())
         	);
         }
         $this->log->info($message);  	 
