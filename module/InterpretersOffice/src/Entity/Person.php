@@ -11,17 +11,6 @@ use Zend\Form\Annotation;
  * Entity representing a person in the court interpreters office management
  * system.
  *
- * The Person's Hat property identifies the "hat" that the Person wears. People
- * have been known to change Hats in the course  of the underlying databases'
- * lifetime. For example, a Law Clerk becomes an AUSA who becomes a Judge; a
- * contract interpreter becomes a staff interpreter. Our strategy for dealing
- * with this is reincarnation: set the former hat-person's active property
- * to <code>false</code> and the new hat-person's active  property to
- * <code>true</code>. The database table's unique index constraint
- * ensures that no two rows can have the same hat_id and email. But because we
- * have to permit emails to be NULL in some instances, the uniqueness of the
- * active Person has to be further enforced at the application level.
- *
  * Note to self: we have tried Annotation/Type("Fieldset") and not been able to
  * make it work properly. Validators don't run.
  * http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
@@ -35,7 +24,11 @@ use Zend\Form\Annotation;
  * @Annotation\Name("person")
  * @Annotation\Type("Form")
  *
- * @ORM\Entity @ORM\Table(name="people",uniqueConstraints={@ORM\UniqueConstraint(name="hat_email_idx",columns={"email","hat_id"})})
+ * @ORM\Entity @ORM\Table(name="people",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="hat_email_idx",columns={"email","hat_id"}),
+ *          @ORM\UniqueConstraint(name="active_email_idx",columns={"email","active"})
+ * })
  * @ORM\InheritanceType("JOINED")
  *
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -129,7 +122,23 @@ class Person
     protected $middlename = '';
 
     /**
-     *  Everyone must where a hat in this life.
+     * Everyone must where a hat in this life.
+     * 
+     * The Person's Hat property identifies the "hat" that the Person wears, and 
+     * makes it possible to identify and classify people whose names are stored 
+     * in the `people` table. People have been known to change Hats in the course 
+     * of the underlying databases' lifetime. For example, a Law Clerk becomes 
+     * an AUSA who becomes a Judge; a contract interpreter becomes a staff 
+     * interpreter. Our strategy for dealing with this is reincarnation: set the 
+     * former hat-person's active property to <code>false</code> and the new 
+     * hat-person's active property to <code>true</code>. Unless the person has 
+     * zero data history, we can't simply update the hat because that would 
+     * falsify the data history.
+     * 
+     * Unique index constraints ensure that no two active people can have the 
+     * same email, and that no two people in the same "hat" can have the same 
+     * email. We are compelled to use this roundabout method because we have to 
+     * allow a NULL email address.
      *
      *  @ORM\ManyToOne(targetEntity="Hat")//,fetch="EAGER"
      *  @ORM\JoinColumn(nullable=false)
