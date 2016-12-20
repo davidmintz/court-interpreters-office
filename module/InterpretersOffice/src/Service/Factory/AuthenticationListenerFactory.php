@@ -16,7 +16,7 @@ use InterpretersOffice\Service\Listener\AuthenticationListener;
 /**
  * Factory for instantiating user listener service.
  */
-class UserListenerFactory implements FactoryInterface {
+class AuthenticationListenerFactory implements FactoryInterface {
 
 
 	/**
