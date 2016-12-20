@@ -10,7 +10,7 @@ use Zend\Authentication\AuthenticationService;
 
 use InterpretersOffice\Service\Authentication\Adapter as AuthAdapter;
 use InterpretersOffice\Controller\AuthController;
-use InterpretersOffice\Service\Listener\UserListener;
+use InterpretersOffice\Service\Listener\AuthenticationListener;
 
 /**
  * Factory for instantiating AuthController.
@@ -37,7 +37,7 @@ class AuthControllerFactory
 
         // attach event listeners
         $sharedEvents = $container->get("SharedEventManager");
-        $listener = $container->get(UserListener::class); 
+        $listener = $container->get(AuthenticationListener::class); 
         $sharedEvents->attach($requestedName,'loginAction',
            [ $listener, 'onLogin']
         );        
