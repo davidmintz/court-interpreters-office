@@ -1,6 +1,5 @@
 <?php
-
-/** module/InterpretersOffice/src/Controller/Factory/IndexControllerFactory.php */
+/** module/InterpretersOffice/src/Controller/Factory/ExampleControllerFactory.php */
 
 namespace InterpretersOffice\Controller\Factory;
 
@@ -8,7 +7,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
 use InterpretersOffice\Controller\ExampleController;
-use InterpretersOffice\Service\Listener\UserListener;
+
 
 /**
  * Factory class for instantiating IndexController.

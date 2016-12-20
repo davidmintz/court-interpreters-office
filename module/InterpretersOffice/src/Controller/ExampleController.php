@@ -18,11 +18,17 @@ use InterpretersOffice\Form\PersonForm;
  *  Currently, just for making sure the application runs, basic routing is
  *  happening, service container is working, views are rendered, etc.
  */
-class ExampleController extends AbstractActionController //implements \Zend\EventManager\EventManagerAwareInterface
+class ExampleController extends AbstractActionController 
 {
     
+    /** @var ObjectManager */
     protected $objectManager;
-
+    
+    /**
+     * constructor
+     * 
+     * @param ObjectManager $objectManager
+     */
     public function __construct(ObjectManager $objectManager)
     {
         $this->objectManager = $objectManager;
@@ -43,7 +49,9 @@ class ExampleController extends AbstractActionController //implements \Zend\Even
 
         $form->setData([
             'person-fieldset' => [
-                'firstname' => "Wank",'lastname'=> "Gackersly", 'email'=>'wank@gacker.com',
+                'firstname' => "Wank",
+                'lastname'=> "Gackersly", 
+                'email'=>'wank@gacker.com',
                 'active' => 1,
                 ]
             ]
@@ -90,7 +98,7 @@ class ExampleController extends AbstractActionController //implements \Zend\Even
      * temporary action for experimenting and doodling.
      *
      * this demonstrates a way to trigger an event. the listener was attached
-     * by the factory at instantiation .
+     * by the factory at instantiation.
      */
     public function testAction()
     {
