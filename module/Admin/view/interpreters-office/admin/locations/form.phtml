@@ -3,10 +3,6 @@
  *  module/Admin/view/interpreters-office/admin/locations/form.phtml 
  *  view script for rendering locations create|update form
  */ 
-
-
-var_dump($this->form->has('csrf'));
-
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -20,11 +16,7 @@ $form->add([
 	'type'=>'Zend\Form\Element\Submit',
 	'attributes' => ['value'=>'submit'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction);
-
 ?>
-
-
-our form action will be <?=$formAction?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
 <h2><?php echo $this->title ?></h2>
 <?php
