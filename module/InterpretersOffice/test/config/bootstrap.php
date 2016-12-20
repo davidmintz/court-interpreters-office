@@ -4,7 +4,7 @@
 
 $loader = require __DIR__.'/../../../../vendor/autoload.php';
 
-$loader->add('Application', __DIR__.'/../../../../module/Application/src');
+$loader->add('Application', __DIR__.'/../../../../module/InterpretersOffice/src');
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
@@ -22,7 +22,7 @@ $dbParams['driver'] = 'pdo_sqlite';
 
 $entitiesPath = [
     //__DIR__ .'/../../../../module/Requests/src/Requests/Entity/',
-    __DIR__.'/../../../../module/Application/src/Entity/',
+    __DIR__.'/../../../../module/InterpretersOffice/src/Entity/',
 
 ];
 
