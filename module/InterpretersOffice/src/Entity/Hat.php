@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * attorney, etc. These should be set up at installation and rarely if ever
  * changed thereafter.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\HatRepository")
  * @ORM\Table(name="hats",uniqueConstraints={@ORM\UniqueConstraint(name="hat_idx",columns={"name"})})
  */
 class Hat
