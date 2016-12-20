@@ -194,7 +194,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         $form->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'type',
-
+            'required' => true,
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\LocationType',
@@ -202,8 +202,6 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'label' => 'location type',
                 'display_empty_item' => true,
                 'empty_item_label' => '(required)',
-                'required' => true,
-
             ],
              'attributes' => [
                 'class' => 'form-control',
