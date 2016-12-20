@@ -240,9 +240,33 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->assertQuery('.validation-error');
         $this->assertQueryCount('.validation-error',1);
         $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
-        
+
+    }
+    
+    public function testLocationTypeIsRequired()
+    {
+        $em = FixtureManager::getEntityManager();
+        $courthouse_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
+                ->findOneBy(['type' => 'courthouse']);
 
 
-
+        $data = [
+            'name' => 'Some Shithead Courthouse',
+            'parentLocation' => '',
+            //'type' => $courtroom_type ->getId(),
+            'type' => NULL,
+            'comments' => '',
+            'active' => 1,
+            'csrf' => $this->getCsrfToken('/admin/locations/add'),
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(
+                new Parameters($data)
+        );
+        $this->dispatch('/admin/locations/add');
+        //echo $this->getResponse()->getBody();
+        $this->assertNotRedirect();
+        $this->assertQuery('.validation-error');
+        $this->assertQueryCount('.validation-error', 1);
+        $this->assertQueryContentRegex('.validation-error', '/location type is required/');
     }
 }
