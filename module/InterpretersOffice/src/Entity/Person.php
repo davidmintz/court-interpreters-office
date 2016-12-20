@@ -146,6 +146,15 @@ class Person
      *  @var Hat
      */
     protected $hat;
+    
+    
+    /**
+     * the office phone number
+     * 
+     * @ORM\Column(name="office_phone",type="string",nullable=false,length=20,options={"default":""})
+     * @var string
+     */
+    protected $officePhone = '';
 
     /**
      * Is the person "active," or only of historical interest?
@@ -309,5 +318,30 @@ class Person
         $this->active = $active;
 
         return $this;
+    }
+    
+    /**
+     * sets the office phone number
+     * 
+     * @todo deal with formatting/unformatting
+     * 
+     * @param string $officePhone
+     * @return Person
+     */
+    public function setOfficePhone($officePhone)
+    {
+        $this->officePhone = $officePhone;
+        return $this;
+    }
+    
+    /**
+     * gets the office phone number
+     * 
+     * @todo deal with formatting/unformatting
+     * @return string
+     */
+    public function getOfficePhone()
+    {
+        return $this->officePhone;
     }
 }
