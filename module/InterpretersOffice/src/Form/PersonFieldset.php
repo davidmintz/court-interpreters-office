@@ -10,8 +10,11 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
-use InterpretersOffice\Entity;
+//use DoctrineModule\Form\Element\ObjectSelect;
 
+//use InterpretersOffice\Entity;
+
+use Zend\Validator;
 
 /**
  * Fieldset for Person entity. still incomplete.
@@ -47,6 +50,16 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'class' => 'form-control',
             ],
         ],
+        'middlename' => [
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'middlename',
+            'options' => [
+                'label' => 'middle name/initial',
+            ],
+            'attributes' => [
+                'class' => 'form-control',
+            ],
+        ],
         'email' => [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'email',
@@ -57,8 +70,54 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'label' => 'email',
             ],
         ],
-    ];
+        /*
+        'hat' => [
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            'name' => 'hat',
+            'required' => true,
+            'allow_empty' => true,
+            'options' => [
+                'object_manager' => $this->objectManager,
+                'target_class' => 'InterpretersOffice\Entity\Hat',
+                'property' => 'name',
+                'label' => 'hat',
+                'display_empty_item' => true,
+                'empty_item_label' => '(none)',
 
+            ],
+             'attributes' => [
+                'class' => 'form-control',
+                'id' => 'hat',
+             ],
+            
+        ],
+         */
+         
+        'active' => [
+            'type' => 'Zend\Form\Element\Checkbox',
+            'name' => 'active',
+            'required' => true,
+            'allow_empty' => false,
+            'options' => [
+                'label' => 'active',
+                'use_hidden_element' => true,
+                'checked_value' => 1,
+                'unchecked_value' => 0,
+            ],
+            'attributes' => [
+                'value' => 1,
+            ]
+        ],
+    ];
+    /**
+     * name of the fieldset.
+     * 
+     * if we are a subclass, this needs to be overriden
+     * 
+     * @var string
+     */
+    protected $fieldset_name = 'person';
+    
     /**
      * constructor.
      *
@@ -67,15 +126,46 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
-        parent::__construct('person-fieldset', $options);
+        parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager))
                 //->setObject(new Entity\Person())
                 ->setUseAsBaseFieldset(true);
-
         foreach ($this->elements as $element) {
             $this->add($element);
         }
+        $this->addHatElement();
+        // if we are a Person, we need the Hat element
+        
+        // if we are a Judge, the Hat is pre-determined
+        // if we are an interpreter, there are only two kinds of hat
+        
+    }
+    
+    public function addHatElement()
+    {
+        $this->add(
+        [
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            'name' => 'hat',
+            'required' => true,
+            'allow_empty' => false,
+            'options' => [
+                'object_manager' => $this->objectManager,
+                'target_class' => 'InterpretersOffice\Entity\Hat',
+                'property' => 'name',
+                'label' => 'hat',
+                'display_empty_item' => true,
+                'empty_item_label' => '',
+                'find_method' => ['name' => 'getHatsForPersonForm'],
+
+            ],
+             'attributes' => [
+                'class' => 'form-control',
+                'id' => 'hat',
+             ],
+        ]);
+        return $this;
     }
     /**
      * returns specification for input filter (per interface).
@@ -104,7 +194,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
-
                 ],
             ],
             'firstname' => [
@@ -129,7 +218,53 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 
                 ],
             ],
-
+            'middlename' => [
+                'validators' => [
+                    [
+                        'name' => 'InterpretersOffice\Form\Validator\ProperName',
+                        'options' => ['type' => 'middle'],
+                    ],
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+            ],
+            'email' => [
+                'validators' => [
+                    /** 
+                    if we want to constrain the domain to values found in a 
+                    config, this would be a good place to set that up
+                     */
+                    [
+                        'name' => 'Zend\Validator\EmailAddress',
+                        'options' => [
+                            'messages' => [
+                                Validator\EmailAddress::INVALID_FORMAT =>
+                                    'invalid email address'
+                            ],
+                        ]
+                    ],
+                    
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+            ],
+            'active' => [
+                'validators' => [
+                    /*
+                    [
+                      'name' => 'NotEmpty',
+                       'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => 
+                                    '"active" setting is required'
+                            ],
+                        ]
+                    ],
+                     */
+                ],
+            ]
         ];
     }
 }
