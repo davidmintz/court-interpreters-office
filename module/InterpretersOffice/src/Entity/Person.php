@@ -174,7 +174,7 @@ class Person
      *
      * @var bool
      */
-    protected $active;
+    protected $active = true;
 
     /**
      * Get id.
