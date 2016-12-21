@@ -26,7 +26,8 @@ class HatRepository extends EntityRepository
     public function getHatsForPersonForm()
     {
         $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h '
-           . 'WHERE h.name NOT LIKE \'%court interpreter%\' AND h.name <> \'Judge\'';
+           . 'WHERE h.name NOT LIKE \'%court interpreter%\' AND h.name <> \'Judge\''
+           . ' AND h.role IS NULL';
         $query = $this->getEntityManager()->createQuery($dql);
         return $query->getResult();
     }
