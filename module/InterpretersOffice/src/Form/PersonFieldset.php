@@ -70,29 +70,23 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'label' => 'email',
             ],
         ],
-        /*
-        'hat' => [
-            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
-            'name' => 'hat',
+       
+        'office_phone' => [
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'officePhone',
             'required' => true,
             'allow_empty' => true,
             'options' => [
-                'object_manager' => $this->objectManager,
-                'target_class' => 'InterpretersOffice\Entity\Hat',
-                'property' => 'name',
-                'label' => 'hat',
-                'display_empty_item' => true,
-                'empty_item_label' => '(none)',
-
+                'label' => 'office phone',
             ],
              'attributes' => [
-                'class' => 'form-control',
-                'id' => 'hat',
+                'class' => 'form-control phone',
+                'id' => 'officePhone',
+               
              ],
             
         ],
-         */
-         
+
         'active' => [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'active',
@@ -134,14 +128,21 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         foreach ($this->elements as $element) {
             $this->add($element);
         }
-        $this->addHatElement();
-        // if we are a Person, we need the Hat element
         
-        // if we are a Judge, the Hat is pre-determined
-        // if we are an interpreter, there are only two kinds of hat
+        $this->addHatElement();
         
     }
     
+    /**
+     * 
+     * adds the Hat element to the form.
+     * 
+     * if we are a Person, we need the Hat element 
+     * if we are a Judge, the Hat is pre-determined
+     * if we are an Interpreter, there are only two kinds of hat
+     * subclasses should override this to provide an appropriately configured
+     * element 
+     */
     public function addHatElement()
     {
         $this->add(
@@ -264,7 +265,30 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ],
                      */
                 ],
-            ]
+            ],
+            'officePhone' => [
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'min' => 10,
+                            'max' => 10,
+                            'messages' => [
+                                Validator\StringLength::TOO_SHORT => 'phone number must contain ten digits',
+                                Validator\StringLength::TOO_LONG => 'phone number cannot exceed ten digits',
+                            ],
+                        ],
+                    ],
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    [
+                        'name' => 'Digits',
+                    ],
+                ],
+
+
+            ],
         ];
     }
 }

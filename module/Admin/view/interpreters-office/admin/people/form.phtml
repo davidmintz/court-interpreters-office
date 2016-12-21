@@ -28,7 +28,7 @@ echo $this->form()->openTag($form);?>
 $hat = $fieldset->get('hat');
 echo $this->formLabel($hat),$this->formSelect($hat),$this->formElementErrors($hat);
 // text inputs
-$elements = ['lastname','middlename','firstname','email',];
+$elements = ['lastname','middlename','firstname','email','officePhone'];
 ?>
 </div>
 <div class="form-group">
@@ -38,7 +38,7 @@ foreach ($elements as $elementName):
     <div class="form-group">
         <?php echo  $this->formLabel($element),$this->formText($element),$this->formElementErrors($element);?>
     </div>
-    <?php
+<?php
 endforeach;
 $active =  $fieldset->get('active');?>
 <div class="form-group">
