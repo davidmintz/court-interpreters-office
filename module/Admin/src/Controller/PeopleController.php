@@ -11,6 +11,8 @@ use InterpretersOffice\Form\PersonForm;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use InterpretersOffice\Entity;
+
 /**
  * controller for admin/people.
  */
@@ -41,11 +43,25 @@ class PeopleController extends AbstractActionController
     
     public function addAction()
     {
-        $view = (new ViewModel())
+        $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/people/form.phtml');
-        
         $form = new PersonForm($this->entityManager);
-        $view->setVariables(['form'=>$form,'title'=>'add a person']);
-        return $view;
+        $viewModel->setVariables(['form'=>$form,'title'=>'add a person']);
+        $request = $this->getRequest();
+        $entity = new Entity\Person();
+        $form->bind($entity);
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (!$form->isValid()) {
+                return $viewModel;
+            } 
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+            $this->flashMessenger()->addSuccessMessage(
+                  sprintf('The person %s %s has been added to the database',
+                  $entity->getFirstname(),$entity->getLastname()));
+            $this->redirect()->toRoute('people');
+        }
+        return $viewModel;
     }
 }
