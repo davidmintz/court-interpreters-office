@@ -82,10 +82,25 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
              'attributes' => [
                 'class' => 'form-control phone',
                 'id' => 'officePhone',
-               
              ],
             
         ],
+
+         'mobile_phone' => [
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'mobilePhone',
+            'required' => true,
+            'allow_empty' => true,
+            'options' => [
+                'label' => 'mobile phone',
+            ],
+             'attributes' => [
+                'class' => 'form-control phone',
+                'id' => 'mobilePhone',
+             ],
+            
+        ],
+
 
         'active' => [
             'type' => 'Zend\Form\Element\Checkbox',
@@ -288,6 +303,27 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
 
 
+            ],
+            'mobilePhone' => [
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'min' => 10,
+                            'max' => 10,
+                            'messages' => [
+                                Validator\StringLength::TOO_SHORT => 'phone number must contain ten digits',
+                                Validator\StringLength::TOO_LONG => 'phone number cannot exceed ten digits',
+                            ],
+                        ],
+                    ],
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    [
+                        'name' => 'Digits',
+                    ],
+                ],
             ],
         ];
     }
