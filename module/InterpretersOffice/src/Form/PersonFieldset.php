@@ -10,6 +10,8 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
+use Zend\InputFilter;
+
 //use DoctrineModule\Form\Element\ObjectSelect;
 
 //use InterpretersOffice\Entity;
@@ -100,8 +102,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
              ],
             
         ],
-
-
         'active' => [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'active',
@@ -160,6 +160,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      */
     public function addHatElement()
     {
+        
         $this->add(
         [
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
@@ -181,8 +182,15 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'id' => 'hat',
              ],
         ]);
-        return $this;
+        //$this->add($hat);
+        //$input = new InputFilter\Input('hat');
+       // $input->getValidatorChain()->attachByName('NotEmpty',[
+       //     'messages' => ['isEmpty' => 'hat is required', ],
+       //$factory = $this->factory->getInputFilterFactory();
+        //$factory->
     }
+    
+    
     /**
      * returns specification for input filter (per interface).
      *
@@ -235,6 +243,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
             'middlename' => [
+                'required' => false,
+                'allow_empty' => true,
                 'validators' => [
                     [
                         'name' => 'InterpretersOffice\Form\Validator\ProperName',
@@ -245,12 +255,15 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ['name' => 'StringTrim'],
                 ],
             ],
+            /*
             'email' => [
+                //'required' => false,
+                'allow_empty' => true,
                 'validators' => [
-                    /** 
-                    if we want to constrain the domain to values found in a 
-                    config, this would be a good place to set that up
-                     */
+                    // 
+                    //if we want to constrain the domain to values found in a 
+                    //config, this would be a good place to set that up
+                    // 
                     [
                         'name' => 'Zend\Validator\EmailAddress',
                         'options' => [
@@ -258,7 +271,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                                 Validator\EmailAddress::INVALID_FORMAT =>
                                     'invalid email address'
                             ],
-                        ]
+                        ],
+                        'break_chain_on_failure' => true,
                     ],
                     
                 ],
@@ -266,6 +280,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ['name' => 'StringTrim'],
                 ],
             ],
+            */
             'active' => [
                 'validators' => [
                     /*
@@ -282,6 +297,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
             'officePhone' => [
+                'required' => false,
+                'allow_empty' => true,
                 'validators' => [
                     [
                         'name' => 'StringLength',
@@ -305,6 +322,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 
             ],
             'mobilePhone' => [
+                'required' => false,
+                'allow_empty' => true,
                 'validators' => [
                     [
                         'name' => 'StringLength',
@@ -322,6 +341,15 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ['name' => 'StringTrim'],
                     [
                         'name' => 'Digits',
+                    ],
+                ],
+            ],
+            
+            'hat' => [
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [ 'messages' => ['isEmpty' => 'hat is required',], ],
                     ],
                 ],
             ],
