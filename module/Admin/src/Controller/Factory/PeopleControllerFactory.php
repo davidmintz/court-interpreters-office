@@ -10,8 +10,7 @@ use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller;
 
 /**
- * Factory for instantiating Controllers for managing our relatively
- * simple entities.
+ * Factory for instantiating Controllers that manage Person and its subclasses
  */
 class PeopleControllerFactory implements FactoryInterface
 {
@@ -26,15 +25,9 @@ class PeopleControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        //$array = explode('\\', $requestedName);
-        //$baseName = end($array);
-        //$shortName = strtolower(substr($baseName, 0, -10));
-        return new Controller\PeopleController(
+        return new $requestedName(
              $container->get('entity-manager')
         );
-        /*
-        switch ($shortName) {
-            
-        }*/
+       
     }
 }
