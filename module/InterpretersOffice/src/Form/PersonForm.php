@@ -51,39 +51,43 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
 		$this->add($fieldset);
         // how to add email validation after the fact
         $factory = new InputFilter\Factory();
-        
-        $inputFilter = $factory->createInputFilter(
-            [
-                'email' => [
-                    'allow_empty' => true,
-                    'validators' => [
-                        /*
-                        [
-                            'name' => 'NotEmpty',
-                            'options' => [
-                                'messages'=>['isEmpty'=> 'email address is required']
-                            ],
-                            'break_chain_on_failure' => true,
-                        ],*/
-                        [
-                            'name' => 'Zend\Validator\EmailAddress',
-                            'options' => [
-                                'messages' => [
-                                    \Zend\Validator\EmailAddress::INVALID_FORMAT =>
-                                        'well-formed email address is required'
-                                ],
-                            ],
-                            //'break_chain_on_failure' => true,
+        $spec = $this->getAdditionalInputFilterSpecification();
+        $inputFilter = $factory->createInputFilter($spec);
+        $this->getInputFilter()->get($fieldset->getName())->merge($inputFilter);
+        $this->add(new Csrf('csrf'));
+	}
+
+	public function getAdditionalInputFilterSpecification()
+	{
+		return 
+		[
+            'email' => [
+                'allow_empty' => true,
+                'validators' => [
+                    /*
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty'=> 'email address is required']
                         ],
-                    ],
-                    'filters' => [
-                        ['name' => 'StringTrim'],
+                        'break_chain_on_failure' => true,
+                    ],*/
+                    [
+                        'name' => 'Zend\Validator\EmailAddress',
+                        'options' => [
+                            'messages' => [
+                                \Zend\Validator\EmailAddress::INVALID_FORMAT =>
+                                    'well-formed email address is required'
+                            ],
+                        ],
+                        //'break_chain_on_failure' => true,
                     ],
                 ],
-            ]
-        );
-        $this->getInputFilter()->get('person')->merge($inputFilter);
-        $this->add(new Csrf('csrf'));
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+            ],
+        ];
 	}
 }
 
