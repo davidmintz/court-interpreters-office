@@ -185,6 +185,43 @@ return [
                     ],
                 ],
             ],
+            'judges' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/admin/judges',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\JudgesController::class,
+                        'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'add' => [  
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/add',
+                            'defaults' => [
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:action/:id',
+                            'defaults' => [
+                                'action' => 'edit',
+
+                            ],
+                            'constraints' => [
+                                'action' => 'edit|delete',
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -197,6 +234,7 @@ return [
             Controller\LocationsController::class  => Controller\Factory\SimpleEntityControllerFactory::class,
             Controller\EventTypesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
             Controller\PeopleController::class     => Controller\Factory\PeopleControllerFactory::class,
+            Controller\JudgesController::class     => Controller\Factory\PeopleControllerFactory::class,
         ],
     ],
     'view_manager' => [
