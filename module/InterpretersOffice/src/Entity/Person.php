@@ -11,18 +11,13 @@ use Zend\Form\Annotation;
  * Entity representing a person in the court interpreters office management
  * system.
  *
- * Note to self: we have tried Annotation/Type("Fieldset") and not been able to
- * make it work properly. Validators don't run.
+ * We tried this with Annotations and Annotation/Type("Fieldset"), and could not
+ * get validators don't run.
  * http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
- * The annotations on some of the instance variables were part of this effort
- * to create a Fieldset with Zend\Form\Annotation\AnnotationBuilder.
  *
  * @see InterpretersOffice\Entity\Hat
  * @see InterpretersOffice\Entity\Judge
  * @see InterpretersOffice\Entity\Interpreter
- *
- * @Annotation\Name("person")
- * @Annotation\Type("Form")
  *
  * @ORM\Entity @ORM\Table(name="people",
  *      uniqueConstraints={
@@ -38,8 +33,7 @@ class Person
 {
     /**
      * entity id.
-     *
-     * @Annotation\Exclude()
+     * 
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
@@ -56,21 +50,6 @@ class Person
     /**
      * the Person's last name.
      *
-     * @Annotation\Options({"label":"last name"})
-     * @Annotation\Filter({"name":"StringTrim"})
-     * @Annotation\Validator({"name":"NotEmpty",
-     *  "break_chain_on_failure": true,
-     *  "options":{"messages":{"isEmpty":"last name is required"}
-     *  }})
-     * @Annotation\Validator({
-     *  "break_chain_on_failure": true,
-     *  "name":"InterpretersOffice\Form\Validator\ProperName",
-     *  "options" : {"type":"last"}
-     * })
-     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
-     *  "messages":{"stringLengthTooShort":"name must be at least 2 characters long",
-     *   "stringLengthTooLong":"name exceeds maximum length of 50 characters"}}})
-     *
      * @ORM\Column(type="string",length=50,nullable=false)
      *
      * @var string
@@ -79,21 +58,6 @@ class Person
 
     /**
      * the Person's first name.
-     *
-     * @Annotation\Options({"label":"first name"})
-     * @Annotation\Filter({"name":"StringTrim"})
-     * @Annotation\Validator({"name":"NotEmpty",
-     *  "break_chain_on_failure": true,
-     *  "options":{"messages":{"isEmpty":"first name is required"}
-     *  }})
-     * @Annotation\Validator({
-     *  "break_chain_on_failure": true,
-     *  "name":"InterpretersOffice\Form\Validator\ProperName",
-     *  "options" : {"type":"first"}
-     * })
-     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
-     *  "messages":{"stringLengthTooShort":"name must be at least 2 characters long",
-     *   "stringLengthTooLong":"name exceeds maximum length of 50 characters"}}})
      *
      * @ORM\Column(type="string",length=50,nullable=false)
      *
@@ -104,17 +68,6 @@ class Person
     /**
      * the Person's middle name or initial.
      *
-     * @Annotation\Options({"label":"middle name"})
-     * @Annotation\Filter({"name":"StringTrim"})
-     * @Annotation\AllowEmpty()
-     * @Annotation\Validator({
-     *  "break_chain_on_failure": true,
-     *  "name":"InterpretersOffice\Form\Validator\ProperName",
-     *  "options" : {"type":"middle"}
-     * })
-     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
-     *  "messages":{"stringLengthTooShort":"name must be at least 2 characters long",
-     *   "stringLengthTooLong":"name exceeds maximum length of 50 characters"}}})
      * @ORM\Column(type="string",length=50,nullable=false,options={"default":""})
      *
      * @var string middle name or initial
@@ -175,6 +128,15 @@ class Person
      * @var bool
      */
     protected $active = true;
+    
+    /**
+     * constructor
+     * 
+     * @param Hat the Hat this Person wears
+     */
+    public function __construct(Hat $hat = null) {
+        $this->hat = $hat;
+    }
 
     /**
      * Get id.
