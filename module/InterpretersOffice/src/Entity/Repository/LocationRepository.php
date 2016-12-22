@@ -24,6 +24,8 @@ class LocationRepository extends EntityRepository
     }
     /**
      * returns all the "parent" locations (those that are not nested in another).
+     * 
+     * @return array
      */
     public function getParentLocations()
     {
