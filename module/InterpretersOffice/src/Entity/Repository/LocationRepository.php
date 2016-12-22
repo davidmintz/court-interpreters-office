@@ -31,7 +31,21 @@ class LocationRepository extends EntityRepository
         'SELECT l FROM InterpretersOffice\Entity\Location l '
          .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC'
         );
-
+        return $query->getResult();
+    }
+    /**
+     * returns all the courthouses and courtrooms
+     * 
+     * @return array of Location entities
+     */
+    public function getJudgeLocations()
+    {
+        // try this one with the querybuilder just for amusement
+        $qb = $this->createQueryBuilder("l")
+            ->join('l.type', 't')
+            ->where('t.type IN (:types)')
+            ->setParameter('types',['courthouse','courtroom']);
+        $query = $qb->getQuery();
         return $query->getResult();
     }
 }
