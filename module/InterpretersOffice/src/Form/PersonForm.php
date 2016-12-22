@@ -44,19 +44,24 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
      * @param Array $options
      */
 	public function __construct(ObjectManager $objectManager,$options = null)
-	{
-			
+	{		
 		parent::__construct($this->formName,$options);
 		$fieldset = new $this->fieldsetClass($objectManager);
 		$this->add($fieldset);
-        // how to add email validation after the fact
+        $this->add(new Csrf('csrf'));
+	}
+    
+    /* this is insane, and unnecessary and will be removed.
+     * instead, our subclasses should simply override 
+     * getInputFilterSpecification, call the parent method, mangle the 
+     * specification array as needed and return it
+     * 
+     *
+     
         $factory = new InputFilter\Factory();
         $spec = $this->getAdditionalInputFilterSpecification();
         $inputFilter = $factory->createInputFilter($spec);
         $this->getInputFilter()->get($fieldset->getName())->merge($inputFilter);
-        $this->add(new Csrf('csrf'));
-	}
-
 	public function getAdditionalInputFilterSpecification()
 	{
 		return 
@@ -64,14 +69,14 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
             'email' => [
                 'allow_empty' => true,
                 'validators' => [
-                    /*
+        
                     [
                         'name' => 'NotEmpty',
                         'options' => [
                             'messages'=>['isEmpty'=> 'email address is required']
                         ],
                         'break_chain_on_failure' => true,
-                    ],*/
+                    ],
                     [
                         'name' => 'Zend\Validator\EmailAddress',
                         'options' => [
@@ -88,11 +93,11 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
                 ],
             ],
         ];
-	}
+	}*/
 }
 
 /*
-    // does not work:
+    // does not work, don't know why:
     $input = $this->getInputFilter()->get('person')->get('email');
     $input->getValidatorChain()->prependByName('NotEmpty', [
         'allow_empty' => false,
