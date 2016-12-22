@@ -40,6 +40,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ],
             'attributes' => [
                 'class' => 'form-control',
+                'id' => 'lastname',
             ],
         ],
         'firstname' => [
@@ -50,6 +51,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ],
             'attributes' => [
                 'class' => 'form-control',
+                'id'   => 'firstname',
             ],
         ],
         'middlename' => [
@@ -60,6 +62,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ],
             'attributes' => [
                 'class' => 'form-control',
+                'id' => 'middlename'
             ],
         ],
         'email' => [
@@ -67,9 +70,12 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             'name' => 'email',
             'attributes' => [
                 'class' => 'form-control',
+                'id'    => 'email',
             ],
             'options' => [
                 'label' => 'email',
+                
+ 
             ],
         ],
        
