@@ -19,7 +19,7 @@ use Zend\InputFilter;
 use Zend\Validator;
 
 /**
- * Fieldset for Person entity. still incomplete.
+ * Fieldset for Person entity.
  */
 class PersonFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
@@ -74,8 +74,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ],
             'options' => [
                 'label' => 'email',
-                
- 
             ],
         ],
        
@@ -94,7 +92,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             
         ],
 
-         'mobile_phone' => [
+        'mobile_phone' => [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'mobilePhone',
             'required' => true,
@@ -261,9 +259,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ['name' => 'StringTrim'],
                 ],
             ],
-            /*
             'email' => [
-                //'required' => false,
+                'required' => false,
                 'allow_empty' => true,
                 'validators' => [
                     // 
@@ -284,9 +281,9 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => 'Null'],
                 ],
             ],
-            */
             'active' => [
                 'validators' => [
                     /*
