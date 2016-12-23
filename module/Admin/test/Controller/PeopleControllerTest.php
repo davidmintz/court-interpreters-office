@@ -11,6 +11,7 @@ namespace ApplicationTest\Controller;
 use InterpretersOffice\Admin\Controller\PeopleController;
 use ApplicationTest\AbstractControllerTest;
 use Zend\Stdlib\Parameters;
+use Zend\Dom\Query;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use InterpretersOffice\Entity;
@@ -67,8 +68,64 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/people');
+        
+        $query = FixtureManager::getEntityManager()->createQuery(
+                'SELECT p FROM InterpretersOffice\Entity\Person p ORDER BY p.id DESC'
+        );
+        $entity = $query->setMaxResults(1)->getOneOrNullResult();
+        $this->assertEquals('John',$entity->getFirstname());
+        $this->assertEquals('Somebody',$entity->getLastname());
+        return $entity;
+        
     }
-
+    /**
+     * @depends testAdd
+     */
+    public function testEditAction(Entity\Person $person)
+    {
+        
+        $em = FixtureManager::getEntityManager();
+        $person->setHat($em->getRepository('InterpretersOffice\Entity\Hat')
+                ->findOneBy(['name' => 'defense attorney']));
+        $em->persist($person);
+        $em->flush();
+        $url = '/admin/people/edit/' . $person->getId();
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery("form");
+        $this->assertQuery('input#lastname');
+        $this->assertQuery('input#firstname');
+        $this->assertQuery('input#middlename');
+        $this->assertQuery('input#email');
+        $this->assertQuery('select#hat');
+        
+        $query = new Query($this->getResponse()->getBody());
+        $node1 = $query->execute('#lastname')->current();
+        $lastname = $node1->attributes->getNamedItem('value')->nodeValue;
+        $this->assertEquals('Somebody',$lastname);
+        
+        $node2 = $query->execute('#firstname')->current();
+        $firstname = $node2->attributes->getNamedItem('value')->nodeValue;
+        $this->assertEquals('John',$firstname);
+        
+        $data = [
+            'person' => [
+                'lastname' => 'Somebody',
+                'firstname' => 'John',
+                'middlename' => 'Peter',
+                'active' => 1,
+                'hat' => $person->getHat()->getId(),            ],
+            'csrf' => $this->getCsrfToken($url)
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch($url);
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/people');
+        
+    }
+    
     public function testFormValidation()
     {
 
