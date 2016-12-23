@@ -64,4 +64,50 @@ class PeopleController extends AbstractActionController
         }
         return $viewModel;
     }
+    
+    public function editAction()
+    {
+        $viewModel = (new ViewModel())
+                ->setTemplate('interpreters-office/admin/people/form.phtml');
+        $id = $this->params()->fromRoute('id');
+        if (!$id) { // get rid of this, since it will otherwise be 404?
+            return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
+        }
+        $entity = $this->entityManager->find('InterpretersOffice\Entity\Person', $id);
+        if (!$entity) {
+            return $viewModel->setVariables(['errorMessage' => "person with id $id not found"]);
+        } else {
+            // judges and interpreters are special cases
+            if (is_subclass_of($entity,Entity\Person::class)) {
+                return $this->redirectToFormFor($entity);
+            }
+            $viewModel->id = $id;
+        }
+        $form = new PersonForm($this->entityManager);
+        $form->bind($entity);
+        $viewModel->form = $form;
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (!$form->isValid()) {
+                return $viewModel;
+            }
+            $this->entityManager->flush();
+            $this->flashMessenger()
+                  ->addSuccessMessage("The person has been updated.");
+            $this->redirect()->toRoute('people');
+        }
+
+        return $viewModel;
+    }
+    
+    public function redirectToFormFor(Entity\Person $entity) {
+        
+        $class = get_class($entity);
+        $base  = substr($class,strrpos($class,'\\')+1);
+        $route = strtolower($base).'s/edit';
+        $this->redirect()->toRoute($route,['id'=>$entity->getId()]);
+        
+    }
 }
