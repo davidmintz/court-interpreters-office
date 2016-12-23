@@ -12,16 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class LocationRepository extends EntityRepository
 {
-    /**
-     * constructor.
-     *
-     * @param EntityManagerInterface              $em
-     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
-     */
-    public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
-    {
-        parent::__construct($em, $class);
-    }
+    
     /**
      * returns all the "parent" locations (those that are not nested in another).
      * 
@@ -35,6 +26,7 @@ class LocationRepository extends EntityRepository
         );
         return $query->getResult();
     }
+
     /**
      * returns all the courthouses and courtrooms
      * 
@@ -45,7 +37,7 @@ class LocationRepository extends EntityRepository
         // try this one with the querybuilder just for amusement
         $qb = $this->createQueryBuilder("l")
             ->join('l.type', 't')
-            ->leftJoin('l.parentLocation p')
+            ->leftJoin('l.parentLocation', 'p')
             ->where('t.type IN (:types)')
             ->setParameter('types',['courthouse','courtroom'])
             ->addOrderBy('p.name','DESC')->addOrderBy('l.name','ASC');
