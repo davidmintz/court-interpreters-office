@@ -110,7 +110,7 @@ class LanguagesController extends AbstractActionController
             }
             $this->entityManager->flush();
             $this->flashMessenger()
-                  ->addSuccessMessage("The language $entity has been updated.");
+                  ->addSuccessMessage("The language <strong>$entity</strong> has been updated.");
             $this->redirect()->toRoute('languages');
         }
 
@@ -154,7 +154,7 @@ class LanguagesController extends AbstractActionController
             $this->entityManager->persist($language);
             $this->entityManager->flush();
             $this->flashMessenger()
-                  ->addSuccessMessage("The language $language has been added.");
+                  ->addSuccessMessage("The language <strong>$language</strong> has been added.");
             $this->redirect()->toRoute('languages');
         }
         return $viewModel;
