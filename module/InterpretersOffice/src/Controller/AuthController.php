@@ -89,7 +89,7 @@ class AuthController extends AbstractActionController
             $this->redirect()->toRoute($route);
         }
 
-        return new ViewModel(['form' => $form]);
+        return new ViewModel(['form' => $form, 'title' => 'user login']);
     }
 
     /**

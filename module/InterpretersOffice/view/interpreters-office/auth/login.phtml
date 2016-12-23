@@ -6,9 +6,9 @@
  */
 //$this->headScript()->appendFile($this->basepath().'/js/query-ui.min.js');
 //$this->headScript()->appendFile($this->basepath().'/js/login.js');
-
+$this->headTitle($this->title);
 ?>
-<div class="panel-heading"><h2 class="navigation">user login</h2></div>
+<div class="panel-heading"><h2 class="navigation"><?php echo $this->title ?></h2></div>
 <?php 
 foreach (['success','default','error','info','warning'] as $ns) {
 	echo $this->flashMessenger()->render($ns, array('alert', 'alert-dismissible', "alert-{$ns}"));	
