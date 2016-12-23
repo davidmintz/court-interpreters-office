@@ -83,31 +83,63 @@ class EventTypesController extends AbstractActionController {
     public function addAction()
     {
         
-        $view = new ViewModel();
+        $view = (new ViewModel(['title' => "add an event-type"]))
+                ->setTemplate("interpreters-office/admin/{$this->name}/form.phtml");
         $entity = new EventType;
-
         $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'create'])
                 ->bind($entity);
-        $view->setTemplate("interpreters-office/admin/{$this->name}/form.phtml")
-            ->setVariables(['form'=>$form,'title'=>'add new event-type']);
+        $view->setVariables(['form'=>$form, 'id' => $entity->getId()]);
         
         $request = $this->getRequest();
+        
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                echo "Not valid?";
-                print_r($form->getMessages());
                 return $view;
             }
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
             $this->flashMessenger()
-                  ->addSuccessMessage("The event-type $entity has been added.");
+                  ->addSuccessMessage("The event-type <strong>$entity</strong> has been added.");
             $this->redirect()->toRoute('event-types');
         }
 
         return $view;
     }
     
+    public function editAction()
+    {
+        $view = (new ViewModel(['title' => "edit an event-type"]))
+                ->setTemplate("interpreters-office/admin/{$this->name}/form.phtml")
+                ->setVariables(['title'=>'edit an event-type']);
+        $id = $this->params()->fromRoute('id');
+        if (!$id) {
+            return $view->setVariables(['errorMessage' => 'invalid or missing id parameter']);
+        }
+        $entity = $this->entityManager->find('InterpretersOffice\Entity\EventType', $id);
+        if (!$entity) {
+            return $view->setVariables(['errorMessage' => "event-type with id $id not found"]);
+        }
+        $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'update'])
+               ->bind($entity);
+        
+        $view->setVariables(['form' => $form,'id' => $id]);
+        
+        $request = $this->getRequest();
+        
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (!$form->isValid()) {
+                return $viewModel;
+            }
+            $this->entityManager->flush();
+            $this->flashMessenger()
+                  ->addSuccessMessage("The event-type <strong>$entity</strong> has been updated.");
+            $this->redirect()->toRoute('event-types');
+        }
+
+        return $view;
+
+    }
     
 }
