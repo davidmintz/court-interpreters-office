@@ -208,7 +208,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      */
     public function getInputFilterSpecification()
     {
-        return [
+        $spec = [
             'lastname' => [
                 'validators' => [
                     [
@@ -306,7 +306,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                        'options' => [
                             'haystack' => [0,1],
                             'messages' => [
-                                Validator\InArray::NOT_IN_ARRAY => 'invalid value for "active" field'
+                                Validator\InArray::NOT_IN_ARRAY => 'illegal value for "active" field'
                             ],
                         ]
                     ],
@@ -360,15 +360,16 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ],
                 ],
             ],
-            
-            'hat' => [
+        ];
+        if ($this instanceof \InterpretersOffice\Entity\Person) {
+            $spec['hat'] = [
                 'validators' => [
                     [
                         'name' => 'NotEmpty',
                         'options' => [ 'messages' => ['isEmpty' => 'hat is required',], ],
                         'break_chain_on_failure' => true,
                     ],
-                     [
+                    [
                         'name' => 'InArray',
                         'options' => [ 
 
@@ -378,9 +379,10 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                             'haystack' => $this->getObjectSelectElementHaystack('hat'),
                          ],
                     ],
-                ],
-            ],
-        ];
+                ]
+            ];
+        }
+        return $spec;
     }
     /**
      * provides a "haystack" out of a Doctrine ObjectSelect for InArray validator
