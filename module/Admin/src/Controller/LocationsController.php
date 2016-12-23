@@ -104,7 +104,7 @@ class LocationsController extends AbstractActionController
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
             $this->flashMessenger()
-                  ->addSuccessMessage("The location  {$entity->getName()} has been added.");
+                  ->addSuccessMessage("The location  <strong>{$entity->getName()}</strong> has been added.");
             $this->redirect()->toRoute('locations');            
         }
 
@@ -147,7 +147,7 @@ class LocationsController extends AbstractActionController
             }
             $this->entityManager->flush();
             $this->flashMessenger()
-                  ->addSuccessMessage("The location {$entity->getName()} has been updated.");
+                  ->addSuccessMessage("The location <strong>{$entity->getName()}</strong> has been updated.");
             $this->redirect()->toRoute('locations');
         }
 
