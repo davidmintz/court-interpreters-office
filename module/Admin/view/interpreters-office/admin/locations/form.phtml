@@ -52,14 +52,13 @@ $comments = $form->get('comments');
 echo $this->formLabel($comments),$this->formTextArea($comments),$this->formElementErrors($comments);
 ?>
 </div>
-<div class="form-group"><?php 
-echo $this->formSubmit($form->get('submit'));
-echo $this->formElement($form->get('id'));
-?>
-<?php
-$csrf = $form->get('csrf');
-echo $this->formElement($csrf),$this->formElementErrors($csrf);
-?>
+<div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+   <?php 
+    $csrf = $form->get('csrf');
+    echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;  
+    echo $this->formElement($form->get('id'));
+    echo $this->formSubmit($form->get('submit'));?></div>
 </div>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->

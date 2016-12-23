@@ -19,7 +19,7 @@ echo "form action: $actionAttrib ... ";
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
     <h2><?php echo $this->title ?></h2>
 <?php if ($action == 'add')  : ?>
-    <p>Use this form to add a new language. Please be careful 
+    <p class="warning">When adding a new language, please be careful 
       to avoid inserting a language that is an inexact duplicate, alternate name 
     or spelling, or a superset of another that already exists in your database.</p>
 <?php endif; 
@@ -42,12 +42,11 @@ echo $this->formLabel($comments),$this->formElement($comments), $this->formEleme
 ?>		
 </div>
 <div class="form-group">
-<?php 
-echo $this->formSubmit($form->get('submit'));
-echo $this->formElement($form->get('id'));
-$csrf = $form->get('csrf');
-echo $this->formElement($csrf),$this->formElementErrors($csrf);
-echo $this->form()->closeTag();
-?>
+    <div class="col-sm-offset-3 col-sm-9">
+   <?php 
+    $csrf = $form->get('csrf');
+    echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;  
+    echo $this->formElement($form->get('id'));
+    echo $this->formSubmit($form->get('submit'));?></div>
 </div>
 </div><!-- /wrapper -->
