@@ -41,8 +41,7 @@ class PeopleControllerTest extends AbstractControllerTest
 
     public function testAdd()
     {
-
-        
+      
         // first try a GET to check the form
         $this->dispatch('/admin/people/add');
         $this->assertResponseStatusCode(200);
@@ -51,16 +50,15 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertQuery('input#firstname');
         $this->assertQuery('input#middlename');
         $this->assertQuery('input#email');
-        // to be continued
-
+        $this->assertQuery('select#hat');
+        $attorneyHat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
+                        ->findByName('defense attorney')[0]->getId();
         $data = [
             'person' => [
                 'lastname' => 'Somebody',
                 'firstname' => 'John',
                 'active' => 1,
-                'hat' => FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
-                        ->findByName('defense attorney')[0]->getId(),
-            ],
+                'hat' => $attorneyHat,            ],
             'csrf' => $this->getCsrfToken('/admin/people/add')
         ];
         $this->getRequest()->setMethod('POST')->setPost(
@@ -69,6 +67,28 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/people');
+    }
+
+    public function testFormValidation()
+    {
+
+        $attorneyHat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
+                        ->findByName('defense attorney')[0]->getId();
+        $data = [
+            'person' => [
+                'lastname' => 'Somebody',
+                'firstname' => 'John (Killer)',
+                'active' => 1,
+                'hat' => $attorneyHat,            ],
+            'csrf' => $this->getCsrfToken('/admin/people/add')
+        ];
+         $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertNotRedirect();
+        $this->assertQueryContentRegex('div.validation-error','/invalid characters/');
+
     }
 
 }
