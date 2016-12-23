@@ -52,7 +52,7 @@ class IndexController extends AbstractActionController
         $connection = $this->em->getConnection();
         $driver = $connection->getDriver()->getName();
 
-        return new ViewModel(['driver' => $driver]);
+        return new ViewModel(['driver' => $driver,]);
     }
     /**
      * temporary action for experimenting and doodling.

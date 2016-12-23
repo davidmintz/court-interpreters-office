@@ -1,5 +1,6 @@
 <?php 
 /** module/Admin/view/interpreters-office/admin/event-types/form.phtml */
+$this->headTitle($this->title);
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -18,8 +19,8 @@ endif;
     <h2><?php echo $this->title ?></h2>
 <?php if ($action == 'add')  : ?>
     <p>Use this form to add a new event type. Please be careful 
-      to avoid adding an type that is a subtype of one that already 
-    exists, or is too rare an occurence to warrant permanent storage.</p>
+      to avoid adding a type that is a subtype of, or partially redundant with, 
+      one that already exists.</p>
 <?php endif; 
 $form->add([
 	'name'=>'submit',
@@ -36,7 +37,7 @@ echo $this->formLabel($name),$this->formElement($name),$this->formElementErrors(
 </div>
 <div class="form-group"><?php 
 $category = $form->get('category');
-echo $this->formLabel($category),$this->formElement($category),$this->formElementErrors($category);
+echo $this->formLabel($category),$this->formSelect($category),$this->formElementErrors($category);
 ?>
 </div> 
 <div class="form-group"><?php 

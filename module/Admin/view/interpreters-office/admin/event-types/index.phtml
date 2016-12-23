@@ -4,11 +4,12 @@
  * module/Admin/view/interpreters-office/admin/event-types/index.phtml 
  *
  */
+$this->headTitle($this->title);
 ?>
 
 <h2>event-types</h2>
 
 <?php
 $messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',]); endif;
+if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',],false); endif;
 ?>

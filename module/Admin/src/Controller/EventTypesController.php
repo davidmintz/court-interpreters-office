@@ -72,7 +72,7 @@ class EventTypesController extends AbstractActionController {
      */
     public function indexAction()
     {
-        
+        return ['title' => 'event-types'];
     }
     
     /**
