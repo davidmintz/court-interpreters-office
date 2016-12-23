@@ -306,7 +306,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                        'options' => [
                             'haystack' => [0,1],
                             'messages' => [
-                                Validator\InArray::NOT_IN_ARRAY => 'illegal value for "active" field'
+                                Validator\InArray::NOT_IN_ARRAY => 'invalid value for "active" field'
                             ],
                         ]
                     ],
@@ -361,7 +361,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
         ];
-        if ($this instanceof \InterpretersOffice\Entity\Person) {
+        if ($this instanceof PersonFieldset) {
             $spec['hat'] = [
                 'validators' => [
                     [
