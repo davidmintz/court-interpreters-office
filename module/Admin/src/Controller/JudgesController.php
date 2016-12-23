@@ -72,7 +72,7 @@ class JudgesController extends AbstractActionController
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(
-                  sprintf('Judge %s %s, %s has been added to the database',
+                  sprintf('Judge <strong>%s %s, %s</strong> has been added to the database',
                     $entity->getFirstname(),
                     $entity->getLastname(),
                     (string)$entity->getFlavor()
@@ -109,7 +109,10 @@ class JudgesController extends AbstractActionController
             }
             $this->entityManager->flush();
             $this->flashMessenger()
-                  ->addSuccessMessage("This judge has been updated.");
+                  ->addSuccessMessage(sprintf('Judge <strong>%s %s, %s</strong> has been updated.',
+                          $entity->getFirstname, $entity->getLastname(),
+                          (string)$entity->getFlavor()
+                   ));
             $this->redirect()->toRoute('judges');
         }
 
