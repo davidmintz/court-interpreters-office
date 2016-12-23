@@ -82,12 +82,86 @@ class PeopleControllerTest extends AbstractControllerTest
                 'hat' => $attorneyHat,            ],
             'csrf' => $this->getCsrfToken('/admin/people/add')
         ];
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertNotRedirect();
+        $this->assertQuery('div.validation-error');
+        $this->assertQueryContentRegex('div.validation-error','/invalid characters/');
+
+        
+        $data['person']['lastname'] = '';
+        $data['person']['firstname'] = 'John';
+        $data['csrf'] = $this->getCsrfToken('/admin/people/add');
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertNotRedirect();
+        $this->assertQuery('div.validation-error');
+        $this->assertQueryContentRegex('div.validation-error','/last name.+required/');
+        
+        $data['person']['lastname'] = 'Somebody';
+        $data['person']['firstname'] = '';
+        $data['csrf'] = $this->getCsrfToken('/admin/people/add');
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertNotRedirect();
+        $this->assertQuery('div.validation-error');
+        $this->assertQueryContentRegex('div.validation-error','/first name.+required/');
+        
+        $data['person']['firstname'] = 'John';
+        $data['csrf'] = $this->getCsrfToken('/admin/people/add');
+        
+        $data['person']['hat'] = '';
          $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
-        $this->assertQueryContentRegex('div.validation-error','/invalid characters/');
+        $this->assertQuery('div.validation-error');
+        $this->assertQueryContentRegex('div.validation-error','/hat.+required/');
+        
+        
+        $data['person']['hat'] = $attorneyHat;
+        $data['person']['active'] = null;
+        $data['csrf'] = $this->getCsrfToken('/admin/people/add');
+        
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        
+        $this->assertNotRedirect();
+        $this->assertQuery('div.validation-error');
+        $this->assertQueryContentRegex('div.validation-error','/active.+required/');
+        
+        $data['person']['active'] = 'some random string';
+        $data['csrf'] = $this->getCsrfToken('/admin/people/add');
+         $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertNotRedirect();
+
+        $this->assertQueryCount('div.validation-error',1);
+        $this->assertQueryContentRegex('div.validation-error','/invalid.+active/');
+        
+        
+        $data['person']['active'] = 1;
+        $data['csrf'] = $this->getCsrfToken('/admin/people/add');
+        $data['person']['hat'] = 'arbitrary shit';
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertNotRedirect();
+        $this->assertQueryCount('div.validation-error',1);
+        $this->assertQueryContentRegex('div.validation-error','/invalid.+hat/');
+       
 
     }
 

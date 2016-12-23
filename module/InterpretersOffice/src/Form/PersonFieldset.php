@@ -292,9 +292,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ],
             'active' => [
                 'validators' => [
-                    /*
                     [
-                      'name' => 'NotEmpty',
+                    'name' => 'NotEmpty',
                        'options' => [
                             'messages' => [
                                 Validator\NotEmpty::IS_EMPTY => 
@@ -302,7 +301,15 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                             ],
                         ]
                     ],
-                     */
+                    [
+                    'name' => 'InArray',
+                       'options' => [
+                            'haystack' => [0,1],
+                            'messages' => [
+                                Validator\InArray::NOT_IN_ARRAY => 'invalid value for "active" field'
+                            ],
+                        ]
+                    ],
                 ],
             ],
             'officePhone' => [
@@ -359,9 +366,31 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     [
                         'name' => 'NotEmpty',
                         'options' => [ 'messages' => ['isEmpty' => 'hat is required',], ],
+                        'break_chain_on_failure' => true,
+                    ],
+                     [
+                        'name' => 'InArray',
+                        'options' => [ 
+
+                            'messages' => [
+                                Validator\InArray::NOT_IN_ARRAY => 'invalid value for hat',
+                             ],
+                            'haystack' => $this->getObjectSelectElementHaystack('hat'),
+                         ],
                     ],
                 ],
             ],
         ];
+    }
+    /**
+     * provides a "haystack" out of a Doctrine ObjectSelect for InArray validator
+     * 
+     * @param string $elementName
+     * @return Array
+     */
+    public function getObjectSelectElementHaystack($elementName = 'hat')
+    {
+        $data = $this->get($elementName)->getValueOptions();
+        return  array_column($data,'value');
     }
 }
