@@ -101,6 +101,11 @@ class JudgeFieldset extends PersonFieldset {
                 ],
             ],
         ];
+
+        $spec['defaultLocation'] = [
+            'required' => false,
+            'allow_empty' => true,
+        ];
         if (key_exists('mobilePhone',$spec)) {
             unset($spec['mobilePhone']);
         }
