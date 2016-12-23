@@ -15,7 +15,7 @@ use Zend\InputFilter;
  */
 class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
 {
-	//use ObjectManagerAwareTrait;
+	use CsrfElementCreationTrait;
     
     /** 
      * name of the form
@@ -36,10 +36,6 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
     /**
      * constructor
      * 
-     * @todo figure out how best to make it easy/obligatory for subclasses to 
-     * provide their own validation to certain elements. extend an abstract class
-     * with an abstract getAdditionalInputFilter() or something ?
-     * 
      * @param ObjectManager $objectManager
      * @param Array $options
      */
@@ -49,6 +45,6 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
 		$fieldset = new $this->fieldsetClass($objectManager);
 		$this->add($fieldset);
 		/** @todo customize the error messages */
-        $this->add(new Csrf('csrf'));
+        $this->addCsrfElement();
 	}
 }    
