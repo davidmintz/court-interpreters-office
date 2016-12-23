@@ -121,6 +121,12 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'value' => 1,
             ]
         ],
+        'id' => [
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'id',
+            'required' => true,
+            'allow_empty' => true,
+        ]
     ];
     /**
      * name of the fieldset.
