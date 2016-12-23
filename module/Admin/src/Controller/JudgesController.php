@@ -82,4 +82,37 @@ class JudgesController extends AbstractActionController
         return $viewModel;
         
     }
+    
+    public function editAction()
+    {
+        $viewModel = (new ViewModel())
+                ->setTemplate('interpreters-office/admin/judges/form.phtml');
+        $id = $this->params()->fromRoute('id');
+        if (!$id) { // get rid of this, since it will otherwise be 404?
+            return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
+        }
+        $entity = $this->entityManager->find('InterpretersOffice\Entity\Judge', $id);
+        if (!$entity) {
+            return $viewModel->setVariables(['errorMessage' => "judge with id $id not found"]);
+        } else {
+            $viewModel->id = $id;
+        }
+        $form = new JudgeForm($this->entityManager);
+        $form->bind($entity);
+        $viewModel->form = $form;
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (!$form->isValid()) {
+                return $viewModel;
+            }
+            $this->entityManager->flush();
+            $this->flashMessenger()
+                  ->addSuccessMessage("This judge has been updated.");
+            $this->redirect()->toRoute('judges');
+        }
+
+        return $viewModel;
+    }
 }
