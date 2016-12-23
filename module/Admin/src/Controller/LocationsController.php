@@ -73,7 +73,7 @@ class LocationsController extends AbstractActionController
         $repo = $this->entityManager->getRepository('InterpretersOffice\Entity\LocationType');
         $locationTypes = $repo->findAllWithTotals();
         if ($id = $this->params()->fromRoute('id')) {
-            // echo "$id is our id!";
+           // echo "$id is our id!";
            // return a list of that type
         }
 
@@ -98,8 +98,6 @@ class LocationsController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                //echo 'SHIT NOT VALID?';
-                // print_r($form->getMessages());
                 return $viewModel;
             }
             
@@ -145,18 +143,12 @@ class LocationsController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                //echo "SHIT NOT VALID?";  print_r($form->getMessages());
                 return $viewModel;
             }
-            try {
-                $this->entityManager->flush();
-                $this->flashMessenger()
-                      ->addSuccessMessage("The location {$entity->getName()} has been updated.");
-                $this->redirect()->toRoute('locations');
-                //echo "YAY. don't forget to redirect() ";
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }
+            $this->entityManager->flush();
+            $this->flashMessenger()
+                  ->addSuccessMessage("The location {$entity->getName()} has been updated.");
+            $this->redirect()->toRoute('locations');
         }
 
         return $viewModel;
