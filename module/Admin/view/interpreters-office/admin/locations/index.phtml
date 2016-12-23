@@ -9,7 +9,7 @@
 
 <?php
 $messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',]); endif;
+if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',],false); endif;
 ?>
 <div class="list-group" style="max-width: 400px">
 <p>Choose a type to display</p>

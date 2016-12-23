@@ -58,7 +58,7 @@ class PeopleController extends AbstractActionController
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(
-                  sprintf('The person %s %s has been added to the database',
+                  sprintf('The person <strong>%s %s</strong> has been added to the database',
                   $entity->getFirstname(),$entity->getLastname()));
             $this->redirect()->toRoute('people');
         }
@@ -95,7 +95,9 @@ class PeopleController extends AbstractActionController
             }
             $this->entityManager->flush();
             $this->flashMessenger()
-                  ->addSuccessMessage("The person has been updated.");
+                  ->addSuccessMessage(sprintf("The person <strong>%s %s</strong> has been updated.",
+                    $entity->getFirstname(),$entity->getLastname()      
+                    ));
             $this->redirect()->toRoute('people');
         }
 

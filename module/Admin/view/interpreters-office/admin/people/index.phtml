@@ -1,4 +1,4 @@
-<h2>languages</h2>
+<h2>people</h2>
 <?php
-$messenger = $this->flashMessenger();
+$messenger = $this->flashMessenger()->setAutoEscape(false);
 if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',]); endif;   
