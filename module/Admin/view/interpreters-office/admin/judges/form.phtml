@@ -3,6 +3,7 @@
  *  module/Admin/view/interpreters-office/admin/people/form.phtml 
  *  view script for rendering people create|update form
  */ 
+$this->headTitle($this->title);
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -15,9 +16,7 @@ $form->add([
 	'name'=>'submit',
 	'type'=>'Zend\Form\Element\Submit',
 	'attributes' => ['value'=>'submit'],
-])->setAttribute('method', 'post')
-   ->setAttribute('action', $formAction)
-    ->setAttribute('class', 'form-horizontal')    ;
+])->setAttribute('method', 'post')->setAttribute('action', $formAction)->setAttribute('class', 'form-horizontal')    ;
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
 <h2><?php echo $this->title ?></h2>
@@ -48,7 +47,6 @@ $element = $fieldset->get($elementName);?>
 </div>
 <?php
 endforeach;
-
 $defaultLocation = $fieldset->get('defaultLocation'); ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $defaultLocation->getLabel()?></label>
@@ -70,7 +68,7 @@ $element = $fieldset->get('hat');
 $element->setValue($hat_id);
 ?>
 <?php echo $this->formHidden($fieldset->get('hat')) ?>
-<?php echo $this->formHidden($form->get('csrf'));     ?>
+<?php $csrf = $form->get('csrf'); echo $this->formHidden($csrf), $this->formElementErrors($csrf);     ?>
     <div class="col-sm-offset-3 col-sm-9"><?php echo $this->formSubmit($form->get('submit'));?></div>
 </div>
 <?php echo $this->form()->closeTag(); ?>
