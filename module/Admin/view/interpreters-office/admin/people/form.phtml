@@ -2,7 +2,8 @@
 /** 
  *  module/Admin/view/interpreters-office/admin/people/form.phtml 
  *  view script for rendering people create|update form
- */ 
+ */
+$this->headTitle($this->title);
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
