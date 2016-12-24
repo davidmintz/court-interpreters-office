@@ -203,6 +203,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
     
     /**
      * returns specification for input filter (per interface).
+     * 
+     * @todo unique object validator thing for email
      *
      * @return array
      */
