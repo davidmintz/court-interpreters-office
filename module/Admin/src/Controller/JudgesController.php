@@ -43,7 +43,7 @@ class JudgesController extends AbstractActionController
     public function indexAction()
     {
         
-        return new ViewModel();
+        return new ViewModel(['title' => 'judges']);
     }
     
     /**

@@ -76,8 +76,8 @@ class LocationsController extends AbstractActionController
            // echo "$id is our id!";
            // return a list of that type
         }
-
-        return compact('locationTypes');
+        $view = new ViewModel(compact('locationTypes')); 
+        return $view->setVariables(['title'=>'locations']);
     }
     /**
      * adds a new Location.

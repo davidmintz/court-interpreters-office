@@ -78,7 +78,7 @@ class LanguagesController extends AbstractActionController
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
         $languages = $repository->findAllWithPagination($page);
 
-        return new ViewModel(['languages' => $languages]);
+        return new ViewModel(['languages' => $languages, 'title' => 'languages']);
     }
 
     /**

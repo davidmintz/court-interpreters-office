@@ -38,7 +38,7 @@ class PeopleController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel();
+        return new ViewModel(['title' => 'people']);
     }
     
     public function addAction()
@@ -68,7 +68,8 @@ class PeopleController extends AbstractActionController
     public function editAction()
     {
         $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/people/form.phtml');
+                ->setTemplate('interpreters-office/admin/people/form.phtml')
+                ->setVariable('title','edit a person');
         $id = $this->params()->fromRoute('id');
         if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
