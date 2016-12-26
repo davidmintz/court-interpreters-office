@@ -45,7 +45,7 @@ class EventType
      * @Annotation\Validator({"name":"InArray",
      *                        "options":{"haystack":{"","1","2","3"},
      *                              "messages":{"notInArray":"invalid category"}}})
-     * @Annotation\Attributes({"value":"0"})
+     * @Annotation\Attributes({"value":"0","class":"form-control"})
      * 
      * @see InterpretersOffice\Entity\EventCategory
      */
