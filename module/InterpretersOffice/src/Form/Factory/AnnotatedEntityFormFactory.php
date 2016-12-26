@@ -80,7 +80,8 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
             $this->setupLocationsForm($form, $options);
             break;
         
-            case Entity\EventTypes::class:
+            case Entity\EventType::class:
+            $this->setupEventTypesForm($form, $options);
             break;
 
         }
@@ -121,6 +122,43 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
     }
     
     /**
+     * completes the initialization of the EventType create|update form.
+     *
+     * @param Form  $form
+     * @param array $options
+     */
+    public function setupEventTypesForm(Form $form, array $options)
+    {
+        /// https://github.com/doctrine/DoctrineModule/issues/252
+        /// https://kuldeep15.wordpress.com/2015/04/08/composite-key-type-duplicate-key-check-with-zf2-doctrine/
+
+        $validatorOptions = [
+            'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\EventType'),
+            'fields' => 'name',
+            'object_manager' => $this->objectManager,
+            'use_context' => true,
+        ];
+        if ($options['action'] == 'create') {
+            $validatorClass = NoObjectExistsValidator::class;
+            $validatorOptions['messages'] = [
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND => 
+                'this event-type is already in your database', 
+            ];
+        } else { // presume update
+            $validatorClass = UniqueObject::class;
+            $validatorOptions['messages'] = [
+                UniqueObject::ERROR_OBJECT_NOT_UNIQUE    =>
+                 'another event-type by this name is already in your database', 
+            ];
+        }
+        $uniquenessValidator = new $validatorClass($validatorOptions);
+        $nameInput = $input = $form->getInputFilter()->get('name');
+        $nameInput->getValidatorChain()->attach($uniquenessValidator, true);
+
+
+    }
+
+    /**
      * completes the initialization of the Language create|update form.
      *
      * @param Form  $form
@@ -150,6 +188,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         $input = $form->getInputFilter()->get('name');
         $input->getValidatorChain()->attach($validator);
     }
+
     /**
      * completes initialization of the Locations create|update form.
      *
@@ -250,15 +289,14 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'there is already an existing location with the same name and parent location'],
            ]);
         }
-        // ->attach($uniquenessValidator,true)
+
         $nameInput = $filter->get('name');
         $nameInput->getValidatorChain()->attach($uniquenessValidator, true);
 
         $input->getValidatorChain()
             ->attach($notEmptyValidator, true)
             ->attach($locationValidator, true);
-
-        //////
+        
         $filter->add([
             'name' => 'parentLocation',
             'required' => true,
