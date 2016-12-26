@@ -42,7 +42,7 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
 	public function __construct(ObjectManager $objectManager,$options = null)
 	{		
 		parent::__construct($this->formName,$options);
-		$fieldset = new $this->fieldsetClass($objectManager);
+		$fieldset = new $this->fieldsetClass($objectManager,$options);
 		$this->add($fieldset);
 		/** @todo customize the error messages */
         $this->addCsrfElement();
