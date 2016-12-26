@@ -136,6 +136,13 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      * @var string
      */
     protected $fieldset_name = 'person';
+
+    /**
+     * the action: either 'update' or 'create'
+     * 
+     * @var string
+     */
+    protected $action;
     
     /**
      * constructor.
@@ -145,6 +152,15 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
+        if (! isset($options['action'])) {
+            throw new \RuntimeException('missing "action" option in PersonFieldset constructor');
+        }
+        if (! in_array($options['action'],['create','update'])) {
+            throw new \RuntimeException('invalid "action" option in PersonFieldset constructor');   
+        }
+        $this->action = $options['action'];
+        unset($options['action']);
+
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager))
@@ -155,7 +171,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         }
         
         $this->addHatElement();
-        
+
     }
     
     /**
