@@ -130,7 +130,7 @@ class EventTypesController extends AbstractActionController {
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                return $viewModel;
+                return $view;
             }
             $this->entityManager->flush();
             $this->flashMessenger()
