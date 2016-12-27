@@ -13,7 +13,8 @@ use Zend\Form\Annotation;
  * Examples include: attorney-client interview, pre-trial conference,
  * plea, sentence, probation pre-sentence interview, etc.
  *
- * @ORM\Entity  @ORM\Table(name="event_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_event_type",columns={"name"})})
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\EventTypeRepository")
+ * @ORM\Table(name="event_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_event_type",columns={"name"})})
  * 
  * @Annotation\Name("event-type")
  */
