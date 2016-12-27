@@ -13,12 +13,6 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
 use InterpretersOffice\Form\Validator\UniqueObject;
 
-use Zend\InputFilter;
-
-//use DoctrineModule\Form\Element\ObjectSelect;
-
-//use InterpretersOffice\Entity;
-
 use Zend\Validator;
 
 /**
