@@ -10,6 +10,9 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
+use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
+use InterpretersOffice\Form\Validator\UniqueObject;
+
 use Zend\InputFilter;
 
 //use DoctrineModule\Form\Element\ObjectSelect;
@@ -178,10 +181,10 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      * 
      * adds the Hat element to the form.
      * 
-     * if we are a Person, we need the Hat element 
-     * if we are a Judge, the Hat is pre-determined
-     * if we are an Interpreter, there are only two kinds of hat
-     * subclasses should override this to provide an appropriately configured
+     * If we are a Person, we need the Hat element 
+     * If we are a Judge, the Hat is pre-determined
+     * If we are an Interpreter, there are only two kinds of Hat.
+     * Subclasses should override this to provide an appropriately configured
      * element 
      */
     public function addHatElement()
@@ -208,12 +211,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'id' => 'hat',
              ],
         ]);
-        //$this->add($hat);
-        //$input = new InputFilter\Input('hat');
-       // $input->getValidatorChain()->attachByName('NotEmpty',[
-       //     'messages' => ['isEmpty' => 'hat is required', ],
-       //$factory = $this->factory->getInputFilterFactory();
-        //$factory->
+
     }
     
     
@@ -379,6 +377,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
         ];
+        // validators for Hat element depend on class of current instance
         if ($this instanceof PersonFieldset) {
             $spec['hat'] = [
                 'validators' => [
@@ -390,7 +389,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     [
                         'name' => 'InArray',
                         'options' => [ 
-
                             'messages' => [
                                 Validator\InArray::NOT_IN_ARRAY => 'invalid value for hat',
                              ],
@@ -398,6 +396,69 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                          ],
                     ],
                 ]
+            ];
+        }
+        // options common to all scenarios
+        $validatorOptions = [
+           // 'fields' => ['hat','email'],
+            'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Person'),
+            'object_manager' => $this->objectManager,
+            'use_context' => true,
+        ];
+        
+        if ('create' == $this->action) {
+            
+            // use the NoObjectExists validator
+            $validatorClass = NoObjectExistsValidator::class;
+            $validatorOptions['messages'] = [
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
+                    'a person with this "Hat" and email address is already in your database'
+            ];
+            // .. for the hat and email fields
+            $validatorOptions['fields'] = ['hat','email'];
+            
+            $spec['email']['validators'][] = [
+                'name' => $validatorClass,
+                'options' => $validatorOptions,
+                'break_chain_on_failure' => true,
+            ];
+             // ... and for the active and email fields
+            $validatorOptions['fields'] = ['active','email'];
+            $validatorOptions['messages'] = [
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
+                     'there is already a person in your database with this email address and "active" setting'
+            ];
+            $spec['email']['validators'][] = [
+                'name' => $validatorClass,
+                'options' => $validatorOptions,
+                'break_chain_on_failure' => true,
+            ];
+            
+        } else { // action is update
+            
+            $validatorClass = UniqueObject::class;
+            
+            $validatorOptions['messages'] = [
+                UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
+                'there is already a person in your database with this email address and "active" setting'
+            ];
+            $validatorOptions['fields'] = ['hat','email'];
+            
+            $spec['email']['validators'][] = [
+                'name' => $validatorClass,
+                'options' => $validatorOptions,
+                'break_chain_on_failure' => true,
+            ];
+
+            $validatorOptions['messages'] = [
+                UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
+                'there is already a person with this "hat" and email address in your database'
+            ];
+            $validatorOptions['fields'] = ['active','email'];
+            $spec['email']['validators'][] = [
+                'name' => $validatorClass,
+                'options' => $validatorOptions,
+                'break_chain_on_failure' => true,
             ];
         }
         return $spec;

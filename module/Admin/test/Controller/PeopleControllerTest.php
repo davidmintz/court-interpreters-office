@@ -55,6 +55,7 @@ class PeopleControllerTest extends AbstractControllerTest
             'person' => [
                 'lastname' => 'Somebody',
                 'firstname' => 'John',
+                'email'   => 'john.somebody@lawfirm.com',
                 'active' => 1,
                 'hat' => $attorneyHat,            ],
             'csrf' => $this->getCsrfToken('/admin/people/add')
@@ -77,6 +78,99 @@ class PeopleControllerTest extends AbstractControllerTest
     }
     /**
      * @depends testAdd
+     * @param 
+     */
+    public function testDuplicateEntityValidation(Entity\Person $entity)
+    {
+        $em = FixtureManager::getEntityManager();
+        $entity->setHat($em->getRepository('InterpretersOffice\Entity\Hat')
+                ->findOneBy(['name' => 'defense attorney']));
+        $em->persist($entity);
+        $em->flush();
+        
+        // try to add the same guy again
+        $data = [
+            'person' => [
+                'lastname' => 'Somebody',
+                'firstname' => 'John',
+                'email'   => 'john.somebody@lawfirm.com',
+                'active' => 1,
+                'hat' => $entity->getHat()->getId(),            ],
+            'csrf' => $this->getCsrfToken('/admin/people/add')
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertNotRedirect();
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('div.validation-error');
+        $this->assertQueryCount('div.validation-error',1);
+        // a person with this &quot;Hat&quot; and email address is already in your database
+        $this->assertQueryContentRegex('div.validation-error', '/person.+Hat.+email.+in your database/i');
+        
+        // different hat, but active and with same email...
+        $hat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
+                        ->findByName('paralegal')[0];
+        $data = [
+            'person' => [
+                'lastname' => 'Somebody',
+                'firstname' => 'John',
+                'email'   => 'john.somebody@lawfirm.com',
+                'active' => 1,
+                'hat' => $hat->getId(),            ],
+            'csrf' => $this->getCsrfToken('/admin/people/add')
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertNotRedirect();
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('div.validation-error');
+        $this->assertQueryCount('div.validation-error',1);
+        //echo $this->getResponse()->getBody();
+        //return;
+        $this->assertQueryContentContains('div.validation-error',
+          'there is already a person in your database with this email address and "active" setting');
+        
+        // now add another person, and edit the record to collide with John Somebody
+        $data = [
+            'person' => [
+                'lastname' => 'Somebody',
+                'firstname' => 'John',
+                'email'   => 'john.somebody.else@lawfirm.com',
+                'active' => 1,
+                'hat' => $hat->getId(),            ],
+            'csrf' => $this->getCsrfToken('/admin/people/add')
+        ];
+         $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/people/add');
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/people');
+        
+        $other_person = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Person')
+                        ->findByEmail('john.somebody.else@lawfirm.com')[0];
+        
+        $this->reset(true);
+        $url = '/admin/people/edit/' . $other_person->getId();
+        $data['person']['email'] = 'john.somebody@lawfirm.com';
+
+         $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('div.validation-error');
+        $this->assertQueryCount('div.validation-error',1);
+        $this->assertQueryContentRegex('div.validation-error', '/person.+Hat.+email.+in your database/i');
+        
+    }
+    /**
+     * @depends testAdd
+     * @param Entity\Person
      */
     public function testEditAction(Entity\Person $person)
     {
