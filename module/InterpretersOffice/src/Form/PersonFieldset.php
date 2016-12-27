@@ -79,7 +79,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'label' => 'email',
             ],
         ],
-       
         'office_phone' => [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'officePhone',
@@ -94,7 +93,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
              ],
             
         ],
-
         'mobile_phone' => [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'mobilePhone',
