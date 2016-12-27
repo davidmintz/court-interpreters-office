@@ -13,7 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @see InterpretersOffice\Entity\Person
  *
- * @ORM\Entity @ORM\Table(name="judges")
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\JudgeRepository")
+ * @ORM\Table(name="judges")
  * @ORM\HasLifecycleCallbacks
  */
 class Judge extends Person
@@ -117,5 +118,19 @@ class Judge extends Person
               'Judge entity must have Hat type "Judge"'
            );
         }
+    }
+    /**
+     * returns a string representation of the entity
+     */
+    public function __toString()
+    {
+        $string = $this->getLastname().', ';
+        $string .= $this->getFirstname();
+        $middle = $this->getMiddlename();
+        if ($middle) {
+            $string .= " $middle";
+        }
+        $string .= ", ".(string)$this->getFlavor();
+        return $string;
     }
 }
