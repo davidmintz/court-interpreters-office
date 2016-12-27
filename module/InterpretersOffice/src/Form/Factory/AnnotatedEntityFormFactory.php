@@ -166,27 +166,26 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
      */
     public function setupLanguageForm(Form $form, array $options)
     {
-        $em = $this->objectManager;
-
+        $validatorOptions = [
+            'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Language'),
+            'fields' => 'name',
+            'object_manager' => $this->objectManager,
+            'use_context' => true,
+        ];
         if ($options['action'] == 'create') {
-            $validator = new NoObjectExistsValidator([
-               'object_repository' => $em->getRepository('InterpretersOffice\Entity\Language'),
-               'fields' => 'name',
-               'messages' => [
-                   NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'this language is already in your database', ],
-           ]);
+            $validatorClass = NoObjectExistsValidator::class;
+            $validatorOptions['messages'] = [
+                   NoObjectExistsValidator::ERROR_OBJECT_FOUND => 
+                   'this language is already in your database', ];
         } else { // assume update
-
-           $validator = new UniqueObject([
-               'object_repository' => $em->getRepository('InterpretersOffice\Entity\Language'),
-               'object_manager' => $em,
-               'fields' => 'name',
-               'use_context' => true,
-               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'language names must be unique; this one is already in your database'],
-           ]);
+           $validatorClass = UniqueObject::class;
+           $validatorOptions['messages'] = [
+                UniqueObject::ERROR_OBJECT_NOT_UNIQUE    =>
+                  'language names must be unique; this one is already in your database', 
+            ];
         }
         $input = $form->getInputFilter()->get('name');
-        $input->getValidatorChain()->attach($validator);
+        $input->getValidatorChain()->attach(new $validatorClass($validatorOptions));
     }
 
     /**
@@ -270,38 +269,34 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
         /// https://github.com/doctrine/DoctrineModule/issues/252
         /// https://kuldeep15.wordpress.com/2015/04/08/composite-key-type-duplicate-key-check-with-zf2-doctrine/
+        
+        $validatorOptions = [
+               'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
+               'fields' => ['name', 'parentLocation'],
+               'object_manager' => $this->objectManager,
+               'use_context' => true,];
+        
         if ($options['action'] == 'create') {
-            $uniquenessValidator = new NoObjectExistsValidator([
-               'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
-               'fields' => ['name', 'parentLocation'],
-               'object_manager' => $this->objectManager,
-               'use_context' => true,
-               'messages' => [
-                   NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'this location is already in your database', ],
-           ]);
+            $validatorClass = NoObjectExistsValidator::class;
+            $validatorOptions['messages'] = [
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND => 
+                'this location is already in your database',
+            ];
+           
         } else { // assume this is an update
-
-           $uniquenessValidator = new UniqueObject([
-               'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
-               'object_manager' => $this->objectManager,
-               'fields' => ['name', 'parentLocation'],
-               'use_context' => true,
-               'messages' => [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'there is already an existing location with the same name and parent location'],
-           ]);
+           $validatorClass = UniqueObject::class;
+           $validatorOptions['messages'] = 
+                 [ UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
+                 'there is already an existing location with this name and parent location'];
         }
 
         $nameInput = $filter->get('name');
-        $nameInput->getValidatorChain()->attach($uniquenessValidator, true);
+        $nameInput->getValidatorChain()->attach(new  $validatorClass($validatorOptions), true);
 
-        $input->getValidatorChain()
-            ->attach($notEmptyValidator, true)
-            ->attach($locationValidator, true);
-        
         $filter->add([
             'name' => 'parentLocation',
             'required' => true,
             'allow_empty' => true,
-
         ]);
     }
 }
