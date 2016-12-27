@@ -131,6 +131,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             'allow_empty' => true,
         ]
     ];
+    
     /**
      * name of the fieldset.
      * 
@@ -239,7 +240,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     [
                         'name' => 'InterpretersOffice\Form\Validator\ProperName',
                         'options' => ['type' => 'last'],
-
                     ],
                 ],
                 'filters' => [
@@ -260,12 +260,10 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     [
                         'name' => 'InterpretersOffice\Form\Validator\ProperName',
                         'options' => ['type' => 'first'],
-
                     ],
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
-
                 ],
             ],
             'middlename' => [
@@ -350,8 +348,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                         'name' => 'Digits',
                     ],
                 ],
-
-
             ],
             'mobilePhone' => [
                 'required' => false,
@@ -400,14 +396,12 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         }
         // options common to all scenarios
         $validatorOptions = [
-           // 'fields' => ['hat','email'],
             'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Person'),
             'object_manager' => $this->objectManager,
             'use_context' => true,
         ];
         
         if ('create' == $this->action) {
-            
             // use the NoObjectExists validator
             $validatorClass = NoObjectExistsValidator::class;
             $validatorOptions['messages'] = [
@@ -434,7 +428,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'break_chain_on_failure' => true,
             ];
             
-        } else { // action is update
+        } else { // action is update, use the UniqueObject validator
             
             $validatorClass = UniqueObject::class;
             
@@ -449,7 +443,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'options' => $validatorOptions,
                 'break_chain_on_failure' => true,
             ];
-
+            
+            // ... and again, for the active and email fields
             $validatorOptions['messages'] = [
                 UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
                 'there is already a person with this "hat" and email address in your database'
@@ -464,7 +459,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         return $spec;
     }
     /**
-     * provides a "haystack" out of a Doctrine ObjectSelect for InArray validator
+     * gets a "haystack" out of a Doctrine ObjectSelect 
+     * for use by an InArray validator
      * 
      * @param string $elementName
      * @return Array
