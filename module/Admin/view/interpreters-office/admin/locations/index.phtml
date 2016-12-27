@@ -17,7 +17,7 @@ if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['aler
 <ul id="locations-list" class="list-group">
 <?php foreach ($this->locationTypes as $t) : ?>
 <li class="list-group-item"><span class="badge"><?php echo $t['total']?></span>
-    <a href="<?php echo $this->url('locations/type',['id'=>$t['id']])?>"><?php echo $t['type'] ?></a>
+    <a href="<?php echo $this->url('locations/type',['id'=>$t['id']])?>"><?php echo $this->escapeHtml($t['type']) ?></a>
   </li>
 <?php endforeach ?>
 </ul>
