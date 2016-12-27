@@ -365,8 +365,10 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
         ];
+        
         // validators for Hat element depend on class of current instance
-        if ($this instanceof PersonFieldset) {
+        if (get_class($this) == PersonFieldset::class)  {
+
             $spec['hat'] = [
                 'validators' => [
                     [
