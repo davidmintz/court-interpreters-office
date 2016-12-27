@@ -43,7 +43,10 @@ class JudgesController extends AbstractActionController
     public function indexAction()
     {
         
-        return new ViewModel(['title' => 'judges']);
+        $judges = $this->entityManager
+                ->getRepository('InterpretersOffice\Entity\Judge')
+                ->findAll();
+        return new ViewModel(['title' => 'judges', 'judges' => $judges]);
     }
     
     /**
@@ -52,7 +55,7 @@ class JudgesController extends AbstractActionController
     public function addAction()
     {
         $viewModel = (new ViewModel())->setTemplate('interpreters-office/admin/judges/form.phtml');
-        $form = new JudgeForm($this->entityManager);
+        $form = new JudgeForm($this->entityManager,['action'=>'create']);
         $viewModel->setVariables(
             ['title' => 'add a judge','form'=> $form]
         );
@@ -65,8 +68,7 @@ class JudgesController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                echo "not valid.";
-                print_r($form->getMessages());
+                // echo "not valid.";  print_r($form->getMessages());
                 return $viewModel;
             } 
             $this->entityManager->persist($entity);
@@ -97,7 +99,7 @@ class JudgesController extends AbstractActionController
         } else {
             $viewModel->id = $id;
         }
-        $form = new JudgeForm($this->entityManager);
+        $form = new JudgeForm($this->entityManager,['action'=>'update']);
         $form->bind($entity);
         $viewModel->form = $form;
 
@@ -110,7 +112,7 @@ class JudgesController extends AbstractActionController
             $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf('Judge <strong>%s %s, %s</strong> has been updated.',
-                          $entity->getFirstname, $entity->getLastname(),
+                          $entity->getFirstname(), $entity->getLastname(),
                           (string)$entity->getFlavor()
                    ));
             $this->redirect()->toRoute('judges');
