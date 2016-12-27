@@ -21,7 +21,7 @@ if (! $this->eventTypes ) :?>
     <?php 
 foreach ($this->eventTypes as $entity): ?>
     <li class="list-group-item">
-        <?php echo $this->escapeHtml($entity) ?>
+        <a href="<?php echo $this->url('event-types/edit',['id'=>$entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
     </li>
 <?php endforeach ?>
 </ul>
