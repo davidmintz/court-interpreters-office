@@ -105,6 +105,7 @@ $element = $fieldset->get('hat')->setValue($hat_id);
   </div>
 </div>
 <script type="text/javascript">
+    /** @todo move this to its own file(s) */
     $(document).ready(function(){
         $('#add-location').on('show.bs.modal',function(event){
             console.log("show event fired");
@@ -121,7 +122,42 @@ $element = $fieldset->get('hat')->setValue($hat_id);
             console.warn("click happened!");
             $.post('/admin/locations/add',$('#add-location form').serialize(),function(response,status,xhr){
                 console.log("valid? " + response.valid);
+                if (! response.valid) {
+                   return displayValidationErrors(response.validationErrors);
+                }
+                $('#add-location').modal("hide");
+                return alert("good job. to be continued");
             });
         });
     });
+    // borrowed from ourself
+    displayValidationErrors = function(validationErrors) {
+    $('.validationError').empty();
+    for (var field in validationErrors) {
+        //console.log("examining field "+field);
+        for (var key in validationErrors[field]) {
+            // console.log("examining key "+key);
+            var message = validationErrors[field][key];
+            var element = $('#' +field);
+            var errorDiv = $('#error_'+field);
+            if (! errorDiv.length) { errorDiv = null;}
+            if (! element.length) { console.log("is there no element #"+field+ " ?");
+                // look for an existing div by id
+                if ($('#error_'+field).length) {
+                    $('#error_'+field).html(message);
+                } else {
+                    console.warn("no element with id "+field + ", and nowhere to put message "+message);
+                }
+            } else {
+                errorDiv = errorDiv || element.next('.validation-error');
+                if (! errorDiv.length) {
+                    errorDiv = $('<div/>').addClass('validation-error').attr({id:'error_'+field})
+                    .insertAfter(element);
+                }
+                errorDiv.html(message).show();
+            }
+            break;
+        }
+    } 
+};
 </script>
