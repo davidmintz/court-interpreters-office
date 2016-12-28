@@ -32,6 +32,7 @@ class ExampleController extends AbstractActionController
     public function __construct(ObjectManager $objectManager)
     {
         $this->objectManager = $objectManager;
+        
     }
     /**
      * fool around with person form and fieldset
@@ -107,7 +108,7 @@ class ExampleController extends AbstractActionController
        $this->events->trigger(__FUNCTION__, $this,
                ["message" => "this is the message parameter"]
         ) ;
-
+    
        return false;
     }
 
@@ -118,7 +119,15 @@ class ExampleController extends AbstractActionController
      */
     public function otherTestAction()
     {
-        //return $viewModel;
+      
+        $header = $this->getRequest()->getHeaders()->get('accept');
+        echo get_class($header),"<br>";
+        echo $header->toString(),"<br>";
+        $request = $this->getRequest();
+        echo "xhr? ";
+        var_dump($request->isXmlHttpRequest());
+        echo "<br>";
+        return false;
     }
 }
 
