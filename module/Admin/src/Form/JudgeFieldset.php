@@ -37,8 +37,8 @@ class JudgeFieldset extends PersonFieldset {
                 'target_class' => 'InterpretersOffice\Entity\Location',
                 'label' => 'default location',
                 'property' => 'name',
-                'display_empty_item' => true,
-                'empty_item_label' => '',
+                //'display_empty_item' => true,
+                //'empty_item_label' => ' ',
                 'find_method' => ['name' => 'getJudgeLocations'],
                  'label_generator' => function ($location) {
                     if ($parent = $location->getParentLocation()) {
@@ -47,7 +47,7 @@ class JudgeFieldset extends PersonFieldset {
                         $parent->getName());
                     }
                     return $location->getName();
-        },
+                },
                 
             ],
             'attributes' => [
@@ -55,6 +55,18 @@ class JudgeFieldset extends PersonFieldset {
                 'id' => 'defaultLocation',
             ], 
         ]);
+        //return;
+        // this makes validator happy: a non-empty label
+        $element = $this->get('defaultLocation');
+        $options = $element->getValueOptions();
+        array_unshift($options, [
+           'label' => ' ',
+           'value' => '',
+           'attributes' => [
+               'label' => ' ',
+           ],
+       ]);
+       $element->setValueOptions($options);
     }
     
     public function addHatElement() {
@@ -75,15 +87,26 @@ class JudgeFieldset extends PersonFieldset {
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\JudgeFlavor',
                 'property' => 'flavor',
-                'label' => 'flavor',
-                'display_empty_item' => true,
-                'empty_item_label' => '',
+                //'label' => 'flavor',
+                //'display_empty_item' => true,
+                'empty_item_label' => ' ',
             ],
              'attributes' => [
                 'class' => 'form-control',
                 'id' => 'flavor',
              ],              
        ]);
+        //return;
+       $element = $this->get('flavor');
+       $options = $element->getValueOptions();
+       array_unshift($options, [
+           'label' => ' ',
+           'value' => '',
+           'attributes' => [
+               'label' => ' ',
+           ],
+       ]);
+       $element->setValueOptions($options);
     }
     
     public function getInputFilterSpecification() {
