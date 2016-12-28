@@ -7,6 +7,7 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use InterpretersOffice\Form\Factory\FormFactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\Location;
@@ -61,7 +62,6 @@ class LocationsController extends AbstractActionController
     {
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
-       // $this->name = $shortName;
     }
     /**
      * index action.
@@ -94,15 +94,30 @@ class LocationsController extends AbstractActionController
             ->setTemplate('interpreters-office/admin/locations/form.phtml');
 
         $request = $this->getRequest();
-
+        $json = $request->isXmlHttpRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                return $viewModel;
+                return $json ? new JsonModel(
+                     [
+                         'valid' => false,
+                          'id'   => null,
+                         'validationErrors' => $form->getMessages(),
+                     ]
+                ) : $viewModel;
             }
             
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
+            if ($json) {
+                return new JsonModel(
+                     [
+                         'valid' => true,
+                          'id'   => $entity->getId(),
+                         // etc
+                     ]
+                );
+            }
             $this->flashMessenger()
                   ->addSuccessMessage("The location  <strong>{$entity->getName()}</strong> has been added.");
             $this->redirect()->toRoute('locations');            
