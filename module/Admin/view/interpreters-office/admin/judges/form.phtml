@@ -36,7 +36,6 @@ $flavor = $fieldset->get('flavor');?>
 $elements = ['lastname','middlename','firstname','email','officePhone',];
 ?>
 </div>
-<div class="form-group">
 <?php 
 foreach ($elements as $elementName):
 $element = $fieldset->get($elementName);?>
@@ -51,16 +50,16 @@ $defaultLocation = $fieldset->get('defaultLocation'); ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $defaultLocation->getLabel()?></label>
     <div class="col-sm-9">
-    <div class="input-group">
-        <?php echo $this->formSelect($defaultLocation) ?>    
-        <span class="input-group-btn">
-            <button title="add a new location" id="btn-add-location" class="btn btn-primary">
-              <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span>  
-            </button>   
-        </span>
-        <?php echo $this->formElementErrors($defaultLocation) ?>
+        <div class="input-group">
+            <?php echo $this->formSelect($defaultLocation) ?>    
+            <span class="input-group-btn">
+                <button type="button" data-toggle="modal" data-target="#add-location" title="add a new location" id="btn-add-location" class="btn btn-info btn-sm">
+                  <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span>  
+                </button>   
+            </span>
+            <?php echo $this->formElementErrors($defaultLocation) ?>
+        </div>
     </div>
-</div>
 </div>
 <?php
 $active =  $fieldset->get('active');?>
@@ -72,18 +71,57 @@ $active =  $fieldset->get('active');?>
 <div class="form-group">
 <?php 
 $hat_id = $form->getObject()->getHat()->getId(); 
-$element = $fieldset->get('hat'); 
-$element->setValue($hat_id);
+$element = $fieldset->get('hat')->setValue($hat_id); 
 ?>
-<div class="col-sm-offset-3 col-sm-9">
-<?php 
-    echo $this->formHidden($fieldset->get('hat'));
-    echo $this->formHidden($fieldset->get('id'));
-    $csrf = $form->get('csrf'); 
-    echo $this->formHidden($csrf), $this->formElementErrors($csrf);
-    echo $this->formSubmit($form->get('submit'));?>
-</div>
+    <div class="col-sm-offset-3 col-sm-9">
+    <?php 
+        echo $this->formHidden($fieldset->get('hat'));
+        echo $this->formHidden($fieldset->get('id'));
+        $csrf = $form->get('csrf'); 
+        echo $this->formHidden($csrf), $this->formElementErrors($csrf);
+        echo $this->formSubmit($form->get('submit'));
+     ?>
+    </div>
 </div>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
 
+<!-- Modal -->
+<div class="modal fade" id="add-location" tabindex="-1" role="dialog" aria-labelledby="label-add-location">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="label-add-location">add a location</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
+        <button id="btn-add-location-submit" type="button" class="btn btn-primary">add location</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#add-location').on('show.bs.modal',function(event){
+            console.log("show event fired");
+            // event.relatedTarget is the button they clicked
+            $('#add-location > div > div > div.modal-body').load(
+                '/admin/locations/add form',
+                function(){
+                    $('#add-location input[name="submit"]').remove();
+                    console.log("load callback running...");
+            });
+        });
+        
+        $('#add-location').on("click",'#btn-add-location-submit', function(){
+            console.warn("click happened!");
+            $.post('/admin/locations/add',$('#add-location form').serialize(),function(response,status,xhr){
+                console.log("valid? " + response.valid);
+            });
+        });
+    });
+</script>
