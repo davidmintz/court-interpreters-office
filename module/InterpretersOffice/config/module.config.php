@@ -138,6 +138,10 @@ return [
         'template_path_stack' => [
             __DIR__.'/../view',
         ],
+        // http://stackoverflow.com/questions/18014885/how-to-disable-layout-and-view-renderer-in-zf2
+        'strategies' => [
+            'ViewJsonStrategy'
+        ],
     ],
     'doctrine' => [
 
