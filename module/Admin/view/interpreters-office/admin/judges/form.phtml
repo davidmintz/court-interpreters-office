@@ -50,10 +50,18 @@ endforeach;
 $defaultLocation = $fieldset->get('defaultLocation'); ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $defaultLocation->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formSelect($defaultLocation),$this->formElementErrors($defaultLocation) ?>            
+    <div class="col-sm-9">
+    <div class="input-group">
+        <?php echo $this->formSelect($defaultLocation) ?>    
+        <span class="input-group-btn">
+            <button title="add a new location" id="btn-add-location" class="btn btn-primary">
+              <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span>  
+            </button>   
+        </span>
+        <?php echo $this->formElementErrors($defaultLocation) ?>
     </div>
 </div>
-
+</div>
 <?php
 $active =  $fieldset->get('active');?>
 <div class="form-group">
