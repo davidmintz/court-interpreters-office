@@ -88,7 +88,8 @@ class JudgesController extends AbstractActionController
     public function editAction()
     {
         $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/judges/form.phtml');
+                ->setTemplate('interpreters-office/admin/judges/form.phtml')
+                ->setVariables(['title' => 'edit a judge']);
         $id = $this->params()->fromRoute('id');
         if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
