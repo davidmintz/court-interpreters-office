@@ -21,7 +21,8 @@
         "zendframework/zend-mvc-plugin-flashmessenger": "^1.0",
         "zendframework/zend-log": "^2.9",
         "zendframework/zend-form": "^2.9",
-        "zendframework/zend-math": "^3.0"
+        "zendframework/zend-math": "^3.0",
+        "zendframework/zend-json": "^3.0"
     },
     "autoload": {
         "psr-4": {
