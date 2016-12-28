@@ -17,17 +17,12 @@ class PersonFormFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return UserListener
+     * @return PersonForm
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
 
     	return new PersonForm (
-            
             $container->get('entity-manager')
         );
-
     }
-
-
-
 }
