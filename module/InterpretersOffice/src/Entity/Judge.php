@@ -105,6 +105,16 @@ class Judge extends Person
     }
 
     /**
+     * 
+     * @ORM\PreUpdate
+     */
+
+    function onPreUpdate()
+    {
+        return $this->onPrePersist();
+    }
+
+    /**
      * lifecycle callback to ensure correct hat and location-type.
      *
      * @ORM\PrePersist
