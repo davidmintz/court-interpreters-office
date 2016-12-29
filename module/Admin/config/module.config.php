@@ -86,6 +86,22 @@ return [
                             ],
                         ],
                     ],
+                    
+                    /** @todo this will have to be moved or copied to a 
+                     * non-admin controller but this is convenient for now
+                     */
+                    'courtrooms' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/courtrooms/:parent_id',
+                            'defaults' => [
+                                'action' => 'courtrooms',
+                            ],
+                            'constraints' => [
+                                'parent_id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
                     'add' => [
                         'type' => Segment::class,
                         'options' => [
@@ -109,6 +125,7 @@ return [
                             ],
                         ],
                     ],
+                    
                 ],
             ],
             'event-types' => [
@@ -123,15 +140,7 @@ return [
                     ],
                 ],
                 'child_routes' => [
-                    'add' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/add',
-                            'defaults' => [
-                                'action' => 'add',
-                            ],
-                        ],
-                    ],
+                    
                     'edit' => [
                         'type' => Segment::class,
                         'options' => [
