@@ -105,7 +105,7 @@ class Judge extends Person
     }
 
     /**
-     * lifecycle callback to ensure correct hat.
+     * lifecycle callback to ensure correct hat and location-type.
      *
      * @ORM\PrePersist
      *
@@ -117,6 +117,15 @@ class Judge extends Person
             throw new \RuntimeException(
               'Judge entity must have Hat type "Judge"'
            );
+        }
+
+        if ($this->getDefaultLocation() !== null ) {
+            if (! in_array((string)$this->getDefaultLocation()->getType() ,
+                ['courtroom', 'courthouse'] )) {
+                throw new \RuntimeException(
+                    'Judge entity must have default location of type "courtroom" or "courthouse"'
+                );
+            }
         }
     }
     /**
