@@ -38,10 +38,9 @@ class LocationRepository extends EntityRepository
     {   
          $qb = $this->createQueryBuilder("l")
             ->join('l.type', 't')
-            ->leftJoin('l.parentLocation', 'p')
             ->where('t.type = :type')
             ->setParameter('type','courthouse')
-            ->addOrderBy('p.name','DESC')->addOrderBy('l.name','ASC');
+            ->addOrderBy('l.name','ASC');//->addOrderBy('l.name','ASC');
         $query = $qb->getQuery();
         return $query->getResult();
         
