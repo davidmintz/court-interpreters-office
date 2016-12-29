@@ -225,6 +225,7 @@ class Location
     {
         $this->active = $active;
     }
+    
     /**
      * get 'active' property.
      *
@@ -233,5 +234,15 @@ class Location
     public function getActive()
     {
         return $this->active;
+    }
+    
+    /**
+     * returns a string representation of the entity
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->name;
     }
 }
