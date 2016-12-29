@@ -136,7 +136,7 @@ $element = $fieldset->get('hat')->setValue($hat_id);
     });
     // borrowed from ourself
     displayValidationErrors = function(validationErrors) {
-    $('.validationError').empty();
+    $('.validation-error').empty();
     for (var field in validationErrors) {
         //console.log("examining field "+field);
         for (var key in validationErrors[field]) {
