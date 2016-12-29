@@ -26,7 +26,46 @@ class LocationRepository extends EntityRepository
         );
         return $query->getResult();
     }
-
+    /**
+     * gets all the locations of type 'courthouse'
+     * 
+     * useful for populating the location form in the context 
+     * of the "add judge" form
+     * 
+     * @return array
+     */
+    public function getCourthouses()
+    {   
+         $qb = $this->createQueryBuilder("l")
+            ->join('l.type', 't')
+            ->leftJoin('l.parentLocation', 'p')
+            ->where('t.type = :type')
+            ->setParameter('type','courthouse')
+            ->addOrderBy('p.name','DESC')->addOrderBy('l.name','ASC');
+        $query = $qb->getQuery();
+        return $query->getResult();
+        
+    }
+    
+    /**
+     * gets all the courtrooms whose parent is $parent_id
+     * 
+     * not yet in use. may be handy later for using xhr to repopulate 
+     * context-sensitive location dropdowns, in which case we should probably 
+     * change hydration mode to array so it can be json_encoded
+     * 
+     * @param int $parent_id
+     * @return array
+     */
+    public function getCourtrooms($parent_id)
+    {
+        $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l JOIN l.parentLocation p JOIN l.type t '
+                . 'WHERE p.id = :parent_id AND t.type = :type ORDER BY l.name ASC';
+        $query = $this->getEntityManager()->createQuery($dql)
+                ->setParameters([':parent_id'=>$parent_id,':type'=>'courtroom']);
+         return $query->getResult();
+        
+    }
     /**
      * returns all the courthouses and courtrooms
      * 
