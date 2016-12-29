@@ -81,7 +81,9 @@ class LocationsController extends AbstractActionController
     }
     /**
      * adds a new Location.
-     *
+     * @todo refactor, start passing some sort of context (query?) parameter to
+     * our form so it can know what option data to fetch for the select 
+     * elements
      * @return ViewModel
      */
     public function addAction()
