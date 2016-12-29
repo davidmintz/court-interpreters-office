@@ -128,8 +128,12 @@ class LocationsController extends AbstractActionController
                 return new JsonModel(
                      [
                          'valid' => true,
-                          'id'   => $entity->getId(),
-                         // etc
+                         'validationErrors' => null,
+                          'entity'   => [
+                              'name' => $entity->getName(),
+                              'id'   => $entity->getId(),
+                           ],
+                         
                      ]
                 );
             }
