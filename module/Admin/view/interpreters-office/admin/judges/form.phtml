@@ -111,12 +111,14 @@ $element = $fieldset->get('hat')->setValue($hat_id);
             console.log("show event fired");
             // event.relatedTarget is the button they clicked
             $('#add-location > div > div > div.modal-body').load(
-                '/admin/locations/add form',
+                '/admin/locations/add?form_context=judges form',
                 function(){
+                    // use the bs-provided buttons instead
                     $('#add-location input[name="submit"]').remove();
                     /** @todo 
                     disable or remove the select options that do not apply
                     */
+                    console.log("load callback running!");
             });
         });
         
@@ -153,7 +155,9 @@ $element = $fieldset->get('hat')->setValue($hat_id);
             } else {
                 errorDiv = errorDiv || element.next('.validation-error');
                 if (! errorDiv.length) {
-                    errorDiv = $('<div/>').addClass('validation-error').attr({id:'error_'+field})
+                    errorDiv = $('<div/>')
+                            .addClass('alert alert-warning validation-error')
+                            .attr({id:'error_'+field})
                     .insertAfter(element);
                 }
                 errorDiv.html(message).show();
