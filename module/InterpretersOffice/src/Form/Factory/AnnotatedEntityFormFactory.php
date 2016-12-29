@@ -200,7 +200,16 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
         // file:///opt/www/court-interpreters-office/vendor/doctrine/doctrine-module/docs/form-element.md
         // for how to add html attributes to options
-
+        $context = key_exists('form_context',$options) ? $options['form_context'] : null;
+        $parentLocationOptions = [];
+        $locationTypeOptions   = [];
+        if ('judges' == $context) {
+            $parentLocationOptions['find_method'] = 'getCourthouses';
+            $locationTypeOptions['find_method'] = 'getJudgeLocationsTypes';
+        } else {
+            $parentLocationOptions['find_method'] = 'getParentLocations';
+            $locationTypeOptions['find_method'] = null;
+        }
         $form->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'parentLocation',
@@ -214,7 +223,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'display_empty_item' => true,
                 'empty_item_label' => '(none)',
 
-                'find_method' => ['name' => 'getParentLocations'],
+                'find_method' => ['name' => $parentLocationOptions['find_method'],],
                 'option_attributes' => [
                     'data-location-type' => function (Entity\Location $location) {
                         return $location->getType();
@@ -239,6 +248,8 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'property' => 'type',
                 'label' => 'location type',
                 'display_empty_item' => true,
+                'find_method' =>  $locationTypeOptions['find_method'] ?
+                    ['name' =>$locationTypeOptions['find_method']  ] : null,
                 'empty_item_label' => '(required)',
             ],
              'attributes' => [
