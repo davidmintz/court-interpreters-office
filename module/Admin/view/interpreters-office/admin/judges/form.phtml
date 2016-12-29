@@ -113,24 +113,26 @@ $element = $fieldset->get('hat')->setValue($hat_id);
             $('#add-location > div > div > div.modal-body').load(
                 '/admin/locations/add?form_context=judges form',
                 function(){
+                    $('.modal-header .modal-title').text("add a courthouse/courtroom")
                     // use the bs-provided buttons instead
                     $('#add-location input[name="submit"]').remove();
-                    /** @todo 
-                    disable or remove the select options that do not apply
-                    */
-                    console.log("load callback running!");
             });
         });
         
         $('#add-location').on("click",'#btn-add-location-submit', function(){
             
-            $.post('/admin/locations/add',$('#add-location form').serialize(),function(response,status,xhr){
+            $.post('/admin/locations/add?form_context=judges',$('#add-location form').serialize(),
+            function(response){
                 console.log("valid? " + response.valid);
                 if (! response.valid) {
                    return displayValidationErrors(response.validationErrors);
                 }
                 $('#add-location').modal("hide");
-                return alert("good job. to be continued");
+                $("<option>")
+                        .attr({label: response.entity.name, value: response.entity.id})
+                        .text(response.entity.name)
+                        .appendTo($("#defaultLocation"));
+                $("#defaultLocation").val(response.entity.id);
             });
         });
     });
