@@ -188,4 +188,14 @@ class LocationsController extends AbstractActionController
 
         return $viewModel;
     }
+    
+    public function courtroomsAction()
+    {
+        $parent_id = $this->params()->fromQuery('parent_id');
+        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Location');
+        $data = $repository->getCourtrooms($parent_id);
+        echo "Hello!<br>"; 
+        var_dump($data[0]);
+        return false;
+    }
 }
