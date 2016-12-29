@@ -59,12 +59,13 @@ $courthouse = $fieldset->get('courthouse'); $courtroom = $fieldset->get('courtro
             <label class="control-label col-sm-2">courtroom</label>
              <div class="col-sm-10"><?php echo $this->formSelect($courtroom),$this->formElementErrors($courtroom) ?>
              <?php echo $this->formHidden($fieldset->get('defaultLocation')) ?>
+                 
              </div>
         </div>
     </div>
 </div>
 
-<?php if (false): 
+<?php if (false): // this is simpler. maybe we'll change our mind back to this.
     $defaultLocation = $fieldset->get('defaultLocation'); ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $defaultLocation->getLabel()?></label>
@@ -112,7 +113,7 @@ $element = $fieldset->get('hat')->setValue($hat_id);
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="label-add-location">add a location</h4>
+        <h4 class="modal-title" id="label-add-location">add a courtroom/courthouse</h4>
       </div>
       <div class="modal-body">
         ...
@@ -138,7 +139,21 @@ $element = $fieldset->get('hat')->setValue($hat_id);
                     $('#add-location input[name="submit"]').remove();
             });
         });
-        
+        $('#courthouse, #courtroom').on('change',function(event){
+            var defaultLocation = $('#defaultLocation');
+            var selectElement = $(event.target);
+            // if the courtroom changed
+            if ('courtroom' === selectElement.attr("id")) {
+                defaultLocation.val(selectElement.val());
+            } else {
+                // the courthouse is what changed. if there is no courtroom,
+                // the courthouse value becomes the default location value
+                if (! $('#courtroom').val()) {
+                    defaultLocation.val(selectElement.val());
+                }
+            }
+            console.debug("set defaultLocation value to: "+defaultLocation.val());
+        });
         $('#add-location').on("click",'#btn-add-location-submit', function(){
             
             $.post('/admin/locations/add?form_context=judges',$('#add-location form').serialize(),

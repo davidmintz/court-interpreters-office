@@ -27,37 +27,52 @@ class JudgeFieldset extends PersonFieldset {
     public function __construct(ObjectManager $objectManager, $options = array())
     {
         parent::__construct($objectManager, $options);
+        
         $this->add([
-            'name' => 'defaultLocation',
+            'name' => 'courthouse',
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
-            'required' => true,
+            'required' => false,
             'allow_empty' => true,
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\Location',
-                'label' => 'default location',
-                'property' => 'name',
-                //'display_empty_item' => true,
-                //'empty_item_label' => ' ',
-                'find_method' => ['name' => 'getJudgeLocations'],
-                 'label_generator' => function ($location) {
-                    if ($parent = $location->getParentLocation()) {
-                        return sprintf('courtroom %s, %s',
-                        $location->getName(),
-                        $parent->getName());
-                    }
-                    return $location->getName();
-                },
-                
+                'label'  => 'courthouse',
+                'find_method' => ['name' => 'getCourthouses'],
+                'property' =>'name',
+               // 'display_empty_item' => true,
+               // 'empty_item_label' => ' ',
             ],
             'attributes' => [
                 'class' => 'form-control',
-                'id' => 'defaultLocation',
+                'id' => 'courthouse',
             ], 
+        ]);
+        
+        $this->add([
+            'name' => 'courtroom',
+            'type' => 'Zend\Form\Element\Select',
+            'required' => true,
+            'allow_empty' => true,
+            'options' => [
+            ],
+            'attributes' => [
+                'class' => 'form-control',
+                'id' => 'courtroom',
+            ], 
+        ]);
+        $this->add([
+            'name' => 'defaultLocation',
+            'type' => 'Zend\Form\Element\Hidden',
+            'required' => true,
+            'allow_empty' => true,
+            'attributes' => [
+                'id' => 'defaultLocation'
+            ],
+            
         ]);
         //return;
         // this makes validator happy: a non-empty label
-        $element = $this->get('defaultLocation');
+        $element = $this->get('courthouse');
         $options = $element->getValueOptions();
         array_unshift($options, [
            'label' => ' ',
@@ -87,9 +102,9 @@ class JudgeFieldset extends PersonFieldset {
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\JudgeFlavor',
                 'property' => 'flavor',
-                //'label' => 'flavor',
+                'label' => 'flavor',
                 //'display_empty_item' => true,
-                'empty_item_label' => ' ',
+                //'empty_item_label' => ' ',
             ],
              'attributes' => [
                 'class' => 'form-control',
