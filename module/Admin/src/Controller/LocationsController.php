@@ -132,6 +132,7 @@ class LocationsController extends AbstractActionController
                           'entity'   => [
                               'name' => $entity->getName(),
                               'id'   => $entity->getId(),
+                              'type' => (string) $entity->getType()
                            ],
                          
                      ]
