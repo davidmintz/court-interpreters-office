@@ -62,6 +62,7 @@ class LocationsController extends AbstractActionController
     {
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
+        
     }
     /**
      * index action.
@@ -88,16 +89,28 @@ class LocationsController extends AbstractActionController
      */
     public function addAction()
     {
+        
         $entity = new Location();
-        $form = $this->getForm(Location::class, ['object' => $entity, 'action' => 'create'])
+        
+        $form = $this->getForm(
+                Location::class, [
+                    'object' => $entity,
+                    'action' => 'create',
+                    'form_context' => $this->params()->fromQuery('form_context','locations')
+                    ])
                ->bind($entity);
 
-        $viewModel = (new ViewModel(['form' => $form, 'title' => 'add a location']))
+        $viewModel = (new ViewModel([
+            'form' => $form, 
+            'title' => 'add a location',          
+            ]))
             ->setTemplate('interpreters-office/admin/locations/form.phtml');
 
         $request = $this->getRequest();
-        $json = $request->isXmlHttpRequest();
+       
+        
         if ($request->isPost()) {
+            $json = $request->isXmlHttpRequest();
             $form->setData($request->getPost());
             if (!$form->isValid()) {
                 return $json ? new JsonModel(
@@ -139,7 +152,7 @@ class LocationsController extends AbstractActionController
             ->setVariables(['title' => 'edit a location']);
 
         $id = $this->params()->fromRoute('id');
-
+        
         if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
