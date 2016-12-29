@@ -114,12 +114,14 @@ $element = $fieldset->get('hat')->setValue($hat_id);
                 '/admin/locations/add form',
                 function(){
                     $('#add-location input[name="submit"]').remove();
-                    console.log("load callback running...");
+                    /** @todo 
+                    disable or remove the select options that do not apply
+                    */
             });
         });
         
         $('#add-location').on("click",'#btn-add-location-submit', function(){
-            console.warn("click happened!");
+            
             $.post('/admin/locations/add',$('#add-location form').serialize(),function(response,status,xhr){
                 console.log("valid? " + response.valid);
                 if (! response.valid) {
