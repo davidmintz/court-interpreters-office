@@ -24,18 +24,18 @@ $form->add([
 $form->prepare();
 $fieldset = $form->get('judge');
 echo $this->form()->openTag($form);?>
-<div class="form-group">
 <?php
 $flavor = $fieldset->get('flavor');?>
-    <div class="form-group">
-        <label class="control-label col-sm-3"><?php echo $flavor->getLabel()?></label>
-        <div class="col-sm-9"><?php echo $this->formSelect($flavor),$this->formElementErrors($flavor) ?>            
-        </div>
+<div class="form-group">
+    <label class="control-label col-sm-3"><?php echo $flavor->getLabel()?></label>
+    <div class="col-sm-9"><?php echo $this->formSelect($flavor),$this->formElementErrors($flavor) ?>
     </div>
+</div>
+
 <?php // text inputs
 $elements = ['lastname','middlename','firstname','email','officePhone',];
 ?>
-</div>
+
 <?php 
 foreach ($elements as $elementName):
 $element = $fieldset->get($elementName);?>
@@ -46,7 +46,26 @@ $element = $fieldset->get($elementName);?>
 </div>
 <?php
 endforeach;
-$defaultLocation = $fieldset->get('defaultLocation'); ?>
+$courthouse = $fieldset->get('courthouse'); $courtroom = $fieldset->get('courtroom');?>
+<div class="form-group">
+    <label class="control-label col-sm-3">default location</label>
+    <div class="col-sm-9">
+        <div class="form-group row">
+            <label class="control-label col-sm-2"><?php echo $courthouse->getLabel()?></label>
+            <div class="col-sm-10"><?php echo $this->formSelect($courthouse),$this->formElementErrors($courthouse) ?>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-sm-2">courtroom</label>
+             <div class="col-sm-10"><?php echo $this->formSelect($courtroom),$this->formElementErrors($courtroom) ?>
+             <?php echo $this->formHidden($fieldset->get('defaultLocation')) ?>
+             </div>
+        </div>
+    </div>
+</div>
+
+<?php if (false): 
+    $defaultLocation = $fieldset->get('defaultLocation'); ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $defaultLocation->getLabel()?></label>
     <div class="col-sm-9">
@@ -61,6 +80,7 @@ $defaultLocation = $fieldset->get('defaultLocation'); ?>
         </div>
     </div>
 </div>
+<?php endif ?>
 <?php
 $active =  $fieldset->get('active');?>
 <div class="form-group">
