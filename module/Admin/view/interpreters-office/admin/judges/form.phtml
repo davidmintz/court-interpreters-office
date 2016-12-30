@@ -23,6 +23,18 @@ $form->add([
 <?php
 $form->prepare();
 $fieldset = $form->get('judge');
+// this is a bit beyond display logic and maybe should go somewhere else...
+$entity = $form->getObject();
+foreach (['hat','defaultLocation'] as $element) : 
+    $getter = 'get'. ucfirst($element);
+    $fieldset->get($element)->setValue($entity->$getter()->getId());
+endforeach;
+$location = $entity->getDefaultLocation();
+if ($location) {
+    $parentSelectVal = $location->getType() == 'courtroom' ? 
+           $location->getParentLocation()->getId() : $location->getId();
+    $fieldset->get('courthouse')->setValue($parentSelectVal);
+}
 echo $this->form()->openTag($form);?>
 <?php
 $flavor = $fieldset->get('flavor');?>
@@ -89,16 +101,12 @@ $courtroom = $fieldset->get('courtroom');?>
 <?php endif ?>
 <?php
 $active = $fieldset->get('active');?>
-<div class="form-group">
-    <label class="control-label col-sm-3"><?php echo $active->getLabel()?></label>
+<div class="form-group" style="margin-top: -15px">
+    <label class="control-label col-sm-3" style="padding-top:2px"><?php echo $active->getLabel()?></label>
     <div class="col-sm-9"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
     </div>
 </div>
 <div class="form-group">
-<?php
-$hat_id = $form->getObject()->getHat()->getId();
-$element = $fieldset->get('hat')->setValue($hat_id);
-?>
     <div class="col-sm-offset-3 col-sm-9">
     <?php
         echo $this->formHidden($fieldset->get('hat'));
@@ -135,7 +143,7 @@ $element = $fieldset->get('hat')->setValue($hat_id);
     $(document).ready(function(){
         $('#add-location').on('show.bs.modal',function(event){
             console.log("show event fired");
-            // event.relatedTarget is the button they clicked
+            // event.relatedTarget is the button they clicked, FYI
             $('#add-location > div > div > div.modal-body').load(
                 '/admin/locations/add?form_context=judges form',
                 function(){
@@ -144,6 +152,32 @@ $element = $fieldset->get('hat')->setValue($hat_id);
                     $('#add-location input[name="submit"]').remove();
             });
         });
+        // if there is no courthouse selected, disable the courtroom control
+        var courthouseSelect = $('#courthouse');
+        var courtroomSelect = $('#courtroom');
+        if (! courthouseSelect.val()) {
+            courtroomSelect.val('').attr({disabled : "disabled"});
+        }
+        courthouseSelect.on('change',function(){
+            var parent_id = courthouseSelect.val();
+            if (! parent_id) {
+                return;
+            }
+            var data = $.getJSON('/admin/locations/courtrooms/'+parent_id, null,
+                function(data){
+                    var options = [], i = -1;
+                    $.each(data,function(){
+                        options[++i] = $('<option/>').attr({label:this.name, value: this.id }).text(this.name);
+                    });            
+                    if (courtroomSelect.children().length > 1) {
+                        // might want to cache these later
+                        var discard = courtroomSelect.children().slice(1).remove();
+                    }
+                    courtroomSelect.append(options);
+                }
+             );
+            
+        }).trigger('change');
         $('#courthouse, #courtroom').on('change',function(event){
             var defaultLocation = $('#defaultLocation');
             var selectElement = $(event.target);
@@ -153,8 +187,11 @@ $element = $fieldset->get('hat')->setValue($hat_id);
             } else {
                 // the courthouse is what changed. if there is no courtroom,
                 // the courthouse value becomes the default location value
-                if (! $('#courtroom').val()) {
+                if (! courtroomSelect.val()) {
                     defaultLocation.val(selectElement.val());
+                }
+                if (courthouseSelect.val()) {
+                    courtroomSelect.removeAttr('disabled');
                 }
             }
             console.debug("set defaultLocation value to: "+defaultLocation.val());

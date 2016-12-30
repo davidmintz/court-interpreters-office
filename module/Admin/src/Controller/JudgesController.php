@@ -108,7 +108,7 @@ class JudgesController extends AbstractActionController
         } else {
             $viewModel->id = $id;
         }
-        $form = new JudgeForm($this->entityManager, ['action' => 'update']);
+        $form = new JudgeForm($this->entityManager, ['action' => 'update','object'=>$entity]);
         $form->bind($entity);
         $viewModel->form = $form;
 
