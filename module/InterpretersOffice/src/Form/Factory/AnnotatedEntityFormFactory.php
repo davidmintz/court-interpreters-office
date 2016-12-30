@@ -55,7 +55,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
     /**
      * creates a Zend\Form\Form.
-     * 
+     *
      * factory method to instantiate and, if needed, complete initialization
      * of a Form for creating or updating the entity
      *
@@ -70,24 +70,23 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
     {
         $annotationBuilder = new AnnotationBuilder();
         $form = $annotationBuilder->createForm($entity);
-       
+
         switch ($entity) {
             case Entity\Language::class:
-            $this->setupLanguageForm($form, $options);
-            break;
+                $this->setupLanguageForm($form, $options);
+                break;
 
             case Entity\Location::class:
-            $this->setupLocationsForm($form, $options);
-            break;
-        
-            case Entity\EventType::class:
-            $this->setupEventTypesForm($form, $options);
-            break;
+                $this->setupLocationsForm($form, $options);
+                break;
 
+            case Entity\EventType::class:
+                $this->setupEventTypesForm($form, $options);
+                break;
         }
         $form->setHydrator(new DoctrineHydrator($this->objectManager))
              ->setObject($options['object']);
-        
+
         // add the CSRF element to the form
         $form->add(new Csrf('csrf'));
         // and customize its validation error messages
@@ -120,7 +119,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         );
         return $form;
     }
-    
+
     /**
      * completes the initialization of the EventType create|update form.
      *
@@ -141,21 +140,19 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         if ($options['action'] == 'create') {
             $validatorClass = NoObjectExistsValidator::class;
             $validatorOptions['messages'] = [
-                NoObjectExistsValidator::ERROR_OBJECT_FOUND => 
-                'this event-type is already in your database', 
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
+                'this event-type is already in your database',
             ];
         } else { // presume update
             $validatorClass = UniqueObject::class;
             $validatorOptions['messages'] = [
                 UniqueObject::ERROR_OBJECT_NOT_UNIQUE    =>
-                 'another event-type by this name is already in your database', 
+                 'another event-type by this name is already in your database',
             ];
         }
         $uniquenessValidator = new $validatorClass($validatorOptions);
         $nameInput = $input = $form->getInputFilter()->get('name');
         $nameInput->getValidatorChain()->attach($uniquenessValidator, true);
-
-
     }
 
     /**
@@ -175,13 +172,13 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         if ($options['action'] == 'create') {
             $validatorClass = NoObjectExistsValidator::class;
             $validatorOptions['messages'] = [
-                   NoObjectExistsValidator::ERROR_OBJECT_FOUND => 
+                   NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
                    'this language is already in your database', ];
         } else { // assume update
-           $validatorClass = UniqueObject::class;
-           $validatorOptions['messages'] = [
+            $validatorClass = UniqueObject::class;
+            $validatorOptions['messages'] = [
                 UniqueObject::ERROR_OBJECT_NOT_UNIQUE    =>
-                  'language names must be unique; this one is already in your database', 
+                  'language names must be unique; this one is already in your database',
             ];
         }
         $input = $form->getInputFilter()->get('name');
@@ -200,7 +197,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
         // file:///opt/www/court-interpreters-office/vendor/doctrine/doctrine-module/docs/form-element.md
         // for how to add html attributes to options
-        $context = key_exists('form_context',$options) ? $options['form_context'] : null;
+        $context = key_exists('form_context', $options) ? $options['form_context'] : null;
         $parentLocationOptions = [];
         $locationTypeOptions   = [];
         if ('judges' == $context) {
@@ -248,8 +245,8 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                 'property' => 'type',
                 'label' => 'location type',
                 'display_empty_item' => true,
-                'find_method' =>  $locationTypeOptions['find_method'] ?
-                    ['name' =>$locationTypeOptions['find_method']  ] : null,
+                'find_method' => $locationTypeOptions['find_method'] ?
+                    ['name' => $locationTypeOptions['find_method']  ] : null,
                 'empty_item_label' => '(required)',
             ],
              'attributes' => [
@@ -280,24 +277,23 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
 
         /// https://github.com/doctrine/DoctrineModule/issues/252
         /// https://kuldeep15.wordpress.com/2015/04/08/composite-key-type-duplicate-key-check-with-zf2-doctrine/
-        
+
         $validatorOptions = [
                'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
                'fields' => ['name', 'parentLocation'],
                'object_manager' => $this->objectManager,
                'use_context' => true,];
-        
+
         if ($options['action'] == 'create') {
             $validatorClass = NoObjectExistsValidator::class;
             $validatorOptions['messages'] = [
-                NoObjectExistsValidator::ERROR_OBJECT_FOUND => 
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
                 'this location is already in your database',
             ];
-           
         } else { // assume this is an update
-           $validatorClass = UniqueObject::class;
-           $validatorOptions['messages'] = 
-                 [ UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
+            $validatorClass = UniqueObject::class;
+            $validatorOptions['messages'] =
+                 [ UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
                  'there is already an existing location with this name and parent location'];
         }
 

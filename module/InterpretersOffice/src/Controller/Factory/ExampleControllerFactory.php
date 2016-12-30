@@ -8,7 +8,6 @@ use Interop\Container\ContainerInterface;
 
 use InterpretersOffice\Controller\ExampleController;
 
-
 /**
  * Factory class for instantiating IndexController.
  *

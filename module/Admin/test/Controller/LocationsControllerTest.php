@@ -143,7 +143,7 @@ class LocationsControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         $courtroom_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courtroom']);
-        
+
         // try adding a courtroom with no parent
         $data = [
             'name' => '29F',
@@ -160,9 +160,9 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
         $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error',1);
-        $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
-        
+        $this->assertQueryCount('.validation-error', 1);
+        $this->assertQueryContentRegex('.validation-error', '/location has to have a parent/');
+
         //$query = new Query($this->getResponse()->getBody());
         //$element = $query->execute('.validation-error')->current();
 
@@ -174,7 +174,7 @@ class LocationsControllerTest extends AbstractControllerTest
         $courthouse_type = $pearl->getType();
         $data = [
             'name' => 'Some Courthouse',
-            'parentLocation' =>  $pearl->getId(),
+            'parentLocation' => $pearl->getId(),
             'type' => $courthouse_type->getId(),
             'comments' => '',
             'active' => 1,
@@ -188,9 +188,9 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
         $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error',1);
+        $this->assertQueryCount('.validation-error', 1);
         $error = 'this type of location cannot have any parent location';
-        $this->assertQueryContentContains('.validation-error',$error);
+        $this->assertQueryContentContains('.validation-error', $error);
 
         // interpreters office has to be somewhere
         $interpretersoffice_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
@@ -199,7 +199,7 @@ class LocationsControllerTest extends AbstractControllerTest
 
         $data = [
             'name' => 'Some Interpreters Office',
-            'parentLocation' =>  null,
+            'parentLocation' => null,
             'type' => $interpretersoffice_type->getId(),
             'comments' => '',
             'active' => 1,
@@ -208,14 +208,14 @@ class LocationsControllerTest extends AbstractControllerTest
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
-        ); 
+        );
         $this->dispatch('/admin/locations/add');
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
         $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error',1);
-        $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
-        
+        $this->assertQueryCount('.validation-error', 1);
+        $this->assertQueryContentRegex('.validation-error', '/location has to have a parent/');
+
         // holding cell has to be somewhere
 
         $holding_cell_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
@@ -224,7 +224,7 @@ class LocationsControllerTest extends AbstractControllerTest
 
         $data = [
             'name' => 'Some Interpreters Office',
-            'parentLocation' =>  null,
+            'parentLocation' => null,
             'type' => $holding_cell_type->getId(),
             'comments' => '',
             'active' => 1,
@@ -233,16 +233,15 @@ class LocationsControllerTest extends AbstractControllerTest
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
-        ); 
+        );
         $this->dispatch('/admin/locations/add');
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
         $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error',1);
-        $this->assertQueryContentRegex('.validation-error','/location has to have a parent/');
-
+        $this->assertQueryCount('.validation-error', 1);
+        $this->assertQueryContentRegex('.validation-error', '/location has to have a parent/');
     }
-    
+
     public function testLocationTypeIsRequired()
     {
         $em = FixtureManager::getEntityManager();
@@ -254,13 +253,13 @@ class LocationsControllerTest extends AbstractControllerTest
             'name' => 'Some Shithead Courthouse',
             'parentLocation' => '',
             //'type' => $courtroom_type ->getId(),
-            'type' => NULL,
+            'type' => null,
             'comments' => '',
             'active' => 1,
             'csrf' => $this->getCsrfToken('/admin/locations/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
-                new Parameters($data)
+            new Parameters($data)
         );
         $this->dispatch('/admin/locations/add');
         //echo $this->getResponse()->getBody();

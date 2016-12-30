@@ -6,19 +6,19 @@
  * security-sensitive configuration information. Copy this file without the
  * .dist extension at the end and populate values as needed.
  *
- * @NOTE: This file is ignored from Git by default with the .gitignore included. 
- * This is a good practice, as it prevents sensitive credentials from accidentally 
+ * @NOTE: This file is ignored from Git by default with the .gitignore included.
+ * This is a good practice, as it prevents sensitive credentials from accidentally
  * being committed into version control.
  */
 
-return [     
-	'doctrine' => array(
-        'connection' => array(
+return [
+    'doctrine' => [
+        'connection' => [
             // default connection name
-            'orm_default' => array(
+            'orm_default' => [
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
-                'params' => array(
-                	// set your database connection parameters here
+                'params' => [
+                    // set your database connection parameters here
                     'user'     => 'user',
                     'password' => 'password',
                     'dbname'   => 'database_name',
@@ -29,10 +29,11 @@ return [
                     // works around it as unobtrusively as possible.
                     // https://github.com/doctrine/doctrine2/issues/5622#issuecomment-231727355
                     'driverOptions' => [
-                        PDO::MYSQL_ATTR_INIT_COMMAND => "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
+                        PDO::MYSQL_ATTR_INIT_COMMAND =>
+                            "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
                     ],
-                )
-            )
-        )
-    )
+                ]
+            ]
+        ]
+    ]
 ];

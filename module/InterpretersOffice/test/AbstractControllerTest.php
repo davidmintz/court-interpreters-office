@@ -36,7 +36,7 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
 
         parent::setUp();
     }
-    
+
     /**
      * logs in a user through the AuthController.
      *
@@ -61,23 +61,23 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
         $auth = $this->getApplicationServiceLocator()->get('auth');
         if (! $auth->hasIdentity()) {
             echo "\nWARNING:  failed authentication\n";
-        } 
-        
+        }
+
         $this->reset(true);
     }
-    
+
     /**
      * parses out a csrf token from a form
-     * 
+     *
      * @param string $url to dispatch
      * @param string $name name of the CSRF form element
      * @return string $token parsed from document body
      */
-    public function getCsrfToken($url,$name='csrf')
+    public function getCsrfToken($url, $name = 'csrf')
     {
-        $this->dispatch($url,'GET');
+        $this->dispatch($url, 'GET');
         $query = new Query($this->getResponse()->getBody());
-        $selector = sprintf('input[name="%s"]',$name);
+        $selector = sprintf('input[name="%s"]', $name);
         $node = $query->execute($selector)->current();
         $token = $node->attributes->getNamedItem('value')->nodeValue;
         return $token;

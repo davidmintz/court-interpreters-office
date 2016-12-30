@@ -28,6 +28,5 @@ class PeopleControllerFactory implements FactoryInterface
         return new $requestedName(
              $container->get('entity-manager')
         );
-       
     }
 }

@@ -1,6 +1,6 @@
 <?php
-/** 
- *  module/Admin/view/interpreters-office/admin/people/form.phtml 
+/**
+ *  module/Admin/view/interpreters-office/admin/people/form.phtml
  *  view script for rendering people create|update form
  */
 $this->headTitle($this->title);
@@ -9,13 +9,13 @@ if ($this->errorMessage) : ?>
 <?php
 return;
 endif;
-$formAction = strstr($this->title,'add') ? $this->url('people/add') 
-	:  $this->url('people/edit',['id' => $this->id ]);
+$formAction = strstr($this->title, 'add') ? $this->url('people/add')
+    : $this->url('people/edit', ['id' => $this->id ]);
 $form = $this->form;
 $form->add([
-	'name'=>'submit',
-	'type'=>'Zend\Form\Element\Submit',
-	'attributes' => ['value'=>'submit'],
+    'name' => 'submit',
+    'type' => 'Zend\Form\Element\Submit',
+    'attributes' => ['value' => 'submit'],
 ])->setAttribute('method', 'post')
    ->setAttribute('action', $formAction)
     ->setAttribute('class', 'form-horizontal')    ;
@@ -37,8 +37,8 @@ $hat = $fieldset->get('hat');?>
 </div>
 <?php
  // text inputs
-foreach ( ['lastname','middlename','firstname','email','officePhone','mobilePhone'] as $elementName):
-$element = $fieldset->get($elementName);?>
+foreach (['lastname','middlename','firstname','email','officePhone','mobilePhone'] as $elementName) :
+    $element = $fieldset->get($elementName);?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
     <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>            
@@ -46,7 +46,7 @@ $element = $fieldset->get($elementName);?>
 </div>
 <?php
 endforeach;
-$active =  $fieldset->get('active');?>
+$active = $fieldset->get('active');?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $active->getLabel()?></label>
     <div class="col-sm-9"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
@@ -54,7 +54,7 @@ $active =  $fieldset->get('active');?>
  </div>
 <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
-   <?php 
+    <?php
     $csrf = $form->get('csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formHidden($fieldset->get('id'));

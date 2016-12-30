@@ -1,4 +1,4 @@
-<?php 
+<?php
 /** module/Admin/view/interpreters-office/admin/languages/form.phtml */
 $this->headTitle($this->title);
 if ($this->errorMessage) : ?>
@@ -7,46 +7,46 @@ if ($this->errorMessage) : ?>
 return;
 endif;
 $form = $this->form;
-if (strstr($this->title,'add')) :
-	$action = 'add' ;
-	$actionAttrib = $this->url('languages/add');//,['action'=>'add']
-else: 
-	$action = 'edit';
-	$actionAttrib = $this->url('languages/edit',['id'=> $this->id ] );
+if (strstr($this->title, 'add')) :
+    $action = 'add' ;
+    $actionAttrib = $this->url('languages/add');//,['action'=>'add']
+else :
+    $action = 'edit';
+    $actionAttrib = $this->url('languages/edit', ['id' => $this->id ]);
 endif;
 
 echo "form action: $actionAttrib ... ";
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
     <h2><?php echo $this->title ?></h2>
-<?php if ($action == 'add')  : ?>
+<?php if ($action == 'add') : ?>
     <p class="warning">When adding a new language, please be careful 
       to avoid inserting a language that is an inexact duplicate, alternate name 
     or spelling, or a superset of another that already exists in your database.</p>
-<?php endif; 
+<?php endif;
 $form->add([
-	'name'=>'submit',
-	'type'=>'Zend\Form\Element\Submit',
-	'attributes' => ['value'=>'submit'],
+    'name' => 'submit',
+    'type' => 'Zend\Form\Element\Submit',
+    'attributes' => ['value' => 'submit'],
 ])->setAttribute('method', 'post')->setAttribute('action', $actionAttrib);
 
 $form->prepare();
 echo $this->form()->openTag($form);?>
-<div class="form-group"><?php 
+<div class="form-group"><?php
 $name = $form->get('name');
 echo $this->formLabel($name),$this->formElement($name),$this->formElementErrors($name);
 ?>
 </div> 
-<div class="form-group"><?php 
+<div class="form-group"><?php
 $comments = $form->get('comments');
 echo $this->formLabel($comments),$this->formElement($comments), $this->formElementErrors($comments);
-?>		
+?>      
 </div>
 <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
-   <?php 
+    <?php
     $csrf = $form->get('csrf');
-    echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;  
+    echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
     echo $this->formSubmit($form->get('submit'));?></div>
 </div>

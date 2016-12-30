@@ -10,16 +10,16 @@ namespace InterpretersOffice\Service\Factory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-use InterpretersOffice\Service\Listener\AuthenticationListener; 
-
+use InterpretersOffice\Service\Listener\AuthenticationListener;
 
 /**
  * Factory for instantiating user listener service.
  */
-class AuthenticationListenerFactory implements FactoryInterface {
+class AuthenticationListenerFactory implements FactoryInterface
+{
 
 
-	/**
+    /**
      * implements FactoryInterface.
      *
      * @param ContainerInterface $container
@@ -28,13 +28,12 @@ class AuthenticationListenerFactory implements FactoryInterface {
      *
      * @return UserListener
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
 
-    	return new AuthenticationListener(
+        return new AuthenticationListener(
             $container->get('log'),
             $container->get('entity-manager')
         );
-
     }
-
 }

@@ -13,27 +13,28 @@ use Doctrine\Common\Persistence\ObjectManager;
  *
  * @author david
  */
-class JudgeFieldset extends PersonFieldset {
-    
+class JudgeFieldset extends PersonFieldset
+{
+
     /**
      * name of the fieldset.
-     * 
+     *
      * since we are a subclass of PersonFieldset, this needs to be overriden
-     * 
+     *
      * @var string
      */
     protected $fieldset_name = 'judge';
 
     /**
      * constructor.
-     * 
+     *
      * @param ObjectManager $objectManager
      * @param array $options
      */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
         parent::__construct($objectManager, $options);
-        
+
         $this->add([
             'name' => 'courthouse',
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
@@ -44,16 +45,16 @@ class JudgeFieldset extends PersonFieldset {
                 'target_class' => 'InterpretersOffice\Entity\Location',
                 'label'  => 'courthouse',
                 'find_method' => ['name' => 'getCourthouses'],
-                'property' =>'name',
+                'property' => 'name',
                // 'display_empty_item' => true,
                // 'empty_item_label' => ' ',
             ],
             'attributes' => [
                 'class' => 'form-control',
                 'id' => 'courthouse',
-            ], 
+            ],
         ]);
-        
+
         $this->add([
             'name' => 'courtroom',
             'type' => 'Zend\Form\Element\Select',
@@ -64,7 +65,7 @@ class JudgeFieldset extends PersonFieldset {
             'attributes' => [
                 'class' => 'form-control',
                 'id' => 'courtroom',
-            ], 
+            ],
         ]);
         $this->add([
             'name' => 'defaultLocation',
@@ -74,7 +75,7 @@ class JudgeFieldset extends PersonFieldset {
             'attributes' => [
                 'id' => 'defaultLocation'
             ],
-            
+
         ]);
         //return;
         // this makes validator happy: a non-empty label
@@ -86,18 +87,19 @@ class JudgeFieldset extends PersonFieldset {
            'attributes' => [
                'label' => ' ',
            ],
-       ]);
-       $element->setValueOptions($options);
+        ]);
+        $element->setValueOptions($options);
     }
-    
+
     /**
      * adds the "Hat" element to our form
-     * 
+     *
      * @return JudgeFieldset
-     * 
+     *
      */
-    public function addHatElement() {
-        
+    public function addHatElement()
+    {
+
         // there might be a better way.
         $this->add(
             [
@@ -121,32 +123,33 @@ class JudgeFieldset extends PersonFieldset {
              'attributes' => [
                 'class' => 'form-control',
                 'id' => 'flavor',
-             ],              
-       ]);
+             ],
+        ]);
         // hack designed to please HTML5 validator
-       $element = $this->get('flavor');
-       $options = $element->getValueOptions();
-       array_unshift($options, [
+        $element = $this->get('flavor');
+        $options = $element->getValueOptions();
+        array_unshift($options, [
            'label' => ' ',
            'value' => '',
            'attributes' => [
                'label' => ' ',
            ],
-       ]);
-       $element->setValueOptions($options);
+        ]);
+        $element->setValueOptions($options);
 
-       return $this;
+        return $this;
     }
-    
+
 
     /**
      * gets input filter specification
-     * 
+     *
      * @return array
-     * 
+     *
      */
-    public function getInputFilterSpecification() {
-        
+    public function getInputFilterSpecification()
+    {
+
         $spec = parent::getInputFilterSpecification();
         $spec['flavor'] = [
             'required' => true,
@@ -166,7 +169,7 @@ class JudgeFieldset extends PersonFieldset {
             'required' => false,
             'allow_empty' => true,
         ];
-        if (key_exists('mobilePhone',$spec)) {
+        if (key_exists('mobilePhone', $spec)) {
             unset($spec['mobilePhone']);
         }
         return $spec;

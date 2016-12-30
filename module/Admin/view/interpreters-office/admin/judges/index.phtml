@@ -1,22 +1,25 @@
-<?php 
-/** 
- * module/Admin/view/interpreters-office/admin/judges/index.phtml 
+<?php
+/**
+ * module/Admin/view/interpreters-office/admin/judges/index.phtml
  * view script for languages admin main page
- */   
+ */
 $this->headTitle($this->title);
 ?>
 <h2>judges</h2>
 <?php
 $messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',],false); endif;
+if ($messenger->hasSuccessMessages()) : 
+    echo $messenger->render('success', ['alert','alert-success',], false); 
+endif;
 
 if (! $this->judges): ?>
 <div class="alert alert-warning">There are no judges in your database. Go to <a href="/admin/judges/add">add</a> to start adding them.</div>
-<?php 
-return; endif; 
+<?php
+return; 
+endif; 
 ?>
 <ul id="judges-list" class="list-group" style="max-width:400px">
-    <?php 
+<?php 
 foreach ($this->judges as $entity): ?>
     <li class="list-group-item">
         <a href="<?php echo $this->url('judges/edit',['id'=>$entity->getId()]) ?>"><?php 

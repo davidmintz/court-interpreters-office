@@ -14,13 +14,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class HatRepository extends EntityRepository
 {
-    
+
     /**
      * returns Hat entities for Person form's select element.
-     * 
-     * this excludes the Hat entities that correspond to subtypes of the 
+     *
+     * this excludes the Hat entities that correspond to subtypes of the
      * Person entity
-     * 
+     *
      * @return array
      */
     public function getHatsForPersonForm()
@@ -31,5 +31,4 @@ class HatRepository extends EntityRepository
         $query = $this->getEntityManager()->createQuery($dql);
         return $query->getResult();
     }
-    
 }

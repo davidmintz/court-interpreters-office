@@ -74,14 +74,16 @@ class IndexController extends AbstractActionController
         // the firstname, middlename and lastname elements have already been
         // added and configured.
         // this demonstrates that we can add more after the fact
-        $element = new \DoctrineModule\Form\Element\ObjectSelect('hat',
-        [
+        $element = new \DoctrineModule\Form\Element\ObjectSelect(
+            'hat',
+            [
             'object_manager' => $em,
             'target_class' => 'InterpretersOffice\Entity\Hat',
             'property' => 'name',
             'label' => 'hat',
             'display_empty_item' => true,
-        ]);
+            ]
+        );
         $filter = $form->getInputFilter();
         //\Zend\Debug\Debug::dump(get_class_methods($filter));
         $filter->add([
@@ -107,7 +109,7 @@ class IndexController extends AbstractActionController
             $person = new \InterpretersOffice\Entity\Person();
             $form->bind($person);
             $form->setData($data);
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $viewModel;
             }
             $em->persist($person);

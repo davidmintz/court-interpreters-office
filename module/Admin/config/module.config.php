@@ -86,8 +86,8 @@ return [
                             ],
                         ],
                     ],
-                    
-                    /** @todo this will have to be moved or copied to a 
+
+                    /** @todo this will have to be moved or copied to a
                      * non-admin controller but this is convenient for now
                      */
                     'courtrooms' => [
@@ -125,7 +125,7 @@ return [
                             ],
                         ],
                     ],
-                    
+
                 ],
             ],
             'event-types' => [
@@ -140,7 +140,7 @@ return [
                     ],
                 ],
                 'child_routes' => [
-                    
+
                     'edit' => [
                         'type' => Segment::class,
                         'options' => [
@@ -169,7 +169,7 @@ return [
                     ],
                 ],
                 'child_routes' => [
-                    'add' => [  
+                    'add' => [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/add',
@@ -206,7 +206,7 @@ return [
                     ],
                 ],
                 'child_routes' => [
-                    'add' => [  
+                    'add' => [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/add',

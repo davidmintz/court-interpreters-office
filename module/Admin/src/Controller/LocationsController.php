@@ -57,12 +57,13 @@ class LocationsController extends AbstractActionController
      * @see InterpretersOffice\Controller\Factory\SimpleEntityControllerFactory
      */
     public function __construct(
-            EntityManagerInterface $entityManager,
-            FormFactoryInterface $formFactory, $shortName = null)
-    {
+        EntityManagerInterface $entityManager,
+        FormFactoryInterface $formFactory,
+        $shortName = null
+    ) {
+
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
-        
     }
     /**
      * index action.
@@ -77,69 +78,71 @@ class LocationsController extends AbstractActionController
            // echo "$id is our id!";
            // return a list of that type
         }
-        $view = new ViewModel(compact('locationTypes')); 
-        return $view->setVariables(['title'=>'locations']);
+        $view = new ViewModel(compact('locationTypes'));
+        return $view->setVariables(['title' => 'locations']);
     }
     /**
      * adds a new Location.
      * @todo refactor, start passing some sort of context (query?) parameter to
-     * our form so it can know what option data to fetch for the select 
+     * our form so it can know what option data to fetch for the select
      * elements
      * @return ViewModel
      */
     public function addAction()
     {
-        
+
         $entity = new Location();
-        
+
         $form = $this->getForm(
-                Location::class, [
+            Location::class,
+            [
                     'object' => $entity,
                     'action' => 'create',
-                    'form_context' => $this->params()->fromQuery('form_context','locations')
-                    ])
+                    'form_context' => $this->params()->fromQuery('form_context', 'locations')
+            ]
+        )
                ->bind($entity);
 
         $viewModel = (new ViewModel([
-            'form' => $form, 
-            'title' => 'add a location',          
+            'form' => $form,
+            'title' => 'add a location',
             ]))
             ->setTemplate('interpreters-office/admin/locations/form.phtml');
 
         $request = $this->getRequest();
-       
-        
+
+
         if ($request->isPost()) {
             $json = $request->isXmlHttpRequest();
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $json ? new JsonModel(
-                     [
+                    [
                          'valid' => false,
                           'id'   => null,
                          'validationErrors' => $form->getMessages(),
                      ]
                 ) : $viewModel;
             }
-            
+
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
             if ($json) {
                 return new JsonModel(
-                     [
+                    [
                         'valid' => true,
                         'validationErrors' => null,
                         'entity'   => [
                             'name' => $entity->getName(),
                             'id'   => $entity->getId(),
                             'type' => (string) $entity->getType(),
-                        ],                    
+                        ],
                      ]
                 );
             }
             $this->flashMessenger()
                   ->addSuccessMessage("The location  <strong>{$entity->getName()}</strong> has been added.");
-            $this->redirect()->toRoute('locations');            
+            $this->redirect()->toRoute('locations');
         }
 
         return $viewModel;
@@ -156,27 +159,29 @@ class LocationsController extends AbstractActionController
             ->setVariables(['title' => 'edit a location']);
 
         $id = $this->params()->fromRoute('id');
-        
-        if (!$id) { // get rid of this, since it will otherwise be 404?
+
+        if (! $id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
 
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Location', $id);
-        if (!$entity) {
+        if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
         } else {
             $viewModel->id = $id;
         }
 
-        $form = $this->getForm(Location::class,
-                ['object' => $entity, 'action' => 'update'])
+        $form = $this->getForm(
+            Location::class,
+            ['object' => $entity, 'action' => 'update']
+        )
                ->bind($entity);
         $viewModel->form = $form;
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -189,11 +194,11 @@ class LocationsController extends AbstractActionController
     }
     /**
      * gets courtrooms located at a courthouse
-     * 
-     * returns as JSON data the courtrooms whose parent courthouse 
+     *
+     * returns as JSON data the courtrooms whose parent courthouse
      * id is submitted as a route parameter. for populating select elements
      * via xhr.
-     * 
+     *
      * @return JsonModel
      */
     public function courtroomsAction()

@@ -32,13 +32,13 @@ class UserLoader implements FixtureInterface
                 ->setEmail('john_somebody@nysd.uscourts.gov')
                 ->setActive(true)
                 ->setHat(
-                     $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+                    $objectManager->getRepository('InterpretersOffice\Entity\Hat')
                         ->findOneBy(['name' => 'Law Clerk'])
                 );
         $another_user->setRole(
-               $objectManager->getRepository('InterpretersOffice\Entity\Role')
+            $objectManager->getRepository('InterpretersOffice\Entity\Role')
                 ->findOneBy(['name' => 'submitter'])
-            )
+        )
             ->setActive(true)
             ->setPerson($person)
             ->setPassword('gack!')

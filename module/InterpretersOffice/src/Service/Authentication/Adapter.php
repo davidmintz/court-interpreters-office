@@ -43,29 +43,30 @@ class Adapter extends ObjectRepository
     *
     * @return Result
     */
-   public function authenticate()
-   {
-       $this->setup();
-       $options = $this->options;
-       $objectManager = $options->getObjectManager();
-       $query = $objectManager->createQuery(
-           "SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p "
-           .'WHERE p.email = :identity OR u.username = :identity')
+    public function authenticate()
+    {
+        $this->setup();
+        $options = $this->options;
+        $objectManager = $options->getObjectManager();
+        $query = $objectManager->createQuery(
+            "SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p "
+            .'WHERE p.email = :identity OR u.username = :identity'
+        )
            ->setParameters([':identity' => $this->identity]);
 
-       $identity = $query->getOneOrNullResult();
+        $identity = $query->getOneOrNullResult();
             // rather than:
             //->getObjectRepository()->findOneBy(array($options->getIdentityProperty() => $this->identity));
 
-        if (!$identity) {
+        if (! $identity) {
             $this->authenticationResultInfo['code'] = \Zend\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
 
             return $this->createAuthenticationResult();
         }
 
-       return $this->validateIdentity($identity);
-   }
+        return $this->validateIdentity($identity);
+    }
 
     /**
      * validates the identity.
@@ -76,9 +77,9 @@ class Adapter extends ObjectRepository
      */
     protected function validateIdentity($identity)
     {
-        if (!method_exists($identity, 'getPassword')) {
+        if (! method_exists($identity, 'getPassword')) {
             throw new Exception\UnexpectedValueException(
-                  'validateIdentity() expects an object that implements '
+                'validateIdentity() expects an object that implements '
                     .' a public getPassword() method'
             );
         }
@@ -97,7 +98,7 @@ class Adapter extends ObjectRepository
             return $this->createAuthenticationResult();
         }
         // this is what we've added to the parent method
-        if (!$identity->isActive()) {
+        if (! $identity->isActive()) {
             $this->authenticationResultInfo['code'] = Result::FAILURE_USER_ACCOUNT_DISABLED;
             $this->authenticationResultInfo['messages'][] = 'User account is disabled (inactive).';
 

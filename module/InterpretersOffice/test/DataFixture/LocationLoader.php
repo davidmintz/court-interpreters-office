@@ -20,7 +20,7 @@ class LocationLoader implements FixtureInterface
             'public area',
             'US Probation office',
         ];
-        foreach ($types as  $type) {
+        foreach ($types as $type) {
             $locationType = new Entity\LocationType();
             $locationType->setType($type)->setComments('');
             $objectManager->persist($locationType);

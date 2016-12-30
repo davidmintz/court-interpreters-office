@@ -225,7 +225,7 @@ class Location
     {
         $this->active = $active;
     }
-    
+
     /**
      * get 'active' property.
      *
@@ -235,10 +235,10 @@ class Location
     {
         return $this->active;
     }
-    
+
     /**
      * returns a string representation of the entity
-     * 
+     *
      * @return string
      */
     public function __toString()

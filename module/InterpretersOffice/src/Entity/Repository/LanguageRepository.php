@@ -40,7 +40,7 @@ class LanguageRepository extends EntityRepository
 
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
-        if (!count($paginator)) {
+        if (! count($paginator)) {
             return null;
         }
         $paginator->setCurrentPageNumber($page)

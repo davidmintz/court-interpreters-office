@@ -12,47 +12,46 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class LocationRepository extends EntityRepository
 {
-    
+
     /**
      * returns all the "parent" locations (those that are not nested in another).
-     * 
+     *
      * @return array
      */
     public function getParentLocations()
     {
         $query = $this->getEntityManager()->createQuery(
-        'SELECT l FROM InterpretersOffice\Entity\Location l '
-         .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC'
+            'SELECT l FROM InterpretersOffice\Entity\Location l '
+            .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC'
         );
         return $query->getResult();
     }
     /**
      * gets all the locations of type 'courthouse'
-     * 
-     * useful for populating the location form in the context 
+     *
+     * useful for populating the location form in the context
      * of the "add judge" form
-     * 
+     *
      * @return array
      */
     public function getCourthouses()
-    {   
+    {
          $qb = $this->createQueryBuilder("l")
             ->join('l.type', 't')
             ->where('t.type = :type')
-            ->setParameter('type','courthouse')
-            ->addOrderBy('l.name','ASC');//->addOrderBy('l.name','ASC');
+            ->setParameter('type', 'courthouse')
+            ->addOrderBy('l.name', 'ASC');//->addOrderBy('l.name','ASC');
         $query = $qb->getQuery();
         return $query->getResult();
-        
     }
-    
+
     /**
      * gets all the courtrooms whose parent is $parent_id
-     * 
-     * not yet in use. may be handy later for using xhr to repopulate 
-     * context-sensitive location dropdowns, in which case we should probably 
+     *
+     * not yet in use. may be handy later for using xhr to repopulate
+     * context-sensitive location dropdowns, in which case we should probably
      * change hydration mode to array so it can be json_encoded
-     * 
+     *
      * @param int $parent_id
      * @return array
      */
@@ -62,13 +61,12 @@ class LocationRepository extends EntityRepository
                 . 'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
         $query = $this->getEntityManager()->createQuery($dql)
                 ->setParameter('parent_id', $parent_id);
-        
+
         return $query->getResult();
-        
     }
     /**
      * returns all the courthouses and courtrooms
-     * 
+     *
      * @return array of Location entities
      */
     public function getJudgeLocations()
@@ -78,8 +76,8 @@ class LocationRepository extends EntityRepository
             ->join('l.type', 't')
             ->leftJoin('l.parentLocation', 'p')
             ->where('t.type IN (:types)')
-            ->setParameter('types',['courthouse','courtroom'])
-            ->addOrderBy('p.name','DESC')->addOrderBy('l.name','ASC');
+            ->setParameter('types', ['courthouse','courtroom'])
+            ->addOrderBy('p.name', 'DESC')->addOrderBy('l.name', 'ASC');
         $query = $qb->getQuery();
         return $query->getResult();
     }

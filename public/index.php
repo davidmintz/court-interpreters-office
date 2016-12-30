@@ -21,7 +21,7 @@ if (php_sapi_name() === 'cli-server') {
 // Composer autoloading
 include __DIR__.'/../vendor/autoload.php';
 
-if (!class_exists(Application::class)) {
+if (! class_exists(Application::class)) {
     throw new RuntimeException(
         "Unable to load application.\n"
         ."- Type `composer install` if you are developing locally.\n"

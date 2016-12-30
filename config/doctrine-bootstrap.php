@@ -15,7 +15,10 @@ use Doctrine\ORM\EntityManager;
 //$reader = new AnnotationReader();
 
 // does not work:
-AnnotationRegistry::registerAutoloadNamespace('Zend\Form\Annotation', __DIR__.'/../vendor/zendframework/zend-form/src/Annotation');
+AnnotationRegistry::registerAutoloadNamespace(
+    'Zend\Form\Annotation',
+    __DIR__.'/../vendor/zendframework/zend-form/src/Annotation'
+);
 /* does work: */
 $path = __DIR__.'/../vendor/zendframework/zend-form/src/Annotation/';
 $files = glob("$path/*php");

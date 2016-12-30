@@ -34,9 +34,9 @@ class JudgeLoader implements FixtureInterface
             ->setLastname('Daniels')
             ->setActive(true)
             ->setDefaultLocation(
-                   $objectManager->getRepository('InterpretersOffice\Entity\Location')
+                $objectManager->getRepository('InterpretersOffice\Entity\Location')
                         ->findOneBy(['name' => '11A'])
-             );
+            );
 
         $objectManager->persist($daniels);
         $objectManager->flush();

@@ -126,8 +126,8 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setCreatedBy($user)
             ->setModifiedBy($user)
             ->addInterpretersAssigned(
-                 (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
-             )
+                (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
+            )
              ->addDefendant($defendant); //->setJudge($judge);
 
         $this->expectException(\RuntimeException::class);

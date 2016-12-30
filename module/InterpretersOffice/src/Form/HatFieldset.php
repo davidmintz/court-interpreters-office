@@ -35,7 +35,6 @@ class HatFieldset extends Fieldset implements ObjectManagerAwareInterface
             'attributes' => ['id' => 'name'],
              'options' => ['label' => 'Name of Hat'],
             ]
-
         );
 
         $this->add([
@@ -43,8 +42,7 @@ class HatFieldset extends Fieldset implements ObjectManagerAwareInterface
             'name' => 'anonymous',
             'attributes' => ['id' => 'anonymous'],
             'options' => ['label' => 'allow anonymous?'],
-            ]
-        );
+            ]);
         $this->objectManager = $objectManager;
     }
 }

@@ -21,7 +21,7 @@ return [
                                 return md5($string);
                             }, 'numArgs' => 1],
                         ],
-                    ],
+                      ],
                  ];
 
                  return \Doctrine\DBAL\DriverManager::getConnection($params, $config);

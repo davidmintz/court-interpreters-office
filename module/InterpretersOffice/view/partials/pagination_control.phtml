@@ -1,37 +1,40 @@
-<?php 
+<?php
 /**
  * module/InterpretersOffice/view/application/defendants/pagination_control.phtml
- * pagination contro, partial view script for presented a page of paginated query 
+ * pagination contro, partial view script for presented a page of paginated query
  * results. based on:
  * https://zf2.readthedocs.org/en/latest/tutorials/tutorial.pagination.html
  */
 
-if ($this->pageCount < 2):  return; endif;
+if ($this->pageCount < 2) :
+    return;
+endif;
 
-$url = $this->url($this->route, isset($params) ? $params: []);?>
+$url = $this->url($this->route, isset($params) ? $params : []);?>
 <nav>
 <ul class="pagination">
-<?php if ($this->first < $this->firstPageInRange ) : ?>
+<?php if ($this->first < $this->firstPageInRange) : ?>
 <li><a href="<?php echo "$url?page=$this->first"  ?>">&lt;&lt;</a></li>
 <?php endif?>
-<?php if (isset($this->previous)): ?>
+<?php if (isset($this->previous)) : ?>
   <li><a title="previous page" href="<?php echo "$url?page=$this->previous" ?>">&lt;</a></li>
-<?php else: ?><li class="disabled"><a href="#">&lt;</a></li>
+<?php else :
+?><li class="disabled"><a href="#">&lt;</a></li>
 <?php endif; ?>
-<?php foreach ($this->pagesInRange as $page): ?>
-  <?php if ($page != $this->current): ?>
+<?php foreach ($this->pagesInRange as $page) : ?>
+    <?php if ($page != $this->current) : ?>
     <li><a href="<?php echo "$url?page=$page"; ?>"><?php echo $page; ?></a></li>
-  <?php else: ?>
+    <?php else : ?>
     <li class="active"><a href="#"><?php echo $page; ?></a></li>
-  <?php endif; ?>
+    <?php endif; ?>
 <?php endforeach; ?>
 <!-- Next page link -->
-<?php if (isset($this->next)): ?>
+<?php if (isset($this->next)) : ?>
   <li><a href="<?php echo "$url?page={$this->next}"; ?>">&gt;</a></li>
-<?php else: ?>
+<?php else : ?>
   <li class="disabled"><a href="#">&gt;</a></li>
 <?php endif; ?>
-<?php if ($this->last > $this->lastPageInRange): ?>
+<?php if ($this->last > $this->lastPageInRange) : ?>
 <li><a title="last page of results" href="<?php echo "$url?page=$this->last"?>">&gt;&gt;</a></li>
 <?php endif?>
 </ul>

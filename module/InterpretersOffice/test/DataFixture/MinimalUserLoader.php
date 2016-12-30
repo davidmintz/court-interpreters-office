@@ -29,23 +29,23 @@ class MinimalUserLoader implements FixtureInterface
             ->setFirstname('Susie')
             ->setLastname('Somebody')
             ->setHat(
-                 $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+                $objectManager->getRepository('InterpretersOffice\Entity\Hat')
                     ->findOneBy(
-                            [
+                        [
                                 //'name'=>'staff, Interpreters Office',
                                 'name' => 'staff Court Interpreter',
 
                             ]
-                     )
+                    )
             )
             ->setEmail('susie_somebody@nysd.uscourts.gov');
         $objectManager->persist($person);
         // create a user entity
         $user = new Entity\User();
         $user->setPerson($person)->setRole(
-                  $objectManager->getRepository('InterpretersOffice\Entity\Role')
+            $objectManager->getRepository('InterpretersOffice\Entity\Role')
                          ->findOneBy(['name' => 'manager'])
-         )->setUsername('susie')
+        )->setUsername('susie')
            ->setPassword('boink')
            ->setActive(true);
         $objectManager->persist($user);

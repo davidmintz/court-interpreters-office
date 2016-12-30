@@ -1,8 +1,8 @@
-<?php 
-/** 
- * module/Admin/view/interpreters-office/admin/locations/form.phtml 
+<?php
+/**
+ * module/Admin/view/interpreters-office/admin/locations/form.phtml
  * view script for displaying locations. work in progress.
- */ 
+ */
 $this->headTitle($this->title);
 ?>
 
@@ -10,14 +10,17 @@ $this->headTitle($this->title);
 
 <?php
 $messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',],false); endif;
+if ($messenger->hasSuccessMessages()) :
+    echo $messenger->render('success', ['alert','alert-success',], false);
+endif;
 ?>
 <div class="list-group" style="max-width: 400px">
 <p>Choose a type to display</p>
 <ul id="locations-list" class="list-group">
 <?php foreach ($this->locationTypes as $t) : ?>
-<li class="list-group-item"><span class="badge"><?php echo $t['total']?></span>
-    <a href="<?php echo $this->url('locations/type',['id'=>$t['id']])?>"><?php echo $this->escapeHtml($t['type']) ?></a>
+<li class="list-group-item"><span class="badge"><?php echo $t['total']?></span><?php
+    $url = $this->url('locations/type', ['id' => $t['id']]);
+    ?><a href="<?php echo $url?>"<?php echo $this->escapeHtml($t['type']) ?></a>
   </li>
 <?php endforeach ?>
 </ul>

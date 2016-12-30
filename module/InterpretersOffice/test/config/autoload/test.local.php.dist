@@ -4,20 +4,22 @@
 $path = __DIR__.'/../../data/office.sqlite';
 
 return [
-    
+
     'service_manager' => [
         'factories' => [
-             'doctrine.connection.orm_default' => function() use ($path) {
+             'doctrine.connection.orm_default' => function () use ($path) {
                  $config = new \Doctrine\DBAL\Configuration();
                  $params = [
                       'driver' => 'pdo_sqlite',
                       'path' => $path,
                        // we can do this if we need it:
-                      'driverOptions' =>[
+                      'driverOptions' => [
                         'userDefinedFunctions' => [
-                            'md5' => ['callback' => function($string) { return md5($string); },'numArgs' => 1,]
+                            'md5' => ['callback' => function ($string) {
+                                return md5($string);
+                            },'numArgs' => 1,]
                         ],
-                    ],
+                      ],
                  ];
                  return \Doctrine\DBAL\DriverManager::getConnection($params, $config);
              }
@@ -40,6 +42,3 @@ return [
     ],
     // */
 ];
-
-
- 

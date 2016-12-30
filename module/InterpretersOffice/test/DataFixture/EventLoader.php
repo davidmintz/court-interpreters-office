@@ -55,8 +55,8 @@ class EventLoader implements FixtureInterface
             ->setLocation($location)
             ->setModifiedBy($user)
             ->addInterpretersAssigned(
-                 (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
-             )
+                (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
+            )
              ->addDefendant($defendant);
 
         $objectManager->persist($event);

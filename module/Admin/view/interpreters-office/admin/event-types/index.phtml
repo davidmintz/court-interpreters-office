@@ -1,27 +1,28 @@
 <?php
-/** 
- * 
- * module/Admin/view/interpreters-office/admin/event-types/index.phtml 
- *
+/**
+ * module/Admin/view/interpreters-office/admin/event-types/index.phtml.
  */
 $this->headTitle($this->title);
 ?>
 <h2>event-types</h2>
 <?php
 $messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) : echo $messenger->render('success',['alert','alert-success',],false); endif;
-if (! $this->eventTypes ) :?>
+if ($messenger->hasSuccessMessages()) :
+    echo $messenger->render('success', ['alert', 'alert-success'], false);
+endif;
+if (! $this->eventTypes) :?>
 <div class="alert alert-warning alert-dismissable">
-    There are no event-types in your database. You should go to <a href="<?php echo $this->url('event-types',['action'=>'add']) ?>">/admin/event-types/add</a> 
+    There are no event-types in your database. You should go to <a href="<?php echo $this->url('event-types', ['action' => 'add']) ?>">/admin/event-types/add</a> 
     to starting adding some.
 </div>
-<?php return; endif;?>
+<?php return;
+endif; ?>
 
 <ul id="event-types-list" class="list-group" style="max-width:400px">
-    <?php 
-foreach ($this->eventTypes as $entity): ?>
-    <li class="list-group-item">
-        <a href="<?php echo $this->url('event-types/edit',['id'=>$entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
-    </li>
-<?php endforeach ?>
+    <?php
+    foreach ($this->eventTypes as $entity) : ?>
+            <li class="list-group-item">
+                <a href="<?php echo $this->url('event-types/edit', ['id' => $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
+            </li>
+        <?php                                                                                                     endforeach ?>
 </ul>

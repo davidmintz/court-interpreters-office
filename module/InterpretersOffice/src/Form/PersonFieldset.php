@@ -85,7 +85,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'class' => 'form-control phone',
                 'id' => 'officePhone',
              ],
-            
+
         ],
         'mobile_phone' => [
             'type' => 'Zend\Form\Element\Text',
@@ -99,7 +99,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'class' => 'form-control phone',
                 'id' => 'mobilePhone',
              ],
-            
+
         ],
         'active' => [
             'type' => 'Zend\Form\Element\Checkbox',
@@ -123,23 +123,23 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             'allow_empty' => true,
         ]
     ];
-    
+
     /**
      * name of the fieldset.
-     * 
+     *
      * if we are a subclass, this needs to be overriden
-     * 
+     *
      * @var string
      */
     protected $fieldset_name = 'person';
 
     /**
      * the action: either 'update' or 'create'
-     * 
+     *
      * @var string
      */
     protected $action;
-    
+
     /**
      * constructor.
      *
@@ -151,8 +151,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         if (! isset($options['action'])) {
             throw new \RuntimeException('missing "action" option in PersonFieldset constructor');
         }
-        if (! in_array($options['action'],['create','update'])) {
-            throw new \RuntimeException('invalid "action" option in PersonFieldset constructor');   
+        if (! in_array($options['action'], ['create','update'])) {
+            throw new \RuntimeException('invalid "action" option in PersonFieldset constructor');
         }
         $this->action = $options['action'];
         unset($options['action']);
@@ -165,26 +165,25 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         foreach ($this->elements as $element) {
             $this->add($element);
         }
-        
-        $this->addHatElement();
 
+        $this->addHatElement();
     }
-    
+
     /**
-     * 
+     *
      * adds the Hat element to the form.
-     * 
-     * If we are a Person, we need the Hat element 
+     *
+     * If we are a Person, we need the Hat element
      * If we are a Judge, the Hat is pre-determined
      * If we are an Interpreter, there are only two kinds of Hat.
      * Subclasses should override this to provide an appropriately configured
-     * element 
+     * element
      */
     public function addHatElement()
     {
-        
+
         $this->add(
-        [
+            [
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'hat',
             'required' => true,
@@ -203,14 +202,14 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'class' => 'form-control',
                 'id' => 'hat',
              ],
-        ]);
-
+            ]
+        );
     }
-    
-    
+
+
     /**
      * returns specification for input filter (per interface).
-     * 
+     *
      * @todo unique object validator thing for email
      *
      * @return array
@@ -275,10 +274,10 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'required' => false,
                 'allow_empty' => true,
                 'validators' => [
-                    // 
-                    //if we want to constrain the domain to values found in a 
+                    //
+                    //if we want to constrain the domain to values found in a
                     //config, this would be a good place to set that up
-                    // 
+                    //
                     [
                         'name' => 'Zend\Validator\EmailAddress',
                         'options' => [
@@ -289,7 +288,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                         ],
                         'break_chain_on_failure' => true,
                     ],
-                    
+
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
@@ -302,7 +301,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     'name' => 'NotEmpty',
                        'options' => [
                             'messages' => [
-                                Validator\NotEmpty::IS_EMPTY => 
+                                Validator\NotEmpty::IS_EMPTY =>
                                     '"active" setting is required'
                             ],
                         ]
@@ -365,10 +364,9 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
         ];
-        
-        // validators for Hat element depend on class of current instance
-        if (get_class($this) == PersonFieldset::class)  {
 
+        // validators for Hat element depend on class of current instance
+        if (get_class($this) == PersonFieldset::class) {
             $spec['hat'] = [
                 'validators' => [
                     [
@@ -378,7 +376,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ],
                     [
                         'name' => 'InArray',
-                        'options' => [ 
+                        'options' => [
                             'messages' => [
                                 Validator\InArray::NOT_IN_ARRAY => 'invalid value for hat',
                              ],
@@ -394,7 +392,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             'object_manager' => $this->objectManager,
             'use_context' => true,
         ];
-        
+
         if ('create' == $this->action) {
             // use the NoObjectExists validator
             $validatorClass = NoObjectExistsValidator::class;
@@ -404,7 +402,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ];
             // .. for the hat and email fields
             $validatorOptions['fields'] = ['hat','email'];
-            
+
             $spec['email']['validators'][] = [
                 'name' => $validatorClass,
                 'options' => $validatorOptions,
@@ -421,23 +419,22 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'options' => $validatorOptions,
                 'break_chain_on_failure' => true,
             ];
-            
         } else { // action is update, use the UniqueObject validator
-            
+
             $validatorClass = UniqueObject::class;
-            
+
             $validatorOptions['messages'] = [
                 UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
                 'there is already a person in your database with this email address and "active" setting'
             ];
             $validatorOptions['fields'] = ['hat','email'];
-            
+
             $spec['email']['validators'][] = [
                 'name' => $validatorClass,
                 'options' => $validatorOptions,
                 'break_chain_on_failure' => true,
             ];
-            
+
             // ... and again, for the active and email fields
             $validatorOptions['messages'] = [
                 UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
@@ -453,15 +450,15 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         return $spec;
     }
     /**
-     * gets a "haystack" out of a Doctrine ObjectSelect 
+     * gets a "haystack" out of a Doctrine ObjectSelect
      * for use by an InArray validator
-     * 
+     *
      * @param string $elementName
      * @return Array
      */
     public function getObjectSelectElementHaystack($elementName = 'hat')
     {
         $data = $this->get($elementName)->getValueOptions();
-        return  array_column($data,'value');
+        return  array_column($data, 'value');
     }
 }

@@ -26,12 +26,12 @@ final class FixtureManager
 
         ];
         $isDevMode = true;
-        $connectionParams = array(
+        $connectionParams = [
             'driver' => 'pdo_sqlite',
             //'user'     => $config['user'],
             //'password' => $config['password'],
             'path' => 'module/InterpretersOffice/test/data/office.sqlite',
-        );
+        ];
 
         $config = Setup::createConfiguration($isDevMode);
         $driver = new AnnotationDriver(new AnnotationReader(), $paths);

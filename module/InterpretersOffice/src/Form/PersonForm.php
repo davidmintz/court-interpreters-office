@@ -1,4 +1,4 @@
-<?php 
+<?php
 /** module/InterpretersOffice/src/Form/PersonForm.php */
 namespace InterpretersOffice\Form;
 
@@ -15,35 +15,35 @@ use Zend\InputFilter;
  */
 class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
 {
-	use CsrfElementCreationTrait;
-    
-    /** 
+    use CsrfElementCreationTrait;
+
+    /**
      * name of the form
-     * 
+     *
      * @var string
      */
     protected $formName = 'person-form';
-    
+
     /**
      * name of Fieldset class to instantiate and add to the form.
-     * 
-     * the idea is that subclasses can override this. 
-     * 
+     *
+     * the idea is that subclasses can override this.
+     *
      * @var string
      */
     protected $fieldsetClass = PersonFieldset::class;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param ObjectManager $objectManager
      * @param Array $options
      */
-	public function __construct(ObjectManager $objectManager,$options = null)
-	{		
-        parent::__construct($this->formName,$options);
-        $fieldset = new $this->fieldsetClass($objectManager,$options);
-        $this->add($fieldset);		
+    public function __construct(ObjectManager $objectManager, $options = null)
+    {
+        parent::__construct($this->formName, $options);
+        $fieldset = new $this->fieldsetClass($objectManager, $options);
+        $this->add($fieldset);
         $this->addCsrfElement();
-	}
-}    
+    }
+}

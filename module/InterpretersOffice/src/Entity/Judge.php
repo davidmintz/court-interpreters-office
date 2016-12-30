@@ -106,13 +106,13 @@ class Judge extends Person
 
     /**
      * lifecycle callback to prevent incorrect hat and location-type on update event
-     * 
+     *
      * proxies to onPrePersist()
-     * 
+     *
      * @ORM\PreUpdate
      */
 
-    function onPreUpdate()
+    public function onPreUpdate()
     {
         return $this->onPrePersist();
     }
@@ -128,13 +128,15 @@ class Judge extends Person
     {
         if ((string) $this->getHat() !== 'Judge') {
             throw new \RuntimeException(
-              'Judge entity must have Hat type "Judge"'
-           );
+                'Judge entity must have Hat type "Judge"'
+            );
         }
 
-        if ($this->getDefaultLocation() !== null ) {
-            if (! in_array((string)$this->getDefaultLocation()->getType() ,
-                ['courtroom', 'courthouse'] )) {
+        if ($this->getDefaultLocation() !== null) {
+            if (! in_array(
+                (string)$this->getDefaultLocation()->getType(),
+                ['courtroom', 'courthouse']
+            )) {
                 throw new \RuntimeException(
                     'Judge entity must have default location of type "courtroom" or "courthouse"'
                 );

@@ -47,21 +47,21 @@ class AuthController extends AbstractActionController
     }
     /**
      * login action.
-     * 
-     * on a GET request or POSTed failed authentication, returns a 
+     *
+     * on a GET request or POSTed failed authentication, returns a
      * view; otherwise, redirect to admin main page or to main front
      * page, depending on authenticated user's role.
-     * 
+     *
      * @return ViewModel
      */
     public function loginAction()
     {
         $form = new LoginForm();
-        
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return new ViewModel(['form' => $form]);
             }
             $data = $form->getData();
@@ -71,21 +71,20 @@ class AuthController extends AbstractActionController
             $result = $this->auth->authenticate();
             $event_params = ['result' => $result, 'identity' => $data['identity']];
             if (! $result->isValid()) {
-
-                $this->events->trigger(__FUNCTION__,$this,$event_params);
+                $this->events->trigger(__FUNCTION__, $this, $event_params);
                 return new ViewModel(
                     ['form' => $form, 'status' => $result->getCode()]
                 );
             }
             $user = $this->auth->getIdentity();
             // managers and administrators go to /admin
-            if (in_array((string)$user->getRole(),['administrator','manager'])) {
+            if (in_array((string)$user->getRole(), ['administrator','manager'])) {
                 $route = 'admin';
             } else {
                 // everyone else goes to the main page
                 $route = 'home';
             }
-            $this->events->trigger(__FUNCTION__,$this,$event_params);
+            $this->events->trigger(__FUNCTION__, $this, $event_params);
             $this->redirect()->toRoute($route);
         }
 
@@ -105,7 +104,7 @@ class AuthController extends AbstractActionController
         } else {
             $this->redirect()->toRoute('home');
         }
-        $this->events->trigger(__FUNCTION__,$this,['user'=>$user]);
+        $this->events->trigger(__FUNCTION__, $this, ['user' => $user]);
         $this->redirect()->toRoute('auth');
     }
 }

@@ -99,15 +99,15 @@ class User
       *
       * @var ArrayCollection
       */
-     protected $judges;
+    protected $judges;
 
      /**
       * constructor.
       */
-     public function __construct()
-     {
-         $this->judges = new ArrayCollection();
-     }
+    public function __construct()
+    {
+        $this->judges = new ArrayCollection();
+    }
 
     /**
      * verifies password.
@@ -306,8 +306,8 @@ class User
     {
         if ($this->getPerson()->getEmail() === null) {
             throw new \RuntimeException(
-              'A user entity\'s related Person\'s email property cannot be null'
-           );
+                'A user entity\'s related Person\'s email property cannot be null'
+            );
         }
     }
 }

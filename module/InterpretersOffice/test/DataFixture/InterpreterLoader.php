@@ -19,7 +19,7 @@ class InterpreterLoader implements FixtureInterface
             ->setDob(new \DateTime('1958-05-26'))
             ->setHat(
                 $objectManager->getRepository('InterpretersOffice\Entity\Hat')
-            ->findOneBy(['name' => 'staff Court Interpreter'])
+                ->findOneBy(['name' => 'staff Court Interpreter'])
             );
         $spanish = $objectManager->getRepository('InterpretersOffice\Entity\Language')
             ->findOneBy(['name' => 'Spanish']);

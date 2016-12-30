@@ -46,23 +46,27 @@ class ParentLocation extends AbstractValidator
      */
     public function __construct($options)
     {
-        if (!key_exists('parentLocations', $options)) {
+        if (! key_exists('parentLocations', $options)) {
             throw new \Exception('missing required parentLocation option');
         }
-        if (!key_exists('locationTypes', $options)) {
+        if (! key_exists('locationTypes', $options)) {
             throw new \Exception('missing required locationTypes option');
         }
-        if (!is_array($options['parentLocations'])) {
+        if (! is_array($options['parentLocations'])) {
             throw new \InvalidArgumentException(
-                sprintf('parentLocations should be array, got %s',
-                        gettype($options['parentLocations']))
+                sprintf(
+                    'parentLocations should be array, got %s',
+                    gettype($options['parentLocations'])
+                )
             );
         }
-        if (!is_array($options['locationTypes'])) {
+        if (! is_array($options['locationTypes'])) {
             throw new \InvalidArgumentException(
-               sprintf('locationTypes should be an array, got %s',
-                       gettype($options['locationTypes']))
-             );
+                sprintf(
+                    'locationTypes should be an array, got %s',
+                    gettype($options['locationTypes'])
+                )
+            );
         }
 
         $this->parentLocations = array_column($options['parentLocations'], null, 'value');
@@ -96,31 +100,32 @@ class ParentLocation extends AbstractValidator
      */
     public function isValid($value, $context = null)
     {
-        
+
         if (! key_exists($context['parentLocation'], $this->parentLocations)) {
-            $type_of_parent = null;    
+            $type_of_parent = null;
         } else {
             $type_of_parent = key_exists('attributes', $this->parentLocations[$context['parentLocation']]) ?
                 $this->parentLocations[$context['parentLocation']]['attributes']['data-location-type'] : null;
         }
-        
+
         $type_submitted = $this->locationTypes[$value];
 
-        if (in_array($type_submitted,['courtroom','interpreters office', 'holding cell' ]) 
+        if (in_array($type_submitted, ['courtroom','interpreters office', 'holding cell' ])
                 && ! $type_of_parent) {
              $this->error(self::LOCATION_TYPE_MUST_HAVE_PARENT);
 
             return false;
-
         }
-        
-        if ('courtroom' == $type_submitted && ! in_array($type_of_parent,
-                ['jail','courthouse'])) {
+
+        if ('courtroom' == $type_submitted && ! in_array(
+            $type_of_parent,
+            ['jail','courthouse']
+        )) {
             $this->error(self::INVALID_PARENT_TYPE, $type_of_parent);
 
             return false;
         }
-        
+
         if (in_array($type_submitted, ['jail', 'courthouse']) && $type_of_parent) {
             $this->error(self::LOCATION_TYPE_CANNOT_HAVE_PARENT);
 

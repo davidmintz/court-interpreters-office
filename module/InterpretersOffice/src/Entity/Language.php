@@ -69,7 +69,7 @@ class Language
      *
      * @return bool
      */
-    public function is_federally_certified()
+    public function isFederallyCertified()
     {
         return in_array($this->name, [
             'Spanish',

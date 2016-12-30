@@ -23,7 +23,8 @@ class DefendantNameLoader implements FixtureInterface
         ];
         foreach ($names as $name) {
             $entity = (new Entity\DefendantName())->setFullname(
-                $name[0], $name[1]
+                $name[0],
+                $name[1]
             );
             $objectManager->persist($entity);
         }

@@ -69,8 +69,9 @@ class AuthenticationTest extends AbstractControllerTest
         $result = $this->auth->authenticate();
         $this->assertFalse($result->isValid());
         $this->assertEquals(
-           Authentication\Result::FAILURE_USER_ACCOUNT_DISABLED,
-           $result->getCode());
+            Authentication\Result::FAILURE_USER_ACCOUNT_DISABLED,
+            $result->getCode()
+        );
     }
 
     public function testAuthenticationFailsIfPasswordIsWrong()
@@ -79,7 +80,9 @@ class AuthenticationTest extends AbstractControllerTest
         $adapter->setIdentity('david@davidmintz.org')->setCredential('not correct');
         $result = $this->auth->authenticate();
         $this->assertFalse($result->isValid());
-        $this->assertEquals(Authentication\Result::FAILURE_CREDENTIAL_INVALID,
-                $result->getCode());
+        $this->assertEquals(
+            Authentication\Result::FAILURE_CREDENTIAL_INVALID,
+            $result->getCode()
+        );
     }
 }

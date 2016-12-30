@@ -1,22 +1,22 @@
-<?php 
-/** 
-* just a view script for testing and experimenting with shit 
+<?php
+/**
+* just a view script for testing and experimenting with shit
 * this one is intended for use with InterpretersOffice\Controller\IndexController::testAction()
 */
 ?>
 <h1>another test</h1>
 <p>a temporary view script for testing shit.</p>
 
-<?php 
+<?php
 
 $form->prepare();
 
 
-$form->setAttribute('action', $this->url('application',['action'=>'other-test']));
+$form->setAttribute('action', $this->url('application', ['action' => 'other-test']));
 $form->add([
-	'name'=>'submit',
-	'type'=>'Zend\Form\Element\Submit',
-	'attributes' => ['value'=>'submit'],
+    'name' => 'submit',
+    'type' => 'Zend\Form\Element\Submit',
+    'attributes' => ['value' => 'submit'],
 ]);
 
 //$form->setAttribute('method', 'post');
@@ -24,18 +24,18 @@ $form->add([
 $fieldset = $form->get('person-fieldset');
 // Render the opening tag
 echo $this->form()->openTag($form);
-?><div class="form-group"><?php 
+?><div class="form-group"><?php
 echo $this->formLabel($fieldset->get('lastname'));
-echo $this->formElement($fieldset->get('lastname')); 
+echo $this->formElement($fieldset->get('lastname'));
 ?></div> 
 <div class="form-group">
-<?php 
+<?php
 echo $this->formLabel($fieldset->get('firstname'));
-echo $this->formElement($fieldset->get('firstname')); 
+echo $this->formElement($fieldset->get('firstname'));
 
-?>		
+?>      
 </div>
-<?php 
+<?php
 //echo $this->formRow($fieldset->get('middlename')),"<br>";
 echo $this->formSubmit($form->get('submit'));
 echo $this->form()->closeTag();

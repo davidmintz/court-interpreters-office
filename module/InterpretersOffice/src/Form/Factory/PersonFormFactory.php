@@ -10,14 +10,14 @@ use InterpretersOffice\Form\PersonForm;
 
 /**
  * Factory class for PersonForm
- * 
- * @see InterpretersOffice\Form\PersonForm 
- * 
+ *
+ * @see InterpretersOffice\Form\PersonForm
+ *
  */
 class PersonFormFactory implements FactoryInterface
 {
 
-	/**
+    /**
      * implements FactoryInterface.
      *
      * @param ContainerInterface $container
@@ -26,9 +26,10 @@ class PersonFormFactory implements FactoryInterface
      *
      * @return PersonForm
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
 
-    	return new PersonForm (
+        return new PersonForm(
             $container->get('entity-manager')
         );
     }

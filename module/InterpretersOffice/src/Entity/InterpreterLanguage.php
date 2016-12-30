@@ -29,9 +29,11 @@ class InterpreterLanguage
      * @todo a lifecycle callback to ensure certified languages have a boolean
      * $federalCertification set
      */
-    public function __construct(Interpreter $interpreter = null,
-            Language $language = null)
-    {
+    public function __construct(
+        Interpreter $interpreter = null,
+        Language $language = null
+    ) {
+
         if ($interpreter) {
             $this->setInterpreter($interpreter);
         }

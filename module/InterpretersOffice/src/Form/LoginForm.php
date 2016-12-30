@@ -22,7 +22,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
         parent::__construct($options);
         ///*
         $this->add(
-        [
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'identity',
             'options' => [
@@ -33,11 +33,11 @@ class LoginForm extends Form implements InputFilterProviderInterface
                 'placeholder' => 'username or email',
                 'id' => 'identity',
             ],
-        ]
+            ]
         );
         //*/
         $this->add(
-        [
+            [
             'type' => 'Zend\Form\Element\Password',
             'name' => 'password',
             'options' => [
@@ -48,24 +48,23 @@ class LoginForm extends Form implements InputFilterProviderInterface
                 'placeholder' => 'password',
                 'id' => 'password',
             ],
-        ]
+            ]
         );
         $csrf = new \Zend\Form\Element\Csrf('csrf');
         $csrf->setCsrfValidatorOptions(
-         ['messages'=>[            
+            ['messages' => [
             'notSame' => 'security error: form submission failed CSRF token validation',
-        ]]);
-        
-       $this->add($csrf);
-       $inputFilter = $this->getInputFilter();
-       $validatorChain = $inputFilter->get('csrf')->getValidatorChain();
-       $validatorChain->prependByName('NotEmpty', ['messages'=>[
-           'isEmpty'=>'security error: missing CSRF token'
-       ]], true);
-      
-        
+            ]]
+        );
+
+        $this->add($csrf);
+        $inputFilter = $this->getInputFilter();
+        $validatorChain = $inputFilter->get('csrf')->getValidatorChain();
+        $validatorChain->prependByName('NotEmpty', ['messages' => [
+           'isEmpty' => 'security error: missing CSRF token'
+        ]], true);
     }
-            
+
     /**
      * input filter specification.
      *

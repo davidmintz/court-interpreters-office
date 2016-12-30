@@ -21,7 +21,7 @@ class Module
     {
         return include __DIR__.'/../config/module.config.php';
     }
-    
+
     /**
      * {@inheritdoc}
      *
@@ -32,9 +32,9 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $eventManager = $event->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_ROUTE , [$this, 'enforceAuthentication']);
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
     }
-    
+
     /**
      * callback to check authentication on mvc route event.
      *
@@ -53,14 +53,14 @@ class Module
     public function enforceAuthentication(MvcEvent $event)
     {
         $match = $event->getRouteMatch();
-        if (!$match) {
+        if (! $match) {
             return;
         }
         $module = $match->getParam('module');
         if (__NAMESPACE__ == $module) {
             $container = $event->getApplication()->getServiceManager();
             $auth = $container->get('auth');
-            if (!$auth->hasIdentity()) {
+            if (! $auth->hasIdentity()) {
                 $flashMessenger = $container
                         ->get('ControllerPluginManager')
                         ->get('FlashMessenger');
@@ -69,18 +69,19 @@ class Module
             } else {
                 $allowed = ['manager', 'administrator'];
                 $user = $container->get('entity-manager')
-                    ->find('InterpretersOffice\Entity\User',
-                    $auth->getIdentity()->getId()
-                );
+                    ->find(
+                        'InterpretersOffice\Entity\User',
+                        $auth->getIdentity()->getId()
+                    );
                 $role = (string) $user->getRole();
-                if (!in_array($role, $allowed)) {
+                if (! in_array($role, $allowed)) {
                     $flashMessenger = $container
                         ->get('ControllerPluginManager')
                         ->get('FlashMessenger');
                     $flashMessenger->addWarningMessage('Access denied.');
 
                     return $this->getRedirectionResponse($event);
-                } 
+                }
             }
         }
     }

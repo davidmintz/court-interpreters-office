@@ -15,7 +15,7 @@ use Zend\Form\Annotation;
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\EventTypeRepository")
  * @ORM\Table(name="event_types",uniqueConstraints={@ORM\UniqueConstraint(name="unique_event_type",columns={"name"})})
- * 
+ *
  * @Annotation\Name("event-type")
  */
 class EventType
@@ -33,7 +33,7 @@ class EventType
      *
      * @ORM\ManyToOne(targetEntity="EventCategory")
      * @ORM\JoinColumn(nullable=false)
-     * 
+     *
      * @Annotation\Type("Zend\Form\Element\Select")
      * Annotation\Required({"required":"true" })
      * @Annotation\Filter({"name":"StripTags"})
@@ -47,7 +47,7 @@ class EventType
      *                        "options":{"haystack":{"","1","2","3"},
      *                              "messages":{"notInArray":"invalid category"}}})
      * @Annotation\Attributes({"value":"0","class":"form-control"})
-     * 
+     *
      * @see InterpretersOffice\Entity\EventCategory
      */
     protected $category;
@@ -74,9 +74,9 @@ class EventType
 
     /**
      * comments.
-     * 
+     *
      * @Annotation\Attributes({"class":"form-control",
-     * "placeholder":"optional comments about this event-type","type":"textarea", 
+     * "placeholder":"optional comments about this event-type","type":"textarea",
      * "cols":36,"rows":4,})
      * @Annotation\Options({"label":"comments"})
      * @Annotation\Filter({"name":"StringTrim"})
@@ -175,9 +175,9 @@ class EventType
         return $this->category;
     }
     /**
-     * 
+     *
      * returns string representation
-     * 
+     *
      * @return string
      */
     public function __toString()

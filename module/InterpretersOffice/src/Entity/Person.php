@@ -33,7 +33,7 @@ class Person
 {
     /**
      * entity id.
-     * 
+     *
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
@@ -76,21 +76,21 @@ class Person
 
     /**
      * Everyone must where a hat in this life.
-     * 
-     * The Person's Hat property identifies the "hat" that the Person wears, and 
-     * makes it possible to identify and classify people whose names are stored 
-     * in the `people` table. People have been known to change Hats in the course 
-     * of the underlying databases' lifetime. For example, a Law Clerk becomes 
-     * an AUSA who becomes a Judge; a contract interpreter becomes a staff 
-     * interpreter. Our strategy for dealing with this is reincarnation: set the 
-     * former hat-person's active property to <code>false</code> and the new 
-     * hat-person's active property to <code>true</code>. Unless the person has 
-     * zero data history, we can't simply update the hat because that would 
+     *
+     * The Person's Hat property identifies the "hat" that the Person wears, and
+     * makes it possible to identify and classify people whose names are stored
+     * in the `people` table. People have been known to change Hats in the course
+     * of the underlying databases' lifetime. For example, a Law Clerk becomes
+     * an AUSA who becomes a Judge; a contract interpreter becomes a staff
+     * interpreter. Our strategy for dealing with this is reincarnation: set the
+     * former hat-person's active property to <code>false</code> and the new
+     * hat-person's active property to <code>true</code>. Unless the person has
+     * zero data history, we can't simply update the hat because that would
      * falsify the data history.
-     * 
-     * Unique index constraints ensure that no two active people can have the 
-     * same email, and that no two people in the same "hat" can have the same 
-     * email. We are compelled to use this roundabout method because we have to 
+     *
+     * Unique index constraints ensure that no two active people can have the
+     * same email, and that no two people in the same "hat" can have the same
+     * email. We are compelled to use this roundabout method because we have to
      * allow a NULL email address.
      *
      *  @ORM\ManyToOne(targetEntity="Hat")//,fetch="EAGER"
@@ -99,11 +99,11 @@ class Person
      *  @var Hat
      */
     protected $hat;
-    
-    
+
+
     /**
      * the office phone number
-     * 
+     *
      * @ORM\Column(name="office_phone",type="string",nullable=false,length=20,options={"default":""})
      * @var string
      */
@@ -111,7 +111,7 @@ class Person
 
      /**
      * the mobile phone number
-     * 
+     *
      * @ORM\Column(name="mobile_phone",type="string",nullable=false,length=20,options={"default":""})
      * @var string
      */
@@ -128,13 +128,14 @@ class Person
      * @var bool
      */
     protected $active = true;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param Hat the Hat this Person wears
      */
-    public function __construct(Hat $hat = null) {
+    public function __construct(Hat $hat = null)
+    {
         $this->hat = $hat;
     }
 
@@ -290,12 +291,12 @@ class Person
 
         return $this;
     }
-    
+
     /**
      * sets the office phone number
-     * 
+     *
      * @todo deal with formatting/unformatting
-     * 
+     *
      * @param string $officePhone
      * @return Person
      */
@@ -304,10 +305,10 @@ class Person
         $this->officePhone = $officePhone;
         return $this;
     }
-    
+
     /**
      * gets the office phone number
-     * 
+     *
      * @todo deal with formatting/unformatting
      * @return string
      */
@@ -318,9 +319,9 @@ class Person
 
     /**
      * sets the mobile phone number
-     * 
+     *
      * @todo deal with formatting/unformatting
-     * 
+     *
      * @param string $mobilePhone
      * @return Person
      */
@@ -329,10 +330,10 @@ class Person
         $this->mobilePhone = $mobilePhone;
         return $this;
     }
-    
+
     /**
      * gets the mobile phone number
-     * 
+     *
      * @todo deal with formatting/unformatting
      * @return string
      */

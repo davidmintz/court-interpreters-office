@@ -18,26 +18,25 @@ use InterpretersOffice\Form\PersonForm;
  *  Currently, just for making sure the application runs, basic routing is
  *  happening, service container is working, views are rendered, etc.
  */
-class ExampleController extends AbstractActionController 
+class ExampleController extends AbstractActionController
 {
-    
-    
+
+
     /**
      * objectManager instance
-     * 
+     *
      * @var ObjectManager
      */
     protected $objectManager;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param ObjectManager $objectManager
      */
     public function __construct(ObjectManager $objectManager)
     {
         $this->objectManager = $objectManager;
-        
     }
     /**
      * fool around with person form and fieldset
@@ -56,12 +55,11 @@ class ExampleController extends AbstractActionController
         $form->setData([
             'person-fieldset' => [
                 'firstname' => "Wank",
-                'lastname'=> "Gackersly", 
-                'email'=>'wank@gacker.com',
+                'lastname' => "Gackersly",
+                'email' => 'wank@gacker.com',
                 'active' => 1,
                 ]
-            ]
-         );
+            ]);
         echo "valid? ";
         var_dump($form->isValid());
         echo "<br>",$entity->getEmail(), " is the entity's email...";
@@ -69,8 +67,7 @@ class ExampleController extends AbstractActionController
         $this->objectManager->persist($entity);
 
         try {
-
-           //$this->objectManager->flush();            
+           //$this->objectManager->flush();
         } catch (\Exception  $e) {
             echo "<br>".$e->getMessage();
         }
@@ -78,7 +75,6 @@ class ExampleController extends AbstractActionController
 
         echo get_class($something) . " comes from \$form->getObject()...";
         return false;
-
     }
 
     /**
@@ -91,7 +87,7 @@ class ExampleController extends AbstractActionController
         echo "it works";
         if ($this->events) {
             echo " and this->events is a ".get_class($this->events);
-            if ($sharedManager =  $this->events->getSharedManager()) {
+            if ($sharedManager = $this->events->getSharedManager()) {
                 echo " ... and we have a shared manager! ... ";
             } else {
                 echo " but no shared event manager..." ;
@@ -108,13 +104,16 @@ class ExampleController extends AbstractActionController
      */
     public function testAction()
     {
-       echo "testAction works; ";echo "<br>note: i am ".self::class."<br>";
+        echo "testAction works; ";
+        echo "<br>note: i am ".self::class."<br>";
        //$this->events->trigger("doShit",$this,["message" => "this is the message parameter"]) ;
-       $this->events->trigger(__FUNCTION__, $this,
-               ["message" => "this is the message parameter"]
+        $this->events->trigger(
+            __FUNCTION__,
+            $this,
+            ["message" => "this is the message parameter"]
         ) ;
-    
-       return false;
+
+        return false;
     }
 
     /**
@@ -124,7 +123,7 @@ class ExampleController extends AbstractActionController
      */
     public function otherTestAction()
     {
-      
+
         $header = $this->getRequest()->getHeaders()->get('accept');
         echo get_class($header),"<br>";
         echo $header->toString(),"<br>";
@@ -135,4 +134,3 @@ class ExampleController extends AbstractActionController
         return false;
     }
 }
-

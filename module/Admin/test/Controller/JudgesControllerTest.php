@@ -17,35 +17,36 @@ use InterpretersOffice\Entity;
  */
 class JudgesControllerTest extends AbstractControllerTest
 {
-    
+
     public function setUp()
     {
-        
+
         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute(
-        [
+            [
             new DataFixture\MinimalUserLoader(),
             new DataFixture\LocationLoader(),
-            new DataFixture\JudgeLoader(),    
-                
-        ]);
-        
+            new DataFixture\JudgeLoader(),
+
+            ]
+        );
+
         $this->login('susie', 'boink');
     }
-    
+
     public function testIndexAction()
     {
         $this->dispatch('/admin/judges');
         $this->assertResponseStatusCode(200);
-        
+
         $count = FixtureManager::getEntityManager()
             ->createQuery('SELECT COUNT(j.id) FROM InterpretersOffice\Entity\Judge j')
             ->getSingleScalarResult();
-        
-        $this->assertQueryContentRegex('title','/^judges/');
+
+        $this->assertQueryContentRegex('title', '/^judges/');
         $this->assertQuery('ul.list-group');
-        $this->assertQueryCount('ul.list-group li',$count);
+        $this->assertQueryCount('ul.list-group li', $count);
     }
 
     // to be continued

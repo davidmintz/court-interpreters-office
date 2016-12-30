@@ -26,14 +26,14 @@ class Module
 
     /**
      * module bootstrap, opportunity to attach listeners etc
-     * 
+     *
      * @param  \Zend\Mvc\MvcEvent $e The MvcEvent instance
      * @return void
      */
     public function onBootstrap($e)
     {
        // from the ZF3 tutorial, a waste of time:
-       
+
         // Register a "render" event, at high priority (so it executes prior
        // to the view attempting to render)
        // $app = $e->getApplication();
@@ -56,7 +56,8 @@ class Module
         // Attach strategy, which is a listener aggregate, at high priority
         $view->getEventManager()->attach(
             \Zend\View\ViewEvent::EVENT_RENDERER,
-            [$jsonStrategy,'selectRenderer'], 100);
+            [$jsonStrategy,'selectRenderer'],
+            100
+        );
     }
 }
-

@@ -17,12 +17,13 @@ class PeopleControllerTest extends AbstractControllerTest
 {
     public function setUp()
     {
-        
+
         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute(
-            [new DataFixture\MinimalUserLoader()]);
-        
+            [new DataFixture\MinimalUserLoader()]
+        );
+
         $this->login('susie', 'boink');
     }
 
@@ -34,12 +35,12 @@ class PeopleControllerTest extends AbstractControllerTest
         //$this->assertModuleName('interpretersofficeadmin');
         $this->assertControllerName(PeopleController::class); // as specified in router's controller name alias
         $this->assertControllerClass('PeopleController');
-        $this->assertMatchedRouteName('people');        
+        $this->assertMatchedRouteName('people');
     }
 
     public function testAdd()
     {
-      
+
         // first try a GET to check the form
         $this->dispatch('/admin/people/add');
         $this->assertResponseStatusCode(200);
@@ -66,19 +67,18 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/people');
-        
+
         $query = FixtureManager::getEntityManager()->createQuery(
-                'SELECT p FROM InterpretersOffice\Entity\Person p ORDER BY p.id DESC'
+            'SELECT p FROM InterpretersOffice\Entity\Person p ORDER BY p.id DESC'
         );
         $entity = $query->setMaxResults(1)->getOneOrNullResult();
-        $this->assertEquals('John',$entity->getFirstname());
-        $this->assertEquals('Somebody',$entity->getLastname());
+        $this->assertEquals('John', $entity->getFirstname());
+        $this->assertEquals('Somebody', $entity->getLastname());
         return $entity;
-        
     }
     /**
      * @depends testAdd
-     * @param 
+     * @param
      */
     public function testDuplicateEntityValidation(Entity\Person $entity)
     {
@@ -87,7 +87,7 @@ class PeopleControllerTest extends AbstractControllerTest
                 ->findOneBy(['name' => 'defense attorney']));
         $em->persist($entity);
         $em->flush();
-        
+
         // try to add the same guy again
         $data = [
             'person' => [
@@ -105,10 +105,10 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertNotRedirect();
         $this->assertResponseStatusCode(200);
         $this->assertQuery('div.validation-error');
-        $this->assertQueryCount('div.validation-error',1);
+        $this->assertQueryCount('div.validation-error', 1);
         // a person with this &quot;Hat&quot; and email address is already in your database
         $this->assertQueryContentRegex('div.validation-error', '/person.+Hat.+email.+in your database/i');
-        
+
         // different hat, but active and with same email...
         $hat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
                         ->findByName('paralegal')[0];
@@ -128,12 +128,14 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertNotRedirect();
         $this->assertResponseStatusCode(200);
         $this->assertQuery('div.validation-error');
-        $this->assertQueryCount('div.validation-error',1);
+        $this->assertQueryCount('div.validation-error', 1);
         //echo $this->getResponse()->getBody();
         //return;
-        $this->assertQueryContentContains('div.validation-error',
-          'there is already a person in your database with this email address and "active" setting');
-        
+        $this->assertQueryContentContains(
+            'div.validation-error',
+            'there is already a person in your database with this email address and "active" setting'
+        );
+
         // now add another person, and edit the record to collide with John Somebody
         $data = [
             'person' => [
@@ -145,28 +147,27 @@ class PeopleControllerTest extends AbstractControllerTest
             'csrf' => $this->getCsrfToken('/admin/people/add')
         ];
          $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters($data)
-        );
+             new Parameters($data)
+         );
         $this->dispatch('/admin/people/add');
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/people');
-        
+
         $other_person = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Person')
                         ->findByEmail('john.somebody.else@lawfirm.com')[0];
-        
+
         $this->reset(true);
         $url = '/admin/people/edit/' . $other_person->getId();
         $data['person']['email'] = 'john.somebody@lawfirm.com';
 
          $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters($data)
-        );
+             new Parameters($data)
+         );
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
         $this->assertQuery('div.validation-error');
-        $this->assertQueryCount('div.validation-error',1);
+        $this->assertQueryCount('div.validation-error', 1);
         $this->assertQueryContentRegex('div.validation-error', '/person.+Hat.+email.+in your database/i');
-        
     }
     /**
      * @depends testAdd
@@ -174,7 +175,7 @@ class PeopleControllerTest extends AbstractControllerTest
      */
     public function testEditAction(Entity\Person $person)
     {
-        
+
         $em = FixtureManager::getEntityManager();
         $person->setHat($em->getRepository('InterpretersOffice\Entity\Hat')
                 ->findOneBy(['name' => 'defense attorney']));
@@ -189,16 +190,16 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertQuery('input#middlename');
         $this->assertQuery('input#email');
         $this->assertQuery('select#hat');
-        
+
         $query = new Query($this->getResponse()->getBody());
         $node1 = $query->execute('#lastname')->current();
         $lastname = $node1->attributes->getNamedItem('value')->nodeValue;
-        $this->assertEquals('Somebody',$lastname);
-        
+        $this->assertEquals('Somebody', $lastname);
+
         $node2 = $query->execute('#firstname')->current();
         $firstname = $node2->attributes->getNamedItem('value')->nodeValue;
-        $this->assertEquals('John',$firstname);
-        
+        $this->assertEquals('John', $firstname);
+
         $data = [
             'person' => [
                 'lastname' => 'Somebody',
@@ -214,9 +215,8 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch($url);
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/people');
-        
     }
-    
+
     public function testFormValidation()
     {
 
@@ -236,9 +236,9 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
         $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error','/invalid characters/');
+        $this->assertQueryContentRegex('div.validation-error', '/invalid characters/');
 
-        
+
         $data['person']['lastname'] = '';
         $data['person']['firstname'] = 'John';
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
@@ -248,8 +248,8 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
         $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error','/last name.+required/');
-        
+        $this->assertQueryContentRegex('div.validation-error', '/last name.+required/');
+
         $data['person']['lastname'] = 'Somebody';
         $data['person']['firstname'] = '';
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
@@ -259,46 +259,46 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
         $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error','/first name.+required/');
-        
+        $this->assertQueryContentRegex('div.validation-error', '/first name.+required/');
+
         $data['person']['firstname'] = 'John';
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
-        
+
         $data['person']['hat'] = '';
          $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters($data)
-        );
+             new Parameters($data)
+         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
         $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error','/hat.+required/');
-        
-        
+        $this->assertQueryContentRegex('div.validation-error', '/hat.+required/');
+
+
         $data['person']['hat'] = $attorneyHat;
         $data['person']['active'] = null;
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
-        
+
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
         );
         $this->dispatch('/admin/people/add');
-        
+
         $this->assertNotRedirect();
         $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error','/active.+required/');
-        
+        $this->assertQueryContentRegex('div.validation-error', '/active.+required/');
+
         $data['person']['active'] = 'some random string';
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
          $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters($data)
-        );
+             new Parameters($data)
+         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
 
-        $this->assertQueryCount('div.validation-error',1);
-        $this->assertQueryContentRegex('div.validation-error','/invalid.+active/');
-        
-        
+        $this->assertQueryCount('div.validation-error', 1);
+        $this->assertQueryContentRegex('div.validation-error', '/invalid.+active/');
+
+
         $data['person']['active'] = 1;
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
         $data['person']['hat'] = 'arbitrary shit';
@@ -307,10 +307,7 @@ class PeopleControllerTest extends AbstractControllerTest
         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
-        $this->assertQueryCount('div.validation-error',1);
-        $this->assertQueryContentRegex('div.validation-error','/invalid.+hat/');
-       
-
+        $this->assertQueryCount('div.validation-error', 1);
+        $this->assertQueryContentRegex('div.validation-error', '/invalid.+hat/');
     }
-
 }

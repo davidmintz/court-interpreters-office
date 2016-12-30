@@ -99,13 +99,13 @@ return [
         ],
     ],
 
-    'view_helper_config' => array(
-        'flashmessenger' => array(
+    'view_helper_config' => [
+        'flashmessenger' => [
             'message_open_format' => '<div%s><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>',
             'message_separator_string' => '</p><p>',
             'message_close_string' => '</p></div>',
-        ),
-    ),
+        ],
+    ],
     'form_elements' => [
         'factories' => [
             Entity\Language::class => Form\Factory\AnnotatedEntityFormFactory::class,
@@ -120,7 +120,7 @@ return [
         ],
         'invokables' => [
             //Controller\ExampleController::class => Controller\ExampleController::class,
-        ],        
+        ],
     ],
     'view_manager' => [
         'display_not_found_reason' => true,
@@ -145,27 +145,27 @@ return [
     ],
     'doctrine' => [
 
-        'driver' => array(
+        'driver' => [
             // defines an annotation driver with two paths, and names it `my_annotation_driver`
-            'application_annotation_driver' => array(
+            'application_annotation_driver' => [
                 'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                 'cache' => 'array',
-                'paths' => array(
+                'paths' => [
                     __DIR__.'/../src/Entity',
-                ),
-            ),
+                ],
+            ],
 
             // default metadata driver, aggregates all other drivers into a single one.
             // Override `orm_default` only if you know what you're doing
-            'orm_default' => array(
-                'drivers' => array(
+            'orm_default' => [
+                'drivers' => [
                     // register `my_annotation_driver` for any entity under namespace `My\Namespace`
                     __NAMESPACE__.'\Entity' => 'application_annotation_driver',
-                ),
-            ),
-        ),
-   ],
-   'service_manager' => [
+                ],
+            ],
+        ],
+    ],
+    'service_manager' => [
         'aliases' => [
           'entity-manager' => 'doctrine.entitymanager.orm_default',
           'auth' => 'Zend\Authentication\AuthenticationService',
@@ -180,6 +180,6 @@ return [
             Form\PersonForm::class  => Form\Factory\PersonFormFactory::class,
         ],
 
-   ],
+    ],
 
 ];

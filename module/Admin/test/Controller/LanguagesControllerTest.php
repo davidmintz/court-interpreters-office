@@ -19,7 +19,7 @@ class LanguagesControllerTest extends AbstractControllerTest
 {
     public function setUp()
     {
-        
+
         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute([
@@ -31,7 +31,7 @@ class LanguagesControllerTest extends AbstractControllerTest
 
     public function testAddLanguage()
     {
-        
+
         $entityManager = FixtureManager::getEntityManager();
         $repository = $entityManager->getRepository('InterpretersOffice\Entity\Language');
         $languages = $repository->findAll();
@@ -58,7 +58,7 @@ class LanguagesControllerTest extends AbstractControllerTest
 
         return $vulcan;
     }
-   
+
     /**
      * @depends testAddLanguage
      */
@@ -73,7 +73,7 @@ class LanguagesControllerTest extends AbstractControllerTest
         //echo $this->getResponseHeader('Location');//return;
         $this->assertResponseStatusCode(200);
         $url = '/admin/languages/edit/'.$id;
-        $token =  $this->getCsrfToken($url);
+        $token = $this->getCsrfToken($url);
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
                 [
