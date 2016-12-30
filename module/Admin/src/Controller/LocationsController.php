@@ -127,14 +127,13 @@ class LocationsController extends AbstractActionController
             if ($json) {
                 return new JsonModel(
                      [
-                         'valid' => true,
-                         'validationErrors' => null,
-                          'entity'   => [
-                              'name' => $entity->getName(),
-                              'id'   => $entity->getId(),
-                              'type' => (string) $entity->getType()
-                           ],
-                         
+                        'valid' => true,
+                        'validationErrors' => null,
+                        'entity'   => [
+                            'name' => $entity->getName(),
+                            'id'   => $entity->getId(),
+                            'type' => (string) $entity->getType(),
+                        ],                    
                      ]
                 );
             }
@@ -191,11 +190,9 @@ class LocationsController extends AbstractActionController
     
     public function courtroomsAction()
     {
-        $parent_id = $this->params()->fromQuery('parent_id');
+        $parent_id = $this->params()->fromRoute('parent_id');
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Location');
         $data = $repository->getCourtrooms($parent_id);
-        echo "Hello!<br>"; 
-        var_dump($data[0]);
-        return false;
+        return new JsonModel($data);
     }
 }
