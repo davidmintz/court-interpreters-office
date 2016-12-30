@@ -26,6 +26,12 @@ class PeopleController extends AbstractActionController
      */
     protected $entityManager;
     
+    /**
+     * constructor.
+     *
+     * @param EntityManagerInterface $entityManager
+     * 
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -40,7 +46,10 @@ class PeopleController extends AbstractActionController
     {
         return new ViewModel(['title' => 'people']);
     }
-    
+
+    /**
+     * adds a Person entity to the database
+     */
     public function addAction()
     {
         $viewModel = (new ViewModel())
@@ -65,6 +74,9 @@ class PeopleController extends AbstractActionController
         return $viewModel;
     }
     
+    /**
+     * updates a Person entity
+     */
     public function editAction()
     {
         $viewModel = (new ViewModel())
@@ -104,7 +116,21 @@ class PeopleController extends AbstractActionController
 
         return $viewModel;
     }
-    
+
+    /**
+     * redirects to the page with specialized form for the Person subclass.
+     * 
+     * When they load /admin/people/edit/xxx, Doctrine will try to find a Person 
+     * whose id is xxx even where if entity is subclassed -- e.g.,
+     * is a Judge or Interpreter entity -- which would result in loading the wrong form.
+     * Our front end should not expose this url, but if anyone should somehow stumble
+     * into it or explicitly load the url, this is how we handle it. our routing 
+     * and class-naming conventions make it possible to compute the url to which 
+     * we should redirect.
+     * 
+     * @param Entity\Person $entity
+     * 
+     */
     public function redirectToFormFor(Entity\Person $entity) {
         
         $class = get_class($entity);

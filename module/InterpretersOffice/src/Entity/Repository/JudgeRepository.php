@@ -7,9 +7,17 @@ namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-
+/**
+ * custom repository class for EventType entity 
+ * 
+ */
 class JudgeRepository extends EntityRepository {
     
+    /**
+     * gets all the Judge entities, sorted
+     * 
+     * @return array
+     */
     public function findAll()
     {
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '

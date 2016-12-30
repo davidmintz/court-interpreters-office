@@ -24,13 +24,15 @@ class Module
         return include __DIR__.'/../config/module.config.php';
     }
 
-     /**
+    /**
+     * module bootstrap, opportunity to attach listeners etc
+     * 
      * @param  \Zend\Mvc\MvcEvent $e The MvcEvent instance
      * @return void
      */
     public function onBootstrap($e)
     {
-       // from the tutorial, a waste of time:
+       // from the ZF3 tutorial, a waste of time:
        
         // Register a "render" event, at high priority (so it executes prior
        // to the view attempting to render)

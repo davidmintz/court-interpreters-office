@@ -30,6 +30,12 @@ class JudgesController extends AbstractActionController
      */
     protected $entityManager;
     
+    /**
+     * constructor.
+     * 
+     * @param ObjectManager $objectManager
+     * 
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -84,7 +90,10 @@ class JudgesController extends AbstractActionController
         return $viewModel;
         
     }
-    
+    /**
+     * updates a Judge entity
+     * 
+     */
     public function editAction()
     {
         $viewModel = (new ViewModel())

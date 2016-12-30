@@ -187,7 +187,15 @@ class LocationsController extends AbstractActionController
 
         return $viewModel;
     }
-    
+    /**
+     * gets courtrooms located at a courthouse
+     * 
+     * returns as JSON data the courtrooms whose parent courthouse 
+     * id is submitted as a route parameter. for populating select elements
+     * via xhr.
+     * 
+     * @return JsonModel
+     */
     public function courtroomsAction()
     {
         $parent_id = $this->params()->fromRoute('parent_id');

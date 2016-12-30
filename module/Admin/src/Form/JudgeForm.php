@@ -10,12 +10,18 @@ use InterpretersOffice\Admin\Form;
 
 
 /**
- * Description of JudgeForm
- *
- * @author david
+ * extends PersonForm
+ * 
+ * @see PersonForm
+ * 
  */
 class JudgeForm extends PersonForm {
-    
+
+	/**
+	 * the name of our form
+	 * 
+	 * @var string 'judge-form'	 * 
+	 */
     protected $formName = 'judge-form';
     
     /**
@@ -23,8 +29,6 @@ class JudgeForm extends PersonForm {
      * 
      * @var string
      */
-    protected $fieldsetClass = Form\JudgeFieldset::class;
-
-    
+    protected $fieldsetClass = Form\JudgeFieldset::class
     
 }

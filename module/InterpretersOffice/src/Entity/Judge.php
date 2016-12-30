@@ -105,6 +105,9 @@ class Judge extends Person
     }
 
     /**
+     * lifecycle callback to prevent incorrect hat and location-type on update event
+     * 
+     * proxies to onPrePersist()
      * 
      * @ORM\PreUpdate
      */
@@ -115,7 +118,7 @@ class Judge extends Person
     }
 
     /**
-     * lifecycle callback to ensure correct hat and location-type.
+     * lifecycle callback to prevent incorrect hat and location-type.on persist event
      *
      * @ORM\PrePersist
      *

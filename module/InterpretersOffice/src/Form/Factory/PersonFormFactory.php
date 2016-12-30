@@ -1,4 +1,5 @@
 <?php
+/** module/InterpretersOffice/Form/Factory/PersonFormFactory.php */
 
 namespace InterpretersOffice\Form\Factory;
 
@@ -7,6 +8,12 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 
 use InterpretersOffice\Form\PersonForm;
 
+/**
+ * Factory class for PersonForm
+ * 
+ * @see InterpretersOffice\Form\PersonForm 
+ * 
+ */
 class PersonFormFactory implements FactoryInterface
 {
 

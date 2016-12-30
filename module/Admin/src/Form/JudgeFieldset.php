@@ -23,8 +23,14 @@ class JudgeFieldset extends PersonFieldset {
      * @var string
      */
     protected $fieldset_name = 'judge';
-    
-    public function __construct(ObjectManager $objectManager, $options = array())
+
+    /**
+     * constructor.
+     * 
+     * @param ObjectManager $objectManager
+     * @param array $options
+     */
+    public function __construct(ObjectManager $objectManager, $options = [])
     {
         parent::__construct($objectManager, $options);
         
@@ -84,6 +90,12 @@ class JudgeFieldset extends PersonFieldset {
        $element->setValueOptions($options);
     }
     
+    /**
+     * adds the "Hat" element to our form
+     * 
+     * @return JudgeFieldset
+     * 
+     */
     public function addHatElement() {
         
         // there might be a better way.
@@ -111,7 +123,7 @@ class JudgeFieldset extends PersonFieldset {
                 'id' => 'flavor',
              ],              
        ]);
-        //return;
+        // hack designed to please HTML5 validator
        $element = $this->get('flavor');
        $options = $element->getValueOptions();
        array_unshift($options, [
@@ -122,9 +134,19 @@ class JudgeFieldset extends PersonFieldset {
            ],
        ]);
        $element->setValueOptions($options);
+
+       return $this;
     }
     
+
+    /**
+     * gets input filter specification
+     * 
+     * @return array
+     * 
+     */
     public function getInputFilterSpecification() {
+        
         $spec = parent::getInputFilterSpecification();
         $spec['flavor'] = [
             'required' => true,

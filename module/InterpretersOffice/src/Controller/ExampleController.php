@@ -21,7 +21,12 @@ use InterpretersOffice\Form\PersonForm;
 class ExampleController extends AbstractActionController 
 {
     
-    /** @var ObjectManager */
+    
+    /**
+     * objectManager instance
+     * 
+     * @var ObjectManager
+     */
     protected $objectManager;
     
     /**
