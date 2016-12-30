@@ -24,7 +24,7 @@ class MinimalUserLoader implements FixtureInterface
          (new HatLoader())->load($objectManager);
 
          // create a Person
-         $person = new Entity\Person();
+        $person = new Entity\Person();
         $person->setActive(true)
             ->setFirstname('Susie')
             ->setLastname('Somebody')
