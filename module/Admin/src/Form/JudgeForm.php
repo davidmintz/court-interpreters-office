@@ -29,6 +29,6 @@ class JudgeForm extends PersonForm {
      * 
      * @var string
      */
-    protected $fieldsetClass = Form\JudgeFieldset::class
+    protected $fieldsetClass = Form\JudgeFieldset::class;
     
 }
