@@ -58,11 +58,12 @@ class LocationRepository extends EntityRepository
      */
     public function getCourtrooms($parent_id)
     {
-        $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l JOIN l.parentLocation p JOIN l.type t '
-                . 'WHERE p.id = :parent_id AND t.type = :type ORDER BY l.name ASC';
+        $dql = 'SELECT l.name,l.id FROM InterpretersOffice\Entity\Location l JOIN l.parentLocation p JOIN l.type t '
+                . 'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
         $query = $this->getEntityManager()->createQuery($dql)
-                ->setParameters([':parent_id'=>$parent_id,':type'=>'courtroom']);
-         return $query->getResult();
+                ->setParameter('parent_id', $parent_id);
+        
+        return $query->getResult();
         
     }
     /**
