@@ -78,8 +78,8 @@ class EventTypesController extends AbstractActionController {
     }
     
     /**
-     * add action. work in progress
-     * 
+     * add action
+     *      * 
      * @return ViewModel
      */
     public function addAction()
@@ -109,6 +109,10 @@ class EventTypesController extends AbstractActionController {
         return $view;
     }
     
+    /**
+     * edits an EventType entity
+     * 
+     */
     public function editAction()
     {
         $view = (new ViewModel(['title' => "edit an event-type"]))

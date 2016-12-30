@@ -33,7 +33,7 @@ class JudgesController extends AbstractActionController
     /**
      * constructor.
      * 
-     * @param ObjectManager $objectManager
+     * @param ObjectManager $entityManager
      * 
      */
     public function __construct(EntityManagerInterface $entityManager)
