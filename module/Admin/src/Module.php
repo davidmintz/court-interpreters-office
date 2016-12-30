@@ -7,6 +7,7 @@ namespace InterpretersOffice\Admin;
 
 use Zend\Mvc\MvcEvent;
 
+use Zend\Session\SessionManager;
 /**
  * Module class for our InterpretersOffice\Admin module.
  */
@@ -33,6 +34,14 @@ class Module
     {
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
+        $container = $event->getApplication()->getServiceManager();
+        //// The following line instantiates the SessionManager and automatically
+        // makes the SessionManager the 'default' one:
+        // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
+        // $sessionManager = 
+        $container->get(SessionManager::class);
+        
+        
     }
 
     /**
@@ -65,6 +74,8 @@ class Module
                         ->get('ControllerPluginManager')
                         ->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Authentication is required.');
+                $session = $container->get('Authentication');
+                $session->redirect_url = $event->getRequest()->getUriString();
                 return $this->getRedirectionResponse($event);
             } else {
                 $allowed = ['manager', 'administrator'];

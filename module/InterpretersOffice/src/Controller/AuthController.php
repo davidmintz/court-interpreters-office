@@ -1,5 +1,4 @@
 <?php
-
 /** module/InterpretersOffice/src/Controller/AuthController.php   */
 
 namespace InterpretersOffice\Controller;
@@ -57,8 +56,8 @@ class AuthController extends AbstractActionController
     public function loginAction()
     {
         $form = new LoginForm();
-
         $request = $this->getRequest();
+
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
@@ -77,6 +76,13 @@ class AuthController extends AbstractActionController
                 );
             }
             $user = $this->auth->getIdentity();
+            // if they tried to load a page and were sent away, send them back
+            $session = new \Zend\Session\Container('Authentication');
+            if (isset($session->redirect_url)) {
+                $url = $session->redirect_url;
+                unset($session->redirect_url);
+                return $this->redirect()->toUrl($url);
+            }
             // managers and administrators go to /admin
             if (in_array((string)$user->getRole(), ['administrator','manager'])) {
                 $route = 'admin';
