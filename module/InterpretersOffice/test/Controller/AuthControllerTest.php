@@ -50,6 +50,52 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertRedirect();
         $this->assertRedirectTo('/admin');
     }
+    /**
+     * tests that an admin user who is redirected from an admin page to 
+     * the login will be redirected back after successful login
+     */
+    function testRedirectionFollowingAuthentication()
+    {
+        
+        $this->dispatch('/admin/languages/add');
+        $this->assertRedirect();
+        $this->reset(true);
+        $params =
+        [
+            'identity' => 'susie',
+            'password' => 'boink',
+            'csrf'     =>  $this->getCsrfToken('/login'),
+        ];
+        $this->dispatch('/login', 'POST', $params);
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/languages/add');
+        
+        $this->dispatch('/logout');
+        
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        
+        // demote susie to see what happens next time she tries to access an admin page
+        $em = FixtureManager::getEntityManager();
+        $user = $em->getRepository('InterpretersOffice\Entity\User')->findOneBy(['username' => 'susie']);
+        $role = $em->getRepository('InterpretersOffice\Entity\Role')->findOneBy(['name' => 'submitter']);
+        
+        $user->setRole($role);
+        $em->flush();
+        
+        $this->dispatch('/admin/languages/add');
+        $this->assertRedirect();
+        $this->reset(true);
+        $params =
+        [
+            'identity' => 'susie',
+            'password' => 'boink',
+            'csrf'     =>  $this->getCsrfToken('/login'),
+        ];
+        $this->dispatch('/login', 'POST', $params);
+        $this->assertRedirect();
+        $this->assertNotRedirectTo('/admin/languages/add');
+        
+    }
 
     /**
      * asserts that a non-administrative user cannot go to /admin
