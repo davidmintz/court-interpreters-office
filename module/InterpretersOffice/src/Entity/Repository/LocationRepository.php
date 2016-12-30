@@ -48,7 +48,7 @@ class LocationRepository extends EntityRepository
     /**
      * gets all the courtrooms whose parent is $parent_id
      *
-     * for using xhr to repopulate context-sensitive location dropdowns     * 
+     * for using xhr to repopulate context-sensitive location dropdowns
      * @todo support an option indexBy parameter for initializing a select 
      * element server-side
      *
