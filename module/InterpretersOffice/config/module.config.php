@@ -181,5 +181,8 @@ return [
         ],
 
     ],
+    'session_containers' => [
+        'Authentication',
+    ]
 
 ];
