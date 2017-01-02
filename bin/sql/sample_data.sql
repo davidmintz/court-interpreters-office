@@ -165,7 +165,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `locations` WRITE;
 /*!40000 ALTER TABLE `locations` DISABLE KEYS */;
-INSERT INTO `locations` VALUES (1,7,NULL,'500 Pearl',''),(2,7,NULL,'40 Foley',''),(3,2,NULL,'MCC',''),(4,2,NULL,'MDC',''),(5,4,1,'7th floor',''),(7,5,1,'5th floor',''),(8,3,1,'4th floor',''),(9,1,2,'618','');
+INSERT INTO `locations` (id, type_id, parent_location_id, name, comments) VALUES (1,7,NULL,'500 Pearl',''),(2,7,NULL,'40 Foley',''),(3,2,NULL,'MCC',''),(4,2,NULL,'MDC',''),(5,4,1,'7th floor',''),(7,5,1,'5th floor',''),(8,3,1,'4th floor',''),(9,1,2,'618','');
 /*!40000 ALTER TABLE `locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -175,7 +175,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `people` WRITE;
 /*!40000 ALTER TABLE `people` DISABLE KEYS */;
-INSERT INTO `people` VALUES (22,14,NULL,'Failla','Katherine','',1,'judge');
+INSERT INTO `people` VALUES (22,14,NULL,'Failla','Katherine','','','',1,'judge');
 /*!40000 ALTER TABLE `people` ENABLE KEYS */;
 UNLOCK TABLES;
 
