@@ -31,7 +31,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `cancellation_reasons` WRITE;
 /*!40000 ALTER TABLE `cancellation_reasons` DISABLE KEYS */;
-INSERT INTO `cancellation_reasons` VALUES (2,'adjourned without notice'),(1,'defendant not produced'),(5,'forÃ§e majeure'),(6,'other'),(3,'party did not appear'),(4,'unknown');
+INSERT INTO `cancellation_reasons` VALUES (2,'adjourned without notice'),(1,'defendant not produced'),(5,'forçe majeure'),(6,'other'),(3,'party did not appear'),(4,'unknown');
 /*!40000 ALTER TABLE `cancellation_reasons` ENABLE KEYS */;
 UNLOCK TABLES;
 
