@@ -51,8 +51,10 @@ class JudgeFieldset extends PersonFieldset
             }
              
         } else {
+            // maybe we don't need to do this, if getCourtrooms() were 
+            // to accept an optional parent_id
             $judge = null;
-            $parent_id = 0; // at least for the time being
+            $parent_id = 0; 
         }
         $this->add([
             'name' => 'courthouse',
