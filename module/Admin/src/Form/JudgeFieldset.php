@@ -39,37 +39,48 @@ class JudgeFieldset extends PersonFieldset
                 throw new \InvalidArgumentException("object has to be an instance of Judge...");
             }
             $judge = $options['object'];
+
+            if ($defaultLocation = $judge->getDefaultLocation()) {
+                if ('courtroom' == $defaultLocation->getType()) {
+                    $location_id = $defaultLocation->getId();
+                    $parent_id = $defaultLocation->getParentLocation()->getId();
+                } else {
+                    $parent_id = $defaultLocation->getId();
+                    $location_id = $parent_id;
+                }
+            }
+             
         } else {
             $judge = null;
+            $parent_id = 0; // at least for the time being
         }
         $this->add([
             'name' => 'courthouse',
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
-            'required' => false,
-            'allow_empty' => true,
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\Location',
                 'label'  => 'courthouse',
                 'find_method' => ['name' => 'getCourthouses'],
                 'property' => 'name',
-               // 'display_empty_item' => true,
-               // 'empty_item_label' => ' ',
             ],
             'attributes' => [
                 'class' => 'form-control',
                 'id' => 'courthouse',
             ],
         ]);
-
         $this->add([
             'name' => 'courtroom',
-            'type' => 'Zend\Form\Element\Select',
-            'required' => true,
-            'allow_empty' => true,
+            'type' =>  'DoctrineModule\Form\Element\ObjectSelect',
             'options' => [
-                'value_options' => ['0' => ' '],
-                'disable_inarray_validator' => true,
+                'object_manager' => $this->objectManager,
+                'target_class' => 'InterpretersOffice\Entity\Location',
+                'label'  => 'courtroom',
+                'find_method' => [
+                    'name' => 'getCourtrooms',
+                    'params' => ['parent_id' => $parent_id]
+                 ],
+                'property' => 'name',
             ],
             'attributes' => [
                 'class' => 'form-control',
@@ -90,31 +101,24 @@ class JudgeFieldset extends PersonFieldset
         ]);
         // return;
         // this makes validator happy: a non-empty label
-        $element = $this->get('courthouse');
-        $options = $element->getValueOptions();
-        array_unshift($options, [
-           'label' => ' ',
-           'value' => '',
-           'attributes' => [
+        foreach (['courthouse','courtroom'] as $elementName) {
+            $element = $this->get($elementName);
+            $options = $element->getValueOptions();
+            array_unshift($options, [
                'label' => ' ',
-           ],
-        ]);
-        $element->setValueOptions($options);
-        
-        if ($judge) {
-            if ($defaultLocation = $judge->getDefaultLocation()) {
-                if ('courtroom' == $defaultLocation->getType()) {
-                    $parent_id = $defaultLocation->getParentLocation()->getId();
-                } else {
-                    $parent_id = $defaultLocation->getId();
-                }
-                // set value options for courtroom select
-                // $valueOptions = $this->getObjectManager()->getRepository('InterpretersOffice\Entity\Locations');
-                // to be continued
-                
-            }
-            
+               'value' => '',
+               'attributes' => [
+                   'label' => ' ',
+               ],
+            ]);
+            $element->setValueOptions($options);
         }
+        $this->get('courthouse')->setValue($parent_id);
+        if ($location_id != $parent_id) {
+            $this->get('courtroom')->setValue($location_id);
+        }
+        
+       
     }
 
     /**
@@ -137,15 +141,11 @@ class JudgeFieldset extends PersonFieldset
         $this->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'flavor',
-            'required' => true,
-            'allow_empty' => false,
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\JudgeFlavor',
                 'property' => 'flavor',
                 'label' => 'flavor',
-                //'display_empty_item' => true,
-                //'empty_item_label' => ' ',
             ],
              'attributes' => [
                 'class' => 'form-control',
@@ -193,6 +193,14 @@ class JudgeFieldset extends PersonFieldset
         ];
 
         $spec['defaultLocation'] = [
+            'required' => false,
+            'allow_empty' => true,
+        ];
+        $spec['courthouse'] = [
+            'required' => false,
+            'allow_empty' => true,
+        ];
+        $spec['courtroom'] = [
             'required' => false,
             'allow_empty' => true,
         ];
