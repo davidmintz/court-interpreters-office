@@ -25,17 +25,7 @@ $form->prepare();
 $fieldset = $form->get('judge');
 // this is a bit beyond display logic and maybe should go somewhere else...
 $entity = $form->getObject();
-/*
-foreach (['hat','defaultLocation'] as $element) : 
-    $getter = 'get'. ucfirst($element);
-    $fieldset->get($element)->setValue($entity->$getter()->getId());
-endforeach;
-$location = $entity->getDefaultLocation();
-if ($location) {
-    $parentSelectVal = $location->getType() == 'courtroom' ? 
-           $location->getParentLocation()->getId() : $location->getId();
-    $fieldset->get('courthouse')->setValue($parentSelectVal);
-}*/
+
 echo $this->form()->openTag($form);?>
 <?php
 $flavor = $fieldset->get('flavor');?>
