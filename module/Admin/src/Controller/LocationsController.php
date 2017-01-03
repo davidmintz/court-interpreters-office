@@ -99,9 +99,7 @@ class LocationsController extends AbstractActionController
                     'object' => $entity,
                     'action' => 'create',
                     'form_context' => $this->params()->fromQuery('form_context', 'locations')
-            ]
-        )
-               ->bind($entity);
+            ])->bind($entity);
 
         $viewModel = (new ViewModel([
             'form' => $form,
@@ -110,7 +108,6 @@ class LocationsController extends AbstractActionController
             ->setTemplate('interpreters-office/admin/locations/form.phtml');
 
         $request = $this->getRequest();
-
 
         if ($request->isPost()) {
             $json = $request->isXmlHttpRequest();
@@ -121,13 +118,14 @@ class LocationsController extends AbstractActionController
                          'valid' => false,
                           'id'   => null,
                          'validationErrors' => $form->getMessages(),
-                     ]
+                    ]
                 ) : $viewModel;
             }
 
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
             if ($json) {
+                $parentLocation = $entity->getParentLocation();
                 return new JsonModel(
                     [
                         'valid' => true,
@@ -136,6 +134,8 @@ class LocationsController extends AbstractActionController
                             'name' => $entity->getName(),
                             'id'   => $entity->getId(),
                             'type' => (string) $entity->getType(),
+                            'parent_location_id' => $parentLocation ? 
+                                    $parentLocation->getId() : null,
                         ],
                      ]
                 );
@@ -205,7 +205,8 @@ class LocationsController extends AbstractActionController
     {
         $parent_id = $this->params()->fromRoute('parent_id');
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Location');
-        $data = $repository->getCourtrooms($parent_id);
+        $data = $repository->getCourtrooms($parent_id,['json'=>true]);
+        
         return new JsonModel($data);
     }
 }
