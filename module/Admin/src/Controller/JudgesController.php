@@ -76,7 +76,14 @@ class JudgesController extends AbstractActionController
                 return $viewModel;
             }
             $this->entityManager->persist($entity);
+
             $this->entityManager->flush();
+            // temporary:  a test of how to clear the judges cache
+            /** @todo move this into an event listener */
+            $cache = $this->entityManager->getConfiguration()->getResultCacheImpl();
+            $cache->setNamespace('judges');
+            $cache->deleteAll();
+            ////
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
                     'Judge <strong>%s %s, %s</strong> has been added to the database',
@@ -99,6 +106,7 @@ class JudgesController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/judges/form.phtml')
                 ->setVariables(['title' => 'edit a judge']);
         $id = $this->params()->fromRoute('id');
+       
         if (! $id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
