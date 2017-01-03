@@ -36,28 +36,34 @@ class LocationRepository extends EntityRepository
      */
     public function getCourthouses()
     {
-         $qb = $this->createQueryBuilder("l")
+        $qb = $this->createQueryBuilder("l")
             ->join('l.type', 't')
             ->where('t.type = :type')
             ->setParameter('type', 'courthouse')
             ->addOrderBy('l.name', 'ASC');//->addOrderBy('l.name','ASC');
         $query = $qb->getQuery();
+        
         return $query->getResult();
+        
     }
 
     /**
-     * gets all the courtrooms whose parent is $parent_id
-     *
-     * for using xhr to repopulate context-sensitive location dropdowns
-     * @todo support an option indexBy parameter for initializing a select 
-     * element server-side
+     * gets all the courtrooms whose parent courthouse is $parent_id
      *
      * @param int $parent_id
-     * @return array
+     * @return array $options
      */
-    public function getCourtrooms($parent_id)
+    public function getCourtrooms($parent_id,$options = [])
     {
-        $dql = 'SELECT l.name,l.id FROM InterpretersOffice\Entity\Location l JOIN l.parentLocation p JOIN l.type t '
+       
+        if (! $parent_id) { return []; }
+        if (isset($options['json']) && $options['json']) {
+            $what = 'l.id, l.name';
+        } else {
+            $what = 'l';
+        }
+        $dql = 'SELECT '.$what.' FROM InterpretersOffice\Entity\Location l '
+                . 'JOIN l.parentLocation p JOIN l.type t '
                 . 'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
         $query = $this->getEntityManager()->createQuery($dql)
                 ->setParameter('parent_id', $parent_id);
