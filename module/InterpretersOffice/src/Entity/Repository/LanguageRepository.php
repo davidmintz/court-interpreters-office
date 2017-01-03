@@ -15,6 +15,9 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class LanguageRepository extends EntityRepository
 {
+    
+    use ResultCachingQueryTrait;
+    
     /**
      * constructor.
      *
@@ -36,7 +39,7 @@ class LanguageRepository extends EntityRepository
     public function findAllWithPagination($page = 1)
     {
         $dql = 'SELECT language FROM InterpretersOffice\Entity\Language language ORDER BY language.name';
-        $query = $this->getEntityManager()->createQuery($dql)->setMaxResults(30);
+        $query = $this->createQuery($dql)->setMaxResults(30);
 
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
