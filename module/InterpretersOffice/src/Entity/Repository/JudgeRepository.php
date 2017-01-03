@@ -6,6 +6,7 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * custom repository class for EventType entity
@@ -14,6 +15,13 @@ use Doctrine\ORM\EntityRepository;
 class JudgeRepository extends EntityRepository
 {
 
+    public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
+        
+        $em->getConfiguration()->getResultCacheImpl()->setNamespace('judges');
+        parent::__construct($em, $class);
+        
+    }
+    
     /**
      * gets all the Judge entities, sorted
      *
@@ -22,8 +30,11 @@ class JudgeRepository extends EntityRepository
     public function findAll()
     {
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
-                . 'ORDER BY j.lastname, j.firstname';
+               . 'ORDER BY j.lastname, j.firstname';
 
-        return $this->getEntityManager()->createQuery($dql)->getResult();
+        return $this->getEntityManager()
+                ->createQuery($dql)
+                ->useResultCache(true)
+                ->getResult();
     }
 }
