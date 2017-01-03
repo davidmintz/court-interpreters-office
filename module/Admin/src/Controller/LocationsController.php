@@ -205,7 +205,7 @@ class LocationsController extends AbstractActionController
     {
         $parent_id = $this->params()->fromRoute('parent_id');
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Location');
-        $data = $repository->getCourtrooms($parent_id,['json'=>true]);
+        $data = $repository->getCourtroomValueOptions($parent_id);
         
         return new JsonModel($data);
     }
