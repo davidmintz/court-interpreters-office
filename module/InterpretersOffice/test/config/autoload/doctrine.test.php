@@ -38,6 +38,14 @@ return [
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOSqlite\Driver',
                 'params' => ['path' => $path],
             ],
+             'configuration' => [
+                'orm_default' => [
+                   'query_cache'       => 'array',
+                   'result_cache'      => 'array',
+                   'metadata_cache'    => 'array',
+                   'hydration_cache'   => 'array',
+               ],
+            ],
         ],
         // this is used to inject dependencies into repository classes
         // and requires us to use a FactoryFactory [sic]
