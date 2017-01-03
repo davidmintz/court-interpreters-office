@@ -25,6 +25,7 @@ $form->prepare();
 $fieldset = $form->get('judge');
 // this is a bit beyond display logic and maybe should go somewhere else...
 $entity = $form->getObject();
+/*
 foreach (['hat','defaultLocation'] as $element) : 
     $getter = 'get'. ucfirst($element);
     $fieldset->get($element)->setValue($entity->$getter()->getId());
@@ -34,7 +35,7 @@ if ($location) {
     $parentSelectVal = $location->getType() == 'courtroom' ? 
            $location->getParentLocation()->getId() : $location->getId();
     $fieldset->get('courthouse')->setValue($parentSelectVal);
-}
+}*/
 echo $this->form()->openTag($form);?>
 <?php
 $flavor = $fieldset->get('flavor');?>
@@ -140,7 +141,8 @@ $active = $fieldset->get('active');?>
 </div>
 <script type="text/javascript">
     /** @todo move this to its own file(s) */
-    $(document).ready(function(){
+    $(document).ready(function(){ 
+        // this whole thing needs cleaning up
         $('#add-location').on('show.bs.modal',function(event){
             console.log("show event fired");
             // event.relatedTarget is the button they clicked, FYI
@@ -161,10 +163,11 @@ $active = $fieldset->get('active');?>
         courthouseSelect.on('change',function(){
             var parent_id = courthouseSelect.val();
             if (! parent_id) {
-                return;
+                return courtroomSelect.val('').attr({disabled : "disabled"});
             }
             var data = $.getJSON('/admin/locations/courtrooms/'+parent_id, null,
                 function(data){
+                    
                     var options = [], i = -1;
                     $.each(data,function(){
                         options[++i] = $('<option/>').attr({label:this.name, value: this.id }).text(this.name);
@@ -176,8 +179,7 @@ $active = $fieldset->get('active');?>
                     courtroomSelect.append(options);
                 }
              );
-            
-        }).trigger('change');
+        }); 
         $('#courthouse, #courtroom').on('change',function(event){
             var defaultLocation = $('#defaultLocation');
             var selectElement = $(event.target);
@@ -200,16 +202,24 @@ $active = $fieldset->get('active');?>
             
             $.post('/admin/locations/add?form_context=judges',$('#add-location form').serialize(),
             function(response){
-                console.log("valid? " + response.valid);
+                
                 if (! response.valid) {
                    return displayValidationErrors(response.validationErrors);
                 }
                 $('#add-location').modal("hide");
-                $("<option>")
-                        .attr({label: response.entity.name, value: response.entity.id})
-                        .text(response.entity.name)
-                        .appendTo($("#defaultLocation"));
                 $("#defaultLocation").val(response.entity.id);
+                $('#courthouse').removeAttr('disabled');
+                entity = response.entity;
+                
+                var targetElement = $('#'+entity.type);
+                $("<option>")
+                    .attr({label: entity.name, value: entity.id})
+                    .text(entity.name)
+                    .appendTo(targetElement);
+                targetElement.val(response.entity.id);
+                if (entity.parent_location_id) {
+                    $('#courthouse').val(entity.parent_location_id);
+                }
             });
         });
     });
