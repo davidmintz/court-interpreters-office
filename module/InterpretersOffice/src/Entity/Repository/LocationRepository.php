@@ -13,6 +13,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class LocationRepository extends EntityRepository
 {
 
+    use ResultCachingQueryTrait;
+
     /**
      * returns all the "parent" locations (those that are not nested in another).
      *
@@ -20,7 +22,7 @@ class LocationRepository extends EntityRepository
      */
     public function getParentLocations()
     {
-        $query = $this->getEntityManager()->createQuery(
+        $query = $this->createQuery(
             'SELECT l FROM InterpretersOffice\Entity\Location l '
             .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC'
         );
@@ -57,8 +59,8 @@ class LocationRepository extends EntityRepository
         $dql = 'SELECT l.id, l.name  FROM InterpretersOffice\Entity\Location l '
                 . 'JOIN l.parentLocation p JOIN l.type t '
                 . 'WHERE p.id = :parent_id AND t.type = \'courtroom\'';
-        $query = $this->getEntityManager()->createQuery($dql)
-                ->setParameter('parent_id', $parent_id)->useResultCache(true);
+        $query = $this->createQuery($dql)
+                ->setParameter('parent_id', $parent_id);
         $data = $query->getResult();
         usort( $data, function($a,$b) { return strnatcasecmp ($a['name'],$b['name'] );});
         return $data;

@@ -26,6 +26,7 @@ class LanguageRepository extends EntityRepository
      */
     public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
     {
+        $em->getConfiguration()->getResultCacheImpl()->setNamespace('languages');
         parent::__construct($em, $class);
     }
 
