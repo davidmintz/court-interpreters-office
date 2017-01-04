@@ -6,6 +6,7 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * custom repository class for EventType entity
@@ -13,6 +14,20 @@ use Doctrine\ORM\EntityRepository;
  */
 class EventTypeRepository extends EntityRepository
 {
+
+    use ResultCachingQueryTrait;
+
+    /**
+     * constructor.
+     *
+     * @param EntityManagerInterface              $em
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     */
+    public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    {
+        $em->getConfiguration()->getResultCacheImpl()->setNamespace('event-types');
+        parent::__construct($em, $class);
+    }
 
     /**
      * gets all the event-types, with sorting
@@ -26,6 +41,6 @@ class EventTypeRepository extends EntityRepository
     {
         $dql = 'SELECT t FROM InterpretersOffice\Entity\EventType t ORDER BY t.name';
 
-        return $this->getEntityManager()->createQuery($dql)->getResult();
+        return $this->createQuery($dql)->getResult();
     }
 }
