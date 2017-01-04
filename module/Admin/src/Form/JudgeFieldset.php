@@ -105,18 +105,19 @@ class JudgeFieldset extends PersonFieldset
         // this makes validator happy: a non-empty label
         foreach (['courthouse','courtroom'] as $elementName) {
             $element = $this->get($elementName);
-            $options = $element->getValueOptions();
-            array_unshift($options, [
+            $valueOptions = $element->getValueOptions();
+            array_unshift($valueOptions, [
                'label' => ' ',
                'value' => '',
                'attributes' => [
                    'label' => ' ',
                ],
             ]);
-            $element->setValueOptions($options);
+            $element->setValueOptions($valueOptions);
         }
         $this->get('courthouse')->setValue($parent_id);
-        if ($location_id != $parent_id) {
+
+        if ($options['action'] == 'update' && $location_id != $parent_id) {
             $this->get('courtroom')->setValue($location_id);
         }
         
