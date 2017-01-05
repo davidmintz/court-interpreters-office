@@ -14,7 +14,12 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class JudgeRepository extends EntityRepository
 {
-
+    /**
+     * constructor
+     * 
+     * @param EntityManagerInterface $em
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     */
     public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
         
         $em->getConfiguration()->getResultCacheImpl()->setNamespace('judges');
