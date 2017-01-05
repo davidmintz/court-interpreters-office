@@ -1,20 +1,18 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/** module/InterpretersOffice/src/Entity/Repository/ResultCachingQueryTrait.php */
 
 namespace InterpretersOffice\Entity\Repository;
 
 /**
- * Description of ResultCachingQueryTrait
- *
- * @author david
+ * trait for easing creating of queries that use result caching
  */
 trait ResultCachingQueryTrait {
     
+    /**
+     * wrapper for EntityManager::createQuery() that turns on result cache
+     * @param string $dql
+     * @return Doctrine\Orm\Query
+     */
     function createQuery($dql='')
     {
        
