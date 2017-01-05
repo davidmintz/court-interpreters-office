@@ -120,5 +120,27 @@ class JudgesControllerTest extends AbstractControllerTest
         $this->assertQuery('#courtroom option');
         $this->assertQueryCount('#courtroom option',1);
         
+        
+        $flavor = $entityManager->getRepository('InterpretersOffice\Entity\JudgeFlavor')
+            ->findOneBy(['flavor' => 'USDJ']);
+        
+        $data = [
+            'judge' => [
+                'lastname' => 'Henklebaum',
+                'firstname' => 'Jane',
+                'middlename' => 'B.',
+                'flavor' => $flavor->getId(),
+                'default_location' => '',
+                'active' => 1,
+            ],
+            'csrf' => $this->getCsrfToken('/admin/judges/add'),
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(new Parameters($data));
+        $this->dispatch('/admin/judges/add');
+        //echo $this->getResponse()->getBody(); //return;
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/judges');
+
+        
     }
 }
