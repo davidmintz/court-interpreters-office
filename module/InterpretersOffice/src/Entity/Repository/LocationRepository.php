@@ -90,11 +90,14 @@ class LocationRepository extends EntityRepository
         usort($data,function($a,$b){return strnatcasecmp($a->getName(), $b->getName());});
         return $data;
     }
-    /**
+    
+    /*
+     * NOT used and slated for removal
+     * 
      * returns all the courthouses and courtrooms
      *
      * @return array of Location entities
-     */
+     
     public function getJudgeLocations()
     {
         // try this one with the querybuilder just for amusement
@@ -107,4 +110,6 @@ class LocationRepository extends EntityRepository
         $query = $qb->getQuery()->useResultCache(true);
         return $query->getResult();
     }
+     
+     */
 }
