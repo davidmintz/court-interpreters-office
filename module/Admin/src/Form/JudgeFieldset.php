@@ -8,6 +8,8 @@ namespace InterpretersOffice\Admin\Form;
 use InterpretersOffice\Form\PersonFieldset;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use InterpretersOffice\Entity\Judge;
+
 /**
  * JudgeFieldset
  *
@@ -35,27 +37,37 @@ class JudgeFieldset extends PersonFieldset
     {
         parent::__construct($objectManager, $options);
         if (isset($options['object'])) { 
-            if (! $options['object'] instanceof \InterpretersOffice\Entity\Judge) {
-                throw new \InvalidArgumentException("object has to be an instance of Judge...");
+            if (! $options['object'] instanceof Judge) {
+                throw new \InvalidArgumentException(sprintf(
+                   'object has to be an instance of %s, got: %s',
+                     Judge::class,
+                     is_object($options['object']) ?  
+                     get_class($options['object']) : gettype($options['object'])
+                ));
             }
             $judge = $options['object'];
-
+            /** @todo refactor this part? it's a bit confusing */
             if ($defaultLocation = $judge->getDefaultLocation()) {
                 if ('courtroom' == $defaultLocation->getType()) {
                     $location_id = $defaultLocation->getId();
-                    $parent_id = $defaultLocation->getParentLocation()->getId();
+                    $parent_location_id = $defaultLocation->getParentLocation()->getId();
                 } else {
-                    $parent_id = $defaultLocation->getId();
-                    $location_id = $parent_id;
+                    $parent_location_id = $defaultLocation->getId();
+                    $location_id = $parent_location_id;
                 }
             }
              
         } else {
-            // maybe we don't need to do this, if getCourtrooms() were 
-            // to accept an optional parent_id
-            $judge = null;
-            $parent_id = 0; 
+            // for getting courtrooms to populate select.
+            // if there is no parent courthouse in the database,
+            // the getCourtrooms() repository method knows to return an
+            // empty array
+            $parent_location_id = 0; 
         }
+        // the following two elements are not properties of the entity,
+        // but rather are only for the UI, so they can select the courthouse 
+        // and the courtroom. a JS event listener will update the 
+        // "defaultLocation" hidden element, which is a property
         $this->add([
             'name' => 'courthouse',
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
@@ -80,7 +92,7 @@ class JudgeFieldset extends PersonFieldset
                 'label'  => 'courtroom',
                 'find_method' => [
                     'name' => 'getCourtrooms',
-                    'params' => ['parent_id' => $parent_id]
+                    'params' => ['parent_id' => $parent_location_id]
                  ],
                 'property' => 'name',
             ],
@@ -89,6 +101,7 @@ class JudgeFieldset extends PersonFieldset
                 'id' => 'courtroom',
             ],
         ]);
+        
         $this->add([
             
             'name' => 'defaultLocation',
@@ -101,8 +114,9 @@ class JudgeFieldset extends PersonFieldset
             ],
 
         ]);
-        // return;
-        // this makes validator happy: a non-empty label
+        
+        // this is to make the HTML5 validator happy: a non-empty label attribute
+        // for the empty option
         foreach (['courthouse','courtroom'] as $elementName) {
             $element = $this->get($elementName);
             $valueOptions = $element->getValueOptions();
@@ -115,13 +129,11 @@ class JudgeFieldset extends PersonFieldset
             ]);
             $element->setValueOptions($valueOptions);
         }
-        $this->get('courthouse')->setValue($parent_id);
+        $this->get('courthouse')->setValue($parent_location_id);
 
-        if ($options['action'] == 'update' && $location_id != $parent_id) {
+        if ($options['action'] == 'update' && $location_id != $parent_location_id) {
             $this->get('courtroom')->setValue($location_id);
         }
-        
-       
     }
 
     /**
@@ -133,7 +145,9 @@ class JudgeFieldset extends PersonFieldset
     public function addHatElement()
     {
 
-        // there might be a better way.
+        // the Hat is not up for discussion; it has to be Judge.
+        // however, there might be a better solution, e.g., an 
+        // entity listener
         $this->add(
             [
                 'name' => 'hat',
@@ -141,6 +155,8 @@ class JudgeFieldset extends PersonFieldset
                 'attributes' => [ 'id' => 'hat'],
             ]
         );
+        // while we're at it, add the Judge "flavor" element, which can be 
+        // thought of as a sub-hat
         $this->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'flavor',
