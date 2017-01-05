@@ -1,0 +1,16 @@
+<?php
+/** module/Admin/views/interpreters-office/admin/interpreters/index.phtml
+ *  viewscript for main people-administration page
+ */
+
+$this->headTitle($this->title);
+?>
+<h2>interpreters</h2>
+<?php
+$messenger = $this->flashMessenger()->setAutoEscape(false);
+if ($messenger->hasSuccessMessages()) :
+    echo $messenger->render('success', ['alert','alert-success',]);
+endif;
+
+?>
+<p>to be continued</p>
