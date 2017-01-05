@@ -49,5 +49,48 @@ class JudgesControllerTest extends AbstractControllerTest
         $this->assertQueryCount('ul.list-group li', $count);
     }
 
-    // to be continued
+    public function testAddAction()
+    {
+        $entityManager = FixtureManager::getEntityManager();
+        $count = $entityManager
+            ->createQuery('SELECT COUNT(j.id) FROM InterpretersOffice\Entity\Judge j')
+            ->getSingleScalarResult();
+        $courtroom = $entityManager->getRepository('InterpretersOffice\Entity\Location')
+            ->findOneBy(['name' => '15C']);
+        // sanity check
+        $this->assertTrue($courtroom instanceof \InterpretersOffice\Entity\Location);
+        $flavor = $entityManager->getRepository('InterpretersOffice\Entity\JudgeFlavor')
+            ->findOneBy(['flavor' => 'USDJ']);
+        // sanity check
+        $this->assertTrue($flavor instanceof \InterpretersOffice\Entity\JudgeFlavor);
+        $this->dispatch('/admin/judges/add');
+        $data = [
+            'judge' => [
+                'lastname' => 'Henklebaum',
+                'firstname' => 'Jane',
+                'middlename' => 'B.',
+                'flavor'  => $flavor->getId(),
+                'default_location' => $courtroom->getId(),
+                'active' => 1,
+            ],
+            'csrf' => $this->getCsrfToken('/admin/judges/add')            
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(new Parameters($data));
+        $this->dispatch('/admin/judges/add'); 
+        //echo $this->getResponse()->getBody(); //return;   
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/judges');
+
+        $this->assertEquals($count + 1,
+            $entityManager
+            ->createQuery('SELECT COUNT(j.id) FROM InterpretersOffice\Entity\Judge j')
+            ->getSingleScalarResult());
+    
+    }
+     public function testAddJudgeDoesNotBlowUpWhenThereAreNoLocations()
+     {
+
+        // set all the judge default locations to null
+        $dql = 'UPDATE ... ';
+     }
 }

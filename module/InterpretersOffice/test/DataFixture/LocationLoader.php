@@ -53,7 +53,10 @@ class LocationLoader implements FixtureInterface
             ['618', $courtroom, $foley],
             ['23A', $courtroom, $pearl],
             ['11A', $courtroom, $pearl],
-
+            ['15A', $courtroom, $pearl],
+            ['15B', $courtroom, $pearl],
+            ['15C', $courtroom, $pearl],
+            ['15D', $courtroom, $pearl],
         ];
 
         foreach ($locations as $p) {
