@@ -140,7 +140,7 @@ return [
         ],
         // http://stackoverflow.com/questions/18014885/how-to-disable-layout-and-view-renderer-in-zf2
         'strategies' => [
-            'ViewJsonStrategy'
+            'ViewJsonStrategy',
         ],
     ],
     'doctrine' => [
@@ -166,10 +166,10 @@ return [
         ],
         'configuration' => [
              'orm_default' => [
-                'query_cache'       => 'filesystem',
-                'result_cache'      => 'filesystem',
-                'metadata_cache'    => 'filesystem',
-                'hydration_cache'   => 'filesystem',
+                'query_cache' => 'filesystem',
+                'result_cache' => 'filesystem',
+                'metadata_cache' => 'filesystem',
+                'hydration_cache' => 'filesystem',
             ],
         ],
     ],
@@ -185,12 +185,12 @@ return [
             \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
 
-            Form\PersonForm::class  => Form\Factory\PersonFormFactory::class,
+            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
         ],
 
     ],
     'session_containers' => [
         'Authentication',
-    ]
+    ],
 
 ];

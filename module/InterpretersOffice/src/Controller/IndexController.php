@@ -52,7 +52,7 @@ class IndexController extends AbstractActionController
         $connection = $this->em->getConnection();
         $driver = $connection->getDriver()->getName();
 
-        return new ViewModel(['driver' => $driver,]);
+        return new ViewModel(['driver' => $driver]);
     }
     /**
      * temporary action for experimenting and doodling.
@@ -109,7 +109,7 @@ class IndexController extends AbstractActionController
             $person = new \InterpretersOffice\Entity\Person();
             $form->bind($person);
             $form->setData($data);
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
             }
             $em->persist($person);

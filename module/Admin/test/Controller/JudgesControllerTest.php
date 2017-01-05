@@ -1,26 +1,23 @@
 <?php
 /**
- * module/Admin/test/Controller/PeopleControllerTest.php
+ * module/Admin/test/Controller/PeopleControllerTest.php.
  */
+
 namespace ApplicationTest\Controller;
 
 //use InterpretersOffice\Admin\Controller\JudgesController;
 use ApplicationTest\AbstractControllerTest;
 use Zend\Stdlib\Parameters;
-use Zend\Dom\Query;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use InterpretersOffice\Entity;
 
 /**
- * JudgesControllerTest
+ * JudgesControllerTest.
  */
 class JudgesControllerTest extends AbstractControllerTest
 {
-
     public function setUp()
     {
-
         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute(
@@ -69,15 +66,15 @@ class JudgesControllerTest extends AbstractControllerTest
                 'lastname' => 'Henklebaum',
                 'firstname' => 'Jane',
                 'middlename' => 'B.',
-                'flavor'  => $flavor->getId(),
+                'flavor' => $flavor->getId(),
                 'default_location' => $courtroom->getId(),
                 'active' => 1,
             ],
-            'csrf' => $this->getCsrfToken('/admin/judges/add')            
+            'csrf' => $this->getCsrfToken('/admin/judges/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(new Parameters($data));
-        $this->dispatch('/admin/judges/add'); 
-        //echo $this->getResponse()->getBody(); //return;   
+        $this->dispatch('/admin/judges/add');
+        //echo $this->getResponse()->getBody(); //return;
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/judges');
 
@@ -85,12 +82,11 @@ class JudgesControllerTest extends AbstractControllerTest
             $entityManager
             ->createQuery('SELECT COUNT(j.id) FROM InterpretersOffice\Entity\Judge j')
             ->getSingleScalarResult());
-    
     }
-     public function testAddJudgeDoesNotBlowUpWhenThereAreNoLocations()
-     {
+    public function testAddJudgeDoesNotBlowUpWhenThereAreNoLocations()
+    {
 
         // set all the judge default locations to null
         $dql = 'UPDATE ... ';
-     }
+    }
 }

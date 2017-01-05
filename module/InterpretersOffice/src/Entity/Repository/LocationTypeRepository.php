@@ -40,16 +40,17 @@ class LocationTypeRepository extends EntityRepository
     }
 
     /**
-     * returns courthouse and courtroom location types
+     * returns courthouse and courtroom location types.
      *
      * @return array of LocationType entities
      */
     public function getJudgeLocationsTypes()
     {
         $dql = 'SELECT t FROM InterpretersOffice\Entity\LocationType t WHERE t. type IN (:types) '
-                . 'ORDER BY t.type ASC';
+                .'ORDER BY t.type ASC';
         $query = $this->getEntityManager()->createQuery($dql)
-                ->setParameters([':types' => ['courtroom','courthouse']]);
+                ->setParameters([':types' => ['courtroom', 'courthouse']]);
+
         return $query->getResult();
     }
 }

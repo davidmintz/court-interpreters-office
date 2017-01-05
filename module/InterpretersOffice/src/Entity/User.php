@@ -81,29 +81,29 @@ class User
      */
     protected $active;
 
-     /**
-      * Judge(s) to whom a user of hat Law Clerk or Courtroom Deputy is assigned.
-      *
-      * Most of these users have one and only one judge, but there can be cases where
-      * they have more than one, hence the many-to-many rather than many-to-one. This
-      * is unidirectional.
-      *
-      * @todo consider whether/how to solve the efficiency/aesthetic problem that a
-      * lot of Users have NO judges, and therefore do not need this at all. Subclass?
-      *
-      * @ORM\ManyToMany(targetEntity="Judge")
-      * @ORM\JoinTable(name="clerks_judges",
-      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-      *      inverseJoinColumns={@ORM\JoinColumn(name="judge_id", referencedColumnName="id")}
-      * )
-      *
-      * @var ArrayCollection
-      */
+    /**
+     * Judge(s) to whom a user of hat Law Clerk or Courtroom Deputy is assigned.
+     *
+     * Most of these users have one and only one judge, but there can be cases where
+     * they have more than one, hence the many-to-many rather than many-to-one. This
+     * is unidirectional.
+     *
+     * @todo consider whether/how to solve the efficiency/aesthetic problem that a
+     * lot of Users have NO judges, and therefore do not need this at all. Subclass?
+     *
+     * @ORM\ManyToMany(targetEntity="Judge")
+     * @ORM\JoinTable(name="clerks_judges",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="judge_id", referencedColumnName="id")}
+     * )
+     *
+     * @var ArrayCollection
+     */
     protected $judges;
 
-     /**
-      * constructor.
-      */
+    /**
+     * constructor.
+     */
     public function __construct()
     {
         $this->judges = new ArrayCollection();

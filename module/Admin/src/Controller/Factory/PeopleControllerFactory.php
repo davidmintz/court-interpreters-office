@@ -6,11 +6,10 @@ namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-
 use InterpretersOffice\Admin\Controller;
 
 /**
- * Factory for instantiating Controllers that manage Person and its subclasses
+ * Factory for instantiating Controllers that manage Person and its subclasses.
  */
 class PeopleControllerFactory implements FactoryInterface
 {

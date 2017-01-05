@@ -33,7 +33,6 @@ class InterpreterLanguage
         Interpreter $interpreter = null,
         Language $language = null
     ) {
-
         if ($interpreter) {
             $this->setInterpreter($interpreter);
         }

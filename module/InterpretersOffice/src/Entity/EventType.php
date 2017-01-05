@@ -175,8 +175,7 @@ class EventType
         return $this->category;
     }
     /**
-     *
-     * returns string representation
+     * returns string representation.
      *
      * @return string
      */

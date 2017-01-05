@@ -1,4 +1,5 @@
 <?php
+
 /** module/InterpretersOffice/src/Controller/AuthController.php   */
 
 namespace InterpretersOffice\Controller;
@@ -6,7 +7,6 @@ namespace InterpretersOffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\View\Model\ViewModel;
-
 use InterpretersOffice\Form\LoginForm;
 
 /**
@@ -60,7 +60,7 @@ class AuthController extends AbstractActionController
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return new ViewModel(['form' => $form]);
             }
             $data = $form->getData();
@@ -69,8 +69,9 @@ class AuthController extends AbstractActionController
                  ->setCredential($data['password']);
             $result = $this->auth->authenticate();
             $event_params = ['result' => $result, 'identity' => $data['identity']];
-            if (! $result->isValid()) {
+            if (!$result->isValid()) {
                 $this->events->trigger(__FUNCTION__, $this, $event_params);
+
                 return new ViewModel(
                     ['form' => $form, 'status' => $result->getCode()]
                 );
@@ -81,10 +82,11 @@ class AuthController extends AbstractActionController
             if (isset($session->redirect_url)) {
                 $url = $session->redirect_url;
                 unset($session->redirect_url);
+
                 return $this->redirect()->toUrl($url);
             }
             // managers and administrators go to /admin
-            if (in_array((string)$user->getRole(), ['administrator','manager'])) {
+            if (in_array((string) $user->getRole(), ['administrator', 'manager'])) {
                 $route = 'admin';
             } else {
                 // everyone else goes to the main page

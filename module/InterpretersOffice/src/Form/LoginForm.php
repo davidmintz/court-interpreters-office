@@ -61,7 +61,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
         $inputFilter = $this->getInputFilter();
         $validatorChain = $inputFilter->get('csrf')->getValidatorChain();
         $validatorChain->prependByName('NotEmpty', ['messages' => [
-           'isEmpty' => 'security error: missing CSRF token'
+           'isEmpty' => 'security error: missing CSRF token',
         ]], true);
     }
 

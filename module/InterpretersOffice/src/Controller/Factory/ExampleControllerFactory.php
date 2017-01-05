@@ -1,11 +1,11 @@
 <?php
+
 /** module/InterpretersOffice/src/Controller/Factory/ExampleControllerFactory.php */
 
 namespace InterpretersOffice\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-
 use InterpretersOffice\Controller\ExampleController;
 
 /**
@@ -29,6 +29,7 @@ class ExampleControllerFactory implements FactoryInterface
         $controller = new ExampleController(
             $container->get('entity-manager')
         );
+
         return $controller;
     }
 }

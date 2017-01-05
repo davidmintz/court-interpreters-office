@@ -1,6 +1,6 @@
 <?php
 /**
- * module/Admin/src/Form/JudgeForm.php
+ * module/Admin/src/Form/JudgeForm.php.
  */
 
 namespace InterpretersOffice\Admin\Form;
@@ -9,16 +9,14 @@ use InterpretersOffice\Form\PersonForm;
 use InterpretersOffice\Admin\Form;
 
 /**
- * extends PersonForm
+ * extends PersonForm.
  *
  * @see PersonForm
- *
  */
 class JudgeForm extends PersonForm
 {
-
     /**
-     * the name of our form
+     * the name of our form.
      *
      * @var string 'judge-form'  *
      */

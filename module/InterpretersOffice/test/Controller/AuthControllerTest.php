@@ -5,10 +5,8 @@
 namespace ApplicationTest\Controller;
 
 use ApplicationTest\AbstractControllerTest;
-use InterpretersOffice\Admin\Controller\AuthController;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use InterpretersOffice\Entity;
 
 class AuthControllerTest extends AbstractControllerTest
 {
@@ -22,18 +20,17 @@ class AuthControllerTest extends AbstractControllerTest
     }
     /**
      * asserts that susie_somebody@nysd.uscourts.gov can log in
-     * with either username or email address
+     * with either username or email address.
      */
     public function testLoginAdminUser()
     {
-
         $token = $this->getCsrfToken('/login');
         $auth = $this->getApplicationServiceLocator()->get('auth');
         $params =
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'csrf'     => $token,
+            'csrf' => $token,
         ];
         $this->dispatch('/login', 'POST', $params);
 
@@ -51,12 +48,11 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertRedirectTo('/admin');
     }
     /**
-     * tests that an admin user who is redirected from an admin page to 
-     * the login will be redirected back after successful login
+     * tests that an admin user who is redirected from an admin page to
+     * the login will be redirected back after successful login.
      */
-    function testRedirectionFollowingAuthentication()
+    public function testRedirectionFollowingAuthentication()
     {
-        
         $this->dispatch('/admin/languages/add');
         $this->assertRedirect();
         $this->reset(true);
@@ -64,24 +60,24 @@ class AuthControllerTest extends AbstractControllerTest
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'csrf'     =>  $this->getCsrfToken('/login'),
+            'csrf' => $this->getCsrfToken('/login'),
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/languages/add');
-        
+
         $this->dispatch('/logout');
-        
+
         $auth = $this->getApplicationServiceLocator()->get('auth');
-        
+
         // demote susie to see what happens next time she tries to access an admin page
         $em = FixtureManager::getEntityManager();
         $user = $em->getRepository('InterpretersOffice\Entity\User')->findOneBy(['username' => 'susie']);
         $role = $em->getRepository('InterpretersOffice\Entity\Role')->findOneBy(['name' => 'submitter']);
-        
+
         $user->setRole($role);
         $em->flush();
-        
+
         $this->dispatch('/admin/languages/add');
         $this->assertRedirect();
         $this->reset(true);
@@ -89,16 +85,15 @@ class AuthControllerTest extends AbstractControllerTest
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'csrf'     =>  $this->getCsrfToken('/login'),
+            'csrf' => $this->getCsrfToken('/login'),
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
         $this->assertNotRedirectTo('/admin/languages/add');
-        
     }
 
     /**
-     * asserts that a non-administrative user cannot go to /admin
+     * asserts that a non-administrative user cannot go to /admin.
      */
     public function testNonAdministrativeUserCannotAccessAdmin()
     {
@@ -112,14 +107,14 @@ class AuthControllerTest extends AbstractControllerTest
         );
         $entityManager->flush();
         // sanity-check it first
-        $this->assertEquals('submitter', (string)$susie->getRole());
+        $this->assertEquals('submitter', (string) $susie->getRole());
 
         $token = $this->getCsrfToken('/login');
         $params =
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'csrf'    => $token,
+            'csrf' => $token,
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
@@ -130,7 +125,7 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(302);
     }
     /**
-     * asserts that the wrong identity or password fails to authenticate
+     * asserts that the wrong identity or password fails to authenticate.
      */
     public function testBadLoginNameOrPasswordFailsToAuthenticate()
     {
@@ -152,7 +147,7 @@ class AuthControllerTest extends AbstractControllerTest
         $this->dispatch(
             '/login',
             'POST',
-            [   'identity' => 'nobody',
+            ['identity' => 'nobody',
                      'password' => 'notCorrect',
                      'csrf' => $this->getCsrfToken('/login'),
                  ]

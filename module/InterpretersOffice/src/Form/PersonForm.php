@@ -1,14 +1,13 @@
 <?php
+
 /** module/InterpretersOffice/src/Form/PersonForm.php */
+
 namespace InterpretersOffice\Form;
 
 use Zend\Form\Form as ZendForm;
-use Zend\Form\Element\Csrf;
 //use Zend\InputFilter\InputFilterProviderInterface;
 //use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Zend\InputFilter;
 
 /**
  * Form for a Person entity.
@@ -18,7 +17,7 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
     use CsrfElementCreationTrait;
 
     /**
-     * name of the form
+     * name of the form.
      *
      * @var string
      */
@@ -34,10 +33,10 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
     protected $fieldsetClass = PersonFieldset::class;
 
     /**
-     * constructor
+     * constructor.
      *
      * @param ObjectManager $objectManager
-     * @param Array $options
+     * @param array         $options
      */
     public function __construct(ObjectManager $objectManager, $options = null)
     {

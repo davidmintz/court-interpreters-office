@@ -25,14 +25,13 @@ class Module
     }
 
     /**
-     * module bootstrap, opportunity to attach listeners etc
+     * module bootstrap, opportunity to attach listeners etc.
      *
-     * @param  \Zend\Mvc\MvcEvent $e The MvcEvent instance
-     * @return void
+     * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
      */
     public function onBootstrap($e)
     {
-       // from the ZF3 tutorial, a waste of time:
+        // from the ZF3 tutorial, a waste of time:
 
         // Register a "render" event, at high priority (so it executes prior
        // to the view attempting to render)
@@ -42,21 +41,21 @@ class Module
 
     /**
      * DOES NOT WORK!
-     * https://docs.zendframework.com/zend-view/quick-start/#creating-and-registering-alternate-rendering-and-response-strategies
-     * @param  \Zend\Mvc\MvcEvent $e The MvcEvent instance
-     * @return void
+     * https://docs.zendframework.com/zend-view/quick-start/#creating-and-registering-alternate-rendering-and-response-strategies.
+     *
+     * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
      */
     public function registerJsonStrategy($e)
     {
-        $app          = $e->getTarget();
-        $locator      = $app->getServiceManager();
-        $view         = $locator->get('Zend\View\View');
+        $app = $e->getTarget();
+        $locator = $app->getServiceManager();
+        $view = $locator->get('Zend\View\View');
         $jsonStrategy = $locator->get('ViewJsonStrategy');
 
         // Attach strategy, which is a listener aggregate, at high priority
         $view->getEventManager()->attach(
             \Zend\View\ViewEvent::EVENT_RENDERER,
-            [$jsonStrategy,'selectRenderer'],
+            [$jsonStrategy, 'selectRenderer'],
             100
         );
     }

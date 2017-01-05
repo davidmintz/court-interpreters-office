@@ -1,23 +1,21 @@
 <?php
 /**
- * module/Admin/src/Form/JudgeFieldset.php
+ * module/Admin/src/Form/JudgeFieldset.php.
  */
 
 namespace InterpretersOffice\Admin\Form;
 
 use InterpretersOffice\Form\PersonFieldset;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use InterpretersOffice\Entity\Judge;
 
 /**
- * JudgeFieldset
+ * JudgeFieldset.
  *
  * @author david
  */
 class JudgeFieldset extends PersonFieldset
 {
-
     /**
      * name of the fieldset.
      *
@@ -31,22 +29,22 @@ class JudgeFieldset extends PersonFieldset
      * constructor.
      *
      * @param ObjectManager $objectManager
-     * @param array $options
+     * @param array         $options
      */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
         parent::__construct($objectManager, $options);
-        if (isset($options['object'])) { 
-            if (! $options['object'] instanceof Judge) {
+        if (isset($options['object'])) {
+            if (!$options['object'] instanceof Judge) {
                 throw new \InvalidArgumentException(sprintf(
                    'object has to be an instance of %s, got: %s',
                      Judge::class,
-                     is_object($options['object']) ?  
+                     is_object($options['object']) ?
                      get_class($options['object']) : gettype($options['object'])
                 ));
             }
             $judge = $options['object'];
-            /** @todo refactor this part? it's a bit confusing */
+            /* @todo refactor this part? it's a bit confusing */
             if ($defaultLocation = $judge->getDefaultLocation()) {
                 if ('courtroom' == $defaultLocation->getType()) {
                     $location_id = $defaultLocation->getId();
@@ -56,17 +54,16 @@ class JudgeFieldset extends PersonFieldset
                     $location_id = $parent_location_id;
                 }
             }
-             
         } else {
             // for getting courtrooms to populate select.
             // if there is no parent courthouse in the database,
             // the getCourtrooms() repository method knows to return an
             // empty array
-            $parent_location_id = 0; 
+            $parent_location_id = 0;
         }
         // the following two elements are not properties of the entity,
-        // but rather are only for the UI, so they can select the courthouse 
-        // and the courtroom. a JS event listener will update the 
+        // but rather are only for the UI, so they can select the courthouse
+        // and the courtroom. a JS event listener will update the
         // "defaultLocation" hidden element, which is a property
         $this->add([
             'name' => 'courthouse',
@@ -74,7 +71,7 @@ class JudgeFieldset extends PersonFieldset
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\Location',
-                'label'  => 'courthouse',
+                'label' => 'courthouse',
                 'find_method' => ['name' => 'getCourthouses'],
                 'property' => 'name',
             ],
@@ -85,14 +82,14 @@ class JudgeFieldset extends PersonFieldset
         ]);
         $this->add([
             'name' => 'courtroom',
-            'type' =>  'DoctrineModule\Form\Element\ObjectSelect',
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\Location',
-                'label'  => 'courtroom',
+                'label' => 'courtroom',
                 'find_method' => [
                     'name' => 'getCourtrooms',
-                    'params' => ['parent_id' => $parent_location_id]
+                    'params' => ['parent_id' => $parent_location_id],
                  ],
                 'property' => 'name',
             ],
@@ -101,23 +98,23 @@ class JudgeFieldset extends PersonFieldset
                 'id' => 'courtroom',
             ],
         ]);
-        
+
         $this->add([
-            
+
             'name' => 'defaultLocation',
             'type' => 'Zend\Form\Element\Hidden',
             'required' => true,
             'allow_empty' => true,
             'attributes' => [
                 'id' => 'defaultLocation',
-                
+
             ],
 
         ]);
-        
+
         // this is to make the HTML5 validator happy: a non-empty label attribute
         // for the empty option
-        foreach (['courthouse','courtroom'] as $elementName) {
+        foreach (['courthouse', 'courtroom'] as $elementName) {
             $element = $this->get($elementName);
             $valueOptions = $element->getValueOptions();
             array_unshift($valueOptions, [
@@ -137,25 +134,24 @@ class JudgeFieldset extends PersonFieldset
     }
 
     /**
-     * adds the "Hat" element to our form
+     * adds the "Hat" element to our form.
      *
      * @return JudgeFieldset
-     *
      */
     public function addHatElement()
     {
 
         // the Hat is not up for discussion; it has to be Judge.
-        // however, there might be a better solution, e.g., an 
+        // however, there might be a better solution, e.g., an
         // entity listener
         $this->add(
             [
                 'name' => 'hat',
                 'type' => 'Zend\Form\Element\Hidden',
-                'attributes' => [ 'id' => 'hat'],
+                'attributes' => ['id' => 'hat'],
             ]
         );
-        // while we're at it, add the Judge "flavor" element, which can be 
+        // while we're at it, add the Judge "flavor" element, which can be
         // thought of as a sub-hat
         $this->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
@@ -186,16 +182,13 @@ class JudgeFieldset extends PersonFieldset
         return $this;
     }
 
-
     /**
-     * gets input filter specification
+     * gets input filter specification.
      *
      * @return array
-     *
      */
     public function getInputFilterSpecification()
     {
-
         $spec = parent::getInputFilterSpecification();
         $spec['flavor'] = [
             'required' => true,
@@ -226,6 +219,7 @@ class JudgeFieldset extends PersonFieldset
         if (key_exists('mobilePhone', $spec)) {
             unset($spec['mobilePhone']);
         }
+
         return $spec;
     }
 }

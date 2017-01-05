@@ -105,20 +105,19 @@ class Judge extends Person
     }
 
     /**
-     * lifecycle callback to prevent incorrect hat and location-type on update event
+     * lifecycle callback to prevent incorrect hat and location-type on update event.
      *
      * proxies to onPrePersist()
      *
      * @ORM\PreUpdate
      */
-
     public function onPreUpdate()
     {
         return $this->onPrePersist();
     }
 
     /**
-     * lifecycle callback to prevent incorrect hat and location-type.on persist event
+     * lifecycle callback to prevent incorrect hat and location-type.on persist event.
      *
      * @ORM\PrePersist
      *
@@ -133,8 +132,8 @@ class Judge extends Person
         }
 
         if ($this->getDefaultLocation() !== null) {
-            if (! in_array(
-                (string)$this->getDefaultLocation()->getType(),
+            if (!in_array(
+                (string) $this->getDefaultLocation()->getType(),
                 ['courtroom', 'courthouse']
             )) {
                 throw new \RuntimeException(
@@ -144,7 +143,7 @@ class Judge extends Person
         }
     }
     /**
-     * returns a string representation of the entity
+     * returns a string representation of the entity.
      */
     public function __toString()
     {
@@ -154,7 +153,8 @@ class Judge extends Person
         if ($middle) {
             $string .= " $middle";
         }
-        $string .= ", ".(string)$this->getFlavor();
+        $string .= ', '.(string) $this->getFlavor();
+
         return $string;
     }
 }

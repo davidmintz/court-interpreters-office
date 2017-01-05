@@ -1,4 +1,5 @@
 <?php
+
 /**  module/InterpretersOffice/src/Service/Listener/AuthenticationListener */
 
 namespace InterpretersOffice\Service\Listener;
@@ -8,33 +9,29 @@ use Zend\Log\Logger;
 use Doctrine\ORM\EntityManager;
 
 /**
- * listener that observes user login attempts and logout
- *
+ * listener that observes user login attempts and logout.
  */
-
 class AuthenticationListener
 {
-
     /**
-     * log instance
+     * log instance.
      *
      * @var Logger
      */
     protected $log;
 
     /**
-     * entity manager
+     * entity manager.
      *
      * @var EntityManager
      */
     protected $entityManager;
 
     /**
-     * constructor
+     * constructor.
      *
      * @param Logger
      * @param EntityManager
-     *
      */
     public function __construct(Logger $log, EntityManager $entityManager)
     {
@@ -43,7 +40,7 @@ class AuthenticationListener
     }
 
     /**
-     * event handler for user login success or failure
+     * event handler for user login success or failure.
      *
      * @param Event
      */
@@ -51,14 +48,14 @@ class AuthenticationListener
     {
         $params = $e->getParams();
         $result = $params['result'];
-        $ip = \filter_input(\INPUT_SERVER, 'REMOTE_ADDR', \FILTER_VALIDATE_IP) ?:'N/A';
+        $ip = \filter_input(\INPUT_SERVER, 'REMOTE_ADDR', \FILTER_VALIDATE_IP) ?: 'N/A';
         if ($result->isValid()) {
             $message = sprintf(
                 'user %s authenticated from IP address: %s',
                 $params['identity'],
                 $ip
             );
-            /**
+            /*
             * @todo add last_login prop to entity ($result->getIdentity()) and update
             */
         } else {
@@ -73,7 +70,7 @@ class AuthenticationListener
     }
 
     /**
-     * event listener for user logout
+     * event listener for user logout.
      *
      * @param Event
      */

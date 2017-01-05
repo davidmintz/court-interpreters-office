@@ -1,6 +1,6 @@
 <?php
 /**
- *  module/InterpretersOffice/src/Entity/Repository/EventTypeRepository.php
+ *  module/InterpretersOffice/src/Entity/Repository/EventTypeRepository.php.
  */
 
 namespace InterpretersOffice\Entity\Repository;
@@ -9,12 +9,10 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * custom repository class for EventType entity
- *
+ * custom repository class for EventType entity.
  */
 class EventTypeRepository extends EntityRepository
 {
-
     use ResultCachingQueryTrait;
 
     /**
@@ -30,7 +28,7 @@ class EventTypeRepository extends EntityRepository
     }
 
     /**
-     * gets all the event-types, with sorting
+     * gets all the event-types, with sorting.
      *
      * note to self: find out if there's a way to make parent class' findAll()
      * sort for us.

@@ -139,7 +139,6 @@ class LocationsControllerTest extends AbstractControllerTest
 
     public function testCourtroomFormValidation()
     {
-
         $em = FixtureManager::getEntityManager();
         $courtroom_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courtroom']);
@@ -148,7 +147,7 @@ class LocationsControllerTest extends AbstractControllerTest
         $data = [
             'name' => '29F',
             'parentLocation' => '',
-            'type' => $courtroom_type ->getId(),
+            'type' => $courtroom_type->getId(),
             'comments' => '',
             'active' => 1,
             'csrf' => $this->getCsrfToken('/admin/locations/add'),
@@ -247,7 +246,6 @@ class LocationsControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         $courthouse_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courthouse']);
-
 
         $data = [
             'name' => 'Some Shithead Courthouse',

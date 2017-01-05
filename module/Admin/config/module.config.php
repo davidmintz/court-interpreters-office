@@ -16,7 +16,7 @@ return [
             'admin' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/admin',//[/]
+                    'route' => '/admin', //[/]
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\IndexController::class,
@@ -87,7 +87,7 @@ return [
                         ],
                     ],
 
-                    /** @todo this will have to be moved or copied to a
+                    /* @todo this will have to be moved or copied to a
                      * non-admin controller but this is convenient for now
                      */
                     'courtrooms' => [
@@ -239,11 +239,11 @@ return [
             Controller\IndexController::class => Controller\IndexController::class,
         ],
         'factories' => [
-            Controller\LanguagesController::class  => Controller\Factory\SimpleEntityControllerFactory::class,
-            Controller\LocationsController::class  => Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\LocationsController::class => Controller\Factory\SimpleEntityControllerFactory::class,
             Controller\EventTypesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
-            Controller\PeopleController::class     => Controller\Factory\PeopleControllerFactory::class,
-            Controller\JudgesController::class     => Controller\Factory\PeopleControllerFactory::class,
+            Controller\PeopleController::class => Controller\Factory\PeopleControllerFactory::class,
+            Controller\JudgesController::class => Controller\Factory\PeopleControllerFactory::class,
         ],
     ],
     'view_manager' => [

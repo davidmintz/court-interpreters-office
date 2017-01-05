@@ -6,11 +6,8 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-
 use InterpretersOffice\Form\PersonForm;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use InterpretersOffice\Entity;
 
 /**
@@ -18,7 +15,6 @@ use InterpretersOffice\Entity;
  */
 class PeopleController extends AbstractActionController
 {
-
     /**
      * entity manager.
      *
@@ -30,7 +26,6 @@ class PeopleController extends AbstractActionController
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
-     *
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -48,20 +43,20 @@ class PeopleController extends AbstractActionController
     }
 
     /**
-     * adds a Person entity to the database
+     * adds a Person entity to the database.
      */
     public function addAction()
     {
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/people/form.phtml');
         $form = new PersonForm($this->entityManager, ['action' => 'create']);
-        $viewModel->setVariables(['form' => $form,'title' => 'add a person']);
+        $viewModel->setVariables(['form' => $form, 'title' => 'add a person']);
         $request = $this->getRequest();
         $entity = new Entity\Person();
         $form->bind($entity);
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->persist($entity);
@@ -75,11 +70,12 @@ class PeopleController extends AbstractActionController
             );
             $this->redirect()->toRoute('people');
         }
+
         return $viewModel;
     }
 
     /**
-     * updates a Person entity
+     * updates a Person entity.
      */
     public function editAction()
     {
@@ -87,11 +83,11 @@ class PeopleController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/people/form.phtml')
                 ->setVariable('title', 'edit a person');
         $id = $this->params()->fromRoute('id');
-        if (! $id) { // get rid of this, since it will otherwise be 404?
+        if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Person', $id);
-        if (! $entity) {
+        if (!$entity) {
             return $viewModel->setVariables(['errorMessage' => "person with id $id not found"]);
         } else {
             // judges and interpreters are special cases
@@ -107,13 +103,13 @@ class PeopleController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
-                      "The person <strong>%s %s</strong> has been updated.",
+                      'The person <strong>%s %s</strong> has been updated.',
                       $entity->getFirstname(),
                       $entity->getLastname()
                   ));
@@ -135,13 +131,11 @@ class PeopleController extends AbstractActionController
      * we should redirect.
      *
      * @param Entity\Person $entity
-     *
      */
     public function redirectToFormFor(Entity\Person $entity)
     {
-
         $class = get_class($entity);
-        $base  = substr($class, strrpos($class, '\\') + 1);
+        $base = substr($class, strrpos($class, '\\') + 1);
         $route = strtolower($base).'s/edit';
         $this->redirect()->toRoute($route, ['id' => $entity->getId()]);
     }

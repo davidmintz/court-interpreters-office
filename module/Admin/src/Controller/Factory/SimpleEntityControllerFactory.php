@@ -39,7 +39,7 @@ class SimpleEntityControllerFactory implements FactoryInterface
                 //echo "WTF? ". get_class($factory). "...." ;
                 $entityManager = $container->get('entity-manager');
                 //echo "returning a $requestedName instance... ";
-                return new $requestedName($entityManager, $factory,$shortName); //, $shortName
+                return new $requestedName($entityManager, $factory, $shortName); //, $shortName
             break;
             // to be continued
         }

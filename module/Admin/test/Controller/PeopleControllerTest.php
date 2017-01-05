@@ -1,6 +1,6 @@
 <?php
 /**
- * module/Admin/test/Controller/PeopleControllerTest.php
+ * module/Admin/test/Controller/PeopleControllerTest.php.
  */
 
 namespace ApplicationTest\Controller;
@@ -17,7 +17,6 @@ class PeopleControllerTest extends AbstractControllerTest
 {
     public function setUp()
     {
-
         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute(
@@ -29,7 +28,6 @@ class PeopleControllerTest extends AbstractControllerTest
 
     public function testAccessPeopleAdminPage()
     {
-
         $this->dispatch('/admin/people');
         $this->assertResponseStatusCode(200);
         //$this->assertModuleName('interpretersofficeadmin');
@@ -44,7 +42,7 @@ class PeopleControllerTest extends AbstractControllerTest
         // first try a GET to check the form
         $this->dispatch('/admin/people/add');
         $this->assertResponseStatusCode(200);
-        $this->assertQuery("form");
+        $this->assertQuery('form');
         $this->assertQuery('input#lastname');
         $this->assertQuery('input#firstname');
         $this->assertQuery('input#middlename');
@@ -56,10 +54,10 @@ class PeopleControllerTest extends AbstractControllerTest
             'person' => [
                 'lastname' => 'Somebody',
                 'firstname' => 'John',
-                'email'   => 'john.somebody@lawfirm.com',
+                'email' => 'john.somebody@lawfirm.com',
                 'active' => 1,
                 'hat' => $attorneyHat,            ],
-            'csrf' => $this->getCsrfToken('/admin/people/add')
+            'csrf' => $this->getCsrfToken('/admin/people/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
@@ -74,10 +72,12 @@ class PeopleControllerTest extends AbstractControllerTest
         $entity = $query->setMaxResults(1)->getOneOrNullResult();
         $this->assertEquals('John', $entity->getFirstname());
         $this->assertEquals('Somebody', $entity->getLastname());
+
         return $entity;
     }
     /**
      * @depends testAdd
+     *
      * @param
      */
     public function testDuplicateEntityValidation(Entity\Person $entity)
@@ -93,10 +93,10 @@ class PeopleControllerTest extends AbstractControllerTest
             'person' => [
                 'lastname' => 'Somebody',
                 'firstname' => 'John',
-                'email'   => 'john.somebody@lawfirm.com',
+                'email' => 'john.somebody@lawfirm.com',
                 'active' => 1,
                 'hat' => $entity->getHat()->getId(),            ],
-            'csrf' => $this->getCsrfToken('/admin/people/add')
+            'csrf' => $this->getCsrfToken('/admin/people/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
@@ -116,10 +116,10 @@ class PeopleControllerTest extends AbstractControllerTest
             'person' => [
                 'lastname' => 'Somebody',
                 'firstname' => 'John',
-                'email'   => 'john.somebody@lawfirm.com',
+                'email' => 'john.somebody@lawfirm.com',
                 'active' => 1,
                 'hat' => $hat->getId(),            ],
-            'csrf' => $this->getCsrfToken('/admin/people/add')
+            'csrf' => $this->getCsrfToken('/admin/people/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
@@ -141,12 +141,12 @@ class PeopleControllerTest extends AbstractControllerTest
             'person' => [
                 'lastname' => 'Somebody',
                 'firstname' => 'John',
-                'email'   => 'john.somebody.else@lawfirm.com',
+                'email' => 'john.somebody.else@lawfirm.com',
                 'active' => 1,
                 'hat' => $hat->getId(),            ],
-            'csrf' => $this->getCsrfToken('/admin/people/add')
+            'csrf' => $this->getCsrfToken('/admin/people/add'),
         ];
-         $this->getRequest()->setMethod('POST')->setPost(
+        $this->getRequest()->setMethod('POST')->setPost(
              new Parameters($data)
          );
         $this->dispatch('/admin/people/add');
@@ -157,10 +157,10 @@ class PeopleControllerTest extends AbstractControllerTest
                         ->findByEmail('john.somebody.else@lawfirm.com')[0];
 
         $this->reset(true);
-        $url = '/admin/people/edit/' . $other_person->getId();
+        $url = '/admin/people/edit/'.$other_person->getId();
         $data['person']['email'] = 'john.somebody@lawfirm.com';
 
-         $this->getRequest()->setMethod('POST')->setPost(
+        $this->getRequest()->setMethod('POST')->setPost(
              new Parameters($data)
          );
         $this->dispatch($url);
@@ -171,20 +171,20 @@ class PeopleControllerTest extends AbstractControllerTest
     }
     /**
      * @depends testAdd
+     *
      * @param Entity\Person
      */
     public function testEditAction(Entity\Person $person)
     {
-
         $em = FixtureManager::getEntityManager();
         $person->setHat($em->getRepository('InterpretersOffice\Entity\Hat')
                 ->findOneBy(['name' => 'defense attorney']));
         $em->persist($person);
         $em->flush();
-        $url = '/admin/people/edit/' . $person->getId();
+        $url = '/admin/people/edit/'.$person->getId();
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
-        $this->assertQuery("form");
+        $this->assertQuery('form');
         $this->assertQuery('input#lastname');
         $this->assertQuery('input#firstname');
         $this->assertQuery('input#middlename');
@@ -207,7 +207,7 @@ class PeopleControllerTest extends AbstractControllerTest
                 'middlename' => 'Peter',
                 'active' => 1,
                 'hat' => $person->getHat()->getId(),            ],
-            'csrf' => $this->getCsrfToken($url)
+            'csrf' => $this->getCsrfToken($url),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
@@ -219,7 +219,6 @@ class PeopleControllerTest extends AbstractControllerTest
 
     public function testFormValidation()
     {
-
         $attorneyHat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
                         ->findByName('defense attorney')[0]->getId();
         $data = [
@@ -228,7 +227,7 @@ class PeopleControllerTest extends AbstractControllerTest
                 'firstname' => 'John (Killer)',
                 'active' => 1,
                 'hat' => $attorneyHat,            ],
-            'csrf' => $this->getCsrfToken('/admin/people/add')
+            'csrf' => $this->getCsrfToken('/admin/people/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
@@ -237,7 +236,6 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertNotRedirect();
         $this->assertQuery('div.validation-error');
         $this->assertQueryContentRegex('div.validation-error', '/invalid characters/');
-
 
         $data['person']['lastname'] = '';
         $data['person']['firstname'] = 'John';
@@ -265,14 +263,13 @@ class PeopleControllerTest extends AbstractControllerTest
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
 
         $data['person']['hat'] = '';
-         $this->getRequest()->setMethod('POST')->setPost(
+        $this->getRequest()->setMethod('POST')->setPost(
              new Parameters($data)
          );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
         $this->assertQuery('div.validation-error');
         $this->assertQueryContentRegex('div.validation-error', '/hat.+required/');
-
 
         $data['person']['hat'] = $attorneyHat;
         $data['person']['active'] = null;
@@ -289,7 +286,7 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $data['person']['active'] = 'some random string';
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
-         $this->getRequest()->setMethod('POST')->setPost(
+        $this->getRequest()->setMethod('POST')->setPost(
              new Parameters($data)
          );
         $this->dispatch('/admin/people/add');
@@ -297,7 +294,6 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $this->assertQueryCount('div.validation-error', 1);
         $this->assertQueryContentRegex('div.validation-error', '/invalid.+active/');
-
 
         $data['person']['active'] = 1;
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');

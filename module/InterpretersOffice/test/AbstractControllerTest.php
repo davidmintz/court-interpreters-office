@@ -9,7 +9,6 @@ namespace ApplicationTest;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\Parameters;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-
 use Zend\Dom\Query;
 
 /**
@@ -53,13 +52,13 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
                 [
                     'identity' => $identity,
                     'password' => $password,
-                    'csrf'     => $token,
+                    'csrf' => $token,
                 ]
             )
         );
         $this->dispatch('/login');
         $auth = $this->getApplicationServiceLocator()->get('auth');
-        if (! $auth->hasIdentity()) {
+        if (!$auth->hasIdentity()) {
             echo "\nWARNING:  failed authentication\n";
         }
 
@@ -67,10 +66,11 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
-     * parses out a csrf token from a form
+     * parses out a csrf token from a form.
      *
-     * @param string $url to dispatch
+     * @param string $url  to dispatch
      * @param string $name name of the CSRF form element
+     *
      * @return string $token parsed from document body
      */
     public function getCsrfToken($url, $name = 'csrf')
@@ -80,6 +80,7 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
         $selector = sprintf('input[name="%s"]', $name);
         $node = $query->execute($selector)->current();
         $token = $node->attributes->getNamedItem('value')->nodeValue;
+
         return $token;
     }
 }

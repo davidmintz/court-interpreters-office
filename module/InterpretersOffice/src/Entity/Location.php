@@ -237,7 +237,7 @@ class Location
     }
 
     /**
-     * returns a string representation of the entity
+     * returns a string representation of the entity.
      *
      * @return string
      */

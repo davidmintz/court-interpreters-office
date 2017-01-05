@@ -6,8 +6,8 @@
 namespace InterpretersOffice\Admin;
 
 use Zend\Mvc\MvcEvent;
-
 use Zend\Session\SessionManager;
+
 /**
  * Module class for our InterpretersOffice\Admin module.
  */
@@ -27,8 +27,8 @@ class Module
      * {@inheritdoc}
      *
      * @param \Zend\EventManager\EventInterface $event
-     * interesting discussion, albeit for ZF2
-     * http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
+     *                                                 interesting discussion, albeit for ZF2
+     *                                                 http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
      */
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
@@ -38,10 +38,8 @@ class Module
         //// The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
-        // $sessionManager = 
+        // $sessionManager =
         $container->get(SessionManager::class);
-        
-        
     }
 
     /**
@@ -62,20 +60,21 @@ class Module
     public function enforceAuthentication(MvcEvent $event)
     {
         $match = $event->getRouteMatch();
-        if (! $match) {
+        if (!$match) {
             return;
         }
         $module = $match->getParam('module');
         if (__NAMESPACE__ == $module) {
             $container = $event->getApplication()->getServiceManager();
             $auth = $container->get('auth');
-            if (! $auth->hasIdentity()) {
+            if (!$auth->hasIdentity()) {
                 $flashMessenger = $container
                         ->get('ControllerPluginManager')
                         ->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Authentication is required.');
                 $session = $container->get('Authentication');
                 $session->redirect_url = $event->getRequest()->getUriString();
+
                 return $this->getRedirectionResponse($event);
             } else {
                 $allowed = ['manager', 'administrator'];
@@ -85,7 +84,7 @@ class Module
                         $auth->getIdentity()->getId()
                     );
                 $role = (string) $user->getRole();
-                if (! in_array($role, $allowed)) {
+                if (!in_array($role, $allowed)) {
                     $flashMessenger = $container
                         ->get('ControllerPluginManager')
                         ->get('FlashMessenger');
@@ -109,7 +108,7 @@ class Module
         $response = $event->getResponse();
         $baseUrl = $event->getRequest()->getBaseurl();
         $response->getHeaders()
-            ->addHeaderLine('Location', $baseUrl .'/login');
+            ->addHeaderLine('Location', $baseUrl.'/login');
         $response->setStatusCode(302);
         $response->sendHeaders();
 

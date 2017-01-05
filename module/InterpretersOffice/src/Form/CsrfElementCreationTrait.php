@@ -1,8 +1,8 @@
 <?php
 /**
- * module/InterpretersOffice/Form/CsrfElementCreationTrait.php
- *
+ * module/InterpretersOffice/Form/CsrfElementCreationTrait.php.
  */
+
 namespace InterpretersOffice\Form;
 
 use Zend\Form\Element\Csrf;
@@ -13,19 +13,16 @@ use Zend\InputFilter;
  *
  * yes, we could create subclasses of Zend\Form\Form and Zend\Form\Fieldset that
  * do this, and extend those instead. but this works, and Traits are cool.
- *
  */
 trait CsrfElementCreationTrait
 {
-
     /**
-     * adds a CSRF element to the form
+     * adds a CSRF element to the form.
      *
-     * @return mixed. whatever $this is (Form or Fieldset instance).
+     * @return mixed. whatever $this is (Form or Fieldset instance)
      */
     public function addCsrfElement()
     {
-
         $this->add(new Csrf('csrf'));
         // customize validation error messages
         $inputFilter = $this->getInputFilter();
@@ -52,9 +49,10 @@ trait CsrfElementCreationTrait
                             ],
                         ],
                     ],
-                ]
+                ],
             ])
         );
+
         return $this;
     }
 }

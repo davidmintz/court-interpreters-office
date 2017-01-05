@@ -7,9 +7,7 @@ namespace InterpretersOffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-
 use Doctrine\Common\Persistence\ObjectManager;
-
 use InterpretersOffice\Form\PersonForm;
 
 /**
@@ -20,17 +18,15 @@ use InterpretersOffice\Form\PersonForm;
  */
 class ExampleController extends AbstractActionController
 {
-
-
     /**
-     * objectManager instance
+     * objectManager instance.
      *
      * @var ObjectManager
      */
     protected $objectManager;
 
     /**
-     * constructor
+     * constructor.
      *
      * @param ObjectManager $objectManager
      */
@@ -39,41 +35,41 @@ class ExampleController extends AbstractActionController
         $this->objectManager = $objectManager;
     }
     /**
-     * fool around with person form and fieldset
+     * fool around with person form and fieldset.
      */
     public function formAction()
     {
-
-        echo "shit works in formAction ... ";
+        echo 'shit works in formAction ... ';
 
         $form = new PersonForm($this->objectManager);
 
-        $entity = new \InterpretersOffice\Entity\Person;
+        $entity = new \InterpretersOffice\Entity\Person();
 
         $form->bind($entity);
 
         $form->setData([
             'person-fieldset' => [
-                'firstname' => "Wank",
-                'lastname' => "Gackersly",
+                'firstname' => 'Wank',
+                'lastname' => 'Gackersly',
                 'email' => 'wank@gacker.com',
                 'active' => 1,
-                ]
+                ],
             ]);
-        echo "valid? ";
+        echo 'valid? ';
         var_dump($form->isValid());
-        echo "<br>",$entity->getEmail(), " is the entity's email...";
+        echo '<br>',$entity->getEmail(), " is the entity's email...";
 
         $this->objectManager->persist($entity);
 
         try {
-           //$this->objectManager->flush();
+            //$this->objectManager->flush();
         } catch (\Exception  $e) {
-            echo "<br>".$e->getMessage();
+            echo '<br>'.$e->getMessage();
         }
         $something = $form->getObject();
 
-        echo get_class($something) . " comes from \$form->getObject()...";
+        echo get_class($something).' comes from $form->getObject()...';
+
         return false;
     }
 
@@ -84,16 +80,18 @@ class ExampleController extends AbstractActionController
      */
     public function indexAction()
     {
-        echo "it works";
+        echo 'it works';
         if ($this->events) {
-            echo " and this->events is a ".get_class($this->events);
+            echo ' and this->events is a '.get_class($this->events);
             if ($sharedManager = $this->events->getSharedManager()) {
-                echo " ... and we have a shared manager! ... ";
+                echo ' ... and we have a shared manager! ... ';
             } else {
-                echo " but no shared event manager..." ;
+                echo ' but no shared event manager...';
             }
         }
+
         return false;
+
         return new ViewModel();
     }
     /**
@@ -104,14 +102,14 @@ class ExampleController extends AbstractActionController
      */
     public function testAction()
     {
-        echo "testAction works; ";
-        echo "<br>note: i am ".self::class."<br>";
+        echo 'testAction works; ';
+        echo '<br>note: i am '.self::class.'<br>';
        //$this->events->trigger("doShit",$this,["message" => "this is the message parameter"]) ;
         $this->events->trigger(
             __FUNCTION__,
             $this,
-            ["message" => "this is the message parameter"]
-        ) ;
+            ['message' => 'this is the message parameter']
+        );
 
         return false;
     }
@@ -123,14 +121,14 @@ class ExampleController extends AbstractActionController
      */
     public function otherTestAction()
     {
-
         $header = $this->getRequest()->getHeaders()->get('accept');
-        echo get_class($header),"<br>";
-        echo $header->toString(),"<br>";
+        echo get_class($header),'<br>';
+        echo $header->toString(),'<br>';
         $request = $this->getRequest();
-        echo "xhr? ";
+        echo 'xhr? ';
         var_dump($request->isXmlHttpRequest());
-        echo "<br>";
+        echo '<br>';
+
         return false;
     }
 }

@@ -61,7 +61,6 @@ class LocationsController extends AbstractActionController
         FormFactoryInterface $formFactory,
         $shortName = null
     ) {
-
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
     }
@@ -75,22 +74,24 @@ class LocationsController extends AbstractActionController
         $repo = $this->entityManager->getRepository('InterpretersOffice\Entity\LocationType');
         $locationTypes = $repo->findAllWithTotals();
         if ($id = $this->params()->fromRoute('id')) {
-           // echo "$id is our id!";
+            // echo "$id is our id!";
            // return a list of that type
         }
         $view = new ViewModel(compact('locationTypes'));
+
         return $view->setVariables(['title' => 'locations']);
     }
     /**
      * adds a new Location.
+     *
      * @todo refactor, start passing some sort of context (query?) parameter to
      * our form so it can know what option data to fetch for the select
      * elements
+     *
      * @return ViewModel
      */
     public function addAction()
     {
-
         $entity = new Location();
 
         $form = $this->getForm(
@@ -98,7 +99,7 @@ class LocationsController extends AbstractActionController
             [
                     'object' => $entity,
                     'action' => 'create',
-                    'form_context' => $this->params()->fromQuery('form_context', 'locations')
+                    'form_context' => $this->params()->fromQuery('form_context', 'locations'),
             ])->bind($entity);
 
         $viewModel = (new ViewModel([
@@ -112,11 +113,11 @@ class LocationsController extends AbstractActionController
         if ($request->isPost()) {
             $json = $request->isXmlHttpRequest();
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $json ? new JsonModel(
                     [
                          'valid' => false,
-                          'id'   => null,
+                          'id' => null,
                          'validationErrors' => $form->getMessages(),
                     ]
                 ) : $viewModel;
@@ -126,15 +127,16 @@ class LocationsController extends AbstractActionController
             $this->entityManager->flush();
             if ($json) {
                 $parentLocation = $entity->getParentLocation();
+
                 return new JsonModel(
                     [
                         'valid' => true,
                         'validationErrors' => null,
-                        'entity'   => [
+                        'entity' => [
                             'name' => $entity->getName(),
-                            'id'   => $entity->getId(),
+                            'id' => $entity->getId(),
                             'type' => (string) $entity->getType(),
-                            'parent_location_id' => $parentLocation ? 
+                            'parent_location_id' => $parentLocation ?
                                     $parentLocation->getId() : null,
                         ],
                      ]
@@ -160,12 +162,12 @@ class LocationsController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
 
-        if (! $id) { // get rid of this, since it will otherwise be 404?
+        if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
 
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Location', $id);
-        if (! $entity) {
+        if (!$entity) {
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
         } else {
             $viewModel->id = $id;
@@ -181,7 +183,7 @@ class LocationsController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -193,7 +195,7 @@ class LocationsController extends AbstractActionController
         return $viewModel;
     }
     /**
-     * gets courtrooms located at a courthouse
+     * gets courtrooms located at a courthouse.
      *
      * returns as JSON data the courtrooms whose parent courthouse
      * id is submitted as a route parameter. for populating select elements
@@ -206,7 +208,7 @@ class LocationsController extends AbstractActionController
         $parent_id = $this->params()->fromRoute('parent_id');
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Location');
         $data = $repository->getCourtroomValueOptions($parent_id);
-        
+
         return new JsonModel($data);
     }
 }

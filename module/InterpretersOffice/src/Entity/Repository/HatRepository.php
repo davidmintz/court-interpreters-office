@@ -1,6 +1,6 @@
 <?php
 /**
- *  module/InterpretersOffice/src/Entity/Repository/HatRepository.php
+ *  module/InterpretersOffice/src/Entity/Repository/HatRepository.php.
  */
 
 namespace InterpretersOffice\Entity\Repository;
@@ -8,13 +8,12 @@ namespace InterpretersOffice\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Hat repository
+ * Hat repository.
  *
  * @author david
  */
 class HatRepository extends EntityRepository
 {
-
     /**
      * returns Hat entities for Person form's select element.
      *
@@ -26,9 +25,10 @@ class HatRepository extends EntityRepository
     public function getHatsForPersonForm()
     {
         $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h '
-           . 'WHERE h.name NOT LIKE \'%court interpreter%\' AND h.name <> \'Judge\''
-           . ' AND h.role IS NULL';
+           .'WHERE h.name NOT LIKE \'%court interpreter%\' AND h.name <> \'Judge\''
+           .' AND h.role IS NULL';
         $query = $this->getEntityManager()->createQuery($dql);
+
         return $query->getResult();
     }
 }

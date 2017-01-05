@@ -100,23 +100,23 @@ class Person
      */
     protected $hat;
 
-
     /**
-     * the office phone number
+     * the office phone number.
      *
      * @ORM\Column(name="office_phone",type="string",nullable=false,length=20,options={"default":""})
+     *
      * @var string
      */
     protected $officePhone = '';
 
-     /**
-     * the mobile phone number
+    /**
+     * the mobile phone number.
      *
      * @ORM\Column(name="mobile_phone",type="string",nullable=false,length=20,options={"default":""})
+     *
      * @var string
      */
     protected $mobilePhone = '';
-
 
     /**
      * Is the person "active," or only of historical interest?
@@ -130,7 +130,7 @@ class Person
     protected $active = true;
 
     /**
-     * constructor
+     * constructor.
      *
      * @param Hat the Hat this Person wears
      */
@@ -293,23 +293,26 @@ class Person
     }
 
     /**
-     * sets the office phone number
+     * sets the office phone number.
      *
      * @todo deal with formatting/unformatting
      *
      * @param string $officePhone
+     *
      * @return Person
      */
     public function setOfficePhone($officePhone)
     {
         $this->officePhone = $officePhone;
+
         return $this;
     }
 
     /**
-     * gets the office phone number
+     * gets the office phone number.
      *
      * @todo deal with formatting/unformatting
+     *
      * @return string
      */
     public function getOfficePhone()
@@ -318,23 +321,26 @@ class Person
     }
 
     /**
-     * sets the mobile phone number
+     * sets the mobile phone number.
      *
      * @todo deal with formatting/unformatting
      *
      * @param string $mobilePhone
+     *
      * @return Person
      */
     public function setMobilePhone($mobilePhone)
     {
         $this->mobilePhone = $mobilePhone;
+
         return $this;
     }
 
     /**
-     * gets the mobile phone number
+     * gets the mobile phone number.
      *
      * @todo deal with formatting/unformatting
+     *
      * @return string
      */
     public function getMobilePhone()

@@ -57,7 +57,6 @@ class LanguagesController extends AbstractActionController
         FormFactoryInterface $formFactory,
         $shortName = null
     ) {
-
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
         //$this->name = $shortName;
@@ -91,11 +90,11 @@ class LanguagesController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
-        if (! $id) {
+        if (!$id) {
             return $this->getFormViewModel(['errorMessage' => 'invalid or missing id parameter']);
         }
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Language', $id);
-        if (! $entity) {
+        if (!$entity) {
             return $this->getFormViewModel(['errorMessage' => "language with id $id not found"]);
         }
         $form = $this->getForm(Language::class, ['object' => $entity, 'action' => 'update'])
@@ -107,7 +106,7 @@ class LanguagesController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -148,7 +147,7 @@ class LanguagesController extends AbstractActionController
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
             }
 
@@ -158,6 +157,7 @@ class LanguagesController extends AbstractActionController
                   ->addSuccessMessage("The language <strong>$language</strong> has been added.");
             $this->redirect()->toRoute('languages');
         }
+
         return $viewModel;
     }
     /**

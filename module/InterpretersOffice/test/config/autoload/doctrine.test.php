@@ -40,10 +40,10 @@ return [
             ],
              'configuration' => [
                 'orm_default' => [
-                   'query_cache'       => 'array',
-                   'result_cache'      => 'array',
-                   'metadata_cache'    => 'array',
-                   'hydration_cache'   => 'array',
+                   'query_cache' => 'array',
+                   'result_cache' => 'array',
+                   'metadata_cache' => 'array',
+                   'hydration_cache' => 'array',
                ],
             ],
         ],

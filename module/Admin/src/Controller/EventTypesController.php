@@ -1,6 +1,6 @@
 <?php
 /**
- * module/Admin/src/Controller/EventTypesController.php
+ * module/Admin/src/Controller/EventTypesController.php.
  */
 
 namespace InterpretersOffice\Admin\Controller;
@@ -11,17 +11,13 @@ use Zend\View\Model\ViewModel;
 use InterpretersOffice\Form\Factory\FormFactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\EventType;
-
 use InterpretersOffice\Form\AnnotatedFormCreationTrait;
 
 /**
- * controller for managing event-types
- *
- *
+ * controller for managing event-types.
  */
 class EventTypesController extends AbstractActionController
 {
-
     use AnnotatedFormCreationTrait;
 
     /**
@@ -61,36 +57,35 @@ class EventTypesController extends AbstractActionController
         FormFactoryInterface $formFactory,
         $shortName = null
     ) {
-
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
-        if (! $this->name) {
+        if (!$this->name) {
             $this->name = $shortName;
         }
     }
 
-
     /**
-     * index action
+     * index action.
      */
     public function indexAction()
     {
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\EventType');
         $eventTypes = $repository->findAll();
-        return ['title' => 'event-types','eventTypes' => $eventTypes ];
+
+        return ['title' => 'event-types', 'eventTypes' => $eventTypes];
     }
 
     /**
      * add action
-     *      *
+     *      *.
+     *
      * @return ViewModel
      */
     public function addAction()
     {
-
-        $view = (new ViewModel(['title' => "add an event-type"]))
+        $view = (new ViewModel(['title' => 'add an event-type']))
                 ->setTemplate("interpreters-office/admin/{$this->name}/form.phtml");
-        $entity = new EventType;
+        $entity = new EventType();
         $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'create'])
                 ->bind($entity);
         $view->setVariables(['form' => $form, 'id' => $entity->getId()]);
@@ -99,7 +94,7 @@ class EventTypesController extends AbstractActionController
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $view;
             }
             $this->entityManager->persist($entity);
@@ -113,32 +108,31 @@ class EventTypesController extends AbstractActionController
     }
 
     /**
-     * edits an EventType entity
-     *
+     * edits an EventType entity.
      */
     public function editAction()
     {
-        $view = (new ViewModel(['title' => "edit an event-type"]))
+        $view = (new ViewModel(['title' => 'edit an event-type']))
                 ->setTemplate("interpreters-office/admin/{$this->name}/form.phtml")
                 ->setVariables(['title' => 'edit an event-type']);
         $id = $this->params()->fromRoute('id');
-        if (! $id) {
+        if (!$id) {
             return $view->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
         $entity = $this->entityManager->find('InterpretersOffice\Entity\EventType', $id);
-        if (! $entity) {
+        if (!$entity) {
             return $view->setVariables(['errorMessage' => "event-type with id $id not found"]);
         }
         $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'update'])
                ->bind($entity);
 
-        $view->setVariables(['form' => $form,'id' => $id]);
+        $view->setVariables(['form' => $form, 'id' => $id]);
 
         $request = $this->getRequest();
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $view;
             }
             $this->entityManager->flush();

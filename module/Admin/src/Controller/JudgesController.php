@@ -1,26 +1,21 @@
 <?php
 /**
- * module/Admin/src/Controller/JudgesController.php
+ * module/Admin/src/Controller/JudgesController.php.
  */
 
 namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-
 use InterpretersOffice\Admin\Form\JudgeForm;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use InterpretersOffice\Entity;
 
 /**
- * JudgesController
- *
+ * JudgesController.
  */
 class JudgesController extends AbstractActionController
 {
-
     /**
      * entity manager.
      *
@@ -32,7 +27,6 @@ class JudgesController extends AbstractActionController
      * constructor.
      *
      * @param ObjectManager $entityManager
-     *
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -46,22 +40,22 @@ class JudgesController extends AbstractActionController
      */
     public function indexAction()
     {
-
         $judges = $this->entityManager
                 ->getRepository('InterpretersOffice\Entity\Judge')
                 ->findAll();
+
         return new ViewModel(['title' => 'judges', 'judges' => $judges]);
     }
 
     /**
-     * add a new Judge
+     * add a new Judge.
      */
     public function addAction()
     {
         $viewModel = (new ViewModel())->setTemplate('interpreters-office/admin/judges/form.phtml');
         $form = new JudgeForm($this->entityManager, ['action' => 'create']);
         $viewModel->setVariables(
-            ['title' => 'add a judge','form' => $form]
+            ['title' => 'add a judge', 'form' => $form]
         );
 
         $request = $this->getRequest();
@@ -71,7 +65,7 @@ class JudgesController extends AbstractActionController
         $form->bind($entity);
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 // echo "not valid.";  print_r($form->getMessages());
                 return $viewModel;
             }
@@ -89,16 +83,16 @@ class JudgesController extends AbstractActionController
                     'Judge <strong>%s %s, %s</strong> has been added to the database',
                     $entity->getFirstname(),
                     $entity->getLastname(),
-                    (string)$entity->getFlavor()
+                    (string) $entity->getFlavor()
                 )
             );
             $this->redirect()->toRoute('judges');
         }
+
         return $viewModel;
     }
     /**
-     * updates a Judge entity
-     *
+     * updates a Judge entity.
      */
     public function editAction()
     {
@@ -106,24 +100,24 @@ class JudgesController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/judges/form.phtml')
                 ->setVariables(['title' => 'edit a judge']);
         $id = $this->params()->fromRoute('id');
-       
-        if (! $id) { // get rid of this, since it will otherwise be 404?
+
+        if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Judge', $id);
-        if (! $entity) {
+        if (!$entity) {
             return $viewModel->setVariables(['errorMessage' => "judge with id $id not found"]);
         } else {
             $viewModel->id = $id;
         }
-        $form = new JudgeForm($this->entityManager, ['action' => 'update','object'=>$entity]);
+        $form = new JudgeForm($this->entityManager, ['action' => 'update', 'object' => $entity]);
         $form->bind($entity);
         $viewModel->form = $form;
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -132,7 +126,7 @@ class JudgesController extends AbstractActionController
                       'Judge <strong>%s %s, %s</strong> has been updated.',
                       $entity->getFirstname(),
                       $entity->getLastname(),
-                      (string)$entity->getFlavor()
+                      (string) $entity->getFlavor()
                   ));
             $this->redirect()->toRoute('judges');
         }

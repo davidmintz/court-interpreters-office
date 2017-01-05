@@ -19,7 +19,6 @@ class LanguagesControllerTest extends AbstractControllerTest
 {
     public function setUp()
     {
-
         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute([
@@ -31,7 +30,6 @@ class LanguagesControllerTest extends AbstractControllerTest
 
     public function testAddLanguage()
     {
-
         $entityManager = FixtureManager::getEntityManager();
         $repository = $entityManager->getRepository('InterpretersOffice\Entity\Language');
         $languages = $repository->findAll();

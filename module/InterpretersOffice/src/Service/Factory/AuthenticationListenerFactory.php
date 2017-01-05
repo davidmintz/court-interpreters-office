@@ -5,11 +5,10 @@
 
 namespace InterpretersOffice\Service\Factory;
 
-/** module/InterpretersOffice/src/Factory/UserListenerFactory */
+/* module/InterpretersOffice/src/Factory/UserListenerFactory */
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-
 use InterpretersOffice\Service\Listener\AuthenticationListener;
 
 /**
@@ -17,8 +16,6 @@ use InterpretersOffice\Service\Listener\AuthenticationListener;
  */
 class AuthenticationListenerFactory implements FactoryInterface
 {
-
-
     /**
      * implements FactoryInterface.
      *
@@ -30,7 +27,6 @@ class AuthenticationListenerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-
         return new AuthenticationListener(
             $container->get('log'),
             $container->get('entity-manager')
