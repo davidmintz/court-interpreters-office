@@ -7,7 +7,14 @@ InterpretersOffice is designed primarily with US District Court in mind, but I'm
 
 # requirements
 
-Requirements are not exotic. In more or less plain English: you are going to need standard hardware and software for serving a web application. That means a computer on a network with its firewall configured to allow web traffic; installed on that computer, a properly configured web server such as [Apache](https://httpd.apache.org/); the [MySQL](https://www.mysql.com/) database server (others will likely work, but we haven't gone there yet); and the programming language [PHP](http://php.net/) version 5.6 or 7.0. On the client side, users will need only a standard web browser and access via the network to the server where the application is installed. If you're running this on your court's intranet, your system administrators should readily understand this stuff. If you opt instead to install it on a commercial web hosting service, that will work as well, because as we said, the underlying software requirements are standard.
+Requirements are not exotic. In more or less plain English: you are going to need standard hardware and software for serving 
+a web application. That means a computer on a network with its firewall configured to allow web traffic; installed on that 
+computer, a properly configured web server such as [Apache](https://httpd.apache.org/); the [MySQL](https://www.mysql.com/) 
+database server (others will likely work, but we haven't gone there yet); and the programming language [PHP](http://php.net/) 
+version 5.6 or later (we are currently testing under PHP 5.6, 7.0 and 7.1). On the client side, users will need only a standard 
+web browser and access via the network to the server where the application is installed. If you're running this on your court's 
+intranet, your system administrators should readily understand this stuff. If you opt instead to install it on a commercial web 
+hosting service, that will work as well, because as we said, the underlying software requirements are standard.
 
 The entire software stack -- operating system, web and database servers, application code -- can consist of open-source software costing you nothing. If you're running it on your organization's network, an ordinary, inexpensive commodity PC will be plenty powerful enough to support the number of users you're likely to have.
 
