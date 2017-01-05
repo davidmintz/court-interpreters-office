@@ -83,10 +83,42 @@ class JudgesControllerTest extends AbstractControllerTest
             ->createQuery('SELECT COUNT(j.id) FROM InterpretersOffice\Entity\Judge j')
             ->getSingleScalarResult());
     }
-    public function testAddJudgeDoesNotBlowUpWhenThereAreNoLocations()
+    
+    /**
+     * @todo move the cache-clearing to someplace convenient for re-use
+     */
+    public function testAddJudgePageNotBlowUpWhenThereAreNoLocations()
     {
-
+        $entityManager = FixtureManager::getEntityManager();
+        // clear the cache (down the road, this should not be necessary)
+        $cache = $this->getApplicationServiceLocator()->get('entity-manager')->getConfiguration()->getResultCacheImpl();
+        $cache->flushAll();
         // set all the judge default locations to null
-        $dql = 'UPDATE ... ';
+        $dql = 'UPDATE InterpretersOffice\Entity\Judge j SET j.defaultLocation = NULL';
+        $query = $entityManager->createQuery($dql);
+        $query->getResult();
+        // delete the location entities having a parent
+        $entityManager->createQuery(
+            'DELETE InterpretersOffice\Entity\Location l where l.parentLocation IS NOT NULL')
+            ->getResult();
+        $entityManager
+                ->createQuery('DELETE InterpretersOffice\Entity\Location l where l.parentLocation IS NULL')
+                ->getResult();
+        // load the "add" page
+        $this->dispatch('/admin/judges/add');
+        $this->assertResponseStatusCode(200);
+        
+        $this->assertQuery('form');
+        $this->assertQuery('#lastname');
+        $this->assertQuery('#firstname');
+        $this->assertQuery('#middlename');
+        $this->assertQuery('#courthouse option');
+        
+       // echo $this->getResponse()->getBody();
+        
+        $this->assertQueryCount('#courthouse option',1);
+        $this->assertQuery('#courtroom option');
+        $this->assertQueryCount('#courtroom option',1);
+        
     }
 }
