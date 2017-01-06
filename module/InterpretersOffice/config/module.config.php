@@ -8,6 +8,10 @@ namespace InterpretersOffice;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 
+$environment = getenv('APP_ENV') ?: 'development';
+
+$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
+
 return [
     'router' => [
         'routes' => [
@@ -146,7 +150,7 @@ return [
     'doctrine' => [
 
         'driver' => [
-            // defines an annotation driver with two paths, and names it `my_annotation_driver`
+            // defines an annotation driver with one path, and names it `my_annotation_driver`
             'application_annotation_driver' => [
                 'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                 'cache' => 'array',
@@ -166,10 +170,10 @@ return [
         ],
         'configuration' => [
              'orm_default' => [
-                'query_cache' => 'filesystem',
-                'result_cache' => 'filesystem',
-                'metadata_cache' => 'filesystem',
-                'hydration_cache' => 'filesystem',
+                'query_cache' => $doctrine_cache,
+                'result_cache' => $doctrine_cache,
+                'metadata_cache' => $doctrine_cache,
+                'hydration_cache' => $doctrine_cache,
             ],
         ],
     ],
