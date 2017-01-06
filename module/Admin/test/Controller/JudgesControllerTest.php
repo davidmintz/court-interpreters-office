@@ -89,10 +89,8 @@ class JudgesControllerTest extends AbstractControllerTest
      */
     public function testAddJudgePageNotBlowUpWhenThereAreNoLocations()
     {
-        $entityManager = FixtureManager::getEntityManager();
-        // clear the cache (down the road, this should not be necessary)
-        $cache = $this->getApplicationServiceLocator()->get('entity-manager')->getConfiguration()->getResultCacheImpl();
-        $cache->flushAll();
+        $entityManager = $this->getApplicationServiceLocator()->get('entity-manager');
+        
         // set all the judge default locations to null
         $dql = 'UPDATE InterpretersOffice\Entity\Judge j SET j.defaultLocation = NULL';
         $query = $entityManager->createQuery($dql);
