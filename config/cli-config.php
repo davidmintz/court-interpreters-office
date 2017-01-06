@@ -7,6 +7,10 @@ use Doctrine\ORM\Tools\Console\ConsoleRunner;
 // replace with file to your own project bootstrap
 $entityManager = require __DIR__.'/doctrine-bootstrap.php';
 
-// replace with mechanism to retrieve EntityManager in your app
+$config = $entityManager->getConfiguration();
+
+// try to make Doctrine cli clear cache, shit does not work:
+// $directory = __DIR__.'/../data/DoctrineModule/cache';
+// $config->setResultCacheImpl( new Doctrine\Common\Cache\FilesystemCache($directory));
 
 return ConsoleRunner::createHelperSet($entityManager);
