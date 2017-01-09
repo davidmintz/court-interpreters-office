@@ -79,22 +79,37 @@ class LocationRepository extends EntityRepository
         if (!$parent_id) {
             return [];
         }
-        if (isset($options['json']) && $options['json']) {
-            $what = 'l.id, l.name';
-        } else {
-            $what = 'l';
-        }
-        $dql = 'SELECT '.$what.' FROM InterpretersOffice\Entity\Location l '
+        $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
         $query = $this->getEntityManager()->createQuery($dql)
                 ->setParameter('parent_id', $parent_id)->useResultCache(true);
         $data = $query->getResult();
-        // maybe it will run faster if you cram it into one line
+        // maybe it would run faster if we crammed it into one line :-)
         usort($data, function ($a, $b) {
             return strnatcasecmp($a->getName(), $b->getName());
         });
 
+        return $data;
+    }
+    
+    /**
+     * find all locations of type id $type_id
+     * 
+     * @param int $type_id
+     * @return array
+     */
+    public function findByTypeId($type_id)
+    {
+        $query = $this->createQuery(
+            'SELECT l.id, l.name, p.name AS parent FROM InterpretersOffice\Entity\Location l '
+                . ' LEFT JOIN l.parentLocation p JOIN l.type t '
+                . ' WHERE t.id = :type_id'
+        )->setParameters([':type_id'=>$type_id]);
+        $data = $query->getResult();
+         usort($data, function ($a, $b) {
+            return strnatcasecmp("$a[name], $a[parent]","$b[name], $b[parent]");
+        });
         return $data;
     }
 
