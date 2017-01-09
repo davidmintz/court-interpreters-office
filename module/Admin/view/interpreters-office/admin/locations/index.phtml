@@ -24,4 +24,36 @@ endif;
   </li>
 <?php endforeach ?>
 </ul>
+<script type="text/javascript">
+$(function(){
+    $('#locations-list > li > a ').on("click",function(event){
+        event.preventDefault();
+        console.log("click");
+        var listItem = $(this).closest('li');
+        var subList = listItem.children('ul');
+        if (subList.length) {
+            subList.toggle("slow");
+        } else {
+            subList = $('<ul>').addClass('list-group subgroup').hide();
+            items = [];
+            $.getJSON(this.href,function(data){
+                if (! data.length) {
+                    items[0] = $('<li>').addClass('list-group-item').text('no locations found');
+                } else {//*/
+                    for (i = 0; i < data.length; i++) {
+                        var text = data[i].name;
+                        if (data[i].parent) {
+                            text += ", "+data[i].parent;
+                        }
+                        items[i] = $('<li>').text(text).addClass('list-group-item');
+                    }
+                } 
+                subList.append(items);
+                listItem.append(subList);
+                subList.show("slow");
+            });
+        }
+    })
+});
 
+</script>
