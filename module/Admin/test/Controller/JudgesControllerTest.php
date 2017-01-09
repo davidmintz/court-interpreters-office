@@ -85,7 +85,8 @@ class JudgesControllerTest extends AbstractControllerTest
     }
     
     /**
-     * @todo move the cache-clearing to someplace convenient for re-use
+     * tests that everything looks ok in the add-judge page even if there are 
+     * no locations in the database
      */
     public function testAddJudgePageNotBlowUpWhenThereAreNoLocations()
     {
@@ -99,6 +100,7 @@ class JudgesControllerTest extends AbstractControllerTest
         $entityManager->createQuery(
             'DELETE InterpretersOffice\Entity\Location l where l.parentLocation IS NOT NULL')
             ->getResult();
+        // delete the rest
         $entityManager
                 ->createQuery('DELETE InterpretersOffice\Entity\Location l where l.parentLocation IS NULL')
                 ->getResult();
