@@ -74,8 +74,10 @@ class LocationsController extends AbstractActionController
         $repo = $this->entityManager->getRepository('InterpretersOffice\Entity\LocationType');
         $locationTypes = $repo->findAllWithTotals();
         if ($id = $this->params()->fromRoute('id')) {
-            // echo "$id is our id!";
-           // return a list of that type
+            
+            $repo = $this->entityManager->getRepository('InterpretersOffice\Entity\Location');
+            $data = $repo->findByTypeId($id);
+            return new JsonModel($data);
         }
         $view = new ViewModel(compact('locationTypes'));
 
