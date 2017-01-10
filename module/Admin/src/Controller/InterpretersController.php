@@ -61,16 +61,17 @@ class InterpretersController extends AbstractActionController
         
          
 
-
-        return $viewModel->setVariables(['form' => $form, ]);
+        $viewModel->form = $form;
+        //return $viewModel->setVariables(['form' => $form, ]);
 
         
         $request = $this->getRequest();
-        $entity = new Entity\Person();
+        $entity = new Entity\Interpreter();
         $form->bind($entity);
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
+                //print_r($form->getMessages());
                 return $viewModel;
             }
             $this->entityManager->persist($entity);
@@ -82,7 +83,7 @@ class InterpretersController extends AbstractActionController
                     $entity->getLastname()
                 )
             );
-            $this->redirect()->toRoute('people');
+            $this->redirect()->toRoute('interpreters');
         }
 
         return $viewModel;

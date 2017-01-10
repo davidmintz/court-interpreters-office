@@ -60,6 +60,20 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
     </div>
  </div>
+<?php $languages = $fieldset->get('language-select') ?>
+<div class="form-group">
+    <label class="control-label col-sm-3"><?php echo $languages->getLabel()?></label>
+    <div class="col-sm-9"><?php echo $this->formSelect($languages),$this->formElementErrors($languages) ?>            
+    </div>
+ </div>
+<?php $languages_element = $fieldset->get('interpreterLanguages') ?>
+<div class="form-group">
+    <label class="control-label col-sm-3"><?php echo $languages_element->getLabel()?></label>
+    <div class="col-sm-9"><?php 
+    // don't render: //echo $this->formSelect($languages_element),
+    echo $this->formElementErrors($languages_element) ?>            
+    </div>
+ </div>
 <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
     <?php
