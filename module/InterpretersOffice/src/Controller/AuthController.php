@@ -109,10 +109,11 @@ class AuthController extends AbstractActionController
             $this->auth->clearIdentity();
             $this->flashMessenger()
                  ->addSuccessMessage('You have logged out');
+            $this->events->trigger(__FUNCTION__, $this, ['user' => $user]);
         } else {
             $this->redirect()->toRoute('home');
         }
-        $this->events->trigger(__FUNCTION__, $this, ['user' => $user]);
+        
         $this->redirect()->toRoute('auth');
     }
 }
