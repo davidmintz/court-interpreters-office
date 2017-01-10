@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Entity representing an Interpreter.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\InterpreterRepository")
  * @ORM\Table(name="interpreters")
  */
 class Interpreter extends Person

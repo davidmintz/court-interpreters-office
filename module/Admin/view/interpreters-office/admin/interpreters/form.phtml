@@ -12,7 +12,7 @@ endif;
 $formAction = strstr($this->title, 'add') ? $this->url('interpreters/add')
     : $this->url('interpreters/edit', ['id' => $this->id ]);
 
-return;
+
 
 $form = $this->form;
 $form->add([
@@ -32,7 +32,7 @@ $form->add([
 // to be continued. what follows is a copy-paste job
 
 $form->prepare();
-$fieldset = $form->get('person');
+$fieldset = $form->get('interpreter');
 echo $this->form()->openTag($form);?>
 <div class="form-group">
 <?php

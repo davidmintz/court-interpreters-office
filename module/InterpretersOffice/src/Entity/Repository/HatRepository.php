@@ -14,6 +14,9 @@ use Doctrine\ORM\EntityRepository;
  */
 class HatRepository extends EntityRepository
 {
+    
+
+    use ResultCachingQueryTrait;
     /**
      * returns Hat entities for Person form's select element.
      *
@@ -31,4 +34,19 @@ class HatRepository extends EntityRepository
 
         return $query->getResult();
     }
+
+    /**
+     * get Hats for InterpreterFieldset
+     *
+     * @return Array 
+     */
+    public function getInterpreterHats()
+    {
+
+        $query = $this->createQuery(
+            'SELECT h  FROM InterpretersOffice\Entity\Hat h WHERE h.name LIKE :what ORDER BY h.name'
+        )->setParameters([':what' => '%court interpreter']);
+        return $query->getResult();
+    }
+
 }
