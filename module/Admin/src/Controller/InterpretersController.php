@@ -59,10 +59,12 @@ class InterpretersController extends AbstractActionController
         
         $form = new InterpreterForm($this->entityManager, ['action' => 'create']);
         
-        return $viewModel;
+         
 
 
-        $viewModel->setVariables(['form' => $form, 'title' => 'add a person']);
+        return $viewModel->setVariables(['form' => $form, ]);
+
+        
         $request = $this->getRequest();
         $entity = new Entity\Person();
         $form->bind($entity);
