@@ -57,10 +57,13 @@ echo $this->doctype(); ?>
         </div>
             <?php echo $this->content; ?>
            
+            
+        </div> <!-- /container -->
+        <div class="container">
             <footer style="margin-top: 2em; border-top: 1px orange dotted">
                 <p>[layout: footer]</p>
             </footer>
-        </div> <!-- /container -->
+        </div>
         <?php echo $this->inlineScript() ?>
         <script>
             $(document).ready(function() {
