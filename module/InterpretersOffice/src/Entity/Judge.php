@@ -42,7 +42,7 @@ class Judge extends Person
      * A Judge has a JudgeFlavor, e.g., "USDJ" in US District Courts.
      *
      * @ORM\JoinColumn(nullable=false)
-     * @ORM\ManyToOne(targetEntity="JudgeFlavor")
+     * @ORM\ManyToOne(targetEntity="JudgeFlavor",fetch="EAGER")
      */
     protected $flavor;
 
