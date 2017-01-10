@@ -67,24 +67,19 @@ class Module
         if (__NAMESPACE__ == $module) {
             $container = $event->getApplication()->getServiceManager();
             $auth = $container->get('auth');
+            $session = $container->get('Authentication');
             if (!$auth->hasIdentity()) {
                 $flashMessenger = $container
                         ->get('ControllerPluginManager')
                         ->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Authentication is required.');
-                $session = $container->get('Authentication');
                 $session->redirect_url = $event->getRequest()->getUriString();
 
                 return $this->getRedirectionResponse($event);
-            } else {
+                
+            } else { 
                 $allowed = ['manager', 'administrator'];
-                $user = $container->get('entity-manager')
-                    ->find(
-                        'InterpretersOffice\Entity\User',
-                        $auth->getIdentity()->getId()
-                    );
-                $role = (string) $user->getRole();
-                if (!in_array($role, $allowed)) {
+                if (!in_array($session->role, $allowed)) {
                     $flashMessenger = $container
                         ->get('ControllerPluginManager')
                         ->get('FlashMessenger');
