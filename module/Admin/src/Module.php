@@ -109,7 +109,7 @@ class Module
         $baseUrl = $event->getRequest()->getBaseurl();
         $response->getHeaders()
             ->addHeaderLine('Location', $baseUrl.'/login');
-        $response->setStatusCode(302);
+        $response->setStatusCode(303);
         $response->sendHeaders();
 
         return $response;

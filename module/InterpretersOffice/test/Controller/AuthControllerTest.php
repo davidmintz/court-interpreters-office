@@ -122,7 +122,7 @@ class AuthControllerTest extends AbstractControllerTest
 
         $this->dispatch('/admin');
         $this->assertRedirect();
-        $this->assertResponseStatusCode(302);
+        $this->assertResponseStatusCode(303);
     }
     /**
      * asserts that the wrong identity or password fails to authenticate.
