@@ -27,7 +27,7 @@ echo "form action: $actionAttrib ... ";
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'submit'],
+    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $actionAttrib);
 
 $form->prepare();

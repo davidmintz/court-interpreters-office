@@ -30,7 +30,7 @@ class HatRepository extends EntityRepository
         $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h '
            .'WHERE h.name NOT LIKE \'%court interpreter%\' AND h.name <> \'Judge\''
            .' AND h.role IS NULL';
-        $query = $this->getEntityManager()->createQuery($dql);
+        $query = $this->createQuery($dql);
 
         return $query->getResult();
     }

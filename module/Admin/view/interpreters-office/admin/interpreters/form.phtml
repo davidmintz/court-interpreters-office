@@ -18,10 +18,10 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'submit'],
+     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')
    ->setAttribute('action', $formAction)
-    ->setAttribute('class', 'form-horizontal')    ;
+   ->setAttribute('class', 'form-horizontal')    ;
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
 <h2><?php echo $this->title ?></h2>
@@ -58,6 +58,20 @@ $active = $fieldset->get('active');?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $active->getLabel()?></label>
     <div class="col-sm-9"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
+    </div>
+ </div>
+<?php $languages = $fieldset->get('language-select') ?>
+<div class="form-group">
+    <label class="control-label col-sm-3"><?php echo $languages->getLabel()?></label>
+    <div class="col-sm-9"><?php echo $this->formSelect($languages),$this->formElementErrors($languages) ?>            
+    </div>
+ </div>
+<?php $languages_element = $fieldset->get('interpreterLanguages') ?>
+<div class="form-group">
+    <label class="control-label col-sm-3"><?php echo $languages_element->getLabel()?></label>
+    <div class="col-sm-9"><?php 
+    // don't render: //echo $this->formSelect($languages_element),
+    echo $this->formElementErrors($languages_element) ?>            
     </div>
  </div>
 <div class="form-group">
