@@ -17,8 +17,8 @@ use InterpretersOffice\Entity;
  *
  * 
  */
-class InterpretersControlllersTest extends AbstractControllerTest
+class InterpretersControllerTest extends AbstractControllerTest
 {
 
-	
+
 }
