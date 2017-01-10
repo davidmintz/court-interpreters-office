@@ -77,8 +77,12 @@ class AuthController extends AbstractActionController
                 );
             }
             $user = $this->auth->getIdentity();
+            $role = (string)$user->getRole();
+            
             // if they tried to load a page and were sent away, send them back
             $session = new \Zend\Session\Container('Authentication');
+            $session->role = $role;
+            
             if (isset($session->redirect_url)) {
                 $url = $session->redirect_url;
                 unset($session->redirect_url);
@@ -86,7 +90,7 @@ class AuthController extends AbstractActionController
                 return $this->redirect()->toUrl($url);
             }
             // managers and administrators go to /admin
-            if (in_array((string) $user->getRole(), ['administrator', 'manager'])) {
+            if (in_array($role, ['administrator', 'manager'])) {
                 $route = 'admin';
             } else {
                 // everyone else goes to the main page
