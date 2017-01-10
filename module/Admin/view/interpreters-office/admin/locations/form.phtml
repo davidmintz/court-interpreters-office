@@ -15,7 +15,7 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'submit'],
+        'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction);
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->

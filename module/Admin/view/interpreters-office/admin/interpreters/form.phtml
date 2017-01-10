@@ -18,10 +18,10 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'submit'],
+     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')
    ->setAttribute('action', $formAction)
-    ->setAttribute('class', 'form-horizontal')    ;
+   ->setAttribute('class', 'form-horizontal')    ;
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
 <h2><?php echo $this->title ?></h2>
