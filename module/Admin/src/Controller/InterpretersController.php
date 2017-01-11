@@ -69,11 +69,17 @@ class InterpretersController extends AbstractActionController
         $entity = new Entity\Interpreter();
         $form->bind($entity);
         if ($request->isPost()) {
+            //$_POST['interpreter']['interpreterLanguages'][0] = ['language'=> 24];
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
-                //print_r($form->getMessages());
+            if (!$form->isValid()) {            
                 return $viewModel;
             }
+            // this is so not working right now.
+            
+            //printf('<pre>%s</pre>',  print_r($this->params()->fromPost('interpreter')['interpreterLanguages'],true));
+            return $viewModel;
+            
+            
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(
