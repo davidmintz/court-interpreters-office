@@ -54,7 +54,7 @@ class InterpreterLanguage
     /**
      * The language in which this interpreter works.
      *
-     * @ORM\ManyToOne(targetEntity="Language")
+     * @ORM\ManyToOne(targetEntity="Language",inversedBy="interpreterLanguages")
      * @ORM\Id
      *
      * @var Language
@@ -84,7 +84,7 @@ class InterpreterLanguage
      *
      * @return InterpreterLanguage
      */
-    public function setInterpreter(Interpreter $interpreter)
+    public function setInterpreter(Interpreter $interpreter = null)
     {
         $this->interpreter = $interpreter;
 
