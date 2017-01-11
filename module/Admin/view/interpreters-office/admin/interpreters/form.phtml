@@ -45,7 +45,7 @@ $hat = $fieldset->get('hat');?>
 </div>
 <?php
  // text inputs
-foreach (['lastname','middlename','firstname','email','officePhone','mobilePhone'] as $elementName) :
+foreach (['lastname','firstname','middlename','email','officePhone','mobilePhone'] as $elementName) :
     $element = $fieldset->get($elementName);?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
@@ -63,7 +63,8 @@ $active = $fieldset->get('active');?>
 <?php $languages = $fieldset->get('language-select') ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $languages->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formSelect($languages),$this->formElementErrors($languages) ?>            
+    <div class="col-sm-9"><?php echo $this->formSelect($languages),$this->formElementErrors($languages) ?>
+    <ul id="languages-list" class="list-group"></ul>            
     </div>
  </div>
 <?php $languages_element = $fieldset->get('interpreterLanguages') ?>
@@ -84,3 +85,31 @@ $active = $fieldset->get('active');?>
 </div>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
+<script type="text/javascript">
+    
+$(function(){
+
+    var select = $('#language-select');
+    var list = $('#languages-list'); 
+    select.on("change",function(){
+        if (! select.val()) {
+            return;
+        }
+        var option = select.children(':selected');
+        var language = option.text();
+        if (list.children(':contains("'+language+'")').length) {
+            return;
+        }
+        var li = $('<li>')
+            .addClass('list-group-item');
+        var input = $('<input>').attr({
+            type:"hidden",
+            name: "interpreter[interpreterLanguages][]",
+            value: option.attr('value')
+        });
+        li.text(option.text()).append(input).appendTo(list);
+        select.val('');
+    });
+});
+
+</script>

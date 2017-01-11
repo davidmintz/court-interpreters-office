@@ -46,7 +46,7 @@ class InterpreterFieldset extends PersonFieldset
             ],
              'attributes' => [
                 'class' => 'form-control',
-                'id' => 'languages-select',
+                'id' => 'language-select',
              ],
         ]);
         $element = $this->get('language-select');
@@ -56,6 +56,7 @@ class InterpreterFieldset extends PersonFieldset
            'value' => '',
            'attributes' => [
                'label' => ' ',
+
            ],
         ]);
         $element->setValueOptions($options);
