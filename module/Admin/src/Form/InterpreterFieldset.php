@@ -52,27 +52,29 @@ class InterpreterFieldset extends PersonFieldset
         $element = $this->get('language-select');
         $options = $element->getValueOptions();
         array_unshift($options, [
-           'label' => ' ',
-           'value' => '',
-           'attributes' => [
-               'label' => ' ',
-
-           ],
+            'label' => ' ',
+            'value' => '',
+            'attributes' => ['label' => ' ', ],
         ]);
         $element->setValueOptions($options);
-        $more_options = [];
+        
+        // use the same $options to populate the hidden multi-select element
+        $interpreterLanguages_options = [];
         foreach ($options as $opt) {
-            $more_options[$opt['value']] = $opt['label'];
+            $interpreterLanguages_options[$opt['value']] = $opt['label'];
         }
         $this->add(
             [
                 'type' => 'Zend\Form\Element\Select',
                 'name' => 'interpreterLanguages',
                 'options' => [
-                    'multiple'=> true,
-                    'value_options' => $more_options,
+                    'value_options' => $interpreterLanguages_options,
                  ],
-                'attributes' => ['multiple'=>'multiple',],
+                'attributes' => [
+                    'multiple'=>'multiple',
+                    'id' => 'interpreterLanguages',
+                    'class' => 'hidden',
+                 ],
             ]
         );
     }
