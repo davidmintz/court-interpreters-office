@@ -60,21 +60,22 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
     </div>
  </div>
-<?php $languages = $fieldset->get('language-select') ?>
+<!-- --------------------------------------------------------------------    -->
+<?php 
+$languages = $fieldset->get('language-select'); 
+$languages_element = $fieldset->get('interpreterLanguages')  ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $languages->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formSelect($languages),$this->formElementErrors($languages) ?>
-    <ul id="languages-list" class="list-group"></ul>            
+    <div class="col-sm-9"><?php echo 
+        $this->formSelect($languages),// for the UI
+        $this->formSelect($languages_element), // for actual data, hidden
+        $this->formElementErrors($languages_element) ?>
+        <ul id="languages-list" class="list-group">
+        </ul>            
     </div>
  </div>
-<?php $languages_element = $fieldset->get('interpreterLanguages') ?>
-<div class="form-group">
-    <label class="control-label col-sm-3"><?php echo $languages_element->getLabel()?></label>
-    <div class="col-sm-9"><?php 
-    // don't render: //echo $this->formSelect($languages_element),
-    echo $this->formElementErrors($languages_element) ?>            
-    </div>
- </div>
+
+<!-- --------------------------------------------------------------------    -->
 <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
     <?php
@@ -86,11 +87,19 @@ $active = $fieldset->get('active');?>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
 <script type="text/javascript">
-    
+/** dynamically add a language. @todo live in its own file ? */
+// no point in typing this more than once
+var languageElementName = "interpreter[interpreterLanguages][]";
 $(function(){
-
     var select = $('#language-select');
-    var list = $('#languages-list'); 
+    var list = $('#languages-list');
+    // when form is (re)loaded, create list from hidden select element
+    $('#interpreterLanguages option:selected').each(function(){ 
+			var option = $(this);
+			createLanguageItem(option).appendTo(list);
+			option.removeAttr('selected');
+    });
+    // when language select menu item is chosen, add it to the list
     select.on("change",function(){
         if (! select.val()) {
             return;
@@ -100,16 +109,23 @@ $(function(){
         if (list.children(':contains("'+language+'")').length) {
             return;
         }
-        var li = $('<li>')
-            .addClass('list-group-item');
-        var input = $('<input>').attr({
-            type:"hidden",
-            name: "interpreter[interpreterLanguages][]",
-            value: option.attr('value')
-        });
-        li.text(option.text()).append(input).appendTo(list);
+        createLanguageItem(option).appendTo(list);
         select.val('');
     });
 });
-
+/**
+ * helper function to create li element
+ * @param option jQuery with one <option> element
+ * @returns jQuery with one <li> element
+ */
+createLanguageItem = function(option)
+{
+    var li = $('<li>').addClass('list-group-item');
+    var input = $('<input>').attr({
+            type: "hidden",
+            name: languageElementName,
+            value: option.attr('value')
+        });
+    return li.text(option.text()).append(input);
+};
 </script>
