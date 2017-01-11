@@ -121,13 +121,23 @@ class ExampleController extends AbstractActionController
      */
     public function otherTestAction()
     {
-        $header = $this->getRequest()->getHeaders()->get('accept');
-        echo get_class($header),'<br>';
-        echo $header->toString(),'<br>';
-        $request = $this->getRequest();
-        echo 'xhr? ';
-        var_dump($request->isXmlHttpRequest());
-        echo '<br>';
+        
+        $object = new \InterpretersOffice\Entity\Interpreter;
+        $em = $this->objectManager;
+        $hydrator = new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em);
+        
+        $data = [
+           'lastname'  => 'Mintz',
+            'firstname' => 'David',
+            'email' => "david@example.com",
+            'hat' => 1,
+            'interpreterLanguages' => [
+                ['language' => 62, 'interpreter'=> null ],
+            ],
+        ];
+        $interpreter = $hydrator->hydrate($data, $object);
+        
+        
 
         return false;
     }
