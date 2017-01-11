@@ -7,6 +7,8 @@ namespace InterpretersOffice\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Entity representing an Interpreter.
  *
@@ -141,7 +143,7 @@ class Interpreter extends Person
      */
     public function addInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
     {
-        $this->interpreterLanguages[] = $interpreterLanguage;
+        $this->interpreterLanguages->add($interpreterLanguage);
 
         return $this;
     }
@@ -169,4 +171,27 @@ class Interpreter extends Person
     {
         return $this->interpreterLanguages;
     }
+    /*
+    AllowRemove strategy for DoctrineModule hydrator requires both addInterpreterLanguages and removeInterpreterLanguages to be defined in InterpretersOffice\Entity\Interpreter
+                     entity domain code, but one or both seem to be missing
+     */
+    
+    public function addInterpreterLanguages(Collection $interpreterLanguages)
+    {
+        foreach($interpreterLanguages as $interpreterLanguage) {
+            $interpreterLanguage->setInterpreter($this);
+            $this->interpreterLanguages->add($interpreterLanguage);
+        }
+    }
+    
+    public function removeInterpreterLanguages(Collection $collection)
+    {
+        foreach ($interpreterLanguages as $interpreterLanguage) {
+            
+            $interpreterLanguage->setInterpreter(null); 
+            $this->interpreterLanguages->removeElement($interpreterLanguage);
+        }
+        return $this;
+    }
+            
 }
