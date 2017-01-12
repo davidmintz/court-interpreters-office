@@ -108,7 +108,7 @@ class InterpreterLanguage
      *
      * @return InterpreterLanguage
      */
-    public function setLanguage(Language $language)
+    public function setLanguage(Language $language = null)
     {
         $this->language = $language;
 

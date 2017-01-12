@@ -6,6 +6,7 @@ namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Zend\Form\Annotation;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Entity class representing a language used by an Interpreter.
@@ -60,6 +61,21 @@ class Language
      * @var string
      */
     protected $comments = '';
+    
+    /**
+     *
+     * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
+     */
+ 
+    protected $interpreterLanguages;
+    
+    /**
+     * constructor
+     */
+    public function __construct()
+    {
+        $this->interpreterLanguages = new ArrayCollection();
+    }
 
     /**
      * Is there a federal certification program for this language?
