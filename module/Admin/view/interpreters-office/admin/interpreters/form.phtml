@@ -12,8 +12,6 @@ endif;
 $formAction = strstr($this->title, 'add') ? $this->url('interpreters/add')
     : $this->url('interpreters/edit', ['id' => $this->id ]);
 
-
-
 $form = $this->form;
 $form->add([
     'name' => 'submit',
@@ -56,8 +54,25 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
     </div>
  </div>
-<!-- --------------------------------------------------------------------    -->
 <?php 
+// shit should be rendered as a collection:
+// throws 'Object provided to Escape helper, but flags do not allow recursion'
+// when already hydrated
+//echo $this->formCollection($fieldset->get('interpreterLanguages'));
+$interpreterLanguages = $fieldset->get('interpreterLanguages');
+$i = -1;
+foreach ($interpreterLanguages as $thing) { // fieldset
+    echo $this->formSelect($thing->get('language'));//, $this->formHidden($thing->get('interpreter'));
+    //name="interpreter[interpreterLanguages][0][language]
+    ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo ++$i?>][interpreter]" value="<?php echo $this->id?>"><?php
+}
+?><!-- <pre><?php print_r(get_class_methods($interpreterLanguages)); ?></pre> -->
+
+
+
+
+<!-- --------------------------------------------------------------------    -->
+<?php if (false):  // experimental. disable this for now
 $languages = $fieldset->get('language-select'); 
 $languages_element = $fieldset->get('interpreterLanguages')  ?>
 <div class="form-group">
@@ -70,7 +85,7 @@ $languages_element = $fieldset->get('interpreterLanguages')  ?>
         </ul>            
     </div>
  </div>
-
+<?php endif; ///if (false)  ?>
 <!-- --------------------------------------------------------------------    -->
 <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
