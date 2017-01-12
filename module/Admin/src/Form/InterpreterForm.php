@@ -18,7 +18,7 @@ class InterpreterForm extends PersonForm
     /**
      * the name of our form.
      *
-     * @var string 'judge-form'  *
+     * @var string 'judge-form'
      */
     protected $formName = 'interpreter-form';
 
