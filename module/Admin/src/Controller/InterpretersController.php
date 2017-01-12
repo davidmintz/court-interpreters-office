@@ -77,11 +77,16 @@ class InterpretersController extends AbstractActionController
             // this is so not working right now.
             
             //printf('<pre>%s</pre>',  print_r($this->params()->fromPost('interpreter')['interpreterLanguages'],true));
-            return $viewModel;
-            
+            //return $viewModel;
+            try {
             
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
+            } catch (\Exception $e) {
+            echo $e->getMessage();
+            printf('<pre>%s</pre>',$e->getTraceAsString());
+            return $viewModel;
+          }
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
                     'The interpreter <strong>%s %s</strong> has been added to the database',
@@ -90,6 +95,7 @@ class InterpretersController extends AbstractActionController
                 )
             );
             $this->redirect()->toRoute('interpreters');
+
         }
 
         return $viewModel;
