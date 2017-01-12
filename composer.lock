@@ -4416,16 +4416,16 @@
         },
         {
             "name": "zfcampus/zf-development-mode",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-development-mode.git",
-                "reference": "909413a0a6b45995de804db75b52b44428102dd4"
+                "reference": "ffef6ab8cf84ee1d1a77a2b51ba2240d2707c05d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-development-mode/zipball/909413a0a6b45995de804db75b52b44428102dd4",
-                "reference": "909413a0a6b45995de804db75b52b44428102dd4",
+                "url": "https://api.github.com/repos/zfcampus/zf-development-mode/zipball/ffef6ab8cf84ee1d1a77a2b51ba2240d2707c05d",
+                "reference": "ffef6ab8cf84ee1d1a77a2b51ba2240d2707c05d",
                 "shasum": ""
             },
             "require": {
@@ -4442,8 +4442,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev",
-                    "dev-develop": "3.1-dev"
+                    "dev-master": "3.1-dev",
+                    "dev-develop": "3.2-dev"
                 }
             },
             "autoload": {
@@ -4461,7 +4461,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2016-06-22 20:39:20"
+            "time": "2017-01-09 23:34:49"
         }
     ],
     "packages-dev": [],
