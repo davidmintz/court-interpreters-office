@@ -36,7 +36,7 @@ class Interpreter extends Person
     /**
      * date of birth.
      *
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date",nullable=true)
      *
      * @var string
      */
