@@ -135,4 +135,65 @@ class FixtureSetupTest extends AbstractControllerTest
         // and prove our lifecycle callback works
         $objectManager->persist($event);
     }
+    
+    public function testInsertInterpreter()
+    {
+        $this->loadTestEventData();
+        $objectManager = FixtureManager::getEntityManager();
+        
+        // there should be an interpreter
+        $interpreters = $objectManager
+                ->getRepository('InterpretersOffice\Entity\Interpreter')
+                ->findAll();
+        $this->assertGreaterThan(0,count($interpreters));
+        
+        $mintz = $objectManager
+                ->getRepository('InterpretersOffice\Entity\Interpreter')
+                ->findOneBy(['lastname'=>'Mintz']);
+        
+        $this->assertInstanceOf(Entity\Interpreter::class, $mintz);
+        
+        $languages = $mintz->getInterpreterLanguages();
+        
+        $this->assertGreaterThan(0,count($languages));
+        
+    }
+    
+    public function testAddAndRemoveInterpreterLanguage()
+    {
+        $this->loadTestEventData();
+        $objectManager = FixtureManager::getEntityManager();
+        $mintz = $objectManager
+                ->getRepository('InterpretersOffice\Entity\Interpreter')
+                ->findOneBy(['lastname'=>'Mintz']);
+        
+        $before = count($mintz->getInterpreterLanguages());
+        $this->assertEquals(1,$before);
+        $french = $objectManager
+                ->getRepository('InterpretersOffice\Entity\Language')
+                ->findOneBy(['name'=>'French']);
+        $mintz->addInterpreterLanguage(
+             new Entity\InterpreterLanguage($mintz,$french)
+        );
+        $objectManager->flush();
+        $languages = $mintz->getInterpreterLanguages();
+        $after = count($languages);
+        
+        foreach($languages as $obj) {
+            if ($obj->getLanguage()->getName() == "French") {
+                $this_one = $obj;
+                break;
+            }
+        }
+        
+        $this->assertEquals($before + 1, $after);
+        $mintz->removeInterpreterLanguage($this_one);
+        
+        $objectManager->flush();
+
+        $after = count($mintz->getInterpreterLanguages());
+        
+        $this->assertEquals($before,$after);
+       
+    }
 }
