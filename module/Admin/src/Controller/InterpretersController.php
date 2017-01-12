@@ -107,28 +107,20 @@ class InterpretersController extends AbstractActionController
     public function editAction()
     {
         
-        echo "not yet implemented"; return false;
+        //echo "not yet implemented"; return false;
 
         $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/people/form.phtml')
-                ->setVariable('title', 'edit a person');
+                ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
+                ->setVariable('title', 'edit an interpreter');
         $id = $this->params()->fromRoute('id');
-        if (!$id) { // get rid of this, since it will otherwise be 404?
-            return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
-        }
-        $entity = $this->entityManager->find('InterpretersOffice\Entity\Person', $id);
+
+        $entity = $this->entityManager->find('InterpretersOffice\Entity\Interpreter', $id);
         if (!$entity) {
-            return $viewModel->setVariables(['errorMessage' => "person with id $id not found"]);
-        } else {
-            // judges and interpreters are special cases
-            if (is_subclass_of($entity, Entity\Person::class)) {
-                return $this->redirectToFormFor($entity);
-            }
-            $viewModel->id = $id;
+            return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
         }
-        $form = new PersonForm($this->entityManager, ['action' => 'update']);
+        $form = new InterpreterForm($this->entityManager, ['action' => 'update']);
         $form->bind($entity);
-        $viewModel->form = $form;
+        $viewModel->setVariables(['form' => $form, 'id' => $id ]);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -139,11 +131,12 @@ class InterpretersController extends AbstractActionController
             $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
-                      'The person <strong>%s %s</strong> has been updated.',
+                      'The interpreter <strong>%s %s</strong> has been updated.',
                       $entity->getFirstname(),
                       $entity->getLastname()
                   ));
-            $this->redirect()->toRoute('people');
+            echo "NOT redirecting.";
+            //$this->redirect()->toRoute('interpreters');
         }
 
         return $viewModel;
