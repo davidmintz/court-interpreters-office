@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Entity;
+namespace InterpretersOffice\Entity;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
@@ -10,28 +10,53 @@ $em = require __DIR__.'/../config/doctrine-bootstrap.php';
 
 echo "trying to insert an interpreter...\n";
 
-$interpreter = new Interpreter();
-try {
-    $hat_staff_interpreter = $em->getRepository('Application\Entity\Hat')->findOneBy(
-        ['type' => 'staff interpreter']);
+$interpreter = $em->getRepository('InterpretersOffice\Entity\Interpreter')->findOneBy(['lastname' => 'Mintz']);
 
-    $interpreter->setLastname('Mintz')
-        ->setFirstname('David')
-        ->setHat($hat_staff_interpreter)
-        ->setEmail('david@davidmintz.org')->setDob(new \DateTime('1958-05-26'));
+if (! $interpreter) {
+    exit("\nwhat?\n");
 
-    $spanish = $em->getRepository('Application\Entity\Language')->findOneBy(['name' => 'Spanish']);
+    $interpreter = new Interpreter();
+    try {
+        $hat_staff_interpreter = $em->getRepository('InterpretersOffice\Entity\Hat')->findOneBy(
+            ['name' => 'staff court interpreter']);
 
-    $interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter, $spanish));
-    $em->persist($interpreter);
-    $em->flush();
-} catch (\Exception $e) {
-    printf("caught exception %s: %s\n", get_class($e), $e->getMessage());
+        $interpreter->setLastname('Mintz')
+            ->setFirstname('David')
+            ->setHat($hat_staff_interpreter)
+            ->setEmail('david@davidmintz.org')->setDob(new \DateTime('1958-05-26'));
+
+        $spanish = $em->getRepository('InterpretersOffice\Entity\Language')->findOneBy(['name' => 'Spanish']);
+
+        $interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter, $spanish));
+        $em->persist($interpreter);
+        $em->flush();
+    } catch (\Exception $e) {
+        printf("caught exception %s: %s\n", get_class($e), $e->getMessage());
+    } 
 }
 
-exit("ok\n");
+$spanish = $em->getRepository('InterpretersOffice\Entity\Language')->findOneBy(['name' => 'Spanish']);
+$french  = $em->getRepository('InterpretersOffice\Entity\Language')->findOneBy(['name' => 'French']);
 
-$interpreter = $em->getRepository('Application\Entity\Interpreter')->findOneBy(['lastname' => 'Mintz']);
+$existing_languages = $interpreter->getInterpreterLanguages();
+
+echo count($existing_languages), " languages at the moment\n";
+
+if (count($existing_languages)) {
+    echo "removing all, adding 2 new...\n";
+    
+    $interpreter->removeInterpreterLanguages($existing_languages);
+    $em->flush();
+    $interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter,$spanish));
+    $interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter,$french));
+    $em->flush();
+}
+
+printf("count is now %d\n",count($interpreter->getInterpreterLanguages()));
+
+
+
+$interpreter = $em->getRepository('InterpretersOffice\Entity\Interpreter')->findOneBy(['lastname' => 'Mintz']);
 
 if (!$interpreter) {
     echo 'no Mintz among the interpreters';
@@ -43,8 +68,8 @@ $interpreter->removeInterpreterLanguage($interpreterLanguage);
 
 $em->flush();
 
-exit("\n");
-
+printf("count is now %d\n",count($interpreter->getInterpreterLanguages()));
+exit();
 //$language = new Language();
 //$language->setName('Spanish');
 //$em->persist($language);
