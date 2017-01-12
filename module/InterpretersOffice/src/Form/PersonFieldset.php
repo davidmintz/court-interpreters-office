@@ -182,8 +182,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             [
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'hat',
-            'required' => true,
-            'allow_empty' => false,
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\Hat',
@@ -361,6 +359,9 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         // validators for Hat element depend on class of current instance
         if (get_class($this) == self::class) {
             $spec['hat'] = [
+                
+                'required' => true,
+                'allow_empty' => false,
                 'validators' => [
                     [
                         'name' => 'NotEmpty',
