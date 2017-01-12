@@ -9,6 +9,9 @@ use InterpretersOffice\Form\PersonFieldset;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity\Interpreter;
 
+// experimental
+use Zend\Form\Element;
+
 /**
  * InterpreterFieldset.
  *
@@ -34,6 +37,22 @@ class InterpreterFieldset extends PersonFieldset
     {
     	parent::__construct($objectManager, $options);
         
+        //$this->add(new InterpreterLanguageFieldset($objectManager));
+        
+        $this->add([
+            'type' => Element\Collection::class,
+            'name' => 'interpreterLanguages',
+            'options' => [
+                'label' => 'working languages',
+               // 'count' => 2,
+                'should_create_template' => true,
+                'allow_add' => true,
+                'allow_remove' => true,
+                'target_element' => new InterpreterLanguageFieldset($objectManager),
+            ],
+        ]);
+        if (false)
+        {
         $this->add([
     		'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'language-select',
@@ -77,6 +96,7 @@ class InterpreterFieldset extends PersonFieldset
                  ],
             ]
         );
+        }
     }
 
     public function addHatElement()
