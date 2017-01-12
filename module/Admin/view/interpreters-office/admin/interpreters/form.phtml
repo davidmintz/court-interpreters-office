@@ -27,10 +27,6 @@ $form->add([
 <h2><?php echo $this->title ?></h2>
 <?php
 
-
-
-// to be continued. what follows is a copy-paste job
-
 $form->prepare();
 $fieldset = $form->get('interpreter');
 echo $this->form()->openTag($form);?>
@@ -112,6 +108,12 @@ $(function(){
         createLanguageItem(option).appendTo(list);
         select.val('');
     });
+
+    //  testing
+    $('#hat').val(3);
+    $('#lastname').val("Doink");
+    $('#firstname').val("Boink");
+    select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
 });
 /**
  * helper function to create li element
