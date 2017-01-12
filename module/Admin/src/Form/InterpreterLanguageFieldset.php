@@ -33,7 +33,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
         
         parent::__construct('interpreterLanguages', $options);
         $this->objectManager = $objectManager;
-        $this->setHydrator(new DoctrineHydrator($objectManager,false));
+        $this->setHydrator(new DoctrineHydrator($objectManager));  // false ?
         $this->setObject(new Entity\InterpreterLanguage);
         
         // try this and see how far we get
