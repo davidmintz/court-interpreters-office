@@ -1,6 +1,5 @@
 <?php
-
-/** module/InterpretersOffice/src/Entity/InterpreterLanguage.php  */
+/** module/InterpretersOffice/src/Entity/InterpreterLanguage.php   */
 
 namespace InterpretersOffice\Entity;
 
