@@ -178,7 +178,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $objectManager->flush();
         $languages = $mintz->getInterpreterLanguages();
         $after = count($languages);
-        
+        system('echo "select * from interpreters_languages" | mysql -t office');
         foreach($languages as $obj) {
             if ($obj->getLanguage()->getName() == "French") {
                 $this_one = $obj;
@@ -194,6 +194,6 @@ class FixtureSetupTest extends AbstractControllerTest
         $after = count($mintz->getInterpreterLanguages());
         
         $this->assertEquals($before,$after);
-       
+        system('echo "select * from interpreters_languages" | mysql -t office');
     }
 }
