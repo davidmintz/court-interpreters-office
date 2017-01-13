@@ -50,10 +50,9 @@ system('echo "select * from interpreters_languages" | mysql -t office');
 if (count($existing_languages)) {
     echo "removing all, adding 2 new...\n";
     foreach ($existing_languages as $obj) { 
-        $interpreter->removeInterpreterLanguage($obj);  
-        
+        $interpreter->removeInterpreterLanguage($obj);          
     }
-    //$interpreter->removeInterpreterLanguages($existing_languages);
+    $interpreter->removeInterpreterLanguages($existing_languages);
     $em->flush();
     echo("\ninterpreter id is: ". $interpreter->getId());
     // nothing works. how about...

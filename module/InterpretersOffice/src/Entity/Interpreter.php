@@ -43,7 +43,7 @@ class Interpreter extends Person
     /**
      * working languages.
      *
-     * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="interpreter", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="interpreter", cascade={"persist", "remove"},orphanRemoval=true)
      * 
      *
      * @var ArrayCollection of InterpreterLanguage
