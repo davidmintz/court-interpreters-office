@@ -1,12 +1,10 @@
 <?php
-
 /** module/InterpretersOffice/src/Entity/Interpreter.php */
 
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Doctrine\Common\Collections\Collection;
 
 /**
@@ -156,9 +154,10 @@ class Interpreter extends Person
      */
     public function removeInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
     {       
-        
+        // this shit is broken and we don't know why.
         $this->interpreterLanguages->removeElement($interpreterLanguage);
-        //$interpreterLanguage->setInterpreter(null)->setLanguage(null);
+        //$interpreterLanguage->setLanguage(null);
+        $interpreterLanguage->setInterpreter(null);
         return $this;
     }
 
@@ -171,6 +170,7 @@ class Interpreter extends Person
     {
         return $this->interpreterLanguages;
     }
+    
     /*
     AllowRemove strategy for DoctrineModule hydrator requires both addInterpreterLanguages and 
      removeInterpreterLanguages to be defined in InterpretersOffice\Entity\Interpreter
@@ -189,9 +189,12 @@ class Interpreter extends Person
 
     public function removeInterpreterLanguages(Collection $interpreterLanguages)
     {
+        printf("entering %s at %d\n",__METHOD__,__LINE__);
         foreach ($interpreterLanguages as $interpreterLanguage) {
-            $interpreterLanguage->setInterpreter(null);
+            
             $this->interpreterLanguages->removeElement($interpreterLanguage);
+           
+            
         }
     }
                 
