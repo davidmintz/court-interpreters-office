@@ -50,20 +50,13 @@ class InterpretersController extends AbstractActionController
      */
     public function addAction()
     {
-        
-
 
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
                 ->setVariables(['title' => 'add an interpreter']);
         
         $form = new InterpreterForm($this->entityManager, ['action' => 'create']);
-        
-         
-
         $viewModel->form = $form;
-        //return $viewModel->setVariables(['form' => $form, ]);
-
         
         $request = $this->getRequest();
         $entity = new Entity\Interpreter();
@@ -79,9 +72,9 @@ class InterpretersController extends AbstractActionController
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
             } catch (\Exception $e) {
-            echo $e->getMessage();
-            printf('<pre>%s</pre>',$e->getTraceAsString());
-            return $viewModel;
+                echo $e->getMessage();
+                printf('<pre>%s</pre>',$e->getTraceAsString());
+                return $viewModel;
           }
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
@@ -91,9 +84,7 @@ class InterpretersController extends AbstractActionController
                 )
             );
             $this->redirect()->toRoute('interpreters');
-
         }
-
         return $viewModel;
     }
 
