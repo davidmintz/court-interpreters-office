@@ -157,7 +157,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
-        $this->setHydrator(new DoctrineHydrator($objectManager,false))
+        $this->setHydrator(new DoctrineHydrator($objectManager,true))
                 //->setObject(new Entity\Person())
                 ->setUseAsBaseFieldset(true);
         foreach ($this->elements as $element) {
