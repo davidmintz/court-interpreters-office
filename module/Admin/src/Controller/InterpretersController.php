@@ -74,10 +74,6 @@ class InterpretersController extends AbstractActionController
             if (!$form->isValid()) {            
                 return $viewModel;
             }
-            // this is so not working right now.
-            
-            //printf('<pre>%s</pre>',  print_r($this->params()->fromPost('interpreter')['interpreterLanguages'],true));
-            //return $viewModel;
             try {
             
             $this->entityManager->persist($entity);
@@ -102,7 +98,7 @@ class InterpretersController extends AbstractActionController
     }
 
     /**
-     * updates a Person entity.
+     * updates an Interpreter entity.
      */
     public function editAction()
     {
@@ -135,9 +131,10 @@ class InterpretersController extends AbstractActionController
                       $entity->getFirstname(),
                       $entity->getLastname()
                   ));
-            echo "NOT redirecting.";
+            echo "NOT redirecting. entity:<pre>";
+            \Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
             //$this->redirect()->toRoute('interpreters');
-        }
+        } else { echo "loaded:<pre> "; \Doctrine\Common\Util\Debug::dump($entity);echo "</pre>";}
 
         return $viewModel;
     }

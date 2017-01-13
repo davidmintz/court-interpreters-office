@@ -62,9 +62,10 @@ $active = $fieldset->get('active');?>
 $interpreterLanguages = $fieldset->get('interpreterLanguages');
 $i = -1;
 foreach ($interpreterLanguages as $thing) { // fieldset
+    echo '<div class="interpreter-language">';
     echo $this->formSelect($thing->get('language'));//, $this->formHidden($thing->get('interpreter'));
     //name="interpreter[interpreterLanguages][0][language]
-    ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo ++$i?>][interpreter]" value="<?php echo $this->id?>"><?php
+    ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo ++$i?>][interpreter]" value="<?php echo $this->id?>"><?php echo "</div>";
 }
 ?><!-- <pre><?php print_r(get_class_methods($interpreterLanguages)); ?></pre> -->
 
