@@ -7,25 +7,21 @@ namespace InterpretersOffice\Admin\Form;
 
 
 use Zend\Form\Fieldset;
+use Zend\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
-use Zend\InputFilter\InputFilterProviderInterface;
-
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
-
 use InterpretersOffice\Entity;
 
 
 /**
- * Description of InterpreterLanguageFieldset
- *
- * @author david
+ * Fieldset for Interpreter's working languages
+ * 
  */
 class InterpreterLanguageFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
-    
     
     use ObjectManagerAwareTrait;
     
@@ -33,13 +29,10 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
         
         parent::__construct('interpreterLanguages', $options);
         $this->objectManager = $objectManager;
-        $this->setHydrator(new DoctrineHydrator($objectManager));  // false ?
+        $this->setHydrator(new DoctrineHydrator($objectManager)); 
         $this->setObject(new Entity\InterpreterLanguage);
         
-        // try this and see how far we get
-        
         $this->add([
-             
             'name' => 'interpreter',
             'type' => 'hidden',             
         ]);
@@ -54,22 +47,16 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                 'label' => 'language',
                 'display_empty_item' => true,
                 'empty_item_label' => '',
-                
-
             ],
              'attributes' => [
-                'class' => 'form-control',
-                
-             ],
-            
+                'class' => 'form-control',                
+             ], 
         ]);
-        
     }
 
     public function getInputFilterSpecification()
     {
+        // to be continued
         return [];
     }
-    
-    
 }
