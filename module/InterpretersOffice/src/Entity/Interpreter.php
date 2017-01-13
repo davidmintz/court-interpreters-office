@@ -154,8 +154,9 @@ class Interpreter extends Person
      */
     public function removeInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
     {       
-        // this shit is broken and we don't know why.
+        
         $this->interpreterLanguages->removeElement($interpreterLanguage);
+        // not sure whether/when the following is required
         //$interpreterLanguage->setLanguage(null);
         //$interpreterLanguage->setInterpreter(null);
         return $this;
@@ -188,13 +189,9 @@ class Interpreter extends Person
     }
 
     public function removeInterpreterLanguages(Collection $interpreterLanguages)
-    {
-        printf("entering %s at %d\n",__METHOD__,__LINE__);
-        foreach ($interpreterLanguages as $interpreterLanguage) {
-            
+    {        
+        foreach ($interpreterLanguages as $interpreterLanguage) {            
             $this->interpreterLanguages->removeElement($interpreterLanguage);
-           
-            
         }
     }
                 

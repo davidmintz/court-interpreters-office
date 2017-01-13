@@ -168,7 +168,11 @@ class FixtureSetupTest extends AbstractControllerTest
                 ->findOneBy(['lastname'=>'Mintz']);
         
         $before = count($mintz->getInterpreterLanguages());
+        //echo "\n";
+        //$command = "echo 'select * from interpreters_languages;'  | sqlite3 module/InterpretersOffice/test/data/office.sqlite | wc -l && echo";
+        //system($command);
         $this->assertEquals(1,$before);
+        
         $french = $objectManager
                 ->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name'=>'French']);
@@ -178,7 +182,9 @@ class FixtureSetupTest extends AbstractControllerTest
         $objectManager->flush();
         $languages = $mintz->getInterpreterLanguages();
         $after = count($languages);
-        system('echo "select * from interpreters_languages" | mysql -t office');
+        $this->assertEquals(2,$after);
+        
+        //system($command);
         foreach($languages as $obj) {
             if ($obj->getLanguage()->getName() == "French") {
                 $this_one = $obj;
@@ -194,6 +200,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $after = count($mintz->getInterpreterLanguages());
         
         $this->assertEquals($before,$after);
-        system('echo "select * from interpreters_languages" | mysql -t office');
+        // system($command);
+        
     }
 }
