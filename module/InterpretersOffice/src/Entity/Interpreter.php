@@ -157,7 +157,7 @@ class Interpreter extends Person
         // this shit is broken and we don't know why.
         $this->interpreterLanguages->removeElement($interpreterLanguage);
         //$interpreterLanguage->setLanguage(null);
-        $interpreterLanguage->setInterpreter(null);
+        //$interpreterLanguage->setInterpreter(null);
         return $this;
     }
 
