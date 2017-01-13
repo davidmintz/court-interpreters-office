@@ -4,6 +4,8 @@ namespace InterpretersOffice\Entity;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 echo "eat shit?\n";
 
 $em = require __DIR__.'/../config/doctrine-bootstrap.php';
@@ -42,18 +44,36 @@ $existing_languages = $interpreter->getInterpreterLanguages();
 
 echo count($existing_languages), " languages at the moment\n";
 
+system('echo "select * from interpreters_languages" | mysql -t office');
+
+
 if (count($existing_languages)) {
     echo "removing all, adding 2 new...\n";
-    
-    $interpreter->removeInterpreterLanguages($existing_languages);
+    foreach ($existing_languages as $obj) { 
+        $interpreter->removeInterpreterLanguage($obj);  
+        
+    }
+    //$interpreter->removeInterpreterLanguages($existing_languages);
     $em->flush();
+    echo("\ninterpreter id is: ". $interpreter->getId());
+    // nothing works. how about...
+    // foreach ($existing_languages as $obj) { $em->remove($obj);    }
+    
+    $count_after_removal =  $interpreter->getInterpreterLanguages()->count();
+    echo("after removal count is: $count_after_removal\n");
+    echo "database:\n";
+    system('echo "select * from interpreters_languages" | mysql -t office');
+    
+    echo "attempting insert...\n";
     $interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter,$spanish));
     $interpreter->addInterpreterLanguage(new InterpreterLanguage($interpreter,$french));
     $em->flush();
+    echo "database:\n";
+    system('echo "select * from interpreters_languages" | mysql -t office');
 }
 
 printf("count is now %d\n",count($interpreter->getInterpreterLanguages()));
-
+exit(0);
 
 
 $interpreter = $em->getRepository('InterpretersOffice\Entity\Interpreter')->findOneBy(['lastname' => 'Mintz']);
@@ -64,11 +84,14 @@ if (!$interpreter) {
 
 $interpreterLanguage = $interpreter->getInterpreterLanguages()[0];
 
-$interpreter->removeInterpreterLanguage($interpreterLanguage);
+//$interpreter->removeInterpreterLanguage($interpreterLanguage);
 
 $em->flush();
 
-printf("count is now %d\n",count($interpreter->getInterpreterLanguages()));
+printf("interpreter-language count is now %d\n",count($interpreter->getInterpreterLanguages()));
+
+
+
 exit();
 //$language = new Language();
 //$language->setName('Spanish');
