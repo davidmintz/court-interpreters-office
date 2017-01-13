@@ -10,9 +10,98 @@ use Zend\Router\Http\Segment;
 
 $environment = getenv('APP_ENV') ?: 'development';
 
-$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
+// disable cache for the time being
+$doctrine_cache = 'array';//$environment == 'testing' ? 'array' : 'filesystem';
 
 return [
+    'form_elements' => [
+        'factories' => [
+            Entity\Language::class => Form\Factory\AnnotatedEntityFormFactory::class,
+            Entity\Location::class => Form\Factory\AnnotatedEntityFormFactory::class,
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+           Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+           Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
+           Controller\ExampleController::class => Controller\Factory\ExampleControllerFactory::class,
+        ],
+        'invokables' => [
+            //Controller\ExampleController::class => Controller\ExampleController::class,
+        ],
+    ],
+    'view_manager' => [
+        'display_not_found_reason' => true,
+        'display_exceptions' => true,
+        'doctype' => 'HTML5',
+        'not_found_template' => 'error/404',
+        'exception_template' => 'error/index',
+        'template_map' => [
+            'layout/layout' => __DIR__.'/../view/layout/layout.phtml',
+            // maybe remove this next line?
+            'application/index/index' => __DIR__.'/../view/application/index/index.phtml',
+            'error/404' => __DIR__.'/../view/error/404.phtml',
+            'error/index' => __DIR__.'/../view/error/index.phtml',
+        ],
+        'template_path_stack' => [
+            __DIR__.'/../view',
+        ],
+        // http://stackoverflow.com/questions/18014885/how-to-disable-layout-and-view-renderer-in-zf2
+        'strategies' => [
+            'ViewJsonStrategy',
+        ],
+    ],
+    'doctrine' => [
+
+        'driver' => [
+            // defines an annotation driver with one path, and names it `my_annotation_driver`
+            'application_annotation_driver' => [
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => [
+                    __DIR__.'/../src/Entity',
+                ],
+            ],
+
+            // default metadata driver, aggregates all other drivers into a single one.
+            // Override `orm_default` only if you know what you're doing
+            'orm_default' => [
+                'drivers' => [
+                    // register `my_annotation_driver` for any entity under namespace `My\Namespace`
+                    __NAMESPACE__.'\Entity' => 'application_annotation_driver',
+                ],
+            ],
+        ],
+        'configuration' => [
+             'orm_default' => [
+                'query_cache' => $doctrine_cache,
+                'result_cache' => $doctrine_cache,
+                'metadata_cache' => $doctrine_cache,
+                'hydration_cache' => $doctrine_cache,
+            ],
+        ],
+    ],
+    
+    'service_manager' => [
+        'aliases' => [
+          'entity-manager' => 'doctrine.entitymanager.orm_default',
+          'auth' => 'Zend\Authentication\AuthenticationService',
+          'log' => \Zend\Log\Logger::class,
+        ],
+        'factories' => [
+            'Zend\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',
+            'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
+            \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
+            Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
+
+            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
+        ],
+
+    ],
+    'session_containers' => [
+        'Authentication',
+    ],
+    
     'router' => [
         'routes' => [
             ///*
@@ -110,91 +199,4 @@ return [
             'message_close_string' => '</p></div>',
         ],
     ],
-    'form_elements' => [
-        'factories' => [
-            Entity\Language::class => Form\Factory\AnnotatedEntityFormFactory::class,
-            Entity\Location::class => Form\Factory\AnnotatedEntityFormFactory::class,
-        ],
-    ],
-    'controllers' => [
-        'factories' => [
-           Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
-           Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
-           Controller\ExampleController::class => Controller\Factory\ExampleControllerFactory::class,
-        ],
-        'invokables' => [
-            //Controller\ExampleController::class => Controller\ExampleController::class,
-        ],
-    ],
-    'view_manager' => [
-        'display_not_found_reason' => true,
-        'display_exceptions' => true,
-        'doctype' => 'HTML5',
-        'not_found_template' => 'error/404',
-        'exception_template' => 'error/index',
-        'template_map' => [
-            'layout/layout' => __DIR__.'/../view/layout/layout.phtml',
-            // maybe remove this next line?
-            'application/index/index' => __DIR__.'/../view/application/index/index.phtml',
-            'error/404' => __DIR__.'/../view/error/404.phtml',
-            'error/index' => __DIR__.'/../view/error/index.phtml',
-        ],
-        'template_path_stack' => [
-            __DIR__.'/../view',
-        ],
-        // http://stackoverflow.com/questions/18014885/how-to-disable-layout-and-view-renderer-in-zf2
-        'strategies' => [
-            'ViewJsonStrategy',
-        ],
-    ],
-    'doctrine' => [
-
-        'driver' => [
-            // defines an annotation driver with one path, and names it `my_annotation_driver`
-            'application_annotation_driver' => [
-                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'cache' => 'array',
-                'paths' => [
-                    __DIR__.'/../src/Entity',
-                ],
-            ],
-
-            // default metadata driver, aggregates all other drivers into a single one.
-            // Override `orm_default` only if you know what you're doing
-            'orm_default' => [
-                'drivers' => [
-                    // register `my_annotation_driver` for any entity under namespace `My\Namespace`
-                    __NAMESPACE__.'\Entity' => 'application_annotation_driver',
-                ],
-            ],
-        ],
-        'configuration' => [
-             'orm_default' => [
-                'query_cache' => $doctrine_cache,
-                'result_cache' => $doctrine_cache,
-                'metadata_cache' => $doctrine_cache,
-                'hydration_cache' => $doctrine_cache,
-            ],
-        ],
-    ],
-    'service_manager' => [
-        'aliases' => [
-          'entity-manager' => 'doctrine.entitymanager.orm_default',
-          'auth' => 'Zend\Authentication\AuthenticationService',
-          'log' => \Zend\Log\Logger::class,
-        ],
-        'factories' => [
-            'Zend\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',
-            'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
-            \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
-            Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
-
-            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
-        ],
-
-    ],
-    'session_containers' => [
-        'Authentication',
-    ],
-
 ];
