@@ -54,20 +54,68 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
     </div>
  </div>
+
+<div class="form-group">
+    <label class="control-label col-sm-3">languages</label>
+    <div class="col-sm-9"><?php 
+    $languageSelect = $fieldset->get('language-select'); 
+    /** @todo figure out where validator should be attached, and how to get error messages */
+    echo $this->formSelect($languageSelect);
+    //,$this->formElementErrors($active) ?>            
+    </div>
+    <table class="table col-sm-offset-3 col-sm-9" style="border:1px dotted red">
+        <thead>
+        <th>language</th>
+        <th>fed certification</th>
+        <th></th>
+        </thead>
+        <tbody>
+<?php 
+    $entity = $form->getObject();
+    $interpreterLanguages = $entity->getInterpreterLanguages();
+    if (count($interpreterLanguages)) :     
+        $i = -1;
+        foreach ($interpreterLanguages as $ilanguage) :
+        ?>
+            <tr>
+                <td><?php echo $ilanguage->getLanguage() ?></td>
+                <td><?php echo $ilanguage->getFederalCertification() ?></td>
+                <td>[x]</td>
+            </tr>
+            <!-- 
+            <div class="col-sm-offset-3 col-sm-4"><?php echo $ilanguage->getLanguage() ?></div>
+             <div class="col-sm-4"><?php echo $ilanguage->getFederalCertification() ?></div>
+             <div class="col-sm-1">[x]</div>
+        -->
+        <?php
+        
+        endforeach;
+    endif;
+?>  </tbody>
+    </table>
+</div>
+
 <?php 
 // shit should be rendered as a collection:
 // throws 'Object provided to Escape helper, but flags do not allow recursion'
 // when already hydrated
 //echo $this->formCollection($fieldset->get('interpreterLanguages'));
-$interpreterLanguages = $fieldset->get('interpreterLanguages');
+$interpreterLanguagesFieldset = $fieldset->get('interpreterLanguages');
+$entity = $form->getObject();
+$interpLanguages = $entity->getInterpreterLanguages();
+echo "DEBUG: language count is ".count($interpLanguages);
+if (count($interpLanguages)) {
+    echo " ...",(string)$interpLanguages[0]->getLanguage();
+}
+if (false):
 $i = -1;
-foreach ($interpreterLanguages as $thing) { // fieldset
+foreach ($interpreterLanguagesFieldset as $thing) { // fieldset
     echo '<div class="interpreter-language">';
     echo $this->formSelect($thing->get('language'));//, $this->formHidden($thing->get('interpreter'));
     //name="interpreter[interpreterLanguages][0][language]
     ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo ++$i?>][interpreter]" value="<?php echo $this->id?>"><?php echo "</div>";
 }
-?><!-- <pre><?php print_r(get_class_methods($interpreterLanguages)); ?></pre> -->
+?><?php endif; ?><!-- <pre><?php //print_r(get_class_methods($interpreterLanguages)); ?></pre> -->
 
 
 
@@ -82,8 +130,10 @@ $languages_element = $fieldset->get('interpreterLanguages')  ?>
         $this->formSelect($languages),// for the UI
         $this->formSelect($languages_element), // for actual data, hidden
         $this->formElementErrors($languages_element) ?>
-        <ul id="languages-list" class="list-group">
-        </ul>            
+        <!--
+        maybe not....
+        <ul id="languages-list" class="list-group"></ul>            
+        -->
     </div>
  </div>
 <?php endif; ///if (false)  ?>
@@ -99,12 +149,20 @@ $languages_element = $fieldset->get('interpreterLanguages')  ?>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
 <script type="text/javascript">
+    
 /** dynamically add a language. @todo live in its own file ? */
 // no point in typing this more than once
 var languageElementName = "interpreter[interpreterLanguages][]";
 $(function(){
     var select = $('#language-select');
-    var list = $('#languages-list');
+    //var list = $('#languages-list');
+    var languageCount = $('div.interpreter-language').length;
+    select.on("click",function(){
+        
+        
+    });
+    
+    if (false) {
     // when form is (re)loaded, create list from hidden select element
     $('#interpreterLanguages option:selected').each(function(){ 
 			var option = $(this);
@@ -123,7 +181,9 @@ $(function(){
         }
         createLanguageItem(option).appendTo(list);
         select.val('');
-    });
+    });   
+    }
+    
 
     //  testing
     $('#hat').val(3);
@@ -133,6 +193,7 @@ $(function(){
 });
 /**
  * helper function to create li element
+ * not currently in use!
  * @param option jQuery with one <option> element
  * @returns jQuery with one <li> element
  */

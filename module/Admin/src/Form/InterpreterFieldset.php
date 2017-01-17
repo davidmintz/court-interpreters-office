@@ -51,7 +51,7 @@ class InterpreterFieldset extends PersonFieldset
                 'target_element' => new InterpreterLanguageFieldset($objectManager),
             ],
         ]);
-        if (false)
+        if (true)
         {
         $this->add([
     		'type' => 'DoctrineModule\Form\Element\ObjectSelect',
