@@ -52,6 +52,18 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                 'class' => 'form-control',                
              ], 
         ]);
+
+        $this->add([
+            'name' => 'federal_certification',
+            'type' => 'Zend\Form\Element\Select',
+            'options' => [
+                'value_options' => [
+                    '' => 'N/A',
+                    1 => 'yes',
+                    0 => 'no',
+                ],
+            ]
+        ]);
     }
 
     public function getInputFilterSpecification()
