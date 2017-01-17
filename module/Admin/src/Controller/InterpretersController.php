@@ -122,10 +122,11 @@ class InterpretersController extends AbstractActionController
                       $entity->getFirstname(),
                       $entity->getLastname()
                   ));
-            echo "NOT redirecting. entity:<pre>";
-            \Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
+            echo "NOT redirecting... ";//entity:<pre>";
+            //\Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
             //$this->redirect()->toRoute('interpreters');
-        } else { echo "loaded:<pre> "; \Doctrine\Common\Util\Debug::dump($entity);echo "</pre>";}
+        } else { //echo "loaded:<pre> "; \Doctrine\Common\Util\Debug::dump($entity);echo "</pre>";
+       }
 
         return $viewModel;
     }
