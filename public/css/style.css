@@ -11,6 +11,14 @@ body {
 .form-group label {
     padding-right: 1em;
 }
+/** @todo move to its own file? */
+.languages-header
+{ 
+    border-bottom: 1px solid #afd9ee;
+    margin-top: .5em;
+     margin-bottom: .5em;
+}
+
 /* stuff that came with the skeleton app*/
 /*
 .btn-success {
