@@ -63,13 +63,7 @@ $active = $fieldset->get('active');?>
     echo $this->formSelect($languageSelect);
     //,$this->formElementErrors($active) ?>            
     </div>
-    <table class="table col-sm-offset-3 col-sm-9" style="border:1px dotted red">
-        <thead>
-        <th>language</th>
-        <th>fed certification</th>
-        <th></th>
-        </thead>
-        <tbody>
+    
 <?php 
     $entity = $form->getObject();
     $interpreterLanguages = $entity->getInterpreterLanguages();
@@ -77,11 +71,7 @@ $active = $fieldset->get('active');?>
         $i = -1;
         foreach ($interpreterLanguages as $ilanguage) :
         ?>
-            <tr>
-                <td><?php echo $ilanguage->getLanguage() ?></td>
-                <td><?php echo $ilanguage->getFederalCertification() ?></td>
-                <td>[x]</td>
-            </tr>
+            
             <!-- 
             <div class="col-sm-offset-3 col-sm-4"><?php echo $ilanguage->getLanguage() ?></div>
              <div class="col-sm-4"><?php echo $ilanguage->getFederalCertification() ?></div>
@@ -91,8 +81,7 @@ $active = $fieldset->get('active');?>
         
         endforeach;
     endif;
-?>  </tbody>
-    </table>
+?> 
 </div>
 
 <?php 
