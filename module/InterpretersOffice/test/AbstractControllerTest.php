@@ -61,8 +61,9 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
         if (!$auth->hasIdentity()) {
             echo "\nWARNING:  failed authentication\n";
         }
-
         $this->reset(true);
+        
+        return $this;
     }
 
     /**
