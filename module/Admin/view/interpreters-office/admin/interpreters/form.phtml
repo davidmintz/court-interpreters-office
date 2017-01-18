@@ -1,4 +1,5 @@
 <?php
+use Zend\Form\Element;
 /**
  *  module/Admin/view/interpreters-office/admin/people/form.phtml
  *  view script for rendering people create|update form
@@ -21,14 +22,13 @@ $form->add([
    ->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal')    ;
 ?>
-<div class="center-block" style="max-width:750px"><!-- wrapper -->
+<div class="center-block" style="max-width:800px"><!-- wrapper -->
 <h2><?php echo $this->title ?></h2>
 <?php
 
 $form->prepare();
 $fieldset = $form->get('interpreter');
 echo $this->form()->openTag($form);?>
-<div class="form-group">
 <?php
 $hat = $fieldset->get('hat');?>
     <div class="form-group">
@@ -36,7 +36,6 @@ $hat = $fieldset->get('hat');?>
         <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>            
         </div>
     </div>
-</div>
 <?php
  // text inputs
 foreach (['lastname','firstname','middlename','email','officePhone','mobilePhone'] as $elementName) :
@@ -63,54 +62,68 @@ $active = $fieldset->get('active');?>
     echo $this->formSelect($languageSelect);
     //,$this->formElementErrors($active) ?>            
     </div>
-    
+    <!-- wrapper for nested grid // border:1px solid #afd9ee; -->
+    <div class="row" style="clear:both">
+        <div class="col-sm-3 col-sm-offset-4 languages-header">language</div>
+        <div class="col-sm-2 languages-header">fed certification</div>
+        <div class="col-sm-3"></div>     
 <?php 
     $entity = $form->getObject();
     $interpreterLanguages = $entity->getInterpreterLanguages();
-    if (count($interpreterLanguages)) :     
-        $i = -1;
-        foreach ($interpreterLanguages as $ilanguage) :
-        ?>
-            
-            <!-- 
-            <div class="col-sm-offset-3 col-sm-4"><?php echo $ilanguage->getLanguage() ?></div>
-             <div class="col-sm-4"><?php echo $ilanguage->getFederalCertification() ?></div>
-             <div class="col-sm-1">[x]</div>
-        -->
+    $fed_certification_options = ['' => 'N/A', 1 => 'yes', 0 => 'no', ];
+    
+    if (true && count($interpreterLanguages)) :     
+        $i = 0;?>            
         <?php
-        
+        foreach ($interpreterLanguages as $ilanguage) :
+            $language_id = $ilanguage->getLanguage()->getId();
+        ?>
+        <div class="col-sm-3 col-sm-offset-4 interpreter-language" id="language-<?php echo $language_id?>"><?php 
+            echo $this->escapeHtml($ilanguage->getLanguage());
+            // language and interpreter ids as hidden inputs
+           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>"><?php 
+           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][interpreter]" value="<?php echo $this->id?>">
+        </div>
+        <div class="col-sm-2 language-fed-certification"><?php 
+           $element = new Element\Select("interpreter[interpreterLanguages][$i][federalCertification]");
+           $element->setValueOptions($fed_certification_options)->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
+           echo $this->formSelect($element);
+        ?></div>
+        <div class="col-sm-3">
+            <button title="remove from this interpreter's working languages" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="sr-only">remove</span></button></div>
+        <?php  
+        $i++; 
         endforeach;
     endif;
-?> 
+?>              
+   </div><!-- /grid wrapper -->   
+
 </div>
 
 <?php 
-// shit should be rendered as a collection:
-// throws 'Object provided to Escape helper, but flags do not allow recursion'
-// when already hydrated
-//echo $this->formCollection($fieldset->get('interpreterLanguages'));
-$interpreterLanguagesFieldset = $fieldset->get('interpreterLanguages');
-$entity = $form->getObject();
-$interpLanguages = $entity->getInterpreterLanguages();
-echo "DEBUG: language count is ".count($interpLanguages);
-if (count($interpLanguages)) {
-    echo " ...",(string)$interpLanguages[0]->getLanguage();
-}
+
+//if (count($interpLanguages)) {// echo " ...",(string)$interpLanguages[0]->getLanguage();}
 if (false):
-$i = -1;
-foreach ($interpreterLanguagesFieldset as $thing) { // fieldset
+$i = 0;
+
+foreach ($interpreterLanguagesFieldset as $thing) : // fieldset
     echo '<div class="interpreter-language">';
-    echo $this->formSelect($thing->get('language'));//, $this->formHidden($thing->get('interpreter'));
+//printf ( "class of language is %s; class of interpreter is %s<br>", get_class($thing->get('language')), get_class($thing->get('interpreter')));
+    echo $this->formHidden($thing->get('language')); echo $this->escapeHtml('<-- shit');
+    ////echo $this->formHidden($thing->get('interpreter'));
     //name="interpreter[interpreterLanguages][0][language]
-    ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo ++$i?>][interpreter]" value="<?php echo $this->id?>"><?php echo "</div>";
-}
-?><?php endif; ?><!-- <pre><?php //print_r(get_class_methods($interpreterLanguages)); ?></pre> -->
+    ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo ++$i?>][interpreter]" value="<?php echo $this->id?>">
+    <?php echo $this->formSelect($thing->get('federalCertification'));
+echo "</div>";
+endforeach;
+
+endif; ?><!--pre><?php //print_r(get_class_methods($interpreterLanguagesFieldset)); ?></pre> -->
 
 
 
 
 <!-- --------------------------------------------------------------------    -->
-<?php if (false):  // experimental. disable this for now
+<?php if (false):  // experimental. disabled for now
 $languages = $fieldset->get('language-select'); 
 $languages_element = $fieldset->get('interpreterLanguages')  ?>
 <div class="form-group">
@@ -119,10 +132,6 @@ $languages_element = $fieldset->get('interpreterLanguages')  ?>
         $this->formSelect($languages),// for the UI
         $this->formSelect($languages_element), // for actual data, hidden
         $this->formElementErrors($languages_element) ?>
-        <!--
-        maybe not....
-        <ul id="languages-list" class="list-group"></ul>            
-        -->
     </div>
  </div>
 <?php endif; ///if (false)  ?>
@@ -143,14 +152,14 @@ $languages_element = $fieldset->get('interpreterLanguages')  ?>
 // no point in typing this more than once
 var languageElementName = "interpreter[interpreterLanguages][]";
 $(function(){
-    var select = $('#language-select');
-    //var list = $('#languages-list');
-    var languageCount = $('div.interpreter-language').length;
-    select.on("click",function(){
-        
+    var select = $('#language-select');    
+    select.on("change",function(){
+        console.log("change event on select element");
         
     });
     
+    
+    /*
     if (false) {
     // when form is (re)loaded, create list from hidden select element
     $('#interpreterLanguages option:selected').each(function(){ 
@@ -172,13 +181,13 @@ $(function(){
         select.val('');
     });   
     }
-    
+    */
 
     //  testing
     $('#hat').val(3);
     $('#lastname').val("Doink");
     $('#firstname').val("Boink");
-    select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
+    // select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
 });
 /**
  * helper function to create li element
