@@ -59,8 +59,7 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9"><?php 
     $languageSelect = $fieldset->get('language-select'); 
     /** @todo figure out where validator should be attached, and how to get error messages */
-    echo $this->formSelect($languageSelect);
-    //,$this->formElementErrors($active) ?>            
+    echo $this->formSelect($languageSelect),$this->formElementErrors($fieldset->get('interpreterLanguages')) ?>            
     </div>
     <!-- wrapper for nested grid // border:1px solid #afd9ee; -->
     <div class="row" style="clear:both">
@@ -84,12 +83,12 @@ $active = $fieldset->get('active');?>
            ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>"><?php 
            ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][interpreter]" value="<?php echo $this->id?>">
         </div>
-        <div class="col-sm-2 language-fed-certification"><?php 
+        <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
            $element = new Element\Select("interpreter[interpreterLanguages][$i][federalCertification]");
            $element->setValueOptions($fed_certification_options)->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
            echo $this->formSelect($element);
         ?></div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 interpreter-language">
             <button title="remove from this interpreter's working languages" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="sr-only">remove</span></button></div>
         <?php  
         $i++; 

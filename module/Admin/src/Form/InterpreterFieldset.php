@@ -45,14 +45,14 @@ class InterpreterFieldset extends PersonFieldset
             'options' => [
                 'label' => 'working languages',
                // 'count' => 2,
-                'should_create_template' => true,
+                'should_create_template' => false,
                 'allow_add' => true,
                 'allow_remove' => true,
                 'target_element' => new InterpreterLanguageFieldset($objectManager),
             ],
         ]);
-        if (true)
-        {
+
+
         $this->add([
     		'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'language-select',
@@ -71,32 +71,13 @@ class InterpreterFieldset extends PersonFieldset
         $element = $this->get('language-select');
         $options = $element->getValueOptions();
         array_unshift($options, [
-            'label' => ' ',
+            'label' => '-- select a language --',
             'value' => '',
             'attributes' => ['label' => ' ', ],
         ]);
         $element->setValueOptions($options);
         
-        // use the same $options to populate the hidden multi-select element
-        $interpreterLanguages_options = [];
-        foreach ($options as $opt) {
-            $interpreterLanguages_options[$opt['value']] = $opt['label'];
-        }
-        $this->add(
-            [
-                'type' => 'Zend\Form\Element\Select',
-                'name' => 'interpreterLanguages',
-                'options' => [
-                    'value_options' => $interpreterLanguages_options,
-                 ],
-                'attributes' => [
-                    'multiple'=>'multiple',
-                    'id' => 'interpreterLanguages',
-                    'class' => 'hidden',
-                 ],
-            ]
-        );
-        }
+
     }
 
     public function addHatElement()
@@ -170,6 +151,7 @@ class InterpreterFieldset extends PersonFieldset
                     
                 ],
          ];
+     
         return $spec;
          
     }

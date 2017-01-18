@@ -31,7 +31,6 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager)); 
         $this->setObject(new Entity\InterpreterLanguage);
-        
         $this->add([
             'name' => 'interpreter',
             'type' => 'hidden',             
@@ -39,22 +38,11 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
         
         $this->add([
             'name' => 'language',
-            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
-            'options' => [
-                'object_manager' => $this->objectManager,
-                'target_class' => 'InterpretersOffice\Entity\Language',
-                'property' => 'name',
-                'label' => 'language',
-                'display_empty_item' => true,
-                'empty_item_label' => '',
-            ],
-             'attributes' => [
-                'class' => 'form-control',                
-             ], 
+            'type' => 'hidden',            
         ]);
 
         $this->add([
-            'name' => 'federal_certification',
+            'name' => 'federalCertification',
             'type' => 'Zend\Form\Element\Select',
             'options' => [
                 'value_options' => [
@@ -69,6 +57,21 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
     public function getInputFilterSpecification()
     {
         // to be continued
-        return [];
+        return [
+            'federalCertification'=> [
+                'required' => true,
+                'allow_empty' => true,
+            ],
+            'language' => [
+                'required' => true,
+                'allow_empty' => false,
+                
+            ],
+            'interpreter' => [
+                'required' => true,
+                'allow_empty' => false,
+                
+            ],
+        ];
     }
 }

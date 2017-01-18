@@ -113,6 +113,9 @@ class InterpretersController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
+                echo "shit is not valid?...";
+                print_r($form->getMessages());
+                //print_r($form->getData());
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -122,7 +125,8 @@ class InterpretersController extends AbstractActionController
                       $entity->getFirstname(),
                       $entity->getLastname()
                   ));
-            echo "NOT redirecting... ";//entity:<pre>";
+            echo "NOT redirecting... ";
+            ////entity:<pre>";
             //\Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
             //$this->redirect()->toRoute('interpreters');
         } else { //echo "loaded:<pre> "; \Doctrine\Common\Util\Debug::dump($entity);echo "</pre>";
