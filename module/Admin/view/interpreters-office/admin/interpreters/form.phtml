@@ -58,7 +58,6 @@ $active = $fieldset->get('active');?>
     <label class="control-label col-sm-3">languages</label>
     <div class="col-sm-9"><?php 
     $languageSelect = $fieldset->get('language-select'); 
-    /** @todo figure out where validator should be attached, and how to get error messages */
     echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ?> 
     <input name="interpreter[language-select]" type="hidden" value="-1">           
     </div>
@@ -72,9 +71,8 @@ $active = $fieldset->get('active');?>
     $interpreterLanguages = $entity->getInterpreterLanguages();
     $fed_certification_options = ['' => 'N/A', 1 => 'yes', 0 => 'no', ];
     
-    if (true && count($interpreterLanguages)) :     
-        $i = 0;?>            
-        <?php
+    if (count($interpreterLanguages)) :     
+        $i = 0;            
         foreach ($interpreterLanguages as $ilanguage) :
             $language_id = $ilanguage->getLanguage()->getId();
         ?>
@@ -99,24 +97,6 @@ $active = $fieldset->get('active');?>
    </div><!-- /grid wrapper -->   
 
 </div>
-
-<?php 
-if (false):
-$i = 0;
-
-foreach ($interpreterLanguagesFieldset as $thing) : // fieldset
-    echo '<div class="interpreter-language">';
-//printf ( "class of language is %s; class of interpreter is %s<br>", get_class($thing->get('language')), get_class($thing->get('interpreter')));
-    echo $this->formHidden($thing->get('language')); echo $this->escapeHtml('<-- shit');
-    ////echo $this->formHidden($thing->get('interpreter'));
-    //name="interpreter[interpreterLanguages][0][language]
-    ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo ++$i?>][interpreter]" value="<?php echo $this->id?>">
-    <?php echo $this->formSelect($thing->get('federalCertification'));
-echo "</div>";
-endforeach;
-
-endif; ?><!--pre><?php //print_r(get_class_methods($interpreterLanguagesFieldset)); ?></pre> -->
-
 <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
     <?php
@@ -130,23 +110,12 @@ endif; ?><!--pre><?php //print_r(get_class_methods($interpreterLanguagesFieldset
 <script type="text/javascript">
     
 /** dynamically add a language. @todo live in its own file ? */
-// no point in typing this more than once
-var languageElementName = "interpreter[interpreterLanguages][]";
+
 $(function(){
     var select = $('#language-select');    
     select.on("change",function(){
         console.log("change event on select element");
         
-    });
-    
-    
-    /*
-    if (false) {
-    // when form is (re)loaded, create list from hidden select element
-    $('#interpreterLanguages option:selected').each(function(){ 
-			var option = $(this);
-			createLanguageItem(option).appendTo(list);
-			option.removeAttr('selected');
     });
     // when language select menu item is chosen, add it to the list
     select.on("change",function(){

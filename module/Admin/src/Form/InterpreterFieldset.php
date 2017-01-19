@@ -75,7 +75,7 @@ class InterpreterFieldset extends PersonFieldset
             'value' => '-1', 
             'attributes' => ['label' => ' ', ],
         ]);
-        $element->setValueOptions($options)
+        $element->setValueOptions($options);    
 
     }
 
