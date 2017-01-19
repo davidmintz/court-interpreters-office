@@ -37,8 +37,6 @@ class InterpreterFieldset extends PersonFieldset
     {
     	parent::__construct($objectManager, $options);
         
-        //$this->add(new InterpreterLanguageFieldset($objectManager));
-        
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterLanguages',
@@ -72,11 +70,12 @@ class InterpreterFieldset extends PersonFieldset
         $options = $element->getValueOptions();
         array_unshift($options, [
             'label' => '-- select a language --',
-            'value' => '',
+            // keeps the allow_empty => false option from preventing
+            // the callback validator from running:
+            'value' => '-1', 
             'attributes' => ['label' => ' ', ],
         ]);
-        $element->setValueOptions($options);
-        
+        $element->setValueOptions($options)
 
     }
 
@@ -115,6 +114,7 @@ class InterpreterFieldset extends PersonFieldset
     
     public function getInputFilterSpecification() {
         $spec = parent::getInputFilterSpecification();
+        /* // does not seem to work for validating this shit
         $spec['interpreterLanguages'] = [
             'required' => true,
             'allow_empty' => false,
@@ -132,10 +132,29 @@ class InterpreterFieldset extends PersonFieldset
             ],
             
         ];
+        */
         // this one is just for the UI
          $spec['language-select'] = [
-            'required' => false,
-            'allow_empty' => true,
+            'required' => true,
+            'allow_empty' => false,
+            'validators' => [
+
+                [   // attach this validator to the language-select element to ensure 
+                    // the interpreter-languages collection is not empty
+                    // cheating, maybe, but it works whereas other attempts have failed 
+                   'name'=> 'Zend\Validator\Callback',
+                   'options' => [
+                        'callback' => function($value){
+                            $shit = $this->getObject()->getInterpreterLanguages();
+                            return $shit->count() ?: false;                         
+                        },
+                        'messages' => [
+                            'callbackValue' => 'At least one language is required',
+                        ],
+                    ],
+                ],
+            ],
+
          ];
          $spec['hat'] = [
                 'validators' => [
@@ -147,9 +166,8 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                     'break_chain_on_failure' => true,
-                ],
-                    
-                ],
+                ],                   
+            ],
          ];
      
         return $spec;
