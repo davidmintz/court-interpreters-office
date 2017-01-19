@@ -18,7 +18,6 @@ use InterpretersOffice\Entity;
 
 /**
  * Fieldset for Interpreter's working languages
- * 
  */
 class InterpreterLanguageFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
@@ -50,27 +49,47 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                     1 => 'yes',
                     0 => 'no',
                 ],
-            ]
+            ],
+            
         ]);
     }
 
     public function getInputFilterSpecification()
     {
-        // to be continued
+
         return [
             'federalCertification'=> [
                 'required' => true,
                 'allow_empty' => true,
+                'filters' => [
+                    [/** note to self: check if ZF provides a filter for this */
+                        'name' => 'Zend\Filter\Callback',
+                        'options' => [
+                            'callback' => function($value) {
+                                switch ($value) {
+                                    case "":
+                                        $value = null;
+                                        break;
+                                    case "1":
+                                        $value = true;
+                                        break;
+                                    case "0";
+                                        $value = false;
+                                        break;
+                                }
+                                return $value;
+                            },
+                        ]
+                    ]
+                ],
             ],
             'language' => [
                 'required' => true,
-                'allow_empty' => false,
-                
+                'allow_empty' => false,               
             ],
             'interpreter' => [
                 'required' => true,
-                'allow_empty' => false,
-                
+                'allow_empty' => false,                
             ],
         ];
     }
