@@ -59,7 +59,8 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9"><?php 
     $languageSelect = $fieldset->get('language-select'); 
     /** @todo figure out where validator should be attached, and how to get error messages */
-    echo $this->formSelect($languageSelect),$this->formElementErrors($fieldset->get('interpreterLanguages')) ?>            
+    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ?> 
+    <input name="interpreter[language-select]" type="hidden" value="-1">           
     </div>
     <!-- wrapper for nested grid // border:1px solid #afd9ee; -->
     <div class="row" style="clear:both">
@@ -100,8 +101,6 @@ $active = $fieldset->get('active');?>
 </div>
 
 <?php 
-
-//if (count($interpLanguages)) {// echo " ...",(string)$interpLanguages[0]->getLanguage();}
 if (false):
 $i = 0;
 
@@ -118,23 +117,6 @@ endforeach;
 
 endif; ?><!--pre><?php //print_r(get_class_methods($interpreterLanguagesFieldset)); ?></pre> -->
 
-
-
-
-<!-- --------------------------------------------------------------------    -->
-<?php if (false):  // experimental. disabled for now
-$languages = $fieldset->get('language-select'); 
-$languages_element = $fieldset->get('interpreterLanguages')  ?>
-<div class="form-group">
-    <label class="control-label col-sm-3"><?php echo $languages->getLabel()?></label>
-    <div class="col-sm-9"><?php echo 
-        $this->formSelect($languages),// for the UI
-        $this->formSelect($languages_element), // for actual data, hidden
-        $this->formElementErrors($languages_element) ?>
-    </div>
- </div>
-<?php endif; ///if (false)  ?>
-<!-- --------------------------------------------------------------------    -->
 <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
     <?php
