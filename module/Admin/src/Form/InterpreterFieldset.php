@@ -7,7 +7,7 @@ namespace InterpretersOffice\Admin\Form;
 
 use InterpretersOffice\Form\PersonFieldset;
 use Doctrine\Common\Persistence\ObjectManager;
-use InterpretersOffice\Entity\Interpreter;
+use InterpretersOffice\Entity;
 
 // experimental
 use Zend\Form\Element;
@@ -60,6 +60,10 @@ class InterpreterFieldset extends PersonFieldset
                 'property' => 'name',
                 //'find_method' => ['name' => 'getInterpreterHats'],
                 'label' => 'languages',
+                'option_attributes' =>
+                   [ 'data-certifiable' => function(Entity\Language $language){
+                        return $language->isFederallyCertified() ? 1 : 0;
+                   },]
             ],
              'attributes' => [
                 'class' => 'form-control',
