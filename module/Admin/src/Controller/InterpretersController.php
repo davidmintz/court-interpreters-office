@@ -94,8 +94,6 @@ class InterpretersController extends AbstractActionController
     public function editAction()
     {
         
-        //echo "not yet implemented"; return false;
-
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
                 ->setVariable('title', 'edit an interpreter');
@@ -125,7 +123,7 @@ class InterpretersController extends AbstractActionController
                       $entity->getFirstname(),
                       $entity->getLastname()
                   ));
-            echo "NOT redirecting... ";
+            echo "success. NOT redirecting... ";
             ////entity:<pre>";
             //\Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
             //$this->redirect()->toRoute('interpreters');

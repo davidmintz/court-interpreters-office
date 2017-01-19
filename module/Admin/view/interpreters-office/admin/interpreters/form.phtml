@@ -59,7 +59,6 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9"><?php 
     $languageSelect = $fieldset->get('language-select'); 
     echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ?> 
-    <input name="interpreter[language-select]" type="hidden" value="-1">           
     </div>
     <!-- wrapper for nested grid // border:1px solid #afd9ee; -->
     <div class="row" id="interpreter-languages" style="clear:both">
@@ -87,7 +86,7 @@ $active = $fieldset->get('active');?>
            $element->setValueOptions($fed_certification_options)->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
            echo $this->formSelect($element);
         ?></div>
-        <div class="col-sm-3 interpreter-language">
+        <div class="col-sm-3 interpreter-language remove-language">
             <button title="remove from this interpreter's working languages" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="sr-only">remove</span></button></div>
         <?php  
         $i++; 
@@ -115,9 +114,10 @@ $(function(){
     var select = $('#language-select');    
     select.on("change",function(){
         console.log("change event on select element");
-        if (! select.val()) {
+        if (! (parseInt(select.val()) > 0)) {
             return;
         }
+        console.warn( parseInt(select.val()) > 0  );
         var option = select.children(':selected');
         var language_id = option.attr('value');
         if ($('#language-' + language_id).length) {
@@ -149,7 +149,29 @@ $(function(){
                         value : interpreter_id
                     })
                 );
-        //console.log(divs[0]);
+        /*<select name="interpreter[interpreterLanguages][0][federalCertification]" class="form-control"><option value="">N/A</option>
+            <option value="1" selected="selected">yes</option><option value="0">no</option></select>*/
+        var certificationSelectElement = $('<select>')
+                        .addClass("form-control")
+                        .attr({name: "interpreter[interpreterLanguages]["+index+"][federalCertification]"});
+                        
+        if (certifiable) {
+            certificationSelectElement
+                    .append($("<option>").attr({value:""}).text(""))
+                    .append('<option value="1" selected="selected">yes</option><option value="0">no</option>');
+        } else {
+            certificationSelectElement.append($("<option>")
+                    .attr({value:"",selected : "selected"})
+                    .text("N/A")
+                ).attr({disabled : "disabled"});
+                    
+        }
+        divs[1] = $('<div>').addClass("col-sm-2 interpreter-language language-fed-certification")
+                .append(certificationSelectElement);
+        divs[2] = $('<div>').addClass("col-sm-3 interpreter-language remove-language").html(
+                '<button title="remove from this interpreter\'s working languages" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="sr-only">remove</span></button>'
+            );
+        //console.log(divs); 
         $('#interpreter-languages').append(divs);
         
     });
