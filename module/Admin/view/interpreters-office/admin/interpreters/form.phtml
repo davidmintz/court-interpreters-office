@@ -84,7 +84,15 @@ $active = $fieldset->get('active');?>
         <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
            $element = new Element\Select("interpreter[interpreterLanguages][$i][federalCertification]");
            $element->setValueOptions($fed_certification_options)->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
+           $disabled = false;
+           if ($element->getValue() === null) {
+               $element->setAttribute("disabled","disabled");
+               $disabled = true;
+           }
            echo $this->formSelect($element);
+           if ($disabled) : // keep the validators happy ?>
+            <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i ?>][federalCertification]" value="">
+           <?php endif;
         ?></div>
         <div class="col-sm-3 interpreter-language remove-language">
             <button title="remove from this interpreter's working languages" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="sr-only">remove</span></button></div>
@@ -108,7 +116,11 @@ $active = $fieldset->get('active');?>
 </div><!-- /wrapper -->
 <script type="text/javascript">
     
-/** dynamically add a language. @todo live in its own file ? */
+/** dynamically add a language. 
+ * 
+ * @todo live in its own file ? 
+ * 
+ */
 
 $(function(){
     var select = $('#language-select');    
@@ -124,12 +136,13 @@ $(function(){
             // then it already exists
             return;
         }
-        // the next index is the number of these elements
+        // gather some data for injecting into the elements
         var index = $('.language-name').length;
         var languageName = option.text();
         var certifiable = option.data().certifiable;
-        
         var interpreter_id = $('input[name="interpreter[id]"]').val();
+        
+        // build the three elements and stick into an array
         var divs = [];
         divs[0] = $('<div>')
                 .addClass("col-sm-3 col-sm-offset-4 interpreter-language language-name")
@@ -166,17 +179,33 @@ $(function(){
         }
         divs[1] = $('<div>').addClass("col-sm-2 interpreter-language language-fed-certification")
                 .append(certificationSelectElement);
+        if (! certifiable) {
+            // with select element disabled, this has to be present 
+            // so it will validate
+            divs[1].append(
+                 $('<input>').attr({
+                     type : "hidden",
+                     name : certificationSelectElement.attr("name"),
+                     value : ""
+                 })
+            );
+        }
         divs[2] = $('<div>').addClass("col-sm-3 interpreter-language remove-language").html(
                 '<button title="remove from this interpreter\'s working languages" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="sr-only">remove</span></button>'
             );
-        //console.log(divs); 
+        // finally, append it all to the interpreter-languages div
         $('#interpreter-languages').append(divs);
+        // reset the language-select
+        select.val($('#language-select option:first').attr("value"));
+        
         
     });
-  
+    // remove the language (3 divs) when the x is clicked
     $('#interpreter-languages').on("click", "div.remove-language",function(event){
         event.preventDefault();
-        console.log("shit was clicked;");
+        $(this).prevUntil("div.remove-language").addBack()
+                .slideUp(function(){$(this).remove();});
+        
     });
     //  testing
     $('#hat').val(3);
