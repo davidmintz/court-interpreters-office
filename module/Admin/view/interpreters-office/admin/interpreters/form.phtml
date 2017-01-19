@@ -117,7 +117,7 @@ $(function(){
         if (! (parseInt(select.val()) > 0)) {
             return;
         }
-        console.warn( parseInt(select.val()) > 0  );
+
         var option = select.children(':selected');
         var language_id = option.attr('value');
         if ($('#language-' + language_id).length) {
@@ -149,8 +149,6 @@ $(function(){
                         value : interpreter_id
                     })
                 );
-        /*<select name="interpreter[interpreterLanguages][0][federalCertification]" class="form-control"><option value="">N/A</option>
-            <option value="1" selected="selected">yes</option><option value="0">no</option></select>*/
         var certificationSelectElement = $('<select>')
                         .addClass("form-control")
                         .attr({name: "interpreter[interpreterLanguages]["+index+"][federalCertification]"});
@@ -175,43 +173,15 @@ $(function(){
         $('#interpreter-languages').append(divs);
         
     });
-    // when language select menu item is chosen, add it to the list
-    /*
-    select.on("change",function(){
-        if (! select.val()) {
-            return;
-        }
-        var option = select.children(':selected');
-        var language = option.text();
-        if (list.children(':contains("'+language+'")').length) {
-            return;
-        }
-        createLanguageItem(option).appendTo(list);
-        select.val('');
-    });   
-    }
-    */
-
+  
+    $('#interpreter-languages').on("click", "div.remove-language",function(event){
+        event.preventDefault();
+        console.log("shit was clicked;");
+    });
     //  testing
     $('#hat').val(3);
     $('#lastname').val("Doink");
     $('#firstname').val("Boink");
     // select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
 });
-/**
- * helper function to create li element
- * not currently in use!
- * @param option jQuery with one <option> element
- * @returns jQuery with one <li> element
- */
-createLanguageItem = function(option)
-{
-    var li = $('<li>').addClass('list-group-item');
-    var input = $('<input>').attr({
-            type: "hidden",
-            name: languageElementName,
-            value: option.attr('value')
-        });
-    return li.text(option.text()).append(input);
-};
 </script>
