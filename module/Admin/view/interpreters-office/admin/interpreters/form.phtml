@@ -62,7 +62,7 @@ $active = $fieldset->get('active');?>
     <input name="interpreter[language-select]" type="hidden" value="-1">           
     </div>
     <!-- wrapper for nested grid // border:1px solid #afd9ee; -->
-    <div class="row" style="clear:both">
+    <div class="row" id="interpreter-languages" style="clear:both">
         <div class="col-sm-3 col-sm-offset-4 languages-header">language</div>
         <div class="col-sm-2 languages-header">fed certification</div>
         <div class="col-sm-3"></div>     
@@ -76,7 +76,7 @@ $active = $fieldset->get('active');?>
         foreach ($interpreterLanguages as $ilanguage) :
             $language_id = $ilanguage->getLanguage()->getId();
         ?>
-        <div class="col-sm-3 col-sm-offset-4 interpreter-language" id="language-<?php echo $language_id?>"><?php 
+        <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
             echo $this->escapeHtml($ilanguage->getLanguage());
             // language and interpreter ids as hidden inputs
            ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>"><?php 
@@ -115,9 +115,46 @@ $(function(){
     var select = $('#language-select');    
     select.on("change",function(){
         console.log("change event on select element");
+        if (! select.val()) {
+            return;
+        }
+        var option = select.children(':selected');
+        var language_id = option.attr('value');
+        if ($('#language-' + language_id).length) {
+            // then it already exists
+            return;
+        }
+        // the next index is the number of these elements
+        var index = $('.language-name').length;
+        var languageName = option.text();
+        var certifiable = option.data().certifiable;
+        
+        var interpreter_id = $('input[name="interpreter[id]"]').val();
+        var divs = [];
+        divs[0] = $('<div>')
+                .addClass("col-sm-3 col-sm-offset-4 interpreter-language language-name")
+                .attr({id : language_id})
+                .text(languageName)
+                .append(
+                    $('<input>').attr({
+                        type  : "hidden",
+                        name  : "interpreter[interpreterLanguages]["+index+"][language]",
+                        value : language_id
+                    })
+                )
+                .append(
+                     $('<input>').attr({
+                        type  : "hidden",
+                        name  : "interpreter[interpreterLanguages]["+index+"][interpreter]",
+                        value : interpreter_id
+                    })
+                );
+        //console.log(divs[0]);
+        $('#interpreter-languages').append(divs);
         
     });
     // when language select menu item is chosen, add it to the list
+    /*
     select.on("change",function(){
         if (! select.val()) {
             return;
