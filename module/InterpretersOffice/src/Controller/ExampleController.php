@@ -10,6 +10,11 @@ use Zend\View\Model\ViewModel;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\PersonForm;
 
+use InterpretersOffice\Entity;
+
+use InterpretersOffice\Form\CreateBlogPostForm;
+
+
 /**
  *  ExampleController.
  *
@@ -33,6 +38,42 @@ class ExampleController extends AbstractActionController
     public function __construct(ObjectManager $objectManager)
     {
         $this->objectManager = $objectManager;
+    }
+    
+    public function createAction()
+    {
+        // Get your ObjectManager from the ServiceManager
+        $objectManager = $this->objectManager;
+       
+        // Create the form and inject the ObjectManager
+        $form = new CreateBlogPostForm($objectManager);
+
+        // Create a new, empty entity and bind it to the form
+        $blogPost = new Entity\BlogPost();
+        $form->bind($blogPost);
+
+        if ($this->request->isPost()) {
+            $form->setData($this->request->getPost());
+
+            if ($form->isValid()) {
+                $objectManager->persist($blogPost);
+                $objectManager->flush();
+            }
+        }
+
+        return ['form' => $form];
+    }
+    
+    public function addInterpreterAction()
+    {
+        $viewModel = new ViewModel();
+        $viewModel->setTemplate('interpreters-office/admin/interpreters/form.phtml');
+        $form = new \InterpretersOffice\Admin\Form\InterpreterForm($this->objectManager,
+                ['action'=>'create']);
+        $entity = new Entity\Interpreter();
+        $form->bind($entity);
+        return $viewModel->setVariables(['form'=>$form,'title'=>"add shit"]);
+        
     }
     /**
      * fool around with person form and fieldset.
@@ -72,11 +113,12 @@ class ExampleController extends AbstractActionController
 
         return false;
     }
-/**
+ /**
   * @return array
   */
  public function formCollectionAction()
  {
+     /*
      $form = new \Application\Form\CreateProduct();
      $product = new \Application\Entity\Product();
      $form->bind($product);
@@ -98,6 +140,8 @@ class ExampleController extends AbstractActionController
      ]);
      $viewModel->setTerminal(true);
      return $viewModel;
+      * 
+      */
  }
     /**
      * index action.
@@ -149,424 +193,24 @@ class ExampleController extends AbstractActionController
     {
         
         $object = new \InterpretersOffice\Entity\Interpreter;
+        $object->setLastname('Mintz');
         $em = $this->objectManager;
         $hydrator = new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em);
-        
+        //$hydrator->ex
         $data = [
            'lastname'  => 'Mintz',
             'firstname' => 'David',
             'email' => "david@example.com",
             'hat' => 1,
             'interpreterLanguages' => [
-                ['language' => 62, 'interpreter'=> null ],
+               ['language' => 62, 'interpreter'=> $object ],
             ],
         ];
         $interpreter = $hydrator->hydrate($data, $object);
-        
+        echo $interpreter->getLastName();
         
 
         return false;
     }
 }
 
-namespace Application\Entity;
-
-class Product
-{
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var int
-     */
-    protected $price;
-
-    /**
-     * @var Brand
-     */
-    protected $brand;
-
-    /**
-     * @var array
-     */
-    protected $categories;
-
-    /**
-     * @param string $name
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param int $price
-     * @return self
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param Brand $brand
-     * @return self
-     */
-    public function setBrand(Brand $brand)
-    {
-        $this->brand = $brand;
-        return $this;
-    }
-
-    /**
-     * @return Brand
-     */
-    public function getBrand()
-    {
-        return $this->brand;
-    }
-
-    /**
-     * @param Category[] $categories
-     * @return self
-     */
-    public function setCategories(array $categories)
-    {
-        $this->categories = $categories;
-        return $this;
-    }
-
-    /**
-     * @return Category[]
-     */
-    public function getCategories()
-    {
-        return $this->categories;
-    }
-}
-
-class Brand
-{
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $url;
-
-    /**
-     * @param string $name
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $url
-     * @return self
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
-    }
-}
-
-class Category
-{
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @param string $name
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-}
-
-//====================================================//
-
-
-namespace Application\Form;
-
-use Application\Entity\Brand;
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Hydrator\ClassMethods as ClassMethodsHydrator;
-
-class BrandFieldset extends Fieldset implements InputFilterProviderInterface
-{
-    public function __construct()
-    {
-        parent::__construct('brand');
-
-        $this->setHydrator(new ClassMethodsHydrator(false));
-        $this->setObject(new Brand());
-
-        $this->add([
-            'name' => 'name',
-            'options' => [
-                'label' => 'Name of the brand',
-            ],
-            'attributes' => [
-                'required' => 'required',
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'url',
-            'type' => Element\Url::class,
-            'options' => [
-                'label' => 'Website of the brand',
-            ],
-            'attributes' => [
-                'required' => 'required',
-            ],
-        ]);
-    }
-
-    /**
-     * @return array
-     */
-    public function getInputFilterSpecification()
-    {
-        return [
-            'name' => [
-                'required' => true,
-            ],
-        ];
-    }
-}
-
-namespace Application\Form;
-
-use Application\Entity\Category;
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Hydrator\ClassMethods as ClassMethodsHydrator;
-
-class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
-{
-    public function __construct()
-    {
-        parent::__construct('category');
-
-        $this->setHydrator(new ClassMethodsHydrator(false));
-        $this->setObject(new Category());
-
-        $this->setLabel('Category');
-
-        $this->add([
-            'name' => 'name',
-            'options' => [
-                'label' => 'Name of the category',
-            ],
-            'attributes' => [
-                'required' => 'required',
-            ],
-        ]);
-    }
-
-    /**
-     * @return array
-     */
-    public function getInputFilterSpecification()
-    {
-        return [
-            'name' => [
-                'required' => true,
-            ],
-        ];
-    }
-}
-
-namespace Application\Form;
-
-use Application\Entity\Product;
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
-
-// not stdLib
-use Zend\Hydrator\ClassMethods as ClassMethodsHydrator;
-
-class ProductFieldset extends Fieldset implements InputFilterProviderInterface
-{
-    public function __construct()
-    {
-        parent::__construct('product');
-
-        $this->setHydrator(new ClassMethodsHydrator(false));
-        $this->setObject(new Product());
-
-        $this->add([
-            'name' => 'name',
-            'options' => [
-                'label' => 'Name of the product',
-            ],
-            'attributes' => [
-                'required' => 'required',
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'price',
-            'options' => [
-                'label' => 'Price of the product',
-            ],
-            'attributes' => [
-                'required' => 'required',
-            ],
-        ]);
-
-        $this->add([
-            'type' => BrandFieldset::class,
-            'name' => 'brand',
-            'options' => [
-                'label' => 'Brand of the product',
-            ],
-        ]);
-
-        $this->add([
-            'type' => Element\Collection::class,
-            'name' => 'categories',
-            'options' => [
-                'label' => 'Please choose categories for this product',
-                'count' => 2,
-                'should_create_template' => true,
-                'allow_add' => true,
-                'target_element' => [
-                    'type' => CategoryFieldset::class,
-                ],
-            ],
-        ]);
-    }
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
-    {
-        return [
-            'name' => [
-                'required' => true,
-            ],
-            'price' => [
-                'required' => true,
-                /*
-                'validators' => [ // syntax error mixing array notation
-                    [
-                        'name' => 'Float',
-                    ],
-                ],
-                */
-            ],
-        ];
-    }
-}
-
-namespace Application\Form;
-
-
-// error:  ClassMethods not in StdLib namespace
-
-
-use Zend\Form\Element;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\ClassMethods as ClassMethodsHydrator;
-
-//// syntax error - parent construct missing ;  
-
-class CreateProduct extends Form
-{
-    public function __construct()
-    {
-        parent::__construct('create_product');
-
-        $this->setAttribute('method', 'post');
-        $this->setHydrator(new ClassMethodsHydrator(false));
-        $this->setInputFilter(new InputFilter());
-
-        $this->add([
-            'type' => ProductFieldset::class,
-            'options' => [
-                'use_as_base_fieldset' => true,
-            ],
-        ]);
-
-        $this->add([
-            'type' => Element\Csrf::class,
-            'name' => 'csrf',
-        ]);
-
-        $this->add([
-            'name' => 'submit',
-            'attributes' => [
-                'type' => 'submit',
-                'value' => 'Send',
-            ],
-        ]);
-    }
-}
