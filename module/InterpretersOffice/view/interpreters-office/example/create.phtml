@@ -1,0 +1,17 @@
+<?php
+$form = $this->form;
+
+$form->prepare();
+
+$post = $form->get('blog-post');
+echo $this->form()->openTag($form);
+echo $this->formRow($post->get('title')),"<br>";
+echo $this->formRow($post->get('body'));
+
+
+echo $this->formCollection($post->get('tags'));
+echo "<br>";
+echo $this->formHidden($post->get('id'));
+echo $this->formElement($form->get('submit'));
+
+echo $this->form()->closeTag();
