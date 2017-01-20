@@ -65,13 +65,15 @@ class InterpretersController extends AbstractActionController
         if ($request->isPost()) {
             //$_POST['interpreter']['interpreterLanguages'][0] = ['language'=> 24];
             $form->setData($request->getPost());
-            if (!$form->isValid()) {            
+            if (!$form->isValid()) {     
+                echo "<pre>\$_POST['interpreter']['interpreterLanguages']<br>"; var_dump($_POST['interpreter']['interpreterLanguages']) ;
+                echo "</pre>";      
                 return $viewModel;
             }
             try {
             
-            $this->entityManager->persist($entity);
-            $this->entityManager->flush();
+              $this->entityManager->persist($entity);
+              $this->entityManager->flush();
             } catch (\Exception $e) {
                 echo $e->getMessage();
                 printf('<pre>%s</pre>',$e->getTraceAsString());
@@ -109,11 +111,15 @@ class InterpretersController extends AbstractActionController
         $viewModel->setVariables(['form' => $form, 'id' => $id ]);
 
         $request = $this->getRequest();
-        if ($request->isPost()) {
+        if ($request->isPost())
+        {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                echo "shit is not valid?...";
+                echo "shit not valid?...";
+                echo "<pre>"; var_dump($_POST['interpreter']['interpreterLanguages']) ;
                 print_r($form->getMessages());
+                echo "</pre>"; 
+                
                 //print_r($form->getData());
                 return $viewModel;
             }
@@ -125,6 +131,10 @@ class InterpretersController extends AbstractActionController
                       $entity->getLastname()
                   ));
             echo "success. NOT redirecting... ";
+            echo "<pre>"; var_dump($_POST['interpreter']['interpreterLanguages']) ;
+                print_r($form->getMessages());
+                echo "</pre>"; 
+                
             ////entity:<pre>";
             //\Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
             //$this->redirect()->toRoute('interpreters');
