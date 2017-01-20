@@ -18,7 +18,7 @@ class Interpreter extends Person
     /**
      * entity id.
      *
-     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     * @ORM\Id @ORM\GeneratedValue(strategy="AUTO") @ORM\Column(type="smallint",options={"unsigned":true})
      */
     protected $id;
 
