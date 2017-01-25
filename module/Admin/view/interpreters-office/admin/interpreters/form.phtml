@@ -78,8 +78,8 @@ $active = $fieldset->get('active');?>
         <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
             echo $this->escapeHtml($ilanguage->getLanguage());
             // language and interpreter ids as hidden inputs
-           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>"><?php 
-           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][interpreter]" value="<?php echo $this->id?>">
+           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>"><?php 
+           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][interpreter_id]" value="<?php echo $this->id?>">
         </div>
         <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
            $element = new Element\Select("interpreter[interpreterLanguages][$i][federalCertification]");
@@ -151,14 +151,14 @@ $(function(){
                 .append(
                     $('<input>').attr({
                         type  : "hidden",
-                        name  : "interpreter[interpreterLanguages]["+index+"][language]",
+                        name  : "interpreter[interpreterLanguages]["+index+"][language_id]",
                         value : language_id
                     })
                 )
                 .append(
                      $('<input>').attr({
                         type  : "hidden",
-                        name  : "interpreter[interpreterLanguages]["+index+"][interpreter]",
+                        name  : "interpreter[interpreterLanguages]["+index+"][interpreter_id]",
                         value : interpreter_id
                     })
                 );

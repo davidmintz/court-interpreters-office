@@ -118,7 +118,7 @@ class InterpreterFieldset extends PersonFieldset
     
     public function getInputFilterSpecification() {
         $spec = parent::getInputFilterSpecification();
-        /* // does not seem to work for validating this shit
+        // does not seem to work for validating this shit
         $spec['interpreterLanguages'] = [
             'required' => true,
             'allow_empty' => false,
@@ -136,7 +136,7 @@ class InterpreterFieldset extends PersonFieldset
             ],
             
         ];
-        */
+        
         // this one is just for the UI
          $spec['language-select'] = [
             'required' => true,
@@ -148,9 +148,13 @@ class InterpreterFieldset extends PersonFieldset
                     // cheating, maybe, but it works whereas other attempts have failed 
                    'name'=> 'Zend\Validator\Callback',
                    'options' => [
-                        'callback' => function($value){
-                            $shit = $this->getObject()->getInterpreterLanguages();
-                            return $shit->count() ?: false;                         
+                        'callback' => function($value,$context){
+                            //$shit = $this->getObject()->getInterpreterLanguages();
+                            //return $shit->count() ?: false;                         
+                            echo "shit is running!";
+                            $return = count($context['interpreterLanguages']);
+                            var_dump($return);
+                            return $return ? true : false;
                         },
                         'messages' => [
                             'callbackValue' => 'At least one language is required',
