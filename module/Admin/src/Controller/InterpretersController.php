@@ -99,13 +99,28 @@ class InterpretersController extends AbstractActionController
         return $viewModel;
     }
     
+    /**
+     * manually deals with hydration of the Interpreter's languages
+     * 
+     * @param \InterpretersOffice\Entity\Interpreter $entity
+     * @param array $data
+     */
     protected function hydrate(Entity\Interpreter $entity,Array $data)
     {
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
-        $entity->removeInterpreterLanguages($entity->getInterpreterLanguages());
+        /** @todo manually figure out what needs deleting so as to avoid duplicate entry exception */
+        
+       // this doesn't get it done.
+       $entity->removeInterpreterLanguages($entity->getInterpreterLanguages());
+        
+       $action = $this->params()->fromRoute('action');
+       if ('edit' == $action) {
+           echo "<br>this is an update involving {$entity->getId()}...";
+       }
         foreach ($data['interpreter-languages'] as $language_data) {  
             //print_r($language_data);
             $language = $repository->find($language_data['language']);
+            /** @todo the certification field */
             $entity->addInterpreterLanguage(new Entity\InterpreterLanguage($entity,$language));            
         }
     }

@@ -133,7 +133,7 @@ class InterpreterFieldset extends PersonFieldset
     }
     
     public function getInputFilterSpecification() {
-        echo __METHOD__, " is running ...";
+      
         $spec = parent::getInputFilterSpecification();
         $spec['interpreter-languages'] = [
             'allow_empty' => false,
