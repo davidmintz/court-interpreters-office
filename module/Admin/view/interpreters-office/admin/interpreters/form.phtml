@@ -78,8 +78,10 @@ $active = $fieldset->get('active');?>
         <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
             echo $this->escapeHtml($ilanguage->getLanguage());
             // language and interpreter ids as hidden inputs
-           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>"><?php 
-           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][interpreter]" value="<?php echo $this->id?>">
+           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>">
+          <?php if (false): ?>
+            <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][interpreter]" value="<?php echo $this->id?>">
+          <?php endif ?>
         </div>
         <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
            $element = new Element\Select("interpreter[interpreterLanguages][$i][federalCertification]");
@@ -112,7 +114,9 @@ $active = $fieldset->get('active');?>
     echo $this->formHidden($fieldset->get('id'));
     echo $this->formSubmit($form->get('submit'));?></div>
 </div>
-<?php echo $this->form()->closeTag(); ?>
+<?php 
+
+echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
 <script type="text/javascript">
     
@@ -155,13 +159,16 @@ $(function(){
                         value : language_id
                     })
                 )
+                /*
                 .append(
                      $('<input>').attr({
                         type  : "hidden",
                         name  : "interpreter[interpreterLanguages]["+index+"][interpreter]",
                         value : interpreter_id
                     })
-                );
+                )
+                */
+                ;
         var certificationSelectElement = $('<select>')
                         .addClass("form-control")
                         .attr({name: "interpreter[interpreterLanguages]["+index+"][federalCertification]"});
@@ -169,7 +176,7 @@ $(function(){
         if (certifiable) {
             certificationSelectElement
                     .append($("<option>").attr({value:""}).text(""))
-                    .append('<option value="1" selected="selected">yes</option><option value="0">no</option>');
+                    .append('<option value="1">yes</option><option value="0">no</option>');
         } else {
             certificationSelectElement.append($("<option>")
                     .attr({value:"",selected : "selected"})

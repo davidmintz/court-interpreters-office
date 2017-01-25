@@ -30,11 +30,12 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager)); 
         $this->setObject(new Entity\InterpreterLanguage);
+        /*
         $this->add([
             'name' => 'interpreter',
             'type' => 'hidden',             
         ]);
-        
+        */
         $this->add([
             'name' => 'language',
             'type' => 'hidden',            
@@ -56,7 +57,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
 
     public function getInputFilterSpecification()
     {
-
+        echo __METHOD__, " is running ...";
         return [
             'federalCertification'=> [
                 'required' => true,
@@ -66,6 +67,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                         'name' => 'Zend\Filter\Callback',
                         'options' => [
                             'callback' => function($value) {
+                                echo "SHIT IS RUNNING.";
                                 switch ($value) {
                                     case "":
                                         $value = null;
@@ -87,10 +89,12 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                 'required' => true,
                 'allow_empty' => false,               
             ],
+            /*
             'interpreter' => [
                 'required' => true,
                 'allow_empty' => false,                
-            ],
+            ],             
+             */
         ];
     }
 }

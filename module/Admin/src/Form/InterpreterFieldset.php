@@ -36,7 +36,7 @@ class InterpreterFieldset extends PersonFieldset
     public function __construct(ObjectManager $objectManager, $options = [])
     {
     	parent::__construct($objectManager, $options);
-        
+        /*
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterLanguages',
@@ -49,8 +49,8 @@ class InterpreterFieldset extends PersonFieldset
                 'target_element' => new InterpreterLanguageFieldset($objectManager),
             ],
         ]);
-
-
+        */
+        
         $this->add([
     		'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'language-select',
@@ -79,7 +79,16 @@ class InterpreterFieldset extends PersonFieldset
             'value' => '-1', 
             'attributes' => ['label' => ' ', ],
         ]);
-        $element->setValueOptions($options);    
+        $element->setValueOptions($options);  
+        
+        $this->add([
+            'type'=> 'Select',
+            'name' => 'interpreterLanguages',
+            'attributes' => [
+                'multiple' => 'multiple',
+                
+            ],
+        ]);
 
     }
 
@@ -117,6 +126,7 @@ class InterpreterFieldset extends PersonFieldset
     }
     
     public function getInputFilterSpecification() {
+        echo __METHOD__, " is running ...";
         $spec = parent::getInputFilterSpecification();
         /* // does not seem to work for validating this shit
         $spec['interpreterLanguages'] = [
