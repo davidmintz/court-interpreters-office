@@ -63,15 +63,22 @@ class InterpretersController extends AbstractActionController
         $entity = new Entity\Interpreter();
         $form->bind($entity);
         if ($request->isPost()) {
+            echo "SHIT IS POSTed ...";
+           
             //$_POST['interpreter']['interpreterLanguages'][0] = ['language'=> 24];
             $form->setData($request->getPost());
-            if (!$form->isValid()) {     
-                echo "<pre>\$_POST['interpreter']['interpreterLanguages']<br>"; var_dump($_POST['interpreter']['interpreterLanguages']) ;
+            if (!$form->isValid()) {  
+                echo "SHIT IS NOT VALID ...";//exit();
+                echo "<pre>\$_POST['interpreter']['interpreter-languages']:<br>"; 
+                var_dump($_POST['interpreter']['interpreter-languages']) ;
+                echo "error messages:\n";
+                print_r($form->getMessages());
                 echo "</pre>";      
                 return $viewModel;
             }
             try {
-            
+              echo "SHIT IS VALID ...";//exit();
+              $this->hydrate($entity,$request->getPost()['interpreter']);
               $this->entityManager->persist($entity);
               $this->entityManager->flush();
             } catch (\Exception $e) {
@@ -86,11 +93,23 @@ class InterpretersController extends AbstractActionController
                     $entity->getLastname()
                 )
             );
-            $this->redirect()->toRoute('interpreters');
+            echo "success. NOT redirecting. <a href=\"/admin/interpreters/add\">again</a>";
+            //$this->redirect()->toRoute('interpreters');
         }
         return $viewModel;
     }
-
+    
+    protected function hydrate(Entity\Interpreter $entity,Array $data)
+    {
+        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
+        $entity->removeInterpreterLanguages($entity->getInterpreterLanguages());
+        foreach ($data['interpreter-languages'] as $language_data) {  
+            //print_r($language_data);
+            $language = $repository->find($language_data['language']);
+            $entity->addInterpreterLanguage(new Entity\InterpreterLanguage($entity,$language));            
+        }
+    }
+    
     /**
      * updates an Interpreter entity.
      */
@@ -114,15 +133,17 @@ class InterpretersController extends AbstractActionController
         if ($request->isPost())
         {
             $form->setData($request->getPost());
+            $this->hydrate($entity,$request->getPost()['interpreter']);
             if (!$form->isValid()) {
                 echo "shit not valid?...";
-                echo "<pre>"; var_dump($_POST['interpreter']['interpreterLanguages']) ;
+                echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
                 print_r($form->getMessages());
                 echo "</pre>"; 
                 
                 //print_r($form->getData());
                 return $viewModel;
             }
+            
             $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(

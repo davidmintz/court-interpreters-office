@@ -76,18 +76,25 @@ class InterpreterFieldset extends PersonFieldset
             'label' => '-- select a language --',
             // keeps the allow_empty => false option from preventing
             // the callback validator from running:
-            'value' => '-1', 
+            'value' => '', 
             'attributes' => ['label' => ' ', ],
         ]);
         $element->setValueOptions($options);  
         
         $this->add([
             'type'=> 'Select',
-            'name' => 'interpreterLanguages',
+            'name' => 'interpreter-languages',
+            
+            
             'attributes' => [
-                'multiple' => 'multiple',
-                
+                'multiple' => 'multiple', 
+                'class' => 'hidden',
             ],
+            'options' => [
+                'value_options' => [],
+                'disable_inarray_validator' => true,
+                'use_hidden_element' => true,
+            ]
         ]);
 
     }
@@ -128,6 +135,21 @@ class InterpreterFieldset extends PersonFieldset
     public function getInputFilterSpecification() {
         echo __METHOD__, " is running ...";
         $spec = parent::getInputFilterSpecification();
+        $spec['interpreter-languages'] = [
+            'allow_empty' => false,
+            'required'  => true,
+            'validators' => [
+                 [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => [
+                            'isEmpty' => 'at least one language is required',
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+            ]
+        ];
         /* // does not seem to work for validating this shit
         $spec['interpreterLanguages'] = [
             'required' => true,
@@ -150,7 +172,8 @@ class InterpreterFieldset extends PersonFieldset
         // this one is just for the UI
          $spec['language-select'] = [
             'required' => true,
-            'allow_empty' => false,
+            'allow_empty' => true,
+             /*
             'validators' => [
 
                 [   // attach this validator to the language-select element to ensure 
@@ -168,6 +191,8 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
             ],
+              * 
+              */
 
          ];
          $spec['hat'] = [

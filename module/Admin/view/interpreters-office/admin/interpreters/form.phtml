@@ -58,7 +58,13 @@ $active = $fieldset->get('active');?>
     <label class="control-label col-sm-3">languages</label>
     <div class="col-sm-9"><?php 
     $languageSelect = $fieldset->get('language-select'); 
-    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ?> 
+    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
+    $this->formSelect($fieldset->get('interpreter-languages'));
+    $shit = $fieldset->get('interpreter-languages');
+    //$shit->setValueOptions($languageSelect->getValueOptions());
+    echo $this->formSelect($shit);
+    echo $this->formElementErrors($shit);
+    ?> 
     </div>
     <!-- wrapper for nested grid // border:1px solid #afd9ee; -->
     <div class="row" id="interpreter-languages" style="clear:both">
@@ -78,13 +84,13 @@ $active = $fieldset->get('active');?>
         <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
             echo $this->escapeHtml($ilanguage->getLanguage());
             // language and interpreter ids as hidden inputs
-           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>">
+           ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>">
           <?php if (false): ?>
-            <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][interpreter]" value="<?php echo $this->id?>">
+            <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][interpreter]" value="<?php echo $this->id?>">
           <?php endif ?>
         </div>
         <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
-           $element = new Element\Select("interpreter[interpreterLanguages][$i][federalCertification]");
+           $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
            $element->setValueOptions($fed_certification_options)->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
            $disabled = false;
            if ($element->getValue() === null) {
@@ -112,6 +118,7 @@ $active = $fieldset->get('active');?>
     $csrf = $form->get('csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formHidden($fieldset->get('id'));
+    
     echo $this->formSubmit($form->get('submit'));?></div>
 </div>
 <?php 
@@ -155,7 +162,7 @@ $(function(){
                 .append(
                     $('<input>').attr({
                         type  : "hidden",
-                        name  : "interpreter[interpreterLanguages]["+index+"][language]",
+                        name  : "interpreter[interpreter-languages]["+index+"][language]",
                         value : language_id
                     })
                 )
@@ -171,7 +178,7 @@ $(function(){
                 ;
         var certificationSelectElement = $('<select>')
                         .addClass("form-control")
-                        .attr({name: "interpreter[interpreterLanguages]["+index+"][federalCertification]"});
+                        .attr({name: "interpreter[interpreter-languages]["+index+"][federalCertification]"});
                         
         if (certifiable) {
             certificationSelectElement
