@@ -119,7 +119,7 @@ class InterpretersController extends AbstractActionController
        }
         foreach ($data['interpreter-languages'] as $language_data) {  
             //print_r($language_data);
-            $language = $repository->find($language_data['language']);
+            $language = $repository->find($language_data['language_id']);
             /** @todo the certification field */
             $entity->addInterpreterLanguage(new Entity\InterpreterLanguage($entity,$language));            
         }

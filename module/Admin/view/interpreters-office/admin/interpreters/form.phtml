@@ -84,9 +84,9 @@ $active = $fieldset->get('active');?>
         <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
             echo $this->escapeHtml($ilanguage->getLanguage());
             // language and interpreter ids as hidden inputs
-           ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language]" value="<?php echo $language_id; ?>">
+           ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>">
           <?php if (false): ?>
-            <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][interpreter]" value="<?php echo $this->id?>">
+            <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][interpreter_id]" value="<?php echo $this->id?>">
           <?php endif ?>
         </div>
         <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
@@ -99,7 +99,7 @@ $active = $fieldset->get('active');?>
            }
            echo $this->formSelect($element);
            if ($disabled) : // keep the validators happy ?>
-            <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i ?>][federalCertification]" value="">
+            <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i ?>][federalCertification]" value="">
            <?php endif;
         ?></div>
         <div class="col-sm-3 interpreter-language remove-language">
