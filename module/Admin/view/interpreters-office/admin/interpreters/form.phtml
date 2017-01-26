@@ -85,7 +85,7 @@ $active = $fieldset->get('active');?>
             echo $this->escapeHtml($ilanguage->getLanguage());
             // language and interpreter ids as hidden inputs
            ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>">
-          <?php if (false): ?>
+          <?php if (false): // not using this ?>
             <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][interpreter_id]" value="<?php echo $this->id?>">
           <?php endif ?>
         </div>
@@ -162,7 +162,7 @@ $(function(){
                 .append(
                     $('<input>').attr({
                         type  : "hidden",
-                        name  : "interpreter[interpreter-languages]["+index+"][language]",
+                        name  : "interpreter[interpreter-languages]["+index+"][language_id]",
                         value : language_id
                     })
                 )

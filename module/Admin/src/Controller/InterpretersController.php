@@ -107,6 +107,8 @@ class InterpretersController extends AbstractActionController
      */
     protected function hydrate(Entity\Interpreter $entity,Array $data)
     {
+        
+        //echo "DATA:<pre>"; print_r($data['interpreter-languages']); echo "</pre>";
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
         /** @todo manually figure out what needs deleting so as to avoid duplicate entry exception */
         
@@ -117,13 +119,39 @@ class InterpretersController extends AbstractActionController
        if ('edit' == $action) {
            echo "<br>this is an update involving {$entity->getId()}...";
        }
-        foreach ($data['interpreter-languages'] as $language_data) {  
-            //print_r($language_data);
-            $language = $repository->find($language_data['language_id']);
+       $after = [];
+       $before = $this->interpreterLanguages;
+       foreach ($data['interpreter-languages'] as $index => $language_data) {  
+           $after[$language_data['language_id']] = [
+               'federalCertification' => $language_data['federalCertification'],
+           ];
+           
+           // $language = $repository->find($language_data['language_id']);
             /** @todo the certification field */
-            $entity->addInterpreterLanguage(new Entity\InterpreterLanguage($entity,$language));            
-        }
+          //  $entity->addInterpreterLanguage(new Entity\InterpreterLanguage($entity,$language));            
+       }
+       $modified = $before != $after;
+       echo "<pre>before: "; print_r($before); echo "after: "; print_r($after); echo "</pre>";
+       // did they add or remove, or just update a certification field?
+       //$modified_certification = $modified && array_keys($before) == array_keys($after);
+       if ($modified) {
+           echo "yes, modified...";
+           $to_be_removed = array_diff_key($before,$after);
+           $to_be_added   = array_diff_key($after,$before);
+           printf("%d to remove, %d to add<br>",count($to_be_removed),count($to_be_added));
+           // to be continued: figure out how to handle updated federalCertification
+       } else {
+           echo "NOT modified? ";
+       }
+      
+       
     }
+    /**
+     * (temporary) instance variable for keeping interpreter-language data
+     * pre-update. need to move this to a service or something.
+     * @var array
+     */
+    protected $interpreterLanguages = [];
     
     /**
      * updates an Interpreter entity.
@@ -135,15 +163,19 @@ class InterpretersController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
                 ->setVariable('title', 'edit an interpreter');
         $id = $this->params()->fromRoute('id');
-
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Interpreter', $id);
         if (!$entity) {
             return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
         }
+        foreach ($entity->getInterpreterLanguages() as $object) {
+            list($lang_id,$data) = each($object->toArray());            
+            $this->interpreterLanguages[$lang_id] = $data;
+        }
+        
+        
         $form = new InterpreterForm($this->entityManager, ['action' => 'update']);
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id ]);
-
         $request = $this->getRequest();
         if ($request->isPost())
         {
@@ -159,7 +191,7 @@ class InterpretersController extends AbstractActionController
                 return $viewModel;
             }
             
-            $this->entityManager->flush();
+           // $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
                       'The interpreter <strong>%s %s</strong> has been updated.',
