@@ -12,6 +12,8 @@ use InterpretersOffice\Admin\Form\InterpreterForm;
 
 use InterpretersOffice\Entity;
 
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+
 /**
  * controller for admin/interpreters.
  */
@@ -78,7 +80,9 @@ class InterpretersController extends AbstractActionController
             }
             try {
               echo "SHIT IS VALID ...";//exit();
-              $this->hydrate($entity,$request->getPost()['interpreter']);
+              $this->hydrate($entity,
+                      $request->getPost()['interpreter']['interpreter-languages'],
+                      $form->get('interpreter')->getHydrator());
               $this->entityManager->persist($entity);
               $this->entityManager->flush();
             } catch (\Exception $e) {
@@ -105,44 +109,32 @@ class InterpretersController extends AbstractActionController
      * @param \InterpretersOffice\Entity\Interpreter $entity
      * @param array $data
      */
-    protected function hydrate(Entity\Interpreter $entity,Array $data)
+    protected function hydrate(Entity\Interpreter $entity,Array $language_data, DoctrineHydrator $hydrator)
     {
         
         //echo "DATA:<pre>"; print_r($data['interpreter-languages']); echo "</pre>";
-        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
-        /** @todo manually figure out what needs deleting so as to avoid duplicate entry exception */
-        
-       // this doesn't get it done.
-       $entity->removeInterpreterLanguages($entity->getInterpreterLanguages());
-        
+       // $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
+       
        $action = $this->params()->fromRoute('action');
        if ('edit' == $action) {
            echo "<br>this is an update involving {$entity->getId()}...";
        }
-       $after = [];
-       $before = $this->interpreterLanguages;
-       foreach ($data['interpreter-languages'] as $index => $language_data) {  
-           $after[$language_data['language_id']] = [
-               'federalCertification' => $language_data['federalCertification'],
-           ];
-           
-           // $language = $repository->find($language_data['language_id']);
-            /** @todo the certification field */
-          //  $entity->addInterpreterLanguage(new Entity\InterpreterLanguage($entity,$language));            
-       }
-       $modified = $before != $after;
-       echo "<pre>before: "; print_r($before); echo "after: "; print_r($after); echo "</pre>";
-       // did they add or remove, or just update a certification field?
-       //$modified_certification = $modified && array_keys($before) == array_keys($after);
-       if ($modified) {
-           echo "yes, modified...";
-           $to_be_removed = array_diff_key($before,$after);
-           $to_be_added   = array_diff_key($after,$before);
-           printf("%d to remove, %d to add<br>",count($to_be_removed),count($to_be_added));
-           // to be continued: figure out how to handle updated federalCertification
-       } else {
-           echo "NOT modified? ";
-       }
+       $interpreterLanguages = [];
+       //foreach 
+       $data = [
+           'interpreterLanguages' => [
+               [
+                   'federalCertification' => 1,
+                   'language' => 62,
+                   'interpreter' => $entity,
+               ],
+           ],           
+       ];
+       //foreach ($data as $language_data) {}
+       
+       
+       $hydrator->hydrate($data, $entity);
+       
       
        
     }
@@ -180,7 +172,9 @@ class InterpretersController extends AbstractActionController
         if ($request->isPost())
         {
             $form->setData($request->getPost());
-            $this->hydrate($entity,$request->getPost()['interpreter']);
+            $this->hydrate($entity,
+                    $request->getPost()['interpreter']['interpreter-languages'],
+                    $form->get('interpreter')->getHydrator());
             if (!$form->isValid()) {
                 echo "shit not valid?...";
                 echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
@@ -191,7 +185,7 @@ class InterpretersController extends AbstractActionController
                 return $viewModel;
             }
             
-           // $this->entityManager->flush();
+            $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
                       'The interpreter <strong>%s %s</strong> has been updated.',
@@ -212,3 +206,41 @@ class InterpretersController extends AbstractActionController
         return $viewModel;
     }
 }
+
+/*  // temporary trash dump
+ 
+ $after = [];
+       $before = $this->interpreterLanguages;
+       foreach ($data['interpreter-languages'] as $index => $language_data) {  
+           $after[$language_data['language_id']] = [
+               'federalCertification' => $language_data['federalCertification'],
+           ];
+           // just stick them all in there, it blows up with duplicate entry
+
+           $language = $repository->find($language_data['language_id']);
+           $interpreterLanguage = new Entity\InterpreterLanguage($entity,$language);
+            if (null === $language_data['federalCertification']) {
+                $federalCertification = null;
+            } else {
+                $federalCertification = $language_data['federalCertification'] == 1 ? true : false;
+            }            
+           
+           $interpreterLanguage->setFederalCertification($federalCertification);
+           $entity->addInterpreterLanguage(new Entity\InterpreterLanguage($entity,$language));                        
+           
+       }
+       $modified = $before != $after;
+       echo "<pre>before: "; print_r($before); echo "after: "; print_r($after); echo "</pre>";
+       
+       if ($modified) {
+           echo "yes, modified...";
+           $to_be_removed = array_diff_key($before,$after);
+           $to_be_added   = array_diff_key($after,$before);
+           printf("%d to remove, %d to add<br>",count($to_be_removed),count($to_be_added));
+           // to be continued: figure out how to handle updated federalCertification
+       } else {
+           echo "NOT modified? ";
+           //$entity->removeInterpreterLanguages($entity->getInterpreterLanguages());
+       } 
+ 
+ */
