@@ -108,36 +108,57 @@ class InterpretersController extends AbstractActionController
      * 
      * @param \InterpretersOffice\Entity\Interpreter $entity
      * @param array $data
+     * @param DoctrineHydrator $hydrator
      */
-    protected function hydrate(Entity\Interpreter $entity,Array $language_data, DoctrineHydrator $hydrator)
+    protected function hydrate(Entity\Interpreter $entity,Array $data, DoctrineHydrator $hydrator)
     {
         
         //echo "DATA:<pre>"; print_r($data['interpreter-languages']); echo "</pre>";
-       // $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
+       $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
        
        $action = $this->params()->fromRoute('action');
        if ('edit' == $action) {
            echo "<br>this is an update involving {$entity->getId()}...";
        }
+       $entity->removeInterpreterLanguages(
+            $entity->getInterpreterLanguages()
+        );
+       foreach ($data as $language_data) {
+             $language = $repository->find($language_data['language_id']);
+             $il = new Entity\InterpreterLanguage($entity,$language);
+             //$this->entityManager->persist($il);
+             $entity->addInterpreterLanguage($il);
+       }
+       return;
+       
        $interpreterLanguages = [];
-       //foreach 
-       $data = [
-           'interpreterLanguages' => [
-               [
-                   'federalCertification' => 1,
-                   'language' => 62,
-                   'interpreter' => $entity,
-               ],
-           ],           
-       ];
-       //foreach ($data as $language_data) {}
-       
-       
+       if (true)
+       {
+       foreach ($data as $language_data) {
+
+            if (null === $language_data['federalCertification']) {
+                $federalCertification = null;
+            } else {
+                $federalCertification = $language_data['federalCertification'] == 1 ? true : false;
+            }
+            $language = $repository->find($language_data['language_id']);
+
+            printf("THE FUCKING LANGUAGE ID IS %s",$language->getId()   ); 
+            $interpreterLanguages[] = 
+                [
+                    'language' => $language, // ['id'=>$language_data['language_id']],
+                    'interpreter' => $entity,
+                    'federalCertification' => $federalCertification,
+                ];
+       }
+       $data = ['interpreterLanguages' => $interpreterLanguages,];
+       echo "<pre>shit: ";
+       \Doctrine\Common\Util\Debug::dump($data['interpreterLanguages']);
+       echo "</pre>";
        $hydrator->hydrate($data, $entity);
-       
-      
-       
+       }
     }
+
     /**
      * (temporary) instance variable for keeping interpreter-language data
      * pre-update. need to move this to a service or something.
@@ -184,7 +205,7 @@ class InterpretersController extends AbstractActionController
                 //print_r($form->getData());
                 return $viewModel;
             }
-            
+            echo count($entity->getInterpreterLanguages()). " is our count... ";
             $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
@@ -193,8 +214,8 @@ class InterpretersController extends AbstractActionController
                       $entity->getLastname()
                   ));
             echo "success. NOT redirecting... ";
-            echo "<pre>"; var_dump($_POST['interpreter']['interpreterLanguages']) ;
-                print_r($form->getMessages());
+            echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
+                //print_r($form->getMessages());
                 echo "</pre>"; 
                 
             ////entity:<pre>";
