@@ -130,41 +130,35 @@ class InterpretersController extends AbstractActionController
              $entity->addInterpreterLanguage($il);
        }
        return;
-       
+
        $interpreterLanguages = [];
        if (true)
-       {
-       foreach ($data as $language_data) {
+        {
+           foreach ($data as $language_data) {
 
-            if (null === $language_data['federalCertification']) {
-                $federalCertification = null;
-            } else {
-                $federalCertification = $language_data['federalCertification'] == 1 ? true : false;
-            }
-            $language = $repository->find($language_data['language_id']);
+                if (null === $language_data['federalCertification']) {
+                    $federalCertification = null;
+                } else {
+                    $federalCertification = $language_data['federalCertification'] == 1 ? true : false;
+                }
+                $language = $repository->find($language_data['language_id']);
 
-            printf("THE FUCKING LANGUAGE ID IS %s",$language->getId()   ); 
-            $interpreterLanguages[] = 
-                [
-                    'language' => $language, // ['id'=>$language_data['language_id']],
-                    'interpreter' => $entity,
-                    'federalCertification' => $federalCertification,
-                ];
-       }
-       $data = ['interpreterLanguages' => $interpreterLanguages,];
-       echo "<pre>shit: ";
-       \Doctrine\Common\Util\Debug::dump($data['interpreterLanguages']);
-       echo "</pre>";
-       $hydrator->hydrate($data, $entity);
+                printf("THE FUCKING LANGUAGE ID IS %s",$language->getId()   ); 
+                $interpreterLanguages[] = 
+                    [
+                        'language' => $language, // ['id'=>$language_data['language_id']],
+                        'interpreter' => $entity,
+                        'federalCertification' => $federalCertification,
+                    ];
+           }
+           $data = ['interpreterLanguages' => $interpreterLanguages,];
+           echo "<pre>shit: ";
+           \Doctrine\Common\Util\Debug::dump($data['interpreterLanguages']);
+           echo "</pre>";
+           $hydrator->hydrate($data, $entity);
        }
     }
 
-    /**
-     * (temporary) instance variable for keeping interpreter-language data
-     * pre-update. need to move this to a service or something.
-     * @var array
-     */
-    protected $interpreterLanguages = [];
     
     /**
      * updates an Interpreter entity.
@@ -180,11 +174,6 @@ class InterpretersController extends AbstractActionController
         if (!$entity) {
             return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
         }
-        foreach ($entity->getInterpreterLanguages() as $object) {
-            list($lang_id,$data) = each($object->toArray());            
-            $this->interpreterLanguages[$lang_id] = $data;
-        }
-        
         
         $form = new InterpreterForm($this->entityManager, ['action' => 'update']);
         $form->bind($entity);
@@ -193,9 +182,6 @@ class InterpretersController extends AbstractActionController
         if ($request->isPost())
         {
             $form->setData($request->getPost());
-            $this->hydrate($entity,
-                    $request->getPost()['interpreter']['interpreter-languages'],
-                    $form->get('interpreter')->getHydrator());
             if (!$form->isValid()) {
                 echo "shit not valid?...";
                 echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
@@ -205,6 +191,9 @@ class InterpretersController extends AbstractActionController
                 //print_r($form->getData());
                 return $viewModel;
             }
+            $this->updateInterpreterLanguages($entity,
+                    $request->getPost()['interpreter']['interpreter-languages']);
+            
             echo count($entity->getInterpreterLanguages()). " is our count... ";
             $this->entityManager->flush();
             $this->flashMessenger()
@@ -213,7 +202,7 @@ class InterpretersController extends AbstractActionController
                       $entity->getFirstname(),
                       $entity->getLastname()
                   ));
-            echo "success. NOT redirecting... ";
+            echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
             echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
                 //print_r($form->getMessages());
                 echo "</pre>"; 
@@ -221,10 +210,15 @@ class InterpretersController extends AbstractActionController
             ////entity:<pre>";
             //\Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
             //$this->redirect()->toRoute('interpreters');
-        } else { //echo "loaded:<pre> "; \Doctrine\Common\Util\Debug::dump($entity);echo "</pre>";
-       }
-
+        } else { 
+            //echo "loaded:<pre> "; \Doctrine\Common\Util\Debug::dump($entity);echo "</pre>";
+        }
         return $viewModel;
+    }
+
+    public function updateInterpreterLanguages(Entity\Interpreter $interpreter, Array $languages)
+    {
+        
     }
 }
 
