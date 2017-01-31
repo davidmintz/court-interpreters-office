@@ -187,10 +187,12 @@ class InterpretersController extends AbstractActionController
         $after = [];
         foreach($languages as $l) {
             $after[$l['language_id']] = is_numeric($l['federalCertification'])? (boolean)$l['federalCertification'] : null;
+            //echo "id {$l['language_id']} submitted as: {$after[$l['language_id']]}";
         }
         // what has been added?
-        echo "<pre>";
+        echo "<pre>before: ";
         var_dump($before);
+        echo "after: ";
         var_dump($after);
         echo "</pre>";
         $added = array_diff_key($after,$before);
@@ -231,11 +233,14 @@ class InterpretersController extends AbstractActionController
             $language = $il->getLanguage(); 
             $id = $il->getLanguage()->getId();
             $cert = $il->getFederalCertification();
-            $submitted_cert == $same[$id];
-             echo "<pre>"; 
-             echo "id is $id; cert: ";var_dump($cert);
-             echo "submitted: "; var_dump($same[$id]);
-             echo "</pre>";
+            $submitted_cert == $after[$id];
+            if ($cert !== $submitted_cert) {
+                echo "needs updating! ";
+            }
+            echo "<pre>"; 
+            echo "id is $id; cert BEFORE: ";var_dump($cert);
+            echo "as submitted: "; var_dump($after[$id]);
+            echo "</pre>";
             
         }
     }
