@@ -129,26 +129,18 @@ class InterpretersController extends AbstractActionController
         {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                echo "shit not valid?...";
-                echo "<pre>"; 
-                //var_dump($_POST['interpreter']['interpreter-languages']) ;
-                print_r($form->getMessages());
-                echo "</pre>"; 
-                
-                //print_r($form->getData());
+                //echo "shit not valid?...";
+                //echo "<pre>"; print_r($form->getMessages()); echo "</pre>"; 
                 return $viewModel;
             }
             $this->updateInterpreterLanguages($entity,
                     $request->getPost()['interpreter']['interpreter-languages']);
-            
-            //echo count($entity->getInterpreterLanguages()). " is our count... ";
+
             $this->entityManager->flush();
-            $this->flashMessenger()
-                  ->addSuccessMessage(sprintf(
-                      'The interpreter <strong>%s %s</strong> has been updated.',
-                      $entity->getFirstname(),
-                      $entity->getLastname()
-                  ));
+            $this->flashMessenger()->addSuccessMessage(sprintf(
+                    'The interpreter <strong>%s %s</strong> has been updated.',
+                    $entity->getFirstname(), $entity->getLastname()
+            ));
             $this->redirect()->toRoute('interpreters');
            // echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
            // echo "<pre>"; 
@@ -159,9 +151,7 @@ class InterpretersController extends AbstractActionController
             ////entity:<pre>";
             //\Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
             
-        } else { 
-            //echo "loaded:<pre> "; \Doctrine\Common\Util\Debug::dump($entity);echo "</pre>";
-        }
+        } 
         return $viewModel;
     }
     

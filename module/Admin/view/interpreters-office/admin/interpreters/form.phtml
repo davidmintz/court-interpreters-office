@@ -79,7 +79,10 @@ $active = $fieldset->get('active');?>
     if (count($interpreterLanguages)) :     
         $i = 0;            
         foreach ($interpreterLanguages as $ilanguage) :
-            $language_id = $ilanguage->getLanguage()->getId();
+            $language = $ilanguage->getLanguage();
+            $language_id = $language->getId();
+            $certifiable = $language->isFederallyCertified();
+            $fed_certification_options[''] = $certifiable ? '' : 'N/A';           
         ?>
         <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
             echo $this->escapeHtml($ilanguage->getLanguage());
@@ -91,7 +94,8 @@ $active = $fieldset->get('active');?>
         </div>
         <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
            $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
-           $element->setValueOptions($fed_certification_options)->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
+           $element->setValueOptions($fed_certification_options)
+                   ->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
            $disabled = false;
            if ($element->getValue() === null) {
                $element->setAttribute("disabled","disabled");
@@ -153,7 +157,7 @@ $(function(){
         var certifiable = option.data().certifiable;
         var interpreter_id = $('input[name="interpreter[id]"]').val();
         
-        // build the three elements and stick into an array
+        // build the three div elements, and stick into an array
         var divs = [];
         divs[0] = $('<div>')
                 .addClass("col-sm-3 col-sm-offset-4 interpreter-language language-name")
@@ -221,10 +225,8 @@ $(function(){
                 .slideUp(function(){$(this).remove();});
         
     });
-    //  testing
-    $('#hat').val(3);
-    $('#lastname').val("Doink");
-    $('#firstname').val("Boink");
-    //select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
+    // testing
+    // $('#hat').val(3); $('#lastname').val("Doink"); $('#firstname').val("Boink");
+    // select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
 });
 </script>
