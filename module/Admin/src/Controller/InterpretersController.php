@@ -229,17 +229,20 @@ class InterpretersController extends AbstractActionController
         echo "<pre>same (languages):";print_r($same);echo "</pre>";
         //return;
         foreach($interpreter->getInterpreterLanguages() as $il) {
-            //continue;
+            
             $language = $il->getLanguage(); 
             $id = $il->getLanguage()->getId();
             $cert = $il->getFederalCertification();
-            $submitted_cert == $after[$id];
-            if ($cert !== $submitted_cert) {
-                echo "needs updating! ";
-            }
+            $submitted_cert = $after[$id];
+            
             echo "<pre>"; 
             echo "id is $id; cert BEFORE: ";var_dump($cert);
             echo "as submitted: "; var_dump($after[$id]);
+            if ($cert !== $submitted_cert) {
+                echo "...updating! ";
+                $il->setFederalCertification($submitted_cert );
+                echo "... $language cert is(?) now: ";var_dump($il->getFederalCertification());
+            }
             echo "</pre>";
             
         }
