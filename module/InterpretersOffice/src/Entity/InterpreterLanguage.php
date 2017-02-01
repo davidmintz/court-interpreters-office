@@ -146,10 +146,8 @@ class InterpreterLanguage
     
     public function toArray() {
         return [
-            $this->language->getId() => [
-                //'name' => $this->language->getName(),
-                'federalCertification' => $this->getFederalCertification(),
-            ]
+            'language_id' => $this->language->getId(),
+            'federalCertification' => $this->getFederalCertification(),
         ];
         
     }
