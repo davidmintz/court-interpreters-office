@@ -141,7 +141,7 @@ class InterpretersController extends AbstractActionController
             $this->updateInterpreterLanguages($entity,
                     $request->getPost()['interpreter']['interpreter-languages']);
             
-            echo count($entity->getInterpreterLanguages()). " is our count... ";
+            //echo count($entity->getInterpreterLanguages()). " is our count... ";
             $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
@@ -149,15 +149,16 @@ class InterpretersController extends AbstractActionController
                       $entity->getFirstname(),
                       $entity->getLastname()
                   ));
-            echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
-            echo "<pre>"; 
+            $this->redirect()->toRoute('interpreters');
+           // echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
+           // echo "<pre>"; 
             //var_dump($_POST['interpreter']['interpreter-languages']) ;
                 //print_r($form->getMessages());
-            echo "</pre>"; 
+           // echo "</pre>"; 
                 
             ////entity:<pre>";
             //\Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
-            //$this->redirect()->toRoute('interpreters');
+            
         } else { 
             //echo "loaded:<pre> "; \Doctrine\Common\Util\Debug::dump($entity);echo "</pre>";
         }
@@ -190,14 +191,12 @@ class InterpretersController extends AbstractActionController
             //echo "id {$l['language_id']} submitted as: {$after[$l['language_id']]}";
         }
         // what has been added?
-        echo "<pre>before: ";
-        var_dump($before);
-        echo "after: ";
-        var_dump($after);
-        echo "</pre>";
+        //echo "<pre>before: "; var_dump($before); 
+        //echo "after: "; var_dump($after);
+        //echo "</pre>";
         $added = array_diff_key($after,$before);
        
-        echo "<pre>diff (added):";var_dump($added); echo "</pre>"; 
+        //echo "<pre>diff (added):";var_dump($added); echo "</pre>"; 
         //return;
         if (count($added)) {
             
@@ -206,27 +205,27 @@ class InterpretersController extends AbstractActionController
                 $obj = new Entity\InterpreterLanguage($interpreter,$language);
                 //$cert = $after[$id];
                 $obj->setFederalCertification($cert);
-                echo "Adding: ".(string)$language;
+                //echo "Adding: ".(string)$language;
                 $interpreter->addInterpreterLanguage($obj);
             }
         }
         // what has been removed?
         $removed = array_diff_key($before,$after);
-        echo "<pre>diff (removed):";var_dump($removed);echo "</pre>";
+        //echo "<pre>diff (removed):";var_dump($removed);echo "</pre>";
         
         if (count($removed)) {
             foreach($interpreterLanguages as $il) {
                 $name = (string)$il->getLanguage();
                 if (key_exists($il->getLanguage()->getId(),$removed)) {
                     $interpreter->removeInterpreterLanguage($il);
-                    echo "$name was removed...";
+                   // echo "$name was removed...";
                 }
             }            
         }
         //return;
         // was any certification was modified?
         $same = array_intersect_assoc($before,$after);
-        echo "<pre>same (languages):";print_r($same);echo "</pre>";
+        //echo "<pre>same (languages):";print_r($same);echo "</pre>";
         //return;
         foreach($interpreter->getInterpreterLanguages() as $il) {
             
@@ -235,15 +234,13 @@ class InterpretersController extends AbstractActionController
             $cert = $il->getFederalCertification();
             $submitted_cert = $after[$id];
             
-            echo "<pre>"; 
-            echo "id is $id; cert BEFORE: ";var_dump($cert);
-            echo "as submitted: "; var_dump($after[$id]);
+            //echo "<pre>"; echo "id is $id; cert BEFORE: ";var_dump($cert);echo "as submitted: "; var_dump($after[$id]);
             if ($cert !== $submitted_cert) {
-                echo "...updating! ";
-                $il->setFederalCertification($submitted_cert );
-                echo "... $language cert is(?) now: ";var_dump($il->getFederalCertification());
+                //echo "...updating! ";
+                $il->setFederalCertification($submitted_cert);
+                //echo "... $language cert is(?) now: ";var_dump($il->getFederalCertification());
             }
-            echo "</pre>";
+            //echo "</pre>";
             
         }
     }
