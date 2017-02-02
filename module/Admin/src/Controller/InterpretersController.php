@@ -48,7 +48,7 @@ class InterpretersController extends AbstractActionController
     }
 
     /**
-     * adds a Person entity to the database.
+     * adds an Interpreter entity to the database.
      */
     public function addAction()
     {
@@ -103,8 +103,7 @@ class InterpretersController extends AbstractActionController
      * updates an Interpreter entity.
      */
     public function editAction()
-    {
-        
+    {       
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
                 ->setVariable('title', 'edit an interpreter');
@@ -121,9 +120,7 @@ class InterpretersController extends AbstractActionController
         if ($request->isPost())
         {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
-                //echo "shit not valid?...";
-                //echo "<pre>"; print_r($form->getMessages()); echo "</pre>"; 
+            if (! $form->isValid()) {
                 return $viewModel;
             }
             $this->updateInterpreterLanguages($entity,
@@ -136,14 +133,8 @@ class InterpretersController extends AbstractActionController
             ));
             $this->redirect()->toRoute('interpreters');
            // echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
-           // echo "<pre>"; 
-            //var_dump($_POST['interpreter']['interpreter-languages']) ;
-                //print_r($form->getMessages());
-           // echo "</pre>"; 
-                
-            ////entity:<pre>";
-            //\Doctrine\Common\Util\Debug::dump($entity); echo "</pre>";
-            
+           // echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
+           //print_r($form->getMessages()); echo "</pre>"; 
         } 
         return $viewModel;
     }
@@ -152,7 +143,7 @@ class InterpretersController extends AbstractActionController
      * manually updates the Interpreter entity's languages
      * 
      * since we were unable to get the Doctrine hydrator to work, for reasons
-     * that remain obscure, we do it ourself.
+     * that remain obscure, we have to do it ourself.
      * 
      * @param Entity\Interpreter $interpreter
      * @param array $languages language data POSTed to us
@@ -171,11 +162,11 @@ class InterpretersController extends AbstractActionController
         }
         $after = [];
         foreach($languages as $l) {
-            $after[$l['language_id']] = is_numeric($l['federalCertification'])? (boolean)$l['federalCertification'] : null;
+            $after[$l['language_id']] = is_numeric($l['federalCertification']) ? 
+                    (boolean)$l['federalCertification'] : null;
         }
         // what has been added?
-        //echo "<pre>before: "; var_dump($before); 
-        //echo "after: "; var_dump($after);
+        //echo "<pre>before: "; var_dump($before); echo "after: "; var_dump($after);
         //echo "</pre>";
         $added = array_diff_key($after,$before);
         if (count($added)) {            
@@ -253,7 +244,8 @@ class InterpretersController extends AbstractActionController
 /*
  * 
      * manually deals with hydration of the Interpreter's languages
-     * 
+     * would not FUCKING work, why? don't know
+     *  
      * @param \InterpretersOffice\Entity\Interpreter $entity
      * @param array $data
      * @param DoctrineHydrator $hydrator
