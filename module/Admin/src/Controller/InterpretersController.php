@@ -49,7 +49,6 @@ class InterpretersController extends AbstractActionController
 
     /**
      * adds a Person entity to the database.
-     * @todo fix. it's broken. add-language is not working.
      */
     public function addAction()
     {
@@ -65,31 +64,25 @@ class InterpretersController extends AbstractActionController
         $entity = new Entity\Interpreter();
         $form->bind($entity);
         if ($request->isPost()) {
-            echo "SHIT IS POSTed ...";
-           
-            //$_POST['interpreter']['interpreterLanguages'][0] = ['language'=> 24];
             $form->setData($request->getPost());
-            if (!$form->isValid()) {  
-                echo "SHIT IS NOT VALID ...";//exit();
-                echo "<pre>\$_POST['interpreter']['interpreter-languages']:<br>"; 
-                var_dump($_POST['interpreter']['interpreter-languages']) ;
-                echo "error messages:\n";
-                print_r($form->getMessages());
-                echo "</pre>";      
+            if (!$form->isValid()) {                      
                 return $viewModel;
+            }         
+            $data = $request->getPost()['interpreter']['interpreter-languages'];
+            $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
+            foreach($data as $language) {
+                $id = $language['language_id'];
+                $certification = is_numeric($language['federalCertification']) ?
+                    (boolean) $data['federalCertification'] : null;
+                // or get them all in one shot with a DQL query?
+                $languageEntity = $repository->find($id);
+                $il = (new Entity\InterpreterLanguage($entity,$languageEntity))
+                ->setFederalCertification($certification);
+                $entity->addInterpreterLanguage($il);
             }
-            try {
-              echo "SHIT IS VALID ...";//exit();
-              $this->hydrate($entity,
-                      $request->getPost()['interpreter']['interpreter-languages'],
-                      $form->get('interpreter')->getHydrator());
-              $this->entityManager->persist($entity);
-              $this->entityManager->flush();
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-                printf('<pre>%s</pre>',$e->getTraceAsString());
-                return $viewModel;
-          }
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+            
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
                     'The interpreter <strong>%s %s</strong> has been added to the database',
@@ -97,8 +90,8 @@ class InterpretersController extends AbstractActionController
                     $entity->getLastname()
                 )
             );
-            echo "success. NOT redirecting. <a href=\"/admin/interpreters/add\">again</a>";
-            //$this->redirect()->toRoute('interpreters');
+            //echo "success. NOT redirecting. <a href=\"/admin/interpreters/add\">again</a>";
+            $this->redirect()->toRoute('interpreters');
         }
         return $viewModel;
     }
@@ -167,10 +160,11 @@ class InterpretersController extends AbstractActionController
      */
     public function updateInterpreterLanguages(Entity\Interpreter $interpreter, Array $languages)
     {
-        // get $before and $after into two like-structured arrays for comparison
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
+        // get $before and $after into two like-structured arrays for comparison
+        // i.e.: [ language_id => certification, ]
         $before = []; 
-        $interpreterLanguages = $interpreter->getInterpreterLanguages();//->toArray();
+        $interpreterLanguages = $interpreter->getInterpreterLanguages();
         foreach ($interpreterLanguages as $il) {
             $array =  $il->toArray();
             $before[$array['language_id']] = $array['federalCertification'] ;
@@ -178,60 +172,43 @@ class InterpretersController extends AbstractActionController
         $after = [];
         foreach($languages as $l) {
             $after[$l['language_id']] = is_numeric($l['federalCertification'])? (boolean)$l['federalCertification'] : null;
-            //echo "id {$l['language_id']} submitted as: {$after[$l['language_id']]}";
         }
         // what has been added?
         //echo "<pre>before: "; var_dump($before); 
         //echo "after: "; var_dump($after);
         //echo "</pre>";
         $added = array_diff_key($after,$before);
-       
-        //echo "<pre>diff (added):";var_dump($added); echo "</pre>"; 
-        //return;
-        if (count($added)) {
-            
+        if (count($added)) {            
             foreach($added as $id => $cert) {
+                // to do: snag all the languages in one shot instead?
                 $language = $repository->find($id);
                 $obj = new Entity\InterpreterLanguage($interpreter,$language);
-                //$cert = $after[$id];
+                $cert = $after[$id];
                 $obj->setFederalCertification($cert);
-                //echo "Adding: ".(string)$language;
                 $interpreter->addInterpreterLanguage($obj);
             }
         }
         // what has been removed?
         $removed = array_diff_key($before,$after);
-        //echo "<pre>diff (removed):";var_dump($removed);echo "</pre>";
-        
         if (count($removed)) {
             foreach($interpreterLanguages as $il) {
                 $name = (string)$il->getLanguage();
                 if (key_exists($il->getLanguage()->getId(),$removed)) {
                     $interpreter->removeInterpreterLanguage($il);
-                   // echo "$name was removed...";
                 }
             }            
         }
-        //return;
-        // was any certification was modified?
+        // was any certification field modified?
         $same = array_intersect_assoc($before,$after);
-        //echo "<pre>same (languages):";print_r($same);echo "</pre>";
-        //return;
         foreach($interpreter->getInterpreterLanguages() as $il) {
             
             $language = $il->getLanguage(); 
             $id = $il->getLanguage()->getId();
             $cert = $il->getFederalCertification();
             $submitted_cert = $after[$id];
-            
-            //echo "<pre>"; echo "id is $id; cert BEFORE: ";var_dump($cert);echo "as submitted: "; var_dump($after[$id]);
             if ($cert !== $submitted_cert) {
-                //echo "...updating! ";
                 $il->setFederalCertification($submitted_cert);
-                //echo "... $language cert is(?) now: ";var_dump($il->getFederalCertification());
             }
-            //echo "</pre>";
-            
         }
     }
 }

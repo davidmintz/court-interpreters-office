@@ -61,7 +61,22 @@ class InterpretersControllerTest extends AbstractControllerTest
         $lastname = $node1->attributes->getNamedItem('value')->nodeValue;
         $this->assertEquals('Mintz', $lastname);
         
-        // add Russian
+        // should have one language (Spanish)
+        $this->assertQueryCount('div.language-name',1);
+        $this->assertQueryContentContains('div.language-name','Spanish');
+        
+        // and it should have federal certification == yes
+        $nodeList = $query->execute('div.language-fed-certification > select > option');
+        foreach ($nodeList as $element) {
+            if ($element->getAttributeNode('selected')) {
+                break;
+            }
+        }
+        $this->assertInstanceOf(\DOMElement::class,$element);
+        $this->assertEquals($element->getAttributeNode('selected')->value,'selected');
+        $this->assertEquals(strtolower($element->nodeValue), 'yes');
+        $this->assertEquals($element->getAttributeNode('value')->value,"1");
+
         $russian = $interpreter = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Russian']);
         $this->assertInstanceOf(Entity\Language::class, $russian);
