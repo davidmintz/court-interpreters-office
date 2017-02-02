@@ -41,7 +41,7 @@ class HatLoader implements FixtureInterface
             ['Law Clerk', false, $submitter],
             ['paralegal', false, null],
             ['Pretrial Services Officer', false, $submitter],
-            ['staff Court Interpreter', false, $submitter],
+            ['staff court interpreter', false, $submitter],
             ['Interpreters Office staff', false, $manager],
             ['staff, US Attorneys Office', false, null],
             ['USPO', false, $submitter],
