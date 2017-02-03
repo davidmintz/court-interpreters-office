@@ -35,6 +35,51 @@ class InterpretersControllerTest extends AbstractControllerTest
         $this->login('susie', 'boink');
     }
     
+    public function testAddInterpreter()
+    {
+        
+
+        $em = FixtureManager::getEntityManager();
+        $url = '/admin/interpreters/add';
+        $russian = $em->getRepository('InterpretersOffice\Entity\Language')
+                ->findOneBy(['name' => 'Russian']);
+        $count_before = $em->createQuery('SELECT COUNT(i.id) FROM InterpretersOffice\Entity\Interpreter i')
+            ->getSingleScalarResult();
+        $data = [
+            'interpreter' => [
+                'lastname' => 'Snertsky',
+                'firstname' => 'David',
+                'hat'  =>  $em->getRepository('InterpretersOffice\Entity\Hat')
+                    ->findOneBy(['name' => 'contract court interpreter'])->getId(),
+                'email' => 'snyert@example.org',
+                'active' => 1,
+                'id' => '',
+                'dob' => '',
+                'language-select'=> 1,
+                'interpreter-languages' => [
+                    [
+                        'language_id'=> $russian->getId(),
+                        'interpreter_id' => '',
+                        'federalCertification' => '',
+                    ],                 
+                ],
+            ],
+            'csrf' => $this->getCsrfToken($url)
+        ];
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch($url);
+
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/interpreters');
+
+        $count_after = $em->createQuery('SELECT COUNT(i.id) FROM InterpretersOffice\Entity\Interpreter i')
+            ->getSingleScalarResult();
+
+        $this->assertEquals($count_after, $count_before + 1);
+    }
+
     public function testIndexAction()
     {
        
