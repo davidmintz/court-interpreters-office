@@ -26,19 +26,23 @@ endif;
 </ul>
 <script type="text/javascript">
 $(function(){
+    var addButton = '<a href="#" class="btn btn-info btn-sm add-location">add new... <span class="glyphicon glyphicon-plus"></span></a>';
     $('#locations-list > li > a ').on("click",function(event){
         event.preventDefault();
-        console.log("click");
+        var that = this;
         var listItem = $(this).closest('li');
-        var subList = listItem.children('ul');
+        var subList = listItem.children('ul');        
         if (subList.length) {
             subList.toggle("slow");
-        } else {
+        } else {            
             subList = $('<ul>').addClass('list-group subgroup').hide();
             items = [];
-            $.getJSON(this.href,function(data){
+            $.getJSON(this.href,function(data){                
+                var url = that.href.replace('locations/type','locations/add/type');
+                var thisButton = addButton.replace('#',url);
+                console.log(thisButton);
                 if (! data.length) {
-                    items[0] = $('<li>').addClass('list-group-item').text('no locations found');
+                    items[0] = $('<li>').addClass('list-group-item').html('none found<br>'+thisButton);
                 } else {//*/
                     for (i = 0; i < data.length; i++) {
                         var text = data[i].name;
@@ -47,13 +51,15 @@ $(function(){
                         }
                         items[i] = $('<li>').text(text).addClass('list-group-item');
                     }
-                } 
+                    items[++i]= $('<li>').html(thisButton).addClass('list-group-item'); 
+                }
+
                 subList.append(items);
                 listItem.append(subList);
                 subList.show("slow");
+                
             });
         }
-    })
+    });
 });
-
 </script>

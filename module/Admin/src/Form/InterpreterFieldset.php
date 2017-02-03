@@ -36,7 +36,7 @@ class InterpreterFieldset extends PersonFieldset
     public function __construct(ObjectManager $objectManager, $options = [])
     {
     	parent::__construct($objectManager, $options);
-        
+        /*
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterLanguages',
@@ -49,8 +49,8 @@ class InterpreterFieldset extends PersonFieldset
                 'target_element' => new InterpreterLanguageFieldset($objectManager),
             ],
         ]);
-
-
+        */
+        
         $this->add([
     		'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'language-select',
@@ -76,10 +76,26 @@ class InterpreterFieldset extends PersonFieldset
             'label' => '-- select a language --',
             // keeps the allow_empty => false option from preventing
             // the callback validator from running:
-            'value' => '-1', 
+            'value' => '', 
             'attributes' => ['label' => ' ', ],
         ]);
-        $element->setValueOptions($options);    
+        $element->setValueOptions($options);  
+        
+        $this->add([
+            'type'=> 'Select',
+            'name' => 'interpreter-languages',
+            
+            
+            'attributes' => [
+                'multiple' => 'multiple', 
+                'class' => 'hidden',
+            ],
+            'options' => [
+                'value_options' => [],
+                'disable_inarray_validator' => true,
+                'use_hidden_element' => true,
+            ]
+        ]);
 
     }
 
@@ -117,14 +133,20 @@ class InterpreterFieldset extends PersonFieldset
     }
     
     public function getInputFilterSpecification() {
+      
         $spec = parent::getInputFilterSpecification();
-        // does not seem to work for validating this shit
-        $spec['interpreterLanguages'] = [
-            'required' => true,
+
+        $language_options = $this->get('language-select')->getValueOptions();
+        $certifiable = array_column($language_options, 'attributes', 'value');
+        //echo "<pre>";    
+        //print_r($certifiable);
+        //echo "</pre>";        
+        $spec['interpreter-languages'] = [
+
             'allow_empty' => false,
-            'validators' => 
-            [
-                [
+            'required'  => true,
+            'validators' => [
+                 [
                     'name' => 'NotEmpty',
                     'options' => [
                         'messages' => [
@@ -133,35 +155,43 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                     'break_chain_on_failure' => true,
                 ],
+                [   // backdoor method for ensuring 'federalCertification' field
+                    // is set, if appropriate
+                    'name' => 'Callback',                  
+                    'options' => [
+                        'callback'=> function($value,$context) use ($certifiable) {
+                           $languages_submitted = $context['interpreter-languages'];                           
+                           foreach ($languages_submitted as $language) {
+                               $id = $language['language_id'];
+                               // should not happen unless they are messing with us
+                               if (! isset($language['federalCertification'])) {
+                                   return false;
+                               }
+                               $submitted_cert = is_numeric($language['federalCertification']) ?
+                                       (boolean)$language['federalCertification'] : null;
+                               $cert_required = (boolean)$certifiable[$id]['data-certifiable'];
+                               if ($cert_required && !is_bool($submitted_cert)) {
+                                   return false;
+                               }                               
+                               //echo "id: $id\n"; echo "value submitted: ";var_dump($submitted_cert);
+                               //echo "bool value required? ";var_dump($cert_required);                               
+                           }
+                           return true;
+                        },
+                        'messages' => 
+                        [
+                            \Zend\Validator\Callback::INVALID_VALUE =>
+                                'yes/no required for federal certification'                            
+                        ],
+                    ],                    
+                ],
             ],
-            
         ];
-        
+
         // this one is just for the UI
          $spec['language-select'] = [
             'required' => true,
-            'allow_empty' => false,
-            'validators' => [
-
-                [   // attach this validator to the language-select element to ensure 
-                    // the interpreter-languages collection is not empty
-                    // cheating, maybe, but it works whereas other attempts have failed 
-                   'name'=> 'Zend\Validator\Callback',
-                   'options' => [
-                        'callback' => function($value,$context){
-                            //$shit = $this->getObject()->getInterpreterLanguages();
-                            //return $shit->count() ?: false;                         
-                            echo "shit is running!";
-                            $return = count($context['interpreterLanguages']);
-                            var_dump($return);
-                            return $return ? true : false;
-                        },
-                        'messages' => [
-                            'callbackValue' => 'At least one language is required',
-                        ],
-                    ],
-                ],
-            ],
+            'allow_empty' => true,             
 
          ];
          $spec['hat'] = [

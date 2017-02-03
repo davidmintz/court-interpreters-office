@@ -86,10 +86,6 @@ class LocationsController extends AbstractActionController
     /**
      * adds a new Location.
      *
-     * @todo refactor, start passing some sort of context (query?) parameter to
-     * our form so it can know what option data to fetch for the select
-     * elements
-     *
      * @return ViewModel
      */
     public function addAction()
@@ -109,7 +105,8 @@ class LocationsController extends AbstractActionController
             'title' => 'add a location',
             ]))
             ->setTemplate('interpreters-office/admin/locations/form.phtml');
-
+        $viewModel->type_id = $this->params()->fromRoute('type_id');
+       
         $request = $this->getRequest();
 
         if ($request->isPost()) {

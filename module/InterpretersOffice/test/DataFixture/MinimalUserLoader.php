@@ -33,7 +33,7 @@ class MinimalUserLoader implements FixtureInterface
                     ->findOneBy(
                         [
                                 //'name'=>'staff, Interpreters Office',
-                                'name' => 'staff Court Interpreter',
+                                'name' => 'staff court interpreter',
 
                             ]
                     )

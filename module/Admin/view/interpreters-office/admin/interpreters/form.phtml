@@ -58,7 +58,13 @@ $active = $fieldset->get('active');?>
     <label class="control-label col-sm-3">languages</label>
     <div class="col-sm-9"><?php 
     $languageSelect = $fieldset->get('language-select'); 
-    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ?> 
+    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
+    $this->formSelect($fieldset->get('interpreter-languages'));
+    $shit = $fieldset->get('interpreter-languages');
+    //$shit->setValueOptions($languageSelect->getValueOptions());
+    echo $this->formSelect($shit);
+    echo $this->formElementErrors($shit);
+    ?> 
     </div>
     <!-- wrapper for nested grid // border:1px solid #afd9ee; -->
     <div class="row" id="interpreter-languages" style="clear:both">
@@ -73,17 +79,24 @@ $active = $fieldset->get('active');?>
     if (count($interpreterLanguages)) :     
         $i = 0;            
         foreach ($interpreterLanguages as $ilanguage) :
-            $language_id = $ilanguage->getLanguage()->getId();
+            $language = $ilanguage->getLanguage();
+            $language_id = $language->getId();
+            $certifiable = $language->isFederallyCertified();
+            $fed_certification_options[''] = $certifiable ? '' : 'N/A';           
         ?>
         <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
             echo $this->escapeHtml($ilanguage->getLanguage());
             // language and interpreter ids as hidden inputs
-           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>"><?php 
-           ?><input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i?>][interpreter_id]" value="<?php echo $this->id?>">
+
+           ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>">
+          <?php if (false): // not using this ?>
+            <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][interpreter_id]" value="<?php echo $this->id?>">
+          <?php endif ?>
         </div>
         <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
-           $element = new Element\Select("interpreter[interpreterLanguages][$i][federalCertification]");
-           $element->setValueOptions($fed_certification_options)->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
+           $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
+           $element->setValueOptions($fed_certification_options)
+                   ->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
            $disabled = false;
            if ($element->getValue() === null) {
                $element->setAttribute("disabled","disabled");
@@ -91,7 +104,7 @@ $active = $fieldset->get('active');?>
            }
            echo $this->formSelect($element);
            if ($disabled) : // keep the validators happy ?>
-            <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i ?>][federalCertification]" value="">
+            <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i ?>][federalCertification]" value="">
            <?php endif;
         ?></div>
         <div class="col-sm-3 interpreter-language remove-language">
@@ -110,9 +123,12 @@ $active = $fieldset->get('active');?>
     $csrf = $form->get('csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formHidden($fieldset->get('id'));
+    
     echo $this->formSubmit($form->get('submit'));?></div>
 </div>
-<?php echo $this->form()->closeTag(); ?>
+<?php 
+
+echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
 <script type="text/javascript">
     
@@ -142,7 +158,7 @@ $(function(){
         var certifiable = option.data().certifiable;
         var interpreter_id = $('input[name="interpreter[id]"]').val();
         
-        // build the three elements and stick into an array
+        // build the three div elements, and stick into an array
         var divs = [];
         divs[0] = $('<div>')
                 .addClass("col-sm-3 col-sm-offset-4 interpreter-language language-name")
@@ -151,25 +167,28 @@ $(function(){
                 .append(
                     $('<input>').attr({
                         type  : "hidden",
-                        name  : "interpreter[interpreterLanguages]["+index+"][language_id]",
+                        name  : "interpreter[interpreter-languages]["+index+"][language_id]",
                         value : language_id
                     })
                 )
+                /*
                 .append(
                      $('<input>').attr({
                         type  : "hidden",
                         name  : "interpreter[interpreterLanguages]["+index+"][interpreter_id]",
                         value : interpreter_id
                     })
-                );
+                )
+                */
+                ;
         var certificationSelectElement = $('<select>')
                         .addClass("form-control")
-                        .attr({name: "interpreter[interpreterLanguages]["+index+"][federalCertification]"});
+                        .attr({name: "interpreter[interpreter-languages]["+index+"][federalCertification]"});
                         
         if (certifiable) {
             certificationSelectElement
                     .append($("<option>").attr({value:""}).text(""))
-                    .append('<option value="1" selected="selected">yes</option><option value="0">no</option>');
+                    .append('<option value="1">yes</option><option value="0">no</option>');
         } else {
             certificationSelectElement.append($("<option>")
                     .attr({value:"",selected : "selected"})
@@ -207,10 +226,8 @@ $(function(){
                 .slideUp(function(){$(this).remove();});
         
     });
-    //  testing
-    $('#hat').val(3);
-    $('#lastname').val("Doink");
-    $('#firstname').val("Boink");
-    //select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
+    // testing
+    // $('#hat').val(3); $('#lastname').val("Doink"); $('#firstname').val("Boink");
+    // select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
 });
 </script>

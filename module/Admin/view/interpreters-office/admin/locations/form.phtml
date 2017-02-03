@@ -30,6 +30,7 @@ echo $this->formLabel($name),$this->formText($name),$this->formElementErrors($na
 </div>
 <div class="form-group"><?php
 $location_type = $form->get('type');
+if ($this->type_id) : $location_type->setValue($this->type_id); endif;
 echo $this->formLabel($location_type),$this->formSelect($location_type),$this->formElementErrors($location_type);
 ?>
 </div>

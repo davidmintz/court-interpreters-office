@@ -49,7 +49,7 @@ class InterpreterLanguage
     /**
      * The language in which this interpreter works.
      *
-     * @ORM\ManyToOne(targetEntity="Language",inversedBy="interpreterLanguages")
+     * @ORM\ManyToOne(targetEntity="Language",inversedBy="interpreterLanguages",fetch="EAGER")
      * @ORM\Id
      *
      * @var Language
@@ -85,7 +85,7 @@ class InterpreterLanguage
 
         return $this;
     }
-
+   
     /**
      * Get interpreter.
      *
@@ -142,5 +142,13 @@ class InterpreterLanguage
     public function getFederalCertification()
     {
         return $this->federalCertification;
+    }
+    
+    public function toArray() {
+        return [
+            'language_id' => $this->language->getId(),
+            'federalCertification' => $this->getFederalCertification(),
+        ];
+        
     }
 }
