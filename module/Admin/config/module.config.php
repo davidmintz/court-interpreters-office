@@ -51,7 +51,6 @@ return [
                             'route' => '/:action/:id',
                             'defaults' => [
                                 'action' => 'edit',
-
                             ],
                             'constraints' => [
                                 'action' => 'edit|delete',
@@ -105,9 +104,12 @@ return [
                     'add' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/add',
+                            'route' => '/add[/type/:type_id]',
                             'defaults' => [
                                 'action' => 'add',
+                            ],
+                            'constraints' => [
+                                'type_id' => '[1-9]\d*',
                             ],
                         ],
                     ],
