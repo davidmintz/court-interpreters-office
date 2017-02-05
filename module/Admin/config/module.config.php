@@ -271,6 +271,21 @@ return [
                     ],
                 ],
             ],
+
+            'users' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/admin/users',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\UsersController::class,
+                        'action' => 'index',
+                    ],
+                ],
+                // to be continued
+
+            ],
         ],
     ],
     'controllers' => [
@@ -285,6 +300,7 @@ return [
             Controller\PeopleController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\JudgesController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\InterpretersController::class => Controller\Factory\PeopleControllerFactory::class,
+            Controller\UsersController::class => Controller\Factory\PeopleControllerFactory::class,
         ],
     ],
     'view_manager' => [
