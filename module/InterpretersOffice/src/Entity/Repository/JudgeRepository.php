@@ -13,8 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class JudgeRepository extends EntityRepository
 {
-    
-
     use ResultCachingQueryTrait;
 
     /**
@@ -39,7 +37,7 @@ class JudgeRepository extends EntityRepository
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
                .'ORDER BY j.lastname, j.firstname';
 
-        return $this->createQuery($dql)                
+        return $this->createQuery($dql)
                 ->getResult();
     }
 }

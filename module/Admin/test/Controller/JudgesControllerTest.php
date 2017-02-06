@@ -83,15 +83,15 @@ class JudgesControllerTest extends AbstractControllerTest
             ->createQuery('SELECT COUNT(j.id) FROM InterpretersOffice\Entity\Judge j')
             ->getSingleScalarResult());
     }
-    
+
     /**
-     * tests that everything looks ok in the add-judge page even if there are 
-     * no locations in the database
+     * tests that everything looks ok in the add-judge page even if there are
+     * no locations in the database.
      */
     public function testAddJudgePageNotBlowUpWhenThereAreNoLocations()
     {
         $entityManager = $this->getApplicationServiceLocator()->get('entity-manager');
-        
+
         // set all the judge default locations to null
         $dql = 'UPDATE InterpretersOffice\Entity\Judge j SET j.defaultLocation = NULL';
         $query = $entityManager->createQuery($dql);
@@ -107,23 +107,22 @@ class JudgesControllerTest extends AbstractControllerTest
         // load the "add" page
         $this->dispatch('/admin/judges/add');
         $this->assertResponseStatusCode(200);
-        
+
         $this->assertQuery('form');
         $this->assertQuery('#lastname');
         $this->assertQuery('#firstname');
         $this->assertQuery('#middlename');
         $this->assertQuery('#courthouse option');
-        
+
        // echo $this->getResponse()->getBody();
-        
-        $this->assertQueryCount('#courthouse option',1);
+
+        $this->assertQueryCount('#courthouse option', 1);
         $this->assertQuery('#courtroom option');
-        $this->assertQueryCount('#courtroom option',1);
-        
-        
+        $this->assertQueryCount('#courtroom option', 1);
+
         $flavor = $entityManager->getRepository('InterpretersOffice\Entity\JudgeFlavor')
             ->findOneBy(['flavor' => 'USDJ']);
-        
+
         $data = [
             'judge' => [
                 'lastname' => 'Henklebaum',
@@ -140,7 +139,5 @@ class JudgesControllerTest extends AbstractControllerTest
         //echo $this->getResponse()->getBody(); //return;
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/judges');
-
-        
     }
 }

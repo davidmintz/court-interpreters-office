@@ -76,8 +76,7 @@ class Module
                 $session->redirect_url = $event->getRequest()->getUriString();
 
                 return $this->getRedirectionResponse($event);
-                
-            } else { 
+            } else {
                 $allowed = ['manager', 'administrator'];
                 if (!in_array($session->role, $allowed)) {
                     $flashMessenger = $container

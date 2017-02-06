@@ -1,4 +1,5 @@
 <?php
+
 /** module/InterpretersOffice/src/Entity/Interpreter.php */
 
 namespace InterpretersOffice\Entity;
@@ -44,7 +45,6 @@ class Interpreter extends Person
      * working languages.
      *
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="interpreter", cascade={"persist", "remove"},orphanRemoval=true)
-     * 
      *
      * @var ArrayCollection of InterpreterLanguage
      */
@@ -142,6 +142,7 @@ class Interpreter extends Person
     public function addInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
     {
         $this->interpreterLanguages->add($interpreterLanguage);
+
         return $this;
     }
 
@@ -153,8 +154,7 @@ class Interpreter extends Person
      * @return Interpreter
      */
     public function removeInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
-    {       
-        
+    {
         $this->interpreterLanguages->removeElement($interpreterLanguage);
         // not sure whether/when the following is required
         //$interpreterLanguage->setLanguage(null);
@@ -171,28 +171,25 @@ class Interpreter extends Person
     {
         return $this->interpreterLanguages;
     }
-    
+
     /*
-    AllowRemove strategy for DoctrineModule hydrator requires both addInterpreterLanguages and 
+    AllowRemove strategy for DoctrineModule hydrator requires both addInterpreterLanguages and
      removeInterpreterLanguages to be defined in InterpretersOffice\Entity\Interpreter
      entity domain code, but one or both seem to be missing
      */
-    
-    
+
     public function addInterpreterLanguages(Collection $interpreterLanguages)
     {
         foreach ($interpreterLanguages as $interpreterLanguage) {
-            
             $interpreterLanguage->setInterpreter($this);
             $this->interpreterLanguages->add($interpreterLanguage);
         }
     }
 
     public function removeInterpreterLanguages(Collection $interpreterLanguages)
-    {        
-        foreach ($interpreterLanguages as $interpreterLanguage) {            
+    {
+        foreach ($interpreterLanguages as $interpreterLanguage) {
             $this->interpreterLanguages->removeElement($interpreterLanguage);
         }
     }
-                
 }

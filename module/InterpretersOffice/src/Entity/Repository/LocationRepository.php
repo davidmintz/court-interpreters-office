@@ -92,24 +92,26 @@ class LocationRepository extends EntityRepository
 
         return $data;
     }
-    
+
     /**
-     * find all locations of type id $type_id
-     * 
+     * find all locations of type id $type_id.
+     *
      * @param int $type_id
+     *
      * @return array
      */
     public function findByTypeId($type_id)
     {
         $query = $this->createQuery(
             'SELECT l.id, l.name, p.name AS parent FROM InterpretersOffice\Entity\Location l '
-                . ' LEFT JOIN l.parentLocation p JOIN l.type t '
-                . ' WHERE t.id = :type_id'
-        )->setParameters([':type_id'=>$type_id]);
+                .' LEFT JOIN l.parentLocation p JOIN l.type t '
+                .' WHERE t.id = :type_id'
+        )->setParameters([':type_id' => $type_id]);
         $data = $query->getResult();
-         usort($data, function ($a, $b) {
-            return strnatcasecmp("$a[name], $a[parent]","$b[name], $b[parent]");
+        usort($data, function ($a, $b) {
+            return strnatcasecmp("$a[name], $a[parent]", "$b[name], $b[parent]");
         });
+
         return $data;
     }
 

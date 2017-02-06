@@ -23,7 +23,8 @@
         "zendframework/zend-form": "^2.9",
         "zendframework/zend-math": "^3.0",
         "zendframework/zend-json": "^3.0",
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "zendframework/zend-permissions-acl": "^2.6"
     },
     "autoload": {
         "psr-4": {

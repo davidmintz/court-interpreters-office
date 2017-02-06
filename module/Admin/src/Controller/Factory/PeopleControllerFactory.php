@@ -9,7 +9,8 @@ use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller;
 
 /**
- * Factory for instantiating Controllers that manage Person and its subclasses.
+ * Factory for instantiating Controllers that manage Person, its subclasses, or
+ * User entities.
  */
 class PeopleControllerFactory implements FactoryInterface
 {

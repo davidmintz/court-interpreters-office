@@ -61,16 +61,15 @@ class Language
      * @var string
      */
     protected $comments = '';
-    
+
     /**
-     *
+     * @var ArrayCollection 
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
      */
- 
     protected $interpreterLanguages;
-    
+
     /**
-     * constructor
+     * constructor.
      */
     public function __construct()
     {

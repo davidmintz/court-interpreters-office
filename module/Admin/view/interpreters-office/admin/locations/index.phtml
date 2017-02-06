@@ -40,7 +40,7 @@ $(function(){
             $.getJSON(this.href,function(data){                
                 var url = that.href.replace('locations/type','locations/add/type');
                 var thisButton = addButton.replace('#',url);
-                console.log(thisButton);
+                
                 if (! data.length) {
                     items[0] = $('<li>').addClass('list-group-item').html('none found<br>'+thisButton);
                 } else {//*/
@@ -49,7 +49,9 @@ $(function(){
                         if (data[i].parent) {
                             text += ", "+data[i].parent;
                         }
-                        items[i] = $('<li>').text(text).addClass('list-group-item');
+                        var href = 'locations/edit/' + data[i].id;
+                        var html = $('<a/>').attr({href:href, title:"edit this location"}).text(text)
+                        items[i] = $('<li>').html(html).addClass('list-group-item');
                     }
                     items[++i]= $('<li>').html(thisButton).addClass('list-group-item'); 
                 }

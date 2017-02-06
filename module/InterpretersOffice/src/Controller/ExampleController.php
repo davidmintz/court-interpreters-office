@@ -9,11 +9,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\PersonForm;
-
 use InterpretersOffice\Entity;
-
 use InterpretersOffice\Form\CreateBlogPostForm;
-
 
 /**
  *  ExampleController.
@@ -39,12 +36,15 @@ class ExampleController extends AbstractActionController
     {
         $this->objectManager = $objectManager;
     }
-    
+    /**
+     * just for doodling with examples from Doctrine github site
+     * @return array
+     */
     public function createAction()
     {
         // Get your ObjectManager from the ServiceManager
         $objectManager = $this->objectManager;
-       
+
         // Create the form and inject the ObjectManager
         $form = new CreateBlogPostForm($objectManager);
 
@@ -63,20 +63,12 @@ class ExampleController extends AbstractActionController
 
         return ['form' => $form];
     }
+
     
-    public function addInterpreterAction()
-    {
-        $viewModel = new ViewModel();
-        $viewModel->setTemplate('interpreters-office/admin/interpreters/form.phtml');
-        $form = new \InterpretersOffice\Admin\Form\InterpreterForm($this->objectManager,
-                ['action'=>'create']);
-        $entity = new Entity\Interpreter();
-        $form->bind($entity);
-        return $viewModel->setVariables(['form'=>$form,'title'=>"add shit"]);
-        
-    }
     /**
-     * fool around with person form and fieldset.
+     * just for fool around with person form and fieldset. to be removed
+     * 
+     * @return boolean 
      */
     public function formAction()
     {
@@ -113,36 +105,7 @@ class ExampleController extends AbstractActionController
 
         return false;
     }
- /**
-  * @return array
-  */
- public function formCollectionAction()
- {
-     /*
-     $form = new \Application\Form\CreateProduct();
-     $product = new \Application\Entity\Product();
-     $form->bind($product);
 
-     $request = $this->getRequest();
-     $form->setAttribute('action',$request->getRequestUri());
-
-     if ($request->isPost()) {
-         $form->setData($request->getPost());
-
-         if ($form->isValid()) {
-            echo "<pre>";            
-            var_dump($product);
-            echo "</pre>";
-         }
-     }
-     $viewModel = new ViewModel([
-         'form' => $form,
-     ]);
-     $viewModel->setTerminal(true);
-     return $viewModel;
-      * 
-      */
- }
     /**
      * index action.
      *
@@ -191,26 +154,23 @@ class ExampleController extends AbstractActionController
      */
     public function otherTestAction()
     {
-        
-        $object = new \InterpretersOffice\Entity\Interpreter;
+        $object = new \InterpretersOffice\Entity\Interpreter();
         $object->setLastname('Mintz');
         $em = $this->objectManager;
         $hydrator = new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em);
         //$hydrator->ex
         $data = [
-           'lastname'  => 'Mintz',
+           'lastname' => 'Mintz',
             'firstname' => 'David',
-            'email' => "david@example.com",
+            'email' => 'david@example.com',
             'hat' => 1,
             'interpreterLanguages' => [
-               ['language' => 62, 'interpreter'=> $object ],
+               ['language' => 62, 'interpreter' => $object],
             ],
         ];
         $interpreter = $hydrator->hydrate($data, $object);
         echo $interpreter->getLastName();
-        
 
         return false;
     }
 }
-
