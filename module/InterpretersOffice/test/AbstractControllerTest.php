@@ -62,7 +62,7 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
             echo "\nWARNING:  failed authentication\n";
         }
         $this->reset(true);
-        
+
         return $this;
     }
 

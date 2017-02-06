@@ -1,4 +1,5 @@
 <?php
+
 /** module/InterpretersOffice/src/Entity/InterpreterLanguage.php   */
 
 namespace InterpretersOffice\Entity;
@@ -32,8 +33,8 @@ class InterpreterLanguage
         Interpreter $interpreter = null,
         Language $language = null
     ) {
-       $this->interpreter = $interpreter;
-       $this->language = $language;
+        $this->interpreter = $interpreter;
+        $this->language = $language;
     }
 
     /**
@@ -85,7 +86,7 @@ class InterpreterLanguage
 
         return $this;
     }
-   
+
     /**
      * Get interpreter.
      *
@@ -144,11 +145,15 @@ class InterpreterLanguage
         return $this->federalCertification;
     }
     
-    public function toArray() {
+    /**
+     * return this entity as an array [ language_id => federalCertification ]
+     * @return Array
+     */
+    public function toArray()
+    {
         return [
             'language_id' => $this->language->getId(),
             'federalCertification' => $this->getFederalCertification(),
         ];
-        
     }
 }

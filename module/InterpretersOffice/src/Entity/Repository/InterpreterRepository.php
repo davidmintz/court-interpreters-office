@@ -1,6 +1,6 @@
-<?php 
-/**  module/InterpretersOffice/src/Entity/Repository/InterpreterRepository.php */
+<?php
 
+/**  module/InterpretersOffice/src/Entity/Repository/InterpreterRepository.php */
 
 namespace InterpretersOffice\Entity\Repository;
 
@@ -12,8 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class InterpreterRepository extends EntityRepository
 {
-    
-	use ResultCachingQueryTrait;
+    use ResultCachingQueryTrait;
 
     /**
      * constructor.
@@ -26,7 +25,4 @@ class InterpreterRepository extends EntityRepository
         $em->getConfiguration()->getResultCacheImpl()->setNamespace('interpreters');
         parent::__construct($em, $class);
     }
-
-    
- }
-
+}

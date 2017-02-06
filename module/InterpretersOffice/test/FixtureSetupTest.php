@@ -135,72 +135,70 @@ class FixtureSetupTest extends AbstractControllerTest
         // and prove our lifecycle callback works
         $objectManager->persist($event);
     }
-    
+
     public function testInsertInterpreter()
     {
         $this->loadTestEventData();
         $objectManager = FixtureManager::getEntityManager();
-        
+
         // there should be an interpreter
         $interpreters = $objectManager
                 ->getRepository('InterpretersOffice\Entity\Interpreter')
                 ->findAll();
-        $this->assertGreaterThan(0,count($interpreters));
-        
+        $this->assertGreaterThan(0, count($interpreters));
+
         $mintz = $objectManager
                 ->getRepository('InterpretersOffice\Entity\Interpreter')
-                ->findOneBy(['lastname'=>'Mintz']);
-        
+                ->findOneBy(['lastname' => 'Mintz']);
+
         $this->assertInstanceOf(Entity\Interpreter::class, $mintz);
-        
+
         $languages = $mintz->getInterpreterLanguages();
-        
-        $this->assertGreaterThan(0,count($languages));
-        
+
+        $this->assertGreaterThan(0, count($languages));
     }
-    
+
     public function testAddAndRemoveInterpreterLanguage()
     {
         $this->loadTestEventData();
         $objectManager = FixtureManager::getEntityManager();
         $mintz = $objectManager
                 ->getRepository('InterpretersOffice\Entity\Interpreter')
-                ->findOneBy(['lastname'=>'Mintz']);
-        
+                ->findOneBy(['lastname' => 'Mintz']);
+
         $before = count($mintz->getInterpreterLanguages());
         //echo "\n";
         //$command = "echo 'select * from interpreters_languages;'  | sqlite3 module/InterpretersOffice/test/data/office.sqlite | wc -l && echo";
         //system($command);
-        $this->assertEquals(1,$before);
-        
+        $this->assertEquals(1, $before);
+
         $french = $objectManager
                 ->getRepository('InterpretersOffice\Entity\Language')
-                ->findOneBy(['name'=>'French']);
+                ->findOneBy(['name' => 'French']);
         $mintz->addInterpreterLanguage(
-             new Entity\InterpreterLanguage($mintz,$french)
+             new Entity\InterpreterLanguage($mintz, $french)
         );
         $objectManager->flush();
         $languages = $mintz->getInterpreterLanguages();
         $after = count($languages);
-        $this->assertEquals(2,$after);
-        
+        $this->assertEquals(2, $after);
+
         //system($command);
-        foreach($languages as $obj) {
-            if ($obj->getLanguage()->getName() == "French") {
+        foreach ($languages as $obj) {
+            if ($obj->getLanguage()->getName() == 'French') {
                 $this_one = $obj;
                 break;
             }
         }
-        
+
         $this->assertEquals($before + 1, $after);
         $mintz->removeInterpreterLanguage($this_one);
-        
+
         $objectManager->flush();
 
         $after = count($mintz->getInterpreterLanguages());
-        
-        $this->assertEquals($before,$after);
+
+        $this->assertEquals($before, $after);
         // system($command);
-        
     }
 }

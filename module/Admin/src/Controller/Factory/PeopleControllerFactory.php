@@ -10,7 +10,7 @@ use InterpretersOffice\Admin\Controller;
 
 /**
  * Factory for instantiating Controllers that manage Person, its subclasses, or
- * User entities
+ * User entities.
  */
 class PeopleControllerFactory implements FactoryInterface
 {

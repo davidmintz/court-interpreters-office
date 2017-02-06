@@ -11,7 +11,7 @@ use Zend\Router\Http\Segment;
 $environment = getenv('APP_ENV') ?: 'development';
 
 // disable cache for the time being
-$doctrine_cache = 'array';//$environment == 'testing' ? 'array' : 'filesystem';
+$doctrine_cache = 'array'; //$environment == 'testing' ? 'array' : 'filesystem';
 
 return [
     'form_elements' => [
@@ -81,7 +81,7 @@ return [
             ],
         ],
     ],
-    
+
     'service_manager' => [
         'aliases' => [
           'entity-manager' => 'doctrine.entitymanager.orm_default',
@@ -101,7 +101,7 @@ return [
     'session_containers' => [
         'Authentication',
     ],
-    
+
     'router' => [
         'routes' => [
             ///*
@@ -171,6 +171,7 @@ return [
                     ],
                 ],
             ],
+
             'example' => [
                 'type' => Segment::class,
                 'may_terminate' => true,

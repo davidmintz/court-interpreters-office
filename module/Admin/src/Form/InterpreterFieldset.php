@@ -19,7 +19,7 @@ use Zend\Form\Element;
  */
 class InterpreterFieldset extends PersonFieldset
 {
-	/**
+    /**
      * name of the fieldset.
      *
      * since we are a subclass of PersonFieldset, this needs to be overriden
@@ -28,15 +28,18 @@ class InterpreterFieldset extends PersonFieldset
      */
     protected $fieldset_name = 'interpreter';
 
-
     /**
      * constructor
      * 
+     * @param ObjectManager $objectManager
+     * @param array $options
      */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
-    	parent::__construct($objectManager, $options);
-        /*
+        parent::__construct($objectManager, $options);
+        /* 
+        // could not get this to hydrate properly, so we're not using 
+        // Element\Collection with a InterpreterLanguageFieldset
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterLanguages',
@@ -50,9 +53,9 @@ class InterpreterFieldset extends PersonFieldset
             ],
         ]);
         */
-        
+
         $this->add([
-    		'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'language-select',
             'options' => [
                 'object_manager' => $this->objectManager,
@@ -60,10 +63,9 @@ class InterpreterFieldset extends PersonFieldset
                 'property' => 'name',
                 //'find_method' => ['name' => 'getInterpreterHats'],
                 'label' => 'languages',
-                'option_attributes' =>
-                   [ 'data-certifiable' => function(Entity\Language $language){
-                        return $language->isFederallyCertified() ? 1 : 0;
-                   },]
+                'option_attributes' => ['data-certifiable' => function (Entity\Language $language) {
+                    return $language->isFederallyCertified() ? 1 : 0;
+                }],
             ],
              'attributes' => [
                 'class' => 'form-control',
@@ -74,35 +76,35 @@ class InterpreterFieldset extends PersonFieldset
         $options = $element->getValueOptions();
         array_unshift($options, [
             'label' => '-- select a language --',
-            // keeps the allow_empty => false option from preventing
-            // the callback validator from running:
-            'value' => '', 
-            'attributes' => ['label' => ' ', ],
+            'value' => '',
+            'attributes' => ['label' => ' '],
         ]);
-        $element->setValueOptions($options);  
-        
+        $element->setValueOptions($options);
+
         $this->add([
-            'type'=> 'Select',
+            'type' => 'Select',
             'name' => 'interpreter-languages',
-            
-            
+
             'attributes' => [
-                'multiple' => 'multiple', 
+                'multiple' => 'multiple',
                 'class' => 'hidden',
             ],
             'options' => [
                 'value_options' => [],
                 'disable_inarray_validator' => true,
                 'use_hidden_element' => true,
-            ]
+            ],
         ]);
-
     }
-
+    /**
+     * adds the specialized "Hat" element to the form
+     * 
+     * @return \InterpretersOffice\Admin\Form\InterpreterFieldset
+     */
     public function addHatElement()
     {
-    	$this->add([
-    		'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+        $this->add([
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'hat',
             'options' => [
                 'object_manager' => $this->objectManager,
@@ -128,23 +130,29 @@ class InterpreterFieldset extends PersonFieldset
         ]);
         $element->setValueOptions($options);
 
-    	return $this;
-
+        return $this;
     }
     
-    public function getInputFilterSpecification() {
-      
+    /**
+     * overrides parent implementation of InputFilterProviderInterface
+     *  
+     * @return array
+     */
+    public function getInputFilterSpecification()
+    {
         $spec = parent::getInputFilterSpecification();
 
         $language_options = $this->get('language-select')->getValueOptions();
+        
+        // require users to provide yes|no for federal-certified language
+        // which we already know from the language select > option elements' 
+        // 'certifiable' attribute
         $certifiable = array_column($language_options, 'attributes', 'value');
-        //echo "<pre>";    
-        //print_r($certifiable);
-        //echo "</pre>";        
+
         $spec['interpreter-languages'] = [
 
             'allow_empty' => false,
-            'required'  => true,
+            'required' => true,
             'validators' => [
                  [
                     'name' => 'NotEmpty',
@@ -156,45 +164,42 @@ class InterpreterFieldset extends PersonFieldset
                     'break_chain_on_failure' => true,
                 ],
                 [   // backdoor method for ensuring 'federalCertification' field
-                    // is set, if appropriate
-                    'name' => 'Callback',                  
+                    // is set, if appropriate: ignore the $value and inspect the 
+                    // $context array
+                    'name' => 'Callback',
                     'options' => [
-                        'callback'=> function($value,$context) use ($certifiable) {
-                           $languages_submitted = $context['interpreter-languages'];                           
-                           foreach ($languages_submitted as $language) {
-                               $id = $language['language_id'];
-                               // should not happen unless they are messing with us
-                               if (! isset($language['federalCertification'])) {
+                        'callback' => function ($value, $context) use ($certifiable) {
+                            $languages_submitted = $context['interpreter-languages'];
+                            foreach ($languages_submitted as $language) {
+                                $id = $language['language_id'];
+                               // should never happen unless they are messing with us
+                               if (!isset($language['federalCertification'])) {
                                    return false;
                                }
-                               $submitted_cert = is_numeric($language['federalCertification']) ?
-                                       (boolean)$language['federalCertification'] : null;
-                               $cert_required = (boolean)$certifiable[$id]['data-certifiable'];
-                               if ($cert_required && !is_bool($submitted_cert)) {
-                                   return false;
-                               }                               
-                               //echo "id: $id\n"; echo "value submitted: ";var_dump($submitted_cert);
-                               //echo "bool value required? ";var_dump($cert_required);                               
-                           }
-                           return true;
+                                $submitted_cert = is_numeric($language['federalCertification']) ?
+                                       (bool) $language['federalCertification'] : null;
+                                $cert_required = (bool) $certifiable[$id]['data-certifiable'];
+                                if ($cert_required && !is_bool($submitted_cert)) {
+                                    return false;
+                                }
+                            }
+
+                            return true;
                         },
-                        'messages' => 
-                        [
-                            \Zend\Validator\Callback::INVALID_VALUE =>
-                                'yes/no required for federal certification'                            
+                        'messages' => [
+                            \Zend\Validator\Callback::INVALID_VALUE => 'yes/no required for federal certification',
                         ],
-                    ],                    
+                    ],
                 ],
             ],
         ];
 
-        // this one is just for the UI
+        // this one is just for the UI, not part of the entity's data
          $spec['language-select'] = [
             'required' => true,
-            'allow_empty' => true,             
-
+            'allow_empty' => true,
          ];
-         $spec['hat'] = [
+        $spec['hat'] = [
                 'validators' => [
                     [
                     'name' => 'NotEmpty',
@@ -204,11 +209,10 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                     'break_chain_on_failure' => true,
-                ],                   
+                ],
             ],
          ];
-     
+
         return $spec;
-         
     }
 }
