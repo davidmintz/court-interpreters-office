@@ -46,6 +46,7 @@ class UsersController extends AbstractActionController
     public function indexAction()
     {
         //echo "it works"; return false;
+        
         return new ViewModel(['title' => 'admin | users']);
     }
 }
