@@ -31,20 +31,31 @@ class Module
      */
     public function onBootstrap($e)
     {
-        // from the ZF3 tutorial, a waste of time:
+        
 
-        // Register a "render" event, at high priority (so it executes prior
-       // to the view attempting to render)
-       // $app = $e->getApplication();
-       // $app->getEventManager()->attach('render', [$this, 'registerJsonStrategy'], 100);
+       $app = $e->getApplication();
+       $app->getEventManager()->attach('render', [$this, 'testSomething'], 100);
     }
-
-    /**
+    
+    public function testSomething(\Zend\Mvc\MvcEvent $e)
+    {
+        $viewModel = $e->getResult();
+        //$viewModel->layout()->headScript()->appendFile($viewModel->basePath("/js/see-if-it-works.js"));
+        //$vars = $viewModel->getVariables()     ;
+        //echo gettype($vars) . " is the data type... count is ".count($vars)."...";
+        //print_r(array_keys($vars));
+        //echo get_class($viewModel). "  is the class of whatever...";
+        $viewModel->something = "some value set by event listener";
+        
+        $acl_config = $e->getApplication()->getServiceManager()->get('config')['acl'];
+        
+    }
+    /*
      * DOES NOT WORK!
      * https://docs.zendframework.com/zend-view/quick-start/#creating-and-registering-alternate-rendering-and-response-strategies.
      *
      * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
-     */
+    
     public function registerJsonStrategy($e)
     {
         $app = $e->getTarget();
@@ -59,4 +70,6 @@ class Module
             100
         );
     }
+     
+     */
 }

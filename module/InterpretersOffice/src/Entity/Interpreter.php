@@ -173,11 +173,15 @@ class Interpreter extends Person
     }
 
     /*
-    AllowRemove strategy for DoctrineModule hydrator requires both addInterpreterLanguages and
+    "AllowRemove strategy for DoctrineModule hydrator requires both addInterpreterLanguages and
      removeInterpreterLanguages to be defined in InterpretersOffice\Entity\Interpreter
-     entity domain code, but one or both seem to be missing
+     entity domain code, but one or both seem to be missing"
      */
-
+    /**
+     * adds InterpreterLanguages.
+     *
+     * @param Collection $interpreterLanguages
+     */
     public function addInterpreterLanguages(Collection $interpreterLanguages)
     {
         foreach ($interpreterLanguages as $interpreterLanguage) {
@@ -185,7 +189,11 @@ class Interpreter extends Person
             $this->interpreterLanguages->add($interpreterLanguage);
         }
     }
-
+    /**
+     * removes InterpreterLanguages.
+     *
+     * @param Collection $interpreterLanguages
+     */
     public function removeInterpreterLanguages(Collection $interpreterLanguages)
     {
         foreach ($interpreterLanguages as $interpreterLanguage) {

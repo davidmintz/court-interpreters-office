@@ -63,7 +63,9 @@ class Language
     protected $comments = '';
 
     /**
-     * @var ArrayCollection 
+     * ArrayCollection association class InterpreterLanguage.
+     *
+     * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
      */
     protected $interpreterLanguages;

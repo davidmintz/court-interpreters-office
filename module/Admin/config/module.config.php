@@ -311,5 +311,8 @@ return [
             'interpreters-office/admin' => __DIR__.'/../view',
         ],
     ],
-
+    // maybe put in its own file?
+    'acl' => [
+        'some_key' => 'some value',
+    ]
 ];

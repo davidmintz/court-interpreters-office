@@ -14,38 +14,36 @@ use InterpretersOffice\Entity;
 /**
  * test interpreters controller.
  */
-class InterpretersControllerTest extends AbstractControllerTest
-{
-    public function setUp()
-    {
+class InterpretersControllerTest extends AbstractControllerTest {
+
+    public function setUp() {
         parent::setUp();
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
 
         $fixtureExecutor->execute(
-            [
-            new DataFixture\MinimalUserLoader(),
-            new DataFixture\LanguageLoader(),
-            new DataFixture\InterpreterLoader(),
-            ]
+                [
+                    new DataFixture\MinimalUserLoader(),
+                    new DataFixture\LanguageLoader(),
+                    new DataFixture\InterpreterLoader(),
+                ]
         );
 
         $this->login('susie', 'boink');
     }
 
-    public function testAddInterpreter()
-    {
+    public function testAddInterpreter() {
         $em = FixtureManager::getEntityManager();
         $url = '/admin/interpreters/add';
         $russian = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Russian']);
         $count_before = $em->createQuery('SELECT COUNT(i.id) FROM InterpretersOffice\Entity\Interpreter i')
-            ->getSingleScalarResult();
+                ->getSingleScalarResult();
         $data = [
             'interpreter' => [
                 'lastname' => 'Snertsky',
                 'firstname' => 'David',
                 'hat' => $em->getRepository('InterpretersOffice\Entity\Hat')
-                    ->findOneBy(['name' => 'contract court interpreter'])->getId(),
+                        ->findOneBy(['name' => 'contract court interpreter'])->getId(),
                 'email' => 'snyert@example.org',
                 'active' => 1,
                 'id' => '',
@@ -62,7 +60,7 @@ class InterpretersControllerTest extends AbstractControllerTest
             'csrf' => $this->getCsrfToken($url),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters($data)
+                new Parameters($data)
         );
         $this->dispatch($url);
 
@@ -70,19 +68,17 @@ class InterpretersControllerTest extends AbstractControllerTest
         $this->assertRedirectTo('/admin/interpreters');
 
         $count_after = $em->createQuery('SELECT COUNT(i.id) FROM InterpretersOffice\Entity\Interpreter i')
-            ->getSingleScalarResult();
+                ->getSingleScalarResult();
 
         $this->assertEquals($count_after, $count_before + 1);
     }
 
-    public function testIndexAction()
-    {
+    public function testIndexAction() {
         $this->dispatch('/admin/interpreters');
         $this->assertResponseStatusCode(200);
     }
 
-    public function testUpdateInterpreter()
-    {
+    public function testUpdateInterpreter() {
 
         // what is the id of an interpreter?
         $em = FixtureManager::getEntityManager();
@@ -91,7 +87,7 @@ class InterpretersControllerTest extends AbstractControllerTest
 
         $this->assertInstanceOf(Entity\Interpreter::class, $interpreter);
         $id = $interpreter->getId();
-        $url = '/admin/interpreters/edit/'.$id;
+        $url = '/admin/interpreters/edit/' . $id;
 
         $this->dispatch($url);
         $this->assertQuery('form');
@@ -122,7 +118,7 @@ class InterpretersControllerTest extends AbstractControllerTest
         $russian = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Russian']);
         $this->assertInstanceOf(Entity\Language::class, $russian);
-        $spanish = $interpreter = $em->getRepository('InterpretersOffice\Entity\Language')
+        $spanish = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Spanish']);
 
         $data = [
@@ -130,7 +126,7 @@ class InterpretersControllerTest extends AbstractControllerTest
                 'lastname' => 'Mintz',
                 'firstname' => 'David',
                 'hat' => $em->getRepository('InterpretersOffice\Entity\Hat')
-                    ->findOneBy(['name' => 'staff court interpreter'])->getId(),
+                        ->findOneBy(['name' => 'staff court interpreter'])->getId(),
                 'email' => 'david@davidmintz.org',
                 'active' => 1,
                 'id' => $id,
@@ -151,40 +147,43 @@ class InterpretersControllerTest extends AbstractControllerTest
             'csrf' => $this->getCsrfToken($url),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters($data)
+                new Parameters($data)
         );
         $this->dispatch($url);
 
-       //echo $this->getResponse()->getBody();
-       $this->assertRedirect();
+        //echo $this->getResponse()->getBody();
+        $this->assertRedirect();
         $this->assertRedirectTo('/admin/interpreters');
 
-       // load the form again
-       $this->reset(true);
+        // load the form again
+        $this->reset(true);
         $this->dispatch($url);
-       //there should now be two languages
-       $this->assertQueryCount('div.language-name', 2);
-       // one of which is Russian
-       $selector = '#language-'.$russian->getId();
+        
+        //there should now be two languages
+        $this->assertQueryCount('div.language-name', 2);
+        // ...one of which is Russian
+        $selector = '#language-' . $russian->getId();
         $this->assertQuery($selector);
         $this->assertQueryContentContains($selector, 'Russian');
 
-       // now take it out
-       unset($data['interpreter']['interpreter-languages'][1]);
+        // now take it out
+        unset($data['interpreter']['interpreter-languages'][1]);
 
         $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters($data)
+                new Parameters($data)
         );
         $this->dispatch($url);
 
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/interpreters');
 
-       // load the form again
-       $this->reset(true);
+        // load the form again
+        $this->reset(true);
         $this->dispatch($url);
-       //there should now be one language again
-       $this->assertQueryCount('div.language-name', 1);
+        
+        // there should now be one language again
+        $this->assertQueryCount('div.language-name', 1);
         $this->assertQueryContentContains('div.language-name', 'Spanish');
     }
+
 }
