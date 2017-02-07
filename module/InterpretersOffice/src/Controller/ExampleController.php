@@ -37,7 +37,8 @@ class ExampleController extends AbstractActionController
         $this->objectManager = $objectManager;
     }
     /**
-     * just for doodling with examples from Doctrine github site
+     * just for doodling with examples from Doctrine github site.
+     *
      * @return array
      */
     public function createAction()
@@ -64,11 +65,10 @@ class ExampleController extends AbstractActionController
         return ['form' => $form];
     }
 
-    
     /**
-     * just for fool around with person form and fieldset. to be removed
-     * 
-     * @return boolean 
+     * just for fool around with person form and fieldset. to be removed.
+     *
+     * @return bool
      */
     public function formAction()
     {

@@ -144,10 +144,11 @@ class InterpreterLanguage
     {
         return $this->federalCertification;
     }
-    
+
     /**
-     * return this entity as an array [ language_id => federalCertification ]
-     * @return Array
+     * return this entity as an array [ language_id => federalCertification ].
+     *
+     * @return array
      */
     public function toArray()
     {

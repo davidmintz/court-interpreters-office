@@ -14,9 +14,9 @@ use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Entity;
 
 /**
- * Fieldset for Interpreter's working languages. 
- * 
- * Not currently in use but it's possible we'll eventually change our mind, so 
+ * Fieldset for Interpreter's working languages.
+ *
+ * Not currently in use but it's possible we'll eventually change our mind, so
  * for now we keep this around.
  */
 class InterpreterLanguageFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
@@ -24,9 +24,9 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
     use ObjectManagerAwareTrait;
     /**
      * constructor.
-     * 
+     *
      * @param ObjectManager $objectManager
-     * @param array $options
+     * @param array         $options
      */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
@@ -34,7 +34,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager));
         $this->setObject(new Entity\InterpreterLanguage());
-        
+
         $this->add([
             'name' => 'language',
             'type' => 'hidden',
@@ -53,16 +53,14 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
 
         ]);
     }
-    
+
     /**
-     * implements InputFilterProviderInterface
-     * 
+     * implements InputFilterProviderInterface.
+     *
      * @return array
      */
     public function getInputFilterSpecification()
     {
-       
-
         return [
             'federalCertification' => [
                 'required' => true,
@@ -72,7 +70,6 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                         'name' => 'Zend\Filter\Callback',
                         'options' => [
                             'callback' => function ($value) {
-                                
                                 switch ($value) {
                                     case '':
                                         $value = null;

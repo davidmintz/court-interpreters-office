@@ -29,16 +29,16 @@ class InterpreterFieldset extends PersonFieldset
     protected $fieldset_name = 'interpreter';
 
     /**
-     * constructor
-     * 
+     * constructor.
+     *
      * @param ObjectManager $objectManager
-     * @param array $options
+     * @param array         $options
      */
     public function __construct(ObjectManager $objectManager, $options = [])
     {
         parent::__construct($objectManager, $options);
-        /* 
-        // could not get this to hydrate properly, so we're not using 
+        /*
+        // could not get this to hydrate properly, so we're not using
         // Element\Collection with a InterpreterLanguageFieldset
         $this->add([
             'type' => Element\Collection::class,
@@ -97,8 +97,8 @@ class InterpreterFieldset extends PersonFieldset
         ]);
     }
     /**
-     * adds the specialized "Hat" element to the form
-     * 
+     * adds the specialized "Hat" element to the form.
+     *
      * @return \InterpretersOffice\Admin\Form\InterpreterFieldset
      */
     public function addHatElement()
@@ -132,10 +132,10 @@ class InterpreterFieldset extends PersonFieldset
 
         return $this;
     }
-    
+
     /**
-     * overrides parent implementation of InputFilterProviderInterface
-     *  
+     * overrides parent implementation of InputFilterProviderInterface.
+     *
      * @return array
      */
     public function getInputFilterSpecification()
@@ -143,9 +143,9 @@ class InterpreterFieldset extends PersonFieldset
         $spec = parent::getInputFilterSpecification();
 
         $language_options = $this->get('language-select')->getValueOptions();
-        
+
         // require users to provide yes|no for federal-certified language
-        // which we already know from the language select > option elements' 
+        // which we already know from the language select > option elements'
         // 'certifiable' attribute
         $certifiable = array_column($language_options, 'attributes', 'value');
 
@@ -164,7 +164,7 @@ class InterpreterFieldset extends PersonFieldset
                     'break_chain_on_failure' => true,
                 ],
                 [   // backdoor method for ensuring 'federalCertification' field
-                    // is set, if appropriate: ignore the $value and inspect the 
+                    // is set, if appropriate: ignore the $value and inspect the
                     // $context array
                     'name' => 'Callback',
                     'options' => [
