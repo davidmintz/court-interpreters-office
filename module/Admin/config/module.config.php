@@ -336,7 +336,7 @@ return [
             'judges' => 'events',
             'interpreters' => 'events',
             'requests' => null,
-            'admin-index' => 'events',
+            'admin-index' => null,
             
             // to be continued
         ],
@@ -348,7 +348,8 @@ return [
                 'requests' => ['create','view','index'],
                 'events'   => ['index','view','search'],
             ],
-            'manager' => [                
+            'manager' => [
+                'admin-index' => null,
                 'languages' => null,
                 'events' => null,
             ],
