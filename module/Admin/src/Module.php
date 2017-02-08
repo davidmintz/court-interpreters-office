@@ -13,9 +13,16 @@ use Zend\Session\SessionManager;
  */
 class Module
 {
+    
+    /**
+     * are we authenticated?
+     * 
+     * @var booleam 
+     */
+    protected $authenticated = false;
+    
     /**
      * returns this module's configuration.
-     *
      * @return array
      */
     public function getConfig()
@@ -27,13 +34,14 @@ class Module
      * {@inheritdoc}
      *
      * @param \Zend\EventManager\EventInterface $event
-     *                                                 interesting discussion, albeit for ZF2
-     *                                                 http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
+     * interesting discussion, albeit for ZF2
+     * http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
      */
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
+        //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'checkAcl']);
         $container = $event->getApplication()->getServiceManager();
         //// The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
@@ -63,33 +71,54 @@ class Module
         if (!$match) {
             return;
         }
-        $module = $match->getParam('module');
-        if (__NAMESPACE__ == $module) {
-            $container = $event->getApplication()->getServiceManager();
-            $auth = $container->get('auth');
-            $session = $container->get('Authentication');
-            if (!$auth->hasIdentity()) {
+        $module = $match->getParam('module');     
+        
+        if ('InterpretersOffice' == $module) {
+            return;
+        }
+            
+        $container = $event->getApplication()->getServiceManager();
+        $auth = $container->get('auth');
+        $session = $container->get('Authentication');
+        if (!$auth->hasIdentity()) {
+            $flashMessenger = $container
+                    ->get('ControllerPluginManager')->get('FlashMessenger');
+            $flashMessenger->addWarningMessage('Authentication is required.');
+            $session->redirect_url = $event->getRequest()->getUriString();
+            return $this->getRedirectionResponse($event);
+
+        } else {
+
+            if (! $this->checkAcl($event,$session->role)) {
                 $flashMessenger = $container
-                        ->get('ControllerPluginManager')
-                        ->get('FlashMessenger');
-                $flashMessenger->addWarningMessage('Authentication is required.');
-                $session->redirect_url = $event->getRequest()->getUriString();
+                    ->get('ControllerPluginManager')->get('FlashMessenger');
+                $flashMessenger->addWarningMessage('Access denied.');
 
                 return $this->getRedirectionResponse($event);
-            } else {
-                $allowed = ['manager', 'administrator'];
-                if (!in_array($session->role, $allowed)) {
-                    $flashMessenger = $container
-                        ->get('ControllerPluginManager')
-                        ->get('FlashMessenger');
-                    $flashMessenger->addWarningMessage('Access denied.');
-
-                    return $this->getRedirectionResponse($event);
-                }
             }
-        }
+        }        
     }
+    /**
+     * 
+     * @param MvcEvent $event
+     * @param string $role
+     */
+    public function checkAcl(MvcEvent $event,$role){
+        
+        $match =  $event->getRouteMatch();
+        if (! $match) {
+            return;
+        }
 
+        $controllerFQCN = $match->getParam('controller');
+        $controllerName = substr($controllerFQCN, strrpos($controllerFQCN,'\\')+1,-10);
+        $resource = strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter($controllerName));
+        $privilege = $match->getParam('action');        
+        $acl = $event->getApplication()->getServiceManager()->get('acl');   
+        return $acl->isAllowed($role,$resource,$privilege);
+
+    }
+    
     /**
      * returns a Response redirecting to the login page.
      *
