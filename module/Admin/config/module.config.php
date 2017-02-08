@@ -311,8 +311,29 @@ return [
             'interpreters-office/admin' => __DIR__.'/../view',
         ],
     ],
-    // maybe put in its own file?
+    // based on LearnZF2
     'acl' => [
-        'some_key' => 'some value',
-    ]
+        'role' => [
+            'anonymous' => null,
+            'submitter' => null,
+            'manager'   => null,
+            'admin'     => ['manager']
+        ],
+        'resource' => [
+
+            'languages' => null,
+            'event-types'=> ['languages'],
+            'interpreters' => null,
+            'requests' => null,
+            'events' => null,
+            // to be comtinued
+        ],
+        // how to do configure this with Assertions?
+        'allow' => [
+            ['admin',null,null],
+            ['submitter','requests',]
+            // to be comtinued
+
+        ],
+    ],
 ];
