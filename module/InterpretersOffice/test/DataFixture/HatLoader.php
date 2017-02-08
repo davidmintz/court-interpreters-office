@@ -22,7 +22,7 @@ class HatLoader implements FixtureInterface
     {
 
         // create the Role entities
-        foreach (['submitter', 'manager', 'administrator'] as $roleName) {
+        foreach (['submitter', 'manager', 'administrator','staff'] as $roleName) {
             $role = new Entity\Role();
             $role->setName($roleName);
             $objectManager->persist($role);
