@@ -47,7 +47,8 @@ class Module
         //echo get_class($viewModel). "  is the class of whatever...";
         $viewModel->something = "some value set by event listener";
         
-        $acl_config = $e->getApplication()->getServiceManager()->get('config')['acl'];
+       // $acl_config = $e->getApplication()->getServiceManager()->get('config')['acl'];
+        
         
     }
     /*
