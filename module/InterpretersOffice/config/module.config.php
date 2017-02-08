@@ -110,6 +110,7 @@ return [
                 'options' => [
                     'route' => '/',
                     'defaults' => [
+                        'module' => __NAMESPACE__,
                         'controller' => Controller\IndexController::class,
                         'action' => 'index',
                     ],
@@ -139,6 +140,7 @@ return [
             'application' => [
                 'type' => Segment::class,
                 'options' => [
+                     'module' => __NAMESPACE__,
                     'route' => '/app[/:action]',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
@@ -165,7 +167,7 @@ return [
                 'options' => [
                     'route' => '/logout',
                     'defaults' => [
-                         'module' => __NAMESPACE__,
+                        'module' => __NAMESPACE__,
                         'controller' => Controller\AuthController::class,
                         'action' => 'logout',
                     ],
@@ -178,7 +180,7 @@ return [
                 'options' => [
                     'route' => '/example[/:action]',
                     'defaults' => [
-                        //'module' => __NAMESPACE__,
+                        'module' => __NAMESPACE__,
                         'controller' => Controller\ExampleController::class,
                         'action' => 'index',
                     ],
