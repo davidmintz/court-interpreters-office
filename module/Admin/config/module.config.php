@@ -19,7 +19,7 @@ return [
                     'route' => '/admin', //[/]
                     'defaults' => [
                         'module' => __NAMESPACE__,
-                        'controller' => Controller\IndexController::class,
+                        'controller' => Controller\AdminIndexController::class,
                         'action' => 'index',
                     ],
                 ],
@@ -291,7 +291,7 @@ return [
     'controllers' => [
 
         'invokables' => [
-            Controller\IndexController::class => Controller\IndexController::class,
+            Controller\AdminIndexController::class => Controller\AdminIndexController::class,
         ],
         'factories' => [
             Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
@@ -305,35 +305,62 @@ return [
     ],
     'view_manager' => [
         'template_map' => [
-            'interpreters-office/admin/index/index' => __DIR__.'/../view/interpreters-office/admin/index/index.phtml',
+            'interpreters-office/admin/admin-index/index' => __DIR__.'/../view/interpreters-office/admin/index/index.phtml',
         ],
         'template_path_stack' => [
             'interpreters-office/admin' => __DIR__.'/../view',
         ],
     ],
-    // based on LearnZF2
+    // based on LearnZF2.
+    // experimental, work in progress
     'acl' => [
-        'role' => [
+        'roles' => [
+            // 'role name' => 'parent role'
             'anonymous' => null,
             'submitter' => null,
             'manager'   => null,
-            'admin'     => ['manager']
+            'administrator' => 'manager',
+            'staff' => null,
         ],
-        'resource' => [
-
+        // some of this inheritance hierarchy might have to change
+        'resources' => [
+             // 'resource name' => 'parent resource'
             'languages' => null,
-            'event-types'=> ['languages'],
-            'interpreters' => null,
-            'requests' => null,
+            'event-types'=> 'languages',            
+            'locations'=>'languages',
             'events' => null,
-            // to be comtinued
+            
+            'users' => 'events',
+            'people' => 'users',
+           
+            'judges' => 'events',
+            'interpreters' => 'events',
+            'requests' => null,
+            'admin-index' => 'events',
+            
+            // to be continued
         ],
-        // how to do configure this with Assertions?
+        // how to we configure this to use Assertions?
+        // I think we don't
         'allow' => [
-            ['admin',null,null],
-            ['submitter','requests',]
-            // to be comtinued
-
+            //'role' => [ 'resource' => [ priv, other-priv, ...  ]
+            'submitter' => [
+                'requests' => ['create','view','index'],
+                'events'   => ['index','view','search'],
+            ],
+            'manager' => [                
+                'languages' => null,
+                'events' => null,
+            ],
+            'administrator' => null,
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+             Service\Acl::class  => Service\Factory\AclFactory::class,            
+        ],
+        'aliases' => [
+            'acl' => Service\Acl::class,
         ],
     ],
 ];
