@@ -29,7 +29,7 @@ class SimpleEntityControllerFactory implements FactoryInterface
         $array = explode('\\', $requestedName);
         $baseName = end($array);
         $shortName = strtolower(substr($baseName, 0, -10));
-
+        //substr($requestedName, strrpos($requestedName,'\\')+1)
         switch ($shortName) {
             case 'languages':
             case 'locations':
