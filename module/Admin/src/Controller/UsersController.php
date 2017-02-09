@@ -9,6 +9,9 @@ use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\User;
 
+use Zend\Permissions\Acl\AclInterface;
+
+use Zend\EventManager\EventManagerInterface;
 /**
  * controller for admin/users.
  *
@@ -21,6 +24,9 @@ use InterpretersOffice\Entity\User;
  */
 class UsersController extends AbstractActionController
 {
+    
+
+
     /**
      * entity manager.
      *
@@ -29,14 +35,44 @@ class UsersController extends AbstractActionController
     protected $entityManager;
 
     /**
+     * @var AclInterface
+     */
+    protected $acl;
+
+    /**
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, AclInterface $acl)
     {
         $this->entityManager = $entityManager;
+        $this->acl = acl;
     }
+
+   /**
+     * attaches event handlers
+     * https://mwop.net/blog/2012-07-30-the-new-init.html
+     */
+    public function setEventManager(EventManagerInterface $events)
+    {
+        
+        $acl = $this->acl;
+        $events->attach('update-role', function ($e) use ($acl) {
+            $acl = $serviceManager->get('acl');
+            $params = $e->getParams();
+            $isAllowed = $acl->checkAcl($params['role'],$params['resource'],$params['action']);
+            if (! $isAllowed) {
+                $controller = $e->getTarget();
+                $message = $acl->getMessage() ?: "Access denied.";
+                $controller->flashMessenger()->addWarningMessage($message);
+                $controller->redirect()->toRoute('requests');
+                return;
+            }
+        });
+        return parent::setEventManager($events);
+    }
+
 
     /**
      * index action.

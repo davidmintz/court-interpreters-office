@@ -25,6 +25,13 @@ class PeopleControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        
+        if ($requestedName == Controller\UsersController::class) {
+            return new $requestedName(
+                $container->get('entity-manager'),
+                $container->get('acl')
+            );
+        }
         return new $requestedName(
              $container->get('entity-manager')
         );
