@@ -12,6 +12,10 @@ use InterpretersOffice\Entity\User;
 use Zend\Permissions\Acl\AclInterface;
 
 use Zend\EventManager\EventManagerInterface;
+
+use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
+use Zend\Authentication\AuthenticationService;
+
 /**
  * controller for admin/users.
  *
@@ -40,15 +44,32 @@ class UsersController extends AbstractActionController
     protected $acl;
 
     /**
+     * @var AuthenticationService
+     * 
+     */
+    protected $auth;
+
+    /**
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, AclInterface $acl)
+    public function __construct(EntityManagerInterface $entityManager)//, AclInterface $acl
     {
         $this->entityManager = $entityManager;
-        $this->acl = acl;
+        //$this->acl = acl;
     }
+    /**
+     * implements AuthenticationAwareInterface
+     * 
+     * @param AuthenticationService $auth
+     * 
+     */
+    public function setAuthenticationService(AuthenticationService $auth)
+    {
+        $this->auth = $auth;
+    }
+
 
    /**
      * attaches event handlers
@@ -61,8 +82,9 @@ class UsersController extends AbstractActionController
         $events->attach('update-role', function ($e) use ($acl) {
             $acl = $serviceManager->get('acl');
             $params = $e->getParams();
-            $isAllowed = $acl->checkAcl($params['role'],$params['resource'],$params['action']);
-            if (! $isAllowed) {
+            // an assertion will be needed here
+            //$isAllowed = $acl->checkAcl($params['role'],$params['resource'],$params['action']);
+            if (false) { // if access denied
                 $controller = $e->getTarget();
                 $message = $acl->getMessage() ?: "Access denied.";
                 $controller->flashMessenger()->addWarningMessage($message);
