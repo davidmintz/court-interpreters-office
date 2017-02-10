@@ -71,9 +71,13 @@ class Module
         if (!$match) {
             return;
         }
+        $container = $event->getApplication()->getServiceManager();
         $module = $match->getParam('module');     
-        
+        $session = $container->get('Authentication');
         if ('InterpretersOffice' == $module) {
+            if (! $session->role ) {
+                $session->role = 'anonymous';
+            }
             return;
         }
             
