@@ -78,6 +78,8 @@ class AuthenticationListener
     {
         $user = $e->getParam('user');
         $message = sprintf('user %s logged out', $user->getPerson()->getEmail());
+        $session = new \Zend\Session\Container('Authentication');
+        $session->role = 'anonymous';
         $this->log->info($message);
     }
 }
