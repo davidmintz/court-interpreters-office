@@ -8,7 +8,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller;
 
-use InterpretersOffice\Admin\Service\Authentication\AuthenticationAwareInterface;
+use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
 
 /**
  * Factory for instantiating Controllers that manage Person, its subclasses, or
