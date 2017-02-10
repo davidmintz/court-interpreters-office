@@ -355,6 +355,11 @@ return [
             ],
             'administrator' => null,
         ],
+        'deny' => [
+            'administrator' => [
+                'requests' => ['create','add','edit','update'],
+            ]
+        ]
     ],
     'service_manager' => [
         'factories' => [
