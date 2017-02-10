@@ -73,8 +73,11 @@ class UsersController extends AbstractActionController
 
    /**
      * attaches event handlers
-     * https://mwop.net/blog/2012-07-30-the-new-init.html
-     */
+    * 
+    * NOTE: we might take this out after all (not necessary)
+    * 
+    * https://mwop.net/blog/2012-07-30-the-new-init.html
+    */
     public function setEventManager(EventManagerInterface $events)
     {
         
@@ -94,7 +97,15 @@ class UsersController extends AbstractActionController
         });
         return parent::setEventManager($events);
     }
-
+    /**
+     * add a new user
+     */
+    public function addAction()
+    {
+        $viewModel = new ViewModel(['title' => 'add a user']);
+        $viewModel->setTemplate('interpreters-office/admin/users/form');
+        return $viewModel;
+    }
 
     /**
      * index action.
