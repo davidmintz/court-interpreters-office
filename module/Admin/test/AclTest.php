@@ -47,8 +47,8 @@ class AuthenticationTest extends AbstractControllerTest
         $allow = [
             ['manager','event-types','edit'],
             ['manager','users','edit'],
-            ['manager','languages','create'],
-            ['administrator','languages','create'],
+            ['manager','languages','edit'],
+            ['administrator','languages','edit'],
         ];
         foreach ($allow as $rule) {
             list($role, $resource, $privilege) = $rule;
@@ -58,7 +58,9 @@ class AuthenticationTest extends AbstractControllerTest
             
             ['staff','event-types','edit'],
             ['staff','languages','add'],
-            ['administrator','requests','create'],
+            ['administrator','requests','edit'],
+            ['staff','requests','edit'],
+            ['staff','requests','edit'],
             
         ];
         foreach ($deny as $rule) {
