@@ -357,7 +357,7 @@ return [
         ],
         'deny' => [
             'administrator' => [
-                'requests' => ['create','add','edit','update'],
+                'requests' => ['add','edit','update','delete','cancel'],
             ]
         ]
     ],
