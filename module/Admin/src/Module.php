@@ -80,10 +80,7 @@ class Module
             }
             return;
         }
-            
-        $container = $event->getApplication()->getServiceManager();
-        $auth = $container->get('auth');
-        $session = $container->get('Authentication');
+        $auth = $container->get('auth');        
         if (!$auth->hasIdentity()) {
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
