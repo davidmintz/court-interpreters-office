@@ -10,13 +10,13 @@ use Doctrine\ORM\Mapping as ORM;
  * Entity representing a Role in the authorization system.
  *
  * Every User has one and only one Role. The Roles are hard-coded in the
- * 'roles' database table: administrator, manager, and submitter. A submitter
+ * 'roles' database table: administrator, manager, staff, and submitter. A submitter
  * can read/write requests for interpreting services. An administrator can do
  * everything except read/write submitter requests. A manager can do everything
  * an administrator can do except manage other users in the manager and
  * administrator roles.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\RoleRepository")
  * @ORM\Table(name="roles")
  */
 class Role
