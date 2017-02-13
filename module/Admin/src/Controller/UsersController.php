@@ -52,7 +52,12 @@ class UsersController extends AbstractActionController //implements Authenticati
      * 
      */
     protected $auth;
-
+    
+    /**
+     * the role of the currently authenticated user
+     * @var string $role
+     */
+    protected $role;
     /**
      * constructor.
      *
@@ -61,7 +66,8 @@ class UsersController extends AbstractActionController //implements Authenticati
     public function __construct(EntityManagerInterface $entityManager)//, AclInterface $acl
     {
         $this->entityManager = $entityManager;
-        //$this->acl = acl;
+        $this->role = (new Session('Authentication'))->role;
+        
     }
     /**
      * implements AuthenticationAwareInterface
@@ -76,29 +82,24 @@ class UsersController extends AbstractActionController //implements Authenticati
 
 
    /**
-     * attaches event handlers
+    * attaches event handlers
     * 
     * NOTE: we might take this out after all (not necessary)
-    * 
+    *  
     * https://mwop.net/blog/2012-07-30-the-new-init.html
     */
     public function setEventManager(EventManagerInterface $events)
     {
         
         $acl = $this->acl;
+        // maybe not... to be continued
         $events->attach('update-role', function ($e) use ($acl) {
-            $acl = $serviceManager->get('acl');
-            $params = $e->getParams();
-            // an assertion will be needed here
-            // $isAllowed = $acl->checkAcl($params['role'],$params['resource'],$params['action']);
-            if (false) { // if access denied
-                $controller = $e->getTarget();
-                $message = $acl->getMessage() ?: "Access denied.";
-                $controller->flashMessenger()->addWarningMessage($message);
-                $controller->redirect()->toRoute('requests');
-                return;
+           
+            // $params = $e->getParams();
+            // etc
+            
             }
-        });
+        );
         return parent::setEventManager($events);
     }
     /**
@@ -109,14 +110,9 @@ class UsersController extends AbstractActionController //implements Authenticati
         $viewModel = new ViewModel(['title' => 'add a user']);
         $viewModel->setTemplate('interpreters-office/admin/users/form');
         $request = $this->getRequest();
-        //$user = $this->auth->getIdentity();
-        //echo get_class($user); $this->entityManager->merge($user);
-        
-        //echo $user->getRole();
         $form = new UserForm($this->entityManager,[
             'action'=>'create',
-            'role' => (new Session('Authentication'))->role,
-            //'auth'=>$this->auth
+            'role' => $this->role,           
             ]
          );
         $viewModel->form = $form;
@@ -133,6 +129,6 @@ class UsersController extends AbstractActionController //implements Authenticati
     {
         //echo "it works"; return false;
         
-        return new ViewModel(['title' => 'admin | users']);
+        return new ViewModel(['title' => 'admin | users','role'=>$this->role]);
     }
 }
