@@ -47,6 +47,7 @@ class AuthenticationTest extends AbstractControllerTest
         $allow = [
             ['manager','event-types','edit'],
             ['manager','users','edit'],
+            ['manager','users','add'],
             ['manager','languages','edit'],
             ['administrator','languages','edit'],
         ];
@@ -58,9 +59,11 @@ class AuthenticationTest extends AbstractControllerTest
             
             ['staff','event-types','edit'],
             ['staff','languages','add'],
+            ['staff','users','add'],
             ['administrator','requests','edit'],
             ['staff','requests','edit'],
             ['staff','requests','edit'],
+            
             
         ];
         foreach ($deny as $rule) {
@@ -69,5 +72,6 @@ class AuthenticationTest extends AbstractControllerTest
         }
         
     }
+    
     
 }
