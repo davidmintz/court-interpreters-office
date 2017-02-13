@@ -37,13 +37,15 @@ class AclFactory implements FactoryInterface
                 $message = sprintf(
                     "access DENIED to user %s in role %s: resource %s, action %s",
                     $auth->getIdentity()->getPerson()->getEmail(),
-                    $e->getParam('role'),$e->getParam('resource'),
+                    $e->getParam('role'), $e->getParam('resource'),
                     $e->getParam('privilege','N/A')
                 );
                 $log->warn($message);                
             }
         );
-       $acl->setEventManager(new EventManager($sharedEventManager));
+       // note to self: if $acl implements EventManagerAwareInterface,
+       // it seems we don't have to do the following ourselves
+       // $acl->setEventManager(new EventManager($sharedEventManager));
        return $acl;
     }
 }
