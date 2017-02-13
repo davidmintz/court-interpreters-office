@@ -22,20 +22,22 @@ class AuthenticationTest extends AbstractControllerTest
     
     public function setUp()
     {
-
         parent::setUp();
-        $this->acl = $this->getApplicationServiceLocator()->get('acl');
+        $config = $this->getApplicationServiceLocator()->get('config')['acl'];
+        // set it up outside the MVC context because the event listeners assume
+        // an authenticated user, which we do not have
+        $this->acl = new Acl($config);
+        $this->acl->setEventManager(new \Zend\EventManager\EventManager());
     }
     
     public function testAclIsAvailableFromServiceManager()
     {
-        $this->assertInstanceOf(Acl::class,$this->acl );
+        $this->assertInstanceOf(Acl::class,$this->getApplicationServiceLocator()->get('acl'));
     }
     
     public function testAcl()
     {
-        
-        
+                
         $this->assertFalse($this->acl->isAllowed('submitter','events','update'),"submitter should NOT be allowed to edit events");
         $this->assertFalse($this->acl->isAllowed('submitter','events','boink'),"submitter should NOT be allowed undefined privilege");
         $this->assertFalse($this->acl->isAllowed('submitter','judges','edit'),"submitters should NOT be allowed to edit judges" );
@@ -69,9 +71,6 @@ class AuthenticationTest extends AbstractControllerTest
         foreach ($deny as $rule) {
             list($role, $resource, $privilege) = $rule;
             $this->assertFalse($this->acl->isAllowed($role, $resource, $privilege),"$role SHOULD NOT be allowed to $privilege $resource");
-        }
-        
+        }   
     }
-    
-    
 }
