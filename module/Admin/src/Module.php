@@ -43,11 +43,12 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'checkAcl']);
         $container = $event->getApplication()->getServiceManager();
-        //// The following line instantiates the SessionManager and automatically
+        // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
         // $sessionManager =
         $container->get(SessionManager::class);
+        
     }
 
     /**
@@ -93,8 +94,7 @@ class Module
             if (! $this->checkAcl($event,$session->role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
-                $flashMessenger->addWarningMessage('Access denied.');
-
+                $flashMessenger->addWarningMessage('Access denied.');                 
                 return $this->getRedirectionResponse($event);
             }
         }        
@@ -115,7 +115,7 @@ class Module
         $controllerName = substr($controllerFQCN, strrpos($controllerFQCN,'\\')+1,-10);
         $resource = strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter($controllerName));
         $privilege = $match->getParam('action');        
-        $acl = $event->getApplication()->getServiceManager()->get('acl');   
+        $acl = $event->getApplication()->getServiceManager()->get('acl');          
         return $acl->isAllowed($role,$resource,$privilege);
 
     }
