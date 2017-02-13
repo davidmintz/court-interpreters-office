@@ -26,12 +26,12 @@ class Acl extends ZendAcl implements EventManagerAwareInterface {
      */
     protected $config;
     
-    /**
+    /*
      * event manager
-     * 
+     * .... or not. seems to make PHP 5.6 sad.
      * @var EventManagerInterface $events
      */
-    protected $events;
+    // protected $events;
     
     /**
      * constructor
