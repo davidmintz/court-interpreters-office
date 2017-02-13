@@ -49,7 +49,31 @@ class MinimalUserLoader implements FixtureInterface
            ->setPassword('boink')
            ->setActive(true);
         $objectManager->persist($user);
+        
+        // create a person in the role of staff
+        $staff_person =  new Entity\Person();
+        $staff_person->setActive(true)->setFirstname('Staffie')->setLastname('Person')
+                ->setEMail('staff_person@nysd.uscourts.gov')
+                ->setHat( $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+                    ->findOneBy(
+                        [
+                                //'name'=>'staff, Interpreters Office',
+                                'name' => 'Interpreters Office staff',
+
+                            ]
+                    )
+            );
+        $objectManager->persist($staff_person);
+        $staff_user = new Entity\User();
+        $staff_user->setPerson($staff_person)->setRole(
+            $objectManager->getRepository('InterpretersOffice\Entity\Role')
+                         ->findOneBy(['name' => 'staff'])
+        )->setUsername('staffie')
+           ->setPassword('boink')
+           ->setActive(true);
+        
+        $objectManager->persist($staff_user); 
         $objectManager->flush();
-        //printf("looking good at %d in %s\n",__LINE__,basename(__FILE__));
+        //printf("\nlooking good at %d in %s\n",__LINE__,basename(__FILE__));
     }
 }
