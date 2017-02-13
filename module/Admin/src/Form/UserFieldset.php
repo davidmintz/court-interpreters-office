@@ -116,6 +116,28 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'id' => 'username',
              ],            
         ]);
+        $this->add(
+            [
+            'name' => 'role',
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            'options' => [
+                'object_manager' => $this->objectManager,
+                'target_class' => 'InterpretersOffice\Entity\Role',
+                'label' => 'role',
+                /** @todo */
+                 //'find_method' => ['name' => 'getCourthouses'],
+                'property' => 'name',
+            ],
+            'attributes' => [
+                'class' => 'form-control',
+                'id' => 'role',
+            ],
+        ]
+        );
+
+
+
+
     }
 
 	//public function setAuthenticationService(AuthenticationService $auth){}
