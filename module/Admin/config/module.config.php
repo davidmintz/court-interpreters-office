@@ -376,6 +376,9 @@ return [
                 'languages' => null,
                 'events' => null,
             ],
+            'staff' => [
+                'admin-index' => ['index'],
+            ],
             'administrator' => null,
         ],
         'deny' => [
