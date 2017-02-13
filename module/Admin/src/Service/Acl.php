@@ -6,22 +6,32 @@ namespace InterpretersOffice\Admin\Service;
 
 use Zend\Permissions\Acl\Acl as ZendAcl;
 
-
+use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerAwareInterface;
 
 /**
  * ACL
  * 
+ * doesn't seem to be necessary to implement EventManagerAwareInterface
+ * explicitly if we call setEventManager on this ourselves
  * 
  */
-class Acl extends ZendAcl {
+class Acl extends ZendAcl implements EventManagerAwareInterface {
     
-    
+    use EventManagerAwareTrait;
     /**
      * configuration
      * 
      * @var Array
      */
     protected $config;
+    
+    /**
+     * event manager
+     * 
+     * @var EventManagerInterface $events
+     */
+    protected $events;
     
     /**
      * constructor
@@ -84,4 +94,17 @@ class Acl extends ZendAcl {
         } 
     }
     
+    /**
+     * 
+     * inherited from Zend\Permissions\Acl\Acl
+     * 
+     * @return boolean if authorized 
+     */
+    public function isAllowed($role = null, $resource = null, $privilege = null) {
+        $allowed = parent::isAllowed($role, $resource, $privilege);
+        if (! $allowed) {
+            $this->events->trigger('access-denied', $this, \compact('role','resource','privilege'));
+        }
+        return $allowed;
+    }
 }
