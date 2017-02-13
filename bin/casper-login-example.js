@@ -1,12 +1,16 @@
 /** 
  *  example demonstrating how to log in and then navigate to somewhere
  *  requiring authentication using CasperJs
+ *  step one is install node.js, phantomjs, and casper
+ *  http://docs.casperjs.org/en/latest/installation.html
+ *  
+ *  invoke as:  casperjs script_name
  * 
  */
 
 
 // these callbacks do not seem to be necessary just to 
-// persist the authentication between requests but we were
+// persist the authentication between requests, but we were
 // having trouble with that, or so we thought
 
 var resourceReceived = function(casper,response) {
@@ -36,7 +40,7 @@ var resourceRequested = function(casper, resource) {
 };
 
 var cookieJar = 'cookies.json';
-var utils = require('utils');
+//var utils = require('utils');
 var fs = require('fs');
 var baseUrl = 'http://localhost:5000';
 
