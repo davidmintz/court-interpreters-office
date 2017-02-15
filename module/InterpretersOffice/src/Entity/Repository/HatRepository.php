@@ -61,12 +61,11 @@ class HatRepository extends EntityRepository
             break;
             case 'manager': 
                 if ($action == 'update') {
-                    $dql .= 'WHERE r.name <> \'submitter\'';                           
+                    $dql .= 'WHERE r.name = \'submitter\'';                           
                 } else {
-                    throw new \RuntimeException("$action on user entity denied to $auth_user_role");
+                    $dql .= 'WHERE  r.name <> \'submitter\'';                     
                 }
             break;
-
             case 'administrator': 
                // nothing more to do
             break;
