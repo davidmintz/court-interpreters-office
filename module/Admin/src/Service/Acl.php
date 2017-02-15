@@ -19,6 +19,7 @@ use Zend\EventManager\EventManagerAwareInterface;
 class Acl extends ZendAcl implements EventManagerAwareInterface {
     
     use EventManagerAwareTrait;
+    
     /**
      * configuration
      * 
@@ -26,13 +27,7 @@ class Acl extends ZendAcl implements EventManagerAwareInterface {
      */
     protected $config;
     
-    /*
-     * event manager
-     * .... or not. seems to make PHP 5.6 sad.
-     * @var EventManagerInterface $events
-     */
-    // protected $events;
-    
+
     /**
      * constructor
      * 
@@ -95,7 +90,6 @@ class Acl extends ZendAcl implements EventManagerAwareInterface {
     }
     
     /**
-     * 
      * inherited from Zend\Permissions\Acl\Acl
      * 
      * @return boolean if authorized 
