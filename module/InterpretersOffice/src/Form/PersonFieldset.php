@@ -139,6 +139,12 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
     protected $action;
 
     /**
+     * role of the currently authenticated user
+     *
+     * @var string
+     */
+    protected $auth_user_role = 'anonymous';
+    /**
      * constructor.
      *
      * @param ObjectManager $objectManager
@@ -151,6 +157,13 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         }
         if (!in_array($options['action'], ['create', 'update'])) {
             throw new \RuntimeException('invalid "action" option in PersonFieldset constructor');
+        }
+        if (isset($options['auth_user_role'])) {
+            /** @todo let's not hard-code these roles */
+             if (! in_array($options['auth_user_role'],['anonymous','staff','submitter','manager','administrator'])) {
+                  throw new \RuntimeException('invalid "auth_user_role" option in PersonFieldset constructor');
+             }
+             $this->auth_user_role = $options['auth_user_role'];
         }
         $this->action = $options['action'];
         unset($options['action']);
@@ -173,11 +186,28 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      * If we are a Person, we need the Hat element
      * If we are a Judge, the Hat is pre-determined
      * If we are an Interpreter, there are only two kinds of Hat.
+     * If we are in the context of User form, the options populating the 
+     * depend on the role of the authenticated user and (possibly) the 
+     * controller action.
      * Subclasses should override this to provide an appropriately configured
-     * element
+     * Hat select element
      */
     public function addHatElement()
     {
+        // if we are the base fieldset, it's a Person form, or a subclass;
+        // otherwise, we are in the context of a User form 
+        $form_context = $this->useAsBaseFieldset ? 'person' : 'user';  
+        if ($form_context == 'person') {
+            $find_method = ['name'=>'getHatsForPersonForm'];
+        } else {
+            $find_method = [
+                'name' => 'getHatsForUserForm',
+                'params'=> [
+                    'auth_user_role'=>$this->auth_user_role,
+                    'action'=> $this->action,
+                ]
+            ];
+        }
         $this->add(
             [
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
@@ -189,9 +219,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'label' => 'hat',
                 'display_empty_item' => true,
                 'empty_item_label' => '',
-                'find_method' => ['name' => 'getHatsForPersonForm'],
-
-            ],
+                'find_method' =>$find_method,
+             ],
              'attributes' => [
                 'class' => 'form-control',
                 'id' => 'hat',
