@@ -154,12 +154,12 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         }
         $this->action = $options['action'];
         unset($options['action']);
-
+        $use_as_base_fieldset = isset($options['use_as_base_fieldset']) ? $options['use_as_base_fieldset'] : true;
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager, true))
                 //->setObject(new Entity\Person())
-                ->setUseAsBaseFieldset(true);
+                ->setUseAsBaseFieldset($use_as_base_fieldset);
         foreach ($this->elements as $element) {
             $this->add($element);
         }
