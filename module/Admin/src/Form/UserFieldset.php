@@ -12,6 +12,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 
+use InterpretersOffice\Form\PersonFieldset;
+
 //use Zend\Authentication\AuthenticationServiceInterface;
 
 //use InterpretersOffice\Admin\Service\Authentication\AuthenticationAwareInterface;
@@ -135,9 +137,18 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         ]
         );
 
+        $fieldset = new PersonFieldset($this->objectManager,[
+            'action' => $this->action,
+            'use_as_base_fieldset' => false,
+            ]);
 
+        $this->add($fieldset);
 
+    }
 
+    public function addPasswordElements()
+    {
+        // to be implemented
     }
 
 	//public function setAuthenticationService(AuthenticationService $auth){}
