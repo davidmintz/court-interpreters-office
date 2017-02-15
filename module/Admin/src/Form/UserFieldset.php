@@ -138,8 +138,9 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         );
 
         $fieldset = new PersonFieldset($this->objectManager,[
-            'action' => $this->action,
-            'use_as_base_fieldset' => false,
+                'action' => $this->action,
+                'use_as_base_fieldset' => false,
+                'auth_user_role' => $this->role,
             ]);
 
         $this->add($fieldset);
