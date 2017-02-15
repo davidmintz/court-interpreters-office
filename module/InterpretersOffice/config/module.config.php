@@ -10,8 +10,8 @@ use Zend\Router\Http\Segment;
 
 $environment = getenv('APP_ENV') ?: 'development';
 
-// disable cache for the time being
-$doctrine_cache = 'array'; //$environment == 'testing' ? 'array' : 'filesystem';
+// set to 'array' to disable
+$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
 
 return [
     'form_elements' => [
