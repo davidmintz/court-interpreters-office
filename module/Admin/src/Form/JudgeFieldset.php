@@ -153,6 +153,9 @@ class JudgeFieldset extends PersonFieldset
         );
         // while we're at it, add the Judge "flavor" element, which can be
         // thought of as a sub-hat
+        /** 
+         * @todo cache this somehow
+         */
         $this->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'flavor',
