@@ -287,10 +287,13 @@ return [
                     'add' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/add',
+                            'route' => '/add[/person/:id]',
                             'defaults' => [
                                 'action' => 'add',
                             ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ]
                         ],
                     ],
                     'edit' => [
