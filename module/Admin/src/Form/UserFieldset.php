@@ -52,9 +52,9 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
     /**
      * role of currently authenticationed user
      * 
-     * @var string $role
+     * @var string $auth_user_role
      */
-    protected $role;
+    protected $auth_user_role;
     
     /**
      * constructor
@@ -73,10 +73,10 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         $this->action = $options['action'];
         unset($options['action']);
         
-        if (! isset($options['role'])) {
+        if (! isset($options['auth_user_role'])) {
             throw new \RuntimeException('missing "role" option in UserFieldset constructor');
         }
-        $this->role = $options['role']; unset($options['role']);
+        $this->role = $options['auth_user_role']; unset($options['auth_user_role']);
         // maybe we can get by with just the "role," which is in the session
         /*
         if (! $options['auth'] instanceof AuthenticationServiceInterface) {
@@ -136,11 +136,21 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ],
         ]
         );
-
+         // hack designed to please HTML5 validator
+        $element = $this->get('role');
+        $options = $element->getValueOptions();
+        array_unshift($options, [
+           'label' => ' ',
+           'value' => '',
+           'attributes' => [
+               'label' => ' ',
+           ],
+        ]);
+        $element->setValueOptions($options);
         $fieldset = new PersonFieldset($this->objectManager,[
                 'action' => $this->action,
                 'use_as_base_fieldset' => false,
-                'auth_user_role' => $this->role,
+                'auth_user_role' => $this->auth_user_role,
             ]);
 
         $this->add($fieldset);

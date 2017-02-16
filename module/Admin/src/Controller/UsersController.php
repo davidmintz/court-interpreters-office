@@ -55,9 +55,9 @@ class UsersController extends AbstractActionController //implements Authenticati
     
     /**
      * the role of the currently authenticated user
-     * @var string $role
+     * @var string $auth_user_role
      */
-    protected $role;
+    protected $auth_user_role;
     /**
      * constructor.
      *
@@ -66,7 +66,7 @@ class UsersController extends AbstractActionController //implements Authenticati
     public function __construct(EntityManagerInterface $entityManager)//, AclInterface $acl
     {
         $this->entityManager = $entityManager;
-        $this->role = (new Session('Authentication'))->role;
+        $this->auth_user_role = (new Session('Authentication'))->role;
         
     }
     /**
@@ -112,7 +112,7 @@ class UsersController extends AbstractActionController //implements Authenticati
         $request = $this->getRequest();
         $form = new UserForm($this->entityManager,[
             'action'=>'create',
-            'role' => $this->role,           
+            'auth_user_role' => $this->auth_user_role,           
             ]
          );
         $viewModel->form = $form;
