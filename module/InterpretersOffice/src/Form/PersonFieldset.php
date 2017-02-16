@@ -112,6 +112,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ],
             'attributes' => [
                 'value' => 1,
+                'id' => 'person-active',
             ],
         ],
         'id' => [

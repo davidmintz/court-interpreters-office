@@ -76,7 +76,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         if (! isset($options['auth_user_role'])) {
             throw new \RuntimeException('missing "role" option in UserFieldset constructor');
         }
-        $this->role = $options['auth_user_role']; unset($options['auth_user_role']);
+        $this->auth_user_role = $options['auth_user_role']; unset($options['auth_user_role']);
         // maybe we can get by with just the "role," which is in the session
         /*
         if (! $options['auth'] instanceof AuthenticationServiceInterface) {
@@ -125,9 +125,11 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             'options' => [
                 'object_manager' => $this->objectManager,
                 'target_class' => 'InterpretersOffice\Entity\Role',
-                'label' => 'role',
-                /** @todo */
-                 //'find_method' => ['name' => 'getCourthouses'],
+                'label' => 'role',                
+                'find_method' => [
+                    'name' => 'getRoles',
+                    'params' => ['auth_user_role' => $this->auth_user_role ],
+                 ],
                 'property' => 'name',
             ],
             'attributes' => [
@@ -136,6 +138,22 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ],
         ]
         );
+        $this->add( [
+            'type' => 'Zend\Form\Element\Checkbox',
+            'name' => 'active',
+            'required' => true,
+            'allow_empty' => false,
+            'options' => [
+                'label' => 'active',
+                'use_hidden_element' => true,
+                'checked_value' => 1,
+                'unchecked_value' => 0,
+            ],
+            'attributes' => [
+                'value' => 1,
+                'id' => 'user-active',
+            ],
+        ]);
          // hack designed to please HTML5 validator
         $element = $this->get('role');
         $options = $element->getValueOptions();
@@ -147,7 +165,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
            ],
         ]);
         $element->setValueOptions($options);
-        $fieldset = new PersonFieldset($this->objectManager,[
+        $fieldset = new PersonFieldset($this->objectManager,
+            [
                 'action' => $this->action,
                 'use_as_base_fieldset' => false,
                 'auth_user_role' => $this->auth_user_role,
@@ -171,7 +190,22 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ],
             'username' => [
                 'required' => true,
+                'allow_empty' => true,
+                /** @todo stringlength validation */
+            ],
+            'role' => [
+                'required' => false,
                 'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'role is required',
+                            ],
+                        ],
+                    ],
+                ],
             ], 
         ];
     }

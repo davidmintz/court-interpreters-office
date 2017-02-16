@@ -113,19 +113,17 @@ class ExampleController extends AbstractActionController
      */
     public function indexAction()
     {
-        echo 'it works';
-        if ($this->events) {
-            echo ' and this->events is a '.get_class($this->events);
-            if ($sharedManager = $this->events->getSharedManager()) {
-                echo ' ... and we have a shared manager! ... ';
-            } else {
-                echo ' but no shared event manager...';
-            }
-        }
-
+       $em = $this->objectManager;
+       // 3 queries
+       $entity = $em->find('InterpretersOffice\Entity\Judge', 11);
+       // 0 queries
+       $defaultLocation = $entity->getDefaultLocation();
+       // 1 queries
+       $parent_location= $defaultLocation->getParentLocation();
+       //if ($parent_location) {}
         return false;
 
-        return new ViewModel();
+        
     }
     /**
      * temporary action for experimenting and doodling.

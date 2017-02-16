@@ -20,6 +20,7 @@ use Zend\Authentication\AuthenticationService;
 use Zend\Session\Container as Session;
 
 use InterpretersOffice\Admin\Form\UserForm;
+use InterpretersOffice\Entity;
 
 /**
  * controller for admin/users.
@@ -116,7 +117,22 @@ class UsersController extends AbstractActionController //implements Authenticati
             ]
          );
         $viewModel->form = $form;
-        
+        /* populate the person fieldset???
+        $user = new Entity\User();
+        $user->setPerson($this->entityManager->find('InterpretersOffice\Entity\Interpreter', 3));
+        $form->bind($user);
+        echo $person->getFirstname();
+        $form->get('user')->get('person')->setObject($user->getPerson());         
+         */
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (!$form->isValid()) {
+                echo "not valid.<pre>"; 
+                print_r($form->getMessages());
+                echo "</pre>";
+                return $viewModel;
+            }
+        }
         return $viewModel;
     }
 

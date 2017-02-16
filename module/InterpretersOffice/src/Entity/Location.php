@@ -68,7 +68,7 @@ class Location
      * a self-referencing Many-To-One relationship.
      *
      * @ORM\JoinColumn(name="parent_location_id",nullable=true)
-     * @ORM\ManyToOne(targetEntity="Location")
+     * @ORM\ManyToOne(targetEntity="Location",fetch="EAGER")
      */
     protected $parentLocation;
 
