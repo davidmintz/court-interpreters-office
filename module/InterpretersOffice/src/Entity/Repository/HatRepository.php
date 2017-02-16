@@ -48,7 +48,7 @@ class HatRepository extends EntityRepository
      */
     public function getHatsForUserForm($auth_user_role,$action)
     {
-        echo "hello? $auth_user_role, $action...";        
+        
          if (! in_array($action,['create','update'])) {
             throw new \DomainException('invalid action parameter');
         }
@@ -60,6 +60,7 @@ class HatRepository extends EntityRepository
                 $dql .= 'WHERE r.name = \'submitter\'';
             break;
             case 'manager': 
+                // manager can update but not create users in role "submitter"
                 if ($action == 'update') {
                     $dql .= 'WHERE r.name = \'submitter\'';                           
                 } else {
@@ -92,5 +93,21 @@ class HatRepository extends EntityRepository
         )->setParameters([':what' => '%court interpreter']);
 
         return $query->getResult();
+    }
+    /**
+     * gets a Hat by its name.
+     * 
+     * we use this instead of findOneBy() for the sake of caching. overriding
+     * findOneBy appears to be a bit too much work.
+     * //http://stackoverflow.com/questions/28668093/how-to-cache-doctrine-findoneby-query-with-cache-id-and-cache-lifetime-optio
+     * @param string $name
+     * @return InterpretersOffice\Entity\Hat
+     */
+    public function getHatByName($name) {
+        return $query = $this->createQuery(
+          'SELECT h  FROM InterpretersOffice\Entity\Hat h WHERE h.name = :what ORDER BY h.name'
+        )->setParameters([':what' => $name])->setMaxResults(1)->getOneorNullResult();
+
+        
     }
 }
