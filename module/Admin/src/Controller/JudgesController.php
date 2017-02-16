@@ -60,7 +60,7 @@ class JudgesController extends AbstractActionController
 
         $request = $this->getRequest();
         $hatRepository = $this->entityManager->getRepository('InterpretersOffice\Entity\Hat');
-        $hat = $hatRepository->findOneBy(['name' => 'Judge']);
+        $hat = $hatRepository->getHatByName('Judge');//findOneBy(['name' => 'Judge']);
         $entity = new Entity\Judge($hat);
         $form->bind($entity);
         if ($request->isPost()) {
@@ -100,7 +100,6 @@ class JudgesController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/judges/form.phtml')
                 ->setVariables(['title' => 'edit a judge']);
         $id = $this->params()->fromRoute('id');
-
         if (!$id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }

@@ -19,7 +19,7 @@ class JudgeFieldset extends PersonFieldset
     /**
      * name of the fieldset.
      *
-     * since we are a subclass of PersonFieldset, this needs to be overriden
+     * since we are a subclass of PersonFieldset, this has to be overriden
      *
      * @var string
      */
@@ -44,12 +44,21 @@ class JudgeFieldset extends PersonFieldset
                 ));
             }
             $judge = $options['object'];
-            /* @todo refactor this part? it's a bit confusing */
+            /**
+             *  @todo refactor this part? it's a bit confusing 
+             *  if this Judge entity has a default location set, we examine it
+             *  to see whether it's a courthouse or a courtroom
+             */
             if ($defaultLocation = $judge->getDefaultLocation()) {
                 if ('courtroom' == $defaultLocation->getType()) {
+                    // ...then we need to know the courtroom's id to set the
+                    // default in the form, and parent courthouse's for the same
+                    // purpose
                     $location_id = $defaultLocation->getId();
                     $parent_location_id = $defaultLocation->getParentLocation()->getId();
                 } else {
+                    // then the default location is a courthouse, so the default 
+                    // $location_id is the courthouse id.
                     $parent_location_id = $defaultLocation->getId();
                     $location_id = $parent_location_id;
                 }
@@ -107,9 +116,7 @@ class JudgeFieldset extends PersonFieldset
             'allow_empty' => true,
             'attributes' => [
                 'id' => 'defaultLocation',
-
             ],
-
         ]);
 
         // this is to make the HTML5 validator happy: a non-empty label attribute
@@ -131,38 +138,20 @@ class JudgeFieldset extends PersonFieldset
         if ($options['action'] == 'update' && $location_id != $parent_location_id) {
             $this->get('courtroom')->setValue($location_id);
         }
-    }
-
-    /**
-     * adds the "Hat" element to our form.
-     *
-     * @return JudgeFieldset
-     */
-    public function addHatElement()
-    {
-
-        // the Hat is not up for discussion; it has to be Judge.
-        // however, there might be a better solution, e.g., an
-        // entity listener
-        $this->add(
-            [
-                'name' => 'hat',
-                'type' => 'Zend\Form\Element\Hidden',
-                'attributes' => ['id' => 'hat'],
-            ]
-        );
-        // while we're at it, add the Judge "flavor" element, which can be
-        // thought of as a sub-hat
-        /** 
-         * @todo cache this somehow
-         */
+        
+        // add the judge "flavor" element. this should be made immutable
+        // if there's a data history. 
+        // formerly a DoctrineModule\Form\Element\ObjectSelect, we're changing
+        // it so we can cache results without having to write a custom repository
         $this->add([
-            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            //'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            'type' => 'Zend\Form\Element\Select',
             'name' => 'flavor',
             'options' => [
-                'object_manager' => $this->objectManager,
-                'target_class' => 'InterpretersOffice\Entity\JudgeFlavor',
-                'property' => 'flavor',
+                'value_options' =>$this->getJudgeFlavorOptions(),
+                //'object_manager' => $this->objectManager,
+                //'target_class' => 'InterpretersOffice\Entity\JudgeFlavor',
+                //'property' => 'flavor',
                 'label' => 'flavor',
             ],
              'attributes' => [
@@ -171,6 +160,7 @@ class JudgeFieldset extends PersonFieldset
              ],
         ]);
         // hack designed to please HTML5 validator
+        /*
         $element = $this->get('flavor');
         $options = $element->getValueOptions();
         array_unshift($options, [
@@ -181,7 +171,44 @@ class JudgeFieldset extends PersonFieldset
            ],
         ]);
         $element->setValueOptions($options);
+`       */
+    }
+    
+    /**
+     * gets the available judge "flavors' for the select menu
+     * @return array
+     */
+    public function getJudgeFlavorOptions()
+    {
+         $flavors = $this->objectManager
+                ->createQuery('SELECT f.id,f.flavor FROM InterpretersOffice\Entity\JudgeFlavor f ORDER BY f.flavor')
+                ->useResultCache(true)
+                ->getResult();
+        $options  [''] = ' ';
+        foreach ($flavors as $f) {
+            $options[$f['id']] = $f['flavor'];
+        }
+        return $options;
+    }
+    
+    /**
+     * adds the "Hat" element to our form.
+     *
+     * @return JudgeFieldset
+     */
+    public function addHatElement()
+    {
 
+        // the Hat is not up for discussion; it has to be Judge.
+        // so, we use no select menu. however, might there be a better 
+        // solution, e.g., an entity listener?
+        $this->add(
+            [
+                'name' => 'hat',
+                'type' => 'Zend\Form\Element\Hidden',
+                'attributes' => ['id' => 'hat'],
+            ]
+        );        
         return $this;
     }
 
