@@ -115,15 +115,24 @@ class UsersController extends AbstractActionController //implements Authenticati
             'action'=>'create',
             'auth_user_role' => $this->auth_user_role,           
             ]
-         );
-        $viewModel->form = $form;
-        /* populate the person fieldset???
+        );
         $user = new Entity\User();
-        $user->setPerson($this->entityManager->find('InterpretersOffice\Entity\Interpreter', 3));
+        // how to populate the person fieldset but not the user
+        $person_id = $this->params()->fromRoute('id');
+        if ($person_id) {
+            $person = $this->entityManager->find('InterpretersOffice\Entity\Person',$person_id);
+            if (! $person) {
+                return $viewModel->setVariables(['errorMessage' => "person with id $person_id not found"]);
+            }
+            $user->setPerson($person);
+            $form->get('user')->get('person')->setObject($person);      
+        }
+        $viewModel->form = $form;
+        
         $form->bind($user);
-        echo $person->getFirstname();
-        $form->get('user')->get('person')->setObject($user->getPerson());         
-         */
+
+        // to be continued
+
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
