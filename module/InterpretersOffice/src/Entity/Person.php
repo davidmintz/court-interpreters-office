@@ -93,7 +93,7 @@ class Person
      * email. We are compelled to use this roundabout method because we have to
      * allow a NULL email address.
      *
-     *  @ORM\ManyToOne(targetEntity="Hat")//,fetch="EAGER"
+     *  @ORM\ManyToOne(targetEntity="Hat",fetch="EAGER")//
      *  @ORM\JoinColumn(nullable=false)
      *
      *  @var Hat
