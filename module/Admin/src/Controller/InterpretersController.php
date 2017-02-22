@@ -115,13 +115,11 @@ class InterpretersController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-             $this->updateInterpreterLanguages($entity,
+            $this->updateInterpreterLanguages($entity,
                     $request->getPost()['interpreter']['interpreter-languages']);
             if (!$form->isValid()) {
                 return $viewModel;
             }
-           
-
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(sprintf(
                     'The interpreter <strong>%s %s</strong> has been updated.',
@@ -143,16 +141,21 @@ class InterpretersController extends AbstractActionController
      * that remain obscure, we have to do it ourself.
      *
      * @param Entity\Interpreter $interpreter
-     * @param array              $languages   language data POSTed to us
+     * @param mixed              $languages   language data POSTed to us
      */
-    public function updateInterpreterLanguages(Entity\Interpreter $interpreter, array $languages)
+    public function updateInterpreterLanguages(Entity\Interpreter $interpreter,  $languages)
     {
+        if (! is_array($languages)) {
+            // return the interpreter entity in an invalid state (no languages)
+            $interpreter->removeInterpreterLanguages($interpreter->getInterpreterLanguages());
+            return;
+        }
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
         // get $before and $after into two like-structured arrays for comparison
         // i.e.: [ language_id => certification, ]
         $before = [];
         $interpreterLanguages = $interpreter->getInterpreterLanguages();
-        printf("DEBUG: we have %d interpreter-languages...",count($interpreterLanguages));
+        //printf("DEBUG: we have %d interpreter-languages...",count($interpreterLanguages));
         foreach ($interpreterLanguages as $il) {
             $array = $il->toArray();
             $before[$array['language_id']] = $array['federalCertification'];
@@ -179,15 +182,13 @@ class InterpretersController extends AbstractActionController
         // what has been removed?
         $removed = array_diff_key($before, $after);
         if (count($removed)) {
-            foreach ($interpreterLanguages as $il) {
-                $name = (string) $il->getLanguage();
+            foreach ($interpreterLanguages as $il) {                
                 if (key_exists($il->getLanguage()->getId(), $removed)) {
                     $interpreter->removeInterpreterLanguage($il);
                 }
             }
         }
         // was any certification field modified?
-        $same = array_intersect_assoc($before, $after);
         foreach ($interpreter->getInterpreterLanguages() as $il) {
             $language = $il->getLanguage();
             $id = $il->getLanguage()->getId();
