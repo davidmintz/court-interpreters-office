@@ -60,12 +60,11 @@ class InterpretersController extends AbstractActionController
         $entity = new Entity\Interpreter();
         $form->bind($entity);
         if ($request->isPost()) {
-            $form->setData($request->getPost());
-            if (!$form->isValid()) {
-                return $viewModel;
-            }
-            $data = $request->getPost()['interpreter']['interpreter-languages'];
+            $form->setData($request->getPost());            
+           
             $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
+            // manually hydrate because we could not make that other shit work
+            $data = $request->getPost()['interpreter']['interpreter-languages'];            
             foreach ($data as $language) {
                 $id = $language['language_id'];
                 $certification = is_numeric($language['federalCertification']) ?
@@ -73,8 +72,11 @@ class InterpretersController extends AbstractActionController
                 // or get them all in one shot with a DQL query?
                 $languageEntity = $repository->find($id);
                 $il = (new Entity\InterpreterLanguage($entity, $languageEntity))
-                ->setFederalCertification($certification);
+                    ->setFederalCertification($certification);
                 $entity->addInterpreterLanguage($il);
+            }
+            if (!$form->isValid()) {
+                return $viewModel;
             }
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
@@ -113,11 +115,12 @@ class InterpretersController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
+             $this->updateInterpreterLanguages($entity,
+                    $request->getPost()['interpreter']['interpreter-languages']);
             if (!$form->isValid()) {
                 return $viewModel;
             }
-            $this->updateInterpreterLanguages($entity,
-                    $request->getPost()['interpreter']['interpreter-languages']);
+           
 
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(sprintf(
@@ -149,6 +152,7 @@ class InterpretersController extends AbstractActionController
         // i.e.: [ language_id => certification, ]
         $before = [];
         $interpreterLanguages = $interpreter->getInterpreterLanguages();
+        printf("DEBUG: we have %d interpreter-languages...",count($interpreterLanguages));
         foreach ($interpreterLanguages as $il) {
             $array = $il->toArray();
             $before[$array['language_id']] = $array['federalCertification'];
