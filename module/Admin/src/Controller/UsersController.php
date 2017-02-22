@@ -140,7 +140,14 @@ class UsersController extends AbstractActionController //implements Authenticati
                 print_r($form->getMessages());
                 echo "</pre>";
                 return $viewModel;
+            } 
+            $this->entityManager->persist($user);
+            if (! $person_id) {
+                $this->entityManager->persist($user->getPerson());
             }
+            $user->setPassword("shit123");
+            $this->entityManager->flush();
+            echo "yay!";
         }
         return $viewModel;
     }
