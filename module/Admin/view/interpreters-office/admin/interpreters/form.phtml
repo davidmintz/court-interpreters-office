@@ -59,9 +59,8 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9"><?php 
     $languageSelect = $fieldset->get('language-select'); 
     echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
-    $this->formSelect($fieldset->get('interpreter-languages'));
+    //$this->formSelect($fieldset->get('interpreter-languages'));
     $shit = $fieldset->get('interpreter-languages');
-    //$shit->setValueOptions($languageSelect->getValueOptions());
     echo $this->formSelect($shit);
     echo $this->formElementErrors($shit);
     ?> 
@@ -98,7 +97,7 @@ $active = $fieldset->get('active');?>
            $element->setValueOptions($fed_certification_options)
                    ->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
            $disabled = false;
-            if (! $ilanguage->getLanguage()->isFederallyCertified()) {
+            if (! $ilanguage->isCertifiable()) {
                $element->setAttribute("disabled","disabled");
                $disabled = true;
            }
@@ -163,7 +162,7 @@ $(function(){
         var divs = [];
         divs[0] = $('<div>')
                 .addClass("col-sm-3 col-sm-offset-4 interpreter-language language-name")
-                .attr({id : language_id})
+                .attr({id : 'language-'+language_id})
                 .text(languageName)
                 .append(
                     $('<input>').attr({
