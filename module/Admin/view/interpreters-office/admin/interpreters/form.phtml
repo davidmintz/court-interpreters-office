@@ -98,7 +98,7 @@ $active = $fieldset->get('active');?>
            $element->setValueOptions($fed_certification_options)
                    ->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
            $disabled = false;
-           if ($element->getValue() === null) {
+            if (! $ilanguage->getLanguage()->isFederallyCertified()) {
                $element->setAttribute("disabled","disabled");
                $disabled = true;
            }
@@ -112,7 +112,7 @@ $active = $fieldset->get('active');?>
         <?php  
         $i++; 
         endforeach;
-    endif;
+    else: echo "WTF? no interpreter-languages"; endif;
 ?>              
    </div><!-- /grid wrapper -->   
 
@@ -156,7 +156,8 @@ $(function(){
         var index = $('.language-name').length;
         var languageName = option.text();
         var certifiable = option.data().certifiable;
-        var interpreter_id = $('input[name="interpreter[id]"]').val();
+        console.warn("DEBUG: language name is "+languageName+ " and certifiable is " + (certifiable ? "true" : "false"));
+        //var interpreter_id = $('input[name="interpreter[id]"]').val();
         
         // build the three div elements, and stick into an array
         var divs = [];
