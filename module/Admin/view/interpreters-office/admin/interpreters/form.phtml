@@ -111,7 +111,7 @@ $active = $fieldset->get('active');?>
         <?php  
         $i++; 
         endforeach;
-    else: echo "WTF? no interpreter-languages"; endif;
+    endif;
 ?>              
    </div><!-- /grid wrapper -->   
 
@@ -222,8 +222,12 @@ $(function(){
     // remove the language (3 divs) when the x is clicked
     $('#interpreter-languages').on("click", "div.remove-language",function(event){
         event.preventDefault();
-        $(this).prevUntil("div.remove-language").addBack()
-                .slideUp(function(){$(this).remove();});
+        var n = $(this).index();
+        // there must be a more elegant way to select the current element plus 
+        // its two previous siblings
+        $(this).prevAll().addBack().slice(n-2,n+1).slideUp(
+                function(){$(this).remove();}
+        );
         
     });
     // testing
