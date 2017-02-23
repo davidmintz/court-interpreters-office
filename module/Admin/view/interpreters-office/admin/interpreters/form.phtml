@@ -133,15 +133,17 @@ echo $this->form()->closeTag(); ?>
     
 /** dynamically add a language. 
  * 
- * @todo live in its own file ? 
+ * @todo live in its own file ?
+ * @todo add a button to the select and attach listener to its 'click' event
+ * instead of 'change' event on select menu 
  * 
  */
 
 $(function(){
     var select = $('#language-select');    
     select.on("change",function(){
-        console.log("change event on select element");
-        if (! (parseInt(select.val()) > 0)) {
+        // console.log("change event on select element");
+        if (! (parseInt(select.val()) > 0)) {           
             return;
         }
 
@@ -155,9 +157,7 @@ $(function(){
         var index = $('.language-name').length;
         var languageName = option.text();
         var certifiable = option.data().certifiable;
-        console.warn("DEBUG: language name is "+languageName+ " and certifiable is " + (certifiable ? "true" : "false"));
-        //var interpreter_id = $('input[name="interpreter[id]"]').val();
-        
+        //console.warn("DEBUG: language name is "+languageName+ " and certifiable is " + (certifiable ? "true" : "false"));
         // build the three div elements, and stick into an array
         var divs = [];
         divs[0] = $('<div>')
@@ -170,17 +170,7 @@ $(function(){
                         name  : "interpreter[interpreter-languages]["+index+"][language_id]",
                         value : language_id
                     })
-                )
-                /*
-                .append(
-                     $('<input>').attr({
-                        type  : "hidden",
-                        name  : "interpreter[interpreterLanguages]["+index+"][interpreter_id]",
-                        value : interpreter_id
-                    })
-                )
-                */
-                ;
+                );
         var certificationSelectElement = $('<select>')
                         .addClass("form-control")
                         .attr({name: "interpreter[interpreter-languages]["+index+"][federalCertification]"});
@@ -200,7 +190,7 @@ $(function(){
                 .append(certificationSelectElement);
         if (! certifiable) {
             // with select element disabled, this has to be present 
-            // so it will validate
+            // so that it will validate
             divs[1].append(
                  $('<input>').attr({
                      type : "hidden",
