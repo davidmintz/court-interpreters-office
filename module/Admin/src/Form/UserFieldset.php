@@ -233,12 +233,10 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                             },
                             'messages' => [
                                 \Zend\Validator\Callback::INVALID_VALUE => 'user account-enabled and person "active" settings are inconsistent',
-                        ],
-                            
-                        ]
-                        
-                    ]
-                ]
+                            ],                            
+                        ],                        
+                    ],
+                ],
             ]
         ];
     }
