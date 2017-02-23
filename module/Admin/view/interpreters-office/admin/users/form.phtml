@@ -87,3 +87,17 @@ $user_active = $user_fieldset->get('active');?>
 <?php 
 echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
+<script type="text/javascript">
+    $(function(){
+        var userActiveElement = $('#user-active');
+        var personActiveElement = $('#person-active');
+        $('#user-active, #person-active').on("change",function(){
+            if (! personActiveElement.is(":checked")) {
+                userActiveElement.prop("checked",false);
+            }
+            if (userActiveElement.is(":checked")) {
+                personActiveElement.prop("checked",true);
+            }            
+        });
+    });
+</script>
