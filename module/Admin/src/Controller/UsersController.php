@@ -87,24 +87,50 @@ class UsersController extends AbstractActionController //implements Authenticati
    /**
     * attaches event handlers
     * 
-    * NOTE: we might take this out after all (not necessary)
-    *  
-    * https://mwop.net/blog/2012-07-30-the-new-init.html
+    * Before they try to create a user account, if they're attaching the account 
+    * to a Person that already exists, this checks the Person's Hat property for validity. 
+    * We won't expose links that lead to an invalid situation, but a person could 
+    * manually edit the query parameters.
+    * 
+    * If they do load a valid Person in the addAction(), we check that an associated
+    * User account does not already exist.
+    * 
+    * NOTE: we might decide on a better way to do this
+    * e.g., use an ACL assertion 
+    * 
     */
     public function setEventManager(EventManagerInterface $events)
     {
-                
-        $events->attach('load-person', function ($e)  {
+        $entityManager = $this->entityManager;       
+        $events->attach('load-person', function ($e) use ($entityManager)  {
            
             $person = $e->getParam('person');
             $hat = $person->getHat(); 
             $form = $e->getParam('form');
             $hats_allowed = $form->get('user')->get('person')->get('hat')->getValueOptions();
-            if (! in_array($hat->getId(), array_column($hats_allowed, 'value')))
-            $e->getParam('viewModel')->errorMessage =
-                sprintf('The person identified by id %d, %s %s, wears the hat %s, but people in that category do not have user accounts in this system.',
-                    $person->getId(), $person->getFirstName(), $person->getLastname(), $hat
-            );       
+                if (! in_array($hat->getId(), array_column($hats_allowed, 'value'))) {
+                $e->getParam('viewModel')->errorMessage =
+                    sprintf('The person identified by id %d, %s %s, wears the hat %s, but people in that category do not have user accounts in this system.',
+                        $person->getId(), $person->getFirstName(), $person->getLastname(), $hat
+                );
+                return false;
+            }
+            $action = $e->getTarget()->params()->fromRoute('action');
+            if ('add' == $action) {
+                // is there already a User account?
+                $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
+                        ->findOneBy(['person' => $person]);
+                if ($user) {
+                   // if we had access to the service container, or the ViewHelperPluginManager...
+                   // $shit = $container->get('ViewHelperManager')->get('url'); echo get_class($shit);
+                   // $shit->url('users/edit',['id'=>$person->getId()])                  
+                   $viewModel->errorMessage = sprintf(
+                        'The person identified by id %d -- %s %s -- already has a user account.',
+                         // Please go to [URL to edit] if you want to edit it.
+                         $person->getId(), $person->getFirstname(), $person->getLastname()//, $url
+                   );
+                }
+            }
         }
         );
         return parent::setEventManager($events);
@@ -123,7 +149,7 @@ class UsersController extends AbstractActionController //implements Authenticati
             ]
         );
         $user = new Entity\User();
-        // how to populate the person fieldset but not the user
+        // how to populate the Person fieldset but not the User
         $person_id = $this->params()->fromRoute('id');
         if ($person_id) {
             $person = $this->entityManager->find('InterpretersOffice\Entity\Person',$person_id);
@@ -166,6 +192,28 @@ class UsersController extends AbstractActionController //implements Authenticati
         }
         return $viewModel;
     }
+    
+    public function editAction()
+    {
+        
+        $id = $this->params()->fromRoute('id');
+        $viewModel = (new ViewModel(['title' => 'edit a user','id'=>$id]))->setTemplate('interpreters-office/admin/users/form');
+        $user = $this->entityManager->find('InterpretersOffice\Entity\User',$id);
+        if (! $user) {
+            return $viewModel->setVariables(['errorMessage' => "user with id $id was not found in your database."]);
+        }
+         $form = new UserForm($this->entityManager,[
+            'action'=>'update',
+            'auth_user_role' => $this->auth_user_role,           
+            ]
+        );
+        /** @todo do this initialization somewhere else */
+        $form->get('user')->get('person')->setObject($user->getPerson());
+        /* -------------------------- */
+        $viewModel->form = $form;
+        $form->bind($user);
+        return $viewModel;
+    }
 
     /**
      * index action.
@@ -174,7 +222,7 @@ class UsersController extends AbstractActionController //implements Authenticati
      */
     public function indexAction()
     {
-        //echo "it works"; return false;
+        echo ($this->params()->fromRoute('action'));
         
         return new ViewModel(['title' => 'admin | users','role'=>$this->role]);
     }
