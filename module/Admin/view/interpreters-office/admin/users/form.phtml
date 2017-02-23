@@ -5,8 +5,12 @@
  *  view script for rendering users add|edit form
  */
 $this->headTitle($this->title);
-if ($this->errorMessage) : ?>
-<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
+?>
+<div class="center-block" style="max-width:800px"><!-- wrapper -->
+<h2><?php echo $this->title ?></h2>
+<?php // echo $this->url('users/edit',['id'=> 3]);?>
+<?php if ($this->errorMessage) : ?>
+<div class="alert alert-danger"><?php echo $this->errorMessage ?></div></div>
 <?php
 return;
 endif;
@@ -16,12 +20,11 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal')    ;
 ?>
-<div class="center-block" style="max-width:800px"><!-- wrapper -->
-<h2><?php echo $this->title ?></h2>
+
 <?php
 $form->prepare();
 $person_fieldset = $this->form->get('user')->get('person');
