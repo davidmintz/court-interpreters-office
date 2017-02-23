@@ -25,7 +25,7 @@ class UserForm extends Form {
      *
      * @var string
      */
-    protected $formName = 'user-form';
+    protected $form_name = 'user-form';
     
     public function __construct(ObjectManager $objectManager, $options = []) {
         
