@@ -1,5 +1,10 @@
 <h2>admin | users</h2>
-
+<?php
+$messenger = $this->flashMessenger();
+if ($messenger->hasSuccessMessages()) :
+    echo $messenger->render('success', ['alert','alert-success',], false);
+endif;
+?>
 <p>current user role is <?php echo $this->role ?></p>
 <p>To edit an existing user account, search the database to find it.</p>
 <p>To create a new user account, first check to see if the user is already in your database.</p>
