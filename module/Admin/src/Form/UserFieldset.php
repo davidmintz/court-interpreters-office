@@ -210,11 +210,35 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ],
             'active' => [
                 'required' => false,
+                'allow_empty' => true,
                 'filters' => [
                     [
                         'name'=>'Zend\Filter\Boolean'
                     ],
                 ],
+                'validators' => [
+                    [
+                        'name' => 'Zend\Validator\Callback',
+                        'options' => [
+                            'callback' => function($value,$context) {
+                                $person_active = $context['person']['active'];
+                                $user_active = $value;
+                                if ($user_active && ! $person_active) {
+                                    return false;
+                                }
+                                if (! $person_active && $user_active ) {
+                                    return false;
+                                }
+                                return true;
+                            },
+                            'messages' => [
+                                \Zend\Validator\Callback::INVALID_VALUE => 'user account-enabled and person "active" settings are inconsistent',
+                        ],
+                            
+                        ]
+                        
+                    ]
+                ]
             ]
         ];
     }
