@@ -142,14 +142,14 @@ class UsersController extends AbstractActionController //implements Authenticati
     {
         $viewModel = new ViewModel(['title' => 'add a user']);
         $viewModel->setTemplate('interpreters-office/admin/users/form');
-        $request = $this->getRequest();
         $form = new UserForm($this->entityManager,[
             'action'=>'create',
             'auth_user_role' => $this->auth_user_role,           
             ]
         );
         $user = new Entity\User();
-        // how to populate the Person fieldset but not the User
+        
+        // if it's for an existing person...
         $person_id = $this->params()->fromRoute('id');
         if ($person_id) {
             $person = $this->entityManager->find('InterpretersOffice\Entity\Person',$person_id);
@@ -161,12 +161,13 @@ class UsersController extends AbstractActionController //implements Authenticati
                 return $viewModel;
             }
             $user->setPerson($person);
-            $form->get('user')->get('person')->setObject($person);      
+            $form->get('user')->get('person')->setObject($person);            
         }
-        $viewModel->form = $form;
-        
+                   
         $form->bind($user);
-
+        $viewModel->form = $form; 
+        $request = $this->getRequest();
+        
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
@@ -207,11 +208,26 @@ class UsersController extends AbstractActionController //implements Authenticati
             'auth_user_role' => $this->auth_user_role,           
             ]
         );
-        /** @todo do this initialization somewhere else */
+        $person = $user->getPerson();
+        /** @todo do this initialization somewhere else?  */
         $form->get('user')->get('person')->setObject($user->getPerson());
         /* -------------------------- */
         $viewModel->form = $form;
         $form->bind($user);
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (!$form->isValid()) {
+                //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
+                return $viewModel;
+            }
+            $this->entityManager->flush();//return $viewModel;
+            $this->flashMessenger()
+                  ->addSuccessMessage(sprintf('The user account for <strong>%s %s</strong> has been updated.',
+                       $person->getFirstname(),$person->getLastname()
+                  ));
+            $this->redirect()->toRoute('users');
+        }
         return $viewModel;
     }
 
