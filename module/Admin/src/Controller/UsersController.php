@@ -194,6 +194,9 @@ class UsersController extends AbstractActionController //implements Authenticati
         return $viewModel;
     }
     
+    /**
+     * edits an existing user account
+     */
     public function editAction()
     {
         
