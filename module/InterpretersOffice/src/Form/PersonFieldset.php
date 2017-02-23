@@ -337,6 +337,11 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                         ],
                     ],
                 ],
+                'filters' => [
+                    [
+                        'name'=>'Zend\Filter\Boolean'
+                    ],
+                ],
             ],
             'officePhone' => [
                 'required' => false,
