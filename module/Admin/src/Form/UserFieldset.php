@@ -76,7 +76,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         if (! isset($options['auth_user_role'])) {
             throw new \RuntimeException('missing "role" option in UserFieldset constructor');
         }
-        $this->auth_user_role = $options['auth_user_role']; unset($options['auth_user_role']);
+        $this->auth_user_role = $options['auth_user_role']; 
+        unset($options['auth_user_role']);
         // maybe we can get by with just the "role," which is in the session
         /*
         if (! $options['auth'] instanceof AuthenticationServiceInterface) {
@@ -206,7 +207,15 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                         ],
                     ],
                 ],
-            ], 
+            ],
+            'active' => [
+                'required' => false,
+                'filters' => [
+                    [
+                        'name'=>'Zend\Filter\Boolean'
+                    ],
+                ],
+            ]
         ];
     }
 
