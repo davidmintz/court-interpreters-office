@@ -59,6 +59,7 @@ class UsersController extends AbstractActionController //implements Authenticati
      * @var string $auth_user_role
      */
     protected $auth_user_role;
+
     /**
      * constructor.
      *
@@ -70,6 +71,7 @@ class UsersController extends AbstractActionController //implements Authenticati
         $this->auth_user_role = (new Session('Authentication'))->role;
         
     }
+
     /**
      * implements AuthenticationAwareInterface
      * 
@@ -91,15 +93,19 @@ class UsersController extends AbstractActionController //implements Authenticati
     */
     public function setEventManager(EventManagerInterface $events)
     {
-        
-        $acl = $this->acl;
-        // maybe not... to be continued
-        $events->attach('update-role', function ($e) use ($acl) {
+                
+        $events->attach('load-person', function ($e)  {
            
-            // $params = $e->getParams();
-            // etc
-            
-            }
+            $person = $e->getParam('person');
+            $hat = $person->getHat(); 
+            $form = $e->getParam('form');
+            $hats_allowed = $form->get('user')->get('person')->get('hat')->getValueOptions();
+            if (! in_array($hat->getId(), array_column($hats_allowed, 'value')))
+            $e->getParam('viewModel')->errorMessage =
+                sprintf('The person identified by id %d, %s %s, wears the hat %s, but people in that category do not have user accounts in this system.',
+                    $person->getId(), $person->getFirstName(), $person->getLastname(), $hat
+            );       
+        }
         );
         return parent::setEventManager($events);
     }
@@ -124,6 +130,10 @@ class UsersController extends AbstractActionController //implements Authenticati
             if (! $person) {
                 return $viewModel->setVariables(['errorMessage' => "person with id $person_id not found"]);
             }
+            $this->events->trigger('load-person',$this,compact('person', 'form', 'viewModel'));  
+            if ($viewModel->errorMessage) {
+                return $viewModel;
+            }
             $user->setPerson($person);
             $form->get('user')->get('person')->setObject($person);      
         }
@@ -131,23 +141,28 @@ class UsersController extends AbstractActionController //implements Authenticati
         
         $form->bind($user);
 
-        // to be continued
-
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (!$form->isValid()) {
-                echo "not valid.<pre>"; 
-                print_r($form->getMessages());
-                echo "</pre>";
+                //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
                 return $viewModel;
             } 
             $this->entityManager->persist($user);
             if (! $person_id) {
                 $this->entityManager->persist($user->getPerson());
             }
-            $user->setPassword("shit123");
+            $user->setPassword(bin2hex(openssl_random_pseudo_bytes(8)));
             $this->entityManager->flush();
-            echo "yay!";
+            $person = $user->getPerson();
+            $this->flashMessenger()->addSuccessMessage(
+                sprintf(
+                    'A user account has been created for %s <strong>%s %s</strong>.',
+                    $person->getRole(),
+                    $person->getFirstName(),
+                    $person->getLastname()
+                )
+            );
+            $this->redirect()->toRoute('users');
         }
         return $viewModel;
     }
