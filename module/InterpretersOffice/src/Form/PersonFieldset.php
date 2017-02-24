@@ -159,6 +159,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         if (!in_array($options['action'], ['create', 'update'])) {
             throw new \RuntimeException('invalid "action" option in PersonFieldset constructor');
         }
+        
         if (isset($options['auth_user_role'])) {
             /** @todo let's not hard-code these roles */
              if (! in_array($options['auth_user_role'],['anonymous','staff','submitter','manager','administrator'])) {
@@ -168,6 +169,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         }
         $this->action = $options['action'];
         unset($options['action']);
+        printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
         $use_as_base_fieldset = isset($options['use_as_base_fieldset']) ? $options['use_as_base_fieldset'] : true;
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
@@ -318,17 +320,17 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
             'active' => [
-                'required' => false,
-                'allow_empty' => true,
+                'required' => true,
+                'allow_empty' => false,
                 'validators' => [
-                    /*[
+                    [
                     'name' => 'NotEmpty',
                        'options' => [
                             'messages' => [
                                 Validator\NotEmpty::IS_EMPTY => '"active" setting is required',
                             ],
                         ],
-                    ],*/
+                    ],
                     [
                     'name' => 'InArray',
                        'options' => [
@@ -339,11 +341,13 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                         ],
                     ],
                 ],
+                /*
                 'filters' => [
                     [
                         'name'=>'Zend\Filter\Boolean'
                     ],
                 ],
+                */
             ],
             'officePhone' => [
                 'required' => false,
@@ -449,7 +453,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'break_chain_on_failure' => true,
             ];
         } else { // action is update, use the UniqueObject validator
-
+            
+            printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
             $validatorClass = UniqueObject::class;
 
             $validatorOptions['messages'] = [
