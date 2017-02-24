@@ -272,6 +272,12 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertQueryContentRegex('div.validation-error', '/hat.+required/');
 
         $data['person']['hat'] = $attorneyHat;
+        /*
+           we reconsider the following. for now, 'active' fields are not required,
+           'allow_empty' is true, and Boolean filters cast the input values. otherwise
+           Doctrine mistakenly thinks an update is necessary.
+        */
+        /*
         $data['person']['active'] = null;
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
 
@@ -279,8 +285,9 @@ class PeopleControllerTest extends AbstractControllerTest
             new Parameters($data)
         );
         $this->dispatch('/admin/people/add');
-        //echo $this->getResponse()->getBody(); return;
+        echo $this->getResponse()->getBody(); return;
         $this->assertNotRedirect();
+        
         $this->assertQuery('div.validation-error');
         $this->assertQueryContentRegex('div.validation-error', '/active.+required/');
 
@@ -294,7 +301,7 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $this->assertQueryCount('div.validation-error', 1);
         $this->assertQueryContentRegex('div.validation-error', '/invalid.+active/');
-
+        */
         $data['person']['active'] = 1;
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
         $data['person']['hat'] = 'arbitrary shit';
