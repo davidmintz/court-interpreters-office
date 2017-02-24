@@ -184,7 +184,7 @@ class UsersController extends AbstractActionController //implements Authenticati
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
                     'A user account has been created for %s <strong>%s %s</strong>.',
-                    $person->getRole(),
+                    $user->getRole(),
                     $person->getFirstName(),
                     $person->getLastname()
                 )

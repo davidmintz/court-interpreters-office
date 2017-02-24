@@ -169,7 +169,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         }
         $this->action = $options['action'];
         unset($options['action']);
-        printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
+        //printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
         $use_as_base_fieldset = isset($options['use_as_base_fieldset']) ? $options['use_as_base_fieldset'] : true;
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
@@ -454,7 +454,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ];
         } else { // action is update, use the UniqueObject validator
             
-            printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
+            //printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
             $validatorClass = UniqueObject::class;
 
             $validatorOptions['messages'] = [

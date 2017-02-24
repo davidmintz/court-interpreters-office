@@ -71,7 +71,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             throw new \RuntimeException('invalid "action" option in UserFieldset constructor');
         }
         $this->action = $options['action'];
-        printf('DEBUG action is %s in UserFieldset line %d<br>',$this->action,__LINE__);
+        //printf('DEBUG action is %s in UserFieldset line %d<br>',$this->action,__LINE__);
         unset($options['action']);
         
         if (! isset($options['auth_user_role'])) {
