@@ -320,8 +320,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
             'active' => [
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
                 'validators' => [
                     [
                     'name' => 'NotEmpty',
@@ -341,13 +341,13 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                         ],
                     ],
                 ],
-                /*
+                ///*
                 'filters' => [
                     [
                         'name'=>'Zend\Filter\Boolean'
                     ],
                 ],
-                */
+                //*/
             ],
             'officePhone' => [
                 'required' => false,

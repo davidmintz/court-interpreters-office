@@ -131,8 +131,14 @@ class UsersController extends AbstractActionController //implements Authenticati
                    );
                 }
             }
-        }
-        );
+        });
+        
+        $events->attach('post.validate',function($e){
+            $person = $e->getParam('user')->getPerson();
+            $person->setActive((boolean)$person->getActive());
+            
+        });
+        
         return parent::setEventManager($events);
     }
     /**
@@ -224,7 +230,8 @@ class UsersController extends AbstractActionController //implements Authenticati
                 //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
                 return $viewModel;
             }
-            $this->entityManager->flush();//return $viewModel;
+            //$this->events->trigger('post.validate',$this,['user'=>$user]);
+            $this->entityManager->flush(); return $viewModel;
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf('The user account for <strong>%s %s</strong> has been updated.',
                        $person->getFirstname(),$person->getLastname()
