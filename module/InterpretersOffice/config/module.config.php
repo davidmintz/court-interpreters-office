@@ -24,6 +24,7 @@ return [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
+           Controller\AccountController::class => Controller\Factory\AccountControllerFactory::class,
            Controller\ExampleController::class => Controller\Factory\ExampleControllerFactory::class,
         ],
         'invokables' => [
@@ -173,7 +174,61 @@ return [
                     ],
                 ],
             ],
+            'account' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/user',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\AccountController::class,
+                        'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'register' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/register',
+                            'defaults' => [
+                                'action' => 'register',
+                            ],
+                        ],
+                    ],
+                    // to do: experiment with collapsing the ones
+                    // with no url params into one config array
+                    'verify-email' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/verify-email',
+                            'defaults' => [
+                                'action' => 'verifyEmail',
+                            ],
+                        ],
+                    ],
+                    'request-password' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/request-password',
+                            'defaults' => [
+                                'action' => 'requestPassword',
+                            ],
+                        ],
+                    ],
+                    'reset-password' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            // to do: add parameters 
+                            'route' => '/reset-password',
+                            'defaults' => [
+                                'action' => 'reset-password',
+                            ],
+                        ],
+                    ],
 
+                ],
+                // to be continued
+            ],
             'example' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
