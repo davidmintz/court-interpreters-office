@@ -24,7 +24,8 @@
         "zendframework/zend-math": "^3.0",
         "zendframework/zend-json": "^3.0",
         "squizlabs/php_codesniffer": "*",
-        "zendframework/zend-permissions-acl": "^2.6"
+        "zendframework/zend-permissions-acl": "^2.6",
+        "zendframework/zend-crypt": "^3.2"
     },
     "autoload": {
         "psr-4": {
