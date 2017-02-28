@@ -1,6 +1,6 @@
 <?php
 /**
- * module/InterpretersOffice/src/Controller/ExampleController.php.
+ * module/Requests/src/Controller/RequestsIndexController.php
  */
 
 namespace InterpretersOffice\Requests\Controller;
@@ -14,7 +14,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  *  IndexController for Requests module
  *
  */
-class IndexController extends AbstractActionController
+class RequestsIndexController extends AbstractActionController
 {
     /**
      * objectManager instance.
@@ -41,7 +41,6 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-       return new ViewModel(['title' => 'schedule an interpreter']);
-        
+       return new ViewModel(['title' => 'schedule an interpreter']);        
     }
 }
