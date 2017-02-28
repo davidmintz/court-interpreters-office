@@ -11,7 +11,7 @@ use Zend\Router\Http\Segment;
 return [
     'controllers' => [
         'factories' => [
-           Controller\IndexController::class => Controller\Factory\RequestsIndexControllerFactory::class,
+           Controller\RequestsIndexController::class => Controller\Factory\RequestsIndexControllerFactory::class,
         ],
     ],
     'view_manager' => [
