@@ -50,6 +50,22 @@ class Interpreter extends Person
      */
     protected $interpreterLanguages;
 
+    /*
+      `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        `honorific` enum('','Ms.','Mr.','Mrs.','Dr.') COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+        `active` enum('Y','N') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Y',
+        `freelance` enum('Y','N') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Y',
+        `ssn` varbinary(40) DEFAULT NULL,
+        `dob` varbinary(40) DEFAULT NULL,
+        `password` char(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+        `publish_public` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
+        `publish_internal` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
+        `security_clearance` date DEFAULT NULL,
+        `contract_expiration` date DEFAULT NULL,
+        `fingerprinted` date DEFAULT NULL,
+        `oath` date DEFAULT NULL,
+
+         */
     /**
      * Constructor.
      */
