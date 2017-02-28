@@ -5,7 +5,7 @@ namespace InterpretersOffice\Requests\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-use InterpretersOffice\RequestsController\IndexController;
+use InterpretersOffice\RequestsController\RequestsIndexController;
 
 /**
  * Factory class for instantiating Requests\IndexController.
@@ -23,7 +23,7 @@ class IndexControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $controller = new IndexController(
+        $controller = new RequestsIndexController(
             $container->get('entity-manager')
         );
 

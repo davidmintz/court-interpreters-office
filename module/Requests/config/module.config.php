@@ -1,6 +1,6 @@
 <?php
 /**
- * module/InterpretersOffice/config/module.config.php.
+ * module/InterpretersOffice/Requests/config/module.config.php.
  */
 
 namespace InterpretersOffice\Requests;
@@ -11,7 +11,7 @@ use Zend\Router\Http\Segment;
 return [
     'controllers' => [
         'factories' => [
-           Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+           Controller\IndexController::class => Controller\Factory\RequestsIndexControllerFactory::class,
         ],
     ],
     'view_manager' => [
@@ -35,7 +35,7 @@ return [
                     'route' => '/requests',
                     'defaults' => [
                         'module' => __NAMESPACE__,
-                        'controller' => Controller\IndexController::class,
+                        'controller' => Controller\RequestsIndexController::class,
                         'action' => 'index',
                     ],
                 ],

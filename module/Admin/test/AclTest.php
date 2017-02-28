@@ -41,7 +41,7 @@ class AuthenticationTest extends AbstractControllerTest
         $this->assertFalse($this->acl->isAllowed('submitter','events','update'),"submitter should NOT be allowed to edit events");
         $this->assertFalse($this->acl->isAllowed('submitter','events','boink'),"submitter should NOT be allowed undefined privilege");
         $this->assertFalse($this->acl->isAllowed('submitter','judges','edit'),"submitters should NOT be allowed to edit judges" );
-        $this->assertTrue($this->acl->isAllowed('submitter','requests','create') ,"submitted SHOULD be allowed to create a request");
+        $this->assertTrue($this->acl->isAllowed('submitter','requests-index','create') ,"submitted SHOULD be allowed to create a request");
         $this->assertTrue($this->acl->isAllowed('manager','events','edit'),"manager SHOULD be allowed to edit events");
         $this->assertTrue($this->acl->isAllowed('administrator','events','edit'),"admin SHOULD be allowed to edit events");
         $this->assertTrue($this->acl->isAllowed('manager','event-types','edit'));
@@ -62,9 +62,9 @@ class AuthenticationTest extends AbstractControllerTest
             ['staff','event-types','edit'],
             ['staff','languages','add'],
             ['staff','users','add'],
-            ['administrator','requests','edit'],
-            ['staff','requests','edit'],
-            ['staff','requests','edit'],
+            ['administrator','requests-index','edit'],
+            ['staff','requests-index','edit'],
+            ['staff','requests-index','edit'],
             
             
         ];

@@ -338,7 +338,6 @@ return [
         ],
     ],
     // based on LearnZF2.
-    // experimental, work in progress
     'acl' => [
         'roles' => [
             // 'role name' => 'parent role'
@@ -348,9 +347,13 @@ return [
             'administrator' => 'manager',
             'staff' => null,
         ],
-        // some of this inheritance hierarchy might have to change
+        /**
+         * the keys in the following array refer to controllers, with the 
+         * names normalized.
+         * 
+         */
         'resources' => [
-             // 'resource name' => 'parent resource'
+             // 'resource name (controller' => 'parent resource'
             'languages' => null,
             'event-types'=> 'languages',            
             'locations'=>'languages',
@@ -361,17 +364,17 @@ return [
            
             'judges' => 'events',
             'interpreters' => 'events',
-            'requests' => null,
+            'requests-index' => null,
             'admin-index' => null,
             
             // to be continued
         ],
-        // how to we configure this to use Assertions?
+        // how do we configure this to use Assertions?
         // I think we don't
         'allow' => [
-            //'role' => [ 'resource' => [ priv, other-priv, ...  ]
+            //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
             'submitter' => [
-                'requests' => ['create','view','index'],
+                'requests-index' => ['create','view','index'],
                 'events'   => ['index','view','search'],
             ],
             'manager' => [
@@ -386,7 +389,7 @@ return [
         ],
         'deny' => [
             'administrator' => [
-                'requests' => ['add','edit','update','delete','cancel'],
+                'requests-index' => null,//['add','edit','update','delete','cancel','index'],
             ]
         ]
     ],

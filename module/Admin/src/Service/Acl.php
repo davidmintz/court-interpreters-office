@@ -65,7 +65,8 @@ class Acl extends ZendAcl implements EventManagerAwareInterface {
             'administrator' => null,
         ],
          */
-        foreach($this->config['allow'] as $role => $rules ) {
+        try {
+           foreach($this->config['allow'] as $role => $rules ) {
            if (null === $rules) {
                $this->allow($role);
                continue;
@@ -87,6 +88,10 @@ class Acl extends ZendAcl implements EventManagerAwareInterface {
                $this->deny($role,$resource,$privileges);               
            }            
         } 
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+         
     }
     
     /**
