@@ -13,4 +13,19 @@ if ($messenger->hasSuccessMessages()) :
 endif;
 
 ?>
-<p>to be continued</p>
+<form>
+    <div class="form-group form-inline">Find interpreters of
+        <label for="language" class="sr-only">language</label> <select name="language" id="language" class="form-control">
+            <option value="0" label="(choose language)">(choose language)</option>
+            <option value="1" label="Spanish">Spanish</option>
+            <option value="2" label="Russian">Russian</option>
+            <option value="3" label="Foochow">Foochow</option>
+        </select>
+        who are <label for="active" class="sr-only">active</label>
+        <select name="active" id="active"  class="form-control">
+            <option value="1" label="active">active</option>
+            <option value="0" label="active">not active</option>
+            <option value="-1" label="any status">any status</option>
+        </select>
+    </div>  
+</form>
