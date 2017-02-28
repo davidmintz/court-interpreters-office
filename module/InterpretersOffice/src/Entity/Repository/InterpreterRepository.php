@@ -25,4 +25,6 @@ class InterpreterRepository extends EntityRepository
         $em->getConfiguration()->getResultCacheImpl()->setNamespace('interpreters');
         parent::__construct($em, $class);
     }
+    
+    // 'SELECT i.lastname, i.firstname FROM InterpretersOffice\Entity\Interpreter i JOIN i.interpreterLanguages il JOIN il.language l WHERE l.name = 'Spanish'and i.active = true'
 }
