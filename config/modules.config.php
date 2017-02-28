@@ -27,4 +27,6 @@ return [
     //'Zend\Validator',
     'InterpretersOffice',
     'InterpretersOffice\Admin',
+    'InterpretersOffice\Requests',
+
 ];

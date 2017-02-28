@@ -29,7 +29,8 @@
     "autoload": {
         "psr-4": {
             "InterpretersOffice\\": "module/InterpretersOffice/src/",
-            "InterpretersOffice\\Admin\\": "module/Admin/src/"
+            "InterpretersOffice\\Admin\\": "module/Admin/src/",
+            "InterpretersOffice\\Requests\\": "module/Requests/src/"
         }
     },
     "autoload-dev": {
