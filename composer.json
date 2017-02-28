@@ -37,7 +37,8 @@
         "psr-4": {
             "ApplicationTest\\": [
                 "module/InterpretersOffice/test/",
-                "module/Admin/test/"
+                "module/Admin/test/",
+                "module/Requests/test/"
             ]
         }
     },
@@ -52,6 +53,7 @@
             "@development-enable"
         ],
         "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
-        "test": "phpunit"
+        "test": "phpunit",
+        "my-test" : "echo \"hello, bitch\""
     }
 }
