@@ -7,6 +7,8 @@ namespace InterpretersOffice\Admin\Controller\Factory;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
+use InterpretersOffice\Entity\Listener;
+use Doctrine\ORM\Events;
 //use Interpreters\Admin\Controller\LanguagesController;
 
 /**
@@ -28,18 +30,25 @@ class SimpleEntityControllerFactory implements FactoryInterface
     {
         $array = explode('\\', $requestedName);
         $baseName = end($array);
+        // might be useful for identifying cache namespace and 
+        // path to a form.phtml viewscript file
         $shortName = strtolower(substr($baseName, 0, -10));
         //substr($requestedName, strrpos($requestedName,'\\')+1)
+        
         switch ($shortName) {
             case 'languages':
             case 'locations':
             case 'eventtypes':
                 //echo "WTF ... $shortName ";
-                $factory = $container->get('annotated-form-factory');
-                //echo "WTF? ". get_class($factory). "...." ;
+                $factory = $container->get('annotated-form-factory');               
                 $entityManager = $container->get('entity-manager');
+                $entityManager->getEventManager()
+                    ->addEventListener([Events::postUpdate,Events::postRemove,Events::postPersist],
+                     // constructor argument to be changed
+                     new Listener\UpdateListener($container->get('log'))
+               );
                 //echo "returning a $requestedName instance... ";
-                return new $requestedName($entityManager, $factory, $shortName); //, $shortName
+                return new $requestedName($entityManager, $factory, $shortName); 
             break;
             // to be continued
         }
