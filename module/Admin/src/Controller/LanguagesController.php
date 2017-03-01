@@ -70,7 +70,7 @@ class LanguagesController extends AbstractActionController
     public function indexAction()
     {
         /* // this gets them all, ordered
-        $languages = $this->serviceManager->get('entity-manager')
+        $languages = $this->$this->entityManager
                 ->getRepository('InterpretersOffice\Entity\Language')
                 ->findBy([],['name'=>'ASC']);
         */
