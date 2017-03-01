@@ -21,10 +21,17 @@ endif;
             <option value="2" label="Russian">Russian</option>
             <option value="3" label="Foochow">Foochow</option>
         </select>
-        who are <label for="active" class="sr-only">active</label>
+        who are <label for="active" class="sr-only">status</label>
         <select name="active" id="active"  class="form-control">
             <option value="1" label="active">active</option>
-            <option value="0" label="active">not active</option>
+            <option value="0" label="not active">not active</option>
+            <option value="-1" label="either status">either status</option>
+        </select>
+        with security clearance <label for="security_clearance_expiration" class="sr-only">security clearance</label>
+         <select name="security_clearance_expiration" id="security_clearance_expiration"  class="form-control">
+            <option value="1" label="active">valid</option>
+            <option value="0" label="not active">expired</option>
+            <option value="-2" label="none">none</option>
             <option value="-1" label="any status">any status</option>
         </select>
     </div>  
