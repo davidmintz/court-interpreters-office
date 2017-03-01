@@ -51,4 +51,20 @@ class LanguageRepository extends EntityRepository
 
         return $paginator;
     }
+    
+    /**
+     * gets all the languaages ordered by name ascending.
+     *
+     * @return array of all our LocationType objects
+     */
+    public function findAll()
+    {
+        // have the decency to sort them by name ascending 
+        // and use the result cache
+        $query = $this->createQuery(
+            'SELECT l FROM InterpretersOffice\Entity\Language l ORDER BY l.name ASC'
+        );
+        
+        return $query->getResult();
+    }
 }
