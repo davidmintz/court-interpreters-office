@@ -53,16 +53,27 @@ class InterpreterFieldset extends PersonFieldset
             ],
         ]);
         */
-
+        $this->add(
+            new \InterpretersOffice\Form\Element\LanguageSelect(
+                'language-select',
+                [
+                    'objectManager' => $objectManager,
+                    'option_attributes' => ['data-certifiable' => function (Entity\Language $language) {
+                        return $language->isFederallyCertified() ? 1 : 0;
+                    }],
+                ])
+        );
+/*      // this might get taken out if all goes well
         $this->add([
-            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            //'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+            'type' => 'InterpretersOffice\Form\Element\LanguageSelect',
             'name' => 'language-select',
             'options' => [
                 'object_manager' => $this->objectManager,
-                'target_class' => 'InterpretersOffice\Entity\Language',
-                'property' => 'name',
+                //'target_class' => 'InterpretersOffice\Entity\Language',
+                //'property' => 'name',
                 //'find_method' => ['name' => 'getInterpreterHats'],
-                'label' => 'languages',
+                //'label' => 'languages',
                 'option_attributes' => ['data-certifiable' => function (Entity\Language $language) {
                     return $language->isFederallyCertified() ? 1 : 0;
                 }],
@@ -80,7 +91,7 @@ class InterpreterFieldset extends PersonFieldset
             'attributes' => ['label' => ' '],
         ]);
         $element->setValueOptions($options);
-
+*/
         $this->add([
             'type' => 'Select',
             'name' => 'interpreter-languages',
