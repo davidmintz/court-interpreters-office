@@ -7,7 +7,7 @@ namespace InterpretersOffice\Entity\Repository;
 /**
  * trait for easing creating of queries that use result caching.
  */
-trait ResultCachingQueryTrait
+trait ResultCachingQueryTrait 
 {
     /**
      * wrapper for EntityManager::createQuery() that turns on result cache.
@@ -16,11 +16,25 @@ trait ResultCachingQueryTrait
      *
      * @return Doctrine\Orm\Query
      */
-    public function createQuery($dql = '')
+    public function createQuery($dql,$cache_id = null)
     {
         $query = $this->getEntityManager()->createQuery($dql);
-        $query->useResultCache(true);
+        if (! $cache_id) {
+            $cache_id = $this->getCacheId();
+        }
+        $query->useResultCache(true,7200,$cache_id);
 
         return $query;
+    }
+    
+    public function getCacheId()
+    {
+        if (isset($this->cache_id)) {
+            return $this->cache_id;
+        } else {
+            /** @todo  compute it ourself and save in $this->cache_id */
+            // strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter());
+        }
+        
     }
 }

@@ -9,23 +9,16 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * custom repository class for EventType entity.
+ * custom repository class for Judge entity.
  */
 class JudgeRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
-
+    
     /**
-     * constructor.
-     *
-     * @param EntityManagerInterface              $em
-     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     * @var string cache id
      */
-    public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
-    {
-        $em->getConfiguration()->getResultCacheImpl()->setNamespace('judges');
-        parent::__construct($em, $class);
-    }
+    protected $cache_id = 'judges';
 
     /**
      * gets all the Judge entities, sorted.
@@ -37,7 +30,6 @@ class JudgeRepository extends EntityRepository
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
                .'ORDER BY j.lastname, j.firstname';
 
-        return $this->createQuery($dql)
-                ->getResult();
+        return $this->createQuery($dql)->getResult();
     }
 }

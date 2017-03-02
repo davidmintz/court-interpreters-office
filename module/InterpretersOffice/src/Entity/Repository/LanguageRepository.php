@@ -16,19 +16,12 @@ use Doctrine\ORM\EntityManagerInterface;
 class LanguageRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
-
+    
     /**
-     * constructor.
-     *
-     * @param EntityManagerInterface              $em
-     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     * @var string cache id
      */
-    public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
-    {
-        $em->getConfiguration()->getResultCacheImpl()->setNamespace('languages');
-        parent::__construct($em, $class);
-    }
-
+    protected $cache_id = 'languages';
+    
     /**
      * returns all languages wrapped in a paginator.
      *
@@ -53,13 +46,13 @@ class LanguageRepository extends EntityRepository
     }
     
     /**
-     * gets all the languaages ordered by name ascending.
+     * gets all the languages ordered by name ascending.
      *
      * @return array of all our LocationType objects
      */
     public function findAll()
     {
-        // have the decency to sort them by name ascending 
+        // have the decency to sort them by name ascending, 
         // and use the result cache
         $query = $this->createQuery(
             'SELECT l FROM InterpretersOffice\Entity\Language l ORDER BY l.name ASC'

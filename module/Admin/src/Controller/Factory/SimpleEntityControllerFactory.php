@@ -9,7 +9,8 @@ use Interop\Container\ContainerInterface;
 
 use InterpretersOffice\Entity\Listener;
 use Doctrine\ORM\Events;
-//use Interpreters\Admin\Controller\LanguagesController;
+
+use Zend\Filter\Word\CamelCaseToDash as Filter;
 
 /**
  * Factory for instantiating Controllers for managing our relatively
@@ -28,31 +29,31 @@ class SimpleEntityControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $array = explode('\\', $requestedName);
-        $baseName = end($array);
-        // might be useful for identifying cache namespace and 
-        // path to a form.phtml viewscript file
-        $shortName = strtolower(substr($baseName, 0, -10));
-        //substr($requestedName, strrpos($requestedName,'\\')+1)
-        
+        $basename = substr($requestedName, strrpos($requestedName,'\\')+1);
+        $shortName = strtolower((new Filter)->filter(substr($basename, 0, -10)));
+        // $shortName is for identifying cache id and maybe composing path 
+        // to a form.phtml viewscript 
+        /**
+         * @todo rethink this whole plan
+         */
         switch ($shortName) {
+            
             case 'languages':
             case 'locations':
-            case 'eventtypes':
-                //echo "WTF ... $shortName ";
+            case 'event-types':
+
                 $factory = $container->get('annotated-form-factory');               
                 $entityManager = $container->get('entity-manager');
                 ///*
                 $entityManager->getEventManager()
-                    ->addEventListener([Events::postPersist,//Events::postRemove,Events::postPersist
+                    ->addEventListener([Events::postPersist,Events::postUpdate //Events::postRemove,
                         ],
                      // constructor argument to be changed
                      new Listener\UpdateListener($shortName,$container->get('log'))
-               );//*/
-                //echo "returning a $requestedName instance... ";
-                return new $requestedName($entityManager, $factory, $shortName); 
-            break;
-            // to be continued
+               );
+               $controller = new $requestedName($entityManager, $factory, $shortName); 
+            break;            
         }
+        return $controller;
     }
 }

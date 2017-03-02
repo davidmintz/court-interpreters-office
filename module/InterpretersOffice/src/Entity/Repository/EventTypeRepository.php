@@ -14,6 +14,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class EventTypeRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
+    
+    protected $cache_id = 'event-types';
 
     /**
      * constructor.

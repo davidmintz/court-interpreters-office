@@ -9,8 +9,18 @@ use Doctrine\ORM\EntityRepository;
 /**
  * custom EntityRepository class for LocationType entity.
  */
-class LocationTypeRepository extends EntityRepository
+class LocationTypeRepository extends EntityRepository implements CacheDeletionInterface
 {
+    /**
+     * experimental
+     * 
+     * @var array
+     */
+    protected $cache_ids = [
+        'location-types',
+        'location-types-with-totals',
+        'judge-location-types',
+    ];
     /**
      * gets all the location types ordered by type ascending.
      *
@@ -21,7 +31,7 @@ class LocationTypeRepository extends EntityRepository
         // have the decency to sort them by name-of-type ascending
         $query = $this->getEntityManager()->createQuery(
             'SELECT t FROM InterpretersOffice\Entity\LocationType t ORDER BY t.type ASC'
-        );
+        )->useResultCache(true, null, 'location-types');
 
         return $query->getResult();
     }
@@ -33,10 +43,13 @@ class LocationTypeRepository extends EntityRepository
      */
     public function findAllWithTotals()
     {
-        $dql = 'SELECT t.id, t.type, COUNT(l.id) AS total FROM InterpretersOffice\Entity\LocationType t 
+        $dql = 'SELECT t.id, t.type, COUNT(l.id) AS total 
+                FROM InterpretersOffice\Entity\LocationType t 
                 LEFT JOIN t.locations l GROUP BY t.type ORDER BY t.type';
 
-        return $this->getEntityManager()->createQuery($dql)->getResult();
+        return $this->getEntityManager()->createQuery($dql)
+                ->useResultCache(true, null, 'location-types-with-totals')
+                ->getResult();
     }
 
     /**
@@ -49,8 +62,26 @@ class LocationTypeRepository extends EntityRepository
         $dql = 'SELECT t FROM InterpretersOffice\Entity\LocationType t WHERE t. type IN (:types) '
                 .'ORDER BY t.type ASC';
         $query = $this->getEntityManager()->createQuery($dql)
-                ->setParameters([':types' => ['courtroom', 'courthouse']]);
+                ->setParameters([':types' => ['courtroom', 'courthouse']])
+                ->useResultCache(true, null, 'judge-location-types');
 
         return $query->getResult();
+    }
+    
+    /**
+     * experimental 
+     * 
+     * implements cache deletion
+     * @param type $cache_id
+     */
+    public function deleteCache($cache_id = null) {
+        $cache = $this->getEntityManager()->getConfiguration()->getResultCacheImpl();
+        if ($cache_id) {
+            $cache->delete($cache_id);
+        } else {
+            foreach ($this->cache_ids as $cache_id) {
+                $cache->delete($cache_id);
+            }
+        }
     }
 }

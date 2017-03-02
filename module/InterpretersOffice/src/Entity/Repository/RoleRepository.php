@@ -20,6 +20,11 @@ class RoleRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
     
+     /**
+     * @var string cache id
+     */
+    protected $cache_id = 'roles';
+    
     /**
      * gets Role entities for populating Userfieldset role element
      * 

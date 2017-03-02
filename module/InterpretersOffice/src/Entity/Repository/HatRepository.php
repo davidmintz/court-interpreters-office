@@ -16,6 +16,7 @@ class HatRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
     
+    protected $cache_id = 'hats';
     /**
      * returns Hat entities for Person form's select element.
      *
