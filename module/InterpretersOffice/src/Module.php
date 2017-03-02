@@ -24,19 +24,17 @@ class Module
         return include __DIR__.'/../config/module.config.php';
     }
 
-    /**
+    /*
      * module bootstrap, opportunity to attach listeners etc.
      *
      * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
-     */
+     
     public function onBootstrap($e)
     {
-        
-
-       $app = $e->getApplication();
-       $app->getEventManager()->attach('render', [$this, 'testSomething'], 100);
+       //$app = $e->getApplication();
+       //$app->getEventManager()->attach('render', [$this, 'testSomething'], 100);
     }
-    
+    */
     public function testSomething(\Zend\Mvc\MvcEvent $e)
     {
         $viewModel = $e->getResult();
