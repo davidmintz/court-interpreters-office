@@ -142,7 +142,15 @@ return [
                     ],
                 ],
                 'child_routes' => [
-
+                     'add' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/add',
+                            'defaults' => [
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
                     'edit' => [
                         'type' => Segment::class,
                         'options' => [
@@ -156,6 +164,7 @@ return [
                                 'id' => '[1-9]\d*',
                             ],
                         ],
+                       
                     ],
                 ],
             ],
