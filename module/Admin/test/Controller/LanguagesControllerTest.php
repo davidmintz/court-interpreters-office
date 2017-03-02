@@ -65,11 +65,12 @@ class LanguagesControllerTest extends AbstractControllerTest
         $count_after = $count = $entityManager
             ->createQuery('SELECT COUNT(l.id) FROM InterpretersOffice\Entity\Language l')
             ->getSingleScalarResult();
-        //count($repository->findAll()); gives the wrong answer!
+        // gives the wrong answer!
+        //$count_after = count($repository->findAll());
 
 
         //echo "\nnow count is fuckin $count_after\n"; //return;
-        //$this->assertEquals(1, $count_after - $count_before);
+        $this->assertEquals(1, $count_after - $count_before);
         //$db = $entityManager->getConnection();
         //echo "\n";
         //$command = "echo 'select * from languages;'  | sqlite3 module/InterpretersOffice/test/data/office.sqlite";
