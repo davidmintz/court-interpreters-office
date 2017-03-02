@@ -33,6 +33,9 @@ $(function(){
         var listItem = $(this).closest('li');
         var subList = listItem.children('ul');        
         if (subList.length) {
+            /** @todo reconsider. fetch anew every time in case something 
+             * was updated?
+             */
             subList.toggle("slow");
         } else {            
             subList = $('<ul>').addClass('list-group subgroup').hide();
