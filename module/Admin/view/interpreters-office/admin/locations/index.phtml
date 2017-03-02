@@ -36,9 +36,10 @@ $(function(){
             subList.toggle("slow");
         } else {            
             subList = $('<ul>').addClass('list-group subgroup').hide();
-            items = [];
-            $.getJSON(this.href,function(data){                
+            items = [];            
+            $.getJSON(that.href,function(data){               
                 var url = that.href.replace('locations/type','locations/add/type');
+                  console.log("callback...? "+that.href);
                 var thisButton = addButton.replace('#',url);
                 
                 if (! data.length) {
