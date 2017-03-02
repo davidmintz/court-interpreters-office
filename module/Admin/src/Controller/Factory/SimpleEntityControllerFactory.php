@@ -42,12 +42,13 @@ class SimpleEntityControllerFactory implements FactoryInterface
                 //echo "WTF ... $shortName ";
                 $factory = $container->get('annotated-form-factory');               
                 $entityManager = $container->get('entity-manager');
-                /*
+                ///*
                 $entityManager->getEventManager()
-                    ->addEventListener([Events::postUpdate,Events::postRemove,Events::postPersist],
+                    ->addEventListener([Events::postPersist,//Events::postRemove,Events::postPersist
+                        ],
                      // constructor argument to be changed
-                     new Listener\UpdateListener($container->get('log'))
-               );*/
+                     new Listener\UpdateListener($shortName,$container->get('log'))
+               );//*/
                 //echo "returning a $requestedName instance... ";
                 return new $requestedName($entityManager, $factory, $shortName); 
             break;
