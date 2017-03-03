@@ -11,16 +11,22 @@ use Doctrine\ORM\EntityRepository;
  */
 class LocationTypeRepository extends EntityRepository implements CacheDeletionInterface
 {
+    
+    
+    use ResultCachingQueryTrait;
+    
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
+        
+        parent::__construct($em, $class);
+        $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace('locations');
+    }
     /**
-     * experimental
-     * 
-     * @var array
+     * @var CacheProvider $cache
      */
-    protected $cache_ids = [
-        'location-types',
-        'location-types-with-totals',
-        'judge-location-types',
-    ];
+    protected $cache;
+    
+    
     /**
      * gets all the location types ordered by type ascending.
      *
@@ -62,7 +68,7 @@ class LocationTypeRepository extends EntityRepository implements CacheDeletionIn
         $dql = 'SELECT t FROM InterpretersOffice\Entity\LocationType t WHERE t. type IN (:types) '
                 .'ORDER BY t.type ASC';
         $query = $this->getEntityManager()->createQuery($dql)
-                ->setParameters([':types' => ['courtroom', 'courthouse']])
+                ->setParameters([':types' => ['courtroom', 'courthouse']])                
                 ->useResultCache(true, null, 'judge-location-types');
 
         return $query->getResult();
@@ -75,16 +81,11 @@ class LocationTypeRepository extends EntityRepository implements CacheDeletionIn
      * @param type $cache_id
      */
     public function deleteCache($cache_id = null) {
-        $cache = $this->getEntityManager()->getConfiguration()->getResultCacheImpl();
-        if ($cache_id) {
-            $cache->delete($cache_id);
-        } else {
-            foreach ($this->cache_ids as $cache_id) {
-                $cache->delete($cache_id);
-            }
-        }
-        $other_repo = $this->getEntityManager()->getRepository('InterpretersOffice\Entity\Location');
-        $status = $other_repo->deleteCache();
-        return $status;
+        
+         $this->cache->setNamespace('locations');
+         $this->cache->deleteAll();
+         // tmp
+         return sprintf('ran %s at line %d',__METHOD__,__LINE__);
+        
     }
 }
