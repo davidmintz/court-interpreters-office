@@ -77,7 +77,6 @@ class EventTypesController extends AbstractActionController
 
     /**
      * add action
-     *      *.
      *
      * @return ViewModel
      */
