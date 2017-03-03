@@ -88,7 +88,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
-        $query = $this->getEntityManager()->createQuery($dq,'locations-courtrooms'l)
+        $query = $this->getEntityManager()->createQuery($dq,'locations-courtrooms')
                 ->setParameter('parent_id', $parent_id)->useResultCache(true);
         $data = $query->getResult();
         // maybe it would run faster if we crammed it into one line :-)
