@@ -84,7 +84,7 @@ class EventTypesController extends AbstractActionController
     public function addAction()
     {
         $view = (new ViewModel(['title' => 'add an event-type']))
-                ->setTemplate("interpreters-office/admin/{$this->name}/form.phtml");
+                ->setTemplate("interpreters-office/admin/{$this->name}/form");
         $entity = new EventType();
         $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'create'])
                 ->bind($entity);
