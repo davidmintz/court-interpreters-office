@@ -31,7 +31,7 @@ class SimpleEntityControllerFactory implements FactoryInterface
     {
         $basename = substr($requestedName, strrpos($requestedName,'\\')+1);
         $shortName = strtolower((new Filter)->filter(substr($basename, 0, -10)));
-        // $shortName is for identifying cache id and maybe composing path 
+        // $shortName is for identifying cache id/namespace and maybe composing path 
         // to a form.phtml viewscript 
         /**
          * @todo rethink this whole plan
@@ -41,17 +41,9 @@ class SimpleEntityControllerFactory implements FactoryInterface
             case 'languages':
             case 'locations':
             case 'event-types':
-
                 $factory = $container->get('annotated-form-factory');               
                 $entityManager = $container->get('entity-manager');
-                ///*
-                $entityManager->getEventManager()
-                    ->addEventListener([Events::postPersist,Events::postUpdate //Events::postRemove,
-                        ],
-                     // constructor argument to be changed
-                     new Listener\UpdateListener($container->get('log'))
-               );
-               $controller = new $requestedName($entityManager, $factory, $shortName); 
+                $controller = new $requestedName($entityManager, $factory, $shortName); 
             break;            
         }
         return $controller;
