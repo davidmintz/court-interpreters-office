@@ -16,7 +16,7 @@ trait ResultCachingQueryTrait
      *
      * @return Doctrine\Orm\Query
      */
-    public function createQuery($dql,$cache_id)
+    public function createQuery($dql,$cache_id = null)
     {
         $query = $this->getEntityManager()->createQuery($dql);
        
