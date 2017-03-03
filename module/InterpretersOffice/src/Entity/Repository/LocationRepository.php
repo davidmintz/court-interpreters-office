@@ -6,17 +6,27 @@ namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use Doctrine\Common\Cache\CacheProvider;
+
 /**
  * custom EntityRepository class for Location entity.
  */
 class LocationRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
-
-    public function deleteCache($id = null)
-    {
-        return "this is a no-op as of now: ". __METHOD__ . "\n";
+    
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
+        
+        parent::__construct($em, $class);
+        $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace('locations');
+        
     }
+    /**
+     * @var CacheProvider 
+     */
+    protected $cache;
+    
 
     /**
      * returns all the "parent" locations (those that are not nested in another).
@@ -27,8 +37,8 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     {
         $query = $this->createQuery(
             'SELECT l FROM InterpretersOffice\Entity\Location l '
-            .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC',
-            'locations-top'
+            .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC'
+            
         );
 
         return $query->getResult();
@@ -48,7 +58,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
             ->where('t.type = :type')
             ->setParameter('type', 'courthouse')
             ->addOrderBy('l.name', 'ASC'); //->addOrderBy('l.name','ASC');
-        $query = $qb->getQuery()->useResultCache(true,0,'locations-courthouses');
+        $query = $qb->getQuery()->useResultCache(true);
 
         return $query->getResult();
     }
@@ -64,7 +74,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         $dql = 'SELECT l.id, l.name  FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\'';
-        $query = $this->createQuery($dql,'locations-courtroom-options')
+        $query = $this->createQuery($dql)
                 ->setParameter('parent_id', $parent_id);
         $data = $query->getResult();
         usort($data, function ($a, $b) {
@@ -89,7 +99,8 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
         $query = $this->getEntityManager()->createQuery($dq,'locations-courtrooms')
-                ->setParameter('parent_id', $parent_id)->useResultCache(true);
+                ->setParameter('parent_id', $parent_id)
+                ->useResultCache(true);
         $data = $query->getResult();
         // maybe it would run faster if we crammed it into one line :-)
         usort($data, function ($a, $b) {
@@ -113,14 +124,28 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
                 .' LEFT JOIN l.parentLocation p JOIN l.type t '
                 .' WHERE t.id = :type_id'
         )->setParameters([':type_id' => $type_id]);
-        $data = $query->getResult();
+        $data = $query->useResultCache(true)->getResult();
         usort($data, function ($a, $b) {
             return strnatcasecmp("$a[name], $a[parent]", "$b[name], $b[parent]");
         });
 
         return $data;
     }
-
+    
+    /**
+     * experimental 
+     * 
+     * implements cache deletion
+     * @param type $cache_id
+     */
+    public function deleteCache($cache_id = null) {
+        
+         $this->cache->setNamespace('locations');
+         $this->cache->deleteAll();
+         // tmp
+         return sprintf('ran %s at line %d',__METHOD__,__LINE__);
+        
+    }
     /*
      * NOT used and slated for removal
      *
