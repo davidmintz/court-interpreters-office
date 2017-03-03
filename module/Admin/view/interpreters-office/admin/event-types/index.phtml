@@ -24,5 +24,8 @@ endif; ?>
             <li class="list-group-item">
                 <a href="<?php echo $this->url('event-types/edit', ['id' => $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
             </li>
-        <?php                                                                                                     endforeach ?>
+        <?php endforeach ?>
 </ul>
+<a href="<?php echo $this->url('event-types/add') ?>" role="button" title="add a new event-type" id="btn-add-event-type" class="btn btn-info">
+<span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new event-type 
+</a>

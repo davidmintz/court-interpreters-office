@@ -38,4 +38,7 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
     'sliding',
     'partials/pagination_control',
     ['route' => 'languages']
-);
+);?>
+<a href="<?php echo $this->url('languages/add') ?>" role="button" title="add a new language" id="btn-add-language" class="btn btn-info">
+<span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new language 
+</a>
