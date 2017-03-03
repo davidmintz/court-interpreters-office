@@ -53,7 +53,13 @@ return [
         ],
     ],
     'doctrine' => [
-
+        'eventmanager' => [
+            'orm_default' => [
+                'subscribers' => [
+                    Entity\Listener\UpdateListener::class,
+                ],
+            ],
+        ],  
         'driver' => [
             // defines an annotation driver with one path, and names it `my_annotation_driver`
             'application_annotation_driver' => [
@@ -70,7 +76,7 @@ return [
                 'drivers' => [
                     // register `my_annotation_driver` for any entity under namespace `My\Namespace`
                     __NAMESPACE__.'\Entity' => 'application_annotation_driver',
-                ],
+                ],                
             ],
         ],
         'configuration' => [
@@ -79,8 +85,8 @@ return [
                 'result_cache' => $doctrine_cache,
                 'metadata_cache' => $doctrine_cache,
                 'hydration_cache' => $doctrine_cache,
-            ],
-        ],
+            ],            
+        ],        
     ],
 
     'service_manager' => [
@@ -94,8 +100,8 @@ return [
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
             \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
-
-            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
+            Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
+            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,            
         ],
 
     ],
