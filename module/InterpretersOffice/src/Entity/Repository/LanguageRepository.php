@@ -13,14 +13,15 @@ use Doctrine\ORM\EntityManagerInterface;
 /**
  * custom EntityRepository class for Language entity.
  */
-class LanguageRepository extends EntityRepository
+class LanguageRepository extends EntityRepository  implements CacheDeletionInterface
+
 {
     use ResultCachingQueryTrait;
     
     /**
-     * @var string cache id
+     * @var string cache id prefix
      */
-    protected $cache_id = 'languages';
+    protected $cache_id_prefix = 'languages:';
     
     /**
      * returns all languages wrapped in a paginator.
@@ -32,7 +33,9 @@ class LanguageRepository extends EntityRepository
     public function findAllWithPagination($page = 1)
     {
         $dql = 'SELECT language FROM InterpretersOffice\Entity\Language language ORDER BY language.name';
-        $query = $this->createQuery($dql)->setMaxResults(30);
+        $query = $this->createQuery($dql,
+                $this->cache_id_prefix . 'findAll'
+            )->setMaxResults(30);
 
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
@@ -55,9 +58,22 @@ class LanguageRepository extends EntityRepository
         // have the decency to sort them by name ascending, 
         // and use the result cache
         $query = $this->createQuery(
-            'SELECT l FROM InterpretersOffice\Entity\Language l ORDER BY l.name ASC'
+            'SELECT l FROM InterpretersOffice\Entity\Language l ORDER BY l.name ASC',
+            $this->cache_id_prefix . 'findAll'
         );
         
         return $query->getResult();
+    }
+
+    /**
+     * experimental 
+     * 
+     * implements cache deletion
+     * @param string $cache_id
+     */
+    public function deleteCache($cache_id = null) {
+
+        $cache = $this->getEntityManager()->getConfiguration()->getResultCacheImpl();
+        $cache->delete($this->cache_id_prefix . 'findAll');
     }
 }

@@ -83,5 +83,8 @@ class LocationTypeRepository extends EntityRepository implements CacheDeletionIn
                 $cache->delete($cache_id);
             }
         }
+        $other_repo = $this->getEntityManager()->getRepository('InterpretersOffice\Entity\Location');
+        $status = $other_repo->deleteCache();
+        return $status;
     }
 }

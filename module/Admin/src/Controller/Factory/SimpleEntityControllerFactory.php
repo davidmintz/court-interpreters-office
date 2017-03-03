@@ -49,7 +49,7 @@ class SimpleEntityControllerFactory implements FactoryInterface
                     ->addEventListener([Events::postPersist,Events::postUpdate //Events::postRemove,
                         ],
                      // constructor argument to be changed
-                     new Listener\UpdateListener($shortName,$container->get('log'))
+                     new Listener\UpdateListener($container->get('log'))
                );
                $controller = new $requestedName($entityManager, $factory, $shortName); 
             break;            

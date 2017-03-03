@@ -16,25 +16,26 @@ trait ResultCachingQueryTrait
      *
      * @return Doctrine\Orm\Query
      */
-    public function createQuery($dql,$cache_id = null)
+    public function createQuery($dql,$cache_id)
     {
         $query = $this->getEntityManager()->createQuery($dql);
-        if (! $cache_id) {
-            $cache_id = $this->getCacheId();
-        }
+       
         $query->useResultCache(true,7200,$cache_id);
 
         return $query;
     }
-    
+    /*
+     @todo  figure out a reasonable default cache_id and make above $cache_id arg
+     optional ?
+
     public function getCacheId()
     {
         if (isset($this->cache_id)) {
             return $this->cache_id;
         } else {
-            /** @todo  compute it ourself and save in $this->cache_id */
-            // strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter());
+                        // strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter());
         }
         
     }
+    */
 }

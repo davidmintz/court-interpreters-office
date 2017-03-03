@@ -9,9 +9,14 @@ use Doctrine\ORM\EntityRepository;
 /**
  * custom EntityRepository class for Location entity.
  */
-class LocationRepository extends EntityRepository
+class LocationRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
+
+    public function deleteCache($id = null)
+    {
+        return "this is a no-op as of now: ". __METHOD__ . "\n";
+    }
 
     /**
      * returns all the "parent" locations (those that are not nested in another).
@@ -22,7 +27,8 @@ class LocationRepository extends EntityRepository
     {
         $query = $this->createQuery(
             'SELECT l FROM InterpretersOffice\Entity\Location l '
-            .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC'
+            .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC',
+            'locations-top'
         );
 
         return $query->getResult();
@@ -42,7 +48,7 @@ class LocationRepository extends EntityRepository
             ->where('t.type = :type')
             ->setParameter('type', 'courthouse')
             ->addOrderBy('l.name', 'ASC'); //->addOrderBy('l.name','ASC');
-        $query = $qb->getQuery()->useResultCache(true);
+        $query = $qb->getQuery()->useResultCache(true,0,'locations-courthouses');
 
         return $query->getResult();
     }
@@ -58,7 +64,7 @@ class LocationRepository extends EntityRepository
         $dql = 'SELECT l.id, l.name  FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\'';
-        $query = $this->createQuery($dql)
+        $query = $this->createQuery($dql,'locations-courtroom-options')
                 ->setParameter('parent_id', $parent_id);
         $data = $query->getResult();
         usort($data, function ($a, $b) {
@@ -82,7 +88,7 @@ class LocationRepository extends EntityRepository
         $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
-        $query = $this->getEntityManager()->createQuery($dql)
+        $query = $this->getEntityManager()->createQuery($dq,'locations-courtrooms'l)
                 ->setParameter('parent_id', $parent_id)->useResultCache(true);
         $data = $query->getResult();
         // maybe it would run faster if we crammed it into one line :-)
