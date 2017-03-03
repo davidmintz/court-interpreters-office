@@ -5,21 +5,22 @@
 namespace InterpretersOffice\Entity\Listener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Doctrine\ORM\Mapping;
-
+use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 
 
 /**
  * a start on an entity listener for clearing caches
  */
-class UpdateListener {
+class UpdateListener implements EventSubscriber {
     
+    public function getSubscribedEvents() {
+        return ['postUpdate','postPersist','postRemove'];
+    }
     // temporary constructor argument
     public function __construct($logger)
     {
         $this->logger = $logger;
-        //$this->cache_id = $cache_id;
     }
     
     /**
