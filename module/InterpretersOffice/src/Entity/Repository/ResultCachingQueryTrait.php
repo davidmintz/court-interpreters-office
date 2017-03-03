@@ -13,29 +13,17 @@ trait ResultCachingQueryTrait
      * wrapper for EntityManager::createQuery() that turns on result cache.
      *
      * @param string $dql
+     * @param string $cache_id
+     * @param int $lifetime 
      *
      * @return Doctrine\Orm\Query
      */
-    public function createQuery($dql,$cache_id = null)
+    public function createQuery($dql,$cache_id = null,$lifetime = 0)
     {
-        $query = $this->getEntityManager()->createQuery($dql);
-       
-        $query->useResultCache(true,7200,$cache_id);
+        $query = $this->getEntityManager()->createQuery($dql);       
+        $query->useResultCache(true,$lifetime,$cache_id);
 
         return $query;
     }
-    /*
-     @todo  figure out a reasonable default cache_id and make above $cache_id arg
-     optional ?
-
-    public function getCacheId()
-    {
-        if (isset($this->cache_id)) {
-            return $this->cache_id;
-        } else {
-                        // strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter());
-        }
-        
-    }
-    */
+    
 }
