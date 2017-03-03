@@ -15,6 +15,11 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 {
     use ResultCachingQueryTrait;
     
+    /**
+     * @var CacheProvider 
+     */
+    protected $cache;
+    
     public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
         
         parent::__construct($em, $class);
@@ -22,12 +27,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         $this->cache->setNamespace('locations');
         
     }
-    /**
-     * @var CacheProvider 
-     */
-    protected $cache;
-    
-
+   
     /**
      * returns all the "parent" locations (those that are not nested in another).
      *
@@ -43,6 +43,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $query->getResult();
     }
+    
     /**
      * gets all the locations of type 'courthouse'.
      *
@@ -62,6 +63,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $query->getResult();
     }
+    
     /**
      * gets data for courtroom SELECT element options.
      *
@@ -83,6 +85,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $data;
     }
+    
     /**
      * gets all the courtrooms whose parent courthouse is $parent_id.
      *
