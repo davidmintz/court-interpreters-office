@@ -8,11 +8,14 @@ use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 
+use Zend\Log;
 
 /**
  * a start on an entity listener for clearing caches
  */
-class UpdateListener implements EventSubscriber {
+class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface {
+    
+    use Log\LoggerAwareTrait;
     
     /**
      * implements EventSubscriber
@@ -21,16 +24,6 @@ class UpdateListener implements EventSubscriber {
      */
     public function getSubscribedEvents() {
         return ['postUpdate','postPersist','postRemove'];
-    }
-    
-    /**
-     * constructor 
-     * 
-     * @param \Zend\Log\LoggerInterface $logger
-     */
-    public function __construct($logger)
-    {
-        $this->logger = $logger;
     }
     
     /**

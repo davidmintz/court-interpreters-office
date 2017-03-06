@@ -24,12 +24,9 @@ class UpdateListenerFactory implements FactoryInterface {
      * @return ExampleController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        // constructor arguments subject to change. for now, this is handy
-        // for debugging.
-        $listener = new UpdateListener(
-            $container->get('log')
-        );
+    {       
+        $listener = new UpdateListener();
+        $listener->setLogger($container->get('log'));
 
         return $listener;
     }
