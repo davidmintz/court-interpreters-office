@@ -24,6 +24,42 @@ return [
                     ],
                 ],
             ],
+            'events' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/admin/events',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\EventsController::class,
+                        'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'add' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/add',
+                            'defaults' => [
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:action/:id',
+                            'defaults' => [
+                                'action' => 'edit',
+                            ],
+                            'constraints' => [
+                                'action' => 'edit|delete|repeat',
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             'languages' => [
                 'type' => Segment::class,
                 'may_terminate' => true,

@@ -145,6 +145,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      * @var string
      */
     protected $auth_user_role = 'anonymous';
+    
     /**
      * constructor.
      *

@@ -19,4 +19,17 @@ class EventsController extends AbstractActionController
     public function __construct(EntityManagerInterface $em) {
         $this->entityManager = $em;
     }
+    
+    public function indexAction() {
+        
+        return ['title' => 'events'];
+        
+        
+    }
+    
+    public function addAction()
+    {
+        print_r($this->params()->fromRoute('action'));
+        
+    }
 }
