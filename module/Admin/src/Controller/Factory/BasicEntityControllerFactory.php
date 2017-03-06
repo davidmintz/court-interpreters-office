@@ -1,6 +1,6 @@
 <?php
 
-/** module/InterpretersOffice/src/Controller/Factory/SimpleEntityControllerFactory.php */
+/** module/InterpretersOffice/src/Controller/Factory/BasicEntityControllerFactory.php */
 
 namespace InterpretersOffice\Admin\Controller\Factory;
 
@@ -16,7 +16,7 @@ use Zend\Filter\Word\CamelCaseToDash as Filter;
  * Factory for instantiating Controllers for managing our relatively
  * simple entities.
  */
-class SimpleEntityControllerFactory implements FactoryInterface
+class BasicEntityControllerFactory implements FactoryInterface
 {
     /**
      * instantiates and returns a concrete instance of AbstractActionController.

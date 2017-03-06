@@ -329,9 +329,9 @@ return [
             Controller\AdminIndexController::class => Controller\AdminIndexController::class,
         ],
         'factories' => [
-            Controller\LanguagesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
-            Controller\LocationsController::class => Controller\Factory\SimpleEntityControllerFactory::class,
-            Controller\EventTypesController::class => Controller\Factory\SimpleEntityControllerFactory::class,
+            Controller\LanguagesController::class => Controller\Factory\BasicEntityControllerFactory::class,
+            Controller\LocationsController::class => Controller\Factory\BasicEntityControllerFactory::class,
+            Controller\EventTypesController::class => Controller\Factory\BasicEntityControllerFactory::class,
             Controller\PeopleController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\JudgesController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\InterpretersController::class => Controller\Factory\PeopleControllerFactory::class,
