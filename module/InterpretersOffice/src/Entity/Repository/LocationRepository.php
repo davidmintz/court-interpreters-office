@@ -14,7 +14,8 @@ use Doctrine\Common\Cache\CacheProvider;
  * An Doctrine event listener is attached to the update, create and delete 
  * events and calls deleteCache on this class as needed.
  * @todo consider taking out this CacheDeletionInterface stuff and doing this
- * directly in the event listener itself.
+ * directly in the event listener itself. In that case we won't need to override
+ * the constructor either.
  * 
  */
 class LocationRepository extends EntityRepository implements CacheDeletionInterface
@@ -29,12 +30,10 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     protected $cache;
     
     /**
-     * 
      * constructor
      * 
      * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
-     * @param Mapping\ClassMetadata $class The class descriptor.
-     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
      */
     public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
         
