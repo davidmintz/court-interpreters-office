@@ -6,15 +6,10 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Doctrine\ORM\EntityManagerInterface;
-use InterpretersOffice\Entity\User;
 
-use Zend\Permissions\Acl\AclInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Zend\EventManager\EventManagerInterface;
-
-//use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
-
 use Zend\Authentication\AuthenticationService;
 
 use Zend\Session\Container as Session;
@@ -32,7 +27,7 @@ use InterpretersOffice\Entity;
  *     autocompletion?
  *    
  */
-class UsersController extends AbstractActionController //implements AuthenticationAwareInterface
+class UsersController extends AbstractActionController 
 
 {
 
@@ -42,17 +37,6 @@ class UsersController extends AbstractActionController //implements Authenticati
      * @var EntityManagerInterface
      */
     protected $entityManager;
-
-    /**
-     * @var AclInterface
-     */
-    protected $acl;
-
-    /**
-     * @var AuthenticationService
-     * 
-     */
-    protected $auth;
     
     /**
      * the role of the currently authenticated user
@@ -65,7 +49,7 @@ class UsersController extends AbstractActionController //implements Authenticati
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)//, AclInterface $acl
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->auth_user_role = (new Session('Authentication'))->role;
@@ -98,6 +82,7 @@ class UsersController extends AbstractActionController //implements Authenticati
     * NOTE: we might decide on a better way to do this
     * e.g., use an ACL assertion 
     * 
+    * @param EventManagerInterface events
     */
     public function setEventManager(EventManagerInterface $events)
     {
@@ -132,12 +117,7 @@ class UsersController extends AbstractActionController //implements Authenticati
                 }
             }
         });
-        /*
-        $events->attach('post.validate',function($e){
-            $person = $e->getParam('user')->getPerson();
-            $person->setActive((boolean)$person->getActive());            
-        });
-        */
+
         return parent::setEventManager($events);
     }
     /**
