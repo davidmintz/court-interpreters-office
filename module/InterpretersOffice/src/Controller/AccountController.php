@@ -15,7 +15,8 @@ use InterpretersOffice\Entity;
 /**
  *  AccountController.
  *
- *  For registration, password reset and email verification
+ *  For registration, password reset and email verification. 
+ *  Very much incomplete.
  */
 
 class AccountController extends AbstractActionController
@@ -36,27 +37,51 @@ class AccountController extends AbstractActionController
     {
         $this->objectManager = $objectManager;
     }
-
+    
+    /**
+     * index action
+     * @return ViewModel
+     */
     public function indexAction()
     {
         return new ViewModel();
     }
-
+    /**
+     * registers a new user account 
+     * 
+     * @return ViewModel
+     */
     public function registerAction()
     {
       return new ViewModel();   
     }
-
+    
+    /**
+     * email verification
+     * s
+     * @return ViewModel
+     */
     public function verifyEmailAction()
     {
       return new ViewModel();   
     }
-
+    
+    /**
+     * handles password-reset requests
+     * 
+     * @return ViewModel
+     */
     public function requestPasswordAction()
     {
       
       return new ViewModel();
     }
+    
+    /**
+     * handles actual resetting of the user's password
+     * 
+     * @return ViewModel
+     */
     public function resetPasswordAction()
     {
        return new ViewModel(); 
