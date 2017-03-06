@@ -15,6 +15,13 @@ class LocationTypeRepository extends EntityRepository implements CacheDeletionIn
     
     use ResultCachingQueryTrait;
     
+    /**
+     * constructor
+     * 
+     * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
+     */
+    
     public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
         
         parent::__construct($em, $class);
@@ -22,6 +29,8 @@ class LocationTypeRepository extends EntityRepository implements CacheDeletionIn
         $this->cache->setNamespace('locations');
     }
     /**
+     * cache
+     * 
      * @var CacheProvider $cache
      */
     protected $cache;
@@ -34,7 +43,7 @@ class LocationTypeRepository extends EntityRepository implements CacheDeletionIn
      */
     public function findAll()
     {
-        // have the decency to sort them by name-of-type ascending
+        // have the decency to sort them by name-of-type, ascending
         $query = $this->getEntityManager()->createQuery(
             'SELECT t FROM InterpretersOffice\Entity\LocationType t ORDER BY t.type ASC'
         )->useResultCache(true, null, 'location-types');
