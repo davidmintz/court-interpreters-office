@@ -336,6 +336,7 @@ return [
             Controller\JudgesController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\InterpretersController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\UsersController::class => Controller\Factory\PeopleControllerFactory::class,
+            Controller\EventsController::class => Controller\Factory\EventsControllerFactory::class,
         ],
     ],
     'view_manager' => [
