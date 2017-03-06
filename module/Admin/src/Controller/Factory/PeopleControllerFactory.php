@@ -1,5 +1,4 @@
 <?php
-
 /** module/InterpretersOffice/src/Controller/Factory/SimpleEntityControllerFactory.php */
 
 namespace InterpretersOffice\Admin\Controller\Factory;
