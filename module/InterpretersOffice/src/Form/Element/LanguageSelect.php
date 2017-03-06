@@ -12,7 +12,8 @@ use DoctrineModule\Form\Element\ObjectSelect;
 class LanguageSelect extends ObjectSelect
 {    
     /**
-     *
+     * default options for the element
+     * 
      * @var array
      */
     protected $defaultOptions = [

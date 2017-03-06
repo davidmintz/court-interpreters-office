@@ -15,6 +15,11 @@ class EventTypeRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
     
+    /**
+     * cache id
+     * 
+     * @var string $cache_id
+     */
     protected $cache_id = 'event-types';
 
     /**
