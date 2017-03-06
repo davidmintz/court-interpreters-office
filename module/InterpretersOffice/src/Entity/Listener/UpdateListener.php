@@ -14,19 +14,30 @@ use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
  */
 class UpdateListener implements EventSubscriber {
     
+    /**
+     * implements EventSubscriber
+     * 
+     * @return array
+     */
     public function getSubscribedEvents() {
         return ['postUpdate','postPersist','postRemove'];
     }
-    // temporary constructor argument
+    
+    /**
+     * constructor 
+     * 
+     * @param \Zend\Log\LoggerInterface $logger
+     */
     public function __construct($logger)
     {
         $this->logger = $logger;
     }
     
     /**
-	 * experimental, soon to be revised
-	 * @return void
-	 */
+     * postUpdate handler
+     * @param LifecycleEventArgs $args
+     * @return void
+     */
 	public function postUpdate(LifecycleEventArgs $args) {
 		
         $entity = $args->getObject();
@@ -41,12 +52,24 @@ class UpdateListener implements EventSubscriber {
         }
         else { $this->logger->debug("! not an implementation of CacheDeletionInterface:    ".get_class($repository));  }         
     }  
-
+    
+    /**
+     * postPersist event handler
+     * 
+     * @param LifecycleEventArgs $args
+     * @return void
+     */
     public function postPersist(LifecycleEventArgs $args)
     {
         return $this->postUpdate($args);
     }
-
+    
+    /**
+     * postRemove event handler
+     * 
+     * @param LifecycleEventArgs $args
+     * @return void
+     */
     public function postRemove(LifecycleEventArgs $args)
     {
         return $this->postUpdate($args);
