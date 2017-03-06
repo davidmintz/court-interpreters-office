@@ -6,12 +6,17 @@ namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Zend\Form\Annotation;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Entity class representing a location where an interpreting event takes place.
- *
- * @todo add a boolean property "active" for retiring (hiding) locations no longer in use
- *
+ * 
+ * @todo consider making Courtroom and Courthouse subclasses of Location, considering
+ * that only these have a relationship to the Judge entity.
+ * 
+ * example:
+ * "SELECT j.lastname AS judge, l.name AS location, p.name courthouse FROM 
+ * InterpretersOffice\Entity\Location l JOIN l.judges j LEFT JOIN l.parentLocation p"
  *
  * @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})})
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\LocationRepository")
@@ -52,7 +57,6 @@ class Location
      * the LocationType of this Location.
      *
      * @ORM\JoinColumn(nullable=false)
-     * // this inversedBy is experimental!
      * @ORM\ManyToOne(targetEntity="LocationType",inversedBy="locations")
      *
      * @var LocationType;
@@ -92,7 +96,7 @@ class Location
     protected $comments;
 
     /**
-     * whether the account is "active" or disabled.
+     * whether the location is "active" or not (i.e., archival).
      *
      * @ORM\Column(type="boolean",options={"nullable":false,"default":true})
      * @Annotation\Type("Zend\Form\Element\Radio")
@@ -105,7 +109,26 @@ class Location
      *      "messages":{"notInArray":"illegal value: only 0 or 1 are accepted"}}})
      */
     protected $active = true;
-
+    
+    
+    /**
+     * 
+     * 
+     * @ORM\OneToMany(targetEntity="InterpretersOffice\Entity\Judge",mappedBy="defaultLocation")
+     * @var ArrayCollection 
+     * 
+     * no setter/getter for this because we will not be managing the Judge's
+     * default location from here
+     */
+    protected $judges;
+    
+    /**
+     * constructor
+     */
+    public function __construct() {
+        $this->judges = new ArrayCollection();
+    }
+    
     /**
      * Get id.
      *
