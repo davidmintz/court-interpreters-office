@@ -59,10 +59,11 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
     /**
      * constructor
      * 
-     * options: 
-     * 	
+     * @param ObjectManager $objectManager
+     * @param array $options
+     * @throws \RuntimeException
      */
-	public function __construct(ObjectManager $objectManager, $options = [])
+	public function __construct(ObjectManager $objectManager, Array $options)
 	{
         if (!isset($options['action'])) {
             throw new \RuntimeException('missing "action" option in UserFieldset constructor');
@@ -99,7 +100,11 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         $this->addElements();        
        
 	}
-    
+    /**
+     * adds elements to this fieldset
+     * 
+     * @return UserFieldset
+     */
     protected function addElements()
     {
         
@@ -175,15 +180,26 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ]);
 
         $this->add($fieldset);
+        
+        return $this;
 
     }
-
+    /**
+     * adds password and confirm-password elements
+     * 
+     * @return UserFieldset
+     */
     public function addPasswordElements()
     {
         // to be implemented
+        return $this;
     }
 
-	//public function setAuthenticationService(AuthenticationService $auth){}
+	/**
+     * implements InputFilterProviderInterface
+     * 
+     * @return array
+     */
     public function getInputFilterSpecification() {
         return [
             'id' => [
@@ -241,5 +257,4 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ]
         ];
     }
-
 }
