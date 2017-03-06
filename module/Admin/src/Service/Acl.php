@@ -40,7 +40,7 @@ class Acl extends ZendAcl implements EventManagerAwareInterface {
     }
     
     /**
-     * initialize the ACL
+     * initializes the ACL
      */
     protected function setup()
             
@@ -90,14 +90,20 @@ class Acl extends ZendAcl implements EventManagerAwareInterface {
         } 
         } catch (Exception $e) {
             echo $e->getMessage();
-        }
-         
+        }         
     }
     
     /**
-     * inherited from Zend\Permissions\Acl\Acl
+     * Returns true if the Role has access to the Resource
      * 
-     * @return boolean if authorized 
+     * Overrides the parent, the sole difference being that we trigger an 
+     * 'access-denied' event if applicable.
+     * 
+     * @param \Zend\Permissions\Acl\Role\RoleInterface|string            $role
+     * @param \Zend\Permissions\Acl\Resource\ResourceInterface|string    $resource
+     * @param string $privilege
+     * @return bool true if authorized
+     * 
      */
     public function isAllowed($role = null, $resource = null, $privilege = null) {
         $allowed = parent::isAllowed($role, $resource, $privilege);
