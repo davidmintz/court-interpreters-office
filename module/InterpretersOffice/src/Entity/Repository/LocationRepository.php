@@ -10,16 +10,32 @@ use Doctrine\Common\Cache\CacheProvider;
 
 /**
  * custom EntityRepository class for Location entity.
+ * 
+ * An Doctrine event listener is attached to the update, create and delete 
+ * events and calls deleteCache on this class as needed.
+ * @todo consider taking out this CacheDeletionInterface stuff and doing this
+ * directly in the event listener itself.
+ * 
  */
 class LocationRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
     
     /**
+     * cache
+     * 
      * @var CacheProvider 
      */
     protected $cache;
     
+    /**
+     * 
+     * constructor
+     * 
+     * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
+     * @param Mapping\ClassMetadata $class The class descriptor.
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     */
     public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
         
         parent::__construct($em, $class);
@@ -101,7 +117,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
-        $query = $this->getEntityManager()->createQuery($dq,'locations-courtrooms')
+        $query = $this->getEntityManager()->createQuery($dql,'locations-courtrooms')
                 ->setParameter('parent_id', $parent_id)
                 ->useResultCache(true);
         $data = $query->getResult();
@@ -145,7 +161,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         
          $this->cache->setNamespace('locations');
          $this->cache->deleteAll();
-         // tmp
+         // for debugging
          return sprintf('ran %s at line %d',__METHOD__,__LINE__);
         
     }
