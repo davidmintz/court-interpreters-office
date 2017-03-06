@@ -1,5 +1,4 @@
 <?php
-
 /** module/InterpretersOffice/src/Service/AuthenticationAwareInterface.php */
 
 namespace InterpretersOffice\Service\Authentication;
@@ -11,7 +10,11 @@ use Zend\Authentication\AuthenticationService;
  */
 interface AuthenticationAwareInterface
 {
-
+    /**
+     * sets AuthenticationService
+     * 
+     * @param AuthenticationService $auth
+     */
 	public function setAuthenticationService(AuthenticationService $auth);
 
 }
