@@ -100,9 +100,11 @@ class Module
         }        
     }
     /**
+     * checks authorization
      * 
      * @param MvcEvent $event
      * @param string $role
+     * @return boolean true if current is authorized access to current resource
      */
     public function checkAcl(MvcEvent $event,$role){
         
