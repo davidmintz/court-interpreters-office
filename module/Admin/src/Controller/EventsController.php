@@ -10,12 +10,16 @@ use Zend\View\Model\ViewModel;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use InterpretersOffice\Form;
+
 
 /**
  *  EventsController
  */
 class EventsController extends AbstractActionController
 {
+    
+
     public function __construct(EntityManagerInterface $em) {
         $this->entityManager = $em;
     }
@@ -29,7 +33,44 @@ class EventsController extends AbstractActionController
     
     public function addAction()
     {
-        print_r($this->params()->fromRoute('action'));
+        $form = new Form\EventForm(
+            $this->entityManager,
+            ['action' => 'create']
+        );
+        $request = $this->getRequest();
+        $form->setAttribute('action',$request->getRequestUri());
+        
+        $viewModel = (new ViewModel())
+            ->setTemplate('interpreters-office/admin/events/form')
+            ->setVariables([
+                'title' => 'events | '.$this->params()->fromRoute('action'),
+                'form'  => $form,
+                ]);
+
+
+        return $viewModel;
+        
+    }
+
+    public function editAction()
+    {
+
+        $form = new Form\EventForm(
+            $this->entityManager,
+            ['action' => 'create']
+        );
+        $request = $this->getRequest();
+        $form->setAttribute('action',$request->getRequestUri());
+        
+        $viewModel = (new ViewModel())
+            ->setTemplate('interpreters-office/admin/events/form')
+            ->setVariables([
+                'title' => $this->params()->fromRoute('action'),
+                'form'  => $form,
+                ]);
+
+
+        return $viewModel;
         
     }
 }

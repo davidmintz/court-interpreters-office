@@ -24,14 +24,10 @@ class EventFieldset extends Fieldset
     protected $formName = 'event-form';
 
     /**
-     * name of Fieldset class to instantiate and add to the form.
-     *
-     * the idea is that subclasses can override this with the classname 
-     * of a Fieldset that extends PersonFieldset
-     *
+     * name of this Fieldset
      * @var string
      */
-    protected $fieldsetClass = EventFieldset::class;
+    protected $fieldset_name = 'event';
     
     /**
      * constructor.
