@@ -99,7 +99,7 @@ class AuthController extends AbstractActionController
             $this->events->trigger(__FUNCTION__, $this, $event_params);
             $this->redirect()->toRoute($route);
         }
-
+        $this->getResponse()->getHeaders()->addHeaderLine('X-Authentication-required', "true");
         return new ViewModel(['form' => $form, 'title' => 'user login']);
     }
 
