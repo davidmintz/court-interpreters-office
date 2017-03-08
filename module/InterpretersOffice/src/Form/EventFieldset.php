@@ -13,9 +13,11 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 //use InterpretersOffice\Form\Validator\UniqueObject;
 
 
-class EventFieldset extends Fieldset
-
+class EventFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
+    
+     use ObjectManagerAwareTrait;
+     
     /**
      * name of the form.
      *
@@ -41,7 +43,7 @@ class EventFieldset extends Fieldset
             throw new \RuntimeException('missing "action" option in EventFieldset constructor');
         }
         if (!in_array($options['action'], ['create', 'update','repeat'])) {
-            throw new \RuntimeException('invalid "action" option in EventFieldset constructor');
+            throw new \RuntimeException('invalid "action" option in EventFieldset constructor: '.(string)$options['action']);
         }
         /** might get rid of this... */
         if (isset($options['auth_user_role'])) {
@@ -63,4 +65,14 @@ class EventFieldset extends Fieldset
        
     }
     
+    /**
+     * implements InputFilterProviderInterface
+     * 
+     * @return array
+     */
+    public function getInputFilterSpecification()
+    {
+        // to be continued
+        return [];
+    }
 }
