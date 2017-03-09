@@ -19,7 +19,8 @@ install:  composer install
 
 before_script:  
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
-    - mkdir -p data/log 
+    - mkdir -p data/log     
+    - phpenv config-rm xdebug.ini
 
 script: vendor/bin/phpunit
 
