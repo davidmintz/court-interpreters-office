@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\Collection;
  * Entity representing an Interpreter.
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\InterpreterRepository")
- * @ORM\Table(name="interpreters")
+ * @ORM\Table(name="interpreters",uniqueConstraints={@ORM\UniqueConstraint(name="unique_ssn",columns={"ssn"})})
  */
 class Interpreter extends Person
 {
@@ -35,7 +35,7 @@ class Interpreter extends Person
     /**
      * date of birth.
      *
-     * @ORM\Column(type="date",nullable=true)
+     * @ORM\Column(type="string",length=125,nullable=true)
      *
      * @var string
      */
@@ -49,6 +49,14 @@ class Interpreter extends Person
      * @var ArrayCollection of InterpreterLanguage
      */
     protected $interpreterLanguages;
+
+    /**
+     * 
+     * @ORM\Column(type="string",length=255,nullable=true)
+     */
+    protected $ssn;
+
+
 
     /*
       `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -65,7 +73,7 @@ class Interpreter extends Person
         `fingerprinted` date DEFAULT NULL,
         `oath` date DEFAULT NULL,
 
-         */
+    */
     /**
      * Constructor.
      */
@@ -101,7 +109,7 @@ class Interpreter extends Person
     /**
      * Set dob.
      *
-     * @param \DateTime $dob
+     * @param string $dob
      *
      * @return Interpreter
      */
@@ -115,11 +123,34 @@ class Interpreter extends Person
     /**
      * Get dob.
      *
-     * @return \DateTime
+     * @return string
      */
     public function getDob()
     {
         return $this->dob;
+    }
+
+    /**
+     * sets ssn
+     * 
+     * @param string
+     * @return Interpreter
+     * 
+     */
+    public function setSsn($ssn) {
+        $this->ssn = $ssn;
+
+        return $this;
+    }
+
+    /**
+     * gets ssn
+     * @return string
+     * 
+     */
+    public function getSsn()
+    {
+        return $this->ssn;
     }
 
     /**
