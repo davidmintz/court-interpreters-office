@@ -9,5 +9,6 @@
 $( document ).ajaxComplete(function(event, xhr) {
     if (xhr.getResponseHeader('X-Authentication-required')) {
         document.location = (basePath || "/") + 'login';
+        //var doc = $(xhr.responseText);
     }
 });
