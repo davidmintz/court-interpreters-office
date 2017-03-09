@@ -18,7 +18,8 @@ class InterpreterLoader implements FixtureInterface
             ->setFirstname('David')
                 ->setActive(true)
             ->setEmail('david@davidmintz.org')
-            ->setDob(new \DateTime('1958-05-26'))
+            //->setDob(new \DateTime('1958-05-26'))
+                ->setDob('1958-05-26')
             ->setHat($staff_hat);
         $spanish = $objectManager->getRepository('InterpretersOffice\Entity\Language')
             ->findOneBy(['name' => 'Spanish']);
@@ -33,7 +34,8 @@ class InterpreterLoader implements FixtureInterface
             ->setFirstname('Margarita')
                 ->setActive(true)
             ->setEmail('m.somebody@nysd.uscourts.gov')
-            ->setDob(new \DateTime('1964-04-21'))
+            //->setDob(new \DateTime('1964-04-21'))
+             ->setDob('1964-04-21')
             ->setHat($staff_hat);
         $other_interpreter->addInterpreterLanguage(new Entity\InterpreterLanguage($other_interpreter,$spanish));
         $objectManager->persist($other_interpreter);
