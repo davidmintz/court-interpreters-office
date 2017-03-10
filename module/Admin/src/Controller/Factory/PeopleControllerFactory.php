@@ -26,11 +26,17 @@ class PeopleControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $controller = new $requestedName($container->get('entity-manager'));
+        
+        $em = $container->get('entity-manager');
+        if ($requestedName == Controller\InterpretersController::class) {
+            // attach Entity Listener
+            $listener = $container->get('interpreter-listener');
+            $em->getConfiguration()->getEntityListenerResolver()->register($listener);
+        }
+        $controller = new $requestedName($em);
         if ($controller instanceof AuthenticationAwareInterface) {
             $controller->setAuthenticationService($container->get('auth'));
         }
-
         return $controller;
     }
 }
