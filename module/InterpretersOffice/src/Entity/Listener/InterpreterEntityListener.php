@@ -11,6 +11,6 @@ class InterpreterEntityListener
 
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
     {
-    	printf("shit is running in %s! yay!",__METHOD__);
+    	//printf("shit is running in %s! yay!",__METHOD__);
 	}
 }
