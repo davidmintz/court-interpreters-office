@@ -5,11 +5,8 @@
  * 
  */
 
-var casper = require('casper').create({
-    verbose:true //, clientScripts: ["../public/js/lib/jquery.min.js"]
-});
+var casper = require('casper').create({});
 
-// var fs = require('fs');
 // var fileUrl = "file:///opt/www/court-interpreters-office/public/judges.html";
 
 var baseUrl = "http://nysd.uscourts.gov";
