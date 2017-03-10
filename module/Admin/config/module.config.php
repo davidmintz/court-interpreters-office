@@ -7,6 +7,7 @@
 namespace InterpretersOffice\Admin;
 
 use Zend\Router\Http\Segment;
+use InterpretersOffice\Entity\Listener;
 
 return [
 
@@ -441,10 +442,13 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-             Service\Acl::class  => Service\Factory\AclFactory::class,            
+             Service\Acl::class  => Service\Factory\AclFactory::class,  
+             Listener\InterpreterEntityListener::class => 
+             function($sm) { return new Listener\InterpreterEntityListener() ; }       
         ],
         'aliases' => [
             'acl' => Service\Acl::class,
+            'interpreter-listener' => Listener\InterpreterEntityListener::class,
         ],
     ],
 ];

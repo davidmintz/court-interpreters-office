@@ -8,10 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
+//
+/** @Entity @EntityListeners({"UserListener"}) */
+
 /**
  * Entity representing an Interpreter.
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\InterpreterRepository")
+ * @ORM\EntityListeners({"InterpretersOffice\Entity\Listener\InterpreterEntityListener"})
  * @ORM\Table(name="interpreters",uniqueConstraints={@ORM\UniqueConstraint(name="unique_ssn",columns={"ssn"})})
  */
 class Interpreter extends Person

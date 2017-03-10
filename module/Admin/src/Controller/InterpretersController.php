@@ -40,8 +40,11 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {
-        //echo "shit is working"; return false;
+        
+        //$this->entityManager->find('InterpretersOffice\Entity\Interpreter',25);
+        
         return new ViewModel(['title' => 'interpreters']);
+
     }
 
     /**
