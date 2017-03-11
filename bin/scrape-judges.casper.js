@@ -17,10 +17,9 @@ casper.start(baseUrl+ '/judges/District', function() {
    // get an object in the form { judge_name : url, ... }
    links = this.evaluate(function(){       
        var links = jQuery("table.judge_info tbody tr td a");
-       var baseUrl = "http://nysd.uscourts.gov/";
        $return = {};
        links.each(function(i,e){
-           $return[e.textContent.trim()] = baseUrl+e.getAttribute('href');
+           $return[e.textContent.trim()] = e.getAttribute('href');
        });
        return $return;       
    });
@@ -28,7 +27,7 @@ casper.start(baseUrl+ '/judges/District', function() {
 
 casper.then(function(){   
     for(var judge in links) {
-       var url = links[judge];
+       var url = baseUrl + "/" + links[judge];
        // and now, use a IIFE and tear your hair out no more! 
        // http://stackoverflow.com/questions/24360993/casperjs-iterating-through-urls
        // https://groups.google.com/forum/#!topic/casperjs/n_zXlxiPMtk
