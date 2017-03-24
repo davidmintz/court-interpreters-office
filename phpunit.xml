@@ -5,6 +5,19 @@
             <directory>./module/InterpretersOffice/test</directory>
             <directory>./module/Admin/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
+      
         </testsuite>
+    
     </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+          <directory suffix=".php">./module/Admin/src</directory>
+          <directory suffix=".php">./module/InterpretersOffice/src</directory>
+          <!--
+          <exclude>
+              <directory>./module/InterpretersOffice/test/DataFixture</directory>
+          </exclude>
+          -->
+        </whitelist>
+    </filter>
 </phpunit>
