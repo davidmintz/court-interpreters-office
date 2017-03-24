@@ -26,8 +26,43 @@ use InterpretersOffice\Entity;
 $application = new Application();
 $application->add(new CreateAdminUserCommand);
 $application->run();
-
 /* ---------------------------------------------------------------------- */
+
+class LoadInitialData extends Command
+{
+     protected function configure()
+    {
+        $this
+        // the name of the command (the part after "bin/console")
+        ->setName('setup:load-initial-data')
+        // the short description shown while running "php bin/console list"
+        ->setDescription('inserts essential data into the database')
+        // the full command description shown when running the command with
+        // the "--help" option
+        ->setHelp('inserts some essential data that is required in order to run the application');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+
+        $io = new SymfonyStyle($input,$output);
+        try {
+
+            $entityManager = require __DIR__.'/../config/doctrine-bootstrap.php';
+            $connection = $entityManager->getConnection();
+            $sql = file_get_contents(__DIR__ . '/sql/hats.sql');
+            $connection->exec($sql);
+
+        } catch (\Exception $e) {
+        
+
+        }
+
+        $io->success("that's all folks");
+
+    }
+
+}
 
 class CreateAdminUserCommand extends Command
 {
@@ -65,7 +100,7 @@ class CreateAdminUserCommand extends Command
             $admin_users = $entityManager
                     ->createQuery('SELECT u FROM InterpretersOffice\Entity\User u JOIN u.role r WHERE r.name =\'administrator\'')
                     ->getResult();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $io->error([
                 sprintf('Exception %s encountered with error message: ',get_class($e)),
                 $e->getMessage(),
@@ -164,7 +199,8 @@ class CreateAdminUserCommand extends Command
             $helper->ask($input,$output,new Question($this->q("user's email address? ")));
         }
         
-        $person = new Entity\Person();
+        $person = $hat_id == 1 ? new Entity\Interpreter : new Entity\Person();
+        
         $person->setFirstname($firstname)
                 ->setLastname($lastname)
                 ->setEmail($email);
@@ -186,5 +222,3 @@ class CreateAdminUserCommand extends Command
          
     }
 }
-
-
