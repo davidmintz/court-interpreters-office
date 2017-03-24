@@ -26,7 +26,7 @@ foreach ($files as $file) {
     AnnotationRegistry::registerFile($file);
 }
 
-$params = require 'autoload/local.php';
+$params = require 'autoload/doctrine.local.php';
 $dbParams = $params['doctrine']['connection']['orm_default']['params'];
 $entitiesPath = [
     __DIR__.'/../module/InterpretersOffice/src/Entity/',
