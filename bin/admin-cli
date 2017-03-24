@@ -1,5 +1,12 @@
 #!/usr/bin/env php
 <?php
+
+/**
+ * first stab at a console application. this sets up an admin user.
+ * 
+ * @todo move CreateAdminUserCommand to its own file
+ * 
+ */
 namespace InterpretersOffice;
 require __DIR__.'/../vendor/autoload.php';
 
@@ -15,6 +22,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Zend\Validator\EmailAddress as EmailValidator;
 
 use InterpretersOffice\Entity;
+
+$application = new Application();
+$application->add(new CreateAdminUserCommand);
+$application->run();
+
+/* ---------------------------------------------------------------------- */
 
 class CreateAdminUserCommand extends Command
 {
@@ -175,9 +188,3 @@ class CreateAdminUserCommand extends Command
 }
 
 
-
-$application = new Application();
-
-$application->add(new CreateAdminUserCommand);
-
-$application->run();
