@@ -2,7 +2,9 @@
 <?php
 
 /**
- * first stab at a console application. this sets up an admin user.
+ * rought draft of a command-line tool for initial database setup.
+ * 
+ * assumes database exists and Doctrine has been configured
  * 
  * @todo move CreateAdminUserCommand to its own file
  * 
@@ -18,6 +20,8 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
+
+use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand as CreateSchemaCommand;
 
 use Zend\Validator\EmailAddress as EmailValidator;
 
@@ -38,27 +42,35 @@ class LoadInitialDataCommand extends Command
         // the "--help" option
         ->setHelp('inserts some essential data that is required in order to run the application');
     }
-
+    /**
+     * load the required initial data
+     * 
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
         $io = new SymfonyStyle($input,$output);
         try {
-
+            //$command = new CreateSchemaCommand();
+            //$command->execute($input,$output); // nice try.
             $entityManager = require __DIR__.'/../config/doctrine-bootstrap.php';
             $connection = $entityManager->getConnection();
-            $sql = file_get_contents(__DIR__ . '/sql/initial_data.sql');
-            $connection->exec($sql);
-
+            $sql_file = trim(file_get_contents(__DIR__ . '/sql/initial_data.sql'));
+            if (false === $sql_file) {
+                throw new \Exception("sorry, could not read initial_data.sql file");
+            }
+            $queries = explode(';',rtrim($sql_file,';'));
+            foreach ($queries as $q) {               
+               $connection->exec($q);
+            }            
+            $io->success("Required initial data loaded successfully.");
         } catch (\Exception $e) {
-        
-
-        }
-
-        $io->success("that's all folks");
-
+            $io->error("Sorry! caught exception: ".$e->getMessage());
+        }        
     }
-
 }
 
 class CreateAdminUserCommand extends Command
@@ -224,4 +236,5 @@ class CreateAdminUserCommand extends Command
 $application = new Application();
 $application->add(new CreateAdminUserCommand);
 $application->add(new LoadInitialDataCommand);
+$application->add(new CreateSchemaCommand);
 $application->run();
