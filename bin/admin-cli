@@ -23,12 +23,9 @@ use Zend\Validator\EmailAddress as EmailValidator;
 
 use InterpretersOffice\Entity;
 
-$application = new Application();
-$application->add(new CreateAdminUserCommand);
-$application->run();
 /* ---------------------------------------------------------------------- */
 
-class LoadInitialData extends Command
+class LoadInitialDataCommand extends Command
 {
      protected function configure()
     {
@@ -50,7 +47,7 @@ class LoadInitialData extends Command
 
             $entityManager = require __DIR__.'/../config/doctrine-bootstrap.php';
             $connection = $entityManager->getConnection();
-            $sql = file_get_contents(__DIR__ . '/sql/hats.sql');
+            $sql = file_get_contents(__DIR__ . '/sql/initial_data.sql');
             $connection->exec($sql);
 
         } catch (\Exception $e) {
@@ -222,3 +219,9 @@ class CreateAdminUserCommand extends Command
          
     }
 }
+
+
+$application = new Application();
+$application->add(new CreateAdminUserCommand);
+$application->add(new LoadInitialDataCommand);
+$application->run();
