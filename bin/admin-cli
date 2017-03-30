@@ -73,6 +73,25 @@ class LoadInitialDataCommand extends Command
     }
 }
 
+class ClearCacheCommand extends Command
+{
+ 
+    protected function configure()
+    {
+        $this->setName("admin:clear-cache")
+            ->setDescription("clears Doctrine filesystem cache (really)")
+            ->setHelp("not much to it, just do it");
+    }
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $io = new SymfonyStyle($input,$output);
+        $path = dirname(__FILE__).'/../data/DoctrineModule/cache/*';
+        $output = system("rm -rf $path", $exit_status);
+        echo "$exit_status\n";
+
+    }
+}
+
 class CreateAdminUserCommand extends Command
 {
     protected function configure()
@@ -237,4 +256,5 @@ $application = new Application();
 $application->add(new CreateAdminUserCommand);
 $application->add(new LoadInitialDataCommand);
 $application->add(new CreateSchemaCommand);
+$application->add(new ClearCacheCommand);
 $application->run();
