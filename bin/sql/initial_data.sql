@@ -4,3 +4,4 @@ INSERT INTO `location_types` VALUES (1,'courtroom',''),(2,'jail',''),(3,'holding
 INSERT INTO `event_categories` VALUES (1,'in'),(3,'not applicable'),(2,'out');
 INSERT INTO `judge_flavors` VALUES (1,'USDJ'),(2,'USMJ');
 INSERT INTO `holidays` VALUES (1,'New Year\'s Day'),(2,'Martin Luther King Day'),(3,'Lincoln\'s Birthday'),(4,'President\'s Day'),(5,'Memorial Day'),(6,'Independence Day'),(7,'Labor Day'),(8,'Columbus Day'),(9,'Veterans\' Day'),(10,'Thanksgiving'),(11,'Christmas'),(12,'Election Day');
+INSERT INTO `cancellation_reasons` VALUES (3,'adjourned w/o notice'),(1,'deft not produced'),(5,'force majeure'),(2,'no interpreter needed'),(7,'other'),(4,'party did not appear'),(6,'reason unknown');
