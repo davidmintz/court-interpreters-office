@@ -255,6 +255,8 @@ class CreateAdminUserCommand extends Command
 $application = new Application();
 $application->add(new CreateAdminUserCommand);
 $application->add(new LoadInitialDataCommand);
-$application->add(new CreateSchemaCommand);
+$application->add($cmd = new CreateSchemaCommand);
+$cmd->setDescription("runs the Doctrine orm:schema-create command directly against your database");
 $application->add(new ClearCacheCommand);
 $application->run();
+ 
