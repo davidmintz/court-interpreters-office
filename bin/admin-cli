@@ -90,7 +90,6 @@ class ClearCacheCommand extends Command
         if ("0" != $exit_status) {
             return $io->error("could not clear filesystem cache");
         }
-        echo $exit_status;
         $io->success("Successfully cleared filesystem cache.");
     }
 }
