@@ -25,10 +25,9 @@ use InterpretersOffice\Entity;
  *   * supply a way to browse and edit existing users
  *   * add new user: encourage (require?) looking up existing person first.
  *     autocompletion?
- *    
+ *
  */
-class UsersController extends AbstractActionController 
-
+class UsersController extends AbstractActionController
 {
 
     /**
@@ -37,7 +36,7 @@ class UsersController extends AbstractActionController
      * @var EntityManagerInterface
      */
     protected $entityManager;
-    
+
     /**
      * the role of the currently authenticated user
      * @var string $auth_user_role
@@ -53,14 +52,13 @@ class UsersController extends AbstractActionController
     {
         $this->entityManager = $entityManager;
         $this->auth_user_role = (new Session('Authentication'))->role;
-        
     }
 
     /**
      * implements AuthenticationAwareInterface
-     * 
+     *
      * @param AuthenticationService $auth
-     * 
+     *
      */
     public function setAuthenticationService(AuthenticationService $auth)
     {
@@ -70,33 +68,37 @@ class UsersController extends AbstractActionController
 
    /**
     * attaches event handlers
-    * 
-    * Before they try to create a user account, if they're attaching the account 
-    * to a Person that already exists, this checks the Person's Hat property for validity. 
-    * We won't expose links that lead to an invalid situation, but a person could 
+    *
+    * Before they try to create a user account, if they're attaching the account
+    * to a Person that already exists, this checks the Person's Hat property for validity.
+    * We won't expose links that lead to an invalid situation, but a person could
     * manually edit the query parameters.
-    * 
+    *
     * If they do load a valid Person in the addAction(), we check that an associated
     * User account does not already exist.
-    * 
+    *
     * NOTE: we might decide on a better way to do this
-    * e.g., use an ACL assertion 
-    * 
+    * e.g., use an ACL assertion
+    *
     * @param EventManagerInterface events
     */
     public function setEventManager(EventManagerInterface $events)
     {
-        $entityManager = $this->entityManager;       
-        $events->attach('load-person', function ($e) use ($entityManager)  {
-           
+        $entityManager = $this->entityManager;
+        $events->attach('load-person', function ($e) use ($entityManager) {
+
             $person = $e->getParam('person');
-            $hat = $person->getHat(); 
+            $hat = $person->getHat();
             $form = $e->getParam('form');
             $hats_allowed = $form->get('user')->get('person')->get('hat')->getValueOptions();
-                if (! in_array($hat->getId(), array_column($hats_allowed, 'value'))) {
+            if (! in_array($hat->getId(), array_column($hats_allowed, 'value'))) {
                 $e->getParam('viewModel')->errorMessage =
-                    sprintf('The person identified by id %d, %s %s, wears the hat %s, but people in that category do not have user accounts in this system.',
-                        $person->getId(), $person->getFirstName(), $person->getLastname(), $hat
+                sprintf(
+                    'The person identified by id %d, %s %s, wears the hat %s, but people in that category do not have user accounts in this system.',
+                    $person->getId(),
+                    $person->getFirstName(),
+                    $person->getLastname(),
+                    $hat
                 );
                 return false;
             }
@@ -108,12 +110,14 @@ class UsersController extends AbstractActionController
                 if ($user) {
                    // if we had access to the service container, or the ViewHelperPluginManager...
                    // $shit = $container->get('ViewHelperManager')->get('url'); echo get_class($shit);
-                   // $shit->url('users/edit',['id'=>$person->getId()])                  
-                   $viewModel->errorMessage = sprintf(
+                   // $shit->url('users/edit',['id'=>$person->getId()])
+                    $viewModel->errorMessage = sprintf(
                         'The person identified by id %d -- %s %s -- already has a user account.',
-                         // Please go to [URL to edit] if you want to edit it.
-                         $person->getId(), $person->getFirstname(), $person->getLastname()//, $url
-                   );
+                        // Please go to [URL to edit] if you want to edit it.
+                         $person->getId(),
+                        $person->getFirstname(),
+                        $person->getLastname()//, $url
+                    );
                 }
             }
         });
@@ -127,38 +131,37 @@ class UsersController extends AbstractActionController
     {
         $viewModel = new ViewModel(['title' => 'add a user']);
         $viewModel->setTemplate('interpreters-office/admin/users/form');
-        $form = new UserForm($this->entityManager,[
-            'action'=>'create',
-            'auth_user_role' => $this->auth_user_role,           
-            ]
-        );
+        $form = new UserForm($this->entityManager, [
+            'action' => 'create',
+            'auth_user_role' => $this->auth_user_role,
+            ]);
         $user = new Entity\User();
-        
+
         // if it's for an existing person...
         $person_id = $this->params()->fromRoute('id');
         if ($person_id) {
-            $person = $this->entityManager->find('InterpretersOffice\Entity\Person',$person_id);
+            $person = $this->entityManager->find('InterpretersOffice\Entity\Person', $person_id);
             if (! $person) {
                 return $viewModel->setVariables(['errorMessage' => "person with id $person_id not found"]);
             }
-            $this->events->trigger('load-person',$this,compact('person', 'form', 'viewModel'));  
+            $this->events->trigger('load-person', $this, compact('person', 'form', 'viewModel'));
             if ($viewModel->errorMessage) {
                 return $viewModel;
             }
             $user->setPerson($person);
-            $form->get('user')->get('person')->setObject($person);            
+            $form->get('user')->get('person')->setObject($person);
         }
-                   
+
         $form->bind($user);
-        $viewModel->form = $form; 
+        $viewModel->form = $form;
         $request = $this->getRequest();
-        
+
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
                 return $viewModel;
-            } 
+            }
             $this->entityManager->persist($user);
             if (! $person_id) {
                 $this->entityManager->persist($user->getPerson());
@@ -178,24 +181,23 @@ class UsersController extends AbstractActionController
         }
         return $viewModel;
     }
-    
+
     /**
      * edits an existing user account
      */
     public function editAction()
     {
-        
+
         $id = $this->params()->fromRoute('id');
-        $viewModel = (new ViewModel(['title' => 'edit a user','id'=>$id]))->setTemplate('interpreters-office/admin/users/form');
-        $user = $this->entityManager->find('InterpretersOffice\Entity\User',$id);
+        $viewModel = (new ViewModel(['title' => 'edit a user','id' => $id]))->setTemplate('interpreters-office/admin/users/form');
+        $user = $this->entityManager->find('InterpretersOffice\Entity\User', $id);
         if (! $user) {
             return $viewModel->setVariables(['errorMessage' => "user with id $id was not found in your database."]);
         }
-         $form = new UserForm($this->entityManager,[
-            'action'=>'update',
-            'auth_user_role' => $this->auth_user_role,           
-            ]
-        );
+         $form = new UserForm($this->entityManager, [
+            'action' => 'update',
+            'auth_user_role' => $this->auth_user_role,
+            ]);
         $person = $user->getPerson();
         /** @todo do this initialization somewhere else?  */
         $form->get('user')->get('person')->setObject($user->getPerson());
@@ -205,15 +207,17 @@ class UsersController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
                 return $viewModel;
             }
             //$this->events->trigger('post.validate',$this,['user'=>$user]);
             $this->entityManager->flush(); // return $viewModel;
             $this->flashMessenger()
-                  ->addSuccessMessage(sprintf('The user account for <strong>%s %s</strong> has been updated.',
-                       $person->getFirstname(),$person->getLastname()
+                  ->addSuccessMessage(sprintf(
+                      'The user account for <strong>%s %s</strong> has been updated.',
+                      $person->getFirstname(),
+                      $person->getLastname()
                   ));
             $this->redirect()->toRoute('users');
         }
@@ -228,7 +232,7 @@ class UsersController extends AbstractActionController
     public function indexAction()
     {
         echo ($this->params()->fromRoute('action'));
-        
-        return new ViewModel(['title' => 'admin | users','role'=>$this->role]);
+
+        return new ViewModel(['title' => 'admin | users','role' => $this->role]);
     }
 }

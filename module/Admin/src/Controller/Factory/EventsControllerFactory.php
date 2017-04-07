@@ -31,5 +31,4 @@ class EventsControllerFactory implements FactoryInterface
 
         return $controller;
     }
-    
 }

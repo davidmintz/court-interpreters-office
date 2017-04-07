@@ -10,39 +10,39 @@ use Doctrine\Common\Cache\CacheProvider;
 
 /**
  * custom EntityRepository class for Location entity.
- * 
- * An Doctrine event listener is attached to the update, create and delete 
+ *
+ * An Doctrine event listener is attached to the update, create and delete
  * events and calls deleteCache on this class as needed.
  * @todo consider taking out this CacheDeletionInterface stuff and doing this
  * directly in the event listener itself. In that case we won't need to override
  * the constructor either.
- * 
+ *
  */
 class LocationRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
-    
+
     /**
      * cache
-     * 
-     * @var CacheProvider 
+     *
+     * @var CacheProvider
      */
     protected $cache;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
      */
-    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
-        
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    {
+
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace('locations');
-        
     }
-   
+
     /**
      * returns all the "parent" locations (those that are not nested in another).
      *
@@ -53,12 +53,11 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         $query = $this->createQuery(
             'SELECT l FROM InterpretersOffice\Entity\Location l '
             .'WHERE l.parentLocation IS NULL ORDER BY l.name ASC'
-            
         );
 
         return $query->getResult();
     }
-    
+
     /**
      * gets all the locations of type 'courthouse'.
      *
@@ -78,7 +77,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $query->getResult();
     }
-    
+
     /**
      * gets data for courtroom SELECT element options.
      *
@@ -100,7 +99,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $data;
     }
-    
+
     /**
      * gets all the courtrooms whose parent courthouse is $parent_id.
      *
@@ -110,13 +109,13 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function getCourtrooms($parent_id)
     {
-        if (!$parent_id) {
+        if (! $parent_id) {
             return [];
         }
         $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
-        $query = $this->getEntityManager()->createQuery($dql,'locations-courtrooms')
+        $query = $this->getEntityManager()->createQuery($dql, 'locations-courtrooms')
                 ->setParameter('parent_id', $parent_id)
                 ->useResultCache(true);
         $data = $query->getResult();
@@ -149,20 +148,20 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $data;
     }
-    
+
     /**
-     * experimental 
-     * 
+     * experimental
+     *
      * implements cache deletion
      * @param type $cache_id
      */
-    public function deleteCache($cache_id = null) {
-        
+    public function deleteCache($cache_id = null)
+    {
+
          $this->cache->setNamespace('locations');
          $this->cache->deleteAll();
          // for debugging
-         return sprintf('ran %s at line %d',__METHOD__,__LINE__);
-        
+         return sprintf('ran %s at line %d', __METHOD__, __LINE__);
     }
     /*
      * NOT used and slated for removal

@@ -9,15 +9,16 @@ use Zend\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+
 //use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
 //use InterpretersOffice\Form\Validator\UniqueObject;
 
 
 class EventFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
-    
+
      use ObjectManagerAwareTrait;
-     
+
     /**
      * name of the form.
      *
@@ -30,27 +31,27 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
      * @var string
      */
     protected $fieldset_name = 'event';
-    
+
     /**
      * constructor.
      *
      * @param ObjectManager $objectManager
      * @param array         $options
      */
-    public function __construct(ObjectManager $objectManager, Array $options)
+    public function __construct(ObjectManager $objectManager, array $options)
     {
-        if (!isset($options['action'])) {
+        if (! isset($options['action'])) {
             throw new \RuntimeException('missing "action" option in EventFieldset constructor');
         }
-        if (!in_array($options['action'], ['create', 'update','repeat'])) {
+        if (! in_array($options['action'], ['create', 'update','repeat'])) {
             throw new \RuntimeException('invalid "action" option in EventFieldset constructor: '.(string)$options['action']);
         }
         /** might get rid of this... */
         if (isset($options['auth_user_role'])) {
             /** @todo let's not hard-code these roles */
-             if (! in_array($options['auth_user_role'],['anonymous','staff','submitter','manager','administrator'])) {
-                  throw new \RuntimeException('invalid "auth_user_role" option in Event constructor');
-             }
+            if (! in_array($options['auth_user_role'], ['anonymous','staff','submitter','manager','administrator'])) {
+                throw new \RuntimeException('invalid "auth_user_role" option in Event constructor');
+            }
              $this->auth_user_role = $options['auth_user_role'];
         }
         $this->action = $options['action'];
@@ -60,14 +61,13 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager))
                 ->setUseAsBaseFieldset(true);
-        
+
         // to be continued: add elements
-       
     }
-    
+
     /**
      * implements InputFilterProviderInterface
-     * 
+     *
      * @return array
      */
     public function getInputFilterSpecification()

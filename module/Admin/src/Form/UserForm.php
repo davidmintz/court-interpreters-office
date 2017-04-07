@@ -16,8 +16,9 @@ use InterpretersOffice\Admin\Form\UserFieldset;
  *
  * @author david
  */
-class UserForm extends Form {
-    
+class UserForm extends Form
+{
+
     use CsrfElementCreationTrait;
 
     /**
@@ -26,20 +27,19 @@ class UserForm extends Form {
      * @var string
      */
     protected $form_name = 'user-form';
-    
+
     /**
      * constructor
-     * 
+     *
      * @param ObjectManager $objectManager
      * @param Array $options
      */
-    
-    public function __construct(ObjectManager $objectManager, $options = []) {
-        
+
+    public function __construct(ObjectManager $objectManager, $options = [])
+    {
+
         parent::__construct($this->form_name, $options);
-        $this->add(new UserFieldset($objectManager,$options));
+        $this->add(new UserFieldset($objectManager, $options));
         $this->addCsrfElement();
     }
-
-    
 }

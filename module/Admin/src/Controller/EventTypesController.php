@@ -59,7 +59,7 @@ class EventTypesController extends AbstractActionController
     ) {
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
-        if (!$this->name) {
+        if (! $this->name) {
             $this->name = $shortName;
         }
     }
@@ -93,7 +93,7 @@ class EventTypesController extends AbstractActionController
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $view;
             }
             $this->entityManager->persist($entity);
@@ -115,11 +115,11 @@ class EventTypesController extends AbstractActionController
                 ->setTemplate("interpreters-office/admin/{$this->name}/form.phtml")
                 ->setVariables(['title' => 'edit an event-type']);
         $id = $this->params()->fromRoute('id');
-        if (!$id) {
+        if (! $id) {
             return $view->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
         $entity = $this->entityManager->find('InterpretersOffice\Entity\EventType', $id);
-        if (!$entity) {
+        if (! $entity) {
             return $view->setVariables(['errorMessage' => "event-type with id $id not found"]);
         }
         $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'update'])
@@ -131,7 +131,7 @@ class EventTypesController extends AbstractActionController
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $view;
             }
             $this->entityManager->flush();

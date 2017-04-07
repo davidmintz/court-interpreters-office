@@ -28,20 +28,20 @@ class Module
      * module bootstrap, opportunity to attach listeners etc.
      *
      * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
-     
+
     public function onBootstrap($e)
     {
        //$app = $e->getApplication();
        //$app->getEventManager()->attach('render', [$this, 'testSomething'], 100);
     }
     */
-    
+
     /*
      * DOES NOT WORK!
      * https://docs.zendframework.com/zend-view/quick-start/#creating-and-registering-alternate-rendering-and-response-strategies.
      *
      * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
-    
+
     public function registerJsonStrategy($e)
     {
         $app = $e->getTarget();
@@ -56,6 +56,6 @@ class Module
             100
         );
     }
-     
+
      */
 }

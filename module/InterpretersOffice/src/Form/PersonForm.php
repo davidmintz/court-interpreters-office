@@ -26,7 +26,7 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
     /**
      * name of Fieldset class to instantiate and add to the form.
      *
-     * the idea is that subclasses can override this with the classname 
+     * the idea is that subclasses can override this with the classname
      * of a Fieldset that extends PersonFieldset
      *
      * @var string

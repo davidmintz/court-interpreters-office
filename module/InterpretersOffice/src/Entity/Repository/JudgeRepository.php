@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class JudgeRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
-    
+
     /**
      * @var string cache id
      */

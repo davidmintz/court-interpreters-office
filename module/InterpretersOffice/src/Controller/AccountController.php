@@ -11,11 +11,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\UserForm;
 use InterpretersOffice\Entity;
 
-
 /**
  *  AccountController.
  *
- *  For registration, password reset and email verification. 
+ *  For registration, password reset and email verification.
  *  Very much incomplete.
  */
 
@@ -37,7 +36,7 @@ class AccountController extends AbstractActionController
     {
         $this->objectManager = $objectManager;
     }
-    
+
     /**
      * index action
      * @return ViewModel
@@ -47,15 +46,15 @@ class AccountController extends AbstractActionController
         return new ViewModel();
     }
     /**
-     * registers a new user account 
-     * 
+     * registers a new user account
+     *
      * @return ViewModel
      */
     public function registerAction()
     {
-      return new ViewModel();   
+        return new ViewModel();
     }
-    
+
     /**
      * email verification
      * s
@@ -63,27 +62,27 @@ class AccountController extends AbstractActionController
      */
     public function verifyEmailAction()
     {
-      return new ViewModel();   
+        return new ViewModel();
     }
-    
+
     /**
      * handles password-reset requests
-     * 
+     *
      * @return ViewModel
      */
     public function requestPasswordAction()
     {
-      
-      return new ViewModel();
+
+        return new ViewModel();
     }
-    
+
     /**
      * handles actual resetting of the user's password
-     * 
+     *
      * @return ViewModel
      */
     public function resetPasswordAction()
     {
-       return new ViewModel(); 
+        return new ViewModel();
     }
 }

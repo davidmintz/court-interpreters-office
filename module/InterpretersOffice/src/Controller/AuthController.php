@@ -60,7 +60,7 @@ class AuthController extends AbstractActionController
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return new ViewModel(['form' => $form]);
             }
             $data = $form->getData();
@@ -69,7 +69,7 @@ class AuthController extends AbstractActionController
                  ->setCredential($data['password']);
             $result = $this->auth->authenticate();
             $event_params = ['result' => $result, 'identity' => $data['identity']];
-            if (!$result->isValid()) {
+            if (! $result->isValid()) {
                 $this->events->trigger(__FUNCTION__, $this, $event_params);
 
                 return new ViewModel(

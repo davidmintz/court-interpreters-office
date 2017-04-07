@@ -12,8 +12,9 @@ use InterpretersOffice\Entity\Listener\UpdateListener;
 /**
  * Factory for instantiating Entity\UpdateListener
  */
-class UpdateListenerFactory implements FactoryInterface {
-    
+class UpdateListenerFactory implements FactoryInterface
+{
+
     /**
      * time to get invoked!
      *
@@ -24,11 +25,10 @@ class UpdateListenerFactory implements FactoryInterface {
      * @return ExampleController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {       
+    {
         $listener = new UpdateListener();
         $listener->setLogger($container->get('log'));
 
         return $listener;
     }
-    
 }

@@ -11,31 +11,32 @@ use Doctrine\ORM\EntityRepository;
  */
 class LocationTypeRepository extends EntityRepository implements CacheDeletionInterface
 {
-    
-    
+
+
     use ResultCachingQueryTrait;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
      */
-    
-    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
-        
+
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    {
+
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace('locations');
     }
     /**
      * cache
-     * 
+     *
      * @var CacheProvider $cache
      */
     protected $cache;
-    
-    
+
+
     /**
      * gets all the location types ordered by type ascending.
      *
@@ -77,24 +78,24 @@ class LocationTypeRepository extends EntityRepository implements CacheDeletionIn
         $dql = 'SELECT t FROM InterpretersOffice\Entity\LocationType t WHERE t. type IN (:types) '
                 .'ORDER BY t.type ASC';
         $query = $this->getEntityManager()->createQuery($dql)
-                ->setParameters([':types' => ['courtroom', 'courthouse']])                
+                ->setParameters([':types' => ['courtroom', 'courthouse']])
                 ->useResultCache(true, null, 'judge-location-types');
 
         return $query->getResult();
     }
-    
+
     /**
-     * experimental 
-     * 
+     * experimental
+     *
      * implements cache deletion
      * @param type $cache_id
      */
-    public function deleteCache($cache_id = null) {
-        
+    public function deleteCache($cache_id = null)
+    {
+
          $this->cache->setNamespace('locations');
          $this->cache->deleteAll();
          // tmp
-         return sprintf('ran %s at line %d',__METHOD__,__LINE__);
-        
+         return sprintf('ran %s at line %d', __METHOD__, __LINE__);
     }
 }

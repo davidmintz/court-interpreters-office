@@ -13,14 +13,14 @@ use Zend\Session\SessionManager;
  */
 class Module
 {
-    
+
     /**
      * are we authenticated?
-     * 
-     * @var booleam 
+     *
+     * @var booleam
      */
     protected $authenticated = false;
-    
+
     /**
      * returns this module's configuration.
      * @return array
@@ -48,7 +48,6 @@ class Module
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
         // $sessionManager =
         $container->get(SessionManager::class);
-        
     }
 
     /**
@@ -69,59 +68,57 @@ class Module
     public function enforceAuthentication(MvcEvent $event)
     {
         $match = $event->getRouteMatch();
-        if (!$match) {
+        if (! $match) {
             return;
         }
         $container = $event->getApplication()->getServiceManager();
-        $module = $match->getParam('module');     
+        $module = $match->getParam('module');
         $session = $container->get('Authentication');
         if ('InterpretersOffice' == $module) {
-            if (! $session->role ) {
+            if (! $session->role) {
                 $session->role = 'anonymous';
             }
             return;
         }
-        $auth = $container->get('auth');        
-        if (!$auth->hasIdentity()) {
+        $auth = $container->get('auth');
+        if (! $auth->hasIdentity()) {
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
             $flashMessenger->addWarningMessage('Authentication is required.');
             $session->redirect_url = $event->getRequest()->getUriString();
             return $this->getRedirectionResponse($event);
-
         } else {
-
-            if (! $this->checkAcl($event,$session->role)) {
+            if (! $this->checkAcl($event, $session->role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
-                $flashMessenger->addWarningMessage('Access denied.');                 
+                $flashMessenger->addWarningMessage('Access denied.');
                 return $this->getRedirectionResponse($event);
             }
-        }        
+        }
     }
     /**
      * checks authorization
-     * 
+     *
      * @param MvcEvent $event
      * @param string $role
      * @return boolean true if current is authorized access to current resource
      */
-    public function checkAcl(MvcEvent $event,$role){
-        
-        $match =  $event->getRouteMatch();
+    public function checkAcl(MvcEvent $event, $role)
+    {
+
+        $match = $event->getRouteMatch();
         if (! $match) {
             return;
         }
 
         $controllerFQCN = $match->getParam('controller');
-        $controllerName = substr($controllerFQCN, strrpos($controllerFQCN,'\\')+1,-10);
+        $controllerName = substr($controllerFQCN, strrpos($controllerFQCN, '\\') + 1, -10);
         $resource = strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter($controllerName));
-        $privilege = $match->getParam('action');        
-        $acl = $event->getApplication()->getServiceManager()->get('acl');          
-        return $acl->isAllowed($role,$resource,$privilege);
-
+        $privilege = $match->getParam('action');
+        $acl = $event->getApplication()->getServiceManager()->get('acl');
+        return $acl->isAllowed($role, $resource, $privilege);
     }
-    
+
     /**
      * returns a Response redirecting to the login page.
      *

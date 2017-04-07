@@ -32,7 +32,7 @@ class Judge extends Person
      * A judge has a default Location, i.e., a courtroom.
      *
      * @ORM\JoinColumn(name="default_location_id",nullable=true)
-     * @ORM\ManyToOne(targetEntity="Location",inversedBy="judges") 
+     * @ORM\ManyToOne(targetEntity="Location",inversedBy="judges")
      *
      * @var Location
      */
@@ -132,7 +132,7 @@ class Judge extends Person
         }
 
         if ($this->getDefaultLocation() !== null) {
-            if (!in_array(
+            if (! in_array(
                 (string) $this->getDefaultLocation()->getType(),
                 ['courtroom', 'courthouse']
             )) {

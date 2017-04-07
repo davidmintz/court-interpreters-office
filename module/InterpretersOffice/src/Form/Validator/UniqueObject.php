@@ -33,7 +33,7 @@ class UniqueObject extends DoctrineModuleUniqueObject
 
         $match = $this->objectRepository->findOneBy($value);
 
-        if (!is_object($match)) {
+        if (! is_object($match)) {
             return true;
         }
 

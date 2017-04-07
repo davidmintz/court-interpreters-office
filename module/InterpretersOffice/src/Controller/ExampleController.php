@@ -113,17 +113,15 @@ class ExampleController extends AbstractActionController
      */
     public function indexAction()
     {
-       $em = $this->objectManager;
+        $em = $this->objectManager;
        // 3 queries
-       $entity = $em->find('InterpretersOffice\Entity\Judge', 11);
+        $entity = $em->find('InterpretersOffice\Entity\Judge', 11);
        // 0 queries
-       $defaultLocation = $entity->getDefaultLocation();
+        $defaultLocation = $entity->getDefaultLocation();
        // 1 queries
-       $parent_location= $defaultLocation->getParentLocation();
+        $parent_location = $defaultLocation->getParentLocation();
        //if ($parent_location) {}
         return false;
-
-        
     }
     /**
      * temporary action for experimenting and doodling.

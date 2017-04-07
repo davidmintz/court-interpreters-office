@@ -12,25 +12,24 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use InterpretersOffice\Form;
 
-
 /**
  *  EventsController
  */
 class EventsController extends AbstractActionController
 {
-    
 
-    public function __construct(EntityManagerInterface $em) {
+
+    public function __construct(EntityManagerInterface $em)
+    {
         $this->entityManager = $em;
     }
-    
-    public function indexAction() {
-        
+
+    public function indexAction()
+    {
+
         return ['title' => 'events'];
-        
-        
     }
-    
+
     public function addAction()
     {
         $form = new Form\EventForm(
@@ -38,8 +37,8 @@ class EventsController extends AbstractActionController
             ['action' => 'create']
         );
         $request = $this->getRequest();
-        $form->setAttribute('action',$request->getRequestUri());
-        
+        $form->setAttribute('action', $request->getRequestUri());
+
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables([
@@ -49,7 +48,6 @@ class EventsController extends AbstractActionController
 
 
         return $viewModel;
-        
     }
 
     public function editAction()
@@ -60,8 +58,8 @@ class EventsController extends AbstractActionController
             ['action' => 'create']
         );
         $request = $this->getRequest();
-        $form->setAttribute('action',$request->getRequestUri());
-        
+        $form->setAttribute('action', $request->getRequestUri());
+
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables([
@@ -71,6 +69,5 @@ class EventsController extends AbstractActionController
 
 
         return $viewModel;
-        
     }
 }

@@ -29,24 +29,23 @@ class BasicEntityControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $basename = substr($requestedName, strrpos($requestedName,'\\')+1);
+        $basename = substr($requestedName, strrpos($requestedName, '\\') + 1);
         $shortName = strtolower((new Filter)->filter(substr($basename, 0, -10)));
-        // $shortName is for identifying cache id/namespace and maybe composing path 
-        // to a form.phtml viewscript 
+        // $shortName is for identifying cache id/namespace and maybe composing path
+        // to a form.phtml viewscript
         /**
          * @todo rethink this whole plan
          */
         switch ($shortName) {
-            
             case 'languages':
             case 'locations':
             case 'event-types':
-                $factory = $container->get('annotated-form-factory');               
+                $factory = $container->get('annotated-form-factory');
                 $entityManager = $container->get('entity-manager');
-                $controller = new $requestedName($entityManager, $factory, $shortName); 
-            break; 
-            
-            default: 
+                $controller = new $requestedName($entityManager, $factory, $shortName);
+                break;
+
+            default:
                 throw new \RuntimeException("controller factory cannot not instantiate $requestedName");
         }
         return $controller;

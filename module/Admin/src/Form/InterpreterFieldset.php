@@ -61,7 +61,8 @@ class InterpreterFieldset extends PersonFieldset
                     'option_attributes' => ['data-certifiable' => function (Entity\Language $language) {
                         return $language->isFederallyCertified() ? 1 : 0;
                     }],
-                ])
+                ]
+            )
         );
 /*      // this might get taken out if all goes well
         $this->add([
@@ -173,7 +174,7 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                     'break_chain_on_failure' => true,
-                ],
+                 ],
                 [   // backdoor method for ensuring 'federalCertification' field
                     // is set, if appropriate: ignore the $value and inspect the
                     // $context array
@@ -184,13 +185,13 @@ class InterpreterFieldset extends PersonFieldset
                             foreach ($languages_submitted as $language) {
                                 $id = $language['language_id'];
                                // should never happen unless they are messing with us
-                               if (!isset($language['federalCertification'])) {
-                                   return false;
-                               }
+                                if (! isset($language['federalCertification'])) {
+                                    return false;
+                                }
                                 $submitted_cert = is_numeric($language['federalCertification']) ?
                                        (bool) $language['federalCertification'] : null;
                                 $cert_required = (bool) $certifiable[$id]['data-certifiable'];
-                                if ($cert_required && !is_bool($submitted_cert)) {
+                                if ($cert_required && ! is_bool($submitted_cert)) {
                                     return false;
                                 }
                             }
@@ -210,7 +211,7 @@ class InterpreterFieldset extends PersonFieldset
             'required' => true,
             'allow_empty' => true,
          ];
-        $spec['hat'] = [
+         $spec['hat'] = [
                 'validators' => [
                     [
                     'name' => 'NotEmpty',
@@ -220,10 +221,10 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                     'break_chain_on_failure' => true,
+                    ],
                 ],
-            ],
          ];
 
-        return $spec;
+         return $spec;
     }
 }

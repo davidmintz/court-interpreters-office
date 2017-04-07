@@ -109,7 +109,7 @@ class IndexController extends AbstractActionController
             $person = new \InterpretersOffice\Entity\Person();
             $form->bind($person);
             $form->setData($data);
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $viewModel;
             }
             $em->persist($person);

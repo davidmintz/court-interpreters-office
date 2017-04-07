@@ -37,7 +37,7 @@ class Interpreter extends Person
     protected $phone;
 
     /**
-     * date of birth. 
+     * date of birth.
      *
      * string rather than date because it will be encrypted
      *
@@ -49,7 +49,7 @@ class Interpreter extends Person
 
 
     /**
-     * 
+     *
      * @ORM\Column(type="string",length=255,nullable=true)
      */
     protected $ssn;
@@ -163,12 +163,13 @@ class Interpreter extends Person
 
     /**
      * sets ssn
-     * 
+     *
      * @param string
      * @return Interpreter
-     * 
+     *
      */
-    public function setSsn($ssn) {
+    public function setSsn($ssn)
+    {
         $this->ssn = $ssn;
 
         return $this;
@@ -177,7 +178,7 @@ class Interpreter extends Person
     /**
      * gets ssn
      * @return string
-     * 
+     *
      */
     public function getSsn()
     {
@@ -351,5 +352,4 @@ class Interpreter extends Person
     {
         return $this->oathDate;
     }
-    
 }

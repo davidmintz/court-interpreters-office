@@ -98,7 +98,8 @@ class LocationsController extends AbstractActionController
                     'object' => $entity,
                     'action' => 'create',
                     'form_context' => $this->params()->fromQuery('form_context', 'locations'),
-            ])->bind($entity);
+            ]
+        )->bind($entity);
 
         $viewModel = (new ViewModel([
             'form' => $form,
@@ -112,7 +113,7 @@ class LocationsController extends AbstractActionController
         if ($request->isPost()) {
             $json = $request->isXmlHttpRequest();
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $json ? new JsonModel(
                     [
                          'valid' => false,
@@ -161,12 +162,12 @@ class LocationsController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
 
-        if (!$id) { // get rid of this, since it will otherwise be 404?
+        if (! $id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
 
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Location', $id);
-        if (!$entity) {
+        if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
         } else {
             $viewModel->id = $id;
@@ -182,7 +183,7 @@ class LocationsController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->flush();

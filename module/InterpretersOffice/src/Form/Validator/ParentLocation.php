@@ -46,13 +46,13 @@ class ParentLocation extends AbstractValidator
      */
     public function __construct($options)
     {
-        if (!key_exists('parentLocations', $options)) {
+        if (! key_exists('parentLocations', $options)) {
             throw new \Exception('missing required parentLocation option');
         }
-        if (!key_exists('locationTypes', $options)) {
+        if (! key_exists('locationTypes', $options)) {
             throw new \Exception('missing required locationTypes option');
         }
-        if (!is_array($options['parentLocations'])) {
+        if (! is_array($options['parentLocations'])) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'parentLocations should be array, got %s',
@@ -60,7 +60,7 @@ class ParentLocation extends AbstractValidator
                 )
             );
         }
-        if (!is_array($options['locationTypes'])) {
+        if (! is_array($options['locationTypes'])) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'locationTypes should be an array, got %s',
@@ -100,7 +100,7 @@ class ParentLocation extends AbstractValidator
      */
     public function isValid($value, $context = null)
     {
-        if (!key_exists($context['parentLocation'], $this->parentLocations)) {
+        if (! key_exists($context['parentLocation'], $this->parentLocations)) {
             $type_of_parent = null;
         } else {
             $type_of_parent = key_exists('attributes', $this->parentLocations[$context['parentLocation']]) ?
@@ -110,13 +110,13 @@ class ParentLocation extends AbstractValidator
         $type_submitted = $this->locationTypes[$value];
 
         if (in_array($type_submitted, ['courtroom', 'interpreters office', 'holding cell'])
-                && !$type_of_parent) {
+                && ! $type_of_parent) {
             $this->error(self::LOCATION_TYPE_MUST_HAVE_PARENT);
 
             return false;
         }
 
-        if ('courtroom' == $type_submitted && !in_array(
+        if ('courtroom' == $type_submitted && ! in_array(
             $type_of_parent,
             ['jail', 'courthouse']
         )) {

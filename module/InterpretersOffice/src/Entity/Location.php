@@ -10,12 +10,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Entity class representing a location where an interpreting event takes place.
- * 
+ *
  * @todo consider making Courtroom and Courthouse subclasses of Location, considering
  * that only these have a relationship to the Judge entity.
- * 
+ *
  * example:
- * "SELECT j.lastname AS judge, l.name AS location, p.name courthouse FROM 
+ * "SELECT j.lastname AS judge, l.name AS location, p.name courthouse FROM
  * InterpretersOffice\Entity\Location l JOIN l.judges j LEFT JOIN l.parentLocation p"
  *
  * @ORM\Entity  @ORM\Table(name="locations",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name_and_parent",columns={"name","parent_location_id"})})
@@ -109,26 +109,27 @@ class Location
      *      "messages":{"notInArray":"illegal value: only 0 or 1 are accepted"}}})
      */
     protected $active = true;
-    
-    
+
+
     /**
-     * 
-     * 
+     *
+     *
      * @ORM\OneToMany(targetEntity="InterpretersOffice\Entity\Judge",mappedBy="defaultLocation")
-     * @var ArrayCollection 
-     * 
+     * @var ArrayCollection
+     *
      * no setter/getter for this because we will not be managing the Judge's
      * default location from here
      */
     protected $judges;
-    
+
     /**
      * constructor
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->judges = new ArrayCollection();
     }
-    
+
     /**
      * Get id.
      *

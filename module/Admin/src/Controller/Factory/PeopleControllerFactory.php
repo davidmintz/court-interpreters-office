@@ -26,7 +26,7 @@ class PeopleControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        
+
         $em = $container->get('entity-manager');
         if ($requestedName == Controller\InterpretersController::class) {
             // attach Entity Listener

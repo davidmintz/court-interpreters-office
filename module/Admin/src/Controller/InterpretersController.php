@@ -40,17 +40,17 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {
-        
-        //$this->entityManager->find('InterpretersOffice\Entity\Interpreter',25);
-        
-        return new ViewModel(['title' => 'interpreters']);
 
+        //$this->entityManager->find('InterpretersOffice\Entity\Interpreter',25);
+
+        return new ViewModel(['title' => 'interpreters']);
     }
 
     public function findAction()
     {
-        echo "shit is running!" ; return false;
-    }    
+        echo "shit is running!" ;
+        return false;
+    }
 
 
     /**
@@ -69,11 +69,11 @@ class InterpretersController extends AbstractActionController
         $entity = new Entity\Interpreter();
         $form->bind($entity);
         if ($request->isPost()) {
-            $form->setData($request->getPost());            
-           
+            $form->setData($request->getPost());
+
             $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
             // manually hydrate because we could not make that other shit work
-            $data = $request->getPost()['interpreter']['interpreter-languages'];            
+            $data = $request->getPost()['interpreter']['interpreter-languages'];
             foreach ($data as $language) {
                 $id = $language['language_id'];
                 $certification = is_numeric($language['federalCertification']) ?
@@ -84,7 +84,7 @@ class InterpretersController extends AbstractActionController
                     ->setFederalCertification($certification);
                 $entity->addInterpreterLanguage($il);
             }
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->persist($entity);
@@ -114,7 +114,7 @@ class InterpretersController extends AbstractActionController
                 ->setVariable('title', 'edit an interpreter');
         $id = $this->params()->fromRoute('id');
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Interpreter', $id);
-        if (!$entity) {
+        if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
         }
 
@@ -124,15 +124,18 @@ class InterpretersController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            $this->updateInterpreterLanguages($entity,
-                    $request->getPost()['interpreter']['interpreter-languages']);
-            if (!$form->isValid()) {
+            $this->updateInterpreterLanguages(
+                $entity,
+                $request->getPost()['interpreter']['interpreter-languages']
+            );
+            if (! $form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(sprintf(
-                    'The interpreter <strong>%s %s</strong> has been updated.',
-                    $entity->getFirstname(), $entity->getLastname()
+                'The interpreter <strong>%s %s</strong> has been updated.',
+                $entity->getFirstname(),
+                $entity->getLastname()
             ));
             $this->redirect()->toRoute('interpreters');
            // echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
@@ -152,7 +155,7 @@ class InterpretersController extends AbstractActionController
      * @param Entity\Interpreter $interpreter
      * @param mixed              $languages   language data POSTed to us
      */
-    public function updateInterpreterLanguages(Entity\Interpreter $interpreter,  $languages)
+    public function updateInterpreterLanguages(Entity\Interpreter $interpreter, $languages)
     {
         if (! is_array($languages)) {
             // return the interpreter entity in an invalid state (no languages)
@@ -191,7 +194,7 @@ class InterpretersController extends AbstractActionController
         // what has been removed?
         $removed = array_diff_key($before, $after);
         if (count($removed)) {
-            foreach ($interpreterLanguages as $il) {                
+            foreach ($interpreterLanguages as $il) {
                 if (key_exists($il->getLanguage()->getId(), $removed)) {
                     $interpreter->removeInterpreterLanguage($il);
                 }

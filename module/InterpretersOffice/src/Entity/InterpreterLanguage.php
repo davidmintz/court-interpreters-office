@@ -157,13 +157,14 @@ class InterpreterLanguage
             'federalCertification' => $this->getFederalCertification(),
         ];
     }
-    
+
     /**
      * is the language among the federal certification languages?
      * @throws \RuntimeException
      * @return boolean
      */
-    public function isCertifiable() {
+    public function isCertifiable()
+    {
         $language = $this->getLanguage();
         if (! $language) {
             throw new \RuntimeException('language entity must be set before calling '.__FUNCTION__);

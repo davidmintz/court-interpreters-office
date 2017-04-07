@@ -62,10 +62,10 @@ class ProperName extends AbstractValidator
     public function __construct(array $options)
     {
         parent::__construct();
-        if (!isset($options['type'])) {
+        if (! isset($options['type'])) {
             throw new \Exception('parameter "type" is required (first, middle, or last)');
         }
-        if (!in_array($options['type'], array_keys($this->patterns))) {
+        if (! in_array($options['type'], array_keys($this->patterns))) {
             throw new \Exception("type {$options['type']} is invalid, must be either 'first', 'middle', or 'last'");
         }
         $this->type = $options['type'];
@@ -104,7 +104,7 @@ class ProperName extends AbstractValidator
             // one more check: suffix Jr. or Sr.
             if (preg_match('/(.+)(,? )(J|S)r\.?$/U', $name, $matches)) {
                 $surname = $matches[1];
-                if (!preg_match($this->patterns['last'], $surname)) {
+                if (! preg_match($this->patterns['last'], $surname)) {
                     return true;
                 }
             }
@@ -125,7 +125,7 @@ class ProperName extends AbstractValidator
     public function isValidMiddleName($name)
     {
         $pattern = $this->patterns['middle'];
-        if (!preg_match($pattern, $name)) {
+        if (! preg_match($pattern, $name)) {
             $this->error(self::INVALID_MIDDLENAME);
 
             return false;
@@ -144,7 +144,7 @@ class ProperName extends AbstractValidator
     {
         $pattern = $this->patterns['first'];
 
-        if (!preg_match($pattern, $name)) {
+        if (! preg_match($pattern, $name)) {
             $this->error(self::INVALID_FIRSTNAME);
 
             return false;

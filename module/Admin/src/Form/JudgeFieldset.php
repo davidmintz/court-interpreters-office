@@ -35,17 +35,17 @@ class JudgeFieldset extends PersonFieldset
     {
         parent::__construct($objectManager, $options);
         if (isset($options['object'])) {
-            if (!$options['object'] instanceof Judge) {
+            if (! $options['object'] instanceof Judge) {
                 throw new \InvalidArgumentException(sprintf(
-                   'object has to be an instance of %s, got: %s',
-                     Judge::class,
-                     is_object($options['object']) ?
+                    'object has to be an instance of %s, got: %s',
+                    Judge::class,
+                    is_object($options['object']) ?
                      get_class($options['object']) : gettype($options['object'])
                 ));
             }
             $judge = $options['object'];
             /**
-             *  @todo refactor this part? it's a bit confusing 
+             *  @todo refactor this part? it's a bit confusing
              *  if this Judge entity has a default location set, we examine it
              *  to see whether it's a courthouse or a courtroom
              */
@@ -57,7 +57,7 @@ class JudgeFieldset extends PersonFieldset
                     $location_id = $defaultLocation->getId();
                     $parent_location_id = $defaultLocation->getParentLocation()->getId();
                 } else {
-                    // then the default location is a courthouse, so the default 
+                    // then the default location is a courthouse, so the default
                     // $location_id is the courthouse id.
                     $parent_location_id = $defaultLocation->getId();
                     $location_id = $parent_location_id;
@@ -138,9 +138,9 @@ class JudgeFieldset extends PersonFieldset
         if ($options['action'] == 'update' && $location_id != $parent_location_id) {
             $this->get('courtroom')->setValue($location_id);
         }
-        
+
         // add the judge "flavor" element. this should be made immutable
-        // if there's a data history. 
+        // if there's a data history.
         // formerly a DoctrineModule\Form\Element\ObjectSelect, we're changing
         // it so we can cache results without having to write a custom repository
         $this->add([
@@ -148,7 +148,7 @@ class JudgeFieldset extends PersonFieldset
             'type' => 'Zend\Form\Element\Select',
             'name' => 'flavor',
             'options' => [
-                'value_options' =>$this->getJudgeFlavorOptions(),
+                'value_options' => $this->getJudgeFlavorOptions(),
                 //'object_manager' => $this->objectManager,
                 //'target_class' => 'InterpretersOffice\Entity\JudgeFlavor',
                 //'property' => 'flavor',
@@ -173,7 +173,7 @@ class JudgeFieldset extends PersonFieldset
         $element->setValueOptions($options);
 `       */
     }
-    
+
     /**
      * gets the available judge "flavors' for the select menu
      * @return array
@@ -190,7 +190,7 @@ class JudgeFieldset extends PersonFieldset
         }
         return $options;
     }
-    
+
     /**
      * adds the "Hat" element to our form.
      *
@@ -200,7 +200,7 @@ class JudgeFieldset extends PersonFieldset
     {
 
         // the Hat is not up for discussion; it has to be Judge.
-        // so, we use no select menu. however, might there be a better 
+        // so, we use no select menu. however, might there be a better
         // solution, e.g., an entity listener?
         $this->add(
             [
@@ -208,7 +208,7 @@ class JudgeFieldset extends PersonFieldset
                 'type' => 'Zend\Form\Element\Hidden',
                 'attributes' => ['id' => 'hat'],
             ]
-        );        
+        );
         return $this;
     }
 

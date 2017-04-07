@@ -12,9 +12,8 @@ interface AuthenticationAwareInterface
 {
     /**
      * sets AuthenticationService
-     * 
+     *
      * @param AuthenticationService $auth
      */
-	public function setAuthenticationService(AuthenticationService $auth);
-
+    public function setAuthenticationService(AuthenticationService $auth);
 }

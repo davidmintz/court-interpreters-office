@@ -14,10 +14,10 @@ use Doctrine\ORM\EntityManagerInterface;
 class EventTypeRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
-    
+
     /**
      * cache id
-     * 
+     *
      * @var string $cache_id
      */
     protected $cache_id = 'event-types';
@@ -46,6 +46,6 @@ class EventTypeRepository extends EntityRepository
     {
         $dql = 'SELECT t FROM InterpretersOffice\Entity\EventType t ORDER BY t.name';
 
-        return $this->createQuery($dql,0,'event-types-all')->getResult();
+        return $this->createQuery($dql, 0, 'event-types-all')->getResult();
     }
 }

@@ -7,14 +7,11 @@
  */
 
 namespace InterpretersOffice\Form;
+
 use Zend\Form\Form as ZendForm;
 //use Zend\InputFilter\InputFilterProviderInterface;
 //use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-
-
-
 
 /**
  * Description of EventForm
@@ -23,13 +20,13 @@ use Doctrine\Common\Persistence\ObjectManager;
  */
 class EventForm extends ZendForm
 {
-    
+
      use CsrfElementCreationTrait;
 
      /**
      * name of Fieldset class to instantiate and add to the form.
      *
-     * subclasses can override this with the classname 
+     * subclasses can override this with the classname
      * of a Fieldset that extends EventFieldset
      *
      * @var string
@@ -49,5 +46,4 @@ class EventForm extends ZendForm
         $this->add($fieldset);
         $this->addCsrfElement();
     }
-    
 }

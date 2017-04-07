@@ -65,7 +65,7 @@ class JudgesController extends AbstractActionController
         $form->bind($entity);
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 // echo "not valid.";  print_r($form->getMessages());
                 return $viewModel;
             }
@@ -100,11 +100,11 @@ class JudgesController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/judges/form.phtml')
                 ->setVariables(['title' => 'edit a judge']);
         $id = $this->params()->fromRoute('id');
-        if (!$id) { // get rid of this, since it will otherwise be 404?
+        if (! $id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Judge', $id);
-        if (!$entity) {
+        if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "judge with id $id not found"]);
         } else {
             $viewModel->id = $id;
@@ -116,7 +116,7 @@ class JudgesController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return $viewModel;
             }
             $this->entityManager->flush();

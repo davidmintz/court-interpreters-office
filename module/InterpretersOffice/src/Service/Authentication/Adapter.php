@@ -58,7 +58,7 @@ class Adapter extends ObjectRepository
             // rather than:
             //->getObjectRepository()->findOneBy(array($options->getIdentityProperty() => $this->identity));
 
-        if (!$identity) {
+        if (! $identity) {
             $this->authenticationResultInfo['code'] = \Zend\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
 
@@ -77,7 +77,7 @@ class Adapter extends ObjectRepository
      */
     protected function validateIdentity($identity)
     {
-        if (!method_exists($identity, 'getPassword')) {
+        if (! method_exists($identity, 'getPassword')) {
             throw new Exception\UnexpectedValueException(
                 'validateIdentity() expects an object that implements '
                     .' a public getPassword() method'
@@ -98,7 +98,7 @@ class Adapter extends ObjectRepository
             return $this->createAuthenticationResult();
         }
         // this is what we've added to the parent method
-        if (!$identity->isActive()) {
+        if (! $identity->isActive()) {
             $this->authenticationResultInfo['code'] = Result::FAILURE_USER_ACCOUNT_DISABLED;
             $this->authenticationResultInfo['messages'][] = 'User account is disabled (inactive).';
 
