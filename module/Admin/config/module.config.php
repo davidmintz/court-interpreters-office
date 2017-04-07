@@ -338,9 +338,8 @@ return [
                             'defaults' => [
                                 'action' => 'find',
                                 'active' => 1, // by default, active only
-                                'security'=> -1, // by default, any security clearnace status
+                                'security'=> -1, // by default, any security clearance status
                             ],
-
                             'constraints' => [                                
                                 'language_id' => '[1-9]\d*',
                                 'active' => '-?1|0',
