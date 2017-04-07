@@ -47,6 +47,12 @@ class InterpretersController extends AbstractActionController
 
     }
 
+    public function findAction()
+    {
+        echo "shit is running!" ; return false;
+    }    
+
+
     /**
      * adds an Interpreter entity to the database.
      */
