@@ -315,6 +315,39 @@ return [
                             ],
                         ],
                     ],
+
+                    'find_by_name' => [ 
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/find/name/:lastname[/:firstname]',
+                            'defaults' => [
+                                'action' => 'find',
+                            ],
+                            /*
+                            'constraints' => [
+                                'action' => 'edit|delete',
+                                'id' => '[1-9]\d*',
+                            ],
+                            */
+                        ],
+                    ],
+                    'find_by_language' => [ 
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/find/language/:language[/active/:active[/security/:security]]',
+                            'defaults' => [
+                                'action' => 'find',
+                                'active' => 1,
+                                'security'=> 1,
+                            ],
+                            /*
+                            'constraints' => [
+                                'action' => 'edit|delete',
+                                'id' => '[1-9]\d*',
+                            ],
+                            */
+                        ],
+                    ]
                 ],
             ],
 
