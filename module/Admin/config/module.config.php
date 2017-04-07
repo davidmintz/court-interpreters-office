@@ -334,18 +334,18 @@ return [
                     'find_by_language' => [ 
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/find/language/:language[/active/:active[/security/:security]]',
+                            'route' => '/find/language/:language_id[/active/:active[/security/:security]]',
                             'defaults' => [
                                 'action' => 'find',
-                                'active' => 1,
-                                'security'=> 1,
+                                'active' => 1, // by default, active only
+                                'security'=> -1, // by default, any security clearnace status
                             ],
-                            /*
-                            'constraints' => [
-                                'action' => 'edit|delete',
-                                'id' => '[1-9]\d*',
+
+                            'constraints' => [                                
+                                'language_id' => '[1-9]\d*',
+                                'active' => '-?1|0',
+                                'security' => '-?1|0',
                             ],
-                            */
                         ],
                     ]
                 ],
