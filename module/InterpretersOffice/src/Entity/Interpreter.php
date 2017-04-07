@@ -49,7 +49,10 @@ class Interpreter extends Person
 
 
     /**
-     *
+     * social security number
+     * 
+     * this will be encrypted, hence the column width
+     * 
      * @ORM\Column(type="string",length=255,nullable=true)
      */
     protected $ssn;

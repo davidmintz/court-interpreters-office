@@ -45,7 +45,13 @@ class InterpretersController extends AbstractActionController
 
         return new ViewModel(['title' => 'interpreters']);
     }
-
+    /**
+     * finds interpreters
+     * 
+     * gets interpreters based on search criteria
+     * 
+     * @return boolean|ViewModel
+     */
     public function findAction()
     {
         echo "shit is running!" ;

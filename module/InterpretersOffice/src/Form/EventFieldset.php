@@ -10,8 +10,10 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
-//use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
-//use InterpretersOffice\Form\Validator\UniqueObject;
+/**
+ * Fieldset for Event form
+ * 
+ */
 
 
 class EventFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface

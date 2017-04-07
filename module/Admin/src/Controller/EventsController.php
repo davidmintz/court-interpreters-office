@@ -18,18 +18,30 @@ use InterpretersOffice\Form;
 class EventsController extends AbstractActionController
 {
 
-
+    /**
+     * constructor
+     * 
+     * @param EntityManagerInterface $em
+     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->entityManager = $em;
     }
-
+    /**
+     * index action
+     * 
+     */
     public function indexAction()
     {
 
         return ['title' => 'events'];
     }
-
+    
+    /**
+     * adds a new event
+     * 
+     * 
+     */
     public function addAction()
     {
         $form = new Form\EventForm(
@@ -50,6 +62,11 @@ class EventsController extends AbstractActionController
         return $viewModel;
     }
 
+    /**
+     * edits an event
+     * 
+     * 
+     */
     public function editAction()
     {
 

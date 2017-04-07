@@ -1,22 +1,14 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/** module/InterpretersOffice/src/Form/EventForm.php */
 
 namespace InterpretersOffice\Form;
 
 use Zend\Form\Form as ZendForm;
-//use Zend\InputFilter\InputFilterProviderInterface;
-//use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Description of EventForm
- *
- * @author david
+ * form for Event entity
+ * 
  */
 class EventForm extends ZendForm
 {
