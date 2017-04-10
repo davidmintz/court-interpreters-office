@@ -18,7 +18,7 @@ echo $this->doctype(); ?>
         <?php echo $this->headScript()
             ->prependFile($this->basePath('js/common.js'))
             ->prependFile($this->basePath('js/lib/bootstrap.min.js'))
-            ->prependFile($this->basePath('js/lib/jquery-3.1.0.min.js'))
+            ->prependFile($this->basePath('js/lib/jquery/dist/jquery.min.js'))
             ->prependFile($this->basePath('js/lib/respond.min.js'), 'text/javascript', ['conditional' => 'lt IE 9',])
             ->prependFile($this->basePath('js/lib/html5shiv.min.js'), 'text/javascript', ['conditional' => 'lt IE 9',])
         ; ?>
