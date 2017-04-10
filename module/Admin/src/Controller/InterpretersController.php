@@ -80,16 +80,19 @@ class InterpretersController extends AbstractActionController
             $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
             // manually hydrate because we could not make that other shit work
             $data = $request->getPost()['interpreter']['interpreter-languages'];
-            foreach ($data as $language) {
-                $id = $language['language_id'];
-                $certification = is_numeric($language['federalCertification']) ?
-                    (bool) $data['federalCertification'] : null;
-                // or get them all in one shot with a DQL query?
-                $languageEntity = $repository->find($id);
-                $il = (new Entity\InterpreterLanguage($entity, $languageEntity))
-                    ->setFederalCertification($certification);
-                $entity->addInterpreterLanguage($il);
+            if (is_array($data))    {
+                foreach ($data as $language) {
+                    $id = $language['language_id'];
+                    $certification = is_numeric($language['federalCertification']) ?
+                        (bool) $data['federalCertification'] : null;
+                    // or get them all in one shot with a DQL query?
+                    $languageEntity = $repository->find($id);
+                    $il = (new Entity\InterpreterLanguage($entity, $languageEntity))
+                        ->setFederalCertification($certification);
+                    $entity->addInterpreterLanguage($il);
+                }
             }
+            
             if (! $form->isValid()) {
                 return $viewModel;
             }
