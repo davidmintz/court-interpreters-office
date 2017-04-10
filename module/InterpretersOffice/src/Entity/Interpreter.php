@@ -90,8 +90,6 @@ class Interpreter extends Person
     protected $interpreterLanguages;
 
 
-
-
     /*
       `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         `honorific` enum('','Ms.','Mr.','Mrs.','Dr.') COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -315,7 +313,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setFingerprintDate($fingerprintDate)
+    public function setFingerprintDate(\DateTime $fingerprintDate)
     {
         $this->fingerprintDate = $fingerprintDate;
 
