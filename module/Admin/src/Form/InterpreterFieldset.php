@@ -37,6 +37,8 @@ class InterpreterFieldset extends PersonFieldset
     public function __construct(ObjectManager $objectManager, $options = [])
     {
         parent::__construct($objectManager, $options);
+        
+        
         /*
         // could not get this to hydrate properly, so we're not using
         // Element\Collection with a InterpreterLanguageFieldset
@@ -64,35 +66,7 @@ class InterpreterFieldset extends PersonFieldset
                 ]
             )
         );
-/*      // this might get taken out if all goes well
-        $this->add([
-            //'type' => 'DoctrineModule\Form\Element\ObjectSelect',
-            'type' => 'InterpretersOffice\Form\Element\LanguageSelect',
-            'name' => 'language-select',
-            'options' => [
-                'object_manager' => $this->objectManager,
-                //'target_class' => 'InterpretersOffice\Entity\Language',
-                //'property' => 'name',
-                //'find_method' => ['name' => 'getInterpreterHats'],
-                //'label' => 'languages',
-                'option_attributes' => ['data-certifiable' => function (Entity\Language $language) {
-                    return $language->isFederallyCertified() ? 1 : 0;
-                }],
-            ],
-             'attributes' => [
-                'class' => 'form-control',
-                'id' => 'language-select',
-             ],
-        ]);
-        $element = $this->get('language-select');
-        $options = $element->getValueOptions();
-        array_unshift($options, [
-            'label' => '-- select a language --',
-            'value' => '',
-            'attributes' => ['label' => ' '],
-        ]);
-        $element->setValueOptions($options);
-*/
+
         $this->add([
             'type' => 'Select',
             'name' => 'interpreter-languages',
@@ -105,6 +79,24 @@ class InterpreterFieldset extends PersonFieldset
                 'value_options' => [],
                 'disable_inarray_validator' => true,
                 'use_hidden_element' => true,
+            ],
+        ]);
+        // fingerprint date
+        $this->add(
+        [
+             'name' => 'fingerprint_date',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Date',
+            'attributes' => [
+                //'required' => 'required',
+                //'size' => 15,
+                'id' => 'fingerprint_date',
+                'class' => 'date form-control',
+            ],
+            'options' => [
+                'label' => 'fingerprinted on',
+                'format' => 'm/d/Y',
+                //'format' => 'Y-m-d',
             ],
         ]);
     }
@@ -224,7 +216,11 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
          ];
-
+         $spec['fingerprint_date'] = [
+             'allow_empty' => true,
+             'required'  => false,
+             
+         ];
          return $spec;
     }
 }

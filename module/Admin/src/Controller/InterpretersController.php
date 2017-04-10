@@ -126,7 +126,7 @@ class InterpretersController extends AbstractActionController
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
         }
-
+        
         $form = new InterpreterForm($this->entityManager, ['action' => 'update']);
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id]);
@@ -221,99 +221,4 @@ class InterpretersController extends AbstractActionController
         }
     }
 }
-
-/*  // temporary garbage dump
-
- $after = [];
-       $before = $this->interpreterLanguages;
-       foreach ($data['interpreter-languages'] as $index => $language_data) {
-           $after[$language_data['language_id']] = [
-               'federalCertification' => $language_data['federalCertification'],
-           ];
-           // just stick them all in there, it blows up with duplicate entry
-
-           $language = $repository->find($language_data['language_id']);
-           $interpreterLanguage = new Entity\InterpreterLanguage($entity,$language);
-            if (null === $language_data['federalCertification']) {
-                $federalCertification = null;
-            } else {
-                $federalCertification = $language_data['federalCertification'] == 1 ? true : false;
-            }
-
-           $interpreterLanguage->setFederalCertification($federalCertification);
-           $entity->addInterpreterLanguage(new Entity\InterpreterLanguage($entity,$language));
-
-       }
-       $modified = $before != $after;
-       echo "<pre>before: "; print_r($before); echo "after: "; print_r($after); echo "</pre>";
-
-       if ($modified) {
-           echo "yes, modified...";
-           $to_be_removed = array_diff_key($before,$after);
-           $to_be_added   = array_diff_key($after,$before);
-           printf("%d to remove, %d to add<br>",count($to_be_removed),count($to_be_added));
-           // to be continued: figure out how to handle updated federalCertification
-       } else {
-           echo "NOT modified? ";
-           //$entity->removeInterpreterLanguages($entity->getInterpreterLanguages());
-       }
-
- */
-/*
- *
-     * manually deals with hydration of the Interpreter's languages
-     * would not FUCKING work, why? don't know
-     *
-     * @param \InterpretersOffice\Entity\Interpreter $entity
-     * @param array $data
-     * @param DoctrineHydrator $hydrator
-     *
-    protected function hydrate(Entity\Interpreter $entity,Array $data, DoctrineHydrator $hydrator)
-    {
-
-        //echo "DATA:<pre>"; print_r($data['interpreter-languages']); echo "</pre>";
-       $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
-
-       $action = $this->params()->fromRoute('action');
-       if ('edit' == $action) {
-           echo "<br>this is an update involving {$entity->getId()}...";
-       }
-       $entity->removeInterpreterLanguages(
-            $entity->getInterpreterLanguages()
-        );
-       foreach ($data as $language_data) {
-             $language = $repository->find($language_data['language_id']);
-             $il = new Entity\InterpreterLanguage($entity,$language);
-             //$this->entityManager->persist($il);
-             $entity->addInterpreterLanguage($il);
-       }
-       return;
-
-       $interpreterLanguages = [];
-       if (true)
-        {
-           foreach ($data as $language_data) {
-
-                if (null === $language_data['federalCertification']) {
-                    $federalCertification = null;
-                } else {
-                    $federalCertification = $language_data['federalCertification'] == 1 ? true : false;
-                }
-                $language = $repository->find($language_data['language_id']);
-
-                printf("THE FUCKING LANGUAGE ID IS %s",$language->getId()   );
-                $interpreterLanguages[] =
-                    [
-                        'language' => $language, // ['id'=>$language_data['language_id']],
-                        'interpreter' => $entity,
-                        'federalCertification' => $federalCertification,
-                    ];
-           }
-           $data = ['interpreterLanguages' => $interpreterLanguages,];
-           echo "<pre>shit: ";
-           \Doctrine\Common\Util\Debug::dump($data['interpreterLanguages']);
-           echo "</pre>";
-           $hydrator->hydrate($data, $entity);
-       }
-    }
- */
+ 

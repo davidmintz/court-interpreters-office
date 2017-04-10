@@ -5,6 +5,11 @@ use Zend\Form\Element;
  *  view script for rendering people create|update form
  */
 $this->headTitle($this->title);
+$this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepicker.css'));
+$this->headScript()
+        ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
+        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
+
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -24,6 +29,7 @@ $form->add([
 ?>
 <div class="center-block" style="max-width:800px"><!-- wrapper -->
 <h2><?php echo $this->title ?></h2>
+fuck you?
 <?php
 
 $form->prepare();
@@ -132,7 +138,13 @@ echo $this->form()->openTag($form);?>
     <div role="tabpanel" class="tab-pane" id="administrative">
 
     other form elements  here<br>
-    yadda bla bla bla
+    <?php $element = $fieldset->get('fingerprint_date');?>
+   <div class="form-group">
+        <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
+        <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>            
+        </div>
+    </div>
+    
 
 
     </div><!--  /tab pane -->
@@ -157,17 +169,24 @@ echo $this->form()->closeTag(); ?>
 
 <script type="text/javascript">
     
-/** dynamically add a language. 
+/** 
+ * attach event listeners
  * 
  * @todo live in its own file ?
  * @todo add a button to the select and attach listener to its 'click' event
  * instead of 'change' event on select menu 
+ * @todo refactor so this function is not so long and monolithic
  * 
  */
 
 $(function(){
     $('a[href="#contact"]').trigger('click');
     console.log("triggered click on contact tab. see bootstrap doc re how to do it right");
+    
+    if (! Modernizr.inputtypes.date) {
+        //$('#fingerprint_date').datepicker();
+    }
+    
     var select = $('#language-select');    
     select.on("change",function(){
         // console.log("change event on select element");
