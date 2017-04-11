@@ -50,7 +50,7 @@ $form->add([
         <div role="tabpanel" class="tab-pane" id="contact">
 
             <?php
-             // text inputs
+             
             foreach (['hat','lastname','firstname','middlename','email','officePhone','mobilePhone','active'] as $elementName) :
                 $element = $fieldset->get($elementName);?>
             <div class="form-group">
@@ -58,8 +58,7 @@ $form->add([
                 <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>
                 </div>
             </div>
-            <?php
-            endforeach;?>
+            <?php endforeach;?>
             <div class="form-group">
                 <label class="control-label col-sm-3">languages</label>
                 <div class="col-sm-9"><?php 
