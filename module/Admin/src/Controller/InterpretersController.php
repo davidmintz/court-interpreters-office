@@ -41,8 +41,6 @@ class InterpretersController extends AbstractActionController
     public function indexAction()
     {
 
-        //$this->entityManager->find('InterpretersOffice\Entity\Interpreter',25);
-
         return new ViewModel(['title' => 'interpreters']);
     }
     /**

@@ -84,7 +84,7 @@ class InterpreterFieldset extends PersonFieldset
         // fingerprint date
         $this->add(
         [
-             'name' => 'fingerprint_date',
+             'name' => 'fingerprintDate',
             //'type' => 'text',
             'type' => 'Zend\Form\Element\Date',
             'attributes' => [
@@ -216,7 +216,7 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
          ];
-         $spec['fingerprint_date'] = [
+         $spec['fingerprintDate'] = [
              'allow_empty' => true,
              'required'  => false,
              
