@@ -138,8 +138,8 @@ $form->add([
         $csrf = $form->get('csrf');
         echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
         echo $this->formHidden($fieldset->get('id'));
-        echo $this->formSubmit($form->get('submit'));?></div>
-        </div>    
+        echo $this->formSubmit($form->get('submit'));?>
+        </div>       
     </div><!-- / .form-group -->
     <?php 
     echo $this->form()->closeTag(); ?>
