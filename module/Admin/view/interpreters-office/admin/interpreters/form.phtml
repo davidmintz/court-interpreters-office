@@ -71,12 +71,16 @@ $form->add([
                 ?> 
             </div>
             <!-- this does not work for mobile -->
+            <!--
             <div class="form-group" id="interpreter-languages" style="clear:both">
                 <div class="col-sm-3 col-sm-offset-4 languages-header">language</div>
                 <div class="col-sm-2 languages-header">fed certification</div>
-                <div class="col-sm-3"></div>     
+                <div class="col-sm-3"></div>  
+            </div> 
+            -->
+            <div class="form-group form-inline" id="interpreter-languages">
             <?php 
-            $entity = $form->getObject();
+            $entity = $form->getObject(); 
             $interpreterLanguages = $entity->getInterpreterLanguages();
             $fed_certification_options = ['' => 'N/A', 1 => 'yes', 0 => 'no', ];
             
@@ -88,7 +92,7 @@ $form->add([
                     $certifiable = $language->isFederallyCertified();
                     $fed_certification_options[''] = $certifiable ? '' : 'N/A';           
                 ?>
-                    <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
+                    <div class="col-sm-2 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
                         echo $this->escapeHtml($ilanguage->getLanguage());
                         // language and interpreter ids as hidden inputs
 
@@ -97,7 +101,7 @@ $form->add([
                         <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][interpreter_id]" value="<?php echo $this->id?>">
                       <?php endif ?>
                     </div>
-                    <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
+                    <div class="col-sm-3 interpreter-language language-fed-certification">fed cert <?php 
                        $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
                        $element->setValueOptions($fed_certification_options)
                                ->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
@@ -186,7 +190,7 @@ $(function(){
         // build the three div elements, and stick into an array
         var divs = [];
         divs[0] = $('<div>')
-                .addClass("col-sm-3 col-sm-offset-4 interpreter-language language-name")
+                .addClass("col-sm-2 col-sm-offset-4 interpreter-language language-name")
                 .attr({id : 'language-'+language_id})
                 .text(languageName)
                 .append(
@@ -211,7 +215,8 @@ $(function(){
                 ).attr({disabled : "disabled"});
                     
         }
-        divs[1] = $('<div>').addClass("col-sm-2 interpreter-language language-fed-certification")
+        divs[1] = $('<div>').addClass("col-sm-3 interpreter-language language-fed-certification")
+                .append('fed cert ')
                 .append(certificationSelectElement);
         if (! certifiable) {
             // with select element disabled, this has to be present 
