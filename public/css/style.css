@@ -27,7 +27,9 @@ div.language-name {
 div.remove-language {
     padding-top:.4em;
 }
-
+div.language-fed-certification select {
+    width : auto;
+}
 /* stuff that came with the skeleton app*/
 /*
 .btn-success {
