@@ -50,7 +50,7 @@ $form->add([
         <div role="tabpanel" class="tab-pane" id="contact">
 
             <?php
-             
+             // text inputs
             foreach (['hat','lastname','firstname','middlename','email','officePhone','mobilePhone','active'] as $elementName) :
                 $element = $fieldset->get($elementName);?>
             <div class="form-group">
@@ -58,7 +58,8 @@ $form->add([
                 <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>
                 </div>
             </div>
-            <?php endforeach;?>
+            <?php
+            endforeach;?>
             <div class="form-group">
                 <label class="control-label col-sm-3">languages</label>
                 <div class="col-sm-9"><?php 
@@ -71,10 +72,14 @@ $form->add([
                 ?> 
             </div>
             <!-- this does not work for mobile -->
+            <!--
             <div class="form-group" id="interpreter-languages" style="clear:both">
                 <div class="col-sm-3 col-sm-offset-4 languages-header">language</div>
                 <div class="col-sm-2 languages-header">fed certification</div>
-                <div class="col-sm-3"></div>     
+                <div class="col-sm-3"></div>
+            </div>
+           -->
+            <div class="form-group" style="background-color:yellow">
             <?php 
             $entity = $form->getObject();
             $interpreterLanguages = $entity->getInterpreterLanguages();
@@ -88,7 +93,7 @@ $form->add([
                     $certifiable = $language->isFederallyCertified();
                     $fed_certification_options[''] = $certifiable ? '' : 'N/A';           
                 ?>
-                    <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
+                <div class="col-sm-3 col-sm-offset-4 interpreter-language language-name" id="language-<?php echo $language_id?>"><?php 
                         echo $this->escapeHtml($ilanguage->getLanguage());
                         // language and interpreter ids as hidden inputs
 
@@ -96,8 +101,8 @@ $form->add([
                       <?php if (false): // not using this ?>
                         <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][interpreter_id]" value="<?php echo $this->id?>">
                       <?php endif ?>
-                    </div>
-                    <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
+                </div>
+                <div class="col-sm-2 interpreter-language language-fed-certification"><?php 
                        $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
                        $element->setValueOptions($fed_certification_options)
                                ->setValue($ilanguage->getFederalCertification())->setAttribute('class', 'form-control');
@@ -110,18 +115,19 @@ $form->add([
                        if ($disabled) : // keep the validators happy ?>
                         <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i ?>][federalCertification]" value="">
                        <?php endif;
-                    ?></div>
-                    <div class="col-sm-3 interpreter-language remove-language">
+                    ?>
+                </div>
+                <div class="col-sm-3 interpreter-language remove-language">
                         <button title="remove from this interpreter's working languages" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="sr-only">remove</span></button></div>
                     <?php  
                         $i++; 
                         endforeach;
                     endif;
                     ?>              
-                    </div>   
-                </div><!--  /.tab-pane -->
-              </div>
-        <div role="tabpanel" class="tab-pane" id="administrative">
+                </div>   
+            </div><!-- / .form-group -->
+        </div><!--  /.tab-pane -->              
+    <div role="tabpanel" class="tab-pane" id="administrative">
 
             other form elements  here<br>
             <?php $element = $fieldset->get('fingerprintDate');?>
@@ -138,7 +144,7 @@ $form->add([
         echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
         echo $this->formHidden($fieldset->get('id'));
         echo $this->formSubmit($form->get('submit'));?>
-        </div>       
+        </div>        
     </div><!-- / .form-group -->
     <?php 
     echo $this->form()->closeTag(); ?>
