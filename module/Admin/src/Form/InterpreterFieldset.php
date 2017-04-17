@@ -95,8 +95,8 @@ class InterpreterFieldset extends PersonFieldset
             ],
             'options' => [
                 'label' => 'fingerprinted on',
-                'format' => 'm/d/Y',
-                //'format' => 'Y-m-d',
+                //'format' => 'm/d/Y',
+                'format' => 'Y-m-d',
             ],
         ]);
     }
