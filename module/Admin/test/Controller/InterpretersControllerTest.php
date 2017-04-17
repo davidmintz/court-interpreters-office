@@ -104,7 +104,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
         $this->assertQueryContentContains('div.language-name', 'Spanish');
 
         // and it should have federal certification == yes
-        $nodeList = $query->execute('div.language-fed-certification > select > option');
+        $nodeList = $query->execute('div.language-certification > select > option');
         foreach ($nodeList as $element) {
             if ($element->getAttributeNode('selected')) {
                 break;
