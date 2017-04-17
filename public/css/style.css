@@ -28,6 +28,29 @@ div.remove-language {
     padding-top:.4em;
 }
 
+/* 
+experimental, borrowed from http://stackoverflow.com/questions/40259391/bootstrap-form-inline-for-viewports-that-are-less-than-768px-wide
+*/
+
+@media (max-width: 767px) {
+  .form-inline > .checkbox {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  .form-inline .form-control {
+    width: auto;
+    display: inline-block;
+  }
+  .form-inline label {
+    margin-right: 5px;
+  }
+  .form-inline .form-group {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+}
+
 /* stuff that came with the skeleton app*/
 /*
 .btn-success {
