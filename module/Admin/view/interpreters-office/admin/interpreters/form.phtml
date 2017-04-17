@@ -99,7 +99,7 @@ $form->add([
                          ?> <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             <span class="sr-only">remove language</span></button><?php
                             if ($disabled) : // supply a value, else undefined index error ?>
-                                <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i ?>][federalCertification]" value="">
+                                <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i ?>][federalCertification]" value="-1">
                        <?php endif;
                     ?>
                     </div>
@@ -168,7 +168,7 @@ $(function(){
                 .attr({id : 'language-'+language_id});
         div_0.html(
            languageName +
-            '<input type="hidden" name="interpreter[interpreter-languages]['+index+'][language_id]" value="'+index+'">'
+            '<input type="hidden" name="interpreter[interpreter-languages]['+index+'][language_id]" value="'+language_id+'">'
         );
         var div_1 = $('<div class="col-sm-6 form-inline language-certification"></div>');
         div_1.append('<label for="fed-certification-'+index+'">fed certified</label>');
@@ -183,7 +183,14 @@ $(function(){
             certificationSelectElement.append($("<option>")
                     .attr({value:"-1",selected : "selected"})
                     .text("N/A")
-            ).attr({disabled : "disabled"});                    
+            ).attr({disabled : "disabled"});
+            div_1.append(
+                 $('<input>').attr({
+                     type : "hidden",
+                     name : certificationSelectElement.attr("name"),
+                     value : "-1"
+                 })
+            );
         }
         div_1.append(certificationSelectElement);
         div_1.append(' <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language">'
@@ -192,6 +199,12 @@ $(function(){
         $('#languages').append([div_0,div_1]);
         languageSelect.val('');
         
+    });
+    $('#languages').on("click", ".btn-remove-language",function(event){
+        event.preventDefault();
+        var div =  $(this).closest("div");
+        var divs = div.add(div.prev());
+        divs.slideUp(function(){divs.remove()});
     });
    
     // testing
