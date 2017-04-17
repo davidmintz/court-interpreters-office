@@ -45,59 +45,71 @@ $form->add([
                 
             <!-- begin "contact" form elements -->
             <?php foreach (['hat','lastname','firstname','middlename','email','officePhone','mobilePhone','active'] as $elementName) :
-                        $element = $fieldset->get($elementName);?>
-                <div class="form-group">
+                        $element = $fieldset->get($elementName);
+               ?><div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>
                     </div>
                 </div>
-            <?php endforeach;?>
-                <div class="form-group">
-                  <label class="control-label col-sm-3">languages</label>
-
-            <?php
+            <?php endforeach;
             /* ----------- languages  ----------- */
+            ?>
+            <div class="form-group">
+                <label class="control-label col-sm-3">languages</label>
+                <div class="col-sm-9 form-inline"><?php 
+                $languageSelect = $fieldset->get('language-select'); 
+                echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
+                //$this->formSelect($fieldset->get('interpreter-languages'));
+                $shit = $fieldset->get('interpreter-languages');
+                echo $this->formSelect($shit);
+                ?><button id="btn-add-language" class="btn btn-info" title="add this language">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    <span class="sr-only">add language</span></button><?php
+                echo $this->formElementErrors($shit);                 
+               ?></div>
+            </div>
+            <div class="form-group languages">
+            <?php            
             $interpreterLanguages =  $form->getObject()->getInterpreterLanguages(); 
             $fed_certification_options = ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ];
             if (count($interpreterLanguages)):
                 $i = 0;
                 foreach ($interpreterLanguages as $ilanguage):
-                    $columns = $i ? 'col-sm-offset-3 col-sm-4' : 'col-sm-4';
+                    $columns = 'col-sm-offset-3 col-sm-3' ;
                     $language = $ilanguage->getLanguage();
                     $language_id = $language->getId();
                     $certifiable = $language->isFederallyCertified();
-                    //$fed_certification_options['-1'] = $certifiable ? '' : 'N/A';
-                    $language_id =  $language->getId();
-                    
+                    $language_id =  $language->getId();                    
                 ?>
                     <div class="<?php echo $columns?>  interpreter-language language-name" id="language-<?php echo $language_id ?>"><?php 
                         echo $this->escapeHtml($ilanguage->getLanguage());
                         // language and interpreter ids as hidden inputs
                        ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>">
                     </div>
-                  <div class="col-sm-5 form-inline"><?php
-                       $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
-                       $selected = $ilanguage->getFederalCertification() === null ? "-1" : (int)$ilanguage->getFederalCertification();
-                       $element->setValueOptions($fed_certification_options)
-                               ->setValue($selected)
-                               ->setAttributes(['class' => 'form-control','id'=>'fed-certification-'.$i]);
-                       $disabled = false;
-                       if (! $ilanguage->isCertifiable()) {
-                           $element->setAttribute("disabled","disabled");
-                           $disabled = true;
-                       }
-                       ?><label for="fed-certification-<?php echo $i?>">fed certified</label><?php
-                       echo $this->formSelect($element);                       
-                       
-                  ?>
-                  </div>
+                    <div class="col-sm-6 form-inline"><?php
+                         $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
+                         $selected = $ilanguage->getFederalCertification() === null ? "-1" : (int)$ilanguage->getFederalCertification();
+                         $element->setValueOptions($fed_certification_options)
+                                 ->setValue($selected)
+                                 ->setAttributes(['class' => 'form-control','id'=>'fed-certification-'.$i]);
+                         $disabled = false;
+                         if (! $ilanguage->isCertifiable()) :  $element->setAttribute("disabled","disabled");  $disabled = true; endif;
+                         ?><label for="fed-certification-<?php echo $i?>">fed certified</label><?php
+                         echo $this->formSelect($element);                       
+                         ?> <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            <span class="sr-only">remove language</span></button><?php
+                            if ($disabled) : // supply a value, else undefined index error ?>
+                                <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i ?>][federalCertification]" value="">
+                       <?php endif;
+                    ?>
+                    </div>
                 <?php
                     $i++;
                 endforeach;
                 
-            endif; // count(languages)
-            ?>
-                </div><!-- /languages -->
+            endif; // count(languages)   ?>
+                
+            </div><!-- /languages .form-group -->
 
             <!-- end "contact" form elements -->
             </div><!-- /tab-pane -->
@@ -114,20 +126,19 @@ $form->add([
     
         </div><!-- /tab-content -->
         <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-9">
-            <?php
-            $csrf = $form->get('csrf');
-            echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
-            echo $this->formHidden($fieldset->get('id'));
-            echo $this->formSubmit($form->get('submit'));?>
-        </div>       
-    </div><!-- / .form-group -->
+            <div class="col-sm-offset-3 col-sm-9">
+                <?php
+                $csrf = $form->get('csrf');
+                echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+                echo $this->formHidden($fieldset->get('id'));
+                echo $this->formSubmit($form->get('submit'));?>
+            </div>       
+        </div><!-- / .form-group -->
   <?php echo $this->form()->closeTag(); ?>  
 </div><!-- /wrapper -->
 
 
 <script type="text/javascript">
-    
 /** 
  * attach event listeners
  * 
@@ -145,7 +156,10 @@ $(function(){
     if (! Modernizr.inputtypes.date) {
         $('#fingerprint_date').datepicker();
     }
-    
+    $('#btn-add-language').on('click',function(event){
+        event.preventDefault();
+        console.log("click!");
+    });
    
     // testing
     // $('#hat').val(3); $('#lastname').val("Doink"); $('#firstname').val("Boink");
