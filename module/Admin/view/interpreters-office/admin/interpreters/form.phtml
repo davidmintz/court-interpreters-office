@@ -68,7 +68,7 @@ $form->add([
                 echo $this->formElementErrors($shit);                 
                ?></div>
             </div>
-            <div class="form-group languages">
+            <div class="form-group" id="languages">
             <?php            
             $interpreterLanguages =  $form->getObject()->getInterpreterLanguages(); 
             $fed_certification_options = ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ];
@@ -86,7 +86,7 @@ $form->add([
                         // language and interpreter ids as hidden inputs
                        ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>">
                     </div>
-                    <div class="col-sm-6 form-inline"><?php
+                    <div class="col-sm-6 form-inline language-certification"><?php
                          $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
                          $selected = $ilanguage->getFederalCertification() === null ? "-1" : (int)$ilanguage->getFederalCertification();
                          $element->setValueOptions($fed_certification_options)
@@ -105,12 +105,9 @@ $form->add([
                     </div>
                 <?php
                     $i++;
-                endforeach;
-                
-            endif; // count(languages)   ?>
-                
-            </div><!-- /languages .form-group -->
-
+                endforeach;                
+            endif; // count(languages)   ?>                
+                </div><!-- /languages .form-group -->
             <!-- end "contact" form elements -->
             </div><!-- /tab-pane -->
             <div role="tabpanel" class="tab-pane" id="administrative">
@@ -157,8 +154,44 @@ $(function(){
         $('#fingerprint_date').datepicker();
     }
     $('#btn-add-language').on('click',function(event){
-        event.preventDefault();
-        console.log("click!");
+        event.preventDefault();        
+        var language_id = $('#language-select').val();
+        if (! language_id) { return; }
+        if ($('#language-'+language_id).length) { return; }
+        var index = $('.language-name').length;
+        var languageSelect = $('#language-select');
+        var languageOption = languageSelect.children(':selected');
+        var languageName =  languageOption.text();
+        var certifiable  = languageOption.data().certifiable;
+        
+        var div_0 = $('<div class="col-sm-offset-3 col-sm-3 interpreter-language language-name"></div>')
+                .attr({id : 'language-'+language_id});
+        div_0.html(
+           languageName +
+            '<input type="hidden" name="interpreter[interpreter-languages]['+index+'][language_id]" value="'+index+'">'
+        );
+        var div_1 = $('<div class="col-sm-6 form-inline language-certification"></div>');
+        div_1.append('<label for="fed-certification-'+index+'">fed certified</label>');
+        var certificationSelectElement = $('<select>')
+                        .addClass("form-control")
+                        .attr({name: "interpreter[interpreter-languages]["+index+"][federalCertification]"});        
+        if (certifiable) {
+            certificationSelectElement
+                .append($("<option>").attr({value:""}).text(""))
+                .append('<option value="1">yes</option><option value="0">no</option>');
+        } else {
+            certificationSelectElement.append($("<option>")
+                    .attr({value:"-1",selected : "selected"})
+                    .text("N/A")
+            ).attr({disabled : "disabled"});                    
+        }
+        div_1.append(certificationSelectElement);
+        div_1.append(' <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language">'
+                    + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
+                    +  '<span class="sr-only">remove language</span></button>');
+        $('#languages').append([div_0,div_1]);
+        languageSelect.val('');
+        
     });
    
     // testing
