@@ -13,6 +13,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
 /**
  * controller for admin/interpreters.
+ * @todo DRY out the hydration/processing
  */
 class InterpretersController extends AbstractActionController
 {
