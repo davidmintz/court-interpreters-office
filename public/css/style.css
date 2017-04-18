@@ -30,7 +30,8 @@ div.remove-language {
 
 
 /* 
-experimental, borrowed from http://stackoverflow.com/questions/40259391/bootstrap-form-inline-for-viewports-that-are-less-than-768px-wide
+experimental, borrowed from http://stackoverflow.com/questions/40259391/bootstrap-form-inline-for-viewports-that-are-less-than-768px-wide\
+so that interpreter-languages won't stack and look crappy on a small viewport
 */
 
 @media (max-width: 767px) {
@@ -50,6 +51,16 @@ experimental, borrowed from http://stackoverflow.com/questions/40259391/bootstra
     margin-bottom: 0;
     vertical-align: middle;
   }
+}
+/* experimental: not sure why these things need to be 100% */
+@media (min-width: 768px) {
+    form input, form select, form textarea {
+        max-width: 75%;
+    }
+}
+
+form label {
+    font-weight: normal;
 }
 
 /* stuff that came with the skeleton app*/
