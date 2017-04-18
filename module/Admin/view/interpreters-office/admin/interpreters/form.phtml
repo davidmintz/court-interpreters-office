@@ -32,8 +32,7 @@ $form->add([
     <?php
     $form->prepare();
     $fieldset = $form->get('interpreter');
-    echo $this->form()->openTag($form);?>
-        
+    echo $this->form()->openTag($form);?>        
         
         <ul class="nav nav-tabs" role="tablist"><!-- nav tabs -->
             <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact &amp; languages</a></li>
@@ -111,13 +110,14 @@ $form->add([
             <!-- end "contact" form elements -->
             </div><!-- /tab-pane -->
             <div role="tabpanel" class="tab-pane" id="administrative">
-
-                other form elements  here<br>
-                <?php $element = $fieldset->get('fingerprintDate');?>
+                <?php foreach (['fingerprintDate','securityExpirationDate','oathDate'] as $elementName):?>
+                
+                <?php $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
                 </div>
+                <?php endforeach; ?>
             </div><!--  / .tab-pane -->
     
     
