@@ -131,6 +131,7 @@ class InterpretersController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
+            //echo '<pre>';print_r($request->getPost()['interpreter']['interpreter-languages']);echo '</pre>';
             $this->updateInterpreterLanguages(
                 $entity,
                 $request->getPost()['interpreter']['interpreter-languages']
@@ -179,14 +180,12 @@ class InterpretersController extends AbstractActionController
             $array = $il->toArray();
             $before[$array['language_id']] = $array['federalCertification'];
         }
-        $after = [];
-        foreach ($languages as $l) {
-            $after[$l['language_id']] = is_numeric($l['federalCertification']) ?
-                    (bool) $l['federalCertification'] : null;
+        $after = [];       
+        foreach ($languages as $l) {           
+            $after[$l['language_id']] = $l['federalCertification'] >= 0 ?
+                    (bool)$l['federalCertification'] : null;
         }
         // what has been added?
-        //echo "<pre>before: "; var_dump($before); echo "after: "; var_dump($after);
-        //echo "</pre>";
         $added = array_diff_key($after, $before);
         if (count($added)) {
             foreach ($added as $id => $cert) {
