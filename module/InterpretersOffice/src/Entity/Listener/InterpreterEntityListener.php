@@ -6,13 +6,18 @@ use InterpretersOffice\Entity\Interpreter;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerAwareTrait;
+
 /**
  * Doctrine event listener for Interpreter entity
  * 
  * to be continued
  */
-class InterpreterEntityListener
+class InterpreterEntityListener implements EventManagerAwareInterface
 {
+    
+    use EventManagerAwareTrait;
     /**
      * callback 
      * 
@@ -24,5 +29,7 @@ class InterpreterEntityListener
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
     {
         //printf("shit is running in %s! yay!",__METHOD__);
+        $this->events->trigger("gack");
+        
     }
 }
