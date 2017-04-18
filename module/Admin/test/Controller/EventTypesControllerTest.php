@@ -20,6 +20,7 @@ class EventTypesControllerTest extends AbstractControllerTest
         );
 
         $this->login('susie', 'boink');
+        $this->reset(true);
     }
 
     public function testIndexAction()

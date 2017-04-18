@@ -25,7 +25,7 @@ class LanguagesControllerTest extends AbstractControllerTest
             new DataFixture\LanguageLoader(),
             new DataFixture\MinimalUserLoader(),
             ]);
-        $this->login('susie', 'boink');
+       
     }
     /**
      * test the addLanguage action.
@@ -49,6 +49,8 @@ class LanguagesControllerTest extends AbstractControllerTest
         $this->assertTrue(is_array($languages));
         $count_before = count($languages);
         //echo "\ncurrent count is $count_before\n";
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $token = $this->getCsrfToken('/admin/languages/add');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
@@ -93,6 +95,8 @@ class LanguagesControllerTest extends AbstractControllerTest
         $entityManager->flush();
         $id = $vulcan->getId();
         $comments_before = $vulcan->getComments();
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $this->dispatch('/admin/languages/edit/'.$id);
         //echo $this->getResponseHeader('Location');//return;
         $this->assertResponseStatusCode(200);
@@ -117,6 +121,8 @@ class LanguagesControllerTest extends AbstractControllerTest
 
     public function testLanguagesIndexActionCanBeAccessed()
     {
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $this->dispatch('/admin/languages', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertModuleName('interpretersoffice');
@@ -128,6 +134,8 @@ class LanguagesControllerTest extends AbstractControllerTest
     }
     public function testLanguagesEditActionCanBeAccessed()
     {
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $this->dispatch('/admin/languages/edit/1', 'GET', []);
         $this->assertResponseStatusCode(200);
         $this->assertModuleName('interpretersoffice');

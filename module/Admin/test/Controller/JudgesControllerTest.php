@@ -29,11 +29,13 @@ class JudgesControllerTest extends AbstractControllerTest
             ]
         );
 
-        $this->login('susie', 'boink');
+       ;
     }
 
     public function testIndexAction()
     {
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $this->dispatch('/admin/judges');
         $this->assertResponseStatusCode(200);
 
@@ -60,6 +62,8 @@ class JudgesControllerTest extends AbstractControllerTest
             ->findOneBy(['flavor' => 'USDJ']);
         // sanity check
         $this->assertTrue($flavor instanceof \InterpretersOffice\Entity\JudgeFlavor);
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $this->dispatch('/admin/judges/add');
         $data = [
             'judge' => [
@@ -104,6 +108,8 @@ class JudgesControllerTest extends AbstractControllerTest
         $entityManager
                 ->createQuery('DELETE InterpretersOffice\Entity\Location l where l.parentLocation IS NULL')
                 ->getResult();
+        $this->login('susie', 'boink');
+        $this->reset(true);
         // load the "add" page
         $this->dispatch('/admin/judges/add');
         $this->assertResponseStatusCode(200);

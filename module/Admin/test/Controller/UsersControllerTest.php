@@ -33,6 +33,7 @@ class UsersControllerTest extends AbstractControllerTest
     public function testStaffCannotCreateNewUsers()
     {
         $this->login('staffie','boink');
+        $this->reset(true);
         // sanity test: make sure user is logged in
         $this->dispatch('/admin');
         $this->assertNotRedirect();

@@ -23,11 +23,13 @@ class PeopleControllerTest extends AbstractControllerTest
             [new DataFixture\MinimalUserLoader()]
         );
 
-        $this->login('susie', 'boink');
+        
     }
 
     public function testAccessPeopleAdminPage()
     {
+        $this->login('susie', 'boink');
+        $this->reset(true);        
         $this->dispatch('/admin/people');
         $this->assertResponseStatusCode(200);
         //$this->assertModuleName('interpretersofficeadmin');
@@ -38,8 +40,9 @@ class PeopleControllerTest extends AbstractControllerTest
 
     public function testAdd()
     {
-
-        // first try a GET to check the form
+        $this->login('susie', 'boink');
+        $this->reset(true);
+       // first try a GET to check the form
         $this->dispatch('/admin/people/add');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('form');
@@ -50,6 +53,9 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertQuery('select#hat');
         $attorneyHat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
                         ->findByName('defense attorney')[0]->getId();
+        
+        $this->login('susie', 'boink');
+        $this->reset(true);        
         $data = [
             'person' => [
                 'lastname' => 'Somebody',
@@ -62,6 +68,7 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
         );
+        
         $this->dispatch('/admin/people/add');
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/people');
@@ -87,7 +94,8 @@ class PeopleControllerTest extends AbstractControllerTest
                 ->findOneBy(['name' => 'defense attorney']));
         $em->persist($entity);
         $em->flush();
-
+        $this->login('susie', 'boink');
+        $this->reset(true);
         // try to add the same guy again
         $data = [
             'person' => [
@@ -112,6 +120,8 @@ class PeopleControllerTest extends AbstractControllerTest
         // different hat, but active and with same email...
         $hat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
                         ->findByName('paralegal')[0];
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $data = [
             'person' => [
                 'lastname' => 'Somebody',
@@ -135,7 +145,8 @@ class PeopleControllerTest extends AbstractControllerTest
             'div.validation-error',
             'there is already a person in your database with this email address and "active" setting'
         );
-
+        $this->login('susie', 'boink');
+        $this->reset(true);
         // now add another person, and edit the record to collide with John Somebody
         $data = [
             'person' => [
@@ -156,16 +167,21 @@ class PeopleControllerTest extends AbstractControllerTest
         $other_person = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Person')
                         ->findByEmail('john.somebody.else@lawfirm.com')[0];
 
-        $this->reset(true);
+        //$this->login('susie', 'boink');
+        //$this->reset(true);
         $url = '/admin/people/edit/'.$other_person->getId();
         $data['person']['email'] = 'john.somebody@lawfirm.com';
-
+        $this->login('susie', 'boink');
+        $this->reset(true);
+        $data['csrf'] = $this->getCsrfToken($url);
         $this->getRequest()->setMethod('POST')->setPost(
              new Parameters($data)
          );
+
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
         $this->assertQuery('div.validation-error');
+        //echo $this->getResponse()->getBody();
         $this->assertQueryCount('div.validation-error', 1);
         $this->assertQueryContentRegex('div.validation-error', '/person.+Hat.+email.+in your database/i');
     }
@@ -181,6 +197,8 @@ class PeopleControllerTest extends AbstractControllerTest
                 ->findOneBy(['name' => 'defense attorney']));
         $em->persist($person);
         $em->flush();
+        $this->login('susie', 'boink');
+        $this->reset(true);        
         $url = '/admin/people/edit/'.$person->getId();
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
@@ -199,7 +217,9 @@ class PeopleControllerTest extends AbstractControllerTest
         $node2 = $query->execute('#firstname')->current();
         $firstname = $node2->attributes->getNamedItem('value')->nodeValue;
         $this->assertEquals('John', $firstname);
-
+        
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $data = [
             'person' => [
                 'lastname' => 'Somebody',
@@ -221,6 +241,8 @@ class PeopleControllerTest extends AbstractControllerTest
     {
         $attorneyHat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
                         ->findByName('defense attorney')[0]->getId();
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $data = [
             'person' => [
                 'lastname' => 'Somebody',
@@ -239,6 +261,8 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $data['person']['lastname'] = '';
         $data['person']['firstname'] = 'John';
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)

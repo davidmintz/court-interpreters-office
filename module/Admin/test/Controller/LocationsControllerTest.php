@@ -27,7 +27,7 @@ class LocationsControllerTest extends AbstractControllerTest
             new DataFixture\LocationLoader(),
             new DataFixture\MinimalUserLoader(),
         ]);
-        $this->login('susie', 'boink');
+        //$this->login('susie', 'boink');
     }
 
     /**
@@ -37,6 +37,8 @@ class LocationsControllerTest extends AbstractControllerTest
      */
     public function testAddCourtroom()
     {
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $this->dispatch('/admin/locations/add');
         $this->assertModuleName('interpretersoffice');
         $this->assertControllerName(LocationsController::class); // as specified in router's controller name alias
@@ -56,7 +58,8 @@ class LocationsControllerTest extends AbstractControllerTest
 
         $type = $em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courtroom']);
-
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $data = [
             'name' => '29F', // twilight zone
             'parentLocation' => $parent->getId(),
@@ -95,9 +98,10 @@ class LocationsControllerTest extends AbstractControllerTest
         $courtroom->setParentLocation($pearl);
         $em->persist($courtroom);
         $em->flush();
-
+        
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $url = '/admin/locations/edit/'.$courtroom->getId();
-
         $this->dispatch($url);
         $this->assertQuery('form');
         $this->assertQuery('#name');
@@ -142,7 +146,9 @@ class LocationsControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         $courtroom_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courtroom']);
-
+        
+        $this->login('susie', 'boink');
+        $this->reset(true);
         // try adding a courtroom with no parent
         $data = [
             'name' => '29F',
@@ -246,7 +252,8 @@ class LocationsControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         $courthouse_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courthouse']);
-
+        $this->login('susie', 'boink');
+        $this->reset(true);
         $data = [
             'name' => 'Some Shithead Courthouse',
             'parentLocation' => '',

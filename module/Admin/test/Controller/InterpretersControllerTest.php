@@ -8,7 +8,7 @@ use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use Zend\Stdlib\Parameters;
-use Zend\Dom\Query;
+use Zend\Dom\Document;
 use InterpretersOffice\Entity;
 
 /**
@@ -27,15 +27,22 @@ class InterpretersControllerTest extends AbstractControllerTest {
                     new DataFixture\InterpreterLoader(),
                 ]
         );
-
-        $this->login('susie', 'boink');
+        //echo "\nsetUp ran login()...\n";
+        $this->login('susie', 'boink');  
+        $this->reset(true);
     }
 
     public function testAddInterpreter() {
+        
         $em = FixtureManager::getEntityManager();
         $url = '/admin/interpreters/add';
-        $russian = $em->getRepository('InterpretersOffice\Entity\Language')
-                ->findOneBy(['name' => 'Russian']);
+        
+        $russian = $em->getRepository('InterpretersOffice\Entity\Language')->findOneBy(['name' => 'Russian']);
+        
+        $this->login('susie', 'boink');  
+        $this->reset(true);
+        $token =  $this->getCsrfToken($url); //return;
+        
         $count_before = $em->createQuery('SELECT COUNT(i.id) FROM InterpretersOffice\Entity\Interpreter i')
                 ->getSingleScalarResult();
         $data = [
@@ -57,7 +64,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
                     ],
                 ],
             ],
-            'csrf' => $this->getCsrfToken($url),
+            'csrf' => $token,
         ];
         $this->getRequest()->setMethod('POST')->setPost(
                 new Parameters($data)
@@ -73,12 +80,12 @@ class InterpretersControllerTest extends AbstractControllerTest {
         $this->assertEquals($count_after, $count_before + 1);
     }
 
-    public function testIndexAction() {
+    public function testIndexAction() { 
         $this->dispatch('/admin/interpreters');
         $this->assertResponseStatusCode(200);
     }
 
-    public function testUpdateInterpreter() {
+    public function testUpdateInterpreter() { 
 
         // what is the id of an interpreter?
         $em = FixtureManager::getEntityManager();
@@ -88,14 +95,21 @@ class InterpretersControllerTest extends AbstractControllerTest {
         $this->assertInstanceOf(Entity\Interpreter::class, $interpreter);
         $id = $interpreter->getId();
         $url = '/admin/interpreters/edit/' . $id;
-
+        $this->login('susie', 'boink');  
+        $this->reset(true);
         $this->dispatch($url);
         $this->assertQuery('form');
         $this->assertQuery('#lastname');
         $this->assertQuery('#firstname');
         $this->assertQuery('#middlename');
-        $query = new Query($this->getResponse()->getBody());
-        $node1 = $query->execute('#lastname')->current();
+        
+        $document = new Document($this->getResponse()->getBody(),Document::DOC_HTML);
+        //$document->setStringDocument($html);
+        $query = new Document\Query(); 
+  
+        //$results = $query->execute('#lastname',$document,  Document\Query::TYPE_CSS);
+        //$query = new Query($this->getResponse()->getBody());
+        $node1 = $query->execute('#lastname',$document, Document\Query::TYPE_CSS)->current();
         $lastname = $node1->attributes->getNamedItem('value')->nodeValue;
         $this->assertEquals('Mintz', $lastname);
 
@@ -104,7 +118,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
         $this->assertQueryContentContains('div.language-name', 'Spanish');
 
         // and it should have federal certification == yes
-        $nodeList = $query->execute('div.language-certification > select > option');
+        $nodeList = $query->execute('div.language-certification > select > option',$document, Document\Query::TYPE_CSS);
         foreach ($nodeList as $element) {
             if ($element->getAttributeNode('selected')) {
                 break;
