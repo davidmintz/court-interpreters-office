@@ -22,7 +22,7 @@ class UpdateListenerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return ExampleController
+     * @return UpdateListener
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
