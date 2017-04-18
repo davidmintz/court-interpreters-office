@@ -272,9 +272,25 @@ class InterpreterFieldset extends PersonFieldset
          ];
          $spec['fingerprintDate'] = [
              'allow_empty' => true,
-             'required'  => false,
-             
+             'required'  => false,             
+         ];
+         $spec['securityExpirationDate'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['oathDate'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['dob'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['ssn'] = [
+             'allow_empty' => true,
+             'required'  => false,             
          ];
          return $spec;
     }
+    
 }
