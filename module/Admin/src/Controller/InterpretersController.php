@@ -76,12 +76,12 @@ class InterpretersController extends AbstractActionController
             $form->setData($request->getPost());
 
             $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
-            // manually hydrate because we could not make that other shit work
+            // manually hydrate, because we could not make that other shit work
             $data = $request->getPost()['interpreter']['interpreter-languages'];
             if (is_array($data))    {
                 foreach ($data as $language) {
                     $id = $language['language_id'];
-                    $certification = is_numeric($language['federalCertification']) ?
+                    $certification = $language['federalCertification'] >= 0 ?
                         (bool) $data['federalCertification'] : null;
                     // or get them all in one shot with a DQL query?
                     $languageEntity = $repository->find($id);
