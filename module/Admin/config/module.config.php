@@ -475,8 +475,7 @@ return [
     'service_manager' => [
         'factories' => [
              Service\Acl::class  => Service\Factory\AclFactory::class,  
-             Listener\InterpreterEntityListener::class => 
-             function($sm) { return new Listener\InterpreterEntityListener() ; }       
+             Listener\InterpreterEntityListener::class => \InterpretersOffice\Entity\Listener\Factory\InterpreterEntityListenerFactory::class            
         ],
         'aliases' => [
             'acl' => Service\Acl::class,
