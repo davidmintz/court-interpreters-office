@@ -40,8 +40,7 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $eventManager = $event->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
-        //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'checkAcl']);
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);       
         $container = $event->getApplication()->getServiceManager();
         // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
