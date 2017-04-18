@@ -140,10 +140,7 @@ $form->add([
  * attach event listeners
  * 
  * @todo live in its own file ?
- * @todo add a button to the select and attach listener to its 'click' event
- * instead of 'change' event on select menu 
- * @todo refactor so this function is not so long and monolithic
- * 
+ * @todo refactor so this is not so long and monolithic
  */
 
 $(function(){
@@ -154,7 +151,8 @@ $(function(){
         $('#fingerprint_date').datepicker();
     }
     /**
-     * add a working language
+     * add a working language. note that if the markup in the form
+     * changes, this likewise has to be changed
      */
     $('#btn-add-language').on('click',function(event){
         
