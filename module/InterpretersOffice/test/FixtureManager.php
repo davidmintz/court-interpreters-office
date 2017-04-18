@@ -11,6 +11,12 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 
+/**
+ * short and sweet
+ */
+class SetupHelper extends AbstractControllerTest {}
+
+
 final class FixtureManager
 {
     /**
@@ -40,7 +46,8 @@ final class FixtureManager
         $config->setMetadataDriverImpl($driver);
 
         $entityManager = EntityManager::create($connectionParams, $config);
-
+        $listener = (new SetupHelper)->setUp()->getApplicationServiceLocator()->get('interpreter-listener');
+        $entityManager->getConfiguration()->getEntityListenerResolver()->register($listener);
         return $entityManager;
     }
 
