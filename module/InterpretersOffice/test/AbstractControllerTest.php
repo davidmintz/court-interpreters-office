@@ -9,12 +9,13 @@ namespace ApplicationTest;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\Parameters;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-use Zend\Dom\Query;
+
+use Zend\Dom\Document;
 
 /**
  * base class for unit tests.
  */
-abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
+class AbstractControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -25,7 +26,6 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
                     __DIR__.'/config/autoload/{{,*.}test,{,*.}local}.php',
                 ],
             ],
-
         ];
 
         $this->setApplicationConfig(ArrayUtils::merge(
@@ -47,6 +47,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
      */
     public function login($identity, $password)
     {
+        //echo "\nentering ".__FUNCTION__."\n";
         $token = $this->getCsrfToken('/login');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
@@ -58,15 +59,21 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
             )
         );
         $this->dispatch('/login');
+        
         $auth = $this->getApplicationServiceLocator()->get('auth');
+        
+        
+         
         if (!$auth->hasIdentity()) {
             echo "\nWARNING:  failed authentication\n";
+        } else {
+            //echo "\nlogin IS OK !!!\n";
         }
-        $this->reset(true);
-
+       
+        //var_dump($_SESSION);
         return $this;
     }
-
+    //static $count = 0;
     /**
      * parses out a csrf token from a form.
      *
@@ -77,12 +84,23 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
      */
     public function getCsrfToken($url, $name = 'csrf')
     {
+        //$i = ++static::$count;
+        // echo "\niteration: $i\n";
+        //echo "\n url is $url\n";
         $this->dispatch($url, 'GET');
-        $query = new Query($this->getResponse()->getBody());
+        $html = $this->getResponse()->getBody();
+        
+        //printf("\nhtml string length in %s: %d\n",__FUNCTION__,strlen($html));
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        //printf("authenticated? %s\n",$auth->hasIdentity() ? "YES":"NO");
+        $document = new Document($html,Document::DOC_HTML);
+        //$document->setStringDocument($html);
+        $query = new Document\Query(); 
         $selector = sprintf('input[name="%s"]', $name);
-        $node = $query->execute($selector)->current();
+        $results = $query->execute($selector,$document,  Document\Query::TYPE_CSS);
+        $node = $results->current();
         $token = $node->attributes->getNamedItem('value')->nodeValue;
-
+        //echo "\n".__FUNCTION__." returning:   $token ....\n";
         return $token;
     }
 }
