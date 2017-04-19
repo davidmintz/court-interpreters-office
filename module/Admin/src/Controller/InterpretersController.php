@@ -11,12 +11,17 @@ use InterpretersOffice\Admin\Form\InterpreterForm;
 use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
+
+
 /**
  * controller for admin/interpreters.
  * @todo DRY out the hydration/processing
  */
 class InterpretersController extends AbstractActionController
 {
+    
+
+    
     /**
      * entity manager.
      *
@@ -31,6 +36,7 @@ class InterpretersController extends AbstractActionController
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
+        
         $this->entityManager = $entityManager;
     }
 
@@ -41,7 +47,7 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {
-
+        $this->events->trigger("gack!");
         return new ViewModel(['title' => 'interpreters']);
     }
     /**
