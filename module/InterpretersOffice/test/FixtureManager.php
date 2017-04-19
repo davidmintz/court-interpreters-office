@@ -12,8 +12,10 @@ use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 
 /**
- * not such a good idea after all. the idea was to register
- * the Interpreter entity listener in the test environment
+ * not such a good idea after all? the idea was to register
+ * the Interpreter entity listener in the test environment. the
+ * result is that the authentication does not seem to persist as it
+ * should in our tests. how this is related, I have no fucking clue.
  */
 class SetupHelper extends AbstractControllerTest {}
 
@@ -47,12 +49,12 @@ final class FixtureManager
         $config->setMetadataDriverImpl($driver);
 
         $entityManager = EntityManager::create($connectionParams, $config);
-        /* // see above
+        ///* // see above
         $helper = new SetupHelper();
         $helper->setUp();
         $listener = $helper->getApplicationServiceLocator()->get('interpreter-listener');
         $entityManager->getConfiguration()->getEntityListenerResolver()->register($listener);         
-         */
+         //*/
         return $entityManager;
     }
 
