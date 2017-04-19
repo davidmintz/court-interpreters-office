@@ -25,13 +25,15 @@
         "zendframework/zend-json": "^3.0",
         "squizlabs/php_codesniffer": "*",
         "zendframework/zend-permissions-acl": "^2.6",
-        "zendframework/zend-crypt": "^3.2"
+        "zendframework/zend-crypt": "^3.2",
+        "zendframework/zend-http": "^2.6"
     },
     "autoload": {
         "psr-4": {
             "InterpretersOffice\\": "module/InterpretersOffice/src/",
             "InterpretersOffice\\Admin\\": "module/Admin/src/",
-            "InterpretersOffice\\Requests\\": "module/Requests/src/"
+            "InterpretersOffice\\Requests\\": "module/Requests/src/",
+            "SDNY\\Vault\\": "module/Vault/src/"
         }
     },
     "autoload-dev": {
@@ -40,7 +42,8 @@
                 "module/InterpretersOffice/test/",
                 "module/Admin/test/",
                 "module/Requests/test/"
-            ]
+            ],
+            "SDNY\\Vault\\Test\\" : "module/Vault/test/"
         }
     },
     "extra": [],
