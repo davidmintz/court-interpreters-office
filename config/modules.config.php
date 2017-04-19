@@ -28,5 +28,5 @@ return [
     'InterpretersOffice',
     'InterpretersOffice\Admin',
     'InterpretersOffice\Requests',
-
+    'SDNY\Vault'
 ];
