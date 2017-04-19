@@ -211,7 +211,7 @@ $(function(){
     $('#languages').on("click", ".btn-remove-language",function(event){
         event.preventDefault();
         var div =  $(this).closest("div");
-        div.add(div.prev())
+        var divs = div.add(div.prev());
         divs.slideUp(function(){divs.remove();});
     });
    

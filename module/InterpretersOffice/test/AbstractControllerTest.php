@@ -15,7 +15,7 @@ use Zend\Dom\Document;
 /**
  * base class for unit tests.
  */
-class AbstractControllerTest extends AbstractHttpControllerTestCase
+abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -34,7 +34,7 @@ class AbstractControllerTest extends AbstractHttpControllerTestCase
         ));
 
         parent::setUp();
-        return $this;
+
     }
 
     /**
