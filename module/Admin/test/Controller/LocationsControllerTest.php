@@ -27,7 +27,8 @@ class LocationsControllerTest extends AbstractControllerTest
             new DataFixture\LocationLoader(),
             new DataFixture\MinimalUserLoader(),
         ]);
-        //$this->login('susie', 'boink');
+        $this->login('susie', 'boink');
+        $this->reset(true);
     }
 
     /**
@@ -37,8 +38,8 @@ class LocationsControllerTest extends AbstractControllerTest
      */
     public function testAddCourtroom()
     {
-        $this->login('susie', 'boink');
-        $this->reset(true);
+        //$this->login('susie', 'boink');
+        //$this->reset(true);
         $this->dispatch('/admin/locations/add');
         $this->assertModuleName('interpretersoffice');
         $this->assertControllerName(LocationsController::class); // as specified in router's controller name alias
