@@ -99,6 +99,60 @@ class InterpreterFieldset extends PersonFieldset
                 'format' => 'Y-m-d',
             ],
         ]);
+        
+        // security expiration date
+        $this->add(
+        [
+             'name' => 'securityExpirationDate',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Date',
+            'attributes' => [
+                //'required' => 'required',
+                //'size' => 15,
+                'id' => 'security_expiration_date',
+                'class' => 'date form-control',
+            ],
+            'options' => [
+                'label' => 'security expiration',
+                //'format' => 'm/d/Y',
+                'format' => 'Y-m-d',
+            ],
+        ]);
+        
+        // date oath taken
+        $this->add(
+        [
+             'name' => 'oathDate',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Date',
+            'attributes' => [
+                //'required' => 'required',
+                //'size' => 15,
+                'id' => 'oath_date',
+                'class' => 'date form-control',
+            ],
+            'options' => [
+                'label' => 'oath taken',
+                //'format' => 'm/d/Y',
+                'format' => 'Y-m-d',
+            ],
+        ]);
+        
+        // complicated stuff
+        $this->add(
+        [
+            'name' => 'dob',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => ['id' => 'dob','class'=>'form-control encrypted'],
+            'options' => ['label' => 'date of birth'],
+        ]);
+        $this->add(
+        [
+            'name' => 'ssn',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => ['id' => 'dob','class'=>'form-control encrypted'],
+            'options' => ['label' => 'date of birth'],
+        ]);
     }
     /**
      * adds the specialized "Hat" element to the form.
@@ -218,9 +272,25 @@ class InterpreterFieldset extends PersonFieldset
          ];
          $spec['fingerprintDate'] = [
              'allow_empty' => true,
-             'required'  => false,
-             
+             'required'  => false,             
+         ];
+         $spec['securityExpirationDate'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['oathDate'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['dob'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['ssn'] = [
+             'allow_empty' => true,
+             'required'  => false,             
          ];
          return $spec;
     }
+    
 }

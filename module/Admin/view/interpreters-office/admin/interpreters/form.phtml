@@ -32,8 +32,7 @@ $form->add([
     <?php
     $form->prepare();
     $fieldset = $form->get('interpreter');
-    echo $this->form()->openTag($form);?>
-        
+    echo $this->form()->openTag($form);?>        
         
         <ul class="nav nav-tabs" role="tablist"><!-- nav tabs -->
             <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact &amp; languages</a></li>
@@ -111,13 +110,14 @@ $form->add([
             <!-- end "contact" form elements -->
             </div><!-- /tab-pane -->
             <div role="tabpanel" class="tab-pane" id="administrative">
-
-                other form elements  here<br>
-                <?php $element = $fieldset->get('fingerprintDate');?>
+                <?php foreach (['fingerprintDate','securityExpirationDate','oathDate'] as $elementName):?>
+                
+                <?php $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
                 </div>
+                <?php endforeach; ?>
             </div><!--  / .tab-pane -->
     
     
@@ -140,10 +140,7 @@ $form->add([
  * attach event listeners
  * 
  * @todo live in its own file ?
- * @todo add a button to the select and attach listener to its 'click' event
- * instead of 'change' event on select menu 
- * @todo refactor so this function is not so long and monolithic
- * 
+ * @todo refactor so this is not so long and monolithic
  */
 
 $(function(){
@@ -153,23 +150,30 @@ $(function(){
     if (! Modernizr.inputtypes.date) {
         $('#fingerprint_date').datepicker();
     }
+    /**
+     * add a working language. note that if the markup in the form
+     * changes, this likewise has to be changed
+     */
     $('#btn-add-language').on('click',function(event){
+        
         event.preventDefault();        
         var language_id = $('#language-select').val();
         if (! language_id) { return; }
         if ($('#language-'+language_id).length) { return; }
+        // collect data
         var index = $('.language-name').length;
         var languageSelect = $('#language-select');
         var languageOption = languageSelect.children(':selected');
         var languageName =  languageOption.text();
         var certifiable  = languageOption.data().certifiable;
-        
+        // create div to contain textual language and hidden input
         var div_0 = $('<div class="col-sm-offset-3 col-sm-3 interpreter-language language-name"></div>')
                 .attr({id : 'language-'+language_id});
         div_0.html(
            languageName +
             '<input type="hidden" name="interpreter[interpreter-languages]['+index+'][language_id]" value="'+language_id+'">'
         );
+        // create div to contain federal-certification select and delete button
         var div_1 = $('<div class="col-sm-6 form-inline language-certification"></div>');
         div_1.append('<label for="fed-certification-'+index+'">fed certified</label>');
         var certificationSelectElement = $('<select>')
@@ -177,9 +181,10 @@ $(function(){
                         .attr({name: "interpreter[interpreter-languages]["+index+"][federalCertification]"});        
         if (certifiable) {
             certificationSelectElement
-                .append($("<option>").attr({value:""}).text(""))
+                .append($("<option>").attr({value:"",label:""}).text(""))
                 .append('<option value="1">yes</option><option value="0">no</option>');
         } else {
+            // non-certified languages have select disabled plus hidden input
             certificationSelectElement.append($("<option>")
                     .attr({value:"-1",selected : "selected"})
                     .text("N/A")
@@ -192,23 +197,23 @@ $(function(){
                  })
             );
         }
-        div_1.append(certificationSelectElement);
-        div_1.append(' <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language">'
+        div_1.append(certificationSelectElement)
+            .append(' <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language">'
                     + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
                     +  '<span class="sr-only">remove language</span></button>');
+        // append these divs to div#languages 
         $('#languages').append([div_0,div_1]);
+        // and reset language select
         languageSelect.val('');
         
     });
+    // remove a language
     $('#languages').on("click", ".btn-remove-language",function(event){
         event.preventDefault();
         var div =  $(this).closest("div");
         var divs = div.add(div.prev());
-        divs.slideUp(function(){divs.remove()});
+        divs.slideUp(function(){divs.remove();});
     });
    
-    // testing
-    // $('#hat').val(3); $('#lastname').val("Doink"); $('#firstname').val("Boink");
-    // select.children(':contains("French")').attr({selected:"selected"}).trigger("change");
 });
 </script>
