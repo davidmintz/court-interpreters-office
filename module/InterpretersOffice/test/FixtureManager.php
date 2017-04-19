@@ -11,6 +11,13 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 
+/**
+ * not such a good idea after all. the idea was to register
+ * the Interpreter entity listener in the test environment
+ */
+class SetupHelper extends AbstractControllerTest {}
+
+
 final class FixtureManager
 {
     /**
@@ -40,7 +47,12 @@ final class FixtureManager
         $config->setMetadataDriverImpl($driver);
 
         $entityManager = EntityManager::create($connectionParams, $config);
-
+        /* // see above
+        $helper = new SetupHelper();
+        $helper->setUp();
+        $listener = $helper->getApplicationServiceLocator()->get('interpreter-listener');
+        $entityManager->getConfiguration()->getEntityListenerResolver()->register($listener);         
+         */
         return $entityManager;
     }
 
