@@ -78,6 +78,8 @@ class InterpretersControllerTest extends AbstractControllerTest {
                 ->getSingleScalarResult();
 
         $this->assertEquals($count_after, $count_before + 1);
+        
+        //echo "\nDEBUG: exiting ".__FUNCTION__."\n";
     }
 
     public function testIndexAction() { 
@@ -89,6 +91,8 @@ class InterpretersControllerTest extends AbstractControllerTest {
 
         // what is the id of an interpreter?
         $em = FixtureManager::getEntityManager();
+        //$listener = $this->getApplicationServiceLocator()->get("interpreter-listener");
+        //$em->getConfiguration()->getEntityListenerResolver()->register($listener);
         $interpreter = $em->getRepository('InterpretersOffice\Entity\Interpreter')
                 ->findOneBy(['lastname' => 'Mintz']);
 
@@ -98,6 +102,9 @@ class InterpretersControllerTest extends AbstractControllerTest {
         $this->login('susie', 'boink');  
         $this->reset(true);
         $this->dispatch($url);
+        //echo "\nresponse status code: " .$this->getResponseStatusCode() . "\n";
+        //$body=$this->getResponse()->getBody();
+        //print "BODY: $body"; return;
         $this->assertQuery('form');
         $this->assertQuery('#lastname');
         $this->assertQuery('#firstname');
@@ -198,6 +205,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
         // there should now be one language again
         $this->assertQueryCount('div.language-name', 1);
         $this->assertQueryContentContains('div.language-name', 'Spanish');
+        //echo "\nDEBUG: exiting ".__FUNCTION__."\n";
     }
 
 }

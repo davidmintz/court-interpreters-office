@@ -25,7 +25,18 @@ class LanguagesControllerTest extends AbstractControllerTest
             new DataFixture\LanguageLoader(),
             new DataFixture\MinimalUserLoader(),
             ]);
-       
+        $this->login('susie', 'boink');
+        $this->reset(true);
+    }
+    
+    public function testTestShit()
+    {
+        
+        $this->dispatch('/admin/languages');
+        $this->assertResponseStatusCode(200);
+        $entityManager = FixtureManager::getEntityManager();
+        
+        
     }
     /**
      * test the addLanguage action.
@@ -40,7 +51,7 @@ class LanguagesControllerTest extends AbstractControllerTest
     {
         $entityManager = FixtureManager::getEntityManager();
 
-        $cache = $entityManager->getConfiguration()->getResultCacheImpl();
+        //$cache = $entityManager->getConfiguration()->getResultCacheImpl();
 
         //printf("\nfucking shit is a %s\n",gettype($cache));echo get_class($cache);
 
