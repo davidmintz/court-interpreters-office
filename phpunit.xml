@@ -9,6 +9,10 @@
         </testsuite>
     
     </testsuites>
+	<php>	 
+	  <ini name="error_log" value="./data/test.error.log"/>	 
+	  <ini name="log_errors" value="On"/>	 
+	</php>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
           <directory suffix=".php">./module/Admin/src</directory>
