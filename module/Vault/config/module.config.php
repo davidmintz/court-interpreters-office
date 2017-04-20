@@ -6,8 +6,8 @@ return [
 // override this with your local configuration
     
     'vault' => [    
-        'vault_address' => 'https://vault.sdnyinterpreters.org:8200',   
-        // etc
+        'vault_address' => 'https://vault.sdnyinterpreters.org:8200', 
+        'sslcafile'     => '/usr/share/ca-certificates/ca-chain.cert.pem',        
     ],
     'service_manager' => [
         'factories' => [
