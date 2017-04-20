@@ -31,6 +31,7 @@ class VaultServiceFactory implements FactoryInterface{
         $service = new Vault(
             $container->get('config')['vault']
         );
+        
         return $service;
     }
 
