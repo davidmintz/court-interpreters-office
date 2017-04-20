@@ -3,7 +3,7 @@ namespace SDNY\Vault\Test;
 
 use ApplicationTest\AbstractControllerTest;
 
-use SDNY\Vault\Service\Vault;
+use SDNY\Vault\Service\Vault as VaultClient;
 
 class VaultInitializationTest extends AbstractControllerTest 
 {
@@ -14,16 +14,38 @@ class VaultInitializationTest extends AbstractControllerTest
     
     public function testVaultCanBeInstantiatedDirectly()
     {
-        $vault = new Vault([]);
+        $vault = new VaultClient(['vault_address' => 'whatever']);
         $this->assertTrue(is_object($vault));
-        $this->assertInstanceOf( Vault::class, $vault);
+        $this->assertInstanceOf( VaultClient::class, $vault);
     }
     
     public function testVaultCanBeInstantiatedViaServiceManager()
     {
         $container = $this->getApplicationServiceLocator();        
-        $vault = $container->get(Vault::class);
+        $vault = $container->get(VaultClient::class);
         $this->assertTrue(is_object($vault));
-        $this->assertInstanceOf(Vault::class, $vault);
+        $this->assertInstanceOf(VaultClient::class, $vault);
+        return $vault;
+    }
+    /**
+     * @depends testVaultCanBeInstantiatedViaServiceManager
+     * @param VaultClient $vault
+     */
+    public function testGetAddress(VaultClient $vault)
+    {
+        $this->assertTrue(is_string($vault->getVaultAddress()));
+    }
+    
+    /**
+     * @depends testVaultCanBeInstantiatedViaServiceManager
+     * @param VaultClient $vault
+     */
+    public function testUserAuthentication(VaultClient $vault)
+    {
+        $response = $vault->authenticateUser('username','password');
+        // this is all for now. setting up a real vault instance
+        // is a bit much for now
+        $this->assertTrue(is_string($response));
+        
     }
 }
