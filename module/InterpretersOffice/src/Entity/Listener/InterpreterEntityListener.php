@@ -18,6 +18,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface
 {
     
     use EventManagerAwareTrait;
+    
     /**
      * callback 
      * 
@@ -27,11 +28,8 @@ class InterpreterEntityListener implements EventManagerAwareInterface
      * @param LifecycleEventArgs $event
      */
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
-    {
-        
-        
-        $this->events->trigger("gack");
-        //printf("\nshit is STILL running in %s! yay!",__METHOD__);
-        
+    {        
+        $this->events->trigger(__FUNCTION__, $this);
+        //printf("\nshit is STILL running in %s! yay!",__METHOD__);        
     }
 }
