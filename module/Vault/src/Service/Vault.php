@@ -8,6 +8,8 @@ use Zend\Http\Client;
 
 /**
  * A stab at a basic Vault client
+ * 
+ * @todo consider:  maybe this should simply extend Zend\Http\Client
  */
 
 class Vault {
