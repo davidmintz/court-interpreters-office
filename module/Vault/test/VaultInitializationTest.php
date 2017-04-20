@@ -46,6 +46,21 @@ class VaultInitializationTest extends AbstractControllerTest
         // this is all for now. setting up a real vault instance
         // is a bit much for now
         $this->assertTrue(is_string($response));
+        $data = json_decode($response);
+        $this->assertTrue(is_object($data));
         
+    }
+    /**
+     * @depends testVaultCanBeInstantiatedViaServiceManager
+     * @param VaultClient $vault
+     */
+    public function testAuthenticateTLSCert(VaultClient $vault)
+    {
+        $response = $vault->authenticateTLSCert();        
+        $this->assertTrue(is_string($response));
+        $data = json_decode($response);
+        $this->assertTrue(is_object($data));
+        // cool, huh?
+        // print "\n{$data->auth->client_token}\n";
     }
 }
