@@ -231,7 +231,16 @@ return [
                             ],
                         ],
                     ],
-
+                    'edit-profile' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            // to do: add parameters 
+                            'route' => '/edit',
+                            'defaults' => [
+                                'action' => 'edit',
+                            ],
+                        ],
+                    ],
                 ],
                 // to be continued
             ],
