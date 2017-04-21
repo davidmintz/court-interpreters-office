@@ -37,6 +37,7 @@ class InterpretersController extends AbstractActionController
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
+     * @param boolean $vault_enabled 
      */
     public function __construct(EntityManagerInterface $entityManager,$vault_enabled)
     {
