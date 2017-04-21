@@ -235,4 +235,6 @@ class UsersController extends AbstractActionController
 
         return new ViewModel(['title' => 'admin | users','role' => $this->auth_user_role]);
     }
+    
+    
 }
