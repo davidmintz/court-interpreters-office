@@ -231,7 +231,7 @@ class UsersController extends AbstractActionController
      */
     public function indexAction()
     {
-        echo ($this->params()->fromRoute('action'));
+        //echo ($this->params()->fromRoute('action'));
 
         return new ViewModel(['title' => 'admin | users','role' => $this->auth_user_role]);
     }
