@@ -20,7 +20,11 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 class InterpretersController extends AbstractActionController
 {
     
-
+    /**
+     * whether our Vault module is enabled
+     * @var boolean
+     */
+    protected $vault_enabled;
     
     /**
      * entity manager.
@@ -34,10 +38,11 @@ class InterpretersController extends AbstractActionController
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager,$vault_enabled)
     {
         
         $this->entityManager = $entityManager;
+        $this->vault_enabled = $vault_enabled;
     }
 
     /**
@@ -73,7 +78,12 @@ class InterpretersController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
                 ->setVariables(['title' => 'add an interpreter']);
 
-        $form = new InterpreterForm($this->entityManager, ['action' => 'create']);
+        $form = new InterpreterForm($this->entityManager,
+                [
+                    'action' => 'create',
+                    'vault_enabled' => $this->vault_enabled
+                ]
+        );
         $viewModel->form = $form;
 
         $request = $this->getRequest();
@@ -130,9 +140,8 @@ class InterpretersController extends AbstractActionController
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Interpreter', $id);
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
-        }
-        
-        $form = new InterpreterForm($this->entityManager, ['action' => 'update']);
+        }        
+        $form = new InterpreterForm($this->entityManager, ['action' => 'update','vault_enabled'=>$this->vault_enabled]);
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id]);
         $request = $this->getRequest();
