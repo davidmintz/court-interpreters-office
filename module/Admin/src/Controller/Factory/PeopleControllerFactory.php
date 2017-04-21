@@ -32,8 +32,12 @@ class PeopleControllerFactory implements FactoryInterface
             // attach Entity Listener
             $listener = $container->get('interpreter-listener');
             $em->getConfiguration()->getEntityListenerResolver()->register($listener);
+            // is the Vault thing enabled?
+            $vault_enabled = key_exists('vault', $container->get('config'));
+            $controller = new Controller\InterpretersController($em,$vault_enabled);
+        } else {
+            $controller = new $requestedName($em);
         }
-        $controller = new $requestedName($em);
         if ($controller instanceof AuthenticationAwareInterface) {
             $controller->setAuthenticationService($container->get('auth'));
         }
