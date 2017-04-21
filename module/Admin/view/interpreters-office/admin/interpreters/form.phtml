@@ -27,7 +27,7 @@ $form->add([
    ->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal')    ;
 ?>
-<div class="center-block" style="max-width:800px"><!-- wrapper -->
+<div class="center-block row" style="max-width:800px"><!-- wrapper -->
     <h2><?php echo $this->title ?></h2>
     <?php
     $form->prepare();
@@ -110,17 +110,34 @@ $form->add([
             <!-- end "contact" form elements -->
             </div><!-- /tab-pane -->
             <div role="tabpanel" class="tab-pane" id="administrative">
-                <?php foreach (['fingerprintDate','securityExpirationDate','oathDate'] as $elementName):?>
-                
-                <?php $element = $fieldset->get($elementName);?>
+                <?php foreach (['fingerprintDate','securityExpirationDate','oathDate',] as $elementName):
+
+                    $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
                 </div>
                 <?php endforeach; ?>
+                <!--
+                
+Don't mix with other components
+
+Do not mix form groups or grid column classes directly with input groups. Instead, nest the input group inside of the form group or grid-related element.
+
+                -->
+                <?php foreach (['dob','ssn'] as $elementName) :
+                    if (! $fieldset->has($elementName)) : break; endif;
+                    $element = $fieldset->get($elementName);?>
+                <div class="form-group">
+                    <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
+                    <div class="col-sm-9 form-inline encrypted">
+                        <span class="input-group-btn"><?php echo $this->formElement($element)?><button title="re-authenticate to view or edit sensitive data fields" class="btn btn-default" type="button"><span class="glyphicon glyphicon-lock"><span class="sr-only">unlock</span></button></span>                            </span>
+                        <?php echo $this->formElementErrors($element) ?>
+                    </div>
+                </div>
+                
+                <?php  endforeach;?>                
             </div><!--  / .tab-pane -->
-    
-    
         </div><!-- /tab-content -->
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-9">
@@ -131,9 +148,9 @@ $form->add([
                 echo $this->formSubmit($form->get('submit'));?>
             </div>       
         </div><!-- / .form-group -->
+        
   <?php echo $this->form()->closeTag(); ?>  
 </div><!-- /wrapper -->
-
 
 <script type="text/javascript">
 /** 
@@ -144,11 +161,20 @@ $form->add([
  */
 
 $(function(){
-    $('a[href="#contact"]').trigger('click');
-    console.log("triggered click on contact tab. see bootstrap doc re how to do it right");
+    // this is bullshit. what we really want is the button thingy on the same 
+    // line as the input but it wraps unless we set the containing element's 
+    // class to form-inline, which makes it too narrow
+    $('#dob, #ssn').css({width:'70%'}).attr({disabled:"disabled"});
+    // ================================================
+    $('a[href="#administrative"]').trigger('click');
+    console.log("triggered click on a tab. see bootstrap doc re how to do it right");
     
     if (! Modernizr.inputtypes.date) {
-        $('#fingerprint_date').datepicker();
+        $('input.date').datepicker();
+        /** @todo 
+         * set datepicker options to display year for dob, if element exists 
+         * set options to constrain security_clearance, fingerprint etc date range
+         */
     }
     /**
      * add a working language. note that if the markup in the form
