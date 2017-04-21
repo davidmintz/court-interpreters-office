@@ -11,6 +11,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\UserForm;
 use InterpretersOffice\Entity;
 
+use Zend\Authentication\AuthenticationServiceInterface;
 /**
  *  AccountController.
  *
@@ -26,15 +27,20 @@ class AccountController extends AbstractActionController
      * @var ObjectManager
      */
     protected $objectManager;
-
+    
+    /**
+     * 
+     */
+    protected $auth;
     /**
      * constructor.
      *
      * @param ObjectManager $objectManager
      */
-    public function __construct(ObjectManager $objectManager)
+    public function __construct(ObjectManager $objectManager, AuthenticationServiceInterface $auth)
     {
         $this->objectManager = $objectManager;
+        $this->auth = $auth;
     }
 
     /**
@@ -83,6 +89,19 @@ class AccountController extends AbstractActionController
      */
     public function resetPasswordAction()
     {
+        return new ViewModel();
+    }
+    /**
+     * edit account profile
+     *
+     * @return ViewModel
+     */
+    public function editAction()
+    {        
+        if (!$this->auth->hasIdentity()) {
+            $this->redirect()->toRoute('auth');
+            return;
+        }
         return new ViewModel();
     }
 }
