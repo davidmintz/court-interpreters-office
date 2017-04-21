@@ -27,6 +27,13 @@ class InterpreterFieldset extends PersonFieldset
      * @var string
      */
     protected $fieldset_name = 'interpreter';
+    
+    /**
+     * configuration options
+     * 
+     * @var Array options
+     */
+    protected $options;
 
     /**
      * constructor.
@@ -38,7 +45,7 @@ class InterpreterFieldset extends PersonFieldset
     {
         parent::__construct($objectManager, $options);
         
-        
+        $this->options = $options;
         /*
         // could not get this to hydrate properly, so we're not using
         // Element\Collection with a InterpreterLanguageFieldset
@@ -113,7 +120,7 @@ class InterpreterFieldset extends PersonFieldset
                 'class' => 'date form-control',
             ],
             'options' => [
-                'label' => 'security expiration',
+                'label' => 'security expiration date',
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
             ],
@@ -137,22 +144,23 @@ class InterpreterFieldset extends PersonFieldset
                 'format' => 'Y-m-d',
             ],
         ]);
-        
-        // complicated stuff
-        $this->add(
-        [
-            'name' => 'dob',
-            'type' => 'Zend\Form\Element\Text',
-            'attributes' => ['id' => 'dob','class'=>'form-control encrypted'],
-            'options' => ['label' => 'date of birth'],
-        ]);
-        $this->add(
-        [
-            'name' => 'ssn',
-            'type' => 'Zend\Form\Element\Text',
-            'attributes' => ['id' => 'dob','class'=>'form-control encrypted'],
-            'options' => ['label' => 'date of birth'],
-        ]);
+        if ($options['vault_enabled']) {        
+            // complicated stuff
+            $this->add(
+            [
+                'name' => 'dob',
+                'type' => 'Zend\Form\Element\Text',
+                'attributes' => ['id' => 'dob','class'=>'form-control encrypted date'],
+                'options' => ['label' => 'date of birth'],
+            ]);
+            $this->add(
+            [
+                'name' => 'ssn',
+                'type' => 'Zend\Form\Element\Text',
+                'attributes' => ['id' => 'ssn','class'=>'form-control encrypted'],
+                'options' => ['label' => 'social security number'],
+            ]);
+        }
     }
     /**
      * adds the specialized "Hat" element to the form.
@@ -290,6 +298,7 @@ class InterpreterFieldset extends PersonFieldset
              'allow_empty' => true,
              'required'  => false,             
          ];
+         
          return $spec;
     }
     
