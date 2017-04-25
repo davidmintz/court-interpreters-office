@@ -60,7 +60,23 @@ class VaultInitializationTest extends AbstractControllerTest
         $this->assertTrue(is_string($response));
         $data = json_decode($response);
         $this->assertTrue(is_object($data));
-        // cool, huh?
-        // print "\n{$data->auth->client_token}\n";
+        
+        $token = $data->auth->client_token;
+        
+        return $vault->setAuthToken($token);
+    }
+    /**
+     * @depends testAuthenticateTLSCert
+     */
+    public function testGetCipherAccessToken(VaultClient $vault)
+    {        
+        $response = $vault->getCipherAccessToken();
+        $this->assertTrue(is_string($response));
+        $data = json_decode($response,JSON_OBJECT_AS_ARRAY);
+        $this->assertTrue(is_array($data));
+        $this->assertArrayNotHasKey('errors', $data);
+        $token = $data['auth']['client_token'];
+        $this->assertTrue(is_string($token));
+        //print_r($data);
     }
 }
