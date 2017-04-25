@@ -60,7 +60,6 @@ class VaultInitializationTest extends AbstractControllerTest
         $this->assertTrue(is_string($response));
         $data = json_decode($response);
         $this->assertTrue(is_object($data));
-        
         $token = $data->auth->client_token;
         
         return $vault->setAuthToken($token);
