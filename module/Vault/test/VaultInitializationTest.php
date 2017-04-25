@@ -27,6 +27,7 @@ class VaultInitializationTest extends AbstractControllerTest
         $this->assertInstanceOf(VaultClient::class, $vault);
         return $vault;
     }
+    
     /**
      * @depends testVaultCanBeInstantiatedViaServiceManager
      * @param VaultClient $vault
@@ -50,6 +51,7 @@ class VaultInitializationTest extends AbstractControllerTest
         $this->assertTrue(is_object($data));
         
     }
+    
     /**
      * @depends testVaultCanBeInstantiatedViaServiceManager
      * @param VaultClient $vault
@@ -64,8 +66,10 @@ class VaultInitializationTest extends AbstractControllerTest
         
         return $vault->setAuthToken($token);
     }
+    
     /**
      * @depends testAuthenticateTLSCert
+     * @param VaultClient $vault
      */
     public function testGetCipherAccessToken(VaultClient $vault)
     {        
