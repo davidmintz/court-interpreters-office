@@ -26,5 +26,32 @@ class InterpreterRepository extends EntityRepository
         parent::__construct($em, $class);
     }
 
-    // 'SELECT i.lastname, i.firstname FROM InterpretersOffice\Entity\Interpreter i JOIN i.interpreterLanguages il JOIN il.language l WHERE l.name = 'Spanish'and i.active = true'
-}
+    /**
+     * looks up Interpreters by name
+     *
+     * @param string $name
+     */
+    public function findByName($name)
+    {
+
+        echo __FUNCTION__ . " is running ... ";
+
+    }
+
+    /**
+     * looks up Interpreters by language
+     *
+     * @param string $name
+     */
+     /**
+     * looks up Interpreters by name
+     *
+     * @param string $name
+     * @param Array $options additional filters
+     */
+    public function findByLanguage($language, Array $options = [])
+    {
+
+        echo __FUNCTION__ . " is running ... ";
+
+    }
