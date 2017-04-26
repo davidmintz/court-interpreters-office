@@ -2,6 +2,9 @@
 /** module/Admin/views/interpreters-office/admin/interpreters/index.phtml
  *  viewscript for main people-administration page
  */
+$selectElement = new \InterpretersOffice\Form\Element\LanguageSelect(
+    'language-select',['objectManager' => $this->objectManager,]
+);
 
 $this->headTitle($this->title);
 ?>
@@ -14,13 +17,10 @@ endif;
 
 ?>
 <form>
-    <div class="form-group form-inline">Find interpreters of
-        <label for="language" class="sr-only">language</label> <select name="language" id="language" class="form-control">
-            <option value="0" label="(choose language)">(choose language)</option>
-            <option value="1" label="Spanish">Spanish</option>
-            <option value="2" label="Russian">Russian</option>
-            <option value="3" label="Foochow">Foochow</option>
-        </select>
+    <div class="form-group form-inline">
+    <div id="form-errors" class="alert alert-warning hidden"></div>
+    Find interpreters of
+        <label for="language" class="sr-only">language</label> <?php echo $this->formElement($selectElement)?>
         who are <label for="active" class="sr-only">status</label>
         <select name="active" id="active"  class="form-control">
             <option value="1" label="active">active</option>
@@ -34,10 +34,33 @@ endif;
             <option value="-2" label="none">none</option>
             <option value="-1" label="any status">any status</option>
         </select><!--
-    --><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a> 
+    --><a id="btn-search-language" href="<?php echo $this->url('interpreters',['language_id'=>null]) ?>" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a> 
     </div>
     <div class="form-group form-inline">or whose name is <input name="name" value="<?php echo $this->escapeHtml($this->name) ?>" type="text" placeholder="last name[, first name]" class="form-control"></input><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
 </form>
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
 </a>
+
+<script type="text/javascript">
+$(function(){
+console.log("boink! load");
+var languageSelect = $('#language-select'); 
+var languageButton = $('#btn-search-language');
+languageButton.on("click",function(event){
+    event.preventDefault();
+    var language_id = languageSelect.val();
+    if (! language_id) {
+        console.warn("shit.");
+        $('#form-errors').text("please select a language").show().removeClass("hidden");
+    }
+    var url = languageButton.attr('href');
+    document.location = url + '/language/' + language_id;
+});
+
+
+
+
+});
+
+</script>
