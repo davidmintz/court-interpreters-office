@@ -34,9 +34,11 @@ You will be able to search your database based on all these criteria (date range
 
 An optional module will allow users outside your Interpreters Office to log in and submit requests themselves, greatly reducing the amount of data entry required of the Interpreters and eliminating the opportunity for error.
 
+Another optional module I have in mind will generate claim forms for contract interpreter compensation and keep track of the money expended. The work flow currently happening in our organization is preposterously tedious, and this will help immensely.
+
 # acknowledgments
 
-The server-side code is written in PHP and relies heavily on [the Zend MVC Framework](http://framework.zend.com/) 3.x and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end will make use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
+The server-side code is written in PHP and relies heavily on [the Zend MVC Framework](http://framework.zend.com/) 3.x and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
 
 # the author
 
