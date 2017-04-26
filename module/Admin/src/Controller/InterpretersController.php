@@ -11,7 +11,7 @@ use InterpretersOffice\Admin\Form\InterpreterForm;
 use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
-
+use InterpretersOffice\Admin\Form\InterpreterRosterForm;
 
 /**
  * controller for admin/interpreters.
@@ -55,11 +55,11 @@ class InterpretersController extends AbstractActionController
     {
         $this->events->trigger("gack!");
         return new ViewModel(
-            ['title' => 'interpreters',
+        ['title' => 'interpreters',
              'objectManager' => $this->entityManager,
-             'params' => $this->params()->fromRoute()
-
-            ]);
+             'params' => $this->params()->fromRoute(),
+             'form' => new InterpreterRosterForm(['objectManager' => $this->entityManager])
+        ]);
     }
 
     /**

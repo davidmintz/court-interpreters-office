@@ -2,10 +2,11 @@
 /** module/Admin/views/interpreters-office/admin/interpreters/index.phtml
  *  viewscript for main people-administration page
  */
-$selectElement = new \InterpretersOffice\Form\Element\LanguageSelect(
-    'language-select',['objectManager' => $this->objectManager,]
-);
-$selectElement->setValue($this->params['language_id']);
+$form = $this->form;
+$form->get('language-select')->setValue($this->params['language_id']);
+$form->get('active')->setValue($this->params['active']);
+$form->get('security_clearance_expiration')->setValue($this->params['security_clearance_expiration']);
+$form->get('name')->setValue(key_exists('name',$this->params)? $this->params['name']:'');
 $this->headTitle($this->title);
 ?>
 <h2>interpreters</h2>
@@ -20,23 +21,14 @@ endif;
     <div class="form-group form-inline">
     <div id="form-errors" class="alert alert-warning hidden"></div>
     Find interpreters of
-        <label for="language" class="sr-only">language</label> <?php echo $this->formElement($selectElement)?>
+        <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language-select'))?>
         who are <label for="active" class="sr-only">status</label>
-        <select name="active" id="active"  class="form-control">
-            <option value="1" label="active">active</option>
-            <option value="0" label="not active">not active</option>
-            <option value="-1" label="either status">either status</option>
-        </select>
+        <?php echo $this->formSelect($form->get('active'))?>
         with security clearance <label for="security_clearance_expiration" class="sr-only">security clearance</label>
-         <select name="security_clearance_expiration" id="security_clearance_expiration"  class="form-control">
-            <option value="1" label="active">valid</option>
-            <option value="0" label="not active">expired</option>
-            <option value="-2" label="none">none</option>
-            <option value="-1" label="any status">any status</option>
-        </select><!--
-    --><a id="btn-search-language" href="<?php echo $this->url('interpreters',['language_id'=>null]) ?>" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a> 
+         <?php echo $this->formSelect($form->get('security_clearance_expiration'))?><!--
+    --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a> 
     </div>
-    <div class="form-group form-inline">or whose name is <input name="name" value="<?php echo $this->escapeHtml($this->name) ?>" type="text" placeholder="last name[, first name]" class="form-control"></input><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
+    <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
 </form>
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
@@ -46,23 +38,22 @@ endif;
 
 <script type="text/javascript">
 $(function(){
-console.log("boink! load");
-var languageSelect = $('#language-select'); 
-var languageButton = $('#btn-search-language');
-languageButton.on("click",function(event){
-    event.preventDefault();
-    var language_id = languageSelect.val();
-    if (! language_id) {
-        console.warn("shit.");
-        $('#form-errors').text("please select a language").show().removeClass("hidden");
-    }
-    var url = languageButton.attr('href');
-    document.location = url + '/language/' + language_id;
-});
-
-
-
-
+    
+    console.log("boink! load");
+    var languageSelect = $('#language-select'); 
+    var languageButton = $('#btn-search-language');
+    languageButton.on("click",function(event){
+        event.preventDefault();
+        var language_id = languageSelect.val() || "0";        
+        var url = languageButton.attr('href');
+        url += '/language/' + language_id;
+        url += '/active/'+$('#active').val();
+        var security = $('#security_clearance_status').val();
+        if (security) {
+            url += '/security/'+security;
+        }
+        document.location = url;
+    });
 });
 
 </script>

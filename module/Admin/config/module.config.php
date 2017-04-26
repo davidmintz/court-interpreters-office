@@ -284,13 +284,13 @@ return [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route' => '/admin/interpreters[/language/:language_id]',
+                    'route' => '/admin/interpreters',//[/language/:language_id]',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\InterpretersController::class,
                         'action' => 'index',
                         ///'defaults' => [
-                            'language_id' => '',
+                        //    'language_id' => '',
                         //]
                     ],
                 ],
@@ -322,31 +322,27 @@ return [
                     'find_by_name' => [ 
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/find/name/:lastname[/:firstname]',
+                            'route' => 'name/:lastname[/:firstname]',
                             'defaults' => [
-                                'action' => 'find',
-                            ],
-                            /*
-                            'constraints' => [
-                                'action' => 'edit|delete',
-                                'id' => '[1-9]\d*',
-                            ],
-                            */
+                                'action' => 'index',
+                                'name'   => '',
+                            ],                           
                         ],
                     ],
                     'find_by_language' => [ 
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/find/language/:language_id[/active/:active[/security/:security]]',
+                            'route' => '/language/:language_id[/active/:active[/security/:security_clearance_expiration]]',
                             'defaults' => [
-                                'action' => 'find',
+                                'action' => 'index',
                                 'active' => 1, // by default, active only
-                                'security'=> -1, // by default, any security clearance status
+                                'security_clearance_expiration'=> 1, // by default, valid security clearance status
+                                'language_id' => 0,
                             ],
                             'constraints' => [                                
-                                'language_id' => '[1-9]\d*',
+                                'language_id' => '[0-9]\d*',
                                 'active' => '-?1|0',
-                                'security' => '-?1|0',
+                                'security_clearance_expiration' => '-?1|0',
                             ],
                         ],
                     ]
