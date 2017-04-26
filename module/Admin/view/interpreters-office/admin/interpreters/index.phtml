@@ -5,7 +5,7 @@
 $selectElement = new \InterpretersOffice\Form\Element\LanguageSelect(
     'language-select',['objectManager' => $this->objectManager,]
 );
-
+$selectElement->setValue($this->params['language_id']);
 $this->headTitle($this->title);
 ?>
 <h2>interpreters</h2>
@@ -41,6 +41,8 @@ endif;
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
 </a>
+    
+<pre><?php print_r($this->params) ?></pre>
 
 <script type="text/javascript">
 $(function(){

@@ -54,8 +54,14 @@ class InterpretersController extends AbstractActionController
     public function indexAction()
     {
         $this->events->trigger("gack!");
-        return new ViewModel(['title' => 'interpreters','objectManager' => $this->entityManager]);
+        return new ViewModel(
+            ['title' => 'interpreters',
+             'objectManager' => $this->entityManager,
+             'params' => $this->params()->fromRoute()
+
+            ]);
     }
+
     /**
      * finds interpreters
      * 
