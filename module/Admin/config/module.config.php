@@ -289,10 +289,16 @@ return [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\InterpretersController::class,
                         'action' => 'index',
-                        ///'defaults' => [
-                        //    'language_id' => '',
-                        //]
+                        'active' => 1, // by default, active only
+                        'security_clearance_expiration'=> 1, // by default, valid security clearance status
+                        'language_id' => 0,
+
                     ],
+                    'constraints' => [                                
+                                'language_id' => '[0-9]\d*',
+                                'active' => '-?1|0',
+                                'security_clearance_expiration' => '-?1|0',
+                            ],
                 ],
                 'child_routes' => [
                     'add' => [
@@ -322,13 +328,14 @@ return [
                     'find_by_name' => [ 
                         'type' => Segment::class,
                         'options' => [
-                            'route' => 'name/:lastname[/:firstname]',
+                            'route' => '/name/:lastname[/:firstname]',
                             'defaults' => [
                                 'action' => 'index',
                                 'name'   => '',
                             ],                           
                         ],
                     ],
+                    ///*
                     'find_by_language' => [ 
                         'type' => Segment::class,
                         'options' => [
@@ -345,7 +352,8 @@ return [
                                 'security_clearance_expiration' => '-?1|0',
                             ],
                         ],
-                    ]
+                    ]                    
+                     //*/
                 ],
             ],
 

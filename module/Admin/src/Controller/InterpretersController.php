@@ -53,12 +53,13 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {
-        $this->events->trigger("gack!");
+        $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
         return new ViewModel(
-        ['title' => 'interpreters',
+        [    
+             'title' => 'interpreters',
              'objectManager' => $this->entityManager,
              'params' => $this->params()->fromRoute(),
-             'form' => new InterpreterRosterForm(['objectManager' => $this->entityManager])
+             'form' => $form,
         ]);
     }
 

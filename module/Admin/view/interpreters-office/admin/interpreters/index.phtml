@@ -1,3 +1,6 @@
+
+<h2>interpreters</h2>
+<h1><?php echo get_class($this->form)?></h1>
 <?php
 /** module/Admin/views/interpreters-office/admin/interpreters/index.phtml
  *  viewscript for main people-administration page
@@ -9,7 +12,7 @@ $form->get('security_clearance_expiration')->setValue($this->params['security_cl
 $form->get('name')->setValue(key_exists('name',$this->params)? $this->params['name']:'');
 $this->headTitle($this->title);
 ?>
-<h2>interpreters</h2>
+
 <?php
 $messenger = $this->flashMessenger()->setAutoEscape(false);
 if ($messenger->hasSuccessMessages()) :

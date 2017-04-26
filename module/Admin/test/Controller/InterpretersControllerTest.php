@@ -84,6 +84,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
 
     public function testIndexAction() { 
         $this->dispatch('/admin/interpreters');
+        //echo $this->getResponse()->getBody(); return;
         $this->assertResponseStatusCode(200);
     }
 
