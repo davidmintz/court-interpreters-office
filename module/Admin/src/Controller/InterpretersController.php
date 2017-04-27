@@ -53,14 +53,21 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {
-        $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
-        return new ViewModel(
-        [    
-             'title' => 'interpreters',
-             'objectManager' => $this->entityManager,
-             'params' => $this->params()->fromRoute(),
-             'form' => $form,
-        ]);
+        $viewModel = new ViewModel([ 'title' => 'interpreters',
+                 'objectManager' => $this->entityManager,
+                 'params' => $this->params()->fromRoute(),
+                 'form' => new InterpreterRosterForm(['objectManager' => $this->entityManager])
+                 ]);
+        $matchedRoute = $this->getEvent()->getRouteMatch();
+        if ('interpreters' == $matchedRoute->getMatchedRouteName()) {
+            return $viewModel;
+        } else {
+            // get some data, then
+            echo "do shit...." ;
+            return $viewModel;
+
+        }
+        
     }
 
     /**
@@ -68,9 +75,9 @@ class InterpretersController extends AbstractActionController
      * 
      * gets interpreters based on search criteria
      * 
-     * @return boolean|ViewModel
+     * @return array
      */
-    public function findAction()
+    public function find()
     {
         echo "shit is running!" ;
         return false;

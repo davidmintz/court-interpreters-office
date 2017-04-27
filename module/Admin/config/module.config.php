@@ -284,7 +284,7 @@ return [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route' => '/admin/interpreters',//[/language/:language_id]',
+                    'route' => '/admin/interpreters',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\InterpretersController::class,
@@ -295,10 +295,10 @@ return [
 
                     ],
                     'constraints' => [                                
-                                'language_id' => '[0-9]\d*',
-                                'active' => '-?1|0',
-                                'security_clearance_expiration' => '-?1|0',
-                            ],
+                        'language_id' => '[0-9]\d*',
+                        'active' => '-?1|0',
+                        'security_clearance_expiration' => '-?1|0',
+                    ],
                 ],
                 'child_routes' => [
                     'add' => [
@@ -340,12 +340,7 @@ return [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/language/:language_id[/active/:active[/security/:security_clearance_expiration]]',
-                            'defaults' => [
-                                'action' => 'index',
-                                'active' => 1, // by default, active only
-                                'security_clearance_expiration'=> 1, // by default, valid security clearance status
-                                'language_id' => 0,
-                            ],
+                            // defaults are defined above
                             'constraints' => [                                
                                 'language_id' => '[0-9]\d*',
                                 'active' => '-?1|0',
