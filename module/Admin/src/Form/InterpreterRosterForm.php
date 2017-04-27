@@ -1,19 +1,26 @@
 <?php
-/**  Interpreter search UI */
+/**  module/Admin/src/Form/InterpreterRosterForm.php Interpreter search UI  */
 
 namespace InterpretersOffice\Admin\Form;
 
 use Zend\Form\Form;
 use InterpretersOffice\Form\Element\LanguageSelect;
-//use Zend\Form\Element;
+
 
 /**
-* 
-*/
+ * Form for looking up interpreters
+ */
 class InterpreterRosterForm extends Form
 {
-	
-	public function __construct(Array $options = [])
+	/**
+     * constructor
+     * 
+     * the sole required element of $options is 
+     * 'objectManager' => Doctrine\Common\Persistence\ObjectManager
+     * 
+     * @param array $options
+     */
+	public function __construct(Array $options)
 	{
 		parent::__construct('interpreter-roster',$options);
         
@@ -72,7 +79,6 @@ class InterpreterRosterForm extends Form
                      'class' => 'form-control',
                  ]                 
              ]
-        );
-        
+        );        
 	}
 }
