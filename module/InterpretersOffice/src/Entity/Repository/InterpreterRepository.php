@@ -57,12 +57,6 @@ class InterpreterRepository extends EntityRepository
                 ->where('l.id = :id')
                 ->setParameters([':id' => $params['language_id']]);
         }
-         
-        $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
-        $paginator = new ZendPaginator($adapter);
-        if (! count($paginator)) {
-            return null;
-        }
          /*
         $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
         $paginator = new ZendPaginator($adapter);
