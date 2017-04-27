@@ -2,12 +2,17 @@
 /** module/Admin/views/interpreters-offe/admin/interpreters/index.phtml
  *  viewscript for main people-administration page
  */
+
 $form = $this->form;
-$form->get('language-select')->setValue($this->params['language_id']);
-$form->get('active')->setValue($this->params['active']);
-$form->get('security_clearance_expiration')->setValue($this->params['security_clearance_expiration']);
+foreach (['language_id','active','security_clearance_expiration'] as $e) :
+    $form->get($e)->setValue($this->params[$e]);
+endforeach;
+//$form->get('language-select')->setValue($this->params['language_id']);
+//$form->get('active')->setValue($this->params['active']);
+//$form->get('security_clearance_expiration')->setValue($this->params['security_clearance_expiration']);
 $form->get('name')->setValue(key_exists('name',$this->params)? $this->params['name']:'');
 $this->headTitle($this->title);
+//$form->setData(['language_id'=>1,'active'=> 0,'security_clearance_expiration'=>1]);
 ?>
 <h2>interpreters</h2>
 <?php
@@ -21,7 +26,7 @@ endif;
     <div class="form-group form-inline">
     <div id="form-errors" class="alert alert-warning hidden"></div>
     Find interpreters of
-        <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language-select'))?>
+        <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language_id'))?>
         who are <label for="active" class="sr-only">status</label>
         <?php echo $this->formSelect($form->get('active'))?>
         with security clearance <label for="security_clearance_expiration" class="sr-only">security clearance</label>
@@ -33,14 +38,16 @@ endif;
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
 </a>
-    
-<pre><?php print_r($this->params) ?></pre>
+<?php if ($this->data): ?>
+<pre><?php print_r($this->data) ?></pre>
+<?php endif; ?>
+<pre><?php //print_r($this->params) ?></pre>
 
 <script type="text/javascript">
 $(function(){
     
     console.log("boink! load");
-    var languageSelect = $('#language-select'); 
+    var languageSelect = $('#language_id'); 
     var languageButton = $('#btn-search-language');
     languageButton.on("click",function(event){
         event.preventDefault();

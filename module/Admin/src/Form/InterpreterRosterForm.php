@@ -26,7 +26,7 @@ class InterpreterRosterForm extends Form
         
 		$this->add(
 			new LanguageSelect(
-   				'language-select',
+   				'language_id',
                 [
                     'objectManager' => $options['objectManager'],
                 ]

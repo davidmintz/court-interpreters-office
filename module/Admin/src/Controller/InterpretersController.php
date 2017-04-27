@@ -12,6 +12,7 @@ use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
 use InterpretersOffice\Admin\Form\InterpreterRosterForm;
+use Zend\Session\Container as Session;
 
 /**
  * controller for admin/interpreters.
@@ -53,23 +54,47 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {
-        $viewModel = new ViewModel([ 'title' => 'interpreters',
-                 'objectManager' => $this->entityManager,
-                 'params' => $this->params()->fromRoute(),
-                 'form' => new InterpreterRosterForm(['objectManager' => $this->entityManager])
-                 ]);
+        $params = $this->params()->fromRoute();
+        $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
+        $viewModel = new ViewModel([           
+            'title' => 'interpreters',
+            'objectManager' => $this->entityManager,
+            'params' => $params, // maybe do away with this
+            'form' => $form,
+        ]);        
         $matchedRoute = $this->getEvent()->getRouteMatch();
-        if ('interpreters' == $matchedRoute->getMatchedRouteName()) {
+        $isQuery = ( 'interpreters' != $matchedRoute->getMatchedRouteName() );
+        $this->initView($viewModel, $params, $isQuery);       
+        if (! $isQuery ) {   // no search parameters in URL
             return $viewModel;
-        } else {
-            // get some data, then
-            echo "do shit...." ;
-            return $viewModel;
-
-        }
-        
+        } else {             // yes search parameters in URL    
+            return $viewModel->setVariables(['data'=>$this->find($params)]);
+        }        
     }
-
+    
+    /**
+     * figures out appropriate defaults for interpreter roster search form
+     * 
+     * @param ViewModel $view
+     * @param Array of GET (route) parameters
+     * @param boolean $isQuery whether submitting search terms or just arriving
+     * 
+     * @todo consider making this a method of the form instead
+     */
+    public function initView(ViewModel $viewModel,Array $params, $isQuery) {
+        
+        $session = new Session('interpreter_roster');
+        if (! $isQuery) {
+        // if no search parameters, get previous state from session if possible
+            if ($session->params) {
+                $viewModel->params = $session->params;
+            } 
+        } else {
+        // save search parameters in session for next time
+            $session->params = $params;
+            $viewModel->params = $params;
+        }
+    }
     /**
      * finds interpreters
      * 
@@ -77,10 +102,12 @@ class InterpretersController extends AbstractActionController
      * 
      * @return array
      */
-    public function find()
+    public function find(Array $params)
     {
-        echo "shit is running!" ;
-        return false;
+        //echo "shit is running!" ;
+        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
+        return $repository->search($params);
+        
     }
 
 
