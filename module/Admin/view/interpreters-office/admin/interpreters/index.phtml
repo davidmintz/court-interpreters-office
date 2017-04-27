@@ -39,7 +39,7 @@ endif;
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
 </a>
 <?php if ($this->data): ?>
-<pre><?php print_r($this->data) ?></pre>
+<pre><?php echo gettype($this->data) ?></pre>
 <?php endif; ?>
 <pre><?php //print_r($this->params) ?></pre>
 

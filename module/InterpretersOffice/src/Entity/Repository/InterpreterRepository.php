@@ -7,6 +7,9 @@ namespace InterpretersOffice\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Zend\Paginator\Paginator as ZendPaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 /**
  * custom repository class for EventType entity.
  */
@@ -38,36 +41,43 @@ class InterpreterRepository extends EntityRepository
 
     }
     
-    public function search($params)
+    public function search($params,$page = 1)
     {
-        if (! isset($params['name'])) {
-            return $this->findByLanguage($params);
+        if ( isset($params['name'])) {
+            return $this->findByName($params);
         }
-    }
-    
-    /**
-     * looks up Interpreters by language
-     *
-     * @param int $language_id
-     * @param Array $params
-     * @return Array;
-     */
-    public function findByLanguage($params)
-    {
-    //orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i JOIN i.interpreterLanguages il JOIN il.language l WHERE l.name = 'Spanish'"
+         //orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i JOIN i.interpreterLanguages il JOIN il.language l WHERE l.name = 'Spanish'"
         //print_r($params);return [];
         $qb = $this->createQueryBuilder('i');
         $qb->select('i.lastname, i.firstname, i.id, i.active, i.securityExpirationDate','h.name AS hat')
-           ->join('i.interpreterLanguages', 'il')
-           ->join('il.language','l')
-           ->join('i.hat','h')
-           ->where('l.id = :id')
-           ->setParameters([':id' => $params['language_id']]);
-        
+            ->join('i.hat','h');
+        if ( !empty($params['language_id'])) {
+            $qb->join('i.interpreterLanguages', 'il')
+                ->join('il.language','l')
+                ->where('l.id = :id')
+                ->setParameters([':id' => $params['language_id']]);
+        }
+         
+        $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
+        $paginator = new ZendPaginator($adapter);
+        if (! count($paginator)) {
+            return null;
+        }
+         /*
+        $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
+        $paginator = new ZendPaginator($adapter);
+        if (! count($paginator)) {
+            return null;
+        }
+        $paginator->setCurrentPageNumber($page)
+            ->setItemCountPerPage(40);
+        return $paginator;                   
+         */
         return  $qb->getQuery()->getResult();
         // echo __FUNCTION__ . " is running ... ";
         // echo  $qb->getDQL();
-
     }
+    
+    
 
 }
