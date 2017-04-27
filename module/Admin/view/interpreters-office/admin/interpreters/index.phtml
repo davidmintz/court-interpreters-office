@@ -39,9 +39,9 @@ endif;
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
 </a>
 <?php if ($this->data): ?>
-<pre><?php echo gettype($this->data) ?></pre>
+<pre><?php echo get_class($this->data) ?></pre>
 <?php endif; ?>
-<pre><?php //print_r($this->params) ?></pre>
+
 
 <script type="text/javascript">
 $(function(){
