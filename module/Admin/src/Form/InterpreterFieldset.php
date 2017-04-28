@@ -125,7 +125,24 @@ class InterpreterFieldset extends PersonFieldset
                 'format' => 'Y-m-d',
             ],
         ]);
-        
+        // contract expiration date
+        $this->add(
+        [
+             'name' => 'contractExpirationDate',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Date',
+            'attributes' => [
+                //'required' => 'required',
+                //'size' => 15,
+                'id' => 'contract_expiration_date',
+                'class' => 'date form-control',
+            ],
+            'options' => [
+                'label' => 'contract expiration date',
+                //'format' => 'm/d/Y',
+                'format' => 'Y-m-d',
+            ],
+        ]);
         // date oath taken
         $this->add(
         [
@@ -283,6 +300,10 @@ class InterpreterFieldset extends PersonFieldset
              'required'  => false,             
          ];
          $spec['securityExpirationDate'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['contractExpirationDate'] = [
              'allow_empty' => true,
              'required'  => false,             
          ];
