@@ -43,7 +43,7 @@ endif;
 <script type="text/javascript">
 $(function(){
     
-    console.log("boink! load");
+    console.log("boink! loaded");
     var languageSelect = $('#language_id'); 
     var languageButton = $('#btn-search-language');
     languageButton.on("click",function(event){
@@ -51,11 +51,14 @@ $(function(){
         var language_id = languageSelect.val() || "0";  
         var url = languageButton.attr('href');
         url += '/language/' + language_id;
-        url += '/active/'+$('#active').val();
-        var security = $('#security_clearance_status').val();
-        if (security) {
+        var active = $('#active').val();        
+        url += '/active/'+$('#active').val();                
+        var security = $('#security_clearance_expiration').val();
+        //if (security !== "-1") {
+        // no, do this unconditionally because if no value is submitted for 
+        // this, the session value overrides and this doesn't stick
             url += '/security/'+security;
-        }
+        //}
         document.location = url;
     });
 });
