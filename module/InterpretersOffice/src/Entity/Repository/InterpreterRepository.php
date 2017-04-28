@@ -55,26 +55,51 @@ class InterpreterRepository extends EntityRepository
         //https://github.com/doctrine/doctrine2/issues/2596#issuecomment-162359725
         $qb->select('PARTIAL i.{lastname, firstname, id, active, securityExpirationDate}','h.name AS hat')
             ->join('i.hat','h');
-        /*
-        $where = 0;
-        if ($params['active'] != -1) {
-            $clause = 'i.active';
-            if (! $params['active']) {
-                $clause = "NOT $clause";
-            }
-            $qb->where($clause);
-            $where++;
-        }   
-        */
         
+        $active_clause = '';
+        $hasWhere = false;
+        switch  ($params['active']) {
+        case -1;
+            break;
+        case 0;
+            $active_clause = 'i.active = false';
+            $hasWhere = true;
+            break;
+        case 1:
+            $active_clause = 'i.active = true';
+            $hasWhere = true;
+            break;
+        }
+        if ($active_clause) {
+            $qb->where($active_clause);
+        }
         
         if ( !empty($params['language_id'])) {
-            //$method = $where ? 'andWhere' : 'where';
+            $method = $hasWhere ? 'andWhere' : 'where';
             $qb->join('i.interpreterLanguages', 'il')
                 ->join('il.language','l')
-                ->where('l.id = :id');
+                ->$method('l.id = :id');
             $queryParams[':id'] = $params['language_id'];
         }
+        $security_expiration_clause = '';
+        switch ($params['security_clearance_expiration']) {
+        case -1;
+            break;
+        case 0;
+            break;
+        case 1;
+            break;
+        case 2;
+            break;
+
+        }
+        /*
+            1 => 'valid',
+             0 => 'expired',
+            -2 => 'none',
+            -1 => 'any status',
+            
+        */
           
         if ($queryParams) { 
             $qb->setParameters($queryParams);
