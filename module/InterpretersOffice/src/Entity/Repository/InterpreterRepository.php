@@ -56,62 +56,72 @@ class InterpreterRepository extends EntityRepository
         $qb->select('PARTIAL i.{lastname, firstname, id, active, securityExpirationDate}','h.name AS hat')
             ->join('i.hat','h');
         
-        $active_clause = '';
-        $hasWhere = false;
+        // keep track of whether we have needed to set any WHERE clauses
+        $hasWhereConditions = false;
+        
+        // are they filtering for active|inactive?
         switch  ($params['active']) {
         case -1;
+            $active_clause = '';
             break;
         case 0;
             $active_clause = 'i.active = false';
-            $hasWhere = true;
             break;
         case 1:
-            $active_clause = 'i.active = true';
-            $hasWhere = true;
+            $active_clause = 'i.active = true';           
             break;
         }
         if ($active_clause) {
             $qb->where($active_clause);
+            $hasWhereConditions = true;
         }
-        
+        // are they filtering for language?
         if ( !empty($params['language_id'])) {
-            $method = $hasWhere ? 'andWhere' : 'where';
+            $method = $hasWhereConditions ? 'andWhere' : 'where';
             $qb->join('i.interpreterLanguages', 'il')
                 ->join('il.language','l')
                 ->$method('l.id = :id');
             $queryParams[':id'] = $params['language_id'];
         }
-        $security_expiration_clause = '';
+        
+        // are they filtering for security clearance?
         switch ($params['security_clearance_expiration']) {
-        case -1;
-            break;
-        case 0;
-            break;
-        case 1;
-            break;
-        case 2;
-            break;
-
-        }
-        /* TO DO 
-            1 => 'valid',
-             0 => 'expired',
-            -2 => 'none',
-            -1 => 'any status',
             
-        */
-          
+        case -1; // any status whatsoever
+            $security_expiration_clause = '';
+            break;
+        case 0;  // expired
+            $security_expiration_clause = 'i.securityExpirationDate < :today ';
+            $queryParams[':today'] = new \DateTime();
+            $hasWhereConditions = true;
+            break;
+        case 1; // valid
+            $security_expiration_clause = 'i.securityExpirationDate >= :today ';
+            $queryParams[':today'] = new \DateTime();
+            $hasWhereConditions = true;
+            break;
+        case -2; // NULL
+            $security_expiration_clause = 'i.securityExpirationDate IS NULL';
+            $hasWhereConditions = true;
+            break;
+        }
+        if ($security_expiration_clause) {
+            $method = $hasWhereConditions ? 'andWhere' : 'where';
+            $qb->$method($security_expiration_clause);
+        }
+        
+        
         if ($queryParams) { 
             $qb->setParameters($queryParams);
         }
         $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
         
         $paginator = new ZendPaginator($adapter);
-        
+        echo $qb->getDQL(); 
         if (! $paginator->count()) {
             return null;
         }
-        echo $qb->getDQL();
+       
         $paginator
             ->setCurrentPageNumber($page)
             ->setItemCountPerPage(40);
