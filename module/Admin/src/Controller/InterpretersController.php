@@ -53,13 +53,13 @@ class InterpretersController extends AbstractActionController
      * @return ViewModel
      */
     public function indexAction()
-    {
+    {        
         $params = $this->params()->fromRoute();
         $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
         $viewModel = new ViewModel([           
             'title' => 'interpreters',
             'objectManager' => $this->entityManager,
-            'params' => $params, // maybe do away with this
+            'params' => $params, // maybe we can do away with this?
             'form' => $form,
         ]);        
         $matchedRoute = $this->getEvent()->getRouteMatch();
@@ -105,6 +105,7 @@ class InterpretersController extends AbstractActionController
     public function find(Array $params)
     {
         //echo "shit is running!" ;
+        
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
         return $repository->search($params);
         
