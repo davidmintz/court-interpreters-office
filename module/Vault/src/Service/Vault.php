@@ -80,8 +80,8 @@ class Vault {
      * 
      * this will attempt to authenticate user against Vault's
      * userpass auth backend.
-     * NOTE: looks like we won't be using
-     * this after all, so this method can disappear
+     * NOTE: looks like we won't be using this auth method after all, so 
+     * this method can disappear
      * @link https://www.vaultproject.io/docs/auth/userpass.html
      * 
      * @param string $user
