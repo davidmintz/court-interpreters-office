@@ -313,7 +313,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setFingerprintDate(\DateTime $fingerprintDate)
+    public function setFingerprintDate($fingerprintDate)
     {
         $this->fingerprintDate = $fingerprintDate;
 
