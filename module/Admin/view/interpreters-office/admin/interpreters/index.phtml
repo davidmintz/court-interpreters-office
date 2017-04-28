@@ -7,9 +7,6 @@ $form = $this->form;
 foreach (['language_id','active','security_clearance_expiration'] as $e) :
     $form->get($e)->setValue($this->params[$e]);
 endforeach;
-//$form->get('language-select')->setValue($this->params['language_id']);
-//$form->get('active')->setValue($this->params['active']);
-//$form->get('security_clearance_expiration')->setValue($this->params['security_clearance_expiration']);
 $form->get('name')->setValue(key_exists('name',$this->params)? $this->params['name']:'');
 $this->headTitle($this->title);
 //$form->setData(['language_id'=>1,'active'=> 0,'security_clearance_expiration'=>1]);
@@ -41,7 +38,7 @@ endif;
 <?php if ($this->data): ?>
 <pre><?php echo get_class($this->data) ?></pre>
 <?php endif; ?>
-
+<pre><?php print_r($this->params)?></pre>
 
 <script type="text/javascript">
 $(function(){
@@ -51,7 +48,7 @@ $(function(){
     var languageButton = $('#btn-search-language');
     languageButton.on("click",function(event){
         event.preventDefault();
-        var language_id = languageSelect.val() || "0";        
+        var language_id = languageSelect.val() || "0";  
         var url = languageButton.attr('href');
         url += '/language/' + language_id;
         url += '/active/'+$('#active').val();

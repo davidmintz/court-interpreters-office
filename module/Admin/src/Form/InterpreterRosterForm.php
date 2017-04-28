@@ -29,6 +29,9 @@ class InterpreterRosterForm extends Form
    				'language_id',
                 [
                     'objectManager' => $options['objectManager'],
+                    'attributes' => [
+                        'id' => 'language_id',
+                    ],
                 ]
 			)
 		);
