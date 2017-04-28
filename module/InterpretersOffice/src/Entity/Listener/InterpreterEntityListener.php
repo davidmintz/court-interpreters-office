@@ -29,7 +29,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface
      */
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
     {        
-        if ($this->events) $this->events->trigger(__FUNCTION__, $this);
+        $this->events->trigger(__FUNCTION__, $this);
         //printf("\nshit is STILL running in %s! yay!",__METHOD__);        
     }
 }
