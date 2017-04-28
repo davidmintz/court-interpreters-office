@@ -285,6 +285,7 @@ return [
                 'may_terminate' => true,
                 'options' => [
                     'route' => '/admin/interpreters',
+                    // defaults for interpreter roster search terms
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\InterpretersController::class,
@@ -292,13 +293,10 @@ return [
                         'active' => 1, // by default, active only
                         'security_clearance_expiration'=> 1, // by default, valid security clearance status
                         'language_id' => 0,
+                        'name' => '',
 
                     ],
-                    'constraints' => [                                
-                        'language_id' => '[0-9]\d*',
-                        'active' => '-?1|0',
-                        'security_clearance_expiration' => '-?1|0',
-                    ],
+                    
                 ],
                 'child_routes' => [
                     'add' => [
@@ -340,15 +338,17 @@ return [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/language/:language_id[/active/:active[/security/:security_clearance_expiration]]',
-                            // defaults are defined above
+                            // defaults are defined above, because we need them
+                            // even if no search terms are submitted (this route
+                            // isn't matched)
                             'constraints' => [                                
                                 'language_id' => '[0-9]\d*',
                                 'active' => '-?1|0',
-                                'security_clearance_expiration' => '-?1|0',
+                                // any value, as long as it's -2, -1, 0 or 1
+                                'security_clearance_expiration' => '-[12]|[01]',
                             ],
                         ],
-                    ]                    
-                     //*/
+                    ],                    
                 ],
             ],
 
