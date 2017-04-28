@@ -1,5 +1,4 @@
 <?php
-
 /** module/InterpretersOffice/src/Entity/Interpreter.php */
 
 namespace InterpretersOffice\Entity;
@@ -13,6 +12,9 @@ use Doctrine\Common\Collections\Collection;
 
 /**
  * Entity representing an Interpreter.
+ * 
+ * Interpreter is a subclass of Person, but is constrained to having only two
+ * types of "Hat:" contract interpreter, or staff interpreter.
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\InterpreterRepository")
  * @ORM\EntityListeners({"InterpretersOffice\Entity\Listener\InterpreterEntityListener"})
@@ -72,13 +74,18 @@ class Interpreter extends Person
     protected $fingerprintDate;
 
     /**
-     * date oath taken.
+     * date interpreters' oath was administered
      *
      * @ORM\Column(type="date",name="oath_date",nullable=true)
      */
     protected $oathDate;
 
-
+     /**
+     * date contract expires
+     *
+     * @ORM\Column(type="date",name="contract_expiration_date",nullable=true)
+     */
+    protected $contractExpirationDate;
 
     /**
      * working languages.
@@ -353,4 +360,30 @@ class Interpreter extends Person
     {
         return $this->oathDate;
     }
+    
+    /**
+     * Get contractExpirationDate
+     *
+     * @return \DateTime
+     */
+    public function getContractExpirationDate()
+    {
+        return $this->contractExpirationDate;
+    }
+    
+    /**
+     * Set contractExpirationDate
+     *
+     * @param \DateTime $contractExpirationDate
+     *
+     * @return Interpreter
+     */
+    public function setContractExpirationDate($contractExpirationDate)
+    {
+        $this->contractExpirationDate = $contractExpirationDate;
+
+        return $this;
+    }
+
+    
 }
