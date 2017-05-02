@@ -44,7 +44,7 @@ class InterpreterRepository extends EntityRepository
     
     public function search($params,$page = 1)
     {
-        if ( isset($params['name'])) {
+        if ( !empty($params['name'])) {
             return $this->findByName($params);
         }
         //orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i JOIN i.interpreterLanguages il JOIN il.language l WHERE l.name = 'Spanish'"
@@ -118,10 +118,12 @@ class InterpreterRepository extends EntityRepository
         
         $paginator = new ZendPaginator($adapter);
         echo $qb->getDQL(); 
-        if (! $paginator->count()) {
+        $found = $paginator->count();
+        if (! $found) {
+            
             return null;
         }
-       
+        echo "<br>".__METHOD__. " found $found ...";
         $paginator
             ->setCurrentPageNumber($page)
             ->setItemCountPerPage(40);
