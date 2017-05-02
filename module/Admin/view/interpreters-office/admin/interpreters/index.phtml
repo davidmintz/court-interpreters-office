@@ -37,7 +37,8 @@ endif;
 </a>
 <?php if ($this->data): ?>
 <pre><?php echo get_class($this->data) ?></pre>
-<?php endif; ?>
+<?php else : echo " NO data ";endif; ?>
+    
 <pre><?php print_r($this->params)?></pre>
 
 <script type="text/javascript">
@@ -50,8 +51,7 @@ $(function(){
         event.preventDefault();
         var language_id = languageSelect.val() || "0";  
         var url = languageButton.attr('href');
-        url += '/language/' + language_id;
-        var active = $('#active').val();        
+        url += '/language/' + language_id;        
         url += '/active/'+$('#active').val();                
         var security = $('#security_clearance_expiration').val();
         //if (security !== "-1") {
