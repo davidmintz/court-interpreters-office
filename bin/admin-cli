@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-
 /**
  * rought draft of a command-line tool for initial database setup.
  * 
@@ -228,8 +227,14 @@ class CreateAdminUserCommand extends Command
             $output->writeln("<error>$email is not a valid email address. Please try again...</error>");  
             $helper->ask($input,$output,new Question($this->q("user's email address? ")));
         }
+        $entityClass= $hat_id == 1 ? Entity\Interpreter::class : Entity\Person::class;
         
-        $person = $hat_id == 1 ? new Entity\Interpreter : new Entity\Person();
+        // check if the person exists
+        $person = $entityManager->getRepository($entityClass)
+                        ->findOneBy(['email'=> $email]);
+        if (! $person) {
+            $person = new $entityClass;            
+        } 
         
         $person->setFirstname($firstname)
                 ->setLastname($lastname)
@@ -237,17 +242,18 @@ class CreateAdminUserCommand extends Command
         $person->setHat($hat);
         
         $user = new Entity\User();
+        
         $user 
             ->setUsername($username)
             ->setPassword($pwd1)
             ->setActive(true)
             ->setRole($role)
             ->setPerson($person);
-        
+     
         $entityManager->persist($person);
         $entityManager->persist($user);        
         $entityManager->flush();
-        
+     
         $io->success("Initial admin user has been created.");
          
     }
