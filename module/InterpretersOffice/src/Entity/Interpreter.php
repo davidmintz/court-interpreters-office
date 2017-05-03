@@ -296,7 +296,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setSecurityExpirationDate($securityClearanceDate)
+    public function setSecurityClearanceDate($securityClearanceDate)
     {
         $this->securityClearanceDate = $securityClearanceDate;
 
@@ -308,7 +308,7 @@ class Interpreter extends Person
      *
      * @return \DateTime
      */
-    public function getSecurityExpirationDate()
+    public function getSecurityClearanceDate()
     {
         return $this->securityClearanceDate;
     }

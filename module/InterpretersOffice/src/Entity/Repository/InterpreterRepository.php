@@ -91,13 +91,13 @@ class InterpreterRepository extends EntityRepository
             $security_expiration_clause = '';
             break;
         case 0;  // expired
-            $security_expiration_clause = 'i.securityClearanceDate < :today ';
-            $queryParams[':today'] = new \DateTime();
+            $security_expiration_clause = 'i.securityClearanceDate < :expiration ';
+            $queryParams[':expiration'] = new \DateTime('-2 years');
             $hasWhereConditions = true;
             break;
         case 1; // valid
-            $security_expiration_clause = 'i.securityClearanceDate >= :today ';
-            $queryParams[':today'] = new \DateTime();
+            $security_expiration_clause = 'i.securityClearanceDate > :expiration ';
+            $queryParams[':expiration'] = new \DateTime('-2 years');
             $hasWhereConditions = true;
             break;
         case -2; // NULL
@@ -114,11 +114,12 @@ class InterpreterRepository extends EntityRepository
         if ($queryParams) { 
             $qb->setParameters($queryParams);
         }
+        $qb->orderBy('i.lastname, i.firstname');
         $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
         
         $paginator = new ZendPaginator($adapter);
         echo $qb->getDQL(); 
-        $found = $paginator->count();
+        $found =  $paginator->getTotalItemCount();
         if (! $found) {
             
             return null;
@@ -127,6 +128,7 @@ class InterpreterRepository extends EntityRepository
         $paginator
             ->setCurrentPageNumber($page)
             ->setItemCountPerPage(40);
+       
         return $paginator;                   
         
     }
