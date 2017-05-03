@@ -55,21 +55,22 @@ class InterpretersController extends AbstractActionController
     public function indexAction()
     {        
         $params = $this->params()->fromRoute();
+        $matchedRoute = $this->getEvent()->getRouteMatch();
+        $routeName =  $matchedRoute->getMatchedRouteName();
+        $isQuery = ( 'interpreters' != $routeName );
+
         $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
         $viewModel = new ViewModel([           
             'title' => 'interpreters',
             'objectManager' => $this->entityManager,
-            'params' => $params, // maybe we can do away with this?
-            'form' => $form,
-        ]);        
-        $matchedRoute = $this->getEvent()->getRouteMatch();
-        $isQuery = ( 'interpreters' != $matchedRoute->getMatchedRouteName() );
+            ] + compact('form','params','isQuery','routeName')
+        );        
         $this->initView($viewModel, $params, $isQuery);       
-        if (! $isQuery ) {   // no search parameters in URL
-            return $viewModel;
-        } else {             // yes search parameters in URL    
-            return $viewModel->setVariables(['data'=>$this->find($params)]);
-        }        
+        if ($isQuery ) {  
+             // i.e., search parameters in URL
+            $viewModel->setVariables(['data'=>$this->find($params)]);
+        } 
+        return $viewModel;       
     }
     
     /**

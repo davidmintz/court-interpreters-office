@@ -32,11 +32,7 @@ endif;
     </div>
     <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
 </form>
-<a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
-<span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
-</a>
 <br>
-    <?php echo $this->url('interpreters/find_by_language',$this->params); ?><br>
 <?php if ($this->data): ?>
 <?php echo $this->paginationControl($this->data, null, 'partials/pagination_head'); 
 
@@ -55,11 +51,14 @@ endif;
     $this->data,
     'sliding',
     'partials/pagination_control',
-     ['route'=>'interpreters/find_by_language','params'=>$this->params]     
+     ['route'=>$this->routeName,'params'=>$this->params]     
 );?>
 <?php else : // to do -- only if a search was submitted! ?>
 <p>No matching records found.</p>    
 <?php endif ?>
+<a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
+<span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
+</a>
 
 <!-- <pre><?php print_r($this->params)?></pre> -->
 
