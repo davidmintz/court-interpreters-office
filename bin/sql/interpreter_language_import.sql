@@ -1,9 +1,9 @@
 /*
-SQL for importing interpreters, languages and interpreters_languages
-*/
+ *  SQL for importing interpreters, languages and interpreters_languages
+ */
 
 /* FIRST purge interpreters_languages, interpreters, people and users */
-SET NAMES 'utf8';
+
 DELETE FROM interpreters_languages;
 DELETE FROM languages;
 DELETE FROM users;
@@ -47,3 +47,5 @@ INSERT INTO interpreters_languages (SELECT interp_id, lang_id,
     END
     FROM dev_interpreters.interp_languages
 );
+
+/* that should do it for interpreters, languages and interpreters_languages */
