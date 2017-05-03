@@ -107,7 +107,7 @@ class InterpretersController extends AbstractActionController
         //echo "shit is running!" ;
         
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
-        return $repository->search($params);
+        return $repository->search($params,$this->params()->fromQuery('page',1));
         
     }
 
