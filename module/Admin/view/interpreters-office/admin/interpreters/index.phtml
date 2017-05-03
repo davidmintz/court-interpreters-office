@@ -35,8 +35,18 @@ endif;
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
 </a>
+<?php system("echo shit") ?>
+This has Ramón Núñez in it<br>  
 <?php if ($this->data): ?>
-<pre><?php echo get_class($this->data) ?></pre>
+<?php echo get_class($this->data). " is our data type<br>" ?>
+<?php foreach ($this->data as $row) {
+    //echo ($row['hat'] . " "); //break;
+    $interpreter = $row[0];
+    echo $interpreter->getLastname(), " ",$interpreter->getId(),"<br>";
+    //echo gettype($row[1]); break;
+}
+?>
+
 <?php else : echo " NO data ";endif; ?>
     
 <pre><?php print_r($this->params)?></pre>
