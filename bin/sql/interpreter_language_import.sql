@@ -21,7 +21,7 @@ INSERT INTO people
 FROM dev_interpreters.interpreters ORDER BY interp_id);
 /* followed by interpreters table */
 INSERT INTO interpreters (
-id, phone, security_expiration_date, contract_expiration_date,fingerprint_date, oath_date
+id, phone, security_clearance_date, contract_expiration_date,fingerprint_date, oath_date
 )
 (SELECT interp_id, home, 
     IF (security_clearance = "0000-00-00",NULL,security_clearance), 

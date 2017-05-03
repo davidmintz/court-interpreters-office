@@ -110,13 +110,13 @@ class InterpreterFieldset extends PersonFieldset
         // security expiration date
         $this->add(
         [
-             'name' => 'securityExpirationDate',
+             'name' => 'securityClearanceDate',
             //'type' => 'text',
             'type' => 'Zend\Form\Element\Date',
             'attributes' => [
                 //'required' => 'required',
                 //'size' => 15,
-                'id' => 'security_expiration_date',
+                'id' => 'security_clearance_date',
                 'class' => 'date form-control',
             ],
             'options' => [
@@ -299,7 +299,7 @@ class InterpreterFieldset extends PersonFieldset
              'allow_empty' => true,
              'required'  => false,             
          ];
-         $spec['securityExpirationDate'] = [
+         $spec['securityClearanceDate'] = [
              'allow_empty' => true,
              'required'  => false,             
          ];

@@ -62,9 +62,9 @@ class Interpreter extends Person
     /**
      * date the security clearance expires.
      *
-     * @ORM\Column(type="date",name="security_expiration_date",nullable=true)
+     * @ORM\Column(type="date",name="security_clearance_date",nullable=true)
      */
-    protected $securityExpirationDate;
+    protected $securityClearanceDate;
 
      /**
      * date fingerprints taken.
@@ -290,27 +290,27 @@ class Interpreter extends Person
 
 
     /**
-     * Set securityExpirationDate
+     * Set securityClearanceDate
      *
-     * @param \DateTime $securityExpirationDate
+     * @param \DateTime $securityClearanceDate
      *
      * @return Interpreter
      */
-    public function setSecurityExpirationDate($securityExpirationDate)
+    public function setSecurityExpirationDate($securityClearanceDate)
     {
-        $this->securityExpirationDate = $securityExpirationDate;
+        $this->securityClearanceDate = $securityClearanceDate;
 
         return $this;
     }
 
     /**
-     * Get securityExpirationDate
+     * Get securityClearanceDate
      *
      * @return \DateTime
      */
     public function getSecurityExpirationDate()
     {
-        return $this->securityExpirationDate;
+        return $this->securityClearanceDate;
     }
 
     /**

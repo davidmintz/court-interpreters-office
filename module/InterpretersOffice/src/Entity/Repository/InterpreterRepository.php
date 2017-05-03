@@ -53,7 +53,7 @@ class InterpreterRepository extends EntityRepository
         $queryParams = [];
         
         //https://github.com/doctrine/doctrine2/issues/2596#issuecomment-162359725
-        $qb->select('PARTIAL i.{lastname, firstname, id, active, securityExpirationDate}','h.name AS hat')
+        $qb->select('PARTIAL i.{lastname, firstname, id, active, securityClearanceDate}','h.name AS hat')
             ->join('i.hat','h');
         
         // keep track of whether we have needed to set any WHERE clauses
@@ -91,17 +91,17 @@ class InterpreterRepository extends EntityRepository
             $security_expiration_clause = '';
             break;
         case 0;  // expired
-            $security_expiration_clause = 'i.securityExpirationDate < :today ';
+            $security_expiration_clause = 'i.securityClearanceDate < :today ';
             $queryParams[':today'] = new \DateTime();
             $hasWhereConditions = true;
             break;
         case 1; // valid
-            $security_expiration_clause = 'i.securityExpirationDate >= :today ';
+            $security_expiration_clause = 'i.securityClearanceDate >= :today ';
             $queryParams[':today'] = new \DateTime();
             $hasWhereConditions = true;
             break;
         case -2; // NULL
-            $security_expiration_clause = 'i.securityExpirationDate IS NULL';
+            $security_expiration_clause = 'i.securityClearanceDate IS NULL';
             $hasWhereConditions = true;
             break;
         }
