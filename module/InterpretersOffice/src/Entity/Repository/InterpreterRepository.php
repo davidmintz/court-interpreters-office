@@ -118,13 +118,13 @@ class InterpreterRepository extends EntityRepository
         $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
         
         $paginator = new ZendPaginator($adapter);
-        echo $qb->getDQL(); 
+        //echo $qb->getDQL(); 
         $found =  $paginator->getTotalItemCount();
         if (! $found) {
             
             return null;
         }
-        echo "<br>".__METHOD__. " found $found ...";
+        //echo "<br>".__METHOD__. " found $found ...";
         $paginator
             ->setCurrentPageNumber($page)
             ->setItemCountPerPage(40);
