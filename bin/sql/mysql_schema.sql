@@ -246,7 +246,7 @@ CREATE TABLE `interpreters` (
   `phone` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dob` varchar(125) COLLATE utf8_unicode_ci DEFAULT NULL,
   `ssn` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `security_expiration_date` date DEFAULT NULL,
+  `security_clearance_date` date DEFAULT NULL,
   `fingerprint_date` date DEFAULT NULL,
   `oath_date` date DEFAULT NULL,
   `contract_expiration_date` date DEFAULT NULL,
@@ -346,7 +346,7 @@ CREATE TABLE `languages` (
   `comments` varchar(300) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_language` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -411,7 +411,7 @@ CREATE TABLE `people` (
   UNIQUE KEY `active_email_idx` (`email`,`active`),
   KEY `IDX_28166A268C6A5980` (`hat_id`),
   CONSTRAINT `FK_28166A268C6A5980` FOREIGN KEY (`hat_id`) REFERENCES `hats` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=954 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,7 +447,7 @@ CREATE TABLE `users` (
   KEY `IDX_1483A5E9D60322AC` (`role_id`),
   CONSTRAINT `FK_1483A5E9217BBB47` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`),
   CONSTRAINT `FK_1483A5E9D60322AC` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -459,4 +459,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-28 16:50:53
+-- Dump completed on 2017-05-03  9:26:03
