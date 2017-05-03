@@ -55,13 +55,9 @@ endif;
     $this->data,
     'sliding',
     'partials/pagination_control',
-     // need to figure this out!
-     ['route'=>'interpreters']
-       //['route'=> 'interpreters/find_by_language',$this->params]
-     
-      
+     ['route'=>'interpreters/find_by_language','params'=>$this->params]     
 );?>
-<?php else : ?>
+<?php else : // to do -- only if a search was submitted! ?>
 <p>No matching records found.</p>    
 <?php endif ?>
 
