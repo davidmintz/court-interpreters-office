@@ -142,7 +142,7 @@ class InterpretersController extends AbstractActionController
                 foreach ($data as $language) {
                     $id = $language['language_id'];
                     $certification = $language['federalCertification'] >= 0 ?
-                        (bool) $data['federalCertification'] : null;
+                        (bool) $language['federalCertification'] : null;
                     // or get them all in one shot with a DQL query?
                     $languageEntity = $repository->find($id);
                     $il = (new Entity\InterpreterLanguage($entity, $languageEntity))
