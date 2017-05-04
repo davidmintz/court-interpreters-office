@@ -57,11 +57,16 @@ so that interpreter-languages won't stack and look crappy on a small viewport
     form input, form select, form textarea, form .validation-error {
         max-width: 75%;
     }
+    form #languages {
+       margin-left: 10%;
+       margin-right: 10%;
+    }
 }
 
 form label {
     font-weight: normal;
 }
+
 form .interpreter-language {
    padding-top:.25em;
    padding-bottom:.25em
