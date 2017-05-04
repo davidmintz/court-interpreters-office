@@ -36,6 +36,7 @@ $form->add([
         
         <ul class="nav nav-tabs" role="tablist"><!-- nav tabs -->
             <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact &amp; languages</a></li>
+            <li role="presentation"><a href="#languages-pane" aria-controls="languages" role="tab" data-toggle="tab">other</a></li>
             <li role="presentation"><a href="#administrative" aria-controls="administrative" role="tab" data-toggle="tab">administrative</a></li>
         </ul>  <!-- /nav tabs -->
         <div class="tab-content" style="padding-top: 1em">
@@ -109,6 +110,10 @@ $form->add([
                 </div><!-- /languages .form-group -->
             <!-- end "contact" form elements -->
             </div><!-- /tab-pane -->
+            <div role="tabpanel" class="tab-pane" id="languages-pane">
+            shit?
+            </div>
+
             <div role="tabpanel" class="tab-pane" id="administrative">
                 <?php foreach (['fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
 
