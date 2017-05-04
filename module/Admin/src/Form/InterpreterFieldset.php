@@ -330,7 +330,8 @@ class InterpreterFieldset extends PersonFieldset
                                 if (! isset($language['federalCertification'])) {
                                     return false;
                                 }
-                                $submitted_cert = is_numeric($language['federalCertification']) ?
+                                $submitted_cert = 
+                                        in_array($language['federalCertification'],[0,1]) ?
                                        (bool) $language['federalCertification'] : null;
                                 $cert_required = (bool) $certifiable[$id]['data-certifiable'];
                                 if ($cert_required && ! is_bool($submitted_cert)) {
