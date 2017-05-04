@@ -94,7 +94,12 @@ $form->add([
                                  ->setValue($selected)
                                  ->setAttributes(['class' => 'form-control','id'=>'fed-certification-'.$i]);
                          $disabled = false;
-                         if (! $ilanguage->isCertifiable()) :  $element->setAttribute("disabled","disabled");  $disabled = true; endif;
+                         if (! $ilanguage->isCertifiable()) :  
+                             $element->setAttribute("disabled","disabled");  
+                            $disabled = true; 
+                         else : // to do: enforce this server-side
+                             $element->setValueOptions(['' => ' ', 1 => 'yes', 0 => 'no', ]);
+                         endif;
                          ?><label for="fed-certification-<?php echo $i?>">fed certified</label><?php
                          echo $this->formSelect($element);                       
                          ?> <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
