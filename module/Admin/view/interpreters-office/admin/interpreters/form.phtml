@@ -34,17 +34,18 @@ $form->add([
     $fieldset = $form->get('interpreter');
     echo $this->form()->openTag($form);?>        
         
-        <ul class="nav nav-tabs" role="tablist"><!-- nav tabs -->
-            <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact</a></li>
-            <li role="presentation"><a href="#languages-pane" aria-controls="languages" role="tab" data-toggle="tab">languages</a></li>
-            <li role="presentation"><a href="#administrative" aria-controls="administrative" role="tab" data-toggle="tab">administrative</a></li>
-        </ul>  <!-- /nav tabs -->
+        <ul id="nav-tabs" class="nav nav-tabs" role="tablist"><!-- nav tabs -->
+            <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact info</a></li>
+            <li role="presentation"><a href="#languages-pane" aria-controls="languages" role="tab" data-toggle="tab">languages &amp; notes</a></li>
+            <li role="presentation"><a href="#administrative" aria-controls="administrative" role="tab" data-toggle="tab">administrative/security</a></li>
+        </ul><!-- /nav tabs -->
         <div class="tab-content" style="padding-top: 1em">
 
-            <div role="tabpanel" class="tab-pane" id="contact">
-                
+            <div role="tabpanel" class="tab-pane" id="contact">                
             <!-- begin "contact" form elements -->
-            <?php foreach (['hat','lastname','firstname','middlename','email','officePhone','mobilePhone','active'] as $elementName) :
+            <?php foreach (['lastname','firstname','middlename','email','officePhone','mobilePhone','homePhone',
+                    'address1','address2','city','state', 'zip'
+                ] as $elementName) :
                         $element = $fieldset->get($elementName);
                ?><div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
@@ -52,24 +53,23 @@ $form->add([
                     </div>
                 </div>
             <?php endforeach; ?>
-                        <!-- end "contact" form elements -->
+            <!-- end "contact" form elements -->
             </div><!-- /tab-pane ================================================================================ -->
             <div role="tabpanel" class="tab-pane" id="languages-pane">
-                <div class="form-group">
-                <label class="control-label col-sm-3">languages</label>
-                <div class="col-sm-9 form-inline"><?php 
-                $languageSelect = $fieldset->get('language-select'); 
-                echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
-                //$this->formSelect($fieldset->get('interpreter-languages'));
-                $shit = $fieldset->get('interpreter-languages');
-                echo $this->formSelect($shit);
-                ?><button id="btn-add-language" class="btn btn-info" title="add this language">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    <span class="sr-only">add language</span></button><?php
-                echo $this->formElementErrors($shit);                 
-               ?></div>
+                <div class="form-group">                
+                    <div class="col-sm-10 col-sm-offset-2 form-inline"><?php 
+                    $languageSelect = $fieldset->get('language-select'); 
+                    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
+                    //$this->formSelect($fieldset->get('interpreter-languages'));
+                    $shit = $fieldset->get('interpreter-languages');
+                    echo $this->formSelect($shit);
+                    ?><button id="btn-add-language" class="btn btn-info" title="add this language">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <span class="sr-only">add language</span></button><?php
+                    echo $this->formElementErrors($shit);                 
+                ?></div>
             </div>
-            <div class="form-group" id="languages">
+            <div class="form-group panel panel-default" id="languages">
             <?php            
             $interpreterLanguages =  $form->getObject()->getInterpreterLanguages(); 
             $fed_certification_options = ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ];
@@ -82,12 +82,12 @@ $form->add([
                     $certifiable = $language->isFederallyCertified();
                     $language_id =  $language->getId();                    
                 ?>
-                    <div class="<?php echo $columns?>  interpreter-language language-name" id="language-<?php echo $language_id ?>"><?php 
+                <div class="<?php echo $columns?>  interpreter-language language-name" id="language-<?php echo $language_id ?>"><?php 
                         echo $this->escapeHtml($ilanguage->getLanguage());
                         // language and interpreter ids as hidden inputs
                        ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>">
                     </div>
-                    <div class="col-sm-6 form-inline language-certification"><?php
+                    <div class="col-sm-6 form-inline interpreter-language language-certification"><?php
                          $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
                          $selected = $ilanguage->getFederalCertification() === null ? "-1" : (int)$ilanguage->getFederalCertification();
                          $element->setValueOptions($fed_certification_options)
@@ -107,15 +107,18 @@ $form->add([
                 <?php
                     $i++;
                 endforeach;                
-            endif; // count(languages)   ?>                
+            endif; // count(languages)   
+            $element = $fieldset->get('comments');
+            ?>                
                 </div><!-- /languages .form-group -->
-
-
-            shit?
+                <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
+                <div class="col-sm-9 form-inline" style="margin-bottom:1em"><?php echo $this->formElement($element), $this->formElementErrors($element)?></div>
+                    
+                
             </div><!-- /languages-pane ================================================================================ -->
 
             <div role="tabpanel" class="tab-pane" id="administrative">
-                <?php foreach (['fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
+                <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
 
                     $element = $fieldset->get($elementName);?>
                 <div class="form-group">
@@ -144,7 +147,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
                 <?php  endforeach;?>                
             </div><!--  / .tab-pane -->
         </div><!-- /tab-content -->
-        <div class="form-group">
+        <div style="margin-top:1em" class="form-group">
             <div class="col-sm-offset-3 col-sm-9">
                 <?php
                 $csrf = $form->get('csrf');
@@ -171,9 +174,15 @@ $(function(){
     // class to form-inline, which makes it too narrow
     $('#dob, #ssn').css({width:'70%'}).attr({disabled:"disabled"});
     // ================================================
-    $('a[href="#administrative"]').trigger('click');
-    console.log("triggered click on a tab. see bootstrap doc re how to do it right");
     
+    // make the first tab active, unless we are coming back from a validation
+    // error -- to be continued
+    if (! $(".validationError").length ) {
+        //$('.tab-content .tab-pane:first').show();
+        $('#nav-tabs li:first a').tab("show");//addClass("active")
+    } else {
+        // figure out which tab/pane to activate
+    }
     if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker();
         /** @todo 
@@ -205,7 +214,7 @@ $(function(){
             '<input type="hidden" name="interpreter[interpreter-languages]['+index+'][language_id]" value="'+language_id+'">'
         );
         // create div to contain federal-certification select and delete button
-        var div_1 = $('<div class="col-sm-6 form-inline language-certification"></div>');
+        var div_1 = $('<div class="col-sm-6 form-inline interpreter-language language-certification"></div>');
         div_1.append('<label for="fed-certification-'+index+'">fed certified</label>');
         var certificationSelectElement = $('<select>')
                         .addClass("form-control")

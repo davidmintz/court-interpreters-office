@@ -30,13 +30,13 @@ class Interpreter extends Person
     protected $id;
 
     /**
-     * phone number.
+     * home phone number.
      *
-     * @ORM\Column(type="string",length=16,nullable=true)
+     * @ORM\Column(type="string",length=16,nullable=true,name="home_phone")
      *
      * @var string
      */
-    protected $phone;
+    protected $homePhone;
 
     /**
      * date of birth.
@@ -63,6 +63,7 @@ class Interpreter extends Person
      * date the security clearance expires.
      *
      * @ORM\Column(type="date",name="security_clearance_date",nullable=true)
+     * @var \DateTime
      */
     protected $securityClearanceDate;
 
@@ -70,6 +71,7 @@ class Interpreter extends Person
      * date fingerprints taken.
      *
      * @ORM\Column(type="date",name="fingerprint_date",nullable=true)
+     * @var \DateTime
      */
     protected $fingerprintDate;
 
@@ -77,6 +79,7 @@ class Interpreter extends Person
      * date interpreters' oath was administered
      *
      * @ORM\Column(type="date",name="oath_date",nullable=true)
+     * @var \DateTime
      */
     protected $oathDate;
 
@@ -84,8 +87,68 @@ class Interpreter extends Person
      * date contract expires
      *
      * @ORM\Column(type="date",name="contract_expiration_date",nullable=true)
+     * @var \DateTime
      */
     protected $contractExpirationDate;
+    
+    
+    /**
+     * comments
+     *  
+     * @ORM\Column(type="string",length=600,name="comments",nullable=false)
+     * @var string
+     */
+    protected $comments = '';
+    
+    /**
+     * address line 1
+     * 
+     * @ORM\Column(type="string",length=60,nullable=false)
+     * @var string
+     */
+    protected $address1 = '';
+    
+    /**
+     * address line 2
+     * 
+     * @ORM\Column(type="string",length=60,nullable=false)
+     * @var string
+     */
+    protected $address2 = '';
+    
+    /**
+     * city
+     * 
+     * @ORM\Column(type="string",length=40,nullable=false)
+     * @var string
+     */
+    protected $city = '';
+    
+    /**
+     * state or province
+     * 
+     * @ORM\Column(type="string",length=40,nullable=false)
+     * @var string
+     */
+    protected $state = '';
+    
+    /**
+     * zip or postal code
+     * @ORM\Column(type="string",length=16,nullable=false)
+     * @var string
+     */
+    protected $zip = '';
+    
+    /**
+     * country
+     * 
+     * virtually everyone is in the US. please don't tell me we have to 
+     * normalize this :-)
+     * 
+     * @ORM\Column(type="string",length=16,nullable=false)
+     * @var string
+     */
+    protected $country = 'United States';
 
     /**
      * working languages.
@@ -122,27 +185,27 @@ class Interpreter extends Person
     }
 
     /**
-     * Set phone.
+     * Set home phone.
      *
      * @param string $phone
      *
      * @return Interpreter
      */
-    public function setPhone($phone)
+    public function setHomePhone($phone)
     {
-        $this->phone = $phone;
+        $this->homePhone = $phone;
 
         return $this;
     }
 
     /**
-     * Get phone.
+     * Get home phone.
      *
      * @return string
      */
-    public function getPhone()
+    public function getHomePhone()
     {
-        return $this->phone;
+        return $this->homePhone;
     }
 
     /**
@@ -386,4 +449,172 @@ class Interpreter extends Person
     }
 
     
+    /**
+     * Set comments
+     *
+     * @param string $comments
+     *
+     * @return Interpreter
+     */
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
+
+        return $this;
+    }
+
+    /**
+     * Get comments
+     *
+     * @return string
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * Set address1
+     *
+     * @param string $address1
+     *
+     * @return Interpreter
+     */
+    public function setAddress1($address1)
+    {
+        $this->address1 = $address1;
+
+        return $this;
+    }
+
+    /**
+     * Get address1
+     *
+     * @return string
+     */
+    public function getAddress1()
+    {
+        return $this->address1;
+    }
+
+    /**
+     * Set address2
+     *
+     * @param string $address2
+     *
+     * @return Interpreter
+     */
+    public function setAddress2($address2)
+    {
+        $this->address2 = $address2;
+
+        return $this;
+    }
+
+    /**
+     * Get address2
+     *
+     * @return string
+     */
+    public function getAddress2()
+    {
+        return $this->address2;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     *
+     * @return Interpreter
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Set state
+     *
+     * @param string $state
+     *
+     * @return Interpreter
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
+    /**
+     * Get state
+     *
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * Set zip
+     *
+     * @param string $zip
+     *
+     * @return Interpreter
+     */
+    public function setZip($zip)
+    {
+        $this->zip = $zip;
+
+        return $this;
+    }
+
+    /**
+     * Get zip
+     *
+     * @return string
+     */
+    public function getZip()
+    {
+        return $this->zip;
+    }
+
+    /**
+     * Set country
+     *
+     * @param string $country
+     *
+     * @return Interpreter
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    /**
+     * Get country
+     *
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
 }

@@ -161,6 +161,27 @@ class InterpreterFieldset extends PersonFieldset
                 'format' => 'Y-m-d',
             ],
         ]);
+        // home phone
+        $this->add([
+            'name' => 'homePhone',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [ 'id'=> 'home_phone', 'class' => 'form-control phone'],
+            'options' => [ 'label' => 'home phone'],
+        ]);
+        
+        $this->add([
+            'name' => 'comments',
+            'type' => 'Zend\Form\Element\Textarea',
+            'attributes' => [ 
+                'id'=> 'comments', 'class' => 'form-control',
+                'rows' => 10,
+                'cols'  => 36,
+             ],
+            'options' => [ 'label' => 'comments'],            
+        ]);
+        
+        $this->addAddressElements();
+        
         if ($options['vault_enabled']) {        
             // complicated stuff
             $this->add(
@@ -215,7 +236,57 @@ class InterpreterFieldset extends PersonFieldset
 
         return $this;
     }
-
+    /**
+     * adds address elements
+     */
+    public function addAddressElements()
+    {
+        // address 1
+        $this->add([
+            'name' => 'address1',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [ 'id'=> 'address1', 'class' => 'form-control'],
+            'options' => [ 'label' => 'address (1)'],
+        ]);
+        // address 2
+        $this->add([
+            'name' => 'address2',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [ 'id'=> 'address2', 'class' => 'form-control'],
+            'options' => [ 'label' => 'address (2)'],
+        ]);
+        
+        // city
+        $this->add([
+            'name' => 'city',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [ 'id'=> 'city', 'class' => 'form-control'],
+            'options' => [ 'label' => 'city'],
+        ]);
+        
+        // state or province
+        $this->add([
+            'name' => 'state',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [ 'id'=> 'state', 'class' => 'form-control'],
+            'options' => [ 'label' => 'state'],
+        ]);
+        // zip/postal code
+        $this->add([
+            'name' => 'zip',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [ 'id'=> 'zip', 'class' => 'form-control'],
+            'options' => [ 'label' => 'zip/postal code'],
+        ]);
+        // country
+        $this->add([
+            'name' => 'country',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [ 'id'=> 'country', 'class' => 'form-control'],
+            'options' => [ 'label' => 'country'],
+        ]);
+    }
+    
     /**
      * overrides parent implementation of InputFilterProviderInterface.
      *
@@ -295,6 +366,9 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
          ];
+         // @todo:  major validation stuff !
+         
+         // dates
          $spec['fingerprintDate'] = [
              'allow_empty' => true,
              'required'  => false,             
@@ -311,6 +385,8 @@ class InterpreterFieldset extends PersonFieldset
              'allow_empty' => true,
              'required'  => false,             
          ];
+         
+         // encrypted fields
          $spec['dob'] = [
              'allow_empty' => true,
              'required'  => false,             
@@ -320,6 +396,94 @@ class InterpreterFieldset extends PersonFieldset
              'required'  => false,             
          ];
          
+         $spec['homePhone'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         /*
+          * `contract_expiration_date` date DEFAULT NULL,
+            `comments` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
+            `address1` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+            `address2` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+            `city` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+            `state` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+            `zip` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
+            `country` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
+          */
+         // address data
+         $spec['address1'] = [
+             'allow_empty' => true,
+             'required'  => false,
+              'filters' => [
+                    [ 'name' => \Zend\Filter\StringTrim::class ]
+              ],
+              'validators' => [
+                [
+                    'name' => \Zend\Validator\StringLength::class,
+                    'options' => [
+                        'max' => 40,
+                        'messages' => [
+                        \Zend\Validator\StringLength::TOO_LONG => 
+                            'address exceeds maximum length of 40 characters'
+                        ]
+                    ]
+                ]
+            ]
+         ];
+         $spec['address2'] = [
+            'allow_empty' => true,
+            'required'  => false,
+            'filters' => [
+                [ 'name' => \Zend\Filter\StringTrim::class ]
+             ],
+            'validators' => [
+                [
+                    'name' => \Zend\Validator\StringLength::class,
+                    'options' => [
+                        'max' => 40,
+                        'messages' => [
+                            \Zend\Validator\StringLength::TOO_LONG => 
+                            'address exceeds maximum length of 40 characters'
+                        ]
+                    ]
+                ],
+            ],//validators             
+         ];
+         $spec['city'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['state'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['zip'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['country'] = [
+             'allow_empty' => true,
+             'required'  => false,             
+         ];
+         $spec['comments'] = [
+             'allow_empty' => true,
+             'required'  => false, 
+              'filters' => [
+                   [ 'name' => \Zend\Filter\StringTrim::class ]
+              ],
+              'validators' => [
+                    [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'max' => 600,
+                            'messages' => [
+                            \Zend\Validator\StringLength::TOO_LONG => 
+                                'comments exceed maximumn length of 600 characters'
+                            ]
+                        ]
+                    ]
+              ]
+         ];
          return $spec;
     }
     
