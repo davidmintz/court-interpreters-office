@@ -107,7 +107,7 @@ class InterpreterFieldset extends PersonFieldset
             ],
         ]);
         
-        // security expiration date
+        // security clearance date
         $this->add(
         [
              'name' => 'securityClearanceDate',
@@ -118,9 +118,10 @@ class InterpreterFieldset extends PersonFieldset
                 //'size' => 15,
                 'id' => 'security_clearance_date',
                 'class' => 'date form-control',
+                 'placeholder' => 'date clearance was received',
             ],
             'options' => [
-                'label' => 'security expiration date',
+                'label' => 'security clearance date',
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
             ],
@@ -246,13 +247,13 @@ class InterpreterFieldset extends PersonFieldset
             'name' => 'address1',
             'type' => 'Zend\Form\Element\Text',
             'attributes' => [ 'id'=> 'address1', 'class' => 'form-control'],
-            'options' => [ 'label' => 'address (1)'],
+            'options' => [ 'label' => 'address (1)',],
         ]);
         // address 2
         $this->add([
             'name' => 'address2',
             'type' => 'Zend\Form\Element\Text',
-            'attributes' => [ 'id'=> 'address2', 'class' => 'form-control'],
+            'attributes' => [ 'id'=> 'address2', 'class' => 'form-control',],
             'options' => [ 'label' => 'address (2)'],
         ]);
         
@@ -372,7 +373,20 @@ class InterpreterFieldset extends PersonFieldset
          // dates
          $spec['fingerprintDate'] = [
              'allow_empty' => true,
-             'required'  => false,             
+             'required'  => false, 
+              'validators' => [
+                [   'name' => 'Callback',
+                    'options' => [
+                        'callback' => function ($value, $context){
+                            // value is a string MM/DD/YYYY
+                            return true;
+                        },
+                        'messages' => [
+                            \Zend\Validator\Callback::INVALID_VALUE => 'shit ain\'t right',
+                        ],
+                    ],
+                ],
+            ]   
          ];
          $spec['securityClearanceDate'] = [
              'allow_empty' => true,
