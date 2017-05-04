@@ -189,11 +189,26 @@ $(function(){
         // figure out which tab/pane to activate
     }
     if (! Modernizr.inputtypes.date) {
-        $('input.date').datepicker();
+        $('input.date').datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
         /** @todo 
          * set datepicker options to display year for dob, if element exists 
-         * set options to constrain security_clearance, fingerprint etc date range
+         * set options to constrain security_clearance, fingerprint etc date ranges
          */
+        $('#fingerprint_date, #oath_date, #security_clearance_date').datepicker("option",{
+            
+            maxDate: 0
+        });
+        // NOTE: this doesn't do anything as long as element is disabled.
+        // but it seems harmless, so it's saved here for later use
+        $('#dob').datepicker("option",{
+            maxDate: "-18y",
+            minDate : "-100y",         
+            yearRange : "-100:-18",
+            
+        });
     }
     /**
      * add a working language. note that if the markup in the form
