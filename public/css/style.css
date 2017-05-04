@@ -54,7 +54,7 @@ so that interpreter-languages won't stack and look crappy on a small viewport
 }
 /* experimental: not sure why these things need to be 100% */
 @media (min-width: 768px) {
-    form input, form select, form textarea {
+    form input, form select, form textarea, form .validation-error {
         max-width: 75%;
     }
 }
@@ -62,7 +62,10 @@ so that interpreter-languages won't stack and look crappy on a small viewport
 form label {
     font-weight: normal;
 }
-
+form .interpreter-language {
+   padding-top:.25em;
+   padding-bottom:.25em
+}
 /* stuff that came with the skeleton app*/
 /*
 .btn-success {
