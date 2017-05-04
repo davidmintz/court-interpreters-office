@@ -97,7 +97,7 @@ $form->add([
                          if (! $ilanguage->isCertifiable()) :  
                              $element->setAttribute("disabled","disabled");  
                             $disabled = true; 
-                         else : // to do: enforce this server-side, one way or another
+                         else : 
                              $element->setValueOptions(['' => ' ', 1 => 'yes', 0 => 'no', ]);
                          endif;
                          ?><label for="fed-certification-<?php echo $i?>">fed certified</label><?php
