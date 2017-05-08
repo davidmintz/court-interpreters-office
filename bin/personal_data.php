@@ -81,6 +81,12 @@ while ($data = $select->fetch(\PDO::FETCH_OBJ)) {
     }
     
 }
+// one more
+$update->execute([
+    'ssn'=>$cipher->encrypt('075-46-2139'),
+    'dob'=> $cipher->encrypt('1957-03-22'),
+    'id' => 117,
+]);
 echo "\ndone.\n";
 if (! $skipCheck) {
     read_it_back($new_db,$cipher); 

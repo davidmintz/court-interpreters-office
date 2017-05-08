@@ -27,13 +27,15 @@ FROM dev_interpreters.interpreters ORDER BY interp_id);
 
 
 INSERT INTO interpreters (
-id, phone, security_clearance_date, contract_expiration_date,fingerprint_date, oath_date
+id, security_clearance_date, contract_expiration_date,fingerprint_date, oath_date,
+comments, address1, address2, city, state, zip, home_phone, country
 )
-(SELECT interp_id, home, 
+(SELECT interp_id,   
     IF (security_clearance = "0000-00-00",NULL,security_clearance), 
     IF (contract_expiration = "0000-00-00",NULL,contract_expiration),
     IF (fingerprinted = "0000-00-00",NULL,fingerprinted),
-    IF (oath = "0000-00-00",NULL,oath)
+    IF (oath = "0000-00-00",NULL,oath),
+    notes, address1, address2, city, state, zip, home, "United States"
     
 FROM dev_interpreters.interpreters ORDER BY interp_id);
 
