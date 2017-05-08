@@ -66,7 +66,7 @@ class InterpretersController extends AbstractActionController
             ] + compact('form','params','isQuery','routeName')
         );        
         $this->initView($viewModel, $params, $isQuery);       
-        if ($isQuery ) {  
+        if ($isQuery) {  
              // i.e., search parameters in URL
             $viewModel->setVariables(['data'=>$this->find($params)]);
         } 
