@@ -6,7 +6,18 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Openssl;
+use Zend\Console\Getopt;
 
+$opts = new Getopt(
+    [
+        'check-only' => "just read values from \"office\" database",
+        'skip-check' => "run import without reading back out",
+        'help|h'       => "print usage statement",
+    ]   
+);
+if ($opts->getOption('help')) { echo $opts->getUsageMessage(); exit(); }
+$skipCheck = $opts->getOption('skip-check');
+$checkOnly = $opts->getOption('check-only');
 
 $db_params = parse_ini_file(getenv('HOME').'/.my.cnf');
 $ciphers = parse_ini_file(__DIR__.'/../config/dev.local.conf',true);
@@ -39,7 +50,10 @@ function read_it_back($db_connection,$cipher)
     }
     
 }
-read_it_back($new_db,$cipher); exit;
+if ($checkOnly) {
+    read_it_back($new_db,$cipher); 
+    exit;
+}
 
 
 
@@ -68,7 +82,9 @@ while ($data = $select->fetch(\PDO::FETCH_OBJ)) {
     
 }
 echo "\ndone.\n";
-//read_it_back($new_db,$cipher); 
+if (! $skipCheck) {
+    read_it_back($new_db,$cipher); 
+}
 
 
 
