@@ -104,7 +104,12 @@ class CreateAdminUserCommand extends Command
         ->setDescription('creates an initial administrative user')
         // the full command description shown when running the command with
         // the "--help" option
-        ->setHelp('creates an initial administrative user');
+        ->setHelp('creates an initial administrative user')
+        ->setDefinition(new \Symfony\Component\Console\Input\InputDefinition(
+                [
+                    new \Symfony\Component\Console\Input\InputOption('no-prompt')
+                ]
+         ));
     }
     
     /**
@@ -154,80 +159,93 @@ class CreateAdminUserCommand extends Command
         } catch (\Exception $e) {
             $io->error(sprintf("Error: %s exception was encountered while querying database. Please check your configuration."));
         }
-        
-        /**
-        if ($admin_users) {
-            return $io->error("An administrative user has already been set up. Please use the web interface for user management.");
-        }
-        */
-        $helper = $this->getHelper('question');
-        
-        $question_username = new Question($this->q('Please enter this administrative user\'s username: ')
-                ,'david'
-        );
-        
-        $username = '';
-        while (! $username )
-        {
-            $username = trim($helper->ask($input, $output, $question_username));
-        }
-        
-        $question_password = new Question($this->q('Please enter this administrative user\'s password:')
-                ,'boink'
-        );
-        $validator = function($value){
-            if (trim($value == '')) {
-                throw new \RuntimeException("password is required");
+        if ($input->getOption('no-prompt')) {
+            // non-interactive, just defaults
+            $username = 'david'; 
+            $pwd1 = 'boink';
+            $hat = $hats[1]; 
+            $firstname = 'David'; 
+            $lastname='Mintz';
+            $email = 'david@davidmintz.org'; 
+            $entityClass= Entity\Interpreter::class;
+            
+        } else { // ask the questions
+
+            /**
+            if ($admin_users) {
+                return $io->error("An administrative user has already been set up. Please use the web interface for user management.");
             }
-            return $value;
-        };
-        $question_confirm_password = new Question($this->q('Confirm administrative user\'s password:'),
-                'boink'
-         );
-        
-        $question_password->setValidator($validator)->setHidden(true);
-        $question_confirm_password->setHidden(true);
-        
-        $pwd1 = $helper->ask($input, $output, $question_password);
-        $pwd2 = $helper->ask($input, $output, $question_confirm_password);
-        
-        while ($pwd1 != $pwd2) {
-            $output->writeln("<error>passwords do not match. once again...</error>");          
+            */
+            $helper = $this->getHelper('question');
+
+            $question_username = new Question($this->q('Please enter this administrative user\'s username: ')
+                    ,'david'
+            );
+
+            $username = '';
+            while (! $username )
+            {
+                $username = trim($helper->ask($input, $output, $question_username));
+            }
+
+            $question_password = new Question($this->q('Please enter this administrative user\'s password:')
+                    ,'boink'
+            );
+            $validator = function($value){
+                if (trim($value == '')) {
+                    throw new \RuntimeException("password is required");
+                }
+                return $value;
+            };
+            $question_confirm_password = new Question($this->q('Confirm administrative user\'s password:'),
+                    'boink'
+             );
+
+            $question_password->setValidator($validator)->setHidden(true);
+            $question_confirm_password->setHidden(true);
+
             $pwd1 = $helper->ask($input, $output, $question_password);
             $pwd2 = $helper->ask($input, $output, $question_confirm_password);
+
+            while ($pwd1 != $pwd2) {
+                $output->writeln("<error>passwords do not match. once again...</error>");          
+                $pwd1 = $helper->ask($input, $output, $question_password);
+                $pwd2 = $helper->ask($input, $output, $question_confirm_password);
+            }
+
+            $hat_choices = [            
+                   1 => 'staff Court Interpreter',
+                   2 => 'other member of the Court Interpreters Office staff'            
+            ];
+
+            $hat_question = new ChoiceQuestion(
+            $this->q('Choose the most appropriate "Hat" for this admin user [default: staff Court Interpreter]'),
+                    $hat_choices,
+                    1       
+            );
+            $hat_string = $helper->ask($input, $output,$hat_question);
+            $hat_id =  array_flip($hat_choices)[$hat_string];
+            $hat = $hats[$hat_id];
+
+            $firstname = $helper->ask($input,$output,new Question($this->q("user's first name? ")
+                    ,'David'
+             ));
+            $lastname = $helper->ask($input,$output,new Question($this->q("user's last name? "),
+                    'Mintz'));
+
+            $email =  trim($helper->ask($input,$output,new Question($this->q("user's email address? ")
+                    ,'david@davidmintz.org'
+                    )));
+
+            $email_validator = new EmailValidator();
+
+            while (! $email_validator->isValid($email)) {
+                $output->writeln("<error>$email is not a valid email address. Please try again...</error>");  
+                $helper->ask($input,$output,new Question($this->q("user's email address? ")));
+            }
+            $entityClass= $hat_id == 1 ? Entity\Interpreter::class : Entity\Person::class;
+
         }
-        
-        $hat_choices = [            
-               1 => 'staff Court Interpreter',
-               2 => 'other member of the Court Interpreters Office staff'            
-        ];
-        
-        $hat_question = new ChoiceQuestion(
-        $this->q('Choose the most appropriate "Hat" for this admin user [default: staff Court Interpreter]'),
-                $hat_choices,
-                1       
-        );
-        $hat_string = $helper->ask($input, $output,$hat_question);
-        $hat_id =  array_flip($hat_choices)[$hat_string];
-        $hat = $hats[$hat_id];
-        
-        $firstname = $helper->ask($input,$output,new Question($this->q("user's first name? ")
-                ,'David'
-         ));
-        $lastname = $helper->ask($input,$output,new Question($this->q("user's last name? "),
-                'Mintz'));
-        
-        $email =  trim($helper->ask($input,$output,new Question($this->q("user's email address? ")
-                ,'david@davidmintz.org'
-                )));
-        
-        $email_validator = new EmailValidator();
-        
-        while (! $email_validator->isValid($email)) {
-            $output->writeln("<error>$email is not a valid email address. Please try again...</error>");  
-            $helper->ask($input,$output,new Question($this->q("user's email address? ")));
-        }
-        $entityClass= $hat_id == 1 ? Entity\Interpreter::class : Entity\Person::class;
         
         // check if the person exists
         $person = $entityManager->getRepository($entityClass)
