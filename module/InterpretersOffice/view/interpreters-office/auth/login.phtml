@@ -32,8 +32,8 @@ foreach (['success','default','error','info','warning'] as $ns) {
         <?php echo $this->formElement($this->form->get('password')); //return; ?>
   </div>
     <button type="submit" class="btn btn-default">log in</button>
-    <?php echo $this->formElement($form->get('csrf')) ?>
-    <?php echo $this->formElementErrors($this->form->get('csrf')) ?>
+    <?php echo $this->formElement($form->get('login_csrf')) ?>
+    <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>
 </form>
 <p style="margin-top:3em">
 <a href="#">Forgot password?</a> (too bad -- not yet implemented)</p>

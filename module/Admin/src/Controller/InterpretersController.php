@@ -66,7 +66,7 @@ class InterpretersController extends AbstractActionController
             ] + compact('form','params','isQuery','routeName')
         );        
         $this->initView($viewModel, $params, $isQuery);       
-        if ($isQuery ) {  
+        if ($isQuery) {  
              // i.e., search parameters in URL
             $viewModel->setVariables(['data'=>$this->find($params)]);
         } 
@@ -187,7 +187,10 @@ class InterpretersController extends AbstractActionController
         }        
         $form = new InterpreterForm($this->entityManager, ['action' => 'update','vault_enabled'=>$this->vault_enabled]);
         $form->bind($entity);
-        $viewModel->setVariables(['form' => $form, 'id' => $id]);
+        $viewModel->setVariables(['form' => $form, 'id' => $id, 
+            // for the re-authentication dialog
+            'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))->setAttribute('id','login_csrf')]
+        );
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());

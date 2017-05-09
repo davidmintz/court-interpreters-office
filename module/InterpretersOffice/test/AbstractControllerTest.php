@@ -48,13 +48,13 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
     public function login($identity, $password)
     {
         //echo "\nentering ".__FUNCTION__."\n";
-        $token = $this->getCsrfToken('/login');
+        $token = $this->getCsrfToken('/login','login_csrf');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
                 [
                     'identity' => $identity,
                     'password' => $password,
-                    'csrf' => $token,
+                    'login_csrf' => $token,
                 ]
             )
         );
@@ -67,7 +67,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         if (!$auth->hasIdentity()) {
             echo "\nWARNING:  failed authentication\n";
         } else {
-            //echo "\nlogin IS OK !!!\n";
+           // echo "\nlogin IS OK !!!\n";
         }
        
         //var_dump($_SESSION);
@@ -89,15 +89,28 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         //echo "\n url is $url\n";
         $this->dispatch($url, 'GET');
         $html = $this->getResponse()->getBody();
-        
-        //printf("\nhtml string length in %s: %d\n",__FUNCTION__,strlen($html));
-        $auth = $this->getApplicationServiceLocator()->get('auth');
-        //printf("authenticated? %s\n",$auth->hasIdentity() ? "YES":"NO");
+  
+        //printf("\n$url html string length in %s: %d\n",__FUNCTION__,strlen($html));
+        //$auth = $this->getApplicationServiceLocator()->get('auth');
+        //printf("authenticated? %s, element name: $name\n",$auth->hasIdentity() ? "YES":"NO");
         $document = new Document($html,Document::DOC_HTML);
-        //$document->setStringDocument($html);
+        
         $query = new Document\Query(); 
-        $selector = sprintf('input[name="%s"]', $name);
+        //if ($name == 'csrf') { $selector = 'input'; } else {
+            $selector = sprintf('input[name="%s"]', $name);
+        //}
+        /*
+        if ('/admin/interpreters/add'==$url) {
+           echo "parsing $url for: $selector ...";//           
+           //#interpreter-form > div.form-group > div > input[type="hidden"]:nth-child(1)
+        }         
+         */
         $results = $query->execute($selector,$document,  Document\Query::TYPE_CSS);
+        if (! count($results)) {
+            echo $html; exit;
+            throw new \Exception("fuck, could not parse out CSRF token!");
+            return;
+        }
         $node = $results->current();
         $token = $node->attributes->getNamedItem('value')->nodeValue;
         //echo "\n".__FUNCTION__." returning:   $token ....\n";

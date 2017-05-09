@@ -7,6 +7,7 @@ namespace InterpretersOffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use InterpretersOffice\Form\LoginForm;
 
 /**
@@ -61,7 +62,10 @@ class AuthController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                return new ViewModel(['form' => $form]);
+                return $request->isXmlHttpRequest() ?
+                        new JsonModel(['validation_errors'=>$form->getMessages(),'authenticated'=>false])
+                        :
+                         new ViewModel(['form' => $form]);
             }
             $data = $form->getData();
             $this->auth->getAdapter()
@@ -71,17 +75,23 @@ class AuthController extends AbstractActionController
             $event_params = ['result' => $result, 'identity' => $data['identity']];
             if (! $result->isValid()) {
                 $this->events->trigger(__FUNCTION__, $this, $event_params);
-
+                
                 return new ViewModel(
                     ['form' => $form, 'status' => $result->getCode()]
                 );
             }
+            
             $user = $this->auth->getIdentity();
             $role = (string) $user->getRole();
+            
 
             // if they tried to load a page and were sent away, send them back
             $session = new \Zend\Session\Container('Authentication');
             $session->role = $role;
+            
+            if ($request->isXmlHttpRequest()) {
+                return new JsonModel(['authenticated'=>true]);
+            }
 
             if (isset($session->redirect_url)) {
                 $url = $session->redirect_url;

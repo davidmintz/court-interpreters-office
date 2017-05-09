@@ -24,13 +24,13 @@ class AuthControllerTest extends AbstractControllerTest
      */
     public function testLoginAdminUser()
     {
-        $token = $this->getCsrfToken('/login');
+        $token = $this->getCsrfToken('/login','login_csrf');
         $auth = $this->getApplicationServiceLocator()->get('auth');
         $params =
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'csrf' => $token,
+            'login_csrf' => $token,
         ];
         $this->dispatch('/login', 'POST', $params);
 
@@ -60,7 +60,7 @@ class AuthControllerTest extends AbstractControllerTest
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'csrf' => $this->getCsrfToken('/login'),
+            'login_csrf' => $this->getCsrfToken('/login','login_csrf'),
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
@@ -85,7 +85,7 @@ class AuthControllerTest extends AbstractControllerTest
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'csrf' => $this->getCsrfToken('/login'),
+            'login_csrf' => $this->getCsrfToken('/login','login_csrf'),
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
@@ -109,12 +109,12 @@ class AuthControllerTest extends AbstractControllerTest
         // sanity-check it first
         $this->assertEquals('submitter', (string) $susie->getRole());
 
-        $token = $this->getCsrfToken('/login');
+        $token = $this->getCsrfToken('/login','login_csrf');
         $params =
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'csrf' => $token,
+            'login_csrf' => $token,
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
@@ -136,7 +136,7 @@ class AuthControllerTest extends AbstractControllerTest
             'POST',
             ['identity' => 'susie',
                  'password' => 'notCorrect',
-                 'csrf' => $this->getCsrfToken('/login'),
+                 'login_csrf' => $this->getCsrfToken('/login','login_csrf'),
                ]
         );
         $this->assertNotRedirect();
@@ -149,7 +149,7 @@ class AuthControllerTest extends AbstractControllerTest
             'POST',
             ['identity' => 'nobody',
                      'password' => 'notCorrect',
-                     'csrf' => $this->getCsrfToken('/login'),
+                     'login_csrf' => $this->getCsrfToken('/login','login_csrf'),
                  ]
         );
         $this->assertNotRedirect();

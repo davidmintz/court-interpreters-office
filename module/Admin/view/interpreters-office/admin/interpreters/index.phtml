@@ -33,29 +33,33 @@ endif;
     <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
 </form>
 <br>
-<?php if ($this->data): ?>
-<?php echo $this->paginationControl($this->data, null, 'partials/pagination_head'); 
-
+<?php 
+if ($this->data): 
+    echo $this->paginationControl($this->data, null, 'partials/pagination_head'); 
 ?>
+
 <table class="table table-hover table-bordered" style="max-width:700px">
     <tbody>
         <?php
         foreach ($this->data as $row) :
-            $interpreter = $row[0];
-            ?><tr><td><?php echo $this->escapeHtml($interpreter->getLastname()) ?></td></tr> <?php
-        endforeach;
-        ?>
+            $interpreter = $row[0];  ?>
+        <tr><td><?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></td><td></td></tr>
+<?php  endforeach;  ?>
     </tbody>
 </table>
+<p>TO DO: action menu thingy for each table row, e.g: edit, view, cron, email</p>
 <?php echo $this->paginationControl(
     $this->data,
     'sliding',
     'partials/pagination_control',
      ['route'=>$this->routeName,'params'=>$this->params]     
 );?>
-<?php else : // to do -- only if a search was submitted! ?>
-<p>No matching records found.</p>    
-<?php endif ?>
+<?php 
+    else : 
+        if ($this->isQuery) :
+?><p>No matching records found.</p><?php 
+    endif; 
+endif; ?>
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
 </a>

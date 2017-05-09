@@ -41,7 +41,8 @@ class InterpretersControllerTest extends AbstractControllerTest {
         
         $this->login('susie', 'boink');  
         $this->reset(true);
-        $token =  $this->getCsrfToken($url); //return;
+        $token =  $this->getCsrfToken($url,'csrf'); 
+        
         
         $count_before = $em->createQuery('SELECT COUNT(i.id) FROM InterpretersOffice\Entity\Interpreter i')
                 ->getSingleScalarResult();
