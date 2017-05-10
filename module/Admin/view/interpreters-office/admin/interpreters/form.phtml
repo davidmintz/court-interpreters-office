@@ -165,7 +165,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
         
   <?php echo $this->form()->closeTag(); ?>  
 </div><!-- /wrapper -->
-<?php // $random = rand() ?>
+<?php // the following is only for "edit" action: re-authentication dialog for reading DOB and SSN ?>
 <div class="modal" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="modal-auth-title">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -201,7 +201,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
  * attach event listeners
  * 
  * @todo live in its own file ?
- * @todo refactor so this is not so long and monolithic
+ * @todo refactor to make less long and monolithic
  */
 
 /*
@@ -299,7 +299,7 @@ $(function(){
         languageSelect.val('');
         
     });
-    // remove a language
+     /* remove a language *********************************************/
     $('#languages').on("click", ".btn-remove-language",function(event){
         event.preventDefault();
         var div =  $(this).closest("div");

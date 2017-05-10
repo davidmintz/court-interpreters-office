@@ -17,6 +17,16 @@ use Zend\Http\Client;
 class Vault {
     
     /**
+     * mapping of string keys to CURL integer constants
+     * 
+     * @var array
+     */
+    private static $curlopt_keys = [
+        'ssl_key' => \CURLOPT_SSLKEY,
+        'ssl_cert'=> \CURLOPT_SSLCERT,        
+    ];
+    
+    /**
      * client to use for speaking to vault
      * 
      * @var Zend\Http\Client
@@ -46,7 +56,13 @@ class Vault {
         
         $this->vault_address = $config['vault_address'] . $this->prefix;
         unset($config['vault_address']);
-        // hand off the rest of the config to Zend\Http\Client
+        $curloptions = [];
+        foreach ($config as $key => $value) {
+            if (key_exists($key, self::$curlopt_keys)) {
+                $curloptions[self::$curlopt_keys[$key]] = $value;
+            }
+        }
+        $config['curloptions'] = $curloptions;       
         $this->client =  new Client(null,$config);        
         $this->client->getRequest()
             ->getHeaders()
