@@ -8,14 +8,13 @@ return [
     'vault' => [    
         // do not change this adapter
         'adapter'       => 'Zend\Http\Client\Adapter\Curl',
-        // do override these with a local config
+        // do override these with a local configuration
         'vault_address' => 'https://vault.sdnyinterpreters.org:8200', 
         'sslcafile'     => '/usr/share/ca-certificates/ca-chain.cert.pem',
-        // these need to match the configuration set in Vault
-        'curloptions' => [            
-            \CURLOPT_SSLKEY => '/opt/ssl/vault/int807a.nysd.key.pem',
-            \CURLOPT_SSLCERT => '/opt/ssl/vault/usr.int807a.cert.pem',            
-        ],
+        // these settings have to match the configuration set in Vault
+        'ssl_key' => '/opt/ssl/vault/int807a.nysd.key.pem',
+        'ssl_cert' => '/opt/ssl/vault/usr.int807a.cert.pem',            
+       
     ],
     'service_manager' => [
         'factories' => [
