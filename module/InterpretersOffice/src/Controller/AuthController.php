@@ -83,7 +83,6 @@ class AuthController extends AbstractActionController
             
             $user = $this->auth->getIdentity();
             $role = (string) $user->getRole();
-            
 
             // if they tried to load a page and were sent away, send them back
             $session = new \Zend\Session\Container('Authentication');
