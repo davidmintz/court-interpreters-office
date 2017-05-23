@@ -22,7 +22,7 @@ class AuthenticationFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return \InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory
+     * @return AuthenticationService
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -31,7 +31,7 @@ class AuthenticationFactory implements FactoryInterface
             'credential_property' => 'password',
             'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
             ]);
-
-        return new AuthenticationService(null, $adapter);
+        $storage = $container->get('doctrine.authenticationstorage.orm_default');
+        return new AuthenticationService($storage, $adapter);
     }
 }
