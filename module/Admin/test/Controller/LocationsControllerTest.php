@@ -59,6 +59,7 @@ class LocationsControllerTest extends AbstractControllerTest
 
         $type = $em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courtroom']);
+        $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);
         $data = [

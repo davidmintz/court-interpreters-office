@@ -53,7 +53,7 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertQuery('select#hat');
         $attorneyHat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
                         ->findByName('defense attorney')[0]->getId();
-        
+        $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);        
         $data = [
@@ -120,6 +120,7 @@ class PeopleControllerTest extends AbstractControllerTest
         // different hat, but active and with same email...
         $hat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
                         ->findByName('paralegal')[0];
+        $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);
         $data = [
@@ -145,6 +146,7 @@ class PeopleControllerTest extends AbstractControllerTest
             'div.validation-error',
             'there is already a person in your database with this email address and "active" setting'
         );
+        $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);
         // now add another person, and edit the record to collide with John Somebody
@@ -171,6 +173,7 @@ class PeopleControllerTest extends AbstractControllerTest
         //$this->reset(true);
         $url = '/admin/people/edit/'.$other_person->getId();
         $data['person']['email'] = 'john.somebody@lawfirm.com';
+        $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);
         $data['csrf'] = $this->getCsrfToken($url);
@@ -217,7 +220,7 @@ class PeopleControllerTest extends AbstractControllerTest
         $node2 = $query->execute('#firstname')->current();
         $firstname = $node2->attributes->getNamedItem('value')->nodeValue;
         $this->assertEquals('John', $firstname);
-        
+        $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);
         $data = [
@@ -261,6 +264,7 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $data['person']['lastname'] = '';
         $data['person']['firstname'] = 'John';
+        $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');

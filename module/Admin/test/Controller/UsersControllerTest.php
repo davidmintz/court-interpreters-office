@@ -40,7 +40,7 @@ class UsersControllerTest extends AbstractControllerTest
         
         $this->assertControllerClass('AdminIndexController');
         $this->dispatch('/admin/users');
-        echo $this->getResponse()->getBody(); return;
+        //echo $this->getResponse()->getBody(); return;
         $this->assertResponseStatusCode(303);
         $this->assertNotControllerName('UsersController');
         $this->assertRedirect();
