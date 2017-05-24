@@ -25,7 +25,9 @@ class AuthControllerTest extends AbstractControllerTest
     public function testLoginAdminUser()
     {
         $token = $this->getCsrfToken('/login','login_csrf');
-        
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        echo spl_object_hash($auth), " is the hash of our auth object in the unit test\n";
+
         $params =
         [
             'identity' => 'susie',
@@ -33,8 +35,14 @@ class AuthControllerTest extends AbstractControllerTest
             'login_csrf' => $token,
         ];
         $this->dispatch('/login', 'POST', $params);
+
         $auth = $this->getApplicationServiceLocator()->get('auth');
         $this->assertTrue($auth->hasIdentity(),"failed asserting auth has identity");
+
+        echo $this->getResponseStatusCode()," is the response code \n";
+        echo $this->dumpResponse();
+        $this->assertTrue($auth->hasIdentity(),'failed asserting that $auth->hasIdentity()');
+
         $auth->clearIdentity();
         // just checking :-)
         $this->assertFalse($auth->hasIdentity());
