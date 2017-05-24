@@ -12,7 +12,7 @@ use InterpretersOffice\Entity\User;
 /**
  * Authentication adapter.
  *
- * Our own adapter is necessary because of the entities structure and
+ * Our own adapter is necessary because of the entities' structure and
  * relationship. A simple query of a users table is not sufficient because
  * we want to allow users to provide either email or username. The User has
  * a one-to-one relationship with the Person entity, and the email is a property
