@@ -32,6 +32,7 @@ class AuthenticationFactory implements FactoryInterface
             'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
             ]);
         $storage = $container->get('doctrine.authenticationstorage.orm_default');
+        echo "\nfactory is instantiating an AuthenticationService...\n";    
         return new AuthenticationService($storage, $adapter);
     }
 }
