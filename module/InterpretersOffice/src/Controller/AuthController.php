@@ -31,7 +31,7 @@ class AuthController extends AbstractActionController
      */
     public function __construct(AuthenticationServiceInterface $auth)
     {
-        $this->auth = $auth;
+        $this->auth = $auth;        
     }
 
     /**
@@ -80,14 +80,16 @@ class AuthController extends AbstractActionController
                     ['form' => $form, 'status' => $result->getCode()]
                 );
             }
-            
+            // TMP DEBUG
+            // echo (spl_object_hash($this->auth). " is the hash of our auth object in the Controller loginAction\n");
             $user = $this->auth->getIdentity();
-            $role = (string) $user->getRole();
-
+            $role = (string) $user->getRole();          
             // if they tried to load a page and were sent away, send them back
             $session = new \Zend\Session\Container('Authentication');
             $session->role = $role;
-            
+            // TMP DEBUG
+            // echo "DEBUG:  auth OK. not redirecting....";
+            // return new ViewModel(['form' => $form, 'title' => 'user login']);
             if ($request->isXmlHttpRequest()) {
                 return new JsonModel(['authenticated'=>true]);
             }
