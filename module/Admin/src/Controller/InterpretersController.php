@@ -176,6 +176,7 @@ class InterpretersController extends AbstractActionController
      * updates an Interpreter entity.
      */
     public function editAction()
+            
     {
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
@@ -189,7 +190,8 @@ class InterpretersController extends AbstractActionController
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id, 
             // for the re-authentication dialog
-            'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))->setAttribute('id','login_csrf')]
+            'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))->setAttribute('id','login_csrf')
+            ]
         );
         $request = $this->getRequest();
         if ($request->isPost()) {

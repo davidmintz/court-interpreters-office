@@ -191,12 +191,13 @@ class InterpretersControllerTest extends AbstractControllerTest {
 
         // now take it out
         unset($data['interpreter']['interpreter-languages'][1]);
-
+        // PLEASE do not forget this.
+        // @todo:  make sure CSRF error thing is in the damn viewscript!
+        $data['csrf'] = $this->getCsrfToken($url);
         $this->getRequest()->setMethod('POST')->setPost(
                 new Parameters($data)
         );
         $this->dispatch($url);
-
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/interpreters');
 
@@ -207,7 +208,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
         // there should now be one language again
         $this->assertQueryCount('div.language-name', 1);
         $this->assertQueryContentContains('div.language-name', 'Spanish');
-        //echo "\nDEBUG: exiting ".__FUNCTION__."\n";
+        
     }
 
 }

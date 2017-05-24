@@ -18,7 +18,7 @@ use Zend\Dom\Document;
 abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
-    {
+    {     
         $configOverrides = [
 
             'module_listener_options' => [
@@ -31,10 +31,8 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         $this->setApplicationConfig(ArrayUtils::merge(
             include __DIR__.'/../../../config/application.config.php',
             $configOverrides
-        ));
-
+        ));        
         parent::setUp();
-
     }
 
     /**
@@ -47,7 +45,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
      */
     public function login($identity, $password)
     {
-        //echo "\nentering ".__FUNCTION__."\n";
+        
         $token = $this->getCsrfToken('/login','login_csrf');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
@@ -61,14 +59,10 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/login');
         
         $auth = $this->getApplicationServiceLocator()->get('auth');
-        
-        
          
         if (!$auth->hasIdentity()) {
             echo "\nWARNING:  failed authentication\n";
-        } else {
-           // echo "\nlogin IS OK !!!\n";
-        }
+        } // else {   echo "\nlogin IS OK !!!\n";  }
        
         //var_dump($_SESSION);
         return $this;
@@ -84,9 +78,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
      */
     public function getCsrfToken($url, $name = 'csrf')
     {
-        //$i = ++static::$count;
-        // echo "\niteration: $i\n";
-        //echo "\n url is $url\n";
+       
         $this->dispatch($url, 'GET');
         $html = $this->getResponse()->getBody();
   
@@ -97,23 +89,23 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         
         $query = new Document\Query(); 
         //if ($name == 'csrf') { $selector = 'input'; } else {
-            $selector = sprintf('input[name="%s"]', $name);
-        //}
-        /*
-        if ('/admin/interpreters/add'==$url) {
-           echo "parsing $url for: $selector ...";//           
-           //#interpreter-form > div.form-group > div > input[type="hidden"]:nth-child(1)
-        }         
-         */
+        $selector = sprintf('input[name="%s"]', $name);
+        
         $results = $query->execute($selector,$document,  Document\Query::TYPE_CSS);
         if (! count($results)) {
-            echo $html; exit;
-            throw new \Exception("fuck, could not parse out CSRF token!");
+            //echo $html; //exit;
+            throw new \Exception("selector was $selector -- fuck, could not parse out CSRF token!");
             return;
         }
         $node = $results->current();
         $token = $node->attributes->getNamedItem('value')->nodeValue;
         //echo "\n".__FUNCTION__." returning:   $token ....\n";
+        $this->reset(true);
         return $token;
+    }
+    
+    public function dumpResponse()
+    {
+        echo $this->getResponse()->getBody();
     }
 }

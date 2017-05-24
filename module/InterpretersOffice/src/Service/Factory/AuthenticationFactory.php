@@ -26,12 +26,14 @@ class AuthenticationFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $adapter = new AuthenticationAdapter([
-            'object_manager' => $container->get('entity-manager'),
-            'credential_property' => 'password',
-            'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
-            ]);
-        $storage = $container->get('doctrine.authenticationstorage.orm_default');
-        return new AuthenticationService($storage, $adapter);
+        
+        $options = $container->get('config')['doctrine']['authentication']['orm_default']; 
+         // if we don't do the following line, it blows up from trying 
+         // to call a method on a string. not sure I understand why.
+         $options['object_manager'] = $container->get('entity-manager');
+         $storage = $container->get('doctrine.authenticationstorage.orm_default');
+         $adapter = new AuthenticationAdapter($options);
+         return new AuthenticationService($storage, $adapter);
+       
     }
 }
