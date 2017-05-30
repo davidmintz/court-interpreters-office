@@ -1,7 +1,7 @@
 <?php
 /**
  * config/autoload/doctrine.test.php
- * used with travis-ci in 'before_script' irective.
+ * used with travis-ci in 'before_script' directive.
  */
 $path = getcwd().'/module/Application/test/data/office.sqlite';
 
