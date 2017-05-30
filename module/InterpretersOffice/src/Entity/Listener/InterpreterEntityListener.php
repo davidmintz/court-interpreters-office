@@ -27,11 +27,14 @@ class InterpreterEntityListener implements EventManagerAwareInterface
      * 
      * runs when Interpreter entity is loaded
      * 
+     * this is experimental. there might be a better approach.
+     * 
      * @param Interpreter $interpreter
      * @param LifecycleEventArgs $event
      */
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
     {        
+
         if ($interpreter->getSsn()) {
             $interpreter->setSsn($this->ssn_obscured);
         }
@@ -39,6 +42,6 @@ class InterpreterEntityListener implements EventManagerAwareInterface
             $interpreter->setDob($this->dob_obscured);
         }
         $this->events->trigger(__FUNCTION__, $this);
-        //printf("\nshit is STILL running in %s! yay!",__METHOD__);        
+        //printf("\nshit is STILL running in %s! yay!",__METHOD__);
     }
 }
