@@ -55,8 +55,6 @@ if ($checkOnly) {
     exit;
 }
 
-
-
 $select = $old_db->prepare('SELECT interp_id AS id, AES_DECRYPT(ssn,:cipher) AS ssn, '
         . 'AES_DECRYPT(dob,:cipher) AS dob FROM interpreters '
         . 'WHERE ssn IS NOT NULL OR dob IS NOT NULL');
@@ -88,6 +86,7 @@ $update->execute([
     'id' => 117,
 ]);
 echo "\ndone.\n";
+
 if (! $skipCheck) {
     read_it_back($new_db,$cipher); 
 }
