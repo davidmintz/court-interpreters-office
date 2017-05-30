@@ -11,3 +11,4 @@ vendor
 composer.phar
 court-interpreters-office.sublime-*
 data/*
+dev.local.conf

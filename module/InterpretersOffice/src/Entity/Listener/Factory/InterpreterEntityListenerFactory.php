@@ -32,8 +32,7 @@ class InterpreterEntityListenerFactory implements FactoryInterface {
         $sharedEventManager = $container->get('SharedEventManager');
         $sharedEventManager->attach($requestedName,'*',function($e){/*echo $e->getName() . " happened... ";}*/});
         $listener = new InterpreterEntityListener();
-       // $listener->setLogger($container->get('log'));
-       
+       // $listener->setLogger($container->get('log'));        
         return $listener;
     }
     
