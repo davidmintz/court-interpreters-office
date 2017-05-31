@@ -41,7 +41,6 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertRedirectTo('/admin');
         
         // this shit broke, we know not when or how.
-        // https://stackoverflow.com/questions/44163856/zend-framework-3-unit-tests-how-to-access-from-service-manager-the-same-object
         //$auth = $this->getApplicationServiceLocator()->get('auth');
         //$this->assertTrue($auth->hasIdentity(),"failed asserting auth has identity");
 
@@ -58,7 +57,7 @@ class AuthControllerTest extends AbstractControllerTest
         $params['csrf'] = $this->getCsrfToken('/login', 'login_csrf');
         $this->dispatch('/login', 'POST', $params);
         $this->assertTrue($auth->hasIdentity());
-
+        //echo $auth->getIdentity()->getRole(); return;
         $this->assertRedirect();
         $this->assertRedirectTo('/admin');
     }
@@ -70,6 +69,8 @@ class AuthControllerTest extends AbstractControllerTest
     {
         $this->dispatch('/admin/languages/add');
         $this->assertRedirect();
+        $this->assertRedirectTo('/login');
+        //echo "\n".$_SESSION['Authentication']->redirect_url . " is our shit here in ".__FUNCTION__."...\n";
         $this->reset(true);
         $params =
         [
@@ -82,8 +83,6 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertRedirectTo('/admin/languages/add');
 
         $this->dispatch('/logout');
-
-        $auth = $this->getApplicationServiceLocator()->get('auth');
 
         // demote susie to see what happens next time she tries to access an admin page
         $em = FixtureManager::getEntityManager();
@@ -104,12 +103,13 @@ class AuthControllerTest extends AbstractControllerTest
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
+        
         //echo $this->getResponseHeader('Location'),"\n";
-        $auth = $this->getApplicationServiceLocator()->get('auth');
+        //$auth = $this->getApplicationServiceLocator()->get('auth');
         //var_dump($auth->hasIdentity());
-        $em->refresh($user);
-        echo "role: {$user->getRole()}\n";
-        printf("TO DO: resolve failed \$this->assertNotRedirectTo('/admin/languages/add') in AuthControllerTest at %d\n",__LINE__);
+        //$em->refresh($user);
+        //echo "role: {$user->getRole()}\n";
+        printf("\nTO DO: resolve failed \$this->assertNotRedirectTo('/admin/languages/add') in AuthControllerTest at %d?\n",__LINE__);
         // problem
         //$this->assertNotRedirectTo('/admin/languages/add');
     }
