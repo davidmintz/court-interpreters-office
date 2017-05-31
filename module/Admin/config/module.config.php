@@ -447,7 +447,8 @@ return [
             'interpreters' => 'events',
             'requests-index' => null,
             'admin-index' => null,
-            
+            // ??
+            'vault' => null,
             // to be continued
         ],
         // how do we configure this to use Assertions?
@@ -462,6 +463,8 @@ return [
                 'admin-index' => null,
                 'languages' => null,
                 'events' => null,
+                // ??
+                'vault' => null,
             ],
             'staff' => [
                 'admin-index' => ['index'],
