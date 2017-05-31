@@ -214,6 +214,11 @@ class InterpretersController extends AbstractActionController
            // echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
            // echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
            //print_r($form->getMessages()); echo "</pre>";
+        } else {
+            // not a POST
+            if ($this->vault_enabled) {
+                $viewModel->obscure_values = true;
+            }
         }
 
         return $viewModel;
