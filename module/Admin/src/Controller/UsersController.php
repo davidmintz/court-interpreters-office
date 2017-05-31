@@ -51,7 +51,7 @@ class UsersController extends AbstractActionController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->auth_user_role = (new Session('Authentication'))->role;        
+        //$this->auth_user_role = (new Session('Authentication'))->role;        
     }
 
     /**
@@ -133,7 +133,7 @@ class UsersController extends AbstractActionController
         $viewModel->setTemplate('interpreters-office/admin/users/form');
         $form = new UserForm($this->entityManager, [
             'action' => 'create',
-            'auth_user_role' => $this->auth_user_role,
+            'auth_user_role' => (string)$this->auth->getIdentity()->getRole(),
             ]);
         $user = new Entity\User();
 
@@ -196,7 +196,7 @@ class UsersController extends AbstractActionController
         }
          $form = new UserForm($this->entityManager, [
             'action' => 'update',
-            'auth_user_role' => $this->auth_user_role,
+            'auth_user_role' =>  (string)$this->auth->getIdentity()->getRole(),
             ]);
         $person = $user->getPerson();
         /** @todo do this initialization somewhere else?  */
@@ -232,7 +232,6 @@ class UsersController extends AbstractActionController
     public function indexAction()
     {
         //echo ($this->params()->fromRoute('action'));
-
         return new ViewModel(['title' => 'admin | users','role' => $this->auth_user_role]);
     }
     
