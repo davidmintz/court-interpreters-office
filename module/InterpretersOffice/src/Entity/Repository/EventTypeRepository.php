@@ -11,8 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 /**
  * custom repository class for EventType entity.
  */
-class EventTypeRepository extends EntityRepository
+class EventTypeRepository extends EntityRepository implements CacheDeletionInterface
 {
+
     use ResultCachingQueryTrait;
 
     /**
@@ -21,6 +22,13 @@ class EventTypeRepository extends EntityRepository
      * @var string $cache_id
      */
     protected $cache_id = 'event-types';
+    
+    /**
+     * cache
+     *
+     * @var CacheProvider
+     */
+    protected $cache;
 
     /**
      * constructor.
@@ -29,8 +37,9 @@ class EventTypeRepository extends EntityRepository
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class
      */
     public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
-    {
-        $em->getConfiguration()->getResultCacheImpl()->setNamespace('event-types');
+    {        
+        $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace($this->cache_id);
         parent::__construct($em, $class);
     }
 
@@ -47,5 +56,20 @@ class EventTypeRepository extends EntityRepository
         $dql = 'SELECT t FROM InterpretersOffice\Entity\EventType t ORDER BY t.name';
 
         return $this->createQuery($dql, 0, 'event-types-all')->getResult();
+    }
+    
+     /**
+     * experimental
+     *
+     * implements cache deletion
+     * @param type $cache_id
+     */
+    public function deleteCache($cache_id = null)
+    {
+
+         $this->cache->setNamespace('event-types');
+         $this->cache->deleteAll();
+         // for debugging
+         return sprintf('ran %s at line %d', __METHOD__, __LINE__);
     }
 }
