@@ -17,7 +17,7 @@ use Doctrine\Common\Collections\Collection;
  * types of "Hat:" contract interpreter, or staff interpreter.
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\InterpreterRepository")
- * @ORM\EntityListeners({"InterpretersOffice\Entity\Listener\InterpreterEntityListener"})
+ * ORM\EntityListeners({"InterpretersOffice\Entity\Listener\InterpreterEntityListener"})
  * @ORM\Table(name="interpreters",uniqueConstraints={@ORM\UniqueConstraint(name="unique_ssn",columns={"ssn"})})
  */
 class Interpreter extends Person

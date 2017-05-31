@@ -41,7 +41,10 @@ class InterpreterEntityListener implements EventManagerAwareInterface
         if ($interpreter->getDob()) {
            // $interpreter->setDob($this->dob_obscured);
         }
+        //if ($this->events) {
+            // to do: make this work even in test environment
         $this->events->trigger(__FUNCTION__, $this);
+        //}
         //printf("\nshit is STILL running in %s! yay!",__METHOD__);
     }
 }

@@ -51,6 +51,9 @@ class AuthController extends AbstractActionController
      * on a GET request or POSTed failed authentication, returns a
      * view; otherwise, redirect to admin main page or to main front
      * page, depending on authenticated user's role.
+     * 
+     * A string "role" is kept in the session to save on database queries that 
+     * Doctrine runs when you getIdentity() from the auth object
      *
      * @return ViewModel
      */
