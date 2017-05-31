@@ -7,7 +7,8 @@
 language: php
 
 php: 
-  - 5.6
+# we broke 5.6 compatibility, so disable this at least for the time being
+# - 5.6
   - 7.0
   - 7.1
 
@@ -15,7 +16,6 @@ install:  composer install
 
 # there may be a better way, but to compel travis-ci to use our test 
 # config (sqlite) we replace the configuration file.
-# and create a data/log directory
 
 before_script:  
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
