@@ -8,8 +8,6 @@ namespace InterpretersOffice\Admin;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\SessionManager;
 
-use InterpretersOffice\Entity\User;
-
 /**
  * Module class for our InterpretersOffice\Admin module.
  */
@@ -72,29 +70,24 @@ class Module
         if (! $match) {
             return;
         }
-        //return;
         $container = $event->getApplication()->getServiceManager();
         $module = $match->getParam('module');
-        $session = $container->get('Authentication');// to do: rename, for clarity
+        $session = $container->get('Authentication');
         if ('InterpretersOffice' == $module) {
-            return;            
+            if (! $session->role) {
+                $session->role = 'anonymous';
+            }
+            return;
         }
         $auth = $container->get('auth');
         if (! $auth->hasIdentity()) {
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
             $flashMessenger->addWarningMessage('Authentication is required.');
-            $session->redirect_url = $event->getRequest()->getUriString();            
+            $session->redirect_url = $event->getRequest()->getUriString();
             return $this->getRedirectionResponse($event);
         } else {
-            $em = $container->get('entity-manager');
-            // same as:
-            //$user = $em->find('InterpretersOffice\Entity\User',$auth->getIdentity()->getId());
-            // this is inefficient. find a why to do fewer than 3 queries for this?
-            // does not seem to be required. Doctrine doing it for us?
-            //$em->merge($auth->getIdentity());
-            $user = $auth->getIdentity(); 
-            if (! $this->checkAcl($event, $user)) {
+            if (! $this->checkAcl($event, $session->role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Access denied.');
@@ -106,10 +99,10 @@ class Module
      * checks authorization
      *
      * @param MvcEvent $event
-     * @param User $user
+     * @param string $role
      * @return boolean true if current is authorized access to current resource
      */
-    public function checkAcl(MvcEvent $event, User $user)
+    public function checkAcl(MvcEvent $event, $role)
     {
 
         $match = $event->getRouteMatch();
@@ -122,7 +115,6 @@ class Module
         $resource = strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter($controllerName));
         $privilege = $match->getParam('action');
         $acl = $event->getApplication()->getServiceManager()->get('acl');
-        $role = (string)$user->getRole();
         return $acl->isAllowed($role, $resource, $privilege);
     }
 
