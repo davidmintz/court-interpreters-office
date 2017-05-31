@@ -138,12 +138,19 @@ Don't mix with other components
 Do not mix form groups or grid column classes directly with input groups. Instead, nest the input group inside of the form group or grid-related element.
 
                 -->
-                <?php foreach (['dob','ssn'] as $elementName) :
+                <?php 
+
+                foreach (['dob','ssn'] as $elementName) :
                     if (! $fieldset->has($elementName)) : break; endif;
                     $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <div class="col-sm-9 form-inline encrypted">
+                        <?php 
+                        if ($this->obscure_values) :
+                            echo "do shit...";
+                    
+                        endif;?>
                         <div class="input-group-btn"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-default" type="button"><span class="glyphicon glyphicon-lock"></span><span class="sr-only">unlock</span></button>                        
                         <?php echo $this->formElementErrors($element) ?>
                         </div>
