@@ -7,13 +7,15 @@
 namespace InterpretersOffice\Admin;
 
 use Zend\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+
 use InterpretersOffice\Entity\Listener;
 
 return [
 
     'router' => [
+        // this is too big. needs to be broken up into separate files
         'routes' => [
-
             'admin' => [
                 'type' => Segment::class,
                 'options' => [
@@ -392,6 +394,28 @@ return [
                     ],
                 ],
             ],
+            'vault-test' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/vault/test', //[/]
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\VaultController::class,
+                        'action' => 'test',
+                    ],
+                ],
+            ],
+            'vault-authenticate' => [
+             'type' => Literal::class,
+                'options' => [
+                    'route' => '/vault/authenticate-app', //[/]
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\VaultController::class,
+                        'action' => 'authenticate-app',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -408,6 +432,7 @@ return [
             Controller\InterpretersController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\UsersController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\EventsController::class => Controller\Factory\EventsControllerFactory::class,
+            Controller\VaultController::class => Controller\Factory\VaultControllerFactory::class,
         ],
     ],
     'view_manager' => [

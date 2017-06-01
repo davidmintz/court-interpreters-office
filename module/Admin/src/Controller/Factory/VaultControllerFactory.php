@@ -3,12 +3,13 @@
  * module/Vault/src/Controller/Factory/VaultControllerFactory.php
  */
 
-namespace SDNY\Vault\Controller\Factory;
+namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
-use SDNY\Vault\Controller\VaultController;
+use InterpretersOffice\Admin\Controller\VaultController;
+
 use SDNY\Vault\Service\Vault as VaultService;
 
 /**
@@ -29,7 +30,7 @@ class VaultControllerFactory implements FactoryInterface {
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new VaultController($container->get(VaultService::class));
+        return new VaultController($container->get(VaultService::class),$container->get('auth'));
     }
 
 }

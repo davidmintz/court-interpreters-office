@@ -18,12 +18,7 @@ return [
         'ssl_key' => '/opt/ssl/vault/int807a.nysd.key.pem',
         'ssl_cert' => '/opt/ssl/vault/usr.int807a.cert.pem',            
        
-    ],
-    'controllers' => [
-        'factories' => [
-             Controller\VaultController::class => Controller\Factory\VaultControllerFactory::class,
-        ],
-    ],
+    ],    
     'service_manager' => [
         'factories' => [
             Service\Vault::class => Service\Factory\VaultServiceFactory::class,           
@@ -32,25 +27,14 @@ return [
     'router' => [
         'routes' => [
 
-            'vault-test' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/vault/test', //[/]
-                    'defaults' => [
-                        'module' => __NAMESPACE__,
-                        'controller' => \SDNY\Vault\Controller\VaultController::class,
-                        'action' => 'test',
-                    ],
-                ],
-            ],
-            'vault-authenticate' => [
+            'vault-decrypt' => [
              'type' => Literal::class,
                 'options' => [
-                    'route' => '/vault/authenticate-app', //[/]
+                    'route' => '/vault/decrypt', //[/]
                     'defaults' => [
-                        'module' => __NAMESPACE__,
-                        'controller' => \SDNY\Vault\Controller\VaultController::class,
-                        'action' => 'authenticate-app',
+                        'module' => 'InterpretersOffice\Admin',
+                        'controller' => \InterpretersOffice\Admin\Controller\VaultController::class,
+                        'action' => 'decrypt',
                     ],
                 ],
             ],

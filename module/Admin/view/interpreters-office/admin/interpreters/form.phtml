@@ -191,6 +191,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
         <h4 id="modal-auth-title" class="modal-title">Please re-authenticate for access to dob/ssn</h4>
       </div>
       <div class="modal-body">
+          <div id="div-auth-error" class="alert alert-danger alert-dismissable hidden">Authentication failed.</div>
           <form autocomplete="off" id="form-login">
               <div class="form-group">
                 <label class="sr-only"  for="identity">username or email</label>
@@ -352,7 +353,12 @@ $(function(){
         });
         
     });
+
+
 });
+
+
+
 // TO DO move this somewhere accessible to all
 displayValidationErrors = function(validationErrors) {
     $('.validation-error').hide();
