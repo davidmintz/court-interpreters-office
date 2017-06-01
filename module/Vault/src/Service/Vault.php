@@ -147,20 +147,33 @@ class Vault {
         return $this;
     }
     
+    public function unwrap($token)
+    {
+        $this->client->reset();
+        $endpoint = $this->vault_address . '/sys/wrapping/unwrap';
+        $this->setAuthToken($token);
+        $this->client->setMethod('POST')->setUri($endpoint)->send();
+        return $this->client->getResponse()->getBody();         
+    }
+    
     /**
-     * attempts to acquire and return Vault access token that is
+     * Attempts to acquire and return response-wrapped Vault access token that is
      * authorized to read the cipher we use for symmetrical encryption/decryption
      * of sensitive Interpreter data.
      * 
+     * The $auth_token parameter is used for authentication if provided; otherwise
+     * it's assumed to have been set already
+     * 
      * @param string $auth_token 
-     * @return \SDNY\Service\Vault
+     * @return string 
      */
     public function getCipherAccessToken($auth_token = null)
     {
         if ($auth_token) {
             $this->client->getRequest()
             ->getHeaders()
-            ->addHeaderLine("X-Vault-Token:$auth_token");
+            ->addHeaderLine("X-Vault-Token:$auth_token")
+            ->addHeaderLine("X-Vault-Wrap-TTL: 3m");
         }
         $endpoint = $this->vault_address . '/auth/token/create/read-cipher';
         $this->client->getRequest()->setContent(json_encode(
@@ -172,5 +185,14 @@ class Vault {
         $this->client->setMethod('POST')->setUri($endpoint)->send();
         
         return $this->client->getResponse()->getBody();           
+    }
+    
+    public function getEncryptionKey($token)
+    {
+        $this->client->reset();
+        $endpoint = $this->vault_address . '/secret/sdny/encryption';
+        $this->setAuthToken($token);
+        $this->client->setMethod('GET')->setUri($endpoint)->send();
+        return $this->client->getResponse()->getBody();  
     }
 }
