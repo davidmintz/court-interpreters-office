@@ -29,7 +29,8 @@ class VaultController extends AbstractActionController {
     
     public function authenticateAppAction()
     {
-        return new JsonModel($this->vaultService->authenticateTLSCert());
+        $json = $this->vaultService->authenticateTLSCert();
+        return new JsonModel(json_decode($json,JSON_OBJECT_AS_ARRAY));
     }
     
 }
