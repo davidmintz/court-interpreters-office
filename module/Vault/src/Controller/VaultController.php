@@ -10,12 +10,16 @@ use Zend\View\Model\JsonModel;
 use SDNY\Vault\Service\Vault;
 use Zend\Authentication\AuthenticationServiceInterface;
 
+
+
 //use Zend\Session\SessionManager;
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Openssl;
 
 /**
- * VaultController
+ * 
+ * VaultController. very much a work-in-progress
+ * 
  */
 class VaultController extends AbstractActionController {
     
@@ -32,9 +36,9 @@ class VaultController extends AbstractActionController {
   
     public function testAction()
     {
-        echo " ...gack" ; 
+      
         $this->verifyAuth();
-       
+        echo " ...gack! looking good in testAction ..." ;  
         return false;
         return new JsonModel(['result'=>'OK']);
     }
@@ -53,12 +57,7 @@ class VaultController extends AbstractActionController {
             throw new \Exception("authorization denied to user in role $role");
         }
         return true;
-    }
-            
-    public function authenticateAppAction()
-    {
-        return new JsonModel(json_decode($this->vaultService->authenticateTLSCert(),JSON_OBJECT_AS_ARRAY));
-    }
+    }   
     
     public function decryptAction()
     {
@@ -76,7 +75,7 @@ class VaultController extends AbstractActionController {
         //echo $cipherToken;
         $response = $this->vaultService->getEncryptionKey($cipherToken);
         $cipher = $response['data']['cipher'];
-        echo "cipher is $cipher ";
+        echo "cipher: $cipher<br>";
         return false;
         
     }
