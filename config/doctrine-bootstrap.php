@@ -33,7 +33,7 @@ $entitiesPath = [
 ];
 $config = Setup::createAnnotationMetadataConfiguration($entitiesPath, true, null, null, false);
 $em = EntityManager::create($dbParams, $config);
-$listener = new InterpretersOffice\Entity\Listener\InterpreterEntityListener();
-$listener->setEventManager(new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager()));
-$em->getConfiguration()->getEntityListenerResolver()->register($listener);
+//$listener = new InterpretersOffice\Entity\Listener\InterpreterEntityListener();
+//$listener->setEventManager(new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager()));
+//$em->getConfiguration()->getEntityListenerResolver()->register($listener);
 return $em;
