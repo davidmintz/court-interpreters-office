@@ -33,12 +33,13 @@ class PeopleControllerFactory implements FactoryInterface
             $vault_enabled = key_exists('vault', $container->get('config'));
             $controller = new Controller\InterpretersController($em,$vault_enabled);
             // if we are NOT cli...
+            ///*
             if  ( $controller->getRequest() instanceof \Zend\Http\Request)  {
                 // ...attach Entity Listener
                 $listener = $container->get('interpreter-listener');            
                 $em->getConfiguration()->getEntityListenerResolver()->register($listener);
             }
-
+            //*/
         } else {
             $controller = new $requestedName($em);
         }
