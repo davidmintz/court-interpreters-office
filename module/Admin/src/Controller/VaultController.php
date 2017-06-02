@@ -34,6 +34,7 @@ class VaultController extends AbstractActionController {
     {
         echo " ...gack" ; 
         $this->verifyAuth();
+       
         return false;
         return new JsonModel(['result'=>'OK']);
     }
@@ -61,10 +62,10 @@ class VaultController extends AbstractActionController {
     
     public function decryptAction()
     {
-        $params = $this->params()->fromPost();
-        $cipher = new BlockCipher(new Openssl);
+        //$params = $this->params()->fromPost();
+        //$cipher = new BlockCipher(new Openssl);
         $applicationAuth = json_decode($this->vaultService->authenticateTLSCert());
-        $token = $applicationAuth->auth->client_token;
+        $token = $applicationAuth->auth->client_token; 
         
         $wrappedResponse = json_decode($this->vaultService->getCipherAccessToken($token));
         $unwrapToken = $wrappedResponse->wrap_info->token;

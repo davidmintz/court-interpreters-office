@@ -90,6 +90,14 @@ class Vault {
     {
         return $this->client;
     }
+
+    public function reset()
+    {
+        $this->client->reset()->getRequest()
+            ->getHeaders()
+            ->addHeaderLine('Accept: application/json');
+        return $this;
+    }
     
     /**
      * attempts user/password authentication
@@ -149,7 +157,8 @@ class Vault {
     
     public function unwrap($token)
     {
-        $this->client->reset();
+        $this->reset();
+        
         $endpoint = $this->vault_address . '/sys/wrapping/unwrap';
         $this->setAuthToken($token);
         $this->client->setMethod('POST')->setUri($endpoint)->send();
@@ -163,7 +172,7 @@ class Vault {
      * 
      * The $auth_token parameter is used for authentication if provided; otherwise
      * it's assumed to have been set already
-     * 
+     *
      * @param string $auth_token 
      * @return string 
      */
@@ -189,7 +198,7 @@ class Vault {
     
     public function getEncryptionKey($token)
     {
-        $this->client->reset();
+        //$this->client->reset();
         $endpoint = $this->vault_address . '/secret/sdny/encryption';
         $this->setAuthToken($token);
         $this->client->setMethod('GET')->setUri($endpoint)->send();
