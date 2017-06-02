@@ -21,10 +21,20 @@ use Zend\Http\Client;
  * 
  */
 
-class Vault extends Client  {
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerAwareTrait;
+
+class Vault extends Client implements EventManagerAwareInterface {
+    
+    use EventManagerAwareTrait;
+    
+    protected $events;
     
     /**
      * mapping of string keys to CURL integer constants
+     * 
+     * we need this because if a config array key is an integer
+     * unfortunate things happen when the framework merges the configs
      * 
      * @var array
      */
@@ -101,9 +111,8 @@ class Vault extends Client  {
      * attempts user/password authentication
      * 
      * this will attempt to authenticate user against Vault's
-     * userpass auth backend.
-     * NOTE: looks like we won't be using this auth method after all, so 
-     * this method can disappear
+     * userpass auth backend. NOTE: looks like we won't be using this auth 
+     * method after all, so this method can disappear
      * @link https://www.vaultproject.io/docs/auth/userpass.html
      * 
      * @param string $user
@@ -132,9 +141,10 @@ class Vault extends Client  {
     {
         $this->setMethod('POST')
             ->setUri($this->vault_address .'/auth/cert/login')
-            ->send();
-        
-        return $this->responseToArray($this->getResponse()->getBody());          
+            ->send();        
+        $response = $this->responseToArray($this->getResponse()->getBody());
+        // to do: check response, trigger an event
+        return $response;
     }
     
     /**
