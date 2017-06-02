@@ -32,5 +32,8 @@ $entitiesPath = [
     __DIR__.'/../module/InterpretersOffice/src/Entity/',
 ];
 $config = Setup::createAnnotationMetadataConfiguration($entitiesPath, true, null, null, false);
-
-return EntityManager::create($dbParams, $config);
+$em = EntityManager::create($dbParams, $config);
+$listener = new InterpretersOffice\Entity\Listener\InterpreterEntityListener();
+$listener->setEventManager(new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager()));
+$em->getConfiguration()->getEntityListenerResolver()->register($listener);
+return $em;
