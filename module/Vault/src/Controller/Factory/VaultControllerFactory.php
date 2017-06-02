@@ -29,7 +29,7 @@ class VaultControllerFactory implements FactoryInterface {
      * @return Vault
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
+    {        
         return new VaultController($container->get(VaultService::class),$container->get('auth'));
     }
 

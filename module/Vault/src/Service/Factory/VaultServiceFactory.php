@@ -15,7 +15,7 @@ use SDNY\Vault\Service\Vault;
  *
  * @author david@davidmintz.org
  */
-class VaultServiceFactory implements FactoryInterface{
+class VaultServiceFactory implements FactoryInterface {
   
     /**
      * invocation, so to speak
