@@ -34,7 +34,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
     {        
 
-        $this->events->trigger(__FUNCTION__, $this);
+        $this->getEventManager()->trigger(__FUNCTION__, $this);
 
     }
 }
