@@ -45,8 +45,14 @@ class Module
         // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
-        // $sessionManager =
-        $container->get(SessionManager::class);
+       
+        $container->get(SessionManager::class);// yes. just the getting is enough
+        
+        // Interpreter entity event listener, an experiment to test a hypothesis.
+        // $listener = $container->get('interpreter-listener');
+        // $em = $container->get('entity-manager');
+        // $em->getConfiguration()->getEntityListenerResolver()->register($listener);
+        
     }
 
     /**
@@ -86,7 +92,7 @@ class Module
             $flashMessenger->addWarningMessage('Authentication is required.');
             $session->redirect_url = $event->getRequest()->getUriString();
             return $this->getRedirectionResponse($event);
-        } else {
+        } else {            
             if (! $this->checkAcl($event, $session->role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
