@@ -8,13 +8,19 @@ use Zend\Http\Client;
 
 
 /**
- * A stab at a basic Vault client
+ * Extension of Zend\Http\Client for communciating with Hashicorp Vault
  * 
- * @todo consider:  maybe this should simply extend Zend\Http\Client
- * instead of wrapping one?
+ * The purpose is enable us to store sensitive data in MySQL using symmetrical
+ * encryption while avoiding having to store the encryption key in plain text 
+ * anywhere at any time. All the configuration has to be correctly set before 
+ * instantiation. Error-checking is left up to the consumer.
+ * 
+ * Absent further precautions, it's surely still possible to beat this in a 
+ * worst-case scenario, but it's a good start.
+ * 
  */
 
-class Vault {
+class Vault extends Client  {
     
     /**
      * mapping of string keys to CURL integer constants
@@ -26,12 +32,6 @@ class Vault {
         'ssl_cert'=> \CURLOPT_SSLCERT,        
     ];
     
-    /**
-     * client to use for speaking to vault
-     * 
-     * @var Zend\Http\Client
-     */
-    protected $client;
     
     /**
      * vault address
@@ -63,8 +63,9 @@ class Vault {
             }
         }
         $config['curloptions'] = $curloptions;       
-        $this->client =  new Client(null,$config);        
-        $this->client->getRequest()
+
+        parent::__construct(null, $config);
+        $this->getRequest()
             ->getHeaders()
             ->addHeaderLine('Accept: application/json');
     }
@@ -79,21 +80,17 @@ class Vault {
         return $this->vault_address;
     }
     
+  
     /**
-     * gets client
+     * resets request, response, etc, and restores
+     * request header for JSON responses
      * 
-     * returns our configured client so that the caller
-     * can do whatever with it
-     * @return \Zend\Http\Client
+     * @return \SDNY\Vault\Service\Vault
      */
-    public function getClient()
-    {
-        return $this->client;
-    }
-
     public function reset()
     {
-        $this->client->reset()->getRequest()
+        parent::reset();
+        $this->getRequest()
             ->getHeaders()
             ->addHeaderLine('Accept: application/json');
         return $this;
@@ -115,29 +112,28 @@ class Vault {
     public function authenticateUser($user,$password)
     {
         $uri = $this->vault_address . "/auth/userpass/login/$user";
-        $this->client->getRequest()->setContent(json_encode(['password'=>$password]));
-        $this->client
-                ->setUri($uri)                
-                ->setMethod('POST')
-                ->send();
+        $this->getRequest()->setContent(json_encode(['password'=>$password]));
+        $this->setUri($uri)->setMethod('POST')->send();
         
-        return $this->client->getResponse()->getBody();
+        return $this->responseToArray($this->getResponse()->getBody());  
         
     }
     
     /**
      * attempts Vault TSL authentication
      * 
-     * this will attempt to authenticate using TLS certificates
+     * this will attempt to authenticate using TLS certificates, which have to 
+     * have been installed and set in our configuration up front. 
+     * 
      * @link https://www.vaultproject.io/docs/auth/cert.html
      */
     public function authenticateTLSCert($options = [])
     {
-        $this->client->setMethod('POST')
+        $this->setMethod('POST')
             ->setUri($this->vault_address .'/auth/cert/login')
             ->send();
         
-        return $this->client->getResponse()->getBody();        
+        return $this->responseToArray($this->getResponse()->getBody());          
     }
     
     /**
@@ -148,21 +144,28 @@ class Vault {
      */
     public function setAuthToken($token)
     {
-        $this->client->getRequest()
+        $this->getRequest()
             ->getHeaders()
             ->addHeaderLine("X-Vault-Token:$token");
         
         return $this;
     }
     
+    /**
+     * unwraps a wrapped response
+     * 
+     * @param string $token
+     * @return array
+     */
     public function unwrap($token)
     {
         $this->reset();
         
         $endpoint = $this->vault_address . '/sys/wrapping/unwrap';
         $this->setAuthToken($token);
-        $this->client->setMethod('POST')->setUri($endpoint)->send();
-        return $this->client->getResponse()->getBody();         
+        $this->setMethod('POST')->setUri($endpoint)->send();
+        
+        return $this->responseToArray($this->getResponse()->getBody());      
     }
     
     /**
@@ -174,34 +177,49 @@ class Vault {
      * it's assumed to have been set already
      *
      * @param string $auth_token 
-     * @return string 
+     * @return array 
      */
     public function getCipherAccessToken($auth_token = null)
     {
         if ($auth_token) {
-            $this->client->getRequest()
+            $this->getRequest()
             ->getHeaders()
             ->addHeaderLine("X-Vault-Token:$auth_token")
             ->addHeaderLine("X-Vault-Wrap-TTL: 3m");
         }
         $endpoint = $this->vault_address . '/auth/token/create/read-cipher';
-        $this->client->getRequest()->setContent(json_encode(
+        $this->getRequest()->setContent(json_encode(
                [
                 'ttl' => '5m',
                 'num_uses' => 3,
                ]
         ));
-        $this->client->setMethod('POST')->setUri($endpoint)->send();
+        $this->setMethod('POST')->setUri($endpoint)->send();
         
-        return $this->client->getResponse()->getBody();           
+       return $this->responseToArray($this->getResponse()->getBody());             
     }
-    
+    /**
+     * 
+     * @param string $token authentication token
+     * @return Array
+     */
     public function getEncryptionKey($token)
     {
-        //$this->client->reset();
+
         $endpoint = $this->vault_address . '/secret/sdny/encryption';
         $this->setAuthToken($token);
-        $this->client->setMethod('GET')->setUri($endpoint)->send();
-        return $this->client->getResponse()->getBody();  
+        $this->setMethod('GET')->setUri($endpoint)->send();
+        return $this->responseToArray($this->getResponse()->getBody());  
+    }
+    
+    /**
+     * converts json to array
+     * 
+     * @param string $json
+     * @return Array
+     */
+    public function responseToArray($json) {
+        
+        return json_decode($json,true);
     }
 }
