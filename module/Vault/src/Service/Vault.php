@@ -4,6 +4,7 @@
  */
 
 namespace SDNY\Vault\Service;
+
 use Zend\Http\Client;
 
 

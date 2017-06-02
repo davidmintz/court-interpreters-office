@@ -24,16 +24,20 @@ return [
             Service\Vault::class => Service\Factory\VaultServiceFactory::class,           
         ]
     ],
+    'controllers' => [
+        'factories' => [           
+            Controller\VaultController::class => Controller\Factory\VaultControllerFactory::class,
+        ]
+    ],
     'router' => [
         'routes' => [
-
             'vault-decrypt' => [
              'type' => Literal::class,
                 'options' => [
                     'route' => '/vault/decrypt', //[/]
                     'defaults' => [
-                        'module' => 'InterpretersOffice\Admin',
-                        'controller' => \InterpretersOffice\Admin\Controller\VaultController::class,
+                        'module' =>__NAMESPACE__,
+                        'controller' => Controller\VaultController::class,
                         'action' => 'decrypt',
                     ],
                 ],

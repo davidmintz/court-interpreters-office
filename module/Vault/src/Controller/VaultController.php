@@ -2,7 +2,7 @@
 /**
  * module/Vault/src/Controller/VaultController
  */
-namespace InterpretersOffice\Admin\Controller;
+namespace SDNY\Vault\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
@@ -64,17 +64,18 @@ class VaultController extends AbstractActionController {
     {
         //$params = $this->params()->fromPost();
         //$cipher = new BlockCipher(new Openssl);
-        $applicationAuth = json_decode($this->vaultService->authenticateTLSCert());
-        $token = $applicationAuth->auth->client_token; 
+        $this->verifyAuth();
+        $applicationAuth = $this->vaultService->authenticateTLSCert();
+        $token = $applicationAuth['auth']['client_token'];
         
-        $wrappedResponse = json_decode($this->vaultService->getCipherAccessToken($token));
-        $unwrapToken = $wrappedResponse->wrap_info->token;
+        $wrappedResponse = $this->vaultService->getCipherAccessToken($token);
+        $unwrapToken = $wrappedResponse['wrap_info']['token'];
         $unwrappedResponse = $this->vaultService->unwrap( $unwrapToken);
         //var_dump(json_decode($unwrappedResponse)); 
-        $cipherToken = json_decode($unwrappedResponse)->auth->client_token;
+        $cipherToken = $unwrappedResponse['auth']['client_token'];
         //echo $cipherToken;
-        $response = json_decode($this->vaultService->getEncryptionKey($cipherToken));
-        $cipher = $response->data->cipher;
+        $response = $this->vaultService->getEncryptionKey($cipherToken);
+        $cipher = $response['data']['cipher'];
         echo "cipher is $cipher ";
         return false;
         

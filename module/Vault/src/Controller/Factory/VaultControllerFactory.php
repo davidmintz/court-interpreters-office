@@ -3,12 +3,12 @@
  * module/Vault/src/Controller/Factory/VaultControllerFactory.php
  */
 
-namespace InterpretersOffice\Admin\Controller\Factory;
+namespace SDNY\Vault\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
-use InterpretersOffice\Admin\Controller\VaultController;
+use SDNY\Vault\Controller\VaultController;
 
 use SDNY\Vault\Service\Vault as VaultService;
 
