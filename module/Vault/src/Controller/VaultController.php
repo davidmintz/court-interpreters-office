@@ -85,8 +85,5 @@ class VaultController extends AbstractActionController {
         } catch (VaultException $e) {
              return new JsonModel(['error'=>$e->getMessage()]);
         }
-           
-        
-    }
-  
+    }  
 }

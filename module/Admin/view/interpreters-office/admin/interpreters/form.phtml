@@ -8,7 +8,8 @@ $this->headTitle($this->title);
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepicker.css'));
 $this->headScript()
         ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
-        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
+        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+        ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'));
 
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
@@ -343,20 +344,29 @@ $(function(){
         $.post(url, input, function(response){
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors);
-            }
-            
+            }            
             if (response.authenticated) {
                 $('#login-modal').modal('hide');
+                var encrypted_dob =  $("input[name='interpreter[dob]']").last();
+                var encrypted_ssn =  $("input[name='interpreter[ssn]']").last();
                 $.post('/vault/decrypt',{
-                    dob : $("input[name='interpreter[dob]']").last().val(),
-                    ssn : $("input[name='interpreter[ssn]']").last().val(),
+                    dob : encrypted_dob.val(),
+                    ssn : encrypted_ssn.val()
                 },function(response){
                     if (response.error) {
                         alert("shit: "+response.error);
                         return;
                     }
-                    // to be continued!
-                    
+                    encrypted_dob.remove();
+                    encrypted_ssn.remove();
+                    $('#ssn, #dob').removeAttr("disabled");
+                    $('#ssn').val(response.ssn);
+                    var dob = $('#dob').val();
+                    if (dob) {
+                        $('#dob').val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"));
+                    }  else {
+                        $('#dob').val("");
+                    }   
                 },'json');
             } else {
                 return alert("auth failed.");
