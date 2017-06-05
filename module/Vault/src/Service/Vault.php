@@ -106,6 +106,15 @@ class Vault extends Client implements EventManagerAwareInterface {
             ->addHeaderLine('Accept: application/json');
         return $this;
     }
+
+    /**
+     * checks response for errors
+     * @param Array $response
+     * @return boolean true if error
+     */
+    public function isError(Array $response) {
+        return key_exists('errors',$response);
+    }
     
     /**
      * attempts user/password authentication
@@ -143,10 +152,13 @@ class Vault extends Client implements EventManagerAwareInterface {
             ->setUri($this->vault_address .'/auth/cert/login')
             ->send();        
         $response = $this->responseToArray($this->getResponse()->getBody());
-        // to do: check response, trigger an event
+        if ($this->isError($response)) {
+            $this->getEventManager()->trigger(__FUNCTION__, $this, []);
+            throw new VaultException();
+        }
         return $response;
     }
-    
+
     /**
      * sets Vault authentication token header
      * 

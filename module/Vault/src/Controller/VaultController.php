@@ -59,6 +59,15 @@ class VaultController extends AbstractActionController {
         return true;
     }   
     
+    /**
+     *
+     * @param Array $response
+     * @return boolean true if error
+     */
+    public function isError(Array $response) {
+        return key_exists('errors',$response);
+    }
+
     public function decryptAction()
     {
         //$params = $this->params()->fromPost();
@@ -73,9 +82,10 @@ class VaultController extends AbstractActionController {
         //var_dump(json_decode($unwrappedResponse)); 
         $cipherToken = $unwrappedResponse['auth']['client_token'];
         //echo $cipherToken;
-        $response = $this->vaultService->getEncryptionKey($cipherToken);
-        $cipher = $response['data']['cipher'];
-        echo "cipher: $cipher<br>";
+        $response = $this->vaultService->getEncryptionKey($cipherToken."shit");
+        var_dump($response);
+       // $cipher = $response['data']['cipher'];
+       // echo "cipher: $cipher<br>";
         return false;
         
     }
