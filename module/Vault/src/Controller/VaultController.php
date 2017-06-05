@@ -59,31 +59,18 @@ class VaultController extends AbstractActionController {
         return true;
     }   
     
-    /**
-     *
-     * @param Array $response
-     * @return boolean true if error
-     */
-    public function isError(Array $response) {
-        return key_exists('errors',$response);
-    }
+    
 
     public function decryptAction()
     {
         //$params = $this->params()->fromPost();
         //$cipher = new BlockCipher(new Openssl);
         $this->verifyAuth();
-        $applicationAuth = $this->vaultService->authenticateTLSCert();
-        $token = $applicationAuth['auth']['client_token'];
-        
-        $wrappedResponse = $this->vaultService->getCipherAccessToken($token);
-        $unwrapToken = $wrappedResponse['wrap_info']['token'];
-        $unwrappedResponse = $this->vaultService->unwrap( $unwrapToken);
-        //var_dump(json_decode($unwrappedResponse)); 
-        $cipherToken = $unwrappedResponse['auth']['client_token'];
-        //echo $cipherToken;
-        $response = $this->vaultService->getEncryptionKey($cipherToken."shit");
-        var_dump($response);
+        $this->vaultService->authenticateTLSCert();
+        $this->vaultService->getCipherAccessToken();
+        $this->vaultService->unwrap();
+        $response = $this->vaultService->getEncryptionKey();
+        var_dump($response['data']);
        // $cipher = $response['data']['cipher'];
        // echo "cipher: $cipher<br>";
         return false;

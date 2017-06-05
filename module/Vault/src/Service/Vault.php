@@ -91,7 +91,18 @@ class Vault extends Client implements EventManagerAwareInterface {
         return $this->vault_address;
     }
     
-  
+    private $token;
+   
+
+    /**
+     * checks response for errors
+     * @param Array $response
+     * @return boolean true if error
+     */
+    public function isError(Array $response) {
+        return key_exists('errors',$response);
+    }
+    
     /**
      * resets request, response, etc, and restores
      * request header for JSON responses
@@ -106,14 +117,150 @@ class Vault extends Client implements EventManagerAwareInterface {
             ->addHeaderLine('Accept: application/json');
         return $this;
     }
+    
+    /**
+     * attempts Vault TSL authentication
+     * 
+     * this will attempt to authenticate using TLS certificates, which have to 
+     * have been installed and set in our configuration up front. 
+     * 
+     * @link https://www.vaultproject.io/docs/auth/cert.html
+     */
+    public function authenticateTLSCert($options = [])
+    {
+        $this->setMethod('POST')
+            ->setUri($this->vault_address .'/auth/cert/login')
+            ->send();        
+        $response = $this->responseToArray($this->getResponse()->getBody());
+        if ($this->isError($response)) {
+            $this->getEventManager()->trigger(__FUNCTION__, $this, []);
+            throw new VaultException($response['errors'][0]);
+        }
+        $this->token = $response['auth']['client_token'];
+        //printf("DEBUG: \$this->token is $this->token in %s<br>",__FUNCTION__);
+        return $response;
+    }
 
     /**
-     * checks response for errors
-     * @param Array $response
-     * @return boolean true if error
+     * Attempts to acquire and return response-wrapped Vault access token that is
+     * authorized to read the cipher we use for symmetrical encryption/decryption
+     * of sensitive Interpreter data.
+     * 
+     * The $auth_token parameter is used for authentication if provided; otherwise
+     * it's assumed to have been set already
+     *
+     * @param string $auth_token 
+     * @return array 
      */
-    public function isError(Array $response) {
-        return key_exists('errors',$response);
+    public function getCipherAccessToken($auth_token = null)
+    {
+        /*
+        if ($auth_token) {
+            $this->getRequest()->getHeaders()
+            ->addHeaderLine("X-Vault-Token:$auth_token");            
+        }         
+         */
+        $this->getRequest()->getHeaders()
+                ->addHeaderLine("X-Vault-Token:$this->token")
+                ->addHeaderLine("X-Vault-Wrap-TTL: 3m");
+        $endpoint = $this->vault_address . '/auth/token/create/read-cipher';
+        $this->getRequest()->setContent(json_encode(
+               [
+                'ttl' => '5m',
+                'num_uses' => 3,
+               ]
+        ));
+        $this->setMethod('POST')->setUri($endpoint)->send();
+        $response = $this->responseToArray($this->getResponse()->getBody());
+        if ($this->isError($response)) {
+            $this->getEventManager()->trigger(__FUNCTION__, $this, [
+                'message' => 'failed to get token for cipher access'
+            ]);
+            throw new VaultException($response['errors'][0]);
+        }
+        
+        
+        $this->token = $response['wrap_info']['token'];
+        //printf("DEBUG: \$this->token is $this->token in %s<br>",__FUNCTION__);
+        return $response;             
+    }
+       
+    
+    /**
+     * unwraps a wrapped response
+     * 
+     * @param string $token
+     * @return array
+     */
+    public function unwrap()
+    {
+        $this->reset();
+        
+        $endpoint = $this->vault_address . '/sys/wrapping/unwrap';
+        $this->setAuthToken($this->token);
+        $this->setMethod('POST')->setUri($endpoint)->send();
+        
+        $response = $this->responseToArray($this->getResponse()->getBody());
+        if ($this->isError($response)) {
+            $this->getEventManager()->trigger(__FUNCTION__, $this, [
+                'message' => 'failed to get token for cipher access'
+            ]);
+            throw new VaultException($response['errors'][0]);
+        }
+        $this->token = $response['auth']['client_token'];
+        //printf("DEBUG: \$this->token is $this->token in %s<br>",__FUNCTION__);
+        return $response;      
+    }
+    
+    /**
+     * 
+     * @param string $token authentication token
+     * @return Array
+     */
+    public function getEncryptionKey()
+    {
+        $endpoint = $this->vault_address . '/secret/sdny/encryption';
+        $this->setAuthToken($this->token);
+        //$this->getRequest()->getHeaders()->addHeaderLine("X-Vault-Wrap-TTL: 3m");
+        $this->setMethod('GET')->setUri($endpoint)->send();
+        $response = $this->responseToArray($this->getResponse()->getBody());
+         if ($this->isError($response)) {
+            $this->getEventManager()->trigger(__FUNCTION__, $this, [
+                'message' => 'failed to get token for cipher access'
+            ]);
+            throw new VaultException($response['errors'][0]);
+        }
+        //var_dump($response);
+        return $response;  
+        
+    }
+    
+    /**
+     * sets Vault authentication token header
+     * 
+     * @param string $token
+     * @return \SDNY\Service\Vault
+     */
+    public function setAuthToken($token)
+    {
+        $this->getRequest()
+            ->getHeaders()
+            ->addHeaderLine("X-Vault-Token:$token");
+        
+        return $this;
+    }
+    
+   
+    
+    /**
+     * converts json to array
+     * 
+     * @param string $json
+     * @return Array
+     */
+    public function responseToArray($json) {
+        
+        return json_decode($json,true);
     }
     
     /**
@@ -138,111 +285,4 @@ class Vault extends Client implements EventManagerAwareInterface {
         
     }
     
-    /**
-     * attempts Vault TSL authentication
-     * 
-     * this will attempt to authenticate using TLS certificates, which have to 
-     * have been installed and set in our configuration up front. 
-     * 
-     * @link https://www.vaultproject.io/docs/auth/cert.html
-     */
-    public function authenticateTLSCert($options = [])
-    {
-        $this->setMethod('POST')
-            ->setUri($this->vault_address .'/auth/cert/login')
-            ->send();        
-        $response = $this->responseToArray($this->getResponse()->getBody());
-        if ($this->isError($response)) {
-            $this->getEventManager()->trigger(__FUNCTION__, $this, []);
-            throw new VaultException();
-        }
-        return $response;
-    }
-
-    /**
-     * sets Vault authentication token header
-     * 
-     * @param string $token
-     * @return \SDNY\Service\Vault
-     */
-    public function setAuthToken($token)
-    {
-        $this->getRequest()
-            ->getHeaders()
-            ->addHeaderLine("X-Vault-Token:$token");
-        
-        return $this;
-    }
-    
-    /**
-     * unwraps a wrapped response
-     * 
-     * @param string $token
-     * @return array
-     */
-    public function unwrap($token)
-    {
-        $this->reset();
-        
-        $endpoint = $this->vault_address . '/sys/wrapping/unwrap';
-        $this->setAuthToken($token);
-        $this->setMethod('POST')->setUri($endpoint)->send();
-        
-        return $this->responseToArray($this->getResponse()->getBody());      
-    }
-    
-    /**
-     * Attempts to acquire and return response-wrapped Vault access token that is
-     * authorized to read the cipher we use for symmetrical encryption/decryption
-     * of sensitive Interpreter data.
-     * 
-     * The $auth_token parameter is used for authentication if provided; otherwise
-     * it's assumed to have been set already
-     *
-     * @param string $auth_token 
-     * @return array 
-     */
-    public function getCipherAccessToken($auth_token = null)
-    {
-        if ($auth_token) {
-            $this->getRequest()
-            ->getHeaders()
-            ->addHeaderLine("X-Vault-Token:$auth_token")
-            ->addHeaderLine("X-Vault-Wrap-TTL: 3m");
-        }
-        $endpoint = $this->vault_address . '/auth/token/create/read-cipher';
-        $this->getRequest()->setContent(json_encode(
-               [
-                'ttl' => '5m',
-                'num_uses' => 3,
-               ]
-        ));
-        $this->setMethod('POST')->setUri($endpoint)->send();
-        
-       return $this->responseToArray($this->getResponse()->getBody());             
-    }
-    /**
-     * 
-     * @param string $token authentication token
-     * @return Array
-     */
-    public function getEncryptionKey($token)
-    {
-
-        $endpoint = $this->vault_address . '/secret/sdny/encryption';
-        $this->setAuthToken($token);
-        $this->setMethod('GET')->setUri($endpoint)->send();
-        return $this->responseToArray($this->getResponse()->getBody());  
-    }
-    
-    /**
-     * converts json to array
-     * 
-     * @param string $json
-     * @return Array
-     */
-    public function responseToArray($json) {
-        
-        return json_decode($json,true);
-    }
 }
