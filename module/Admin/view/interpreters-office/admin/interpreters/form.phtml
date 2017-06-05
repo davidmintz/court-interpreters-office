@@ -344,9 +344,20 @@ $(function(){
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors);
             }
-            // to be continued
+            
             if (response.authenticated) {
-                return alert("yay!");
+                $('#login-modal').modal('hide');
+                $.post('/vault/decrypt',{
+                    dob : $("input[name='interpreter[dob]']").last().val(),
+                    ssn : $("input[name='interpreter[ssn]']").last().val(),
+                },function(response){
+                    if (response.error) {
+                        alert("shit: "+response.error);
+                        return;
+                    }
+                    // to be continued!
+                    
+                },'json');
             } else {
                 return alert("auth failed.");
             }
