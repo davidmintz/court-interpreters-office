@@ -8,6 +8,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
 use SDNY\Vault\Service\Vault;
+use SDNY\Vault\Service\VaultException;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 
@@ -63,17 +64,28 @@ class VaultController extends AbstractActionController {
 
     public function decryptAction()
     {
-        //$params = $this->params()->fromPost();
-        //$cipher = new BlockCipher(new Openssl);
-        $this->verifyAuth();
-        $this->vaultService->authenticateTLSCert();
-        $this->vaultService->getCipherAccessToken();
-        $this->vaultService->unwrap();
-        $response = $this->vaultService->getEncryptionKey();
-        var_dump($response['data']);
-       // $cipher = $response['data']['cipher'];
-       // echo "cipher: $cipher<br>";
-        return false;
+        $params = $this->params()->fromPost();
+        
+        try  {
+            $this->verifyAuth();
+            $this->vaultService
+                ->authenticateTLSCert()
+                ->getCipherAccessToken()
+                ->unwrap();        
+            $this->vaultService->getWrappedEncryptionKey();
+            $key = $this->vaultService->unwrap()['data']['cipher'];
+            $cipher = new BlockCipher(new Openssl);
+            $cipher->setKey($key);
+            $decrypted = [
+                'ssn' => $cipher->decrypt($params['ssn']),
+                'dob' => $cipher->decrypt($params['dob'])
+            ];
+            return new JsonModel($decrypted) ;
+            
+        } catch (VaultException $e) {
+             return new JsonModel(['error'=>$e->getMessage()]);
+        }
+           
         
     }
   
