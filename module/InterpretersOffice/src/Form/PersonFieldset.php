@@ -145,6 +145,24 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      * @var string
      */
     protected $auth_user_role = 'anonymous';
+    
+    /**
+     * standard phone validation spec
+     * 
+     * @var array
+     */
+    protected $phone_validator_spec = [
+        
+        'name' => 'StringLength',
+        'options' => [
+            'min' => 10,
+            'max' => 10,
+            'messages' => [
+                Validator\StringLength::TOO_SHORT => 'phone number must contain ten digits',
+                Validator\StringLength::TOO_LONG => 'phone number cannot exceed ten digits',
+            ],
+        ],
+    ];
 
     /**
      * constructor.
@@ -166,7 +184,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             if (! in_array($options['auth_user_role'], ['anonymous','staff','submitter','manager','administrator'])) {
                 throw new \RuntimeException('invalid "auth_user_role" option in PersonFieldset constructor');
             }
-             $this->auth_user_role = $options['auth_user_role'];
+            $this->auth_user_role = $options['auth_user_role'];
         }
         $this->action = $options['action'];
         unset($options['action']);
@@ -354,46 +372,22 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'required' => false,
                 'allow_empty' => true,
                 'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'min' => 10,
-                            'max' => 10,
-                            'messages' => [
-                                Validator\StringLength::TOO_SHORT => 'phone number must contain ten digits',
-                                Validator\StringLength::TOO_LONG => 'phone number cannot exceed ten digits',
-                            ],
-                        ],
-                    ],
+                    $this->phone_validator_spec,
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
-                    [
-                        'name' => 'Digits',
-                    ],
+                    ['name' => 'Digits', ],                
                 ],
             ],
             'mobilePhone' => [
                 'required' => false,
                 'allow_empty' => true,
                 'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'min' => 10,
-                            'max' => 10,
-                            'messages' => [
-                                Validator\StringLength::TOO_SHORT => 'phone number must contain ten digits',
-                                Validator\StringLength::TOO_LONG => 'phone number cannot exceed ten digits',
-                            ],
-                        ],
-                    ],
+                    $this->phone_validator_spec,
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
-                    [
-                        'name' => 'Digits',
-                    ],
+                    ['name' => 'Digits', ],
                 ],
             ],
         ];

@@ -373,47 +373,205 @@ class InterpreterFieldset extends PersonFieldset
          // dates
          $spec['fingerprintDate'] = [
              'allow_empty' => true,
-             'required'  => false, 
-              'validators' => [
-                [   'name' => 'Callback',
+                    'required' => false,
+                    'filters' => [
+                        [
+                            'name' => 'StringTrim',
+                        ],
+                    ],
+                    'validators' => [
+                        [
+                            'name' => 'Zend\Validator\Date',
+                            'options' => [
+                                'format' => 'd/m/Y',
+                                'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
+                            ],
+                            'break_chain_on_failure' => true,
+                        ],
+                        [ 'name' => 'Callback',
+                            'options' => [
+                                'callback' => function ($value, $context) {
+                                    // it can't be in the future
+                                    // and it can't be unreasonably long ago
+                                    list($M, $D, $Y) = explode('/', $value);
+                                    $date = "$Y-$M-$D";
+                                    $max = date('Y-m-d');
+                                    $min = (new \DateTime("-3 years"))->format('Y-m-d');                                    
+                                    return $date >= $min && $date <= $max;
+                                    
+                                },
+                                'messages' => [
+                                    \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between three years ago and today',
+                                ],
+                            ],
+                        ],
+                    ]
+                ];
+            $spec['securityClearanceDate'] = [
+             'allow_empty' => true,
+             'required'  => false,
+             'filters' => [
+                [
+                    'name' => 'StringTrim',
+                ],
+              ],
+             'validators' => [
+                 [
+                    'name'=> 'Zend\Validator\Date',
+                    'options'=>[
+                        'format' => 'd/m/Y',
+                         'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
+                    ],
+                    'break_chain_on_failure' => true,
+                 ],
+                 [ 'name' => 'Callback',
+                            'options' => [
+                                'callback' => function ($value, $context) {
+                                    // it can't be in the future
+                                    // and it can't be unreasonably long ago
+                                    list($M, $D, $Y) = explode('/', $value);
+                                    $date = "$Y-$M-$D";
+                                    $max = date('Y-m-d');
+                                    $min = (new \DateTime("-5 years"))->format('Y-m-d');                                    
+                                    return $date >= $min && $date <= $max;
+                                    
+                                },
+                                'messages' => [
+                                    \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and today',
+                                ],
+                            ],
+                     ],
+                ],
+         ];
+         $spec['contractExpirationDate'] = [
+            'allow_empty' => true,
+            'required' => false,
+            'filters' => [
+                [
+                    'name' => 'StringTrim',
+                ],
+            ],
+            'validators' => [
+                [
+                    'name' => 'Zend\Validator\Date',
                     'options' => [
-                        'callback' => function ($value, $context){
-                            // value is a string MM/DD/YYYY
-                            return true;
+                        'format' => 'd/m/Y',
+                        'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [ 'name' => 'Callback',
+                    'options' => [
+                        'callback' => function ($value, $context) {
+                            // it can't be in the future
+                            // and it can't be unreasonably long ago
+                            list($M, $D, $Y) = explode('/', $value);
+                            $date = "$Y-$M-$D";
+                            $max = date('Y-m-d');
+                            $min = (new \DateTime("-5 years"))->format('Y-m-d');
+                            return $date >= $min && $date <= $max;
                         },
                         'messages' => [
-                            \Zend\Validator\Callback::INVALID_VALUE => 'shit ain\'t right',
+                            \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and today',
                         ],
                     ],
                 ],
-            ]   
-         ];
-         $spec['securityClearanceDate'] = [
-             'allow_empty' => true,
-             'required'  => false,             
-         ];
-         $spec['contractExpirationDate'] = [
-             'allow_empty' => true,
-             'required'  => false,             
-         ];
-         $spec['oathDate'] = [
-             'allow_empty' => true,
-             'required'  => false,             
+            ],
+        ];
+        $spec['oathDate'] = [
+            'allow_empty' => true,
+            'required'  => false,
+            'filters' => [
+                [
+                    'name' => 'StringTrim',
+                ],
+            ],
+             'validators' => [
+                [
+                    'name' => 'Zend\Validator\Date',
+                    'options' => [
+                        'format' => 'd/m/Y',
+                        'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [ 'name' => 'Callback',
+                    'options' => [
+                        'callback' => function ($value, $context) {
+                            // it can't be in the future
+                            // and it can't be unreasonably long ago
+                            list($M, $D, $Y) = explode('/', $value);
+                            $date = "$Y-$M-$D";
+                            $max = (new \DateTime("+2 years"))->format('Y-m-d');
+                            $min = (new \DateTime("-5 years"))->format('Y-m-d');
+                            return $date >= $min && $date <= $max;
+                        },
+                        'messages' => [
+                            \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and two years from today',
+                        ],
+                    ],
+                ],
+            ],        
          ];
          
          // encrypted fields
          $spec['dob'] = [
              'allow_empty' => true,
-             'required'  => false,             
+             'required'  => false,
+              'filters' => [
+                [
+                    'name' => 'StringTrim',
+                ],
+            ],
+             'validators' => [
+                 [
+                    'name'=> 'Zend\Validator\Date',
+                    'options'=>[
+                        'format' => 'd/m/Y',
+                         'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [ 'name' => 'Callback',
+                    'options' => [
+                        'callback' => function ($value, $context) {
+                            // it can't be in the future
+                            // and it can't be unreasonably long ago
+                            list($M, $D, $Y) = explode('/', $value);
+                            $date = "$Y-$M-$D";
+                            $max = (new \DateTime("-18 years"))->format('Y-m-d');
+                            $min = (new \DateTime("-100 years"))->format('Y-m-d');
+                            return $date >= $min && $date <= $max;
+                        },
+                        'messages' => [
+                            \Zend\Validator\Callback::INVALID_VALUE => 'date of birth has to be between 18 and 100 years ago',
+                        ],
+                    ],
+                ],
+             ],
          ];
          $spec['ssn'] = [
              'allow_empty' => true,
-             'required'  => false,             
+             'required'  => false,
+              'validators' => [
+                    $this->phone_validator_spec,
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => 'Digits', ],
+                ],
          ];
          
          $spec['homePhone'] = [
              'allow_empty' => true,
-             'required'  => false,             
+             'required'  => false,
+              'validators' => [
+                    $this->phone_validator_spec,
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => 'Digits', ],
+                ],
          ];
          /*
           * `contract_expiration_date` date DEFAULT NULL,
