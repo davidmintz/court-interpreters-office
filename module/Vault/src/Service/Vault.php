@@ -43,7 +43,14 @@ class Vault extends Client implements EventManagerAwareInterface {
         'ssl_cert'=> \CURLOPT_SSLCERT,        
     ];
     
-    
+    /**
+     * vault authentication token
+     * 
+     * @var string
+     */
+
+    private $token;
+
     /**
      * vault address
      * 
@@ -90,8 +97,6 @@ class Vault extends Client implements EventManagerAwareInterface {
     {
         return $this->vault_address;
     }
-    
-    private $token;
    
 
     /**
