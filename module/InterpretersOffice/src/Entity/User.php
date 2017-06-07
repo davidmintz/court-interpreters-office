@@ -20,6 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\Table(name="users")
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class User
