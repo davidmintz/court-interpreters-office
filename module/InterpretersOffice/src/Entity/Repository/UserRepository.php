@@ -10,22 +10,27 @@ use InterpretersOffice\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Description of UserRepository
+ * UserRepository
  *
- * @author david
+ * 
  */
 class UserRepository extends EntityRepository {
     
     
     use ResultCachingQueryTrait;
     
-    
-    
      /**
      * @var string cache id
      */
     protected $cache_id = 'users';
-    
+
+    /**
+     * cache lifetime
+     *
+     * @var int 
+     */
+    protected $cache_lifetime = 3600;
+
     /**
      * cache
      *

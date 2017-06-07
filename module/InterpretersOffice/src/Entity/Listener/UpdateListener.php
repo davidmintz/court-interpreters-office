@@ -8,6 +8,8 @@ use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 
+use InterpretersOffice\Entity;
+
 use Zend\Log;
 
 /**
@@ -50,6 +52,18 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         } else {
             $this->logger->debug("! not an implementation of CacheDeletionInterface:    ".get_class($repository));
         }
+        if ($entity instanceof Entity\User) {
+            // delete the cache entry
+            $cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
+            $cache->setNamespace('users');
+            $id = $entity->getId();
+            if ($cache->contains($id)) {
+                $cache->delete($id);
+                $this->logger->debug(sprintf("%s in UpdateListener deleted user id $id from cache",__FUNCTION__));
+            } else {
+                $this->logger->debug(sprintf('%s in UpdateListener: looks like users cache has no %d',__FUNCTION__,$id));
+            }
+        } 
     }
 
     /**
