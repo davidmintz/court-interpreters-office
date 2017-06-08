@@ -1,4 +1,5 @@
 <?php
+/* also not really part of the project, just screwing around and experimenting */
 
 namespace InterpretersOffice\Entity;
 
