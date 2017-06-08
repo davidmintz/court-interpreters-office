@@ -3,6 +3,8 @@
  * screen-scraper for CasperJs to get SDNY judge courtrooms
  * Usage: casperjs <scriptname>.js
  * 
+ * this could all surely be done easier and fasting by piping curl output to awk or similar. but
+ * we want to learn some Casper.
  */
 
 var casper = require('casper').create({});
