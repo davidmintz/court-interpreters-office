@@ -15,11 +15,11 @@ With [docker](https://www.docker.com/) having become such a thing, the chances a
 
 # installation
 
-At the moment InterpretersOffice isn't really worth installing, since it doesn't do very much as of yet. But when the time comes, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Then next thing you'll need to do is create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in the README files and/or comments in the source files.
+At the moment InterpretersOffice isn't really worth installing, since it's still incomplete. But when the time comes, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Then next thing you'll need to do is create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in the README files and/or comments in the source files.
 
 # features
 
-There will be an administrative interface with which authenticated users can manage the calendar for their office: view, add,update and delete events involving court interpreters. Events have attributes like date, time, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You will also  be able to record metadata such as the identity of the person making the request and the date and time it was made.
+There will be an administrative interface with which authenticated users can manage the calendar for their office: view, add, update and delete events involving court interpreters. Events have attributes like date, time, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You will also  be able to record metadata such as the identity of the person making the request and the date and time it was made.
 
 You will be able to search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
 
