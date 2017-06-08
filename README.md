@@ -7,28 +7,19 @@ InterpretersOffice is designed primarily with US District Court in mind, but I'm
 
 # requirements
 
-Requirements are not exotic. In more or less plain English: you are going to need standard hardware and software for serving 
-a web application. That means a computer on a network with its firewall configured to allow web traffic; installed on that 
-computer, a properly configured web server such as [Apache](https://httpd.apache.org/); the [MySQL](https://www.mysql.com/) 
-database server (others will likely work, but we haven't gone there yet); and the programming language [PHP](http://php.net/) 
-version 5.6 or later (we are currently testing under PHP 5.6, 7.0 and 7.1). On the client side, users will need only a standard 
-web browser and access via the network to the server where the application is installed. If you're running this on your court's 
-intranet, your system administrators should readily understand this stuff. If you opt instead to install it on a commercial web 
-hosting service, that will work as well, because as we said, the underlying software requirements are standard.
+Requirements are not exotic. In more or less plain English: you are going to need standard hardware and software for serving a web application. That means a computer on a network with its firewall configured to allow web traffic; installed on that computer, a properly configured web server such as [Apache](https://httpd.apache.org/); the [MySQL](https://www.mysql.com/) database server (others will likely work, but we haven't gone there yet); and the programming language [PHP](http://php.net/) version 7.0 or 7.1. On the client side, users will need only a standard web browser and access via the network to the server where the application is installed. If you're running this on your court's intranet, your system administrators should readily understand this stuff. If you opt instead to install it on a commercial web hosting service, that will work as well, because as we said, the underlying software requirements are standard.
 
-The entire software stack -- operating system, web and database servers, application code -- can consist of open-source software costing you nothing. If you're running it on your organization's network, an ordinary, inexpensive commodity PC will be plenty powerful enough to support the number of users you're likely to have.
+The entire software stack -- operating system, web and database servers, application code -- can and should consist of open-source software costing you nothing. If you're running it on your organization's network, an ordinary, inexpensive commodity PC will be plenty powerful enough to support the number of users you're likely to have.
+
+With [docker](https://www.docker.com/) having become such a thing, the chances are very good that I will also publish this application as a docker image. In English, this more or less means a single, self-contained thing that will depend on little else being installed on the computer where it resides.
 
 # installation
 
-At the moment InterpretersOffice isn't really worth installing, since it doesn't do very much as of yet. But when the time comes, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Then next thing you'll need 
-to do is create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files 
-to edit. Details will be in the README files and/or comments in the source files.
+At the moment InterpretersOffice isn't really worth installing, since it doesn't do very much as of yet. But when the time comes, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Then next thing you'll need to do is create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in the README files and/or comments in the source files.
 
 # features
 
-There will be an administrative interface with which authenticated users can manage the calendar for their office: view, add,
-update and delete events involving court interpreters. Events have attributes like date, time, language, judge,
-docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You will also  be able to record metadata such as the identity of the person making the request and the date and time it was made.
+There will be an administrative interface with which authenticated users can manage the calendar for their office: view, add,update and delete events involving court interpreters. Events have attributes like date, time, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You will also  be able to record metadata such as the identity of the person making the request and the date and time it was made.
 
 You will be able to search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
 
@@ -44,6 +35,8 @@ The server-side code is written in PHP and relies heavily on [the Zend MVC Frame
 
 My name is [David Mintz](https://davidmintz.org) and I'm a Spanish interpreter on staff at the [Interpreters Office](https://sdnyinterpreters.org/) of the US District Court, Southern District of New York, located in New York City. And I like coding web applications.
 
-Feel free to contact me with any questions or suggestions.
+# questions? comments?
+
+Please feel free to contact me with any questions or suggestions.
 
 
