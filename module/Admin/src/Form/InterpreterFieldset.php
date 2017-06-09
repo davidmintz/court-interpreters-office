@@ -552,7 +552,7 @@ class InterpreterFieldset extends PersonFieldset
              'allow_empty' => true,
              'required'  => false,
               'validators' => [
-                    $this->phone_validator_spec,
+                    // to be continued
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
