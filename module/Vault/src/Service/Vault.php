@@ -80,10 +80,9 @@ class Vault extends Client implements EventManagerAwareInterface {
      */
     public function __construct(Array $config) {
         
-        $this->vault_address = $config['vault_address'] . $this->prefix;=
+        $this->vault_address = $config['vault_address'] . $this->prefix;
         $this->path_to_secret = isset($config['path_to_secret']) ? 
             $config['path_to_secret'] : null;
-        //unset($config['vault_address']);
         $curloptions = [];
         foreach ($config as $key => $value) {
             if (key_exists($key, self::$curlopt_keys)) {
@@ -105,7 +104,7 @@ class Vault extends Client implements EventManagerAwareInterface {
      */
     public function setPathToSecret($path)
     {
-        $this->path_to_secret = $path;
+        $this->path_to_secret = $path;       
     }
 
     /**
