@@ -56,14 +56,22 @@ class Vault extends Client implements EventManagerAwareInterface {
      * 
      * @var string
      */
-    protected $vault_address;
+    private $vault_address;
     
     /**
      * Vault API prefix
      * 
      * @var string
      */
-    protected $prefix = '/v1';
+    private $prefix = '/v1';
+
+
+    /**
+     * path to the ultimate secret
+     * 
+     * @var string
+     */
+    private $path_to_secret;
     
     /**
      * constructor
@@ -72,8 +80,10 @@ class Vault extends Client implements EventManagerAwareInterface {
      */
     public function __construct(Array $config) {
         
-        $this->vault_address = $config['vault_address'] . $this->prefix;
-        unset($config['vault_address']);
+        $this->vault_address = $config['vault_address'] . $this->prefix;=
+        $this->path_to_secret = isset($config['path_to_secret']) ? 
+            $config['path_to_secret'] : null;
+        //unset($config['vault_address']);
         $curloptions = [];
         foreach ($config as $key => $value) {
             if (key_exists($key, self::$curlopt_keys)) {
@@ -87,7 +97,27 @@ class Vault extends Client implements EventManagerAwareInterface {
             ->getHeaders()
             ->addHeaderLine('Accept: application/json');
     }
-    
+
+    /**
+     * sets path to secret
+     * 
+     * @var string
+     */
+    public function setPathToSecret($path)
+    {
+        $this->path_to_secret = $path;
+    }
+
+    /**
+     * gets path to secret
+     * 
+     * @var string
+     */
+    public function getPathToSecret()
+    {
+        return $this->path_to_secret;
+    }
+
     /**
      * gets the vault address
      * 
@@ -124,7 +154,7 @@ class Vault extends Client implements EventManagerAwareInterface {
     }
     
     /**
-     * attempts Vault TSL authentication
+     * attempts Vault TLS authentication
      * 
      * this will attempt to authenticate using TLS certificates, which have to 
      * have been installed and set in our configuration up front. 
@@ -219,7 +249,10 @@ class Vault extends Client implements EventManagerAwareInterface {
      */
     public function getWrappedEncryptionKey()
     {
-        $endpoint = $this->vault_address . '/secret/sdny/encryption';
+        if (! $this->path_to_secret) {
+            throw new VaultException('path to secret has to be set before calling '.__FUNCTION__);
+        }
+        $endpoint = $this->vault_address . $this->path_to_secret;
         $this->setAuthToken($this->token);
         $this->getRequest()->getHeaders()->addHeaderLine("X-Vault-Wrap-TTL: 10s");
         $this->setMethod('GET')->setUri($endpoint)->send();
