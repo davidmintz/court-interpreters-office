@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * custom repository class for Judge entity.
+ * @todo implement cache deletion thing
  */
 class JudgeRepository extends EntityRepository
 {
