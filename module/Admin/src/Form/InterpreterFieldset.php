@@ -513,6 +513,11 @@ class InterpreterFieldset extends PersonFieldset
          ];
          
          // encrypted fields
+         /*
+
+        food for thought: these validators should not run unless the values have been decrypted, so 
+        we need some sort of flag or something on this
+         */
          $spec['dob'] = [
              'allow_empty' => true,
              'required'  => false,
