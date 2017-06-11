@@ -66,7 +66,12 @@ class AuthController extends AbstractActionController
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 return $request->isXmlHttpRequest() ?
-                        new JsonModel(['validation_errors'=>$form->getMessages(),'authenticated'=>false])
+                        new JsonModel([
+                            'validation_errors'=>$form->getMessages(),
+                            'authenticated'=>false,
+                            'login_csrf' => $form->get('login_csrf')->getValue(),
+                            ]
+                            )
                         :
                          new ViewModel(['form' => $form]);
             }
