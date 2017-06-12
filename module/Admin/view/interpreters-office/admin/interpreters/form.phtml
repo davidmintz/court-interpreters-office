@@ -341,8 +341,12 @@ $(function(){
             login_csrf : $('input[name="login_csrf"').val()
         }
         var url = window.basePath + '/login';
-        $.post(url, input, function(response){
+        $.post(url, input, function(response    ){
             if (response.validation_errors) {
+                /* 
+                    we need to refresh the CSRF token
+                */
+                $('input[name="login_csrf"').val(response.login_csrf);
                 return displayValidationErrors(response.validation_errors);
             }            
             if (response.authenticated) {
@@ -366,7 +370,9 @@ $(function(){
                         $('#dob').val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"));
                     }  else {
                         $('#dob').val("");
-                    }   
+                    }
+                    // hide the lock thingies
+                    $('button[data-target="#login-modal"]').hide();  
                 },'json');
             } else {
                 return alert("auth failed.");
@@ -377,8 +383,6 @@ $(function(){
 
 
 });
-
-
 
 // TO DO move this somewhere accessible to all
 displayValidationErrors = function(validationErrors) {
