@@ -66,7 +66,7 @@ class VaultController extends AbstractActionController {
     {
         $params = $this->params()->fromPost();
        
-        try  {
+        try {
             $this->verifyAuth();           
             $key = $this->vaultService->getEncryptionKey();
             $cipher = new BlockCipher(new Openssl());
@@ -77,7 +77,8 @@ class VaultController extends AbstractActionController {
             ];
             return new JsonModel($decrypted) ;
             
-        } catch (VaultException $e) {            
+        } catch (VaultException $e) {
+
              return new JsonModel(['error'=>$e->getMessage()]);
         }
     }  

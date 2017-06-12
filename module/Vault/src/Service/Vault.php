@@ -186,7 +186,7 @@ class Vault extends Client implements EventManagerAwareInterface {
      * @return Vault
      * @throws VaultException
      */
-    public function acquireCipherAccessToken()
+    public function requestCipherAccessToken()
     {
         $this->getRequest()->getHeaders()
                 ->addHeaderLine("X-Vault-Token:$this->token")
@@ -240,19 +240,18 @@ class Vault extends Client implements EventManagerAwareInterface {
     }
     
     /**
-     * get response-wrapped encryption key
+     * requests response-wrapped encryption key
      * 
      * @param string $token authentication token
      * @return Vault
      * @throws VaultException
      */
-    public function getWrappedEncryptionKey()
+    public function requestWrappedEncryptionKey()
     {
         if (! $this->path_to_secret) {
             throw new VaultException('path to secret has to be set before calling '.__FUNCTION__);
         }
-        $endpoint = $this->vault_address . $this->path_to_secret;
-        //$this->setAuthToken($this->token); // really? 
+        $endpoint = $this->vault_address . $this->path_to_secret;        
         $this->getRequest()->getHeaders()->addHeaderLine("X-Vault-Wrap-TTL: 10s");
         $this->setMethod('GET')->setUri($endpoint)->send();
         $response = $this->responseToArray($this->getResponse()->getBody());
@@ -266,13 +265,22 @@ class Vault extends Client implements EventManagerAwareInterface {
         return $this;  
         
     }
-    
+    /**
+     * gets encryption key.
+     *
+     * convenience method that wraps the several 
+     * steps into one.
+     *
+     * @param string $token authentication token
+     * @return Vault
+     * @throws VaultException
+     */
     public function getEncryptionKey()
     {
         $this->authenticateTLSCert()
-                ->acquireCipherAccessToken()
+                ->requestCipherAccessToken()
                 ->unwrap();
-        $this->getWrappedEncryptionKey();//return false;
+        $this->requestWrappedEncryptionKey();
         $key = $this->unwrap()['data']['cipher'];
         return $key;
         
