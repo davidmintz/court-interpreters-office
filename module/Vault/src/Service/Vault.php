@@ -186,7 +186,7 @@ class Vault extends Client implements EventManagerAwareInterface {
      * @return Vault
      * @throws VaultException
      */
-    public function getCipherAccessToken()
+    public function acquireCipherAccessToken()
     {
         $this->getRequest()->getHeaders()
                 ->addHeaderLine("X-Vault-Token:$this->token")
@@ -234,7 +234,7 @@ class Vault extends Client implements EventManagerAwareInterface {
             throw new VaultException($response['errors'][0]);
         }
         if (isset($response['auth'])) {
-            $this->token = $response['auth']['client_token'];
+            $this->setAuthToken($response['auth']['client_token']);
         }        
         return $response;      
     }
@@ -252,7 +252,7 @@ class Vault extends Client implements EventManagerAwareInterface {
             throw new VaultException('path to secret has to be set before calling '.__FUNCTION__);
         }
         $endpoint = $this->vault_address . $this->path_to_secret;
-        $this->setAuthToken($this->token);
+        //$this->setAuthToken($this->token); // really? 
         $this->getRequest()->getHeaders()->addHeaderLine("X-Vault-Wrap-TTL: 10s");
         $this->setMethod('GET')->setUri($endpoint)->send();
         $response = $this->responseToArray($this->getResponse()->getBody());
@@ -262,13 +262,14 @@ class Vault extends Client implements EventManagerAwareInterface {
             ]);
             throw new VaultException($response['errors'][0]);
         }
-        $this->token = $response['wrap_info']['token'];
+        $this->setAuthToken($response['wrap_info']['token']);
         return $this;  
         
     }
     
     /**
      * sets Vault authentication token header
+     * and instance variable
      * 
      * @param string $token
      * @return \SDNY\Service\Vault
@@ -278,11 +279,14 @@ class Vault extends Client implements EventManagerAwareInterface {
         $this->getRequest()
             ->getHeaders()
             ->addHeaderLine("X-Vault-Token:$token");
-        
+        $this->token = $token;
         return $this;
     }
     
-   
+    public function getAuthToken()
+    {
+        return $this->token;
+    }
     
     /**
      * converts json to array
@@ -298,14 +302,14 @@ class Vault extends Client implements EventManagerAwareInterface {
     /**
      * attempts user/password authentication
      * 
-     * this will attempt to authenticate user against Vault's
+     * this will attempt to authenticate user against Vault's 
      * userpass auth backend. NOTE: looks like we won't be using this auth 
-     * method after all, so this method can disappear
+     * method after all, so this method is not currently used.
      * @link https://www.vaultproject.io/docs/auth/userpass.html
      * 
      * @param string $user
      * @param string $password
-     * @return string json data
+     * @return array Vault response as array
      */
     public function authenticateUser($user,$password)
     {
