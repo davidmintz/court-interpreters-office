@@ -70,11 +70,11 @@ class VaultController extends AbstractActionController {
             $this->verifyAuth();
             $this->vaultService
                 ->authenticateTLSCert()
-                ->getCipherAccessToken()
+                ->acquireCipherAccessToken()
                 ->unwrap();        
             $this->vaultService->getWrappedEncryptionKey();
             $key = $this->vaultService->unwrap()['data']['cipher'];
-            $cipher = new BlockCipher(new Openssl);
+            $cipher = new BlockCipher(new Openssl());
             $cipher->setKey($key);
             $decrypted = [
                 'ssn' => $cipher->decrypt($params['ssn']),
