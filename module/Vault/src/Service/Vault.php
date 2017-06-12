@@ -267,6 +267,17 @@ class Vault extends Client implements EventManagerAwareInterface {
         
     }
     
+    public function getEncryptionKey()
+    {
+        $this->authenticateTLSCert()
+                ->acquireCipherAccessToken()
+                ->unwrap();
+        $this->getWrappedEncryptionKey();//return false;
+        $key = $this->unwrap()['data']['cipher'];
+        return $key;
+        
+    }
+    
     /**
      * sets Vault authentication token header
      * and instance variable

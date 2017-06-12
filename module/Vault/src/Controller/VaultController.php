@@ -65,16 +65,11 @@ class VaultController extends AbstractActionController {
     public function decryptAction()
     {
         $params = $this->params()->fromPost();
-        
+       
         try  {
-            $this->verifyAuth();
-            $this->vaultService
-                ->authenticateTLSCert()
-                ->getCipherAccessToken()
-                ->unwrap();        
-            $this->vaultService->getWrappedEncryptionKey();
-            $key = $this->vaultService->unwrap()['data']['cipher'];
-            $cipher = new BlockCipher(new Openssl);
+            $this->verifyAuth();           
+            $key = $this->vaultService->getEncryptionKey();
+            $cipher = new BlockCipher(new Openssl());
             $cipher->setKey($key);
             $decrypted = [
                 'ssn' => $cipher->decrypt($params['ssn']),
@@ -82,7 +77,7 @@ class VaultController extends AbstractActionController {
             ];
             return new JsonModel($decrypted) ;
             
-        } catch (VaultException $e) {
+        } catch (VaultException $e) {            
              return new JsonModel(['error'=>$e->getMessage()]);
         }
     }  
