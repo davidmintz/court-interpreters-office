@@ -33,6 +33,13 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
      * @var string
      */
     protected $fieldset_name = 'event';
+    
+    /**
+     * current user's role
+     * 
+     * @var string
+     */
+    protected $auth_user_role;
 
     /**
      * constructor.
@@ -54,7 +61,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
             if (! in_array($options['auth_user_role'], ['anonymous','staff','submitter','manager','administrator'])) {
                 throw new \RuntimeException('invalid "auth_user_role" option in Event constructor');
             }
-             $this->auth_user_role = $options['auth_user_role'];
+            $this->auth_user_role = $options['auth_user_role'];
         }
         $this->action = $options['action'];
         unset($options['action']);
