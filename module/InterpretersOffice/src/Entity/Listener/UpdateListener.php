@@ -46,9 +46,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         ));
         $repository = $args->getObjectManager()->getRepository(get_class($entity));
         if ($repository instanceof CacheDeletionInterface) {
-            $status = $repository->deleteCache();
-            $this->logger->debug("called delete cache on ".get_class($repository));
-            $this->logger->debug("$status");
+            $repository->deleteCache();
+            $this->logger->debug("called delete cache on ".get_class($repository));            
         } else {
             $this->logger->debug("! not an implementation of CacheDeletionInterface:    ".get_class($repository));
         }
