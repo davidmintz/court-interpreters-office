@@ -51,7 +51,7 @@ class UsersController extends AbstractActionController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->auth_user_role = (new Session('Authentication'))->role;        
+        //$this->auth_user_role = (new Session('Authentication'))->role;        
     }
 
     /**
@@ -63,6 +63,7 @@ class UsersController extends AbstractActionController
     public function setAuthenticationService(AuthenticationService $auth)
     {
         $this->auth = $auth;
+        $this->auth_user_role = (string) $auth->getIdentity()->getRole();
     }
 
 

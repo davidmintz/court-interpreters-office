@@ -80,9 +80,9 @@ class Module
         $module = $match->getParam('module');
         $session = $container->get('Authentication');
         if ('InterpretersOffice' == $module) {
-            if (! $session->role) {
-                $session->role = 'anonymous';
-            }
+           // if (! $session->role) {
+           //     $session->role = 'anonymous';
+           // }
             return;
         }
         $auth = $container->get('auth');
@@ -92,8 +92,9 @@ class Module
             $flashMessenger->addWarningMessage('Authentication is required.');
             $session->redirect_url = $event->getRequest()->getUriString();
             return $this->getRedirectionResponse($event);
-        } else {            
-            if (! $this->checkAcl($event, $session->role)) {
+        } else { 
+            $role = (string)$auth->getIdentity()->getRole();
+            if (! $this->checkAcl($event,$role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Access denied.');
@@ -106,7 +107,7 @@ class Module
      *
      * @param MvcEvent $event
      * @param string $role
-     * @return boolean true if current is authorized access to current resource
+     * @return boolean true if current user is authorized access to current resource
      */
     public function checkAcl(MvcEvent $event, $role)
     {
