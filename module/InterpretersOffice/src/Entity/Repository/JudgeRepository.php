@@ -10,16 +10,37 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * custom repository class for Judge entity.
- * @todo implement cache deletion thing
+ * 
  */
-class JudgeRepository extends EntityRepository
+class JudgeRepository extends EntityRepository  implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
 
     /**
-     * @var string cache id
+     * @var string cache namespace
      */
-    protected $cache_id = 'judges';
+    protected $cache_namespace = 'judges';
+    
+    /**
+     * cache
+     *
+     * @var CacheProvider
+     */
+    protected $cache;
+
+    /**
+     * constructor
+     *
+     * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
+     */
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    {
+
+        parent::__construct($em, $class);
+        $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace($this->cache_namespace);
+    }
 
     /**
      * gets all the Judge entities, sorted.
@@ -31,6 +52,19 @@ class JudgeRepository extends EntityRepository
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
                .'ORDER BY j.lastname, j.firstname';
 
-        return $this->createQuery($dql)->getResult();
+        return $this->createQuery($dql,$this->cache_namespace)->getResult();
+    }
+    
+    /**
+     * deletes cache
+     *
+     * implements CacheDeletionInterface
+     * @param string $cache_id
+     */
+    public function deleteCache($cache_id = null)
+    {
+
+        $this->cache->setNamespace($this->cache_namespace);
+        return $this->cache->deleteAll();
     }
 }
