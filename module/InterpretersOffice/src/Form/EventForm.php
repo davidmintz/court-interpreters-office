@@ -24,6 +24,13 @@ class EventForm extends ZendForm
      * @var string
      */
     protected $fieldsetClass = EventFieldset::class;
+    
+    /**
+     * name of the form
+     * 
+     * @var string
+     */
+    protected $formName = 'event-form';
 
      /**
      * constructor.
@@ -35,7 +42,7 @@ class EventForm extends ZendForm
     {
         parent::__construct($this->formName, $options);
         $fieldset = new $this->fieldsetClass($objectManager, $options);
-        $this->add($fieldset);
+        $this->add($fieldset);        
         $this->addCsrfElement();
     }
 }
