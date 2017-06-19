@@ -28,8 +28,7 @@ class AuthControllerFactory
      * @return AuthController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        
+    {        
         // attach event listeners
         $sharedEvents = $container->get('SharedEventManager');
         $listener = $container->get(AuthenticationListener::class);
