@@ -8,6 +8,8 @@ namespace InterpretersOffice\Admin;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\SessionManager;
 
+use InterpretersOffice\Admin\Controller;
+//use InterpretersOffice\Controller;
 /**
  * Module class for our InterpretersOffice\Admin module.
  */
@@ -40,7 +42,8 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $eventManager = $event->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);       
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']); 
+        $eventManager->attach(MvcEvent::EVENT_ROUTE,[$this,'attachEntityListener']);
         $container = $event->getApplication()->getServiceManager();
         // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
@@ -54,7 +57,24 @@ class Module
         // $em->getConfiguration()->getEntityListenerResolver()->register($listener);
         
     }
-
+    
+    public function attachEntityListener(MvcEvent $event)
+    {
+        $routeMatch = $event->getRouteMatch();
+        if (! $routeMatch) { return; }
+        $controller_name = $routeMatch->getParams()['controller'];
+        
+        if (in_array($controller_name,[
+            Controller\InterpretersController::class, 
+            Controller\UsersController::class,
+            \InterpretersOffice\Controller\AuthController::class,            
+        ])) {
+            $container = $event->getApplication()->getServiceManager();
+            $em = $container->get('entity-manager');
+            $listener = $container->get('interpreter-listener');            
+            $em->getConfiguration()->getEntityListenerResolver()->register($listener);
+        } 
+    }
     /**
      * callback to check authentication on mvc route event.
      *
@@ -93,7 +113,7 @@ class Module
             $session->redirect_url = $event->getRequest()->getUriString();
             return $this->getRedirectionResponse($event);
         } else { 
-            $role = (string)$auth->getIdentity()->getRole();
+            $role = (string) $auth->getIdentity()->getRole();
             if (! $this->checkAcl($event,$role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
