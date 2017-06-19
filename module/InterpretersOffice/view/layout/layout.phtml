@@ -53,6 +53,7 @@ echo $this->doctype(); ?>
                             <li><a href="#">One more separated link</a></li>
                           </ul>
                         </li>
+                        <?php if ($this->identity()): ?><li><a href="/logout">log out</a></li><?php endif; ?>
                       </ul>
                 </div>
             </nav>

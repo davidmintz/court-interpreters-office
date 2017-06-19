@@ -29,7 +29,7 @@ class AuthenticationFactory implements FactoryInterface
         
         $options = $container->get('config')['doctrine']['authentication']['orm_default']; 
          // if we don't do the following line, it blows up from trying 
-         // to call a method on a string. not sure I understand why.
+         // to call a method on a string. not sure why.
          $options['object_manager'] = $container->get('entity-manager');
          $storage = $container->get('doctrine.authenticationstorage.orm_default');
          $adapter = new AuthenticationAdapter($options);
