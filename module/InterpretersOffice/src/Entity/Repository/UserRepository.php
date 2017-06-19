@@ -62,11 +62,14 @@ class UserRepository extends EntityRepository {
      * @param int|null $lockVersion The lock version.
      * @return User  The User instance or NULL if the entity cannot be found.
      */
-    public function find($id, $lockMode = null, $lockVersion = null) {
+    public function find($id, $lockMode = null, $lockVersion = null) {       
        
-        // this gets us down to zero when there's a cache hit
         if (is_object($id)) {
             $id = $id->getId();
+        }
+        // this seems to resolve "array to string conversion" notices
+        if (is_array($id) && isset($id['id'])) {
+            $id = $id['id'];
         }
         if ($this->cache->contains($id)) {
             return $this->cache->fetch($id);
@@ -76,20 +79,5 @@ class UserRepository extends EntityRepository {
         if (! $user) { return null; }
         $this->cache->save($id, $user, $this->cache_lifetime);        
         return $user;
-    }
-     /*
-        // this find() reduces 3 queries to one by return the object from the
-        // session (i.e., the same object we were given)
-        if (is_object($id) && $id instanceof User) {
-            
-            // a simple 'return $id;' looks like it works 
-            $DQL = 'SELECT u.id FROM InterpretersOffice\Entity\User u '
-                    //. ' JOIN u.person p JOIN u.role r JOIN p.hat h '
-                    . ' WHERE u.id = :id AND u.active = true';
-            $q = $this->getEntityManager()->createQuery($DQL)->setParameters(['id'=>$id->getId()]);            
-            if($q->getOneOrNullResult()) {
-                return $id;
-            }
-        }         
-        */
+    }     
 }
