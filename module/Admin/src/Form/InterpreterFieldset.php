@@ -511,14 +511,13 @@ class InterpreterFieldset extends PersonFieldset
                 ],
             ],        
          ];
-         
          // encrypted fields
          /*
-
         food for thought: these validators should not run unless the values have been decrypted.
         to do:  compare submitted values to existing entity values and attach validators only if 
         submitted != existing
          */
+        if (false) {
          $spec['dob'] = [
              'allow_empty' => true,
              'required'  => false,
@@ -565,6 +564,8 @@ class InterpreterFieldset extends PersonFieldset
                     ['name' => 'Digits', ],
                 ],
          ];
+         
+         }  
          
          $spec['homePhone'] = [
              'allow_empty' => true,
