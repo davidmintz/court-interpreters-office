@@ -175,8 +175,7 @@ class InterpretersController extends AbstractActionController
     /**
      * updates an Interpreter entity.
      */
-    public function editAction()
-            
+    public function editAction()            
     {
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
@@ -185,7 +184,8 @@ class InterpretersController extends AbstractActionController
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Interpreter', $id);
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
-        }        
+        }
+        //echo "FUCKING HELLO??????";
         $form = new InterpreterForm($this->entityManager, ['action' => 'update','vault_enabled'=>$this->vault_enabled]);
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id, 
@@ -202,6 +202,8 @@ class InterpretersController extends AbstractActionController
                 $request->getPost()['interpreter']['interpreter-languages']
             );
             if (! $form->isValid()) {
+                //print_r($form->getMessages());
+                echo "shit is NOT valid. ";
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -211,7 +213,7 @@ class InterpretersController extends AbstractActionController
                 $entity->getLastname()
             ));
             $this->redirect()->toRoute('interpreters');
-           // echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
+            //echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
            // echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
            //print_r($form->getMessages()); echo "</pre>";
         } else {
