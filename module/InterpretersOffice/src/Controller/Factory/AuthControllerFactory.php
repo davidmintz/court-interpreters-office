@@ -29,22 +29,7 @@ class AuthControllerFactory
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        // this here is not the best design. the interpreter entity listener is
-        // intended to be used for encryption/decryption of certain fields and we 
-        // are only wiring it in here to keep a listener callback from blowing up
-        // by trying to trigger() on its 'events' instance before the container
-        // has a chance to automatically setEventManager() on it
-        $entityManager =  $container->get('entity-manager');
-        $listener = $container->get('interpreter-listener');
-        $entityManager->getConfiguration()->getEntityListenerResolver()->register($listener);
         
-        $adapter = new AuthAdapter([
-          'object_manager' => $entityManager,
-           // we should hard-code this into the adapter
-          'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
-        ]);
-        $service = new AuthenticationService(null, $adapter);
-
         // attach event listeners
         $sharedEvents = $container->get('SharedEventManager');
         $listener = $container->get(AuthenticationListener::class);
@@ -58,7 +43,7 @@ class AuthControllerFactory
             'logoutAction',
             [$listener, 'onLogout']
         );
-
+        $service = $container->get('auth');
         return new AuthController($service);
     }
 }
