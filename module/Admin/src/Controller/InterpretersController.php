@@ -225,7 +225,12 @@ class InterpretersController extends AbstractActionController
 
         return $viewModel;
     }
-
+    
+    public function validatePartialAction()
+    {
+        
+        
+    }
     /**
      * manually updates the Interpreter entity's languages.
      *
