@@ -14,7 +14,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 /**
  * custom repository class for EventType entity.
  */
-class InterpreterRepository extends EntityRepository
+class InterpreterRepository extends EntityRepository 
 {
     use ResultCachingQueryTrait;
 
