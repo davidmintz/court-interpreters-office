@@ -335,7 +335,7 @@ $(function(){
     $('#login-modal').on("show.bs.modal",function(){
         $('#identity, #password').val("");
         
-    })
+    });
     
     $('a[data-toggle="tab"]').on('click', function (e) {       
         //e.target is the newly activated tab
@@ -348,7 +348,7 @@ $(function(){
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors);
             }
-            $(this).tab('show')            
+            $(this).tab('show');            
         },'json');
     });
     
