@@ -70,11 +70,11 @@ class Adapter extends AbstractAdapter
     /**
      * validates the identity.
      *
-     * @param User $identity -- not type-hinted for the sake of interface compatibility
+     * @param User $identity
      *
      * @return \InterpretersOffice\Service\Authentication\Result
      */
-    protected function validateIdentity($identity)
+    protected function validateIdentity(User $identity)
     {
         if (! method_exists($identity, 'getPassword')) {
             throw new \Exception(
@@ -85,8 +85,6 @@ class Adapter extends AbstractAdapter
         $hash = $identity->getPassword();
         $password = $this->credential;
         $valid = password_verify($password, $hash);
-        
-        
         
         if (! $valid) {
             $this->authenticationResultInfo['code'] = Result::FAILURE_CREDENTIAL_INVALID;
