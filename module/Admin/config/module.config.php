@@ -350,7 +350,17 @@ return [
                                 'security_clearance_expiration' => '-[12]|[01]',
                             ],
                         ],
-                    ],                    
+                    ], 
+                    'validate-partial'  => [
+
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/validate-partial',
+                            'defaults' => [
+                                'action' => 'validate-partial',
+                            ],
+                        ],
+                    ],           
                 ],
             ],
 

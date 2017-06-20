@@ -36,7 +36,6 @@ class InterpreterEntityListenerFactory implements FactoryInterface {
         if ($container->has('vault')) {
             $listener->setVault($container->get('vault'));
         }
-        
         return $listener;
     }
     

@@ -229,8 +229,12 @@ class InterpretersController extends AbstractActionController
     public function validatePartialAction()
     {
         
-        
+        $params = $this->params()->fromPost();
+        //print_r($params);
+        //echo __FUNCTION__;
+        return false;
     }
+
     /**
      * manually updates the Interpreter entity's languages.
      *

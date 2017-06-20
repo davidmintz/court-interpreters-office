@@ -332,6 +332,12 @@ $(function(){
         
     })
     
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        //alert("shit.");
+        // return false
+        //e.target // newly activated tab
+        //e.relatedTarget // previous active tab
+    });
     
     $('#auth-submit').on("click",function(){
        
@@ -357,6 +363,7 @@ $(function(){
                     dob : encrypted_dob.val(),
                     ssn : encrypted_ssn.val()
                 },function(response){
+                    // to do:  finish this
                     if (response.error) {
                         alert("shit: "+response.error);
                         return;

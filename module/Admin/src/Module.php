@@ -73,6 +73,7 @@ class Module
             $em = $container->get('entity-manager');
             $listener = $container->get('interpreter-listener');            
             $em->getConfiguration()->getEntityListenerResolver()->register($listener);
+            //echo "shit is attached. ";
         } 
     }
     /**

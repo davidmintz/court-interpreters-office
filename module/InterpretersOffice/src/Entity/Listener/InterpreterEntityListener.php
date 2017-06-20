@@ -50,7 +50,6 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      * 
      * runs when Interpreter entity is loaded
      * 
-     * doesn't do anything at the moment, except trigger another event 
      * which in turn doesn't do anything
      * 
      * @param Interpreter $interpreter
@@ -60,6 +59,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
     {        
 
         $this->getEventManager()->trigger(__FUNCTION__, $this);
+        //var_dump(is_null($this->log));
         $this->log->debug("this is ".__FUNCTION__ . " in your InterpreterEntityListener ...");
         //echo "Interpreter entity listener WTF? hello what the FUCKING FUCK??";
 
