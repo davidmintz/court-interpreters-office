@@ -37,7 +37,7 @@ $form->add([
         
         <ul id="nav-tabs" class="nav nav-tabs" role="tablist"><!-- nav tabs -->
             <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact info</a></li>
-            <li role="presentation"><a href="#languages-pane" aria-controls="languages" role="tab" data-toggle="tab">languages &amp; notes</a></li>
+            <li role="presentation"><a href="#languages-pane" aria-controls="languages-pane" role="tab" data-toggle="tab">languages &amp; notes</a></li>
             <li role="presentation"><a href="#administrative" aria-controls="administrative" role="tab" data-toggle="tab">administrative/security</a></li>
         </ul><!-- /nav tabs -->
         <div class="tab-content" style="padding-top: 1em">
@@ -79,7 +79,6 @@ $form->add([
                 foreach ($interpreterLanguages as $ilanguage):
                     $columns = 'col-sm-offset-3 col-sm-3' ;
                     $language = $ilanguage->getLanguage();
-                    $language_id = $language->getId();
                     $certifiable = $language->isFederallyCertified();
                     $language_id =  $language->getId();                    
                 ?>
@@ -125,7 +124,6 @@ $form->add([
 
             <div role="tabpanel" class="tab-pane" id="administrative">
                 <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
-
                     $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
@@ -140,20 +138,27 @@ Do not mix form groups or grid column classes directly with input groups. Instea
 
                 -->
                 <?php 
-
-                foreach (['dob','ssn'] as $elementName) :
-                    if (! $fieldset->has($elementName)) : break; endif;
+                if (! $this->obscure_values) : 
+                    foreach (['dob','ssn'] as $elementName) : 
+                        $element = $fieldset->get($elementName); 
+                ?>
+                <div class="form-group">
+                    <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
+                    <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
+                </div><?php
+                    endforeach;
+                else:                    
+                    foreach (['dob','ssn'] as $elementName) :
+                        if (! $fieldset->has($elementName)) : break; endif;
                     $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
+                    <?php $encrypted = $element->getValue();
+                    if (! $encrypted): // nothing to obscure
+                        ?><div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div><?php
+                    else: $element->setAttribute('disabled','disabled');?>
                     <div class="col-sm-9 form-inline encrypted">
                         <?php 
-                        if (!$this->obscure_values) :?>
-                        <div class="input-group-btn"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-default" type="button"><span class="glyphicon glyphicon-lock"></span><span class="sr-only">unlock</span></button>                        
-                        <?php echo $this->formElementErrors($element) ?>
-                        </div>                    
-                       <?php else:
-                            $encrypted = $element->getValue();
                             $element->setValue('**************');
                         ?><div class="input-group-btn"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-default" type="button"><span class="glyphicon glyphicon-lock"></span><span class="sr-only">unlock</span></button>                        
                         <?php 
@@ -162,13 +167,11 @@ Do not mix form groups or grid column classes directly with input groups. Instea
                             echo $this->formHidden($hidden);
                         ?>
                         </div>
-                            
-                       <?php endif;?>
-                       
-                    </div>
+                    </div>    
+                <?php endif;?>                    
                 </div>
-                <?php  endforeach;?>   
 
+             <?php endforeach; endif; ?>            
             </div><!--  / .tab-pane -->
         </div><!-- /tab-content -->
         <div style="margin-top:1em" class="form-group">
@@ -235,7 +238,9 @@ $(function(){
     // this is bullshit. what we really want is the button thingy on the same 
     // line as the input but it wraps unless we set the containing element's 
     // class to form-inline, which makes it too narrow
-    $('#dob, #ssn').css({width:'70%'}).attr({disabled:"disabled"});
+    if ($("div.col-sm-9.encrypted").length) {
+        $('#dob[disabled="disabled"], #ssn[disabled="disabled"]').css({width:'70%'});//.attr({disabled:"disabled"});
+    }
     // ================================================
     
     // make the first tab active, unless we are coming back from a validation
@@ -332,11 +337,19 @@ $(function(){
         
     })
     
-    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-        //alert("shit.");
-        // return false
-        //e.target // newly activated tab
-        //e.relatedTarget // previous active tab
+    $('a[data-toggle="tab"]').on('click', function (e) {       
+        //e.target is the newly activated tab
+        //e.relatedTarget is the previous active tab
+        
+        var id = '#'+$('div.active').attr('id');
+        var selector = id + " input, " + id + " select";
+        var data =($(selector).serialize());
+        $.post(window.basePath + '/admin/interpreters/validate-partial',data,function(response){
+            if (response.validation_errors) {
+                return displayValidationErrors(response.validation_errors);
+            }
+            $(this).tab('show')            
+        },'json');
     });
     
     $('#auth-submit').on("click",function(){
@@ -349,9 +362,7 @@ $(function(){
         var url = window.basePath + '/login';
         $.post(url, input, function(response    ){
             if (response.validation_errors) {
-                /* 
-                    we need to refresh the CSRF token
-                */
+                //refresh the CSRF token
                 $('input[name="login_csrf"').val(response.login_csrf);
                 return displayValidationErrors(response.validation_errors);
             }            
@@ -363,30 +374,36 @@ $(function(){
                     dob : encrypted_dob.val(),
                     ssn : encrypted_ssn.val()
                 },function(response){
-                    // to do:  finish this
+                    // to do:  finish this error handling
                     if (response.error) {
                         alert("shit: "+response.error);
                         return;
                     }
-                    encrypted_dob.remove();
-                    encrypted_ssn.remove();
                     $('#ssn, #dob').removeAttr("disabled");
-                    $('#ssn').val(response.ssn);
-                    var dob = $('#dob').val();
-                    if (dob) {
-                        $('#dob').val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"));
-                    }  else {
-                        $('#dob').val("");
+                    if (response.ssn) { 
+                        encrypted_ssn.remove();
+                        $('#ssn').val(response.ssn);
                     }
+                    if (response.dob) {
+                        encrypted_dob.remove();
+                        var dob = $('#dob').val();
+                        if (dob) {
+                            $('#dob').val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"));
+                        }  /*else { // ?
+                            $('#dob').val("");
+                        }*/
+                    }                     
                     // hide the lock thingies
                     $('button[data-target="#login-modal"]').hide();  
+                    $('#ssn, #dob').css({width:'100%'});
                 },'json');
             } else {
+                // to do: finish this...
                 return alert("auth failed.");
             }
         });
         
-    });
+    });                */
 
 
 });
