@@ -6,8 +6,9 @@
 
 namespace InterpretersOffice\Service\Authentication;
 
-use DoctrineModule\Authentication\Adapter\ObjectRepository;
 use InterpretersOffice\Entity\User;
+use Doctrine\ORM\EntityManager;
+use Zend\Authentication\Adapter\AbstractAdapter;
 
 /**
  * Authentication adapter.
@@ -20,24 +21,24 @@ use InterpretersOffice\Entity\User;
  * subclass of Result that includes a constant meaning account not active
  * (i.e., disabled).
  *
- * A work in progress. We might not really need to extend the Doctrine adapter
- * or pass in a credential_callable via the constructor -- we might as well
- * hard-code it.
  */
-class Adapter extends ObjectRepository
+class Adapter extends AbstractAdapter
 {
+    /**
+     *
+     * @var EntityManager
+     */
+    protected $entityManager;
     /**
      * constructor.
      *
      * @param array|\DoctrineModule\Options\Authentication $options
      */
-    public function __construct($options = [])
+    public function __construct(EntityManager $entityManager)
     {
-        parent::__construct($options);
-        // maybe we will do something here down the road.
-        // for now this is superfluous
+        $this->entityManager = $entityManager;
     }
-
+    
     /**
      * authenticates the user.
      *
@@ -45,19 +46,17 @@ class Adapter extends ObjectRepository
      */
     public function authenticate()
     {
-        $this->setup();
-        $options = $this->options;
-        $objectManager = $options->getObjectManager();
+       
+        $objectManager = $this->entityManager;
         $query = $objectManager->createQuery(
-            "SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p "
+            "SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p"
+                . " JOIN u.role r "
             .'WHERE p.email = :identity OR u.username = :identity'
         )
            ->setParameters([':identity' => $this->identity]);
 
         $identity = $query->getOneOrNullResult();
-            // rather than:
-            //->getObjectRepository()->findOneBy(array($options->getIdentityProperty() => $this->identity));
-
+         
         if (! $identity) {
             $this->authenticationResultInfo['code'] = \Zend\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
@@ -78,26 +77,24 @@ class Adapter extends ObjectRepository
     protected function validateIdentity($identity)
     {
         if (! method_exists($identity, 'getPassword')) {
-            throw new Exception\UnexpectedValueException(
+            throw new \Exception(
                 'validateIdentity() expects an object that implements '
                     .' a public getPassword() method'
             );
         }
-        $documentCredential = $identity->getPassword();
-
-        // $documentCredential means the hashed password, as stored
-        $credentialValue = $this->credential; // i.e., submitted password
-        $callable = $this->options->getCredentialCallable();
-        if ($callable) {
-            $credentialValue = call_user_func($callable, $identity, $credentialValue);
-        }
-        if ($credentialValue !== true && $credentialValue !== $documentCredential) {
+        $hash = $identity->getPassword();
+        $password = $this->credential;
+        $valid = password_verify($password, $hash);
+        
+        
+        
+        if (! $valid) {
             $this->authenticationResultInfo['code'] = Result::FAILURE_CREDENTIAL_INVALID;
             $this->authenticationResultInfo['messages'][] = 'Supplied credential is invalid.';
 
             return $this->createAuthenticationResult();
         }
-        // this is what we've added to the parent method
+   
         if (! $identity->isActive()) {
             $this->authenticationResultInfo['code'] = Result::FAILURE_USER_ACCOUNT_DISABLED;
             $this->authenticationResultInfo['messages'][] = 'User account is disabled (inactive).';
@@ -120,9 +117,24 @@ class Adapter extends ObjectRepository
      */
     protected function createAuthenticationResult()
     {
+        if (! isset($this->authenticationResultInfo['identity'])) {
+            return new Result($this->authenticationResultInfo['code'],null, $this->authenticationResultInfo['messages']);
+        }
+        
+        $entity = $this->authenticationResultInfo['identity'];
+        $user_object = new \stdClass();
+        $person = $entity->getPerson();
+        $user_object->lastname = $person->getLastname();
+        $user_object->firstname = $person->getFirstname();
+        $user_object->email = $person->getEmail();
+        $user_object->hat = (string)$person->getHat();
+        $user_object->username = $entity->getUserName();
+        $user_object->role = (string)$entity->getRole();
+        
+        
         return new Result(
             $this->authenticationResultInfo['code'],
-            $this->authenticationResultInfo['identity'],
+            $user_object,
             $this->authenticationResultInfo['messages']
         );
     }

@@ -27,6 +27,11 @@ class AuthenticationFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         
+        // try something new, and simpler
+        $entityManager = $container->get('entity-manager');
+        return new AuthenticationService(null,new AuthenticationAdapter($entityManager));
+        
+        /* status quo ante, to be cleaned out:
         $options = $container->get('config')['doctrine']['authentication']['orm_default']; 
          // if we don't do the following line, it blows up from trying 
          // to call a method on a string. not sure why.
@@ -34,6 +39,6 @@ class AuthenticationFactory implements FactoryInterface
          $storage = $container->get('doctrine.authenticationstorage.orm_default');
          $adapter = new AuthenticationAdapter($options);
          return new AuthenticationService($storage, $adapter);
-       
+        */
     }
 }

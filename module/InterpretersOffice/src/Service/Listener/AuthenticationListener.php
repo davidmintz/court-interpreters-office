@@ -77,7 +77,7 @@ class AuthenticationListener
     public function onLogout(Event $e)
     {
         $user = $e->getParam('user');
-        $message = sprintf('user %s logged out', $user->getPerson()->getEmail());
+        $message = sprintf('user %s logged out', $user->email);
         $session = new \Zend\Session\Container('Authentication');
         $session->role = 'anonymous';
         $this->log->info($message);
