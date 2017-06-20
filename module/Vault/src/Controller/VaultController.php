@@ -53,7 +53,7 @@ class VaultController extends AbstractActionController {
         if (! $this->auth->hasIdentity()) {
             throw new \Exception("authentication is required");
         }
-        $role = (string)$this->auth->getIdentity()->getRole();
+        $role = (string)$this->auth->getIdentity()->role;
         if (!in_array($role,['administrator','manager'])) {
             throw new \Exception("authorization denied to user in role $role");
         }
