@@ -384,16 +384,14 @@ $(function(){
                     }
                     if (response.dob) {
                         encrypted_dob.remove();
-                        var dob = $('#dob').val();
-                        if (dob) {
-                            $('#dob').val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"));
-                            $('#dob').datepicker("option",{
+                        $('#dob')
+                            .val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"))
+                            .datepicker("option",{
                                 maxDate: "-18y",
                                 minDate : "-100y",         
                                 yearRange : "-100:-18",
-                            });
+                        });
 
-                        }
                     }           
                     // hide the lock thingies
                     $('button[data-target="#login-modal"]').hide();  
