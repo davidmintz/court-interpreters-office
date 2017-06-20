@@ -226,14 +226,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
  * @todo refactor to make less long and monolithic
  */
 
-/*
- * we will need this later!
-$('#dob').datepicker("option",{
-    maxDate: "-18y",
-    minDate : "-100y",         
-    yearRange : "-100:-18",
-});
-*/
+//*/
 $(function(){
     // this is bullshit. what we really want is the button thingy on the same 
     // line as the input but it wraps unless we set the containing element's 
@@ -365,7 +358,7 @@ $(function(){
             login_csrf : $('input[name="login_csrf"').val()
         };
         var url = window.basePath + '/login';
-        $.post(url, input, function(response    ){
+        $.post(url, input, function(response){
             if (response.validation_errors) {
                 //refresh the CSRF token
                 $('input[name="login_csrf"').val(response.login_csrf);
@@ -394,8 +387,14 @@ $(function(){
                         var dob = $('#dob').val();
                         if (dob) {
                             $('#dob').val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"));
-                        }  
-                    }                     
+                            $('#dob').datepicker("option",{
+                                maxDate: "-18y",
+                                minDate : "-100y",         
+                                yearRange : "-100:-18",
+                            });
+
+                        }
+                    }           
                     // hide the lock thingies
                     $('button[data-target="#login-modal"]').hide();  
                     $('#ssn, #dob').css({width:'100%'});
