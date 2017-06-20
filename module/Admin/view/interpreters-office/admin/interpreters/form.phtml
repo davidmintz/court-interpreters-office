@@ -336,11 +336,8 @@ $(function(){
         $('#identity, #password').val("");
         
     });
-    /** A WORK IN PROGRESS **/
+    /** validate each tab pane before moving on **/
     $('a[data-toggle="tab"]').on('click', function (e) { 
-        e.preventDefault(); console.warn("WTF?"); return false;
-        //e.target is the newly activated tab
-        //e.relatedTarget is the previous active tab
         var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
         var id = '#'+$('div.active').attr('id');
@@ -352,10 +349,12 @@ $(function(){
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors.interpreter);
             } else {
+                $(id + " .validation-error").hide();
                 $(that).tab("show");
             }
                         
         },'json');
+        return false;
     });
     
     $('#auth-submit').on("click",function(){
@@ -395,9 +394,7 @@ $(function(){
                         var dob = $('#dob').val();
                         if (dob) {
                             $('#dob').val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"));
-                        }  /*else { // ?
-                            $('#dob').val("");
-                        }*/
+                        }  
                     }                     
                     // hide the lock thingies
                     $('button[data-target="#login-modal"]').hide();  
