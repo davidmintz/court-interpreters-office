@@ -336,19 +336,25 @@ $(function(){
         $('#identity, #password').val("");
         
     });
-    
-    $('a[data-toggle="tab"]').on('click', function (e) {       
+    /** A WORK IN PROGRESS **/
+    $('a[data-toggle="tab"]').on('click', function (e) { 
+        e.preventDefault(); console.warn("WTF?"); return false;
         //e.target is the newly activated tab
         //e.relatedTarget is the previous active tab
-        
+        var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
+            'update' : 'create';
         var id = '#'+$('div.active').attr('id');
         var selector = id + " input, " + id + " select";
         var data =($(selector).serialize());
-        $.post(window.basePath + '/admin/interpreters/validate-partial',data,function(response){
+        var that = this;
+        $.post(window.basePath + '/admin/interpreters/validate-partial?action='+action,data,
+        function(response){
             if (response.validation_errors) {
-                return displayValidationErrors(response.validation_errors);
+                return displayValidationErrors(response.validation_errors.interpreter);
+            } else {
+                $(that).tab("show");
             }
-            $(this).tab('show');            
+                        
         },'json');
     });
     
