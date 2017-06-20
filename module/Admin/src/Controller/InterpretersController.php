@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Form\InterpreterForm;
 use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-
+use Zend\View\Model\JsonModel;
 use InterpretersOffice\Admin\Form\InterpreterRosterForm;
 use Zend\Session\Container as Session;
 
@@ -140,6 +140,8 @@ class InterpretersController extends AbstractActionController
             // manually hydrate, because we could not make that other shit work
             $data = $request->getPost()['interpreter']['interpreter-languages'];
             if (is_array($data))    {
+                $this->updateInterpreterLanguages($entity, $data);
+                /*
                 foreach ($data as $language) {
                     $id = $language['language_id'];
                     $certification = $language['federalCertification'] >= 0 ?
@@ -149,7 +151,7 @@ class InterpretersController extends AbstractActionController
                     $il = (new Entity\InterpreterLanguage($entity, $languageEntity))
                         ->setFederalCertification($certification);
                     $entity->addInterpreterLanguage($il);
-                }
+                }*/
             }
             
             if (! $form->isValid()) {
@@ -228,11 +230,16 @@ class InterpretersController extends AbstractActionController
     
     public function validatePartialAction()
     {
-        
-        $params = $this->params()->fromPost();
-        //print_r($params);
-        //echo __FUNCTION__;
-        return false;
+        $action = $this->params()->fromQuery('action');
+        $params = $this->params()->fromPost();//['interpreter'];
+        $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled'=>$this->vault_enabled]);
+        $request = $this->getRequest();
+        $form->setData($request->getPost());
+        $form->setValidationGroup(['interpreter'=>array_keys($params['interpreter'])]);
+        if (! $form->isValid()) {
+            return new JsonModel(['valid'=>false,'validation_errors'=>$form->getMessages()]);
+        }
+        return new JsonModel(['valid'=>true]);
     }
 
     /**
