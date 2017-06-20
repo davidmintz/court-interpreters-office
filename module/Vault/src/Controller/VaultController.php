@@ -71,10 +71,13 @@ class VaultController extends AbstractActionController {
             $key = $this->vaultService->getEncryptionKey();
             $cipher = new BlockCipher(new Openssl());
             $cipher->setKey($key);
-            $decrypted = [
-                'ssn' => $cipher->decrypt($params['ssn']),
-                'dob' => $cipher->decrypt($params['dob'])
-            ];
+            $decrypted = [];
+            foreach(['ssn','dob'] as $field) {
+                if (! $params[$field]) {
+                    continue;
+                }
+                $decrypted[$field] =  $cipher->decrypt($params[$field]);
+            }            
             return new JsonModel($decrypted) ;
             
         } catch (VaultException $e) {
