@@ -114,7 +114,22 @@ class Module
             $session->redirect_url = $event->getRequest()->getUriString();
             return $this->getRedirectionResponse($event);
         } else { 
-            $role = (string) $auth->getIdentity()->getRole();
+            
+            $user = $auth->getIdentity();
+            //var_dump($user); exit();
+            $role = $user->role;
+            /*
+            if (!$role instanceof \InterpretersOffice\Entity\Role) {
+                foreach ($role as $key => $val) {
+                    if ('name' == $key) {
+                        $role = $val;
+                        break;
+                    }
+                }
+                echo "(ugly!)...";
+            }
+             *
+             */
             if (! $this->checkAcl($event,$role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');

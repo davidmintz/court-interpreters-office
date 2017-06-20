@@ -30,11 +30,15 @@ class AuthenticationTest extends AbstractControllerTest
             new DataFixture\JudgeLoader(),
             new DataFixture\UserLoader(),
         ]);
-        $adapter = new Authentication\Adapter([
-            'object_manager' => FixtureManager::getEntityManager(),  //'Doctrine\ORM\EntityManager',
+        $adapter = new Authentication\Adapter(
+                FixtureManager::getEntityManager());
+             /*
+            'object_manager' =>   //'Doctrine\ORM\EntityManager',
             // 'credential_property' => 'password', // not required!
             'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword',
             ]);
+              * 
+              */
         $this->auth = new AuthenticationService(null, $adapter);
         parent::setUp();
     }

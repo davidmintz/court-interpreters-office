@@ -565,7 +565,7 @@ class InterpreterFieldset extends PersonFieldset
                 ],
          ];
          
-         }  
+         }      
          
          $spec['homePhone'] = [
              'allow_empty' => true,
