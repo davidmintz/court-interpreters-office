@@ -55,6 +55,9 @@ class UserRepository extends EntityRepository {
     /**
      * experimental overrride of find() to cut down on db queries
      * 
+     * ...which maybe we no longer really need because we are no longer using 
+     * Doctrine's authentication adapter
+     * 
      * @param mixed    $id          The identifier.
      * @param int|null $lockMode    One of the \Doctrine\DBAL\LockMode::* constants
      *                              or NULL if no specific lock mode should be used
