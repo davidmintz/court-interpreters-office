@@ -241,6 +241,10 @@ class Interpreter extends Person
      */
     public function setSsn($ssn)
     {
+        // temporary fix? 
+        if ($ssn === '') {
+            $ssn = null;
+        }
         $this->ssn = $ssn;
 
         return $this;
