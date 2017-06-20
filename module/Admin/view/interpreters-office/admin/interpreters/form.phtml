@@ -358,7 +358,7 @@ $(function(){
             identity : $('#identity').val(),
             password : $('#password').val(),
             login_csrf : $('input[name="login_csrf"').val()
-        }
+        };
         var url = window.basePath + '/login';
         $.post(url, input, function(response    ){
             if (response.validation_errors) {
@@ -401,11 +401,8 @@ $(function(){
                 // to do: finish this...
                 return alert("auth failed.");
             }
-        });
-        
-    });                */
-
-
+        });        
+    });                
 });
 
 // TO DO move this somewhere accessible to all
