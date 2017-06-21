@@ -35,6 +35,16 @@ class InterpreterFieldset extends PersonFieldset
      */
     protected $options;
 
+   /**
+     * encrypted field values
+     *
+     * encrypted ssn and dob are stored here so we can compare
+     * and determine whether to apply validation 
+     *
+     * @var Array
+     */ 
+    protected $original_encryted_values;
+
     /**
      * constructor.
      *
@@ -206,6 +216,15 @@ class InterpreterFieldset extends PersonFieldset
      *
      * @return \InterpretersOffice\Admin\Form\InterpreterFieldset
      */
+    
+
+    public function setOriginalEncryptedValues()
+    {
+
+        //$this->original_encryted_values = $data;
+    }
+
+
     public function addHatElement()
     {
         $this->add([
@@ -664,5 +683,4 @@ class InterpreterFieldset extends PersonFieldset
          ];
          return $spec;
     }
-    
 }
