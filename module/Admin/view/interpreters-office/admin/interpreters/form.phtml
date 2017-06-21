@@ -138,7 +138,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
 
                 -->
                 <?php 
-                if (! $this->obscure_values) : 
+                if (! $this->obscure_values) : // regular plain-text elements
                     foreach (['dob','ssn'] as $elementName) : 
                         $element = $fieldset->get($elementName); 
                 ?>
@@ -147,7 +147,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
                 </div><?php
                     endforeach;
-                else:                    
+                else:  // shit should be obscured until they re-authenticate/decrypt             
                     foreach (['dob','ssn'] as $elementName) :
                         if (! $fieldset->has($elementName)) : break; endif;
                     $element = $fieldset->get($elementName);?>
@@ -163,7 +163,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
                         ?><div class="input-group-btn"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-default" type="button"><span class="glyphicon glyphicon-lock"></span><span class="sr-only">unlock</span></button>                        
                         <?php 
                             echo $this->formElementErrors($element);
-                            $hidden = (new \Zend\Form\Element\Hidden($element->getName()))->setValue($encrypted);
+                            $hidden = (new \Zend\Form\Element\Hidden( 'encrypted.'.$elementName ))->setValue($encrypted);
                             echo $this->formHidden($hidden);
                         ?>
                         </div>
@@ -230,19 +230,21 @@ Do not mix form groups or grid column classes directly with input groups. Instea
 $(function(){
     // this is bullshit. what we really want is the button thingy on the same 
     // line as the input but it wraps unless we set the containing element's 
-    // class to form-inline, which makes it too narrow
+    // class to form-inline, which makes it too narrow. NOTE TO SELF: try "nowrap"
     if ($("div.col-sm-9.encrypted").length) {
         $('#dob[disabled="disabled"], #ssn[disabled="disabled"]').css({width:'70%'});//.attr({disabled:"disabled"});
     }
     // ================================================
     
     // make the first tab active, unless we are coming back from a validation
-    // error -- to be continued
-    if (! $(".validationError").length ) {
-        //$('.tab-content .tab-pane:first').show();
-        $('#nav-tabs li:first a').tab("show");//addClass("active")
+    // error
+    if (! $(".validation-error").length ) {        
+        $('#nav-tabs li:first a').tab("show");
     } else {
-        // figure out which tab/pane to activate
+       var pane = $(".validation-error").closest('div.tab-pane');
+       var id = pane.attr("id");
+       $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
+        console.log("say shit?");
     }
     if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker({
@@ -253,11 +255,9 @@ $(function(){
          * set datepicker options to display year for dob, if element exists 
          * set options to constrain security_clearance, fingerprint etc date ranges
          */
-        $('#fingerprint_date, #oath_date, #security_clearance_date').datepicker("option",{
-            
+        $('#fingerprint_date, #oath_date, #security_clearance_date').datepicker("option",{            
             maxDate: 0
-        });
-        
+        });        
     }
     /**
      * add a working language. note that if the markup in the form
@@ -326,27 +326,27 @@ $(function(){
     // prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
     $('#login-modal').on("show.bs.modal",function(){
-        $('#identity, #password').val("");
-        
+        $('#identity, #password').val("");        
     });
     /** validate each tab pane before moving on **/
-    $('a[data-toggle="tab"]').on('click', function (e) { 
+    $('a[data-toggle="tab"]').on('click', function (e) {
         var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
         var id = '#'+$('div.active').attr('id');
         var selector = id + " input, " + id + " select";
         var data =($(selector).serialize());
         var that = this;
-        $.post(window.basePath + '/admin/interpreters/validate-partial?action='+action,data,
-        function(response){
-            if (response.validation_errors) {
-                return displayValidationErrors(response.validation_errors.interpreter);
-            } else {
-                $(id + " .validation-error").hide();
-                $(that).tab("show");
-            }
-                        
-        },'json');
+        $.post(window.basePath + '/admin/interpreters/validate-partial?action='+action,
+            data,
+            function(response){
+                if (response.validation_errors) {
+                    return displayValidationErrors(response.validation_errors.interpreter);
+                } else {
+                    $(id + " .validation-error").hide();
+                    $(that).tab("show");
+                }                        
+            },'json'
+        );
         return false;
     });
     
@@ -366,8 +366,8 @@ $(function(){
             }            
             if (response.authenticated) {
                 $('#login-modal').modal('hide');
-                var encrypted_dob =  $("input[name='interpreter[dob]']").last();
-                var encrypted_ssn =  $("input[name='interpreter[ssn]']").last();
+                var encrypted_dob =  $('input[name="encrypted.dob"]');
+                var encrypted_ssn =  $('input[name="encrypted.ssn"]');
                 $.post('/vault/decrypt',{
                     dob : encrypted_dob.val(),
                     ssn : encrypted_ssn.val()
