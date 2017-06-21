@@ -43,7 +43,7 @@ class InterpreterFieldset extends PersonFieldset
      *
      * @var Array
      */ 
-    protected $original_encryted_values;
+    protected $original_encrypted_values;
 
     /**
      * constructor.
@@ -313,9 +313,8 @@ class InterpreterFieldset extends PersonFieldset
      * @return array
      */
     public function getInputFilterSpecification()
-    {
+    {       
         $spec = parent::getInputFilterSpecification();
-
         $language_options = $this->get('language-select')->getValueOptions();
 
         // require users to provide yes|no for federal-certified language
@@ -444,22 +443,21 @@ class InterpreterFieldset extends PersonFieldset
                     'break_chain_on_failure' => true,
                  ],
                  [ 'name' => 'Callback',
-                            'options' => [
-                                'callback' => function ($value, $context) {
-                                    // it can't be in the future
-                                    // and it can't be unreasonably long ago
-                                    list($M, $D, $Y) = explode('/', $value);
-                                    $date = "$Y-$M-$D";
-                                    $max = date('Y-m-d');
-                                    $min = (new \DateTime("-5 years"))->format('Y-m-d');                                    
-                                    return $date >= $min && $date <= $max;
-                                    
-                                },
-                                'messages' => [
-                                    \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and today',
-                                ],
+                        'options' => [
+                            'callback' => function ($value, $context) {
+                                // it can't be in the future
+                                // and it can't be unreasonably long ago
+                                list($M, $D, $Y) = explode('/', $value);
+                                $date = "$Y-$M-$D";
+                                $max = date('Y-m-d');
+                                $min = (new \DateTime("-5 years"))->format('Y-m-d');                                    
+                                return $date >= $min && $date <= $max;
+                            },
+                            'messages' => [
+                                \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and today',
                             ],
-                     ],
+                        ],
+                    ],
                 ],
          ];
          $spec['contractExpirationDate'] = [
@@ -530,13 +528,7 @@ class InterpreterFieldset extends PersonFieldset
                 ],
             ],        
          ];
-         // encrypted fields
-         /*
-        food for thought: these validators should not run unless the values have been decrypted.
-        to do:  compare submitted values to existing entity values and attach validators only if 
-        submitted != existing
-         */
-        if (false) {
+         // encrypted fields        
          $spec['dob'] = [
              'allow_empty' => true,
              'required'  => false,
@@ -576,16 +568,24 @@ class InterpreterFieldset extends PersonFieldset
              'allow_empty' => true,
              'required'  => false,
               'validators' => [
-                    // to be continued
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'min' => 9,
+                            'max' => 9,
+                             'messages' => [
+                                    \Zend\Validator\StringLength::TOO_SHORT => 'ssn must contain nine digits',
+                                    \Zend\Validator\StringLength::TOO_LONG => 'ssn number cannot exceed nine digits',
+                            ],
+                        ],
+                    ],
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
                     ['name' => 'Digits', ],
                 ],
          ];
-         
-         }      
-         
+
          $spec['homePhone'] = [
              'allow_empty' => true,
              'required'  => false,
