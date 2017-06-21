@@ -73,7 +73,7 @@ class VaultController extends AbstractActionController {
             $cipher->setKey($key);
             $decrypted = [];
             foreach(['ssn','dob'] as $field) {
-                if (! $params[$field]) {
+                if (empty($params[$field])) {
                     continue;
                 }
                 $decrypted[$field] =  $cipher->decrypt($params[$field]);
