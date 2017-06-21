@@ -187,26 +187,26 @@ class InterpretersController extends AbstractActionController
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
         }
-        //echo "FUCKING HELLO??????";
+
         $form = new InterpreterForm($this->entityManager, ['action' => 'update','vault_enabled'=>$this->vault_enabled]);
         $form->bind($entity);
-        
         $viewModel->setVariables(['form' => $form, 'id' => $id, 
             // for the re-authentication dialog
             'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))->setAttribute('id','login_csrf')
             ]
-        );
+        );               
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $form->setData($request->getPost());
-            //echo '<pre>';print_r($request->getPost()['interpreter']['interpreter-languages']);echo '</pre>';
+            
+            $form->setData($request->getPost());            
             $this->updateInterpreterLanguages(
                 $entity,
                 $request->getPost()['interpreter']['interpreter-languages']
             );
+            
             if (! $form->isValid()) {
-                //print_r($form->getMessages());
-                echo "shit is NOT valid. ";
+                //echo "<pre>";print_r($form->getMessages());echo "</pre>";
+                //echo "shit is NOT valid. ";
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -216,8 +216,7 @@ class InterpretersController extends AbstractActionController
                 $entity->getLastname()
             ));
             $this->redirect()->toRoute('interpreters');
-            //echo "success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
-           // echo "<pre>"; var_dump($_POST['interpreter']['interpreter-languages']) ;
+           // echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
            //print_r($form->getMessages()); echo "</pre>";
         } else {
             // not a POST
