@@ -7,6 +7,9 @@ namespace SDNY\Vault\Service;
 
 use Zend\Http\Client;
 
+use Zend\Crypt\BlockCipher;
+use Zend\Crypt\Symmetric\Openssl;
+
 
 /**
  * Extension of Zend\Http\Client for communciating with Hashicorp Vault
@@ -284,6 +287,14 @@ class Vault extends Client implements EventManagerAwareInterface {
         $key = $this->unwrap()['data']['cipher'];
         return $key;
         
+    }
+
+    public function encrypt($string)
+    {
+        $key = $this->getEncryptionKey();
+        $cipher = new BlockCipher(new Openssl());
+        $cipher->setKey($key);
+        return $cipher->encrypt($string);
     }
     
     /**

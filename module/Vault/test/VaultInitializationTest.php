@@ -76,7 +76,7 @@ class VaultInitializationTest extends AbstractControllerTest
     public function testAcquireCipherAccessToken(VaultClient $vault)
     {        
         
-        $this->assertTrue(is_object($vault->acquireCipherAccessToken()));
+        $this->assertTrue(is_object($vault->requestCipherAccessToken()));
         //$data = json_decode($response,JSON_OBJECT_AS_ARRAY);
         //$this->assertTrue(is_array($data));
         //$this->assertArrayNotHasKey('errors', $response);
@@ -84,5 +84,15 @@ class VaultInitializationTest extends AbstractControllerTest
         //$this->assertTrue(is_string($token));
         $this->assertTrue(is_string($vault->getAuthToken()));
         //print_r($data);
+    }
+
+    /**
+     * @depends testVaultCanBeInstantiatedViaServiceManager
+     * @param VaultClient $vault
+     */
+    public function __testGetEncryptionKey(VaultClient $vault)
+    {
+        $key = $vault->getEncryptionKey();
+        $this->assertTrue(is_string($key));
     }
 }

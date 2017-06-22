@@ -78,9 +78,18 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      */
     public function preUpdate(Interpreter $interpreter, LifecycleEventArgs $event)
     {        
-
         $this->getEventManager()->trigger(__FUNCTION__, $this);
-        $this->log->debug("this is FUCKING ".__FUNCTION__ . " in your InterpreterEntityListener ...");
-
+        $this->log->debug("this is ".__FUNCTION__ . " in your InterpreterEntityListener ...");
+        $this->log->debug(sprintf(
+            'ssn is now %s', $interpreter->getSsn()
+        ));
+        $this->log->debug(sprintf(
+            'modified? %s', $event->hasChangedField('ssn') ? "yes":"no"
+        ));
+        if ($event->hasChangedField('ssn') and $interpreter->getSsn()) {
+            $encrypted = $this->vault->encrypt($interpreter->getSsn());
+            $interpreter->setSsn($encrypted);
+            $this->log->debug(sprintf("shit is now: %s",$interpreter->getSsn()));
+        }
     }
 }
