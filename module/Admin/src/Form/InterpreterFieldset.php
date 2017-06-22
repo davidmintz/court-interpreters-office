@@ -401,7 +401,7 @@ class InterpreterFieldset extends PersonFieldset
                         [
                             'name' => 'Zend\Validator\Date',
                             'options' => [
-                                'format' => 'd/m/Y',
+                                'format' => 'm/d/Y',
                                 'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
                             ],
                             'break_chain_on_failure' => true,
@@ -437,7 +437,7 @@ class InterpreterFieldset extends PersonFieldset
                  [
                     'name'=> 'Zend\Validator\Date',
                     'options'=>[
-                        'format' => 'd/m/Y',
+                        'format' => 'm/d/Y',
                          'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
                     ],
                     'break_chain_on_failure' => true,
@@ -472,7 +472,7 @@ class InterpreterFieldset extends PersonFieldset
                 [
                     'name' => 'Zend\Validator\Date',
                     'options' => [
-                        'format' => 'd/m/Y',
+                        'format' => 'm/d/Y',
                         'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
                     ],
                     'break_chain_on_failure' => true,
@@ -505,7 +505,7 @@ class InterpreterFieldset extends PersonFieldset
                 [
                     'name' => 'Zend\Validator\Date',
                     'options' => [
-                        'format' => 'd/m/Y',
+                        'format' => 'm/d/Y',
                         'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
                     ],
                     'break_chain_on_failure' => true,
@@ -541,7 +541,7 @@ class InterpreterFieldset extends PersonFieldset
                  [
                     'name'=> 'Zend\Validator\Date',
                     'options'=>[
-                        'format' => 'd/m/Y',
+                        'format' => 'm/d/Y',
                          'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
                     ],
                     'break_chain_on_failure' => true,
@@ -568,22 +568,22 @@ class InterpreterFieldset extends PersonFieldset
              'allow_empty' => true,
              'required'  => false,
               'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'min' => 9,
-                            'max' => 9,
-                             'messages' => [
-                                    \Zend\Validator\StringLength::TOO_SHORT => 'ssn must contain nine digits',
-                                    \Zend\Validator\StringLength::TOO_LONG => 'ssn number cannot exceed nine digits',
-                            ],
+                [
+                    'name' => 'StringLength',
+                    'options' => [
+                        'min' => 9,
+                        'max' => 9,
+                         'messages' => [
+                                \Zend\Validator\StringLength::TOO_SHORT => 'ssn must contain nine digits',
+                                \Zend\Validator\StringLength::TOO_LONG => 'ssn number cannot exceed nine digits',
                         ],
                     ],
                 ],
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                    ['name' => 'Digits', ],
-                ],
+            ],
+            'filters' => [
+                ['name' => 'StringTrim'],
+                ['name' => 'Digits', ],
+            ],
          ];
 
          $spec['homePhone'] = [
