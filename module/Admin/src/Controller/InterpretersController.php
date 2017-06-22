@@ -216,7 +216,7 @@ class InterpretersController extends AbstractActionController
                 $entity->getLastname()
             ));
             $this->redirect()->toRoute('interpreters');
-           // echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
+            // echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
            //print_r($form->getMessages()); echo "</pre>";
         } else {
             // not a POST
@@ -227,7 +227,10 @@ class InterpretersController extends AbstractActionController
 
         return $viewModel;
     }
-    
+    /**
+     * @todo DO NOT run if not xhr, check presence of 'interpreters' index
+     * @return JsonModel
+     */
     public function validatePartialAction()
     {
         $action = $this->params()->fromQuery('action');

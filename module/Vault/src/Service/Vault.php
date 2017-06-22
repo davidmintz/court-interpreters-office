@@ -280,19 +280,38 @@ class Vault extends Client implements EventManagerAwareInterface {
      */
     public function getEncryptionKey()
     {
-        $this->authenticateTLSCert()
+        if (! $this->key) {
+            $this->authenticateTLSCert()
                 ->requestCipherAccessToken()
                 ->unwrap();
-        $this->requestWrappedEncryptionKey();
-        $key = $this->unwrap()['data']['cipher'];
-        return $key;
+            $this->requestWrappedEncryptionKey();
+            $this->key = $this->unwrap()['data']['cipher'];
+        }
+        
+        return $this->key;
         
     }
-
+    
+    private $key;
+    
+    protected $blockCipher;
+    
+    protected function getBlockCipher()
+    {
+        if (! $this->blockCipher) {
+            $this->blockCipher = new BlockCipher(new Openssl());
+        }
+        return $this->blockCipher;
+    }
+    public function decrypt($string) {
+        $cipher = $this->getBlockCipher();
+        $cipher->setKey($this->getEncryptionKey());
+        return $cipher->decrypt($string);
+    }
     public function encrypt($string)
     {
         $key = $this->getEncryptionKey();
-        $cipher = new BlockCipher(new Openssl());
+        $cipher = $this->getBlockCipher();
         $cipher->setKey($key);
         return $cipher->encrypt($string);
     }

@@ -31,7 +31,8 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
     protected $log;
     
     /**
-     *
+     * Vault client
+     * 
      * @var Vault
      */
     protected $vault;
@@ -41,6 +42,20 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
         $this->log = $log;
     }
     
+    /**
+     * encrypted values
+     * 
+     * store here for later comparison
+     * 
+     * @var Array
+     */
+    protected $encrypted_values = [];
+    
+    /**
+     * sets Vault client
+     * 
+     * @param Vault $vault
+     */
     public function setVaultService(Vault $vault)
     {
         $this->vault = $vault;
@@ -58,6 +73,10 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
     {        
 
+        $this->encrypted_values = [
+            'dob' => $interpreter->getDob(),
+            'ssn' => $interpreter->getSsn(),
+        ];
         $this->getEventManager()->trigger(__FUNCTION__, $this);
         //var_dump(is_null($this->log));
         $this->log->debug("this is ".__FUNCTION__ . " in your InterpreterEntityListener ...");
@@ -76,20 +95,60 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      * @param Interpreter $interpreter
      * @param LifecycleEventArgs $event
      */
-    public function preUpdate(Interpreter $interpreter, LifecycleEventArgs $event)
+    public function preUpdate(Interpreter $interpreter, \Doctrine\ORM\Event\PreUpdateEventArgs $event)
     {        
         $this->getEventManager()->trigger(__FUNCTION__, $this);
-        $this->log->debug("this is ".__FUNCTION__ . " in your InterpreterEntityListener ...");
+        
+        $this->log->debug(sprintf('getSsn() now returns %s', $interpreter->getSsn()));
         $this->log->debug(sprintf(
-            'ssn is now %s', $interpreter->getSsn()
+            'hasChangedField? %s', $event->hasChangedField('ssn') ? "yes":"no"
         ));
-        $this->log->debug(sprintf(
-            'modified? %s', $event->hasChangedField('ssn') ? "yes":"no"
-        ));
-        if ($event->hasChangedField('ssn') and $interpreter->getSsn()) {
-            $encrypted = $this->vault->encrypt($interpreter->getSsn());
-            $interpreter->setSsn($encrypted);
-            $this->log->debug(sprintf("shit is now: %s",$interpreter->getSsn()));
+        if ($event->hasChangedField('ssn')) {
+            $old_value = $event->getOldValue('ssn');
+            $new_value = $event->getNewValue('ssn');
+            // if there is NO old value, but there IS a new value, just encrypt it
+            if ($new_value && ! $old_value ) {
+                $this->log->debug("updating from null ssn to not-null?");
+                $interpreter->setSsn($this->vault->encrypt($new_value));
+            } elseif ($old_value && ! $new_value) {
+                // pass
+                $this->log->debug("updating from  not-null to null?");
+            } else {
+                // compare old value decrypted with new
+                $this->log->debug("comparing old-decrypted to new");
+                $decrypted_old_value = $this->vault->decrypt($old_value);
+                if ($decrypted_old_value != $new_value) {
+                    // it really changed. encrypt
+                    $this->log->debug("...it really was updated");
+                    $interpreter->setSsn($this->vault->encrypt($new_value));
+                } else {
+                    // not really modified.
+                     $this->log->debug("NOT really updated, attempting to unset from changeset");
+                    $changeset = $event->getEntityChangeSet();
+                    unset($changeset['ssn']);
+                }
+            }
         }
+        
+        
+        /*
+        if ($event->hasChangedField('ssn') and $interpreter->getSsn()) {
+            
+            $oldValue = $event->getOldValue('ssn');
+            $this->log->debug("old value: $oldValue ");
+            $encrypted_new_value = $this->vault->encrypt($event->getNewValue('ssn'));
+            if ( $oldValue == $encrypted_new_value) {
+                // 
+                $this->log->debug("old value == encrypted, attempting to undo changeset");
+                $changeset = $event->getEntityChangeSet();
+                unset($changeset['ssn']);
+            } else {
+                $interpreter->setSsn($encrypted_new_value);
+                $this->log->debug(sprintf("set ssn to encrypted value. shit is now: %s",$interpreter->getSsn()));
+            }
+        } else {
+             $this->log->debug("ssn not in the changeset, moving on");
+        }
+         */
     }
 }
