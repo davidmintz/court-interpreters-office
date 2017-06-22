@@ -9,6 +9,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
 use InterpretersOffice\Entity\Listener\InterpreterEntityListener;
+use SDNY\Vault\Service\Vault;
 
 
 /**
@@ -33,8 +34,8 @@ class InterpreterEntityListenerFactory implements FactoryInterface {
         //$sharedEventManager->attach($requestedName,'*',function($e){echo $e->getName() . " happened... ";});
         $listener = new InterpreterEntityListener();
         $listener->setLogger($container->get('log'));
-        if ($container->has('vault')) {
-            $listener->setVault($container->get('vault'));
+        if ($container->has(Vault::class)) {
+            $listener->setVaultService($container->get(Vault::class));
         }
         return $listener;
     }
