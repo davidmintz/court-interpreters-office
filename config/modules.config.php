@@ -11,7 +11,7 @@
  *
  * This should be an array of module namespaces used in the application.
  */
-return [
+$modules = [
     'Zend\Log',
     'Zend\Mvc\Plugin\FlashMessenger',
     'Zend\Session',
@@ -28,5 +28,9 @@ return [
     'InterpretersOffice',
     'InterpretersOffice\Admin',
     'InterpretersOffice\Requests',
-    'SDNY\Vault'
+    
 ];
+if (! getenv('TRAVIS')) {
+    $modules[] = 'SDNY\Vault';
+}
+return $modules;
