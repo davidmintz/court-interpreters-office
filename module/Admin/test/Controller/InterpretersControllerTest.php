@@ -56,6 +56,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
                 'active' => 1,
                 'id' => '',
                 'dob' => '',
+                'ssn' => '',
                 'language-select' => 1,
                 'interpreter-languages' => [
                     [
