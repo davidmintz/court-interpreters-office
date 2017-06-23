@@ -363,7 +363,11 @@ class Vault extends Client implements EventManagerAwareInterface {
         $this->token = $token;
         return $this;
     }
-    
+    /**
+     * returns Authentication token
+     * 
+     * @return string
+     */
     public function getAuthToken()
     {
         return $this->token;
