@@ -93,12 +93,12 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      * which in turn doesn't do anything
      * 
      * @param Interpreter $interpreter
-     * @param LifecycleEventArgs $event
+     * @param PreUpdateEventArgs $event
      */
     public function preUpdate(Interpreter $interpreter, PreUpdateEventArgs $event)
     {        
         $this->getEventManager()->trigger(__FUNCTION__, $this);
-        
+        if (! $this->vault) { return; }
         $this->log->debug(sprintf('getSsn() now returns %s', $interpreter->getSsn()));
         $this->log->debug(sprintf(
             'hasChangedField? %s', $event->hasChangedField('ssn') ? "yes":"no"
@@ -134,6 +134,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
     public function prePersist(Interpreter $interpreter, LifecycleEventArgs $event) {
         
         $this->log->debug("this is ".__FUNCTION__);
+        if (! $this->vault) { return; }
         foreach (['dob','ssn'] as $field) {
             $getter = 'get'.lcfirst($field);
             $value = $interpreter->$getter();
