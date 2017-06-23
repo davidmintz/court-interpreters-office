@@ -140,6 +140,9 @@ Do not mix form groups or grid column classes directly with input groups. Instea
                 <?php 
                 if (! $this->obscure_values) : // regular plain-text elements
                     foreach (['dob','ssn'] as $elementName) : 
+                        if (! $fieldset->has($elementName)) {
+                            continue;
+                        }
                         $element = $fieldset->get($elementName); 
                 ?>
                 <div class="form-group">
