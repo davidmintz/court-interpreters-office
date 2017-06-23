@@ -1,7 +1,7 @@
 <?php
-/** module/Application/test/Controller/InterpretersPersonalDataControllerTest.php */
+/** module/Vault/test/Controller/InterpretersPersonalDataControllerTest.php */
 
-namespace ApplicationTest\Controller;
+namespace SDNY\Vault\Test\Controller;
 
 use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
