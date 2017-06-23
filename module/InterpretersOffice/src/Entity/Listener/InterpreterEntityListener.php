@@ -5,7 +5,7 @@ namespace InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Entity\Interpreter;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 
@@ -95,7 +95,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      * @param Interpreter $interpreter
      * @param LifecycleEventArgs $event
      */
-    public function preUpdate(Interpreter $interpreter, \Doctrine\ORM\Event\PreUpdateEventArgs $event)
+    public function preUpdate(Interpreter $interpreter, PreUpdateEventArgs $event)
     {        
         $this->getEventManager()->trigger(__FUNCTION__, $this);
         
@@ -123,32 +123,25 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
                     $interpreter->setSsn($this->vault->encrypt($new_value));
                 } else {
                     // not really modified.
-                     $this->log->debug("NOT really updated, attempting to unset from changeset");
+                    $this->log->debug("NOT really updated, attempting to unset from changeset");
                     $changeset = $event->getEntityChangeSet();
                     unset($changeset['ssn']);
                 }
             }
         }
+    }
+    
+    public function prePersist(Interpreter $interpreter, LifecycleEventArgs $event) {
         
-        
-        /*
-        if ($event->hasChangedField('ssn') and $interpreter->getSsn()) {
-            
-            $oldValue = $event->getOldValue('ssn');
-            $this->log->debug("old value: $oldValue ");
-            $encrypted_new_value = $this->vault->encrypt($event->getNewValue('ssn'));
-            if ( $oldValue == $encrypted_new_value) {
-                // 
-                $this->log->debug("old value == encrypted, attempting to undo changeset");
-                $changeset = $event->getEntityChangeSet();
-                unset($changeset['ssn']);
-            } else {
-                $interpreter->setSsn($encrypted_new_value);
-                $this->log->debug(sprintf("set ssn to encrypted value. shit is now: %s",$interpreter->getSsn()));
+        $this->log->debug("this is ".__FUNCTION__);
+        foreach (['dob','ssn'] as $field) {
+            $getter = 'get'.lcfirst($field);
+            $value = $interpreter->$getter();
+            if ($value) {
+                $setter = 'set'.lcfirst($field);
+                $interpreter->$setter($this->vault->encrypt($value));
+                $this->log->debug("we have encrypted $field in ".__FUNCTION__);
             }
-        } else {
-             $this->log->debug("ssn not in the changeset, moving on");
-        }
-         */
+        }        
     }
 }
