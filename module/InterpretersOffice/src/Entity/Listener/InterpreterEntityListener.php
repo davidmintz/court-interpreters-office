@@ -145,4 +145,13 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
             }
         }        
     }
+    /**
+     * is Vault enabled?
+     * 
+     * @return boolean
+     */
+    public function hasVault()
+    {
+        return $this->vault ? true : false;
+    }
 }
