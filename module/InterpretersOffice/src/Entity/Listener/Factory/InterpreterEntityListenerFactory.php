@@ -29,7 +29,7 @@ class InterpreterEntityListenerFactory implements FactoryInterface {
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        // much more to come        
+        // more to come?        
         //$sharedEventManager = $container->get('SharedEventManager');
         //$sharedEventManager->attach($requestedName,'*',function($e){echo $e->getName() . " happened... ";});
         $listener = new InterpreterEntityListener();
