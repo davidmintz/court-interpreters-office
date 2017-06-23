@@ -291,6 +291,7 @@ class Vault extends Client implements EventManagerAwareInterface {
         return $this;  
         
     }
+    
     /**
      * gets encryption key.
      *
