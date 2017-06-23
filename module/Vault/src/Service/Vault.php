@@ -183,17 +183,24 @@ class Vault extends Client implements EventManagerAwareInterface {
      */
     public function authenticateTLSCert()
     {
-        $this->setMethod('POST')
-            ->setUri($this->vault_address .'/auth/cert/login')
-            ->send();        
-        $response = $this->responseToArray($this->getResponse()->getBody());
-        if ($this->isError($response)) {
-            $this->getEventManager()->trigger(__FUNCTION__, $this, []);
-            throw new VaultException($response['errors'][0]);
+        try {
+            $this->setMethod('POST')
+                ->setUri($this->vault_address .'/auth/cert/login')
+                ->send();        
+            $response = $this->responseToArray($this->getResponse()->getBody());
+            if ($this->isError($response)) {
+                $this->getEventManager()->trigger(__FUNCTION__, $this, []);
+                throw new VaultException($response['errors'][0]);
+            }
+            $this->token = $response['auth']['client_token'];
+            //printf("DEBUG: \$this->token has been set to: $this->token in %s\n",__FUNCTION__);
+            return $this;
+        } catch (\Exception $e) {
+            throw new VaultException('could not authenticate via TLS: '.
+                    $e->getMessage(),
+                    $e->getCode(), $e);
         }
-        $this->token = $response['auth']['client_token'];
-        //printf("DEBUG: \$this->token has been set to: $this->token in %s\n",__FUNCTION__);
-        return $this;
+        
     }
 
     /**
