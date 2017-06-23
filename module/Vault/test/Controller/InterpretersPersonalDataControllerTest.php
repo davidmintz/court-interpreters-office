@@ -8,7 +8,7 @@ use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use Zend\Stdlib\Parameters;
 //use Zend\Dom\Document;
-//use InterpretersOffice\Entity;
+use InterpretersOffice\Entity;
 
 use SDNY\Vault\Service\Vault;
 
@@ -92,7 +92,38 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest {
         $this->assertTrue(is_string($encrypted_dob));
         $this->assertTrue($encrypted_dob != $data['interpreter']['dob']);
         
+        return $entity;
         
     }
-    
+    /**
+     * @depends testSetDobAndSsn
+     * @param Entity\Interpreter $entity
+     */
+    public function testUpdateSsnAndDob(Entity\Interpreter $entity)
+    {
+        
+        // TO BE CONTINUED !
+        
+        $em = FixtureManager::getEntityManager();
+        $hat = $em->getRepository('InterpretersOffice\Entity\Hat')
+                         ->findOneBy(['name' => 'contract court interpreter']);
+        $entity->setHat($hat);
+        $em->persist($entity); 
+        $em->flush();
+        //$container = $this->getApplicationServiceLocator();
+        
+        $this->login('susie', 'boink');  
+        $this->reset(true);
+        $id = $entity->getId();
+        $url = "/admin/interpreters/edit/$id";
+        $this->dispatch("/admin/interpreters/edit/$id");
+        $token = $this->getCsrfToken($url,'login_csrf');
+        echo "\n$token\n";
+        //<input type="hidden" name="login_csrf" id="login_csrf" value="b0b4375e7de0397f342ae0f54cad36ea-97f3bfa1b7447eb2ab37fe84d597faab">       
+        
+        // $listener = $container->get('interpreter-listener');
+        // echo "\n",$entity->getSsn(), "\n";
+        $entity->setSsn('987654321');
+        $this->assertTrue(true);
+    }
 }
