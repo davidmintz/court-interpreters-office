@@ -47,11 +47,24 @@ class Vault extends Client implements EventManagerAwareInterface {
     ];
     
     /**
+     * cipher (key) for symmetrical encryption/decryption
+     * 
+     * @var string
+     */
+    private $key;
+    
+    /**
+     * Blockcipher for encryption/decryption
+     * 
+     * @var BlockCipher 
+     */
+    private $blockCipher;
+    
+    /**
      * vault authentication token
      * 
      * @var string
      */
-
     private $token;
 
     /**
@@ -133,6 +146,7 @@ class Vault extends Client implements EventManagerAwareInterface {
 
     /**
      * checks response for errors
+     * 
      * @param Array $response
      * @return boolean true if error
      */
@@ -152,6 +166,7 @@ class Vault extends Client implements EventManagerAwareInterface {
         $this->getRequest()
             ->getHeaders()
             ->addHeaderLine('Accept: application/json');
+        
         return $this;
     }
     
@@ -166,7 +181,7 @@ class Vault extends Client implements EventManagerAwareInterface {
      * @return Vault
      * @throws VaultException
      */
-    public function authenticateTLSCert($options = [])
+    public function authenticateTLSCert()
     {
         $this->setMethod('POST')
             ->setUri($this->vault_address .'/auth/cert/login')
@@ -177,7 +192,7 @@ class Vault extends Client implements EventManagerAwareInterface {
             throw new VaultException($response['errors'][0]);
         }
         $this->token = $response['auth']['client_token'];
-        //printf("DEBUG: \$this->token is $this->token in %s<br>",__FUNCTION__);
+        //printf("DEBUG: \$this->token has been set to: $this->token in %s\n",__FUNCTION__);
         return $this;
     }
 
@@ -190,9 +205,10 @@ class Vault extends Client implements EventManagerAwareInterface {
      * @throws VaultException
      */
     public function requestCipherAccessToken()
-    {
+    {        
+        //printf("DEBUG: \$this->token has been set to: $this->token in %s\n",__FUNCTION__);
         $this->getRequest()->getHeaders()
-                ->addHeaderLine("X-Vault-Token:$this->token")
+                ->addHeaderLine("X-Vault-Token: $this->token")
                 ->addHeaderLine("X-Vault-Wrap-TTL: 10s");
         $endpoint = $this->vault_address . '/auth/token/create/read-cipher';
         $this->getRequest()->setContent(json_encode(
@@ -274,7 +290,6 @@ class Vault extends Client implements EventManagerAwareInterface {
      * convenience method that wraps the several 
      * steps into one.
      *
-     * @param string $token authentication token
      * @return Vault
      * @throws VaultException
      */
@@ -290,12 +305,13 @@ class Vault extends Client implements EventManagerAwareInterface {
         
         return $this->key;
         
-    }
+    }    
     
-    private $key;
-    
-    protected $blockCipher;
-    
+    /**
+     * gets BlockCipher
+     * 
+     * @return BlockCipher
+     */
     protected function getBlockCipher()
     {
         if (! $this->blockCipher) {
@@ -303,11 +319,27 @@ class Vault extends Client implements EventManagerAwareInterface {
         }
         return $this->blockCipher;
     }
+    
+    /**
+     * decrypts an encrypted string
+     * 
+     * @param string $string the encrypted datum
+     * @throws VaultException
+     * @return string
+     */
     public function decrypt($string) {
         $cipher = $this->getBlockCipher();
         $cipher->setKey($this->getEncryptionKey());
         return $cipher->decrypt($string);
     }
+    
+    /**
+     * encrypts a string
+     * 
+     * @param string $string
+     * @return string
+     * @throws VaultException
+     */
     public function encrypt($string)
     {
         $key = $this->getEncryptionKey();
