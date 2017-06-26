@@ -217,6 +217,10 @@ class Interpreter extends Person
      */
     public function setDob($dob)
     {
+        // temporary fix? 
+        if ($dob === '') {
+            $dob = null;
+        }
         $this->dob = $dob;
 
         return $this;

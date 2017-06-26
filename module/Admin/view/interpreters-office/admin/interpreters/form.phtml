@@ -231,11 +231,17 @@ Do not mix form groups or grid column classes directly with input groups. Instea
 
 //*/
 $(function(){
+    var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
+            'update' : 'create';
+    
+    
+
     // this is bullshit. what we really want is the button thingy on the same 
     // line as the input but it wraps unless we set the containing element's 
     // class to form-inline, which makes it too narrow. NOTE TO SELF: try "nowrap"
     if ($("div.col-sm-9.encrypted").length) {
-        $('#dob[disabled="disabled"], #ssn[disabled="disabled"]').css({width:'70%'});//.attr({disabled:"disabled"});
+        $('#dob[disabled="disabled"], #ssn[disabled="disabled"]')
+              .css({width:'70%'});//.attr({disabled:"disabled"});
     }
     // ================================================
     
@@ -254,6 +260,14 @@ $(function(){
             changeMonth: true,
             changeYear: true
         });
+        // ????????????
+        if (!($('#dob').val())) {
+            $('#dob').datepicker("option",{
+                maxDate: "-18y",
+                minDate : "-100y",         
+                yearRange : "-100:-18"                
+            });        
+        } 
         /** @todo 
          * set datepicker options to display year for dob, if element exists 
          * set options to constrain security_clearance, fingerprint etc date ranges
@@ -329,12 +343,11 @@ $(function(){
     // prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
     $('#login-modal').on("show.bs.modal",function(){
-        $('#identity, #password').val("");        
+        //$('#identity, #password').val("");        
     });
     /** validate each tab pane before moving on **/
     $('a[data-toggle="tab"]').on('click', function (e) {
-        var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
-            'update' : 'create';
+        
         var id = '#'+$('div.active').attr('id');
         var selector = id + " input, " + id + " select";
         var data =($(selector).serialize());
@@ -386,6 +399,7 @@ $(function(){
                         $('#ssn').val(response.ssn);
                     }
                     if (response.dob) {
+                        alert(response.dob);
                         encrypted_dob.remove();
                         $('#dob')
                             .val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"))
@@ -394,7 +408,6 @@ $(function(){
                                 minDate : "-100y",         
                                 yearRange : "-100:-18",
                         });
-
                     }           
                     // hide the lock thingies
                     $('button[data-target="#login-modal"]').hide();  

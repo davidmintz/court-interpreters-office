@@ -104,23 +104,23 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
                 $setter = 'set'.lcfirst($prop);
                 // if there is NO old value, but there IS a new value, just encrypt it
                 if ($new_value && ! $old_value ) {
-                    $this->log->debug("updating from null ssn to not-null?");
+                    $this->log->debug("updating from null $prop to not-null?");
                     $setter = 'set'.lcfirst($prop);
                     $interpreter->$setter($this->vault->encrypt($new_value));
                 } elseif ($old_value && ! $new_value) {
                     // pass
-                    $this->log->debug("updating from  not-null to null?");
+                    $this->log->debug("updating from  not-null $prop  to null?");
                 } else {
                     // compare old value decrypted with new
-                    $this->log->debug("comparing old-decrypted to new");
-                    $decrypted_old_value = $this->vault->decrypt($old_value);
+                    $this->log->debug("comparing old-decrypted $prop to new");
+                    $decrypted_old_value = !$old_value ? NULL : $this->vault->decrypt($old_value);
                     if ($decrypted_old_value != $new_value) {
                         // it really changed. encrypt
-                        $this->log->debug("...and it really was updated");
+                        $this->log->debug("...and $prop really was updated");
                         $interpreter->$setter($this->vault->encrypt($new_value));
                     } else {
                         // not really modified.
-                        $this->log->debug("NOT really updated, attempting to unset from changeset");
+                        $this->log->debug("$prop NOT really updated, attempting to unset from changeset");
                         $changeset = $event->getEntityChangeSet();
                         unset($changeset[$prop]);
                     }
@@ -144,6 +144,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
             }
         }        
     }
+    
     /**
      * is Vault enabled?
      * 

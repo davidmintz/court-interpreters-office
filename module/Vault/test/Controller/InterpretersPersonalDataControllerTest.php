@@ -161,7 +161,7 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest {
                 new Parameters($data)
         );
         $this->dispatch($url);
-        $this->dumpResponse(); 
+        //$this->dumpResponse(); 
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/interpreters');
         $em->refresh($entity);
