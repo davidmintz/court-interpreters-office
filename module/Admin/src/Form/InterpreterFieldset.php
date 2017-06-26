@@ -541,18 +541,16 @@ class InterpreterFieldset extends PersonFieldset
                  [
                     'name'=> 'Zend\Validator\Date',
                     'options'=>[
-                        'format' => 'm/d/Y',
+                        'format' => 'Y-m-d',
                          'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
                     ],
                     'break_chain_on_failure' => true,
                 ],
                 [ 'name' => 'Callback',
                     'options' => [
-                        'callback' => function ($value, $context) {
+                        'callback' => function ($date, $context) {
                             // it can't be in the future
                             // and it can't be unreasonably long ago
-                            list($M, $D, $Y) = explode('/', $value);
-                            $date = "$Y-$M-$D";
                             $max = (new \DateTime("-18 years"))->format('Y-m-d');
                             $min = (new \DateTime("-100 years"))->format('Y-m-d');
                             return $date >= $min && $date <= $max;
@@ -561,8 +559,22 @@ class InterpreterFieldset extends PersonFieldset
                             \Zend\Validator\Callback::INVALID_VALUE => 'date of birth has to be between 18 and 100 years ago',
                         ],
                     ],
-                ],
+                ],                
              ],
+             'filters'=>[
+                    [
+                        'name' => 'StringTrim',
+                    ],
+                    [
+                       'name' => 'Callback',
+                        'options' =>[
+                            'callback' => function($value){
+                                list($M, $D, $Y) = explode('/', $value);
+                                return "$Y-$M-$D";
+                            },
+                        ],
+                    ],                    
+                ],
          ];
          $spec['ssn'] = [
              'allow_empty' => true,
