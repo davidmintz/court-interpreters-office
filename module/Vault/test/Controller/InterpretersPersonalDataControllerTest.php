@@ -91,7 +91,7 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest {
         $encrypted_dob= $entity->getDob();
         $this->assertTrue(is_string($encrypted_dob));
         $this->assertTrue($encrypted_dob != $data['interpreter']['dob']);
-        
+        //echo "\n", $entity->getInterpreterLanguages()->count(), " languages?\n";
         return $entity;
         
     }
@@ -110,20 +110,62 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest {
         $entity->setHat($hat);
         $em->persist($entity); 
         $em->flush();
-        //$container = $this->getApplicationServiceLocator();
         
+        // without the Controller
+        $former_ssn = $entity->getSsn();
+        $former_dob= $entity->getDob();
+        $entity->setSsn('987654321')->setDob('1968-06-18');
+        $em->flush();
+        
+        $this->assertTrue($former_ssn != $entity->getSsn());
+        $this->assertTrue($former_dob != $entity->getDob());
+        $container = $this->getApplicationServiceLocator();
+        $vault = $container->get(Vault::class);
+        $decrypted_ssn = $vault->decrypt($entity->getSsn());
+        $this->assertEquals('987654321', $decrypted_ssn);
+        $decrypted_dob = $vault->decrypt($entity->getDob());
+        $this->assertEquals('1968-06-18', $decrypted_dob);
+        
+        // with the controller
         $this->login('susie', 'boink');  
         $this->reset(true);
         $id = $entity->getId();
         $url = "/admin/interpreters/edit/$id";
         $this->dispatch("/admin/interpreters/edit/$id");
-        $token = $this->getCsrfToken($url,'login_csrf');
-        echo "\n$token\n";
-        //<input type="hidden" name="login_csrf" id="login_csrf" value="b0b4375e7de0397f342ae0f54cad36ea-97f3bfa1b7447eb2ab37fe84d597faab">       
+        $token = $this->getCsrfToken($url,'csrf');
+        $russian = $em->getRepository('InterpretersOffice\Entity\Language')->findOneBy(['name' => 'Russian']);
         
-        // $listener = $container->get('interpreter-listener');
-        // echo "\n",$entity->getSsn(), "\n";
-        $entity->setSsn('987654321');
-        $this->assertTrue(true);
+        $data = [
+            'interpreter' => [
+                'lastname' => 'Snertsky',
+                'firstname' => 'David',
+                'hat' => $em->getRepository('InterpretersOffice\Entity\Hat')
+                        ->findOneBy(['name' => 'contract court interpreter'])->getId(),
+                'email' => 'snyert@example.org',
+                'active' => 1,
+                'id' => $entity->getId(),
+                'dob' => '05/22/1971',
+                'ssn' => '123456789',
+                'language-select' => 1,
+                'interpreter-languages' => [
+                    [
+                        'language_id' => $russian->getId(),
+                        'interpreter_id' => $entity->getId(),
+                        'federalCertification' => '-1',
+                    ],
+                ],
+            ],
+            'csrf' => $token,
+        ];
+         $this->getRequest()->setMethod('POST')->setPost(
+                new Parameters($data)
+        );
+        $this->dispatch($url);
+        $this->dumpResponse(); 
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/interpreters');
+        $em->refresh($entity);
+        $this->assertEquals('123456789',$vault->decrypt($entity->getSsn()));
+        
     }
 }
