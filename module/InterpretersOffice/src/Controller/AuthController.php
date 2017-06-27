@@ -96,7 +96,9 @@ class AuthController extends AbstractActionController
             // echo "DEBUG:  auth OK. not redirecting....";
             // return new ViewModel(['form' => $form, 'title' => 'user login']);
             if ($request->isXmlHttpRequest()) {
-                return new JsonModel(['authenticated'=>true]);
+                $csrf = new \Zend\Form\Element\Csrf('csrf');
+                $token = $csrf->getValue();
+                return new JsonModel(['authenticated'=>true,'csrf' => $token ]);
             }
 
             if (isset($session->redirect_url)) {

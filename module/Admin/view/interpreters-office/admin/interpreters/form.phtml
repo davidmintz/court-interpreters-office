@@ -385,8 +385,9 @@ $(function(){
                 var encrypted_dob =  $('input[name="encrypted.dob"]');
                 var encrypted_ssn =  $('input[name="encrypted.ssn"]');
                 $.post('/vault/decrypt',{
-                    dob : encrypted_dob.val(),
-                    ssn : encrypted_ssn.val()
+                    dob  : encrypted_dob.val(),
+                    ssn  : encrypted_ssn.val(),
+                    csrf : response.csrf
                 },function(response){
                     // to do:  finish this error handling
                     if (response.error) {

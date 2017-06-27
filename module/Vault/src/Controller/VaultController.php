@@ -47,15 +47,22 @@ class VaultController extends AbstractActionController {
      * redundant authentication and authorization check
      * 
      * @return boolean
-     * @throws \Exception
+     * @throws VaultException
      */
-    protected function verifyAuth() {
+    protected function verifyAuth(Array $params) {
         if (! $this->auth->hasIdentity()) {
-            throw new \Exception("authentication is required");
+            throw new VaultException("authentication is required");
+        }
+        if (! isset($params['csrf'])) {
+            throw new VaultException("missing CSRF token");
+        }
+        $validator = new \Zend\Validator\Csrf(['name'=>'csrf']);        
+        if ( ! $validator->isValid($params['csrf'])) {
+             throw new VaultException("invalid CSRF token");
         }
         $role = (string)$this->auth->getIdentity()->role;
         if (!in_array($role,['administrator','manager'])) {
-            throw new \Exception("authorization denied to user in role $role");
+            throw new VaultException("authorization denied to user in role $role");
         }
         return true;
     }   
@@ -67,7 +74,8 @@ class VaultController extends AbstractActionController {
         $params = $this->params()->fromPost();
        
         try {
-            $this->verifyAuth();           
+            
+            $this->verifyAuth($params);             
             $key = $this->vaultService->getEncryptionKey();
             $cipher = new BlockCipher(new Openssl());
             $cipher->setKey($key);
