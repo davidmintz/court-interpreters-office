@@ -198,7 +198,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
         <h4 id="modal-auth-title" class="modal-title">Please re-authenticate for access to dob/ssn</h4>
       </div>
       <div class="modal-body">
-          <div id="div-auth-error" class="alert alert-danger alert-dismissable hidden">Authentication failed.</div>
+          <div id="div-auth-error" class="alert alert-warning alert-dismissable hidden">Authentication failed.</div>
           <form autocomplete="off" id="form-login">
               <div class="form-group">
                 <label class="sr-only"  for="identity">username or email</label>
@@ -233,9 +233,6 @@ Do not mix form groups or grid column classes directly with input groups. Instea
 $(function(){
     var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
-    
-    
-
     // this is bullshit. what we really want is the button thingy on the same 
     // line as the input but it wraps unless we set the containing element's 
     // class to form-inline, which makes it too narrow. NOTE TO SELF: try "nowrap"
@@ -381,7 +378,7 @@ $(function(){
                 return displayValidationErrors(response.validation_errors);
             }            
             if (response.authenticated) {
-                $('#login-modal').modal('hide');
+                
                 var encrypted_dob =  $('input[name="encrypted.dob"]');
                 var encrypted_ssn =  $('input[name="encrypted.ssn"]');
                 $.post('/vault/decrypt',{
@@ -391,7 +388,7 @@ $(function(){
                 },function(response){
                     // to do:  finish this error handling
                     if (response.error) {
-                        alert("shit: "+response.error);
+                        $('#div-auth-error').text("Error: "+response.error).removeClass("hidden");
                         return;
                     }
                     $('#ssn, #dob').removeAttr("disabled");
@@ -399,8 +396,7 @@ $(function(){
                         encrypted_ssn.remove();
                         $('#ssn').val(response.ssn);
                     }
-                    if (response.dob) {
-                        
+                    if (response.dob) {                        
                         encrypted_dob.remove();
                         $('#dob')
                             .val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"))
@@ -409,14 +405,16 @@ $(function(){
                                 minDate : "-100y",         
                                 yearRange : "-100:-18",
                         });
-                    }           
+                    }
+                    // hide the modal dialog
+                    $('#login-modal').modal('hide');
                     // hide the lock thingies
                     $('button[data-target="#login-modal"]').hide();  
                     $('#ssn, #dob').css({width:'100%'});
                 },'json');
             } else {
                 // to do: finish this...
-                return alert("auth failed.");
+                return $('#div-auth-error').text(response.error).removeClass("hidden");
             }
         });        
     });                
