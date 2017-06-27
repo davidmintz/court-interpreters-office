@@ -211,20 +211,12 @@ class InterpreterFieldset extends PersonFieldset
             ]);
         }
     }
+    
     /**
      * adds the specialized "Hat" element to the form.
      *
      * @return \InterpretersOffice\Admin\Form\InterpreterFieldset
      */
-    
-
-    public function setOriginalEncryptedValues()
-    {
-
-        //$this->original_encryted_values = $data;
-    }
-
-
     public function addHatElement()
     {
         $this->add([
