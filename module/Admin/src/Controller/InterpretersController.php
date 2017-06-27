@@ -201,12 +201,13 @@ class InterpretersController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             
-            $form->setData($request->getPost());            
+            $form->setData($request->getPost());
+           // var_dump($request->getPost()->toArray());//exit();
             $this->updateInterpreterLanguages(
                 $entity,
                 $request->getPost()['interpreter']['interpreter-languages']
             );
-            $this->preValidate($values_before,$form);
+
             if (! $form->isValid()) {
                 //echo "<pre>";print_r($form->getMessages());echo "</pre>";
                 //echo "shit is NOT valid. ";
@@ -219,7 +220,7 @@ class InterpretersController extends AbstractActionController
             ));
             $this->redirect()->toRoute('interpreters');
             //echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
-           //print_r($form->getMessages()); echo "</pre>";
+           
         } else {
             // not a POST
             if ($this->vault_enabled) {
@@ -229,19 +230,7 @@ class InterpretersController extends AbstractActionController
 
         return $viewModel;
     }
-
-    protected function preValidate(Array $values_before,InterpreterForm $form)
-    {
-        $fields = array_keys($values_before);
-        $input = $this->params()->fromPost('interpreter');
-        $fieldset = $form->get('interpreter');
-        foreach($fields as $field) {
-            if (isset($input[$field]) && values_before[$field] == $input[$field]) {
-                $fieldset->remove($field);
-            }
-        }
-    }
-
+    
     /**
      * @todo DO NOT run if not xhr, check presence of 'interpreters' index
      * @return JsonModel
