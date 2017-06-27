@@ -55,11 +55,11 @@ class VaultController extends AbstractActionController {
             throw new VaultException("authentication is required");
         }
         if (! isset($params['csrf'])) {
-            throw new VaultException("missing CSRF token");
+            throw new VaultException("missing CSRF (security) token");
         }
         $validator = new \Zend\Validator\Csrf(['name'=>'csrf']);        
         if ( ! $validator->isValid($params['csrf'])) {
-             throw new VaultException("invalid CSRF token");
+             throw new VaultException("invalid CSRF (security) token");
         }
         $role = (string)$this->auth->getIdentity()->role;
         if (!in_array($role,['administrator','manager'])) {
