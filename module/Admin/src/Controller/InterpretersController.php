@@ -187,7 +187,10 @@ class InterpretersController extends AbstractActionController
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
         }
-
+        $values_before = [
+            'dob' => $entity->getDob(),
+            'ssn' => $entity->getSsn(),
+        ];
         $form = new InterpreterForm($this->entityManager, ['action' => 'update','vault_enabled'=>$this->vault_enabled]);
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id, 
@@ -203,7 +206,7 @@ class InterpretersController extends AbstractActionController
                 $entity,
                 $request->getPost()['interpreter']['interpreter-languages']
             );
-            
+            $this->preValidate($values_before,$form);
             if (! $form->isValid()) {
                 //echo "<pre>";print_r($form->getMessages());echo "</pre>";
                 //echo "shit is NOT valid. ";
@@ -212,8 +215,7 @@ class InterpretersController extends AbstractActionController
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(sprintf(
                 'The interpreter <strong>%s %s</strong> has been updated.',
-                $entity->getFirstname(),
-                $entity->getLastname()
+                $entity->getFirstname(), $entity->getLastname()
             ));
             $this->redirect()->toRoute('interpreters');
             //echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
@@ -227,6 +229,19 @@ class InterpretersController extends AbstractActionController
 
         return $viewModel;
     }
+
+    protected function preValidate(Array $values_before,InterpreterForm $form)
+    {
+        $fields = array_keys($values_before);
+        $input = $this->params()->fromPost('interpreter');
+        $fieldset = $form->get('interpreter');
+        foreach($fields as $field) {
+            if (isset($input[$field]) && values_before[$field] == $input[$field]) {
+                $fieldset->remove($field);
+            }
+        }
+    }
+
     /**
      * @todo DO NOT run if not xhr, check presence of 'interpreters' index
      * @return JsonModel
