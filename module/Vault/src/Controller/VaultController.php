@@ -44,12 +44,13 @@ class VaultController extends AbstractActionController {
         return new JsonModel(['result'=>'OK']);
     }
     /**
-     * redundant authentication and authorization check
+     * verifies CSRF token and re-verifies authentication/authorization
      * 
      * @return boolean
      * @throws VaultException
      */
     protected function verifyAuth(Array $params) {
+        
         if (! $this->auth->hasIdentity()) {
             throw new VaultException("authentication is required");
         }
