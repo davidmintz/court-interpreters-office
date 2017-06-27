@@ -2,7 +2,8 @@
 /** module/Admin/views/interpreters-offe/admin/interpreters/index.phtml
  *  viewscript for main people-administration page
  */
-
+$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
+$this->headLink()->appendStylesheet('//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css') ?>
 $form = $this->form;
 foreach (['language_id','active','security_clearance_expiration'] as $e) :
     $form->get($e)->setValue($this->params[$e]);
@@ -17,7 +18,6 @@ $messenger = $this->flashMessenger()->setAutoEscape(false);
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',]);
 endif;
-
 ?>
 <form>
     <div class="form-group form-inline">
@@ -30,7 +30,7 @@ endif;
          <?php echo $this->formSelect($form->get('security_clearance_expiration'))?><!--
     --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a> 
     </div>
-    <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
+    <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
 </form>
 <br>
 <?php 
@@ -85,6 +85,22 @@ $(function(){
             url += '/security/'+security;
         //}
         document.location = url;
+    });
+    $('#name').autocomplete({
+        source : window.basePath+'/admin/interpreters',
+        minLength : 2,
+        focus: function( event, ui ) {}
+    });
+    $('#btn-search-name').on("click",function(event){
+        event.preventDefault();
+        var nameElement = $('#name');
+        var name = nameElement.val();
+        if (! name) {
+            return;
+        }
+        
+        
+        
     });
 });
 

@@ -17,6 +17,7 @@ use Zend\Session\Container as Session;
 /**
  * controller for admin/interpreters.
  * @todo DRY out the hydration/processing
+ * @todo split off the read-only functions from the update/insert
  */
 class InterpretersController extends AbstractActionController
 {
@@ -54,6 +55,12 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {        
+        
+        $autocomplete_term = $this->params()->fromQuery('term');
+        if ($autocomplete_term) {
+            return $this->autocomplete($autocomplete_term);
+        }
+        
         $params = $this->params()->fromRoute();
         $matchedRoute = $this->getEvent()->getRouteMatch();
         $routeName =  $matchedRoute->getMatchedRouteName();
@@ -73,6 +80,15 @@ class InterpretersController extends AbstractActionController
         return $viewModel;       
     }
     
+    public function autocomplete($term)
+    {
+        return new JsonModel([
+            ['label'=>"shit",'value'=>"shit"],
+            ['label'=>"boink",'value'=>"boink"],
+            ['label'=>"gack",'value'=>"gack"],
+            
+        ]);
+    }
     /**
      * figures out appropriate defaults for interpreter roster search form
      * 
