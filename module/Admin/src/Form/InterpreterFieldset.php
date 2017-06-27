@@ -569,7 +569,7 @@ class InterpreterFieldset extends PersonFieldset
                        'name' => 'Callback',
                         'options' =>[
                             'callback' => function($value){
-                                if (! $value) { return null; }
+                                if (! preg_match('|^\d\d/\d\d/\d{4}$|',$value)) { return $value; }
                                 list($M, $D, $Y) = explode('/', $value);
                                 return "$Y-$M-$D";
                             },
