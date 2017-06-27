@@ -386,7 +386,7 @@ $(function(){
                     ssn  : encrypted_ssn.val(),
                     csrf : response.csrf
                 },function(response){
-                    // to do:  finish this error handling
+                    
                     if (response.error) {
                         $('#div-auth-error').text("Error: "+response.error).removeClass("hidden");
                         return;
@@ -412,8 +412,7 @@ $(function(){
                     $('button[data-target="#login-modal"]').hide();  
                     $('#ssn, #dob').css({width:'100%'});
                 },'json');
-            } else {
-                // to do: finish this...
+            } else {                
                 return $('#div-auth-error').text(response.error).removeClass("hidden");
             }
         });        
