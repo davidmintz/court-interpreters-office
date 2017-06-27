@@ -343,7 +343,7 @@ $(function(){
     // prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
     $('#login-modal').on("show.bs.modal",function(){
-        //$('#identity, #password').val("");        
+         $('#identity, #password').val("");        
     });
     /** validate each tab pane before moving on **/
     $('a[data-toggle="tab"]').on('click', function (e) {
@@ -399,7 +399,7 @@ $(function(){
                         $('#ssn').val(response.ssn);
                     }
                     if (response.dob) {
-                        alert(response.dob);
+                        
                         encrypted_dob.remove();
                         $('#dob')
                             .val(window.moment(response.dob,"YYYY-MM-DD").format("MM/DD/YYYY"))
