@@ -102,16 +102,19 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
                 $old_value = $event->getOldValue($prop);
                 $new_value = $event->getNewValue($prop);
                 $setter = 'set'.lcfirst($prop);
-                // if there is NO old value, but there IS a new value, just encrypt it
+                // if there is NO old value, but there IS a new value, 
+                // just encrypt it without further ado
                 if ($new_value && ! $old_value ) {
-                    $this->log->debug("updating from null $prop to not-null?");
+                    $this->log->debug("updating from null $prop to $new_value (not-null)?");
                     $setter = 'set'.lcfirst($prop);
-                    $interpreter->$setter($this->vault->encrypt($new_value));
+                    $encrypted = $this->vault->encrypt($new_value);
+                    $interpreter->$setter($encrypted);
+
                 } elseif ($old_value && ! $new_value) {
-                    // pass
+                    // pass. nothing to encrypt.
                     $this->log->debug("updating from  not-null $prop  to null?");
                 } else {
-                    // compare old value decrypted with new
+                    // compare old value ~decrypted~ with new
                     $this->log->debug("comparing old-decrypted $prop to new");
                     $decrypted_old_value = !$old_value ? NULL : $this->vault->decrypt($old_value);
                     if ($decrypted_old_value != $new_value) {
@@ -120,9 +123,9 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
                         $interpreter->$setter($this->vault->encrypt($new_value));
                     } else {
                         // not really modified.
-                        $this->log->debug("$prop NOT really updated, attempting to unset from changeset");
-                        $changeset = $event->getEntityChangeSet();
-                        unset($changeset[$prop]);
+                        $this->log->debug("$prop NOT really updated, resetting to old encrypted value");
+                        $interpreter->$setter($old_value);
+                        
                     }
                 }
             }            
