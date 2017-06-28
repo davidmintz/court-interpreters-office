@@ -22,6 +22,7 @@ class LanguageSelect extends ObjectSelect
             'target_class' => 'InterpretersOffice\Entity\Language',
             'property' => 'name',
             'label' => 'languages',
+            'empty_item_label'   => '--- select language --',
         ],
         'attributes' => [
             'class' => 'form-control',
@@ -39,16 +40,16 @@ class LanguageSelect extends ObjectSelect
     {
 
         $this->getProxy()->setObjectManager($options['objectManager']);
-        $this->getProxy()->setTargetClass('InterpretersOffice\Entity\Language');
-        parent::__construct($name, $options);
+        parent::__construct($name, array_merge($this->defaultOptions['options'], $options));
         $attributes = $this->defaultOptions['attributes'];
         if (key_exists('attributes', $options)) {
             $attributes = array_merge($attributes, $options['attributes']);
         }
         $this->setAttributes($attributes);
         $select_options = $this->getValueOptions();
+        
         array_unshift($select_options, [
-            'label' => '-- select a language --',
+            'label' => $this->getOption('empty_item_label'),
             'value' => '',
             'attributes' => ['label' => ' '],
         ]);
