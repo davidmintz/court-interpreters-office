@@ -32,6 +32,7 @@ class InterpreterRosterForm extends Form
                     'attributes' => [
                         'id' => 'language_id',
                     ],
+                    'empty_item_label' => '-- any language --',
                 ]
 			)
 		);
