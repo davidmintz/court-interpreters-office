@@ -15,6 +15,7 @@ interface CacheDeletionInterface
      * clears the cache
      *
      * @param string $cache_id
+     * @return boolean true if successful
      */
     public function deleteCache($cache_id = null);
 }
