@@ -82,12 +82,10 @@ class InterpretersController extends AbstractActionController
     
     public function autocomplete($term)
     {
-        return new JsonModel([
-            ['label'=>"shit",'value'=>"shit"],
-            ['label'=>"boink",'value'=>"boink"],
-            ['label'=>"gack",'value'=>"gack"],
-            
-        ]);
+        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
+        return new JsonModel(
+            $repository->autocomplete($term)
+        );
     }
     /**
      * figures out appropriate defaults for interpreter roster search form

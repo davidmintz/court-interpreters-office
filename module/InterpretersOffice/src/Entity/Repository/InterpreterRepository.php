@@ -14,9 +14,22 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 /**
  * custom repository class for EventType entity.
  */
-class InterpreterRepository extends EntityRepository 
+class InterpreterRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
+
+    /**
+     * @var string cache namespace
+     */
+    protected $cache_namespace = 'interpreters';
+    
+    /**
+     * cache
+     *
+     * @var CacheProvider
+     */
+    protected $cache;
+
 
     /**
      * constructor.
@@ -26,10 +39,11 @@ class InterpreterRepository extends EntityRepository
      */
     public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
     {
-        $em->getConfiguration()->getResultCacheImpl()->setNamespace('interpreters');
         parent::__construct($em, $class);
+        $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace($this->cache_namespace);
     }
-
+    
     /**
      * looks up Interpreters by name
      *
@@ -131,5 +145,23 @@ class InterpreterRepository extends EntityRepository
        
         return $paginator;                   
         
+    }
+
+    public function deleteCache($id = null)
+    {
+
+        $this->cache->setNamespace($this->cache_namespace);
+        return $this->cache->deleteAll();    
+    }
+
+    public function autocomplete($term)
+    {
+
+        return [
+            ['label'=>"shit",'value'=>"shit"],
+            ['label'=>"boink",'value'=>"boink"],
+            ['label'=>"gack",'value'=>"gack"],
+            
+        ];
     }
 }
