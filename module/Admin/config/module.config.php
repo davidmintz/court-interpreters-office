@@ -310,13 +310,24 @@ return [
                             ],
                         ],
                     ],
+                    'find_by_id' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:id',
+                            'defaults' => [
+                                'action' => 'view',
+                            ],
+                            'constraints' => [                                
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
                     'edit' => [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/:action/:id',
                             'defaults' => [
                                 'action' => 'edit',
-
                             ],
                             'constraints' => [
                                 'action' => 'edit|delete',
