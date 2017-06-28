@@ -55,13 +55,21 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         echo __FUNCTION__ . " is running ... ";
 
     }
-    
+    /**
+     * gets interpreters based on search criteria
+     * 
+     * @param Array $params
+     * @param int $page
+     * @return ZendPaginator|Array
+     */
     public function search($params,$page = 1)
     {
         if ( !empty($params['name'])) {
             return $this->findByName($params);
         }
-        //orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i JOIN i.interpreterLanguages il JOIN il.language l WHERE l.name = 'Spanish'"
+        //orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i 
+        //JOIN i.interpreterLanguages il 
+        //JOIN il.language l WHERE l.name = 'Spanish'"
 
         $qb = $this->createQueryBuilder('i');
         $queryParams = [];
@@ -70,7 +78,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $qb->select('PARTIAL i.{lastname, firstname, id, active, securityClearanceDate}','h.name AS hat')
             ->join('i.hat','h');
         
-        // keep track of whether we have needed to set any WHERE clauses
+        // keep track of whether we need to set any WHERE clauses
         $hasWhereConditions = false;
         
         // are they filtering for active|inactive?
@@ -122,8 +130,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         if ($security_expiration_clause) {
             $method = $hasWhereConditions ? 'andWhere' : 'where';
             $qb->$method($security_expiration_clause);
-        }
-        
+        }        
         
         if ($queryParams) { 
             $qb->setParameters($queryParams);
@@ -146,22 +153,58 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         return $paginator;                   
         
     }
-
+    
+    /**
+     * deletes cache
+     *
+     * implements CacheDeletionInterface
+     * @param string $cache_id
+     */
     public function deleteCache($id = null)
     {
-
         $this->cache->setNamespace($this->cache_namespace);
         return $this->cache->deleteAll();    
     }
-
+    /**
+     * returns autocompletion values
+     * 
+     * @param string $term
+     * @return array
+     */
     public function autocomplete($term)
     {
-
-        return [
-            ['label'=>"shit",'value'=>"shit"],
-            ['label'=>"boink",'value'=>"boink"],
-            ['label'=>"gack",'value'=>"gack"],
-            
-        ];
+        $name = $this->parseName($term);
+        $params = [':lastname' => "$name[lastname]%"];
+        $cache_id = "autocomplete.$name[lastname]";
+        $dql = 'SELECT i.id, i.lastname, i.firstname FROM InterpretersOffice\Entity\Interpreter i '
+                . 'WHERE i.lastname LIKE :lastname ';        
+        if ($name['firstname']) {
+            $dql .= ' AND i.firstname LIKE :firstname ';
+            $params[':firstname'] = "$name[firstname]%";
+            $cache_id .= $name['firstname'];
+        }
+        $dql .= 'ORDER BY i.lastname, i.firstname';
+        $result = $this->createQuery($dql,$cache_id,3600)->setParameters($params)->getResult();
+        $data = [];
+        foreach ($result as $row) {
+            $data[] = ['id'=>$row['id'],'value'=> "$row[lastname], $row[firstname]"];
+        }
+        return $data;
+       
+    }
+    
+    /**
+     * parses lastname and firstname from input string
+     * 
+     * @param string $name
+     * @return Array
+     */
+    public function parseName($name)
+    {        
+        $pos = strrpos($name, ',');
+        if (false === $pos) { return ['lastname'=>trim($name), 'firstname'=> null]; }
+        $lastname = trim(substr($name,0,$pos));
+        $firstname = trim(substr($name,$pos+1));
+        return compact('lastname','firstname');
     }
 }
