@@ -1,6 +1,6 @@
 <?php
-/** module/Admin/views/interpreters-offe/admin/interpreters/index.phtml
- *  viewscript for main people-administration page
+/** module/Admin/views/interpreters-office/admin/interpreters/index.phtml
+ *  viewscript for main interpreter-administration page
  */
 $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.css'));
@@ -41,7 +41,7 @@ if ($this->data):
 <table class="table table-hover table-bordered" style="max-width:700px">
     <tbody>
         <?php
-        foreach ($this->data as $row) :
+        foreach ($this->data as $row) : /** note to self: use array hydration? */
             $interpreter = $row[0];  ?>
         <tr><td><?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></td><td></td></tr>
 <?php  endforeach;  ?>
@@ -86,21 +86,43 @@ $(function(){
         //}
         document.location = url;
     });
-    $('#name').autocomplete({
+    var nameElement = $('#name');
+    nameElement.autocomplete({
         source : window.basePath+'/admin/interpreters',
         minLength : 2,
-        focus: function( event, ui ) {}
+        select : function( event, ui ) {            
+           nameElement.data({ interpreterName : ui.item.label, interpreterId: ui.item.id });
+           console.log("select. shit is real");
+        }
+    }).on("change",function(){
+        console.log($(this).data());
     });
     $('#btn-search-name').on("click",function(event){
-        event.preventDefault();
-        var nameElement = $('#name');
-        var name = nameElement.val();
+        event.preventDefault();       
+        var name = nameElement.val().trim();
         if (! name) {
             return;
         }
         
-        
-        
+        var url = window.basePath + "/admin/interpreters";
+        var selected = nameElement.data();
+        if (name === selected.interpreterName) {
+            //shit = "using id "+selected.interpreterId;
+            url  = window.basePath + "/admin/interpreters/" + selected.interpreterId;
+        } else {
+            
+            //'route' => '/name/:lastname[/:firstname]',
+            var pos = name.lastIndexOf(',');
+            if (-1 === pos) {
+                url += "/name/"+name.trim();
+            } else {                
+                 var lastname = encodeURIComponent(name.substring(0,pos).trim());
+                 var firstname = encodeURIComponent(name.substr(pos+1).trim());
+                 url += "/name/"+ lastname + "/" + firstname;
+            }
+        }
+        // TO BE CONTINUED
+        console.log(url +  " will be the url");
     });
 });
 

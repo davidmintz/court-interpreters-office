@@ -51,9 +51,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
      */
     public function findByName($name)
     {
-
         echo __FUNCTION__ . " is running ... ";
-
     }
     /**
      * gets interpreters based on search criteria

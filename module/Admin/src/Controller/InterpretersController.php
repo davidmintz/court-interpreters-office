@@ -47,7 +47,11 @@ class InterpretersController extends AbstractActionController
         $this->entityManager = $entityManager;
         $this->vault_enabled = $vault_enabled;
     }
-
+    
+    public function viewAction() {
+        $id = $this->params()->fromRoute('id');
+        echo "hello from ViewAction! id is $id"; return false;
+    }
     /**
      * index action.
      *
@@ -92,7 +96,7 @@ class InterpretersController extends AbstractActionController
      * 
      * @param ViewModel $view
      * @param Array of GET (route) parameters
-     * @param boolean $isQuery whether submitting search terms or just arriving
+     * @param boolean $isQuery whether submitting search terms, or just arriving
      * 
      * @todo consider making this a method of the form instead
      */
@@ -118,12 +122,9 @@ class InterpretersController extends AbstractActionController
      * @return array
      */
     public function find(Array $params)
-    {
-        //echo "shit is running!" ;
-        
+    {        
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
-        return $repository->search($params,$this->params()->fromQuery('page',1));
-        
+        return $repository->search($params,$this->params()->fromQuery('page',1));        
     }
 
 
