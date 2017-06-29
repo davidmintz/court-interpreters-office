@@ -163,15 +163,9 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $this->cache->setNamespace($this->cache_namespace);
         return $this->cache->deleteAll();    
     }
-    /**
-     * returns autocompletion values
-     * 
-     * @param string $term
-     * @return array
-     */
-    public function autocomplete($term)
+
+    public function getQueryDataForName(Array $name)
     {
-        $name = $this->parseName($term);
         $params = [':lastname' => "$name[lastname]%"];
         $cache_id = "autocomplete.$name[lastname]";
         $dql = 'SELECT i.id, i.lastname, i.firstname FROM InterpretersOffice\Entity\Interpreter i '
@@ -182,6 +176,23 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             $cache_id .= $name['firstname'];
         }
         $dql .= 'ORDER BY i.lastname, i.firstname';
+        return compact('dql','params','cache_id');
+
+    }
+
+
+
+    /**
+     * returns autocompletion values
+     * 
+     * @param string $term
+     * @return array
+     */
+    public function autocomplete($term)
+    {
+        $name = $this->parseName($term);
+        $query = $this->getQueryDataForName($name);
+        extract($query);
         $result = $this->createQuery($dql,$cache_id,3600)->setParameters($params)->getResult();
         $data = [];
         foreach ($result as $row) {
