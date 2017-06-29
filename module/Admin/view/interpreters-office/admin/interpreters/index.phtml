@@ -6,11 +6,15 @@ $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.css'));
 $form = $this->form;
 foreach (['language_id','active','security_clearance_expiration'] as $e) :
-    $form->get($e)->setValue($this->params[$e]);
+    if (isset($params[$e])) { $form->get($e)->setValue($this->params[$e]); }
 endforeach;
-$form->get('name')->setValue(key_exists('name',$this->params)? $this->params['name']:'');
+if ($this->interpreter): 
+    $form->get('name')->setValue("{$interpreter->getLastname()}, {$interpreter->getFirstName()}");
+else:
+    $form->get('name')->setValue(key_exists('name',$this->params)? $this->params['name']:'');
+endif;
+
 $this->headTitle($this->title);
-//$form->setData(['language_id'=>1,'active'=> 0,'security_clearance_expiration'=>1]);
 ?>
 <h2>interpreters</h2>
 <?php
@@ -34,14 +38,19 @@ endif;
 </form>
 <br>
 <?php 
-if ($this->data): 
-    echo $this->paginationControl($this->data, null, 'partials/pagination_head'); 
+if ($this->interpreter) :
+    
+    echo "<p>yes we have an interpreter</p>";
+
+endif;
+if ($this->results): 
+    echo $this->paginationControl($this->results, null, 'partials/pagination_head'); 
 ?>
 
 <table class="table table-hover table-bordered" style="max-width:700px">
     <tbody>
         <?php
-        foreach ($this->data as $row) : /** note to self: use array hydration? */
+        foreach ($this->results as $row) : /** note to self: use array hydration? */
             $interpreter = $row[0];  ?>
         <tr><td><?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></td><td></td></tr>
 <?php  endforeach;  ?>
@@ -49,27 +58,22 @@ if ($this->data):
 </table>
 <p>TO DO: action menu thingy for each table row, e.g: edit, view, cron, email</p>
 <?php echo $this->paginationControl(
-    $this->data,
+    $this->results,
     'sliding',
     'partials/pagination_control',
      ['route'=>$this->routeName,'params'=>$this->params]     
 );?>
 <?php 
     else : 
-        if ($this->isQuery) :
+        if ($this->isQuery and !$this->interpreter) :
 ?><p>No matching records found.</p><?php 
     endif; 
 endif; ?>
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
 </a>
-
-<!-- <pre><?php print_r($this->params)?></pre> -->
-
 <script type="text/javascript">
 $(function(){
-    
-    console.log("boink! loaded");
     var languageSelect = $('#language_id'); 
     var languageButton = $('#btn-search-language');
     languageButton.on("click",function(event){
@@ -79,11 +83,7 @@ $(function(){
         url += '/language/' + language_id;        
         url += '/active/'+$('#active').val();                
         var security = $('#security_clearance_expiration').val();
-        //if (security !== "-1") {
-        // no, do this unconditionally because if no value is submitted for 
-        // this, the session value overrides and this doesn't stick
-            url += '/security/'+security;
-        //}
+        url += '/security/'+security;
         document.location = url;
     });
     var nameElement = $('#name');
@@ -92,11 +92,10 @@ $(function(){
         minLength : 2,
         select : function( event, ui ) {            
            nameElement.data({ interpreterName : ui.item.label, interpreterId: ui.item.id });
-           console.log("select. shit is real");
+           //console.log("select. shit is real");
         }
-    }).on("change",function(){
-        console.log($(this).data());
     });
+    
     $('#btn-search-name').on("click",function(event){
         event.preventDefault();       
         var name = nameElement.val().trim();
@@ -106,11 +105,10 @@ $(function(){
         
         var url = window.basePath + "/admin/interpreters";
         var selected = nameElement.data();
+        // if we have an interpreter id, use it in the url
         if (name === selected.interpreterName) {
-            //shit = "using id "+selected.interpreterId;
-            url  = window.basePath + "/admin/interpreters/" + selected.interpreterId;
-        } else {
-            
+            url  += "/" + selected.interpreterId;
+        } else {            
             //'route' => '/name/:lastname[/:firstname]',
             var pos = name.lastIndexOf(',');
             if (-1 === pos) {
@@ -121,8 +119,7 @@ $(function(){
                  url += "/name/"+ lastname + "/" + firstname;
             }
         }
-        // TO BE CONTINUED
-        console.log(url +  " will be the url");
+        document.location = url;
     });
 });
 

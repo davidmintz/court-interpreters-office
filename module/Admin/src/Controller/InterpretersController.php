@@ -49,8 +49,8 @@ class InterpretersController extends AbstractActionController
     }
     
     public function viewAction() {
-        $id = $this->params()->fromRoute('id');
-        echo "hello from ViewAction! id is $id"; return false;
+        //$id = $this->params()->fromRoute('id');
+        //return new ViewModel
     }
     /**
      * index action.
@@ -69,21 +69,34 @@ class InterpretersController extends AbstractActionController
         $matchedRoute = $this->getEvent()->getRouteMatch();
         $routeName =  $matchedRoute->getMatchedRouteName();
         $isQuery = ( 'interpreters' != $routeName );
-
         $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
         $viewModel = new ViewModel([           
             'title' => 'interpreters',
-            'objectManager' => $this->entityManager,
+            //'objectManager' => $this->entityManager,
             ] + compact('form','params','isQuery','routeName')
         );        
-        $this->initView($viewModel, $params, $isQuery);       
-        if ($isQuery) {  
-             // i.e., search parameters in URL
-            $viewModel->setVariables(['data'=>$this->find($params)]);
-        } 
-        return $viewModel;       
+        if ('interpreters/find_by_id' == $routeName) {
+            $viewModel->interpreter = $this->entityManager->find(
+                 'InterpretersOffice\Entity\Interpreter',
+                  $this->params()->fromRoute('id')
+            );
+
+        } else {        
+            if ($isQuery) {  
+                // i.e., there are search parameters in URL
+                $viewModel->results = $this->find($params);
+            }
+        }
+        return $this->initView($viewModel, $params, $isQuery); 
+        
     }
     
+    /**
+     * returns autocompletion data for name search textfield
+     * 
+     * @param string $term
+     * @return JsonModel
+     */
     public function autocomplete($term)
     {
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
@@ -102,29 +115,42 @@ class InterpretersController extends AbstractActionController
      */
     public function initView(ViewModel $viewModel,Array $params, $isQuery) {
         
-        $session = new Session('interpreter_roster');
+        $session = new Session('interpreter_roster');//$session->clear();return;
+        
         if (! $isQuery) {
+           
         // if no search parameters, get previous state from session if possible
             if ($session->params) {
                 $viewModel->params = $session->params;
             } 
-        } else {
-        // save search parameters in session for next time
-            $session->params = $params;
-            $viewModel->params = $params;
+        } else {             
+            // save search parameters in session for next time
+            
+            if (!empty($params['lastname'])) {
+                $params['name'] = $params['lastname'];
+                if (!empty($params['firstname'])) {
+                    $params['name'] .= ", {$params['firstname']}" ;
+                }
+            }
+            $session->params = $merged = array_merge($session->params ?: [],$params);
+            $viewModel->params = $merged;
+            //var_dump($session->params);
         }
+        return $viewModel;
     }
     /**
      * finds interpreters
      * 
-     * gets interpreters based on search criteria
+     * gets interpreters based on search criteria. if we are given an id
+     * parameter, find by id
      * 
      * @return array
      */
     public function find(Array $params)
     {        
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
-        return $repository->search($params,$this->params()->fromQuery('page',1));        
+        
+        return $repository->search($params, $this->params()->fromQuery('page',1));        
     }
 
 

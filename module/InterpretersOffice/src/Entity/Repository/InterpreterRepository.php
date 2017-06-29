@@ -47,11 +47,13 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     /**
      * looks up Interpreters by name
      *
-     * @param string $name
+     * @param array $name
      */
-    public function findByName($name)
+    public function findByName($params)
     {
-        echo __FUNCTION__ . " is running ... ";
+        $name = ['lastname' => $params['lastname'], 'firstname'=>$params['firstname']];
+        $q = $this->getQueryDataForName($name);       
+        return $this->createQuery($q['dql'],$q['cache_id'],3600)->setParameters($params)->getResult();
     }
     /**
      * gets interpreters based on search criteria
@@ -62,13 +64,6 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
      */
     public function search($params,$page = 1)
     {
-        if ( !empty($params['name'])) {
-            return $this->findByName($params);
-        }
-        //orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i 
-        //JOIN i.interpreterLanguages il 
-        //JOIN il.language l WHERE l.name = 'Spanish'"
-
         $qb = $this->createQueryBuilder('i');
         $queryParams = [];
         
@@ -76,78 +71,90 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $qb->select('PARTIAL i.{lastname, firstname, id, active, securityClearanceDate}','h.name AS hat')
             ->join('i.hat','h');
         
-        // keep track of whether we need to set any WHERE clauses
-        $hasWhereConditions = false;
-        
-        // are they filtering for active|inactive?
-        switch  ($params['active']) {
-        case -1;
-            $active_clause = '';
-            break;
-        case 0;
-            $active_clause = 'i.active = false';
-            break;
-        case 1:
-            $active_clause = 'i.active = true';           
-            break;
+        if ( !empty($params['lastname'])) {
+            $qb->where('i.lastname LIKE :lastname');
+            $queryParams[':lastname'] = "$params[lastname]%";            
+            if (isset($params['firstname'])) {
+                $qb->andWhere('i.firstname LIKE :firstname');
+                $queryParams[':firstname'] = "$params[firstname]%";
+            }
+        } else {
+            //orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i 
+            //JOIN i.interpreterLanguages il 
+            //JOIN il.language l WHERE l.name = 'Spanish'"
+            // keep track of whether we need to set any WHERE clauses
+            $hasWhereConditions = false;
+
+            // are they filtering for active|inactive?
+            switch  ($params['active']) {
+            case -1;
+                $active_clause = '';
+                break;
+            case 0;
+                $active_clause = 'i.active = false';
+                break;
+            case 1:
+                $active_clause = 'i.active = true';           
+                break;
+            }
+            if ($active_clause) {
+                $qb->where($active_clause);
+                $hasWhereConditions = true;
+            }
+            // are they filtering for language?
+            if ( !empty($params['language_id'])) {
+                $method = $hasWhereConditions ? 'andWhere' : 'where';
+                $qb->join('i.interpreterLanguages', 'il')
+                    ->join('il.language','l')
+                    ->$method('l.id = :id');
+                $queryParams[':id'] = $params['language_id'];
+            }
+
+            // are they filtering for security clearance?
+            switch ($params['security_clearance_expiration']) {
+
+            case -1; // any status whatsoever
+                $security_expiration_clause = '';
+                break;
+            case 0;  // expired
+                $security_expiration_clause = 'i.securityClearanceDate < :expiration ';
+                $queryParams[':expiration'] = new \DateTime('-2 years');
+                $hasWhereConditions = true;
+                break;
+            case 1; // valid
+                $security_expiration_clause = 'i.securityClearanceDate > :expiration ';
+                $queryParams[':expiration'] = new \DateTime('-2 years');
+                $hasWhereConditions = true;
+                break;
+            case -2; // NULL
+                $security_expiration_clause = 'i.securityClearanceDate IS NULL';
+                $hasWhereConditions = true;
+                break;
+            }
+            if ($security_expiration_clause) {
+                $method = $hasWhereConditions ? 'andWhere' : 'where';
+                $qb->$method($security_expiration_clause);
+            }        
+
         }
-        if ($active_clause) {
-            $qb->where($active_clause);
-            $hasWhereConditions = true;
-        }
-        // are they filtering for language?
-        if ( !empty($params['language_id'])) {
-            $method = $hasWhereConditions ? 'andWhere' : 'where';
-            $qb->join('i.interpreterLanguages', 'il')
-                ->join('il.language','l')
-                ->$method('l.id = :id');
-            $queryParams[':id'] = $params['language_id'];
-        }
-        
-        // are they filtering for security clearance?
-        switch ($params['security_clearance_expiration']) {
-            
-        case -1; // any status whatsoever
-            $security_expiration_clause = '';
-            break;
-        case 0;  // expired
-            $security_expiration_clause = 'i.securityClearanceDate < :expiration ';
-            $queryParams[':expiration'] = new \DateTime('-2 years');
-            $hasWhereConditions = true;
-            break;
-        case 1; // valid
-            $security_expiration_clause = 'i.securityClearanceDate > :expiration ';
-            $queryParams[':expiration'] = new \DateTime('-2 years');
-            $hasWhereConditions = true;
-            break;
-        case -2; // NULL
-            $security_expiration_clause = 'i.securityClearanceDate IS NULL';
-            $hasWhereConditions = true;
-            break;
-        }
-        if ($security_expiration_clause) {
-            $method = $hasWhereConditions ? 'andWhere' : 'where';
-            $qb->$method($security_expiration_clause);
-        }        
         
         if ($queryParams) { 
             $qb->setParameters($queryParams);
         }
         $qb->orderBy('i.lastname, i.firstname');
+        
         $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
         
         $paginator = new ZendPaginator($adapter);
         //echo $qb->getDQL(); 
         $found =  $paginator->getTotalItemCount();
-        if (! $found) {
-            
+        if (! $found) {            
             return null;
         }
         //echo "<br>".__METHOD__. " found $found ...";
         $paginator
             ->setCurrentPageNumber($page)
-            ->setItemCountPerPage(40);
-       
+            ->setItemCountPerPage(40);       
         return $paginator;                   
         
     }

@@ -287,15 +287,16 @@ return [
                 'may_terminate' => true,
                 'options' => [
                     'route' => '/admin/interpreters',
-                    // defaults for interpreter roster search terms
+                    
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\InterpretersController::class,
                         'action' => 'index',
-                        'active' => 1, // by default, active only
-                        'security_clearance_expiration'=> 1, // by default, valid security clearance status
-                        'language_id' => 0,
-                        'name' => '',
+                        // defaults for interpreter roster search terms
+                        //'active' => 1, // by default, active only
+                        //'security_clearance_expiration'=> 1, // by default, valid security clearance status
+                        //'language_id' => 0,
+                        // 'name' => '',
 
                     ],
                     
@@ -315,7 +316,7 @@ return [
                         'options' => [
                             'route' => '/:id',
                             'defaults' => [
-                                'action' => 'view',
+                                'action' => 'index',
                             ],
                             'constraints' => [                                
                                 'id' => '[1-9]\d*',
@@ -342,7 +343,9 @@ return [
                             'route' => '/name/:lastname[/:firstname]',
                             'defaults' => [
                                 'action' => 'index',
-                                'name'   => '',
+                                // for name-search text input
+                                //'name' => '',
+                                //'firstname'   => '',
                             ],                           
                         ],
                     ],
