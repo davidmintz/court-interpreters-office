@@ -99,6 +99,7 @@ class InterpretersController extends AbstractActionController
      */
     public function autocomplete($term)
     {
+        
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
         return new JsonModel(
             $repository->autocomplete($term)
@@ -278,6 +279,11 @@ class InterpretersController extends AbstractActionController
      */
     public function validatePartialAction()
     {
+        
+        if (! $this->getRequest()->isXmlHttpRequest()) {
+            $this->redirect()->toRoute('interpreters');
+        }
+
         $action = $this->params()->fromQuery('action');
         $params = $this->params()->fromPost();//['interpreter'];
         $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled'=>$this->vault_enabled]);
