@@ -88,7 +88,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         'mobile_phone' => [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'mobilePhone',
-            'required' => true,
+            'required' => false,
             'allow_empty' => true,
             'options' => [
                 'label' => 'mobile phone',
@@ -102,8 +102,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         'active' => [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'active',
-            'required' => true,
-            'allow_empty' => false,
+            //'required' => true,
+            //'allow_empty' => false,
             'options' => [
                 'label' => 'active',
                 'use_hidden_element' => true,
