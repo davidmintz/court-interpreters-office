@@ -72,7 +72,6 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      */
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
     {        
-
        
         $this->getEventManager()->trigger(__FUNCTION__, $this);
         //var_dump(is_null($this->log));
