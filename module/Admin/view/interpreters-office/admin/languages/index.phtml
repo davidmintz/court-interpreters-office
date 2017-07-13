@@ -26,11 +26,11 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
     <tbody>
         <?php
         foreach ($this->languages as $language) :
-            ?><tr><td><?php echo $this->escapeHtml($language) ?></td></tr> <?php
-        endforeach;
-        ?>
+            ?><tr><td><?php echo $this->escapeHtml($language[0]) ?> 
+       (<?php printf('%d interpreters, %d events',$language['interpreters'],$language['events']); ?>)</td></tr>
+       <?php endforeach;
+       ?>
     </tbody>
-
 </table>
 
 <?php echo $this->paginationControl(

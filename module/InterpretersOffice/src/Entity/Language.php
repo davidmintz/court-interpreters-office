@@ -69,6 +69,14 @@ class Language
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
      */
     protected $interpreterLanguages;
+    
+    /**
+     * ArrayCollection related Events
+     *
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Event",mappedBy="language")
+     */
+    protected $events;
 
     /**
      * constructor.
@@ -76,6 +84,7 @@ class Language
     public function __construct()
     {
         $this->interpreterLanguages = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     /**

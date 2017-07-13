@@ -31,7 +31,14 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function findAllWithPagination($page = 1)
     {
-        $dql = 'SELECT language FROM InterpretersOffice\Entity\Language language ORDER BY language.name';
+        
+        $dql= 'SELECT partial l.{id,name}, COUNT(il.language) AS interpreters, 
+            COUNT(e.id) AS events 
+            FROM InterpretersOffice\Entity\Language l 
+                LEFT JOIN l.interpreterLanguages il 
+                LEFT JOIN l.events e 
+            GROUP BY l.id ORDER BY l.name ASC';
+        //$dql = 'SELECT language FROM InterpretersOffice\Entity\Language language ORDER BY language.name';
         $query = $this->createQuery(
             $dql,
             $this->cache_id_prefix . 'findAll'
