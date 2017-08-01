@@ -142,8 +142,8 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             $qb->setParameters($queryParams);
         }
         $qb->orderBy('i.lastname, i.firstname');
-        
-        $adapter = new DoctrineAdapter(new ORMPaginator($qb->getQuery()));
+        $query = $qb->getQuery()->useResultCache(true, null, 'interpreter-search-query');
+        $adapter = new DoctrineAdapter(new ORMPaginator($query));
         
         $paginator = new ZendPaginator($adapter);
         //echo $qb->getDQL(); 
