@@ -5,8 +5,9 @@
 $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.css'));
 $form = $this->form;
+// set some defaults for the search form
 foreach (['language_id','active','security_clearance_expiration'] as $e) :
-    if (isset($params[$e])) { $form->get($e)->setValue($this->params[$e]); }
+    if (isset($this->params[$e])) { $form->get($e)->setValue($this->params[$e]); }
 endforeach;
 if ($this->interpreter): 
     $form->get('name')->setValue("{$interpreter->getLastname()}, {$interpreter->getFirstName()}");
