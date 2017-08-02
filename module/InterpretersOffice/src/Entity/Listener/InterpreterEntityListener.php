@@ -25,7 +25,8 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
     use EventManagerAwareTrait;
     
     /**
-     *
+     * log
+     * 
      * @var Zend\Log\LoggerInterface
      */
     protected $log;
@@ -37,6 +38,11 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      */
     protected $vault;
     
+    /**
+     * sets logger instance
+     * 
+     * @param LoggerInterface $log
+     */
     public function setLogger(LoggerInterface $log)
     {
         $this->log = $log;
@@ -131,15 +137,33 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
         }        
     }
     
+    /**
+     * listener for prePersist event.
+     * 
+     * if our Hashicorp Vault module is enabled, encrypt the Interpreter's
+     * date-of-birth and social security number using our vault client.
+     * 
+     * @param Interpreter $interpreter
+     * @param LifecycleEventArgs $event
+     * 
+     */
     public function prePersist(Interpreter $interpreter, LifecycleEventArgs $event) {
         
-        $this->log->debug("this is ".__FUNCTION__);
+        if (! $this->hasVault()) {
+            $this->log->info("no vault enabled, not encrypting any interpreter data");
+            return;
+        }
         // @todo throw Exception if they try to save w/o encryption??
-        if (! $this->vault) { $this->log->debug("no vault enabled, returning");return; }
         foreach (['dob','ssn'] as $field) {
             $getter = 'get'.lcfirst($field);
             $value = $interpreter->$getter();
             if ($value) {
+                /* worth considering...
+                if (! $this->hasVault()) {
+                    throw new \RuntimeException(
+                      "cannot save interpreter $field without encyption");
+                }                 
+                 */
                 $setter = 'set'.lcfirst($field);
                 $interpreter->$setter($this->vault->encrypt($value));
                 $this->log->debug("we have encrypted $field in ".__FUNCTION__);
