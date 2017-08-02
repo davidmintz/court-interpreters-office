@@ -29,7 +29,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         return ['postUpdate','postPersist','postRemove'];
     }
-
+    
+    
     /**
      * postUpdate handler
      * @param LifecycleEventArgs $args
@@ -62,7 +63,14 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             } else {
                 $this->logger->debug(sprintf('%s in UpdateListener: looks like users cache has no %d',__FUNCTION__,$id));
             }
-        } 
+        }
+        if ($entity instanceof Entity\InterpreterLanguage) {
+            
+            $cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
+            $cache->setNamespace('languages');
+            $cache->deleteAll();
+            $this->logger->debug("InterpreterLanguage entity updated; language cache was purged.");
+        }
     }
 
     /**
