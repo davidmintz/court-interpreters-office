@@ -24,28 +24,35 @@ use Zend\Crypt\Symmetric\Openssl;
  */
 class VaultController extends AbstractActionController {
     
-    
+    /**
+     * client for communicating with Vault
+     * 
+     * @var SDNY\Vault\Service\Vault
+     */
     protected $vaultService;
     
+    /**
+     * auth service
+     * 
+     * @var Zend\Authentication\AuthenticationServiceInterface
+     */
     protected $auth;
     
+    /**
+     * constructor
+     * 
+     * @param Vault $vaultService
+     * @param AuthenticationServiceInterface $auth
+     */
     public function __construct(Vault $vaultService, AuthenticationServiceInterface $auth) {
         
         $this->vaultService = $vaultService;
         $this->auth = $auth;
-    }
-  
-    public function testAction()
-    {
-      
-        $this->verifyAuth();
-        echo " ...gack! looking good in testAction ..." ;  
-        return false;
-        return new JsonModel(['result'=>'OK']);
-    }
+    }  
+   
     /**
      * verifies CSRF token and re-verifies authentication/authorization
-     * 
+     * @param Array $params
      * @return boolean
      * @throws VaultException
      */
@@ -68,7 +75,12 @@ class VaultController extends AbstractActionController {
         return true;
     }   
     
-    
+    /**
+     * decrypts encrypted values in POST
+     * 
+     * @return JsonModel
+     * @throws VaultException
+     */
 
     public function decryptAction()
     {
