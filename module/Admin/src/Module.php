@@ -9,6 +9,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\Session\SessionManager;
 
 use InterpretersOffice\Admin\Controller;
+
 //use InterpretersOffice\Controller;
 /**
  * Module class for our InterpretersOffice\Admin module.
@@ -42,45 +43,46 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $eventManager = $event->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']); 
-        $eventManager->attach(MvcEvent::EVENT_ROUTE,[$this,'attachEntityListener']);
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
         $container = $event->getApplication()->getServiceManager();
         // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
-       
+
         $container->get(SessionManager::class);// yes. just the getting is enough
-        
+
         // Interpreter entity event listener, an experiment to test a hypothesis.
         // $listener = $container->get('interpreter-listener');
         // $em = $container->get('entity-manager');
         // $em->getConfiguration()->getEntityListenerResolver()->register($listener);
-        
     }
-    
+
     /**
      * attaches Interpreter entity event listener
-     * 
+     *
      * @param MvcEvent $event
-     * 
+     *
      */
     public function attachEntityListener(MvcEvent $event)
     {
         $routeMatch = $event->getRouteMatch();
-        if (! $routeMatch) { return; }
+        if (! $routeMatch) {
+            return;
+        }
         $controller_name = $routeMatch->getParams()['controller'];
-        
-        if (in_array($controller_name,[
-            Controller\InterpretersController::class, 
+
+        if (in_array($controller_name, [
+            Controller\InterpretersController::class,
             Controller\UsersController::class,
-            \InterpretersOffice\Controller\AuthController::class,            
+            \InterpretersOffice\Controller\AuthController::class,
         ])) {
             $container = $event->getApplication()->getServiceManager();
             $em = $container->get('entity-manager');
-            $listener = $container->get('interpreter-listener');            
+            $listener = $container->get('interpreter-listener');
             $em->getConfiguration()->getEntityListenerResolver()->register($listener);
             //echo "shit is attached. ";
-        } 
+        }
     }
     /**
      * callback to check authentication on mvc route event.
@@ -119,8 +121,7 @@ class Module
             $flashMessenger->addWarningMessage('Authentication is required.');
             $session->redirect_url = $event->getRequest()->getUriString();
             return $this->getRedirectionResponse($event);
-        } else { 
-            
+        } else {
             $user = $auth->getIdentity();
             //var_dump($user); exit();
             $role = $user->role;
@@ -136,7 +137,7 @@ class Module
             }
              *
              */
-            if (! $this->checkAcl($event,$role)) {
+            if (! $this->checkAcl($event, $role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Access denied.');

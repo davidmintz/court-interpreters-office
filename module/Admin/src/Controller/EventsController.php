@@ -20,7 +20,7 @@ class EventsController extends AbstractActionController
 
     /**
      * constructor
-     * 
+     *
      * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)
@@ -29,18 +29,18 @@ class EventsController extends AbstractActionController
     }
     /**
      * index action
-     * 
+     *
      */
     public function indexAction()
     {
 
         return ['title' => 'events'];
     }
-    
+
     /**
      * adds a new event
-     * 
-     * 
+     *
+     *
      */
     public function addAction()
     {
@@ -64,8 +64,8 @@ class EventsController extends AbstractActionController
 
     /**
      * edits an event
-     * 
-     * 
+     *
+     *
      */
     public function editAction()
     {

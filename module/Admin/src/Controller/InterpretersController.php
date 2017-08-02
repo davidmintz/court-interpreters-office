@@ -21,13 +21,13 @@ use Zend\Session\Container as Session;
  */
 class InterpretersController extends AbstractActionController
 {
-    
+
     /**
      * whether our Vault module is enabled
      * @var boolean
      */
     protected $vault_enabled;
-    
+
     /**
      * entity manager.
      *
@@ -39,21 +39,22 @@ class InterpretersController extends AbstractActionController
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param boolean $vault_enabled 
+     * @param boolean $vault_enabled
      */
-    public function __construct(EntityManagerInterface $entityManager,$vault_enabled)
+    public function __construct(EntityManagerInterface $entityManager, $vault_enabled)
     {
-        
+
         $this->entityManager = $entityManager;
         $this->vault_enabled = $vault_enabled;
     }
-    
+
     /**
      * display Interpreter details view
-     * 
+     *
      * to be implemented
      */
-    public function viewAction() {
+    public function viewAction()
+    {
         //$id = $this->params()->fromRoute('id');
         return new ViewModel();
     }
@@ -63,103 +64,102 @@ class InterpretersController extends AbstractActionController
      * @return ViewModel
      */
     public function indexAction()
-    {        
-        
+    {
+
         $autocomplete_term = $this->params()->fromQuery('term');
         if ($autocomplete_term) {
             return $this->autocomplete($autocomplete_term);
         }
-        
+
         $params = $this->params()->fromRoute();
         $matchedRoute = $this->getEvent()->getRouteMatch();
-        $routeName =  $matchedRoute->getMatchedRouteName();
+        $routeName = $matchedRoute->getMatchedRouteName();
         $isQuery = ( 'interpreters' != $routeName );
         $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
-        $viewModel = new ViewModel([           
+        $viewModel = new ViewModel([
             'title' => 'interpreters',
             //'objectManager' => $this->entityManager,
-            ] + compact('form','params','isQuery','routeName')
-        );        
+            ] + compact('form', 'params', 'isQuery', 'routeName')
+        );
         if ('interpreters/find_by_id' == $routeName) {
             $viewModel->interpreter = $this->entityManager->find(
                  'InterpretersOffice\Entity\Interpreter',
                   $this->params()->fromRoute('id')
             );
-
-        } else {        
-            if ($isQuery) {  
+        } else {
+            if ($isQuery) {
                 // i.e., there are search parameters in URL
                 $viewModel->results = $this->find($params);
             }
         }
-        return $this->initView($viewModel, $params, $isQuery); 
-        
+        return $this->initView($viewModel, $params, $isQuery);
     }
-    
+
     /**
      * returns autocompletion data for name search textfield
-     * 
+     *
      * @param string $term
      * @return JsonModel
      */
     public function autocomplete($term)
     {
-        
+
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
         return new JsonModel(
             $repository->autocomplete($term)
         );
     }
+
     /**
      * figures out appropriate defaults for interpreter roster search form
-     * 
+     *
      * @param ViewModel $viewModel
      * @param Array $params GET (route) parameters
      * @param boolean $isQuery whether submitting search terms, or just arriving
-     * 
+     *
      * @todo consider making this a method of the form instead
      */
-    public function initView(ViewModel $viewModel,Array $params, $isQuery) {
-        
+    public function initView(ViewModel $viewModel, array $params, $isQuery)
+    {
+
         $session = new Session('interpreter_roster');//$session->clear();return;
-        
+
         if (! $isQuery) {
-           
         // if no search parameters, get previous state from session if possible
             if ($session->params) {
                 $viewModel->params = $session->params;
-            } 
-        } else {             
+            }
+        } else {
             // save search parameters in session for next time
-            
-            if (!empty($params['lastname'])) {
+
+            if (! empty($params['lastname'])) {
                 $params['name'] = $params['lastname'];
-                if (!empty($params['firstname'])) {
+                if (! empty($params['firstname'])) {
                     $params['name'] .= ", {$params['firstname']}" ;
                 }
             }
-            $session->params = $merged = array_merge($session->params ?: [],$params);
+            $session->params = $merged = array_merge($session->params ?: [], $params);
             $viewModel->params = $merged;
             //var_dump($session->params);
         }
         return $viewModel;
     }
+
     /**
      * finds interpreters
-     * 
+     *
      * gets interpreters based on search criteria. if we are given an id
      * parameter, find by id
-     * 
+     *
      * @param Array $params interpreter search parameters
      * @return array
      */
-    public function find(Array $params)
-    {        
+    public function find(array $params)
+    {
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
-        
-        return $repository->search($params, $this->params()->fromQuery('page',1));        
-    }
 
+        return $repository->search($params, $this->params()->fromQuery('page', 1));
+    }
 
     /**
      * adds an Interpreter entity to the database.
@@ -185,23 +185,13 @@ class InterpretersController extends AbstractActionController
             $form->setData($request->getPost());
 
             $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
-            // manually hydrate, because we could not make that other shit work
+
             $data = $request->getPost()['interpreter']['interpreter-languages'];
-            if (is_array($data))    {
+            if (is_array($data)) {
+                // manually hydrate, because we could not make that other shit work
                 $this->updateInterpreterLanguages($entity, $data);
-                /*
-                foreach ($data as $language) {
-                    $id = $language['language_id'];
-                    $certification = $language['federalCertification'] >= 0 ?
-                        (bool) $language['federalCertification'] : null;
-                    // or get them all in one shot with a DQL query?
-                    $languageEntity = $repository->find($id);
-                    $il = (new Entity\InterpreterLanguage($entity, $languageEntity))
-                        ->setFederalCertification($certification);
-                    $entity->addInterpreterLanguage($il);
-                }*/
             }
-            
+
             if (! $form->isValid()) {
                 return $viewModel;
             }
@@ -225,7 +215,7 @@ class InterpretersController extends AbstractActionController
     /**
      * updates an Interpreter entity.
      */
-    public function editAction()            
+    public function editAction()
     {
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
@@ -239,16 +229,15 @@ class InterpretersController extends AbstractActionController
             'dob' => $entity->getDob(),
             'ssn' => $entity->getSsn(),
         ];
-        $form = new InterpreterForm($this->entityManager, ['action' => 'update','vault_enabled'=>$this->vault_enabled]);
+        $form = new InterpreterForm($this->entityManager, ['action' => 'update','vault_enabled' => $this->vault_enabled]);
         $form->bind($entity);
-        $viewModel->setVariables(['form' => $form, 'id' => $id, 
+        $viewModel->setVariables(['form' => $form, 'id' => $id,
             // for the re-authentication dialog
-            'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))->setAttribute('id','login_csrf')
+            'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))->setAttribute('id', 'login_csrf')
             ]
-        );               
+        );
         $request = $this->getRequest();
         if ($request->isPost()) {
-            
             $form->setData($request->getPost());
            // var_dump($request->getPost()->toArray());//exit();
             $this->updateInterpreterLanguages(
@@ -257,8 +246,7 @@ class InterpretersController extends AbstractActionController
             );
 
             if (! $form->isValid()) {
-                //echo "<pre>";print_r($form->getMessages());echo "</pre>";
-                //echo "shit is NOT valid. ";
+                //echo "shit is NOT valid.<pre>";print_r($form->getMessages());echo "</pre>";
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -268,7 +256,6 @@ class InterpretersController extends AbstractActionController
             ));
             $this->redirect()->toRoute('interpreters');
             //echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
-           
         } else {
             // not a POST
             if ($this->vault_enabled) {
@@ -278,32 +265,32 @@ class InterpretersController extends AbstractActionController
 
         return $viewModel;
     }
-    
+
     /**
      * validates part of the Interpreter form
-     * 
+     *
      * invoked when the user changes tabs on the Interpreter form
-     * 
+     *
      * @todo DO NOT run if not xhr, check presence of 'interpreters' index
      * @return JsonModel
      */
     public function validatePartialAction()
     {
-        
+
         if (! $this->getRequest()->isXmlHttpRequest()) {
             $this->redirect()->toRoute('interpreters');
         }
 
         $action = $this->params()->fromQuery('action');
         $params = $this->params()->fromPost();//['interpreter'];
-        $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled'=>$this->vault_enabled]);
+        $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled' => $this->vault_enabled]);
         $request = $this->getRequest();
         $form->setData($request->getPost());
-        $form->setValidationGroup(['interpreter'=>array_keys($params['interpreter'])]);
+        $form->setValidationGroup(['interpreter' => array_keys($params['interpreter'])]);
         if (! $form->isValid()) {
-            return new JsonModel(['valid'=>false,'validation_errors'=>$form->getMessages()]);
+            return new JsonModel(['valid' => false,'validation_errors' => $form->getMessages()]);
         }
-        return new JsonModel(['valid'=>true]);
+        return new JsonModel(['valid' => true]);
     }
 
     /**
@@ -332,8 +319,8 @@ class InterpretersController extends AbstractActionController
             $array = $il->toArray();
             $before[$array['language_id']] = $array['federalCertification'];
         }
-        $after = [];       
-        foreach ($languages as $l) {           
+        $after = [];
+        foreach ($languages as $l) {
             $after[$l['language_id']] = $l['federalCertification'] >= 0 ?
                     (bool)$l['federalCertification'] : null;
         }
@@ -370,4 +357,3 @@ class InterpretersController extends AbstractActionController
         }
     }
 }
- 

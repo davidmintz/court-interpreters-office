@@ -27,10 +27,10 @@ class InterpreterFieldset extends PersonFieldset
      * @var string
      */
     protected $fieldset_name = 'interpreter';
-    
+
     /**
      * configuration options
-     * 
+     *
      * @var Array options
      */
     protected $options;
@@ -39,10 +39,10 @@ class InterpreterFieldset extends PersonFieldset
      * encrypted field values
      *
      * encrypted ssn and dob are stored here so we can compare
-     * and determine whether to apply validation 
+     * and determine whether to apply validation
      *
      * @var Array
-     */ 
+     */
     protected $original_encrypted_values;
 
     /**
@@ -54,7 +54,7 @@ class InterpreterFieldset extends PersonFieldset
     public function __construct(ObjectManager $objectManager, $options = [])
     {
         parent::__construct($objectManager, $options);
-        
+
         $this->options = $options;
         /*
         // could not get this to hydrate properly, so we're not using
@@ -110,13 +110,13 @@ class InterpreterFieldset extends PersonFieldset
                 'id' => 'fingerprint_date',
                 'class' => 'date form-control',
             ],
-            'options' => [
+             'options' => [
                 'label' => 'fingerprinted on',
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
-            ],
+             ],
         ]);
-        
+
         // security clearance date
         $this->add(
         [
@@ -130,11 +130,11 @@ class InterpreterFieldset extends PersonFieldset
                 'class' => 'date form-control',
                  'placeholder' => 'date clearance was received',
             ],
-            'options' => [
+             'options' => [
                 'label' => 'security clearance date',
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
-            ],
+             ],
         ]);
         // contract expiration date
         $this->add(
@@ -148,11 +148,11 @@ class InterpreterFieldset extends PersonFieldset
                 'id' => 'contract_expiration_date',
                 'class' => 'date form-control',
             ],
-            'options' => [
+             'options' => [
                 'label' => 'contract expiration date',
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
-            ],
+             ],
         ]);
         // date oath taken
         $this->add(
@@ -166,52 +166,52 @@ class InterpreterFieldset extends PersonFieldset
                 'id' => 'oath_date',
                 'class' => 'date form-control',
             ],
-            'options' => [
+             'options' => [
                 'label' => 'oath taken',
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
-            ],
+             ],
         ]);
         // home phone
         $this->add([
             'name' => 'homePhone',
             'type' => 'Zend\Form\Element\Text',
-            'attributes' => [ 'id'=> 'home_phone', 'class' => 'form-control phone'],
+            'attributes' => [ 'id' => 'home_phone', 'class' => 'form-control phone'],
             'options' => [ 'label' => 'home phone'],
         ]);
-        
+
         $this->add([
             'name' => 'comments',
             'type' => 'Zend\Form\Element\Textarea',
-            'attributes' => [ 
-                'id'=> 'comments', 'class' => 'form-control',
+            'attributes' => [
+                'id' => 'comments', 'class' => 'form-control',
                 'rows' => 10,
                 'cols'  => 36,
              ],
-            'options' => [ 'label' => 'comments'],            
+            'options' => [ 'label' => 'comments'],
         ]);
-        
+
         $this->addAddressElements();
-        
-        if ($options['vault_enabled']) {        
+
+        if ($options['vault_enabled']) {
             // complicated stuff
             $this->add(
             [
                 'name' => 'dob',
                 'type' => 'Zend\Form\Element\Text',
-                'attributes' => ['id' => 'dob','class'=>'form-control encrypted date'],
+                'attributes' => ['id' => 'dob','class' => 'form-control encrypted date'],
                 'options' => ['label' => 'date of birth'],
             ]);
             $this->add(
             [
                 'name' => 'ssn',
                 'type' => 'Zend\Form\Element\Text',
-                'attributes' => ['id' => 'ssn','class'=>'form-control encrypted'],
+                'attributes' => ['id' => 'ssn','class' => 'form-control encrypted'],
                 'options' => ['label' => 'social security number'],
             ]);
         }
     }
-    
+
     /**
      * adds the specialized "Hat" element to the form.
      *
@@ -257,55 +257,55 @@ class InterpreterFieldset extends PersonFieldset
         $this->add([
             'name' => 'address1',
             'type' => 'Zend\Form\Element\Text',
-            'attributes' => [ 'id'=> 'address1', 'class' => 'form-control'],
+            'attributes' => [ 'id' => 'address1', 'class' => 'form-control'],
             'options' => [ 'label' => 'address (1)',],
         ]);
         // address 2
         $this->add([
             'name' => 'address2',
             'type' => 'Zend\Form\Element\Text',
-            'attributes' => [ 'id'=> 'address2', 'class' => 'form-control',],
+            'attributes' => [ 'id' => 'address2', 'class' => 'form-control',],
             'options' => [ 'label' => 'address (2)'],
         ]);
-        
+
         // city
         $this->add([
             'name' => 'city',
             'type' => 'Zend\Form\Element\Text',
-            'attributes' => [ 'id'=> 'city', 'class' => 'form-control'],
+            'attributes' => [ 'id' => 'city', 'class' => 'form-control'],
             'options' => [ 'label' => 'city'],
         ]);
-        
+
         // state or province
         $this->add([
             'name' => 'state',
             'type' => 'Zend\Form\Element\Text',
-            'attributes' => [ 'id'=> 'state', 'class' => 'form-control'],
+            'attributes' => [ 'id' => 'state', 'class' => 'form-control'],
             'options' => [ 'label' => 'state'],
         ]);
         // zip/postal code
         $this->add([
             'name' => 'zip',
             'type' => 'Zend\Form\Element\Text',
-            'attributes' => [ 'id'=> 'zip', 'class' => 'form-control'],
+            'attributes' => [ 'id' => 'zip', 'class' => 'form-control'],
             'options' => [ 'label' => 'zip/postal code'],
         ]);
         // country
         $this->add([
             'name' => 'country',
             'type' => 'Zend\Form\Element\Text',
-            'attributes' => [ 'id'=> 'country', 'class' => 'form-control'],
+            'attributes' => [ 'id' => 'country', 'class' => 'form-control'],
             'options' => [ 'label' => 'country'],
         ]);
     }
-    
+
     /**
      * overrides parent implementation of InputFilterProviderInterface.
      *
      * @return array
      */
     public function getInputFilterSpecification()
-    {       
+    {
         $spec = parent::getInputFilterSpecification();
         $language_options = $this->get('language-select')->getValueOptions();
 
@@ -328,7 +328,7 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                     'break_chain_on_failure' => true,
                  ],
-                [   // backdoor method for ensuring 'federalCertification' field
+                 [   // backdoor method for ensuring 'federalCertification' field
                     // is set, if appropriate: ignore the $value and inspect the
                     // $context array
                     'name' => 'Callback',
@@ -341,8 +341,8 @@ class InterpreterFieldset extends PersonFieldset
                                 if (! isset($language['federalCertification'])) {
                                     return false;
                                 }
-                                $submitted_cert = 
-                                        in_array($language['federalCertification'],[0,1]) ?
+                                $submitted_cert =
+                                        in_array($language['federalCertification'], [0,1]) ?
                                        (bool) $language['federalCertification'] : null;
                                 $cert_required = (bool) $certifiable[$id]['data-certifiable'];
                                 if ($cert_required && ! is_bool($submitted_cert)) {
@@ -356,7 +356,7 @@ class InterpreterFieldset extends PersonFieldset
                             \Zend\Validator\Callback::INVALID_VALUE => 'yes/no required for federal certification',
                         ],
                     ],
-                ],
+                 ],
             ],
         ];
 
@@ -379,7 +379,7 @@ class InterpreterFieldset extends PersonFieldset
                 ],
          ];
          // @todo:  major validation stuff !
-         
+
          // dates
          $spec['fingerprintDate'] = [
              'allow_empty' => true,
@@ -394,7 +394,7 @@ class InterpreterFieldset extends PersonFieldset
                             'name' => 'Zend\Validator\Date',
                             'options' => [
                                 'format' => 'm/d/Y',
-                                'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
+                                'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
                             ],
                             'break_chain_on_failure' => true,
                         ],
@@ -406,9 +406,8 @@ class InterpreterFieldset extends PersonFieldset
                                     list($M, $D, $Y) = explode('/', $value);
                                     $date = "$Y-$M-$D";
                                     $max = date('Y-m-d');
-                                    $min = (new \DateTime("-3 years"))->format('Y-m-d');                                    
+                                    $min = (new \DateTime("-3 years"))->format('Y-m-d');
                                     return $date >= $min && $date <= $max;
-                                    
                                 },
                                 'messages' => [
                                     \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between three years ago and today',
@@ -427,10 +426,10 @@ class InterpreterFieldset extends PersonFieldset
               ],
              'validators' => [
                  [
-                    'name'=> 'Zend\Validator\Date',
-                    'options'=>[
+                    'name' => 'Zend\Validator\Date',
+                    'options' => [
                         'format' => 'm/d/Y',
-                         'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
+                         'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
                     ],
                     'break_chain_on_failure' => true,
                  ],
@@ -442,7 +441,7 @@ class InterpreterFieldset extends PersonFieldset
                                 list($M, $D, $Y) = explode('/', $value);
                                 $date = "$Y-$M-$D";
                                 $max = date('Y-m-d');
-                                $min = (new \DateTime("-5 years"))->format('Y-m-d');                                    
+                                $min = (new \DateTime("-5 years"))->format('Y-m-d');
                                 return $date >= $min && $date <= $max;
                             },
                             'messages' => [
@@ -451,8 +450,8 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                 ],
-         ];
-         $spec['contractExpirationDate'] = [
+            ];
+            $spec['contractExpirationDate'] = [
             'allow_empty' => true,
             'required' => false,
             'filters' => [
@@ -484,8 +483,8 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
             ],
-        ];
-        $spec['oathDate'] = [
+            ];
+            $spec['oathDate'] = [
             'allow_empty' => true,
             'required'  => false,
             'filters' => [
@@ -518,27 +517,27 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                 ],
-            ],        
-         ];
-         // encrypted fields        
-         $spec['dob'] = [
+             ],
+            ];
+         // encrypted fields
+            $spec['dob'] = [
              'allow_empty' => true,
              'required'  => false,
               'filters' => [
                 [
                     'name' => 'StringTrim',
                 ],
-            ],
+              ],
              'validators' => [
                  [
-                    'name'=> 'Zend\Validator\Date',
-                    'options'=>[
+                    'name' => 'Zend\Validator\Date',
+                    'options' => [
                         'format' => 'Y-m-d',
-                         'messages' => [\Zend\Validator\Date::INVALID_DATE=>'valid date in MM/DD/YYYY format is required']
+                         'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
                     ],
                     'break_chain_on_failure' => true,
-                ],
-                [ 'name' => 'Callback',
+                 ],
+                 [ 'name' => 'Callback',
                     'options' => [
                         'callback' => function ($date, $context) {
                             // it can't be in the future
@@ -551,25 +550,27 @@ class InterpreterFieldset extends PersonFieldset
                             \Zend\Validator\Callback::INVALID_VALUE => 'date of birth has to be between 18 and 100 years ago',
                         ],
                     ],
-                ],                
+                 ],
              ],
-             'filters'=>[
+             'filters' => [
                     [
                         'name' => 'StringTrim',
                     ],
                     [
                        'name' => 'Callback',
-                        'options' =>[
-                            'callback' => function($value){
-                                if (! preg_match('|^\d\d/\d\d/\d{4}$|',$value)) { return $value; }
+                        'options' => [
+                            'callback' => function ($value) {
+                                if (! preg_match('|^\d\d/\d\d/\d{4}$|', $value)) {
+                                    return $value;
+                                }
                                 list($M, $D, $Y) = explode('/', $value);
                                 return "$Y-$M-$D";
                             },
                         ],
-                    ],                    
+                    ],
                 ],
-         ];
-         $spec['ssn'] = [
+            ];
+            $spec['ssn'] = [
              'allow_empty' => true,
              'required'  => false,
               'validators' => [
@@ -581,17 +582,17 @@ class InterpreterFieldset extends PersonFieldset
                          'messages' => [
                                 \Zend\Validator\StringLength::TOO_SHORT => 'ssn must contain nine digits',
                                 \Zend\Validator\StringLength::TOO_LONG => 'ssn number cannot exceed nine digits',
-                        ],
+                         ],
                     ],
                 ],
-            ],
-            'filters' => [
+              ],
+             'filters' => [
                 ['name' => 'StringTrim'],
                 ['name' => 'Digits', ],
-            ],
-         ];
+             ],
+            ];
 
-         $spec['homePhone'] = [
+            $spec['homePhone'] = [
              'allow_empty' => true,
              'required'  => false,
               'validators' => [
@@ -601,7 +602,7 @@ class InterpreterFieldset extends PersonFieldset
                     ['name' => 'StringTrim'],
                     ['name' => 'Digits', ],
                 ],
-         ];
+            ];
          /*
           * `contract_expiration_date` date DEFAULT NULL,
             `comments` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
@@ -613,7 +614,7 @@ class InterpreterFieldset extends PersonFieldset
             `country` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
           */
          // address data
-         $spec['address1'] = [
+            $spec['address1'] = [
              'allow_empty' => true,
              'required'  => false,
               'filters' => [
@@ -625,14 +626,14 @@ class InterpreterFieldset extends PersonFieldset
                     'options' => [
                         'max' => 40,
                         'messages' => [
-                        \Zend\Validator\StringLength::TOO_LONG => 
+                        \Zend\Validator\StringLength::TOO_LONG =>
                             'address exceeds maximum length of 40 characters'
                         ]
                     ]
                 ]
-            ]
-         ];
-         $spec['address2'] = [
+              ]
+            ];
+            $spec['address2'] = [
             'allow_empty' => true,
             'required'  => false,
             'filters' => [
@@ -644,32 +645,32 @@ class InterpreterFieldset extends PersonFieldset
                     'options' => [
                         'max' => 40,
                         'messages' => [
-                            \Zend\Validator\StringLength::TOO_LONG => 
+                            \Zend\Validator\StringLength::TOO_LONG =>
                             'address exceeds maximum length of 40 characters'
                         ]
                     ]
                 ],
-            ],//validators             
-         ];
-         $spec['city'] = [
+            ],//validators
+            ];
+            $spec['city'] = [
              'allow_empty' => true,
-             'required'  => false,             
-         ];
-         $spec['state'] = [
+             'required'  => false,
+            ];
+            $spec['state'] = [
              'allow_empty' => true,
-             'required'  => false,             
-         ];
-         $spec['zip'] = [
+             'required'  => false,
+            ];
+            $spec['zip'] = [
              'allow_empty' => true,
-             'required'  => false,             
-         ];
-         $spec['country'] = [
+             'required'  => false,
+            ];
+            $spec['country'] = [
              'allow_empty' => true,
-             'required'  => false,             
-         ];
-         $spec['comments'] = [
+             'required'  => false,
+            ];
+            $spec['comments'] = [
              'allow_empty' => true,
-             'required'  => false, 
+             'required'  => false,
               'filters' => [
                    [ 'name' => \Zend\Filter\StringTrim::class ]
               ],
@@ -679,13 +680,13 @@ class InterpreterFieldset extends PersonFieldset
                         'options' => [
                             'max' => 600,
                             'messages' => [
-                            \Zend\Validator\StringLength::TOO_LONG => 
+                            \Zend\Validator\StringLength::TOO_LONG =>
                                 'comments exceed maximumn length of 600 characters'
                             ]
                         ]
                     ]
               ]
-         ];
-         return $spec;
+            ];
+            return $spec;
     }
 }
