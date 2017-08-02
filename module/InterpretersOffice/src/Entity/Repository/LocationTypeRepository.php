@@ -29,7 +29,7 @@ class LocationTypeRepository extends EntityRepository implements CacheDeletionIn
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace('locations');
     }
-    
+
     /**
      * cache
      *

@@ -22,7 +22,7 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
      * @var string $cache_id
      */
     protected $cache_id = 'event-types';
-    
+
     /**
      * cache
      *
@@ -37,7 +37,7 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class
      */
     public function __construct(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
-    {        
+    {
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace($this->cache_id);
         parent::__construct($em, $class);
@@ -57,7 +57,7 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
 
         return $this->createQuery($dql, 0, 'event-types-all')->getResult();
     }
-    
+
      /**
      * experimental
      *

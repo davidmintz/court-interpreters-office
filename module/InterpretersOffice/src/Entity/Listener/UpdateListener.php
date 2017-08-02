@@ -29,8 +29,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         return ['postUpdate','postPersist','postRemove'];
     }
-    
-    
+
+
     /**
      * postUpdate handler
      * @param LifecycleEventArgs $args
@@ -48,7 +48,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         $repository = $args->getObjectManager()->getRepository(get_class($entity));
         if ($repository instanceof CacheDeletionInterface) {
             $repository->deleteCache();
-            $this->logger->debug("called delete cache on ".get_class($repository));            
+            $this->logger->debug("called delete cache on ".get_class($repository));
         } else {
             $this->logger->debug("! not an implementation of CacheDeletionInterface:    ".get_class($repository));
         }
@@ -59,13 +59,12 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             $id = $entity->getId();
             if ($cache->contains($id)) {
                 $cache->delete($id);
-                $this->logger->debug(sprintf("%s in UpdateListener deleted user id $id from cache",__FUNCTION__));
+                $this->logger->debug(sprintf("%s in UpdateListener deleted user id $id from cache", __FUNCTION__));
             } else {
-                $this->logger->debug(sprintf('%s in UpdateListener: looks like users cache has no %d',__FUNCTION__,$id));
+                $this->logger->debug(sprintf('%s in UpdateListener: looks like users cache has no %d', __FUNCTION__, $id));
             }
         }
         if ($entity instanceof Entity\InterpreterLanguage) {
-            
             $cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
             $cache->setNamespace('languages');
             $cache->deleteAll();

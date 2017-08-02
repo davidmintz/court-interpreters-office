@@ -11,13 +11,13 @@ use Interop\Container\ContainerInterface;
 use InterpretersOffice\Entity\Listener\InterpreterEntityListener;
 use SDNY\Vault\Service\Vault;
 
-
 /**
  * InterpreterEntityListenerFactory
- * 
+ *
  */
-class InterpreterEntityListenerFactory implements FactoryInterface {
-    
+class InterpreterEntityListenerFactory implements FactoryInterface
+{
+
     /**
      * instantiates Interpreter entity listener
      *
@@ -29,7 +29,7 @@ class InterpreterEntityListenerFactory implements FactoryInterface {
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        // more to come?        
+        // more to come?
         //$sharedEventManager = $container->get('SharedEventManager');
         //$sharedEventManager->attach($requestedName,'*',function($e){echo $e->getName() . " happened... ";});
         $listener = new InterpreterEntityListener();
@@ -39,5 +39,4 @@ class InterpreterEntityListenerFactory implements FactoryInterface {
         }
         return $listener;
     }
-    
 }

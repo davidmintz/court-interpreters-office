@@ -12,6 +12,7 @@ use InterpretersOffice\Form\UserForm;
 use InterpretersOffice\Entity;
 
 use Zend\Authentication\AuthenticationServiceInterface;
+
 /**
  *  AccountController.
  *
@@ -27,10 +28,10 @@ class AccountController extends AbstractActionController
      * @var ObjectManager
      */
     protected $objectManager;
-    
+
     /**
      * authentication service
-     * 
+     *
      * @var AuthenticationServiceInterface
      */
     protected $auth;
@@ -100,8 +101,8 @@ class AccountController extends AbstractActionController
      * @return ViewModel
      */
     public function editAction()
-    {        
-        if (!$this->auth->hasIdentity()) {
+    {
+        if (! $this->auth->hasIdentity()) {
             $this->redirect()->toRoute('auth');
             return;
         }

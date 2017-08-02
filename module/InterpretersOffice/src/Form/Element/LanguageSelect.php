@@ -47,7 +47,7 @@ class LanguageSelect extends ObjectSelect
         }
         $this->setAttributes($attributes);
         $select_options = $this->getValueOptions();
-        
+
         array_unshift($select_options, [
             'label' => $this->getOption('empty_item_label'),
             'value' => '',

@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * form for Event entity
- * 
+ *
  */
 class EventForm extends ZendForm
 {
@@ -24,10 +24,10 @@ class EventForm extends ZendForm
      * @var string
      */
     protected $fieldsetClass = EventFieldset::class;
-    
+
     /**
      * name of the form
-     * 
+     *
      * @var string
      */
     protected $formName = 'event-form';
@@ -42,7 +42,7 @@ class EventForm extends ZendForm
     {
         parent::__construct($this->formName, $options);
         $fieldset = new $this->fieldsetClass($objectManager, $options);
-        $this->add($fieldset);        
+        $this->add($fieldset);
         $this->addCsrfElement();
     }
 }

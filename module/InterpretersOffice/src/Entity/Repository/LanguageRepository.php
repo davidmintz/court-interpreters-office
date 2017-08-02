@@ -21,7 +21,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      * @var string cache id prefix
      */
     protected $cache_id_prefix = 'languages:';
-    
+
     /**
      * constructor
      *
@@ -45,8 +45,8 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function findAllWithPagination($page = 1)
     {
-        
-        $dql= 'SELECT partial l.{id,name}, COUNT(il.language) AS interpreters, 
+
+        $dql = 'SELECT partial l.{id,name}, COUNT(il.language) AS interpreters, 
             COUNT(e.id) AS events 
             FROM InterpretersOffice\Entity\Language l 
                 LEFT JOIN l.interpreterLanguages il 

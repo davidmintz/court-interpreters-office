@@ -12,13 +12,14 @@ use Doctrine\ORM\EntityRepository;
 /**
  * UserRepository
  *
- * 
+ *
  */
-class UserRepository extends EntityRepository {
-    
-    
+class UserRepository extends EntityRepository
+{
+
+
     use ResultCachingQueryTrait;
-    
+
      /**
      * @var string cache id
      */
@@ -27,7 +28,7 @@ class UserRepository extends EntityRepository {
     /**
      * cache lifetime
      *
-     * @var int 
+     * @var int
      */
     protected $cache_lifetime = 3600;
 
@@ -51,13 +52,13 @@ class UserRepository extends EntityRepository {
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace('users');
     }
-    
+
     /**
      * experimental overrride of find() to cut down on db queries
-     * 
-     * ...which maybe we no longer really need because we are no longer using 
+     *
+     * ...which maybe we no longer really need because we are no longer using
      * Doctrine's authentication adapter
-     * 
+     *
      * @param mixed    $id          The identifier.
      * @param int|null $lockMode    One of the \Doctrine\DBAL\LockMode::* constants
      *                              or NULL if no specific lock mode should be used
@@ -65,8 +66,9 @@ class UserRepository extends EntityRepository {
      * @param int|null $lockVersion The lock version.
      * @return User  The User instance or NULL if the entity cannot be found.
      */
-    public function find($id, $lockMode = null, $lockVersion = null) {       
-       
+    public function find($id, $lockMode = null, $lockVersion = null)
+    {
+
         if (is_object($id)) {
             $id = $id->getId();
         }
@@ -76,11 +78,13 @@ class UserRepository extends EntityRepository {
         }
         if ($this->cache->contains($id)) {
             return $this->cache->fetch($id);
-        } 
+        }
 
         $user = parent::find($id, $lockMode, $lockVersion);
-        if (! $user) { return null; }
-        $this->cache->save($id, $user, $this->cache_lifetime);        
+        if (! $user) {
+            return null;
+        }
+        $this->cache->save($id, $user, $this->cache_lifetime);
         return $user;
-    }     
+    }
 }

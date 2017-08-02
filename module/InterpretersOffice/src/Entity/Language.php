@@ -69,7 +69,7 @@ class Language
      * @ORM\OneToMany(targetEntity="InterpreterLanguage",mappedBy="language")
      */
     protected $interpreterLanguages;
-    
+
     /**
      * ArrayCollection related Events
      *

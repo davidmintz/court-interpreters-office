@@ -145,21 +145,23 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      * @var string
      */
     protected $auth_user_role = 'anonymous';
-    
+
     /**
      * standard phone validation spec
-     * 
+     *
      * @var array
      */
     protected $phone_validator_spec = [
-        
+
         'name' => 'StringLength',
         'options' => [
             'min' => 10,
             'max' => 10,
             'messages' => [
-                Validator\StringLength::TOO_SHORT => 'phone number must contain ten digits',
-                Validator\StringLength::TOO_LONG => 'phone number cannot exceed ten digits',
+                Validator\StringLength::TOO_SHORT =>
+                    'phone number must contain ten digits',
+                Validator\StringLength::TOO_LONG =>
+                    'phone number cannot exceed ten digits',
             ],
         ],
     ];
@@ -173,16 +175,23 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
     public function __construct(ObjectManager $objectManager, $options = [])
     {
         if (! isset($options['action'])) {
-            throw new \RuntimeException('missing "action" option in PersonFieldset constructor');
+            throw new \RuntimeException(
+                'missing "action" option in PersonFieldset constructor'
+            );
         }
         if (! in_array($options['action'], ['create', 'update'])) {
-            throw new \RuntimeException('invalid "action" option in PersonFieldset constructor');
+            throw new \RuntimeException(
+                'invalid "action" option in PersonFieldset constructor'
+            );
         }
 
         if (isset($options['auth_user_role'])) {
             /** @todo let's not hard-code these roles */
-            if (! in_array($options['auth_user_role'], ['anonymous','staff','submitter','manager','administrator'])) {
-                throw new \RuntimeException('invalid "auth_user_role" option in PersonFieldset constructor');
+            if (! in_array($options['auth_user_role'],
+                 ['anonymous','staff','submitter','manager','administrator'])) {
+                throw new \RuntimeException(
+                 'invalid "auth_user_role" option in PersonFieldset constructor'
+                );
             }
             $this->auth_user_role = $options['auth_user_role'];
         }
@@ -376,7 +385,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
                 'filters' => [
                     ['name' => 'StringTrim'],
-                    ['name' => 'Digits', ],                
+                    ['name' => 'Digits', ],
                 ],
             ],
             'mobilePhone' => [
@@ -418,7 +427,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         }
         // options common to all scenarios
         $validatorOptions = [
-            'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Person'),
+            'object_repository' => $this->objectManager
+                ->getRepository('InterpretersOffice\Entity\Person'),
             'object_manager' => $this->objectManager,
             'use_context' => true,
         ];
@@ -427,7 +437,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             // use the NoObjectExists validator
             $validatorClass = NoObjectExistsValidator::class;
             $validatorOptions['messages'] = [
-                NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'a person with this "Hat" and email address is already in your database',
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
+               'a person with this "Hat" and email address is already in your database',
             ];
             // .. for the hat and email fields
             $validatorOptions['fields'] = ['hat', 'email'];
@@ -440,7 +451,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
              // ... and for the active and email fields
             $validatorOptions['fields'] = ['active', 'email'];
             $validatorOptions['messages'] = [
-                NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'there is already a person in your database with this email address and "active" setting',
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
+                    'there is already a person in your database with this email address and "active" setting',
             ];
             $spec['email']['validators'][] = [
                 'name' => $validatorClass,
@@ -453,7 +465,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             $validatorClass = UniqueObject::class;
 
             $validatorOptions['messages'] = [
-                UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'there is already a person in your database with this email address and "active" setting',
+                UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
+                    'there is already a person in your database with this email address and "active" setting',
             ];
             $validatorOptions['fields'] = ['hat', 'email'];
 
@@ -465,7 +478,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 
             // ... and again, for the active and email fields
             $validatorOptions['messages'] = [
-                UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'there is already a person with this "hat" and email address in your database',
+                UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
+                    'there is already a person with this "hat" and email address in your database',
             ];
             $validatorOptions['fields'] = ['active', 'email'];
             $spec['email']['validators'][] = [

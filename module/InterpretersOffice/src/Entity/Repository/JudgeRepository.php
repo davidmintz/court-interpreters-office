@@ -10,9 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * custom repository class for Judge entity.
- * 
+ *
  */
-class JudgeRepository extends EntityRepository  implements CacheDeletionInterface
+class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
 
@@ -20,7 +20,7 @@ class JudgeRepository extends EntityRepository  implements CacheDeletionInterfac
      * @var string cache namespace
      */
     protected $cache_namespace = 'judges';
-    
+
     /**
      * cache
      *
@@ -52,9 +52,9 @@ class JudgeRepository extends EntityRepository  implements CacheDeletionInterfac
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
                .'ORDER BY j.lastname, j.firstname';
 
-        return $this->createQuery($dql,$this->cache_namespace)->getResult();
+        return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
-    
+
     /**
      * deletes cache
      *

@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\Collection;
 
 /**
  * Entity representing an Interpreter.
- * 
+ *
  * Interpreter is a subclass of Person, but is constrained to having only two
  * types of "Hat:" contract interpreter, or staff interpreter.
  *
@@ -52,9 +52,9 @@ class Interpreter extends Person
 
     /**
      * social security number
-     * 
+     *
      * this will be encrypted, hence the column width
-     * 
+     *
      * @ORM\Column(type="string",length=255,nullable=true)
      */
     protected $ssn;
@@ -90,61 +90,61 @@ class Interpreter extends Person
      * @var \DateTime
      */
     protected $contractExpirationDate;
-    
-    
+
+
     /**
      * comments
-     *  
+     *
      * @ORM\Column(type="string",length=600,name="comments",nullable=false)
      * @var string
      */
     protected $comments = '';
-    
+
     /**
      * address line 1
-     * 
+     *
      * @ORM\Column(type="string",length=60,nullable=false)
      * @var string
      */
     protected $address1 = '';
-    
+
     /**
      * address line 2
-     * 
+     *
      * @ORM\Column(type="string",length=60,nullable=false)
      * @var string
      */
     protected $address2 = '';
-    
+
     /**
      * city
-     * 
+     *
      * @ORM\Column(type="string",length=40,nullable=false)
      * @var string
      */
     protected $city = '';
-    
+
     /**
      * state or province
-     * 
+     *
      * @ORM\Column(type="string",length=40,nullable=false)
      * @var string
      */
     protected $state = '';
-    
+
     /**
      * zip or postal code
      * @ORM\Column(type="string",length=16,nullable=false)
      * @var string
      */
     protected $zip = '';
-    
+
     /**
      * country
-     * 
-     * virtually everyone is in the US. please don't tell me we have to 
+     *
+     * virtually everyone is in the US. please don't tell me we have to
      * normalize this :-)
-     * 
+     *
      * @ORM\Column(type="string",length=16,nullable=false)
      * @var string
      */
@@ -217,7 +217,7 @@ class Interpreter extends Person
      */
     public function setDob($dob)
     {
-        // temporary fix? 
+        // temporary fix?
         if ($dob === '') {
             $dob = null;
         }
@@ -245,7 +245,7 @@ class Interpreter extends Person
      */
     public function setSsn($ssn)
     {
-        // temporary fix? 
+        // temporary fix?
         if ($ssn === '') {
             $ssn = null;
         }
@@ -431,7 +431,7 @@ class Interpreter extends Person
     {
         return $this->oathDate;
     }
-    
+
     /**
      * Get contractExpirationDate
      *
@@ -441,7 +441,7 @@ class Interpreter extends Person
     {
         return $this->contractExpirationDate;
     }
-    
+
     /**
      * Set contractExpirationDate
      *
@@ -456,7 +456,7 @@ class Interpreter extends Person
         return $this;
     }
 
-    
+
     /**
      * Set comments
      *
@@ -624,5 +624,4 @@ class Interpreter extends Person
     {
         return $this->country;
     }
-
 }

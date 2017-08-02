@@ -12,7 +12,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
 /**
  * Fieldset for Event form
- * 
+ *
  */
 
 
@@ -33,10 +33,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
      * @var string
      */
     protected $fieldset_name = 'event';
-    
+
     /**
      * current user's role
-     * 
+     *
      * @var string
      */
     protected $auth_user_role;

@@ -31,7 +31,7 @@ class AuthController extends AbstractActionController
      */
     public function __construct(AuthenticationServiceInterface $auth)
     {
-        $this->auth = $auth;        
+        $this->auth = $auth;
     }
 
     /**
@@ -51,7 +51,7 @@ class AuthController extends AbstractActionController
      * on a GET request or POSTed failed authentication, returns a
      * view; otherwise, redirect to admin main page or to main front
      * page, depending on authenticated user's role.
-     * 
+     *
      * @return ViewModel
      */
     public function loginAction()
@@ -64,8 +64,8 @@ class AuthController extends AbstractActionController
             if (! $form->isValid()) {
                 return $request->isXmlHttpRequest() ?
                         new JsonModel([
-                            'validation_errors'=>$form->getMessages(),
-                            'authenticated'=>false,
+                            'validation_errors' => $form->getMessages(),
+                            'authenticated' => false,
                             'login_csrf' => $form->get('login_csrf')->getValue(),
                             ]
                             )
@@ -80,7 +80,7 @@ class AuthController extends AbstractActionController
             $event_params = ['result' => $result, 'identity' => $data['identity']];
             if (! $result->isValid()) {
                 $this->events->trigger(__FUNCTION__, $this, $event_params);
-                
+
                 return new ViewModel(
                     ['form' => $form, 'status' => $result->getCode()]
                 );
@@ -88,17 +88,17 @@ class AuthController extends AbstractActionController
             // TMP DEBUG
             // echo (spl_object_hash($this->auth). " is the hash of our auth object in the Controller loginAction\n");
             $user = $this->auth->getIdentity();
-            $role = $user->role; 
-   
+            $role = $user->role;
+
             // if they tried to load a page and were sent away, send them back
             $session = new \Zend\Session\Container('Authentication');
-            
+
             // echo "DEBUG:  auth OK. not redirecting....";
             // return new ViewModel(['form' => $form, 'title' => 'user login']);
             if ($request->isXmlHttpRequest()) {
                 $csrf = new \Zend\Form\Element\Csrf('csrf');
                 $token = $csrf->getValue();
-                return new JsonModel(['authenticated'=>true,'csrf' => $token ]);
+                return new JsonModel(['authenticated' => true,'csrf' => $token ]);
             }
 
             if (isset($session->redirect_url)) {

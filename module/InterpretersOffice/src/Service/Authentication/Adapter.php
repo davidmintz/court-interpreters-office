@@ -25,7 +25,7 @@ class Adapter extends AbstractAdapter
 {
     /**
      * Doctrine entity manager
-     * 
+     *
      * @var EntityManager
      */
     protected $entityManager;
@@ -38,7 +38,7 @@ class Adapter extends AbstractAdapter
     {
         $this->entityManager = $entityManager;
     }
-    
+
     /**
      * authenticates the user.
      *
@@ -46,7 +46,7 @@ class Adapter extends AbstractAdapter
      */
     public function authenticate()
     {
-       
+
         $objectManager = $this->entityManager;
         $query = $objectManager->createQuery(
             "SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p"
@@ -56,7 +56,7 @@ class Adapter extends AbstractAdapter
            ->setParameters([':identity' => $this->identity]);
 
         $identity = $query->getOneOrNullResult();
-         
+
         if (! $identity) {
             $this->authenticationResultInfo['code'] = \Zend\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
@@ -85,14 +85,14 @@ class Adapter extends AbstractAdapter
         $hash = $identity->getPassword();
         $password = $this->credential;
         $valid = password_verify($password, $hash);
-        
+
         if (! $valid) {
             $this->authenticationResultInfo['code'] = Result::FAILURE_CREDENTIAL_INVALID;
             $this->authenticationResultInfo['messages'][] = 'Supplied credential is invalid.';
 
             return $this->createAuthenticationResult();
         }
-   
+
         if (! $identity->isActive()) {
             $this->authenticationResultInfo['code'] = Result::FAILURE_USER_ACCOUNT_DISABLED;
             $this->authenticationResultInfo['messages'][] = 'User account is disabled (inactive).';
@@ -116,9 +116,9 @@ class Adapter extends AbstractAdapter
     protected function createAuthenticationResult()
     {
         if (! isset($this->authenticationResultInfo['identity'])) {
-            return new Result($this->authenticationResultInfo['code'],null, $this->authenticationResultInfo['messages']);
+            return new Result($this->authenticationResultInfo['code'], null, $this->authenticationResultInfo['messages']);
         }
-        
+
         $entity = $this->authenticationResultInfo['identity'];
         $user_object = new \stdClass();
         $person = $entity->getPerson();
@@ -128,8 +128,8 @@ class Adapter extends AbstractAdapter
         $user_object->hat = (string)$person->getHat();
         $user_object->username = $entity->getUserName();
         $user_object->role = (string)$entity->getRole();
-        
-        
+
+
         return new Result(
             $this->authenticationResultInfo['code'],
             $user_object,
