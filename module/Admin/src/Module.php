@@ -58,6 +58,12 @@ class Module
         
     }
     
+    /**
+     * attaches Interpreter entity event listener
+     * 
+     * @param MvcEvent $event
+     * 
+     */
     public function attachEntityListener(MvcEvent $event)
     {
         $routeMatch = $event->getRouteMatch();
