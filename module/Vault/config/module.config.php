@@ -1,4 +1,6 @@
 <?php
+/** module/Vault/config/module.config.php */
+
 namespace SDNY\Vault;
 use Zend\Router\Http\Literal;
 
