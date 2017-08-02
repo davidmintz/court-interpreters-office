@@ -1,6 +1,6 @@
 <?php
 /**
- * module/InterpretersOffice/src/Controller/ExampleController.php.
+ * module/InterpretersOffice/src/Controller/AccountController.php.
  */
 
 namespace InterpretersOffice\Controller;
@@ -29,13 +29,16 @@ class AccountController extends AbstractActionController
     protected $objectManager;
     
     /**
+     * authentication service
      * 
+     * @var AuthenticationServiceInterface
      */
     protected $auth;
     /**
      * constructor.
      *
      * @param ObjectManager $objectManager
+     * @param AuthenticationServiceInterface
      */
     public function __construct(ObjectManager $objectManager, AuthenticationServiceInterface $auth)
     {
