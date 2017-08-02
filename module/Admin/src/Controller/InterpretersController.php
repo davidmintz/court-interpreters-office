@@ -1,6 +1,6 @@
 <?php
 
-/** module/Admin/src/Controller/PeopleController */
+/** module/Admin/src/Controller/InterpretersController */
 
 namespace InterpretersOffice\Admin\Controller;
 
@@ -48,9 +48,14 @@ class InterpretersController extends AbstractActionController
         $this->vault_enabled = $vault_enabled;
     }
     
+    /**
+     * display Interpreter details view
+     * 
+     * to be implemented
+     */
     public function viewAction() {
         //$id = $this->params()->fromRoute('id');
-        //return new ViewModel
+        return new ViewModel();
     }
     /**
      * index action.
@@ -108,8 +113,8 @@ class InterpretersController extends AbstractActionController
     /**
      * figures out appropriate defaults for interpreter roster search form
      * 
-     * @param ViewModel $view
-     * @param Array of GET (route) parameters
+     * @param ViewModel $viewModel
+     * @param Array $params GET (route) parameters
      * @param boolean $isQuery whether submitting search terms, or just arriving
      * 
      * @todo consider making this a method of the form instead
@@ -145,6 +150,7 @@ class InterpretersController extends AbstractActionController
      * gets interpreters based on search criteria. if we are given an id
      * parameter, find by id
      * 
+     * @param Array $params interpreter search parameters
      * @return array
      */
     public function find(Array $params)
@@ -274,6 +280,10 @@ class InterpretersController extends AbstractActionController
     }
     
     /**
+     * validates part of the Interpreter form
+     * 
+     * invoked when the user changes tabs on the Interpreter form
+     * 
      * @todo DO NOT run if not xhr, check presence of 'interpreters' index
      * @return JsonModel
      */
