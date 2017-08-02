@@ -9,7 +9,8 @@ use Zend\Http\Client;
 
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Openssl;
-
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerAwareTrait;
 
 /**
  * Extension of Zend\Http\Client for communciating with Hashicorp Vault
@@ -24,13 +25,15 @@ use Zend\Crypt\Symmetric\Openssl;
  * 
  */
 
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
-
 class Vault extends Client implements EventManagerAwareInterface {
     
     use EventManagerAwareTrait;
     
+    /**
+     * event manager
+     * 
+     * @var EventManagerInterface
+     */
     protected $events;
     
     /**
@@ -116,7 +119,7 @@ class Vault extends Client implements EventManagerAwareInterface {
     /**
      * sets path to secret
      * 
-     * @var string
+     * @param string
      */
     public function setPathToSecret($path)
     {
@@ -126,7 +129,7 @@ class Vault extends Client implements EventManagerAwareInterface {
     /**
      * gets path to secret
      * 
-     * @var string
+     * @return string
      */
     public function getPathToSecret()
     {

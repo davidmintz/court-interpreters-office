@@ -21,6 +21,20 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      * @var string cache id prefix
      */
     protected $cache_id_prefix = 'languages:';
+    
+    /**
+     * constructor
+     *
+     * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
+     */
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    {
+
+        parent::__construct($em, $class);
+        $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace('languages');
+    }
 
     /**
      * returns all languages wrapped in a paginator.
@@ -41,7 +55,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         //$dql = 'SELECT language FROM InterpretersOffice\Entity\Language language ORDER BY language.name';
         $query = $this->createQuery(
             $dql,
-            $this->cache_id_prefix . 'findAll'
+            $this->cache_id_prefix . "findAllPage{$page}"
         )->setMaxResults(30);
 
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
@@ -58,15 +72,15 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
     /**
      * gets all the languages ordered by name ascending.
      *
-     * @return array of all our LocationType objects
+     * @return array of all our Language objects
      */
     public function findAll()
     {
         // have the decency to sort them by name ascending,
         // and use the result cache
         $query = $this->createQuery(
-            'SELECT l FROM InterpretersOffice\Entity\Language l ORDER BY l.name ASC',
-            $this->cache_id_prefix . 'findAll'
+            'SELECT l FROM InterpretersOffice\Entity\Language l ORDER BY l.name ASC'
+           //, $this->cache_id_prefix . 'findAll'
         );
 
         return $query->getResult();

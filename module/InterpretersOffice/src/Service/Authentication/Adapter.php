@@ -1,5 +1,4 @@
 <?php
-
 /**
  * module/InterpretersOffice/src/Service/Authentication/Adapter.php.
  */
@@ -25,14 +24,15 @@ use Zend\Authentication\Adapter\AbstractAdapter;
 class Adapter extends AbstractAdapter
 {
     /**
-     *
+     * Doctrine entity manager
+     * 
      * @var EntityManager
      */
     protected $entityManager;
     /**
      * constructor.
      *
-     * @param array|\DoctrineModule\Options\Authentication $options
+     * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
     {
