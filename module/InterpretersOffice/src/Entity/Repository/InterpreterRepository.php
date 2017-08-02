@@ -47,7 +47,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     /**
      * looks up Interpreters by name
      *
-     * @param array $name
+     * @param array $params
      */
     public function findByName($params)
     {
@@ -165,12 +165,18 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
      * implements CacheDeletionInterface
      * @param string $cache_id
      */
-    public function deleteCache($id = null)
+    public function deleteCache($cache_id = null)
     {
         $this->cache->setNamespace($this->cache_namespace);
         return $this->cache->deleteAll();    
     }
-
+    
+    /**
+     * helper method for finding an interpreter by name
+     * 
+     * @param array $name
+     * @return array
+     */
     public function getQueryDataForName(Array $name)
     {
         $params = [':lastname' => "$name[lastname]%"];
@@ -183,6 +189,8 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             $cache_id .= $name['firstname'];
         }
         $dql .= 'ORDER BY i.lastname, i.firstname';
+        // lazy way to get rid of possibly unsafe characters in filename?
+        // $cache_id = md5($cache_id);
         return compact('dql','params','cache_id');
 
     }
