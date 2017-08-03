@@ -27,6 +27,7 @@ echo $this->doctype(); ?>
     <body>
         <div class="container">
             <div class="row">
+                
             <nav class="navbar navbar-default" role="navigation"><!-- // navbar-fixed-top ? -->
               <div class="navbar-header">
                   <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-main">
@@ -35,7 +36,9 @@ echo $this->doctype(); ?>
                   </button>
                 <a class="navbar-brand" href="#">InterpretersOffice</a>
                 </div>
-                <div class="collapse navbar-collapse" id="navbar-main">
+                <div class="collapse navbar-collapse" id="navbar-main">                    
+            <?php // echo $this->navigation('navigation')->menu()->setMinDepth(0)->setMaxDepth(10)->setUlClass('nav navbar-nav') //*/ ?>
+                    <!--  -->
                     <ul class="nav navbar-nav">
                         <li><a href="<?php echo $this->url('home')?>">home</a></li>
                         <li><a href="#">something</a></li>
@@ -55,9 +58,11 @@ echo $this->doctype(); ?>
                         </li>
                         <?php if ($this->identity()): ?><li><a href="/logout">log out</a></li><?php endif; ?>
                       </ul>
+                <!--  -->
                 </div>
             </nav>
         </div>
+            
             <?php echo $this->content; ?>
            
             
