@@ -22,6 +22,7 @@ $modules = [
     //'Zend\Hydrator',
     'Zend\Router',
     //'Zend\Validator',
+    'Zend\Navigation',
     'InterpretersOffice',
     'InterpretersOffice\Admin',
     'InterpretersOffice\Requests',
