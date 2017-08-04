@@ -31,7 +31,7 @@ return [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route' => '/admin/events',
+                    'route' => '/admin/schedule',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\EventsController::class,
@@ -482,7 +482,7 @@ return [
          * 
          */
         'resources' => [
-             // 'resource name (controller' => 'parent resource'
+             // 'resource name (controller)' => 'parent resource'
             'languages' => null,
             'event-types'=> 'languages',            
             'locations'=>'languages',
@@ -535,4 +535,12 @@ return [
             'interpreter-listener' => Listener\InterpreterEntityListener::class,
         ],
     ],
+    /* // guessing --- this does not work
+    'view_helper_config' => [
+        'navigation' => [
+            //'breadcrumbs' => [
+                'separator' => ' | ',
+            //]
+        ]
+    ]*/
 ];
