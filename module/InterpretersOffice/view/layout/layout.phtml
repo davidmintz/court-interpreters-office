@@ -37,32 +37,13 @@ echo $this->doctype(); ?>
                 <a class="navbar-brand" href="#">InterpretersOffice</a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbar-main">                    
-            <?php // echo $this->navigation('navigation')->menu()->setMinDepth(0)->setMaxDepth(10)->setUlClass('nav navbar-nav') //*/ ?>
-                    <!--  -->
-                    <ul class="nav navbar-nav">
-                        <li><a href="<?php echo $this->url('home')?>">home</a></li>
-                        <li><a href="#">something</a></li>
-                        <li class="dropdown">
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">admin <span class="caret"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="<?php echo $this->url('interpreters')?>">interpreters</a></li>
-                            <li><a href="<?php echo $this->url('languages')?>">languages</a></li>
-                            <li><a href="<?php echo $this->url('locations')?>">locations</a></li>
-                            <li><a href="<?php echo $this->url('judges')?>">judges</a></li>
-                            <li><a href="<?php echo $this->url('event-types')?>">event-types</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#">One more separated link</a></li>
-                          </ul>
-                        </li>
-                        <?php if ($this->identity()): ?><li><a href="/logout">log out</a></li><?php endif; ?>
-                      </ul>
-                <!--  -->
+            <?php  echo $this->navigation('navigation')->menu() //->setMinDepth(0)->setMaxDepth(1)->setUlClass('nav navbar-nav')
+                    ->setPartial('partials/navbar-01.phtml') //*/ ?>
+                   
                 </div>
             </nav>
         </div>
-            
+            <?php echo "SHIT? ",$this->navigation()->breadcrumbs()->setMaxDepth(10) ; ?><br>
             <?php echo $this->content; ?>
            
             
