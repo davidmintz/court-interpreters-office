@@ -1,64 +1,62 @@
-<?php
-/** layout view script. a work in progress. */
-echo $this->doctype(); ?>
+<?php /** layout view script. a work in progress. */
+echo $this->doctype();
+?>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <?php echo $this->headTitle('Court Interpreters Office')->setSeparator(' - ')->setAutoEscape(false) ?>
-        <?php echo $this->headMeta()
-            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
-            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        <?php
+        echo $this->headMeta()
+                ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+                ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
         ?>
-        <?php echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
-                        ->prependStylesheet($this->basePath('css/style.css'))
-                        ->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
-                        ->prependStylesheet($this->basePath('css/bootstrap.min.css')) ?>
-
-        <!-- Scripts -->
-        <?php echo $this->headScript()
+        <?php
+        echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
+                ->prependStylesheet($this->basePath('css/style.css'))
+                ->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
+                ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+        ?>
+        <!-- scripts -->
+        <?php
+        echo $this->headScript()
             ->prependFile($this->basePath('js/common.js'))
             ->prependFile($this->basePath('js/lib/bootstrap.min.js'))
             ->prependFile($this->basePath('js/lib/jquery/dist/jquery.min.js'))
             ->prependFile($this->basePath('js/lib/respond.min.js'), 'text/javascript', ['conditional' => 'lt IE 9',])
-            ->prependFile($this->basePath('js/lib/html5shiv.min.js'), 'text/javascript', ['conditional' => 'lt IE 9',])
-        ; ?>
-
+            ->prependFile($this->basePath('js/lib/html5shiv.min.js'), 'text/javascript', ['conditional' => 'lt IE 9',]);
+        ?>
     </head>
     <body>
         <div class="container">
             <div class="row">
-                
-            <nav class="navbar navbar-default" role="navigation"><!-- // navbar-fixed-top ? -->
-              <div class="navbar-header">
-                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-main">
-                      <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span>
-                      <span class="icon-bar"></span><span class="icon-bar"></span>
-                  </button>
-                <a class="navbar-brand" href="#">InterpretersOffice</a>
-                </div>
-                <div class="collapse navbar-collapse" id="navbar-main">                    
-            <?php  echo $this->navigation('navigation')->menu() //->setMinDepth(0)->setMaxDepth(1)->setUlClass('nav navbar-nav')
-                    ->setPartial('partials/navbar-01.phtml') //*/ ?>
-                   
-                </div>
-            </nav>
-        </div>
-            <?php echo "SHIT? ",$this->navigation()->breadcrumbs()->setMaxDepth(10) ; ?><br>
-            <?php echo $this->content; ?>
-           
-            
-        </div> <!-- /container -->
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-main">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">InterpretersOffice</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbar-main">
+                        <?php echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml') ?>                       
+                    </div>
+                </nav>
+            </div><!-- /row -->
+        <?php echo $this->content; ?>
+        </div><!-- /container -->
         <div class="container">
             <footer style="margin-top: 2em; border-top: 1px orange dotted">
                 <p>[layout: footer]</p>
             </footer>
         </div>
-        <?php echo $this->inlineScript() ?>
+<?php echo $this->inlineScript() ?>
         <script>
-            basePath = '<?php echo $this->basePath()?>';
-            $(document).ready(function() {
-                $('a[href="' + this.location.pathname + '"]').parent().addClass('active');                
-          });
+            basePath = '<?php echo $this->basePath() ?>';
+            $(document).ready(function () {
+               $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
+            });
         </script>
     </body>
 </html>
