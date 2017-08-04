@@ -1,5 +1,4 @@
 <?php
-
 /** module/Admin/src/Controller/UsersController.php */
 
 namespace InterpretersOffice\Admin\Controller;
@@ -16,6 +15,7 @@ use Zend\Session\Container as Session;
 
 use InterpretersOffice\Admin\Form\UserForm;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
 
 /**
  * controller for admin/users.
@@ -27,7 +27,7 @@ use InterpretersOffice\Entity;
  *     autocompletion?
  *
  */
-class UsersController extends AbstractActionController
+class UsersController extends AbstractActionController implements AuthenticationAwareInterface
 {
 
     /**
@@ -63,7 +63,7 @@ class UsersController extends AbstractActionController
     public function setAuthenticationService(AuthenticationService $auth)
     {
         $this->auth = $auth;
-        $this->auth_user_role = (string) $auth->getIdentity()->getRole();
+        $this->auth_user_role = $auth->getIdentity()->role;
     }
 
 
