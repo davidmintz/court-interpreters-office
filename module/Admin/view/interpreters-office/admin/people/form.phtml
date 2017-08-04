@@ -21,7 +21,7 @@ $form->add([
     ->setAttribute('class', 'form-horizontal')    ;
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
-<h2><?php echo $this->title ?></h2>
+<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 $form->prepare();
 $fieldset = $form->get('person');

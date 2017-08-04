@@ -26,15 +26,14 @@ $form->add([
      'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')
    ->setAttribute('action', $formAction)
-   ->setAttribute('class', 'form-horizontal')    ;
+   ->setAttribute('class', 'form-horizontal');
 ?>
 <div class="center-block row" style="max-width:800px"><!-- wrapper -->
-    <h2><?php echo $this->title ?></h2>
+    <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
     <?php
     $form->prepare();
     $fieldset = $form->get('interpreter');
-    echo $this->form()->openTag($form);?>        
-        
+    echo $this->form()->openTag($form);?>                
         <ul id="nav-tabs" class="nav nav-tabs" role="tablist"><!-- nav tabs -->
             <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact info</a></li>
             <li role="presentation"><a href="#languages-pane" aria-controls="languages-pane" role="tab" data-toggle="tab">languages &amp; notes</a></li>
