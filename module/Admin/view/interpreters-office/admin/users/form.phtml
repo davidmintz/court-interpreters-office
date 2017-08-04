@@ -7,7 +7,7 @@
 $this->headTitle($this->title);
 ?>
 <div class="center-block" style="max-width:800px"><!-- wrapper -->
-<h2><?php echo $this->title ?></h2>
+<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php // echo $this->url('users/edit',['id'=> 3]);?>
 <?php if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div></div>
