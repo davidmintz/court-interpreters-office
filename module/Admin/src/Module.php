@@ -49,9 +49,13 @@ class Module
         // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
-
         $container->get(SessionManager::class);// yes. just the getting is enough
-
+        
+        // set the "breadcrumbs" navigation view-helper separator
+        // unless there's a better way to make sure this gets done globally...
+        $navigation = $container->get('ViewHelperManager')->get("navigation");
+        $navigation->findHelper('breadcrumbs')->setSeparator(' | ');
+        
         // Interpreter entity event listener, an experiment to test a hypothesis.
         // $listener = $container->get('interpreter-listener');
         // $em = $container->get('entity-manager');
