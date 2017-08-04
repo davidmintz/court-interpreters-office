@@ -1,4 +1,4 @@
-<?php /** layout view script. a work in progress. */
+<?php /** layout view script */
 echo $this->doctype();
 ?>
 <html lang="en">
@@ -44,6 +44,7 @@ echo $this->doctype();
                     </div>
                 </nav>
             </div><!-- /row -->
+            <?php //echo $this->navigation()->breadcrumbs() ?>
         <?php echo $this->content; ?>
         </div><!-- /container -->
         <div class="container">
