@@ -1,15 +1,15 @@
-<h2>admin | users</h2>
+<h2><?= $this->navigation('default')->breadcrumbs()->setSeparator(' | ') ?></h2>
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
 endif;
 ?>
-<p>current user role is <?php echo $this->role ?></p>
+<p>current user's role is: <?php echo $this->identity()->role ?></p>
 <p>To edit an existing user account, search the database to find it.</p>
 <p>To create a new user account, first check to see if the user is already in your database.</p>
 
 <p>Enter the lastname or email address in the field below</p>
 
 
-[to be continued]
+<em>[to be continued]</em>
