@@ -54,6 +54,7 @@ class Module
         // set the "breadcrumbs" navigation view-helper separator
         // unless there's a better way to make sure this gets done globally...
         $navigation = $container->get('ViewHelperManager')->get("navigation");
+        $navigation->setDefaultAcl($container->get('acl'));
         $navigation->findHelper('breadcrumbs')->setSeparator(' | ');
         
         // Interpreter entity event listener, an experiment to test a hypothesis.
@@ -113,9 +114,7 @@ class Module
         $module = $match->getParam('module');
         $session = $container->get('Authentication');
         if ('InterpretersOffice' == $module) {
-           // if (! $session->role) {
-           //     $session->role = 'anonymous';
-           // }
+            // the main module doesn't do anything
             return;
         }
         $auth = $container->get('auth');
@@ -126,21 +125,9 @@ class Module
             $session->redirect_url = $event->getRequest()->getUriString();
             return $this->getRedirectionResponse($event);
         } else {
-            $user = $auth->getIdentity();
-            //var_dump($user); exit();
+            $user = $auth->getIdentity();            
             $role = $user->role;
-            /*
-            if (!$role instanceof \InterpretersOffice\Entity\Role) {
-                foreach ($role as $key => $val) {
-                    if ('name' == $key) {
-                        $role = $val;
-                        break;
-                    }
-                }
-                echo "(ugly!)...";
-            }
-             *
-             */
+            $container->get('ViewHelperManager')->get("navigation")->setDefaultRole($role);
             if (! $this->checkAcl($event, $role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
@@ -163,7 +150,7 @@ class Module
         if (! $match) {
             return;
         }
-
+        
         $controllerFQCN = $match->getParam('controller');
         $controllerName = substr($controllerFQCN, strrpos($controllerFQCN, '\\') + 1, -10);
         $resource = strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter($controllerName));
