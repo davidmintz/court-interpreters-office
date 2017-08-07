@@ -17,7 +17,14 @@
                 <ul class="dropdown-menu">
                     <?php foreach ($page->getPages() as $child) { ?>
                         <?php // when using partials we need to manually check for ACL conditions ?>
-                        <?php if (!$child->isVisible() || !$this->navigation()->accept($child)) { continue; } ?>
+                        <?php if (!$child->isVisible() || !$this->navigation()->accept($child)) { 
+                            continue;                             
+                        } 
+                        if (in_array($child->getLabel(),['edit',])) {
+                            // keep it from blowing up for lack of an id parameter
+                            continue;
+                        }                        
+                        ?>
                         <li>
                             <a href="<?php echo $child->getHref() ?>">
                                 <?php echo $child->getLabel() ?>
