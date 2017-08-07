@@ -286,7 +286,7 @@ return [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route' => '/admin/interpreters',
+                    'route' => '/admin/interpreters[/list]',
                     
                     'defaults' => [
                         'module' => __NAMESPACE__,
@@ -460,13 +460,16 @@ return [
     ],
     'view_manager' => [
         'template_map' => [
-            'interpreters-office/admin/admin-index/index' => __DIR__.'/../view/interpreters-office/admin/index/index.phtml',
+            'interpreters-office/admin/admin-index/index' =>
+                __DIR__.'/../view/interpreters-office/admin/index/index.phtml',
         ],
         'template_path_stack' => [
             'interpreters-office/admin' => __DIR__.'/../view',
         ],
     ],
+    /** ACL configuration ====================================      **/
     // based on LearnZF2.
+    
     'acl' => [
         'roles' => [
             // 'role name' => 'parent role'
@@ -497,6 +500,7 @@ return [
             'admin-index' => null,
             // ??
             'vault' => null,
+            'auth' => null,
             // to be continued
         ],
         // how do we configure this to use Assertions?
@@ -511,17 +515,23 @@ return [
                 'admin-index' => null,
                 'languages' => null,
                 'events' => null,
-                // ??
+                 // ??
                 'vault' => null,
             ],
             'staff' => [
                 'admin-index' => ['index'],
             ],
             'administrator' => null,
+            'anonymous' => [
+                'auth' => 'login',
+            ]
         ],
         'deny' => [
             'administrator' => [
                 'requests-index' => null,//['add','edit','update','delete','cancel','index'],
+            ],
+            'anonymous' => [
+                'auth' => 'logout'
             ]
         ]
     ],
@@ -535,12 +545,4 @@ return [
             'interpreter-listener' => Listener\InterpreterEntityListener::class,
         ],
     ],
-    /* // guessing --- this does not work
-    'view_helper_config' => [
-        'navigation' => [
-            //'breadcrumbs' => [
-                'separator' => ' | ',
-            //]
-        ]
-    ]*/
 ];
