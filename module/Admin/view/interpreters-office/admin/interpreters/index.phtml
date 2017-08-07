@@ -17,15 +17,17 @@ endif;
 
 $this->headTitle($this->title);
 ?>
-<h2>interpreters</h2>
+<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 $messenger = $this->flashMessenger()->setAutoEscape(false);
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',]);
 endif;
 ?>
-<form>
-    <div class="form-group form-inline">
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form>
+    <div class="form-group form-inline panel-body">
     <div id="form-errors" class="alert alert-warning hidden"></div>
     Find interpreters of
         <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language_id'))?>
@@ -36,7 +38,10 @@ endif;
     --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a> 
     </div>
     <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
-</form>
+    </form>
+  </div>
+</div>
+
 <br>
 <?php 
 if ($this->interpreter) :
