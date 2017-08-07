@@ -166,7 +166,7 @@ return [
                     ],
                 ],
             ],
-            'auth' => [
+            'login' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
