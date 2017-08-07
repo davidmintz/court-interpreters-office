@@ -1,4 +1,8 @@
-<?php /** config/autoload/navigation.global.php */
+<?php 
+/** config/autoload/navigation.global.php 
+ *
+ * still a work in progress
+ */
 return [
 
     'navigation' => [
@@ -6,14 +10,33 @@ return [
               [
                   'label'=>'schedule',
                   'route' => 'events',
+                  'resource' => 'events',
               ],
               [
                   'label'=>'interpreters',
                   'route' => 'interpreters',
+                  'resource' => 'interpreters',
+                  'pages' => [
+                    [
+                        'label' => 'list',
+                        'route' => 'interpreters'
+                    ]
+                    ,
+                    [
+                        'label' => 'add',
+                        'route' => 'interpreters/add'
+                    ],
+                    [
+                        'label' => 'edit',
+                        'route' => 'interpreters/edit',
+                    ]
+                  ]
               ],
               [                
                 'label' => 'admin',
                 'route' => 'admin',
+                'resource' => 'admin-index',
+                 //'privilege' => 'index','action' => 'index',
                 'pages' => [
                     [
                         'label' => 'main',
@@ -89,7 +112,14 @@ return [
                             ],
                         ]
                     ],
-                ]
+                ],
+                
+            ],
+            [
+                'label' => 'log out',
+                'route' => 'logout',
+                'resource' => 'auth',
+                'privilege' => 'logout',
             ],
         ],
     ],
