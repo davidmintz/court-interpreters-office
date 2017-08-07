@@ -20,7 +20,7 @@ foreach (['success','default','error','info','warning'] as $ns) {
 <?php else :?>
 <p style="margin:1em 0 2em 0;font-size:120%">Please log in to continue.</p>    
 <?php endif;?>
-<form class="form-inline well" style="max-width:900px;display:inline-block" id="form-login" action="<?php echo $this->url('auth', ['action' => 'login']) ?>" method="post">
+<form class="form-inline well" style="max-width:900px;display:inline-block" id="form-login" action="<?php echo $this->url('login') ?>" method="post">
   <div class="form-group">
     <label class="sr-only" for="identity">username or email</label>
         <?php echo $this->formElementErrors($this->form->get('identity'))?>
