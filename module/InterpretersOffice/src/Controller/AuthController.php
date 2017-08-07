@@ -136,6 +136,6 @@ class AuthController extends AbstractActionController
             $this->redirect()->toRoute('home');
         }
 
-        $this->redirect()->toRoute('auth');
+        $this->redirect()->toRoute('login');
     }
 }
