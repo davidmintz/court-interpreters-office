@@ -1,7 +1,7 @@
 <?php /** module/Admin/view/interpreters-office/admin/index/index.phtml */
 $this->headTitle($this->title);
 
-$username = $this->identity()->username ?>
+$user = $this->identity() ?>
 <h2>admin</h2>
-<p>hello user <?php echo $username ?></p>
+<p>hello user <?php echo $user->username ?> in role <?php echo $user->role ?></p>
 
