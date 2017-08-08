@@ -54,7 +54,7 @@ class EventsController extends AbstractActionController
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables([
-                'title' => 'events | '.$this->params()->fromRoute('action'),
+                'title' => 'schedule | '.$this->params()->fromRoute('action'),
                 'form'  => $form,
                 ]);
 
