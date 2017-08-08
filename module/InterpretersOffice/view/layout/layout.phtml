@@ -40,12 +40,12 @@ echo $this->doctype();
                         <a class="navbar-brand" href="<?php echo $this->url('home')?>">InterpretersOffice</a>
                     </div>
                     <div class="collapse navbar-collapse" id="navbar-main">
-                        <?php echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml') ?>                       
+                        <?php echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml') ?>
+                        <div class="pull-right" style="padding: 15px 10px; ">other shit here?</div>
                     </div>
-                </nav>
-            </div><!-- /row -->
-            <?php //echo $this->navigation()->breadcrumbs() ?>
-        <?php echo $this->content; ?>
+                </nav>                
+            </div><!-- /row -->            
+            <?php echo $this->content; ?>
         </div><!-- /container -->
         <div class="container">
             <footer style="margin-top: 2em; border-top: 1px orange dotted">
