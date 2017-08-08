@@ -1,13 +1,12 @@
 <?php
 /** module/InterpretersOffice/view/interpreters-office/index/index.phtml */
 ?>
-<h1>this is index.phtml</h1>
+<h1>InterpretersOffice</h1>
+
 <?php echo $this->flashMessenger()->render();?>
 <p>
 We hope you enjoy it.
 </p>
 <p>FYI, driver is <?php echo $this->driver ?></p>
 
-<p>"<?php echo $this->something ?>"</p>
-
-<p>current user role: <?php echo (new \Zend\Session\Container('Authentication'))->role  ?></p>
+<p>current user role: <?php echo $this->identity() ? $this->identity()->role : 'anonymous' ?></p>

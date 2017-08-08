@@ -4,7 +4,7 @@ echo $this->doctype();
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <?php echo $this->headTitle('Court Interpreters Office')->setSeparator(' - ')->setAutoEscape(false) ?>
+        <?php echo $this->headTitle('Court Interpreters Office')->setSeparator(' | ')->setAutoEscape(false) ?>
         <?php
         echo $this->headMeta()
                 ->appendName('viewport', 'width=device-width, initial-scale=1.0')
@@ -37,7 +37,7 @@ echo $this->doctype();
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="#">InterpretersOffice</a>
+                        <a class="navbar-brand" href="<?php echo $this->url('home')?>">InterpretersOffice</a>
                     </div>
                     <div class="collapse navbar-collapse" id="navbar-main">
                         <?php echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml') ?>                       
