@@ -493,6 +493,8 @@ return [
            
             'judges' => 'events',
             'interpreters' => 'events',
+            // the topmost controller
+            'index' => null,
             'requests-index' => null,
             'admin-index' => null,
             // ??
