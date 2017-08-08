@@ -18,11 +18,6 @@ return [
                   'resource' => 'interpreters',
                   'pages' => [
                     [
-                        'label' => 'list',
-                        'route' => 'interpreters'
-                    ]
-                    ,
-                    [
                         'label' => 'add',
                         'route' => 'interpreters/add'
                     ],
