@@ -10,7 +10,7 @@ use Zend\View\Model\ViewModel;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-use InterpretersOffice\Form;
+use InterpretersOffice\Admin\Form;
 
 /**
  *  EventsController
