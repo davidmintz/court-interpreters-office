@@ -286,7 +286,7 @@ return [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route' => '/admin/interpreters[/list]',
+                    'route' => '/admin/interpreters',//[/list] was an experiment
                     
                     'defaults' => [
                         'module' => __NAMESPACE__,
@@ -354,9 +354,6 @@ return [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/language/:language_id[/active/:active[/security/:security_clearance_expiration]]',
-                            // defaults are defined above, because we need them
-                            // even if no search terms are submitted (this route
-                            // isn't matched)
                             'constraints' => [                                
                                 'language_id' => '[0-9]\d*',
                                 'active' => '-?1|0',
