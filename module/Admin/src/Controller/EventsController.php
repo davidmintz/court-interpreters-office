@@ -33,8 +33,7 @@ class EventsController extends AbstractActionController
      */
     public function indexAction()
     {
-
-        return ['title' => 'events'];
+        return ['title' => 'schedule'];
     }
 
     /**
