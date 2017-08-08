@@ -14,10 +14,9 @@ if ($this->interpreter):
 else:
     $form->get('name')->setValue(key_exists('name',$this->params)? $this->params['name']:'');
 endif;
-
 $this->headTitle($this->title);
 ?>
-<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<h2><a href="<?php echo $this->url('admin')?>">admin</a> | <?php echo $this->title ?></h2>
 <?php
 $messenger = $this->flashMessenger()->setAutoEscape(false);
 if ($messenger->hasSuccessMessages()) :
