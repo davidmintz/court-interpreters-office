@@ -37,7 +37,7 @@ class Module
     */
 
     /*
-     * DOES NOT WORK!
+     * DOES NOT SEEM TO WORK
      * https://docs.zendframework.com/zend-view/quick-start/#creating-and-registering-alternate-rendering-and-response-strategies.
      *
      * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
