@@ -16,6 +16,7 @@ return [
                   'label'=>'interpreters',
                   'route' => 'interpreters',
                   'resource' => 'interpreters',
+                  'expand_children' => false,
                   'pages' => [
                     [
                         'label' => 'add',

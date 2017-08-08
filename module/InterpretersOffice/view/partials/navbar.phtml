@@ -7,7 +7,7 @@
             <?php $hasChildren = $page->hasPages(); ?>
             <?php 
             // to do here: learn about adding arbitrary properties to pages?
-            if (!$hasChildren or 'interpreters' == $page->getLabel()) { ?>
+            if (!$hasChildren or false === $page->expand_children ) { //'interpreters' == $page->getLabel())?>
                 <li>
                     <a href="<?php echo $page->getHref() ?>">
                         <?php echo $page->getLabel() ?>
