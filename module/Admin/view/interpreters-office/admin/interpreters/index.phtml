@@ -53,11 +53,21 @@ if ($this->results):
 ?>
 
 <table class="table table-hover table-bordered" style="max-width:700px">
+    <thead>
+        <!-- <tr><th class="col-sm-10"></th><th class="col-sm-2"></th></tr> -->
+    </thead>
     <tbody>
         <?php
         foreach ($this->results as $row) : /** note to self: use array hydration? */
             $interpreter = $row[0];  ?>
-        <tr><td><?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></td><td></td></tr>
+        <tr><td class="col-sm-10" style="vertical-align: middle"><a title="edit interpreter details" href="<?php echo $this->url('interpreters',['action'=>'edit','id'=>$interpreter->getId()])?>"><?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></a>
+            </td>
+            <td class="col-sm-2">
+                <div class="btn-group" role="group" aria-label="actions" style="display:inline-block">
+                    <button class="btn btn-info"><a style="color:inherit" href="#"><span class="glyphicon glyphicon-search"></span></a></button><?php //<a title="edit interpreter details" href="<?php echo $this->url('interpreters',['action'=>'edit','id'=>$interpreter->getId()])
+                    ?><button class="btn btn-info"><a style="color:inherit" href="#"><span class="glyphicon glyphicon-edit"></span></a></button>
+                </div>
+            </td></tr>
 <?php  endforeach;  ?>
     </tbody>
 </table>
