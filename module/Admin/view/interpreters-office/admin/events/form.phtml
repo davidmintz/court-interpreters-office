@@ -1,15 +1,42 @@
 <?php
-
-$this->headTitle($this->title);
+$this->headTitle('admin | events | '.$this->layout()->action);
+$this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepicker.css'));
+$this->headScript()
+        ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
+        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+        ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
 return;
 endif;
-
-
-
+$form = $this->form; $form->setAttribute('class','form-horizontal form-event');
 ?>
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<?php
+ $form->prepare();
+    $fieldset = $form->get('event');
+    echo $this->form()->openTag($form);  
+?>
+<div class="col-sm-6"><!-- left side -->
+    <div class="row">
+        <?php foreach (['date','time'] as $elementName) : $element = $fieldset->get($elementName); ?>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-9"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<div class="col-sm-6"><!-- right side -->
+    <div class="row">
+        <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-9"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php echo $this->form()->closeTag(); ?>
 
-<p>to be continued...</p>
