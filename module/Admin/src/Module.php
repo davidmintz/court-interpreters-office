@@ -57,13 +57,12 @@ class Module
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
-        
-        /* // possibly worth considering...
-        $routeMatch = $event->getRouteMatch();
-        if ($routeMatch) {
-            $event->getApplication()->getViewModel()->assignVariables($routeMatch->getParams());
-        }        
-        */
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function($event){
+            $routeMatch = $event->getRouteMatch();
+            if ($routeMatch) {
+                $event->getApplication()->getMvcEvent()->getViewModel()->setVariables($routeMatch->getParams());                
+            }
+        });
         
         // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
