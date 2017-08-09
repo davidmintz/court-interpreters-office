@@ -4,23 +4,30 @@ $this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepi
 $this->headScript()
         ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
         ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
-        ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'));
+        ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+        ->appendFile($this->basePath('js/event-form.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
 return;
 endif;
 $form = $this->form; $form->setAttribute('class','form-horizontal form-event');
+
+
 ?>
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
- $form->prepare();
-    $fieldset = $form->get('event');
-    echo $this->form()->openTag($form);  
+
+$form->prepare();
+$fieldset = $form->get('event');
+// for testing
+$fieldset->get('time')->setValue('10:00:00');
+$fieldset->get('date')->setValue('2017-08-15');
+echo $this->form()->openTag($form);  
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
-        <?php foreach (['date','time'] as $elementName) : $element = $fieldset->get($elementName); ?>
+        <?php foreach (['date','time','language', 'docket'] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
                 <div class="col-sm-9"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
