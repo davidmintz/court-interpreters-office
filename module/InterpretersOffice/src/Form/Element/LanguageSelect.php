@@ -38,7 +38,8 @@ class LanguageSelect extends ObjectSelect
      */
     public function __construct($name = null, array $options)
     {
-
+        // this needs work. overriding defaults is not working
+        
         $this->getProxy()->setObjectManager($options['objectManager']);
         parent::__construct($name, array_merge($this->defaultOptions['options'], $options));
         $attributes = $this->defaultOptions['attributes'];
