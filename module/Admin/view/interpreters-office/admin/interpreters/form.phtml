@@ -231,6 +231,14 @@ Do not mix form groups or grid column classes directly with input groups. Instea
 
 //*/
 $(function(){
+    if (! window.Modernizr.inputtypes.date){
+        $('input.date').each(function(i,element){
+            if (element.value.match(/\d{4}-\d\d-\d\d/)) {
+                element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
+            }
+        });    
+    }
+    
     var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
     // this is bullshit. what we really want is the button thingy on the same 
