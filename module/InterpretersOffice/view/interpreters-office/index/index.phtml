@@ -1,12 +1,28 @@
 <?php
 /** module/InterpretersOffice/view/interpreters-office/index/index.phtml */
 ?>
-<h1>InterpretersOffice</h1>
+<div class="jumbotron text-center">
+    <h1>InterpretersOffice</h1>
+    <p>A court interpreter management system.</p>
+</div>
+
 
 <?php echo $this->flashMessenger()->render();?>
 <p>
 We hope you enjoy it.
 </p>
-<p>FYI, driver is <?php echo $this->driver ?></p>
+<p>FYI, driver is <?php echo $this->driver ?>.
+current user role: <?php echo $this->identity() ? $this->identity()->role : 'anonymous' ?>
+</p>
 
-<p>current user role: <?php echo $this->identity() ? $this->identity()->role : 'anonymous' ?></p>
+<h3 class="text-center">To do</h3>
+<ul class="list-group center-block" style="max-width:500px">    
+    <li class="list-group-item">event fieldset</li>
+    <li class="list-group-item">our own pagination adapter for DQL queries w/o entities</li>
+    <li class="list-group-item">rewrite logging stuff. Monolog? a listener that wraps a logger?</li>
+    <li class="list-group-item">users: registration, email verification/password recovery</li>
+    <li class="list-group-item">interface for court closings/holidays</li>
+    <li class="list-group-item">data import: event-types, locations</li>
+    <li class="list-group-item">data import: judges</li>
+    <li class="list-group-item">data import: events, deft-names, requests</li>
+</ul>
