@@ -21,4 +21,40 @@ $(document).ready(function(){
             element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
         }
     });
-});
+})
+/**
+ * displays validation errors on a form
+ * 
+ * @param object validationErrors
+ * @returns void
+ */
+displayValidationErrors = function(validationErrors) {
+    $('.validation-error').hide();
+    for (var field in validationErrors) {
+        for (var key in validationErrors[field]) {
+            var message = validationErrors[field][key];
+            var element = $('#' +field);
+            var errorDiv = $('#error_'+field);
+            if (! errorDiv.length) { errorDiv = null;}
+            if (! element.length) { console.log("is there no element #"+field+ " ?");
+                // look for an existing div by id
+                if ($('#error_'+field).length) {
+                    $('#error_'+field).html(message);
+                } else {                    
+                    console.warn("no element with id "+field + " or "+ filtered_id + ", and nowhere to put message "+message);
+                }
+            } else {
+                errorDiv = errorDiv || element.next('.validation-error');
+                if (! errorDiv.length) {
+                    errorDiv = $('<div/>')
+                        .addClass('alert alert-warning validation-error')
+                        .attr({id:'error_'+field})
+                    .insertAfter(element);
+                }
+                errorDiv.html(message).show();
+            }
+            break;
+        }
+    } 
+};
+// // try harder! var filtered_id = '#error_' + field.replace(/([A-Z])/g,"_$1").toLowerCase();        
