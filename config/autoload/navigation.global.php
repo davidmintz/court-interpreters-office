@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 /** config/autoload/navigation.global.php 
  *
  * still a work in progress
@@ -7,17 +8,31 @@ return [
 
     'navigation' => [
         'default' => [
-              [
-                  'label'=>'schedule',
-                  'route' => 'events',
-                  'resource' => 'events',
-              ],
-              [
-                  'label'=>'interpreters',
-                  'route' => 'interpreters',
-                  'resource' => 'interpreters',
-                  'expand_children' => false,
-                  'pages' => [
+            [
+                'label' => 'schedule',
+                'route' => 'events',
+                'resource' => 'events',
+                'expand_children' => false,
+                'pages' =>
+                [
+                    [
+                        'label' => 'add',
+                        'route' => 'events/add'
+                    ],
+                ],
+            ],
+            // yes, two of these: the above to make the breadcrumbs helper work,
+            // the next for the main nav
+            [
+                'label' => 'add event',
+                'route' => 'events/add'
+            ],
+            [
+                'label' => 'interpreters',
+                'route' => 'interpreters',
+                'resource' => 'interpreters',
+                'expand_children' => false,
+                'pages' => [
                     [
                         'label' => 'add',
                         'route' => 'interpreters/add'
@@ -26,13 +41,13 @@ return [
                         'label' => 'edit',
                         'route' => 'interpreters/edit',
                     ]
-                  ]
-              ],
-              [                
+                ]
+            ],
+            [
                 'label' => 'admin',
                 'route' => 'admin',
                 'resource' => 'admin-index',
-                 //'privilege' => 'index','action' => 'index',
+                //'privilege' => 'index','action' => 'index',
                 'pages' => [
                     [
                         'label' => 'main',
@@ -78,7 +93,7 @@ return [
                                 'label' => 'edit',
                                 'route' => 'judges/edit'
                             ],
-                        ] 
+                        ]
                     ],
                     [
                         'label' => 'users',
@@ -109,7 +124,6 @@ return [
                         ]
                     ],
                 ],
-                
             ],
             [
                 'label' => 'log out',
