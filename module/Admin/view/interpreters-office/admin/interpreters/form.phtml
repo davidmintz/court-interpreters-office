@@ -126,8 +126,7 @@ $form->add([
                     $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
-                    <div class="col-sm-9"><?php echo $this->formElement($element);//$this->formElementErrors($element)
-                    ?><div class="validation-error" id="error_<?php echo $element->getAttribute('id')?>"></div>
+                    <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element)                   ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
