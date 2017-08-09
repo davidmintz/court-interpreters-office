@@ -65,10 +65,21 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
             ],
              'options' => [
                 'label' => 'time',
-                'format' => 'H:i:s',
+                'format' => 'H:i:s',// :s
              ],
         ],
-
+        [
+            'name' => 'docket',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [
+                'id' => 'docket',
+                'class' => 'docket form-control',
+            ],
+             'options' => [
+                'label' => 'docket',                
+             ],
+            
+        ]
 
     ];
 
@@ -106,6 +117,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         foreach ($this->elements as $element) {
             $this->add($element);
         }
+        // TO DO! fix constructor option stuff in LanguageSelect
+        $this->add(
+            new \InterpretersOffice\Form\Element\LanguageSelect(
+                'language',
+                [
+                    'objectManager' => $objectManager,                   
+                ]
+            )
+        );
     }
 
     /**
