@@ -473,7 +473,7 @@ class InterpreterFieldset extends PersonFieldset
                         'callback' => function ($value, $context) {
                             list($M, $D, $Y) = explode('/', $value);
                             $date = "$Y-$M-$D";
-                            $max = date('Y-m-d');
+                            $max =  (new \DateTime("+2 years"))->format('Y-m-d');
                             $min = (new \DateTime("-5 years"))->format('Y-m-d');
                             return $date >= $min && $date <= $max;
                         },
