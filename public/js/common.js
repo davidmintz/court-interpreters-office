@@ -21,7 +21,7 @@ $(document).ready(function(){
             element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
         }
     });
-})
+});
 /**
  * displays validation errors on a form
  * 
@@ -34,16 +34,22 @@ displayValidationErrors = function(validationErrors) {
         for (var key in validationErrors[field]) {
             var message = validationErrors[field][key];
             var element = $('#' +field);
+            if (! element.length) {
+                // nothing to lose by trying harder; undo camelcase
+                var field = '#' + field.replace(/([A-Z])/g,"_$1").toLowerCase();
+                element = $(field);
+            }
             var errorDiv = $('#error_'+field);
             if (! errorDiv.length) { errorDiv = null;}
-            if (! element.length) { console.log("is there no element #"+field+ " ?");
+            if (! element.length) { 
+                console.log("is there no element #"+field+ " ?");
                 // look for an existing div by id
                 if ($('#error_'+field).length) {
-                    $('#error_'+field).html(message);
+                    $('#error_'+field).html(message).show();
                 } else {                    
-                    console.warn("no element with id "+field + " or "+ filtered_id + ", and nowhere to put message "+message);
+                    console.warn("no element with id "+field + ", and nowhere to put message: "+message);
                 }
-            } else {
+            } else {               
                 errorDiv = errorDiv || element.next('.validation-error');
                 if (! errorDiv.length) {
                     errorDiv = $('<div/>')
