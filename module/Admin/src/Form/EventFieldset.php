@@ -37,7 +37,41 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
      *
      * @var string
      */
-    protected $auth_user_role;
+    protected $auth_user_role;  
+
+    protected $elements = [
+
+        [
+             'name' => 'date',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Date',
+            'attributes' => [
+                'id' => 'date',
+                'class' => 'date form-control',
+            ],
+             'options' => [
+                'label' => 'date',
+                //'format' => 'm/d/Y',
+                'format' => 'Y-m-d',
+             ],
+        ],
+        [
+            'name' => 'time',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Time',
+            'attributes' => [
+                'id' => 'time',
+                'class' => 'time form-control',
+            ],
+             'options' => [
+                'label' => 'time',
+                'format' => 'H:i:s',
+             ],
+        ],
+
+
+    ];
+
 
     /**
      * constructor.
