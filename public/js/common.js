@@ -14,14 +14,22 @@ $( document ).ajaxComplete(function(event, xhr) {
 });
 
 $(document).ready(function(){
+    /*
     // because the HTML5 validator complains if the date element's value attribute
     // is formatted other than YYYY-mm-dd
+    // disabled because it interferes with browsers that support date element
     $('input.date').each(function(i,element){
         if (element.value.match(/\d{4}-\d\d-\d\d/)) {
-            element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
+            // give this a rest because it messes up e.g., Chrome that
+            // does support date elements
+            // element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
         }
     });
-});
+    */
+}); 
+
+DocketRegExp = /^(?:s-?[1-9] *)?((?:19|20)?\d{2})[- .]*(c(?:r(?:im)?|i?v)|m(?:ag)?)[- .]*(\d{1,4})(?: *\([a-z]{2,3}\))?$/i;
+
 /**
  * displays validation errors on a form
  * 
