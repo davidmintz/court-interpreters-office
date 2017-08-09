@@ -122,7 +122,14 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
             new \InterpretersOffice\Form\Element\LanguageSelect(
                 'language',
                 [
-                    'objectManager' => $objectManager,                   
+                    'objectManager' => $objectManager,
+                    'attributes'  => [
+                        'id' => 'language',
+                    ],
+                    'options' => [
+                        'label' => 'language', 
+                        'empty_item_label' => '',
+                    ],    
                 ]
             )
         );
