@@ -91,7 +91,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         if (isset($options['auth_user_role'])) {
             /** @todo let's not hard-code these roles */
             if (! in_array($options['auth_user_role'], ['anonymous','staff','submitter','manager','administrator'])) {
-                throw new \RuntimeException('invalid "auth_user_role" option in Event constructor');
+                throw new \RuntimeException('invalid "auth_user_role" option in Event fieldset constructor');
             }
             $this->auth_user_role = $options['auth_user_role'];
         }
@@ -103,7 +103,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         $this->setHydrator(new DoctrineHydrator($objectManager))
                 ->setUseAsBaseFieldset(true);
 
-        // to be continued: add elements
+        foreach ($this->elements as $element) {
+            $this->add($element);
+        }
     }
 
     /**
