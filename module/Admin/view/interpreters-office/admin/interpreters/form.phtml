@@ -126,7 +126,9 @@ $form->add([
                     $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
-                    <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
+                    <div class="col-sm-9"><?php echo $this->formElement($element);//$this->formElementErrors($element)
+                    ?><div class="validation-error" id="error_<?php echo $element->getAttribute('id')?>"></div>
+                    </div>
                 </div>
                 <?php endforeach; ?>
                 <!--
@@ -417,35 +419,4 @@ $(function(){
         });        
     });                
 });
-
-// TO DO move this somewhere accessible to all
-displayValidationErrors = function(validationErrors) {
-    $('.validation-error').hide();
-    for (var field in validationErrors) {
-        for (var key in validationErrors[field]) {
-            var message = validationErrors[field][key];
-            var element = $('#' +field);
-            var errorDiv = $('#error_'+field);
-            if (! errorDiv.length) { errorDiv = null;}
-            if (! element.length) { console.log("is there no element #"+field+ " ?");
-                // look for an existing div by id
-                if ($('#error_'+field).length) {
-                    $('#error_'+field).html(message);
-                } else {
-                    console.warn("no element with id "+field + ", and nowhere to put message "+message);
-                }
-            } else {
-                errorDiv = errorDiv || element.next('.validation-error');
-                if (! errorDiv.length) {
-                    errorDiv = $('<div/>')
-                        .addClass('alert alert-warning validation-error')
-                        .attr({id:'error_'+field})
-                    .insertAfter(element);
-                }
-                errorDiv.html(message).show();
-            }
-            break;
-        }
-    } 
-};
 </script>
