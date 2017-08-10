@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * particular judge.
  *
  * @ORM\Entity
- * @ORM\Table(name="anonymous_judges",uniqueConstraints={@ORM\UniqueConstraint(name="unique_anon_judge",columns={"name"})})
+ * @ORM\Table(name="anonymous_judges",uniqueConstraints={@ORM\UniqueConstraint(name="unique_anon_judge",columns={"name","default_location_id"})})
  */
 class AnonymousJudge
 {
@@ -40,8 +40,8 @@ class AnonymousJudge
     /**
      * the default Location (i.e., courtroom) of this Judge.
      *
-     * @ORM\Column(name="default_location_id",nullable=true)
      * @ORM\ManyToOne(targetEntity="Location")
+     * @ORM\JoinColumn(nullable=true,name="default_location_id")
      *
      * @var Location
      */
