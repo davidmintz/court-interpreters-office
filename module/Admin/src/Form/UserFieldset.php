@@ -80,7 +80,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         }
         $this->auth_user_role = $options['auth_user_role'];
         unset($options['auth_user_role']);
-        // maybe we can get by with just the "role," which is in the session
+        
         /*
         if (! $options['auth'] instanceof AuthenticationServiceInterface) {
             throw new \RuntimeException(sprintf(
