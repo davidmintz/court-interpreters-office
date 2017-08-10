@@ -69,6 +69,21 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
     }
     
     /**
+     * get anonymous/generic judges
+     * 
+     * it may be a capital crime to put this here rather than in a separate 
+     * AnonymousJudgeRepository class, but for now, here it is
+     * 
+     * @return array
+     */
+        public function getAnonymousJudges()
+    {
+        $dql = 'SELECT j FROM InterpretersOffice\Entity\AnonymousJudge j ';
+        
+        return $this->createQuery($dql, $this->cache_namespace)->getResult();
+    }
+    
+    /**
      * deletes cache
      *
      * implements CacheDeletionInterface
