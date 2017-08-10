@@ -10,6 +10,8 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
+use InterpretersOffice\Form\Element\LanguageSelect;
+use DoctrineModule\Form\Element\ObjectSelect;
 /**
  * Fieldset for Event form
  *
@@ -77,8 +79,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
             ],
              'options' => [
                 'label' => 'docket',                
-             ],
-            
+            ],            
         ]
 
     ];
@@ -113,13 +114,13 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager))
                 ->setUseAsBaseFieldset(true);
+        
 
         foreach ($this->elements as $element) {
             $this->add($element);
         }
-        // TO DO! fix constructor option stuff in LanguageSelect
         $this->add(
-            new \InterpretersOffice\Form\Element\LanguageSelect(
+            new LanguageSelect(
                 'language',
                 [
                     'objectManager' => $objectManager,
@@ -133,6 +134,35 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                 ]
             )
         );
+        $this->addJudgeElement();
+
+
+    }
+
+
+    public function addJudgeElement()
+    {
+        $element = new ObjectSelect(
+            'judge',
+            [ 
+                'options' => [
+                    'objectManager' => $this->objectManager,
+                    'target_class' => 'InterpretersOffice\Entity\Judge',
+                    'label'  => 'judge',
+                    'property' => 'lastname',
+                    /*'find_method' => [
+                        'name' => 'getRoles',
+                        'params' => ['auth_user_role' => $this->auth_user_role ],
+                     ],*/
+                 ],
+            'attributes' => [
+                'class' => 'form-control',
+                'id' => 'judge',
+                ],
+            ]
+        );
+        //exit(get_class($this->objectManager));
+       $this->add($element);
     }
 
     /**
