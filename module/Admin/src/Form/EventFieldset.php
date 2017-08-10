@@ -144,8 +144,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
             ->addEventTypeElement()
             ->addLocationElement();
 
-
     }
+    
+    
     
     /**
      * adds the EventType element
@@ -180,7 +181,13 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
     
     /**
      * adds Location element
-     * 
+     * consider:
+     * <code>
+     * CREATE OR REPLACE VIEW view_locations AS SELECT locations.*, parent.name 
+     * AS parent, type.type AS category FROM locations 
+     * LEFT JOIN locations as parent ON locations.parent_location_id = parent.id 
+     * JOIN location_types AS type ON locations.type_id = type.id;
+     * </code>
      * @return EventFieldset
      */
     public function addLocationElement()
