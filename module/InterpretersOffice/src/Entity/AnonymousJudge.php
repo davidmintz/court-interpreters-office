@@ -7,7 +7,7 @@ namespace InterpretersOffice\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity representing a category of anonymous/generic judge.
+ * Entity representing a category of anonymous/generic pseudo-judge.
  *
  * Events typically have a related Judge entity. A Judge is a Person with attributes
  * like last name, firstname. But some events have a "generic" judge, e.g., the
@@ -46,15 +46,29 @@ class AnonymousJudge
      * @var Location
      */
     protected $defaultLocation;
+    
+    
 
     /**
      * returns string representation of AnonymousJudge entity.
+     * 
+     * food for thought: this generates SQL queries. maybe think of a way
+     * to avoid that.
      *
      * @return string
      */
     public function __toString()
     {
-        return $this->name;
+        if (! $this->defaultLocation) { 
+            return $this->name;
+        }
+        if (! $this->defaultLocation->getParentLocation()) {
+            return $this->name . ', '.$this->defaultLocation;
+        }
+        return sprintf('%s, %s %s',
+                $this->name, 
+                $this->defaultLocation, 
+                $this->defaultLocation->getParentLocation());
     }
 
     /**
