@@ -69,7 +69,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
     }
     
     /**
-     * get anonymous/generic judges
+     * gets anonymous/generic judges
      * 
      * it may be a capital crime to put this here rather than in a separate 
      * AnonymousJudgeRepository class, but for now, here it is
