@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.17, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.19, for Linux (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.17-0ubuntu0.16.04.1
+-- Server version	5.7.19-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -25,9 +25,11 @@ DROP TABLE IF EXISTS `anonymous_judges`;
 CREATE TABLE `anonymous_judges` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `default_location_id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `default_location_id` smallint(5) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_anon_judge` (`name`)
+  UNIQUE KEY `unique_anon_judge` (`name`),
+  KEY `default_location_id` (`default_location_id`),
+  CONSTRAINT `anonymous_judges_ibfk_1` FOREIGN KEY (`default_location_id`) REFERENCES `locations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -43,7 +45,7 @@ CREATE TABLE `cancellation_reasons` (
   `reason` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_cancel_reason` (`reason`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,7 +149,7 @@ CREATE TABLE `event_types` (
   UNIQUE KEY `unique_event_type` (`name`),
   KEY `IDX_182B381C12469DE2` (`category_id`),
   CONSTRAINT `FK_182B381C12469DE2` FOREIGN KEY (`category_id`) REFERENCES `event_categories` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -243,13 +245,20 @@ DROP TABLE IF EXISTS `interpreters`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `interpreters` (
   `id` smallint(5) unsigned NOT NULL,
-  `phone` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `home_phone` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dob` varchar(125) COLLATE utf8_unicode_ci DEFAULT NULL,
   `ssn` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `security_clearance_date` date DEFAULT NULL,
   `fingerprint_date` date DEFAULT NULL,
   `oath_date` date DEFAULT NULL,
   `contract_expiration_date` date DEFAULT NULL,
+  `comments` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
+  `address1` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `address2` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `city` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `state` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `zip` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
+  `country` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_ssn` (`ssn`),
   CONSTRAINT `FK_4EBBDB02BF396750` FOREIGN KEY (`id`) REFERENCES `people` (`id`) ON DELETE CASCADE
@@ -346,7 +355,7 @@ CREATE TABLE `languages` (
   `comments` varchar(300) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_language` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -385,7 +394,7 @@ CREATE TABLE `locations` (
   KEY `IDX_17E64ABA6D6133FE` (`parent_location_id`),
   CONSTRAINT `FK_17E64ABA6D6133FE` FOREIGN KEY (`parent_location_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `FK_17E64ABAC54C8C93` FOREIGN KEY (`type_id`) REFERENCES `location_types` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,7 +456,7 @@ CREATE TABLE `users` (
   KEY `IDX_1483A5E9D60322AC` (`role_id`),
   CONSTRAINT `FK_1483A5E9217BBB47` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`),
   CONSTRAINT `FK_1483A5E9D60322AC` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -459,4 +468,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-05-03  9:26:03
+-- Dump completed on 2017-08-10 13:02:33
