@@ -146,7 +146,7 @@ class Judge extends Person
      * returns a string representation of the entity.
      */
     public function __toString()
-    {
+    {        
         $string = $this->getLastname().', ';
         $string .= $this->getFirstname();
         $middle = $this->getMiddlename();
