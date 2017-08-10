@@ -143,6 +143,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         );
         
         $this->addJudgeElement();
+        
+        $this->addEventTypeElement();
 
 
     }
@@ -174,6 +176,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
        $element->setAttributes([ 'class' => 'form-control','id' => 'role',]);
        // $element->getValueOptions() : array of arrays containing keys: label, value, attributes => array
        // we need to jam the generic Magistrate etc in there and sort
+       $anonymous = $this->getObjectManager()->getRepository(Judge::class)->getAnonymousJudges();
+       $valueOptions = $element->getValueOptions();
+       foreach($anonymous as $entity) {
+           $label = $entity->__toString();
+           $value = $entity->getId();
+           $attributes = ['data-pseudojudge'=>true];
+           $valueOptions[] = compact('label','value','attributes');
+       }
+       $element->setValueOptions($valueOptions);
        $this->add($element);
     }
 
