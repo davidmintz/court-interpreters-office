@@ -26,8 +26,11 @@ class EventsControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $controller = new EventsController($container->get('entity-manager'));
-        // more initialization
+        $controller = new EventsController(
+             $container->get('entity-manager'),
+             $container->get('auth')
+        );
+        // more initialization?
 
         return $controller;
     }
