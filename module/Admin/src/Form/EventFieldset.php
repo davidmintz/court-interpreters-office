@@ -12,6 +12,8 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
 use DoctrineModule\Form\Element\ObjectSelect;
+
+use InterpretersOffice\Entity\Judge;
 /**
  * Fieldset for Event form
  *
@@ -40,7 +42,12 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
      * @var string
      */
     protected $auth_user_role;  
-
+    
+    /**
+     * fieldset elements
+     * 
+     * @var Array some of our element definitions
+     */
     protected $elements = [
 
         [
@@ -134,34 +141,39 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                 ]
             )
         );
+        
         $this->addJudgeElement();
 
 
     }
-
+   
 
     public function addJudgeElement()
     {
-        $element = new ObjectSelect(
-            'judge',
-            [ 
-                'options' => [
-                    'objectManager' => $this->objectManager,
-                    'target_class' => 'InterpretersOffice\Entity\Judge',
-                    'label'  => 'judge',
-                    'property' => 'lastname',
-                    /*'find_method' => [
-                        'name' => 'getRoles',
-                        'params' => ['auth_user_role' => $this->auth_user_role ],
-                     ],*/
-                 ],
-            'attributes' => [
-                'class' => 'form-control',
-                'id' => 'judge',
-                ],
+        $element = new ObjectSelect('judge',
+            [
+                'object_manager' => $this->objectManager,
+                'target_class' => 'InterpretersOffice\Entity\Judge',
+                'label' => 'judge',
+                'label_generator' => function(Judge $judge) {
+                    $label = sprintf("%s, %s",$judge->getLastname(),$judge->getFirstname());
+                    $middle = $judge->getMiddleName();
+                    if ($middle) {
+                         if (2 == strlen($middle) && '.' == $middle[1]) {
+                            $label .= " $middle";
+                        } else {
+                            $label .= " $middle[0].";
+                        }
+                    }
+                    $label .= ', '.$judge->getFlavor();
+                    return $label;
+                },
+                'find_method' => ['name'=> 'findAllActive',]
             ]
         );
-        //exit(get_class($this->objectManager));
+       $element->setAttributes([ 'class' => 'form-control','id' => 'role',]);
+       // $element->getValueOptions() : array of arrays containing keys: label, value, attributes => array
+       // we need to jam the generic Magistrate etc in there and sort
        $this->add($element);
     }
 
