@@ -66,4 +66,12 @@ class EventCategory
     {
         return $this->category;
     }
+    
+    /**
+     * returns string representation
+     */
+    public function __toString()
+    {
+        return $this->category;
+    }
 }
