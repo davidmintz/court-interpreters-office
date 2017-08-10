@@ -51,10 +51,23 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
     {
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
                .'ORDER BY j.lastname, j.firstname';
-
+        
         return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
-
+    
+    /**
+     * gets all the judge entities who are "active"
+     * 
+     * @return array
+     */
+    public function findAllActive()
+    {
+        $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
+                . ' WHERE j.active = true ORDER BY j.lastname, j.firstname';
+        
+        return $this->createQuery($dql, $this->cache_namespace)->getResult();
+    }
+    
     /**
      * deletes cache
      *
