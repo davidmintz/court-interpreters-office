@@ -27,7 +27,8 @@ echo $this->form()->openTag($form);
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
-        <?php foreach (['date','time','language','docket'] as $elementName) : $element = $fieldset->get($elementName); ?>
+        <?php foreach (['date','time','judge','location',  'language','event-type','docket',
+            ] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
                 <div class="col-sm-9"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
