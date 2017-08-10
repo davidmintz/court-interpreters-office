@@ -122,7 +122,6 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         $this->setHydrator(new DoctrineHydrator($objectManager))
                 ->setUseAsBaseFieldset(true);
         
-
         foreach ($this->elements as $element) {
             $this->add($element);
         }
@@ -140,16 +139,77 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                     ],    
                 ]
             )
-        );
-        
-        $this->addJudgeElement();
-        
-        $this->addEventTypeElement();
+        );        
+        $this->addJudgeElement()       
+            ->addEventTypeElement()
+            ->addLocationElement();
 
 
     }
-   
-
+    
+    /**
+     * adds the EventType element
+     * 
+     * @return \InterpretersOffice\Admin\Form\EventFieldset
+     */
+    public function addEventTypeElement()            
+    {
+        $this->add([
+            'type'=>'DoctrineModule\Form\Element\ObjectSelect',
+            'name' => 'event-type',
+            'options' => [
+                'object_manager' => $this->getObjectManager(),
+                'target_class' => 'InterpretersOffice\Entity\EventType',
+                'property' => 'name',
+                'label' => 'event type',
+                //'optgroup_identifier' => 'optionGroup',
+                'display_empty_item' => true,
+                'empty_item_label' => ' ',
+                'option_attributes' => [            
+                    'data-event_category' => 
+                     function (\InterpretersOffice\Entity\EventType $entity) {
+                        return (string)$entity->getCategory();
+                     },
+                ]
+            ],         
+            'attributes' => ['class' => 'form-control', 'id' => 'event-type'],
+        ]);
+        
+        return $this;
+    }
+    
+    /**
+     * adds Location element
+     * 
+     * @return EventFieldset
+     */
+    public function addLocationElement()
+    {
+        $this->add([
+            'type'=>'DoctrineModule\Form\Element\ObjectSelect',
+            'name' => 'location',
+            'options' => [
+                'object_manager' => $this->getObjectManager(),
+                'target_class' => 'InterpretersOffice\Entity\Location',
+                'property' => 'name',
+                'label' => 'place',
+                // doesn't work unless it's a string
+                //'optgroup_identifier' => 'parentLocation',
+                'display_empty_item' => true,
+                'empty_item_label' => ' ',
+                
+            ],         
+            'attributes' => ['class' => 'form-control', 'id' => 'event-type'],
+        ]);
+        
+        return $this;
+    }
+    
+    /**
+     * adds the Judge element
+     * 
+     * @return \InterpretersOffice\Admin\Form\EventFieldset
+     */
     public function addJudgeElement()
     {
         $element = new ObjectSelect('judge',
@@ -170,6 +230,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                     $label .= ', '.$judge->getFlavor();
                     return $label;
                 },
+                'display_empty_item' => true,
+                'empty_item_label' => ' ', 
                 'find_method' => ['name'=> 'findAllActive',]
             ]
         );
@@ -186,6 +248,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
        }
        $element->setValueOptions($valueOptions);
        $this->add($element);
+       return $this;
     }
 
     /**
