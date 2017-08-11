@@ -25,7 +25,9 @@ return [
             // the next for the main nav
             [
                 'label' => 'add event',
-                'route' => 'events/add'
+                'route' => 'events/add',
+                'resource' => 'interpreters',
+                'privilege' => 'add',
             ],
             [
                 'label' => 'interpreters',
