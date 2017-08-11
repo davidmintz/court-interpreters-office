@@ -110,7 +110,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     public function getCourtrooms($parent_id)
     {
         if (! $parent_id) {
-            return [];
+            return []; // do we need this? WTF was I thinking?
         }
         $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
@@ -137,6 +137,36 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function getChildren($parent_id,$type_id = null)
     {
+        $params = [':parent_id' => $parent_id];
+        $dql =  'SELECT l, t.type FROM InterpretersOffice\Entity\Location l '
+                . 'JOIN l.parentLocation p JOIN l.type t ';
+        $where = 'p.id = :parent_id ';
+        if ($type_id) {
+            $params[':type_id'] = $type_id;            
+            $where .= 'AND t.id = :type_id ';
+        }
+        $dql .= " WHERE $where";// ORDER BY t.type, l.name";        
+     
+        $data = $this->createQuery($dql)
+                ->useResultCache(true)
+                ->setParameters($params)->getResult();
+        
+        usort($data, function ($a, $b) {
+            $type_1 = $a['type']; //(string)$a->getType();
+            $type_2 = $b['type']; //(string)$b->getType();
+            if ($type_1 == 'courtroom' && $type_2 != 'courtroom') {
+                return -1;
+            } elseif ($type_1 != 'courtroom' && $type_2 == 'courtroom') {
+                return 1;
+            }
+            if ($type_1 == $type_2) {
+                return strnatcasecmp($a[0]->getName(), $b[0]->getName());
+            } else {
+                return strcasecmp($type_1,$type_2);
+            }
+            
+        });
+        return array_column($data,0);
         
     }
     
@@ -163,9 +193,10 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     public function findByTypeId($type_id)
     {
         $query = $this->createQuery(
-            'SELECT l.id, l.name, p.name AS parent FROM InterpretersOffice\Entity\Location l '
-                .' LEFT JOIN l.parentLocation p JOIN l.type t '
-                .' WHERE t.id = :type_id'
+            'SELECT l.id, l.name, p.name AS parent '
+            . 'FROM InterpretersOffice\Entity\Location l '
+            .' LEFT JOIN l.parentLocation p JOIN l.type t '
+            .' WHERE t.id = :type_id'
         )->setParameters([':type_id' => $type_id]);
         $data = $query->useResultCache(true)->getResult();
         usort($data, function ($a, $b) {

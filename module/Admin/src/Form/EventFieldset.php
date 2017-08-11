@@ -207,35 +207,47 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
             ],         
             'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
         ]);
-        /** 
-        WRONG. the thing is to add an ObjectSelect if there is an event entity
-        with a location that has a parent, 
-         * else add an empty Zend\Form\Element\Select
-         *          */
-        if (!$event) {
-            $value_options = [];
-        } else {
-            $location = $event->getLocation();
-            if ($location && $location->getParentLocation()) {
-                $id =  $location->getParentLocation()->getId();
-                $value_options = $this->getObjectManager()
-                     ->getRepository('InterpretersOffice\Entity\Location')
-                     ->getValueOptions($id);
-            }
-        }
-         
-         /**/
-        $this->add([
+        /**
+         * @todo clean this up
+         */
+        $element_spec = [           
                 'type' => 'Zend\Form\Element\Select',
                 'name' => 'location',
                 'options' =>[
-                    'value_options' => $value_options,
+                    'value_options' =>[],
                     'empty_option' => '---- specific location ---',                    
                 ],                
                 'attributes' => ['class' => 'form-control', 'id' => 'location'],
-                
-        ]);
-        return $this;
+        ];
+        if (! $event) {
+             $this->add($element_spec);
+        } else {
+           $location = $event->getLocation();
+           if ($location && $location->getParentLocation()) {
+                $parent_id =  $location->getParentLocation()->getId();
+            //$parent_id = 1;
+            $this->add([
+                'type'=>'DoctrineModule\Form\Element\ObjectSelect',
+                'name' => 'location',
+                'options' => [
+                    'object_manager' => $this->getObjectManager(),
+                    'target_class' => 'InterpretersOffice\Entity\Location',
+                    'property' => 'name',
+                    'find_method' => [
+                        'name' => 'getChildren',
+                        'params' => ['parent_id'=>$parent_id]
+                    ],
+                    'display_empty_item' => true,
+                    'empty_item_label' => '---- specific location ---',
+                ],         
+                'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
+            ]);
+            } else {
+                $this->add($element_spec);
+            }
+        }
+        return $this; 
+        
     }
     
     /**

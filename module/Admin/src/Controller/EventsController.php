@@ -59,6 +59,12 @@ class EventsController extends AbstractActionController
      */
     public function addAction()
     {
+        $entities = $this->entityManager->getRepository('InterpretersOffice\Entity\Location')
+                ->getChildren(1);
+        foreach ($entities as $place) {
+           // print_r(array_keys($place)); echo "... ";
+            //echo "({$place->getType()}) ",$place->getName(), '<br>';
+        }
         $form = new Form\EventForm(
             $this->entityManager,
             [   'action' => 'create',
