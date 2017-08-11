@@ -11,6 +11,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
+use InterpretersOffice\Entity\Event;
 use DoctrineModule\Form\Element\ObjectSelect;
 
 use InterpretersOffice\Entity\Judge;
@@ -106,6 +107,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         if (! in_array($options['action'], ['create', 'update','repeat'])) {
             throw new \RuntimeException('invalid "action" option in EventFieldset constructor: '.(string)$options['action']);
         }
+        if (! isset($options['object'])) {
+            $options['object'] = null;
+        }
         /** might get rid of this... */
         if (isset($options['auth_user_role'])) {
             /** @todo let's not hard-code these roles */
@@ -142,7 +146,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         );        
         $this->addJudgeElement()       
             ->addEventTypeElement()
-            ->addLocationElement();
+            ->addLocationElements($options['object']);
 
     }
     
@@ -180,35 +184,57 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
     }
     
     /**
-     * adds Location element
-     * consider:
-     * <code>
-     * CREATE OR REPLACE VIEW view_locations AS SELECT locations.*, parent.name 
-     * AS parent, type.type AS category FROM locations 
-     * LEFT JOIN locations as parent ON locations.parent_location_id = parent.id 
-     * JOIN location_types AS type ON locations.type_id = type.id;
-     * </code>
+     * adds Location elements
+     * @param the Event instance, if we are updating
      * @return EventFieldset
      */
-    public function addLocationElement()
+    public function addLocationElements(Event $event = null)
     {
         $this->add([
             'type'=>'DoctrineModule\Form\Element\ObjectSelect',
-            'name' => 'location',
+            'name' => 'parent_location',
             'options' => [
                 'object_manager' => $this->getObjectManager(),
                 'target_class' => 'InterpretersOffice\Entity\Location',
                 'property' => 'name',
                 'label' => 'place',
-                // doesn't work unless it's a string
-                //'optgroup_identifier' => 'parentLocation',
+                'find_method' => [
+                    'name' => 'getParentLocations'
+                ],
                 'display_empty_item' => true,
-                'empty_item_label' => ' ',
+                'empty_item_label' => '---- general location ---',
                 
             ],         
-            'attributes' => ['class' => 'form-control', 'id' => 'event-type'],
+            'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
         ]);
-        
+        /** 
+        WRONG. the thing is to add an ObjectSelect if there is an event entity
+        with a location that has a parent, 
+         * else add an empty Zend\Form\Element\Select
+         *          */
+        if (!$event) {
+            $value_options = [];
+        } else {
+            $location = $event->getLocation();
+            if ($location && $location->getParentLocation()) {
+                $id =  $location->getParentLocation()->getId();
+                $value_options = $this->getObjectManager()
+                     ->getRepository('InterpretersOffice\Entity\Location')
+                     ->getValueOptions($id);
+            }
+        }
+         
+         /**/
+        $this->add([
+                'type' => 'Zend\Form\Element\Select',
+                'name' => 'location',
+                'options' =>[
+                    'value_options' => $value_options,
+                    'empty_option' => '---- specific location ---',                    
+                ],                
+                'attributes' => ['class' => 'form-control', 'id' => 'location'],
+                
+        ]);
         return $this;
     }
     

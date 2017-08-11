@@ -72,7 +72,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
             ->join('l.type', 't')
             ->where('t.type = :type')
             ->setParameter('type', 'courthouse')
-            ->addOrderBy('l.name', 'ASC'); //->addOrderBy('l.name','ASC');
+            ->addOrderBy('l.name', 'ASC');
         $query = $qb->getQuery()->useResultCache(true);
 
         return $query->getResult();
@@ -126,6 +126,32 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $data;
     }
+    
+    /**
+     * get children of parent location $parent_id
+     * @param int $parent_id
+     * @param int $type_id
+     * @return array
+     * @todo refactor shit. make getCourtrooms proxy to this
+     * 
+     */
+    public function getChildren($parent_id,$type_id = null)
+    {
+        
+    }
+    
+    /*
+        $dql = 'SELECT  l.id, l.name '
+                . 'FROM InterpretersOffice\Entity\Location l '
+                . 'INDEX BY l.id '
+                . 'LEFT JOIN l.parentLocation p '
+                . 'WHERE p.id ';
+        if ($parent_id) {
+            $dql .= '= :parent_id ';
+        } else {
+            $dql .= 'IS NULL ';
+        }
+     */ 
 
     /**
      * find all locations of type id $type_id.

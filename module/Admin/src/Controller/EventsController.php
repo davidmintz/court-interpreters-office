@@ -61,17 +61,18 @@ class EventsController extends AbstractActionController
     {
         $form = new Form\EventForm(
             $this->entityManager,
-            [  'action' => 'create',
-                'auth_user_role'=> $this->auth->getIdentity()->role
+            [   'action' => 'create',
+                'auth_user_role'=> $this->auth->getIdentity()->role,
+                'object' => null,
             ]
         );
+
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
 
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables([
-                'title' => 'schedule | '.$this->params()->fromRoute('action'),
+            ->setVariables([                
                 'form'  => $form,
                 ]);
 
@@ -89,18 +90,16 @@ class EventsController extends AbstractActionController
 
         $form = new Form\EventForm(
             $this->entityManager,
-            ['action' => 'create']
+            ['action' => 'update']
         );
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
 
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables([
-                'title' => $this->params()->fromRoute('action'),
+            ->setVariables([               
                 'form'  => $form,
-                ]);
-
+             ]);
 
         return $viewModel;
     }
