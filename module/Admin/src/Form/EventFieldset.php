@@ -11,7 +11,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
-use InterpretersOffice\Entity\Event;
+use InterpretersOffice\Entity;
 use DoctrineModule\Form\Element\ObjectSelect;
 
 use InterpretersOffice\Entity\Judge;
@@ -147,7 +147,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         $this->addJudgeElement()       
             ->addEventTypeElement()
             ->addLocationElements($options['object']);
-
+        // still to do: comments, admin comments, request meta (from whom and when)
+        // defendants, interpreters, end time
     }
     
     
@@ -172,7 +173,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                 'empty_item_label' => ' ',
                 'option_attributes' => [            
                     'data-event_category' => 
-                     function (\InterpretersOffice\Entity\EventType $entity) {
+                     function (Entity\EventType $entity) {
                         return (string)$entity->getCategory();
                      },
                 ]
@@ -188,7 +189,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
      * @param the Event instance, if we are updating
      * @return EventFieldset
      */
-    public function addLocationElements(Event $event = null)
+    public function addLocationElements(Entity\Event $event = null)
     {
         $this->add([
             'type'=>'DoctrineModule\Form\Element\ObjectSelect',
@@ -219,31 +220,33 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                 ],                
                 'attributes' => ['class' => 'form-control', 'id' => 'location'],
         ];
-        if (! $event) {
+        if (! $event or !$event->getLocation()) {
              $this->add($element_spec);
         } else {
            $location = $event->getLocation();
-           if ($location && $location->getParentLocation()) {
+           if ($location->getParentLocation()) {
                 $parent_id =  $location->getParentLocation()->getId();
-            //$parent_id = 1;
-            $this->add([
-                'type'=>'DoctrineModule\Form\Element\ObjectSelect',
-                'name' => 'location',
-                'options' => [
-                    'object_manager' => $this->getObjectManager(),
-                    'target_class' => 'InterpretersOffice\Entity\Location',
-                    'property' => 'name',
-                    'find_method' => [
-                        'name' => 'getChildren',
-                        'params' => ['parent_id'=>$parent_id]
-                    ],
-                    'display_empty_item' => true,
-                    'empty_item_label' => '---- specific location ---',
-                ],         
-                'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
-            ]);
+                //$parent_id = 1;
+                $this->add([
+                    'type'=>'DoctrineModule\Form\Element\ObjectSelect',
+                    'name' => 'location',
+                    'options' => [
+                        'object_manager' => $this->getObjectManager(),
+                        'target_class' => 'InterpretersOffice\Entity\Location',
+                        'property' => 'name',
+                        'find_method' => [
+                            'name' => 'getChildren',
+                            'params' => ['parent_id'=>$parent_id]
+                        ],
+                        'display_empty_item' => true,
+                        'empty_item_label' => '---- specific location ---',
+                    ],         
+                    'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
+                ]);
             } else {
                 $this->add($element_spec);
+                // ! the "parent_location" element value needs to be set
+                $this->getElement('parent_location')->setValue($location->getId());
             }
         }
         return $this; 
@@ -260,7 +263,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         $element = new ObjectSelect('judge',
             [
                 'object_manager' => $this->objectManager,
-                'target_class' => 'InterpretersOffice\Entity\Judge',
+                'target_class' => Entity\Judge::class,
                 'label' => 'judge',
                 'label_generator' => function(Judge $judge) {
                     $label = sprintf("%s, %s",$judge->getLastname(),$judge->getFirstname());

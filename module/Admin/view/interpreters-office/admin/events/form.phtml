@@ -21,13 +21,13 @@ $form = $this->form; $form->setAttribute('class','form-horizontal form-event');
 $form->prepare();
 $fieldset = $form->get('event');
 // for testing
-$fieldset->get('time')->setValue('10:00:00');
-$fieldset->get('date')->setValue('2017-08-15');
+//$fieldset->get('time')->setValue('10:00:00');
+//$fieldset->get('date')->setValue('2017-08-15');
 echo $this->form()->openTag($form);  
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
-        <?php foreach (['date','time','judge','parent_location','location',  'language','event-type','docket',
+        <?php foreach (['date','time','judge','event-type','parent_location','location','language','docket',
             ] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
