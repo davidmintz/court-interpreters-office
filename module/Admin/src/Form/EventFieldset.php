@@ -5,12 +5,14 @@
 namespace InterpretersOffice\Admin\Form;
 
 use Zend\Form\Fieldset;
+use Zend\Form\Element;
 use Zend\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
+use InterpretersOffice\Admin\Form\InterpretersAssignedFieldset;
 use InterpretersOffice\Entity;
 use DoctrineModule\Form\Element\ObjectSelect;
 
@@ -147,6 +149,21 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         $this->addJudgeElement()       
             ->addEventTypeElement()
             ->addLocationElements($options['object']);
+        
+        $interpretersAssignedFieldset = new InterpretersAssignedFieldset($objectManager);
+        $this->add([
+            'type' => Element\Collection::class,
+            'name' => 'interpretersAssigned',
+            'options' => [
+                'label' => 'interpreters',
+                //'count' => 2,
+                //'should_create_template' => true,
+                'allow_add' => true,
+                'allow_remove' => true,
+                'target_element' =>  $interpretersAssignedFieldset,
+                
+            ],
+        ]);
         // still to do: comments, admin comments, request meta (from whom and when)
         // defendants, interpreters, end time
     }
@@ -162,7 +179,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
     {
         $this->add([
             'type'=>'DoctrineModule\Form\Element\ObjectSelect',
-            'name' => 'event-type',
+            'name' => 'eventType',
             'options' => [
                 'object_manager' => $this->getObjectManager(),
                 'target_class' => 'InterpretersOffice\Entity\EventType',
@@ -307,6 +324,31 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
     public function getInputFilterSpecification()
     {
         // to be continued
-        return [];
+        return [
+            'date' => [
+                'validators'=> [
+                    
+                ],
+            ],
+            'time' => [
+                'validators'=> [
+                    
+                ],
+            ],
+            'location' => [
+                'required'=> false, 
+                 'allow_empty' => true,
+                 'validators'=> [
+                    
+                ],
+            ],
+             'parent_location' => [
+                 'required'=> false, 
+                 'allow_empty' => true,
+                 'validators'=> [
+                    
+                ],
+            ],
+        ];
     }
 }

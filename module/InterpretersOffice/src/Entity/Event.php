@@ -669,21 +669,36 @@ class Event
      *
      * @return Event
      */
-    public function addInterpretersAssigned(InterpreterEvent $interpretersAssigned)
+    public function __addInterpretersAssigned(InterpreterEvent $interpretersAssigned)
     {
         $this->interpretersAssigned[] = $interpretersAssigned;
 
         return $this;
     }
-
+    
+    public function addInterpretersAssigned(\Doctrine\Common\Collections\Collection $interpreterEvents)
+    {
+        foreach ($interpreterEvents as $interpreterEvent) {
+            $interpreterEvent->setEvent($this);
+            $this->interpretersAssigned->add($interpreterEvent);
+        }
+    }
     /**
      * Remove interpretersAssigned.
      *
      * @param InterpreterEvent $interpretersAssigned
      */
-    public function removeInterpretersAssigned(InterpreterEvent $interpretersAssigned)
+    public function ___removeInterpretersAssigned(InterpreterEvent $interpretersAssigned)
     {
         $this->interpretersAssigned->removeElement($interpretersAssigned);
+    }
+    
+    public function removeInterpretersAssigned(\Doctrine\Common\Collections\Collection $interpreterEvents)
+    {
+         foreach ($interpreterEvents as $interpreterEvent) {
+            $interpreterEvent->setEvent(null);
+            $this->interpretersAssigned->removeElement($interpreterEvent);
+        }
     }
 
     /**

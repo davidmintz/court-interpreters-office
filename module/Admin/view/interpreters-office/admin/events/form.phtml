@@ -11,9 +11,13 @@ if ($this->errorMessage) : ?>
 <?php
 return;
 endif;
-$form = $this->form; $form->setAttribute('class','form-horizontal form-event');
-
-
+$form = $this->form; 
+$form->setAttribute('class','form-horizontal form-event');
+$form->add([
+    'name' => 'submit',
+    'type' => 'Zend\Form\Element\Submit',
+     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+])->setAttribute('method', 'post');
 ?>
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
@@ -21,13 +25,19 @@ $form = $this->form; $form->setAttribute('class','form-horizontal form-event');
 $form->prepare();
 $fieldset = $form->get('event');
 // for testing
-//$fieldset->get('time')->setValue('10:00:00');
-//$fieldset->get('date')->setValue('2017-08-15');
+$fieldset->get('time')->setValue('10:00:00');
+$fieldset->get('date')->setValue('2017-08-15');
+$fieldset->get('judge')->setValue(948);
+$fieldset->get('eventType')->setValue(1);
+$fieldset->get('language')->setValue(62);
+$fieldset->get('interpretersAssigned')->populateValues([  
+   ['interpreter'=> 117] 
+]);
 echo $this->form()->openTag($form);  
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
-        <?php foreach (['date','time','judge','event-type','parent_location','location','language','docket',
+        <?php foreach (['date','time','judge','eventType','parent_location','location','language','docket',
             ] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
@@ -38,6 +48,10 @@ echo $this->form()->openTag($form);
 </div>
 <div class="col-sm-6"><!-- right side -->
     <div class="row">
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="interpreters_assigned">shit</label>
+                <div class="col-sm-9"><?php echo $this->formCollection($fieldset->get('interpretersAssigned'))?></div>
+        </div>
         <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
@@ -46,5 +60,14 @@ echo $this->form()->openTag($form);
         <?php endforeach; ?>
     </div>
 </div>
+<div style="margin-top:1em" class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <?php
+               // $csrf = $form->get('csrf');
+               // echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+               // echo $this->formHidden($fieldset->get('id'));
+                echo $this->formSubmit($form->get('submit'));?>
+            </div>       
+        </div><!-- / .form-group -->
 <?php echo $this->form()->closeTag(); ?>
 

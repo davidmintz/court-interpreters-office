@@ -13,6 +13,8 @@ use Zend\Authentication\AuthenticationServiceInterface;
 
 use InterpretersOffice\Admin\Form;
 
+use InterpretersOffice\Entity;
+
 /**
  *  EventsController
  */
@@ -74,14 +76,28 @@ class EventsController extends AbstractActionController
         );
 
         $request = $this->getRequest();
-        $form->setAttribute('action', $request->getRequestUri());
-
+        $form
+             ->setAttribute('action', $request->getRequestUri());
+        $event = new Entity\Event();
+        $form->bind($event);
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables([                
                 'form'  => $form,
                 ]);
-
+        
+        
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if (! $form->isValid()) {
+                echo "validation failed ... ";
+                var_dump($form->getMessages());
+                return $viewModel;
+            } else {
+                echo "validation OK";
+            }
+            
+        }
 
         return $viewModel;
     }

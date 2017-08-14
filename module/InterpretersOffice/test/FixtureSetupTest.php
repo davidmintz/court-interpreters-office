@@ -5,6 +5,7 @@ namespace ApplicationTest;
 //use PHPUnit_Framework_TestCase;
 
 use InterpretersOffice\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class FixtureSetupTest extends AbstractControllerTest
 {
@@ -139,10 +140,16 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setCreated($now)
             ->setCreatedBy($user)
             ->setModifiedBy($user)
+            ->addDefendant($defendant) 
             ->addInterpretersAssigned(
-                (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
-            )
-             ->addDefendant($defendant); //->setJudge($judge);
+                    new ArrayCollection(
+                       [     
+                            (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
+                       ]
+                    )
+                
+            );
+           //->setJudge($judge);
 
         $this->expectException(\RuntimeException::class);
         // this should suffice to throw a RuntimeException

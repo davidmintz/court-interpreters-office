@@ -4,6 +4,7 @@ namespace ApplicationTest\DataFixture;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use InterpretersOffice\Entity;
 
 class EventLoader implements FixtureInterface
@@ -39,6 +40,9 @@ class EventLoader implements FixtureInterface
                 ->findOneBy(['surnames' => 'Fulano Mengano']);
         $event = new Entity\Event();
         $now = new \DateTime();
+        $collection = new ArrayCollection([
+            (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user),
+        ]);
         $event
             ->setDate($date)
             ->setTime($time)
@@ -53,11 +57,11 @@ class EventLoader implements FixtureInterface
             ->setCreated($now)
             ->setCreatedBy($user)
             ->setLocation($location)
-            ->setModifiedBy($user)
-            ->addInterpretersAssigned(
-                (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
-            )
-             ->addDefendant($defendant);
+            ->setModifiedBy($user)            
+             ->addDefendant($defendant)
+             ->addInterpretersAssigned(
+                $collection
+            );
 
         $objectManager->persist($event);
 
