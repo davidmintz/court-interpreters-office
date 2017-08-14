@@ -4,7 +4,7 @@ use Zend\Form\Element;
  *  module/Admin/view/interpreters-office/admin/people/form.phtml
  *  view script for rendering interpreters create|update form
  */
-$this->headTitle($this->title);
+$this->headTitle('admin | interpreters | '.$this->layout()->action);
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepicker.css'));
 $this->headScript()
         ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
