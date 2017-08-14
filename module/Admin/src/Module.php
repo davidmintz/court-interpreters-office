@@ -88,6 +88,7 @@ class Module
         if (in_array($controller_name, [
             Controller\InterpretersController::class,
             Controller\UsersController::class,
+            Controller\EventsController::class,
             \InterpretersOffice\Controller\AuthController::class,
         ])) {
             $container = $event->getApplication()->getServiceManager();
