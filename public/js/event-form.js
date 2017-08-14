@@ -13,7 +13,7 @@ $(document).ready(
                 changeYear: true
             });
             $('input.date').each(function(i,element){
-                if (element.value.match(/\d{4}-\d\d-\d\d/)) {
+                if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
                     element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
                 }
             });
