@@ -231,7 +231,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
 $(function(){
     if (! window.Modernizr.inputtypes.date){
         $('input.date').each(function(i,element){
-            if (element.value.match(/\d{4}-\d\d-\d\d/)) {
+            if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
                 element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
             }
         });    
@@ -256,12 +256,13 @@ $(function(){
        var pane = $(".validation-error").closest('div.tab-pane');
        var id = pane.attr("id");
        $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
-        console.log("say shit?");
+        //console.log("say shit?");
     }
     if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker({
             changeMonth: true,
-            changeYear: true
+            changeYear: true,
+            constrainInput : false
         });
         // ????????????
         if (!($('#dob').val())) {
@@ -274,14 +275,18 @@ $(function(){
         /** @todo 
          * set datepicker options to display year for dob, if element exists 
          * set options to constrain security_clearance, fingerprint etc date ranges
+         * NOTE TO SELF: setting the relative maxDate to 0 has the interesting side 
+         * effect of making invalid dates NOT display in cases like 04/17/23472348789374
          */
+        /*
         $('#fingerprint_date, #oath_date, #security_clearance_date').datepicker("option",{            
             maxDate: 0
-        });        
+        });        */
     }
     /**
      * add a working language. note that if the markup in the form
      * changes, this likewise has to be changed
+     * 
      * @todo get rid of this in favor of an xhr call to a controller 
      * action that renders the same partial viewscript that will replace
      * the nasty mess above, in the "languages" pane

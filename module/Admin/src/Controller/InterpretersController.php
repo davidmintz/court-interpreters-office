@@ -13,6 +13,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\View\Model\JsonModel;
 use InterpretersOffice\Admin\Form\InterpreterRosterForm;
 use Zend\Session\Container as Session;
+use Zend\Stdlib\Parameters;
 
 /**
  * controller for admin/interpreters.
@@ -83,8 +84,7 @@ class InterpretersController extends AbstractActionController
         );
         if ('interpreters/find_by_id' == $routeName) {
             $viewModel->interpreter = $this->entityManager->find(
-                 'InterpretersOffice\Entity\Interpreter',
-                  $this->params()->fromRoute('id')
+                 Entity\Interpreter::class, $this->params()->fromRoute('id')
             );
         } else {
             if ($isQuery) {
@@ -156,7 +156,8 @@ class InterpretersController extends AbstractActionController
      */
     public function find(array $params)
     {
-        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
+        $repository = $this->entityManager
+                ->getRepository(Entity\Interpreter::class);
 
         return $repository->search($params, $this->params()->fromQuery('page', 1));
     }
@@ -189,7 +190,7 @@ class InterpretersController extends AbstractActionController
             $data = $request->getPost()['interpreter']['interpreter-languages'];
             if (is_array($data)) {
                 // manually hydrate, because we could not make that other shit work
-                $this->updateInterpreterLanguages($entity, $data);
+                $this->hydrateInterpreterLanguages($entity, $data);
             }
 
             if (! $form->isValid()) {
@@ -217,36 +218,51 @@ class InterpretersController extends AbstractActionController
      */
     public function editAction()
     {
+        /* // very annoying: '201' is considered a 4-digit year
+        $value = '04/23/201';
+        $validator = new \Zend\Validator\Date([
+           'format' => 'm/d/Y',
+           'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+        ]);*/
+        //var_dump($validator->isValid($value));
+
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
                 ->setVariable('title', 'edit an interpreter');
         $id = $this->params()->fromRoute('id');
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Interpreter', $id);
         if (! $entity) {
-            return $viewModel->setVariables(['errorMessage' => "interpreter with id $id not found"]);
+            return $viewModel->setVariables(
+                   ['errorMessage' => "interpreter with id $id not found"]);
         }
         $values_before = [
             'dob' => $entity->getDob(),
             'ssn' => $entity->getSsn(),
         ];
-        $form = new InterpreterForm($this->entityManager, ['action' => 'update','vault_enabled' => $this->vault_enabled]);
+        $form = new InterpreterForm($this->entityManager, 
+                ['action' => 'update','vault_enabled' => $this->vault_enabled]);
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id,
             // for the re-authentication dialog
-            'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))->setAttribute('id', 'login_csrf')
+            'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))
+                        ->setAttribute('id', 'login_csrf')
             ]
         );
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $form->setData($request->getPost());
-           // var_dump($request->getPost()->toArray());//exit();
-            $this->updateInterpreterLanguages(
+            $input = $request->getPost();
+            $form->setData($input);
+           //var_dump($request->getPost()->toArray());//exit();
+            $this->hydrateInterpreterLanguages(
                 $entity,
-                $request->getPost()['interpreter']['interpreter-languages']
+                $input['interpreter']['interpreter-languages']
             );
 
-            if (! $form->isValid()) {
-                //echo "shit is NOT valid.<pre>";print_r($form->getMessages());echo "</pre>";
+            if (! $form->isValid()) {               
+                // whether the encrypted fields should be obscured (again) 
+                // or not depends on whether they changed them                
+                $viewModel->obscure_values = 
+                  ! $this->getEncryptedFieldsWereModified($values_before,$input);                
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -265,7 +281,21 @@ class InterpretersController extends AbstractActionController
 
         return $viewModel;
     }
-
+    /**
+     * were the dob and ssn fields modified?
+     * @param Array $values_before the dob and ssn used when form was loaded
+     * @param $input \Zend\Stdlib\Parameters
+     * @return boolean
+     */
+    public function getEncryptedFieldsWereModified(Array $values_before,
+            Parameters $input)
+            
+    {
+        return $input->get('dob') != $values_before['dob']
+                or 
+                $input->get('ssn') != $values_before['ssn'];
+    }
+    
     /**
      * validates part of the Interpreter form
      *
@@ -302,7 +332,7 @@ class InterpretersController extends AbstractActionController
      * @param Entity\Interpreter $interpreter
      * @param mixed              $languages   language data POSTed to us
      */
-    public function updateInterpreterLanguages(Entity\Interpreter $interpreter, $languages)
+    public function hydrateInterpreterLanguages(Entity\Interpreter $interpreter, $languages)
     {
         if (! is_array($languages)) {
             // return the interpreter entity in an invalid state (no languages)
