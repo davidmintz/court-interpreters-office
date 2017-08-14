@@ -168,9 +168,7 @@ class InterpretersController extends AbstractActionController
     public function addAction()
     {
         $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
-                ->setVariables(['title' => 'add an interpreter']);
-
+            ->setTemplate('interpreters-office/admin/interpreters/form.phtml');
         $form = new InterpreterForm($this->entityManager,
                 [
                     'action' => 'create',
@@ -184,9 +182,6 @@ class InterpretersController extends AbstractActionController
         $form->bind($entity);
         if ($request->isPost()) {
             $form->setData($request->getPost());
-
-            $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
-
             $data = $request->getPost()['interpreter']['interpreter-languages'];
             if (is_array($data)) {
                 // manually hydrate, because we could not make that other shit work
@@ -200,10 +195,10 @@ class InterpretersController extends AbstractActionController
             $this->entityManager->flush();
 
             $this->flashMessenger()->addSuccessMessage(
-                sprintf(
-                    'The interpreter <strong>%s %s</strong> has been added to the database',
-                    $entity->getFirstname(),
-                    $entity->getLastname()
+              sprintf(
+                'The interpreter <strong>%s %s</strong> has been added to the database',
+                $entity->getFirstname(),
+                $entity->getLastname()
                 )
             );
             //echo "success. NOT redirecting. <a href=\"/admin/interpreters/add\">again</a>";
@@ -227,10 +222,9 @@ class InterpretersController extends AbstractActionController
         //var_dump($validator->isValid($value));
 
         $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/interpreters/form.phtml')
-                ->setVariable('title', 'edit an interpreter');
+            ->setTemplate('interpreters-office/admin/interpreters/form.phtml');
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager->find('InterpretersOffice\Entity\Interpreter', $id);
+        $entity = $this->entityManager->find(Entity\Interpreter::class, $id);
         if (! $entity) {
             return $viewModel->setVariables(
                    ['errorMessage' => "interpreter with id $id not found"]);
@@ -272,8 +266,7 @@ class InterpretersController extends AbstractActionController
             ));
             $this->redirect()->toRoute('interpreters');
             //echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
-        } else {
-            // not a POST
+        } else {    // not a POST
             if ($this->vault_enabled) {
                 $viewModel->obscure_values = true;
             }
