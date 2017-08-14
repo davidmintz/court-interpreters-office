@@ -402,15 +402,15 @@ class InterpreterFieldset extends PersonFieldset
                             'options' => [
                                 'callback' => function ($value, $context) {
                                     // it can't be in the future
-                                    // and it can't be unreasonably long ago
+                                   
                                     list($M, $D, $Y) = explode('/', $value);
                                     $date = "$Y-$M-$D";
                                     $max = date('Y-m-d');
-                                    $min = (new \DateTime("-3 years"))->format('Y-m-d');
-                                    return $date >= $min && $date <= $max;
+                                   // $min = (new \DateTime("-3 years"))->format('Y-m-d');
+                                    return $date <= $max;
                                 },
                                 'messages' => [
-                                    \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between three years ago and today',
+                                    \Zend\Validator\Callback::INVALID_VALUE => 'fingerprint date cannot be set to a future date',
                                 ],
                             ],
                         ],
@@ -501,6 +501,7 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                     'break_chain_on_failure' => true,
                 ],
+                 ///*
                 [ 'name' => 'Callback',
                     'options' => [
                         'callback' => function ($value, $context) {
@@ -508,15 +509,16 @@ class InterpreterFieldset extends PersonFieldset
                             // and it can't be unreasonably long ago
                             list($M, $D, $Y) = explode('/', $value);
                             $date = "$Y-$M-$D";
-                            $max = (new \DateTime("+2 years"))->format('Y-m-d');
-                            $min = (new \DateTime("-5 years"))->format('Y-m-d');
-                            return $date >= $min && $date <= $max;
+                            $max = (new \DateTime())->format('Y-m-d');
+                           // $min = (new \DateTime("-6 years"))->format('Y-m-d');
+                            return $date <= $max;
                         },
                         'messages' => [
-                            \Zend\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and two years from today',
+                            \Zend\Validator\Callback::INVALID_VALUE => 'oath date cannot be set in the future',
                         ],
                     ],
                 ],
+ 
              ],
             ];
          // encrypted fields
