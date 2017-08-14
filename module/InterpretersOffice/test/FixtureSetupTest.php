@@ -51,9 +51,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $this->assertTrue(is_object($fixtureExecutor));
         $entityManager = FixtureManager::getEntityManager();
-        //return;
-        //$entityManager->getC
-        //FixtureManager::start();
+       
         $fixtureExecutor->execute([
             new DataFixture\LanguageLoader(),
             new DataFixture\HatLoader(),
@@ -69,13 +67,29 @@ class FixtureSetupTest extends AbstractControllerTest
 
         $this->assertTrue(is_object($entityManager));
         //echo get_class($entityManager);
-        $languages = $entityManager->getRepository('InterpretersOffice\Entity\Language')->findAll();
+        $languages = $entityManager->getRepository(Entity\Language::class)->findAll();
         $this->assertTrue(is_array($languages));
         /** @var Doctrine\DBAL\Connection $connection */
         $connection = $entityManager->getConnection();
         $count = (int) $connection->fetchColumn('select count(*) from languages');
 
         $this->assertEquals($count, count($languages));
+        
+        $events = $entityManager->getRepository(Entity\Event::class)->findAll();
+        /** @var $event InterpretersOffice\Entity\Event */
+        $event = $events[0];
+        $this->assertInstanceOf(Entity\Event::class, $event);
+        $interpreters = $event->getInterpretersAssigned();
+        $this->assertTrue($interpreters->count() >= 1);
+        $assignment = $interpreters->current();
+        $interpreter = $assignment->getInterpreter();
+        $this->assertInstanceOf(Entity\Interpreter::class, $interpreter);
+        $user = $assignment->getCreatedBy();
+        $this->assertInstanceOf(Entity\User::class, $user);
+        $defendants = $event->getDefendants();
+        $this->assertTrue($defendants->count() >= 1);
+        $defendant = $defendants->current();
+        $this->assertInstanceOf(Entity\DefendantName::class,$defendant);
     }
     /**
      * test that a RuntimeException will be thrown if we try to persist an Event
@@ -89,10 +103,10 @@ class FixtureSetupTest extends AbstractControllerTest
 
         $time = new \DateTime('10:00 am');
         $objectManager = FixtureManager::getEntityManager();
-        $language = $objectManager->getRepository('InterpretersOffice\Entity\Language')
+        $language = $objectManager->getRepository(Entity\Language::class)
                 ->findOneBy(['name' => 'Spanish']);
 
-        $eventType = $objectManager->getRepository('InterpretersOffice\Entity\EventType')
+        $eventType = $objectManager->getRepository(Entity\EventType::class)
                 ->findOneBy(['name' => 'pretrial conference']);
 
         $comments = 'test one two';
@@ -102,7 +116,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $query = $objectManager->createQuery($dql);
         $user = $query->getSingleResult();
 
-        $interpreter = $objectManager->getRepository('InterpretersOffice\Entity\Interpreter')
+        $interpreter = $objectManager->getRepository(Entity\Interpreter::class)
                 ->findOneBy(['lastname' => 'Mintz']);
 
         $defendant = $objectManager->getRepository('InterpretersOffice\Entity\DefendantName')
