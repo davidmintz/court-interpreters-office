@@ -2,7 +2,7 @@
 use Zend\Form\Element;
 /**
  *  module/Admin/view/interpreters-office/admin/people/form.phtml
- *  view script for rendering people create|update form
+ *  view script for rendering interpreters create|update form
  */
 $this->headTitle($this->title);
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepicker.css'));
@@ -16,7 +16,7 @@ if ($this->errorMessage) : ?>
 <?php
 return;
 endif;
-$formAction = strstr($this->title, 'add') ? $this->url('interpreters/add')
+$formAction = $this->layout()->action == 'add' ? $this->url('interpreters/add')
     : $this->url('interpreters/edit', ['id' => $this->id ]);
 
 $form = $this->form;
@@ -70,7 +70,7 @@ $form->add([
                 ?></div>
             </div>
             <div class="form-group panel panel-default" id="languages">
-            <?php            
+            <?php   /** @todo move this to a partial viewscript */   
             $interpreterLanguages =  $form->getObject()->getInterpreterLanguages(); 
             $fed_certification_options = ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ];
             if (count($interpreterLanguages)):
@@ -113,12 +113,9 @@ $form->add([
                 endforeach;                
             endif; // count(languages)   
             $element = $fieldset->get('comments');
-            ?>                
-                </div><!-- /languages .form-group -->
+            ?>  </div><!-- /languages .form-group -->
                 <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
                 <div class="col-sm-9 form-inline" style="margin-bottom:1em"><?php echo $this->formElement($element), $this->formElementErrors($element)?></div>
-                    
-                
             </div><!-- /languages-pane ================================================================================ -->
 
             <div role="tabpanel" class="tab-pane" id="administrative">
@@ -150,7 +147,7 @@ Do not mix form groups or grid column classes directly with input groups. Instea
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
                 </div><?php
                     endforeach;
-                else:  // shit should be obscured until they re-authenticate/decrypt             
+                else:  // should be obscured until they re-authenticate/decrypt             
                     foreach (['dob','ssn'] as $elementName) :
                         if (! $fieldset->has($elementName)) : break; endif;
                     $element = $fieldset->get($elementName);?>
@@ -159,7 +156,8 @@ Do not mix form groups or grid column classes directly with input groups. Instea
                     <?php $encrypted = $element->getValue();
                     if (! $encrypted): // nothing to obscure
                         ?><div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div><?php
-                    else: $element->setAttribute('disabled','disabled');?>
+                    else:  // display text inputs as encrypted/disabled
+                        $element->setAttribute('disabled','disabled');?>
                     <div class="col-sm-9 form-inline encrypted">
                         <?php 
                             $element->setValue('**************');
@@ -284,6 +282,9 @@ $(function(){
     /**
      * add a working language. note that if the markup in the form
      * changes, this likewise has to be changed
+     * @todo get rid of this in favor of an xhr call to a controller 
+     * action that renders the same partial viewscript that will replace
+     * the nasty mess above, in the "languages" pane
      */
     $('#btn-add-language').on('click',function(event){
         
