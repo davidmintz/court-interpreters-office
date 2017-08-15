@@ -64,32 +64,40 @@ echo $this->form()->openTag($form);?>
                         <span class="sr-only">add language</span></button><?php                    
                      /** @todo display fieldset validation errors ? */
            ?></div>
-        </div><?php // display individual languages 
+        </div>
+        <div class="form-group panel panel-default" id="languages">
+        <?php 
+        //   display individual languages, hidden id input, 
+        //   certification select
             $collection = $fieldset->get('interpreterLanguages');
             $namespace = 'interpreter[interpreterLanguages]';
+            //$fed_certification_options = ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ];
             for ($i = 0; $i < count($collection); $i++):
-                $fs = $collection->get($i);
-                //foreach ($fs as $e) { echo $e->getName(),'<br>'; 
+                $fs = $collection->get($i);                
                 $language_element = $fs->get('language');
                 $obj = $language_element->getValue();
                 $language_id = $obj->getId();
                 $language_element->setValue($language_id);
-                
+                $certification_element = $fs->get('federalCertification');
+                $certification_element->setAttribute('id',"fed-certification-{$i}");
+                if ($certification_element->getValue() === null) {
+                    $certification_element->setAttribute('disabled','disabled');
+                }
         ?>
-        <div class="form-group panel panel-default" id="languages-">
+        
             <div class="col-sm-offset-3 col-sm-3  interpreter-language language-name" id="language-<?php echo $language_id ?>">
-                
+                <?php echo $this->formElement($language_element),
+                      $this->escapeHtml($obj->getName());
+                ?>
             </div>
             <div class="col-sm-6 form-inline interpreter-language language-certification">
-                <label for="fed-certification-0">fed certified</label><select name="interpreter&#x5B;interpreter-languages&#x5D;&#x5B;0&#x5D;&#x5B;federalCertification&#x5D;" class="form-control" id="fed-certification-0">
-                    <option value=""> </option>
-                    <option value="1" selected="selected">yes</option>
-                    <option value="0">no</option></select>
+                <label for="fed-certification-<?php echo $i?>">fed certification</label>
+                <?php echo $this->formElement($certification_element);  ?>
                 <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 <span class="sr-only">remove language</span></button>
-            </div>            
-        </div><!-- /languages .form-group -->
+            </div>                    
         <?php endfor;?>
+        </div><!-- /languages .form-group -->
     </div>
     <!-- /#languages-pane ================================================================================ -->
     <div role="tabpanel" class="tab-pane" id="administrative">
