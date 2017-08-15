@@ -49,6 +49,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                     1 => 'yes',
                     0 => 'no',
                 ],
+                'disable_inarray_validator'=> true,
             ],
             'attributes' => [
                 'class' => 'form-control'
@@ -94,13 +95,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
             'language' => [
                 'required' => true,
                 'allow_empty' => false,
-            ],
-            /*
-            'interpreter' => [
-                'required' => true,
-                'allow_empty' => false,
-            ],
-             */
+            ],            
         ];
     }
 }
