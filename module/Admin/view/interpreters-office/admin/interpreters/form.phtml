@@ -55,22 +55,29 @@ echo $this->form()->openTag($form);?>
             <!-- end "contact" form elements -->
     </div><!-- /#contact ================================================================================ -->
     <div role="tabpanel" class="tab-pane" id="languages-pane">
-        <div class="form-group">                
+        <div class="form-group"><?php // select element for choosing languages //?>               
             <div class="col-sm-10 col-sm-offset-2 form-inline"><?php 
                     $languageSelect = $fieldset->get('language-select'); 
                     echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
-                    //$this->formSelect($fieldset->get('interpreter-languages'));
-                    //$shit = $fieldset->get('interpreter-languages');
-                    //echo $this->formSelect($shit);
                     ?><button id="btn-add-language" class="btn btn-info" title="add this language">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                        <span class="sr-only">add language</span></button><?php
-                    //echo $this->formElementErrors($shit)
+                        <span class="sr-only">add language</span></button><?php                    
                      /** @todo display fieldset validation errors ? */
            ?></div>
-        </div>
-        <div class="form-group panel panel-default" id="languages">
-            <div class="col-sm-offset-3 col-sm-3  interpreter-language language-name" id="language-62">
+        </div><?php // display individual languages 
+            $collection = $fieldset->get('interpreterLanguages');
+            $namespace = 'interpreter[interpreterLanguages]';
+            for ($i = 0; $i < count($collection); $i++):
+                $fs = $collection->get($i);
+                //foreach ($fs as $e) { echo $e->getName(),'<br>'; 
+                $language_element = $fs->get('language');
+                $obj = $language_element->getValue();
+                $language_id = $obj->getId();
+                $language_element->setValue($language_id);
+                
+        ?>
+        <div class="form-group panel panel-default" id="languages-">
+            <div class="col-sm-offset-3 col-sm-3  interpreter-language language-name" id="language-<?php echo $language_id ?>">
                 
             </div>
             <div class="col-sm-6 form-inline interpreter-language language-certification">
@@ -82,8 +89,7 @@ echo $this->form()->openTag($form);?>
                 <span class="sr-only">remove language</span></button>
             </div>            
         </div><!-- /languages .form-group -->
-        
-        
+        <?php endfor;?>
     </div>
     <!-- /#languages-pane ================================================================================ -->
     <div role="tabpanel" class="tab-pane" id="administrative">
@@ -201,15 +207,16 @@ $(function(){
               .css({width:'70%'});//.attr({disabled:"disabled"});
     }
     // ================================================
-    
+    /** @todo reverse this temporary convenience ============================= */
     // make the first tab active, unless we are coming back from a validation
     // error
+    $('#nav-tabs a[aria-controls="'+"languages-pane"+'"]').tab("show");
     if (! $(".validation-error").length ) {        
-        $('#nav-tabs li:first a').tab("show");
+       //$('#nav-tabs li:first a').tab("show");
     } else {
        var pane = $(".validation-error").closest('div.tab-pane');
        var id = pane.attr("id");
-       $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
+      // $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
         //console.log("say shit?");
     }
     if (! Modernizr.inputtypes.date) {
