@@ -55,9 +55,34 @@ echo $this->form()->openTag($form);?>
             <!-- end "contact" form elements -->
     </div><!-- /#contact ================================================================================ -->
     <div role="tabpanel" class="tab-pane" id="languages-pane">
+        <div class="form-group">                
+            <div class="col-sm-10 col-sm-offset-2 form-inline"><?php 
+                    $languageSelect = $fieldset->get('language-select'); 
+                    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
+                    //$this->formSelect($fieldset->get('interpreter-languages'));
+                    //$shit = $fieldset->get('interpreter-languages');
+                    //echo $this->formSelect($shit);
+                    ?><button id="btn-add-language" class="btn btn-info" title="add this language">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <span class="sr-only">add language</span></button><?php
+                    //echo $this->formElementErrors($shit)
+                     /** @todo display fieldset validation errors ? */
+           ?></div>
+        </div>
+        <div class="form-group panel panel-default" id="languages">
+            <div class="col-sm-offset-3 col-sm-3  interpreter-language language-name" id="language-62">
+                
+            </div>
+            <div class="col-sm-6 form-inline interpreter-language language-certification">
+                <label for="fed-certification-0">fed certified</label><select name="interpreter&#x5B;interpreter-languages&#x5D;&#x5B;0&#x5D;&#x5B;federalCertification&#x5D;" class="form-control" id="fed-certification-0">
+                    <option value=""> </option>
+                    <option value="1" selected="selected">yes</option>
+                    <option value="0">no</option></select>
+                <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                <span class="sr-only">remove language</span></button>
+            </div>            
+        </div><!-- /languages .form-group -->
         
-        
-        [language elements]
         
     </div>
     <!-- /#languages-pane ================================================================================ -->
@@ -165,8 +190,7 @@ $(function(){
                 element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
             }
         });    
-    }
-    
+    }    
     var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
     // this is bullshit. what we really want is the button thingy on the same 
