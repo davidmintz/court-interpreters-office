@@ -61,7 +61,7 @@ class EventsController extends AbstractActionController
      */
     public function addAction()
     {
-        $entities = $this->entityManager->getRepository('InterpretersOffice\Entity\Location')
+        $entities = $this->entityManager->getRepository(Entity\Location::class)
                 ->getChildren(1);
         foreach ($entities as $place) {
            // print_r(array_keys($place)); echo "... ";
@@ -94,7 +94,25 @@ class EventsController extends AbstractActionController
                 var_dump($form->getMessages());
                 return $viewModel;
             } else {
-                echo "validation OK";
+                echo "validation OK... ";
+                $anonymousSubmitter = $this->entityManager->find(
+                    Entity\Hat::class, 4
+                );
+                $user =  $this->entityManager->find(
+                            Entity\User::class, 4
+                        );
+                //exit(get_class($user));
+                $event->setAnonymousSubmitter($anonymousSubmitter)
+                    ->setModified(new \DateTime())
+                    ->setCreated(new \DateTime())
+                    ->setCreatedBy($user)
+                    ->setModifiedBy($user);
+                $event->getInterpretersAssigned()->current()->setCreatedBy($user);
+                //\Doctrine\Common\Util\Debug::dump($event);
+                //echo get_class($event->getInterpretersAssigned());
+                $this->entityManager->persist($event);
+                $this->entityManager->flush();
+                echo "YAY!!!!!!";
             }
             
         }
