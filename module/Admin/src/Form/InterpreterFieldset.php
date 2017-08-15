@@ -56,9 +56,9 @@ class InterpreterFieldset extends PersonFieldset
         parent::__construct($objectManager, $options);
 
         $this->options = $options;
-        /*
-        // could not get this to hydrate properly, so we're not using
-        // Element\Collection with a InterpreterLanguageFieldset
+        ///*
+        // this is making a comeback
+        // 
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterLanguages',
@@ -71,7 +71,7 @@ class InterpreterFieldset extends PersonFieldset
                 'target_element' => new InterpreterLanguageFieldset($objectManager),
             ],
         ]);
-        */
+        //*/
         $this->add(
             new \InterpretersOffice\Form\Element\LanguageSelect(
                 'language-select',
@@ -83,7 +83,7 @@ class InterpreterFieldset extends PersonFieldset
                 ]
             )
         );
-
+        /* // this is out
         $this->add([
             'type' => 'Select',
             'name' => 'interpreter-languages',
@@ -97,7 +97,8 @@ class InterpreterFieldset extends PersonFieldset
                 'disable_inarray_validator' => true,
                 'use_hidden_element' => true,
             ],
-        ]);
+        ]);         
+         */
         // fingerprint date
         $this->add(
         [

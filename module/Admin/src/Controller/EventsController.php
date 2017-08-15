@@ -61,12 +61,14 @@ class EventsController extends AbstractActionController
      */
     public function addAction()
     {
+        //scribble
+        /*
         $entities = $this->entityManager->getRepository(Entity\Location::class)
                 ->getChildren(1);
         foreach ($entities as $place) {
            // print_r(array_keys($place)); echo "... ";
             //echo "({$place->getType()}) ",$place->getName(), '<br>';
-        }
+        }*/
         $form = new Form\EventForm(
             $this->entityManager,
             [   'action' => 'create',
@@ -99,7 +101,7 @@ class EventsController extends AbstractActionController
                     Entity\Hat::class, 4
                 );
                 $user =  $this->entityManager->find(
-                            Entity\User::class, 4
+                            Entity\User::class, 8
                         );
                 //exit(get_class($user));
                 $event->setAnonymousSubmitter($anonymousSubmitter)
@@ -134,7 +136,8 @@ class EventsController extends AbstractActionController
         );
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
-
+        $event = $this->entityManager->find(Entity\Event::class,1);
+        $form->bind($event);
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables([               
