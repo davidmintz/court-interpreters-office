@@ -310,10 +310,13 @@ class InterpretersController extends AbstractActionController
         $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled' => $this->vault_enabled]);
         $request = $this->getRequest();
         $form->setData($request->getPost());
-        $form->setValidationGroup(['interpreter' => array_keys($params['interpreter'])]);
-        if (! $form->isValid()) {
-            return new JsonModel(['valid' => false,'validation_errors' => $form->getMessages()]);
-        }
+        // temporary
+        if (key_exists('interpreter',$params)) {
+            $form->setValidationGroup(['interpreter' => array_keys($params['interpreter'])]);
+            if (! $form->isValid()) {
+                return new JsonModel(['valid' => false,'validation_errors' => $form->getMessages()]);
+            }
+        }       
         return new JsonModel(['valid' => true]);
     }
 

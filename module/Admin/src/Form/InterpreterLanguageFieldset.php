@@ -50,6 +50,9 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                     0 => 'no',
                 ],
             ],
+            'attributes' => [
+                'class' => 'form-control'
+            ]
 
         ]);
     }
