@@ -308,13 +308,17 @@ class InterpreterFieldset extends PersonFieldset
     public function getInputFilterSpecification()
     {
         $spec = parent::getInputFilterSpecification();
-        $language_options = $this->get('language-select')->getValueOptions();
+        //$language_options = $this->get('language-select')->getValueOptions();
 
         // require users to provide yes|no for federal-certified language
         // which we already know from the language select > option elements'
         // 'certifiable' attribute
+        
+        /** @todo 
+            add a validator to enforce minumum one language
+         */
+        /*
         $certifiable = array_column($language_options, 'attributes', 'value');
-
         $spec['interpreter-languages'] = [
 
             'allow_empty' => false,
@@ -360,7 +364,7 @@ class InterpreterFieldset extends PersonFieldset
                  ],
             ],
         ];
-
+       */
         // this one is just for the UI, not part of the entity's data
          $spec['language-select'] = [
             'required' => true,

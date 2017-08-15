@@ -248,16 +248,18 @@ class InterpretersController extends AbstractActionController
             $input = $request->getPost();
             $form->setData($input);
            //var_dump($request->getPost()->toArray());//exit();
+            /*
             $this->hydrateInterpreterLanguages(
                 $entity,
                 $input['interpreter']['interpreter-languages']
             );
-
+            */
             if (! $form->isValid()) {               
                 // whether the encrypted fields should be obscured (again) 
                 // or not depends on whether they changed them                
                 $viewModel->obscure_values = 
                   ! $this->getEncryptedFieldsWereModified($values_before,$input);                
+                print_r($form->getMessages()); exit();
                 return $viewModel;
             }
             $this->entityManager->flush();
