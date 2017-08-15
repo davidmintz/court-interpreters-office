@@ -50,7 +50,11 @@ echo $this->form()->openTag($form);
     <div class="row">
         <div class="form-group">
             <label class="control-label col-sm-3" for="interpreters_assigned">shit</label>
-                <div class="col-sm-9"><?php echo $this->formCollection($fieldset->get('interpretersAssigned'))?></div>
+                <div class="col-sm-9">
+                    <?php $collection = $fieldset->get('interpretersAssigned'); ?>
+                    'interpretersAssigned' is a Element\Collection, each of whose elements is a
+                    InterpretersAssignedFieldset containing its own elements.                   
+                    <?php echo $this->formCollection($fieldset->get('interpretersAssigned'))?></div>
         </div>
         <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
