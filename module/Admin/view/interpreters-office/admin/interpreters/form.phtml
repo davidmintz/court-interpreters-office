@@ -61,18 +61,36 @@ $form->add([
                     $languageSelect = $fieldset->get('language-select'); 
                     echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
                     //$this->formSelect($fieldset->get('interpreter-languages'));
-                    $shit = $fieldset->get('interpreter-languages');
-                    echo $this->formSelect($shit);
+                    
                     ?><button id="btn-add-language" class="btn btn-info" title="add this language">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         <span class="sr-only">add language</span></button><?php
-                    echo $this->formElementErrors($shit);                 
+                    //echo $this->formElementErrors($shit);                 
                 ?></div>
             </div>
             <div class="form-group panel panel-default" id="languages">
             <?php   /** @todo move this to a partial viewscript */   
-            $interpreterLanguages =  $form->getObject()->getInterpreterLanguages(); 
+            $collection =  $fieldset->get('interpreterLanguages');//$form->getObject()->getInterpreterLanguages(); 
             $fed_certification_options = ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ];
+            $ns = 'interpreter[interpreterLanguages]';
+            for ($i = 0; $i < count($collection); $i++ ) :
+                $fs = $collection->get($i);
+                $language_element = $fs->get('language');
+                $language = $language_element->getValue();
+                $language_id = $language->getId();
+                $language_element->setValue($language_id);
+                //echo $this->formElement($language_element);
+               ?><div class="col-sm-offset-3 col-sm-3 interpreter-language language-name" id="language-<?php echo $language_id ?>">
+                <?php echo $this->formElement($language_element); echo $this->escapeHtml($language); ?>
+               </div>
+               <div class="col-sm-6 form-inline interpreter-language language-certification">
+               <?php 
+               
+               ?></div>
+            <?php endfor;?>
+            <?php
+            if (false): // tmp disable
+           
             if (count($interpreterLanguages)):
                 $i = 0;
                 foreach ($interpreterLanguages as $ilanguage):
@@ -111,9 +129,10 @@ $form->add([
                 <?php
                     $i++;
                 endforeach;                
-            endif; // count(languages)   
+            endif; // count(languages)
+            endif; // tmp disable
             $element = $fieldset->get('comments');
-            ?>  </div><!-- /languages .form-group -->
+            ?>  fuck you</div></div><!-- /languages .form-group -->
                 <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
                 <div class="col-sm-9 form-inline" style="margin-bottom:1em"><?php echo $this->formElement($element), $this->formElementErrors($element)?></div>
             </div><!-- /languages-pane ================================================================================ -->
