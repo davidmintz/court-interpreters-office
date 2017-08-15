@@ -29,23 +29,22 @@ $form->add([
    ->setAttribute('class', 'form-horizontal');
 ?>
 <div class="center-block row" style="max-width:800px"><!-- wrapper -->
-    <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
-    <?php
-    $form->prepare();
-    $fieldset = $form->get('interpreter');
-    echo $this->form()->openTag($form);?>                
-        <ul id="nav-tabs" class="nav nav-tabs" role="tablist"><!-- nav tabs -->
-            <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact info</a></li>
-            <li role="presentation"><a href="#languages-pane" aria-controls="languages-pane" role="tab" data-toggle="tab">languages &amp; notes</a></li>
-            <li role="presentation"><a href="#administrative" aria-controls="administrative" role="tab" data-toggle="tab">administrative/security</a></li>
-        </ul><!-- /nav tabs -->
-        <div class="tab-content" style="padding-top: 1em">
-
-            <div role="tabpanel" class="tab-pane" id="contact">                
-            <!-- begin "contact" form elements -->
-            <?php foreach (['lastname','firstname','middlename','email','officePhone','mobilePhone','homePhone',
-                    'address1','address2','city','state', 'zip'
-                ] as $elementName) :
+<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<?php
+$form->prepare();
+$fieldset = $form->get('interpreter');
+echo $this->form()->openTag($form);?>
+<!-- nav tabs -->
+<ul id="nav-tabs" class="nav nav-tabs" role="tablist">
+    <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">contact info</a></li>
+    <li role="presentation"><a href="#languages-pane" aria-controls="languages-pane" role="tab" data-toggle="tab">languages &amp; notes</a></li>
+    <li role="presentation"><a href="#administrative" aria-controls="administrative" role="tab" data-toggle="tab">administrative/security</a></li>
+</ul>
+<!-- /nav tabs -->
+<div class="tab-content" style="padding-top: 1em">
+    <div role="tabpanel" class="tab-pane" id="contact">
+        <?php foreach (['lastname','firstname','middlename','email','officePhone','mobilePhone','homePhone',
+                    'address1','address2','city','state', 'zip'  ] as $elementName) :
                         $element = $fieldset->get($elementName);
                ?><div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
@@ -54,91 +53,17 @@ $form->add([
                 </div>
             <?php endforeach; ?>
             <!-- end "contact" form elements -->
-            </div><!-- /tab-pane ================================================================================ -->
-            <div role="tabpanel" class="tab-pane" id="languages-pane">
-                <div class="form-group">                
-                    <div class="col-sm-10 col-sm-offset-2 form-inline"><?php 
-                    $languageSelect = $fieldset->get('language-select'); 
-                    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
-                    //$this->formSelect($fieldset->get('interpreter-languages'));
-                    
-                    ?><button id="btn-add-language" class="btn btn-info" title="add this language">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                        <span class="sr-only">add language</span></button><?php
-                    //echo $this->formElementErrors($shit);                 
-                ?></div>
-            </div>
-            <div class="form-group panel panel-default" id="languages">
-            <?php   /** @todo move this to a partial viewscript */   
-            $collection =  $fieldset->get('interpreterLanguages');//$form->getObject()->getInterpreterLanguages(); 
-            $fed_certification_options = ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ];
-            $ns = 'interpreter[interpreterLanguages]';
-            for ($i = 0; $i < count($collection); $i++ ) :
-                $fs = $collection->get($i);
-                $language_element = $fs->get('language');
-                $language = $language_element->getValue();
-                $language_id = $language->getId();
-                $language_element->setValue($language_id);
-                //echo $this->formElement($language_element);
-               ?><div class="col-sm-offset-3 col-sm-3 interpreter-language language-name" id="language-<?php echo $language_id ?>">
-                <?php echo $this->formElement($language_element); echo $this->escapeHtml($language); ?>
-               </div>
-               <div class="col-sm-6 form-inline interpreter-language language-certification">
-               <?php 
-               
-               ?></div>
-            <?php endfor;?>
-            <?php
-            if (false): // tmp disable
-           
-            if (count($interpreterLanguages)):
-                $i = 0;
-                foreach ($interpreterLanguages as $ilanguage):
-                    $columns = 'col-sm-offset-3 col-sm-3' ;
-                    $language = $ilanguage->getLanguage();
-                    $certifiable = $language->isFederallyCertified();
-                    $language_id =  $language->getId();                    
-                ?>
-                <div class="<?php echo $columns?>  interpreter-language language-name" id="language-<?php echo $language_id ?>"><?php 
-                        echo $this->escapeHtml($ilanguage->getLanguage());
-                        // language and interpreter ids as hidden inputs
-                       ?><input type="hidden" name="interpreter[interpreter-languages][<?php echo $i?>][language_id]" value="<?php echo $language_id; ?>">
-                    </div>
-                    <div class="col-sm-6 form-inline interpreter-language language-certification"><?php
-                         $element = new Element\Select("interpreter[interpreter-languages][$i][federalCertification]");
-                         $selected = $ilanguage->getFederalCertification() === null ? "-1" : (int)$ilanguage->getFederalCertification();
-                         $element->setValueOptions($fed_certification_options)
-                                 ->setValue($selected)
-                                 ->setAttributes(['class' => 'form-control','id'=>'fed-certification-'.$i]);
-                         $disabled = false;
-                         if (! $ilanguage->isCertifiable()) :  
-                             $element->setAttribute("disabled","disabled");  
-                            $disabled = true; 
-                         else : 
-                             $element->setValueOptions(['' => ' ', 1 => 'yes', 0 => 'no', ]);
-                         endif;
-                         ?><label for="fed-certification-<?php echo $i?>">fed certified</label><?php
-                         echo $this->formSelect($element);                       
-                         ?> <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            <span class="sr-only">remove language</span></button><?php
-                            if ($disabled) : // supply a value, else undefined index error ?>
-                                <input type="hidden" name="interpreter[interpreter-languages][<?php echo $i ?>][federalCertification]" value="-1">
-                       <?php endif;
-                    ?>
-                    </div>
-                <?php
-                    $i++;
-                endforeach;                
-            endif; // count(languages)
-            endif; // tmp disable
-            $element = $fieldset->get('comments');
-            ?>  fuck you</div></div><!-- /languages .form-group -->
-                <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
-                <div class="col-sm-9 form-inline" style="margin-bottom:1em"><?php echo $this->formElement($element), $this->formElementErrors($element)?></div>
-            </div><!-- /languages-pane ================================================================================ -->
-
-            <div role="tabpanel" class="tab-pane" id="administrative">
-                <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
+    </div><!-- /#contact ================================================================================ -->
+    <div role="tabpanel" class="tab-pane" id="languages-pane">
+        
+        
+        [language elements]
+        
+    </div>
+    <!-- /#languages-pane ================================================================================ -->
+    <div role="tabpanel" class="tab-pane" id="administrative">
+        
+        <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
                     $element = $fieldset->get($elementName);?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
@@ -146,12 +71,9 @@ $form->add([
                     </div>
                 </div>
                 <?php endforeach; ?>
-                <!--
-                
-Don't mix with other components
-
-Do not mix form groups or grid column classes directly with input groups. Instead, nest the input group inside of the form group or grid-related element.
-
+                <!--"Don't mix with other components
+                    Do not mix form groups or grid column classes directly with input groups. 
+                    Instead, nest the input group inside of the form group or grid-related element.
                 -->
                 <?php 
                 if (! $this->obscure_values) : // regular plain-text elements
@@ -191,20 +113,10 @@ Do not mix form groups or grid column classes directly with input groups. Instea
                 <?php endif;?>                    
                 </div>
 
-             <?php endforeach; endif; ?>            
-            </div><!--  / .tab-pane -->
-        </div><!-- /tab-content -->
-        <div style="margin-top:1em" class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-                <?php
-                $csrf = $form->get('csrf');
-                echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
-                echo $this->formHidden($fieldset->get('id'));
-                echo $this->formSubmit($form->get('submit'));?>
-            </div>       
-        </div><!-- / .form-group -->
-        
-  <?php echo $this->form()->closeTag(); ?>  
+             <?php endforeach; endif; ?>
+    </div>
+</div><!-- /.tab-content -->    
+<?php echo $this->form()->closeTag(); ?>    
 </div><!-- /wrapper -->
 <?php // the following is only for "edit" action: re-authentication dialog for reading DOB and SSN ?>
 <div class="modal" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="modal-auth-title">
@@ -245,7 +157,6 @@ Do not mix form groups or grid column classes directly with input groups. Instea
  * @todo live in its own file ?
  * @todo refactor to make less long and monolithic
  */
-
 //*/
 $(function(){
     if (! window.Modernizr.inputtypes.date){
