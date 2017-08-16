@@ -205,6 +205,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
      * adds Location elements
      * @param the Event instance, if we are updating
      * @return EventFieldset
+     * @todo option grouping for sub-location
      */
     public function addLocationElements(Entity\Event $event = null)
     {
