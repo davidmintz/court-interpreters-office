@@ -85,6 +85,19 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
 
         return $query->getResult();
     }
+    
+    public function findAllCertifiedLanguages()
+    {
+        $query = $this->createQuery(
+            'SELECT l.id, l.name FROM InterpretersOffice\Entity\Language l '
+                . ' INDEX BY l.id '              
+                . ' WHERE l.name IN (:names)'           
+        )->setParameters([
+            ':names' => ['Spanish','Haitian Creole','Navajo'],
+        ]);
+        
+        return $query->getResult();
+    }
 
     /**
      * experimental
