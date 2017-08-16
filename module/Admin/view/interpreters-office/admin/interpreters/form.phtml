@@ -97,6 +97,7 @@ echo $this->form()->openTag($form);?>
                 <?php if ($certification_element->getAttribute('disabled')) : // supply a value, else undefined index error ?>
                   <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i ?>][federalCertification]" value="-1">
                 <?php endif; ?>
+                  <div class="alert alert-warning validation-error" style="display:none"></div>                
             </div>                    
         <?php endfor;?>
             </div><!-- /languages .form-group -->
@@ -234,7 +235,7 @@ $(function(){
     // error
     //
     //$('#nav-tabs a[aria-controls="'+"languages-pane"+'"]').tab("show");
-    if (! $(".validation-error").length ) {        
+    if (! $(".validation-error").is(":visible").length ) {        
        $('#nav-tabs li:first a').tab("show");
     } else {
        var pane = $(".validation-error").closest('div.tab-pane');
@@ -286,46 +287,7 @@ $(function(){
         var languageOption = languageSelect.children(':selected');
         var languageName =  languageOption.text();
         var certifiable  = languageOption.data().certifiable;
-        // create div to contain textual language and hidden input
-        var div_0 = $('<div class="col-sm-offset-3 col-sm-3 interpreter-language language-name"></div>')
-                .attr({id : 'language-'+language_id});
-        div_0.html(
-           languageName +
-            '<input type="hidden" name="interpreter[interpreter-languages]['+index+'][language_id]" value="'+language_id+'">'
-        );
-        // create div to contain federal-certification select and delete button
-        var div_1 = $('<div class="col-sm-6 form-inline interpreter-language language-certification"></div>');
-        div_1.append('<label for="fed-certification-'+index+'">fed certified</label>');
-        var certificationSelectElement = $('<select>')
-                        .addClass("form-control")
-                        .attr({name: "interpreter[interpreter-languages]["+index+"][federalCertification]"});        
-        if (certifiable) {
-            certificationSelectElement
-                .append($("<option>").attr({value:"",label:""}).text(""))
-                .append('<option value="1">yes</option><option value="0">no</option>');
-        } else {
-            // non-certified languages have select disabled plus hidden input
-            certificationSelectElement.append($("<option>")
-                    .attr({value:"-1",selected : "selected"})
-                    .text("N/A")
-            ).attr({disabled : "disabled"});
-            div_1.append(
-                 $('<input>').attr({
-                     type : "hidden",
-                     name : certificationSelectElement.attr("name"),
-                     value : "-1"
-                 })
-            );
-        }
-        div_1.append(certificationSelectElement)
-            .append(' <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language">'
-                    + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
-                    +  '<span class="sr-only">remove language</span></button>');
-        // append these divs to div#languages 
-        $('#languages').append([div_0,div_1]);
-        // and reset language select
-        languageSelect.val('');
-        
+        // bla bla bla
     });
      /* remove a language *********************************************/
     $('#languages').on("click", ".btn-remove-language",function(event){
@@ -342,7 +304,8 @@ $(function(){
     /** validate each tab pane before moving on **/
     $('a[data-toggle="tab"]').on('click', function (e) {
         
-        var id = '#'+$('div.active').attr('id');
+        var id = '#'+$('div.active').attr('id'); 
+
         var selector = id + " input, " + id + " select";
         var data =($(selector).serialize());
         var that = this;
@@ -350,6 +313,10 @@ $(function(){
             data,
             function(response){
                 if (response.validation_errors) {
+                    console.log(response.validation_errors);
+                    if (id.indexOf('language')!== -1) {
+                        // errors are nested too deep for our displayValidationErrors()
+                    }
                     return displayValidationErrors(response.validation_errors.interpreter);
                 } else {
                     $(id + " .validation-error").hide();

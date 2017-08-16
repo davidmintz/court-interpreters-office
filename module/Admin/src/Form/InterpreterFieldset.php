@@ -77,10 +77,18 @@ class InterpreterFieldset extends PersonFieldset
                 'language-select',
                 [
                     'objectManager' => $objectManager,
-                    'option_attributes' => ['data-certifiable' => function (Entity\Language $language) {
-                        return $language->isFederallyCertified() ? 1 : 0;
-                    }],
-                    'exclude'=> true,
+                    
+                    'options' => [
+                        'option_attributes' => 
+                            ['data-certifiable' => 
+                                function (Entity\Language $language)
+                                {
+                                    //echo "W T F ?????  ...";
+                                    return $language->isFederallyCertified() ? 1 : 0;
+                                }
+                             ],
+                        'exclude'=> true,// doesn't work?
+                    ],
                 ]
             )
         );
@@ -367,10 +375,11 @@ class InterpreterFieldset extends PersonFieldset
         ];
        */
         // this one is just for the UI, not part of the entity's data
-         $spec['language-select'] = [
+        $spec['language-select'] = [
             'required' => true,
             'allow_empty' => true,
-         ];
+         ];         
+        // */
          $spec['hat'] = [
                 'validators' => [
                     [

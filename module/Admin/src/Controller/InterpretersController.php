@@ -66,7 +66,7 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {
-
+        
         $autocomplete_term = $this->params()->fromQuery('term');
         if ($autocomplete_term) {
             return $this->autocomplete($autocomplete_term);
@@ -316,7 +316,7 @@ class InterpretersController extends AbstractActionController
             if (key_exists('interpreter',$params)) {
                 $form->setValidationGroup(['interpreter' => array_keys($params['interpreter'])]);
                 if (! $form->isValid()) {
-                    return new JsonModel(['valid' => false,'validation_errors' => $form->getMessages()]);
+                    return new JsonModel(['valid' => false,'validation_errors' => $form->getMessages()['interpreter']]);
                 }
             }       
             return new JsonModel(['valid' => true]);
