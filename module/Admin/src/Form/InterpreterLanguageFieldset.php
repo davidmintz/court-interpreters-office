@@ -106,7 +106,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                                 $is_a_certified_language = in_array($context['language'],$certified_language_ids);
                                 //echo "language id is $context[language] ...";
                                 if ($is_a_certified_language && in_array($value,["0","1"])) {
-                                    echo "value $value, returning true for certified...\n";
+                                    //echo "value $value, returning true for certified...\n";
                                     return true;
                                 }
                                 if ( (! $is_a_certified_language) && $value == "-1") {
