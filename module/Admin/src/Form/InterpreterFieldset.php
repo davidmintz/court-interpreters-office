@@ -80,6 +80,7 @@ class InterpreterFieldset extends PersonFieldset
                     'option_attributes' => ['data-certifiable' => function (Entity\Language $language) {
                         return $language->isFederallyCertified() ? 1 : 0;
                     }],
+                    'exclude'=> true,
                 ]
             )
         );
