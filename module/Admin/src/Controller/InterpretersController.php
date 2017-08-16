@@ -306,20 +306,25 @@ class InterpretersController extends AbstractActionController
         if (! $this->getRequest()->isXmlHttpRequest()) {
             $this->redirect()->toRoute('interpreters');
         }
+        try {
+            $action = $this->params()->fromQuery('action');
+            $params = $this->params()->fromPost();//['interpreter'];
+            $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled' => $this->vault_enabled]);
+            $request = $this->getRequest();
+            $form->setData($request->getPost());
+            // temporary
+            if (key_exists('interpreter',$params)) {
+                $form->setValidationGroup(['interpreter' => array_keys($params['interpreter'])]);
+                if (! $form->isValid()) {
+                    return new JsonModel(['valid' => false,'validation_errors' => $form->getMessages()]);
+                }
+            }       
+            return new JsonModel(['valid' => true]);
+        } catch (\Exception $e) {
 
-        $action = $this->params()->fromQuery('action');
-        $params = $this->params()->fromPost();//['interpreter'];
-        $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled' => $this->vault_enabled]);
-        $request = $this->getRequest();
-        $form->setData($request->getPost());
-        // temporary
-        if (key_exists('interpreter',$params)) {
-            $form->setValidationGroup(['interpreter' => array_keys($params['interpreter'])]);
-            if (! $form->isValid()) {
-                return new JsonModel(['valid' => false,'validation_errors' => $form->getMessages()]);
-            }
-        }       
-        return new JsonModel(['valid' => true]);
+            return new JsonModel(['valid' => false, 'error' => $e->getMessage()]);
+        }
+        
     }
 
     /**

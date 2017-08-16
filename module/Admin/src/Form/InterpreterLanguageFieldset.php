@@ -91,10 +91,33 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                         ],
                     ],
                 ],
-                /** @todo callback validator with $context to 
+                /** callback validator with $context to 
                  * ensure fed certification is NOT NULL if language is
                  * certifiable
                  */
+                'validators'=>[
+
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callback' => function($value, $context) {
+                                return false;
+                            },
+                            'messages' => [
+                                \Zend\Validator\Callback::INVALID_VALUE
+                                => 'I don\'t like it',
+                            ],
+
+
+
+                        ],
+
+
+                    ],
+
+
+
+                ],
             ],
             'language' => [
                 'required' => true,
