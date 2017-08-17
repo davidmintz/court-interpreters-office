@@ -59,32 +59,26 @@ class InterpretersController extends AbstractActionController
         //$id = $this->params()->fromRoute('id');
         return new ViewModel();
     }
+    
+    public function languageFieldsetAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        $index = $this->params()->fromQuery('index',0);
+        if ($id) {
+            $language = $this->entityManager->find(Entity\Language::class,$id);
+        }
+        //$this->getResponse()->getHeaders()->addHeaderLine('content-type','text/plain');
+        return (new ViewModel(['language'=>$language,'index'=>$index]))
+                ->setTemplate('partials/interpreters/language.phtml')
+                ->setTerminal(true);
+    }
     /**
      * index action.
      *
      * @return ViewModel
      */
     public function indexAction()
-    {
-        
-        /* --------------------------------- //
-        
-        $form = new \Zend\Form\Form;
-
-        $form->add([
-
-            'name' => 'InterpretersOffice\Form\Element\LanguageSelect',
-
-        ]);
-
-
-
-
-
-
-
-        // --------------------------------- */
-
+    {      
         $autocomplete_term = $this->params()->fromQuery('term');
         if ($autocomplete_term) {
             return $this->autocomplete($autocomplete_term);
@@ -194,7 +188,6 @@ class InterpretersController extends AbstractActionController
                 ]
         );
         $viewModel->form = $form;
-
         $request = $this->getRequest();
         $entity = new Entity\Interpreter();
         $form->bind($entity);
