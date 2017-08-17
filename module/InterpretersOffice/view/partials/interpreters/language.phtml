@@ -1,0 +1,37 @@
+
+<?php   
+    for ($i = 0; $i < $this->count; $i++) :
+        $fs = $collection->get($i);        
+        $language_element = $fs->get('language');
+        $obj = $language_element->getValue();
+        $language_id = $obj->getId();
+        $language_element->setValue($language_id);
+        $certification_element = $fs->get('federalCertification');
+        $certification_element->setAttribute('id',"fed-certification-{$i}");
+        if ($certification_element->getValue() === null) :
+            // federal certification is not applicable
+            $certification_element->setAttribute('disabled','disabled');
+        else :
+            // "N/A" is not an option
+            $certification_element->setValueOptions(['-1' => '', 1 => 'yes', 0 => 'no', ]);
+        endif;
+        ?>
+
+    <div class="col-sm-offset-1 col-sm-3  interpreter-language language-name" id="language-<?php echo $language_id ?>">
+        <?php
+        echo $this->formElement($language_element),
+        $this->escapeHtml($obj->getName());
+        ?>
+    </div>
+    <div class="col-sm-5 form-inline interpreter-language language-certification">
+        <label for="fed-certification-<?php echo $i ?>">fed certification</label>
+    <?php echo $this->formElement($certification_element); 
+       ?><button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <span class="sr-only">remove language</span></button>
+        <?php if ($certification_element->getAttribute('disabled')) : // supply a value, else undefined index error  ?>
+            <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i ?>][federalCertification]" value="-1">
+    <?php endif; ?>
+        <div class="alert alert-warning validation-error" style="display:none"></div>                
+    </div>
+<?php endfor;?>
+
