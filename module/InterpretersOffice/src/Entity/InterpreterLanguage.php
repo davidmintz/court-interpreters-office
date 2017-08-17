@@ -130,6 +130,9 @@ class InterpreterLanguage
      */
     public function setFederalCertification($federalCertification)
     {
+        if ((string)$federalCertification == "-1") {
+            $federalCertification = null;
+        }
         $this->federalCertification = $federalCertification;
 
         return $this;
