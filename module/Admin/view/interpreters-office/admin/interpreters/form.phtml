@@ -222,8 +222,8 @@ $(function(){
             changeYear: true,
             constrainInput : false
         });
-        // ????????????
-        if (!($('#dob').val())) {
+        // if the dob field is enabled, set datepicker options
+        if (!($('#dob').val())) { // i.e., if it isn't '**********'
             $('#dob').datepicker("option",{
                 maxDate: "-18y",
                 minDate : "-100y",         
@@ -252,16 +252,26 @@ $(function(){
     $('#btn-add-language').on('click',function(event){
         
         event.preventDefault();        
+        var index; 
         var language_id = $('#language-select').val();
         if (! language_id) { return; }
         if ($('#language-'+language_id).length) { return; }
-        // collect data
-        var index = $('.language-name').length;
-        var languageSelect = $('#language-select');
-        var languageOption = languageSelect.children(':selected');
-        var languageName =  languageOption.text();
-        var certifiable  = languageOption.data().certifiable;
-        // bla bla bla
+        // get the (server-side) index of the last fieldset
+        var last = $('#languages .interpreter-language > select').last();
+        if (last.length) {
+            var m = last.attr("name").match(/\[(\d+)\]/);
+            if (m.length) {
+                index = parseInt(m.pop()) + 1;
+            } else {
+                // this is an error. to do: do something
+            }
+        } else {
+            index = 0;
+        }
+        url = window.basePath + "/admin/interpreters/language-fieldset";
+        $.get(url,{index : index, id : language_id },function(data){
+            $('#languages').append(data);
+        });
     });
      /* remove a language *********************************************/
     $('#languages').on("click", ".btn-remove-language",function(event){
