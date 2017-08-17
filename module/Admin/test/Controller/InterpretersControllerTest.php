@@ -30,6 +30,9 @@ class InterpretersControllerTest extends AbstractControllerTest {
         //echo "\nsetUp ran login()...\n";
         $this->login('susie', 'boink');  
         $this->reset(true);
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        $RESULT = $auth->hasIdentity() ?  "SUCCESS" : "FAILED";
+        printf("\nDEBUG: %s: login $RESULT in %s:%d\n",__FUNCTION__,basename(__FILE__),__LINE__);
     }
 
     public function testAddInterpreter() {
@@ -41,6 +44,11 @@ class InterpretersControllerTest extends AbstractControllerTest {
         
         $this->login('susie', 'boink');  
         $this->reset(true);
+        // authentication needs to have succeeded here.
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        if (! $auth->hasIdentity()) {
+            exit("SHIT FAILED!\n" . $this->getResponse()->getBody());
+        }
         $token =  $this->getCsrfToken($url,'csrf'); 
         
         
