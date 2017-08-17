@@ -81,21 +81,22 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
        
         $this->dispatch($url, 'GET');
         $html = $this->getResponse()->getBody();
-  
-        //printf("\n$url html string length in %s: %d\n",__FUNCTION__,strlen($html));
-        //$auth = $this->getApplicationServiceLocator()->get('auth');
-        //printf("authenticated? %s, element name: $name\n",$auth->hasIdentity() ? "YES":"NO");
-        $document = new Document($html,Document::DOC_HTML);
-        
-        $query = new Document\Query(); 
-        //if ($name == 'csrf') { $selector = 'input'; } else {
-        $selector = sprintf('input[name="%s"]', $name);
-        
+        $DEBUG = "\nGET: $url in getCsrfToken\n";
+        $DEBUG .= "...parsing $name in getCsrfToken\n";
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        $DEBUG .= sprintf("...authenticated? %s, element name: $name\n",$auth->hasIdentity() ? "YES":"NO");
+        //echo "HTML in ".__FUNCTION__.":\n$html";
+        $DEBUG .= sprintf("...$url html string length in %s: %d\n",__FUNCTION__,strlen($html));
+        $DEBUG .= "is $name in HTML? "; 
+        $DEBUG .= (boolean)strstr($html,"name=\"$name\"") ? "YES":"NO!";
+        //echo "\n=================================\n";       
+        $document = new Document($html,Document::DOC_HTML);        
+        $query = new Document\Query();         
+        $selector = sprintf('input[name="%s"]', $name);        
         $results = $query->execute($selector,$document,  Document\Query::TYPE_CSS);
-        if (! count($results)) {
-            //echo $html; //exit;
-            throw new \Exception("selector was $selector -- fuck, could not parse out CSRF token!");
-            return;
+        if (! count($results)) {           
+            throw new \Exception("selector was $selector -- could not parse "
+                    . "CSRF token! does the element exist? Is the HTML too deformed by error output?\nDEBUG: $DEBUG\n");            
         }
         $node = $results->current();
         $token = $node->attributes->getNamedItem('value')->nodeValue;
