@@ -371,7 +371,18 @@ return [
                                 'action' => 'validate-partial',
                             ],
                         ],
-                    ],           
+                    ],
+                    // for generating markup for an interpreter-language
+                    'language-fieldset' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/language-fieldset',
+                            'defaults' => [
+                                'action' => 'language-fieldset',
+                            ],
+                        ],
+                        
+                    ]
                 ],
             ],
 
