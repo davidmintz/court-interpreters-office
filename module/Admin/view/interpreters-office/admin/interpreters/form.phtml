@@ -70,9 +70,8 @@ echo $this->form()->openTag($form);?>
         //   display individual languages, hidden id input, 
         //   certification select
             $collection = $fieldset->get('interpreterLanguages');
-            $namespace = 'interpreter[interpreterLanguages]';
-            //$fed_certification_options = ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ];
-            for ($i = 0; $i < count($collection); $i++):
+            $count = $form->getObject()->getInterpreterLanguages()->count();
+            for ($i = 0; $i < $count; $i++) :
                 $fs = $collection->get($i);                
                 $language_element = $fs->get('language');
                 $obj = $language_element->getValue();
@@ -81,7 +80,11 @@ echo $this->form()->openTag($form);?>
                 $certification_element = $fs->get('federalCertification');
                 $certification_element->setAttribute('id',"fed-certification-{$i}");
                 if ($certification_element->getValue() === null) :
+                    // federal certification is not applicable
                     $certification_element->setAttribute('disabled','disabled');
+                else :
+                    // "N/A" is not an option
+                    $certification_element->setValueOptions(['-1' => '', 1 => 'yes', 0 => 'no', ]);
                 endif;
             ?>
             <div class="col-sm-offset-3 col-sm-3  interpreter-language language-name" id="language-<?php echo $language_id ?>">
