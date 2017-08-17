@@ -319,7 +319,6 @@ class InterpretersController extends AbstractActionController
         } catch (\Exception $e) {
 
             return new JsonModel(['valid' => false, 'error' => $e->getMessage()]);
-        }
-        
+        }        
     }
 }
