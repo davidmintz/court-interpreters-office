@@ -36,34 +36,25 @@ for ($i = 0; $i < $this->count; $i++) :
         $i = $this->index;
         $certifiable = $this->language->isFederallyCertified();
         $language_id = $this->language->getId();
-        $language_element = new \Zend\Form\Element\Hidden(
-                 "interpreter[interpreterLanguages][$i][language]",
-                [                                        
-                    'value' => $language_id,
-                ]
-        );           
-        $certification_element = new \Zend\Form\Element\Select(
-                
-                "interpreter[interpreterLanguages][$i][federalCertification]",
-                [
-                'options' => [
-                    'value_options' => ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ],
-                    'attributes' => [
-                        'class' => 'form-control','id'=>"fed-certification-{$i}"
-                     ],
-                    'value' => '-1',
-                ]
-            ]
+        // don't know why the FUCK I can't get these initialized
+        // with constructor options. grrrr!!!
+        $language_element = (new \Zend\Form\Element\Hidden(
+            "interpreter[interpreterLanguages][$i][language]"                
+        ))->setValue($language_id);           
+        $certification_element = new \Zend\Form\Element\Select(                
+                "interpreter[interpreterLanguages][$i][federalCertification]"            
          );
+        $certification_element->setAttributes([
+            'class' => 'form-control',
+            'id'=>"fed-certification-{$i}"
+        ]);
+        $empty_label = $certifiable ? '' : "N/A";
+        $value_options = ['-1' =>  $empty_label, 1 => 'yes', 0 => 'no', ];
+        $certification_element->setValueOptions($value_options);
     }        
     if (! $certifiable) :
         // federal certification is not applicable
-        $certification_element
-            ->setValue(-1)
-            ->setAttribute('disabled','disabled');
-    else :
-        // "N/A" is not an option, so change empty option label
-        $certification_element->setValueOptions(['-1' => '', 1 => 'yes', 0 => 'no', ]);
+        $certification_element->setAttribute('disabled','disabled');
     endif; // now, the markup
     
     ?><div class="col-sm-offset-1 col-sm-3  interpreter-language language-name" id="language-<?php echo $language_id ?>">
