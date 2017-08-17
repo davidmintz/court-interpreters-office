@@ -80,7 +80,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
     {
        
         $this->dispatch($url, 'GET');
-        $html = $this->getResponse()->getBody();
+        $html = $this->getResponse()->getBody();//echo($html);
         $DEBUG = "\nGET: $url in getCsrfToken\n";
         $DEBUG .= "...parsing $name in getCsrfToken\n";
         $auth = $this->getApplicationServiceLocator()->get('auth');
