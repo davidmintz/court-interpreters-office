@@ -13,7 +13,7 @@
  */
 
 if ($this->language) : 
-    $this->count = 1;   
+    $this->count = 1;   // counter for the `for` loop
 endif;
 
 for ($i = 0; $i < $this->count; $i++) :
@@ -22,14 +22,14 @@ for ($i = 0; $i < $this->count; $i++) :
         
         $fs = $this->collection->get($i);        
         $language_element = $fs->get('language');
-        $obj = $language_element->getValue();
-        $certifiable = $obj->isFederallyCertified();
-        $language_id = $obj->getId();
+        $this->language = $language_element->getValue();
+        $certifiable = $this->language->isFederallyCertified();
+        $language_id = $this->language->getId();
         $language_element->setValue($language_id);
+        
         $certification_element = $fs->get('federalCertification');
         $certification_element->setAttribute('id',"fed-certification-{$i}");  
-        // finally..
-        $this->language = $obj;
+        
         
     } else { // XHR request for some markup
         
@@ -38,17 +38,19 @@ for ($i = 0; $i < $this->count; $i++) :
         $language_id = $this->language->getId();
         $language_element = new \Zend\Form\Element\Hidden(
                  "interpreter[interpreterLanguages][$i][language]",
-                [                        
-                    //'name' => "interpreter[interpreterLanguages][$i][language]",
+                [                                        
                     'value' => $language_id,
                 ]
         );           
         $certification_element = new \Zend\Form\Element\Select(
+                
                 "interpreter[interpreterLanguages][$i][federalCertification]",
                 [
                 'options' => [
                     'value_options' => ['-1' => 'N/A', 1 => 'yes', 0 => 'no', ],
-                    'attributes' => ['class' => 'form-control','id'=>"fed-certification-{$i}"],
+                    'attributes' => [
+                        'class' => 'form-control','id'=>"fed-certification-{$i}"
+                     ],
                     'value' => '-1',
                 ]
             ]
