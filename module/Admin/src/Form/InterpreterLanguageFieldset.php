@@ -94,7 +94,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                     ],                   
                 ],*/
                 /** @todo two callback validators w/ different error msg 
-                 * for each case: certified or on-certified language*/
+                 * for each case: certified or non-certified language*/
                 'validators' => [
                     [
                         'name' => 'Callback',
