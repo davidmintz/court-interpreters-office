@@ -229,7 +229,7 @@ class InterpretersController extends AbstractActionController
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/interpreters/form.phtml');
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager->find(Entity\Interpreter::class, $id);
+        $entity = $this->entityManager->find(Entity\Interpreter::class, $id);        
         if (! $entity) {
             return $viewModel->setVariables(
                    ['errorMessage' => "interpreter with id $id not found"]);
@@ -264,7 +264,7 @@ class InterpretersController extends AbstractActionController
                 $entity->getFirstname(), $entity->getLastname()
             ));
             $this->redirect()->toRoute('interpreters');
-            //echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">again</a> ";
+            // echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">do it again</a> ";
         } else {    // not a POST
             if ($this->vault_enabled) {
                 $viewModel->obscure_values = true;
