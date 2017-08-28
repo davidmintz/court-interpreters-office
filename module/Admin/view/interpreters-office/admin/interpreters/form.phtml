@@ -67,12 +67,11 @@ echo $this->form()->openTag($form);?>
         </div>
         <div class="form-group panel panel-default" id="languages">
         <?php 
-        //   display individual languages, hidden id input, 
-        //   certification select
+        //   display individual languages, hidden id input, certification select       
             $collection = $fieldset->get('interpreterLanguages');
-            $count = $form->getObject()->getInterpreterLanguages()->count();
-            if ($count) : 
-                echo $this->partial('partials/interpreters/language.phtml',compact('collection','count'));
+            $interpreterLanguages = $form->getObject()->getInterpreterLanguages();
+            if ($interpreterLanguages->count()) : 
+                echo $this->partial('partials/interpreters/language.phtml',compact('collection','interpreterLanguages'));
             endif;?>
             </div><!-- /#languages .form-group -->
            <?php $element = $fieldset->get('comments');?>
