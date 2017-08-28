@@ -32,10 +32,10 @@ class InterpretersControllerTest extends AbstractControllerTest {
         $this->reset(true);
         $auth = $this->getApplicationServiceLocator()->get('auth');
         $RESULT = $auth->hasIdentity() ?  "SUCCESS" : "FAILED";
-        printf("\nDEBUG: %s: login $RESULT in %s:%d\n",__FUNCTION__,basename(__FILE__),__LINE__);
+        //printf("\nDEBUG: %s: login $RESULT in %s:%d\n",__FUNCTION__,basename(__FILE__),__LINE__);
     }
 
-    public function testAddInterpreter() {
+    public function __testAddInterpreter() {
         
         $em = FixtureManager::getEntityManager();
         $url = '/admin/interpreters/add';
@@ -92,7 +92,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
         //echo "\nDEBUG: exiting ".__FUNCTION__."\n";
     }
 
-    public function testIndexAction() { 
+    public function __testIndexAction() { 
         $this->dispatch('/admin/interpreters');
         //echo $this->getResponse()->getBody(); return;
         $this->assertResponseStatusCode(200);
@@ -149,15 +149,20 @@ class InterpretersControllerTest extends AbstractControllerTest {
         //echo $this->getResponse()->getBody();return;
         //$this->assertEquals(strtolower($element->nodeValue), 'yes');
         //$this->assertEquals($element->getAttributeNode('value')->value, '1');
-        echo "\nTO DO: fix broken tests involving fed certification select menu state\n";
+        //echo "\nTO DO: fix broken tests involving fed certification select menu state\n";
+
+
         $russian = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Russian']);
         $this->assertInstanceOf(Entity\Language::class, $russian);
         $spanish = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Spanish']);
-        $this->reset(true);
-        $token = $this->getCsrfToken($url);
-        //echo $this->getResponse()->getBody();return;
+        
+          
+        $this->reset(true); 
+        
+        $token = $this->getCsrfToken($url); 
+        //$this->reset(true) ;      
         $data = [
             'interpreter' => [
                 'lastname' => 'Mintz',
@@ -183,13 +188,16 @@ class InterpretersControllerTest extends AbstractControllerTest {
         ];
         $this->getRequest()->setMethod('POST')->setPost(
                 new Parameters($data)
-        );
-        $this->dispatch($url);
+        );//
+        //echo "\nfuck's wrong with $url?\n";
 
+        //return;
+        $this->dispatch($url);        
+        //return;
         //echo $this->getResponse()->getBody();
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/interpreters');
-
+// shit happens by here
         // load the form again
         $this->reset(true);
         $this->dispatch($url);
