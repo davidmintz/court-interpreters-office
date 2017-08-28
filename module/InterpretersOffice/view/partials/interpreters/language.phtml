@@ -3,17 +3,20 @@
  * module/InterpretersOffice/view/partials/interpreters/language.phtml
  * 
  * this is intended to keep the HTML in one place and the Javascript simple
- * for rendering/dynamically adding languages to the Interpreter form
+ * for rendering/dynamically adding language fieldsets to the Interpreter form
  * 
  * expected variables are either:
  *  
- *  (1) $this->count and $this->collection
+ *  (1) $this->interpreterLanguages (Doctrine\ORM\PersistentCollection) 
+ *  and $this->collection (Zend\Form\Element\Collection)
  *     or
- *  (2) a $this->language entity and an index number $this->index
+ *  (2) $this->language (a Language entity) and an index number $this->index
  */
 
 if ($this->language) : 
     $this->count = 1;   // counter for the `for` loop
+else :
+    $this->count = $this->interpreterLanguages->count();
 endif;
 
 for ($i = 0; $i < $this->count; $i++) :
@@ -22,14 +25,44 @@ for ($i = 0; $i < $this->count; $i++) :
         
         $fs = $this->collection->get($i);        
         $language_element = $fs->get('language');
-        $this->language = $language_element->getValue();
-        $certifiable = $this->language->isFederallyCertified();
-        $language_id = $this->language->getId();
-        $language_element->setValue($language_id);
         
-        $certification_element = $fs->get('federalCertification');
+        $this->language = $language_element->getValue();        
+        if (is_object($this->language)) {            
+            // we are a GET request
+            $certifiable = $this->language->isFederallyCertified();
+            $language_id = $this->language->getId();
+            $language_name = $this->language->getName();
+                
+        } else {
+            // we are a POST request; $language_element will have a (string) id 
+            // value, not a Language entity
+            $language_id = $this->language;
+            $array = $this->interpreterLanguages->toArray();
+             /** @todo figure out a better way? */
+             foreach ($array as $j => $il) {
+                 $language = $il->getLanguage();
+                 if ($language->getId() == $language_id) {
+                     $certifiable = $language->isFederallyCertified();
+                     $language_name = $language->getName();
+                     // make the array smaller to speed up the next iteration
+                     unset($array[$j]); 
+                     break;
+                 }
+             }              
+        }
+        
+        $language_element->setValue($language_id);        
+        $certification_element = $fs->get('federalCertification'); 
         $certification_element->setAttribute('id',"fed-certification-{$i}");  
-        
+        // the default select renderer seems to need some help, because
+        // -1 is truthy so it gets its selected attribute set and breaks our 
+        // unit test
+        $value = $certification_element->getValue();
+        if ($value === null) {
+            $certification_element->setValue('-1');
+        } else {
+            $certification_element->setValue($value ? '1' : '0');
+        }
         
     } else { // XHR request for some markup
         
@@ -59,7 +92,7 @@ for ($i = 0; $i < $this->count; $i++) :
     
     ?><div class="col-sm-offset-1 col-sm-3  interpreter-language language-name" id="language-<?php echo $language_id ?>">
         <?php 
-        echo $this->formElement($language_element),  $this->escapeHtml($this->language->getName());
+        echo $this->formElement($language_element),  $this->escapeHtml($language_name);
         ?>
     </div>
     <div class="col-sm-5 form-inline interpreter-language language-certification">

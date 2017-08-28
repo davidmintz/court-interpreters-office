@@ -35,7 +35,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
         //printf("\nDEBUG: %s: login $RESULT in %s:%d\n",__FUNCTION__,basename(__FILE__),__LINE__);
     }
 
-    public function __testAddInterpreter() {
+    public function testAddInterpreter() {
         
         $em = FixtureManager::getEntityManager();
         $url = '/admin/interpreters/add';
@@ -92,7 +92,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
         //echo "\nDEBUG: exiting ".__FUNCTION__."\n";
     }
 
-    public function __testIndexAction() { 
+    public function testIndexAction() { 
         $this->dispatch('/admin/interpreters');
         //echo $this->getResponse()->getBody(); return;
         $this->assertResponseStatusCode(200);
@@ -147,28 +147,25 @@ class InterpretersControllerTest extends AbstractControllerTest {
         // sanity check
         //var_dump($interpreter->getInterpreterLanguages()->current()->getFederalCertification()); //return;
         //echo $this->getResponse()->getBody();return;
-        //$this->assertEquals(strtolower($element->nodeValue), 'yes');
-        //$this->assertEquals($element->getAttributeNode('value')->value, '1');
-        //echo "\nTO DO: fix broken tests involving fed certification select menu state\n";
-
+        $this->assertEquals(strtolower($element->nodeValue), 'yes');
+        $this->assertEquals($element->getAttributeNode('value')->value, '1');
 
         $russian = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Russian']);
         $this->assertInstanceOf(Entity\Language::class, $russian);
         $spanish = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Spanish']);
-        
           
         $this->reset(true); 
         
         $token = $this->getCsrfToken($url); 
-        //$this->reset(true) ;      
+        $hat_id = $em->getRepository('InterpretersOffice\Entity\Hat')
+                        ->findOneBy(['name' => 'staff court interpreter'])->getId();
         $data = [
             'interpreter' => [
                 'lastname' => 'Mintz',
                 'firstname' => 'David',
-                'hat' => $em->getRepository('InterpretersOffice\Entity\Hat')
-                        ->findOneBy(['name' => 'staff court interpreter'])->getId(),
+                'hat' => $hat_id,
                 'email' => 'david@davidmintz.org',
                 'active' => 1,
                 'id' => $id,
@@ -188,16 +185,11 @@ class InterpretersControllerTest extends AbstractControllerTest {
         ];
         $this->getRequest()->setMethod('POST')->setPost(
                 new Parameters($data)
-        );//
-        //echo "\nfuck's wrong with $url?\n";
-
-        //return;
+        );
         $this->dispatch($url);        
-        //return;
-        //echo $this->getResponse()->getBody();
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/interpreters');
-// shit happens by here
+
         // load the form again
         $this->reset(true);
         $this->dispatch($url);
@@ -229,8 +221,6 @@ class InterpretersControllerTest extends AbstractControllerTest {
         
         // there should now be one language again
         $this->assertQueryCount('div.language-name', 1);
-        $this->assertQueryContentRegex('div.language-name', '/Spanish/');
-        
+        $this->assertQueryContentRegex('div.language-name', '/Spanish/');        
     }
-
 }
