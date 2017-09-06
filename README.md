@@ -7,11 +7,31 @@ InterpretersOffice is designed primarily with US District Court in mind, but I'm
 
 # requirements
 
-Requirements are not exotic. In more or less plain English: you are going to need standard hardware and software for serving a web application. That means a computer on a network with its firewall configured to allow web traffic; installed on that computer, a properly configured web server such as [Apache](https://httpd.apache.org/); the [MySQL](https://www.mysql.com/) database server (others will likely work, but we haven't gone there yet); and the programming language [PHP](http://php.net/) version 7.0 or 7.1. On the client side, users will need only a standard web browser and access via the network to the server where the application is installed. If you're running this on your court's intranet, your system administrators should readily understand this stuff. If you opt instead to install it on a commercial web hosting service, that will work as well, because as we said, the underlying software requirements are standard.
+If you're considering adopting this software for managing your own interpreters office, 
+you'll be pleased to know that the requirements, in addition to the application source code 
+itself, are straightforward. In more or less plain English: you are going to need standard 
+hardware and software for serving a web application. That means a computer on a network with its firewall 
+configured to allow web traffic; installed on that computer, a properly configured web 
+server such as [Apache](https://httpd.apache.org/); the [MySQL](https://www.mysql.com/) database 
+server (others will likely work, but we haven't gone there yet); and the programming language
+[PHP](http://php.net/) version 7.0 or 7.1. On the client side, users will need no more than a 
+standard web browser and network access to the server where the application is installed.
 
-The entire software stack -- operating system, web and database servers, application code -- can and should consist of open-source software costing you nothing. If you're running it on your organization's network, an ordinary, inexpensive commodity PC will be plenty powerful enough to support the number of users you're likely to have.
+With [docker](https://www.docker.com/) having become such a thing, the chances are very good 
+that we will also make this application available as a docker image. In English, this more or less means a single, 
+self-contained thing that will depend on little else being installed on the computer where it resides.
 
-With [docker](https://www.docker.com/) having become such a thing, the chances are very good that I will also publish this application as a docker image. In English, this more or less means a single, self-contained thing that will depend on little else being installed on the computer where it resides.
+If you're planning to run InterpretersOffice on your court's intranet, your system administrators 
+should readily understand this stuff. If you opt instead to install it on a commercial web hosting 
+service, that will work as well, because as we said, the underlying software requirements are standard.
+
+For the entire software stack -- operating system, web and database servers, application code -- you can (and should) 
+use open-source software costing you nothing. If you're running InterpretersOffice on your organization's network, 
+even a single ordinary, inexpensive commodity PC should be powerful enough to do the job.
+
+All of this is to say that in terms of cost, InterpretersOffice and supporting the software are 
+completely free; the hardware you'll need is inexpensive.
+
 
 # installation
 
