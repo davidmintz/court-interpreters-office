@@ -307,11 +307,26 @@ return [
                         'options' => [
                             'route' => '/add',
                             'defaults' => [
+                                'controller' => Controller\InterpretersWriteController::class,
                                 'action' => 'add',
                             ],
                         ],
+                    ],                   
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:action/:id',
+                            'defaults' => [
+                                'controller' => Controller\InterpretersWriteController::class,
+                                'action' => 'edit',
+                            ],
+                            'constraints' => [
+                                'action' => 'edit|delete',                                
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
                     ],
-                    'find_by_id' => [
+                     'find_by_id' => [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/:id',
@@ -323,20 +338,6 @@ return [
                             ],
                         ],
                     ],
-                    'edit' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/:action/:id',
-                            'defaults' => [
-                                'action' => 'edit',
-                            ],
-                            'constraints' => [
-                                'action' => 'edit|delete',
-                                'id' => '[1-9]\d*',
-                            ],
-                        ],
-                    ],
-
                     'find_by_name' => [ 
                         'type' => Segment::class,
                         'options' => [
@@ -462,6 +463,7 @@ return [
             Controller\PeopleController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\JudgesController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\InterpretersController::class => Controller\Factory\PeopleControllerFactory::class,
+            Controller\InterpretersWriteController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\UsersController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\EventsController::class => Controller\Factory\EventsControllerFactory::class,
         ],
@@ -504,6 +506,7 @@ return [
            
             'judges' => 'events',
             'interpreters' => 'events',
+            'interpreters-write' => 'events',
             // the topmost controller
             'index' => null,
             'requests-index' => null,

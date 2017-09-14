@@ -28,10 +28,10 @@ class PeopleControllerFactory implements FactoryInterface
     {
 
         $em = $container->get('entity-manager');
-        if ($requestedName == Controller\InterpretersController::class) {
+        if ($requestedName == Controller\InterpretersWriteController::class) {
             // is the Vault thing enabled?
             $vault_enabled = key_exists('vault', $container->get('config'));
-            $controller = new Controller\InterpretersController($em, $vault_enabled);
+            $controller = new $requestedName($em, $vault_enabled);
         } else {
             $controller = new $requestedName($em);
         }
