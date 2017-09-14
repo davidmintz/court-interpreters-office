@@ -5,6 +5,8 @@
  *  http://docs.casperjs.org/en/latest/installation.html
  *  
  *  invoke as:  casperjs script_name
+ *  
+ *  possibly including --ignore-ssl-errors=true
  * 
  */
 
@@ -42,7 +44,7 @@ var resourceRequested = function(casper, resource) {
 var cookieJar = 'cookies.json';
 //var utils = require('utils');
 var fs = require('fs');
-var baseUrl = 'http://localhost:5000';
+var baseUrl = 'https://office.localhost';
 
 var casper = require('casper').create({
     verbose:true,
@@ -79,7 +81,7 @@ casper.start(baseUrl + '/',function(status){
 casper.thenOpen(baseUrl + '/login',function(){
     this.log("attempting login",'warning');
     this.fillSelectors('form', {
-        '#identity':    'somebody',
+        '#identity':    'david',
         '#password':    'boink'
     }, true);   
 });
