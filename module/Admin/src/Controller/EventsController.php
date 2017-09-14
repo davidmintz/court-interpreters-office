@@ -39,6 +39,7 @@ class EventsController extends AbstractActionController
      * constructor
      *
      * @param EntityManagerInterface $em
+     * @param AuthenticationServiceInterface $auth
      */
     public function __construct(EntityManagerInterface $em, AuthenticationServiceInterface $auth)
     {

@@ -85,7 +85,11 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
 
         return $query->getResult();
     }
-    
+    /**
+     * returns all Languages for which there is federal certification
+     * 
+     * @return Array
+     */
     public function findAllCertifiedLanguages()
     {
         $query = $this->createQuery(

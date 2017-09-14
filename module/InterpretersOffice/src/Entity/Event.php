@@ -662,20 +662,12 @@ class Event
         return $this->defendants;
     }
 
-    /**
-     * Add interpretersAssigned.
-     *
-     * @param InterpreterEvent $interpretersAssigned
-     *
-     * @return Event
-     */
-    public function __addInterpretersAssigned(InterpreterEvent $interpretersAssigned)
-    {
-        $this->interpretersAssigned[] = $interpretersAssigned;
-
-        return $this;
-    }
     
+    /**
+     * adds InterpreterEvents
+     * 
+     * @param \Doctrine\Common\Collections\Collection $interpreterEvents
+     */
     public function addInterpretersAssigned(\Doctrine\Common\Collections\Collection $interpreterEvents)
     {
         foreach ($interpreterEvents as $interpreterEvent) {
@@ -683,16 +675,12 @@ class Event
             $this->interpretersAssigned->add($interpreterEvent);
         }
     }
-    /**
-     * Remove interpretersAssigned.
-     *
-     * @param InterpreterEvent $interpretersAssigned
-     */
-    public function ___removeInterpretersAssigned(InterpreterEvent $interpretersAssigned)
-    {
-        $this->interpretersAssigned->removeElement($interpretersAssigned);
-    }
     
+    /**
+     * removes InterpretersEvents
+     * 
+     * @param \Doctrine\Common\Collections\Collection $interpreterEvents
+     */
     public function removeInterpretersAssigned(\Doctrine\Common\Collections\Collection $interpreterEvents)
     {
          foreach ($interpreterEvents as $interpreterEvent) {
