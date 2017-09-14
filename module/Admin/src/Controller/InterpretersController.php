@@ -60,18 +60,6 @@ class InterpretersController extends AbstractActionController
         return new ViewModel();
     }
     
-    public function languageFieldsetAction()
-    {
-        $id = $this->params()->fromQuery('id');
-        $index = $this->params()->fromQuery('index',0);
-        if ($id) {
-            $language = $this->entityManager->find(Entity\Language::class,$id);
-        }
-        //$this->getResponse()->getHeaders()->addHeaderLine('content-type','text/plain');
-        return (new ViewModel(['language'=>$language,'index'=>$index]))
-                ->setTemplate('partials/interpreters/language.phtml')
-                ->setTerminal(true);
-    }
     /**
      * index action.
      *

@@ -326,6 +326,30 @@ return [
                             ],
                         ],
                     ],
+                    // partial validation for interpreters form 
+                    // when they change tabs
+                     'validate-partial'  => [
+
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/validate-partial',
+                            'defaults' => [
+                                'controller' => Controller\InterpretersWriteController::class,
+                                'action' => 'validate-partial',
+                            ],
+                        ],
+                    ],
+                    // for generating markup for an interpreter-language
+                    'language-fieldset' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/language-fieldset',
+                            'defaults' => [
+                                'controller' => Controller\InterpretersWriteController::class,
+                                'action' => 'language-fieldset',
+                            ],
+                        ],                        
+                    ],
                      'find_by_id' => [
                         'type' => Segment::class,
                         'options' => [
@@ -362,28 +386,7 @@ return [
                                 'security_clearance_expiration' => '-[12]|[01]',
                             ],
                         ],
-                    ], 
-                    'validate-partial'  => [
-
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/validate-partial',
-                            'defaults' => [
-                                'action' => 'validate-partial',
-                            ],
-                        ],
-                    ],
-                    // for generating markup for an interpreter-language
-                    'language-fieldset' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/language-fieldset',
-                            'defaults' => [
-                                'action' => 'language-fieldset',
-                            ],
-                        ],
-                        
-                    ]
+                    ],                    
                 ],
             ],
 

@@ -181,11 +181,14 @@ class InterpretersWriteController extends AbstractActionController
             $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled' => $this->vault_enabled]);
             $request = $this->getRequest();
             $form->setData($request->getPost());
-            // temporary
             if (key_exists('interpreter',$params)) {
-                $form->setValidationGroup(['interpreter' => array_keys($params['interpreter'])]);
+                $form->setValidationGroup(
+                        ['interpreter' => array_keys($params['interpreter'])]);
                 if (! $form->isValid()) {
-                    return new JsonModel(['valid' => false,'validation_errors' => $form->getMessages()['interpreter']]);
+                    return new JsonModel([
+                        'valid' => false,
+                        'validation_errors' => $form->getMessages()['interpreter']
+                    ]);
                 }
             }       
             return new JsonModel(['valid' => true]);
@@ -193,5 +196,23 @@ class InterpretersWriteController extends AbstractActionController
 
             return new JsonModel(['valid' => false, 'error' => $e->getMessage()]);
         }        
+    }
+    
+     /**
+     * renders HTML fragment for an interpreter language
+     * 
+     * @return ViewModel
+     */
+    public function languageFieldsetAction()
+    {
+        $id = $this->params()->fromQuery('id');
+        $index = $this->params()->fromQuery('index',0);
+        if ($id) {
+            $language = $this->entityManager->find(Entity\Language::class,$id);
+        }
+        //$this->getResponse()->getHeaders()->addHeaderLine('content-type','text/plain');
+        return (new ViewModel(['language'=>$language,'index'=>$index]))
+                ->setTemplate('partials/interpreters/language.phtml')
+                ->setTerminal(true);
     }
 }
