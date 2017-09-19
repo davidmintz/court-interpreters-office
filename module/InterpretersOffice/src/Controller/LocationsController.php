@@ -7,7 +7,8 @@
 namespace InterpretersOffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+//use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -31,9 +32,20 @@ class LocationsController extends AbstractActionController {
         $this->em = $em;
     }
     
-    public function indexAction() {
+    public function indexAction()
+    {
         
         return new ViewModel();
     }
     
+    public function getChildrenAction()
+    {
+        $parent_id = $this->params()->fromQuery('parent_id');
+        if (! $parent_id) {
+            throw new \RuntimeException("missing required parent_id parameter");
+        }
+        $repo = $this->em->getRepository('InterpretersOffice\Entity\Location');
+        // etc
+        return new JsonModel(['result'=>'life is good']);
+    }
 }
