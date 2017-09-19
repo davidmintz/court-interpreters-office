@@ -147,12 +147,12 @@ return [
                     ],
                 ],
                 'child_routes' => [
-                    'do_something' => [
+                    'get_children' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/shit',
+                            'route' => '/get-children',
                             'defaults' => [
-                                'action' => 'boink',
+                                'action' => 'getChildren',
                             ],
                         ],
                     ],
