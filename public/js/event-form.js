@@ -31,13 +31,17 @@ $(document).ready(
 
         if (! parentLocationElement.val()){
             locationElement.val("").attr({disabled : "disabled"});
-        }
+        } 
         parentLocationElement.on("change",function(){
             if (! parentLocationElement.val()) {
                 locationElement.attr({disabled : "disabled"});
+                        
             } else {
                 locationElement.removeAttr("disabled");
                 // populate with children of current parent location
+                $.getJSON('/locations/get-children',{parent_id:parentLocationElement.val()})
+                
+                
             }
         });
     
