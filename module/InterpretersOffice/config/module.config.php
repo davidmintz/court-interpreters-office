@@ -26,6 +26,7 @@ return [
            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
            Controller\AccountController::class => Controller\Factory\AccountControllerFactory::class,
            Controller\ExampleController::class => Controller\Factory\ExampleControllerFactory::class,
+           Controller\LocationsController::class => Controller\Factory\LocationsControllerFactory::class,//function($container) {return new Controller\LocationsController($container->get('entity-manager'));}
         ],
         'invokables' => [
             //Controller\ExampleController::class => Controller\ExampleController::class,
@@ -132,6 +133,30 @@ return [
                         'controller' => Controller\IndexController::class,
                         'action' => 'index',
                     ],
+                ],
+            ],
+            'public-locations' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/locations',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\LocationsController::class,
+                        'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'do_something' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/shit',
+                            'defaults' => [
+                                'action' => 'boink',
+                            ],
+                        ],
+                    ],
+                
                 ],
             ],
             // can't get this to work, an effort to make multiple controllers
