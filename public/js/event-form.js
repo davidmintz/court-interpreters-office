@@ -24,15 +24,31 @@ $(document).ready(
               .on("change",parseTime);
         }
         $('input.docket').on("change",formatDocketElement);
-    }
-);
+
+    
+        parentLocationElement = $('#parent_location');
+        locationElement = $('#location');
+
+        if (! parentLocationElement.val()){
+            locationElement.val("").attr({disabled : "disabled"});
+        }
+        parentLocationElement.on("change",function(){
+            if (! parentLocationElement.val()) {
+                locationElement.attr({disabled : "disabled"});
+            } else {
+                locationElement.removeAttr("disabled");
+                // populate with children of current parent location
+            }
+        });
+    
+});
 formatTimeElement = function(timeElement) {
     
     var timeValue = timeElement.val();
     // reformat time
     if (timeValue && timeValue.match(/^\d\d:\d\d:\d\d$/)) {
         var formatted = moment(timeValue, 'HH:mm:ss').format('h:mm a');
-        console.log('formatted time is: '+formatted);
+        //console.log('formatted time is: '+formatted);
         timeElement.val(formatted);
     }
     return timeElement;
