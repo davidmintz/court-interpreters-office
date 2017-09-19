@@ -35,7 +35,7 @@ casper.then(function(){
        // https://groups.google.com/forum/#!topic/casperjs/n_zXlxiPMtk
        (function(url,name){
            casper.thenOpen(url,function(){
-               this.echo(name+ ":  "+this.getCurrentUrl());
+               this.echo(name+ "  ["+this.getCurrentUrl() + "]");
                data = this.evaluate(function() {
                     var text = '';
                     var elements = jQuery("table#text.main tbody tr.whiteback td table tbody tr td p:lt(2)");
