@@ -152,6 +152,9 @@ formatDocketElement = function(event)
     if (number.length < 4) {
         var padding = new Array(5 - number.length).join("0");
         number = padding + number;
+    } else if (number.length === 5) {
+        // four digits with up to three leading zeroes is enough
+        number = number.replace(/^00/,"0");
     }
     element.val(year + '-'  + flavor + '-' + number)
             .data('valid',1);
