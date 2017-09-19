@@ -221,7 +221,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                     'name' => 'getParentLocations'
                 ],
                 'display_empty_item' => true,
-                'empty_item_label' => '---- general location ---',
+                'empty_item_label' => '(general location)',
                 
             ],         
             'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
@@ -234,7 +234,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                 'name' => 'location',
                 'options' =>[
                     'value_options' =>[],
-                    'empty_option' => '---- specific location ---',                    
+                    'empty_option' => '(specific location)',                    
                 ],                
                 'attributes' => ['class' => 'form-control', 'id' => 'location'],
         ];
