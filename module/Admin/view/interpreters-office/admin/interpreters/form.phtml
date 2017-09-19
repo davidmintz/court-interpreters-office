@@ -267,7 +267,7 @@ $(function(){
         } else {
             index = 0;
         }
-        url = window.basePath + "/admin/interpreters/language-fieldset";
+        url = /*window.basePath +*/ "/admin/interpreters/language-fieldset";
         $.get(url,{index : index, id : language_id },function(data){
             $('#languages').append(data);
         });
@@ -292,7 +292,7 @@ $(function(){
         var selector = id + " input, " + id + " select";
         var data =($(selector).serialize());
         var that = this;
-        $.post(window.basePath + '/admin/interpreters/validate-partial?action='+action,
+        $.post(/*window.basePath + */  '/admin/interpreters/validate-partial?action='+action,
             data,
             function(response){
                 if (response.validation_errors) {
@@ -317,7 +317,7 @@ $(function(){
             password : $('#password').val(),
             login_csrf : $('input[name="login_csrf"').val()
         };
-        var url = window.basePath + '/login';
+        var url = /*window.basePath +*/ '/login';
         $.post(url, input, function(response){
             if (response.validation_errors) {
                 //refresh the CSRF token

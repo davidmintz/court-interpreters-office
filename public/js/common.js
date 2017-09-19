@@ -13,6 +13,14 @@ $( document ).ajaxComplete(function(event, xhr) {
     }
 });
 
+/** experimental: prepend basePath if such exists */
+jQuery.ajaxSetup({
+    beforeSend : function(xhr,settings) {         
+        if (window.basePath && window.basePath.length) {
+            settings.url = window.basePath + settings.url
+        }
+    }
+});
 $(document).ready(function(){
     /*
     
