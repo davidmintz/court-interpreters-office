@@ -17,7 +17,7 @@ $( document ).ajaxComplete(function(event, xhr) {
 jQuery.ajaxSetup({
     beforeSend : function(xhr,settings) {         
         if (window.basePath && window.basePath.length) {
-            settings.url = window.basePath + settings.url
+            settings.url = window.basePath + settings.url;
         }
     }
 });
