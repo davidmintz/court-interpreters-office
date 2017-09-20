@@ -257,7 +257,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                             'params' => ['parent_id'=>$parent_id]
                         ],
                         'display_empty_item' => true,
-                        'empty_item_label' => '---- specific location ---',
+                        'empty_item_label' => '(specific location)',
                     ],         
                     'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
                 ]);
