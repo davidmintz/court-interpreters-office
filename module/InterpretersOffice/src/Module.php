@@ -12,7 +12,7 @@ namespace InterpretersOffice;
  */
 class Module
 {
-    //const VERSION = '3.0.2dev';
+    
 
     /**
      * returns this module's configuration.
