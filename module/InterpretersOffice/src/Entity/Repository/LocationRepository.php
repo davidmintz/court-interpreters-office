@@ -126,12 +126,12 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     }
     
     /**
-     * get children of parent location $parent_id
+     * gets children of parent location $parent_id
+     *
      * @param int $parent_id
      * @param int $type_id
      * @return array
      * @todo refactor shit. make getCourtrooms proxy to this?
-     * 
      */
     public function getChildren($parent_id,$type_id = null)
     {
@@ -151,11 +151,19 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         usort($data,[$this,'sort']);
         return array_column($data,0);        
     }
-    
+
+
+    /**
+     * sort rows
+     *
+     * @param array $a
+     * @param array $b
+     * @return int
+     */
     public function sort($a, $b)
     {
-        $type_1 = $a['type']; //(string)$a->getType();
-        $type_2 = $b['type']; //(string)$b->getType();
+        $type_1 = $a['type'];
+        $type_2 = $b['type'];
         if ($type_1 == 'courtroom' && $type_2 != 'courtroom') {
             return -1;
         } elseif ($type_1 != 'courtroom' && $type_2 == 'courtroom') {
@@ -167,7 +175,13 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
             return strcasecmp($type_1,$type_2);
         }   
     }
-    
+
+    /**
+     * gets children of parent location $parent_id for populating select elements
+     *
+     * @param int $parent_id
+     * @return array
+     */
     public function getChildLocationValueOptions($parent_id)
     {
         $dql =  'SELECT l.id AS value, l.name AS label, t.type '
@@ -180,6 +194,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
                 ->setParameters([':parent_id'=>$parent_id])->getResult();
          
         usort($data, function($a, $b) {
+            // if the types are the same, the label de
             if ($a['type'] == $b['type']) {
                 return strnatcasecmp($a['label'], $b['label']);
             // if either is a courtroom, it wins                                 
@@ -193,20 +208,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         });
         return $data;
     }
-    
-    /*
-        $dql = 'SELECT  l.id, l.name '
-                . 'FROM InterpretersOffice\Entity\Location l '
-                . 'INDEX BY l.id '
-                . 'LEFT JOIN l.parentLocation p '
-                . 'WHERE p.id ';
-        if ($parent_id) {
-            $dql .= '= :parent_id ';
-        } else {
-            $dql .= 'IS NULL ';
-        }
-     */ 
-
+ 
     /**
      * find all locations of type id $type_id.
      *
