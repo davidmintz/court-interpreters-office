@@ -25,15 +25,28 @@ $form->add([
 $form->prepare();
 $fieldset = $form->get('event');
 // for testing
-$fieldset->get('time')->setValue('10:00:00');
-$fieldset->get('date')->setValue('2017-08-15');
-$fieldset->get('judge')->setValue(949);
-$fieldset->get('eventType')->setValue(1);
-$fieldset->get('language')->setValue(62);
-$fieldset->get('interpretersAssigned')->populateValues([  
+if (true) {
+    $fieldset->get('time')->setValue('10:00:00');
+    $fieldset->get('date')->setValue('2017-08-15');
+    $fieldset->get('judge')->setValue(949);
+    $fieldset->get('eventType')->setValue(1);
+    $fieldset->get('language')->setValue(62);
+    $fieldset->get('parent_location')->setValue(1);
+    $fieldset->get('interpretersAssigned')->populateValues([  
    ['interpreter'=> 117] 
 ]);
+}
+/*
+class Helper extends \Zend\View\Helper\AbstractHelper {
+    public function render($fieldset) {
+        return 'rendering '.get_class($fieldset).'<br>';
+    }
+}*/
+//$this->formCollection()->setFieldsetHelper(new Helper);
 echo $this->form()->openTag($form);  
+
+//$collection = $fieldset->get('interpretersAssigned');var_dump(get_class_methods($collection));
+
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
@@ -49,12 +62,22 @@ echo $this->form()->openTag($form);
 <div class="col-sm-6"><!-- right side -->
     <div class="row">
         <div class="form-group">
-            <label class="control-label col-sm-3" for="interpreters_assigned">shit</label>
+            <label class="control-label col-sm-3" for="interpreters_assigned">interpreters</label>
                 <div class="col-sm-9">
                     <?php $collection = $fieldset->get('interpretersAssigned'); ?>
                     'interpretersAssigned' is a Element\Collection, each of whose elements is a
                     InterpretersAssignedFieldset containing its own elements.                   
-                    <?php echo $this->formCollection($fieldset->get('interpretersAssigned'))?></div>
+                    <?php /*foreach ($collection as $fieldset) { 
+                        foreach ($fieldset as $element) {
+                            echo get_class($element),"; ";
+                            echo gettype($element->getValue()),'<br>';
+                        }
+                    }*/
+                    try {
+                        echo $this->formCollection($fieldset->get('interpretersAssigned'),false);
+                    } catch (\Exception $e) { echo "<br>oops, {$e->getMessage()}";}
+                    ?>
+                </div>
         </div>
         <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
