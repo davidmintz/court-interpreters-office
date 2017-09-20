@@ -19,9 +19,11 @@ use DoctrineModule\Form\Element\ObjectSelect;
 use InterpretersOffice\Entity\Judge;
 /**
  * Fieldset for Event form
- *
+ * Notes to self: make a base class that adds only the elements required for 
+ * a 'Request' form, and have the 'Events' for (for admins) add the rest.
  */
-class EventFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
+class EventFieldset extends Fieldset implements InputFilterProviderInterface, 
+        ObjectManagerAwareInterface
 {
 
      use ObjectManagerAwareTrait;
@@ -115,7 +117,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
         /** might get rid of this... */
         if (isset($options['auth_user_role'])) {
             /** @todo let's not hard-code these roles */
-            if (! in_array($options['auth_user_role'], ['anonymous','staff','submitter','manager','administrator'])) {
+            if (! in_array($options['auth_user_role'],
+                 ['anonymous','staff','submitter','manager','administrator'])) {
                 throw new \RuntimeException('invalid "auth_user_role" option in Event fieldset constructor');
             }
             $this->auth_user_role = $options['auth_user_role'];
@@ -151,17 +154,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
             ->addLocationElements($options['object']);
         
         $interpretersAssignedFieldset = new InterpretersAssignedFieldset($objectManager);
+        
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpretersAssigned',
             'options' => [
                 'label' => 'interpreters',
-                //'count' => 2,
-                //'should_create_template' => true,
                 'allow_add' => true,
                 'allow_remove' => true,
-                'target_element' =>  $interpretersAssignedFieldset,
-                
+                'target_element' =>  $interpretersAssignedFieldset,                
             ],
         ]);
         // still to do: comments, admin comments, request meta (from whom and when)
@@ -187,7 +188,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface, Ob
                 'label' => 'event type',
                 //'optgroup_identifier' => 'optionGroup',
                 'display_empty_item' => true,
-                'empty_item_label' => ' ',
+                'empty_item_label' => ' ',               
                 'option_attributes' => [            
                     'data-event_category' => 
                      function (Entity\EventType $entity) {

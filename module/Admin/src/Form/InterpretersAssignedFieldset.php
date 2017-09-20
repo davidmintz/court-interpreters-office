@@ -34,7 +34,7 @@ class InterpretersAssignedFieldset extends Fieldset
         
         $this->add(
             [
-                'type'=>'text',
+                'type'=>'hidden',
                 'name' => 'interpreter'
             ]
         );

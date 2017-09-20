@@ -41,7 +41,8 @@ class EventsController extends AbstractActionController
      * @param EntityManagerInterface $em
      * @param AuthenticationServiceInterface $auth
      */
-    public function __construct(EntityManagerInterface $em, AuthenticationServiceInterface $auth)
+    public function __construct(EntityManagerInterface $em, 
+            AuthenticationServiceInterface $auth)
     {
         $this->entityManager = $em;
         $this->auth = $auth;
@@ -68,7 +69,7 @@ class EventsController extends AbstractActionController
                 ->getChildren(1);
         foreach ($entities as $place) {
            // print_r(array_keys($place)); echo "... ";
-            //echo "({$place->getType()}) ",$place->getName(), '<br>';
+            echo "({$place->getType()}) ",$place->getName(), '<br>';
         }*/
         $form = new Form\EventForm(
             $this->entityManager,
