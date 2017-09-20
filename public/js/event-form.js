@@ -34,14 +34,23 @@ $(document).ready(
         } 
         parentLocationElement.on("change",function(){
             if (! parentLocationElement.val()) {
-                locationElement.attr({disabled : "disabled"});
-                        
+                locationElement.attr({disabled : "disabled"});                        
             } else {
                 locationElement.removeAttr("disabled");
-                // populate with children of current parent location
-                $.getJSON('/locations/get-children',{parent_id:parentLocationElement.val()})
-                
-                
+                // discard existing
+                locationElement.children().not(":first").remove();
+                // populate with children of current parent location                
+                $.getJSON('/locations/get-children',
+                    {parent_id:parentLocationElement.val()},
+                    function(data){
+                        options = data.map(function(item){
+                            return $('<option>').val(item.value)
+                                    .text(item.label)
+                                    .data({type: item.type});
+                        });
+                        locationElement.children().not(":first").remove();
+                        locationElement.append(options);
+                })
             }
         });
     
