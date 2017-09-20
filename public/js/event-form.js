@@ -5,55 +5,55 @@
 moment = window.moment; 
 Modernizr = window.Modernizr;
 
-$(document).ready(
-    function() {
-        if (! Modernizr.inputtypes.date) {
-            $('input.date').datepicker({
-                changeMonth: true,
-                changeYear: true
-            });
-            $('input.date').each(function(i,element){
-                if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
-                    element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
-                }
-            });
-        }
-        if (! Modernizr.inputtypes.time) {
-            $("input.time")
-              .each(function(){formatTimeElement($(this));})
-              .on("change",parseTime);
-        }
-        $('input.docket').on("change",formatDocketElement);
-
-    
-        parentLocationElement = $('#parent_location');
-        locationElement = $('#location');
-
-        if (! parentLocationElement.val()){
-            locationElement.val("").attr({disabled : "disabled"});
-        } 
-        parentLocationElement.on("change",function(){
-            if (! parentLocationElement.val()) {
-                locationElement.attr({disabled : "disabled"});                        
-            } else {
-                locationElement.removeAttr("disabled");
-                // discard existing
-                locationElement.children().not(":first").remove();
-                // populate with children of current parent location                
-                $.getJSON('/locations/get-children',
-                    {parent_id:parentLocationElement.val()},
-                    function(data){
-                        options = data.map(function(item){
-                            return $('<option>').val(item.value)
-                                    .text(item.label)
-                                    .data({type: item.type});
-                        });
-                        locationElement.children().not(":first").remove();
-                        locationElement.append(options);
-                })
+$(document).ready(function()
+{
+    if (! Modernizr.inputtypes.date) {
+        $('input.date').datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+        $('input.date').each(function(i,element){
+            if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
+                element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
             }
         });
+    }
+    if (! Modernizr.inputtypes.time) {
+        $("input.time")
+          .each(function(){formatTimeElement($(this));})
+          .on("change",parseTime);
+    }
+    $('input.docket').on("change",formatDocketElement);
+
+    parentLocationElement = $('#parent_location');
+    locationElement = $('#location');
     
+    parentLocationElement.on("change",function(){       
+        if (! parentLocationElement.val()) {
+            locationElement.attr({disabled : "disabled"});                        
+        } else {
+            locationElement.removeAttr("disabled");
+            // populate with children of currently selected parent location                
+            $.getJSON('/locations/get-children',
+                {parent_id:parentLocationElement.val()},
+                function(data){
+                    options = data.map(function(item){
+                        return $('<option>').val(item.value)
+                                .text(item.label)
+                                .data({type: item.type});
+                    });
+                    // discard existing option elements
+                    locationElement.children().not(":first").remove();
+                    locationElement.append(options).trigger("sdny.update-complete");                        
+            });
+        }
+    });
+    
+    if (! parentLocationElement.val()){
+        locationElement.val("").attr({disabled : "disabled"});
+    } else {
+        parentLocationElement.trigger("change");
+    }
 });
 formatTimeElement = function(timeElement) {
     
