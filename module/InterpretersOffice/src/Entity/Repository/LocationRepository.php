@@ -109,9 +109,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function getCourtrooms($parent_id)
     {
-        if (! $parent_id) {
-            return []; // do we need this? WTF was I thinking?
-        }
+        
         $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
@@ -132,7 +130,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
      * @param int $parent_id
      * @param int $type_id
      * @return array
-     * @todo refactor shit. make getCourtrooms proxy to this
+     * @todo refactor shit. make getCourtrooms proxy to this?
      * 
      */
     public function getChildren($parent_id,$type_id = null)
@@ -150,24 +148,50 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         $data = $this->createQuery($dql)
                 ->useResultCache(true)
                 ->setParameters($params)->getResult();
-        
-        usort($data, function ($a, $b) {
-            $type_1 = $a['type']; //(string)$a->getType();
-            $type_2 = $b['type']; //(string)$b->getType();
-            if ($type_1 == 'courtroom' && $type_2 != 'courtroom') {
+        usort($data,[$this,'sort']);
+        return array_column($data,0);        
+    }
+    
+    public function sort($a, $b)
+    {
+        $type_1 = $a['type']; //(string)$a->getType();
+        $type_2 = $b['type']; //(string)$b->getType();
+        if ($type_1 == 'courtroom' && $type_2 != 'courtroom') {
+            return -1;
+        } elseif ($type_1 != 'courtroom' && $type_2 == 'courtroom') {
+            return 1;
+        }
+        if ($type_1 == $type_2) {
+            return strnatcasecmp($a[0]->getName(), $b[0]->getName());
+        } else {
+            return strcasecmp($type_1,$type_2);
+        }   
+    }
+    
+    public function getChildLocationValueOptions($parent_id)
+    {
+        $dql =  'SELECT l.id AS value, l.name AS label, t.type '
+                . 'FROM InterpretersOffice\Entity\Location l '
+                . 'JOIN l.parentLocation p JOIN l.type t '
+                . ' WHERE  p.id = :parent_id ';
+                
+         $data = $this->createQuery($dql)
+                ->useResultCache(true)
+                ->setParameters([':parent_id'=>$parent_id])->getResult();
+         
+        usort($data, function($a, $b) {
+            if ($a['type'] == $b['type']) {
+                return strnatcasecmp($a['label'], $b['label']);
+            // if either is a courtroom, it wins                                 
+            } elseif ($a['type'] == 'courtroom') { 
                 return -1;
-            } elseif ($type_1 != 'courtroom' && $type_2 == 'courtroom') {
+            } elseif ($b['type'] == 'courtroom') {
                 return 1;
-            }
-            if ($type_1 == $type_2) {
-                return strnatcasecmp($a[0]->getName(), $b[0]->getName());
-            } else {
-                return strcasecmp($type_1,$type_2);
-            }
+            } 
+            return strnatcasecmp($a['type'], $b['type']);
             
         });
-        return array_column($data,0);
-        
+        return $data;
     }
     
     /*

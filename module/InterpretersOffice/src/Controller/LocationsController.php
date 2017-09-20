@@ -32,12 +32,21 @@ class LocationsController extends AbstractActionController {
         $this->em = $em;
     }
     
+    /**
+     * don't really need this. it can be removed
+     * 
+     * @return \InterpretersOffice\Controller\ViewModel
+     */
     public function indexAction()
-    {
-        
+    {        
         return new ViewModel();
     }
     
+    /**
+     * gets child locations as JSON for populating select menu via xhr
+     * @return JsonModel
+     * @throws \RuntimeException
+     */
     public function getChildrenAction()
     {
         $parent_id = $this->params()->fromQuery('parent_id');
@@ -45,7 +54,8 @@ class LocationsController extends AbstractActionController {
             throw new \RuntimeException("missing required parent_id parameter");
         }
         $repo = $this->em->getRepository('InterpretersOffice\Entity\Location');
-        // etc
-        return new JsonModel(['result'=>'life is good']);
+        $data = $repo->getChildLocationValueOptions($parent_id);
+        
+        return new JsonModel($data);
     }
 }
