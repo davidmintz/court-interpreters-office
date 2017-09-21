@@ -274,7 +274,8 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         /// https://kuldeep15.wordpress.com/2015/04/08/composite-key-type-duplicate-key-check-with-zf2-doctrine/
 
         $validatorOptions = [
-               'object_repository' => $this->objectManager->getRepository('InterpretersOffice\Entity\Location'),
+               'object_repository' => $this->objectManager
+                   ->getRepository('InterpretersOffice\Entity\Location'),
                'fields' => ['name', 'parentLocation'],
                'object_manager' => $this->objectManager,
                'use_context' => true, ];
@@ -282,16 +283,19 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         if ($options['action'] == 'create') {
             $validatorClass = NoObjectExistsValidator::class;
             $validatorOptions['messages'] = [
-                NoObjectExistsValidator::ERROR_OBJECT_FOUND => 'this location is already in your database',
+                NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
+                    'this location is already in your database',
             ];
         } else { // assume this is an update
             $validatorClass = UniqueObject::class;
             $validatorOptions['messages'] =
-                 [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 'there is already an existing location with this name and parent location'];
+              [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
+              'there is already an existing location with this name and parent location'];
         }
 
         $nameInput = $filter->get('name');
-        $nameInput->getValidatorChain()->attach(new  $validatorClass($validatorOptions), true);
+        $nameInput->getValidatorChain()
+                ->attach(new $validatorClass($validatorOptions), true);
 
         $filter->add([
             'name' => 'parentLocation',
