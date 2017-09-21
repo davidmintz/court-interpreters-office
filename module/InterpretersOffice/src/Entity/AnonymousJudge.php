@@ -52,7 +52,7 @@ class AnonymousJudge
     /**
      * returns string representation of AnonymousJudge entity.
      * 
-     * food for thought: this generates SQL queries. maybe think of a way
+     * @todo this generates SQL queries that are not cached. think of a way
      * to avoid that.
      *
      * @return string
