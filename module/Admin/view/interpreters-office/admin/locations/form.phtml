@@ -44,10 +44,10 @@ echo $this->formLabel($parentLocation),$this->formSelect($parentLocation),$this-
 $isActive = $active->getValue();
  echo $this->formLabel($active); ?>
     <br>
-    <input type="radio" name="active" value="1"<?php if ($isActive) :
+    <input type="radio" id="active" name="active" value="1"<?php if ($isActive) :
 ?> checked="checked"<?php
 endif;?>> yes&nbsp;&nbsp;&nbsp;
-    <input type="radio" name="active" value="0"<?php if (! $isActive) :
+    <input id="active_0" type="radio" name="active" value="0"<?php if (! $isActive) :
 ?> checked="checked"<?php
 endif;?>> no
 <?php
