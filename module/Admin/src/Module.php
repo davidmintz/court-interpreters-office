@@ -43,7 +43,7 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
-        
+        // $view = $container->get('ViewRenderer'); var_dump(get_class($view));
         // set the "breadcrumbs" navigation view-helper separator
         // unless there's a better way to make sure this gets done globally...
         $navigation = $container->get('ViewHelperManager')->get("navigation");
