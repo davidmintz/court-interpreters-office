@@ -20,7 +20,7 @@ use InterpretersOffice\Entity\Judge;
 /**
  * Fieldset for Event form
  * Notes to self: make a base class that adds only the elements required for 
- * a 'Request' form, and have the 'Events' for (for admins) add the rest.
+ * a 'Request' form, and create a subclass 'Events' form (for admins) add the rest.
  */
 class EventFieldset extends Fieldset implements InputFilterProviderInterface, 
         ObjectManagerAwareInterface
@@ -106,10 +106,12 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     public function __construct(ObjectManager $objectManager, array $options)
     {
         if (! isset($options['action'])) {
-            throw new \RuntimeException('missing "action" option in EventFieldset constructor');
+            throw new \RuntimeException(
+                    'missing "action" option in EventFieldset constructor');
         }
         if (! in_array($options['action'], ['create', 'update','repeat'])) {
-            throw new \RuntimeException('invalid "action" option in EventFieldset constructor: '.(string)$options['action']);
+            throw new \RuntimeException('invalid "action" option in '
+                . 'EventFieldset constructor: '.(string)$options['action']);
         }
         if (! isset($options['object'])) {
             $options['object'] = null;
@@ -118,8 +120,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         if (isset($options['auth_user_role'])) {
             /** @todo let's not hard-code these roles */
             if (! in_array($options['auth_user_role'],
-                 ['anonymous','staff','submitter','manager','administrator'])) {
-                throw new \RuntimeException('invalid "auth_user_role" option in Event fieldset constructor');
+               ['anonymous','staff','submitter','manager','administrator'])) {
+                throw new \RuntimeException(
+               'invalid "auth_user_role" option in Event fieldset constructor');
             }
             $this->auth_user_role = $options['auth_user_role'];
         }
@@ -127,6 +130,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         unset($options['action']);
 
         parent::__construct($this->fieldset_name, $options);
+        
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager))
                 ->setUseAsBaseFieldset(true);
@@ -165,7 +169,33 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'target_element' =>  $interpretersAssignedFieldset,                
             ],
         ]);
-        // still to do: comments, admin comments, request meta (from whom and when)
+        
+        // figure out value options for interpreter select
+        $empty_option =  ['label' => ' ','value' => '',];
+        if ($options['object']) {
+            $entity = $options['object'];
+            $language_id = $entity->getLanguage()->getId();
+            $repository = $objectManager->getRepository(Entity\Interpreter::class);
+            $value_options = $empty_option +
+                $repository->getInterpreterOptionsForLanguage($language_id);
+        } else {
+            $value_options = $empty_option;
+        }
+        $this->add([
+            'type'=>  Element\Select::class,
+            'name'=> 'interpreter-select',
+            'options' => [
+                'label' => 'interpreter(s)',
+                'value_options' => $value_options,
+            ],
+            'attributes' => [
+                'class' => 'form-control', 
+                'id' => 'interpreter-select',
+            ],
+            
+        ]);
+        // still to do: comments, admin comments, 
+        // request meta (from whom and when)
         // defendants, interpreters, end time
     }
     
@@ -174,6 +204,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     /**
      * adds the EventType element
      * 
+     * @todo get rid of this and use a regular Zend\Form\Element\Select
+     * with a repository method that gets options WITH ATTRIBUTES and uses caching
      * @return \InterpretersOffice\Admin\Form\EventFieldset
      */
     public function addEventTypeElement()            
@@ -192,6 +224,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'option_attributes' => [            
                     'data-event_category' => 
                      function (Entity\EventType $entity) {
+                        return "shit";
                         return (string)$entity->getCategory();
                      },
                 ]
@@ -285,7 +318,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'target_class' => Entity\Judge::class,
                 'label' => 'judge',
                 'label_generator' => function(Judge $judge) {
-                    $label = sprintf("%s, %s",$judge->getLastname(),$judge->getFirstname());
+                    $label = sprintf("%s, %s",
+                            $judge->getLastname(),
+                            $judge->getFirstname());
                     $middle = $judge->getMiddleName();
                     if ($middle) {
                          if (2 == strlen($middle) && '.' == $middle[1]) {
@@ -303,9 +338,11 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ]
         );
        $element->setAttributes([ 'class' => 'form-control','id' => 'role',]);
-       // $element->getValueOptions() : array of arrays containing keys: label, value, attributes => array
+       // $element->getValueOptions() : array of arrays containing keys: 
+       // label, value, attributes => array
        // we need to jam the generic Magistrate etc in there and sort
-       $anonymous = $this->getObjectManager()->getRepository(Judge::class)->getAnonymousJudges();
+       $anonymous = $this->getObjectManager()->getRepository(Judge::class)
+               ->getAnonymousJudges();
        $valueOptions = $element->getValueOptions();
        foreach($anonymous as $entity) {
            $label = $entity->__toString();
