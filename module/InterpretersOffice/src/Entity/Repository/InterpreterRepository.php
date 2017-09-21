@@ -228,4 +228,26 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $firstname = trim(substr($name, $pos + 1));
         return compact('lastname', 'firstname');
     }
+    /**
+     * gets active interpreters of language id $id
+     * 
+     * @param int $id
+     * @return Array
+     */
+    public function getInterpreterOptionsForLanguage($id)
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select("i.id AS value, CONCAT(i.lastname, ', ',i.firstname) AS label")
+                // maybe more columns later, and data attributes
+            ->join('i.interpreterLanguages', 'il')
+            ->join('il.language', 'l')
+            ->where('l.id = :id')
+            ->andWhere('i.active = true')
+            ->orderBy('i.lastname, i.firstname')
+            ->setParameters(['id' => $id]);
+        $query = $qb->getQuery()->useResultCache(true, null,
+                "interp-options-language-$id");
+        
+        return $query->getResult();
+    }
 }
