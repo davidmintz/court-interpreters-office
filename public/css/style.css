@@ -54,7 +54,10 @@ so that interpreter-languages won't stack and look crappy on a small viewport
 }
 /* experimental: not sure why these things need to be 100% */
 @media (min-width: 768px) {
-    form input, form select, form textarea, form .validation-error {
+    form input, form select, form textarea, 
+    form .validation-error,
+    form .interpreters-assigned
+    {
         max-width: 75%;
     }
     form #languages {
