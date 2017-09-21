@@ -83,7 +83,7 @@ class Location
     /**
      * comments about this location.
      *
-     * @Annotation\Attributes({"class":"form-control","placeholder":"optional comments about this location"})
+     * @Annotation\Attributes({"class":"form-control","id":"comments","placeholder":"optional comments about this location"})
      * @Annotation\Options({"label":"comments"})
      * @Annotation\Filter({"name":"StringTrim"})
      * @Annotation\Filter({"name":"StripTags"})
