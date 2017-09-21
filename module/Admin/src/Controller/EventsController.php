@@ -89,8 +89,6 @@ class EventsController extends AbstractActionController
             ->setVariables([                
                 'form'  => $form,
                 ]);
-        
-        
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
@@ -98,6 +96,7 @@ class EventsController extends AbstractActionController
                 var_dump($form->getMessages());
                 return $viewModel;
             } else {
+                // faking it for now
                 echo "validation OK... ";
                 $anonymousSubmitter = $this->entityManager->find(
                     Entity\Hat::class, 4
@@ -131,15 +130,33 @@ class EventsController extends AbstractActionController
      */
     public function editAction()
     {
-
+        $id = $this->params()->fromRoute('id');
+        $event = $this->entityManager->find(Entity\Event::class,$id);
+        if (! $event) {
+             return (new ViewModel())
+            ->setTemplate('interpreters-office/admin/events/form')
+            ->setVariables([               
+                'errorMessage'  => 
+                "event with id $id was not found in the database."
+             ]);
+        }
         $form = new Form\EventForm(
             $this->entityManager,
-            ['action' => 'update']
+            ['action' => 'update','object'=>$event,]
         );
         $request = $this->getRequest();
-        $form->setAttribute('action', $request->getRequestUri());
-        $event = $this->entityManager->find(Entity\Event::class,1);
+        $form->setAttribute('action', $request->getRequestUri());        
         $form->bind($event);
+        
+        if ($this->getRequest()->isPost()) {
+            $form->setData($this->getRequest()->getPost());
+            if ($form->isValid()) {
+                echo "yay!";
+            } else {
+                
+            }
+        }
+        
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables([               

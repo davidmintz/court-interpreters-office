@@ -171,7 +171,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         ]);
         
         // figure out value options for interpreter select
-        $empty_option =  ['label' => ' ','value' => '',];
+        $empty_option =  ['value' => "shit","label"=>"shit"];
         if ($options['object']) {
             $entity = $options['object'];
             $language_id = $entity->getLanguage()->getId();
@@ -179,7 +179,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             $value_options = $empty_option +
                 $repository->getInterpreterOptionsForLanguage($language_id);
         } else {
-            $value_options = $empty_option;
+            $value_options = [$empty_option];
         }
         $this->add([
             'type'=>  Element\Select::class,
@@ -220,11 +220,11 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'label' => 'event type',
                 //'optgroup_identifier' => 'optionGroup',
                 'display_empty_item' => true,
-                'empty_item_label' => ' ',               
+                'empty_item_label' => '-- select event-type --',               
                 'option_attributes' => [            
                     'data-event_category' => 
                      function (Entity\EventType $entity) {
-                        return "shit";
+                        //return "shit";
                         return (string)$entity->getCategory();
                      },
                 ]
@@ -312,6 +312,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function addJudgeElement()
     {
+        /** @todo get rid of this and use a regular Zend\Form\Element\Select */
         $element = new ObjectSelect('judge',
             [
                 'object_manager' => $this->objectManager,
@@ -332,24 +333,26 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     $label .= ', '.$judge->getFlavor();
                     return $label;
                 },
-                'display_empty_item' => true,
-                'empty_item_label' => ' ', 
+                //'display_empty_item' => true,
+                // 'empty_item_label' => ' ', 
                 'find_method' => ['name'=> 'findAllActive',]
             ]
         );
        $element->setAttributes([ 'class' => 'form-control','id' => 'role',]);
+       $valueOptions = $element->getValueOptions();
        // $element->getValueOptions() : array of arrays containing keys: 
        // label, value, attributes => array
        // we need to jam the generic Magistrate etc in there and sort
+       ///*
        $anonymous = $this->getObjectManager()->getRepository(Judge::class)
                ->getAnonymousJudges();
-       $valueOptions = $element->getValueOptions();
+       
        foreach($anonymous as $entity) {
-           $label = $entity->__toString();
+           $label = $entity->__toString(); /** @todo solve wasted query*/
            $value = $entity->getId();
            $attributes = ['data-pseudojudge'=>true];
            $valueOptions[] = compact('label','value','attributes');
-       }
+       }//*/
        $element->setValueOptions($valueOptions);
        $this->add($element);
        return $this;
@@ -362,11 +365,20 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function getInputFilterSpecification()
     {
-        // to be continued
+        // to be continued!!
         return [
             'date' => [
+                'required' => true,
+                'allow_empty' => false,
                 'validators'=> [
-                    
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'date is required',
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'time' => [
@@ -388,6 +400,20 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     
                 ],
             ],
+            'language' => [
+                'required' => true,
+                'allow_empty' => false,
+                'validators'=> [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'language is required',
+                            ],
+                        ],
+                    ],
+                ],
+            ]
         ];
     }
 }

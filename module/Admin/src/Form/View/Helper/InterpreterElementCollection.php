@@ -19,7 +19,7 @@ class InterpreterElementCollection extends AbstractHelper
         '<li class="list-group-item">'
         . '<input name="event[interpretersAssigned][%d][interpreter]" '
         . 'type="hidden" value="%d">'
-        . '%s<div class="pull-right" title="remove this interpreter" class="remove-button">[x]</div></li>';
+        . '%s<div class="remove-button pull-right" title="remove this interpreter">[x]</div></li>';
     
     /**
      * invoke

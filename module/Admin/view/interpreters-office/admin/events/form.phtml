@@ -1,4 +1,6 @@
 <?php
+use InterpretersOffice\Admin\Form\View\Helper\InterpreterElementCollection;
+
 $this->headTitle('admin | events | '.$this->layout()->action);
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepicker.css'));
 $this->headScript()
@@ -43,9 +45,11 @@ class Helper extends \Zend\View\Helper\AbstractHelper {
     }
 }*/
 //$this->formCollection()->setFieldsetHelper(new Helper);
+
+
 echo $this->form()->openTag($form);  
 
-//$collection = $fieldset->get('interpretersAssigned');var_dump(get_class_methods($collection));
+//var_dump(get_class_methods($collection));
 
 ?>
 <div class="col-sm-6"><!-- left side -->
@@ -62,22 +66,19 @@ echo $this->form()->openTag($form);
 <div class="col-sm-6"><!-- right side -->
     <div class="row">
         <div class="form-group">
-            <label class="control-label col-sm-3" for="interpreters_assigned">interpreters</label>
-                <div class="col-sm-9">
-                    <?php $collection = $fieldset->get('interpretersAssigned'); ?>
-                    'interpretersAssigned' is a Element\Collection, each of whose elements is a
-                    InterpretersAssignedFieldset containing its own elements.                   
-                    <?php /*foreach ($collection as $fieldset) { 
-                        foreach ($fieldset as $element) {
-                            echo get_class($element),"; ";
-                            echo gettype($element->getValue()),'<br>';
-                        }
-                    }*/
-                    try {
-                        echo $this->formCollection($fieldset->get('interpretersAssigned'),false);
-                    } catch (\Exception $e) { echo "<br>oops, {$e->getMessage()}";}
-                    ?>
-                </div>
+            <label class="control-label col-sm-3" for="interpreter-select">interpreters</label>
+            <div class="col-sm-9">
+                <?php 
+                echo $this->formElement($fieldset->get('interpreter-select'));
+                /* 'interpretersAssigned' is a Element\Collection, each of 
+                 * whose elements is a InterpretersAssignedFieldset 
+                 * containing its own elements.                   
+                */
+                $collection = $fieldset->get('interpretersAssigned'); 
+                $helper = (new InterpreterElementCollection())->setView($this);
+                echo $helper->render($collection);
+                ?>                   
+            </div>
         </div>
         <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
