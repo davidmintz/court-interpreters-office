@@ -210,7 +210,7 @@ class Event
     /**
      * timestamp of last update.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime",nullable=true)
      *
      * @var \DateTime
      */
@@ -220,7 +220,7 @@ class Event
      * last User who updated the Event.
      *
      * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     protected $modifiedBy;
 
@@ -756,9 +756,8 @@ class Event
      */
     public function assignInterpreter(Interpreter $interpreter)
     {
-        $this->addInterpretersAssigned(
-            new InterpreterEvent($interpreter, $this)
-        );
+        $this->getInterpretersAssigned()
+                ->add(new InterpreterEvent($interpreter, $this));
 
         return $this;
     }
