@@ -52,9 +52,12 @@ final class FixtureManager
         ///* // see above
         $helper = new SetupHelper();
         $helper->setUp();
-        $listener = $helper->getApplicationServiceLocator()->get('interpreter-listener');
-        $entityManager->getConfiguration()->getEntityListenerResolver()->register($listener);         
-         //*/
+        $container = $helper->getApplicationServiceLocator();
+        $listener = $container->get('interpreter-listener');
+        $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
+        $resolver->register($listener);
+        $event_listener_fqcn = \InterpretersOffice\Entity\Listener\EventEntityListener::class;
+        $resolver->register($container->get($event_listener_fqcn));
         return $entityManager;
     }
 
