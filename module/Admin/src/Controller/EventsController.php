@@ -96,7 +96,7 @@ class EventsController extends AbstractActionController
                 var_dump($form->getMessages());
                 return $viewModel;
             } else {
-                // faking it for now
+                // faking some data for now
                 echo "validation OK... ";
                 $anonymousSubmitter = $this->entityManager->find(
                     Entity\Hat::class, 4
@@ -105,12 +105,13 @@ class EventsController extends AbstractActionController
                             Entity\User::class, 8
                         );
                 //exit(get_class($user));
-                $event->setAnonymousSubmitter($anonymousSubmitter)
-                    ->setModified(new \DateTime())
-                    ->setCreated(new \DateTime())
-                    ->setCreatedBy($user)
-                    ->setModifiedBy($user);
-                $event->getInterpretersAssigned()->current()->setCreatedBy($user);
+                $event->setAnonymousSubmitter($anonymousSubmitter);
+                // fake-add an interpreter
+                $event->assignInterpreter(
+                      $this->entityManager->find(Entity\Interpreter::class,117)
+                );
+                $event->getInterpretersAssigned()->current()
+                        ->setCreatedBy($user);
                 //\Doctrine\Common\Util\Debug::dump($event);
                 //echo get_class($event->getInterpretersAssigned());
                 $this->entityManager->persist($event);

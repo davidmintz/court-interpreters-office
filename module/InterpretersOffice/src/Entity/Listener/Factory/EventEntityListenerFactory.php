@@ -20,6 +20,8 @@ class EventEntityListenerFactory implements FactoryInterface
         $log  = $container->get('log'); // maybe get rid of this at some point
         $listener = new EventEntityListener();
         $listener->setLogger($container->get('log'));
+        /** @todo see what happens if we make this a constructor dependency */
+        $listener->setAuth($container->get('auth'));
         return $listener;
         
     }
