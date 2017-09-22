@@ -60,7 +60,8 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function($event){
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
-                $event->getApplication()->getMvcEvent()->getViewModel()->setVariables($routeMatch->getParams());                
+                $event->getApplication()->getMvcEvent()->getViewModel()
+                ->setVariables($routeMatch->getParams());                
             }
         });
         
@@ -95,7 +96,8 @@ class Module
             $container = $event->getApplication()->getServiceManager();
             $em = $container->get('entity-manager');
             $listener = $container->get('interpreter-listener');
-            $em->getConfiguration()->getEntityListenerResolver()->register($listener);
+            $resolver = $em->getConfiguration()->getEntityListenerResolver();
+            $resolver->register($listener);
             //echo "shit is attached. ";
         }
     }

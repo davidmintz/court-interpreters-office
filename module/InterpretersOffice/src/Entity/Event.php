@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(name="events")
  * @ORM\HasLifecycleCallbacks
+ * @ORM\EntityListeners({"InterpretersOffice\Entity\Listener\EventEntityListener"})
  */
 class Event
 {
