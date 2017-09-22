@@ -128,7 +128,7 @@ class Adapter extends AbstractAdapter
         $user_object->hat = (string)$person->getHat();
         $user_object->username = $entity->getUserName();
         $user_object->role = (string)$entity->getRole();
-
+        $user_object->id = $entity->getId();
 
         return new Result(
             $this->authenticationResultInfo['code'],
