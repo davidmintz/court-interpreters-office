@@ -51,7 +51,8 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
      * @param Entity\Event $eventEntity
      * @param LifecycleEventArgs $event
      */
-    public function preUpdate(Entity\Event $eventEntity, LifecycleEventArgs $event)
+    public function preUpdate(Entity\Event $eventEntity, 
+            LifecycleEventArgs $event)
     {
         
     }
