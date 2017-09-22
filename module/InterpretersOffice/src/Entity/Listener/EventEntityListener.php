@@ -15,8 +15,8 @@ use Zend\Log\LoggerInterface;
 // use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 
 use InterpretersOffice\Entity;
-
 use Zend\Log;
+
 class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInterface
 {
 	use Log\LoggerAwareTrait;
@@ -25,20 +25,27 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
 	/**
      * callback
      *
-     * runs when Interpreter entity is loaded
+     * runs when Event entity is loaded. not doing anything at the moment
+     * other than test that the listener is wired up.
      *
-     * which in turn doesn't do anything
-     *
-     * @param Interpreter $interpreter
+     * @param Entity\Event $eventEntity
      * @param LifecycleEventArgs $event
      */
     public function postLoad(Entity\Event $eventEntity, LifecycleEventArgs $event)
+    {        
+        $this->getEventManager()->trigger(__FUNCTION__, $this);        
+        $this->logger->debug("running ".__FUNCTION__ . " in your EventEntityListener ...");        
+    }
+    
+    /**
+     * prePersist
+     * 
+     * @param \InterpretersOffice\Entity\Event $eventEntity
+     * @param LifecycleEventArgs $event
+     */
+    public function prePersist(Entity\Event $eventEntity, LifecycleEventArgs $event)
     {
-
-        $this->getEventManager()->trigger(__FUNCTION__, $this);
-        //var_dump(is_null($this->log));
-        $this->log->debug("running ".__FUNCTION__ . " in your EventEntityListener ...");
-        //echo "Interpreter entity listener WTF? hello what the FUCKING FUCK??";
+        $this->logger->debug("running ".__FUNCTION__ . " in your EventEntityListener ..."); 
     }
     
 }
