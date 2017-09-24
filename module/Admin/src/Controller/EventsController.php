@@ -166,4 +166,10 @@ class EventsController extends AbstractActionController
 
         return $viewModel;
     }
+
+    public function interpreterTemplateAction()
+    {
+        $response = $this->getResponse();
+        return $response->setContent("hello!");
+    }
 }
