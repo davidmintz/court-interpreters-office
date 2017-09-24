@@ -56,7 +56,7 @@ class Module
         
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
+        //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function($event){
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
@@ -72,35 +72,7 @@ class Module
       
     }
 
-    /**
-     * attaches Interpreter entity event listener
-     *
-     * @param MvcEvent $event
-     *
-     */
-    public function attachEntityListener(MvcEvent $event)
-    {
-        $routeMatch = $event->getRouteMatch();
-        if (! $routeMatch) {
-            return;
-        }
-        $controller_name = $routeMatch->getParams()['controller'];
-
-        if (in_array($controller_name, [
-            Controller\InterpretersController::class,
-            Controller\InterpretersWriteController::class,
-            Controller\UsersController::class,
-            Controller\EventsController::class,
-            \InterpretersOffice\Controller\AuthController::class,
-        ])) {
-            $container = $event->getApplication()->getServiceManager();
-            $em = $container->get('entity-manager');
-            $listener = $container->get('interpreter-listener');
-            $resolver = $em->getConfiguration()->getEntityListenerResolver();
-            $resolver->register($listener);
-            //echo "shit is attached. ";
-        }
-    }
+    
     /**
      * callback to check authentication on mvc route event.
      *

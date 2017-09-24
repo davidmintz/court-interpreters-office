@@ -32,6 +32,11 @@ class PeopleControllerFactory implements FactoryInterface
             // is the Vault thing enabled?
             $vault_enabled = key_exists('vault', $container->get('config'));
             $controller = new $requestedName($em, $vault_enabled);
+            $container = $event->getApplication()->getServiceManager();
+            $em = $container->get('entity-manager');
+            $listener = $container->get('interpreter-listener');
+            $resolver = $em->getConfiguration()->getEntityListenerResolver();
+            $resolver->register($listener);
         } else {
             $controller = new $requestedName($em);
         }
