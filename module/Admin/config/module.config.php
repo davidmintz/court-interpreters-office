@@ -61,6 +61,15 @@ return [
                             ],
                         ],
                     ],
+                    'interpreter-template' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/interpreter-template',
+                            'defaults' => [
+                                'action' => 'interpreter-template',
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'languages' => [
