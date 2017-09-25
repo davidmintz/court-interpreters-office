@@ -7,7 +7,7 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-
+use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 
@@ -186,9 +186,27 @@ class EventsController extends AbstractActionController
                 "bad input parameters: "
                     .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
             );
-        }
-        $r=$this->getResponse();exit(get_class($r));
+        }        
         $html = $helper->renderFromArray($data);
         return $this->getResponse()->setContent($html);
+    }
+    
+    
+    /**
+     * gets interpreter options for populating select
+     * 
+     * @return JsonModel
+     */
+    public function interpreterOptionsAction()
+    {
+        /** @var  \InterpretersOffice\Entity\Repository\InterpreterRepository $repository */
+        $repository = $this->entityManager->getRepository(Entity\Interpreter::class);        
+        $language_id = $this->params()->fromQuery('language_id');
+        if (! $language_id) {
+            $result = ['error' => 'missing language id parameter'];
+        } else {
+            $result = $repository->getInterpreterOptionsForLanguage($language_id);
+        }
+        return new JsonModel($result);        
     }
 }
