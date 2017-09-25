@@ -34,7 +34,7 @@ class InterpreterElementCollection extends AbstractHelper
     
     public function wrap($markup)
     {
-        return '<ul class="list-group interpreters-assigned">'. $markup ."</ul>";
+        return '<ul id="interpreters-assigned" class="list-group interpreters-assigned">'. $markup ."</ul>";
     }
     
     /**
