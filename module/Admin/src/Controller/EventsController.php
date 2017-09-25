@@ -110,8 +110,7 @@ class EventsController extends AbstractActionController
                 $event->assignInterpreter(
                       $this->entityManager->find(Entity\Interpreter::class,117)
                 );
-                $event->getInterpretersAssigned()->current()
-                        ->setCreatedBy($user);
+                //$event->getInterpretersAssigned()->current()->setCreatedBy($user);
                 //\Doctrine\Common\Util\Debug::dump($event);
                 //echo get_class($event->getInterpretersAssigned());
                 $this->entityManager->persist($event);
@@ -166,10 +165,29 @@ class EventsController extends AbstractActionController
 
         return $viewModel;
     }
-
+    
+    /**
+     * generates markup for an interpreter
+     * 
+     * @return Zend\Http\PhpEnvironment\Response
+     * @throws \RuntimeException
+     */
     public function interpreterTemplateAction()
     {
-        $response = $this->getResponse();
-        return $response->setContent("hello!");
+        $helper = new Form\View\Helper\InterpreterElementCollection();
+        $factory = new \Zend\InputFilter\Factory();
+        $inputFilter = $factory->createInputFilter(                
+               $helper->getInputFilterSpecification()
+        );
+        $data = $this->params()->fromPost();
+        $inputFilter->setData($data);
+        if (! $inputFilter->isValid()) {
+            throw new \RuntimeException(
+                "bad input parameters: ".json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
+            );
+        }
+        $r=$this->getResponse();exit(get_class($r));
+        $html = $helper->renderFromArray($data);
+        return $this->getResponse()->setContent($html);
     }
 }
