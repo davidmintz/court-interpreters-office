@@ -32,6 +32,11 @@ class InterpreterElementCollection extends AbstractHelper
         return $this->render($collection);
     }
     
+    public function wrap($markup)
+    {
+        return '<ul class="list-group interpreters-assigned">'. $markup ."</ul>";
+    }
+    
     /**
      * renders markup
      * 
@@ -54,7 +59,7 @@ class InterpreterElementCollection extends AbstractHelper
             $markup .= sprintf($this->template,$i,$interpreter->getId(),$name);
             $i++;
         }
-        return '<ul class="list-group interpreters-assigned">'. $markup ."</ul>";
+        return $this->wrap($markup);
     }
     
     /**
@@ -65,5 +70,61 @@ class InterpreterElementCollection extends AbstractHelper
     public function getTemplate()
     {
         return $this->template;
-    }    
+    }
+    
+    /**
+     * renders Interpreter fieldset from array data
+     * 
+     * @param array $data
+     * @return string
+     */
+    public function renderFromArray(Array $data)
+    {
+        if (! isset($data['name'])) {
+            $data['name'] = '__NAME__';
+        }
+        $markup = sprintf($this->template,$data['index'],$data['id'],$data['name']);
+        return $this->wrap($markup);
+    }
+    
+    /**
+     * input filter spec for xhr/interpreter template helper
+     * 
+     * @return Array
+     */
+    public function getInputFilterSpecification()
+    {
+         return 
+         [   
+            'id' => [
+                'name'=> 'id',
+                'required' => true,
+                'allow_empty' => false,
+                'validators' => [
+                    ['name'=>'Digits'],
+                ],
+            ],
+            'index' => [
+                'name' => 'index',
+                'required' => true,
+                'allow_empty' => false,
+                'validators' => [
+                    ['name'=>'Digits'],
+                ]
+            ],
+            'name' => [
+                'name' => 'name',
+                'required' => false,
+                'allow_empty' => true,
+                'validators' => [
+                    [ 'name'=>'StringLength',
+                        'options' => [
+                            'max' => 152,
+                            'min' => 5,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
 }
