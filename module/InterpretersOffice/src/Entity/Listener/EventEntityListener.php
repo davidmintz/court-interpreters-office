@@ -24,11 +24,23 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
 	use Log\LoggerAwareTrait;
 	use EventManagerAwareTrait;
     
+    
     /**
      *
      * @var AuthenticationServiceInterface
      */
     protected $auth;
+    
+    /**
+     * @var \DateTime
+     * protected $now
+     */
+    
+    public function __construct() {
+        
+        $this->now = new \DateTime();
+    }
+    
     
     /**
      * sets authentication service
@@ -86,10 +98,13 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
             $eventEntity->setCreatedBy($user);
         }
         $now = new \DateTime();
-        $eventEntity->setCreated($now)
+        $eventEntity->setCreated($this->now)
                 ->setModifiedBy(null)
                 ->setModified(null);
-        $this->logger->debug(__FUNCTION__ . " in EventEntityListener did shit");
+        foreach ($eventEntity->getInterpretersAssigned() as $interpreterEvent) {
+            $interpreterEvent->setCreatedBy($user)->setCreated($now);
+        }
+        $this->logger->debug(__FUNCTION__ . " in EventEntityListener really did shit");
     }
     
     /**
