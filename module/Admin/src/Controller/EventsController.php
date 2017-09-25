@@ -183,7 +183,8 @@ class EventsController extends AbstractActionController
         $inputFilter->setData($data);
         if (! $inputFilter->isValid()) {
             throw new \RuntimeException(
-                "bad input parameters: ".json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
+                "bad input parameters: "
+                    .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
             );
         }
         $r=$this->getResponse();exit(get_class($r));
