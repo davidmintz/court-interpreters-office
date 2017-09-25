@@ -1,4 +1,5 @@
 <?php
+/**  module/InterpretersOffice/src/Entity/Listener/Factory/EventEntityListenerFactory.php */
 
 namespace InterpretersOffice\Entity\Listener\Factory;
 
@@ -6,9 +7,14 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
 
+/**
+ * factory class for the Event entity listener
+ */
 class EventEntityListenerFactory implements FactoryInterface
 {
     /**
+     * implements FactoryInterface
+     * 
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options
@@ -16,8 +22,7 @@ class EventEntityListenerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $auth = $container->get('auth');
-        $log  = $container->get('log'); // maybe get rid of this at some point
+        
         $listener = new EventEntityListener();
         $listener->setLogger($container->get('log'));
         /** @todo see what happens if we make this a constructor dependency */
