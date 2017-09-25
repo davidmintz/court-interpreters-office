@@ -18,8 +18,10 @@ current user role: <?php echo $this->identity() ? $this->identity()->role : 'ano
 <h3 class="text-center">To do</h3>
 <ul class="list-group center-block" style="max-width:500px">    
     <li class="list-group-item">Event fieldset: more fields</li>
-    <li class="list-group-item">Interpreter form: use Element\Collection for languages, update Interpreter entity as needed</li>
-    <li class="list-group-item">Interpreter form: use partial or data-template for dynamically adding languages, eliminate complicated JS</li>
+    <li class="list-group-item">SELECT elements switch to Zend\Element\Select with doctrine repo & DQL</li>
+    <li class="list-group-item">SELECT elements write a SelectHackTrait to fix HTML5 conformance/emptly label thing</li>
+    <li class="list-group-item">Interpreter form: use Element\Collection with custom helper, integrate with JS</li>
+    <li class="list-group-item">Interpreter form: custom helper to simplify Elemenent\Collection rendering </li>
     <li class="list-group-item">entity listeners for Event persist: set metadata</li>
     <li class="list-group-item">entity listeners for InterpreterEvent persist: set metadata</li>
     <li class="list-group-item">our own pagination adapter for DQL queries w/o entities</li>
