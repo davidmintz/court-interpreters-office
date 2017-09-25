@@ -31,12 +31,7 @@ class InterpreterElementCollection extends AbstractHelper
     {
         return $this->render($collection);
     }
-    
-    public function wrap($markup)
-    {
-        return '<ul id="interpreters-assigned" class="list-group interpreters-assigned">'. $markup ."</ul>";
-    }
-    
+
     /**
      * renders markup
      * 
@@ -59,7 +54,7 @@ class InterpreterElementCollection extends AbstractHelper
             $markup .= sprintf($this->template,$i,$interpreter->getId(),$name);
             $i++;
         }
-        return $this->wrap($markup);
+        return $markup;
     }
     
     /**
@@ -84,7 +79,7 @@ class InterpreterElementCollection extends AbstractHelper
             $data['name'] = '__NAME__';
         }
         $markup = sprintf($this->template,$data['index'],$data['id'],$data['name']);
-        return $this->wrap($markup);
+        return $markup;
     }
     
     /**
