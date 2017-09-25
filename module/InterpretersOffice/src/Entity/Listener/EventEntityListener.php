@@ -24,8 +24,6 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
 	use Log\LoggerAwareTrait;
 	use EventManagerAwareTrait;
     
-    
-    
     /**
      *
      * @var AuthenticationServiceInterface
@@ -43,6 +41,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         $this->auth = $auth;
         return $this;
     }
+    
     /**
      * preUpdate callback
      *
@@ -56,6 +55,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
     {
         
     }
+    
 	/**
      * postLoad callback
      *
@@ -104,7 +104,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         $id = $this->auth->getIdentity()->id;        
         $query = $em->createQuery($dql)
                 ->setParameters(['id'=>$id])
-                ->useResultCache(false);
+                ->useResultCache(true);
         $user = $query->getOneOrNullResult();
         
         return $user;        
