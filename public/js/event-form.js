@@ -25,8 +25,8 @@ $(document).ready(function()
     }
     $('input.docket').on("change",formatDocketElement);
 
-    parentLocationElement = $('#parent_location');
-    locationElement = $('#location');
+    var parentLocationElement = $('#parent_location');
+    var locationElement = $('#location');
     
     parentLocationElement.on("change",function(){       
         if (! parentLocationElement.val()) {
@@ -37,7 +37,7 @@ $(document).ready(function()
             $.getJSON('/locations/get-children',
                 {parent_id:parentLocationElement.val()},
                 function(data){
-                    options = data.map(function(item){
+                    var options = data.map(function(item){
                         return $('<option>').val(item.value)
                                 .text(item.label)
                                 .data({type: item.type});
@@ -54,6 +54,24 @@ $(document).ready(function()
     } else {
         parentLocationElement.trigger("change");
     }
+    /** this applies to admin form, not "request" form **/
+    var languageElement = $('#language');
+    var interpreterSelectElement = $("#interpreter-select");
+    languageElement.on('change',function(){
+        var language_id =  languageElement.val();
+        if (! language_id) {
+            $('#interpreters-assigned').remove();
+            return;
+        }
+        $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
+        {}, function(data){
+            var options = data.map(function(item){
+                  return $('<option>').val(item.value).text(item.label);
+             });
+            interpreterSelectElement.children().not(":first").remove();
+            interpreterSelectElement.append(options).trigger("sdny.update-complete"); 
+        });        
+    });
 });
 formatTimeElement = function(timeElement) {
     
