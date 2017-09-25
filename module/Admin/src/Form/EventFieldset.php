@@ -171,7 +171,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         ]);
         
         // figure out value options for interpreter select
-        $empty_option =  ['value' => "shit","label"=>"shit"];
+        $empty_option =  ['value' => "","label"=>" "];
         if ($options['object']) {
             $entity = $options['object'];
             $language_id = $entity->getLanguage()->getId();
@@ -187,6 +187,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'options' => [
                 'label' => 'interpreter(s)',
                 'value_options' => $value_options,
+                'exclude' => true,
             ],
             'attributes' => [
                 'class' => 'form-control', 
@@ -413,6 +414,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                         ],
                     ],
                 ],
+            ],
+            'interpreter-select' => [
+                'required' => false,
+                'allow_empty' => true,
             ]
         ];
     }
