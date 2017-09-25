@@ -57,19 +57,42 @@ $(document).ready(function()
     /** this applies to admin form, not "request" form **/
     var languageElement = $('#language');
     var interpreterSelectElement = $("#interpreter-select");
-    languageElement.on('change',function(){
+    
+    // (re)populate the interpreter select element according to the language
+    languageElement.on('change',function(event,params){
+        
         var language_id =  languageElement.val();
-        if (! language_id) {
-            $('#interpreters-assigned').remove();
-            return;
-        }
+        if (params && params.remove_existing !== false) {
+            $('#interpreters-assigned li').remove();
+        }        
         $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
-        {}, function(data){
+            {}, function(data){
             var options = data.map(function(item){
                   return $('<option>').val(item.value).text(item.label);
              });
             interpreterSelectElement.children().not(":first").remove();
-            interpreterSelectElement.append(options).trigger("sdny.update-complete"); 
+            interpreterSelectElement.append(options)
+                    .trigger("sdny.update-complete"); 
+        })        
+    }).trigger("change",{remove_existing:false});
+    
+    // add an interpreter to this event
+    interpreterSelectElement.on('change',function(){
+        var id = interpreterSelectElement.val();
+        if (! id ) { return; }
+        var selector = '#interpreters-assigned li > input[value="'+id+'"]';
+        if ($(selector).length) { 
+            // duplicate. maybe do something to let them know?
+            return interpreterSelectElement.val("");
+        }
+        var name = interpreterSelectElement.children(":selected").text();
+        var index = $('#interpreters-assigned li').length;
+        $.post('/admin/schedule/interpreter-template',
+            {id:id, index:index, name:name},
+            function(html){
+                interpreterSelectElement.val("");
+                $('#interpreters-assigned').append(html);
+                
         });        
     });
 });
