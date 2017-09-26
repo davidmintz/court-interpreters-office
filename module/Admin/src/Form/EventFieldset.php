@@ -214,27 +214,19 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function addEventTypeElement()            
     {
-        $this->add([
-            'type'=>'DoctrineModule\Form\Element\ObjectSelect',
+        $repo = $this->objectManager->getRepository(Entity\EventType::class);
+        $value_options = $repo-> getEventTypeOptions();
+        $this->add(
+        [
+            'type'=>'Zend\Form\Element\Select',
             'name' => 'eventType',
             'options' => [
-                'object_manager' => $this->getObjectManager(),
-                'target_class' => 'InterpretersOffice\Entity\EventType',
-                'property' => 'name',
                 'label' => 'event type',
-                //'optgroup_identifier' => 'optionGroup',
-                'display_empty_item' => true,
-                'empty_item_label' => '-- select event-type --',               
-                'option_attributes' => [            
-                    'data-event_category' => 
-                     function (Entity\EventType $entity) {
-                        //return "shit";
-                        return (string)$entity->getCategory();
-                     },
-                ]
-            ],         
+                'value_options' => $value_options,
+            ],
             'attributes' => ['class' => 'form-control', 'id' => 'event-type'],
-        ]);
+        ]
+        );
         
         return $this;
     }
@@ -282,7 +274,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
            $location = $event->getLocation();
            if ($location->getParentLocation()) {
                 $parent_id =  $location->getParentLocation()->getId();
-                //$parent_id = 1;
+                
                 $this->add([
                     'type'=>'DoctrineModule\Form\Element\ObjectSelect',
                     'name' => 'location',
