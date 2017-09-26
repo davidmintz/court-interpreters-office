@@ -122,7 +122,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         }
         if (isset($options['include_pseudo_judges']) 
                 && $options['include_pseudo_judges']) {
-            $data = array_mrege($data,$this->getPseudoJudgeOptions());
+            $data = array_merge($data,$this->getPseudoJudgeOptions());
             usort($data,function($a,$b){
                 return strnatcasecmp($a['label'], $b['label']);
             });
