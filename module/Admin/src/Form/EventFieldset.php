@@ -107,7 +107,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     {
         if (! isset($options['action'])) {
             throw new \RuntimeException(
-                    'missing "action" option in EventFieldset constructor');
+                'missing "action" option in EventFieldset constructor');
         }
         if (! in_array($options['action'], ['create', 'update','repeat'])) {
             throw new \RuntimeException('invalid "action" option in '
@@ -198,6 +198,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         // still to do: comments, admin comments, 
         // request meta (from whom and when)
         // defendants, interpreters, end time
+        
+        // also sanity-check if there's an entity and one of its props is 
+        // NOT in a select (e.g., a Judge marked inactive)
     }
     
     
@@ -302,8 +305,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 $this->getElement('parent_location')->setValue($location->getId());
             }
         }
-        return $this; 
         
+        return $this;         
     }
     
     /**
