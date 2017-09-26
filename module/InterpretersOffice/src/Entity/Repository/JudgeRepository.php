@@ -102,24 +102,63 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      */
     public function getJudgeOptions($options = [])
     {
-        $dql = 'SELECT j.id, j.lastname, j.firstname, j.middlename, '
-                . 'h.name AS flavor '
-                . ' FROM InterpretersOffice\Entity\Judge j JOIN j.hat h '
+        $dql = 'SELECT j.id, j.lastname, j.firstname, j.middlename, f.flavor '
+                . ' FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f '
                 . ' WHERE j.active = true ORDER BY j.lastname, j.firstname';
         $judges = $this->createQuery($dql, $this->cache_namespace)->getResult();
+        $data = [];
+        foreach ($judges as $judge) {
+            $value = $judge['id'];
+            $label = "$judge[lastname], $judge[firstname]";
+            if ($judge['middlename']) {
+                if (strlen($judge['middlename']) == 2) {
+                    $label .= " $judge[middlename]";
+                } else { // abbreviate it
+                    $label .= " {$judge['middlename'][0]}.";
+                }
+            }
+            $label .= ", $judge[flavor]";
+            $data[] = compact('label','value');
+        }
         if (isset($options['include_pseudo_judges']) 
                 && $options['include_pseudo_judges']) {
-            $anon_judge_dql = 'SELECT j.name, l.name as location, '
+            $data = array_mrege($data,$this->getPseudoJudgeOptions());
+            usort($data,function($a,$b){
+                return strnatcasecmp($a['label'], $b['label']);
+            });
+            return $data;
+        }        
+    }
+    
+    /**
+     * helper to get anonymous (a/k/a pseudo-) judges for populating a select
+     * 
+     * @return array
+     */
+    protected function getPseudoJudgeOptions()
+    {
+        $data = [];
+        $pseudojudge_dql = 'SELECT j.id, j.name, l.name as location, '
                     . 'p.name as parent_location '
                     . 'FROM InterpretersOffice\Entity\AnonymousJudge j '
                     . 'LEFT JOIN j.defaultLocation l '
                     . 'LEFT JOIN l.parentLocation p '
                     . 'ORDER BY j.name, location, parent_location';
-
-            $anonymous_judges = $this->createQuery(
-                $anon_judge_dql,
-                $this->cache_namespace)->getResult();
-        }
+        $pseudo_judges = $this->createQuery(
+            $pseudojudge_dql,
+            $this->cache_namespace)->getResult();
+        foreach ($pseudo_judges as $pseudojudge) {
+            $value = $pseudojudge['id'];
+            $label = $pseudojudge['name'];
+            if ($pseudojudge['location']) {
+                $label .= " - $pseudojudge[location]";
+            }
+            if ($pseudojudge['parent_location']) {
+                $label .= ", $pseudojudge[parent_location]";
+            }
+            $attributes = ['data-pseudojudge' => true];
+            $data[] = compact('label','value','attributes');                
+        }       
+        return $data;
     }
-    
 }
