@@ -171,7 +171,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         ]);
         
         // figure out value options for interpreter select
-        $empty_option =  ['value' => "","label"=>" "];
+        $empty_option =  ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
         if ($options['object']) {
             $entity = $options['object'];
             $language_id = $entity->getLanguage()->getId();
@@ -215,7 +215,12 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     public function addEventTypeElement()            
     {
         $repo = $this->objectManager->getRepository(Entity\EventType::class);
-        $value_options = $repo-> getEventTypeOptions();
+        $value_options = array_merge(
+                [
+                  ['label'=> ' ','value' =>'','attributes'=>['label'=> ' ']]  
+                ],
+                $repo-> getEventTypeOptions()
+         );
         $this->add(
         [
             'type'=>'Zend\Form\Element\Select',
@@ -313,7 +318,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         ]);
         $repository = $this->objectManager->getRepository(Entity\Judge::class);
         $element->setValueOptions(
-                $repository->getJudgeOptions(['include_pseudo_judges'=>true])
+                array_merge([ 
+                    ['value' => '','label'=>' ','attributes'=>['label'=>' ']]
+                ],
+                $repository->getJudgeOptions(['include_pseudo_judges'=>true]))
              )
             ->setAttributes(['class' => 'form-control', 'id'=> 'judge',]);
         $this->add($element);
