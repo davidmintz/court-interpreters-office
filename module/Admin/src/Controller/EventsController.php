@@ -53,9 +53,7 @@ class EventsController extends AbstractActionController
      */
     public function indexAction()
     {
-        $data = $this->entityManager->getRepository(Entity\Judge::class)
-                ->getJudgeOptions();
-        var_dump($data);
+       
         return ['title' => 'schedule'];
     }
 
