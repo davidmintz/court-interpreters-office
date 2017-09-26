@@ -313,8 +313,20 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function addJudgeElement()
     {
+        
+        $element = new \Zend\Form\Element\Select('judge',[
+           
+                'label' => 'judge',                
+               // 'attributes' => [ 'class' => 'form-control', 'id'    => 'judge',  ]
+        ]);
+        $element->setValueOptions([
+            ['label'=>"one",'value'=>1]
+        ])
+            ->setAttributes([ 'class' => 'form-control', 'id'    => 'judge',  ]);
+        $this->add($element);
+        return $this;
         /** @todo get rid of this and use a regular Zend\Form\Element\Select */
-        $element = new ObjectSelect('judge',
+        /*$element = new ObjectSelect('judge',
             [
                 'object_manager' => $this->objectManager,
                 'target_class' => Entity\Judge::class,
@@ -344,18 +356,18 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
        // $element->getValueOptions() : array of arrays containing keys: 
        // label, value, attributes => array
        // we need to jam the generic Magistrate etc in there and sort
-       ///*
+       ///
        $anonymous = $this->getObjectManager()->getRepository(Judge::class)
                ->getAnonymousJudges();
        
        foreach($anonymous as $entity) {
-           $label = $entity->__toString(); /** @todo solve wasted query*/
+           $label = $entity->__toString(); // @todo solve wasted query
            $value = $entity->getId();
            $attributes = ['data-pseudojudge'=>true];
            $valueOptions[] = compact('label','value','attributes');
-       }//*/
+       }///
        $element->setValueOptions($valueOptions);
-       $this->add($element);
+       $this->add($element);*/
        return $this;
     }
 

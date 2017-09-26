@@ -95,4 +95,31 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         $this->cache->setNamespace($this->cache_namespace);
         return $this->cache->deleteAll();
     }
+    /**
+     * get data for populating Judge select menu
+     * @param array $options
+     * @return array
+     */
+    public function getJudgeOptions($options = [])
+    {
+        $dql = 'SELECT j.id, j.lastname, j.firstname, j.middlename, '
+                . 'h.name AS flavor '
+                . ' FROM InterpretersOffice\Entity\Judge j JOIN j.hat h '
+                . ' WHERE j.active = true ORDER BY j.lastname, j.firstname';
+        $judges = $this->createQuery($dql, $this->cache_namespace)->getResult();
+        if (isset($options['include_pseudo_judges']) 
+                && $options['include_pseudo_judges']) {
+            $anon_judge_dql = 'SELECT j.name, l.name as location, '
+                    . 'p.name as parent_location '
+                    . 'FROM InterpretersOffice\Entity\AnonymousJudge j '
+                    . 'LEFT JOIN j.defaultLocation l '
+                    . 'LEFT JOIN l.parentLocation p '
+                    . 'ORDER BY j.name, location, parent_location';
+
+            $anonymous_judges = $this->createQuery(
+                $anon_judge_dql,
+                $this->cache_namespace)->getResult();
+        }
+    }
+    
 }
