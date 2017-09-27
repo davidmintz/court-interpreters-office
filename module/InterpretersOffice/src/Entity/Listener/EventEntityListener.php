@@ -86,12 +86,13 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
     /**
      * prePersist callback
      * 
+     * sets Event metadata, e.g., who created the Event and when
+     * 
      * @param \InterpretersOffice\Entity\Event $eventEntity
      * @param LifecycleEventArgs $event
      */
     public function prePersist(Entity\Event $eventEntity, LifecycleEventArgs $event)
     {        
-        // set the CreatedBy user
         
         if (! $eventEntity->getCreatedBy()) {
             // because in test environment, this might already have been done
