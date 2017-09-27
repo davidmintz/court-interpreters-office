@@ -92,15 +92,19 @@ TEMPLATE;
                             -1 => 'N/A',  
                             1 => 'yes',
                             0 => 'no',
-                        ],
-               
-                        ],
-                        'attributes' => [
-                            'class' => 'form-control'
-                        ]
-                    
+                        ],               
+                     ],
+                    'attributes' => [
+                        'class' => 'form-control'
+                    ]                    
                 ]);
-        return "OK";
+        if (! $language->isFederallyCertified()) {
+            $certification_element->setAttribute('disabled','disabled');
+        }
+        $certification_markup = $this->view->formElement($certification_element);
+        return sprintf($this->template, $language_id,
+                $language_markup, $language_id,
+                $certification_markup);
     }
 
 }
