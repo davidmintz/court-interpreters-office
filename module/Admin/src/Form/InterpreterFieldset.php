@@ -64,10 +64,10 @@ class InterpreterFieldset extends PersonFieldset
             'name' => 'interpreterLanguages',
             'options' => [
                 'label' => 'working languages',
-               // 'count' => 2,
-                'should_create_template' => false,
-                'allow_add' => true,
-                'allow_remove' => true,
+                // 'count' => 2,
+                // 'should_create_template' => false,
+                //'allow_add' => true,
+                //'allow_remove' => true,
                 'target_element' => new InterpreterLanguageFieldset($objectManager),
             ],
         ]);
@@ -96,22 +96,7 @@ class InterpreterFieldset extends PersonFieldset
                 ]
             )
         );
-        /* // this is out
-        $this->add([
-            'type' => 'Select',
-            'name' => 'interpreter-languages',
-
-            'attributes' => [
-                'multiple' => 'multiple',
-                'class' => 'hidden',
-            ],
-            'options' => [
-                'value_options' => [],
-                'disable_inarray_validator' => true,
-                'use_hidden_element' => true,
-            ],
-        ]);         
-         */
+        
         // fingerprint date
         $this->add(
         [
