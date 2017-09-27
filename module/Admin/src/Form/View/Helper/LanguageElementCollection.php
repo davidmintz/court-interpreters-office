@@ -8,11 +8,22 @@ class LanguageElementCollection extends AbstractHelper
 
 	
 	protected $template = <<<TEMPLATE
+<div class="col-sm-offset-1 col-sm-3  interpreter-language language-name" id="language-%d">
+%s
+</div>
+<div class="col-sm-5 form-inline interpreter-language language-certification">
+    <label for="fed-certification-%d">fed-certified:</label>
+          %s
+   <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <span class="sr-only">remove language</span></button>
+    <div class="alert alert-warning validation-error" style="display:none"></div>                
+</div>
 
-		shit
 
 TEMPLATE;
-
+/* <?php if ($certification_element->getAttribute('disabled')) : // supply a value, to avoid undefined index error  ?>
+        <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i ?>][federalCertification]" value="-1">
+*/
 	public function __invoke()
 	{
 		return $this->render();
@@ -20,8 +31,77 @@ TEMPLATE;
 
 	public function render()
 	{
-		return "shit";
+		$form = $this->getView()->form;
+        $element_collection = $form->get('interpreter')
+                ->get('interpreterLanguages');
+        $html = '';
+        foreach ($element_collection as $index => $fieldset) {
+           
+            $hidden_element = $fieldset->get('language');
+            $language =  $hidden_element->getValue();
+            if (is_object($language)) {
+                // we were hydrated from an entity               
+                $language_id = $language->getId();
+                $hidden_element->setValue($language_id);
+            } else {
+                // we were hydrated from $_POST
+                $language = $form->getObject()->getInterpreterLanguages()
+                        ->get($index)
+                        ->getLanguage();
+                $language_id = $hidden_element->getValue();                
+            }
+            $label = $this->view->escapeHtml($language->getName());
+            $language_markup = $this->view->formElement($hidden_element);
+            $language_markup .= $label;            
+            $certification = $fieldset->get('federalCertification');
+            $certification->setAttribute('id',"fed-certification-$language_id");            
+            if (null === $certification->getValue()) {           
+               $certification->setAttribute("disabled","disabled");
+               $certification_markup = $this->view->formElement($certification);               
+               $certification_markup .= sprintf(
+                  '<input type="hidden" name="interpreter[interpreterLanguages]'
+                       . '[%d][federalCertification]" value="-1">',
+                   $index);
+            } else {
+                $certification_markup = $this->view->formElement($certification);
+            }
+            $html .= sprintf($this->template, $language_id,
+                $language_markup, $language_id,
+                $certification_markup);
+        }
+        return $html;
 	}
 
+    public function fromArray(Array $params)
+    {
+        $language = $params['language'];
+        $index = $params['index'];
+        $label = $this->view->escapeHtml($language->getName());
+        $language_id = $language->getId();
+        $language_markup = sprintf(
+                  '<input type="hidden" name="interpreter[interpreterLanguages]'
+                       . '[%d][language]" value="%d">',
+                   $index,$language_id);
+        $language_markup .= $label;
+        $certification_element = new \Zend\Form\Element(
+                "interpreter[interpreterLanguages][$index][federalCertification]",
+                [
+                    'type' => 'Select',
+                    'options'=> [
+                        'value_options' => [
+                            -1 => 'N/A',  
+                            1 => 'yes',
+                            0 => 'no',
+                        ],
+               
+                        ],
+                        'attributes' => [
+                            'class' => 'form-control'
+                        ]
+                    
+                ]);
+        return "OK";
+    }
 
 }
+

@@ -128,7 +128,7 @@ class InterpretersWriteController extends AbstractActionController
                 // whether the encrypted fields should be obscured (again) 
                 // or not depends on whether they changed them                
                 $viewModel->obscure_values = 
-                  ! $this->getEncryptedFieldsWereModified($values_before,$input);                               
+                  ! $this->getEncryptedFieldsWereModified($values_before,$input);                
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -141,7 +141,7 @@ class InterpretersWriteController extends AbstractActionController
         } else {    // not a POST
             if ($this->vault_enabled) {
                 $viewModel->obscure_values = true;
-            }
+            }           
         }
 
         return $viewModel;
@@ -207,12 +207,20 @@ class InterpretersWriteController extends AbstractActionController
     {
         $id = $this->params()->fromQuery('id');
         $index = $this->params()->fromQuery('index',0);
-        if ($id) {
-            $language = $this->entityManager->find(Entity\Language::class,$id);
+        $language = $this->entityManager->find(Entity\Language::class,$id);
+        if (! $language) {
+            return $this->getResponse()->setContent("<br>WTF?");
         }
-        //$this->getResponse()->getHeaders()->addHeaderLine('content-type','text/plain');
-        return (new ViewModel(['language'=>$language,'index'=>$index]))
-                ->setTemplate('partials/interpreters/language.phtml')
-                ->setTerminal(true);
+        $helper = new \InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection();
+        try { 
+            $thing = new \Zend\View\Renderer\PhpRenderer();
+            $helper->setView($thing); 
+            $content = $helper->fromArray(compact('language','index'));
+        }   catch (\Exception $e) {
+            $content = $e->getMessage();
+        }
+        //$content = $helper->fromArray(compact('language','index'));
+        return $this->getResponse()->setContent($content);
+        
     }
 }

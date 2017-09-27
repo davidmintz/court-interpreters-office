@@ -72,9 +72,9 @@ echo $this->form()->openTag($form);?>
             $interpreterLanguages = $form->getObject()->getInterpreterLanguages();
 
             if ($interpreterLanguages->count()) : 
-                $helper = (new \InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection())->setView($this);
-                echo $helper($collection);
-                //echo $this->partial('partials/interpreters/language.phtml',compact('collection','interpreterLanguages'));
+               $helper = (new \InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection())->setView($this);
+               echo $helper($collection);
+               //echo $this->partial('partials/interpreters/language.phtml',compact('collection','interpreterLanguages'));
             endif;?>
             
 
@@ -273,6 +273,7 @@ $(function(){
             index = 0;
         }
         url = /*window.basePath +*/ "/admin/interpreters/language-fieldset";
+        //return alert(index);
         $.get(url,{index : index, id : language_id },function(data){
             $('#languages').append(data);
         });
@@ -289,8 +290,9 @@ $(function(){
     $('#login-modal').on("show.bs.modal",function(){
          $('#identity, #password').val("");        
     });
+   
     /** validate each tab pane before moving on **/
-    $('a[data-toggle="tab"]').on('click', function (e) {
+    $('a[data-toggle="tab"]').on('click', function (event) {
         
         var id = '#'+$('div.active').attr('id'); 
 
@@ -300,13 +302,29 @@ $(function(){
         $.post(/*window.basePath + */  '/admin/interpreters/validate-partial?action='+action,
             data,
             function(response){
+                
                 if (response.validation_errors) {
-                    console.log(response.validation_errors);
-                    if (id.indexOf('language')!== -1) {
-                        // errors are nested too deep for our displayValidationErrors()
+                    if (response.validation_errors.interpreterLanguages) {                        
+                        $.each(response.validation_errors.interpreterLanguages,
+                            function(i,obj){                                
+                                for (var prop in obj) {
+                                    for (var shit in obj[prop]) {
+                                        var error = obj[prop][shit];
+                                        var div = $('#languages .language-certification')
+                                                .eq(i).children(".validation-error");
+                                        div.text(error).show();
+                                        break;
+                                    }
+                                }
+                            });
+                    } else {
+                        console.warn("shit has nada to do with languages?");
+                        displayValidationErrors(response.validation_errors);
                     }
-                    return displayValidationErrors(response.validation_errors.interpreter);
+                    
+                    
                 } else {
+                   
                     $(id + " .validation-error").hide();
                     $(that).tab("show");
                 }                        
