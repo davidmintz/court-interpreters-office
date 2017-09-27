@@ -119,7 +119,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                             },
                             'messages' => [
                                 \Zend\Validator\Callback::INVALID_VALUE
-                                => 'yes or no is required exclusively for certified languages',
+                                => 'yes or no is required for certified languages',
                             ],
                         ],
                     ],
