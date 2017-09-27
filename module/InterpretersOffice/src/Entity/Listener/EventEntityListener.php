@@ -92,17 +92,23 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
     public function prePersist(Entity\Event $eventEntity, LifecycleEventArgs $event)
     {        
         // set the CreatedBy user
+        
         if (! $eventEntity->getCreatedBy()) {
-            // because in test environment might already have been done
+            // because in test environment, this might already have been done
             $user = $this->getAuthenticatedUser($event->getEntityManager());
             $eventEntity->setCreatedBy($user);
+        } else {
+            // so we don't blow up in the test environment
+            $user = $eventEntity->getCreatedBy(); 
         }
         $now = new \DateTime();
         $eventEntity->setCreated($this->now)
                 ->setModifiedBy(null)
                 ->setModified(null);
         foreach ($eventEntity->getInterpretersAssigned() as $interpreterEvent) {
-            $interpreterEvent->setCreatedBy($user)->setCreated($now);
+            $interpreterEvent
+                    ->setCreatedBy($user)
+                    ->setCreated($now);
         }
         $this->logger->debug(__FUNCTION__ . " in EventEntityListener really did shit");
     }
