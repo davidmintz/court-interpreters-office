@@ -28,7 +28,7 @@ $form->add([
    ->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal');
 ?>
-<div class="center-block row" style="max-width:800px"><!-- wrapper -->
+<div class="center-block" style="max-width:800px"><!-- wrapper -->
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 $form->prepare();
@@ -186,7 +186,6 @@ echo $this->form()->openTag($form);?>
 /** 
  * attach event listeners
  * 
- * @todo rewrite to work with new markup 
  * @todo refactor to make less long and monolithic
  */
 //*/
@@ -246,12 +245,7 @@ $(function(){
         });        */
     }
     /**
-     * add a working language. note that if the markup in the form
-     * changes, this likewise has to be changed
-     * 
-     * @todo get rid of this in favor of an xhr call to a controller 
-     * action that renders the same partial viewscript that will replace
-     * the nasty mess above, in the "languages" pane
+     * add a working language. 
      */
     $('#btn-add-language').on('click',function(event){
         
@@ -273,7 +267,6 @@ $(function(){
             index = 0;
         }
         url = /*window.basePath +*/ "/admin/interpreters/language-fieldset";
-        //return alert(index);
         $.get(url,{index : index, id : language_id },function(data){
             $('#languages').append(data);
         });
@@ -304,7 +297,11 @@ $(function(){
             function(response){
                 
                 if (response.validation_errors) {
-                    if (response.validation_errors.interpreterLanguages) {                        
+                    if (response.validation_errors.interpreterLanguages) {
+                    // note to self: either learn how to drill down into Javascript
+                    // objects whose property names are unknown, or else make the
+                    // server-side action flatten this shit out for us, because this
+                    // is ugly.
                         $.each(response.validation_errors.interpreterLanguages,
                             function(i,obj){                                
                                 for (var prop in obj) {
@@ -320,11 +317,9 @@ $(function(){
                     } else {
                         console.warn("shit has nada to do with languages?");
                         displayValidationErrors(response.validation_errors);
-                    }
+                    }                    
                     
-                    
-                } else {
-                   
+                } else {                   
                     $(id + " .validation-error").hide();
                     $(that).tab("show");
                 }                        
