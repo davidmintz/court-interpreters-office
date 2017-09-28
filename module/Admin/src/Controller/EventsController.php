@@ -102,18 +102,17 @@ class EventsController extends AbstractActionController
                 $anonymousSubmitter = $this->entityManager->find(
                     Entity\Hat::class, 4
                 );
+                /*
                 $user =  $this->entityManager->find(
                             Entity\User::class, 8
                         );
+                 */
                 //exit(get_class($user));
                 $event->setAnonymousSubmitter($anonymousSubmitter);
-                // fake-add an interpreter
-                $event->assignInterpreter(
-                      $this->entityManager->find(Entity\Interpreter::class,117)
-                );
-                //$event->getInterpretersAssigned()->current()->setCreatedBy($user);
+                
+
                 //\Doctrine\Common\Util\Debug::dump($event);
-                //echo get_class($event->getInterpretersAssigned());
+
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
                 echo "YAY!!!!!!";
