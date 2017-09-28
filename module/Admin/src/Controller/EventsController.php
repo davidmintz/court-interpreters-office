@@ -178,7 +178,7 @@ class EventsController extends AbstractActionController
         $helper = new Form\View\Helper\InterpreterElementCollection();
         $factory = new \Zend\InputFilter\Factory();
         $inputFilter = $factory->createInputFilter(                
-               $helper->getInputFilterSpecification()
+            $helper->getInputFilterSpecification()
         );
         $data = $this->params()->fromPost();
         $inputFilter->setData($data);
@@ -188,7 +188,7 @@ class EventsController extends AbstractActionController
                     .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
             );
         }        
-        $html = $helper->renderFromArray($data);
+        $html = $helper->fromArray($data);
         return $this->getResponse()->setContent($html);
     }
     
