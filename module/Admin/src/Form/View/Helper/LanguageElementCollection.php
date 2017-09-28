@@ -39,10 +39,17 @@ TEMPLATE;
            
             $hidden_element = $fieldset->get('language');
             $language =  $hidden_element->getValue();
+            $certification = $fieldset->get('federalCertification');
             if (is_object($language)) {
                 // we were hydrated from an entity               
                 $language_id = $language->getId();
                 $hidden_element->setValue($language_id);
+                if ($language->isFederallyCertified()) {
+                	// convert from boolean to keep test from breaking
+                	$value = $certification->getValue()	;
+                	$certification->setValue($value === true ? "1" : "0");
+                }
+                
             } else {
                 // we were hydrated from $_POST
                 $language = $form->getObject()->getInterpreterLanguages()
@@ -53,10 +60,9 @@ TEMPLATE;
             $label = $this->view->escapeHtml($language->getName());
             $language_markup = $this->view->formElement($hidden_element);
             $language_markup .= $label;            
-            $certification = $fieldset->get('federalCertification');
             $certification->setAttribute('id',"fed-certification-$language_id");            
-            if (null === $certification->getValue()) {           
-               $certification->setAttribute("disabled","disabled");
+            if (null === $certification->getValue()) {  
+               $certification->setValue('-1')->setAttribute ("disabled","disabled");
                $certification_markup = $this->view->formElement($certification);               
                $certification_markup .= sprintf(
                   '<input type="hidden" name="interpreter[interpreterLanguages]'
@@ -83,25 +89,22 @@ TEMPLATE;
                        . '[%d][language]" value="%d">',
                    $index,$language_id);
         $language_markup .= $label;
-        $certification_element = new \Zend\Form\Element(
+        $certification_element = new \Zend\Form\Element\Select(
                 "interpreter[interpreterLanguages][$index][federalCertification]",
-                [
-                    'type' => 'Select',
-                    'options'=> [
-                        'value_options' => [
+                ['value_options' => [
                             -1 => 'N/A',  
                             1 => 'yes',
                             0 => 'no',
                         ],               
-                     ],
                     'attributes' => [
                         'class' => 'form-control'
                     ]                    
                 ]);
+        $certification_element->setAttributes(['class'=>'form-control']);
         if (! $language->isFederallyCertified()) {
             $certification_element->setAttribute('disabled','disabled');
         }
-        $certification_markup = $this->view->formElement($certification_element);
+        $certification_markup = $this->view->formSelect($certification_element);
         return sprintf($this->template, $language_id,
                 $language_markup, $language_id,
                 $certification_markup);

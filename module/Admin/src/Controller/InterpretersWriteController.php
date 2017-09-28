@@ -212,15 +212,12 @@ class InterpretersWriteController extends AbstractActionController
             return $this->getResponse()->setContent("<br>WTF?");
         }
         $helper = new \InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection();
-        try { 
-            $thing = new \Zend\View\Renderer\PhpRenderer();
-            $helper->setView($thing); 
-            $content = $helper->fromArray(compact('language','index'));
-        }   catch (\Exception $e) {
-            $content = $e->getMessage();
-        }
-        //$content = $helper->fromArray(compact('language','index'));
-        return $this->getResponse()->setContent($content);
-        
+        $container = $this->getEvent()
+            ->getApplication()->getServiceManager();
+        $renderer = $container->get('ViewRenderer');
+        $helper->setView($renderer);
+        $content = $helper->fromArray(compact('language','index'));
+
+        return $this->getResponse()->setContent($content);        
     }
 }
