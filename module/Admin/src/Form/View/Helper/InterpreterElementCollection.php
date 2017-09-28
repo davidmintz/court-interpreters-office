@@ -45,19 +45,17 @@ TEMPLATE;
      */
     public function render(Collection $collection)
     {
-        $n = $collection->count();
-        if (! $n) { return ''; }
+        
+        if (! $collection->count()) { return ''; }
         // to do: deal with possible undefined $form
         $form = $this->getView()->form;
         $entity = $form->getObject();
         $interpretersAssigned = $entity->getInterpretersAssigned();
-        $i = 0;
         $markup = '';
-        foreach ($interpretersAssigned as $interpEvent) {
+        foreach ($interpretersAssigned as $i => $interpEvent) {
             $interpreter = $interpEvent->getInterpreter();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
-            $markup .= sprintf($this->template,$i,$interpreter->getId(),$name);
-            $i++;
+            $markup .= sprintf($this->template,$i,$interpreter->getId(),$name);          
         }
         return $markup;
     }
