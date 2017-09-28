@@ -15,11 +15,18 @@ class InterpreterElementCollection extends AbstractHelper
      * 
      * @var string
      */
-    protected $template = 
-        '<li class="list-group-item">'
-        . '<input name="event[interpretersAssigned][%d][interpreter]" '
-        . 'type="hidden" value="%d">'
-        . '%s<div class="remove-button pull-right" title="remove this interpreter">[x]</div></li>';
+    protected $template = <<<TEMPLATE
+        <li class="list-group-item">
+            <input name="event[interpretersAssigned][%d][interpreter]" type="hidden" value="%d">
+             %s
+            <div class="pull-right">
+            <button class="btn btn-danger btn-xs btn-remove-interpreter" title="remove this interpreter">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <span class="sr-only">remove this interpreter
+            </button></div>
+        </li>
+            
+TEMPLATE;
     
     /**
      * invoke
