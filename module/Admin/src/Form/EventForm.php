@@ -43,7 +43,7 @@ class EventForm extends ZendForm
         parent::__construct($this->formName, $options);
         $fieldset = new $this->fieldsetClass($objectManager, $options);
         $this->add($fieldset);
-      //  $this->addCsrfElement();
+        $this->addCsrfElement();
         
     }
 }
