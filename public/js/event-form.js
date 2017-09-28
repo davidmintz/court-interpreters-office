@@ -118,7 +118,7 @@ $(document).ready(function()
               function(){$(this).remove();}
         );        
     });
-    $("#event-form").on("submit",function(event){
+    $("#event-form").on("submit",function(e){
         // if there's no specific location selected, the general location,
         // if any, is it
         if (! locationElement.val()) {
@@ -132,6 +132,16 @@ $(document).ready(function()
                 );
             }
         }
+        // if the selected judge is anonymous, populate hidden anonymousJudge
+        // field and (figure out how to) suppress judge select value
+        judgeElement = $('#judge');
+        var judgeOption = judgeElement.children(":selected")
+        if (judgeOption.data("pseudojudge")) {
+            
+        }
+        console.log(judgeOption.data());
+        e.preventDefault();
+
     });
 });
 formatTimeElement = function(timeElement) {
