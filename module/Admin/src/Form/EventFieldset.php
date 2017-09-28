@@ -54,6 +54,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      * @var Array some of our element definitions
      */
     protected $elements = [
+        [
+            'name' => 'id',
+            'type' =>  'Zend\Form\Element\Hidden',
+        ],
 
         [
              'name' => 'date',
@@ -321,10 +325,19 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 array_merge([ 
                     ['value' => '','label'=>' ','attributes'=>['label'=>' ']]
                 ],
+                // this will become conditional on who the user is!
                 $repository->getJudgeOptions(['include_pseudo_judges'=>true]))
              )
             ->setAttributes(['class' => 'form-control', 'id'=> 'judge',]);
         $this->add($element);
+        
+        // this will also be contingent on who our user is
+        $this->add(
+                [
+                    'type' => 'Zend\Form\Element\Hidden',
+                    'name' => 'anonymousJudge',
+                ]
+        );
         
         return $this;        
     }
@@ -338,6 +351,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     {
         // to be continued!!
         return [
+            'id' => [
+                'required' => true,
+                 'allow_empty' => true,
+            ],
             'date' => [
                 'required' => true,
                 'allow_empty' => false,
@@ -353,6 +370,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 ],
             ],
             'time' => [
+                'required' => true,
+                'allow_empty' => true, // subject to conditions, to be continued
                 'validators'=> [
                     
                 ],
@@ -385,10 +404,44 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     ],
                 ],
             ],
+            'eventType' => [
+                'required' => true,
+                'allow_empty' => false,
+                'validators'=> [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'event-type is required',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            // gonna have to think this through
+            'judge' => [
+                'required' => true,
+                'allow_empty' => false,
+                'validators'=> [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'judge is required',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'anonymousJudge' => [
+                'required' => false,
+                'allow_empty' => true,
+                
+            ],
             'interpreter-select' => [
                 'required' => false,
                 'allow_empty' => true,
-            ]
+            ],
         ];
     }
 }
