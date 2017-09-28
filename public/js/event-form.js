@@ -44,7 +44,8 @@ $(document).ready(function()
                     });
                     // discard existing option elements
                     locationElement.children().not(":first").remove();
-                    locationElement.append(options).trigger("sdny.update-complete");                        
+                    locationElement.append(options)
+                            .trigger("sdny.location-update-complete");                        
             });
         }
     });
@@ -58,13 +59,24 @@ $(document).ready(function()
     var languageElement = $('#language');
     var interpreterSelectElement = $("#interpreter-select");
     
+    if (! languageElement.val()) {
+        interpreterSelectElement.attr("disabled","disabled");
+    }
+    
     // (re)populate the interpreter select element according to the language
     languageElement.on('change',function(event,params){
         
         var language_id =  languageElement.val();
-        if (params && params.remove_existing !== false) {
+        // remove the interpreters if the language changes, except
+        // when we're initially triggered on page load, which we 
+        // will know from the parameters
+        if (! params || params.remove_existing !== false) {            
             $('#interpreters-assigned li').remove();
-        }        
+        }
+        if (! language_id) {
+            interpreterSelectElement.attr("disabled","disabled");
+            return;
+        }
         $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
             {}, function(data){
             var options = data.map(function(item){
@@ -72,8 +84,11 @@ $(document).ready(function()
              });
             interpreterSelectElement.children().not(":first").remove();
             interpreterSelectElement.append(options)
-                    .trigger("sdny.update-complete"); 
-        })        
+                    .trigger("sdny.language-update-complete");
+            if (options.length) {
+                interpreterSelectElement.removeAttr("disabled");
+            }
+        });
     }).trigger("change",{remove_existing:false});
     
     // add an interpreter to this event
@@ -94,6 +109,29 @@ $(document).ready(function()
                 $('#interpreters-assigned').append(html);
                 
         });        
+    });
+    // interpreter "remove" buttons event handler
+    $('#interpreters-assigned').on("click",".btn-remove-interpreter",
+    function(event){
+        event.preventDefault();
+        $(this).closest(".interpreter-assigned").slideUp(
+              function(){$(this).remove();}
+        );        
+    });
+    $("#event-form").on("submit",function(event){
+        // if there's no specific location selected, the general location,
+        // if any, is it
+        if (! locationElement.val()) {
+            var location_id = parentLocationElement.val();
+            if (location_id) {
+                locationElement.after(
+                     $("<input>").attr({
+                        name : "event[location]",
+                        type : "hidden"
+                    }).val(location_id)
+                );
+            }
+        }
     });
 });
 formatTimeElement = function(timeElement) {
@@ -141,8 +179,7 @@ parseTime = function(event)
         } else if (ap.length === 1) {
             ap = ap + 'm';
         }
-    } else if (matches = time.match(/^([01][0-9]|2[1-3])([0-5][0-9])$/)) {
-        //console.log(" found 24 hr format");
+    } else if (matches = time.match(/^([01][0-9]|2[1-3])([0-5][0-9])$/)) {       
         hour = matches[1];
         ap = 'am';
         if (hour > 12) {
