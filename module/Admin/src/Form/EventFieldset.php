@@ -418,30 +418,66 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     ],
                 ],
             ],
-            // gonna have to think this through
+            // gonna have to re-think this through
+            //*
             'judge' => [
                 'required' => true,
                 'allow_empty' => false,
+                'disable_inarray_validator' => true,
                 'validators'=> [
                     [
-                        'name' => 'NotEmpty',
+                        'name' => 'Callback',
                         'options' => [
+                            'callback' => [$this,'validateJudge'],
                             'messages' => [
-                                'isEmpty' => 'judge is required',
+                                'callbackValue' => 'judge is required',
                             ],
                         ],
                     ],
                 ],
-            ],
+                'filters' => [
+                    [
+                        'name' => 'ToNull',
+                    ]
+                ],
+            ],//*/
+            /*
             'anonymousJudge' => [
-                'required' => false,
-                'allow_empty' => true,
                 
-            ],
+               'required' => false,
+               'allow_empty' => true,
+                'validators'=> [
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callback' => [$this,'validateAnonymousJudge'],
+                            'messages' => [
+                                'callbackValue' => 'some kinda judge is required',
+                            ],
+                        ],
+                    ],
+                ],                
+            ],*/
             'interpreter-select' => [
                 'required' => false,
                 'allow_empty' => true,
             ],
         ];
+    }
+    // this is wrong. we are gonna take a different approach.
+    public function validateJudge($value, $context)
+    {
+        echo "running ".__FUNCTION__."...value is $value...";
+        var_dump(is_int($value));
+        
+    }
+    public function validateAnonymousJudge($value, $context)
+    {
+        echo "value of anonymous judge is $value so fuck you"; return false;
+        if ($value) {
+            return true;
+        }
+        var_dump($context);
+        return false;
     }
 }

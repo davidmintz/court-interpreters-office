@@ -95,10 +95,12 @@ class EventsController extends AbstractActionController
             if (! $form->isValid()) {
                 echo "validation failed ... ";
                 var_dump($form->getMessages());
+                var_dump($request->getPost());
                 return $viewModel;
             } else {
                 // faking some data for now
                 echo "validation OK... ";
+                
                 $anonymousSubmitter = $this->entityManager->find(
                     Entity\Hat::class, 4
                 );
