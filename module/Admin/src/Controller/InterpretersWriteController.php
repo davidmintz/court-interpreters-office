@@ -11,7 +11,8 @@ use InterpretersOffice\Admin\Form\InterpreterForm;
 use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\View\Model\JsonModel;
-
+use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection as
+    LanguageCollectionHelper;
 use Zend\Stdlib\Parameters;
 
 /**
@@ -55,10 +56,8 @@ class InterpretersWriteController extends AbstractActionController
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/interpreters/form.phtml');
         $form = new InterpreterForm($this->entityManager,
-                [
-                    'action' => 'create',
-                    'vault_enabled' => $this->vault_enabled
-                ]
+                [ 'action' => 'create',
+                 'vault_enabled' => $this->vault_enabled ]
         );
         $viewModel->form = $form;
         $request = $this->getRequest();
@@ -137,7 +136,8 @@ class InterpretersWriteController extends AbstractActionController
                 $entity->getFirstname(), $entity->getLastname()
             ));
             $this->redirect()->toRoute('interpreters');
-            // echo "<br>success. NOT redirecting...<a href=\"/admin/interpreters/edit/$id\">do it again</a> ";
+            // echo "<br>success. NOT redirecting...
+            // <a href=\"/admin/interpreters/edit/$id\">do it again</a> ";
         } else {    // not a POST
             if ($this->vault_enabled) {
                 $viewModel->obscure_values = true;
@@ -153,8 +153,7 @@ class InterpretersWriteController extends AbstractActionController
      * @return boolean
      */
     public function getEncryptedFieldsWereModified(Array $values_before,
-            Parameters $input)
-            
+            Parameters $input)            
     {
         return $input->get('dob') != $values_before['dob']
                 or 
@@ -178,7 +177,8 @@ class InterpretersWriteController extends AbstractActionController
         try {
             $action = $this->params()->fromQuery('action');
             $params = $this->params()->fromPost();//['interpreter'];
-            $form = new InterpreterForm($this->entityManager, ['action' => $action,'vault_enabled' => $this->vault_enabled]);
+            $form = new InterpreterForm($this->entityManager,
+                 ['action' => $action,'vault_enabled' => $this->vault_enabled]);
             $request = $this->getRequest();
             $form->setData($request->getPost());
             if (key_exists('interpreter',$params)) {
@@ -187,21 +187,38 @@ class InterpretersWriteController extends AbstractActionController
                 if (! $form->isValid()) {
                     return new JsonModel([
                         'valid' => false,
-                        'validation_errors' => $form->getMessages()['interpreter']
+                        'validation_errors' => 
+                            $form->getMessages()['interpreter']
                     ]);
                 }
             }       
             return new JsonModel(['valid' => true]);
         } catch (\Exception $e) {
-
             return new JsonModel(['valid' => false, 'error' => $e->getMessage()]);
-        }        
+        }
+        
+    }
+    
+    /**
+     * creates form view helper for interpreter-language markup
+     * 
+     * @return LanguageCollectionHelper
+     */
+    protected function getLanguageCollectionHelper()
+    {
+        $helper = new LanguageCollectionHelper();
+         $container = $this->getEvent()
+            ->getApplication()->getServiceManager();
+        $renderer = $container->get('ViewRenderer');
+        $helper->setView($renderer);
+        
+        return $helper;
     }
     
      /**
      * renders HTML fragment for an interpreter language
      * 
-     * @return ViewModel
+     * @return Zend\Http\PhpEnvironment\Response
      */
     public function languageFieldsetAction()
     {
@@ -209,15 +226,11 @@ class InterpretersWriteController extends AbstractActionController
         $index = $this->params()->fromQuery('index',0);
         $language = $this->entityManager->find(Entity\Language::class,$id);
         if (! $language) {
-            return $this->getResponse()->setContent("<br>WTF?");
+            return $this->getResponse()->setContent("<br>WTF??");
         }
-        $helper = new \InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection();
-        $container = $this->getEvent()
-            ->getApplication()->getServiceManager();
-        $renderer = $container->get('ViewRenderer');
-        $helper->setView($renderer);
+        $helper = $this->getLanguageCollectionHelper();
         $content = $helper->fromArray(compact('language','index'));
-
+        
         return $this->getResponse()->setContent($content);        
     }
 }
