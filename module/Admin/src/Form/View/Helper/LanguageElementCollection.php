@@ -14,8 +14,8 @@ class LanguageElementCollection extends AbstractHelper
 <div class="col-sm-5 form-inline interpreter-language language-certification">
     <label for="fed-certification-%d">fed-certified:</label>
           %s
-   <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-        <span class="sr-only">remove language</span></button>
+   <button class="btn btn-danger btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <span class="sr-only">remove this language</span></button>
     <div class="alert alert-warning validation-error" style="display:none"></div>                
 </div>
 
@@ -81,16 +81,16 @@ TEMPLATE;
     public function fromArray(Array $params)
     {
         $language = $params['language'];
-        $index = $params['index'];
+        $i = $params['index'];
         $label = $this->view->escapeHtml($language->getName());
         $language_id = $language->getId();
         $language_markup = sprintf(
                   '<input type="hidden" name="interpreter[interpreterLanguages]'
                        . '[%d][language]" value="%d">',
-                   $index,$language_id);
+                   $i,$language_id);
         $language_markup .= $label;
         $certification_element = new \Zend\Form\Element\Select(
-                "interpreter[interpreterLanguages][$index][federalCertification]",
+                "interpreter[interpreterLanguages][$i][federalCertification]",
                 ['value_options' => [
                             -1 => 'N/A',  
                             1 => 'yes',
@@ -101,14 +101,20 @@ TEMPLATE;
                     ]                    
                 ]);
         $certification_element->setAttributes(['class'=>'form-control']);
-        if (! $language->isFederallyCertified()) {
+        
+        if (!  $language->isFederallyCertified()) {
+            // disable element, append a hidden
             $certification_element->setAttribute('disabled','disabled');
+            $certification_markup = $this->view->formSelect($certification_element);
+            $name = "interpreter[interpreterLanguages][$i][federalCertification]";
+            $certification_markup .= sprintf(
+                '<input type="hidden" name="%s" value="-1">',$name);
+        } else {
+            $certification_markup = $this->view->formSelect($certification_element);
         }
-        $certification_markup = $this->view->formSelect($certification_element);
         return sprintf($this->template, $language_id,
                 $language_markup, $language_id,
                 $certification_markup);
     }
-
 }
 
