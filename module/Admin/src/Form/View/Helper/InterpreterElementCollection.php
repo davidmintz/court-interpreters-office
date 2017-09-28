@@ -73,12 +73,13 @@ class InterpreterElementCollection extends AbstractHelper
      * @param array $data
      * @return string
      */
-    public function renderFromArray(Array $data)
+    public function fromArray(Array $data)
     {
         if (! isset($data['name'])) {
             $data['name'] = '__NAME__';
         }
-        $markup = sprintf($this->template,$data['index'],$data['id'],$data['name']);
+        $markup = sprintf($this->template,$data['index'],
+                $data['id'],$data['name']);
         return $markup;
     }
     
