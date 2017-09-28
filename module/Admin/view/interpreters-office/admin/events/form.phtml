@@ -27,7 +27,7 @@ $form->add([
 $form->prepare();
 $fieldset = $form->get('event');
 // for testing
-if (true) {
+if (false) {
     $fieldset->get('time')->setValue('10:00:00');
     $fieldset->get('date')->setValue('2017-08-15');
     $fieldset->get('judge')->setValue(949);
@@ -94,9 +94,9 @@ echo $this->form()->openTag($form);
 <div style="margin-top:1em" class="form-group">
             <div class="col-sm-offset-3 col-sm-9">
                 <?php
-               // $csrf = $form->get('csrf');
-               // echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
-               // echo $this->formHidden($fieldset->get('id'));
+               $csrf = $form->get('csrf');
+                echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+                echo $this->formHidden($fieldset->get('id'));
                 echo $this->formSubmit($form->get('submit'));?>
             </div>       
         </div><!-- / .form-group -->
