@@ -91,15 +91,18 @@ class EventsController extends AbstractActionController
                 'form'  => $form,
                 ]);
         if ($request->isPost()) {
-            $form->setData($request->getPost());
+            $data = $request->getPost();
+            $this->preValidate($data,$form);
+            $form->setData($data);
             if (! $form->isValid()) {
                 echo "validation failed ... ";
-                var_dump($form->getMessages());
-                var_dump($request->getPost());
+                //var_dump($form->getMessages()['event']);var_dump($request->getPost());
                 return $viewModel;
             } else {
                 // faking some data for now
                 echo "validation OK... ";
+                
+                //$this->postValidate($event,$form);
                 
                 $anonymousSubmitter = $this->entityManager->find(
                     Entity\Hat::class, 4
@@ -121,8 +124,22 @@ class EventsController extends AbstractActionController
             }
             
         }
-
         return $viewModel;
+    }
+    
+    protected function preValidate(\Zend\Stdlib\Parameters $data, 
+            Form\Event $form)
+    {
+       $event = $data->get('event');       
+       if (! $event['judge'] && ! $event['anonymousJudge']) {           
+           $validator = new \Zend\Validator\NotEmpty([
+               'messages' => ['isEmpty' => "judge is required"],
+               'break_chain_on_failure' => true,
+           ]);
+           $judge_input = $form->getInputFilter()->get('event')->get('judge');
+           $judge_input->getValidatorChain()->attach($validator);
+           $judge_input->setAllowEmpty(false);
+       }           
     }
 
     /**
