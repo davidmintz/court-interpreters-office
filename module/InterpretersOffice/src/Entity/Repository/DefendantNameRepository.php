@@ -85,7 +85,6 @@ class DefendantNameRepository extends EntityRepository
     }
 
     /**
-     * experimental
      *
      * implements cache deletion
      */
