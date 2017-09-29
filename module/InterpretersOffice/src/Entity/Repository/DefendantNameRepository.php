@@ -42,10 +42,46 @@ class DefendantNameRepository extends EntityRepository
         $this->cache->setNamespace('defendants');
     }
     
-    
-    public function autocomplete($term)
+    /**
+     * returns an array of names for defendant autocompletion
+     * 
+     * @param string $term
+     * @param int $limit
+     * @return array
+     */    
+    public function autocomplete($term, $limit = 20)
     {
+        $name = $this->parseName($term);
+        $parameters = ['surnames' => "$name[last]%"];
         
+        $dql = "SELECT d.id AS value, CONCAT(d.surnames, ',  ',d.givenNames) "
+                . ' AS label FROM  InterpretersOffice\Entity\DefendantName d '
+                . ' WHERE ';
+        
+        // we don't do hyphens
+        if (! strstr($name['last'],'-')) {
+            $dql .= 'd.surnames LIKE :surnames ';
+        } else {
+             $non_hypthenated = str_replace('-',' ',$name['last']);
+             $dql .= '(d.surnames LIKE :surnames OR d.surnames LIKE :non_hyphenated) ';
+             $parameters['non_hyphenated']=$non_hypthenated;
+        }        
+        
+        if ($name['first']) {
+            $parameters['givenNames'] = "$name[first]%";
+            $dql .= 'AND d.givenNames LIKE :givenNames ';
+        } else {
+            // we don't like empty first names, so if there are any (legacy)
+            // rows that are missing a first name, avoid returning them
+            $dql .= "AND d.givenNames <> '' " ;
+        }        
+        $dql   .= "ORDER BY d.surnames, d.givenNames";       
+        $query = $this->createQuery($dql)
+                ->setParameters($parameters)
+                ->setMaxResults($limit);
+        
+        return $query->getResult();
+ 
     }
 
     /**
