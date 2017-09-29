@@ -51,24 +51,10 @@ class DefendantsController extends AbstractActionController {
     public function autocompleteAction()
     {
         $repo = $this->entityManager->getRepository(Entity\DefendantName::class);
+        $term = $this->params()->fromRoute('term');
+        $data = $repo->autocomplete($term);
         
-        
-        return $this->getResponse()
-            ->setContent("LocationsController/autocomplete works, repo is a ".get_class($repo));
-    	$term = $this->getRequest()->getQuery('term');
-    	if (! $term) { return false; }
-
-    	/**
-    	 * @var $em Doctrine\ORM\EntityManager
-    	 */
-    	$em = $this->entityManager;
-    	/**
-    	 * @var $repo Application\Entity\DefendantNameRepository
-    	 */
-    	$repo = $em->getRepository('InterpretersOffice\Entity\DefendantName');
-    	$data = json_encode($repo->autocomplete($term));
-        
-        return new JsonModel($data);
+        return new JsonModel($data);       
     }
 
 }
