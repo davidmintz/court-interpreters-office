@@ -23,9 +23,8 @@ use InterpretersOffice\Entity\Judge;
  * a 'Request' form, and create a subclass 'Events' form (for admins) add the rest.
  */
 class EventFieldset extends Fieldset implements InputFilterProviderInterface, 
-        ObjectManagerAwareInterface
+        ObjectManagerAwareInterface        
 {
-
      use ObjectManagerAwareTrait;
 
     /**
@@ -199,12 +198,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
             
         ]);
-        // this will be N/A for the request form
-        $this->add([
-            'type' => Element\Hidden::class,
-            'name' => 'is_anonymous_judge', 
-            'attributes' => ['id' => 'is_anonymous_judge'],           
-        ]);
+        
         // still to do: comments, admin comments, 
         // request meta (from whom and when)
         // defendants, end time
@@ -342,9 +336,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             [
                 'type' => 'Zend\Form\Element\Hidden',
                 'name' => 'anonymousJudge',
+                'attributes' => ['id' => 'anonymousJudge']
             ]
         );
-        
+        // this will be N/A for the request form
+        $this->add([
+            'type' => Element\Hidden::class,
+            'name' => 'is_anonymous_judge', 
+            'attributes' => ['id' => 'is_anonymous_judge'],           
+        ]);
         return $this;        
     }
 
@@ -424,67 +424,20 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     ],
                 ],
             ],
-            // gonna have to re-think this through
-            //*
+
             'judge' => [
                 'required' => true,
-                'allow_empty' => false,
-                //'disable_inarray_validator' => true,
-                'validators'=> [
-                    [
-                        'name' => 'NotEmpty',
-                        'options' => [
-                            'messages' => [
-                                'isEmpty' => 'judge is required',
-                            ],
-                        ],
-                    ],
-                ],
-                'filters' => [ // ??
-                    [
-                        'name' => 'ToNull',
-                    ]
-                ],
+                'allow_empty' => true,                
             ],
-            //*/
-           // /*
-            'anonymousJudge' => [
-                
-               'required' => false,
-               'allow_empty' => true,
-                'validators'=> [
-                    [ /*
-                        'name' => 'Callback',
-                        'options' => [
-                            'callback' => [$this,'validateAnonymousJudge'],
-                            'messages' => [
-                                'callbackValue' => 'some kinda judge is required',
-                            ],
-                        ], */
-                    ],
-                ],                
-            ],//*/
+            'anonymousJudge' => [                
+               'required' => true,
+               'allow_empty' => true,                         
+            ],
             'interpreter-select' => [
                 'required' => false,
                 'allow_empty' => true,
             ],
         ];
     }
-    
-    // this is wrong. we are gonna take a different approach.
-    public function validateJudge($value, $context)
-    {
-        echo "running ".__FUNCTION__."...value is $value...";
-        var_dump(is_int($value));
-        
-    }
-    public function validateAnonymousJudge($value, $context)
-    {
-        echo "value of anonymous judge is $value so fuck you"; return false;
-        if ($value) {
-            return true;
-        }
-        var_dump($context);
-        return false;
-    }
+   
 }
