@@ -102,12 +102,11 @@ $(document).ready(function()
         }
         var name = interpreterSelectElement.children(":selected").text();
         var index = $('#interpreters-assigned li').length;
+        interpreterSelectElement.val("");
         $.post('/admin/schedule/interpreter-template',
             {id:id, index:index, name:name},
-            function(html){
-                interpreterSelectElement.val("");
-                $('#interpreters-assigned').append(html);
-                
+            function(html){                
+                $('#interpreters-assigned').append(html);                
         });        
     });
     // interpreter "remove" buttons event handler
