@@ -26,7 +26,8 @@ return [
            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
            Controller\AccountController::class => Controller\Factory\AccountControllerFactory::class,
            Controller\ExampleController::class => Controller\Factory\ExampleControllerFactory::class,
-           Controller\LocationsController::class => Controller\Factory\LocationsControllerFactory::class,//function($container) {return new Controller\LocationsController($container->get('entity-manager'));}
+           Controller\LocationsController::class => Controller\Factory\LocationsControllerFactory::class,
+           Controller\DefendantsController::class => Controller\Factory\DefendantsControllerFactory::class,
         ],
         'invokables' => [
             //Controller\ExampleController::class => Controller\ExampleController::class,
@@ -158,39 +159,7 @@ return [
                     ],
                 
                 ],
-            ],
-            // can't get this to work, an effort to make multiple controllers
-            // match this route
-            /*
-            'example' => [
-
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/admin/:controller[/:action]',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]+',
-                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]+',
-                    ],
-                    'defaults' => [
-                        'controller' => 'InterpretersOffice\Controller\IndexController',
-                        'action'     => 'index',
-                    ],
-                ],
-
-             ],*/
-            // based on one that comes out of the box with the
-            // Skeleton Application; no reason not to remove it at some point.
-            'application' => [
-                'type' => Segment::class,
-                'options' => [
-                     'module' => __NAMESPACE__,
-                    'route' => '/app[/:action]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action' => 'index',
-                    ],
-                ],
-            ],
+            ],            
             'login' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
@@ -279,6 +248,19 @@ return [
                     ],
                 ],
                 // to be continued
+            ],
+            'defendant-autocomplete' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/defendants/autocomplete/:term',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\DefendantsController::class,
+                        'action' => 'autocomplete',
+                        //'term' => '',
+                    ],
+                ],
+                
             ],
             'example' => [
                 'type' => Segment::class,
