@@ -7,6 +7,9 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Controller\DefendantsController;
 
+/**
+ * Factory for DefendantsController
+ */
 class DefendantsControllerFactory implements FactoryInterface
 {
     /**
