@@ -156,7 +156,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 ]
             )
         );        
-        $this->addJudgeElement()       
+        $this->addJudgeElements()
             ->addEventTypeElement()
             ->addLocationElements($options['object']);
         
@@ -315,7 +315,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      * 
      * @return \InterpretersOffice\Admin\Form\EventFieldset
      */
-    public function addJudgeElement()
+    public function addJudgeElements()
     {        
         $element = new \Zend\Form\Element\Select('judge',[           
                 'label' => 'judge',                
@@ -339,12 +339,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'attributes' => ['id' => 'anonymousJudge']
             ]
         );
-        // this will be N/A for the request form
-        $this->add([
-            'type' => Element\Hidden::class,
-            'name' => 'is_anonymous_judge', 
-            'attributes' => ['id' => 'is_anonymous_judge'],           
-        ]);
+       
         return $this;        
     }
 
@@ -379,7 +374,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'required' => true,
                 'allow_empty' => true, // subject to conditions, to be continued
                 'validators'=> [
-                    
+                    // we need a format check here
                 ],
             ],
             'location' => [
