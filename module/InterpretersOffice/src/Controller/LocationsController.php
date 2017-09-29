@@ -1,7 +1,6 @@
 <?php
-
 /**
- * module/InterpretersOffice/src/Controller/Factory/LocationsControllerFactory.php
+ * module/InterpretersOffice/src/Controller/LocationsController.php
  */
 
 namespace InterpretersOffice\Controller;
