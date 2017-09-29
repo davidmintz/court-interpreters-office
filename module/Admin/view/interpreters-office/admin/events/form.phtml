@@ -38,19 +38,7 @@ if (false) {
    ['interpreter'=> 117] 
 ]);
 }
-/*
-class Helper extends \Zend\View\Helper\AbstractHelper {
-    public function render($fieldset) {
-        return 'rendering '.get_class($fieldset).'<br>';
-    }
-}*/
-//$this->formCollection()->setFieldsetHelper(new Helper);
-
-
 echo $this->form()->openTag($form);  
-
-//var_dump(get_class_methods($collection));
-
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
@@ -95,6 +83,7 @@ echo $this->form()->openTag($form);
             <div class="col-sm-offset-3 col-sm-9">
                 <?php
                $csrf = $form->get('csrf');
+                echo $this->formHidden($fieldset->get('is_anonymous_judge'));
                 echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
                 echo $this->formHidden($fieldset->get('id'));
                 echo $this->formSubmit($form->get('submit'));?>

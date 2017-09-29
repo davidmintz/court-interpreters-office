@@ -21,9 +21,7 @@ class LanguageElementCollection extends AbstractHelper
 
 
 TEMPLATE;
-/* <?php if ($certification_element->getAttribute('disabled')) : // supply a value, to avoid undefined index error  ?>
-        <input type="hidden" name="interpreter[interpreterLanguages][<?php echo $i ?>][federalCertification]" value="-1">
-*/
+
 	public function __invoke()
 	{
 		return $this->render();
@@ -51,7 +49,7 @@ TEMPLATE;
                 }
                 
             } else {
-                // we were hydrated from $_POST
+                // form was hydrated from $_POST
                 $language = $form->getObject()->getInterpreterLanguages()
                         ->get($index)
                         ->getLanguage();
@@ -78,6 +76,10 @@ TEMPLATE;
         return $html;
 	}
 
+	/**
+	 *
+	 *
+	 */
     public function fromArray(Array $params)
     {
         $language = $params['language'];

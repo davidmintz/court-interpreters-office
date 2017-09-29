@@ -199,9 +199,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
             
         ]);
+        // this will be N/A for the request form
+        $this->add([
+            'type' => Element\Hidden::class,
+            'name' => 'is_anonymous_judge', 
+            'attributes' => ['id' => 'is_anonymous_judge'],           
+        ]);
         // still to do: comments, admin comments, 
         // request meta (from whom and when)
-        // defendants, interpreters, end time
+        // defendants, end time
         
         // also sanity-check if there's an entity and one of its props is 
         // NOT in a select (e.g., a Judge marked inactive)
@@ -333,10 +339,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         
         // this will also be contingent on who our user is
         $this->add(
-                [
-                    'type' => 'Zend\Form\Element\Hidden',
-                    'name' => 'anonymousJudge',
-                ]
+            [
+                'type' => 'Zend\Form\Element\Hidden',
+                'name' => 'anonymousJudge',
+            ]
         );
         
         return $this;        
@@ -423,47 +429,48 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'judge' => [
                 'required' => true,
                 'allow_empty' => false,
-                'disable_inarray_validator' => true,
+                //'disable_inarray_validator' => true,
                 'validators'=> [
                     [
-                        'name' => 'Callback',
+                        'name' => 'NotEmpty',
                         'options' => [
-                            'callback' => [$this,'validateJudge'],
                             'messages' => [
-                                'callbackValue' => 'judge is required',
+                                'isEmpty' => 'judge is required',
                             ],
                         ],
                     ],
                 ],
-                'filters' => [
+                'filters' => [ // ??
                     [
                         'name' => 'ToNull',
                     ]
                 ],
-            ],//*/
-            /*
+            ],
+            //*/
+           // /*
             'anonymousJudge' => [
                 
                'required' => false,
                'allow_empty' => true,
                 'validators'=> [
-                    [
+                    [ /*
                         'name' => 'Callback',
                         'options' => [
                             'callback' => [$this,'validateAnonymousJudge'],
                             'messages' => [
                                 'callbackValue' => 'some kinda judge is required',
                             ],
-                        ],
+                        ], */
                     ],
                 ],                
-            ],*/
+            ],//*/
             'interpreter-select' => [
                 'required' => false,
                 'allow_empty' => true,
             ],
         ];
     }
+    
     // this is wrong. we are gonna take a different approach.
     public function validateJudge($value, $context)
     {
