@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * with a docket number.
  *
  * @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={@ORM\UniqueConstraint(name="unique_deftname",columns={"given_names", "surnames"})})
- * //ORM\Entity(repositoryClass="InterpretersOffice\Entity\DefendantNameRepository")
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\DefendantNameRepository")
  */
 class DefendantName
 {
