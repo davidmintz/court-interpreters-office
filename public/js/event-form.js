@@ -119,9 +119,9 @@ $(document).ready(function()
         );        
     });
     $("#event-form").on("submit",function(e){
-        // if there's no specific location selected, the general location,
-        // if any, is gonna be it.
         if (! locationElement.val()) {
+            // no specific location selected, so the general location
+            // should be submitted instead
             var location_id = parentLocationElement.val();
             if (location_id) {
                 locationElement.after(
@@ -131,24 +131,21 @@ $(document).ready(function()
                     }).val(location_id)
                 );
             }
-        }
-        // if the selected judge is anonymous, populate hidden anonymousJudge
-        // field ... and suppress judge select value?
+        }        
         judgeElement = $('#judge');
         var judgeOption = judgeElement.children(":selected")
         if (judgeOption.data("pseudojudge")) {
-            judgeElement
-                    //.attr({name:"event[anonymousJudge]"})
-                    .after($("<input>").attr({
-                        name : "event[is_anonymous_judge]",
-                        type : "hidden"
-                    }).val("1"));
-            
+            // selected judge is anonymous, so set the 
+            // hidden anonymousJudge field to judge-element value
+           $('#anonymousJudge').val(judgeElement.val());
+           // and override judge with a hidden field
+           judgeElement.after($("<input>").attr({
+                        name : "event[judge]",
+                        type : "hidden",
+                        value : ""
+            }));
         }
-        //console.log(judgeOption.data());
-        // console.warn("judge element value is: "+judgeElement.val());
-        // e.preventDefault();
-
+     
     });
 });
 formatTimeElement = function(timeElement) {
