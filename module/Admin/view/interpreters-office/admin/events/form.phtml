@@ -59,11 +59,6 @@ echo $this->form()->openTag($form);
                 <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
                 <ul style="margin-top: 1em" id="interpreters-assigned" class="list-group interpreters-assigned">
                 <?php 
-                
-                /* 'interpretersAssigned' is a Element\Collection, each of 
-                 * whose elements is a InterpretersAssignedFieldset 
-                 * containing its own elements.                   
-                */
                 $collection = $fieldset->get('interpretersAssigned'); 
                 $helper = (new InterpreterElementCollection())->setView($this);
                 echo $helper->render($collection);
@@ -71,6 +66,18 @@ echo $this->form()->openTag($form);
                 </ul>
             </div>
         </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="defendant-search">defendants</label>
+            <div class="col-sm-9">
+                <?php echo $this->formElement($fieldset->get('defendant-search'));?>
+                <ul style="margin-top: 1em" id="defendant-names" class="list-group defendant-names">
+                <?php 
+                
+                ?>
+                </ul>
+            </div>
+        </div>
+        
         <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>

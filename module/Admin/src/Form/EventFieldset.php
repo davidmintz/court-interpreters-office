@@ -95,7 +95,18 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
              'options' => [
                 'label' => 'docket',                
             ],            
-        ]
+        ],
+        [
+            'name' => 'defendant-search',
+            'type' => 'Zend\Form\Element\Text',
+            'attributes' => [
+                'id' => 'defendant-search',
+                'class' => 'form-control',
+            ],
+             'options' => [
+                'label' => 'defendants',                
+            ],                      
+        ],
 
     ];
 
@@ -432,6 +443,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'required' => false,
                 'allow_empty' => true,
             ],
+            'defendant-search' => [
+                'required' => false,
+                'allow_empty' => true,
+            ]
         ];
     }
    
