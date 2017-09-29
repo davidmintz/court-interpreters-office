@@ -256,8 +256,7 @@ return [
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\DefendantsController::class,
-                        'action' => 'autocomplete',
-                        //'term' => '',
+                        'action' => 'autocomplete',                        
                     ],
                 ],
                 
