@@ -156,7 +156,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
             if ($pseudojudge['parent_location']) {
                 $label .= ", $pseudojudge[parent_location]";
             }
-            $attributes = ['data-pseudojudge' => true];
+            $attributes = ['data-pseudojudge' => 1];
             $data[] = compact('label','value','attributes');                
         }       
         return $data;

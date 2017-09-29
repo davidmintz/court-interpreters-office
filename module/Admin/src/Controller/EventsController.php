@@ -163,14 +163,20 @@ class EventsController extends AbstractActionController
             $this->entityManager,
             ['action' => 'update','object'=>$event,]
         );
+        
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());        
         $form->bind($event);
+        //$e = $form->get('event')->get('eventType');
+        //$renderer = $this->getEvent()->getApplication()->getServiceManager()->get("ViewRenderer");
+        //$html = $renderer->formElement($e);
+        //echo $renderer->escapeHtml($html);
         
         if ($this->getRequest()->isPost()) {
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 echo "yay!";
+                //var_dump($this->getRequest()->getPost()->get('event')['location']);
             } else {
                 
             }

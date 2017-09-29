@@ -13,8 +13,9 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
 use InterpretersOffice\Admin\Form\InterpretersAssignedFieldset;
+use InterpretersOffice\Admin\Form\DefendantsEventFieldset;
 use InterpretersOffice\Entity;
-use DoctrineModule\Form\Element\ObjectSelect;
+//use DoctrineModule\Form\Element\ObjectSelect;
 
 use InterpretersOffice\Entity\Judge;
 /**
@@ -183,6 +184,18 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'target_element' =>  $interpretersAssignedFieldset,                
             ],
         ]);
+        $defendantsEventFieldset = new DefendantsEventFieldset($objectManager);
+        
+        $this->add([
+            'type' => Element\Collection::class,
+            'name' => 'defendantsEvent',
+            'options' => [
+                'label' => 'defendants',
+                'allow_add' => true,
+                'allow_remove' => true,
+                'target_element' =>   $defendantsEventFieldset,                
+            ],
+        ]);
         
         // figure out value options for interpreter select
         $empty_option =  ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
@@ -234,7 +247,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 [
                   ['label'=> ' ','value' =>'','attributes'=>['label'=> ' ']]  
                 ],
-                $repo-> getEventTypeOptions()
+                $repo->getEventTypeOptions()
          );
         $this->add(
         [
@@ -314,7 +327,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             } else {
                 $this->add($element_spec);
                 // ! the "parent_location" element value needs to be set
-                $this->getElement('parent_location')->setValue($location->getId());
+                $this->get('parent_location')->setValue($location->getId());
             }
         }
         
@@ -328,20 +341,23 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function addJudgeElements()
     {        
-        $element = new \Zend\Form\Element\Select('judge',[           
-                'label' => 'judge',                
-        ]);
         $repository = $this->objectManager->getRepository(Entity\Judge::class);
-        $element->setValueOptions(
-                array_merge([ 
-                    ['value' => '','label'=>' ','attributes'=>['label'=>' ']]
-                ],
-                // this will become conditional on who the user is!
-                $repository->getJudgeOptions(['include_pseudo_judges'=>true]))
-             )
-            ->setAttributes(['class' => 'form-control', 'id'=> 'judge',]);
-        $this->add($element);
-        
+        $value_options =  array_merge(
+            [ 
+                ['value' => '','label'=>' ','attributes'=>['label'=>' '] ]
+            ],
+            // this will become conditional on who the user is!
+            $repository->getJudgeOptions(['include_pseudo_judges'=>true]));
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'judge',
+             'options' => [
+                'label' => 'judge',
+                'value_options' => $value_options
+            ],
+            'attributes' => ['class' => 'form-control', 'id' => 'judge'],            
+        ]);
+        // var_dump($value_options);
         // this will also be contingent on who our user is
         $this->add(
             [
