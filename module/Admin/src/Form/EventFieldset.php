@@ -15,7 +15,7 @@ use InterpretersOffice\Form\Element\LanguageSelect;
 use InterpretersOffice\Admin\Form\InterpretersAssignedFieldset;
 use InterpretersOffice\Admin\Form\DefendantsEventFieldset;
 use InterpretersOffice\Entity;
-//use DoctrineModule\Form\Element\ObjectSelect;
+use DoctrineModule\Form\Element\ObjectSelect;
 
 use InterpretersOffice\Entity\Judge;
 /**
@@ -341,22 +341,49 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function addJudgeElements()
     {        
-        $repository = $this->objectManager->getRepository(Entity\Judge::class);
-        $value_options =  array_merge(
-            [ 
-                ['value' => '','label'=>' ','attributes'=>['label'=>' '] ]
-            ],
-            // this will become conditional on who the user is!
-            $repository->getJudgeOptions(['include_pseudo_judges'=>true]));
-        $this->add([
-            'type' => 'Zend\Form\Element\Select',
-            'name' => 'judge',
-             'options' => [
+        $element = new ObjectSelect('judge',
+            [
+                'object_manager' => $this->objectManager,
+                'target_class' => Entity\Judge::class,
                 'label' => 'judge',
-                'value_options' => $value_options
-            ],
-            'attributes' => ['class' => 'form-control', 'id' => 'judge'],            
-        ]);
+                'label_generator' => function(Judge $judge) {
+                    $label = sprintf("%s, %s",
+                            $judge->getLastname(),
+                            $judge->getFirstname());
+                    $middle = $judge->getMiddleName();
+                    if ($middle) {
+                         if (2 == strlen($middle) && '.' == $middle[1]) {
+                            $label .= " $middle";
+                        } else {
+                            $label .= " $middle[0].";
+                        }
+                    }
+                    $label .= ', '.$judge->getFlavor();
+                    return $label;
+                },
+                //'display_empty_item' => true,
+                // 'empty_item_label' => ' ', 
+                'find_method' => ['name'=> 'findAllActive',]
+            ]
+        );
+       $element->setAttributes([ 'class' => 'form-control','id' => 'role',]);
+       $valueOptions = $element->getValueOptions();
+       // $element->getValueOptions() : array of arrays containing keys: 
+       // label, value, attributes => array
+       // we need to jam the generic Magistrate etc in there and sort
+       ///*
+       $anonymous = $this->getObjectManager()->getRepository(Judge::class)
+               ->getAnonymousJudges();
+       
+       foreach($anonymous as $entity) {
+           $label = $entity->__toString(); /** @todo solve wasted query*/
+           $value = $entity->getId();
+           $attributes = ['data-pseudojudge'=>true];
+           $valueOptions[] = compact('label','value','attributes');
+       }//*/
+       $element->setValueOptions($valueOptions);
+       $this->add($element);
+       //return $this;
         // var_dump($value_options);
         // this will also be contingent on who our user is
         $this->add(
