@@ -51,7 +51,7 @@ class DefendantsController extends AbstractActionController {
     public function autocompleteAction()
     {
         $repo = $this->entityManager->getRepository(Entity\DefendantName::class);
-        $term = $this->params()->fromRoute('term');
+        $term = $this->params()->fromQuery('term');
         $data = $repo->autocomplete($term);
         
         return new JsonModel($data);       
