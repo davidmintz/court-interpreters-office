@@ -147,6 +147,17 @@ $(document).ready(function()
         }
      
     });
+    /** a start on deft name autocompletion. viewscript still needs CSS */
+    $('#defendant-search').autocomplete(
+                {
+                    source: '/defendants/autocomplete',
+                    minLength: 2,
+                    select: function( event, ui ) {
+                        console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+                        }
+                    }
+                    
+         );
 });
 formatTimeElement = function(timeElement) {
     
