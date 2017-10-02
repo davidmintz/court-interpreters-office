@@ -103,20 +103,21 @@ $(document).ready(function()
         var name = interpreterSelectElement.children(":selected").text();
         var index = $('#interpreters-assigned li').length;
         interpreterSelectElement.val("");
-        $.post('/admin/schedule/interpreter-template',
+        $.get('/admin/schedule/interpreter-template',
             {id:id, index:index, name:name},
             function(html){                
                 $('#interpreters-assigned').append(html);                
         });        
     });
-    // interpreter "remove" buttons event handler
-    $('#interpreters-assigned').on("click",".btn-remove-interpreter",
+    // interpreter and deft name "remove" buttons event handler
+    $('#interpreters-assigned, #defendant-names').on("click",".btn-remove-item",
     function(event){
         event.preventDefault();
-        $(this).closest(".interpreter-assigned").slideUp(
+        $(this).closest(".list-group-item").slideUp(
               function(){$(this).remove();}
         );        
     });
+    
     $("#event-form").on("submit",function(e){
         if (! locationElement.val()) {
             // no specific location selected, so the general location
