@@ -6,7 +6,9 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
+//use Doctrine\ORM\EntityManagerInterface;
+
+use InterpretersOffice\Entity;
 
 /**
  * custom repository class for Judge entity.
@@ -78,7 +80,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      */
         public function getAnonymousJudges()
     {
-        $dql = 'SELECT j FROM InterpretersOffice\Entity\AnonymousJudge j ';
+        $dql = 'SELECT j FROM InterpretersOffice\Entity\AnonymousJudge j';
         
         return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
@@ -160,5 +162,31 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
             $data[] = compact('label','value','attributes');                
         }       
         return $data;
+    }
+    
+    /**
+     * experimental method. @todo change argument to SomethingInterface
+     * of which both Judge and AnonymousJudge are implementations?
+     * 
+     * @param \InterpretersOffice\Entity\AnonymousJudge $judge
+     * @return string
+     */
+    public function getDefaultLocationString(Entity\AnonymousJudge $judge)
+    {
+        $dql = 'SELECT l.name, p.name AS parent '
+                . 'FROM InterpretersOffice\Entity\AnonymousJudge j '
+                . 'LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation p '
+                . 'WHERE j.id = :id';
+        $result = $this->createQuery($dql, $this->cache_namespace)
+                ->setParameters(['id' => $judge->getId()])
+                ->getOneOrNullResult();
+        if (! $result or !$result['name']) {
+            return '';
+        }
+        $name = $result['name'];
+        if ($result['parent']) {
+            $name .= " $result[parent]";
+        }
+        return $name;
     }
 }
