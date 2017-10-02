@@ -341,6 +341,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function addJudgeElements()
     {        
+        $em = $this->objectManager;
         $element = new ObjectSelect('judge',
             [
                 'object_manager' => $this->objectManager,
@@ -359,6 +360,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                         }
                     }
                     $label .= ', '.$judge->getFlavor();
+                    //$label .= ", whatever";
+                            
                     return $label;
                 },
                 //'display_empty_item' => true,
@@ -372,11 +375,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
        // label, value, attributes => array
        // we need to jam the generic Magistrate etc in there and sort
        ///*
-       $anonymous = $this->getObjectManager()->getRepository(Judge::class)
-               ->getAnonymousJudges();
+       $repository = $this->getObjectManager()->getRepository(Judge::class);
+       $anonymous = $repository->getAnonymousJudges();
        
        foreach($anonymous as $entity) {
-           $label = $entity->__toString(); /** @todo solve wasted query*/
+           $label = $entity->getName();
+           $location = $repository->getDefaultLocationString($entity);
+           if ($location) {
+               $label .= ", $location";
+           }          
            $value = $entity->getId();
            $attributes = ['data-pseudojudge'=>true];
            $valueOptions[] = compact('label','value','attributes');
