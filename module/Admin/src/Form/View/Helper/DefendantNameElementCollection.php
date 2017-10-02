@@ -54,7 +54,7 @@ TEMPLATE;
         $markup = '';
         foreach ($defendants as $i => $defendant) {
             
-            $name = $defendant->getSurnames().', '.$defendant->getGivenName();
+            $name = $defendant->getSurnames().', '.$defendant->getGivenNames();
             $markup .= sprintf($this->template,$i,$defendant->getId(),$name);          
         }
         return $markup;
@@ -71,7 +71,7 @@ TEMPLATE;
     }
     
     /**
-     * renders Interpreter fieldset from array data
+     * renders defendantNames fieldset from array data
      * 
      * @param array $data
      * @return string
