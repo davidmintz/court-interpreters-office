@@ -154,7 +154,7 @@ class Event
      *
      * @see DefendantName
      *
-     * @ORM\ManyToMany(targetEntity="DefendantName")
+     * @ORM\ManyToMany(targetEntity="DefendantName",fetch="EAGER") 
      * @ORM\JoinTable(name="defendants_events",inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
      *
      * @var ArrayCollection
@@ -164,7 +164,7 @@ class Event
     /**
      * Interpreters assigned to this event.
      *
-     * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event",cascade="persist")
+     * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event",cascade="persist",fetch="EAGER")
      *
      * @var ArrayCollection
      */
