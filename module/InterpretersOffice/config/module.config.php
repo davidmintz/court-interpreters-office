@@ -252,7 +252,7 @@ return [
             'defendant-autocomplete' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/defendants/autocomplete/:term',
+                    'route' => '/defendants/autocomplete',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\DefendantsController::class,
