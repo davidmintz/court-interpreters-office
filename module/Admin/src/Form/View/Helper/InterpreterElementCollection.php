@@ -19,7 +19,7 @@ class InterpreterElementCollection extends AbstractHelper
         <li class="list-group-item interpreter-assigned">
             <input name="event[interpretersAssigned][%d][interpreter]" type="hidden" value="%d">
              %s            
-            <button class="btn btn-danger btn-xs btn-remove-interpreter pull-right" title="remove this interpreter">
+            <button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             <span class="sr-only">remove this interpreter
             </button>

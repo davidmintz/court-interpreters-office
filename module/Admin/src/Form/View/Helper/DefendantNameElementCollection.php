@@ -19,7 +19,7 @@ class DefendantNameElementCollection extends AbstractHelper
         <li class="list-group-item defendant">
             <input name="event[defendantsEvent][%d][defendantName]" type="hidden" value="%d">
              %s            
-            <button class="btn btn-danger btn-xs btn-remove-defendant pull-right" title="remove this defendant">
+            <button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this defendant">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             <span class="sr-only">remove this defendant
             </button>
