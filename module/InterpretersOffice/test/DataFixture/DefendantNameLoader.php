@@ -19,6 +19,11 @@ class DefendantNameLoader implements FixtureInterface
             ['Snyertzski', 'Boris'],
             ['Ajmanabalahadji', 'Mohammed'],
             ['Zheng', 'Xao Xui'],
+            ['Rodríguez', 'José Luis'],
+            ['Rodríguez', 'Eusebio'],
+            ['Rodríguez', 'Ramón'],
+            ['Romero', 'Pepe'],
+            ['Franco', 'Francisco'],
 
         ];
         foreach ($names as $name) {
