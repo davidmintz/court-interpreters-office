@@ -378,7 +378,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'find_method' => ['name'=> 'findAllActive',]
             ]
         );
-       $element->setAttributes([ 'class' => 'form-control','id' => 'role',]);
+       $element->setAttributes([ 'class' => 'form-control','id' => 'judge',]);
        $valueOptions = $element->getValueOptions();
        // $element->getValueOptions() : array of arrays containing keys: 
        // label, value, attributes => array
