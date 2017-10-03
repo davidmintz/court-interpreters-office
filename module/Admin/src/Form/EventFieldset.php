@@ -240,7 +240,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         // NOT in a select (e.g., a Judge marked inactive)
     }
     
-    
+    public function addHatElement()
+    {
+        // to be continued
+    }
     
     /**
      * adds the EventType element
