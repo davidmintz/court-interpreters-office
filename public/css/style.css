@@ -52,6 +52,7 @@ so that interpreter-languages won't stack and look crappy on a small viewport
     vertical-align: middle;
   }
 }
+
 /* experimental: not sure why these things need to be 100% width */
 @media (min-width: 768px) {
     form input, form select, form textarea, 
@@ -75,30 +76,35 @@ form .interpreter-language {
    padding-top:.25em;
    padding-bottom:.25em
 }
-/* stuff that came with the skeleton app*/
-/*
-.btn-success {
-    background-color: #57a900;
-    background-image: -moz-linear-gradient(top, #70d900, #57a900);
-    background-image: -ms-linear-gradient(top, #70d900, #57a900);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70d900), to(#57a900));
-    background-image: -webkit-linear-gradient(top, #70d900, #57a900);
-    background-image: -o-linear-gradient(top, #70d900, #57a900);
-    background-image: linear-gradient(top, #70d900, #57a900);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900', endColorstr='#57a900', GradientType=0);
+/* for jquery-ui autocomplete  */
+/* https://stackoverflow.com/questions/28285813/style-jquery-autocomplete-in-a-bootstrap-input-field */
+.ui-autocomplete {
+    position: absolute;
+    z-index: 1000;
+    cursor: default;
+    padding: 0;
+    margin-top: 2px;
+    list-style: none;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+       -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
-
-.btn-success:hover,
-.btn-success:active,
-.btn-success.active,
-.btn-success.disabled,
-.btn-success[disabled] {
-    background-color: #57a900;
+.ui-autocomplete > li {
+  padding: 3px 20px;
 }
-
-div.container a.navbar-brand > img {
-    display: inline;
-    margin-right: 4px;
-    margin-top: -2px;
+.ui-autocomplete > li.ui-state-focus {
+  background-color: #DDD;
 }
-*/
+.ui-helper-hidden-accessible {
+  display: none;
+}
+/* our innnovation */
+.ui-autocomplete > li:hover {
+  cursor: pointer;
+  background-color: #ffffcc;
+}

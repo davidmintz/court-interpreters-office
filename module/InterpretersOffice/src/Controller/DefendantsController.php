@@ -53,7 +53,7 @@ class DefendantsController extends AbstractActionController {
         $repo = $this->entityManager->getRepository(Entity\DefendantName::class);
         $term = $this->params()->fromQuery('term');
         $data = $repo->autocomplete($term);
-        
+  
         return new JsonModel($data);       
     }
 

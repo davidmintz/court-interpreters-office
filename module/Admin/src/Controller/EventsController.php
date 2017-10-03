@@ -204,7 +204,7 @@ class EventsController extends AbstractActionController
         $inputFilter = $factory->createInputFilter(                
             $helper->getInputFilterSpecification()
         );
-        $data = $this->params()->fromPost();
+        $data = $this->params()->fromQuery();
         $inputFilter->setData($data);
         if (! $inputFilter->isValid()) {
             throw new \RuntimeException(

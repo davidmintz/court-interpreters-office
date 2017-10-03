@@ -101,8 +101,19 @@ $(document).ready(function()
             return interpreterSelectElement.val("");
         }
         var name = interpreterSelectElement.children(":selected").text();
-        var index = $('#interpreters-assigned li').length;
+        var last = $('#interpreters-assigned li > input').last();
+        if (last.length) {
+            var m = last.attr("name").match(/\[(\d+)\]/);
+            if (m.length) {
+                index = parseInt(m.pop()) + 1;
+            } else {
+                // this is an error. to do: do something
+            }
+        } else {
+            index = 0;
+        }        
         interpreterSelectElement.val("");
+        alert("index is "+index);
         $.get('/admin/schedule/interpreter-template',
             {id:id, index:index, name:name},
             function(html){                
@@ -147,22 +158,24 @@ $(document).ready(function()
         }
      
     });
-    /** a start on deft name autocompletion. viewscript still needs CSS */
+    /** a start on deft name autocompletion */
     $('#defendant-search').autocomplete(
                 {
                     source: '/defendants/autocomplete',
                     minLength: 2,
-                    select: function( event, ui ) {
-                        console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
-                        }
-                    }
-                    
+                    select: function( event, ui ) {                        
+                        var name = ui.item.label;
+                        var id = ui.item.value;
+                       // var index =                        
+                    },
+                    focus: function(event,ui) { event.preventDefault(); }
+                 }   
          );
 });
 formatTimeElement = function(timeElement) {
     
     var timeValue = timeElement.val();
-    // reformat time
+    // reformat time;
     if (timeValue && timeValue.match(/^\d\d:\d\d:\d\d$/)) {
         var formatted = moment(timeValue, 'HH:mm:ss').format('h:mm a');
         //console.log('formatted time is: '+formatted);
