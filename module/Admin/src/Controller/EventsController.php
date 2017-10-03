@@ -128,7 +128,7 @@ class EventsController extends AbstractActionController
     }
     
     protected function preValidate(\Zend\Stdlib\Parameters $data, 
-            Form\Event $form)
+            Form\EventForm $form)
     {
        $event = $data->get('event');       
        if (! $event['judge'] && ! $event['anonymousJudge']) {           
