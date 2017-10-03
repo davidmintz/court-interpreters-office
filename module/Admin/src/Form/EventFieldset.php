@@ -397,6 +397,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
            $attributes = ['data-pseudojudge'=>true];
            $valueOptions[] = compact('label','value','attributes');
        }
+       usort($valueOptions,function($a,$b){
+           return strnatcasecmp($a['label'], $b['label']);
+       });
        $empty_option = ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
        array_unshift($valueOptions, $empty_option);
        $element->setValueOptions($valueOptions);
