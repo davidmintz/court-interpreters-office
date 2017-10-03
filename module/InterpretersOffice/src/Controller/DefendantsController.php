@@ -10,6 +10,8 @@ use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity;
+use InterpretersOffice\Admin\Form\View\Helper\DefendantNameElementCollection as 
+    DeftNameHelper;
 
 /**
  *
@@ -55,6 +57,25 @@ class DefendantsController extends AbstractActionController {
         $data = $repo->autocomplete($term);
   
         return new JsonModel($data);       
+    }
+    
+    public function templateAction()
+    {
+        $helper = new DeftNameHelper();
+        $factory = new \Zend\InputFilter\Factory();
+        $inputFilter = $factory->createInputFilter(                
+            $helper->getInputFilterSpecification()
+        );
+        $data = $this->params()->fromQuery();
+        $inputFilter->setData($data);
+        if (! $inputFilter->isValid()) {
+            throw new \RuntimeException(
+                "bad input parameters: "
+                    .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
+            );
+        }        
+        $html = $helper->fromArray($data);
+        return $this->getResponse()->setContent($html);
     }
 
 }
