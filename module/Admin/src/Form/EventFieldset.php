@@ -46,7 +46,14 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      *
      * @var string
      */
-    protected $auth_user_role;  
+    protected $auth_user_role;
+    
+    /**
+     * constructor options
+     * 
+     * @var Array
+     */
+    protected $options;
     
     /**
      * fieldset elements
@@ -142,7 +149,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             $this->auth_user_role = $options['auth_user_role'];
         }
         $this->action = $options['action'];
-        unset($options['action']);
+        $this->options = $options;
+        //unset($options['action']);
 
         parent::__construct($this->fieldset_name, $options);
         
@@ -179,8 +187,6 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'name' => 'interpretersAssigned',
             'options' => [
                 'label' => 'interpreters',
-                'allow_add' => true,
-                'allow_remove' => true,
                 'target_element' =>  $interpretersAssignedFieldset,                
             ],
         ]);
@@ -191,8 +197,6 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'name' => 'defendantsEvent',
             'options' => [
                 'label' => 'defendants',
-                'allow_add' => true,
-                'allow_remove' => true,
                 'target_element' =>   $defendantsEventFieldset,                
             ],
         ]);
@@ -222,7 +226,12 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
             
         ]);
-        
+        if ("update" == $this->options['action']) {
+            $this->add([
+                'type'=> 'Hidden',
+                'name'=> 'modified',            
+            ]);
+        }
         // still to do: comments, admin comments, 
         // request meta (from whom and when)
         // defendants, end time
@@ -387,7 +396,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
            $value = $entity->getId();
            $attributes = ['data-pseudojudge'=>true];
            $valueOptions[] = compact('label','value','attributes');
-       }//*/
+       }
+       $empty_option = ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
+       array_unshift($valueOptions, $empty_option);
        $element->setValueOptions($valueOptions);
        $this->add($element);
        //return $this;
@@ -411,8 +422,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function getInputFilterSpecification()
     {
-        // to be continued!!
-        return [
+        
+        $spec = [
             'id' => [
                 'required' => true,
                  'allow_empty' => true,
@@ -496,8 +507,25 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'defendant-search' => [
                 'required' => false,
                 'allow_empty' => true,
-            ]
+            ],           
         ];
+        if ($this->has('modified')) {
+            $spec['modified'] = [
+                'required' => true,
+                'allow_empty' => false,
+                'validators'=> [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'form is missing last-modification timestamp',
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+        }
+        return $spec;
     }
    
 }
