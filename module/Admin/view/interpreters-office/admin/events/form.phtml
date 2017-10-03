@@ -3,10 +3,11 @@ use InterpretersOffice\Admin\Form\View\Helper\InterpreterElementCollection;
 use InterpretersOffice\Admin\Form\View\Helper\DefendantNameElementCollection;
 
 $this->headTitle('admin | events | '.$this->layout()->action);
-$this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepicker.css'));
+$this->headLink()
+        ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headScript()
         ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
-        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
         ->appendFile($this->basePath('js/event-form.js'))
         ;
@@ -30,7 +31,7 @@ $form->prepare();
 $fieldset = $form->get('event');
 // for testing
 if (false) {
-    echo "FUCKING SHIT .........<br>";
+    echo "FUCKING SHIT? .........<br>";
     $fieldset->get('time')->setValue('10:00:00');
     $fieldset->get('date')->setValue('2017-08-15');
    // $fieldset->get('judge')->setValue(1);
@@ -47,11 +48,10 @@ $event = $form->getObject();
 $e = $fieldset->get('judge'); 
 
 //var_dump(get_class_methods($this->getHelperPluginManager())); //exit();
-$pluginManager = $this->getHelperPluginManager();
+//$pluginManager = $this->getHelperPluginManager();
 //$shit = $pluginManager->get("formSelect");
 //echo get_class($shit);
 //var_dump($shit); exit();
-//printf('the fucking judge is %s<br>',$event->getJudge()?$event->getJudge()->getLastname():"anonymous");
 //printf('the fucking judge id %s<br>',$event->getJudge()?$event->getJudge()->getId():"n/a");
 //print($fieldset->get('judge')->getValue() .  " is the value of the judge element<br>");
 //print($fieldset->get('eventType')->getValue() .  " is the value of the event-type element<br>");
@@ -112,6 +112,9 @@ $pluginManager = $this->getHelperPluginManager();
                 echo $this->formHidden($fieldset->get('anonymousJudge'));
                 echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
                 echo $this->formHidden($fieldset->get('id'));
+                if ($fieldset->has('modified')) {
+                    echo $this->formHidden($fieldset->get('modified'));
+                }
                 echo $this->formSubmit($form->get('submit'));?>
             </div>       
         </div><!-- / .form-group -->

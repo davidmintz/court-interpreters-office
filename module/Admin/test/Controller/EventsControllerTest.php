@@ -10,7 +10,6 @@ class EventControllerTest extends AbstractControllerTest
     public function setUp()
     {
         parent::setUp();
-        $fixtureExecutor = FixtureManager::getFixtureExecutor();
         FixtureManager::dataSetup();
 
         $this->login('david', 'boink');
@@ -25,6 +24,10 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertQueryCount('#date',1);
         $this->assertQueryCount('#time',1);
         $this->assertQueryCount('#event-type',1);
+        $this->assertQueryCount('#judge',1);
+        $this->assertQueryCount('#language',1);
+        $this->assertQueryCount('#docket',1);
+        $this->assertQueryCount('#location',1);
         /** to be continued */
         
     }
