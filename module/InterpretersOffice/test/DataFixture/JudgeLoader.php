@@ -45,7 +45,8 @@ class JudgeLoader implements FixtureInterface
             ->setFirstname('Roland')
             ->setMiddleName('Z.')                
             ->setLastname('Dinklesnort')
-            ->setActive(true);
+            ->setActive(true)
+            ->setDefaultLocation($locations->findOneBy(['name' => '14A']));
         $objectManager->persist($dinklesnort);
         
         // the Magistrate
