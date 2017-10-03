@@ -78,6 +78,7 @@ form .interpreter-language {
 }
 /* for jquery-ui autocomplete  */
 /* https://stackoverflow.com/questions/28285813/style-jquery-autocomplete-in-a-bootstrap-input-field */
+/*
 .ui-autocomplete {
     position: absolute;
     z-index: 1000;
@@ -103,8 +104,9 @@ form .interpreter-language {
 .ui-helper-hidden-accessible {
   display: none;
 }
-/* our innnovation */
+
 .ui-autocomplete > li:hover {
   cursor: pointer;
   background-color: #ffffcc;
-}
+}*/
+/* the preceding is our innnovation */
