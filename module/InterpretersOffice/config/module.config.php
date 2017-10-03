@@ -258,8 +258,18 @@ return [
                         'controller' => Controller\DefendantsController::class,
                         'action' => 'autocomplete',                        
                     ],
-                ],
-                
+                ],                
+            ],
+            'defendant-template' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/defendants/template',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\DefendantsController::class,
+                        'action' => 'template',                        
+                    ],
+                ],                
             ],
             'example' => [
                 'type' => Segment::class,
