@@ -13,8 +13,8 @@ class JudgeLoader implements FixtureInterface
         $failla = new Entity\Judge();
         $usdj = $objectManager->getRepository('InterpretersOffice\Entity\JudgeFlavor')
             ->findOneBy(['flavor' => 'USDJ']);
-        $courtroom_618 = $objectManager->getRepository('InterpretersOffice\Entity\Location')
-            ->findOneBy(['name' => '618']);
+        $locations =  $objectManager->getRepository(Entity\Location::class);
+        $courtroom_618 = $locations->findOneBy(['name' => '618']);
 
         $judgeHat = $objectManager->getRepository('InterpretersOffice\Entity\Hat')
             ->findOneBy(['name' => 'Judge']);
@@ -37,8 +37,22 @@ class JudgeLoader implements FixtureInterface
                 $objectManager->getRepository('InterpretersOffice\Entity\Location')
                         ->findOneBy(['name' => '11A'])
             );
-
-        $objectManager->persist($daniels);
+         $objectManager->persist($daniels);
+        // a few make-believe
+        $dinklesnort = new Entity\Judge();
+        $dinklesnort->setHat($judgeHat)
+            ->setFlavor($usdj)
+            ->setFirstname('Roland')
+            ->setMiddleName('Z.')                
+            ->setLastname('Dinklesnort')
+            ->setActive(true);
+        $objectManager->persist($dinklesnort);
+        
+        // the Magistrate
+        $mag = new Entity\AnonymousJudge();
+        $mag->setDefaultLocation($locations->findOneBy(['name' => '5A']))
+              ->setName('magistrate');
+        $objectManager->persist($mag);
         $objectManager->flush();
     }
 }
