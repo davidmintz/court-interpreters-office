@@ -69,7 +69,7 @@ $(document).ready(function()
         var language_id =  languageElement.val();
         // remove the interpreters if the language changes, except
         // when we're initially triggered on page load, which we 
-        // will know from the parameters
+        // find out from the "params" parameter
         if (! params || params.remove_existing !== false) {            
             $('#interpreters-assigned li').remove();
         }
@@ -112,8 +112,7 @@ $(document).ready(function()
         } else {
             index = 0;
         }        
-        interpreterSelectElement.val("");
-        alert("index is "+index);
+        interpreterSelectElement.val("");        
         $.get('/admin/schedule/interpreter-template',
             {id:id, index:index, name:name},
             function(html){                
@@ -160,16 +159,37 @@ $(document).ready(function()
     });
     /** a start on deft name autocompletion */
     $('#defendant-search').autocomplete(
-                {
-                    source: '/defendants/autocomplete',
-                    minLength: 2,
-                    select: function( event, ui ) {                        
-                        var name = ui.item.label;
-                        var id = ui.item.value;
-                       // var index =                        
-                    },
-                    focus: function(event,ui) { event.preventDefault(); }
-                 }   
+        {
+                source: '/defendants/autocomplete',
+                //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
+
+                minLength: 2,
+                select: function( event, ui ) {                        
+                    var name = ui.item.label;
+                    var id = ui.item.value;
+                    var index;
+                    var last = $('#defendant-names li > input').last();
+                    if (! last.length) {
+                        index = 0;
+                    } else {
+                        var m = last.attr("name").match(/\[(\d+)\]/);
+                        index = parseInt(m.pop()) + 1;
+                    }
+                    that = $(this);
+                    $.get(
+                        '/defendants/template',
+                        {index:index,id:id,name:name},
+                        function(html){
+                            $('#defendant-names').append(html);
+                            that.val("");
+                        }
+                    );
+                },
+                focus: function(event,ui) { 
+                    event.preventDefault();
+                    $(this).val(ui.item.label);
+                }
+             }   
          );
 });
 formatTimeElement = function(timeElement) {
