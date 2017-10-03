@@ -84,4 +84,28 @@ final class FixtureManager
             new ORMPurger(static::getEntityManager())
         );
     }
+    
+    /**
+     * 
+     */
+    public static function dataSetup()
+    {
+        $executor = self::getFixtureExecutor();
+        $executor->execute([
+            
+            new DataFixture\LanguageLoader(),
+            new DataFixture\HatLoader(),
+            new DataFixture\EventTypeLoader(),
+            new DataFixture\LocationLoader(),
+            new DataFixture\DefendantNameLoader(),
+            new DataFixture\JudgeLoader(),
+            new DataFixture\InterpreterLoader(),
+            new DataFixture\CancellationReasonLoader(),
+            new DataFixture\UserLoader(),
+            new DataFixture\EventLoader(),
+            
+            
+            
+        ]);
+    }
 }
