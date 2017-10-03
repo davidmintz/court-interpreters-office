@@ -22,6 +22,9 @@ class EventControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/schedule/add');
         $this->assertResponseStatusCode(200);
         $this->assertQueryCount('form#event-form', 1);
+        $this->assertQueryCount('#date',1);
+        $this->assertQueryCount('#time',1);
+        $this->assertQueryCount('#event-type',1);
         /** to be continued */
         
     }
