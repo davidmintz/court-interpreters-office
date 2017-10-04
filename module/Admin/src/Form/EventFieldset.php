@@ -232,19 +232,17 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'name'=> 'modified',            
             ]);
         }
-        $this->addHatElement();
+        $this->addSubmitterElements();
         // still to do: comments, admin comments, 
         // request meta (from whom and when)
-        // defendants, end time
+        // end time ?
         
         // also sanity-check if there's an entity and one of its props is 
         // NOT in a select (e.g., a Judge marked inactive)
     }
     
-    public function addHatElement()
-    {
-
-        $repo = $this->objectManager->getRepository(Entity\Hat::class);
+    public function addSubmitterElements()
+    {        
         $this->add([
             'type'=>'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'hat',
@@ -253,9 +251,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'target_class' => Entity\Hat::class,
                 'property' => 'name',
                 'label' => 'submitted by',
-                'find_method' => [
-                    'name' => 'findAll'
-                ],
+                // this is the default:
+                //'find_method' => ['name' => 'findAll'],
                 'display_empty_item' => true,
                 'empty_item_label' => '(title/description)',
                 'option_attributes' => [
@@ -264,11 +261,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                             return $hat->getAnonymous() ? 1 : 0;
                         },
                 ],
-                  
-                
             ],         
             'attributes' => ['class' => 'form-control', 'id' => 'hat'],
         ]);
+        
     }
 
     /**
