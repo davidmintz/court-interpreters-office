@@ -98,7 +98,8 @@ $e = $fieldset->get('judge');
         <div class="form-group">
             <label class="control-label col-sm-3" for="hat">submitted by</label>
             <div class="col-sm-9">
-                <?php echo $this->formElement($fieldset->get('hat'));?>
+                <?php echo $this->formElement($fieldset->get('anonymousSubmitter'));?><br>
+                <?php echo $this->formElement($fieldset->get('submitter'));?>
                 
             </div>
         </div>

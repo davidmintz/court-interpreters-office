@@ -232,7 +232,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'name'=> 'modified',            
             ]);
         }
-        $this->addSubmitterElements();
+        $this->addSubmitterElements($options['object']);
         // still to do: comments, admin comments, 
         // request meta (from whom and when)
         // end time ?
@@ -241,11 +241,11 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         // NOT in a select (e.g., a Judge marked inactive)
     }
     
-    public function addSubmitterElements()
+    public function addSubmitterElements(Entity\Event $event = null)
     {        
         $this->add([
             'type'=>'DoctrineModule\Form\Element\ObjectSelect',
-            'name' => 'hat',
+            'name' => 'anonymousSubmitter',
             'options' => [
                 'object_manager' => $this->getObjectManager(),
                 'target_class' => Entity\Hat::class,
@@ -264,6 +264,23 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],         
             'attributes' => ['class' => 'form-control', 'id' => 'hat'],
         ]);
+        $value_options = [['value' => '','label'=>' ','attributes'=>['label'=>' ']]];
+        if ($event && $event->getSubmitter()) {
+             $person = $event->getSubmitter();
+             $hat = $person->getHat();
+             // et cetera!
+        }
+        $this->add(
+         [   'type'=>'Zend\Form\Element\Select',
+            'name' => 'submitter',
+            'options' => [
+                'label' => '',
+                'value_options' => $value_options,
+            ],
+            'attributes' => ['class' => 'form-control', 'id' => 'event-type'],
+        ]
+        
+        );
         
     }
 
