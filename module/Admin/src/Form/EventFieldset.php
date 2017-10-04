@@ -232,6 +232,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'name'=> 'modified',            
             ]);
         }
+        $this->addHatElement();
         // still to do: comments, admin comments, 
         // request meta (from whom and when)
         // defendants, end time
@@ -242,9 +243,34 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     
     public function addHatElement()
     {
-        // to be continued
+
+        $repo = $this->objectManager->getRepository(Entity\Hat::class);
+        $this->add([
+            'type'=>'DoctrineModule\Form\Element\ObjectSelect',
+            'name' => 'hat',
+            'options' => [
+                'object_manager' => $this->getObjectManager(),
+                'target_class' => Entity\Hat::class,
+                'property' => 'name',
+                'label' => 'submitted by',
+                'find_method' => [
+                    'name' => 'findAll'
+                ],
+                'display_empty_item' => true,
+                'empty_item_label' => '(title/description)',
+                'option_attributes' => [
+                    'data-can-be-anonymous' => 
+                        function($hat) {
+                            return $hat->getAnonymous() ? 1 : 0;
+                        },
+                ],
+                  
+                
+            ],         
+            'attributes' => ['class' => 'form-control', 'id' => 'hat'],
+        ]);
     }
-    
+
     /**
      * adds the EventType element
      * 
@@ -513,7 +539,11 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'defendant-search' => [
                 'required' => false,
                 'allow_empty' => true,
-            ],           
+            ],
+            'hat' => [
+                'required' => false,
+                'allow_empty' => true,
+            ],
         ];
         if ($this->has('modified')) {
             $spec['modified'] = [

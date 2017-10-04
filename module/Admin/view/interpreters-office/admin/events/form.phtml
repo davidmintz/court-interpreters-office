@@ -96,7 +96,7 @@ $e = $fieldset->get('judge');
             </div>
         </div>
         
-        <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
+        <?php foreach (['hat'] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
                 <div class="col-sm-9"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
