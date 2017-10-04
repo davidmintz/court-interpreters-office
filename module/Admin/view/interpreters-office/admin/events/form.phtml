@@ -98,7 +98,7 @@ $e = $fieldset->get('judge');
         
         <?php foreach (['hat'] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
-                <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+            <label class="control-label col-sm-3" for="defendant-search"><?php echo $element->getLabel() ?></label>
                 <div class="col-sm-9"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
             </div>
         <?php endforeach; ?>
@@ -113,7 +113,12 @@ $e = $fieldset->get('judge');
                 echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
                 echo $this->formHidden($fieldset->get('id'));
                 if ($fieldset->has('modified')) {
-                    echo $this->formHidden($fieldset->get('modified'));
+                    $element = $fieldset->get('modified');
+                    $value = $element->getValue();
+                    if (! is_object($value)) {
+                        echo $this->formHidden($fieldset->get('modified'));    
+                    } else { ?>to do: deal with shit<?php }
+                    
                 }
                 echo $this->formSubmit($form->get('submit'));?>
             </div>       
