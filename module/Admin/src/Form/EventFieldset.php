@@ -265,23 +265,25 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => ['class' => 'form-control', 'id' => 'hat'],
         ]);
         $value_options = [['value' => '','label'=>' ','attributes'=>['label'=>' ']]];
-        if ($event && $event->getSubmitter()) {
-             $person = $event->getSubmitter();
-             $hat = $person->getHat();
-             // et cetera!
+        $repo = $this->getObjectManager()->getRepository(Entity\Person::class);
+        if ($event) { // this surely can be refactored
+            if ($event->getSubmitter()) {            
+                $hat = $event->getSubmitter()->getHat();
+                $value_options = array_merge($value_options, $repo->getPersonOptions($hat->getId()));
+            } elseif ($event->getAnonymousSubmitter()) {
+                $hat = $event->getAnonymousSubmitter();
+                $value_options = array_merge($value_options, $repo->getPersonOptions($hat->getId()));
+            }
         }
         $this->add(
-         [   'type'=>'Zend\Form\Element\Select',
+        [   'type'=>'Zend\Form\Element\Select',
             'name' => 'submitter',
             'options' => [
                 'label' => '',
                 'value_options' => $value_options,
             ],
             'attributes' => ['class' => 'form-control', 'id' => 'event-type'],
-        ]
-        
-        );
-        
+        ]);
     }
 
     /**

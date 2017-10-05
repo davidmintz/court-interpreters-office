@@ -157,7 +157,7 @@ $(document).ready(function()
         }
      
     });
-    /** a start on deft name autocompletion */
+    /** deft name autocompletion */
     $('#defendant-search').autocomplete(
         {
                 source: '/defendants/autocomplete',
@@ -165,8 +165,6 @@ $(document).ready(function()
 
                 minLength: 2,
                 select: function( event, ui ) {                        
-                    var name = ui.item.label;
-                    var id = ui.item.value;
                     var index;
                     var last = $('#defendant-names li > input').last();
                     if (! last.length) {
@@ -178,7 +176,7 @@ $(document).ready(function()
                     that = $(this);
                     $.get(
                         '/defendants/template',
-                        {index:index,id:id,name:name},
+                        {index:index,id:ui.item.value,name:ui.item.label},
                         function(html){
                             $('#defendant-names').append(html);
                             that.val("");

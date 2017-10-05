@@ -19,7 +19,8 @@ use Zend\Form\Annotation;
  * @see InterpretersOffice\Entity\Judge
  * @see InterpretersOffice\Entity\Interpreter
  *
- * @ORM\Entity @ORM\Table(name="people",
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\PersonRepository")
+ * @ORM\Table(name="people",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="hat_email_idx",columns={"email","hat_id"}),
  *          @ORM\UniqueConstraint(name="active_email_idx",columns={"email","active"})
