@@ -105,12 +105,6 @@ class EventsController extends AbstractActionController
                 $anonymousSubmitter = $this->entityManager->find(
                     Entity\Hat::class, 4
                 );
-                /*
-                $user =  $this->entityManager->find(
-                            Entity\User::class, 8
-                        );
-                 */
-                //exit(get_class($user));
                 $event->setAnonymousSubmitter($anonymousSubmitter);
                 if (! $event->getSubmissionDatetime()) {
                     $event->setSubmissionDatetime(new \DateTime('-5 minutes'));
