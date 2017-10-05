@@ -234,13 +234,22 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         }
         $this->addSubmitterElements($options['object']);
         // still to do: comments, admin comments, 
-        // request meta (from whom and when)
+        // request meta (from whom, when)
         // end time ?
         
         // also sanity-check if there's an entity and one of its props is 
         // NOT in a select (e.g., a Judge marked inactive)
+        $this->addSubmissionDateTimeElements();
+        
     }
     
+   /**
+    * adds submitter elements
+    * 
+    * @param \InterpretersOffice\Entity\Event $event
+    * @return \InterpretersOffice\Admin\Form\EventFieldset
+    * @throws \Exception
+    */
     public function addSubmitterElements(Entity\Event $event = null)
     {        
         $this->add([
@@ -263,7 +272,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],         
             'attributes' => ['class' => 'form-control', 'id' => 'hat'],
         ]);
-        $value_options = [['value' => '','label'=>' ','attributes'=>['label'=>' ']]];
+        $value_options = [['value' => '','label'=>'(person\'s name)',
+            'attributes'=>['label'=>'person\'s name']]];
         $repo = $this->getObjectManager()->getRepository(Entity\Person::class);
         if ($event) {
             $hat = $event->getSubmitter() ? $event->getSubmitter()->getHat() :
@@ -286,8 +296,21 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
             'attributes' => ['class' => 'form-control', 'id' => 'submitter'],
         ]);
+        
+        return $this;
     }
-
+    
+    /**
+     * adds elements for date and time of submission
+     * 
+     * @param \InterpretersOffice\Entity\Event $event
+     * @return \InterpretersOffice\Admin\Form\EventFieldset
+     */
+    public function addSubmissionDateTimeElements(Entity\Event $event = null)
+    {
+        return $this;
+    }
+    
     /**
      * adds the EventType element
      * 

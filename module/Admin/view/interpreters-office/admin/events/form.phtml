@@ -100,7 +100,7 @@ if (null !== $event->getSubmitter()) {
             <label class="control-label col-sm-3" for="interpreter-select">interpreters</label>
             <div class="col-sm-9">
                 <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
-                <ul style="margin-top: 1em" id="interpreters-assigned" class="list-group interpreters-assigned">
+                <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                 <?php 
                 $collection = $fieldset->get('interpretersAssigned'); 
                 $helper = (new InterpreterElementCollection())->setView($this);
@@ -113,7 +113,7 @@ if (null !== $event->getSubmitter()) {
             <label class="control-label col-sm-3" for="defendant-search">defendants</label>
             <div class="col-sm-9">
                 <?php echo $this->formElement($fieldset->get('defendant-search'));?>
-                <ul style="margin-top: 1em" id="defendant-names" class="list-group defendant-names">
+                <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php                
                 $collection = $fieldset->get('defendantsEvent'); 
                 $helper = (new DefendantNameElementCollection())->setView($this);

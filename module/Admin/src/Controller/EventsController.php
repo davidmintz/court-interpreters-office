@@ -112,7 +112,9 @@ class EventsController extends AbstractActionController
                  */
                 //exit(get_class($user));
                 $event->setAnonymousSubmitter($anonymousSubmitter);
-                
+                if (! $event->getSubmissionDatetime()) {
+                    $event->setSubmissionDatetime(new \DateTime('-5 minutes'));
+                }
 
                 //\Doctrine\Common\Util\Debug::dump($event);
 

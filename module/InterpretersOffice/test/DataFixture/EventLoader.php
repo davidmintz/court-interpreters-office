@@ -57,7 +57,8 @@ class EventLoader implements FixtureInterface
             ->setCreated($now)
             ->setCreatedBy($user)
             ->setLocation($location)
-            ->setModifiedBy($user)            
+            ->setModifiedBy($user)
+             ->setSubmissionDatetime(new \DateTime('-1 hour'))
              ->addDefendant($defendant)
              ->addInterpretersAssigned(
                 $collection
