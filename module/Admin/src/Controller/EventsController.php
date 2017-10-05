@@ -59,8 +59,6 @@ class EventsController extends AbstractActionController
 
     /**
      * adds a new event
-     *
-     *
      */
     public function addAction()
     {
@@ -99,7 +97,7 @@ class EventsController extends AbstractActionController
                 //var_dump($form->getMessages()['event']);var_dump($request->getPost());
                 return $viewModel;
             } else {
-                // faking some data for now
+                // fake some data for now
                 echo "validation OK... ";
                 
                 //$this->postValidate($event,$form);

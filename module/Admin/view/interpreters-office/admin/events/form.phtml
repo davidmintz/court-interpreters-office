@@ -21,12 +21,11 @@ $form->setAttribute('class','form-horizontal form-event');
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
 ?>
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
-
 $form->prepare();
 $fieldset = $form->get('event');
 // for testing
@@ -44,9 +43,18 @@ if (false) {
 }
 echo $this->form()->openTag($form);  
 $event = $form->getObject();
+// if location is set and has a parent, set parent_location element
+$location = $event->getLocation();
+if ($location && $parentLocation = $location->getParentLocation()) {
+    $fieldset->get('parent_location')->setValue($parentLocation->getId());
+}
+// if submitter !== NULL, set anonymousSubmitter element = hat_id of submitter
+if (null !== $event->getSubmitter()) {
+    $hat = $event->getSubmitter()->getHat();
+    $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
+}
 
-$e = $fieldset->get('judge'); 
-
+                
 //var_dump(get_class_methods($this->getHelperPluginManager())); //exit();
 //$pluginManager = $this->getHelperPluginManager();
 //$shit = $pluginManager->get("formSelect");
@@ -58,11 +66,30 @@ $e = $fieldset->get('judge');
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
-        <?php foreach (['date','time','judge','eventType','parent_location','location','language','docket',
-            ] as $elementName) : $element = $fieldset->get($elementName); ?>
+        <?php foreach (['date','time','eventType','judge', ] as $elementName) : 
+            $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
-                <div class="col-sm-9"><?php echo $this->formElement($element), $this->formElementErrors($element) ?></div>
+                <div class="col-sm-9"><?php 
+                    echo $this->formElement($element), $this->formElementErrors($element) ?>
+                </div>
+            </div>
+        <?php endforeach;  $element = $fieldset->get('parent_location')?>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-9"><?php 
+                    echo $this->formElement($element), 
+                         $this->formElement($fieldset->get('location')),
+                         $this->formElementErrors($element) ?>
+                </div>
+            </div>
+        <?php foreach (['language','docket', ]  as $elementName) : 
+            $element = $fieldset->get($elementName); ?>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-9"><?php 
+                    echo $this->formElement($element), $this->formElementErrors($element) ?>
+                </div>
             </div>
         <?php endforeach; ?>
     </div>
@@ -99,15 +126,8 @@ $e = $fieldset->get('judge');
             <label class="control-label col-sm-3" for="hat">submitted by</label>
             <div class="col-sm-9">
             <?php 
-            // if submitter !== NULL, set the anonymousSubmitter element = hat_id of submitter
-            if (null !== $event->getSubmitter()) {
-                $hat = $event->getSubmitter()->getHat();
-                $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
-            }
-            ?>
-                <?php echo $this->formElement($fieldset->get('anonymousSubmitter'));?><br>
-                <?php echo $this->formElement($fieldset->get('submitter'));?>
-                
+                  echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
+            <?php echo $this->formElement($fieldset->get('submitter'));?>                
             </div>
         </div>
         <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
@@ -123,7 +143,7 @@ $e = $fieldset->get('judge');
                 <?php
                $csrf = $form->get('csrf');
                 //echo $this->formHidden($fieldset->get('is_anonymous_judge'));
-                echo $this->formHidden($fieldset->get('anonymousJudge'));
+                //echo $this->formHidden($fieldset->get('anonymousJudge'));
                 echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
                 echo $this->formHidden($fieldset->get('id'));
                 if ($fieldset->has('modified')) {

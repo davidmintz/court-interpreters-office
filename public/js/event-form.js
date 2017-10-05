@@ -53,7 +53,7 @@ $(document).ready(function()
     if (! parentLocationElement.val()){
         locationElement.val("").attr({disabled : "disabled"});
     } else {
-        parentLocationElement.trigger("change");
+        //parentLocationElement.trigger("change");
     }
     /** this applies to admin form, not "request" form **/
     var languageElement = $('#language');

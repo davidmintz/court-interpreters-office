@@ -251,8 +251,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'target_class' => Entity\Hat::class,
                 'property' => 'name',
                 'label' => 'submitted by',
-                // this is the default:
-                //'find_method' => ['name' => 'findAll'],
+                // the default is:'find_method' => ['name' => 'findAll'],
                 'display_empty_item' => true,
                 'empty_item_label' => '(title/description)',
                 'option_attributes' => [
@@ -266,14 +265,17 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         ]);
         $value_options = [['value' => '','label'=>' ','attributes'=>['label'=>' ']]];
         $repo = $this->getObjectManager()->getRepository(Entity\Person::class);
-        if ($event) { // this surely can be refactored
-            if ($event->getSubmitter()) {            
-                $hat = $event->getSubmitter()->getHat();
-                $value_options = array_merge($value_options, $repo->getPersonOptions($hat->getId()));
-            } elseif ($event->getAnonymousSubmitter()) {
-                $hat = $event->getAnonymousSubmitter();
-                $value_options = array_merge($value_options, $repo->getPersonOptions($hat->getId()));
+        if ($event) {
+            $hat = $event->getSubmitter() ? $event->getSubmitter()->getHat() :
+                $event->getAnonymousSubmitter();
+            if (! $hat) {
+                throw new \Exception(sprintf(
+                    'The database record for event %d is in an invalid state: '
+                  . 'both the submitter and generic submitter fields are null. '
+                ));
             }
+            $value_options = array_merge($value_options, 
+                    $repo->getPersonOptions($hat->getId()));
         }
         $this->add(
         [   'type'=>'Zend\Form\Element\Select',
@@ -289,8 +291,6 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     /**
      * adds the EventType element
      * 
-     * @todo get rid of this and use a regular Zend\Form\Element\Select
-     * with a repository method that gets options WITH ATTRIBUTES and uses caching
      * @return \InterpretersOffice\Admin\Form\EventFieldset
      */
     public function addEventTypeElement()            
@@ -321,10 +321,11 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      * adds Location elements
      * @param Entity\Event $event the Event instance, if we are updating
      * @return EventFieldset
-     * @todo option grouping for sub-location
+     * @todo option grouping for sub-location?
      */
     public function addLocationElements(Entity\Event $event = null)
     {
+        // the "parentLocation" element
         $this->add([
             'type'=>'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'parent_location',
@@ -340,11 +341,13 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'empty_item_label' => '(general location)',
                 
             ],         
-            'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
+            'attributes' => [
+                'class' => 'form-control', 
+                'id' => 'parent_location'
+            ],
         ]);
-        /**
-         * @todo clean this up
-         */
+        
+        // the (specific) "location" element
         $element_spec = [           
                 'type' => 'Zend\Form\Element\Select',
                 'name' => 'location',
@@ -354,13 +357,11 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 ],                
                 'attributes' => ['class' => 'form-control', 'id' => 'location'],
         ];
-        if (! $event or !$event->getLocation()) {
+        if (! $event or ! $event->getLocation()) {
              $this->add($element_spec);
-        } else {
-           $location = $event->getLocation();
-           if ($location->getParentLocation()) {
-                $parent_id =  $location->getParentLocation()->getId();
-                
+        } else { // the event location is set
+           $parentLocation = $event->getLocation()->getParentLocation();
+           if ($parentLocation) {
                 $this->add([
                     'type'=>'DoctrineModule\Form\Element\ObjectSelect',
                     'name' => 'location',
@@ -370,17 +371,16 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                         'property' => 'name',
                         'find_method' => [
                             'name' => 'getChildren',
-                            'params' => ['parent_id'=>$parent_id]
+                            'params' => ['parent_id'=>$parentLocation->getId()]
                         ],
                         'display_empty_item' => true,
                         'empty_item_label' => '(specific location)',
                     ],         
-                    'attributes' => ['class' => 'form-control', 'id' => 'parent_location'],
+                    'attributes' => 
+                        ['class' => 'form-control', 'id' => 'location'],
                 ]);
             } else {
                 $this->add($element_spec);
-                // ! the "parent_location" element value needs to be set
-                $this->get('parent_location')->setValue($location->getId());
             }
         }
         

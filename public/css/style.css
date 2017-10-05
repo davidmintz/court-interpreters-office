@@ -60,7 +60,7 @@ so that interpreter-languages won't stack and look crappy on a small viewport
     form .interpreters-assigned,
     form .defendant-names
     {
-        max-width: 75%;
+        /*max-width: 75%;*/
     }
     form #languages {
        margin-left: 10%;
@@ -76,37 +76,8 @@ form .interpreter-language {
    padding-top:.25em;
    padding-bottom:.25em
 }
-/* for jquery-ui autocomplete  */
-/* https://stackoverflow.com/questions/28285813/style-jquery-autocomplete-in-a-bootstrap-input-field */
-/*
-.ui-autocomplete {
-    position: absolute;
-    z-index: 1000;
-    cursor: default;
-    padding: 0;
-    margin-top: 2px;
-    list-style: none;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    -webkit-border-radius: 5px;
-       -moz-border-radius: 5px;
-            border-radius: 5px;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-       -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+.form-event { 
+    max-width : 1020px; 
+    
 }
-.ui-autocomplete > li {
-  padding: 3px 20px;
-}
-.ui-autocomplete > li.ui-state-focus {
-  background-color: #DDD;
-}
-.ui-helper-hidden-accessible {
-  display: none;
-}
-
-.ui-autocomplete > li:hover {
-  cursor: pointer;
-  background-color: #ffffcc;
-}*/
-/* the preceding is our innnovation */
+.form-event label { padding-right: 0;}
