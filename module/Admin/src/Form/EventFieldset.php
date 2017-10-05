@@ -282,7 +282,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'label' => '',
                 'value_options' => $value_options,
             ],
-            'attributes' => ['class' => 'form-control', 'id' => 'event-type'],
+            'attributes' => ['class' => 'form-control', 'id' => 'submitter'],
         ]);
     }
 
