@@ -281,8 +281,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 $event->getAnonymousSubmitter();
             if (! $hat) {
                 throw new \Exception(sprintf(
-                    'The database record for event %d is in an invalid state: '
-                  . 'both the submitter and generic submitter fields are null. '
+                    'The database record for event id %d is in an invalid state: '
+                  . 'both the submitter and generic submitter fields are null.',
+                    $event->getId()
                 ));
             }
             $value_options = array_merge($value_options, 
@@ -440,13 +441,42 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         
         return $this;         
     }
-    
+
     /**
      * adds the Judge element
      * 
      * @return \InterpretersOffice\Admin\Form\EventFieldset
      */
     public function addJudgeElements()
+    {
+        $repository = $this->getObjectManager()->getRepository(Judge::class);
+        $value_options = $repository->getJudgeOptions(['include_pseudo_judges'=>true]);
+        $this->add([
+            'type'=>'Zend\Form\Element\Select',
+            'name' => 'judge',
+            'options' => [
+                'label' => 'judge',
+                'value_options' => $value_options,
+            ],
+            'attributes' => ['class' => 'form-control', 'id' => 'judge'],
+         
+        ]);
+        $this->add(
+            [
+                'type' => 'Zend\Form\Element\Hidden',
+                'name' => 'anonymousJudge',
+                'attributes' => ['id' => 'anonymousJudge']
+            ]
+        );
+        return $this;
+    }
+
+    /**
+     * adds the Judge element
+     * 
+     * @return \InterpretersOffice\Admin\Form\EventFieldset
+     */
+    public function __addJudgeElements()
     {        
         $em = $this->objectManager;
         $element = new ObjectSelect('judge',

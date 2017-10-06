@@ -53,7 +53,10 @@ if (null !== $event->getSubmitter()) {
     $hat = $event->getSubmitter()->getHat();
     $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
 }
-
+$judge = $fieldset->get('judge')->getValue();
+if (is_object($judge)) {
+   $fieldset->get('judge')->setValue($judge->getId());
+}
                 
 //var_dump(get_class_methods($this->getHelperPluginManager())); //exit();
 //$pluginManager = $this->getHelperPluginManager();
@@ -61,7 +64,7 @@ if (null !== $event->getSubmitter()) {
 //echo get_class($shit);
 //var_dump($shit); exit();
 //printf('the fucking judge id %s<br>',$event->getJudge()?$event->getJudge()->getId():"n/a");
-//print($fieldset->get('judge')->getValue() .  " is the value of the judge element<br>");
+print(gettype($fieldset->get('judge')->getValue()) .  " is the data type of the judge element<br>");
 //print($fieldset->get('eventType')->getValue() .  " is the value of the event-type element<br>");
 ?>
 <div class="col-sm-6"><!-- left side -->

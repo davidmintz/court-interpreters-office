@@ -99,6 +99,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
     }
     /**
      * get data for populating Judge select menu
+
      * @param array $options
      * @return array
      */
@@ -128,11 +129,12 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
             usort($data,function($a,$b){
                 return strnatcasecmp($a['label'], $b['label']);
             });
-            return $data;
-        }        
+        }
+
+        return $data;     
     }
     
-    /**
+    /*
      * helper to get anonymous (a/k/a pseudo-) judges for populating a select
      * 
      * @return array
