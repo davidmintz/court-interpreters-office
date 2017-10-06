@@ -110,6 +110,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'id' => 'defendant-search',
                 'class' => 'form-control',
+                'placeholder' => 'last name[, first name]'
             ],
              'options' => [
                 'label' => 'defendants',                
@@ -308,6 +309,36 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      */
     public function addSubmissionDateTimeElements(Entity\Event $event = null)
     {
+        $this->add(
+        [
+             'name' => 'submission_date',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Date',
+            'attributes' => [
+                'id' => 'submission_date',
+                'class' => 'date form-control',
+                'placeholder'=> 'date request was received',
+            ],
+             'options' => [
+                'label' => 'requested on',
+                'format' => 'Y-m-d',
+            ]             
+        ]);
+        $this->add(
+        [
+            'name' => 'submission_time',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Time',
+            'attributes' => [
+                'id' => 'submission_time',
+                'class' => 'time form-control',
+                'placeholder'=> 'time request was received',
+            ],
+             'options' => [
+                'label' => 'time',
+                'format' => 'H:i:s',
+             ],
+        ]);
         return $this;
     }
     

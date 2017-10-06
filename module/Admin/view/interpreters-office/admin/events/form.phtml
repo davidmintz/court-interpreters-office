@@ -95,7 +95,7 @@ if (null !== $event->getSubmitter()) {
     </div>
 </div>
 <div class="col-sm-6"><!-- right side -->
-    <div class="row">
+    <div class="row"><!--  style="background-color: yellow" -->
         <div class="form-group">
             <label class="control-label col-sm-3" for="interpreter-select">interpreters</label>
             <div class="col-sm-9">
@@ -130,32 +130,47 @@ if (null !== $event->getSubmitter()) {
             <?php echo $this->formElement($fieldset->get('submitter'));?>                
             </div>
         </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="submission_date">submitted on</label>
+            <div class="col-sm-9">
+            <?php 
+                  echo $this->formElement($fieldset->get('submission_date'));?>                
+            </div>
+            <label class="control-label col-sm-3 submission-time" for="submission_time">at</label>
+            <div class="col-sm-9 submission-time">
+            <?php echo $this->formElement($fieldset->get('submission_time'));?>                
+            </div>
+        </div>
+
         <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
             <label class="control-label col-sm-3" for="defendant-search"><?php echo $element->getLabel() ?></label>
                 <div class="col-sm-9"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
             </div>
         <?php endforeach; ?>
-    </div>
-</div>
-<div style="margin-top:1em" class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-                <?php
-               $csrf = $form->get('csrf');
-                //echo $this->formHidden($fieldset->get('is_anonymous_judge'));
-                //echo $this->formHidden($fieldset->get('anonymousJudge'));
-                echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
-                echo $this->formHidden($fieldset->get('id'));
-                if ($fieldset->has('modified')) {
-                    $element = $fieldset->get('modified');
-                    $value = $element->getValue();
-                    if (! is_object($value)) {
-                        echo $this->formHidden($fieldset->get('modified'));    
-                    } else { ?>to do: deal with shit<?php }
-                    
+    </div><!-- /.row -->
+</div><!-- /right side -->
+<div class="row">
+    <div style="margin-top:1em" class="form-group">
+        <div class="col-sm-12" style="text-align: center;">
+
+            <?php
+           $csrf = $form->get('csrf');
+            //echo $this->formHidden($fieldset->get('is_anonymous_judge'));
+            //echo $this->formHidden($fieldset->get('anonymousJudge'));
+            echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+            echo $this->formHidden($fieldset->get('id'));
+            if ($fieldset->has('modified')) {
+                $element = $fieldset->get('modified');
+                $value = $element->getValue();
+                if (is_object($value)) {
+                    $element->setValue($value->format('Y-m-d H:i:s'));
                 }
-                echo $this->formSubmit($form->get('submit'));?>
-            </div>       
-        </div><!-- / .form-group -->
+                echo $this->formHidden($element);   
+            }
+            echo $this->formSubmit($form->get('submit'));?>
+        </div>
+    </div><!-- / .form-group -->
+</div>
 <?php echo $this->form()->closeTag(); ?>
 
