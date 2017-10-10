@@ -41,8 +41,9 @@ if (false) {
    ['interpreter'=> 117] 
 ]);
 }
-echo $this->form()->openTag($form);  
+/** @todo put all this logic somewhere else? */
 $event = $form->getObject();
+
 // if location is set and has a parent, set parent_location element
 $location = $event->getLocation();
 if ($location && $parentLocation = $location->getParentLocation()) {
@@ -53,44 +54,58 @@ if (null !== $event->getSubmitter()) {
     $hat = $event->getSubmitter()->getHat();
     $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
 }
+// judge element value needs to be an integer
 $judge = $fieldset->get('judge')->getValue();
 if (is_object($judge)) {
    $fieldset->get('judge')->setValue($judge->getId());
 }
-                
-//var_dump(get_class_methods($this->getHelperPluginManager())); //exit();
-//$pluginManager = $this->getHelperPluginManager();
-//$shit = $pluginManager->get("formSelect");
-//echo get_class($shit);
-//var_dump($shit); exit();
-//printf('the fucking judge id %s<br>',$event->getJudge()?$event->getJudge()->getId():"n/a");
-print(gettype($fieldset->get('judge')->getValue()) .  " is the data type of the judge element<br>");
-//print($fieldset->get('eventType')->getValue() .  " is the value of the event-type element<br>");
+// temporarily, set this here
+$config = ['end_time' => true];
+echo $this->form()->openTag($form);  
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
         <?php foreach (['date','time','eventType','judge', ] as $elementName) : 
             $element = $fieldset->get($elementName); ?>
             <div class="form-group">
-                <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
-                <div class="col-sm-9"><?php 
-                    echo $this->formElement($element), $this->formElementErrors($element) ?>
+                <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <?php
+                if ('time' == $elementName && $config['end_time']):
+                    // this looks shitty and needs more work.
+                    // the "time" element looks like shit in chrome.
+                    // the inline css doesn't work for smaller viewports
+                ?>
+                <div class="col-sm-3"  style="padding-right:0px">
+                    <?php echo $this->formElement($element),$this->formElementErrors($element);?>
+                    <!-- <input class="form-control time" name="time" id="time"> -->
+                </div><label class="control-label col-sm-2" style="text-align:center;margin:0;" for="end_time">to</label>
+                <div class="col-sm-3" style="padding-left:0px">
+                    <?php $element = $fieldset->get('end_time');
+                    echo $this->formElement($element),$this->formElementErrors($element);?>
+                    <!-- <input class="form-control time" id="end_time" name="to"> -->
                 </div>
+                <?php
+                    else: 
+                  ?><div class="col-sm-8"><?php
+                    echo $this->formElement($element), $this->formElementErrors($element);
+                    ?></div><?php
+                    endif;
+                ?>
             </div>
         <?php endforeach;  $element = $fieldset->get('parent_location')?>
             <div class="form-group">
-                <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
-                <div class="col-sm-9"><?php 
+                <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-8"><?php 
                     echo $this->formElement($element), 
                          $this->formElement($fieldset->get('location')),
                          $this->formElementErrors($element) ?>
                 </div>
             </div>
-        <?php foreach (['language','docket', ]  as $elementName) : 
+        <?php foreach (['language','docket', 'comments','admin_comments']  as $elementName) : 
             $element = $fieldset->get($elementName); ?>
             <div class="form-group">
-                <label class="control-label col-sm-3" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
-                <div class="col-sm-9"><?php 
+                <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-8"><?php 
                     echo $this->formElement($element), $this->formElementErrors($element) ?>
                 </div>
             </div>
@@ -100,8 +115,8 @@ print(gettype($fieldset->get('judge')->getValue()) .  " is the data type of the 
 <div class="col-sm-6"><!-- right side -->
     <div class="row"><!--  style="background-color: yellow" -->
         <div class="form-group">
-            <label class="control-label col-sm-3" for="interpreter-select">interpreters</label>
-            <div class="col-sm-9">
+            <label class="control-label col-sm-4" for="interpreter-select">interpreters</label>
+            <div class="col-sm-8">
                 <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                 <?php 
@@ -113,8 +128,8 @@ print(gettype($fieldset->get('judge')->getValue()) .  " is the data type of the 
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="defendant-search">defendants</label>
-            <div class="col-sm-9">
+            <label class="control-label col-sm-4" for="defendant-search">defendants</label>
+            <div class="col-sm-8">
                 <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php                
@@ -126,29 +141,29 @@ print(gettype($fieldset->get('judge')->getValue()) .  " is the data type of the 
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="hat">submitted by</label>
-            <div class="col-sm-9">
+            <label class="control-label col-sm-4" for="hat">submitted by</label>
+            <div class="col-sm-8">
             <?php 
                   echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
             <?php echo $this->formElement($fieldset->get('submitter'));?>                
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="submission_date">submitted on</label>
-            <div class="col-sm-9">
+            <label class="control-label col-sm-4" for="submission_date">submitted on</label>
+            <div class="col-sm-8">
             <?php 
                   echo $this->formElement($fieldset->get('submission_date'));?>                
             </div>
-            <label class="control-label col-sm-3 submission-time" for="submission_time">at</label>
-            <div class="col-sm-9 submission-time">
+            <label class="control-label col-sm-4 submission-time" for="submission_time">at</label>
+            <div class="col-sm-8 submission-time">
             <?php echo $this->formElement($fieldset->get('submission_time'));?>                
             </div>
         </div>
 
         <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
             <div class="form-group">
-            <label class="control-label col-sm-3" for="defendant-search"><?php echo $element->getLabel() ?></label>
-                <div class="col-sm-9"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
+            <label class="control-label col-sm-4" for="defendant-search"><?php echo $element->getLabel() ?></label>
+                <div class="col-sm-8"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
             </div>
         <?php endforeach; ?>
     </div><!-- /.row -->
@@ -158,7 +173,7 @@ print(gettype($fieldset->get('judge')->getValue()) .  " is the data type of the 
         <div class="col-sm-12" style="text-align: center;">
 
             <?php
-           $csrf = $form->get('csrf');
+            $csrf = $form->get('csrf');
             //echo $this->formHidden($fieldset->get('is_anonymous_judge'));
             //echo $this->formHidden($fieldset->get('anonymousJudge'));
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
