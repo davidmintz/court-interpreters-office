@@ -1,5 +1,4 @@
 <?php
-
 /** config/autoload/navigation.global.php 
  *
  * still a work in progress
