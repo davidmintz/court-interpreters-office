@@ -234,11 +234,51 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ]);
         }
         $this->addSubmitterElements($options['object']);
-        // still to do: comments, admin comments, 
-        // request meta (from whom, when)
-        // end time ?
         
-        // also sanity-check if there's an entity and one of its props is 
+        $this->add([
+            'type' => 'Textarea',
+            'name' => 'comments',
+            'attributes' => [
+                'class' => 'form-control', 
+                'id' => 'comments',
+                'rows' => 3,
+                'cols' => 28,
+            ],
+            'options' => [
+                'label' => 'comments (public)',
+            ],
+            
+        ]);
+        $this->add([
+            'type' => 'Textarea',
+            'name' => 'admin_comments',
+            'attributes' => [
+                'class' => 'form-control', 
+                'id' => 'admin_comments',
+                'rows' => 3,
+                'cols' => 28,
+            ],
+            'options' => [
+                'label' => 'comments (private)'
+            ],
+            
+        ]);
+        /** @to do make this configurable */
+        $this->add(
+         [
+            'name' => 'end_time',
+            //'type' => 'text',
+            'type' => 'Zend\Form\Element\Time',
+            'attributes' => [
+                'id' => 'end_time',
+                'class' => 'time form-control',
+            ],
+             'options' => [
+                'label' => 'time',
+                'format' => 'H:i:s',// :s
+             ],
+        ]);
+        // also:  sanity-check if there's an entity and one of its props is 
         // NOT in a select (e.g., a Judge marked inactive)
         $this->addSubmissionDateTimeElements();
         
@@ -570,6 +610,51 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'hat' => [
                 'required' => false,
                 'allow_empty' => true,
+            ],
+            'comments' => [
+                'required' => false,
+                'allow_empty' => true,
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'min' => 5,
+                            'max' => 600,
+                            'messages' => [
+                            \Zend\Validator\StringLength::TOO_LONG => 
+                                'maximum length allowed is 600 characters',
+                             \Zend\Validator\StringLength::TOO_SHORT => 
+                                'minimum length allowed is 5 characters',
+                            ]
+                        ]
+                    ]
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+            ],
+             'admin_comments' => [
+                'required' => false,
+                'allow_empty' => true,
+                 'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'min' => 5,
+                            'max' => 600,
+                            'messages' => [
+                            \Zend\Validator\StringLength::TOO_LONG => 
+                                'maximum length allowed is 600 characters',
+                             \Zend\Validator\StringLength::TOO_SHORT => 
+                                'minimum length allowed is 5 characters',
+                            ]
+                        ]
+                    ]
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                 
             ],
         ];
         if ($this->has('modified')) {
