@@ -27,7 +27,7 @@ $(document).ready(function(){
     */
 }); 
 
-DocketRegExp = /^(?:s-?[1-9] *)?((?:19|20)?\d{2})[- .]*(c(?:r(?:im)?|i?v)|m(?:ag)?)[- .]*(\d{1,5})(?: *\([a-z]{2,3}\))?$/i;
+DocketRegExp = /^(?:s-?[1-9] *)?((?:19|20)?\d{2})[- .]*(c(?:r(?:im)?|i?v)|m(?:ag|j)?)[- .]*(\d{1,5})(?: *\([a-z]{2,3}\))?$/i;
 
 /**
  * displays validation errors on a form
