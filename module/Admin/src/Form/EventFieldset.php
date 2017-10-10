@@ -450,7 +450,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     public function addJudgeElements()
     {
         $repository = $this->getObjectManager()->getRepository(Judge::class);
-        $value_options = $repository->getJudgeOptions(['include_pseudo_judges'=>true]);
+        $value_options = 
+                $repository->getJudgeOptions(['include_pseudo_judges'=>true]);
+        array_unshift($value_options, 
+                [ 'value' => '','label'=>' ','attributes'=>['label'=>' '] ]);
         $this->add([
             'type'=>'Zend\Form\Element\Select',
             'name' => 'judge',
