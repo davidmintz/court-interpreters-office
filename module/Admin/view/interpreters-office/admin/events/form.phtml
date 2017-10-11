@@ -11,6 +11,13 @@ $this->headScript()
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
         ->appendFile($this->basePath('js/event-form.js'))
         ;
+$this->headStyle()->captureStart();?>
+.multi-input label, .multi-input div { border : 1px dotted gray; }
+form { max-width: 900px;}
+.multi-input div:first-of-type { padding-right: 0px; }
+.multi-input div:last-of-type { padding-left: 0px; }
+.multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
+<?php $this->headStyle()->captureEnd();
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -59,38 +66,28 @@ $judge = $fieldset->get('judge')->getValue();
 if (is_object($judge)) {
    $fieldset->get('judge')->setValue($judge->getId());
 }
-// temporarily, set this here
+// temporarily, we set this here
 $config = ['end_time' => true];
 echo $this->form()->openTag($form);  
 ?>
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
         <?php foreach (['date','time','eventType','judge', ] as $elementName) : 
-            $element = $fieldset->get($elementName); ?>
+            $element = $fieldset->get($elementName); 
+            if ('time' == $elementName && $config['end_time']):?>
+            <div class="form-group multi-input">
+                <label class="control-label col-xs-4" for="time">time</label>
+                <div class="col-xs-3"><?php echo $this->formElement($element), $this->formElementErrors($element);?></div>
+                <label class="col-xs-2 control-label" for="end_time">to</label>
+                <div class="col-xs-3"><?php $element = $fieldset->get('end_time');
+                    echo $this->formElement($element),$this->formElementErrors($element);?></div>    
+            <?php else: ?>
             <div class="form-group">
                 <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
-                <?php
-                if ('time' == $elementName && $config['end_time']):
-                    // this looks shitty and needs more work.
-                    // the "time" element looks like shit in chrome.
-                    // the inline css doesn't work for smaller viewports
-                ?>
-                <div class="col-sm-3"  style="padding-right:0px">
-                    <?php echo $this->formElement($element),$this->formElementErrors($element);?>
-                    <!-- <input class="form-control time" name="time" id="time"> -->
-                </div><label class="control-label col-sm-2" style="text-align:center;margin:0;" for="end_time">to</label>
-                <div class="col-sm-3" style="padding-left:0px">
-                    <?php $element = $fieldset->get('end_time');
-                    echo $this->formElement($element),$this->formElementErrors($element);?>
-                    <!-- <input class="form-control time" id="end_time" name="to"> -->
-                </div>
-                <?php
-                    else: 
-                  ?><div class="col-sm-8"><?php
+                <div class="col-sm-8"><?php
                     echo $this->formElement($element), $this->formElementErrors($element);
-                    ?></div><?php
-                    endif;
-                ?>
+              ?></div>
+            <?php  endif; ?>
             </div>
         <?php endforeach;  $element = $fieldset->get('parent_location')?>
             <div class="form-group">
