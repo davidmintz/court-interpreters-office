@@ -1,7 +1,39 @@
 <?php /** module/Admin/view/interpreters-office/admin/index/index.phtml */
 $this->headTitle($this->title);
-
+$this->headStyle()->captureStart();?>
+div.form-inline input { max-width: 40% ; }
+.col-sm-8 ,.col-sm-4 { border: 1px dotted blue; }
+<?php $this->headStyle()->captureEnd(); echo $this->headStyle() ?>
+<?php
 $user = $this->identity() ?>
 <h2>admin</h2>
 <p>hello user <?php echo $user->username ?> in role <?php echo $user->role ?></p>
+<h3>scratch</h3>
+<p>how to get this effect...</p>
 
+<form class="form-horizontal">
+	<div class="col-sm-6"><!-- left side -->
+	    <div class="row">
+	    	<label class="control-label col-sm-4" for="time">time</label>
+	    	<div class="col-sm-8 form-inline">
+	    		<input class="form-control" name="time" id="time"></input>
+	    		<label class="control-label" for="end_time">to</label>
+	    		<input class="form-control" name="end_time" id="end_time"></input>
+	    	</div>
+	    </div>
+	   <label class="control-label col-sm-4" for="shit">shit</label>
+    	<div class="col-sm-8">
+    		<input class="form-control" name="shit" id="shit"></input>
+    	</div>
+	   <label class="control-label col-sm-4" for="other-shit">other shit</label>
+    	<div class="col-sm-8">
+    		<input class="form-control" name="shit" id="other-shit"></input>
+    	</div>
+
+    </div>
+	<div class="col-sm-6"><!-- right side -->
+	    <div class="row">
+	    	other shit here
+	    </div>
+    </div>
+</form>
