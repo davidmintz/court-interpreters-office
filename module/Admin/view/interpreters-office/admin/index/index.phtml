@@ -1,39 +1,84 @@
 <?php /** module/Admin/view/interpreters-office/admin/index/index.phtml */
 $this->headTitle($this->title);
+$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
 $this->headStyle()->captureStart();?>
-div.form-inline input { max-width: 40% ; }
-.col-sm-8 ,.col-sm-4 { border: 1px dotted blue; }
-<?php $this->headStyle()->captureEnd(); echo $this->headStyle() ?>
-<?php
+/*.multi-input label, .multi-input div { border : 1px dotted gray; }*/
+form { max-width: 900px;}
+.multi-input div:first-of-type { padding-right: 0px; }
+.multi-input div:last-of-type { padding-left: 0px; }
+.multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
+<?php $this->headStyle()->captureEnd(); echo $this->headStyle() ;
 $user = $this->identity() ?>
 <h2>admin</h2>
 <p>hello user <?php echo $user->username ?> in role <?php echo $user->role ?></p>
 <h3>scratch</h3>
 <p>how to get this effect...</p>
-
+<pre class="well">
+ form { max-width: 900px;}
+.multi-input div:first-of-type { padding-right: 0px; }
+.multi-input div:last-of-type { padding-left: 0px; }
+.multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
+</pre>
 <form class="form-horizontal">
 	<div class="col-sm-6"><!-- left side -->
 	    <div class="row">
-	    	<label class="control-label col-sm-4" for="time">time</label>
-	    	<div class="col-sm-8 form-inline">
-	    		<input class="form-control" name="time" id="time"></input>
-	    		<label class="control-label" for="end_time">to</label>
-	    		<input class="form-control" name="end_time" id="end_time"></input>
-	    	</div>
-	    </div>
-	   <label class="control-label col-sm-4" for="shit">shit</label>
-    	<div class="col-sm-8">
-    		<input class="form-control" name="shit" id="shit"></input>
-    	</div>
-	   <label class="control-label col-sm-4" for="other-shit">other shit</label>
-    	<div class="col-sm-8">
-    		<input class="form-control" name="shit" id="other-shit"></input>
-    	</div>
-
+            <div class="form-group multi-input">
+                <label class="control-label col-xs-4" for="time">time</label>
+                <div class="col-xs-3"><input class="form-control" type="time" name="time" id="time"></div>
+                <label class="col-xs-2 control-label" for="end_time">to</label>
+                <div class="col-xs-3"><input class="form-control" name="end_time" type="time" id="end_time"></div>                      
+            </div>
+            
+             <div class="form-group">
+                <label class="control-label col-sm-4" for="shit">shit</label>
+                 <div class="col-sm-8">
+                     <input class="form-control" name="shit" id="shit">
+                 </div>
+             </div>
+             <div class="form-group">
+                <label class="control-label col-sm-4" for="other-shit">other shit</label>
+                 <div class="col-sm-8">
+                     <input class="form-control" name="shit" id="other-shit">
+                 </div>
+            </div>
+        </div>
     </div>
 	<div class="col-sm-6"><!-- right side -->
 	    <div class="row">
-	    	other shit here
+	    	 <div class="form-group">
+                <label class="control-label col-sm-4" for="other">other input</label>
+                 <div class="col-sm-8">
+                     <input class="form-control" name="other" id="other">
+                 </div>
+                         </div>
+             <div class="form-group">
+                <label class="control-label col-sm-4" for="another">yet another</label>
+                 <div class="col-sm-8">
+                     <input class="form-control" name="another" id="another">
+                 </div>
+            </div>
 	    </div>
     </div>
 </form>
+<div class="clearfix" style="clear:both" id='debug'></div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#debug').append("shit<br>");
+        var thing1 = $('.multi-input').first();
+        //thing1.css({backgroundColor:'#ffffcc'});
+        var thing2 = $(".form-group").not(".multi-input").first();
+        $('#debug').append("thing 2 width is: "+ thing2.css("width"));
+        $('#debug').append("<br>thing 1 width is: "+ thing1.css("width"));
+       // $('#debug').append("<br>gonna adjust...");
+       // thing1.css("width",thing2.css("width"));
+        /*
+        $('label[for=time]').position({
+            my : 'left bottom',
+            at :  'left top',
+            of : $('label[for=shit]')
+        });
+        */
+       $('#debug').append("<br>thing1 left margin: "+ thing1.css("margin-left"));
+        $('#debug').append("<br>thing2 left margin: "+ thing2.css("margin-left"));
+    });
+</script>
