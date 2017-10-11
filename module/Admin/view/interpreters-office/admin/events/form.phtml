@@ -85,7 +85,8 @@ echo $this->form()->openTag($form);
             <div class="form-group">
                 <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
                 <div class="col-sm-8"><?php
-                    echo $this->formElement($element), $this->formElementErrors($element);
+                    echo $this->formElement($element), 
+                         $this->formElementErrors($element);
               ?></div>
             <?php  endif; ?>
             </div>
@@ -98,7 +99,7 @@ echo $this->form()->openTag($form);
                          $this->formElementErrors($element) ?>
                 </div>
             </div>
-        <?php foreach (['language','docket', 'comments','admin_comments']  as $elementName) : 
+        <?php foreach (['language','docket', 'comments',]  as $elementName) : 
             $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
@@ -141,28 +142,32 @@ echo $this->form()->openTag($form);
             <label class="control-label col-sm-4" for="hat">submitted by</label>
             <div class="col-sm-8">
             <?php 
-                  echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
-            <?php echo $this->formElement($fieldset->get('submitter'));?>                
+                echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
+            <?php $element = $fieldset->get('submitter'); 
+                echo $this->formElement($element), $this->formElementErrors($element);            
+            ?>                
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-sm-4" for="submission_date">submitted on</label>
             <div class="col-sm-8">
-            <?php 
-                  echo $this->formElement($fieldset->get('submission_date'));?>                
+            <?php $element = $fieldset->get('submission_date');
+                  echo $this->formElement($element),$this->formElementErrors($element);?>                
             </div>
             <label class="control-label col-sm-4 submission-time" for="submission_time">at</label>
             <div class="col-sm-8 submission-time">
-            <?php echo $this->formElement($fieldset->get('submission_time'));?>                
+            <?php $element = $fieldset->get('submission_time');
+                echo $this->formElement($element),$this->formElementErrors($element);?>                
             </div>
         </div>
-
-        <?php foreach ([] as $elementName) : $element = $fieldset->get($elementName); ?>
-            <div class="form-group">
-            <label class="control-label col-sm-4" for="defendant-search"><?php echo $element->getLabel() ?></label>
-                <div class="col-sm-8"><?= $this->formElement($element) ?><?= $this->formElementErrors($element) ?></div>
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="admin_comments">comments (private)</label>
+            <div class="col-sm-8">
+            <?php $element = $fieldset->get('admin_comments');
+                  echo $this->formElement($element);?>
+            <?php echo $this->formElementErrors($element);?>                
             </div>
-        <?php endforeach; ?>
+        </div>
     </div><!-- /.row -->
 </div><!-- /right side -->
 <div class="row">
