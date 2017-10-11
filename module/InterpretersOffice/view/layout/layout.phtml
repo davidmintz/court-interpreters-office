@@ -24,6 +24,7 @@ echo $this->doctype();
             ->prependFile($this->basePath('js/lib/jquery/dist/jquery.min.js'))
             ->prependFile($this->basePath('js/lib/respond.min.js'), 'text/javascript', ['conditional' => 'lt IE 9',])
             ->prependFile($this->basePath('js/lib/html5shiv.min.js'), 'text/javascript', ['conditional' => 'lt IE 9',]);
+        echo $this->headStyle();
         ?>
     </head>
     <body>
