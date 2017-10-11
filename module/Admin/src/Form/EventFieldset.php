@@ -596,7 +596,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'allow_empty' => true,                
             ],
             'anonymousJudge' => [                
-               'required' => true,
+               'required' => false,
                'allow_empty' => true,                         
             ],
             'interpreter-select' => [
@@ -608,6 +608,18 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'allow_empty' => true,
             ],
             'hat' => [
+                'required' => false,
+                'allow_empty' => true,
+            ],
+            'anonymousSubmitter' => [
+                'required' => true,
+                'allow_empty' => true,
+            ],
+            'submitter' => [
+                'required' => true,
+                'allow_empty' => true,
+            ],
+            'end_time' => [
                 'required' => false,
                 'allow_empty' => true,
             ],
@@ -672,6 +684,24 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     ],
                 ],
             ];
+        }
+        foreach (['submission_date','submission_time'] as $field) {
+            $label = str_replace('_', ' ', $field);
+            $shit = [
+                'required' => true,
+                'allow_empty' => false,
+                'validators'=> [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => "$label is required"
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+            $spec[$field] = $shit;
         }
         return $spec;
     }
