@@ -12,7 +12,7 @@ $this->headScript()
         ->appendFile($this->basePath('js/event-form.js'))
         ;
 $this->headStyle()->captureStart();?>
-.multi-input label, .multi-input div { border : 1px dotted gray; }
+/*.multi-input label, .multi-input div { border : 1px dotted gray; }*/
 form { max-width: 900px;}
 .multi-input div:first-of-type { padding-right: 0px; }
 .multi-input div:last-of-type { padding-left: 0px; }
@@ -78,7 +78,7 @@ echo $this->form()->openTag($form);
             <div class="form-group multi-input">
                 <label class="control-label col-xs-4" for="time">time</label>
                 <div class="col-xs-3"><?php echo $this->formElement($element), $this->formElementErrors($element);?></div>
-                <label class="col-xs-2 control-label" for="end_time">to</label>
+                <label class="col-xs-1 control-label" for="end_time">to</label>
                 <div class="col-xs-3"><?php $element = $fieldset->get('end_time');
                     echo $this->formElement($element),$this->formElementErrors($element);?></div>    
             <?php else: ?>
