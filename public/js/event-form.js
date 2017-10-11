@@ -147,6 +147,10 @@ $(document).ready(function()
         if (judgeOption.data("pseudojudge")) {
             // selected judge is anonymous, so set the 
             // hidden anonymousJudge field to judge-element value
+            /** @todo consider keeping the #anonymousJudge set as part of
+                the judge element's change handler, and processing the rest
+                server-side . OR change the _name_ of the judge element at this point?
+            */
            $('#anonymousJudge').val(judgeElement.val());
            // and override judge with a hidden field
            judgeElement.after($("<input>").attr({
