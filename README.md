@@ -3,7 +3,7 @@ is a web application for managing busy court interpreters offices (in the Englis
 
 At this writing, the application is far from complete, but I am actively working on it. The intention is to make it available to any court interpreter offices that are interested in adopting it. The motivation is that there is to my knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote (and which sprang into being precisely because of this dearth of alternatives), and it works great, but needs updating and has too many baked-in features that are peculiar only to our Interpreters Office's needs. So this project will become the world's finest court federal interpreter management system by far (the competition being pretty scarce).
 
-InterpretersOffice is designed primarily with US District Court in mind, but I'm trying to keep it flexible enough for use in state court as well.
+InterpretersOffice is designed primarily with the US District Court system in mind, but I'm trying to keep it flexible enough for use in state court as well.
 
 # requirements
 
@@ -29,7 +29,7 @@ For the entire software stack -- operating system, web and database servers, app
 use open-source software costing you nothing. If you're running InterpretersOffice on your organization's network, 
 even a single ordinary, inexpensive commodity PC should be powerful enough to do the job.
 
-All of this is to say that in terms of cost, InterpretersOffice and supporting the software are 
+All of this is to say that in terms of cost, InterpretersOffice and the supporting software are 
 completely free; the hardware you'll need is inexpensive.
 
 
