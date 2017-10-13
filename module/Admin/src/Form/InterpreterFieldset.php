@@ -306,7 +306,7 @@ class InterpreterFieldset extends PersonFieldset
     public function getInputFilterSpecification()
     {
         $spec = parent::getInputFilterSpecification();
-        //$language_options = $this->get('language-select')->getValueOptions();
+        $language_options = $this->get('language-select')->getValueOptions();
 
         // require users to provide yes|no for federal-certified language
         // which we already know from the language select > option elements'
@@ -315,9 +315,10 @@ class InterpreterFieldset extends PersonFieldset
         /** @todo 
             add a validator to enforce minumum one language
          */
-        /*
+        ///*
         $certifiable = array_column($language_options, 'attributes', 'value');
-        $spec['interpreter-languages'] = [
+         //*/
+        $spec['interpreterLanguages'] = [
 
             'allow_empty' => false,
             'required' => true,
@@ -331,15 +332,16 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                     'break_chain_on_failure' => true,
                  ],
-                 [   // backdoor method for ensuring 'federalCertification' field
-                    // is set, if appropriate: ignore the $value and inspect the
-                    // $context array
+                
+                // this is bullshit, we can do better (set validators on sub-fieldset)
+                
+                 [   
                     'name' => 'Callback',
                     'options' => [
                         'callback' => function ($value, $context) use ($certifiable) {
-                            $languages_submitted = $context['interpreter-languages'];
-                            foreach ($languages_submitted as $language) {
-                                $id = $language['language_id'];
+                            $languages_submitted = $context['interpreterLanguages'];
+                            foreach ($languages_submitted as $language) {                                
+                                $id = $language['language'];
                                // should never happen unless they are messing with us
                                 if (! isset($language['federalCertification'])) {
                                     return false;
@@ -362,7 +364,7 @@ class InterpreterFieldset extends PersonFieldset
                  ],
             ],
         ];
-       */
+       //*/
         // this one is just for the UI, not part of the entity's data
         $spec['language-select'] = [
             'required' => true,
