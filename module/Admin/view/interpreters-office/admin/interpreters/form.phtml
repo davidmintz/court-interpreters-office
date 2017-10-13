@@ -75,9 +75,11 @@ echo $this->form()->openTag($form);?>
                $helper = (new \InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection())->setView($this);
                echo $helper($collection);
                //echo $this->partial('partials/interpreters/language.phtml',compact('collection','interpreterLanguages'));
-            endif;?>
+            endif;
+            echo $this->formElementErrors($collection);
+            ?>
             
-
+            
             </div><!-- /#languages .form-group -->
            <?php $element = $fieldset->get('comments');?>
            <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
@@ -287,12 +289,27 @@ $(function(){
     /** validate each tab pane before moving on **/
     $('a[data-toggle="tab"]').on('click', function (event) {
         
-        var id = '#'+$('div.active').attr('id'); 
-
+        var id = '#'+$('div.active').attr('id');         
         var selector = id + " input, " + id + " select";
+        if (id.indexOf('languages') !== -1) {
+            // we are on the "languages" tab (pane)
+           /* if (! $(id +" input").length) {
+                $("#languages").append(
+                     $("<input>").attr(
+                    {   type:"hidden", 
+                        name : "interpreter[interpreterLanguages]",
+                        value : null,
+                    }
+                    )
+                );
+            }*/
+        }
         var data =($(selector).serialize());
+        
+       
+        console.log(data);
         var that = this;
-        $.post(/*window.basePath + */  '/admin/interpreters/validate-partial?action='+action,
+        $.post('/admin/interpreters/validate-partial?action='+action,
             data,
             function(response){
                 
@@ -300,7 +317,7 @@ $(function(){
                     if (response.validation_errors.interpreterLanguages) {
                     // note to self: either learn how to drill down into Javascript
                     // objects whose property names are unknown, or else make the
-                    // server-side action flatten this shit out for us, because this
+                    // server-side action flatten shit out for us, because this
                     // is ugly.
                         $.each(response.validation_errors.interpreterLanguages,
                             function(i,obj){                                
