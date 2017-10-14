@@ -66,10 +66,9 @@ class InterpretersControllerTest extends AbstractControllerTest {
                 'dob' => '',
                 'ssn' => '',
                 'language-select' => 1,
-                'interpreter-languages' => [
+                'interpreterLanguages' => [
                     [
-                        'language_id' => $russian->getId(),
-                        'interpreter_id' => '',
+                        'language' => $russian->getId(),
                         'federalCertification' => '-1',
                     ],
                 ],
@@ -80,7 +79,7 @@ class InterpretersControllerTest extends AbstractControllerTest {
                 new Parameters($data)
         );
         $this->dispatch($url);
-
+        //echo $this->getResponse()->getBody(); return;
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/interpreters');
 
