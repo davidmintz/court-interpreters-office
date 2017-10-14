@@ -214,12 +214,12 @@ $(function(){
     // error
     //
     //$('#nav-tabs a[aria-controls="'+"languages-pane"+'"]').tab("show");
-    if (! $(".validation-error").is(":visible").length ) {        
+    if (! $(".validation-error").text()) {        
        $('#nav-tabs li:first a').tab("show");
     } else {
-       var pane = $(".validation-error").closest('div.tab-pane');
+       var pane = $(".validation-error").first().closest('div.tab-pane');
        var id = pane.attr("id");
-       $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");       
+       $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
     }
     if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker({
@@ -290,24 +290,18 @@ $(function(){
     $('a[data-toggle="tab"]').on('click', function (event) {
         
         var id = '#'+$('div.active').attr('id');         
-        var selector = id + " input, " + id + " select";
-        if (id.indexOf('languages') !== -1) {
-            // we are on the "languages" tab (pane)
-           /* if (! $(id +" input").length) {
-                $("#languages").append(
-                     $("<input>").attr(
-                    {   type:"hidden", 
-                        name : "interpreter[interpreterLanguages]",
-                        value : null,
-                    }
-                    )
-                );
-            }*/
+        if (id.indexOf('languages') !== -1 && 
+           ! $(".interpreter-language input").length
+        ) {
+            $('#languages').append(
+                $('<div>').addClass("alert alert-warning validation-error")
+                .text("at least one language is required")
+            );
+            return false;
         }
+        var selector = id + " input, " + id + " select";
         var data =($(selector).serialize());
-        
-       
-        console.log(data);
+        //console.log(data);
         var that = this;
         $.post('/admin/interpreters/validate-partial?action='+action,
             data,
