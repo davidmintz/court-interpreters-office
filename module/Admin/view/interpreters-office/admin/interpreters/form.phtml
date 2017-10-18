@@ -309,22 +309,12 @@ $(function(){
                 
                 if (response.validation_errors) {
                     if (response.validation_errors.interpreterLanguages) {
-                    // note to self: either learn how to drill down into Javascript
-                    // objects whose property names are unknown, or else make the
-                    // server-side action flatten shit out for us, because this
-                    // is ugly.
+                        // this shit is not working
                         $.each(response.validation_errors.interpreterLanguages,
-                            function(i,obj){                                
-                                for (var prop in obj) {
-                                    for (var shit in obj[prop]) {
-                                        var error = obj[prop][shit];
-                                        var div = $('#languages .language-certification')
-                                                .eq(i).children(".validation-error");
-                                        div.text(error).show();
-                                        break;
-                                    }
+                            function(i,error){
+                                console.log("i is "+ i + " and error is " + error)
                                 }
-                            });
+                            );
                     } else {
                         console.warn("shit has nada to do with languages?");
                         displayValidationErrors(response.validation_errors);
