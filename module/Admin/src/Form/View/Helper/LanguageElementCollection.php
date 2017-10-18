@@ -49,7 +49,9 @@ TEMPLATE;
                 }
                 
             } else {
-                // form was hydrated from $_POST
+                // form was hydrated from $_POST.
+                // and this shit explodes when you hit submit with languages
+                // in an invalid state so something is WRONG.
                 $language = $form->getObject()->getInterpreterLanguages()
                         ->get($index)
                         ->getLanguage();
