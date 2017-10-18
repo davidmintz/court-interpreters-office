@@ -333,8 +333,8 @@ class InterpreterFieldset extends PersonFieldset
                     'break_chain_on_failure' => true,
                  ],
                 
-                // this is bullshit, we can do better (set validators on sub-fieldset)
-                
+                // this is bullshit
+
                  [   
                     'name' => 'Callback',
                     'options' => [
@@ -362,6 +362,7 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                  ],
+
             ],
         ];
        //*/
