@@ -16,13 +16,14 @@ class LanguageElementCollection extends AbstractHelper
           %s
    <button class="btn btn-danger btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         <span class="sr-only">remove this language</span></button>
-    <div class="alert alert-warning validation-error" style="display:none"></div>                
+    <div class="alert alert-warning validation-error" style="display:none">[some shit]</div>
 </div>
 
-
 TEMPLATE;
-
-	public function __invoke()
+    
+    protected $error_html = '<div class="alert alert-warning validation-error" style="display:%s">%s</div>';
+	
+    public function __invoke()
 	{
 		return $this->render();
 	}
