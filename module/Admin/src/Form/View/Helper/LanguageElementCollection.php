@@ -33,7 +33,7 @@ TEMPLATE;
         $element_collection = $form->get('interpreter')
                 ->get('interpreterLanguages');
         $html = '';
-        //var_dump($_POST);
+        // we need these for reference
         $language_options = $this->getView()->form->get('interpreter')
                         ->get('language-select')->getValueOptions();   
         foreach ($element_collection as $index => $fieldset) {
@@ -54,7 +54,7 @@ TEMPLATE;
                 } else {
                     $certification->setValue("-1")
                         ->setAttribute ("disabled","disabled");
-                    //ho "we set cert to -1 at ".__LINE__ . "<br>";
+                    //echo "we set cert to -1 at ".__LINE__ . "<br>";
                 } 
             } else {
                 // form was populated with POST data, not objects
@@ -71,7 +71,6 @@ TEMPLATE;
                 }
             }          
             $hidden_element->setValue($language_id);
-
             $language_markup = $this->view->formElement($hidden_element);
             $language_markup .= $label;            
             $certification->setAttribute('id',"fed-certification-$language_id");            
