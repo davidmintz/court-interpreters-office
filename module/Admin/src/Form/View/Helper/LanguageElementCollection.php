@@ -47,35 +47,34 @@ TEMPLATE;
                 	$value = $certification->getValue()	;
                 	$certification->setValue($value === true ? "1" : "0");
                 }
+                $label = $this->view->escapeHtml($language->getName());
+                $language_markup = $this->view->formElement($hidden_element);
+                $language_markup .= $label;            
+                $certification->setAttribute('id',"fed-certification-$language_id");            
+                if (null === $certification->getValue()) {  
+                   $certification->setValue('-1')->setAttribute ("disabled","disabled");
+                   $certification_markup = $this->view->formElement($certification);               
+                   $certification_markup .= sprintf(
+                      '<input type="hidden" name="interpreter[interpreterLanguages]'
+                           . '[%d][federalCertification]" value="-1">',
+                       $index);
+                } else {
+                    $certification_markup = $this->view->formElement($certification);
+                }
+                $html .= sprintf($this->template, $language_id,
+                $language_markup, $language_id,
+                    $certification_markup);
+
+                return $html;
+
                 
             } else {
                 // form was hydrated from $_POST.
                 // and this shit explodes when you hit submit with languages
                 // in an invalid state so something is WRONG.
-                $language = $form->getObject()->getInterpreterLanguages()
-                        ->get($index)
-                        ->getLanguage();
-                $language_id = $hidden_element->getValue();                
+                return "fuck... "  ;              
             }
-            $label = $this->view->escapeHtml($language->getName());
-            $language_markup = $this->view->formElement($hidden_element);
-            $language_markup .= $label;            
-            $certification->setAttribute('id',"fed-certification-$language_id");            
-            if (null === $certification->getValue()) {  
-               $certification->setValue('-1')->setAttribute ("disabled","disabled");
-               $certification_markup = $this->view->formElement($certification);               
-               $certification_markup .= sprintf(
-                  '<input type="hidden" name="interpreter[interpreterLanguages]'
-                       . '[%d][federalCertification]" value="-1">',
-                   $index);
-            } else {
-                $certification_markup = $this->view->formElement($certification);
-            }
-            $html .= sprintf($this->template, $language_id,
-                $language_markup, $language_id,
-                $certification_markup);
-        }
-        return $html;
+        }        
 	}
 
 	/**
