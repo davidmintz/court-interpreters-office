@@ -71,12 +71,12 @@ echo $this->form()->openTag($form);?>
             $collection = $fieldset->get('interpreterLanguages');
             $interpreterLanguages = $form->getObject()->getInterpreterLanguages();
 
-            if ($interpreterLanguages->count()) : 
+            //if ($interpreterLanguages->count()) : 
                $helper = (new \InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection())->setView($this);
                echo $helper($collection);
-               //echo $this->partial('partials/interpreters/language.phtml',compact('collection','interpreterLanguages'));
-            endif;
-            echo $this->formElementErrors($collection);
+               // echo $this->partial('partials/interpreters/language.phtml',compact('collection','interpreterLanguages'));
+               // endif;
+                echo $this->formElementErrors($collection);
             ?>
             
             
@@ -249,11 +249,12 @@ $(function(){
     /**
      * add a working language. 
      */
+    var languageSelect = $('#language-select');
     $('#btn-add-language').on('click',function(event){
         
         event.preventDefault();        
         var index; 
-        var language_id = $('#language-select').val();
+        var language_id = languageSelect.val();
         if (! language_id) { return; }
         if ($('#language-'+language_id).length) { return; }
         // get the (server-side) index of the last fieldset
@@ -271,6 +272,7 @@ $(function(){
         url = /*window.basePath +*/ "/admin/interpreters/language-fieldset";
         $.get(url,{index : index, id : language_id },function(data){
             $('#languages').append(data);
+            languageSelect.val("");
         });
     });
      /* remove a language *********************************************/
@@ -293,10 +295,12 @@ $(function(){
         if (id.indexOf('languages') !== -1 && 
            ! $(".interpreter-language input").length
         ) {
-            $('#languages').append(
-                $('<div>').addClass("alert alert-warning validation-error")
-                .text("at least one language is required")
-            );
+            if (! $('#languages .language-required').length) {
+                $('#languages').append(
+                    $('<div >').addClass("alert alert-warning validation-error language-required")
+                    .text("at least one language is required")
+                );
+            }
             return false;
         }
         var selector = id + " input, " + id + " select";
