@@ -16,12 +16,12 @@ class LanguageElementCollection extends AbstractHelper
           %s
    <button class="btn btn-danger btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         <span class="sr-only">remove this language</span></button>
-    <div class="alert alert-warning validation-error" style="display:none">[some shit]</div>
+    %s
 </div>
 
 TEMPLATE;
     
-    protected $error_html = '<div class="alert alert-warning validation-error" style="display:%s">%s</div>';
+    protected $error_template = '<div class="alert alert-warning validation-error" style="display:%s">%s</div>';
 	
     public function __invoke()
 	{
@@ -52,6 +52,7 @@ TEMPLATE;
                     // convert possibly-boolean to int, to keep test from breaking
                     $value = $certification->getValue()	;
                     $certification->setValue($value === true ? "1" : "0");
+                    // and fix the N/A option !
                 } else {
                     $certification->setValue("-1")
                         ->setAttribute ("disabled","disabled");
@@ -86,9 +87,10 @@ TEMPLATE;
             } else {
                 $certification_markup = $this->view->formElement($certification);
             }
+            $errors = '<!-- error here -->';
             $html .= sprintf($this->template, $language_id,
             $language_markup, $language_id,
-                $certification_markup);
+                $certification_markup,$errors);
             }
             
         return $html;
@@ -133,9 +135,10 @@ TEMPLATE;
         } else {
             $certification_markup = $this->view->formSelect($certification_element);
         }
+        $errors = sprintf($this->error_template,'none','');
         return sprintf($this->template, $language_id,
                 $language_markup, $language_id,
-                $certification_markup);
+                $certification_markup, $errors);
     }
 }
 
