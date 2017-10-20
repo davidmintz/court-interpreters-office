@@ -34,13 +34,17 @@ TEMPLATE;
         $element_collection = $form->get('interpreter')
                 ->get('interpreterLanguages');
         $html = '';
+        // if (isset($_POST['interpreter'])) { printf('<pre>%s</pre>',print_r($_POST['interpreter'],true)); }
+        //echo "FUCKING HELLO ????????";
+       
         // we need these for reference
         $language_options = $this->getView()->form->get('interpreter')
                         ->get('language-select')->getValueOptions();   
         foreach ($element_collection as $index => $fieldset) {
-           
+            //echo "looping through elements at  ".__LINE__;
             $hidden_element = $fieldset->get('language');
             $language =  $hidden_element->getValue();
+            if (! $language) { return ''; }
             $certification = $fieldset->get('federalCertification');
             
             if (is_object($language)) {
@@ -57,26 +61,34 @@ TEMPLATE;
                     $certification->setValue("-1")
                         ->setAttribute ("disabled","disabled");
                     //echo "we set cert to -1 at ".__LINE__ . "<br>";
+                    //echo "WTF at ".__LINE__;
                 } 
             } else {
-                // form was populated with POST data, not objects
+                // form was populated with POST, not objects
+               
+                //echo 'language-select is: ',$_POST['interpreter']['language-select'], '...<br>'; 
                 $language_id = $language;
                 $key = array_search($language_id,
                         array_column($language_options,'value'));
+              
                 $label =  $language_options[$key]['label'];
+               // echo "\$key is $key, label $label ...<br>";
                 $certifiable = $language_options[$key]['attributes']['data-certifiable'];
-                //if ('Spanish'==$label) {var_dump($certification->getValue());}
+               //echo " and \$certifiable is: $certifiable ....";
+               // echo " and the value of \$certification->getValue() is ".$certification->getValue(). "....";
+                if ('Spanish'==$label) {var_dump($certification->getValue());}
                 if (! $certifiable) {
                     $certification->setValue("-1")
                         ->setAttribute ("disabled","disabled");
                     //echo "we set cert to -1 for $label at ".__LINE__ . "<br>";
                 }
+               // return "shit";
             }          
             $hidden_element->setValue($language_id);
             $language_markup = $this->view->formElement($hidden_element);
             $language_markup .= $label;            
             $certification->setAttribute('id',"fed-certification-$language_id");            
-            if (-1 == $certification->getValue()) {  
+            if (! $certifiable) {  
                //echo "adding hidden for $label...";
                //$certification->setValue('-1')->setAttribute ("disabled","disabled");
                $certification_markup = $this->view->formElement($certification);               
@@ -92,7 +104,7 @@ TEMPLATE;
             $language_markup, $language_id,
                 $certification_markup,$errors);
             }
-            
+            //echo "returning ".strlen($html).' chars of html ... ';
         return $html;
     
 	}
