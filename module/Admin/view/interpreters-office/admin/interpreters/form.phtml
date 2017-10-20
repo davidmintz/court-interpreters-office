@@ -273,6 +273,7 @@ $(function(){
         $.get(url,{index : index, id : language_id },function(data){
             $('#languages').append(data);
             languageSelect.val("");
+            $('#languages .language-required').remove();
         });
     });
      /* remove a language *********************************************/
@@ -302,6 +303,9 @@ $(function(){
                 );
             }
             return false;
+        } else {
+            // this should now be redundandant, right?
+            $('#languages .language-required').remove();
         }
         var selector = id + " input, " + id + " select";
         var data =($(selector).serialize());
@@ -314,6 +318,7 @@ $(function(){
                 if (response.validation_errors) {
                     if (response.validation_errors.interpreterLanguages) {
                         // this shit is not working
+                        /** @todo fix this */
                         $.each(response.validation_errors.interpreterLanguages,
                             function(i,error){
                                 console.log("i is "+ i + " and error is " + error)
