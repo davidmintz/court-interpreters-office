@@ -41,6 +41,7 @@ TEMPLATE;
         $language_options = $this->getView()->form->get('interpreter')
                         ->get('language-select')->getValueOptions();   
         foreach ($element_collection as $index => $fieldset) {
+            
             //echo "looping through elements at  ".__LINE__;
             $hidden_element = $fieldset->get('language');
             $language =  $hidden_element->getValue();
@@ -55,6 +56,9 @@ TEMPLATE;
                 if ($certifiable) {
                     // convert possibly-boolean to int, to keep test from breaking
                     $value = $certification->getValue()	;
+                    $certification->setValueOptions(
+                            [-1 => '',1 => 'yes', 0 => 'no']
+                    );
                     $certification->setValue($value === true ? "1" : "0");
                     // and fix the N/A option !
                 } else {
@@ -81,6 +85,10 @@ TEMPLATE;
                     $certification->setValue("-1")
                         ->setAttribute ("disabled","disabled");
                     //echo "we set cert to -1 for $label at ".__LINE__ . "<br>";
+                } else {
+                     $certification->setValueOptions(
+                            [-1 => '',1 => 'yes', 0 => 'no']
+                    );
                 }
                // return "shit";
             }          
@@ -145,6 +153,9 @@ TEMPLATE;
             $certification_markup .= sprintf(
                 '<input type="hidden" name="%s" value="-1">',$name);
         } else {
+             $certification_element->setValueOptions(
+                            [-1 => '',1 => 'yes', 0 => 'no']
+                    );
             $certification_markup = $this->view->formSelect($certification_element);
         }
         $errors = sprintf($this->error_template,'none','');
