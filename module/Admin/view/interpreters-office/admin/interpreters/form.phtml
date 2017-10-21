@@ -222,6 +222,11 @@ $(function(){
        var pane = $(".validation-error").first().closest('div.tab-pane');
        var id = pane.attr("id");
        $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
+       $(".validation-error").each(function(i,div){
+            if (-1 != div.text().indexOf("language is required")) {
+                div.addClass("language-required");
+            }
+       });
     }
     if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker({
@@ -267,7 +272,7 @@ $(function(){
             if (m.length) {
                 index = parseInt(m.pop()) + 1;
             } else {
-                // this is an error. to do: do something
+                // this is an error. to do: do something?
             }
         } else {
             index = 0;
