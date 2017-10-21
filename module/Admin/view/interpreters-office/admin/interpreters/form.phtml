@@ -76,7 +76,9 @@ echo $this->form()->openTag($form);?>
                echo $helper($collection);
                // echo $this->partial('partials/interpreters/language.phtml',compact('collection','interpreterLanguages'));
                // endif;
-                echo $this->formElementErrors($collection);
+               //if (! $collection->count()) { 
+                    echo $this->formElementErrors($collection); 
+                //}
             ?>
             
             
@@ -248,6 +250,7 @@ $(function(){
     }
     /**
      * add a working language. 
+     * @todo solve case where "at least one language is required" is printed twice
      */
     var languageSelect = $('#language-select');
     $('#btn-add-language').on('click',function(event){
@@ -317,7 +320,7 @@ $(function(){
                 
                 if (response.validation_errors) {
                     if (response.validation_errors.interpreterLanguages) {
-                        
+
                         $.each(response.validation_errors.interpreterLanguages,
                             function(i,error){
                                 $('div.language-certification select').not(":disabled")
