@@ -30,7 +30,8 @@ TEMPLATE;
         return $this->render($collection);
 	}
 
-	public function render($collection) {
+	public function render($collection)
+    {
         $form = $this->getView()->form;
         $element_collection = $form->get('interpreter')
                 ->get('interpreterLanguages');
@@ -67,16 +68,13 @@ TEMPLATE;
                             [-1 => '', 1 => 'yes', 0 => 'no']
                     );
                     $certification->setValue($value === true ? "1" : "0");
-                    // and fix the N/A option !
                 } else {
                     $certification->setValue("-1")
-                            ->setAttribute("disabled", "disabled");
+                        ->setAttribute("disabled", "disabled");
                     //echo "we set cert to -1 at ".__LINE__ . "<br>";
-                    //echo "WTF at ".__LINE__;
                 }
             } else {
                 // form was populated with POST, not objects
-                //echo 'language-select is: ',$_POST['interpreter']['language-select'], '...<br>'; 
                 $language_id = $language;
                 $key = array_search($language_id, array_column($language_options, 'value'));
 
@@ -84,7 +82,6 @@ TEMPLATE;
                 // echo "\$key is $key, label $label ...<br>";
                 $certifiable = $language_options[$key]['attributes']['data-certifiable'];
                 //echo " and \$certifiable is: $certifiable ....";
-                // echo " and the value of \$certification->getValue() is ".$certification->getValue(). "....";
                 //if ('Spanish'==$label) {var_dump($certification->getValue());}
                 if (!$certifiable) {
                     $certification->setValue("-1")
@@ -95,9 +92,8 @@ TEMPLATE;
                             [-1 => '', 1 => 'yes', 0 => 'no']
                     );
                 }
-                // return "shit";
             }
-            //printf("iteration %d: now it's dark at %d<br>", $index, __LINE__);
+
             $hidden_element->setValue($language_id);
             $language_markup = $this->view->formElement($hidden_element);
             $language_markup .= $label;
@@ -121,11 +117,9 @@ TEMPLATE;
             } else {
                 $errors = sprintf($this->error_template, 'none', '');
             }
-            //$errors = '[errors here]';
             $html .= sprintf($this->template, $language_id, $language_markup, $language_id, $certification_markup, $errors);
-            //printf("iteration %d: now it's dark at %d<br>", $index, __LINE__);
         }
-        //echo "index $index, returning " . strlen($html) . ' chars of html ...<br> ';
+
         return $html;
     }
 

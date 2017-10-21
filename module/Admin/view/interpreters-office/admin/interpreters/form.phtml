@@ -200,9 +200,11 @@ $(function(){
                 element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
             }
         });    
-    }    
+    }
+    // in order for server-side partial validation to know the context
     var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
+
     // this is bullshit. what we really want is the button thingy on the same 
     // line as the input but it wraps unless we set the containing element's 
     // class to form-inline, which makes it too narrow. NOTE TO SELF: try "nowrap"
@@ -291,13 +293,15 @@ $(function(){
         var divs = div.add(div.prev());
         divs.slideUp(function(){divs.remove();});
     });
-    // prevent the damn browser from autocompleting
+
+    // try to prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
     $('#login-modal').on("show.bs.modal",function(){
          $('#identity, #password').val("");        
     });
    
     /** validate each tab pane before moving on **/
+    // note to self: is there a Bootstrap event to observe instead?
     $('a[data-toggle="tab"]').on('click', function (event) {
         
         var id = '#'+$('div.active').attr('id');         
