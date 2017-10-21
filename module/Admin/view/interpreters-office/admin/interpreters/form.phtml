@@ -224,7 +224,8 @@ $(function(){
        var pane = $(".validation-error").first().closest('div.tab-pane');
        var id = pane.attr("id");
        $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
-       $(".validation-error").each(function(i,div){
+       $(".validation-error").each(function(){
+            var div = $(this);
             if (-1 != div.text().indexOf("language is required")) {
                 div.addClass("language-required");
             }
@@ -303,7 +304,7 @@ $(function(){
     /** validate each tab pane before moving on **/
     // note to self: is there a Bootstrap event to observe instead?
     $('a[data-toggle="tab"]').on('click', function (event) {
-        
+        //alert("shit?");
         var id = '#'+$('div.active').attr('id');         
         if (id.indexOf('languages') !== -1 && 
            ! $(".interpreter-language input").length
@@ -406,7 +407,18 @@ $(function(){
                 return $('#div-auth-error').text(response.error).removeClass("hidden");
             }
         });        
-    });                
+    });
+    /**
+    @todo run partial validation here?
+    */
+    $('#interpreter-form').on("submit",function(event){
+        //event.preventDefault();
+        if ($(".validation-error:visible").length) {
+            //console.warn("boink");
+            return false;
+        }
+        return true;
+    });              
 });
 test = function(){
     $('#languages-pane').tab("show");
