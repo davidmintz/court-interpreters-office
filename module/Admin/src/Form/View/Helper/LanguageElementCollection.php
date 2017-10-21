@@ -166,7 +166,7 @@ TEMPLATE;
                 '<input type="hidden" name="%s" value="-1">',$name);
         } else {
             $certification_element
-                    ->setValueOptions([-1 => '',1 => 'yes', 0 => 'no']);
+                    ->setValueOptions([-1 => '',1 => 'yes', 0 => 'no'])->setValue("-1");
             $certification_markup = $this->view->formSelect($certification_element);
         }
         $errors = sprintf($this->error_template,'none','');
