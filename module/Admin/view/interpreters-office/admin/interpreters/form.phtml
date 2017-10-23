@@ -77,7 +77,10 @@ echo $this->form()->openTag($form);?>
                // echo $this->partial('partials/interpreters/language.phtml',compact('collection','interpreterLanguages'));
                // endif;
                //if (! $collection->count()) { 
-                    echo $this->formElementErrors($collection); 
+                    $collectionErrors = $this->formElementErrors($collection);
+                    if (stristr($collectionErrors, 'language is required')) :
+                        echo $collectionErrors;
+                    endif;
                 //}
             ?>
             
@@ -303,7 +306,7 @@ $(function(){
    
     /** validate each tab pane before moving on **/
     // note to self: is there a Bootstrap event to observe instead?
-    $('a[data-toggle="tab"]').on('click', function (event) {
+    $('a[data-toggle="tab"]').on('click', function (event,params) {
         //alert("shit?");
         var id = '#'+$('div.active').attr('id');         
         if (id.indexOf('languages') !== -1 && 
@@ -345,7 +348,11 @@ $(function(){
                         displayValidationErrors(response.validation_errors);
                     }                    
                     
-                } else {                   
+                } else {
+                    if (params && params.submit) {
+                        console.warn("shit is valid, time to submit the form");
+                        return $('#interpreter-form').submit();
+                    }
                     $(id + " .validation-error").hide();
                     $(that).tab("show");
                 }                        
@@ -411,14 +418,17 @@ $(function(){
     /**
     @todo run partial validation here?
     */
+   ///*
     $('#interpreter-form').on("submit",function(event){
         //event.preventDefault();
         if ($(".validation-error:visible").length) {
-            //console.warn("boink");
+            console.warn("boink! not valid");
             return false;
         }
+        //$('a[data-toggle="tab"]').trigger("click",{submit:true});
         return true;
-    });              
+    }); 
+    //*/
 });
 test = function(){
     $('#languages-pane').tab("show");

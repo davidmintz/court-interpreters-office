@@ -49,14 +49,13 @@ TEMPLATE;
             $hidden_element = $fieldset->get('language');
             $language = $hidden_element->getValue();
             if (!$language) {
-                // because it's empty
-                //echo "oops, no language?";
+                // because it's empty //echo "oops, no language?";
                 return '';
             }
             $certification = $fieldset->get('federalCertification');
 
             if (is_object($language)) {
-                //echo "yes, object...<br>";
+
                 // we were hydrated from an Interpreter entity
                 $label = $this->view->escapeHtml($language->getName());
                 $language_id = $language->getId();
