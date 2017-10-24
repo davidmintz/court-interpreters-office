@@ -28,6 +28,7 @@
         "zendframework/zend-crypt": "^3.2",
         "zendframework/zend-http": "^2.6",
         "zendframework/zend-navigation": "^2.8"
+       
     },
     "autoload": {
         "psr-4": {
@@ -60,5 +61,8 @@
         "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
         "test": "phpunit",
         "my-test" : "echo \"hello, bitch\""       
+    },
+    "require-dev": {
+		 "codeception/codeception": "^2.3"
     }
 }
