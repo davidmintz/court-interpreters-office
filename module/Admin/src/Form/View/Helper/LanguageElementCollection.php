@@ -24,16 +24,16 @@ TEMPLATE;
     protected $error_template = '<div class="alert alert-warning '
             . 'validation-error" style="display:%s">%s</div>';
 	
-    public function __invoke($collection)
+    public function __invoke()
 	{
 		//printf('<pre>%s</pre>',print_r(get_class_methods($collection),true));
-        return $this->render($collection);
+        return $this->render();
 	}
 
-	public function render($collection)
+	public function render()
     {
         $form = $this->getView()->form;
-        $element_collection = $form->get('interpreter')
+        $collection = $form->get('interpreter')
                 ->get('interpreterLanguages');
         $html = '';
         //echo $collection->count(), " is the \$collection->count()<br>";
@@ -43,7 +43,7 @@ TEMPLATE;
                         ->get('language-select')->getValueOptions();
         
         /** INTERESTING FACT:  foreach DOES NOT ITERATE BEYOND THE 1st ELEMENT */
-        for ($index = 0; $index < $element_collection->count(); $index++) { // as $index => $fieldset) {
+        for ($index = 0; $index < $collection->count(); $index++) { // as $index => $fieldset) {
             
             $fieldset = $collection->get($index);
             $hidden_element = $fieldset->get('language');
@@ -112,7 +112,7 @@ TEMPLATE;
             if ($messages && $certifiable && -1 == $certification->getValue()) {
                 $error_message = array_values($messages)[0];
                 $errors = sprintf($this->error_template, 'block', $error_message);
-                //$collection->setMessages
+                
             } else {
                 $errors = sprintf($this->error_template, 'none', '');
             }
