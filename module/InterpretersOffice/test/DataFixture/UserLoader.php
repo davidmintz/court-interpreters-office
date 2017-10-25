@@ -21,7 +21,7 @@ class UserLoader implements FixtureInterface
         $user->setPerson($person)
             ->setPassword('boink')
             ->setRole($role)
-            ->setActive(true)
+            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"))
             ->setUsername('david');
         $objectManager->persist($user);
 
@@ -39,7 +39,7 @@ class UserLoader implements FixtureInterface
             $objectManager->getRepository('InterpretersOffice\Entity\Role')
                 ->findOneBy(['name' => 'submitter'])
         )
-            ->setActive(true)
+            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"))
             ->setPerson($person)
             ->setPassword('gack!')
              ->addJudge($objectManager->getRepository('InterpretersOffice\Entity\Judge')

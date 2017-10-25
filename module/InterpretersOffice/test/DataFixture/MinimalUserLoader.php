@@ -47,7 +47,7 @@ class MinimalUserLoader implements FixtureInterface
                          ->findOneBy(['name' => 'manager'])
         )->setUsername('susie')
            ->setPassword('boink')
-           ->setActive(true);
+           ->setActive(true)->setLastLogin(new \DateTime("-24 hours"));
         $objectManager->persist($user);
         
         // create a person in the role of staff
@@ -70,7 +70,7 @@ class MinimalUserLoader implements FixtureInterface
                          ->findOneBy(['name' => 'staff'])
         )->setUsername('staffie')
            ->setPassword('boink')
-           ->setActive(true);
+           ->setActive(true)->setLastLogin(new \DateTime("-1 weeks"));
         
         $objectManager->persist($staff_user); 
         $objectManager->flush();
