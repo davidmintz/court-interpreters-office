@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.19, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.20, for Linux (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.19-0ubuntu0.16.04.1
+-- Server version	5.7.20-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -201,7 +201,7 @@ CREATE TABLE `events` (
   CONSTRAINT `FK_5387574AB7D66194` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`),
   CONSTRAINT `FK_5387574AC15B25DE` FOREIGN KEY (`eventType_id`) REFERENCES `event_types` (`id`),
   CONSTRAINT `FK_5387574AFF915C63` FOREIGN KEY (`anonymous_judge_id`) REFERENCES `anonymous_judges` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -421,7 +421,7 @@ CREATE TABLE `people` (
   UNIQUE KEY `active_email_idx` (`email`,`active`),
   KEY `IDX_28166A268C6A5980` (`hat_id`),
   CONSTRAINT `FK_28166A268C6A5980` FOREIGN KEY (`hat_id`) REFERENCES `hats` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=961 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1218 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -452,6 +452,7 @@ CREATE TABLE `users` (
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `username` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
+  `last_login` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_1483A5E9217BBB47` (`person_id`),
   KEY `IDX_1483A5E9D60322AC` (`role_id`),
@@ -506,4 +507,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-05 17:05:02
+-- Dump completed on 2017-10-25 13:50:00
