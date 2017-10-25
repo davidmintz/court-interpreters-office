@@ -43,6 +43,8 @@ class AuthenticationListener
      * event handler for user login success or failure.
      *
      * @param Event
+     * 
+     * @todo record the login timestamp in the database
      */
     public function onLogin(Event $e)
     {
@@ -79,7 +81,7 @@ class AuthenticationListener
         $user = $e->getParam('user');
         $message = sprintf('user %s logged out', $user->email);
         $session = new \Zend\Session\Container('Authentication');
-        $session->role = 'anonymous';
+        $session->role = 'anonymous'; // do we still need this?
         $this->log->info($message);
     }
 }
