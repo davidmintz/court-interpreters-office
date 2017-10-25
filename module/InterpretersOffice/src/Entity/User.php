@@ -81,6 +81,15 @@ class User
      * @var bool true if account is active (enabled)
      */
     protected $active;
+    
+    /**
+     * last login timestamp
+     * 
+     * @ORM\Column(type="datetime",name="last_login",options={"nullable":true})
+     * 
+     * @var \DateTime
+     */
+    protected $lastLogin;
 
     /**
      * Judge(s) to whom a user of hat Law Clerk or Courtroom Deputy is assigned.
@@ -292,6 +301,28 @@ class User
     {
         return $this->active;
     }
+    /**
+     * sets last login
+     * 
+     * @param \DateTime $datetime
+     * @return \InterpretersOffice\Entity\User
+     */
+    public function setLastLogin(\DateTime $datetime)
+    {
+        $this->lastLogin = $datetime;
+         
+        return $this;
+    }
+    /**
+     * gets last login 
+     *
+     * @return \Datetime
+     */  
+    public function getLastLogin()
+    {
+         return $this->lastLogin = $datetime;    
+    }
+    
     /**
      * Lifecycle callback to ensure User has an email address.
      *
