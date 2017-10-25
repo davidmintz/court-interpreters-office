@@ -5,6 +5,7 @@
             <directory>./module/InterpretersOffice/test</directory>
             <directory>./module/Admin/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
+            <exclude>./module/Admin/test/WebDriver/</exclude>
       
         </testsuite>
     
@@ -13,15 +14,4 @@
 	  <ini name="error_log" value="./data/test.error.log"/>	 
 	  <ini name="log_errors" value="On"/>	 
 	</php>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-          <directory suffix=".php">./module/Admin/src</directory>
-          <directory suffix=".php">./module/InterpretersOffice/src</directory>
-          <!--
-          <exclude>
-              <directory>./module/InterpretersOffice/test/DataFixture</directory>
-          </exclude>
-          -->
-        </whitelist>
-    </filter>
 </phpunit>
