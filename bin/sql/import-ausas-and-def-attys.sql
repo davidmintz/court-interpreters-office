@@ -25,7 +25,7 @@ SELECT
 	firstname,
 	phone,
 	mobile_phone,
-	active,
+	IF (active = "Y",1,0) AS active,
 	"person"
 FROM dev_interpreters.request_by
 
