@@ -313,7 +313,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],         
             'attributes' => ['class' => 'form-control', 'id' => 'hat'],
         ]);
-        $value_options = [['value' => '','label'=>'(person\'s name)',
+        $empty_option = [['value' => '','label'=>'(person\'s name)',
             'attributes'=>['label'=>'person\'s name']]];
         $repo = $this->getObjectManager()->getRepository(Entity\Person::class);
         if ($event) {
@@ -326,8 +326,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     $event->getId()
                 ));
             }
-            $value_options = array_merge($value_options, 
-                    $repo->getPersonOptions($hat->getId()));
+            $value_options = $repo->getPersonOptions($hat->getId());           
+            array_unshift($value_options, $empty_option);            
+        } else {
+            $value_options = $empty_option;
         }
         $this->add(
         [   'type'=>'Zend\Form\Element\Select',
