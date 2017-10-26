@@ -32,7 +32,7 @@ class PersonRepository extends EntityRepository
     {
     	$dql = "SELECT p.id AS value, CONCAT(p.lastname, ', ', p.firstname) AS label "
             . 'FROM InterpretersOffice\Entity\Person p JOIN p.hat h '
-    		. 'WHERE h.id = :hat_id ORDER BY p.firstname, p.lastname';
+    		. 'WHERE h.id = :hat_id ORDER BY p.lastname, p.firstname';
     	return $this->createQuery($dql)->setParameters(['hat_id'=>$hat_id])->getResult();
     }
 }
