@@ -56,10 +56,15 @@ $location = $event->getLocation();
 if ($location && $parentLocation = $location->getParentLocation()) {
     $fieldset->get('parent_location')->setValue($parentLocation->getId());
 }
+// OK, it is BULLSHIT that we have to do this. what am I doing wrong that makes
+// this necessary?
+// 
 // if submitter !== NULL, set anonymousSubmitter element = hat_id of submitter
 if (null !== $event->getSubmitter()) {
     $hat = $event->getSubmitter()->getHat();
     $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
+    // the fucking form element value needs to be an integer, not an object.
+    $fieldset->get('submitter')->setValue($event->getSubmitter()->getId());
 }
 // judge element value needs to be an integer
 $judge = $fieldset->get('judge')->getValue();
