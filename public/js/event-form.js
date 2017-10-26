@@ -128,6 +128,40 @@ $(document).ready(function()
         );        
     });
     
+    hatElement = $('#hat');    
+    submitterElement = $('#submitter');
+    
+    if (!hatElement.val()) {
+        submitterElement.attr({disabled:"disabled"});
+    }
+    
+    hatElement.on("change",function()
+    {
+        console.warn("shit changes");
+        var hat_id = hatElement.val();
+        if (! hat_id) {
+            hatElement.children().not(":first").remove();
+            return;
+        }
+        var url = '/admin/people/autocomplete';
+         $.getJSON(url,
+                { hat_id: hat_id },
+                function(data)
+                {
+                    var options = data.map(function(item){
+                        return $('<option>').val(item.value)
+                            .text(item.label)
+                            .data({type: item.type});
+                    });
+                    submitterElement.removeAttr("disabled");
+                    submitterElement.children().not(":first").remove();
+                    submitterElement.append(options)
+                           .trigger("sdny.submitter-update-complete");
+                }
+            );
+        
+    });
+    
     $("#event-form").on("submit",function(e){
         if (! locationElement.val()) {
             // no specific location selected, so the general location
