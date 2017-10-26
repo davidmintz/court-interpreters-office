@@ -6,6 +6,7 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use InterpretersOffice\Form\PersonForm;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
@@ -138,5 +139,15 @@ class PeopleController extends AbstractActionController
         $base = substr($class, strrpos($class, '\\') + 1);
         $route = strtolower($base).'s/edit';
         $this->redirect()->toRoute($route, ['id' => $entity->getId()]);
+    }
+    
+    public function autocompleteAction()
+    {
+        $repo = $this->entityManager->getRepository(Entity\Person::class);
+        $hat_id = $this->params()->fromQuery('hat_id');
+        $data = $repo->getPersonOptions($hat_id);
+        
+        return new JsonModel($data);  
+        
     }
 }
