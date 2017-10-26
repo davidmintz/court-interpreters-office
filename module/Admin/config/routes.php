@@ -250,6 +250,15 @@ return  [
                         ],
                     ],
                 ],
+                'autocomplete' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/autocomplete',
+                        'defaults' => [
+                            'action' => 'autocomplete',
+                        ],
+                    ],
+                ],
             ],
         ],
         'judges' => [
