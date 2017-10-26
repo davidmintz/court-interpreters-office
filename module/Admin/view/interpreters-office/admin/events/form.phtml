@@ -180,9 +180,8 @@ echo $this->form()->openTag($form);
         <div class="col-sm-12" style="text-align: center;">
 
             <?php
-            $csrf = $form->get('csrf');
-            //echo $this->formHidden($fieldset->get('is_anonymous_judge'));
-            //echo $this->formHidden($fieldset->get('anonymousJudge'));
+            $csrf = $form->get('csrf');            
+            echo $this->formHidden($fieldset->get('anonymousJudge'));
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
             echo $this->formHidden($fieldset->get('id'));
             if ($fieldset->has('modified')) {
