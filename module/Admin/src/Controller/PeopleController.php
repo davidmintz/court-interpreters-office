@@ -141,6 +141,11 @@ class PeopleController extends AbstractActionController
         $this->redirect()->toRoute($route, ['id' => $entity->getId()]);
     }
     
+    /**
+     * returns names and ids of people of a particular "hat"
+     * 
+     * @return JsonModel
+     */
     public function autocompleteAction()
     {
         $repo = $this->entityManager->getRepository(Entity\Person::class);
