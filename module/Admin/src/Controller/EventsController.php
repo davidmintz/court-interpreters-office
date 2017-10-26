@@ -17,6 +17,20 @@ use InterpretersOffice\Entity;
 
 /**
  *  EventsController
+ *
+ */
+
+/*
+ SELECT e.id, e.date, e.time, t.name type, l.name language, 
+ COALESCE(j.lastname, a.name) AS judge, p.name AS place, 
+ COALESCE(s.lastname,as.name) submitter, submission_datetime FROM events e 
+ JOIN event_types t ON e.eventType_id = t.id 
+ JOIN languages l ON e.language_id = l.id 
+ LEFT JOIN people j ON j.id = e.judge_id 
+ LEFT JOIN anonymous_judges a ON a.id = e.anonymous_judge_id 
+ LEFT JOIN people s ON e.submitter_id = s.id
+ LEFT JOIN hats AS `as` ON e.anonymous_submitter_id = as.id
+ LEFT JOIN locations p ON e.location_id = p.id;
  */
 class EventsController extends AbstractActionController
 {
@@ -97,19 +111,10 @@ class EventsController extends AbstractActionController
                 //var_dump($form->getMessages()['event']);
                 return $viewModel;
             } else {
-                // fake some data for now
+              
                 echo "validation OK... ";
                 
                 //$this->postValidate($event,$form);
-                
-                $anonymousSubmitter = $this->entityManager->find(
-                    Entity\Hat::class, 4
-                );
-                $event->setAnonymousSubmitter($anonymousSubmitter);
-                if (! $event->getSubmissionDatetime()) {
-                    $event->setSubmissionDatetime(new \DateTime('-5 minutes'));
-                }
-
                 //\Doctrine\Common\Util\Debug::dump($event);
 
                 $this->entityManager->persist($event);
