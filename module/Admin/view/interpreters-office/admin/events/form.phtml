@@ -71,6 +71,11 @@ $judge = $fieldset->get('judge')->getValue();
 if (is_object($judge)) {
    $fieldset->get('judge')->setValue($judge->getId());
 }
+$submission_datetime =  $fieldset->get('submission_datetime')->getValue();
+if (is_object($submission_datetime)) {
+     $fieldset->get('submission_datetime')
+             ->setValue($submission_datetime->format('Y-m-d H:i:s'));
+}
 // temporarily, we set this here
 $config = ['end_time' => true];
 echo $this->form()->openTag($form);  
@@ -184,6 +189,7 @@ echo $this->form()->openTag($form);
             echo $this->formHidden($fieldset->get('anonymousJudge'));
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
             echo $this->formHidden($fieldset->get('id'));
+            echo $this->formHidden($fieldset->get('submission_datetime'));
             if ($fieldset->has('modified')) {
                 $element = $fieldset->get('modified');
                 $value = $element->getValue();

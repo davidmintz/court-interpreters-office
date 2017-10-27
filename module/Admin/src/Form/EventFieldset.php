@@ -56,6 +56,13 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     protected $options;
     
     /**
+     * action
+     * 
+     * @var string
+     */
+    protected $action;
+    
+    /**
      * fieldset elements
      * 
      * @var Array some of our element definitions
@@ -381,6 +388,12 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'label' => 'time',
                 'format' => 'H:i:s',
              ],
+        ]);
+        $this->add(
+        [
+            'name' => 'submission_datetime',
+            'type' => 'Hidden',
+            'attributes' => ['id' => 'submission_datetime',],
         ]);
         return $this;
     }

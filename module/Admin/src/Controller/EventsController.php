@@ -76,14 +76,8 @@ class EventsController extends AbstractActionController
      */
     public function addAction()
     {
-        //scribble
-        /*
-        $entities = $this->entityManager->getRepository(Entity\Location::class)
-                ->getChildren(1);
-        foreach ($entities as $place) {
-           // print_r(array_keys($place)); echo "... ";
-            echo "({$place->getType()}) ",$place->getName(), '<br>';
-        }*/
+        
+        
         $form = new Form\EventForm(
             $this->entityManager,
             [   'action' => 'create',
@@ -97,6 +91,19 @@ class EventsController extends AbstractActionController
              ->setAttribute('action', $request->getRequestUri());
         $event = new Entity\Event();
         $form->bind($event);
+        // test
+        $shit = $form->get("event");
+        $shit->get("date")->setValue('10/27/2017');
+        $shit->get("time")->setValue('10:00 am');
+        $shit->get("judge")->setValue(948);
+        $shit->get("language")->setValue(62);
+        $shit->get("parent_location")->setValue(6);
+        $shit->get("location")->setValue(11);
+        $shit->get("eventType")->setValue(1);
+        $shit->get("docket")->setValue("2016-CR-0345");
+        $shit->get("anonymousSubmitter")->setValue("6");
+        $shit->get("submission_date")->setValue("10/24/2017");
+        $shit->get("submission_time")->setValue("10:17 am");
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables([                
@@ -129,26 +136,46 @@ class EventsController extends AbstractActionController
     protected function preValidate(\Zend\Stdlib\Parameters $data, 
             Form\EventForm $form)
     {
-       $event = $data->get('event');       
-       if (! $event['judge'] && empty($event['anonymousJudge'])) {
-           $validator = new \Zend\Validator\NotEmpty([
-               'messages' => ['isEmpty' => "judge is required"],
-               'break_chain_on_failure' => true,
-           ]);
-           $judge_input = $form->getInputFilter()->get('event')->get('judge');
-           $judge_input->setAllowEmpty(false);
-           $judge_input->getValidatorChain()->attach($validator);
-           
-       }
-       if (! $event['submitter'] && empty($event['anonymousSubmitter'])) {
-           $validator = new \Zend\Validator\NotEmpty([
-               'messages' => ['isEmpty' => "identity or description of submitter is required"],
-               'break_chain_on_failure' => true,
-           ]);
-           $submitter_input = $form->getInputFilter()->get('event')->get('submitter');
-           $submitter_input->setAllowEmpty(false);
-           $submitter_input->getValidatorChain()->attach($validator);
-       }
+        $event = $data->get('event');
+        if (!$event['judge'] && empty($event['anonymousJudge'])) {
+            $validator = new \Zend\Validator\NotEmpty([
+                'messages' => ['isEmpty' => "judge is required"],
+                'break_chain_on_failure' => true,
+            ]);
+            $judge_input = $form->getInputFilter()->get('event')->get('judge');
+            $judge_input->setAllowEmpty(false);
+            $judge_input->getValidatorChain()->attach($validator);
+        }
+        if (empty($event['submitter']) && empty($event['anonymousSubmitter'])) {
+            $validator = new \Zend\Validator\NotEmpty([
+                'messages' => ['isEmpty' => "identity or description of submitter is required"],
+                'break_chain_on_failure' => true,
+            ]);
+            $submitter_input = $form->getInputFilter()->get('event')->get('submitter');
+            $submitter_input->setAllowEmpty(false);
+            $submitter_input->getValidatorChain()->attach($validator);
+            
+        }
+       // $shit_changed = false;
+        // if NO submitter but YES anonymous submitter
+        if (empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
+            $event['submitter'] = null;
+           // $shit_changed = true;
+        // if anonymous submitter AND submitter, make anonymous NULL
+        } elseif (!empty($event['anonymousSubmitter'])&& !empty($event['submitter'])) {
+            $event['anonymousSubmitter'] = null;
+           // $shit_changed = true;
+        }
+        if (!empty($event['submission_date']) && !empty($event['submission_time'])) {
+            
+            $event['submission_datetime'] = "$event[submission_date] $event[submission_time]";
+            //exit(" I FUCKING SET THE SHIT: ".$event['submission_datetime']);
+        }
+        //if ($shit_changed) { // because $event is a copy, not a reference!
+            $data->set('event',$event);
+        //}
+        
+        
     }
 
     /**
@@ -182,12 +209,22 @@ class EventsController extends AbstractActionController
         //echo $renderer->escapeHtml($html);
         
         if ($this->getRequest()->isPost()) {
-            $form->setData($this->getRequest()->getPost());
+            $data = $request->getPost();
+            $this->preValidate($data,$form);
+            $form->setData($data);
             if ($form->isValid()) {
-                echo "yay!";
-                //var_dump($this->getRequest()->getPost()->get('event')['location']);
-            } else {
+                 printf("<pre><%s</pre>",print_r($_POST['event'],true));
+                try { 
+                    $this->entityManager->flush();
+                    echo "yay! shit is valid and has been saved.";
+                } catch (\Exception $e) {
+                    echo $e->getMessage();
+                }
                 
+            } else {
+                echo "shit is NOT valid...";
+                printf("<pre><%s</pre>",print_r($form->getMessages(),true));
+                printf("<pre><%s</pre>",print_r($_POST['event'],true));
             }
         }
         

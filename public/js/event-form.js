@@ -143,8 +143,8 @@ $(document).ready(function()
             hatElement.children().not(":first").remove();
             return;
         }
-        var url = '/admin/people/autocomplete';
-         $.getJSON(url,
+
+         $.getJSON('/admin/people/get',
                 { hat_id: hat_id },
                 function(data)
                 {
