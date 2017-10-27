@@ -146,7 +146,7 @@ class PeopleController extends AbstractActionController
      * 
      * @return JsonModel
      */
-    public function autocompleteAction()
+    public function getAction()
     {
         $repo = $this->entityManager->getRepository(Entity\Person::class);
         $hat_id = $this->params()->fromQuery('hat_id');

@@ -250,15 +250,13 @@ return  [
                         ],
                     ],
                 ],
-                /** 
-                * @todo  actually this is sort of a misnomer. change it.
-                */
-                'autocomplete' => [
+
+                'people_options' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/autocomplete',
+                        'route' => '/get',
                         'defaults' => [
-                            'action' => 'autocomplete',
+                            'action' => 'get',
                         ],
                     ],
                 ],
