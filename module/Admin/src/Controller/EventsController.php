@@ -113,10 +113,10 @@ class EventsController extends AbstractActionController
                 'form'  => $form,
                 ]);
         if ($request->isPost()) {
-            $data = $request->getPost();
+            $input = $request->getPost();
             //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
-            $this->preValidate($data,$form);
-            $form->setData($data);
+            $this->preValidate($input,$form);
+            $form->setData($input);
             //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
             if (! $form->isValid()) {
                 echo "validation failed ... ";
@@ -126,7 +126,16 @@ class EventsController extends AbstractActionController
               
                 echo "validation OK... ";
                 ///* // shit is not working here!
-                $collection = $event->getInterpreterEvents();
+                $entity_collection = $event->getInterpreterEvents();
+                $form_collection =  $form->get('event')->get('interpreterEvents');
+                if ($entity_collection->count() != $form_collection->count()) {
+                    echo "shit is NOT working!<br>"; 
+                    $data = $input['event']['interpreterEvents'];
+                    printf('<pre>%s</pre>',print_r($data,true));                    
+                    //$hydrator->hydrate($data, $event->getInterpreterEvents());
+                    return false;
+                }
+                /*
                 echo $collection->count(), " is the number of elements in the entity collection!...";
                 $shit = $form->get('event')->get('interpreterEvents');
                 echo gettype($shit), " ... ";
