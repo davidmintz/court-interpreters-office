@@ -63,7 +63,7 @@ if ($location && $parentLocation = $location->getParentLocation()) {
 if (null !== $event->getSubmitter()) {
     $hat = $event->getSubmitter()->getHat();
     $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
-    // the fucking form element value needs to be an integer, not an object.
+    // the form element value needs to be an integer, not an object.
     $fieldset->get('submitter')->setValue($event->getSubmitter()->getId());
 }
 // judge element value needs to be an integer
@@ -71,10 +71,18 @@ $judge = $fieldset->get('judge')->getValue();
 if (is_object($judge)) {
    $fieldset->get('judge')->setValue($judge->getId());
 }
+// this needs to be a string
 $submission_datetime =  $fieldset->get('submission_datetime')->getValue();
 if (is_object($submission_datetime)) {
      $fieldset->get('submission_datetime')
-             ->setValue($submission_datetime->format('Y-m-d H:i:s'));
+         ->setValue($submission_datetime->format('Y-m-d H:i:s'));
+     
+}
+$submission_datetime =  $fieldset->get('submission_datetime')->getValue();
+if ($submission_datetime) {
+    list($date,$time) = explode(' ',$submission_datetime);
+    $fieldset->get('submission_date')->setValue($date);
+    $fieldset->get('submission_time')->setValue($time);
 }
 // temporarily, we set this here
 $config = ['end_time' => true];
@@ -126,6 +134,7 @@ echo $this->form()->openTag($form);
             <label class="control-label col-sm-4" for="interpreter-select">interpreters</label>
             <div class="col-sm-8">
                 <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
+                
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                 <?php 
                 $collection = $fieldset->get('interpretersAssigned'); 
