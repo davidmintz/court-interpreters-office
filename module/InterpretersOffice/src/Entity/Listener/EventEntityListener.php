@@ -106,7 +106,8 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         $eventEntity->setCreated($this->now)
                 ->setModifiedBy(null)
                 ->setModified(null);
-        foreach ($eventEntity->getInterpretersAssigned() as $interpreterEvent) {
+        foreach ($eventEntity->getInterpreterEvents() as $interpreterEvent) {
+           
             $interpreterEvent
                     ->setCreatedBy($user)
                     ->setCreated($now);

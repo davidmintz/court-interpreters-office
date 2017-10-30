@@ -80,7 +80,7 @@ class FixtureSetupTest extends AbstractControllerTest
         /** @var $event InterpretersOffice\Entity\Event */
         $event = $events[0];
         $this->assertInstanceOf(Entity\Event::class, $event);
-        $interpreters = $event->getInterpretersAssigned();
+        $interpreters = $event->getInterpreterEvents();
         $this->assertTrue($interpreters->count() >= 1);
         $assignment = $interpreters->current();
         $interpreter = $assignment->getInterpreter();
@@ -141,7 +141,7 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setCreatedBy($user)
             ->setModifiedBy($user)
             ->addDefendant($defendant) 
-            ->addInterpretersAssigned(
+            ->addInterpreterEvents(
                     new ArrayCollection(
                        [     
                             (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)

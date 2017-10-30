@@ -12,7 +12,8 @@ use InterpretersOffice\Entity;
 /**
  * fieldset for Interpreters assigned to an Event
  */
-class InterpretersAssignedFieldset extends Fieldset 
+class InterpreterEventsFieldset extends Fieldset 
+
     implements InputFilterProviderInterface
 {
     use ObjectManagerAwareTrait;
@@ -26,7 +27,7 @@ class InterpretersAssignedFieldset extends Fieldset
     public function __construct(ObjectManager $objectManager, Array $options = [])
     {
 
-        parent::__construct('interpretersAssigned', $options);
+        parent::__construct('interpreterEvents', $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager));
         $this->setObject(new Entity\InterpreterEvent());
