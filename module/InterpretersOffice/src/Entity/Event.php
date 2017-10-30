@@ -680,6 +680,7 @@ class Event
     public function addInterpretersAssigned(\Doctrine\Common\Collections\Collection $interpreterEvents)
     {
         foreach ($interpreterEvents as $interpreterEvent) {
+            echo "AM I RUCKING RUNNING HERE OR WHAT???? ";
             $interpreterEvent->setEvent($this);
             $this->interpretersAssigned->add($interpreterEvent);
         }

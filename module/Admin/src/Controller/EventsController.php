@@ -115,7 +115,7 @@ class EventsController extends AbstractActionController
         if ($request->isPost()) {
             $data = $request->getPost();
             //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
-            //$this->preValidate($data,$form);
+            $this->preValidate($data,$form);
             $form->setData($data);
             //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
             if (! $form->isValid()) {
