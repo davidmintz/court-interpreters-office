@@ -680,7 +680,7 @@ class Event
     public function addInterpreterEvents(\Doctrine\Common\Collections\Collection $interpreterEvents)
     {
         foreach ($interpreterEvents as $interpreterEvent) {
-            echo "AM I RUCKING RUNNING HERE OR WHAT???? ";
+            //echo "AM I FUCKING RUNNING HERE OR WHAT???? ";
             $interpreterEvent->setEvent($this);
             $this->interpreterEvents->add($interpreterEvent);
         }
