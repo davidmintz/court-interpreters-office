@@ -44,8 +44,8 @@ if (false) {
     $fieldset->get('eventType')->setValue(1);
     $fieldset->get('language')->setValue(62);
     $fieldset->get('parent_location')->setValue(1);
-    $fieldset->get('interpretersAssigned')->populateValues([  
-   ['interpreter'=> 117] 
+    $fieldset->get('interpreterEvents')->populateValues([  
+            ['interpreter'=> 117] 
 ]);
 }
 /** @todo put all this logic somewhere else? */
@@ -137,7 +137,7 @@ echo $this->form()->openTag($form);
                 
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                 <?php 
-                $collection = $fieldset->get('interpretersAssigned'); 
+                $collection = $fieldset->get('interpreterEvents'); 
                 $helper = (new InterpreterElementCollection())->setView($this);
                 echo $helper($collection);
                 ?>

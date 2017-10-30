@@ -188,14 +188,14 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ->addEventTypeElement()
             ->addLocationElements($options['object']);
         
-        $interpretersAssignedFieldset = new InterpretersAssignedFieldset($objectManager);
+        $interpreterEventsFieldset = new InterpreterEventsFieldset($objectManager);
         
         $this->add([
             'type' => Element\Collection::class,
-            'name' => 'interpretersAssigned',
+            'name' => 'interpreterEvents',
             'options' => [
                 'label' => 'interpreters',
-                'target_element' =>  $interpretersAssignedFieldset,                
+                'target_element' =>  $interpreterEventsFieldset,                
             ],
         ]);
         $defendantsEventFieldset = new DefendantsEventFieldset($objectManager);

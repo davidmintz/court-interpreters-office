@@ -17,7 +17,7 @@ class InterpreterElementCollection extends AbstractHelper
      */
     protected $template = <<<TEMPLATE
         <li class="list-group-item interpreter-assigned">
-            <input name="event[interpretersAssigned][%d][interpreter]" type="hidden" value="%d">
+            <input name="event[interpreterEvents][%d][interpreter]" type="hidden" value="%d">
              %s            
             <button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -50,9 +50,9 @@ TEMPLATE;
         // to do: deal with possible undefined $form
         $form = $this->getView()->form;
         $entity = $form->getObject();
-        $interpretersAssigned = $entity->getInterpretersAssigned();
+        $interpreterEvents = $entity->getInterpreterEvents();
         $markup = '';
-        foreach ($interpretersAssigned as $i => $interpEvent) {
+        foreach ($interpreterEvents as $i => $interpEvent) {
             $interpreter = $interpEvent->getInterpreter();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
             $markup .= sprintf($this->template,$i,$interpreter->getId(),$name);          

@@ -168,7 +168,7 @@ class Event
      *
      * @var ArrayCollection
      */
-    protected $interpretersAssigned;
+    protected $interpreterEvents;
 
     /**
      * comments for semi-public consumption.
@@ -240,7 +240,7 @@ class Event
     public function __construct()
     {
         $this->defendants = new ArrayCollection();
-        $this->interpretersAssigned = new ArrayCollection();
+        $this->interpreterEvents = new ArrayCollection();
     }
 
     /**
@@ -677,12 +677,12 @@ class Event
      * 
      * @param \Doctrine\Common\Collections\Collection $interpreterEvents
      */
-    public function addInterpretersAssigned(\Doctrine\Common\Collections\Collection $interpreterEvents)
+    public function addInterpreterEvents(\Doctrine\Common\Collections\Collection $interpreterEvents)
     {
         foreach ($interpreterEvents as $interpreterEvent) {
             echo "AM I RUCKING RUNNING HERE OR WHAT???? ";
             $interpreterEvent->setEvent($this);
-            $this->interpretersAssigned->add($interpreterEvent);
+            $this->interpreterEvents->add($interpreterEvent);
         }
     }
     
@@ -691,22 +691,22 @@ class Event
      * 
      * @param \Doctrine\Common\Collections\Collection $interpreterEvents
      */
-    public function removeInterpretersAssigned(\Doctrine\Common\Collections\Collection $interpreterEvents)
+    public function removeInterpreterEvents(\Doctrine\Common\Collections\Collection $interpreterEvents)
     {
          foreach ($interpreterEvents as $interpreterEvent) {
             $interpreterEvent->setEvent(null);
-            $this->interpretersAssigned->removeElement($interpreterEvent);
+            $this->interpreterEvents->removeElement($interpreterEvent);
         }
     }
 
     /**
-     * Get interpretersAssigned.
+     * Get interpreterEvents.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getInterpretersAssigned()
+    public function getInterpreterEvents()
     {
-        return $this->interpretersAssigned;
+        return $this->interpreterEvents;
     }
 
     /**
@@ -791,7 +791,7 @@ class Event
      */
     public function assignInterpreter(Interpreter $interpreter)
     {
-        $this->getInterpretersAssigned()
+        $this->getInterpreterEvents()
                 ->add(new InterpreterEvent($interpreter, $this));
 
         return $this;

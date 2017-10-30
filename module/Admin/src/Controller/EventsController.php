@@ -125,10 +125,10 @@ class EventsController extends AbstractActionController
             } else {
               
                 echo "validation OK... ";
-                /* // shit is not working here!
-                $collection = $event->getInterpretersAssigned();
+                ///* // shit is not working here!
+                $collection = $event->getInterpreterEvents();
                 echo $collection->count(), " is the number of elements in the entity collection!...";
-                $shit = $form->get('event')->get('interpretersAssigned');
+                $shit = $form->get('event')->get('interpreterEvents');
                 echo gettype($shit), " ... ";
                 if (is_object($shit)) {
                     echo get_class($shit);
@@ -136,10 +136,10 @@ class EventsController extends AbstractActionController
                 }
                 echo "<br>"; $defendantCollection = $event->getDefendants();
                 echo "number of defendants is: ",$defendantCollection->count();
-                return false;
+                //return false;
                 //$this->postValidate($event,$form);
                 //\Doctrine\Common\Util\Debug::dump($event);
-                 */
+                // */
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
                 echo "YAY!!!!!!";

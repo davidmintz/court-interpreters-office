@@ -29,7 +29,7 @@ class InterpreterEvent
      * The Event.
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Event",inversedBy="interpretersAssigned")
+     * @ORM\ManyToOne(targetEntity="Event",inversedBy="interpreterEvents")
      *
      * @var Event
      */
