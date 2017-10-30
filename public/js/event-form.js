@@ -237,7 +237,7 @@ $(document).ready(function()
      /* test/debug */
     var shit = 
     '<li class="list-group-item interpreter-assigned">'
-            +'<input name="event[interpretersAssigned][0][interpreter]" value="117" type="hidden">'
+            +'<input name="event[interpreterEvents][0][interpreter]" value="117" type="hidden">'
              + 'Mintz, David<button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">'
             + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
             + '<span class="sr-only">remove this interpreter</span></button></li>';
