@@ -24,7 +24,14 @@ $(document).ready(function()
           .on("change",parseTime);
     }
     $('input.docket').on("change",formatDocketElement);
-
+    
+   
+    
+    
+    
+    
+    
+    
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
     
@@ -227,6 +234,26 @@ $(document).ready(function()
                 }
              }   
          );
+     /* test/debug */
+    var shit = 
+    '<li class="list-group-item interpreter-assigned">'
+            +'<input name="event[interpretersAssigned][0][interpreter]" value="117" type="hidden">'
+             + 'Mintz, David<button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">'
+            + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
+            + '<span class="sr-only">remove this interpreter</span></button></li>';
+    
+    $('#interpreters-assigned').append(shit);
+    
+    $('#defendant-names').append('<li class="list-group-item defendant">'
+           +'<input name="event[defendantsEvent][0][defendantName]" value="11" type="hidden">'
+           + ' Rodríguez,  José'            
+           + '<button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this defendant">'
+            + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
+            + '<span class="sr-only">remove this defendant</span></button></li>');
+    $('#submitter').append('<option selected="selected" value="1283">Cavale, Allison</option>');
+    $("h2").after("<p>stuffed with test data</p>");
+    
+    /* ==================== */
 });
 formatTimeElement = function(timeElement) {
     

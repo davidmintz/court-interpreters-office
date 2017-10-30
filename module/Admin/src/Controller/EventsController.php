@@ -90,6 +90,7 @@ class EventsController extends AbstractActionController
         $form
              ->setAttribute('action', $request->getRequestUri());
         $event = new Entity\Event();
+        
         $form->bind($event);
         // test
         $shit = $form->get("event");
@@ -104,6 +105,8 @@ class EventsController extends AbstractActionController
         $shit->get("anonymousSubmitter")->setValue("6");
         $shit->get("submission_date")->setValue("10/24/2017");
         $shit->get("submission_time")->setValue("10:17 am");
+        $shit->get("submission_datetime")->setValue('2017-10-24 10:17:00');
+        // end test
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables([                
@@ -111,8 +114,10 @@ class EventsController extends AbstractActionController
                 ]);
         if ($request->isPost()) {
             $data = $request->getPost();
-            $this->preValidate($data,$form);
+            //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
+            //$this->preValidate($data,$form);
             $form->setData($data);
+            //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
             if (! $form->isValid()) {
                 echo "validation failed ... ";
                 //var_dump($form->getMessages()['event']);
@@ -120,10 +125,21 @@ class EventsController extends AbstractActionController
             } else {
               
                 echo "validation OK... ";
-                
+                /* // shit is not working here!
+                $collection = $event->getInterpretersAssigned();
+                echo $collection->count(), " is the number of elements in the entity collection!...";
+                $shit = $form->get('event')->get('interpretersAssigned');
+                echo gettype($shit), " ... ";
+                if (is_object($shit)) {
+                    echo get_class($shit);
+                    echo " is the class, and number of items is: ", count($shit);
+                }
+                echo "<br>"; $defendantCollection = $event->getDefendants();
+                echo "number of defendants is: ",$defendantCollection->count();
+                return false;
                 //$this->postValidate($event,$form);
                 //\Doctrine\Common\Util\Debug::dump($event);
-
+                 */
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
                 echo "YAY!!!!!!";
