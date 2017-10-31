@@ -245,7 +245,7 @@ $(document).ready(function()
     $('#interpreters-assigned').append(shit);
     
     $('#defendant-names').append('<li class="list-group-item defendant">'
-           +'<input name="event[defendantsEvent][0][defendantName]" value="11" type="hidden">'
+           +'<input name="event[defendantNames][0][defendantName]" value="11" type="hidden">'
            + ' Rodríguez,  José'            
            + '<button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this defendant">'
            + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'

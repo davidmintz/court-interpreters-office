@@ -113,16 +113,20 @@ class EventsController extends AbstractActionController
                 'form'  => $form,
                 ]);
         if ($request->isPost()) {
+            echo "<strong>POST['event']['defendantNames']</strong>";var_dump($_POST['event']['defendantNames']);
             $input = $request->getPost();
-            //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
+            //printf('<pre>%s</pre>',print_r($input->get('event')['interpreterEvents'],true)); //return false;
             $this->preValidate($input,$form);
+            //printf('<pre>%s</pre>',print_r($input->get('event')['interpreterEvents'],true)); //return false;
+             echo "<strong>\$input->get('event')['defendantNames']</strong>";
+            var_dump($input->get('event')['defendantNames']);
             $form->setData($input);
-            printf('<pre>%s</pre>',print_r($input->get('event'),true)); 
+            //printf('<pre>%s</pre>',print_r($input->get('event'),true)); 
            
             //return false;
             if (! $form->isValid()) {
                 echo "validation failed ... ";
-                //var_dump($form->getMessages()['event']);
+                var_dump($form->getMessages());
                 return $viewModel;
             } else {
               
@@ -130,8 +134,8 @@ class EventsController extends AbstractActionController
                 ///* // shit is not working here!
                 $entity_collection = $event->getInterpreterEvents();
                 $form_collection =  $form->get('event')->get('interpreterEvents');
-                if ($entity_collection->count() != $form_collection->count()) {
-                    echo "hydration shit is NOT working!<br>"; 
+                if ($entity_collection->count() == $form_collection->count()) {
+                    echo "hydration shit is ON ITS WAY????<br>"; 
                     //$data = $input['event']['interpreterEvents'];
                     //printf('<pre>%s</pre>',print_r($data,true));                    
                     //$hydrator->hydrate($data, $event->getInterpreterEvents());

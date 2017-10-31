@@ -13,7 +13,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
 use InterpretersOffice\Admin\Form\InterpretersAssignedFieldset;
-use InterpretersOffice\Admin\Form\DefendantsEventFieldset;
+use InterpretersOffice\Admin\Form\DefendantNamesFieldset;
 use InterpretersOffice\Entity;
 use DoctrineModule\Form\Element\ObjectSelect;
 
@@ -198,14 +198,14 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'target_element' =>  $interpreterEventsFieldset,                
             ],
         ]);
-        $defendantsEventFieldset = new DefendantsEventFieldset($objectManager);
+        $defendantNamesFieldset = new DefendantNamesFieldset($objectManager);
         
         $this->add([
             'type' => Element\Collection::class,
-            'name' => 'defendantsEvent',
+            'name' => 'defendantNames',
             'options' => [
                 'label' => 'defendants',
-                'target_element' =>   $defendantsEventFieldset,                
+                'target_element' =>   $defendantNamesFieldset,                
             ],
         ]);
         
@@ -538,9 +538,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     {
         
         $spec = [
+            'interpreterEvents' => [
+                'required' => true, 'allow_empty' => true,
+            ],
+            'defendantNames'  => [
+                'required' => true, 'allow_empty' => true,
+            ],
             'id' => [
                 'required' => true,
-                 'allow_empty' => true,
+                'allow_empty' => true,
             ],
             'date' => [
                 'required' => true,

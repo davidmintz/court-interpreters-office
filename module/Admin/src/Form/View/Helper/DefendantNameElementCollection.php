@@ -17,7 +17,7 @@ class DefendantNameElementCollection extends AbstractHelper
      */
     protected $template = <<<TEMPLATE
         <li class="list-group-item defendant">
-            <input name="event[defendantsEvent][%d][defendantName]" type="hidden" value="%d">
+            <input name="event[defendantNames][%d][defendantName]" type="hidden" value="%d">
              %s            
             <button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this defendant">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -50,10 +50,10 @@ TEMPLATE;
         // to do: deal with possible undefined $form
         $form = $this->getView()->form;
         $entity = $form->getObject();
-        $defendants = $entity->getDefendants();
-        $markup = '';
-        foreach ($defendants as $i => $defendant) {
-            
+        $defendantNames = $entity->getDefendantNames();
+        $markup = '';        
+        foreach ($defendantNames as $i => $defendantEvent) {
+            $defendant = $defendantEvent->getDefendant();
             $name = $defendant->getSurnames().', '.$defendant->getGivenNames();
             $markup .= sprintf($this->template,$i,$defendant->getId(),$name);          
         }

@@ -5,6 +5,7 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -149,24 +150,39 @@ class Event
      */
     protected $cancellationReason;
 
+    /* FROM our Request entity in the older project....
+     * 
+     * @ORM\ManyToMany(targetEntity="Application\Entity\DefendantName",fetch="EAGER") 
+     * @ORM\JoinTable(name="defendants_requests",
+     *      joinColumns={@ORM\JoinColumn(name="request_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="deft_id")}
+     * )
+     *  //, unique=true ?
+     * cribbed from:
+     * http://doctrine-orm.readthedocs.org/en/latest/reference/annotations-reference.html#annref-manytomany
+     */
+    
+    
     /**
      * defendant(s) for whom an interpreter is required.
      *
      * @see DefendantName
      *
-     * @ORM\ManyToMany(targetEntity="DefendantName",fetch="EAGER") 
-     * @ORM\JoinTable(name="defendants_events",inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
+     * @ORM\ManyToMany(targetEntity="DefendantName",fetch="EAGER") //,inversedBy="Events",
+     * @ORM\JoinTable(name="defendants_events",
+     *  joinColumns={@ORM\JoinColumn(name="event_id", referencedColumnName="id")},
+     *  inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
      *
-     * @var ArrayCollection
+     * @var Collection
      */
-    protected $defendants;
+    protected $defendantNames;
 
     /**
      * Interpreters assigned to this event.
      *
      * @ORM\OneToMany(targetEntity="InterpreterEvent",mappedBy="event",cascade="persist",fetch="EAGER")
      *
-     * @var ArrayCollection
+     * @var Collection
      */
     protected $interpreterEvents;
 
@@ -239,7 +255,7 @@ class Event
      */
     public function __construct()
     {
-        $this->defendants = new ArrayCollection();
+        $this->defendantNames = new ArrayCollection();
         $this->interpreterEvents = new ArrayCollection();
     }
 
@@ -636,7 +652,9 @@ class Event
     {
         return $this->cancellationReason;
     }
-
+    
+    
+    
     /**
      * Add defendant.
      *
@@ -646,7 +664,7 @@ class Event
      */
     public function addDefendant(DefendantName $defendant)
     {
-        $this->defendants[] = $defendant;
+        $this->defendantNames->add($defendant);
 
         return $this;
     }
@@ -662,23 +680,63 @@ class Event
     }
 
     /**
-     * Get defendants.
+     * Proxies to getDefendantNames();
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDefendants()
     {
-        return $this->defendants;
+        return $this->getDefendantNames();
+    }
+    
+    /**
+     * Get defendants.
+     *
+     * @return Collection
+     */
+    public function getDefendantNames()
+    {
+        return $this->defendantNames;
     }
 
+    /**
+     * adds DefendantNames
+     * 
+     * @param Collection $defendantNames
+     */
+    public function addDefendantNames(Collection $defendantNames)
+    {
+        printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
+        foreach ($defendantNames as $defendantName) {
+            //echo "AM I FUCKING RUNNING HERE OR WHAT???? ";
+            
+            $this->defendantNames->add($defendantName);
+        }
+    }
+    
+    /**
+     * removes DefendantNames
+     * 
+     * @param Collection $defendantNames
+     */
+    public function removeDefendantNames(Collection $defendantNames)
+    {
+        printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
+        foreach ($defendantNames as $defendantName) {
+            //echo "AM I FUCKING RUNNING HERE OR WHAT???? ";
+            
+            $this->defendantNames->removeElement($defendantName);
+        }
+    }
     
     /**
      * adds InterpreterEvents
      * 
-     * @param \Doctrine\Common\Collections\Collection $interpreterEvents
+     * @param Collection $interpreterEvents
      */
-    public function addInterpreterEvents(\Doctrine\Common\Collections\Collection $interpreterEvents)
+    public function addInterpreterEvents(Collection $interpreterEvents)
     {
+        //throw new \Exception("show me the call stack");
         foreach ($interpreterEvents as $interpreterEvent) {
             //echo "AM I FUCKING RUNNING HERE OR WHAT???? ";
             $interpreterEvent->setEvent($this);
@@ -689,11 +747,12 @@ class Event
     /**
      * removes InterpretersEvents
      * 
-     * @param \Doctrine\Common\Collections\Collection $interpreterEvents
+     * @param Collection $interpreterEvents
      */
-    public function removeInterpreterEvents(\Doctrine\Common\Collections\Collection $interpreterEvents)
+    public function removeInterpreterEvents(Collection $interpreterEvents)
     {
-         foreach ($interpreterEvents as $interpreterEvent) {
+        //echo "fucking hello from " .__FUNCTION__ . " ....";
+        foreach ($interpreterEvents as $interpreterEvent) {           
             $interpreterEvent->setEvent(null);
             $this->interpreterEvents->removeElement($interpreterEvent);
         }
@@ -702,7 +761,7 @@ class Event
     /**
      * Get interpreterEvents.
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getInterpreterEvents()
     {

@@ -150,7 +150,7 @@ echo $this->form()->openTag($form);
                 <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php                
-                $collection = $fieldset->get('defendantsEvent'); 
+                $collection = $fieldset->get('defendantNames'); 
                 $helper = (new DefendantNameElementCollection())->setView($this);
                 echo $helper($collection);
                 ?>

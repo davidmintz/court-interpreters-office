@@ -123,7 +123,13 @@ class InterpretersWriteController extends AbstractActionController
         if ($request->isPost()) {
             $input = $request->getPost();
             $form->setData($input);
-            if (! $form->isValid()) {               
+             
+            //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
+            //$this->preValidate($input,$form);
+            //$form->setData($input);
+            printf('<pre>%s</pre>',print_r($input->get('interpreter'),true)); 
+            if (! $form->isValid()) {
+                
                 // whether the encrypted fields should be obscured (again) 
                 // or not depends on whether they changed them                
                 $viewModel->obscure_values = 
@@ -135,8 +141,8 @@ class InterpretersWriteController extends AbstractActionController
                 'The interpreter <strong>%s %s</strong> has been updated.',
                 $entity->getFirstname(), $entity->getLastname()
             ));
-            $this->redirect()->toRoute('interpreters');
-            // echo "<br>success. NOT redirecting...
+            //$this->redirect()->toRoute('interpreters');
+             echo "<br>success. NOT redirecting...
             // <a href=\"/admin/interpreters/edit/$id\">do it again</a> ";
         } else {    // not a POST
             if ($this->vault_enabled) {
