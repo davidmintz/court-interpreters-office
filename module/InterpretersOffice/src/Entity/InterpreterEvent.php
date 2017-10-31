@@ -48,7 +48,7 @@ class InterpreterEvent
      * User who assigned the interpreter.
      *
      * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false,name="created_by_id")
      *
      * @var User
      */
