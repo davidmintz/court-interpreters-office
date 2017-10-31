@@ -117,7 +117,9 @@ class EventsController extends AbstractActionController
             //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
             $this->preValidate($input,$form);
             $form->setData($input);
-            //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
+            printf('<pre>%s</pre>',print_r($input->get('event'),true)); 
+           
+            //return false;
             if (! $form->isValid()) {
                 echo "validation failed ... ";
                 //var_dump($form->getMessages()['event']);
@@ -129,11 +131,11 @@ class EventsController extends AbstractActionController
                 $entity_collection = $event->getInterpreterEvents();
                 $form_collection =  $form->get('event')->get('interpreterEvents');
                 if ($entity_collection->count() != $form_collection->count()) {
-                    echo "shit is NOT working!<br>"; 
-                    $data = $input['event']['interpreterEvents'];
-                    printf('<pre>%s</pre>',print_r($data,true));                    
+                    echo "hydration shit is NOT working!<br>"; 
+                    //$data = $input['event']['interpreterEvents'];
+                    //printf('<pre>%s</pre>',print_r($data,true));                    
                     //$hydrator->hydrate($data, $event->getInterpreterEvents());
-                    return false;
+                    //return false;
                 }
                 /*
                 echo $collection->count(), " is the number of elements in the entity collection!...";
@@ -157,7 +159,12 @@ class EventsController extends AbstractActionController
         }
         return $viewModel;
     }
-    
+    /**
+     * preprocesses incoming data
+     * 
+     * @param \Zend\Stdlib\Parameters $data
+     * @param \InterpretersOffice\Admin\Form\EventForm $form
+     */
     protected function preValidate(\Zend\Stdlib\Parameters $data, 
             Form\EventForm $form)
     {
@@ -171,9 +178,12 @@ class EventsController extends AbstractActionController
             $judge_input->setAllowEmpty(false);
             $judge_input->getValidatorChain()->attach($validator);
         }
+        
         if (empty($event['submitter']) && empty($event['anonymousSubmitter'])) {
             $validator = new \Zend\Validator\NotEmpty([
-                'messages' => ['isEmpty' => "identity or description of submitter is required"],
+                'messages' => 
+                    [ 'isEmpty' => 
+                        "identity or description of submitter is required"],
                 'break_chain_on_failure' => true,
             ]);
             $submitter_input = $form->getInputFilter()->get('event')->get('submitter');
@@ -181,26 +191,17 @@ class EventsController extends AbstractActionController
             $submitter_input->getValidatorChain()->attach($validator);
             
         }
-       // $shit_changed = false;
-        // if NO submitter but YES anonymous submitter
+        // if NO submitter but YES anonymous submitter, submitter = NULL
         if (empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
             $event['submitter'] = null;
-           // $shit_changed = true;
-        // if anonymous submitter AND submitter, make anonymous NULL
-        } elseif (!empty($event['anonymousSubmitter'])&& !empty($event['submitter'])) {
+        // if YES submitter and YES anonymous submitter, anon submitter = NULL
+        } elseif (!empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
             $event['anonymousSubmitter'] = null;
-           // $shit_changed = true;
         }
-        if (!empty($event['submission_date']) && !empty($event['submission_time'])) {
-            
+        if (!empty($event['submission_date']) && !empty($event['submission_time'])) {            
             $event['submission_datetime'] = "$event[submission_date] $event[submission_time]";
-            //exit(" I FUCKING SET THE SHIT: ".$event['submission_datetime']);
         }
-        //if ($shit_changed) { // because $event is a copy, not a reference!
-            $data->set('event',$event);
-        //}
-        
-        
+        $data->set('event',$event);
     }
 
     /**

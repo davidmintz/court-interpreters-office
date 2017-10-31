@@ -184,7 +184,7 @@ $(document).ready(function()
             }
         }        
         judgeElement = $('#judge');
-        var judgeOption = judgeElement.children(":selected")
+        var judgeOption = judgeElement.children(":selected");
         if (judgeOption.data("pseudojudge")) {
             // selected judge is anonymous, so set the 
             // hidden anonymousJudge field to judge-element value
@@ -238,7 +238,7 @@ $(document).ready(function()
     var shit = 
     '<li class="list-group-item interpreter-assigned">'
             +'<input name="event[interpreterEvents][0][interpreter]" value="117" type="hidden">'
-             + 'Mintz, David<button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">'
+            + 'Mintz, David<button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">'
             + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
             + '<span class="sr-only">remove this interpreter</span></button></li>';
     
@@ -248,8 +248,8 @@ $(document).ready(function()
            +'<input name="event[defendantsEvent][0][defendantName]" value="11" type="hidden">'
            + ' Rodríguez,  José'            
            + '<button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this defendant">'
-            + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
-            + '<span class="sr-only">remove this defendant</span></button></li>');
+           + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
+           + '<span class="sr-only">remove this defendant</span></button></li>');
     $('#submitter').append('<option selected="selected" value="1283">Cavale, Allison</option>');
     $("h2").after("<p>stuffed with test data</p>");
     
