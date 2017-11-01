@@ -242,8 +242,8 @@ $(document).ready(function()
             + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
             + '<span class="sr-only">remove this interpreter</span></button></li>';
     
-    $('#interpreters-assigned').append(shit);
-    
+    //$('#interpreters-assigned').append(shit);
+    /*
     $('#defendant-names').append('<li class="list-group-item defendant">'
            +'<input name="event[defendantNames][0][defendantName]" value="11" type="hidden">'
            + ' Rodríguez,  José'            
@@ -251,6 +251,7 @@ $(document).ready(function()
            + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
            + '<span class="sr-only">remove this defendant</span></button></li>');
     $('#submitter').append('<option selected="selected" value="1283">Cavale, Allison</option>');
+    */
     $("h2").after("<p>stuffed with test data</p>");
     
     /* ==================== */

@@ -149,11 +149,25 @@ echo $this->form()->openTag($form);
             <div class="col-sm-8">
                 <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
-                <?php                
+                <?php 
+                echo $this->formSelect($fieldset->get('defendantNames'));
+                if ($this->defendantNames) {
+                    foreach ($this->defendantNames as $id => $name) {
+                        echo $this->defendantName($id,$name);
+                    }
+                } else {
+                    $names = $form->getObject()->getDefendantNames()->toArray();
+                    foreach ($names as $nameObject) {
+                        $name = $nameObject->getSurNames() . ', ' . $nameObject->getGivenNames();
+                        echo $this->defendantName($nameObject->getId(),$name);
+                    }
+                }
+                //echo is_object($names) ? get_class($names) : gettype($names);
+                /*
                 $collection = $fieldset->get('defendantNames'); 
                 $helper = (new DefendantNameElementCollection())->setView($this);
                 echo $helper($collection);
-                ?>
+               */ ?>
                 </ul>
             </div>
         </div>

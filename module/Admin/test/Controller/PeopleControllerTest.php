@@ -96,6 +96,12 @@ class PeopleControllerTest extends AbstractControllerTest
         $em->flush();
         $this->login('susie', 'boink');
         $this->reset(true);
+        // is the guy really in there?
+        
+        $person = $em->getRepository(Entity\Person::class)->findBy([
+            'email' => 'john.somebody@lawfirm.com'
+        ]);
+        printf(gettype($person[0]) ." is the data type of john somebody in %s\n",basename(__FILE__)); 
         // try to add the same guy again
         $data = [
             'person' => [
