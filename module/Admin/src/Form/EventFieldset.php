@@ -189,7 +189,6 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ->addLocationElements($options['object']);
         
         $interpreterEventsFieldset = new InterpreterEventsFieldset($objectManager);
-        
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterEvents',
@@ -198,6 +197,25 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'target_element' =>  $interpreterEventsFieldset,                
             ],
         ]);
+        /* defendant names, not actually displayed */
+        $this->add([
+            'name' => 'defendantNames',
+            'type' => 'Zend\Form\Element\Select',
+            'options' => [
+                //'empty_option' => '',
+                'value_options' => [],
+                'disable_inarray_validator' => true,
+                'label' => 'defendants',
+            ],
+            'attributes' => [
+                'class' => 'hidden',
+                'id' => 'deft-select',
+                'multiple' => 'multiple',
+            ],
+        ]);
+        
+         /*
+        // this was misguided
         $defendantNamesFieldset = new DefendantNamesFieldset($objectManager);
         
         $this->add([
@@ -208,7 +226,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'target_element' =>   $defendantNamesFieldset,                
             ],
         ]);
-        
+        */
         // figure out value options for interpreter select
         $empty_option =  ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
         if ($options['object']) {
@@ -539,10 +557,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         
         $spec = [
             'interpreterEvents' => [
-                'required' => true, 'allow_empty' => true,
+                'required' => false, 'allow_empty' => true,
             ],
             'defendantNames'  => [
-                'required' => true, 'allow_empty' => true,
+                'required' => false, 'allow_empty' => true,
             ],
             'id' => [
                 'required' => true,

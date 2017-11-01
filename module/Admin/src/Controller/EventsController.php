@@ -93,6 +93,7 @@ class EventsController extends AbstractActionController
         
         $form->bind($event);
         // test
+
         $shit = $form->get("event");
         $shit->get("date")->setValue('10/27/2017');
         $shit->get("time")->setValue('10:00 am');
@@ -113,13 +114,14 @@ class EventsController extends AbstractActionController
                 'form'  => $form,
                 ]);
         if ($request->isPost()) {
-            echo "<strong>POST['event']['defendantNames']</strong>";var_dump($_POST['event']['defendantNames']);
+            //echo "<strong>POST['event']['defendantNames']</strong>";
+            //var_dump($_POST['event']['defendantNames']);
             $input = $request->getPost();
             //printf('<pre>%s</pre>',print_r($input->get('event')['interpreterEvents'],true)); //return false;
             $this->preValidate($input,$form);
             //printf('<pre>%s</pre>',print_r($input->get('event')['interpreterEvents'],true)); //return false;
-             echo "<strong>\$input->get('event')['defendantNames']</strong>";
-            var_dump($input->get('event')['defendantNames']);
+            //echo "<strong>\$input->get('event')['defendantNames']</strong>";
+            //  var_dump($input->get('event')['defendantNames']);
             $form->setData($input);
             //printf('<pre>%s</pre>',print_r($input->get('event'),true)); 
            
@@ -135,26 +137,9 @@ class EventsController extends AbstractActionController
                 $entity_collection = $event->getInterpreterEvents();
                 $form_collection =  $form->get('event')->get('interpreterEvents');
                 if ($entity_collection->count() == $form_collection->count()) {
-                    echo "hydration shit is ON ITS WAY????<br>"; 
-                    //$data = $input['event']['interpreterEvents'];
-                    //printf('<pre>%s</pre>',print_r($data,true));                    
-                    //$hydrator->hydrate($data, $event->getInterpreterEvents());
-                    //return false;
+                    echo "hydration shit is ON ITS WAY????<br>";                     
                 }
-                /*
-                echo $collection->count(), " is the number of elements in the entity collection!...";
-                $shit = $form->get('event')->get('interpreterEvents');
-                echo gettype($shit), " ... ";
-                if (is_object($shit)) {
-                    echo get_class($shit);
-                    echo " is the class, and number of items is: ", count($shit);
-                }
-                echo "<br>"; $defendantCollection = $event->getDefendants();
-                echo "number of defendants is: ",$defendantCollection->count();
-                //return false;
-                //$this->postValidate($event,$form);
-                //\Doctrine\Common\Util\Debug::dump($event);
-                // */
+                
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
                 echo "YAY!!!!!!";
@@ -205,6 +190,24 @@ class EventsController extends AbstractActionController
         if (!empty($event['submission_date']) && !empty($event['submission_time'])) {            
             $event['submission_datetime'] = "$event[submission_date] $event[submission_time]";
         }
+        if (isset($event['defendantNames'])) {
+            $event['defendantNames'] = array_keys($event['defendantNames']);
+        } 
+        /*
+         else {
+            $event['defendantNames'] = [];
+        }
+        if (! isset($event['interpreterEvents'] )) { 
+            
+            $entity = $form->getObject();
+            $existing = $entity->getInterpreterEvents();
+            $entity->removeInterpreterEvents($existing);
+            $event['interpreterEvents'] = [];
+        } else {
+           
+        }
+         * 
+         */
         $data->set('event',$event);
     }
 
@@ -237,32 +240,34 @@ class EventsController extends AbstractActionController
         //$renderer = $this->getEvent()->getApplication()->getServiceManager()->get("ViewRenderer");
         //$html = $renderer->formElement($e);
         //echo $renderer->escapeHtml($html);
-        
+        $defendantNames = [];
         if ($this->getRequest()->isPost()) {
+            //var_dump($_POST['event']['defendantNames']);
             $data = $request->getPost();
             $this->preValidate($data,$form);
             $form->setData($data);
             if ($form->isValid()) {
-                 printf("<pre><%s</pre>",print_r($_POST['event'],true));
-                try { 
+                    //printf("<pre><%s</pre>",print_r($_POST['event']['defendantNames'],true));
+                    
+                //try { 
                     $this->entityManager->flush();
                     echo "yay! shit is valid and has been saved.";
-                } catch (\Exception $e) {
-                    echo $e->getMessage();
-                }
+                //} catch (\Exception $e) {
+                  //  echo $e->getMessage();
+                //}
                 
             } else {
                 echo "shit is NOT valid...";
-                printf("<pre><%s</pre>",print_r($form->getMessages(),true));
-                printf("<pre><%s</pre>",print_r($_POST['event'],true));
+                printf("<pre><%s</pre>",print_r($form->getMessages(),true));                 
+                //$post = $this->params()->fromPost('event')['defendantNames'];
+                //$defendantNames = $_POST['event']['defendantNames'];
+                // printf("<pre><strong>POSTed deft names:</strong>%s</pre>",print_r($defendantNames,true));//print_r($_POST['event'],true)
             }
         }
         
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables([               
-                'form'  => $form,
-             ]);
+            ->setVariables(compact('form','defendantNames'));
 
         return $viewModel;
     }

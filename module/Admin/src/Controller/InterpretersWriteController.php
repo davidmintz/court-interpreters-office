@@ -141,8 +141,8 @@ class InterpretersWriteController extends AbstractActionController
                 'The interpreter <strong>%s %s</strong> has been updated.',
                 $entity->getFirstname(), $entity->getLastname()
             ));
-            //$this->redirect()->toRoute('interpreters');
-             echo "<br>success. NOT redirecting...
+            $this->redirect()->toRoute('interpreters');
+            // echo "<br>success. NOT redirecting...
             // <a href=\"/admin/interpreters/edit/$id\">do it again</a> ";
         } else {    // not a POST
             if ($this->vault_enabled) {
