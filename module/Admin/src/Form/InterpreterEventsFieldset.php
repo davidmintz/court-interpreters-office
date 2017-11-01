@@ -47,15 +47,8 @@ class InterpreterEventsFieldset extends Fieldset
      * @todo complete it
      * @return array
      */
-    public function getInputFilterSpecification() {echo "Hello???? from ".__METHOD__. "....<br>";
+    public function getInputFilterSpecification() { //echo "Hello???? from ".__METHOD__. "....<br>";
         return [];
     }
     
-    public function bindValues(array $values = array(), array $validationGroup = null)
-    {
-        var_dump($values);echo "HELLO?????????";
-        return parent::bindValues($values, $validationGroup);
-    }
-    
 }
-
