@@ -10,10 +10,9 @@ use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity;
-use InterpretersOffice\Admin\Form\View\Helper\DefendantNameElementCollection as 
-    DeftNameHelper;
+use InterpretersOffice\View\Helper\DefendantName as DeftNameHelper;
 
-/**
+/** 
  *
  * for fetching defendant data for autocompletion, etc
  */
@@ -26,13 +25,15 @@ class DefendantsController extends AbstractActionController {
      */
     protected $entityManager;
     
+    protected $helper;
     /**
      * constructor
      * 
      * @param EntityManager $em
      */
-    public function __construct(EntityManager $em) {
+    public function __construct(EntityManager $em, $shit) {
         $this->entityManager = $em;
+        $this->helper = $shit;
     }
     
     /**
@@ -61,20 +62,20 @@ class DefendantsController extends AbstractActionController {
     
     public function templateAction()
     {
-        $helper = new DeftNameHelper();
-        $factory = new \Zend\InputFilter\Factory();
-        $inputFilter = $factory->createInputFilter(                
-            $helper->getInputFilterSpecification()
-        );
+        $helper = $this->helper; //new DeftNameHelper();
+        //$factory = new \Zend\InputFilter\Factory();
+        //$inputFilter = $factory->createInputFilter(                
+        //    $helper->getInputFilterSpecification()
+        //);
         $data = $this->params()->fromQuery();
-        $inputFilter->setData($data);
-        if (! $inputFilter->isValid()) {
-            throw new \RuntimeException(
-                "bad input parameters: "
-                    .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
-            );
-        }        
-        $html = $helper->fromArray($data);
+        // $inputFilter->setData($data);
+        //if (! $inputFilter->isValid()) {
+        //    throw new \RuntimeException(
+        //        "bad input parameters: "
+           //         .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
+         //   );
+        //}        
+        $html = $helper($data['id'],$data['name']);
         return $this->getResponse()->setContent($html);
     }
 

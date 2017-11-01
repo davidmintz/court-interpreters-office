@@ -28,7 +28,7 @@ class UpdateListenerFactory implements FactoryInterface
     {
         $listener = new UpdateListener();
         $listener->setLogger($container->get('log'));
-
+        // to do: inject the Auth user
         return $listener;
     }
 }

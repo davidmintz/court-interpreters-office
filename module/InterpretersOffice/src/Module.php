@@ -5,14 +5,14 @@
 
 namespace InterpretersOffice;
 
-//use Zend\Mvc\MvcEvent;
+use InterpretersOffice\View\Helper;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 /**
  * Module class for application's main module.
  */
 class Module
 {
-    
 
     /**
      * returns this module's configuration.
@@ -24,17 +24,36 @@ class Module
         return include __DIR__.'/../config/module.config.php';
     }
 
+    public function getViewHelperConfig()
+    {
+        return [
+            
+            'aliases' => [
+                'defendantName' =>  Helper\DefendantName::class,
+            ],
+            'factories' => [
+                Helper\DefendantName::class => function($container){
+                    $manager = $container->get('ViewHelperManager');
+                    return new Helper\DefendantName($manager->get("escapeHtml"));
+                }
+            ],
+        ];
+        
+    }
     /*
      * module bootstrap, opportunity to attach listeners etc.
      *
      * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
 
-    public function onBootstrap($e)
+    public function onBootstrap(\Zend\Mvc\MvcEvent $e)
     {
-       //$app = $e->getApplication();
+       
+       //$container = $e->getApplication()->getServiceManager();
+       //$shit = $container->get('ViewHelperManager');
+       //var_dump (get_class ($shit->get('defendantName')) );
        //$app->getEventManager()->attach('render', [$this, 'testSomething'], 100);
     }
-    */
+    //*/
 
     /*
      * DOES NOT SEEM TO WORK

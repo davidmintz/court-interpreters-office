@@ -27,7 +27,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postPersist','postRemove'];
+        return ['postUpdate','postPersist','postRemove','preUpdate','prePersist'];
     }
 
 
@@ -92,5 +92,17 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function postRemove(LifecycleEventArgs $args)
     {
         return $this->postUpdate($args);
+    }
+    
+    /**
+     * 
+     */
+    public function prePersist(LifecycleEventArgs $args)
+    {
+         $entity = $args->getObject();
+         if ($entity instanceof Entity\InterpreterEvent) {
+             echo "um, FUCK YOU? in ".__METHOD__. "<br>";
+             // to do: inject authenticated User entity, set user, set creation time
+         }
     }
 }

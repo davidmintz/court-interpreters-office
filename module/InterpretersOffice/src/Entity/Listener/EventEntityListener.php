@@ -65,7 +65,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
     public function preUpdate(Entity\Event $eventEntity, 
             LifecycleEventArgs $event)
     {
-        
+        //echo "UM, hello??????? <br>";
     }
     
 	/**

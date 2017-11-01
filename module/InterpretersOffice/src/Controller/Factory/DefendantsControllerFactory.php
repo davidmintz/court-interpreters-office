@@ -22,6 +22,9 @@ class DefendantsControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new DefendantsController($container->get(\Doctrine\ORM\EntityManager::class));
+        return new DefendantsController(
+            $container->get(\Doctrine\ORM\EntityManager::class),
+            $container->get("ViewHelperManager")->get("defendantName")
+        );
     }
 }

@@ -751,9 +751,10 @@ class Event
      */
     public function removeInterpreterEvents(Collection $interpreterEvents)
     {
-        //echo "fucking hello from " .__FUNCTION__ . " ....";
+        echo "<br><strong>fucking</strong> hello from " .__FUNCTION__ . "<br>....";
         foreach ($interpreterEvents as $interpreterEvent) {           
             $interpreterEvent->setEvent(null);
+            echo "here goes:  ";
             $this->interpreterEvents->removeElement($interpreterEvent);
         }
     }
