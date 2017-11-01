@@ -105,4 +105,16 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
              // to do: inject authenticated User entity, set user, set creation time
          }
     }
+    
+    /**
+     * 
+     */
+    public function preUpdate(LifecycleEventArgs $args)
+    {
+         $entity = $args->getObject();
+         if ($entity instanceof Entity\InterpreterEvent) {
+             echo "um, FUCK YOU? in ".__METHOD__. "<br>";
+             // to do: inject authenticated User entity, set user, set creation time
+         }
+    }
 }
