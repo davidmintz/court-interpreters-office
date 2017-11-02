@@ -39,6 +39,24 @@ class InterpreterEventsFieldset extends Fieldset
                 'name' => 'interpreter'
             ]
         );
+        $this->add(
+            [
+                'type'=>'hidden',
+                'name' => 'event'
+            ]
+        );
+        $this->add(
+            [
+                'type'=>'hidden',
+                'name' => 'createdBy'
+            ]
+        );
+        $this->add(
+            [
+                'type'=>'hidden',
+                'name' => 'created'
+            ]
+        );
     }
     
     /**

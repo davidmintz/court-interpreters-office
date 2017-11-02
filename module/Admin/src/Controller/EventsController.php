@@ -167,8 +167,16 @@ class EventsController extends AbstractActionController
             $judge_input->setAllowEmpty(false);
             $judge_input->getValidatorChain()->attach($validator);
         }
-        
-        if (empty($event['submitter']) && empty($event['anonymousSubmitter'])) {
+        $anonSubmitterElement = $form->get('event')->get('anonymousSubmitter');
+        $hat_options = $anonSubmitterElement->getValueOptions();
+        $hat_id = $anonSubmitterElement->getValue();        
+        $key = array_search($hat_id, array_column($hat_options, 'value'));
+        $can_be_anonymous = (!$key) ? false : $hat_options[$key]['attributes']['data-can-be-anonymous'];
+        var_dump($hat_options[$key]['attributes']['data-can-be-anonymous']);
+        if ((empty($event['submitter']) && empty($event['anonymousSubmitter'])) 
+                or
+            (!$can_be_anonymous  && empty($event['submitter']))
+        ) {
             $validator = new \Zend\Validator\NotEmpty([
                 'messages' => 
                     [ 'isEmpty' => 
@@ -192,22 +200,49 @@ class EventsController extends AbstractActionController
         }
         if (isset($event['defendantNames'])) {
             $event['defendantNames'] = array_keys($event['defendantNames']);
-        } 
+        } else {
+            $entity = $form->getObject();
+            $deftNames = $entity->getDefendantNames();
+            if ($deftNames->count()) {
+                foreach ($deftNames as $deft) {
+                    echo "manually removing shit...<br>";
+                   $entity->removeDefendantNames( $deftNames );
+                }
+            }
+        }
+        if (isset($event['interpreterEvents'])) {
+            foreach ($event['interpreterEvents'] as $i => $interpreterEvent ) {
+                if (! isset($interpreterEvent[$i]['createdBy'])) {
+                    echo "HELLO? WHAT THE ?!?!?!?<br>";
+                    $event['interpreterEvents'][$i]['createdBy'] = $this->auth->getStorage()->read()->id;                   
+                }
+            }
+        } else {
+            
+        }
         /*
          else {
             $event['defendantNames'] = [];
-        }
+        } * 
+         */
         if (! isset($event['interpreterEvents'] )) { 
-            
+            echo "HELLO???? no interpreterEvents were submitted<br>";
             $entity = $form->getObject();
             $existing = $entity->getInterpreterEvents();
+            printf("as it stands at %d in the controller we have %s interpreterEvent elements<br>",
+                    __LINE__,
+                    $existing->count()
+                    );
             $entity->removeInterpreterEvents($existing);
-            $event['interpreterEvents'] = [];
+            foreach( $existing as $shit) {                
+                $this->entityManager->remove($shit);                
+            }
+            printf("<br><strong>%d</strong>  is now the count of getInterpreterEvents()<br>",$entity->getInterpreterEvents()->count());
+            //$event['interpreterEvents'] = [];
         } else {
            
         }
-         * 
-         */
+        if (! empty($i)) { echo "SHIT IS NOW: ".$event['interpreterEvents'][$i]['createdBy']. "<br>";}
         $data->set('event',$event);
     }
 

@@ -71,6 +71,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         [
             'name' => 'id',
             'type' =>  'Zend\Form\Element\Hidden',
+            'attributes' => ['id' => 'event_id'],
         ],
 
         [
@@ -656,7 +657,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
             'submitter' => [
                 'required' => true,
-                'allow_empty' => true,
+                'allow_empty' => true,// conditionally
             ],
             'end_time' => [
                 'required' => false,
@@ -742,6 +743,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ];
             $spec[$field] = $shit;
         }
+        
         return $spec;
     }
    

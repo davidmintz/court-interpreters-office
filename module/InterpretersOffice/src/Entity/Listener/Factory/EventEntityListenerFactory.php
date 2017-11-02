@@ -27,6 +27,7 @@ class EventEntityListenerFactory implements FactoryInterface
         $listener->setLogger($container->get('log'));
         /** @todo see what happens if we make this a constructor dependency */
         $listener->setAuth($container->get('auth'));
+        // echo "is this an issue in ".__METHOD__. "?  ....... ";
         return $listener;
         
     }
