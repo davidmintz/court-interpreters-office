@@ -723,8 +723,7 @@ class Event
     {
         printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
         foreach ($defendantNames as $defendantName) {
-            //echo "AM I FUCKING RUNNING HERE OR WHAT???? ";
-            
+            //echo "AM I DOING SHIT HERE OR WHAT???? ";            
             $this->defendantNames->removeElement($defendantName);
         }
     }
@@ -735,10 +734,8 @@ class Event
      * @param Collection $interpreterEvents
      */
     public function addInterpreterEvents(Collection $interpreterEvents)
-    {
-        //throw new \Exception("show me the call stack");
-        foreach ($interpreterEvents as $interpreterEvent) {
-            //echo "AM I FUCKING RUNNING HERE OR WHAT???? ";
+    {        
+        foreach ($interpreterEvents as $interpreterEvent) {            
             $interpreterEvent->setEvent($this);
             $this->interpreterEvents->add($interpreterEvent);
         }
@@ -751,7 +748,7 @@ class Event
      */
     public function removeInterpreterEvents(Collection $interpreterEvents)
     {
-        echo "<br><strong>fucking</strong> hello from " .__FUNCTION__ . "<br>....";
+        echo "<br><strong>I said HELLO</strong> from " .__FUNCTION__ . "<br>....";
         foreach ($interpreterEvents as $interpreterEvent) {           
             $interpreterEvent->setEvent(null);
             echo "here goes:  ";
