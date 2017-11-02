@@ -71,7 +71,7 @@ for ($i = 0; $i < $this->count; $i++) :
         $i = $this->index;
         $certifiable = $this->language->isFederallyCertified();
         $language_id = $this->language->getId();
-        // don't know why the FUCK I can't get these initialized
+        // don't know why the fu-hell we can't get these initialized
         // with constructor options. grrrr!!!
         $language_element = (new \Zend\Form\Element\Hidden(
             "interpreter[interpreterLanguages][$i][language]"                
