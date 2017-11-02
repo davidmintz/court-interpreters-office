@@ -11,6 +11,7 @@ use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Entity;
 
 use Zend\Log;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
  * a start on an entity listener for clearing caches
@@ -19,6 +20,12 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
 {
 
     use Log\LoggerAwareTrait;
+    
+    /**
+     *
+     * @var AuthenticationServiceInterface
+     */
+    protected $auth;
 
     /**
      * implements EventSubscriber
@@ -30,7 +37,10 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         return ['postUpdate','postPersist','postRemove','preUpdate','prePersist'];
     }
 
-
+    public function setAuthenticationService(AuthenticationServiceInterface $auth)
+    {
+        $this->auth = $auth;
+    }
     /**
      * postUpdate handler
      * @param LifecycleEventArgs $args
@@ -101,8 +111,14 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
          $entity = $args->getObject();
          if ($entity instanceof Entity\InterpreterEvent) {
-             echo "um, FUCK YOU? in ".__METHOD__. "<br>";
-             // to do: inject authenticated User entity, set user, set creation time
+             echo "um, WTF? in ".__METHOD__. "<br>";
+             $entity->setCreated(new \DateTime());
+             // $em = $args->getObjectManager();
+             // $user = $em->find(Entity\User::class,$this->auth->getStorage()->read()->id);
+             // $entity->setCreatedBy($user);
+             // trying to inject auth object and so as to set createdBy resulted 
+             // in functions-nested-over-256-levels error at factory instantiation
+             // 
          }
     }
     
@@ -113,7 +129,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
          $entity = $args->getObject();
          if ($entity instanceof Entity\InterpreterEvent) {
-             echo "um, FUCK YOU? in ".__METHOD__. "<br>";
+             echo "um, these DO NOT GET UPDATED, do they??? in ".__METHOD__. "<br>";
              // to do: inject authenticated User entity, set user, set creation time
          }
     }
