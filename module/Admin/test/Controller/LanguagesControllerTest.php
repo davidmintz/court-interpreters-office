@@ -53,8 +53,6 @@ class LanguagesControllerTest extends AbstractControllerTest
 
         //$cache = $entityManager->getConfiguration()->getResultCacheImpl();
 
-        //printf("\nfucking shit is a %s\n",gettype($cache));echo get_class($cache);
-
         $repository = $entityManager->getRepository('InterpretersOffice\Entity\Language');
         $languages = $repository->findAll();
         $this->assertTrue(is_array($languages));
@@ -82,7 +80,7 @@ class LanguagesControllerTest extends AbstractControllerTest
         //$count_after = count($repository->findAll());
 
 
-        //echo "\nnow count is fuckin $count_after\n"; //return;
+        //echo "\nnow count is $count_after\n"; //return;
         $this->assertEquals(1, $count_after - $count_before);
         //$db = $entityManager->getConnection();
         //echo "\n";
