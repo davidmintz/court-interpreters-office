@@ -18,6 +18,8 @@ class InterpreterElementCollection extends AbstractHelper
     protected $template = <<<TEMPLATE
         <li class="list-group-item interpreter-assigned">
             <input name="event[interpreterEvents][%d][interpreter]" type="hidden" value="%d">
+            <input name="event[interpreterEvents][%d][event]" type="hidden" value="%d">
+            <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="">
              %s            
             <button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -54,8 +56,13 @@ TEMPLATE;
         $markup = '';
         foreach ($interpreterEvents as $i => $interpEvent) {
             $interpreter = $interpEvent->getInterpreter();
+            $event = $interpEvent->getEvent();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
-            $markup .= sprintf($this->template,$i,$interpreter->getId(),$name);          
+            $markup .= sprintf($this->template,
+                    $i, $interpreter->getId(),
+                    $i, $event->getId(),
+                    $i, 
+                    $name);          
         }
         return $markup;
     }
@@ -81,8 +88,13 @@ TEMPLATE;
         if (! isset($data['name'])) {
             $data['name'] = '__NAME__';
         }
-        $markup = sprintf($this->template,$data['index'],
-                $data['id'],$data['name']);
+        $markup = sprintf($this->template,
+                $data['index'],
+                $data['interpreter_id'],
+                $data['index'],
+                $data['event_id'],
+                $data['index'],
+                $data['name']);
         return $markup;
     }
     
@@ -95,10 +107,18 @@ TEMPLATE;
     {
          return 
          [   
-            'id' => [
-                'name'=> 'id',
+            'interpreter_id' => [
+                'name'=> 'interpreter_id',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name'=>'Digits'],
+                ],
+            ],
+              'event_id' => [
+                'name'=> 'event_id',
+                'required' => true,
+                'allow_empty' => true,
                 'validators' => [
                     ['name'=>'Digits'],
                 ],
