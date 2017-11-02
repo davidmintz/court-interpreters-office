@@ -28,7 +28,10 @@ class UpdateListenerFactory implements FactoryInterface
     {
         $listener = new UpdateListener();
         $listener->setLogger($container->get('log'));
-        // to do: inject the Auth user
+        // echo "Not daring to pull auth from container<br>";
+        // because it causes a fatal error -- functions nested > 256 levels.
+        // sounds like bullshit to me!
+        // $auth = $container->get(\Zend\Authentication\AuthenticationService::class);
         return $listener;
     }
 }
