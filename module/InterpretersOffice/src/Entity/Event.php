@@ -707,9 +707,7 @@ class Event
     public function addDefendantNames(Collection $defendantNames)
     {
         printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
-        foreach ($defendantNames as $defendantName) {
-            //echo "AM I FUCKING RUNNING HERE OR WHAT???? ";
-            
+        foreach ($defendantNames as $defendantName) {           
             $this->defendantNames->add($defendantName);
         }
     }
