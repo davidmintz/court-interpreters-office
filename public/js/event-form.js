@@ -121,7 +121,9 @@ $(document).ready(function()
         }        
         interpreterSelectElement.val("");        
         $.get('/admin/schedule/interpreter-template',
-            {id:id, index:index, name:name},
+            {   interpreter_id : id, index : index, 
+                name : name, 
+                event_id : $('#event_id').val()},
             function(html){                
                 $('#interpreters-assigned').append(html);                
         });        
@@ -210,18 +212,11 @@ $(document).ready(function()
 
                 minLength: 2,
                 select: function( event, ui ) {                        
-                    var index;
-                    var last = $('#defendant-names li > input').last();
-                    if (! last.length) {
-                        index = 0;
-                    } else {
-                        var m = last.attr("name").match(/\[(\d+)\]/);
-                        index = parseInt(m.pop()) + 1;
-                    }
+
                     that = $(this);
                     $.get(
                         '/defendants/template',
-                        {index:index,id:ui.item.value,name:ui.item.label},
+                        {id:ui.item.value,name:ui.item.label},
                         function(html){
                             $('#defendant-names').append(html);
                             that.val("");
@@ -234,7 +229,7 @@ $(document).ready(function()
                 }
              }   
          );
-     /* test/debug */
+     /* test/debug 
     var shit = 
     '<li class="list-group-item interpreter-assigned">'
             +'<input name="event[interpreterEvents][0][interpreter]" value="117" type="hidden">'
@@ -242,7 +237,7 @@ $(document).ready(function()
             + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
             + '<span class="sr-only">remove this interpreter</span></button></li>';
     
-    //$('#interpreters-assigned').append(shit);
+    *///$('#interpreters-assigned').append(shit);
     /*
     $('#defendant-names').append('<li class="list-group-item defendant">'
            +'<input name="event[defendantNames][0][defendantName]" value="11" type="hidden">'
