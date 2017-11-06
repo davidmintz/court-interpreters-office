@@ -14,7 +14,7 @@ use Zend\Log;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
- * a start on an entity listener for clearing caches
+ * entity listener for clearing caches etc
  */
 class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
 {
@@ -26,7 +26,32 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      * @var AuthenticationServiceInterface
      */
     protected $auth;
-
+    
+    /**
+     * the Event entity
+     * 
+     * a reference to the current Entity\Event so we can set its metadata
+     * on listeners that observe events in related entities.
+     * 
+     * @var Entity\Event
+     */
+    protected $eventEntity;
+    
+    /**
+     * current datetime
+     * 
+     * @var \DateTime
+     */
+    protected $now;
+    
+    protected function getTimeStamp()
+    {
+        if (! $this->now) {
+            $this->now = new \DateTime();
+        }
+        return $this->now;
+    }
+    
     /**
      * implements EventSubscriber
      *
@@ -34,12 +59,38 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postPersist','postRemove','preUpdate','prePersist'];
+        return ['postLoad','postUpdate','postPersist','postRemove','preUpdate','prePersist','preRemove'];
     }
-
+    
+    /**
+     * postLoad handler
+     * 
+     * keeps a reference to the Event entity in order to update 
+     * its meta later on in listeners that observe related entities
+     * 
+     * @param LifecycleEventArgs $args
+     */
+    public function postLoad(LifecycleEventArgs $args)
+    {
+        $entity = $args->getObject();
+        if ($entity instanceof Entity\Event) {
+            $this->eventEntity = $entity;            
+        }
+    }
+    
+    
+    
+    /**
+     * sets the AuthenticationService
+     * 
+     * @param AuthenticationServiceInterface $auth
+     * @return \InterpretersOffice\Entity\Listener\UpdateListener
+     */
     public function setAuthenticationService(AuthenticationServiceInterface $auth)
     {
         $this->auth = $auth;
+        
+        return $this;
     }
     /**
      * postUpdate handler
@@ -105,20 +156,34 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     }
     
     /**
+     * prePersist
      * 
+     * 
+     * 
+     * @param LifecycleEventArgs $args
      */
     public function prePersist(LifecycleEventArgs $args)
     {
          $entity = $args->getObject();
          if ($entity instanceof Entity\InterpreterEvent) {
-             echo "um, WTF? in ".__METHOD__. "<br>";
-             $entity->setCreated(new \DateTime());
+             
+             $this->logger->debug(sprintf("running %s on InterpreterEvent",__FUNCTION__));             
+             $entity->setCreated($this->getTimeStamp());
+             if (is_null($entity->getCreatedBy())) {
+                 // to do: factor this out into a getter method 
+                 // that returns User entity
+                 $em = $args->getObjectManager();
+                 $user = $em->find(Entity\User::class,$this->auth->getStorage()->read()->id);
+                 $entity->setCreatedBy($user);
+                 $this->logger->debug(sprintf("set createdBy for InterpreterEvent in %s",__FUNCTION__));
+             }
              // $em = $args->getObjectManager();
              // $user = $em->find(Entity\User::class,$this->auth->getStorage()->read()->id);
              // $entity->setCreatedBy($user);
-             // trying to inject auth object and so as to set createdBy resulted 
+             // trying to inject auth object so as to set createdBy resulted 
              // in functions-nested-over-256-levels error at factory instantiation
-             // 
+             
+             
          }
     }
     
@@ -129,8 +194,25 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
          $entity = $args->getObject();
          if ($entity instanceof Entity\InterpreterEvent) {
-             echo "um, these DO NOT GET UPDATED, do they??? in ".__METHOD__. "<br>";
+             echo "um, these do NOT GET UPDATED, do they??? in ".__METHOD__. "<br>";
              // to do: inject authenticated User entity, set user, set creation time
          }
+        
+    }
+    
+    /**
+     * 
+     */
+    public function preRemove(LifecycleEventArgs $args)
+    {
+         $entity = $args->getObject();
+         if ($entity instanceof Entity\InterpreterEvent) {
+            echo "how now! shit is being removed! ....";
+            if ($this->eventEntity) {
+                $comments = $this->eventEntity->getComments();
+                $this->eventEntity->setComments($comments . "\n ho shit! this worked!!");
+            }
+         }
+         
     }
 }

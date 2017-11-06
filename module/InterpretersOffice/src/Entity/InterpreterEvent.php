@@ -53,6 +53,13 @@ class InterpreterEvent
      * @var User
      */
     protected $createdBy;
+    
+    /**
+     * current data and time
+     * 
+     * @var \DateTime
+     */
+    protected $now;
 
     /**
      * constructor.
@@ -64,6 +71,7 @@ class InterpreterEvent
     {
         $this->interpreter = $interpreter;
         $this->event = $event;
+        $this->now = new \DateTime();
     }
 
     /**
@@ -73,7 +81,26 @@ class InterpreterEvent
      */
     public function onPrePersist()
     {
-        $this->created = new \DateTime();
+        $this->created = $this->now;
+        $event = $this->getEvent();
+        if ($event->getModified() != $this->now) {
+            $event->setModified($this->now);
+        }
+    }
+    
+    /*
+     * updates event modification timestamp
+     *  
+     * OOOPS 
+     * by now the event instance is null so this WILL NOT WORK
+     */
+    public function __onPreRemove()
+    {
+        
+        $event = $this->getEvent();
+        if ($event->getModified() != $this->now) {
+            $event->setModified($this->now);
+        }
     }
 
     /**

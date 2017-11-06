@@ -63,9 +63,10 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
      * @param LifecycleEventArgs $event
      */
     public function preUpdate(Entity\Event $eventEntity, 
-            LifecycleEventArgs $event)
+            PreUpdateEventArgs $args)
     {
-        //echo "UM, hello??????? <br>";
+        $changeSet = $args->getEntityChangeSet();
+        printf('<pre>%s</pre>',print_r(array_keys($changeSet),true));
     }
     
 	/**
@@ -102,15 +103,15 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
             // so we don't blow up in the test environment
             $user = $eventEntity->getCreatedBy(); 
         }
-        $now = new \DateTime();
+        
         $eventEntity->setCreated($this->now)
-                ->setModifiedBy(null)
-                ->setModified(null);
+                ->setModifiedBy($user)
+                ->setModified($this->now);
         foreach ($eventEntity->getInterpreterEvents() as $interpreterEvent) {
            
             $interpreterEvent
                     ->setCreatedBy($user)
-                    ->setCreated($now);
+                    ->setCreated($this->now);
         }
         $this->logger->debug(__FUNCTION__ . " in EventEntityListener really did shit");
     }
