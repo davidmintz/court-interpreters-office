@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Admin\Form\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
-use Zend\Form\Element\Collection;
+use Zend\Form\Element\Collection as ElementCollection;
 
 /**
  * helper for rendering interpreters
@@ -31,10 +31,10 @@ TEMPLATE;
     /**
      * invoke
      * 
-     * @param Collection $collection
+     * @param ElementCollection $collection
      * @return string
      */
-    public function __invoke(Collection $collection)
+    public function __invoke(ElementCollection $collection)
     {
         return $this->render($collection);
     }
@@ -45,10 +45,11 @@ TEMPLATE;
      * @param Collection $collection
      * @return string
      */
-    public function render(Collection $collection)
+    public function render(ElementCollection $collection)
     {
+        /** THIS IS ALL WRONG. re-think and start over. */
         
-        if (! $collection->count()) { return ''; }
+        if (! $collection->count()) { return ''; } // really? 
         // to do: deal with possible undefined $form
         $form = $this->getView()->form;
         $entity = $form->getObject();

@@ -133,13 +133,18 @@ echo $this->form()->openTag($form);
         <div class="form-group">
             <label class="control-label col-sm-4" for="interpreter-select">interpreters</label>
             <div class="col-sm-8">
-                <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
-                
+                <?php echo $this->formElement($fieldset->get('interpreter-select'));?>                
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
-                <?php 
-                $collection = $fieldset->get('interpreterEvents'); 
-                $helper = (new InterpreterElementCollection())->setView($this);
-                echo $helper($collection);
+                <?php
+                /** THIS IS ALL WRONG. re-think and start over. */
+                $interpreters = $form->getObject()->getInterpreterEvents();
+                echo "interpreters: ", $c=$interpreters->count() ;
+                if ($c) {
+                    $helper = (new InterpreterElementCollection())->setView($this);
+                    echo $helper($fieldset->get('interpreterEvents'))?></pre><?php
+                } else {
+
+                }
                 ?>
                 </ul>
             </div>
@@ -151,11 +156,14 @@ echo $this->form()->openTag($form);
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php 
                 echo $this->formSelect($fieldset->get('defendantNames'));
+
                 if ($this->defendantNames) {
+                    echo "DEBUG: # deft names is ". count($this->defendantNames);
                     foreach ($this->defendantNames as $id => $name) {
                         echo $this->defendantName($id,$name);
                     }
                 } else {
+                    echo "DEBUG: # deft names is ". count($this->defendantNames);
                     $names = $form->getObject()->getDefendantNames()->toArray();
                     foreach ($names as $nameObject) {
                         $name = $nameObject->getSurNames() . ', ' . $nameObject->getGivenNames();

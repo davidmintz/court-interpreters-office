@@ -129,7 +129,13 @@ class EventsController extends AbstractActionController
             if (! $form->isValid()) {
                 echo "validation failed ... ";
                 var_dump($form->getMessages());
-                return $viewModel;
+                /** @todo śanity-check 'event'
+                */
+                $event = $input->get('event');
+                $defendantNames = empty($event['defendantNames']) ? [] : $event['defendantNames'];
+                $interpreters = empty($event['interpreterEvents']) ? [] : $event['interpreterEvents'];
+                return $viewModel->setVariables(compact('defendantNames','interpreters' ));
+
             } else {
               
                 echo "validation OK... ";
@@ -229,7 +235,7 @@ class EventsController extends AbstractActionController
             echo "HELLO???? no interpreterEvents were submitted<br>";
             $entity = $form->getObject();
             $existing = $entity->getInterpreterEvents();
-            printf("as it stands at %d in the controller we have %s interpreterEvent elements<br>",
+            printf("as it stands at %d in the controller our entity has %s interpreterEvent elements<br>",
                     __LINE__,
                     $existing->count()
                     );
@@ -237,7 +243,7 @@ class EventsController extends AbstractActionController
             foreach( $existing as $shit) {                
                 $this->entityManager->remove($shit);                
             }
-            printf("<br><strong>%d</strong>  is now the count of getInterpreterEvents()<br>",$entity->getInterpreterEvents()->count());
+            printf("<br><strong>%d</strong> is now the count of getInterpreterEvents()<br>",$entity->getInterpreterEvents()->count());
             //$event['interpreterEvents'] = [];
         } else {
            
