@@ -91,6 +91,7 @@ echo $this->form()->openTag($form);
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
         <?php foreach (['date','time','eventType','judge', ] as $elementName) : 
+            //if (! $fieldset->has($elementName)) { continue; } //experimental
             $element = $fieldset->get($elementName); 
             if ('time' == $elementName && $config['end_time']):?>
             <div class="form-group multi-input">
