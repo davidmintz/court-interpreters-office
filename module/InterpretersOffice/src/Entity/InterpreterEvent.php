@@ -81,7 +81,9 @@ class InterpreterEvent
      */
     public function onPrePersist()
     {
+       
         $this->created = $this->now;
+         return;
         $event = $this->getEvent();
         if ($event->getModified() != $this->now) {
             $event->setModified($this->now);

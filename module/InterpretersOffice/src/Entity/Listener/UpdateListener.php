@@ -159,12 +159,14 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      * prePersist
      * 
      * 
-     * 
+     * @todo get rid of this or put to some real use
      * @param LifecycleEventArgs $args
      */
     public function prePersist(LifecycleEventArgs $args)
     {
-         $entity = $args->getObject();
+        return; 
+        
+        $entity = $args->getObject();
          if ($entity instanceof Entity\InterpreterEvent) {
              
              $this->logger->debug(sprintf("running %s on InterpreterEvent",__FUNCTION__));             
