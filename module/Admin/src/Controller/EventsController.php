@@ -314,7 +314,8 @@ class EventsController extends AbstractActionController
                 "bad input parameters: "
                     .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
             );
-        }        
+        }
+        $data['created_by'] =  $this->auth->getStorage()->read()->id;
         $html = $helper->fromArray($data);
         return $this->getResponse()->setContent($html);
     }
