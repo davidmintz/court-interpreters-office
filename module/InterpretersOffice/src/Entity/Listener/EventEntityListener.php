@@ -32,10 +32,19 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
     protected $auth;
     
     /**
+     * holds a copy of related entities before update
+     * 
+     * @var array
+     */    
+    protected $state_before = [
+        'interpreter_ids' => [],
+        'defendant_ids'   => [],        
+    ];
+    
+    /**
      * @var \DateTime
      * protected $now
-     */
-    
+     */    
     public function __construct() {
         
         $this->now = new \DateTime();
@@ -46,14 +55,36 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
      * sets authentication service
      * 
      * @param AuthenticationServiceInterface $auth
-     * @return \InterpretersOffice\Entity\Listener\EventEntityListener
+     * @return EventEntityListener
      */
     public function setAuth(AuthenticationServiceInterface $auth)
     {
         $this->auth = $auth;
         return $this;
     }
-    
+    /**
+     * postLoad callback
+     *    
+     * @param Entity\Event $eventEntity
+     * @param LifecycleEventArgs $event
+     */
+    public function postLoad(Entity\Event $eventEntity, 
+         LifecycleEventArgs $event)
+    {        
+        $this->logger
+          ->debug("running ".__FUNCTION__ . " in your EventEntityListener ...");
+        // for now, just for kicks:
+        $this->getEventManager()->trigger(__FUNCTION__, $this);
+        foreach ($eventEntity->getInterpreterEvents() as $interpEvent) {
+            $this->state_before['interpreter_ids'][] = 
+                    $interpEvent->getInterpreter()->getId();
+        }
+        foreach ($eventEntity->getDefendantNames() as $defendant) {
+            $this->state_before['defendant_ids'][] = 
+                    $defendant->getId();
+        }
+        
+    }
     /**
      * preUpdate callback
      *
@@ -69,20 +100,6 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         printf('<pre>%s</pre>',print_r(array_keys($changeSet),true));
     }
     
-	/**
-     * postLoad callback
-     *
-     * not doing anything at the moment other than test that the 
-     * listener is wired up.
-     *
-     * @param Entity\Event $eventEntity
-     * @param LifecycleEventArgs $event
-     */
-    public function postLoad(Entity\Event $eventEntity, LifecycleEventArgs $event)
-    {        
-        $this->getEventManager()->trigger(__FUNCTION__, $this);        
-        $this->logger->debug("running ".__FUNCTION__ . " in your EventEntityListener ...");  
-    }
     
     /**
      * prePersist callback
