@@ -19,7 +19,7 @@ class InterpreterElementCollection extends AbstractHelper
         <li class="list-group-item interpreter-assigned">
             <input name="event[interpreterEvents][%d][interpreter]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][event]" type="hidden" value="%d">
-            <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="">
+            <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="%d">
              %s            
             <button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -47,7 +47,7 @@ TEMPLATE;
      */
     public function render(ElementCollection $collection)
     {
-        /** THIS IS ALL WRONG. re-think and start over. */
+        /** THIS IS TOO COMPLICATED. re-think and start over. */
         
         if (! $collection->count()) { return ''; } // really? 
         // to do: deal with possible undefined $form
@@ -59,10 +59,11 @@ TEMPLATE;
             $interpreter = $interpEvent->getInterpreter();
             $event = $interpEvent->getEvent();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
+            // 7 placeholders, yes it's excessive
             $markup .= sprintf($this->template,
                     $i, $interpreter->getId(),
                     $i, $event->getId(),
-                    $i, 
+                    $i, $interpEvent->getCreatedBy()->getId(),
                     $name);          
         }
         return $markup;
@@ -95,6 +96,7 @@ TEMPLATE;
                 $data['index'],
                 $data['event_id'],
                 $data['index'],
+                $data['created_by'],
                 $data['name']);
         return $markup;
     }
