@@ -25,13 +25,6 @@ $(document).ready(function()
     }
     $('input.docket').on("change",formatDocketElement);
     
-   
-    
-    
-    
-    
-    
-    
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
     
