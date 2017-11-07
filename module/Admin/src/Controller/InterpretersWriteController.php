@@ -123,13 +123,7 @@ class InterpretersWriteController extends AbstractActionController
         if ($request->isPost()) {
             $input = $request->getPost();
             $form->setData($input);
-             
-            //printf('<pre>%s</pre>',print_r($data->get('event'),true)); return false;
-            //$this->preValidate($input,$form);
-            //$form->setData($input);
-            printf('<pre>%s</pre>',print_r($input->get('interpreter'),true)); 
-            if (! $form->isValid()) {
-                
+            if (! $form->isValid()) {                
                 // whether the encrypted fields should be obscured (again) 
                 // or not depends on whether they changed them                
                 $viewModel->obscure_values = 
