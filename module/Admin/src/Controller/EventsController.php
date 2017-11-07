@@ -210,26 +210,11 @@ class EventsController extends AbstractActionController
         if (isset($event['defendantNames'])) {
             $event['defendantNames'] = array_keys($event['defendantNames']);
         } 
-        /*
-        if (! isset($event['interpreterEvents'] )) { 
-            echo "HELLO???? no interpreterEvents were submitted<br>";
-            $entity = $form->getObject();
-            $existing = $entity->getInterpreterEvents();
-            printf("as it stands at %d in the controller our entity has %s interpreterEvent elements<br>",
-                    __LINE__,
-                    $existing->count()
-                    );
-            $entity->removeInterpreterEvents($existing);
-            foreach( $existing as $shit) {                
-                $this->entityManager->remove($shit);                
-            }
-            printf("<br><strong>%d</strong> is now the count of getInterpreterEvents()<br>",$entity->getInterpreterEvents()->count());
-            //$event['interpreterEvents'] = [];
-        } else {
-           
-        }
-        if (! empty($i)) { echo "SHIT IS NOW: ".$event['interpreterEvents'][$i]['createdBy']. "<br>";}        
+        /** @todo the thing to do here is test datetime properties for changes, 
+         and if there is no change, flat-out remove the element to stop Doctrine
+         from insisting on updating anyway
          */
+        //$form->get('event')->remove('date');
         $data->set('event',$event);
     }
 
