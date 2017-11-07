@@ -48,6 +48,8 @@ class Module
     public function onBootstrap(\Zend\Mvc\MvcEvent $e)
     {
        return;
+       
+       /** @todo remove this. nice try but this is not the way to go */
        $container = $e->getApplication()->getServiceManager();
        $entityManager = $container->get('entity-manager');
        $eventManager = $entityManager->getEventManager();
@@ -62,7 +64,8 @@ class Module
        }
        if ($listener) {
            $listener->setAuthenticationService($container->get('auth'));
-           $container->get('log')->debug('auth service injected into UpdateListener in Admin Bootstrap');
+           $container->get('log')
+                   ->debug('auth service injected into UpdateListener in Admin Bootstrap');
        } 
     }
     //
