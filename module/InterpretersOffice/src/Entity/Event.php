@@ -745,11 +745,9 @@ class Event
      * @param Collection $interpreterEvents
      */
     public function removeInterpreterEvents(Collection $interpreterEvents)
-    {
-        echo "<br><strong>I said HELLO</strong> from " .__FUNCTION__ . "<br>....";
+    {        
         foreach ($interpreterEvents as $interpreterEvent) {           
-            $interpreterEvent->setEvent(null);
-            echo "here goes:  ";
+            $interpreterEvent->setEvent(null);     
             $this->interpreterEvents->removeElement($interpreterEvent);
         }
     }
