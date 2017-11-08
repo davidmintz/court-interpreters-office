@@ -718,10 +718,8 @@ class Event
      * @param Collection $defendantNames
      */
     public function removeDefendantNames(Collection $defendantNames)
-    {
-       // printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
-        foreach ($defendantNames as $defendantName) {
-            //echo "AM I DOING SHIT HERE OR WHAT???? ";            
+    {       
+        foreach ($defendantNames as $defendantName) {     
             $this->defendantNames->removeElement($defendantName);
         }
     }
