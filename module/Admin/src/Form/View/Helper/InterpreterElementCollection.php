@@ -20,6 +20,7 @@ class InterpreterElementCollection extends AbstractHelper
             <input name="event[interpreterEvents][%d][interpreter]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][event]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="%d">
+            <input name="event[interpreterEvents][%d][name]" type="hidden" value="%s">
              %s            
             <button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -59,12 +60,12 @@ TEMPLATE;
             $interpreter = $interpEvent->getInterpreter();
             $event = $interpEvent->getEvent();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
-            // 7 placeholders, yes it's excessive
+            // 9 placeholders, yes it's excessive!
             $markup .= sprintf($this->template,
                     $i, $interpreter->getId(),
                     $i, $event->getId(),
                     $i, $interpEvent->getCreatedBy()->getId(),
-                    $name);          
+                    $i, $name,$name);          
         }
         return $markup;
     }
@@ -80,7 +81,7 @@ TEMPLATE;
     }
     
     /**
-     * renders Interpreter fieldset from array data
+     * renders InterpreterEvent fieldset from array data
      * 
      * @param array $data
      * @return string
@@ -91,13 +92,37 @@ TEMPLATE;
             $data['name'] = '__NAME__';
         }
         $markup = sprintf($this->template,
-                $data['index'],
-                $data['interpreter_id'],
-                $data['index'],
-                $data['event_id'],
-                $data['index'],
-                $data['created_by'],
+                $data['index'],$data['interpreter_id'],
+                $data['index'],$data['event_id'], 
+                $data['index'], $data['created_by'], 
+                $data['index'], $data['name'], 
                 $data['name']);
+        return $markup;
+    }
+    
+    /**
+     * renders interpreter-events from POST data
+     * 
+     * this simply translates the names of the array 
+     * keys and calls fromArray()
+     * 
+     * @param array $data
+     * @return string
+     */            
+    public function fromPost(Array $data)
+    {
+        $markup = '';
+        foreach($data as $index => $ie) {
+            $markup .= $this->fromArray(
+                [
+                    'index' => $index,
+                    'name'  => $ie['name'],
+                    'created_by' => $ie['createdBy'],
+                    'event_id'  => $ie['event'],
+                    'interpreter_id' => $ie['interpreter']                    
+                ]                    
+            );            
+        }
         return $markup;
     }
     
