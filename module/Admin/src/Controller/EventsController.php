@@ -76,8 +76,6 @@ class EventsController extends AbstractActionController
      */
     public function addAction()
     {
-        
-        
         $form = new Form\EventForm(
             $this->entityManager,
             [   'action' => 'create',
@@ -85,15 +83,12 @@ class EventsController extends AbstractActionController
                 'object' => null,
             ]
         );
-
         $request = $this->getRequest();
-        $form
-             ->setAttribute('action', $request->getRequestUri());
-        $event = new Entity\Event();
-        
+        $form->setAttribute('action', $request->getRequestUri());
+        $event = new Entity\Event();        
         $form->bind($event);
         // test
-
+        if (false) {
         $shit = $form->get("event");
         $shit->get("date")->setValue('10/27/2017');
         $shit->get("time")->setValue('10:00 am');
@@ -108,52 +103,95 @@ class EventsController extends AbstractActionController
         $shit->get("submission_time")->setValue("10:17 am");
         $shit->get("submission_datetime")->setValue('2017-10-24 10:17:00');
         // end test
+        }
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables([                
-                'form'  => $form,
-                ]);
+            ->setVariables(['form'  => $form,]);
+        
         if ($request->isPost()) {
-            //echo "<strong>POST['event']['defendantNames']</strong>";
-            //var_dump($_POST['event']['defendantNames']);
-            $input = $request->getPost();
-            //printf('<pre>%s</pre>',print_r($input->get('event')['interpreterEvents'],true)); //return false;
-            $this->preValidate($input,$form);
-            //printf('<pre>%s</pre>',print_r($input->get('event')['interpreterEvents'],true)); //return false;
-            //echo "<strong>\$input->get('event')['defendantNames']</strong>";
-            //  var_dump($input->get('event')['defendantNames']);
-            $form->setData($input);
-            //printf('<pre>%s</pre>',print_r($input->get('event'),true)); 
-           
-            //return false;
+            $data = $request->getPost();
+            $event = $data->get('event');
+            if ($event) {
+                $defendantNames = isset($event['defendantNames']) ? 
+                        $event['defendantNames'] : [];
+                $interpreters = isset($event['interpreterEvents']) ? 
+                        $event['interpreterEvents'] : [];
+            }
+            $this->preValidate($data,$form);
+            $form->setData($data);
             if (! $form->isValid()) {
-                echo "validation failed ... ";
-                var_dump($form->getMessages());
-                /** @todo śanity-check 'event'
-                */
-                $event = $input->get('event');
-                $defendantNames = empty($event['defendantNames']) ? [] : $event['defendantNames'];
-                $interpreters = empty($event['interpreterEvents']) ? [] : $event['interpreterEvents'];
+                echo "validation failed ... ";                    
                 return $viewModel->setVariables(compact('defendantNames','interpreters' ));
-
-            } else {
-              
-                echo "validation OK... ";
-                ///* // shit is not working here!
+            } else {              
+                echo "validation OK... ";                
                 $entity_collection = $event->getInterpreterEvents();
-                $form_collection =  $form->get('event')->get('interpreterEvents');
-                if ($entity_collection->count() == $form_collection->count()) {
-                    echo "hydration shit is ON ITS WAY????<br>";                     
-                }
-                
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
                 echo "YAY!!!!!!";
-            }
-            
+            }            
         }
+        
         return $viewModel;
     }
+    
+    
+    /**
+     * edits an event
+     *
+     *
+     */
+    public function editAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $event = $this->entityManager->find(Entity\Event::class,$id);
+        if (! $event) {
+             return (new ViewModel())
+            ->setTemplate('interpreters-office/admin/events/form')
+            ->setVariables([               
+                'errorMessage'  => 
+                "event with id $id was not found in the database."
+             ]);
+        }
+        $form = new Form\EventForm(
+            $this->entityManager, ['action' => 'update','object'=>$event,]
+        );
+        
+        $request = $this->getRequest();
+        $form->setAttribute('action', $request->getRequestUri());        
+        $form->bind($event);
+
+        if ($this->getRequest()->isPost()) {
+            //var_dump($_POST['event']['defendantNames']);
+            $data = $request->getPost();            
+            $event = $data->get('event');
+            if ($event) {
+                $defendantNames = isset($event['defendantNames']) ? 
+                        $event['defendantNames'] : [];
+                $interpreters = isset($event['interpreterEvents']) ? 
+                        $event['interpreterEvents'] : [];
+            }            
+            $this->preValidate($data,$form);
+            $form->setData($data);
+            if ($form->isValid()) {
+               
+                $this->entityManager->flush();
+                echo "yay! shit is valid and has been saved.";
+                
+            } else {
+                echo "shit is NOT valid...";
+                return (new ViewModel(compact('defendantNames','interpreters','form')))
+                        ->setTemplate('interpreters-office/admin/events/form');
+            }
+        }
+        
+        $viewModel = (new ViewModel())
+            ->setTemplate('interpreters-office/admin/events/form')
+            ->setVariables(compact('form','defendantNames'));
+
+        return $viewModel;
+    }
+
+    
     /**
      * preprocesses incoming data
      * 
@@ -216,67 +254,6 @@ class EventsController extends AbstractActionController
          */
         //$form->get('event')->remove('date');
         $data->set('event',$event);
-    }
-
-    /**
-     * edits an event
-     *
-     *
-     */
-    public function editAction()
-    {
-        $id = $this->params()->fromRoute('id');
-        $event = $this->entityManager->find(Entity\Event::class,$id);
-        if (! $event) {
-             return (new ViewModel())
-            ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables([               
-                'errorMessage'  => 
-                "event with id $id was not found in the database."
-             ]);
-        }
-        $form = new Form\EventForm(
-            $this->entityManager,
-            ['action' => 'update','object'=>$event,]
-        );
-        
-        $request = $this->getRequest();
-        $form->setAttribute('action', $request->getRequestUri());        
-        $form->bind($event);
-        //$e = $form->get('event')->get('eventType');
-        //$renderer = $this->getEvent()->getApplication()->getServiceManager()->get("ViewRenderer");
-        //$html = $renderer->formElement($e);
-        //echo $renderer->escapeHtml($html);
-        $defendantNames = [];
-        if ($this->getRequest()->isPost()) {
-            //var_dump($_POST['event']['defendantNames']);
-            $data = $request->getPost();
-            $this->preValidate($data,$form);
-            $form->setData($data);
-            if ($form->isValid()) {
-                    //printf("<pre><%s</pre>",print_r($_POST['event']['defendantNames'],true));
-                    
-                //try { 
-                    $this->entityManager->flush();
-                    echo "yay! shit is valid and has been saved.";
-                //} catch (\Exception $e) {
-                  //  echo $e->getMessage();
-                //}
-                
-            } else {
-                echo "shit is NOT valid...";
-                printf("<pre><%s</pre>",print_r($form->getMessages(),true));                 
-                //$post = $this->params()->fromPost('event')['defendantNames'];
-                //$defendantNames = $_POST['event']['defendantNames'];
-                // printf("<pre><strong>POSTed deft names:</strong>%s</pre>",print_r($defendantNames,true));//print_r($_POST['event'],true)
-            }
-        }
-        
-        $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables(compact('form','defendantNames'));
-
-        return $viewModel;
     }
     
     /**
