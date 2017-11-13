@@ -117,14 +117,13 @@ class EventsController extends AbstractActionController
                 $interpreters = isset($event['interpreterEvents']) ? 
                         $event['interpreterEvents'] : [];
             }
-            $this->preValidate($data,$form);
-            $form->setData($data);
+            $form->preValidate($data,$form)->setData($data);
+            
             if (! $form->isValid()) {
                 echo "validation failed ... ";                    
                 return $viewModel->setVariables(compact('defendantNames','interpreters' ));
             } else {              
                 echo "validation OK... ";                
-                $entity_collection = $event->getInterpreterEvents();
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
                 echo "YAY!!!!!!";
@@ -170,12 +169,11 @@ class EventsController extends AbstractActionController
                 $interpreters = isset($event['interpreterEvents']) ? 
                         $event['interpreterEvents'] : [];
             }            
-            $this->preValidate($data,$form);
-            $form->setData($data);
+            $form->preValidate($data)->setData($data);
             if ($form->isValid()) {
                
                 $this->entityManager->flush();
-                echo "yay! shit is valid and has been saved.";
+                echo "yay! shit is valid and has been saved. to do: redirect()";
                 
             } else {
                 echo "shit is NOT valid...";
@@ -191,70 +189,6 @@ class EventsController extends AbstractActionController
         return $viewModel;
     }
 
-    
-    /**
-     * preprocesses incoming data
-     * 
-     * @param \Zend\Stdlib\Parameters $data
-     * @param \InterpretersOffice\Admin\Form\EventForm $form
-     */
-    protected function preValidate(\Zend\Stdlib\Parameters $data, 
-            Form\EventForm $form)
-    {
-        $event = $data->get('event');
-        if (!$event['judge'] && empty($event['anonymousJudge'])) {
-            $validator = new \Zend\Validator\NotEmpty([
-                'messages' => ['isEmpty' => "judge is required"],
-                'break_chain_on_failure' => true,
-            ]);
-            $judge_input = $form->getInputFilter()->get('event')->get('judge');
-            $judge_input->setAllowEmpty(false);
-            $judge_input->getValidatorChain()->attach($validator);
-        }
-        
-        /** @todo untangle this and make error message specific to context */
-        $anonSubmitterElement = $form->get('event')->get('anonymousSubmitter');
-        $hat_options = $anonSubmitterElement->getValueOptions();
-        $hat_id = $anonSubmitterElement->getValue();        
-        $key = array_search($hat_id, array_column($hat_options, 'value'));
-        $can_be_anonymous = (!$key) ? false : $hat_options[$key]['attributes']['data-can-be-anonymous'];
-        //var_dump($hat_options[$key]['attributes']['data-can-be-anonymous']);
-        if ((empty($event['submitter']) && empty($event['anonymousSubmitter'])) 
-                or
-            (!$can_be_anonymous  && empty($event['submitter']))
-        ) {
-            $validator = new \Zend\Validator\NotEmpty([
-                'messages' => 
-                    [ 'isEmpty' => 
-                        "identity or description of submitter is required"],
-                'break_chain_on_failure' => true,
-            ]);
-            $submitter_input = $form->getInputFilter()->get('event')->get('submitter');
-            $submitter_input->setAllowEmpty(false);
-            $submitter_input->getValidatorChain()->attach($validator);            
-        }
-        // end to-do ///////////////////////////////////////////////////////////
-        
-        // if NO submitter but YES anonymous submitter, submitter = NULL
-        if (empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
-            $event['submitter'] = null;
-        // if YES submitter and YES anonymous submitter, anon submitter = NULL
-        } elseif (!empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
-            $event['anonymousSubmitter'] = null;
-        }
-        if (!empty($event['submission_date']) && !empty($event['submission_time'])) {            
-            $event['submission_datetime'] = "$event[submission_date] $event[submission_time]";
-        }
-        if (isset($event['defendantNames'])) {
-            $event['defendantNames'] = array_keys($event['defendantNames']);
-        } 
-        /** @todo the thing to do here is test datetime properties for changes, 
-         and if there is no change, flat-out remove the element to stop Doctrine
-         from insisting on updating anyway
-         */
-        //$form->get('event')->remove('date');
-        $data->set('event',$event);
-    }
     
     /**
      * generates markup for an interpreter
