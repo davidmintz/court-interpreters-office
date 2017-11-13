@@ -86,7 +86,7 @@ final class FixtureManager
     }
     
     /**
-     * 
+     * loads enough data to test events controller
      */
     public static function dataSetup()
     {
@@ -103,8 +103,6 @@ final class FixtureManager
             new DataFixture\CancellationReasonLoader(),
             new DataFixture\UserLoader(),
             new DataFixture\EventLoader(),
-            
-            
             
         ]);
     }
