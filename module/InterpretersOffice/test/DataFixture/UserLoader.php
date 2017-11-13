@@ -46,6 +46,28 @@ class UserLoader implements FixtureInterface
                 ->findOneBy(['lastname' => 'Daniels']));
         $objectManager->persist($person);
         $objectManager->persist($another_user);
+        
+        $clerk_to_dinklesnort = new Entity\Person();
+        $clerk_to_dinklesnort->setFirstname('Jane')
+                ->setLastname('Zorkendoofer')
+                ->setEmail('jane_zorkendoofer@nysd.uscourts.gov')
+                ->setActive(true)
+                ->setHat(
+                    $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+                        ->findOneBy(['name' => 'Law Clerk'])
+                );
+        $user_account = new Entity\User();
+        $user_account->setRole(
+            $objectManager->getRepository('InterpretersOffice\Entity\Role')
+                ->findOneBy(['name' => 'submitter'])
+        )
+            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"))
+            ->setPerson($clerk_to_dinklesnort)
+            ->setPassword('gack!')
+             ->addJudge($objectManager->getRepository('InterpretersOffice\Entity\Judge')
+             ->findOneBy(['lastname' => 'Dinklesnort']));
+        $objectManager->persist($clerk_to_dinklesnort);
+        $objectManager->persist($user_account);
         $objectManager->flush();
 
         //$another_user->setPassword("something else");
