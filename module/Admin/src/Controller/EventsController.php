@@ -110,17 +110,18 @@ class EventsController extends AbstractActionController
         
         if ($request->isPost()) {
             $data = $request->getPost();
-            $event = $data->get('event');
-            if ($event) {
-                $defendantNames = isset($event['defendantNames']) ? 
+            $input = $data->get('event');
+            if ($input) {
+                $defendantNames = isset($input['defendantNames']) ? 
                         $event['defendantNames'] : [];
-                $interpreters = isset($event['interpreterEvents']) ? 
-                        $event['interpreterEvents'] : [];
+                $interpreters = isset($input['interpreterEvents']) ? 
+                        $input['interpreterEvents'] : [];
             }
-            $form->preValidate($data,$form)->setData($data);
+            $form->preValidate($data)->setData($data);
             
             if (! $form->isValid()) {
-                echo "validation failed ... ";                    
+                echo "validation failed ... ";
+                print_r($form->getMessages());
                 return $viewModel->setVariables(compact('defendantNames','interpreters' ));
             } else {              
                 echo "validation OK... ";                
@@ -162,13 +163,13 @@ class EventsController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             //var_dump($_POST['event']['defendantNames']);
             $data = $request->getPost();            
-            $event = $data->get('event');
-            if ($event) {
-                $defendantNames = isset($event['defendantNames']) ? 
+            $input = $data->get('event');
+            if ($input) {
+                $defendantNames = isset($input['defendantNames']) ? 
                         $event['defendantNames'] : [];
-                $interpreters = isset($event['interpreterEvents']) ? 
-                        $event['interpreterEvents'] : [];
-            }            
+                $interpreters = isset($input['interpreterEvents']) ? 
+                        $input['interpreterEvents'] : [];
+            }           
             $form->preValidate($data)->setData($data);
             if ($form->isValid()) {
                
