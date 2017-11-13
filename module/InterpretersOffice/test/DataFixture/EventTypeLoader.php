@@ -29,6 +29,7 @@ class EventTypeLoader implements FixtureInterface
             ['sentence', 'in'],
             ['attorny/client interview', 'out'],
             ['plea', 'in'],
+            ['conference', 'in'],
             ['presentment', 'in'],
             ['arraignment', 'in'],
             ['pretrial services intake', 'out'],
