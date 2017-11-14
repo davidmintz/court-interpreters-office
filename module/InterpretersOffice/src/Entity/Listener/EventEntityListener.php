@@ -74,9 +74,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
     public function postLoad(Entity\Event $eventEntity, 
          LifecycleEventArgs $event)
     {        
-        $this->logger
-          ->debug("running ".__FUNCTION__ . " in your EventEntityListener ...");
-        
+       
         foreach ($eventEntity->getInterpreterEvents() as $interpEvent) {
             $this->state_before['interpreter_ids'][] = 
                     $interpEvent->getInterpreter()->getId();
@@ -85,6 +83,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
             $this->state_before['defendant_ids'][] = 
                     $defendant->getId();
         }
+        // this approach is not gonna work.
         $this->state_before['modified'] = $eventEntity->getModified();
         $this->state_before['date'] = $eventEntity->getDate();
         $this->state_before['time'] = $eventEntity->getTime();
@@ -152,7 +151,8 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         if ($defendants_after != $defendants_before) {
             $modified = true;
         }
-        // don't update when datetime objects are equivalent but not identical
+        /** @todo stop WASTING OUR CPU CYCLES with this 
+         * because it does NOT work */
         
         $datetime_props = ['date','time','submission_datetime','modified'];
         $changeSet = $args->getEntityChangeSet();
@@ -160,6 +160,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         $fields_modified = array_keys($changeSet);
         // loop through datetime fields and see if before and after are 
         // *equivalent* 
+        
         foreach($datetime_props as $prop) {
             if (!in_array($prop,$fields_modified)) {
                 continue;
