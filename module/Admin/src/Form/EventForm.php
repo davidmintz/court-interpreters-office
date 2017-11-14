@@ -6,18 +6,26 @@ namespace InterpretersOffice\Admin\Form;
 use Zend\Form\Form as ZendForm;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
-use Zend\Stdlib\Parameters;
 
+use Zend\EventManager\ListenerAggregateInterface;
+use Zend\EventManager\ListenerAggregateTrait;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\EventInterface;
 
+use Zend\Filter\Word\CamelCaseToUnderscore;
 
 /**
  * form for Event entity
  *
  */
-class EventForm extends ZendForm
+class EventForm extends ZendForm implements ListenerAggregateInterface
 {
 
      use CsrfElementCreationTrait;
+     
+     use ListenerAggregateTrait;
+     
+     
 
      /**
      * name of Fieldset class to instantiate and add to the form.
@@ -35,6 +43,19 @@ class EventForm extends ZendForm
      * @var string
      */
     protected $formName = 'event-form';
+    
+    protected $datetime_properties = 
+            ['date','submissionDatetime',];
+    
+    protected $time_properties = ['time','endTime'];
+    
+    protected $state_before = [];
+    
+    /**
+     *
+     * @var CamelCaseToUnderscore
+     */
+    protected $camelCaseFilter;
 
      /**
      * constructor.
@@ -50,14 +71,35 @@ class EventForm extends ZendForm
         $this->addCsrfElement();
         
     }
+    
+    public function attach(EventManagerInterface $events,$priority = 1)
+    {
+        $this->listeners[] = $events->attach('pre.populate', [$this, 'prePopulate']);
+        //$this->listeners[] = $events->attach('post.validate',[$this, 'postValidate']);
+        $this->listeners[] = $events->attach('pre.validate',[$this, 'preValidate']);
+        
+    }
+    /**
+     * 
+     * @return CamelCaseToUnderscore
+     */
+    protected function getFilter()
+    {
+        if (! $this->camelCaseFilter) {
+            $this->camelCaseFilter = new CamelCaseToUnderscore();
+        }
+        return $this->camelCaseFilter;
+    }
+    
    /**
     * preprocesses input and conditionally modifies validators
     * 
-    * @param Parameters $input
+    * @param EventInterface $e
     * @return \InterpretersOffice\Admin\Form\EventForm
     */
-    public function preValidate(Parameters $input)
+    public function preValidate(EventInterface $e)
     {
+        $input = $e->getParam('input');
         $event = $input->get('event');
         if (!$event['judge'] && empty($event['anonymousJudge'])) {
             $validator = new \Zend\Validator\NotEmpty([
@@ -115,39 +157,70 @@ class EventForm extends ZendForm
          and if there is no change, flat-out remove the element to stop Doctrine
          from insisting on updating anyway
          */
+        $entity = $this->getObject();
+        $entity->setModified($this->modified);
+        foreach ($this->datetime_properties as $prop) {
+            $getter = 'get'.ucfirst($prop);
+            $object = $entity->$getter($prop);
+            $value = $object ? $object->format('m/d/Y')  : null ;
+            if ($value == $this->state_before[$prop]) {
+                $field_name = strtolower($this->getFilter()->filter($prop));
+                
+                echo "$prop DID NOT CHANGE. removing $field_name<br>";
+                $this->get('event')->remove($field_name);
+            } else {
+                echo "$prop DID change ?!?<br>";
+            }            
+        }
+        foreach ($this->time_properties as $prop) {
+            $getter = 'get'.ucfirst($prop);
+            $object = $entity->$getter($prop);
+            $value = $object ? $object->format('g:i a')  : null ;
+            if ($value == $this->state_before[$prop]) {                
+                $field_name = strtolower($this->getFilter()->filter($prop));
+                
+                echo "$prop DID NOT CHANGE. removing $field_name<br>";
+                $this->get('event')->remove($field_name);
+            } else {
+                echo "$prop DID change<br>";
+            }            
+        }
         //$this->get('event')->remove('date');
         $input->set('event',$event);
         return $this;
         
     }
     
+    protected $modified;
     
     /**
      * processes form data before rendering
      * 
      * @return void
      */
-    public function prePopulate()
+    public function prePopulate(EventInterface $e)
     {
-        /** 
-            some data needs to be reset, reformatted, moved around
-        */
+        
         $event = $this->getObject();
+        
+        $this->modified = $event->getModified();
+        
         $fieldset = $this->get('event');
         // if location is set and has a parent, set parent_location element
         $location = $event->getLocation();
         if ($location && $parentLocation = $location->getParentLocation()) {
             $fieldset->get('parent_location')->setValue($parentLocation->getId());
         }
-        // OK, it is BULLSHIT that we have to do all this. am I doing something wrong 
-        // that makes this necessary?
-        // 
+        // seems like BULLSHIT that we have to do quite so much work here. 
+        // am I doing something wrong that makes this necessary?
+        
         // if submitter !== NULL, set anonymousSubmitter element = hat_id of submitter
         if (null !== $event->getSubmitter()) {
             $hat = $event->getSubmitter()->getHat();
             $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
             // the form element value needs to be an integer, not an object.
-            $fieldset->get('submitter')->setValue($event->getSubmitter()->getId());
+            $fieldset->get('submitter')
+                    ->setValue($event->getSubmitter()->getId());
         }
         $judge_element = $fieldset->get('judge');
         // judge element value needs to be an integer
@@ -168,11 +241,26 @@ class EventForm extends ZendForm
                  ->setValue($submission_datetime->format('Y-m-d H:i:s'));     
         }
         // and now that it's a string, split it into two fields
-        $submission_datetime_string =  $fieldset->get('submission_datetime')->getValue();
+        $submission_datetime_string = $fieldset->get('submission_datetime')
+                ->getValue();
         if ($submission_datetime_string) {
             list($date,$time) = explode(' ',$submission_datetime_string);
             $fieldset->get('submission_date')->setValue($date);
             $fieldset->get('submission_time')->setValue($time);
         }
+        // store state of date/time fields for later comparison
+        foreach ($this->datetime_properties as $prop) {
+            $getter = 'get'.ucfirst($prop);
+            $value = $event->$getter($prop);
+            $this->state_before[$prop] = $value ? 
+                    $value->format('m/d/Y') : null;
+        }
+        foreach($this->time_properties as $prop) {
+            $getter = 'get'.ucfirst($prop);
+            $value = $event->$getter($prop);
+            $this->state_before[$prop] = 
+                    $value ? $value->format('g:i a') : null;                       
+        }
+        
     }
 }

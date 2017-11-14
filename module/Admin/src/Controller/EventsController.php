@@ -64,18 +64,7 @@ class EventsController extends AbstractActionController
         $this->auth = $auth;
     }
     
-    public function setEventManager(\Zend\EventManager\EventManagerInterface $events) {
-        parent::setEventManager($events);
-        $events->attach('form-populate', function(Event $e){
-            $form = $e->getParam('form');
-            $form->prePopulate();
-        });
-        $events->attach('form-post-validate',function(Event $e){
-            $form = $e->getParam('form');
-            $form->postValidate();
-            echo "woo hoo.";
-        });
-    }
+    
     /**
      * index action
      *
@@ -98,6 +87,8 @@ class EventsController extends AbstractActionController
                 'object' => null,
             ]
         );
+        $form->attach($this->getEventManager());
+        
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
         $event = new Entity\Event();        
@@ -163,22 +154,21 @@ class EventsController extends AbstractActionController
         $event = $this->entityManager->find(Entity\Event::class,$id);
         if (! $event) {
              return (new ViewModel())
-            ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables([               
-                'errorMessage'  => 
-                "event with id $id was not found in the database."
+                ->setTemplate('interpreters-office/admin/events/form')
+                ->setVariables([               
+                    'errorMessage'  => 
+                    "event with id $id was not found in the database."
              ]);
         }
         $form = new Form\EventForm(
             $this->entityManager, ['action' => 'update','object'=>$event,]
         );
-        
+        $form->attach($this->getEventManager());        
         $request = $this->getRequest();
-        $form->setAttribute('action', $request->getRequestUri());        
-        $form->bind($event);
-        $this->getEventManager()->trigger('form-populate',$this,['form'=>$form]);
+        $form->setAttribute('action', $request->getRequestUri())
+                ->bind($event);                
+        $this->getEventManager()->trigger('pre.populate');  
         if ($this->getRequest()->isPost()) {
-            //var_dump($_POST['event']['defendantNames']);
             $data = $request->getPost();            
             $input = $data->get('event');
             if ($input) {
@@ -186,10 +176,12 @@ class EventsController extends AbstractActionController
                         $input['defendantNames'] : [];
                 $interpreters = isset($input['interpreterEvents']) ? 
                         $input['interpreterEvents'] : [];
-            }           
-            $form->preValidate($data)->setData($data);
+            }
+            $this->getEventManager()->trigger('pre.validate',$this,
+                    ['input'=> $data]);  
+            $form->setData($data);
             if ($form->isValid()) {
-                $this->getEventManager()->trigger('form-post-validate',$this,['form'=>$form]);
+                $this->getEventManager()->trigger('post.validate');
                 $this->entityManager->flush();
                 echo "yay! shit is valid and has been saved. to do: redirect()";
                 
@@ -198,8 +190,7 @@ class EventsController extends AbstractActionController
                 return (new ViewModel(compact('defendantNames','interpreters','form')))
                         ->setTemplate('interpreters-office/admin/events/form');
             }
-        }
-        
+        }        
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/events/form')
             ->setVariables(compact('form','defendantNames'));

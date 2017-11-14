@@ -56,7 +56,7 @@ echo $this->form()->openTag($form);
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
         <?php foreach (['date','time','eventType','judge', ] as $elementName) : 
-            //if (! $fieldset->has($elementName)) { continue; } //experimental
+            if (! $fieldset->has($elementName)) { continue; } //experimental
             $element = $fieldset->get($elementName); 
             if ('time' == $elementName && $config['end_time']):?>
             <div class="form-group multi-input">
@@ -181,7 +181,9 @@ echo $this->form()->openTag($form);
             echo $this->formHidden($fieldset->get('anonymousJudge'));
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
             echo $this->formHidden($fieldset->get('id'));
-            echo $this->formHidden($fieldset->get('submission_datetime'));
+            if ($fieldset->has('submission_datetime')) {
+                echo $this->formHidden($fieldset->get('submission_datetime'));
+            }
             if ($fieldset->has('modified')) {
                 $element = $fieldset->get('modified');
                 $value = $element->getValue();
