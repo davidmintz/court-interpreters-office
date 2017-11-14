@@ -11,6 +11,8 @@ use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 
+use Zend\EventManager\Event;
+
 use InterpretersOffice\Admin\Form;
 
 use InterpretersOffice\Entity;
@@ -60,6 +62,19 @@ class EventsController extends AbstractActionController
     {
         $this->entityManager = $em;
         $this->auth = $auth;
+    }
+    
+    public function setEventManager(\Zend\EventManager\EventManagerInterface $events) {
+        parent::setEventManager($events);
+        $events->attach('form-populate', function(Event $e){
+            $form = $e->getParam('form');
+            $form->prePopulate();
+        });
+        $events->attach('form-post-validate',function(Event $e){
+            $form = $e->getParam('form');
+            $form->postValidate();
+            echo "woo hoo.";
+        });
     }
     /**
      * index action
@@ -113,15 +128,17 @@ class EventsController extends AbstractActionController
             $input = $data->get('event');
             if ($input) {
                 $defendantNames = isset($input['defendantNames']) ? 
-                        $event['defendantNames'] : [];
+                        $input['defendantNames'] : [];
                 $interpreters = isset($input['interpreterEvents']) ? 
                         $input['interpreterEvents'] : [];
             }
+           
             $form->preValidate($data)->setData($data);
             
             if (! $form->isValid()) {
-                echo "validation failed ... ";
-                print_r($form->getMessages());
+                //echo "validation failed ... ";
+                //var_dump($_POST['event']);
+                //print_r($form->getMessages());
                 return $viewModel->setVariables(compact('defendantNames','interpreters' ));
             } else {              
                 echo "validation OK... ";                
@@ -159,20 +176,20 @@ class EventsController extends AbstractActionController
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());        
         $form->bind($event);
-
+        $this->getEventManager()->trigger('form-populate',$this,['form'=>$form]);
         if ($this->getRequest()->isPost()) {
             //var_dump($_POST['event']['defendantNames']);
             $data = $request->getPost();            
             $input = $data->get('event');
             if ($input) {
                 $defendantNames = isset($input['defendantNames']) ? 
-                        $event['defendantNames'] : [];
+                        $input['defendantNames'] : [];
                 $interpreters = isset($input['interpreterEvents']) ? 
                         $input['interpreterEvents'] : [];
             }           
             $form->preValidate($data)->setData($data);
             if ($form->isValid()) {
-               
+                $this->getEventManager()->trigger('form-post-validate',$this,['form'=>$form]);
                 $this->entityManager->flush();
                 echo "yay! shit is valid and has been saved. to do: redirect()";
                 

@@ -48,45 +48,8 @@ if (false) {
             ['interpreter'=> 117] 
 ]);
 }
-/** @todo put all this logic somewhere else? 
-    some data needs to be re-acst, reformatted, moved around
- */
-$event = $form->getObject();
 
-// if location is set and has a parent, set parent_location element
-$location = $event->getLocation();
-if ($location && $parentLocation = $location->getParentLocation()) {
-    $fieldset->get('parent_location')->setValue($parentLocation->getId());
-}
-// OK, it is BULLSHIT that we have to do all this. am I doing something wrong 
-// that makes this necessary?
-// 
-// if submitter !== NULL, set anonymousSubmitter element = hat_id of submitter
-if (null !== $event->getSubmitter()) {
-    $hat = $event->getSubmitter()->getHat();
-    $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
-    // the form element value needs to be an integer, not an object.
-    $fieldset->get('submitter')->setValue($event->getSubmitter()->getId());
-}
-// judge element value needs to be an integer
-$judge = $fieldset->get('judge')->getValue();
-if (is_object($judge)) {
-   $fieldset->get('judge')->setValue($judge->getId());
-}
-// this needs to be a string
-$submission_datetime = $fieldset->get('submission_datetime')->getValue();
-if (is_object($submission_datetime)) {
-     $fieldset->get('submission_datetime')
-         ->setValue($submission_datetime->format('Y-m-d H:i:s'));     
-}
-// and now that it's a string, split it into two fields
-$submission_datetime_string =  $fieldset->get('submission_datetime')->getValue();
-if ($submission_datetime_string) {
-    list($date,$time) = explode(' ',$submission_datetime_string);
-    $fieldset->get('submission_date')->setValue($date);
-    $fieldset->get('submission_time')->setValue($time);
-}
-// temporarily, just set this here
+// temporarily, let's just set this here
 $config = ['end_time' => true];
 echo $this->form()->openTag($form);  
 ?>
