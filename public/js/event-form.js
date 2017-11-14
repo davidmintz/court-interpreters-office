@@ -177,7 +177,8 @@ $(document).ready(function()
                     }).val(location_id)
                 );
             }
-        }        
+        }
+        //alert($("#hat").val());
         judgeElement = $('#judge');
         var judgeOption = judgeElement.children(":selected");
         if (judgeOption.data("pseudojudge")) {
@@ -239,8 +240,9 @@ $(document).ready(function()
            + '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
            + '<span class="sr-only">remove this defendant</span></button></li>');
     $('#submitter').append('<option selected="selected" value="1283">Cavale, Allison</option>');
-    */
     $("h2").after("<p>stuffed with test data</p>");
+    */
+    
     
     /* ==================== */
 });
