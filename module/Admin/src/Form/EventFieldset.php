@@ -253,12 +253,14 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
             
         ]);
+        /*
         if ("update" == $this->options['action']) {
             $this->add([
                 'type'=> 'Hidden',
                 'name'=> 'modified',            
             ]);
         }
+         */
         $this->addSubmitterElements($options['object']);
         
         $this->add([
@@ -709,6 +711,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                  
             ],
         ];
+        /** @todo maybe remove this? */
         if ($this->has('modified')) {
             $spec['modified'] = [
                 'required' => true,

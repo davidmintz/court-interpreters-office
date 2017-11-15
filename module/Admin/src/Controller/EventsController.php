@@ -152,7 +152,7 @@ class EventsController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
-        $event = $this->entityManager->find(Entity\Event::class,$id);
+        $event = $this->entityManager->find(Entity\Event::class,$id);        
         if (! $event) {
              return (new ViewModel())
                 ->setTemplate('interpreters-office/admin/events/form')
@@ -160,16 +160,19 @@ class EventsController extends AbstractActionController
                     'errorMessage'  => 
                     "event with id $id was not found in the database."
              ]);
-        }
+        }                
         $form = new Form\EventForm(
             $this->entityManager, ['action' => 'update','object'=>$event,]
         );
-        $form->attach($this->getEventManager());        
+        $events = $this->getEventManager();
+        $form->attach($events);
+        $events->trigger('post.load',$this,['entity'=>$event]);
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri())
                 ->bind($event);                
-        $this->getEventManager()->trigger('pre.populate');  
+        $events->trigger('pre.populate');  
         if ($this->getRequest()->isPost()) {
+            
             $data = $request->getPost();            
             $input = $data->get('event');
             if ($input) {
@@ -178,25 +181,39 @@ class EventsController extends AbstractActionController
                 $interpreters = isset($input['interpreterEvents']) ? 
                         $input['interpreterEvents'] : [];
             }
-            $this->getEventManager()->trigger('pre.validate',$this,
-                    ['input'=> $data]);  
+            $events->trigger('pre.validate',$this,['input'=> $data]);  
             $form->setData($data);
+            //var_dump($input['end_time']);
             if ($form->isValid()) {
-                $this->getEventManager()->trigger('post.validate');
+                $collection = $events->trigger('post.validate');                                
+                if ($collection->contains(false)) {
+                    $this->flashMessenger()
+                  ->addErrorMessage('Database record was modified by another '
+                       . 'process after you loaded the form. To avoid '
+                       . 'accidentally overwriting someone else\'s changes, '
+                       .  ' please start over.'     );
+                    $this->redirect()->toRoute('admin/schedule/edit/'.$id);
+                } 
                 $this->entityManager->flush();
-                echo "yay! shit is valid and has been saved. to do: redirect()";
-                
+                //echo "yay! shit is valid and has been saved. to do: redirect()";
+                ///*
+                $this->flashMessenger()->addSuccessMessage(
+                     "This event has been successfully saved in the database.");                
+                return $this->redirect()->toRoute('events');
+                // */
             } else {
-                echo "shit is NOT valid...";
+                
                 return (new ViewModel(compact('defendantNames','interpreters','form')))
                         ->setTemplate('interpreters-office/admin/events/form');
             }
-        }        
-        $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables(compact('form','defendantNames'));
-
-        return $viewModel;
+        } else {
+            //echo "HELLO? WTF?";
+            //$viewModel
+            
+        }
+        return (new ViewModel(compact('form')))
+                        ->setTemplate('interpreters-office/admin/events/form');
+        
     }
 
     
