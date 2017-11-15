@@ -123,8 +123,9 @@ class EventsController extends AbstractActionController
                 $interpreters = isset($input['interpreterEvents']) ? 
                         $input['interpreterEvents'] : [];
             }
-           
-            $form->preValidate($data)->setData($data);
+            $this->getEventManager()->trigger('pre.validate',$this,
+                    ['input'=> $data]);  
+            $form->setData($data);
             
             if (! $form->isValid()) {
                 //echo "validation failed ... ";

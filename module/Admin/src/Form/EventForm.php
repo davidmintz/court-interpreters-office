@@ -152,12 +152,19 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
         }
         if (isset($event['defendantNames'])) {
             $event['defendantNames'] = array_keys($event['defendantNames']);
-        } 
+        }
+        if (false === strstr($this->getAttribute('action'),'/edit/')) {
+            $input->set('event',$event);
+            return $this;
+        }
+        
+        
         /** @todo the thing to do here is test datetime properties for changes, 
          and if there is no change, flat-out remove the element to stop Doctrine
          from insisting on updating anyway
          */
         $entity = $this->getObject();
+        // maybe, maybe not... 
         $entity->setModified($this->modified);
         foreach ($this->datetime_properties as $prop) {
             $getter = 'get'.ucfirst($prop);
@@ -190,7 +197,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
         return $this;
         
     }
-    
+    // an experiment...
     protected $modified;
     
     /**
