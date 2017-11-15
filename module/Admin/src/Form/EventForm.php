@@ -231,7 +231,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
                 //echo "$prop is now: {$event[$prop]}; was: {$this->state_before[$prop]}<br>";
                 //echo "$prop DID NOT CHANGE. removing $field_name<br>";
                 $this->get('event')->remove($prop);
-            } else { echo "$prop has been modified... " ;}
+            }// else { echo "$prop has been modified... " ;}
         }
         $input->set('event',$event);
         
