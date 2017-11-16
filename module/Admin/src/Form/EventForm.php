@@ -14,7 +14,6 @@ use Zend\EventManager\EventInterface;
 
 use Zend\Filter\Word\CamelCaseToUnderscore;
 
-use Zend\Session\Container as Session;
 
 /**
  * form for Event entity
@@ -50,17 +49,12 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
     
     protected $state_before = [];
     
-    /**
-     *
-     * @var \Zend\Session\Container
-     */
-    protected $session;
     
-    /**
+    /*
      *
      * @var CamelCaseToUnderscore
      */
-    protected $camelCaseFilter;
+   // protected $camelCaseFilter;
 
      /**
      * constructor.
@@ -73,14 +67,16 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
         parent::__construct($this->formName, $options);
         $fieldset = new $this->fieldsetClass($objectManager, $options);
         $this->add($fieldset);
-        $this->addCsrfElement();        
-        $this->session = new Session('EventManager');
-       
-        if (! is_array($this->session->timestamps)) {
-            //printf("constructor initializing session timestamps... ");
-            $this->session->timestamps = [];
-        } 
-        
+        //*
+        if ("update" == $this->options['action']) {
+            $this->add([
+                'type'=> 'Hidden',
+                'name'=> 'modified',            
+            ]);
+        }
+         //*/
+
+        $this->addCsrfElement();                
     }
     
     public function attach(EventManagerInterface $events,$priority = 1)
@@ -94,13 +90,8 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
     public function postLoad(EventInterface $e)
     {
         
-        $timestamps =& $this->session->timestamps;
         $entity = $e->getParam('entity');
         $id = $entity->getId();
-        if (! isset($timestamps[$id])) {
-            $timestamps[$id] = $entity->getModified()->format('Y-m-d H:i:s');
-            //printf("<br>%s put shit in session: {$timestamps[$id]}",__FUNCTION__);
-        }
         // store state of date/time fields for later comparison
         foreach ($this->datetime_props as $prop) {
             if (in_array($prop,['time','end_time'])) {
@@ -119,12 +110,13 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
             $this->state_before[$prop] = $value ? 
                     $value->format($format) : null;
         }
-        //var_dump($this->state_before);
         
         return true;
     }
+
     /**
-     * 
+     * not used. maybe take it out, or replace with its opposite
+     *
      * @return CamelCaseToUnderscore
      */
     protected function getFilter()
@@ -138,19 +130,14 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
     public function postValidate(EventInterface $e)
     {
                 
-        $timestamps =& $this->session->timestamps;
-        $entity = $this->getObject();
-        $id = $entity->getId();
-        if (!isset($timestamps[$id])) {
-           throw new \Exception(
-              "modification timestamp not found in the session for event id $id"
-            );
-        }
-        $before = $timestamps[$id];
-        $after = $entity->getModified()->format('Y-m-d H:i:s');
+        //$entity = $this->getObject();
+        //$id = $entity->getId();
+        //$before = $timestamps[$id];
+        //$after = $entity->getModified()->format('Y-m-d H:i:s');
         //echo "<br>timestamp check:  <strong>$before</strong> vs <strong>$after</strong><br>";
-        unset($timestamps[$id]);                
-        return $before == $after;        
+                  
+        //return $before == $after; ;
+        return true; // for now    
     }
     
    /**
