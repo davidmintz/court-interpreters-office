@@ -18,6 +18,12 @@ form { max-width: 900px;}
 .multi-input div:last-of-type { padding-left: 0px; }
 .multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
 <?php $this->headStyle()->captureEnd();
+
+$messenger = $this->flashMessenger();
+if ($messenger->hasErrorMessages()) : 
+    echo $messenger->render('error', ['alert','alert-warning',], false);   
+endif;
+
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -45,7 +51,7 @@ if (false) {
     $fieldset->get('language')->setValue(62);
     $fieldset->get('parent_location')->setValue(1);
     $fieldset->get('interpreterEvents')->populateValues([  
-            ['interpreter'=> 117] 
+          ['interpreter'=> 117] 
 ]);
 }
 
@@ -185,9 +191,9 @@ echo $this->form()->openTag($form);
             if ($fieldset->has('submission_datetime')) {
                 echo $this->formHidden($fieldset->get('submission_datetime'));
             }
-            /** @todo maybe remove this? */
-            if ($fieldset->has('modified')) {
-                $element = $fieldset->get('modified');
+           
+            if ($form->has('modified')) {
+                $element = $form->get('modified');
                 $value = $element->getValue();
                 if (is_object($value)) {
                     $element->setValue($value->format('Y-m-d H:i:s'));
