@@ -151,9 +151,7 @@ class EventsController extends AbstractActionController
      */
     public function editAction()
     {
-        $id = $this->params()->fromRoute('id');
-        // echo $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        // 'events/edit'
+        $id = $this->params()->fromRoute('id');        
         $event = $this->entityManager->find(Entity\Event::class,$id);        
         if (! $event) {
              return (new ViewModel())
@@ -177,6 +175,8 @@ class EventsController extends AbstractActionController
             
             $data = $request->getPost();            
             $input = $data->get('event');
+            /** @todo put this task in the 'pre.validate' event listener, 
+             * maybe passing viewModel as parameter */
             if ($input) {
                 $defendantNames = isset($input['defendantNames']) ? 
                         $input['defendantNames'] : [];
@@ -193,26 +193,19 @@ class EventsController extends AbstractActionController
 
             } else {
                 if ($form->hasTimestampMismatchError()) {
-                    //var_dump($form->getMessages());
                     $error = $form->getMessages()['modified']
                             [\Zend\Validator\Callback::INVALID_VALUE];
-                    $this->flashMessenger()->addErrorMessage($error);                    
+                    $this->flashMessenger()->addErrorMessage($error);                     
                     return $this->redirect()
                             ->toRoute('events/edit',['id'=>$id]);
-                            //->toRoute('events',['action'=>'edit','id'=>$id]);
                 } 
-                printf('<pre>%s</pre>',print_r($form->getMessages(),true));
+                //printf('<pre>%s</pre>',print_r($form->getMessages(),true));
                 return (new ViewModel(compact('defendantNames','interpreters','form')))
                         ->setTemplate('interpreters-office/admin/events/form');
             }
-        } else {
-            //echo "HELLO? WTF?";
-            //$viewModel
-            
-        }
+        } 
         return (new ViewModel(compact('form')))
-                        ->setTemplate('interpreters-office/admin/events/form');
-        
+            ->setTemplate('interpreters-office/admin/events/form');        
     }
 
     
