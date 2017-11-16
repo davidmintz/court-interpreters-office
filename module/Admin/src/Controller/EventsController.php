@@ -152,6 +152,8 @@ class EventsController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
+        // echo $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        // 'events/edit'
         $event = $this->entityManager->find(Entity\Event::class,$id);        
         if (! $event) {
              return (new ViewModel())
@@ -183,26 +185,23 @@ class EventsController extends AbstractActionController
             }
             $events->trigger('pre.validate',$this,['input'=> $data]);  
             $form->setData($data);
-            //var_dump($input['end_time']);
             if ($form->isValid()) {
-                $collection = $events->trigger('post.validate');                                
-                if ($collection->contains(false)) {
-                    $this->flashMessenger()
-                  ->addErrorMessage('Database record was modified by another '
-                       . 'process after you loaded the form. To avoid '
-                       . 'accidentally overwriting someone else\'s changes, '
-                       .  ' please start over.'     );
-                    $this->redirect()->toRoute('admin/schedule/edit/'.$id);
-                } 
                 $this->entityManager->flush();
-                //echo "yay! shit is valid and has been saved. to do: redirect()";
-                ///*
                 $this->flashMessenger()->addSuccessMessage(
                      "This event has been successfully saved in the database.");                
                 return $this->redirect()->toRoute('events');
-                // */
+
             } else {
-                
+                if ($form->hasTimestampMismatchError()) {
+                    //var_dump($form->getMessages());
+                    $error = $form->getMessages()['modified']
+                            [\Zend\Validator\Callback::INVALID_VALUE];
+                    $this->flashMessenger()->addErrorMessage($error);                    
+                    return $this->redirect()
+                            ->toRoute('events/edit',['id'=>$id]);
+                            //->toRoute('events',['action'=>'edit','id'=>$id]);
+                } 
+                printf('<pre>%s</pre>',print_r($form->getMessages(),true));
                 return (new ViewModel(compact('defendantNames','interpreters','form')))
                         ->setTemplate('interpreters-office/admin/events/form');
             }

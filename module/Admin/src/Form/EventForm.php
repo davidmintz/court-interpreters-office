@@ -12,6 +12,7 @@ use Zend\EventManager\ListenerAggregateTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventInterface;
 
+use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Filter\Word\CamelCaseToUnderscore;
 
 
@@ -19,7 +20,8 @@ use Zend\Filter\Word\CamelCaseToUnderscore;
  * form for Event entity
  *
  */
-class EventForm extends ZendForm implements ListenerAggregateInterface
+class EventForm extends ZendForm implements ListenerAggregateInterface,
+     InputFilterProviderInterface   
 {
 
      use CsrfElementCreationTrait;
@@ -71,8 +73,10 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
         if ("update" == $this->options['action']) {
             $this->add([
                 'type'=> 'Hidden',
-                'name'=> 'modified',            
+                'name'=> 'modified',  
+                'attributes' => ['id' => 'modified'],
             ]);
+
         }
          //*/
 
@@ -236,8 +240,6 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
         
         $event = $this->getObject();
         
-        
-        
         $fieldset = $this->get('event');
         // if location is set and has a parent, set parent_location element
         $location = $event->getLocation();
@@ -267,7 +269,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
             // set the judge element accordingly
             $judge_element->setValue($anonymous_judge->getId());
         }
-        // this needs to be a string
+        // this needs to be a string rather than an object
         $submission_datetime = $fieldset->get('submission_datetime')->getValue();
         if (is_object($submission_datetime)) {
              $fieldset->get('submission_datetime')
@@ -281,8 +283,85 @@ class EventForm extends ZendForm implements ListenerAggregateInterface
             $fieldset->get('submission_date')->setValue($date);
             $fieldset->get('submission_time')->setValue($time);
         }
-        
+        if ($this->has('modified')) {
+            $date_obj = $event->getModified();
+            if ($date_obj) {
+                $this->get('modified')->setValue($date_obj->format('Y-m-d H:i:s'));
+            }
+        }
         //printf('<pre>%s</pre>',print_r($this->state_before,true));
         return true;
+    }
+    
+    /**
+     * implements InputFilterProviderInterface
+     *
+     * @return array
+     */   
+    function getInputFilterSpecification()
+    {
+        $spec = [];
+        if (!$this->has('modified')) {
+            return $spec;
+        }
+        
+        $spec['modified'] = [
+            'required' => true,
+            'allow_empty' => false,
+            'validators'=> [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => [
+                            'isEmpty' => 
+                            'form is missing last-modification timestamp',
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Date',
+                    'options' => [
+                        'format' => 'Y-m-d H:i:s',
+                        'messages' => [
+                            \Zend\Validator\Date::INVALID_DATE =>
+                                'invalid modification timestamp'
+                        ],
+                    ]
+                ]
+            ],
+        ];        
+        $em = $this->get('event')->getObjectManager();
+        $spec['modified']['validators'][] = [            
+            'name' => 'Callback',
+            'options' => [
+                'callback' => function($value,$context) use ($em) { 
+                    $id = $context['event']['id'];                    
+                    $dql = 'SELECT e.modified '
+                            . 'FROM InterpretersOffice\Entity\Event e '
+                            . 'WHERE e.id = :id';
+                    $timestamp = $em->createQuery($dql)
+                            ->setParameters(['id'=>$id])
+                            ->getSingleScalarResult();
+                    //echo "comparing $timestamp : $value";
+                    return $timestamp == $value;
+                },
+                'messages' => [
+                    \Zend\Validator\Callback::INVALID_VALUE =>
+                        'Database record was modified by another process after '
+                        . 'you loaded the form. In order to avoid overwriting '
+                    . 'someone else\'s changes, please start over.',
+                ],
+            ]
+            
+        ];
+        return $spec;
+        
+    }
+    
+    function hasTimestampMismatchError()
+    {
+        $errors = $this->getMessages('modified');      
+        return $errors && 
+                key_exists(\Zend\Validator\Callback::INVALID_VALUE, $errors);
     }
 }

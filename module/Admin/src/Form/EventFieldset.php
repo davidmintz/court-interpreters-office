@@ -704,23 +704,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                  
             ],
         ];
-        /** @todo maybe remove this? */
-        if ($this->has('modified')) {
-            $spec['modified'] = [
-                'required' => true,
-                'allow_empty' => false,
-                'validators'=> [
-                    [
-                        'name' => 'NotEmpty',
-                        'options' => [
-                            'messages' => [
-                                'isEmpty' => 'form is missing last-modification timestamp',
-                            ],
-                        ],
-                    ],
-                ],
-            ];
-        }
+        
         foreach (['submission_date','submission_time'] as $field) {
             $label = str_replace('_', ' ', $field);
             $shit = [
