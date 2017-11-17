@@ -128,15 +128,17 @@ class EventsController extends AbstractActionController
             $form->setData($data);
             
             if (! $form->isValid()) {
-                //echo "validation failed ... ";
-                //var_dump($_POST['event']);
                 //print_r($form->getMessages());
                 return $viewModel->setVariables(compact('defendantNames','interpreters' ));
             } else {              
                 echo "validation OK... ";                
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
-                echo "YAY!!!!!!";
+                $this->flashMessenger()->addSuccessMessage(
+                     "This event has been added to the schedule.");                
+                return $this->redirect()->toRoute('events');
+
+                //echo "YAY!!!!!!";
             }            
         }
         
