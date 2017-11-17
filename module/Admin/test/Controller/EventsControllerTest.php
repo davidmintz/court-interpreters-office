@@ -31,7 +31,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertQueryCount('#language',1);
         $this->assertQueryCount('#docket',1);
         $this->assertQueryCount('#location',1);
-        /** to be continued */
+        /** to be continued ? */
         
     }
     
@@ -55,7 +55,7 @@ class EventControllerTest extends AbstractControllerTest
         $data['date'] = (new \DateTime("next Monday"))->format("m/d/Y");
         $data['time'] = '10:00 am';
         
-        $data['docket'] = '2017 CR 123';
+        $data['docket'] = '2017-CR-123';
         
         $type = $em->getRepository(Entity\EventType::class)->findOneBy(['name'=>'conference']);
         $data['eventType'] = $type->getId();
@@ -79,7 +79,9 @@ class EventControllerTest extends AbstractControllerTest
             ->setParameters(['email'=> 'jane_zorkendoofer@nysd.uscourts.gov'])
             ->getOneorNullResult();
         
-        $data['submitter'] = $user->getId();
+        $data['submitter'] = $user->getPerson()->getId();
+        //printf ("\nDEBUG: submitter is %s, id %d, person_id %d\n",
+        //        $user->getPerson()->getLastname(),$user->getId(),$user->getPerson()->getId());
         $data['anonymousJudge'] = '';
         $data['id'] = '';
         
@@ -99,9 +101,21 @@ class EventControllerTest extends AbstractControllerTest
         $count_after = $em
           ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
           ->getSingleScalarResult();
-        
+        $this->assertRedirect();
         $this->assertEquals(1, $count_after - $count_before, 
                 "count was not incrememented by one");
+        return;
+        // pull it out and take a look.
+        $q = 'SELECT MAX(e.id) FROM InterpretersOffice\Entity\Event e';
+        $id = $em->createQuery($q)->getSingleScalarResult();
+        $data = $em->getRepository(Entity\Event::class)->getView($id);
+        print_r($data);//exit();
+        
+    }
+    
+    public function _testGetView()
+    {
+        
         
     }
         

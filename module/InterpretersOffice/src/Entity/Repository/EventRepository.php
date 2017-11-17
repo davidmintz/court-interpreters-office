@@ -23,8 +23,15 @@ class EventRepository extends EntityRepository
          e.docket,
          loc.name AS location,
          ploc.name AS parent_location,
-         COALESCE(p.lastname, anon_submitter.name) AS submitter
-            
+         COALESCE(CONCAT(p.lastname,', ',p.firstname), anon_submitter.name) AS submitter,
+         h.name AS submitter_hat,
+         e.submission_datetime,
+         user1.username AS created_by,
+         e.created,
+         user2.username AS last_updated_by,
+         e.modified,
+         e.comments,
+         e.admin_comments
          FROM InterpretersOffice\Entity\Event e
          LEFT JOIN e.judge j JOIN e.eventType t
          LEFT JOIN e.anonymousJudge aj
@@ -32,7 +39,10 @@ class EventRepository extends EntityRepository
          LEFT JOIN e.location loc
          LEFT JOIN loc.parentLocation ploc
          LEFT JOIN e.submitter p
+         LEFT JOIN p.hat h
          LEFT JOIN e.anonymousSubmitter anon_submitter
+         JOIN e.createdBy user1
+         LEFT JOIN e.modifiedBy user2
 DQL;
     
     /**
@@ -59,6 +69,5 @@ DQL;
                  ->setParameters(['id'=>$id])
                  ->getOneOrNullResult();
 
- 
     }
 }

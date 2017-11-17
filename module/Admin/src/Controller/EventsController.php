@@ -22,7 +22,7 @@ use InterpretersOffice\Entity;
  *
  */
 
-/*
+/* some handy SQL
  SELECT e.id, e.date, e.time, t.name type, l.name language, 
  COALESCE(j.lastname, a.name) AS judge, p.name AS place, 
  COALESCE(s.lastname,as.name) submitter, submission_datetime FROM events e 
@@ -71,7 +71,11 @@ class EventsController extends AbstractActionController
      */
     public function indexAction()
     {
-       
+        // temporary debugging
+        //$id = $this->params()->fromQuery('id',1);
+        // $data = $this->entityManager->getRepository(Entity\Event::class)
+        //        ->getView($id);
+        //printf('<pre>%s</pre>',print_r($data,true));
         return ['title' => 'schedule'];
     }
 
@@ -131,14 +135,13 @@ class EventsController extends AbstractActionController
                 //print_r($form->getMessages());
                 return $viewModel->setVariables(compact('defendantNames','interpreters' ));
             } else {              
-                echo "validation OK... ";                
+              
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
                 $this->flashMessenger()->addSuccessMessage(
                      "This event has been added to the schedule.");                
                 return $this->redirect()->toRoute('events');
 
-                //echo "YAY!!!!!!";
             }            
         }
         
