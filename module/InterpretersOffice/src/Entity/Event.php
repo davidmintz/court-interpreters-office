@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Entity representing a event involving an interpreter.
  *
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\EventRepository")
  * @ORM\Table(name="events")
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"InterpretersOffice\Entity\Listener\EventEntityListener"})
