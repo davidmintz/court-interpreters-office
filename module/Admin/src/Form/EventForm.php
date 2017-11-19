@@ -134,13 +134,19 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     public function postValidate(EventInterface $e)
     {
                 
-        //$entity = $this->getObject();
-        //$id = $entity->getId();
-        //$before = $timestamps[$id];
-        //$after = $entity->getModified()->format('Y-m-d H:i:s');
-        //echo "<br>timestamp check:  <strong>$before</strong> vs <strong>$after</strong><br>";
-                  
-        //return $before == $after; ;
+        /** 
+         * test datetime properties for changes, and if there is no change, 
+         * remove the element to stop Doctrine from insisting on updating anyway
+         */
+        $event = $e->getParam('input')->get('event');
+        foreach ($this->datetime_props as $prop) {
+            if ($event[$prop] == $this->state_before[$prop]) {   
+                //echo "$prop is now: {$event[$prop]}; was: {$this->state_before[$prop]}<br>";
+                //echo "$prop DID NOT CHANGE. removing $field_name<br>";
+                $this->get('event')->remove($prop);
+            }// else { echo "$prop has been modified... " ;}
+        }
+
         return true; // for now    
     }
     
@@ -150,7 +156,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     * @param EventInterface $e
     * @return \InterpretersOffice\Admin\Form\EventForm
     */
-    public function preValidate(EventInterface $e)
+    public function (EventInterface $e)
     {
         $input = $e->getParam('input');
         $event = $input->get('event');
@@ -216,14 +222,16 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         /** 
          * test datetime properties for changes, and if there is no change, 
          * remove the element to stop Doctrine from insisting on updating anyway
-         */
+         * @todo MOVE THIS into postValidate() or something because it fucks us up when 
+         * validation fails and the form is re-displayed
+         */ /*
         foreach ($this->datetime_props as $prop) {
             if ($event[$prop] == $this->state_before[$prop]) {   
                 //echo "$prop is now: {$event[$prop]}; was: {$this->state_before[$prop]}<br>";
                 //echo "$prop DID NOT CHANGE. removing $field_name<br>";
                 $this->get('event')->remove($prop);
             }// else { echo "$prop has been modified... " ;}
-        }
+        }*/
         $input->set('event',$event);
         
         return true;        

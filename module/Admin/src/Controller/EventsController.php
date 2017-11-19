@@ -26,7 +26,7 @@ use InterpretersOffice\Entity;
  SELECT e.id, e.date, e.time, t.name type, l.name language, 
  COALESCE(j.lastname, a.name) AS judge, p.name AS place, 
  COALESCE(s.lastname,as.name) submitter, submission_datetime FROM events e 
- JOIN event_types t ON e.eventType_id = t.id 
+ JOIN event_types t ON e.event_type_id = t.id 
  JOIN languages l ON e.language_id = l.id 
  LEFT JOIN people j ON j.id = e.judge_id 
  LEFT JOIN anonymous_judges a ON a.id = e.anonymous_judge_id 
@@ -50,6 +50,13 @@ class EventsController extends AbstractActionController
      * @var AuthenticationServiceInterface 
      */
     protected $auth;
+
+    /**
+     * view
+     * 
+     * @var ViewModel
+     */
+    protected $viewModel;
     
     /**
      * constructor
@@ -64,6 +71,21 @@ class EventsController extends AbstractActionController
         $this->auth = $auth;
     }
     
+    public function getViewModel(Array $data = [])
+    {
+
+        if (! $this->viewModel) {
+
+            $this->viewModel = new ViewModel();
+            $this->viewModel
+                ->setTemplate('interpreters-office/admin/events/form');
+            if ($data) {
+                $this->viewModel->setVariables($data);
+            }
+        }
+
+        return $this->viewModel;
+    }
     
     /**
      * index action
@@ -114,25 +136,24 @@ class EventsController extends AbstractActionController
         $shit->get("submission_datetime")->setValue('2017-10-24 10:17:00');
         // end test
         }
-        $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/events/form')
-            ->setVariables(['form'  => $form,]);
+        $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
         
         if ($request->isPost()) {
             $data = $request->getPost();
             $input = $data->get('event');
-            if ($input) {
-                $defendantNames = isset($input['defendantNames']) ? 
-                        $input['defendantNames'] : [];
-                $interpreters = isset($input['interpreterEvents']) ? 
-                        $input['interpreterEvents'] : [];
-            }
             $this->getEventManager()->trigger('pre.validate',$this,
-                    ['input'=> $data]);  
+                ['input'=> $data,]);  
+            ///*
             $form->setData($data);
             
             if (! $form->isValid()) {
                 //print_r($form->getMessages());
+                if ($input) {
+                    $defendantNames = isset($input['defendantNames']) ? 
+                            $input['defendantNames'] : [];
+                    $interpreters = isset($input['interpreterEvents']) ? 
+                            $input['interpreterEvents'] : [];
+                }//*/
                 return $viewModel->setVariables(compact('defendantNames','interpreters' ));
             } else {              
               
@@ -152,16 +173,14 @@ class EventsController extends AbstractActionController
     /**
      * edits an event
      *
-     *
+     *o
      */
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');        
         $event = $this->entityManager->find(Entity\Event::class,$id);        
         if (! $event) {
-             return (new ViewModel())
-                ->setTemplate('interpreters-office/admin/events/form')
-                ->setVariables([               
+             return $this->getViewModel([               
                     'errorMessage'  => 
                     "event with id $id was not found in the database."
              ]);
@@ -175,42 +194,46 @@ class EventsController extends AbstractActionController
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri())
                 ->bind($event);                
-        $events->trigger('pre.populate');  
+        $events->trigger('pre.populate');
+
         if ($this->getRequest()->isPost()) {
             
             $data = $request->getPost();            
             $input = $data->get('event');
-            /** @todo put this task in the 'pre.validate' event listener, 
-             * maybe passing viewModel as parameter */
-            if ($input) {
-                $defendantNames = isset($input['defendantNames']) ? 
-                        $input['defendantNames'] : [];
-                $interpreters = isset($input['interpreterEvents']) ? 
-                        $input['interpreterEvents'] : [];
-            }
             $events->trigger('pre.validate',$this,['input'=> $data]);  
             $form->setData($data);
             if ($form->isValid()) {
+                $events->trigger('post.validate',$this,['input'=> $data]);
                 $this->entityManager->flush();
                 $this->flashMessenger()->addSuccessMessage(
                      "This event has been successfully saved in the database.");                
                 return $this->redirect()->toRoute('events');
 
             } else {
+
                 if ($form->hasTimestampMismatchError()) {
                     $error = $form->getMessages()['modified']
                             [\Zend\Validator\Callback::INVALID_VALUE];
                     $this->flashMessenger()->addErrorMessage($error);                     
                     return $this->redirect()
                             ->toRoute('events/edit',['id'=>$id]);
-                } 
+                }
+                /** @todo put this task in the 'pre.validate' event listener ? */
+                if ($input) {
+                    $defendantNames = isset($input['defendantNames']) ? 
+                            $input['defendantNames'] : [];
+                    $interpreters = isset($input['interpreterEvents']) ? 
+                            $input['interpreterEvents'] : [];
+                    $form->get('event')->get('anonymousSubmitter')
+                        ->setValue($input['anonymousSubmitter']);
+                }
+
                 //printf('<pre>%s</pre>',print_r($form->getMessages(),true));
-                return (new ViewModel(compact('defendantNames','interpreters','form')))
-                        ->setTemplate('interpreters-office/admin/events/form');
+                $this->getViewModel()
+                    ->setVariables(compact('defendantNames','interpreters','form'));
             }
         } 
-        return (new ViewModel(compact('form')))
-            ->setTemplate('interpreters-office/admin/events/form');        
+        return $this->getViewModel(['form'=>$form]);
     }
 
     
