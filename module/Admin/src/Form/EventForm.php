@@ -96,10 +96,12 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         
         $entity = $e->getParam('entity');
         $id = $entity->getId();
-        // store state of date/time fields for later comparison
+        $fieldset = $this->get('event');
+        // store state of date/time fields as strings for later comparison
+        // using a consistent format
         foreach ($this->datetime_props as $prop) {
             if (in_array($prop,['time','end_time'])) {
-                $format = 'g:i a';
+                $format = 'g:i a';                                                
             } elseif ('submission_datetime'== $prop) {
                 $format = 'Y-m-d H:i:s';
             } else {
