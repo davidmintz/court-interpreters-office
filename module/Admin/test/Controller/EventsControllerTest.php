@@ -10,6 +10,9 @@ use Zend\Stdlib\Parameters;
 
 class EventControllerTest extends AbstractControllerTest
 {
+    
+    protected $dummy_data;
+    
     public function setUp()
     {
         parent::setUp();
@@ -19,30 +22,13 @@ class EventControllerTest extends AbstractControllerTest
         $this->reset(true);
     }
     
-    public function testLoadEventInsertForm()
+    protected function getDummyData()
     {
-        $this->dispatch('/admin/schedule/add');
-        $this->assertResponseStatusCode(200);
-        $this->assertQueryCount('form#event-form', 1);
-        $this->assertQueryCount('#date',1);
-        $this->assertQueryCount('#time',1);
-        $this->assertQueryCount('#event-type',1);
-        $this->assertQueryCount('#judge',1);
-        $this->assertQueryCount('#language',1);
-        $this->assertQueryCount('#docket',1);
-        $this->assertQueryCount('#location',1);
-        /** to be continued ? */
-        
-    }
-    
-    public function testAddInCourtEvent()
-    {
+        if ($this->dummy_data) {
+            return $this->dummy_data;
+        }
         $data = [];
         $em =  FixtureManager::getEntityManager();
-        
-        $count_before = $em
-          ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
-          ->getSingleScalarResult();
         $judge = $em->getRepository(Entity\Judge::class)
                 ->findOneBy(['lastname' => 'Dinklesnort']);
 
@@ -85,9 +71,39 @@ class EventControllerTest extends AbstractControllerTest
         $data['anonymousJudge'] = '';
         $data['id'] = '';
         
-        $this->assertTrue(is_array($data));
+        $this->dummy_data = $data;
+        return $data;
+        
+    }
+    
+    
+    public function testLoadEventInsertForm()
+    {
+        $this->dispatch('/admin/schedule/add');
+        $this->assertResponseStatusCode(200);
+        $this->assertQueryCount('form#event-form', 1);
+        $this->assertQueryCount('#date',1);
+        $this->assertQueryCount('#time',1);
+        $this->assertQueryCount('#event-type',1);
+        $this->assertQueryCount('#judge',1);
+        $this->assertQueryCount('#language',1);
+        $this->assertQueryCount('#docket',1);
+        $this->assertQueryCount('#location',1);
+        /** to be continued ? */
+        
+    }
+    
+    public function testAddInCourtEvent()
+    {
+        //$data = [];
+        $em =  FixtureManager::getEntityManager();
+        
+        $count_before = $em
+          ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+          ->getSingleScalarResult();
+        $data = $this->getDummyData();
         $this->login('david', 'boink');
-        $this->reset(true);
+        $this->reset(true);        
         $token = $this->getCsrfToken('/admin/schedule/add');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters(
@@ -97,19 +113,31 @@ class EventControllerTest extends AbstractControllerTest
                 ]
             )
         );
+        
         $this->dispatch('/admin/schedule/add');
+
         $count_after = $em
           ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
           ->getSingleScalarResult();
         $this->assertRedirect();
         $this->assertEquals(1, $count_after - $count_before, 
-                "count was not incrememented by one");
-        return;
+                "count $count_after was not incrememented by one (from $count_before)");
+        //return;
         // pull it out and take a look.
         $q = 'SELECT MAX(e.id) FROM InterpretersOffice\Entity\Event e';
         $id = $em->createQuery($q)->getSingleScalarResult();
         $data = $em->getRepository(Entity\Event::class)->getView($id);
-        print_r($data);//exit();
+        $this->assertTrue(false !== strstr($data['judge'],'Dinklesnort'));
+        $this->assertTrue(false !== strstr($data['type'],'conference'));
+        $this->assertEquals($data['location'],'14B');
+        $this->assertEquals($data['parent_location'],'500 Pearl');
+        $this->assertEquals($data['created_by'],'david');
+        $this->assertEquals($data['language'],'Spanish');        
+        $this->assertTrue(false !== strstr($data['submitter'],'Zorkendoofer'),
+                 "string 'Zorkendoofer' not contained in string '{$data['submitter']}'");
+        $this->assertEquals($data['submitter_hat'],'Law Clerk');
+        
+        
         
     }
     
