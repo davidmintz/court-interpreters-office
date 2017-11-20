@@ -85,7 +85,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
              'options' => [
                 'label' => 'date',
                 //'format' => 'm/d/Y',
-                'format' => 'Y-m-d',
+                //'format' => 'Y-m-d',
              ],
         ],
         [
@@ -98,7 +98,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
              'options' => [
                 'label' => 'time',
-                'format' => 'H:i:s',// :s
+               //    'format' => 'H:i:s',// :s
              ],
         ],
         [
