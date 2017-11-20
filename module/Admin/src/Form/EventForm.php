@@ -156,7 +156,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     * @param EventInterface $e
     * @return \InterpretersOffice\Admin\Form\EventForm
     */
-    public function (EventInterface $e)
+    public function preValidate(EventInterface $e)
     {
         $input = $e->getParam('input');
         $event = $input->get('event');
