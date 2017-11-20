@@ -170,8 +170,22 @@ class EventControllerTest extends AbstractControllerTest
         $date = $dom->execute('#date')->current()->getAttribute('value');
         $this->assertEquals(html_entity_decode($date),$date_expected);
         
-        //$result = $dom->execute('#judge');
-        //echo $result->count();
+        $judge_select = $dom->execute('#judge')->current();
+        $judge_options = $judge_select->childNodes;
+        $judge_lastname = $entity->getJudge()->getLastname();
+        $found = false;
+        foreach ($judge_options as $opt) {
+            $name = $opt->nodeValue;
+            if (false !== strstr($name,$judge_lastname)) {
+                $found = true;
+                break;
+            }            
+        }
+        $this->assertTrue($found);
+        $this->assertTrue($opt->hasAttribute('selected'));
+        $this->assertEquals($opt->getAttribute('selected'),'selected');
+        
+        // to be continued with language, event type, location...
         
     }
     
