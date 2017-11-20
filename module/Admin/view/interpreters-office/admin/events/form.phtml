@@ -12,7 +12,7 @@ $this->headScript()
         ->appendFile($this->basePath('js/event-form.js'))
         ;
 $this->headStyle()->captureStart();?>
-/*.multi-input label, .multi-input div { border : 1px dotted gray; }*/
+.multi-input label, .multi-input div { border : 1px dotted gray; }
 form { max-width: 900px;}
 .multi-input div:first-of-type { padding-right: 0px; }
 .multi-input div:last-of-type { padding-left: 0px; }
@@ -41,6 +41,13 @@ $form->add([
 <?php
 $form->prepare();
 $fieldset = $form->get('event');
+foreach (['date','time','end_time','submission_time'] as $time) :
+    if (! $fieldset->has($time)) : continue; endif;
+    $value = $fieldset->get($time)->getValue();
+    if (2 == substr_count($value, ':')) {        
+        $fieldset->get($time)->setValue(substr($value,0,5));
+    }
+endforeach;
 // for testing
 if (false) {
   
@@ -62,15 +69,27 @@ echo $this->form()->openTag($form);
 <div class="col-sm-6"><!-- left side -->
     <div class="row">
         <?php foreach (['date','time','eventType','judge', ] as $elementName) : 
-            if (! $fieldset->has($elementName)) { continue; } //experimental
-            $element = $fieldset->get($elementName); 
-            if ('time' == $elementName && $config['end_time']):?>
+            //if (! $fieldset->has($elementName)) { continue; } //experimental
+            $element = $fieldset->get($elementName);
+            if ('time' == $elementName && $config['end_time']): 
+                $end_time = $fieldset->get('end_time'); ?>
+            <!-- --><div class="form-group">
+                 <label class="control-label col-sm-4" for="time">time</label>
+                 <div class="col-sm-8 form-inline">from <?php echo $this->formElement($element), $this->formElementErrors($element);?></div>
+                 <div class="col-sm-8 col-sm-offset-4 form-inline">
+                     <label class="control-label" for="end_time">until </label>
+                      <?php echo $this->formElement($end_time), $this->formElementErrors($end_time);?>
+                 </div>                 
+            <!-- </div>
+            -->
+            <!-- 
             <div class="form-group multi-input">
                 <label class="control-label col-xs-4" for="time">time</label>
                 <div class="col-xs-3"><?php echo $this->formElement($element), $this->formElementErrors($element);?></div>
                 <label class="col-xs-1 control-label" for="end_time">to</label>
                 <div class="col-xs-3"><?php $element = $fieldset->get('end_time');
-                    echo $this->formElement($element),$this->formElementErrors($element);?></div>    
+                    echo $this->formElement($element),$this->formElementErrors($element);?></div> 
+            -->
             <?php else: ?>
             <div class="form-group">
                 <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
