@@ -73,23 +73,12 @@ echo $this->form()->openTag($form);
             $element = $fieldset->get($elementName);
             if ('time' == $elementName && $config['end_time']): 
                 $end_time = $fieldset->get('end_time'); ?>
-            <!-- --><div class="form-group">
+            <div class="form-group">
                  <label class="control-label col-sm-4" for="time">time</label>
-                 <div class="col-sm-8 form-inline">from <?php echo $this->formElement($element), $this->formElementErrors($element);?></div>
-                 <div class="col-sm-8 col-sm-offset-4 form-inline">
-                     <label class="control-label" for="end_time">until </label>
-                      <?php echo $this->formElement($end_time), $this->formElementErrors($end_time);?>
-                 </div>                 
-            <!-- </div>
-            -->
-            <!-- 
-            <div class="form-group multi-input">
-                <label class="control-label col-xs-4" for="time">time</label>
-                <div class="col-xs-3"><?php echo $this->formElement($element), $this->formElementErrors($element);?></div>
-                <label class="col-xs-1 control-label" for="end_time">to</label>
-                <div class="col-xs-3"><?php $element = $fieldset->get('end_time');
-                    echo $this->formElement($element),$this->formElementErrors($element);?></div> 
-            -->
+                 <div class="col-sm-1 control-label">from</div>
+                 <div class="col-sm-7"><?php echo $this->formElement($element), $this->formElementErrors($element);?></div>
+                 <label class="control-label col-sm-1 col-sm-offset-4" for="end_time">until </label>
+                 <div class="col-sm-7"><?php echo $this->formElement($end_time), $this->formElementErrors($end_time);?></div>                 
             <?php else: ?>
             <div class="form-group">
                 <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
