@@ -8,6 +8,8 @@ use ApplicationTest\DataFixture;
 use InterpretersOffice\Entity;
 use Zend\Stdlib\Parameters;
 
+use Zend\Dom;
+
 class EventControllerTest extends AbstractControllerTest
 {
     
@@ -101,28 +103,23 @@ class EventControllerTest extends AbstractControllerTest
         $count_before = $em
           ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
           ->getSingleScalarResult();
-        $data = $this->getDummyData();
+        $event = $this->getDummyData();
         $this->login('david', 'boink');
         $this->reset(true);        
         $token = $this->getCsrfToken('/admin/schedule/add');
         $this->getRequest()->setMethod('POST')->setPost(
-            new Parameters(
-                [
-                    'event' => $data,
+            new Parameters([
+                    'event' => $event,
                     'csrf' => $token,
-                ]
-            )
-        );
-        
+                ])
+        );        
         $this->dispatch('/admin/schedule/add');
-
         $count_after = $em
           ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
           ->getSingleScalarResult();
         $this->assertRedirect();
         $this->assertEquals(1, $count_after - $count_before, 
-                "count $count_after was not incrememented by one (from $count_before)");
-        //return;
+        "count $count_after was not incrememented by one (from $count_before)");
         // pull it out and take a look.
         $q = 'SELECT MAX(e.id) FROM InterpretersOffice\Entity\Event e';
         $id = $em->createQuery($q)->getSingleScalarResult();
@@ -136,8 +133,45 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertTrue(false !== strstr($data['submitter'],'Zorkendoofer'),
                  "string 'Zorkendoofer' not contained in string '{$data['submitter']}'");
         $this->assertEquals($data['submitter_hat'],'Law Clerk');
+        $entity = $em->find(Entity\Event::class,$id);
+        return $entity;
+    }
+    
+    /**
+     * @depends testAddInCourtEvent
+     * 
+     */
+    public function testUpdateInCourtEvent(Entity\Event $entity)
+    {
+        $em = FixtureManager::getEntityManager();
+        $event = $this->getDummyData();
+        $this->login('david', 'boink');
+        $this->reset(true);        
+        $token = $this->getCsrfToken('/admin/schedule/add');
+        $this->dispatch('/admin/schedule/add', 'POST',
+                ['event'=>$event,'csrf'=>$token]);
+        $count_after = $em
+          ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+          ->getSingleScalarResult();
+        // sanity check
+        $this->assertEquals(2,(integer)$count_after);
+        $this->reset(true);
+        $this->login('david', 'boink');
+        $this->reset(true);
+        $this->dispatch('/admin/schedule/edit/'.$count_after);
+        $this->assertQueryCount('form#event-form', 1);
+        $dom = new Dom\Query($this->getResponse()->getBody());
+        $element = $dom->execute('#time')->current();
+        $time = $element->getAttribute('value');
+        $time_expected = $entity->getTime()->format('H:i');
+        $this->assertEquals(html_entity_decode($time),$time_expected);
         
+        $date_expected = $entity->getDate()->format('Y-m-d');
+        $date = $dom->execute('#date')->current()->getAttribute('value');
+        $this->assertEquals(html_entity_decode($date),$date_expected);
         
+        //$result = $dom->execute('#judge');
+        //echo $result->count();
         
     }
     
@@ -148,3 +182,4 @@ class EventControllerTest extends AbstractControllerTest
     }
         
 }
+    
