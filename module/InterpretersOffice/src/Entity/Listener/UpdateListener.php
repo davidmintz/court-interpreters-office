@@ -203,16 +203,18 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     }
     
     /**
+     * preRemove
      * 
+     * @todo use it or lose it
      */
     public function preRemove(LifecycleEventArgs $args)
     {
          $entity = $args->getObject();
          if ($entity instanceof Entity\InterpreterEvent) {
-            echo "how now! shit is being removed! ....";
+            //echo "how now! shit is being removed! ....";
             if ($this->eventEntity) {
                 $comments = $this->eventEntity->getComments();
-                $this->eventEntity->setComments($comments . "\n ho shit! this worked!!");
+                $this->eventEntity->setComments($comments . "\nho shit! preRemove() callback workeds\n");
             }
          }
          
