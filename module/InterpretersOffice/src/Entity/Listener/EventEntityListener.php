@@ -83,12 +83,6 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
             $this->state_before['defendant_ids'][] = 
                     $defendant->getId();
         }
-        // this approach is not gonna work.
-        $this->state_before['modified'] = $eventEntity->getModified();
-        $this->state_before['date'] = $eventEntity->getDate();
-        $this->state_before['time'] = $eventEntity->getTime();
-        $this->state_before['submission_datetime'] = $eventEntity->getSubmissionDatetime();
-        // for now, just for kicks:
         $this->getEventManager()->trigger(__FUNCTION__, $this);
     }
     /**
@@ -151,50 +145,19 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         if ($defendants_after != $defendants_before) {
             $modified = true;
         }
-        /** @todo stop WASTING OUR CPU CYCLES with this 
-         * because it does NOT work */
-        
-        $datetime_props = ['date','time','submission_datetime','modified'];
-        $changeSet = $args->getEntityChangeSet();
-        $other_props = array_diff(array_keys($changeSet),$datetime_props);
-        $fields_modified = array_keys($changeSet);
-        // loop through datetime fields and see if before and after are 
-        // *equivalent* 
-        
-        foreach($datetime_props as $prop) {
-            if (!in_array($prop,$fields_modified)) {
-                continue;
-            }
-            list($before,$after) = $changeSet[$prop];
-            if ('time' == $prop) {
-                // compare only the time part of it
-                $before = $before->format("H:i:s");
-                $after  = $after->format("H:i:s");
-            }
-            if ($before == $after) {
-                $this->logger->debug("$prop has not really been modified, trying to undo");
-                // a waste of time, just as we suspected:
-                unset($changeSet[$prop]); 
-                
-                // neither does this work.....
-                if ($prop == 'submission_datetime') {
-                    $method = 'setSubmissionDateTime';
-                } else {
-                    $method = 'set' . ucfirst($prop);
-                }
-                $eventEntity->$method($this->state_before[$prop]);
-                $this->logger->debug("ran $method on $prop");
-            }
-        }
-        
-        
-        if ($modified or count($other_props)) {
+
+        if ($modified) { // or count($other_props)) {
             $eventEntity
                     ->setModified($this->now)
-                    ->setModifiedBy($this->getAuthenticatedUser($args->getEntityManager()));
-            $debug = "real changes detected, updated event meta in with event id ".$eventEntity->getId();
+                    ->setModifiedBy(
+                       $this->getAuthenticatedUser($args->getEntityManager()));
+            $debug = sprintf(
+                "real changes detected, updated event meta in with event id %s",
+                    $eventEntity->getId()
+            );
         } else {
-            $debug = "no actual update detected with event id ".$eventEntity->getId();
+            $debug = "no actual update detected with event id "
+                    .$eventEntity->getId();
         }
         $this->logger->debug($debug);
        
