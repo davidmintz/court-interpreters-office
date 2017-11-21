@@ -56,8 +56,8 @@ class EventControllerTest extends AbstractControllerTest
                 ->findOneBy(['name'=>'500 Pearl']);  
         
         $data['parentLocation'] = $parent_location->getId();
-        $data['submission_date'] = (new \DateTime())->format("m/d/Y");
-        $data['submission_time'] = (new \DateTime('-5 minutes'))->format("g:i a");
+        $data['submission_date'] = (new \DateTime('-1 day'))->format("m/d/Y");
+        $data['submission_time'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
         $clerk_hat =  $em->getRepository(Entity\Hat::class)
                 ->findOneBy(['name'=>'Law Clerk']);
         $data['anonymousSubmitter'] = $clerk_hat->getId();
@@ -92,6 +92,11 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertQueryCount('#docket',1);
         $this->assertQueryCount('#location',1);
         $this->assertQueryCount('#parent_location',1);
+        $this->assertQueryCount('#hat',1);
+        $this->assertQueryCount('#submission_date',1);
+        $this->assertQueryCount('#submission_time',1);
+        $this->assertQueryCount('#comments',1);
+        $this->assertQueryCount('#admin_comments',1);
         /** to be continued ? */
         
     }
@@ -156,10 +161,12 @@ class EventControllerTest extends AbstractControllerTest
           ->getSingleScalarResult();
         // sanity check
         $this->assertEquals(2,(integer)$count_after);
+        $id = $count_after; // as it so happens
         $this->reset(true);
         $this->login('david', 'boink');
         $this->reset(true);
-        $this->dispatch('/admin/schedule/edit/'.$count_after);
+        $url = '/admin/schedule/edit/'.$id;
+        $this->dispatch($url);
         $this->assertQueryCount('form#event-form', 1);
         $dom = new Dom\Query($this->getResponse()->getBody());
         $element = $dom->execute('#time')->current();
@@ -187,13 +194,12 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertEquals($opt->getAttribute('selected'),'selected');
         
         $language_select = $dom->execute('#language')->current();
-        $expected = $entity->getLanguage()->getName();
-        
+        $expected = $entity->getLanguage()->getName();        
         $this->assertOptionIsSelected($language_select, $expected);
 
-        $expected = (string)$entity->getEventType();
+        $type_expected = (string)$entity->getEventType();
         $type_select = $dom->execute('#event-type')->current();
-        $this->assertOptionIsSelected($type_select,$expected);
+        $this->assertOptionIsSelected($type_select,$type_expected);
         
         $expected = $entity->getLocation()->getParentLocation()->getName();
         $parent_location_select = $dom->execute('#parent_location')->current();
@@ -219,6 +225,44 @@ class EventControllerTest extends AbstractControllerTest
         $submission_time = $submission_time_element->getAttribute('value');
         $expected = $entity->getSubmissionDatetime()->format('H:i');
         $this->assertEquals($expected,$submission_time);
+        
+        # try changing type to plea, hour to 3:00p
+        # 
+        $event['time'] = '3:00 pm';
+        $type_id = $em->getRepository(Entity\EventType::class)
+                ->findOneBy(['name'=>'plea'])->getId();
+        $event['eventType'] = $type_id;
+        $event['id'] = $count_after;
+        $event['end_time'] = '';
+        $event['comments'] = 'hey this is something different';
+        // cheat
+        $modified = $em->createQuery('SELECT e.modified '
+                . 'FROM InterpretersOffice\Entity\Event e '
+                . 'WHERE e.id = :id')->setParameters(['id'=>$count_after])
+                ->getSingleScalarResult();
+                
+        $this->reset(true);
+        $this->login('david', 'boink');
+        $this->reset(true);        
+        $token = $this->getCsrfToken($url);        
+        $this->dispatch($url,'POST',
+                ['event' => $event, 'csrf'=>$token, 'modified'=>$modified]
+        );        
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/schedule');
+        
+        $type_before = $type_expected;
+        $time_before = $time_expected;
+        $shit = $em->getRepository(Entity\Event::class)->getView($id);
+        $this->assertTrue('plea' == $shit['type']);
+        $this->assertNotEquals($type_before,$shit['type']);
+        if (is_object($shit['time'])) {
+            $time_after = $shit['time']->format('g:i a');
+            $this->assertEquals($event['time'],$time_after);            
+        } else {
+            printf("\nwarning: can't test becase we don't know what format to "
+                    . "expect for event 'time' property in %s\n",__METHOD__);
+        }
         
     }
     
