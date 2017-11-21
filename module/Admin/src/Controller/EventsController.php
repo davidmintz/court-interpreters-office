@@ -171,35 +171,33 @@ class EventsController extends AbstractActionController
     
     
     /**
-     * edits an event
+     * edits an court interpreting event
      *
-     *o
+     *
      */
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');        
-        $event = $this->entityManager->find(Entity\Event::class,$id);        
-        if (! $event) {
+        $entity = $this->entityManager->find(Entity\Event::class,$id);        
+        if (! $entity) {
              return $this->getViewModel([               
-                    'errorMessage'  => 
-                    "event with id $id was not found in the database."
-             ]);
+                'errorMessage'  => 
+                 "event with id $id was not found in the database." ]);
         }                
         $form = new Form\EventForm(
-            $this->entityManager, ['action' => 'update','object'=>$event,]
+            $this->entityManager, ['action' => 'update','object'=>$entity,]
         );
         $events = $this->getEventManager();
         $form->attach($events);
-        $events->trigger('post.load',$this,['entity'=>$event]);
+        $events->trigger('post.load',$this,['entity'=>$entity]);
         $request = $this->getRequest();
-        $form->setAttribute('action', $request->getRequestUri())
-                ->bind($event);                
+        $form->bind($entity);                
         $events->trigger('pre.populate');
-
-        if ($this->getRequest()->isPost()) {
-            
+        
+        if ($request->isPost()) {            
             $data = $request->getPost();            
             $input = $data->get('event');
+            //var_dump($input);
             $events->trigger('pre.validate',$this,['input'=> $data]);  
             $form->setData($data);
             if ($form->isValid()) {
@@ -208,30 +206,26 @@ class EventsController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                      "This event has been successfully saved in the database.");                
                 return $this->redirect()->toRoute('events');
-
-            } else {
-
-                if ($form->hasTimestampMismatchError()) {
-                    $error = $form->getMessages()['modified']
-                            [\Zend\Validator\Callback::INVALID_VALUE];
-                    $this->flashMessenger()->addErrorMessage($error);                     
-                    return $this->redirect()
-                            ->toRoute('events/edit',['id'=>$id]);
-                }
-                /** @todo put this task in the 'pre.validate' event listener ? */
-                if ($input) {
-                    $defendantNames = isset($input['defendantNames']) ? 
-                            $input['defendantNames'] : [];
-                    $interpreters = isset($input['interpreterEvents']) ? 
-                            $input['interpreterEvents'] : [];
-                    $form->get('event')->get('anonymousSubmitter')
-                        ->setValue($input['anonymousSubmitter']);
-                }
-
-                //printf('<pre>%s</pre>',print_r($form->getMessages(),true));
-                $this->getViewModel()
-                    ->setVariables(compact('defendantNames','interpreters','form'));
             }
+            //printf('<pre>error:  %s</pre>',print_r($form->getMessages(),true));
+            if ($form->hasTimestampMismatchError()) {
+                $error = $form->getMessages()['modified']
+                        [\Zend\Validator\Callback::INVALID_VALUE];
+                $this->flashMessenger()->addErrorMessage($error);                     
+                return $this->redirect()
+                        ->toRoute('events/edit',['id'=>$id]);
+            }
+            /** @todo put this task in the 'pre.validate' event listener ? */
+            if ($input) {
+                $defendantNames = isset($input['defendantNames']) ? 
+                        $input['defendantNames'] : [];
+                $interpreters = isset($input['interpreterEvents']) ? 
+                        $input['interpreterEvents'] : [];
+                $form->get('event')->get('anonymousSubmitter')
+                    ->setValue($input['anonymousSubmitter']);
+                $this->getViewModel()
+                ->setVariables(compact('defendantNames','interpreters','form'));
+            }                                        
         } 
         return $this->getViewModel(['form'=>$form]);
     }
