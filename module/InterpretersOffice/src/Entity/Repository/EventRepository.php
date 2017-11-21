@@ -16,14 +16,15 @@ class EventRepository extends EntityRepository
     
     protected $view_dql = <<<DQL
             
-         SELECT e.id, 
+         SELECT e.id, e.date, e.time, 
          COALESCE(j.lastname, aj.name) AS judge, 
          t.name AS type,
          lang.name AS language,
          e.docket,
          loc.name AS location,
          ploc.name AS parent_location,
-         COALESCE(CONCAT(p.lastname,', ',p.firstname), anon_submitter.name) AS submitter,
+         COALESCE(CONCAT(p.lastname,', ',p.firstname), anon_submitter.name) 
+             AS submitter,
          h.name AS submitter_hat,
          e.submission_datetime,
          user1.username AS created_by,
