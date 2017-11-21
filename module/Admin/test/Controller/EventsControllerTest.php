@@ -261,7 +261,7 @@ class EventControllerTest extends AbstractControllerTest
             $this->assertEquals($event['time'],$time_after);
             $this->assertNotEquals($time_before,$time_after);                    
         } else {
-            printf("\nwarning: can't test becase we don't know what format to "
+            printf("\nwarning: can't test because we don't know what format to "
                     . "expect for event 'time' property in %s\n",__METHOD__);
         }
         
