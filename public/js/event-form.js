@@ -28,7 +28,7 @@ $(document).ready(function()
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
     
-    parentLocationElement.on("change",function(){       
+    parentLocationElement.on("change",function() {
         if (! parentLocationElement.val()) {
             locationElement.attr({disabled : "disabled"});                        
         } else {
@@ -186,10 +186,16 @@ $(document).ready(function()
             // hidden anonymousJudge field to judge-element value
             /** @todo consider keeping the #anonymousJudge set as part of
                 the judge element's change handler, and processing the rest
-                server-side . OR change the _name_ of the judge element at this point?
+                server-side . OR change the _name_ of the judge element at this point?or
+
+                ... or just discard the 'judge' value on the server side if anon-judge 
+                is set
             */
            $('#anonymousJudge').val(judgeElement.val());
            // and override judge with a hidden field
+           /*  ... or just discard the 'judge' value on the server side if anon-judge 
+                is set
+            */
            judgeElement.after($("<input>").attr({
                         name : "event[judge]",
                         type : "hidden",
