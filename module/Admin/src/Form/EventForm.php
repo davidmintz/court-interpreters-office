@@ -13,7 +13,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventInterface;
 
 use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Filter\Word\CamelCaseToUnderscore;
+
 
 
 /**
