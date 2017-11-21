@@ -185,7 +185,46 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertTrue($opt->hasAttribute('selected'));
         $this->assertEquals($opt->getAttribute('selected'),'selected');
         
-        // to be continued with language, event type, location...
+        $language_select = $dom->execute('#language')->current();
+        $found = false;
+        $expected = $entity->getLanguage()->getName();
+        foreach($language_select->childNodes as $language_opt) {
+            if ($language_opt->nodeValue == $expected) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        $this->assertEquals($language_opt->getAttribute('selected'),'selected');
+
+        $expected = (string)$entity->getEventType();
+        $type_select = $dom->execute('#event-type')->current();
+        $found = false;
+        foreach($type_select->childNodes as $type_opt) {
+            if ($type_opt->nodeValue == $expected) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        $this->assertEquals($type_opt->getAttribute('selected'),'selected');
+
+        $parent_location = $entity->getLocation()->getParentLocation()->getName();
+
+        $parent_location_select = $dom->execute('#parent_location')->current();
+
+        $found = false;
+        /*
+        foreach($parent_location_select->childNodes as $loc_opt) {
+            if ($loc_opt->nodeValue == $expected) {        
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($loc_opt->hasAttribute('selected'));
+        $this->assertEquals($loc_opt->getAttribute('selected'),'selected');
+        */
+        
         
     }
     
