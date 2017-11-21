@@ -1,5 +1,5 @@
 <?php
-
+/** module/InterpretersOffice/src/Entity/Listener/EventEntityListener.php */
 namespace InterpretersOffice\Entity\Listener;
 
 
@@ -9,7 +9,7 @@ use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerInterface;
+// use Zend\Log\LoggerInterface;
 
 // maybe not
 // use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
@@ -19,22 +19,26 @@ use Zend\Log;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Event entity listener
+ */
 class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInterface
 {
 	use Log\LoggerAwareTrait;
-	use EventManagerAwareTrait;
-    
+	use EventManagerAwareTrait;    
     
     /**
-     *
+     * authentication service
+     * 
      * @var AuthenticationServiceInterface
      */
     protected $auth;
     
-    protected $datetime_properties = ['date','time','modified','submission_datetime'];
+    
+    // protected $datetime_properties = ['date','time','modified','submission_datetime'];
     
     /**
-     * holds a copy of related entities before update
+     * holds a copy of related entiti ids before update
      * 
      * @var array
      */    
@@ -44,8 +48,9 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
     ];
     
     /**
-     * @var \DateTime
-     * protected $now
+     * constructor
+     * 
+     * @param \DateTime
      */    
     public function __construct() {
         
@@ -90,7 +95,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
      * @todo if modified, set metadata accordingly
      * 
      * @param Entity\Event $eventEntity
-     * @param LifecycleEventArgs $event
+     * @param PreUpdateEventArgs $args
      */
     public function preUpdate(Entity\Event $eventEntity, 
             PreUpdateEventArgs $args)

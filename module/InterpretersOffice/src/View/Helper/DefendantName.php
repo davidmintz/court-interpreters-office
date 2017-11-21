@@ -6,6 +6,9 @@ namespace InterpretersOffice\View\Helper;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Helper\EscapeHtml;
 
+/**
+ * helper for rendering defendant-name
+ */
 class DefendantName extends AbstractHelper
 {
     
@@ -32,7 +35,13 @@ TEMPLATE;
      */
     protected $escaper;
 
-    
+    /**
+     * renders markup
+     * 
+     * @param integer $id
+     * @param string $name
+     * @return string
+     */
     public function __invoke($id,$name)
     {               
         $escaper = $this->escaper->getEscaper();
@@ -41,7 +50,12 @@ TEMPLATE;
         //printf("<pre>%s</pre>",$shit);
         return sprintf($this->template,$id,$label,$label);
     }
-
+    
+    /**
+     * constructor
+     * 
+     * @param EscapeHtml $escaper
+     */
     public function __construct(EscapeHtml $escaper)
     {
         $this->escaper= $escaper;

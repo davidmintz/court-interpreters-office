@@ -14,6 +14,11 @@ use Doctrine\Common\Cache\CacheProvider;
 class EventRepository extends EntityRepository
 {
     
+    /**
+     * DQL statement for human-friendly representation of Event
+     * 
+     * @var string 
+     */
     protected $view_dql = <<<DQL
             
          SELECT e.id, e.date, e.time, 
@@ -60,7 +65,12 @@ DQL;
         $this->cache->setNamespace('events');
     }
     
-    
+    /**
+     * returns human-readable representation of event
+     * 
+     * @param type $id
+     * @return array
+     */
     public function getView($id)
     {
         

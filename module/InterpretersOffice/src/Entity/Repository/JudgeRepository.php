@@ -134,8 +134,11 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         return $data;     
     }
     
-    /*
+    /**
+     * gets pseudo-judges
+     * 
      * helper to get anonymous (a/k/a pseudo-) judges for populating a select
+     * elements
      * 
      * @return array
      */

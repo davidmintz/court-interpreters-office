@@ -1,12 +1,20 @@
-<?php
+<?php /** module/Admin/src/Form/View/Helper/LanguageElementCollection.php */
+
 namespace InterpretersOffice\Admin\Form\View\Helper;
 
 use Zend\Form\View\Helper\AbstractHelper;
 
+/**
+ * helper for displaying interpreter-languages
+ */
 class LanguageElementCollection extends AbstractHelper
 {
 
-	
+	/**
+     * html template
+     * 
+     * @var string
+     */
 	protected $template = <<<TEMPLATE
 <div class="col-sm-offset-1 col-sm-3  interpreter-language language-name" id="language-%d">
 %s
@@ -21,15 +29,28 @@ class LanguageElementCollection extends AbstractHelper
 
 TEMPLATE;
     
+    /**
+     * error template
+     * @var string
+     */
     protected $error_template = '<div class="alert alert-warning '
             . 'validation-error" style="display:%s">%s</div>';
 	
+    /**
+     * proxies to render()
+     * 
+     * @return string
+     */
     public function __invoke()
 	{
-		//printf('<pre>%s</pre>',print_r(get_class_methods($collection),true));
         return $this->render();
 	}
 
+    /**
+     * renders interpreter-language elements
+     * 
+     * @return string
+     */
 	public function render()
     {
         $form = $this->getView()->form;
@@ -123,8 +144,10 @@ TEMPLATE;
     }
 
     /**
-	 *
-	 *
+	 * renders interpreter-language elements using input array
+     * 
+     * @param array $params
+	 * @return string
 	 */
     public function fromArray(Array $params)
     {

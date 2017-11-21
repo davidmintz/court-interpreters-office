@@ -89,21 +89,6 @@ class InterpreterEvent
             $event->setModified($this->now);
         }
     }
-    
-    /*
-     * updates event modification timestamp
-     *  
-     * OOOPS 
-     * by now the event instance is null so this WILL NOT WORK
-     */
-    public function __onPreRemove()
-    {
-        
-        $event = $this->getEvent();
-        if ($event->getModified() != $this->now) {
-            $event->setModified($this->now);
-        }
-    }
 
     /**
      * Set interpreter.

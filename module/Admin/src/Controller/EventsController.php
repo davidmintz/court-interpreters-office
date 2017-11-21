@@ -34,6 +34,13 @@ use InterpretersOffice\Entity;
  LEFT JOIN hats AS `as` ON e.anonymous_submitter_id = as.id
  LEFT JOIN locations p ON e.location_id = p.id;
  */
+
+/**
+ * events controller
+ * 
+ * controller for inserting and updating court interpreting events
+ * 
+ */
 class EventsController extends AbstractActionController
 {
     
@@ -71,6 +78,12 @@ class EventsController extends AbstractActionController
         $this->auth = $auth;
     }
     
+    /**
+     * lazy-instantiates and returns ViewModel
+     * 
+     * @param array $data view variables to set
+     * @return ViewModel
+     */    
     public function getViewModel(Array $data = [])
     {
 
@@ -93,11 +106,7 @@ class EventsController extends AbstractActionController
      */
     public function indexAction()
     {
-        // temporary debugging
-        //$id = $this->params()->fromQuery('id',1);
-        // $data = $this->entityManager->getRepository(Entity\Event::class)
-        //        ->getView($id);
-        //printf('<pre>%s</pre>',print_r($data,true));
+        
         return ['title' => 'schedule'];
     }
 

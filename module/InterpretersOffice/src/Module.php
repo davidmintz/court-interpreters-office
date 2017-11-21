@@ -23,7 +23,12 @@ class Module
     {
         return include __DIR__.'/../config/module.config.php';
     }
-
+    
+    /**
+     * gets viewhelper config 
+     * 
+     * @return array
+     */
     public function getViewHelperConfig()
     {
         return [

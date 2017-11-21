@@ -118,7 +118,11 @@ class HatRepository extends EntityRepository
         )->setParameters([':what' => $name])->setMaxResults(1)->getOneorNullResult();
     }
 
-    
+    /**
+     * fetches all the hats
+     * 
+     * @return array
+     */
     public function findAll()
     {
         return $this->createQuery('SELECT h FROM InterpretersOffice\Entity\Hat h ORDER BY h.name')

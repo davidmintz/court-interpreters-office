@@ -99,6 +99,14 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         $this->listeners[] = $events->attach('pre.validate',[$this, 'preValidate']);        
     }
     
+    /**
+     * entity load event listener
+     * 
+     * runs after entity is fetched but before form data is set
+     * 
+     * @param EventInterface $e
+     * @return void
+     */
     public function postLoad(EventInterface $e)
     {
         
@@ -124,8 +132,6 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             $this->state_before[$prop] = $value ? 
                     $value->format($format) : null;
         }
-        
-        return true;
     }
    
     /**
@@ -236,6 +242,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     /**
      * processes form data before rendering
      * 
+     * @param EventInterface $e
      * @return void
      */
     public function prePopulate(EventInterface $e)

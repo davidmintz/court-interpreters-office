@@ -22,7 +22,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     use Log\LoggerAwareTrait;
     
     /**
-     *
+     * auth
+     * 
      * @var AuthenticationServiceInterface
      */
     protected $auth;
@@ -44,6 +45,11 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     protected $now;
     
+    /**
+     * gets current datetime
+     * 
+     * @return \DateTime
+     */
     protected function getTimeStamp()
     {
         if (! $this->now) {
@@ -77,7 +83,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             $this->eventEntity = $entity;            
         }
     }
-    
     
     
     /**
@@ -190,7 +195,9 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     }
     
     /**
+     * preUpdate listener
      * 
+     * @param LifecycleEventArgs $args
      */
     public function preUpdate(LifecycleEventArgs $args)
     {
@@ -205,6 +212,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     /**
      * preRemove
      * 
+     * @param LifecycleEventArgs $args
      * @todo use it or lose it
      */
     public function preRemove(LifecycleEventArgs $args)
@@ -216,7 +224,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                 $comments = $this->eventEntity->getComments();
                 $this->eventEntity->setComments($comments . "\nho shit! preRemove() callback workeds\n");
             }
-         }
-         
+         }         
     }
 }

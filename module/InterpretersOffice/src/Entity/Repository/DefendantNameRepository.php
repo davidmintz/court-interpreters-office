@@ -85,15 +85,16 @@ class DefendantNameRepository extends EntityRepository
     }
 
     /**
-     *
      * implements cache deletion
+     * 
+     * @param int $cache_id optional cache id
      */
     public function deleteCache($cache_id = null)
     {
 
          $this->cache->setNamespace('defendants');
          $this->cache->deleteAll();
-         //return sprintf('ran %s at line %d', __METHOD__, __LINE__);
+         
     }
    
 }

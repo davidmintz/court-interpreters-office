@@ -25,15 +25,23 @@ class DefendantsController extends AbstractActionController {
      */
     protected $entityManager;
     
+    /**
+     * view helper
+     * 
+     * @var DeftNameHelper
+     */
     protected $helper;
+    
     /**
      * constructor
      * 
      * @param EntityManager $em
+     * @param DeftNameHelper $helper
      */
-    public function __construct(EntityManager $em, $shit) {
+    public function __construct(EntityManager $em, DeftNameHelper $helper) {
+        
         $this->entityManager = $em;
-        $this->helper = $shit;
+        $this->helper = $helper;
     }
     
     /**
@@ -60,21 +68,17 @@ class DefendantsController extends AbstractActionController {
         return new JsonModel($data);       
     }
     
+    /**
+     * returns response containing defendant-name markup
+     * 
+     * this is for invoking via javascript/xhr
+     * 
+     * @return \Zend\Http\PhpEnvironment\Response
+     */
     public function templateAction()
     {
-        $helper = $this->helper; //new DeftNameHelper();
-        //$factory = new \Zend\InputFilter\Factory();
-        //$inputFilter = $factory->createInputFilter(                
-        //    $helper->getInputFilterSpecification()
-        //);
-        $data = $this->params()->fromQuery();
-        // $inputFilter->setData($data);
-        //if (! $inputFilter->isValid()) {
-        //    throw new \RuntimeException(
-        //        "bad input parameters: "
-           //         .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
-         //   );
-        //}        
+        $helper = $this->helper;
+        $data = $this->params()->fromQuery();            
         $html = $helper($data['id'],$data['name']);
         return $this->getResponse()->setContent($html);
     }
