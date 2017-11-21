@@ -27,8 +27,6 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
      use CsrfElementCreationTrait;
      
      use ListenerAggregateTrait;
-     
-     
 
      /**
      * name of Fieldset class to instantiate and add to the form.
@@ -47,8 +45,18 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
      */
     protected $formName = 'event-form';
     
+    /**
+     * date/time properties
+     * 
+     * @var array
+     */
     protected $datetime_props = ['date','submission_datetime','time','end_time'];
     
+    /**
+     * holds state of datetime fields
+     * 
+     * @var array
+     */
     protected $state_before = [];
  
      /**
@@ -352,6 +360,11 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         
     }
     
+    /**
+     * is there a timestamp mismatch error?
+     * 
+     * @return boolean
+     */
     function hasTimestampMismatchError()
     {
         $errors = $this->getMessages('modified');      
