@@ -33,7 +33,6 @@ class EventControllerTest extends AbstractControllerTest
         $em =  FixtureManager::getEntityManager();
         $judge = $em->getRepository(Entity\Judge::class)
                 ->findOneBy(['lastname' => 'Dinklesnort']);
-
         $data['judge'] = $judge->getId();
         // $this->assertTrue(is_integer($data['judge']));
         $language = $em->getRepository(Entity\Language::class)
@@ -41,20 +40,15 @@ class EventControllerTest extends AbstractControllerTest
         $data['language'] = $language->getId();
         
         $data['date'] = (new \DateTime("next Monday"))->format("m/d/Y");
-        $data['time'] = '10:00 am';
-        
-        $data['docket'] = '2017-CR-123';
-        
+        $data['time'] = '10:00 am';        
+        $data['docket'] = '2017-CR-123';        
         $type = $em->getRepository(Entity\EventType::class)->findOneBy(['name'=>'conference']);
-        $data['eventType'] = $type->getId();
-        
+        $data['eventType'] = $type->getId();        
         $location =  $em->getRepository(Entity\Location::class)
                 ->findOneBy(['name'=>'14B']);        
-        $data['location'] = $location->getId();
-        
+        $data['location'] = $location->getId();        
         $parent_location = $em->getRepository(Entity\Location::class)
-                ->findOneBy(['name'=>'500 Pearl']);  
-        
+                ->findOneBy(['name'=>'500 Pearl']);          
         $data['parentLocation'] = $parent_location->getId();
         $data['submission_date'] = (new \DateTime('-1 day'))->format("m/d/Y");
         $data['submission_time'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
@@ -65,12 +59,10 @@ class EventControllerTest extends AbstractControllerTest
                 . ' WHERE p.email = :email';
         $user = $em->createQuery($dql)
             ->setParameters(['email'=> 'jane_zorkendoofer@nysd.uscourts.gov'])
-            ->getOneorNullResult();
-        
+            ->getOneorNullResult();        
         $data['submitter'] = $user->getPerson()->getId();
-        //printf ("\nDEBUG: submitter is %s, id %d, person_id %d\n",
-        //        $user->getPerson()->getLastname(),$user->getId(),$user->getPerson()->getId());
         $data['anonymousJudge'] = '';
+        $data['is_anonymous_judge'] = '';
         $data['id'] = '';
         
         $this->dummy_data = $data;
@@ -97,7 +89,8 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertQueryCount('#submission_time',1);
         $this->assertQueryCount('#comments',1);
         $this->assertQueryCount('#admin_comments',1);
-        /** to be continued ? */
+        $this->assertQueryCount('#anonymousJudge',1);
+        $this->assertQueryCount('#is_anonymous_judge',1);
         
     }
     
