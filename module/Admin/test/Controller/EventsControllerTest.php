@@ -202,9 +202,23 @@ class EventControllerTest extends AbstractControllerTest
         $expected_location =  $entity->getLocation()->getName();        
         $location_select = $dom->execute('#location')->current();
         $this->assertOptionIsSelected($location_select, $expected_location);
-       
-       
+        $submitter = $entity->getSubmitter();
+        $hat = (string)$submitter->getHat();        
+        $hat_select = $dom->execute('#hat')->current();
+        $this->assertOptionIsSelected($hat_select,$hat);
         
+        $expected_person = sprintf('%s, %s',$submitter->getLastname(),$submitter->getFirstname());
+        $submitter_select = $dom->execute('#submitter')->current();
+        $this->assertOptionIsSelected($submitter_select,$expected_person);
+        $submission_date_element = $dom->execute('#submission_date')->current();
+        $submission_date = $submission_date_element->getAttribute('value');
+        $expected = $entity->getSubmissionDatetime()->format('Y-m-d');
+        $this->assertEquals($expected,$submission_date);
+        
+        $submission_time_element = $dom->execute('#submission_time')->current();
+        $submission_time = $submission_time_element->getAttribute('value');
+        $expected = $entity->getSubmissionDatetime()->format('H:i');
+        $this->assertEquals($expected,$submission_time);
         
     }
     
