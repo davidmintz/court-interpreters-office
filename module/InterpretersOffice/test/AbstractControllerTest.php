@@ -68,6 +68,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         return $this;
     }
     //static $count = 0;
+    
     /**
      * parses out a csrf token from a form.
      *
@@ -105,8 +106,31 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         return $token;
     }
     
+    /**
+     * spits out the response body
+     */
     public function dumpResponse()
     {
         echo $this->getResponse()->getBody();
+    }
+    
+     /**
+     * asserts that option element having $label exists and is selected
+     * 
+     * @param \DOMElement $select a SELECT element
+     * @param string $label
+     */
+    public function assertOptionIsSelected(\DOMElement $select, $label)
+    {
+        $found = false;
+        foreach ($select->childNodes as $option) {
+            if ($option->nodeValue == $label) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+        $this->assertEquals($option->getAttribute('selected'),'selected');
+        
     }
 }
