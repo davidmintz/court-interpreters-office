@@ -50,14 +50,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     protected $datetime_props = ['date','submission_datetime','time','end_time'];
     
     protected $state_before = [];
-    
-    
-    /*
-     *
-     * @var CamelCaseToUnderscore
-     */
-   // protected $camelCaseFilter;
-
+ 
      /**
      * constructor.
      *
@@ -69,7 +62,9 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         parent::__construct($this->formName, $options);
         $fieldset = new $this->fieldsetClass($objectManager, $options);
         $this->add($fieldset);
-        //*
+        /* putting this here instead of in the fieldset and handling the logic 
+         * ourself saves us some pain 
+         */
         if ("update" == $this->options['action']) {
             $this->add([
                 'type'=> 'Hidden',
@@ -78,11 +73,16 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             ]);
 
         }
-         //*/
 
         $this->addCsrfElement();                
     }
     
+    /**
+     * implements ListenerAggregateInterface
+     * 
+     * @param EventManagerInterface $events
+     * @param integer $priority
+     */
     public function attach(EventManagerInterface $events,$priority = 1)
     {
         $this->listeners[] = $events->attach('post.load',[$this, 'postLoad']);
@@ -119,66 +119,70 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         
         return true;
     }
-
+   
     /**
-     * not used. maybe take it out, or replace with its opposite
-     *
-     * @return CamelCaseToUnderscore
+     * removes unmodified datetime elements
+     * 
+     * Checks whether date/time fields have been modified, and removes them if
+     * they have not. We do this to stop Doctrine from wasting an update query 
+     * when no data has actually changed.
+     * 
+     * @param EventInterface $e
+     * @return void
      */
-    protected function getFilter()
-    {
-        if (! $this->camelCaseFilter) {
-            $this->camelCaseFilter = new CamelCaseToUnderscore();
-        }
-        return $this->camelCaseFilter;
-    }
-    
     public function postValidate(EventInterface $e)
     {
-                
-        /** 
-         * test datetime properties for changes, and if there is no change, 
-         * remove the element to stop Doctrine from insisting on updating anyway
-         */
-        $event = $e->getParam('input')->get('event');
+        $input = $e->getTarget()->getRequest()->getPost();
+        $event = $input->get('event');
         foreach ($this->datetime_props as $prop) {
             if ($event[$prop] == $this->state_before[$prop]) {   
                 //echo "$prop is now: {$event[$prop]}; was: {$this->state_before[$prop]}<br>";
                 //echo "$prop DID NOT CHANGE. removing $field_name<br>";
                 $this->get('event')->remove($prop);
             }// else { echo "$prop has been modified... " ;}
-        }
-
-        return true; // for now    
+        }        
     }
     
    /**
     * preprocesses input and conditionally modifies validators
     * 
     * @param EventInterface $e
-    * @return \InterpretersOffice\Admin\Form\EventForm
+    * @return void
     */
     public function preValidate(EventInterface $e)
     {
-        $input = $e->getParam('input');
+        $input = $e->getTarget()->getRequest()->getPost();        
         $event = $input->get('event');
-        if (!$event['judge'] && empty($event['anonymousJudge'])) {
+        /* there is one form control for the judge but its value may 
+         * correspond to either the 'judge' or the 'anonymousJudge' property,
+         * and we have to make sure one is null and the other is not-null. Some
+         * Javascript in the viewscript watches the judge element 'change' 
+         * events and sets the is_anonymous_judge flag.
+         */
+        if (empty($event['judge']) && empty($event['anonymousJudge'])) {
             $validator = new \Zend\Validator\NotEmpty([
                 'messages' => ['isEmpty' => "judge is required"],
                 'break_chain_on_failure' => true,
             ]);
             $judge_input = $this->getInputFilter()->get('event')->get('judge');
-            $judge_input->setAllowEmpty(false);
+            $judge_input->setAllowEmpty(false)->setRequired(true);
             $judge_input->getValidatorChain()->attach($validator);
-        }
+            
+        } elseif ($event['is_anonymous_judge']) {
+            $event['anonymousJudge'] = $event['judge'];
+            unset($event['judge']);
+            $entity = $this->getObject();
+            if ($entity->getJudge()) {
+                $entity->setJudge(null);
+            }
+        }        
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null 
         /** @todo untangle this and make error message specific to context */
         $anonSubmitterElement = $this->get('event')->get('anonymousSubmitter');
         $hat_options = $anonSubmitterElement->getValueOptions();
         $hat_id = $event['anonymousSubmitter'];
-        $key = array_search($hat_id, array_column($hat_options, 'value'));
-        
+        $key = array_search($hat_id, array_column($hat_options, 'value'));        
         $can_be_anonymous = (!$key) ? false : 
                 $hat_options[$key]['attributes']['data-can-be-anonymous'];
         //echo "can be anonymous? " ;var_dump((boolean)$can_be_anonymous);
@@ -202,11 +206,11 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         // if NO submitter but YES anonymous submitter, submitter = NULL
         if (empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
             $event['submitter'] = null;
-            // printf("did you just fuck yourself at %d?<br>",__LINE__);
+            // printf("did we just fuck ourself at %d?<br>",__LINE__);
         // if YES submitter and YES anonymous submitter, anon submitter = NULL
         } elseif (!empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
             $event['anonymousSubmitter'] = null;
-            // printf("did you just fuck yourself at %d?<br>",__LINE__);
+            // printf("did we just fuck ourself at %d?<br>",__LINE__);
         }
         if (!empty($event['submission_date']) && !empty($event['submission_time'])) {            
             $event['submission_datetime'] = 
@@ -216,27 +220,8 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         if (isset($event['defendantNames'])) {
             $event['defendantNames'] = array_keys($event['defendantNames']);
         }
-        // if this is NOT an update, we're done
-        if (false === strstr($this->getAttribute('action'),'/edit/')) {
-            $input->set('event',$event);
-            return true;
-        }
-        /** 
-         * test datetime properties for changes, and if there is no change, 
-         * remove the element to stop Doctrine from insisting on updating anyway
-         * @todo MOVE THIS into postValidate() or something because it fucks us up when 
-         * validation fails and the form is re-displayed
-         */ /*
-        foreach ($this->datetime_props as $prop) {
-            if ($event[$prop] == $this->state_before[$prop]) {   
-                //echo "$prop is now: {$event[$prop]}; was: {$this->state_before[$prop]}<br>";
-                //echo "$prop DID NOT CHANGE. removing $field_name<br>";
-                $this->get('event')->remove($prop);
-            }// else { echo "$prop has been modified... " ;}
-        }*/
-        $input->set('event',$event);
-        
-        return true;        
+        $input->set('event',$event);        
+       
     }
    
     
@@ -248,8 +233,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     public function prePopulate(EventInterface $e)
     {
         
-        $event = $this->getObject();
-        
+        $event = $this->getObject();        
         $fieldset = $this->get('event');
         // if location is set and has a parent, set parent_location element
         $location = $event->getLocation();
@@ -265,7 +249,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
             // the form element value needs to be an integer, not an object.
             $fieldset->get('submitter')
-                    ->setValue($event->getSubmitter()->getId());
+                  ->setValue($event->getSubmitter()->getId());
         }
         $judge_element = $fieldset->get('judge');
         // judge element value needs to be an integer

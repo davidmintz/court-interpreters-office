@@ -136,7 +136,15 @@ $(document).ready(function()
     if (!hatElement.val()) {
         submitterElement.attr({disabled:"disabled"});
     }
-    
+    //
+    var judgeElement = $('#judge');
+    var anon_judge = $('#is_anonymous_judge');
+    judgeElement.on('change',function(){
+         anon_judge.val(
+            judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
+        );
+    }).trigger('change');
+    //
     hatElement.on("change",function()
     {
         console.warn("shit changes");
@@ -178,31 +186,6 @@ $(document).ready(function()
                 );
             }
         }
-        //alert($("#hat").val());
-        judgeElement = $('#judge');
-        var judgeOption = judgeElement.children(":selected");
-        if (judgeOption.data("pseudojudge")) {
-            // selected judge is anonymous, so set the 
-            // hidden anonymousJudge field to judge-element value
-            /** @todo consider keeping the #anonymousJudge set as part of
-                the judge element's change handler, and processing the rest
-                server-side . OR change the _name_ of the judge element at this point?or
-
-                ... or just discard the 'judge' value on the server side if anon-judge 
-                is set
-            */
-           $('#anonymousJudge').val(judgeElement.val());
-           // and override judge with a hidden field
-           /*  ... or just discard the 'judge' value on the server side if anon-judge 
-                is set
-            */
-           judgeElement.after($("<input>").attr({
-                        name : "event[judge]",
-                        type : "hidden",
-                        value : ""
-            }));
-        }
-     
     });
     /** deft name autocompletion */
     $('#defendant-search').autocomplete(
@@ -237,7 +220,7 @@ formatTimeElement = function(timeElement) {
     
     var timeValue = timeElement.val();
     // reformat time;
-    if (timeValue && timeValue.match(/^\d\d:\d\d:\d\d$/)) {
+    if (timeValue && timeValue.match(/^\d\d:\d\d$/)) {
         var formatted = moment(timeValue, 'HH:mm:ss').format('h:mm a');
         //console.log('formatted time is: '+formatted);
         timeElement.val(formatted);

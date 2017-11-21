@@ -536,8 +536,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         $this->add(
             [
                 'type' => 'Zend\Form\Element\Hidden',
+                'name' => 'is_anonymous_judge',
+                'attributes' => ['id' => 'is_anonymous_judge'],
+            ]
+        );
+        $this->add(
+            [
+                'type' => 'Zend\Form\Element\Hidden',
                 'name' => 'anonymousJudge',
-                'attributes' => ['id' => 'anonymousJudge']
+                'attributes' => ['id' => 'anonymousJudge'],
             ]
         );
         return $this;
@@ -627,11 +634,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
 
             'judge' => [
-                'required' => true,
+                'required' => false,
                 'allow_empty' => true,                
             ],
+            'is_anonymous_judge' => [                
+               'required' => true,
+               'allow_empty' => true,                         
+            ],
             'anonymousJudge' => [                
-               'required' => false,
+               'required' => true,
                'allow_empty' => true,                         
             ],
             'interpreter-select' => [

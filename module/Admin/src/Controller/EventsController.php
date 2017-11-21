@@ -196,12 +196,11 @@ class EventsController extends AbstractActionController
         
         if ($request->isPost()) {            
             $data = $request->getPost();            
-            $input = $data->get('event');
-            //var_dump($input);
-            $events->trigger('pre.validate',$this,['input'=> $data]);  
+            $input = $data->get('event'); //var_dump($input);
+            $events->trigger('pre.validate',$this);  
             $form->setData($data);
             if ($form->isValid()) {
-                $events->trigger('post.validate',$this,['input'=> $data]);
+                $events->trigger('post.validate',$this);
                 $this->entityManager->flush();
                 $this->flashMessenger()->addSuccessMessage(
                      "This event has been successfully saved in the database.");                
