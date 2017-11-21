@@ -40,8 +40,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
      */    
     protected $state_before = [
         'interpreter_ids' => [],
-        'defendant_ids'   => [],
-        
+        'defendant_ids'   => [],        
     ];
     
     /**
