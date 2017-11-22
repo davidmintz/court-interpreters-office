@@ -115,9 +115,9 @@ return [
         'factories' => [
              Service\Acl::class  => Service\Factory\AclFactory::class,  
              Listener\InterpreterEntityListener::class => 
-                Entity\Listener\Factory\InterpreterEntityListenerFactory::class,
+                Listener\Factory\InterpreterEntityListenerFactory::class,
              Listener\EventEntityListener::class => 
-                    Entity\Listener\Factory\EventEntityListenerFactory::class,
+                Listener\Factory\EventEntityListenerFactory::class,
         ],
         'aliases' => [
             'acl' => Service\Acl::class,
