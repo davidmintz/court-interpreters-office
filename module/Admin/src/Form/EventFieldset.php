@@ -214,20 +214,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'multiple' => 'multiple',
             ],
         ]);
-        
-         /*
-        // this was misguided
-        $defendantNamesFieldset = new DefendantNamesFieldset($objectManager);
-        
-        $this->add([
-            'type' => Element\Collection::class,
-            'name' => 'defendantNames',
-            'options' => [
-                'label' => 'defendants',
-                'target_element' =>   $defendantNamesFieldset,                
-            ],
-        ]);
-        */
+
         // figure out value options for interpreter select
         $empty_option =  ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
         if ($options['object']) {
@@ -262,7 +249,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'class' => 'form-control', 
                 'id' => 'comments',
-                'rows' => 3,
+                'rows' => 2,
                 'cols' => 28,
             ],
             'options' => [
@@ -276,7 +263,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'class' => 'form-control', 
                 'id' => 'admin_comments',
-                'rows' => 3,
+                'rows' => 2,
                 'cols' => 28,
             ],
             'options' => [
@@ -299,11 +286,21 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'format' => 'H:i:s',// :s
              ],
         ]);
-        // also:  sanity-check if there's an entity and one of its props is 
-        // NOT in a select (e.g., a Judge marked inactive)
+        /** @todo also:  sanity-check if there's an entity and one of its props 
+         * is NOT in a select (e.g., a Judge marked inactive)
+         */
+        
         $this->addSubmissionDateTimeElements();
         //$empty_option =  ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
         
+        // reason for cancellation
+        $repository = $objectManager->getRepository(Entity\Event::class);
+        $cancellation_options = $repository->getCancellationOptions();
+        $default_label = 'N/A';
+        $default_opt = ['label' => $default_label,'value'=> '',
+            'attributes' => ['label'=>$default_label,'class'=>'cancellation-default'],
+        ];
+        array_unshift($cancellation_options, $default_opt);
         $this->add([
             'name' => 'cancellationReason',
             'type' => 'select',
@@ -313,8 +310,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
              ],
              'options' => [
                 'label' => 'cancellation',
-                'value_options' => [0 => "",1 => "whatever"],
-                    
+                'value_options' => $cancellation_options,
              ],
             
         ]);
@@ -730,6 +726,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 ],
                  
             ],
+            'cancellationReason' => [
+                'required' => true,
+                'allow_empty'=> true,
+            ],              
         ];
         
         foreach (['submission_date','submission_time'] as $field) {
