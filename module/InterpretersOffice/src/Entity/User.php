@@ -320,7 +320,7 @@ class User
      */  
     public function getLastLogin()
     {
-         return $this->lastLogin = $datetime;    
+         return $this->lastLogin;    
     }
     
     /**
