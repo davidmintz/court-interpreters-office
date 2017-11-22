@@ -79,6 +79,34 @@ DQL;
                  ->createQuery($this->view_dql . ' WHERE e.id = :id')
                  ->setParameters(['id'=>$id])
                  ->getOneOrNullResult();
+    }
+    
+    /**
+     * gets data for populating cancellation menu options
+     * 
+     * @return Array
+     */
+    public function getCancellationOptions()
+    {
+        $id = 'cancellation_reasons';
+        $cache = $this->getEntityManager()->getConfiguration()
+                ->getResultCacheImpl();
+        if ($cache->contains('cancellation_reasons')) {
+            return $cache->fetch($id);
+        }
+        $dql = 'SELECT r.id AS value, r.reason AS label FROM '
+                . 'InterpretersOffice\Entity\ReasonForCancellation r '
+                . ' ORDER BY r.reason';
+        $result = $this->getEntityManager()->createQuery($dql)->getResult();        
+        $index = array_search('other',array_column($result, 'label'));
+        if ($index) {
+            $tmp = $result[$index];
+            unset($result[$index]);
+            $result[] = $tmp;
+        }
+        $cache->save($id,$result);
 
+        return $result;
+        
     }
 }
