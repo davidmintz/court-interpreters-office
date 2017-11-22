@@ -97,7 +97,7 @@ echo $this->form()->openTag($form);
                          $this->formElementErrors($element) ?>
                 </div>
             </div>
-        <?php foreach (['language','docket', 'comments',]  as $elementName) : 
+        <?php foreach (['language','docket', 'comments','admin_comments']  as $elementName) : 
             $element = $fieldset->get($elementName); ?>
             <div class="form-group">
                 <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
@@ -177,9 +177,9 @@ echo $this->form()->openTag($form);
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-4" for="admin_comments">comments (private)</label>
+            <label class="control-label col-sm-4" for="cancellation">cancellation</label>
             <div class="col-sm-8">
-            <?php $element = $fieldset->get('admin_comments');
+            <?php $element = $fieldset->get('cancellationReason');
                   echo $this->formElement($element);?>
             <?php echo $this->formElementErrors($element);?>                
             </div>
