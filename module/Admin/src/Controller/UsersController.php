@@ -86,16 +86,20 @@ class UsersController extends AbstractActionController implements Authentication
     public function setEventManager(EventManagerInterface $events)
     {
         $entityManager = $this->entityManager;
+        // $this->getEvent()->getApplication()->getServiceManager()
         $events->attach('load-person', function ($e) use ($entityManager) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
             $form = $e->getParam('form');
-            $hats_allowed = $form->get('user')->get('person')->get('hat')->getValueOptions();
+            $hats_allowed = $form->get('user')->get('person')->get('hat')
+                    ->getValueOptions();
             if (! in_array($hat->getId(), array_column($hats_allowed, 'value'))) {
                 $e->getParam('viewModel')->errorMessage =
                 sprintf(
-                    'The person identified by id %d, %s %s, wears the hat %s, but people in that category do not have user accounts in this system.',
+                    'The person identified by id %d, %s %s, wears the hat %s, '
+                      . 'but people in that category do not have user accounts '
+                      . 'in this system.',
                     $person->getId(),
                     $person->getFirstName(),
                     $person->getLastname(),
@@ -109,15 +113,18 @@ class UsersController extends AbstractActionController implements Authentication
                 $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
                         ->findOneBy(['person' => $person]);
                 if ($user) {
-                   // if we had access to the service container, or the ViewHelperPluginManager...
-                   // $shit = $container->get('ViewHelperManager')->get('url'); echo get_class($shit);
-                   // $shit->url('users/edit',['id'=>$person->getId()])
-                    $viewModel->errorMessage = sprintf(
-                        'The person identified by id %d -- %s %s -- already has a user account.',
-                        // Please go to [URL to edit] if you want to edit it.
-                         $person->getId(),
+                   $container = $e->getTarget()->getEvent()->getApplication()
+                           ->getServiceManager();
+                   $helper = $container->get('ViewHelperManager')->get('url');
+                   $url = $helper('users/edit',['id'=>$user->getId()]);                          
+                   
+                    $e->getParam('viewModel')->errorMessage = sprintf(
+                      'We can\'t create a new user account because this person '
+                            . 'whose id is %d (%s %s) already has one. '
+                            . 'You can <a href="%s">edit it</a> if you want to.',
+                        $person->getId(),
                         $person->getFirstname(),
-                        $person->getLastname()//, $url
+                        $person->getLastname(), $url
                     );
                 }
             }
@@ -138,14 +145,17 @@ class UsersController extends AbstractActionController implements Authentication
             ]);
         $user = new Entity\User();
 
-        // if it's for an existing person...
+        // if they are trying to add a user account for an existing person...
         $person_id = $this->params()->fromRoute('id');
         if ($person_id) {
-            $person = $this->entityManager->find('InterpretersOffice\Entity\Person', $person_id);
+            $person = $this->entityManager
+                    ->find('InterpretersOffice\Entity\Person', $person_id);
             if (! $person) {
-                return $viewModel->setVariables(['errorMessage' => "person with id $person_id not found"]);
+                return $viewModel->setVariables(
+                    ['errorMessage' => "person with id $person_id not found"]);
             }
-            $this->events->trigger('load-person', $this, compact('person', 'form', 'viewModel'));
+            $this->events->trigger('load-person', $this,
+                    compact('person', 'form', 'viewModel'));
             if ($viewModel->errorMessage) {
                 return $viewModel;
             }
@@ -190,10 +200,12 @@ class UsersController extends AbstractActionController implements Authentication
     {
 
         $id = $this->params()->fromRoute('id');
-        $viewModel = (new ViewModel(['title' => 'edit a user','id' => $id]))->setTemplate('interpreters-office/admin/users/form');
+        $viewModel = (new ViewModel(['title' => 'edit a user','id' => $id]))
+                ->setTemplate('interpreters-office/admin/users/form');
         $user = $this->entityManager->find('InterpretersOffice\Entity\User', $id);
         if (! $user) {
-            return $viewModel->setVariables(['errorMessage' => "user with id $id was not found in your database."]);
+            return $viewModel->setVariables(['errorMessage' => 
+                "user with id $id was not found in your database."]);
         }
          $form = new UserForm($this->entityManager, [
             'action' => 'update',
