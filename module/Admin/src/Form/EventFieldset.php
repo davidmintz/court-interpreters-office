@@ -302,6 +302,22 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         // also:  sanity-check if there's an entity and one of its props is 
         // NOT in a select (e.g., a Judge marked inactive)
         $this->addSubmissionDateTimeElements();
+        //$empty_option =  ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
+        
+        $this->add([
+            'name' => 'cancellationReason',
+            'type' => 'select',
+             'attributes' => [
+                'id'   => 'cancellation_reason',
+                'class' => 'form-control',
+             ],
+             'options' => [
+                'label' => 'cancellation',
+                'value_options' => [0 => "",1 => "whatever"],
+                    
+             ],
+            
+        ]);
         
     }
     
