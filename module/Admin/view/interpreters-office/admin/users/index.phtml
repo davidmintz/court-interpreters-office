@@ -4,6 +4,9 @@ $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
 endif;
+if ($messenger->hasErrorMessages()) :    
+    echo $messenger->render('error', ['alert','alert-warning',], false);
+endif;
 ?>
 <p>current user's role is: <?php echo $this->identity()->role ?></p>
 <p>To edit an existing user account, search the database to find it.</p>
