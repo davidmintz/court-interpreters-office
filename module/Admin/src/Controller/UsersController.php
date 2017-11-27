@@ -9,6 +9,7 @@ use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\EventInterface;
 use Zend\Authentication\AuthenticationService;
 
 use Zend\Session\Container as Session;
@@ -16,6 +17,8 @@ use Zend\Session\Container as Session;
 use InterpretersOffice\Admin\Form\UserForm;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
+
+use InterpretersOffice\Admin\Service\Acl;
 
 /**
  * controller for admin/users.
@@ -42,6 +45,13 @@ class UsersController extends AbstractActionController implements Authentication
      * @var string $auth_user_role
      */
     protected $auth_user_role;
+    
+    /**
+     * acl
+     * 
+     * @var Acl
+     */
+    protected $acl;
 
     /**
      * constructor.
@@ -51,7 +61,7 @@ class UsersController extends AbstractActionController implements Authentication
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        //$this->auth_user_role = (new Session('Authentication'))->role;
+        
     }
 
     /**
@@ -63,7 +73,7 @@ class UsersController extends AbstractActionController implements Authentication
     public function setAuthenticationService(AuthenticationService $auth)
     {
         $this->auth = $auth;
-        $this->auth_user_role = $auth->getIdentity()->role;
+        $this->auth_user_role = $auth->getIdentity()->role;        
     }
 
 
@@ -87,14 +97,15 @@ class UsersController extends AbstractActionController implements Authentication
     {
         $entityManager = $this->entityManager;
         // $this->getEvent()->getApplication()->getServiceManager()
-        $events->attach('load-person', function ($e) use ($entityManager) {
+        $events->attach('load-person', function (EventInterface $e) use ($entityManager) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
             $form = $e->getParam('form');
             $hats_allowed = $form->get('user')->get('person')->get('hat')
                     ->getValueOptions();
-            if (! in_array($hat->getId(), array_column($hats_allowed, 'value'))) {
+            if (! in_array($hat->getId(), array_column($hats_allowed, 'value')))
+            {
                 $e->getParam('viewModel')->errorMessage =
                 sprintf(
                     'The person identified by id %d, %s %s, wears the hat %s, '
@@ -116,8 +127,7 @@ class UsersController extends AbstractActionController implements Authentication
                    $container = $e->getTarget()->getEvent()->getApplication()
                            ->getServiceManager();
                    $helper = $container->get('ViewHelperManager')->get('url');
-                   $url = $helper('users/edit',['id'=>$user->getId()]);                          
-                   
+                   $url = $helper('users/edit',['id'=>$user->getId()]);                                             
                     $e->getParam('viewModel')->errorMessage = sprintf(
                       'We can\'t create a new user account because this person '
                             . 'whose id is %d (%s %s) already has one. '
@@ -127,9 +137,21 @@ class UsersController extends AbstractActionController implements Authentication
                         $person->getLastname(), $url
                     );
                 }
+            } 
+        });
+        
+        // de facto ACL enforcement
+        $role_id = $this->auth_user_role;        
+        $events->attach('load-user', function (EventInterface $e) use ($role_id)
+        {          
+            $resource_id = $e->getParam('user')->getResourceId();
+            if ('manager'== $role_id && 'administrator' == $resource_id) {
+                $controller = $e->getTarget();
+                $message = 'Access denied to administrator\'s user account';
+                $controller->flashMessenger()->addErrorMessage($message);
+                return  $controller->redirect()->toRoute('users');
             }
         });
-
         return parent::setEventManager($events);
     }
     /**
@@ -207,7 +229,8 @@ class UsersController extends AbstractActionController implements Authentication
             return $viewModel->setVariables(['errorMessage' => 
                 "user with id $id was not found in your database."]);
         }
-         $form = new UserForm($this->entityManager, [
+        $this->events->trigger('load-user',$this,['user'=>$user,]);
+        $form = new UserForm($this->entityManager, [
             'action' => 'update',
             'auth_user_role' => $this->auth_user_role,
             ]);
