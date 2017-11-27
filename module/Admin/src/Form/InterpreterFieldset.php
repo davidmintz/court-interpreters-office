@@ -199,7 +199,10 @@ class InterpreterFieldset extends PersonFieldset
                 'name' => 'dob',
                 'type' => 'Zend\Form\Element\Text',
                 'attributes' => ['id' => 'dob','class' => 'form-control encrypted date'],
-                'options' => ['label' => 'date of birth'],
+                'options' => [
+                    'label' => 'date of birth',
+                    //'format' => 'Y-m-d',
+                    ],
             ]);
             $this->add(
             [
