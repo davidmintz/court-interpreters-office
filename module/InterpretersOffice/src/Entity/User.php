@@ -8,6 +8,9 @@ namespace InterpretersOffice\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+// sort of experimental
+use Zend\Permissions\Acl\Resource\ResourceInterface;
+
 /**
  * Entity representing a user of the application.
  *
@@ -23,7 +26,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class User
+class User implements ResourceInterface
 {
     /**
      * user id.
@@ -119,6 +122,16 @@ class User
         $this->judges = new ArrayCollection();
     }
 
+    /**
+     * implements ResourceInterface
+     * 
+     * @return string 
+     */
+    
+    public function getResourceId()
+    {
+        return $this->getRole()->getName();
+    }
     /**
      * verifies password.
      *
