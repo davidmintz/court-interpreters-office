@@ -39,7 +39,7 @@ class AclFactory implements FactoryInterface
                 $message = sprintf(
                     "access DENIED to user %s in role %s: resource %s, action %s",
                     $identity ? $identity->email : 'anonymous',
-                    $e->getParam('role'),
+                    $e->getParam('role','none'),
                     $e->getParam('resource'),
                     $e->getParam('privilege', 'N/A')
                 );
