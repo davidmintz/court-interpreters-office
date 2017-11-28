@@ -137,11 +137,11 @@ class User implements ResourceInterface
      *
      * @param User   $user
      * @param string $submitted_password
+     * @return boolean 
      */
     public static function verifyPassword(User $user, $submitted_password)
     {
 
-        //exit("SHIT IS RUNNING HERE....\n");
         return password_verify($submitted_password, $user->getPassword());
     }
 
