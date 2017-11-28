@@ -86,6 +86,7 @@ return [
             'submitter' => [
                 'requests-index' => ['create','view','index'],
                 'events'   => ['index','view','search'],
+                'auth' => ['logout'],
             ],
             'manager' => [
                 'admin-index' => null,
@@ -99,7 +100,6 @@ return [
                 'admin-index' => ['index'],
                 'auth' => ['logout'],
             ],
-            'submitter'=>['auth' => ['logout'],],
             'administrator' => null,
             'anonymous' => [
                 'auth' => 'login',
