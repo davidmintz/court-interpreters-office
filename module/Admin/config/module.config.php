@@ -93,10 +93,13 @@ return [
                 'events' => null,
                  // ??
                 'vault' => null,
+                'auth' => ['logout'],
             ],
             'staff' => [
                 'admin-index' => ['index'],
+                'auth' => ['logout'],
             ],
+            'submitter'=>['auth' => ['logout'],],
             'administrator' => null,
             'anonymous' => [
                 'auth' => 'login',
