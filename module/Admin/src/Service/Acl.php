@@ -83,7 +83,8 @@ class Acl extends ZendAcl implements EventManagerAwareInterface
                     continue;
                 }
                 foreach ($rules as $resource => $privileges) {
-                     //printf ("we are setting allow on role %s, resource %s, privs %s<br>",$role,$resource, is_scalar($privileges)
+                     // printf ("we are setting allow on role %s, resource %s, 
+                     // privs %s<br>",$role,$resource, is_scalar($privileges)
                      // ? $privileges : implode(",",$privileges));
                      $this->deny($role, $resource, $privileges);
                 }
