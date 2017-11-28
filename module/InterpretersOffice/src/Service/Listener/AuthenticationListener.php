@@ -52,7 +52,8 @@ class AuthenticationListener
     {
         $params = $e->getParams();
         $result = $params['result'];
-        $ip = \filter_input(\INPUT_SERVER, 'REMOTE_ADDR', \FILTER_VALIDATE_IP) ?: 'N/A';
+        $ip = \filter_input(\INPUT_SERVER, 'REMOTE_ADDR', \FILTER_VALIDATE_IP) 
+                ?: 'N/A';
         if ($result->isValid()) {
             $message = sprintf(
                 'user %s authenticated from IP address: %s',
