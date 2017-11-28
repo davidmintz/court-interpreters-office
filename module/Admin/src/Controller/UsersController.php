@@ -12,7 +12,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventInterface;
 use Zend\Authentication\AuthenticationService;
 
-use Zend\Session\Container as Session;
+//use Zend\Session\Container as Session;
 
 use InterpretersOffice\Admin\Form\UserForm;
 use InterpretersOffice\Entity;
@@ -95,9 +95,11 @@ class UsersController extends AbstractActionController implements Authentication
     */
     public function setEventManager(EventManagerInterface $events)
     {
+       
         $entityManager = $this->entityManager;
-        $role_id = $this->auth_user_role;
-        $events->attach('load-person', function (EventInterface $e) use ($entityManager,$role_id) {
+        $role_id = $this->auth_user_role;        
+        $events->attach('load-person', function (EventInterface $e) 
+                use ($entityManager,$role_id) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
@@ -106,7 +108,7 @@ class UsersController extends AbstractActionController implements Authentication
                     ->getValueOptions();
             if (! in_array($hat->getId(), array_column($hats_allowed, 'value')))
             {
-                $e->getParam('viewModel')->errorMessage =
+                $errorMessage =
                 sprintf(
                     'The person identified by id %d, %s %s, wears the hat %s, '
                       . 'but people in that category do not have user accounts '
@@ -116,7 +118,9 @@ class UsersController extends AbstractActionController implements Authentication
                     $person->getLastname(),
                     $hat
                 );
-                return false;
+                $controller = $e->getTarget();
+                $controller->flashMessenger()->addErrorMessage($message);
+                return  $controller->redirect()->toRoute('users');
             }
             $action = $e->getTarget()->params()->fromRoute('action');
             if ('add' == $action) {
@@ -137,17 +141,18 @@ class UsersController extends AbstractActionController implements Authentication
                    $resource_id = $user->getResourceId();
                    $can_edit = ($role_id == 'manager' 
                            && $resource_id == 'administrator') ? false : true;
+                   $controller = $e->getTarget();
                    if ($can_edit) {
                        $helper = $container->get('ViewHelperManager')->get('url');
                        $url = $helper('users/edit',['id'=>$user->getId()]);
                        $message .= sprintf(
                          'You can <a href="%s">edit it</a> if you want to.',
                                $url
-                          );
-                       $controller = $e->getTarget();
-                       $controller->flashMessenger()->addErrorMessage($message);
-                       return  $controller->redirect()->toRoute('users');
-                   }
+                          );                      
+                   } //else { }
+                    
+                    $controller->flashMessenger()->addErrorMessage($message);
+                    return  $controller->redirect()->toRoute('users');
                 }
             } 
         });
@@ -159,11 +164,28 @@ class UsersController extends AbstractActionController implements Authentication
             if ('manager'== $role_id && 'administrator' == $resource_id) {
                 $controller = $e->getTarget();
                 $message = 'Access denied to administrator\'s user account';
+                $controller->getEventManager()//->getSharedManager()
+                               ->trigger(
+                                       Acl::class,
+                                       'access-denied',                             
+                                [   'role'=>$role_id,
+                                    'resource'=>$resource_id, 
+                                    'privilege'=>$controller->params()->fromRoute('action')
+                                ]
+                                 );
+                //$container = $e->getTarget()->getEvent()->getApplication()
+                //           ->getServiceManager();
+                //$container->get('log')->warn("fuck you?");
                 $controller->flashMessenger()->addErrorMessage($message);
                 return  $controller->redirect()->toRoute('users');
             }
         });
-        return parent::setEventManager($events);
+        // this is bullshit
+        //$identifiers = $events->getIdentifiers();
+        //$identifiers[] = Acl::class;
+        //$events->setIdentifiers($identifiers);
+         parent::setEventManager($events);
+        
     }
     /**
      * add a new user
@@ -188,10 +210,7 @@ class UsersController extends AbstractActionController implements Authentication
                     ['errorMessage' => "person with id $person_id not found"]);
             }
             $this->events->trigger('load-person', $this,
-                    compact('person', 'form', 'viewModel'));
-            if ($viewModel->errorMessage) {
-                return $viewModel;
-            }
+                    compact('person', 'form'));            
             $user->setPerson($person);
             $form->get('user')->get('person')->setObject($person);
         }
