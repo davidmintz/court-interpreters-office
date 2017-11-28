@@ -96,8 +96,8 @@ class UsersController extends AbstractActionController implements Authentication
     public function setEventManager(EventManagerInterface $events)
     {
         $entityManager = $this->entityManager;
-        // $this->getEvent()->getApplication()->getServiceManager()
-        $events->attach('load-person', function (EventInterface $e) use ($entityManager) {
+        $role_id = $this->auth_user_role;
+        $events->attach('load-person', function (EventInterface $e) use ($entityManager,$role_id) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
@@ -126,22 +126,33 @@ class UsersController extends AbstractActionController implements Authentication
                 if ($user) {
                    $container = $e->getTarget()->getEvent()->getApplication()
                            ->getServiceManager();
-                   $helper = $container->get('ViewHelperManager')->get('url');
-                   $url = $helper('users/edit',['id'=>$user->getId()]);                                             
-                    $e->getParam('viewModel')->errorMessage = sprintf(
+                  
+                   $message = $e->getParam('viewModel')->errorMessage = sprintf(
                       'We can\'t create a new user account because this person '
-                            . 'whose id is %d (%s %s) already has one. '
-                            . 'You can <a href="%s">edit it</a> if you want to.',
-                        $person->getId(),
-                        $person->getFirstname(),
-                        $person->getLastname(), $url
-                    );
+                            . 'whose id is %d (%s %s) already has one. ',
+                            $person->getId(),
+                            $person->getFirstname(),
+                            $person->getLastname());
+                   
+                   $resource_id = $user->getResourceId();
+                   $can_edit = ($role_id == 'manager' 
+                           && $resource_id == 'administrator') ? false : true;
+                   if ($can_edit) {
+                       $helper = $container->get('ViewHelperManager')->get('url');
+                       $url = $helper('users/edit',['id'=>$user->getId()]);
+                       $message .= sprintf(
+                         'You can <a href="%s">edit it</a> if you want to.',
+                               $url
+                          );
+                       $controller = $e->getTarget();
+                       $controller->flashMessenger()->addErrorMessage($message);
+                       return  $controller->redirect()->toRoute('users');
+                   }
                 }
             } 
         });
         
-        // de facto ACL enforcement
-        $role_id = $this->auth_user_role;        
+        // de facto ACL enforcement       
         $events->attach('load-user', function (EventInterface $e) use ($role_id)
         {          
             $resource_id = $e->getParam('user')->getResourceId();
