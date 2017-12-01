@@ -106,7 +106,10 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
     public function getJudgeOptions($options = [])
     {
         $dql = 'SELECT j.id, j.lastname, j.firstname, j.middlename, f.flavor '
+                . ', l.id AS location, pl.id AS parent_location'
                 . ' FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f '
+                . 'LEFT JOIN j.defaultLocation l '
+                . 'LEFT JOIN l.parentLocation pl '
                 . ' WHERE j.active = true ORDER BY j.lastname, j.firstname';
         $judges = $this->createQuery($dql, $this->cache_namespace)->getResult();
         $data = [];
@@ -121,8 +124,13 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 }
             }
             $label .= ", $judge[flavor]";
-            $data[] = compact('label','value');
+            $attributes = [
+                'data-default_location' => $judge['location'],
+                'data-default_parent_location' => $judge['parent_location'],
+            ];
+            $data[] = compact('label','value','attributes');
         }
+        
         if (isset($options['include_pseudo_judges']) 
                 && $options['include_pseudo_judges']) {
             $data = array_merge($data,$this->getPseudoJudgeOptions());
@@ -130,7 +138,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 return strnatcasecmp($a['label'], $b['label']);
             });
         }
-
+        
         return $data;     
     }
     
