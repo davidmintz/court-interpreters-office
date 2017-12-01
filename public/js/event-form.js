@@ -93,6 +93,7 @@ $(document).ready(function()
     
     // add an interpreter to this event
     interpreterSelectElement.on('change',function(){
+        
         var id = interpreterSelectElement.val();
         if (! id ) { return; }
         var selector = '#interpreters-assigned li > input[value="'+id+'"]';
@@ -169,6 +170,22 @@ $(document).ready(function()
                            .trigger("sdny.submitter-update-complete");
                 }
             );
+        
+    });
+    var eventTypeElement = $('#event-type');
+    // set the location automatically if possible
+    $('#event-type, #judge').on('change',function(event){
+        // either 'judge' or 'event-type'
+        var target_id = event.target.id;
+        if ('judge' == target_id 
+                && judgeElement.val()
+                && eventTypeElement.val()
+                && ! parentLocationElement.val()) {
+           var judgeData = judgeElement.children(':selected').data();
+           console.log("we should do something based on: ")
+           console.log(judgeData);
+        }
+        
         
     });
     
