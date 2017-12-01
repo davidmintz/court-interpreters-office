@@ -77,6 +77,7 @@ return [
             // ??
             'vault' => null,
             'auth' => null,
+            'administrator'=> null,
             // to be continued
         ],
         // how do we configure this to use Assertions?
@@ -111,7 +112,7 @@ return [
             ],
             'anonymous' => [
                 'auth' => 'logout'
-            ]
+            ],            
         ]
     ],
     'service_manager' => [

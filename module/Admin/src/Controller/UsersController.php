@@ -87,9 +87,7 @@ class UsersController extends AbstractActionController implements Authentication
     *
     * If they do load a valid Person in the addAction(), we check that an associated
     * User account does not already exist.
-    *
-    * NOTE: we might decide on a better way to do this
-    * e.g., use an ACL assertion
+    *   
     *
     * @param EventManagerInterface events
     */
@@ -97,7 +95,7 @@ class UsersController extends AbstractActionController implements Authentication
     {
        
         $entityManager = $this->entityManager;
-        $role_id = $this->auth_user_role;        
+        $role_id = $this->auth_user_role; 
         $events->attach('load-person', function (EventInterface $e) 
                 use ($entityManager,$role_id) {
 
@@ -131,17 +129,17 @@ class UsersController extends AbstractActionController implements Authentication
                    $container = $e->getTarget()->getEvent()->getApplication()
                            ->getServiceManager();
                   
-                   $message = $e->getParam('viewModel')->errorMessage = sprintf(
-                      'We can\'t create a new user account because this person '
+                   $message = sprintf(
+                      'We can\'t create a new user account because the person '
                             . 'whose id is %d (%s %s) already has one. ',
                             $person->getId(),
                             $person->getFirstname(),
                             $person->getLastname());
                    
                    $resource_id = $user->getResourceId();
-                   $can_edit = ($role_id == 'manager' 
-                           && $resource_id == 'administrator') ? false : true;
-                   $controller = $e->getTarget();
+                   $acl = $e->getTarget()->getEvent()->getApplication()
+                    ->getServiceManager()->get('acl');
+                   $can_edit = $acl->isAllowed($role_id,$resource_id);                                              
                    if ($can_edit) {
                        $helper = $container->get('ViewHelperManager')->get('url');
                        $url = $helper('users/edit',['id'=>$user->getId()]);
@@ -149,44 +147,37 @@ class UsersController extends AbstractActionController implements Authentication
                          'You can <a href="%s">edit it</a> if you want to.',
                                $url
                           );                      
-                   } //else { }
-                    
-                    $controller->flashMessenger()->addErrorMessage($message);
-                    return  $controller->redirect()->toRoute('users');
+                   }
+                   $controller = $e->getTarget();
+                   $controller->flashMessenger()->addErrorMessage($message);
+                   return  $controller->redirect()->toRoute('users');
                 }
             } 
-        });
-        
-        // de facto ACL enforcement       
+        });        
+        // ACL enforcement       
         $events->attach('load-user', function (EventInterface $e) use ($role_id)
         {          
             $resource_id = $e->getParam('user')->getResourceId();
-            if ('manager'== $role_id && 'administrator' == $resource_id) {
+             $acl = $e->getTarget()->getEvent()->getApplication()
+                    ->getServiceManager()->get('acl');
+            if (! $acl->isAllowed($role_id,$resource_id)) {
                 $controller = $e->getTarget();
                 $message = 'Access denied to administrator\'s user account';
-                $controller->getEventManager()//->getSharedManager()
-                               ->trigger(
-                                       Acl::class,
-                                       'access-denied',                             
+                $controller->getEventManager()->trigger(
+                                       Acl::class,'access-denied',                             
                                 [   'role'=>$role_id,
                                     'resource'=>$resource_id, 
                                     'privilege'=>$controller->params()->fromRoute('action')
                                 ]
                                  );
-                //$container = $e->getTarget()->getEvent()->getApplication()
-                //           ->getServiceManager();
-                //$container->get('log')->warn("fuck you?");
+                
                 $controller->flashMessenger()->addErrorMessage($message);
                 return  $controller->redirect()->toRoute('users');
             }
         });
-        // this is bullshit
-        //$identifiers = $events->getIdentifiers();
-        //$identifiers[] = Acl::class;
-        //$events->setIdentifiers($identifiers);
-         parent::setEventManager($events);
-        
+         parent::setEventManager($events);        
     }
+    
     /**
      * add a new user
      */
@@ -209,7 +200,7 @@ class UsersController extends AbstractActionController implements Authentication
                 return $viewModel->setVariables(
                     ['errorMessage' => "person with id $person_id not found"]);
             }
-            $this->events->trigger('load-person', $this,
+            $this->events->trigger('load-person', $this, 
                     compact('person', 'form'));            
             $user->setPerson($person);
             $form->get('user')->get('person')->setObject($person);
@@ -273,11 +264,9 @@ class UsersController extends AbstractActionController implements Authentication
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {
-                //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
+            if (! $form->isValid()) {                
                 return $viewModel;
-            }
-            //$this->events->trigger('post.validate',$this,['user'=>$user]);
+            }            
             $this->entityManager->flush(); // return $viewModel;
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
