@@ -81,12 +81,13 @@ class UsersController extends AbstractActionController implements Authentication
     * attaches event handlers
     *
     * Before they try to create a user account, if they're attaching the account
-    * to a Person that already exists, this checks the Person's Hat property for validity.
-    * We won't expose links that lead to an invalid situation, but a person could
-    * manually edit the query parameters.
+    * to a Person that already exists, this checks the Person's Hat property for 
+    * validity. We won't expose links that lead to an invalid situation, but a 
+    * person could manually edit the query parameters.
     *
-    * If they do load a valid Person in the addAction(), we check that an associated
-    * User account does not already exist.
+    * If they do load a valid Person in the addAction(), we check that an 
+    * associated User account does not already exist, and whether the current 
+    * user is authorized.
     *   
     *
     * @param EventManagerInterface events
@@ -95,89 +96,84 @@ class UsersController extends AbstractActionController implements Authentication
     {
        
         $entityManager = $this->entityManager;
-        $role_id = $this->auth_user_role; 
-        $events->attach('load-person', function (EventInterface $e) 
-                use ($entityManager,$role_id) {
+        $role_id = $this->auth_user_role;
+        $events->attach('load-person', function (EventInterface $e)
+                use ($entityManager, $role_id) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
             $form = $e->getParam('form');
             $hats_allowed = $form->get('user')->get('person')->get('hat')
                     ->getValueOptions();
-            if (! in_array($hat->getId(), array_column($hats_allowed, 'value')))
+            if (!in_array($hat->getId(), array_column($hats_allowed, 'value')))
             {
-                $errorMessage =
-                sprintf(
+                $errorMessage = sprintf(
                     'The person identified by id %d, %s %s, wears the hat %s, '
-                      . 'but people in that category do not have user accounts '
-                      . 'in this system.',
-                    $person->getId(),
-                    $person->getFirstName(),
-                    $person->getLastname(),
-                    $hat
+                    . 'but people in that category do not have user accounts '
+                    . 'in this system.', 
+                    $person->getId(), $person->getFirstName(), 
+                    $person->getLastname(), $hat
                 );
                 $controller = $e->getTarget();
                 $controller->flashMessenger()->addErrorMessage($message);
-                return  $controller->redirect()->toRoute('users');
+                return $controller->redirect()->toRoute('users');
             }
             $action = $e->getTarget()->params()->fromRoute('action');
+            
             if ('add' == $action) {
                 // is there already a User account?
                 $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
                         ->findOneBy(['person' => $person]);
                 if ($user) {
-                   $container = $e->getTarget()->getEvent()->getApplication()
-                           ->getServiceManager();
-                  
-                   $message = sprintf(
-                      'We can\'t create a new user account because the person '
-                            . 'whose id is %d (%s %s) already has one. ',
-                            $person->getId(),
-                            $person->getFirstname(),
-                            $person->getLastname());
-                   
-                   $resource_id = $user->getResourceId();
-                   $acl = $e->getTarget()->getEvent()->getApplication()
-                    ->getServiceManager()->get('acl');
-                   $can_edit = $acl->isAllowed($role_id,$resource_id);                                              
-                   if ($can_edit) {
-                       $helper = $container->get('ViewHelperManager')->get('url');
-                       $url = $helper('users/edit',['id'=>$user->getId()]);
-                       $message .= sprintf(
-                         'You can <a href="%s">edit it</a> if you want to.',
-                               $url
-                          );                      
-                   }
-                   $controller = $e->getTarget();
-                   $controller->flashMessenger()->addErrorMessage($message);
-                   return  $controller->redirect()->toRoute('users');
+                    $container = $e->getTarget()->getEvent()->getApplication()
+                            ->getServiceManager();
+
+                    $message = sprintf(
+                        'We can\'t create a new user account because the person '
+                        . 'whose id is %d (%s %s) already has one. ', 
+                        $person->getId(), $person->getFirstname(), 
+                        $person->getLastname());
+
+                    $resource_id = $user->getResourceId();
+                    $acl = $e->getTarget()->getEvent()->getApplication()
+                                    ->getServiceManager()->get('acl');
+                    // are they authorized to edit?
+                    if ( $acl->isAllowed($role_id, $resource_id)) {
+                        $helper = $container->get('ViewHelperManager')->get('url');
+                        $url = $helper('users/edit', ['id' => $user->getId()]);
+                        $message .= sprintf(
+                            'You can <a href="%s">edit it</a> if you want to.', 
+                             $url
+                        );
+                    }
+                    $controller = $e->getTarget();
+                    $controller->flashMessenger()->addErrorMessage($message);
+                    return $controller->redirect()->toRoute('users');
                 }
-            } 
-        });        
-        // ACL enforcement       
-        $events->attach('load-user', function (EventInterface $e) use ($role_id)
-        {          
+            }
+        });
+        // are they authorized to edit this user account?       
+        $events->attach('load-user', function (EventInterface $e) use ($role_id) {
             $resource_id = $e->getParam('user')->getResourceId();
-             $acl = $e->getTarget()->getEvent()->getApplication()
-                    ->getServiceManager()->get('acl');
-            if (! $acl->isAllowed($role_id,$resource_id)) {
+            $acl = $e->getTarget()->getEvent()->getApplication()
+                            ->getServiceManager()->get('acl');
+            if (!$acl->isAllowed($role_id, $resource_id)) {
                 $controller = $e->getTarget();
                 $message = 'Access denied to administrator\'s user account';
                 $controller->getEventManager()->trigger(
-                                       Acl::class,'access-denied',                             
-                                [   'role'=>$role_id,
-                                    'resource'=>$resource_id, 
-                                    'privilege'=>$controller->params()->fromRoute('action')
-                                ]
-                                 );
-                
+                        Acl::class, 'access-denied', [ 'role' => $role_id,
+                    'resource' => $resource_id,
+                    'privilege' => $controller->params()->fromRoute('action')
+                        ]
+                );
+
                 $controller->flashMessenger()->addErrorMessage($message);
-                return  $controller->redirect()->toRoute('users');
+                return $controller->redirect()->toRoute('users');
             }
         });
-         parent::setEventManager($events);        
+        return parent::setEventManager($events);
     }
-    
+
     /**
      * add a new user
      */
