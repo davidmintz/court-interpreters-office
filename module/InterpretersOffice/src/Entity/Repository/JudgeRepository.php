@@ -153,7 +153,8 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
     protected function getPseudoJudgeOptions()
     {
         $data = [];
-        $pseudojudge_dql = 'SELECT j.id, j.name, l.name as location, '
+        $pseudojudge_dql = 'SELECT j.id, j.name, l.name as location, l.id '
+                . ' AS default_location_id, p.id AS default_parent_location_id, '
                     . 'p.name as parent_location '
                     . 'FROM InterpretersOffice\Entity\AnonymousJudge j '
                     . 'LEFT JOIN j.defaultLocation l '
@@ -162,16 +163,20 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         $pseudo_judges = $this->createQuery(
             $pseudojudge_dql,
             $this->cache_namespace)->getResult();
-        foreach ($pseudo_judges as $pseudojudge) {
-            $value = $pseudojudge['id'];
-            $label = $pseudojudge['name'];
-            if ($pseudojudge['location']) {
-                $label .= " - $pseudojudge[location]";
+        foreach ($pseudo_judges as $pjudge) {
+            $value = $pjudge['id'];
+            $label = $pjudge['name'];
+            if ($pjudge['location']) {
+                $label .= " - $pjudge[location]";
             }
-            if ($pseudojudge['parent_location']) {
-                $label .= ", $pseudojudge[parent_location]";
+            if ($pjudge['parent_location']) {
+                $label .= ", $pjudge[parent_location]";
             }
-            $attributes = ['data-pseudojudge' => 1];
+            $attributes = [
+                'data-pseudojudge' => 1, 
+                'data-default_location' => $pjudge['default_location_id'],
+                'data-default_parent_location' => 
+                    $pjudge['default_parent_location_id'],];
             $data[] = compact('label','value','attributes');                
         }       
         return $data;
