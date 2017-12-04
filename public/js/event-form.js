@@ -28,7 +28,7 @@ $(document).ready(function()
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
     
-    parentLocationElement.on("change",function() {
+    parentLocationElement.on("change",function(event,params) {
         if (! parentLocationElement.val()) {
             locationElement.attr({disabled : "disabled"});                        
         } else {
@@ -45,7 +45,10 @@ $(document).ready(function()
                     // discard existing option elements
                     locationElement.children().not(":first").remove();
                     locationElement.append(options)
-                            .trigger("sdny.location-update-complete");                        
+                         .trigger("sdny.location-update-complete");
+                    if (params && params.location_id) {
+                        locationElement.val(params.location_id)
+                    } 
             });
         }
     });
@@ -174,19 +177,26 @@ $(document).ready(function()
     });
     var eventTypeElement = $('#event-type');
     // set the location automatically if possible
-    $('#event-type, #judge').on('change',function(event){
-        // either 'judge' or 'event-type'
-        var target_id = event.target.id;
-        if ('judge' == target_id 
-                && judgeElement.val()
-                && eventTypeElement.val()
-                && ! parentLocationElement.val()) {
-           var judgeData = judgeElement.children(':selected').data();
-           console.log("we should do something based on: ")
-           console.log(judgeData);
+    //#event-type,
+    $(' #judge').on('change',function(event){
+                
+        if (// is the event-type set, is it in-court, is the judge set?            
+            ! judgeElement.val()
+            || ! eventTypeElement.val() 
+            || "in" !== eventTypeElement.children(":selected").data().category) 
+        {   // if not, return
+            return;
         }
-        
-        
+        /**/
+        var judge = judgeElement.children(':selected').data();
+        if (judge.default_parent_location && 
+              judge.default_parent_location !== parentLocationElement.val())
+        {
+            parentLocationElement.val(judge.default_parent_location)
+                    .trigger("change", judge.default_location ?
+                        {location_id:judge.default_location} : null
+            );
+        }
     });
     
     $("#event-form").on("submit",function(e){
