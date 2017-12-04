@@ -180,11 +180,11 @@ $(document).ready(function()
     //#event-type,
     $(' #judge').on('change',function(event){
                 
-        if (// is the event-type set, is it in-court, is the judge set?            
+        if (// make sure event-type is set, it's in-court, and judge is set
             ! judgeElement.val()
             || ! eventTypeElement.val() 
             || "in" !== eventTypeElement.children(":selected").data().category) 
-        {   // if not, return
+        {
             return;
         }
         /**/
