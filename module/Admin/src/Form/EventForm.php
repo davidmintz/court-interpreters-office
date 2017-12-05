@@ -213,7 +213,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
                         $this->error('invalid_format');
                         return false;
                     }
-                    if ($start && $end && $end >= $start) {
+                    if ($start && $end && $end <= $start) {
                         $this->error('invalid_time');
                         return false;
                     }                    
