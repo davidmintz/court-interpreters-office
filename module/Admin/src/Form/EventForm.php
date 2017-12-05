@@ -79,9 +79,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
                 'name'=> 'modified',  
                 'attributes' => ['id' => 'modified'],
             ]);
-
         }
-
         $this->addCsrfElement();                
     }
     
@@ -189,7 +187,40 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             if ($entity->getJudge()) {
                 $entity->setJudge(null);
             }
-        }        
+        }
+        if (! empty($event['end_time'])) {
+            $end_time_input = $this->getInputFilter()->get('event')
+                    ->get('end_time');
+            $end_time_input->getValidatorChain()->attach(
+            new class extends \Zend\Validator\AbstractValidator {
+                protected $messageTemplates = [
+                    'invalid_format'=> 'invalid time',
+                    'invalid_time' => 'end time has to be later than start time',
+                    'missing_start_time'=> 
+                        'if end time is provided, start time is required',
+                ];
+                public function isValid($value,$context = null) {                    
+                    if (! trim($value)) {
+                        return true;
+                    }
+                    if ($value && ! $context['time']) {
+                        $this->error('missing_start_time');
+                        return false;
+                    }
+                    $end = strtotime($value);
+                    $start = strtotime($context['time']);
+                    if (false === $end) {
+                        $this->error('invalid_format');
+                        return false;
+                    }
+                    if ($start && $end && $end >= $start) {
+                        $this->error('invalid_time');
+                        return false;
+                    }                    
+                    return true;
+                }
+            });
+        }
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null 
         /** @todo untangle this and make error message specific to context */
