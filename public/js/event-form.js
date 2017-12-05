@@ -7,7 +7,7 @@ Modernizr = window.Modernizr;
 
 $(document).ready(function()
 {
-    if (! Modernizr.inputtypes.date) {
+   // if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker({
             changeMonth: true,
             changeYear: true
@@ -17,12 +17,12 @@ $(document).ready(function()
                 element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
             }
         });
-    } else { console.log("date element is supported!");}
-    if (! Modernizr.inputtypes.time) {
+   // } else { console.log("date element is supported!");}
+  //  if (! Modernizr.inputtypes.time) {
         $("input.time")
           .each(function(){formatTimeElement($(this));})
           .on("change",parseTime);
-    } else {console.log( "time element is supported!"); }
+  //  } else {console.log( "time element is supported!"); }
     $('input.docket').on("change",formatDocketElement);
     
     var parentLocationElement = $('#parent_location');
