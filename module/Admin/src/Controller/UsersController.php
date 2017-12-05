@@ -160,13 +160,6 @@ class UsersController extends AbstractActionController implements Authentication
             if (!$acl->isAllowed($role_id, $resource_id)) {
                 $controller = $e->getTarget();
                 $message = 'Access denied to administrator\'s user account';
-                $controller->getEventManager()->trigger(
-                        Acl::class, 'access-denied', [ 'role' => $role_id,
-                    'resource' => $resource_id,
-                    'privilege' => $controller->params()->fromRoute('action')
-                        ]
-                );
-
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
             }
