@@ -10,7 +10,9 @@ $(document).ready(function()
    // if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker({
             changeMonth: true,
-            changeYear: true
+            changeYear: true,
+            selectOtherMonths : true,
+            showOtherMonths : true
         });
         $('input.date').each(function(i,element){
             if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
