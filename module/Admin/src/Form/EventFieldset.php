@@ -12,11 +12,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
-use InterpretersOffice\Admin\Form\InterpretersAssignedFieldset;
-use InterpretersOffice\Admin\Form\DefendantNamesFieldset;
 use InterpretersOffice\Entity;
-use DoctrineModule\Form\Element\ObjectSelect;
 
+use Zend\Validator\Callback;
 use InterpretersOffice\Entity\Judge;
 /**
  * Fieldset for Event form
@@ -27,6 +25,22 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         ObjectManagerAwareInterface        
 {
      use ObjectManagerAwareTrait;
+     
+     /**
+      * type to use for time elements
+      *
+      * for convenience, while trying to make up our mind about 
+      * using the HTML5 date and time elements
+      *  
+      * @var string 
+      */     
+     const TIME_ELEMENT_TYPE = 'Text';
+      /**
+      * type to use for date elements
+      * 
+      * @var string 
+      */
+     const DATE_ELEMENT_TYPE = 'Text';
 
     /**
      * name of the form.
@@ -77,7 +91,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         [
              'name' => 'date',
             //'type' => 'text',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => self::DATE_ELEMENT_TYPE,
             'attributes' => [
                 'id' => 'date',
                 'class' => 'date form-control',
@@ -91,7 +105,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         [
             'name' => 'time',
             //'type' => 'text',
-            'type' => 'Zend\Form\Element\Time',
+            'type' =>self::TIME_ELEMENT_TYPE,
             'attributes' => [
                 'id' => 'time',
                 'class' => 'time form-control',
@@ -276,7 +290,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
          [
             'name' => 'end_time',
             //'type' => 'text',
-            'type' => 'Zend\Form\Element\Time',
+            'type' => self::TIME_ELEMENT_TYPE,
             'attributes' => [
                 'id' => 'end_time',
                 'class' => 'time form-control',
@@ -389,7 +403,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         [
              'name' => 'submission_date',
             //'type' => 'text',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => self::DATE_ELEMENT_TYPE,
             'attributes' => [
                 'id' => 'submission_date',
                 'class' => 'date form-control',
@@ -403,8 +417,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         $this->add(
         [
             'name' => 'submission_time',
-            //'type' => 'text',
-            'type' => 'Zend\Form\Element\Time',
+
+            'type' => self::TIME_ELEMENT_TYPE,
             'attributes' => [
                 'id' => 'submission_time',
                 'class' => 'time form-control',
@@ -600,6 +614,17 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'allow_empty' => true, // subject to conditions, to be continued
                 'validators'=> [
                     // we need a format check here
+                    [
+                        'name'=>  Callback::class,
+                        'options'=> [
+                            'callback'=> function($value) {
+                                return strtotime($value) !== false;
+                            } ,
+                            'messages'=> [
+                               Callback::INVALID_VALUE => 'invalid time',                                
+                            ],
+                        ],                        
+                    ]
                 ],
             ],
             'location' => [
