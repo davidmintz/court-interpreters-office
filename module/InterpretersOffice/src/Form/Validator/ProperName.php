@@ -42,7 +42,8 @@ class ProperName extends AbstractValidator
         self::INVALID_LASTNAME => 'last name contains invalid characters',
         self::INVALID_MIDDLENAME => 'middle name contains invalid characters',
         self::INVALID_FIRSTNAME => 'first name contains invalid characters',
-        self::FAKE_PLACEHOLDER_NAME => "'%value%' does not appear to be a proper name",
+        self::FAKE_PLACEHOLDER_NAME => "'%value%' does not appear "
+            . "to be a proper name",
     ];
 
     /**
@@ -63,10 +64,12 @@ class ProperName extends AbstractValidator
     {
         parent::__construct();
         if (! isset($options['type'])) {
-            throw new \Exception('parameter "type" is required (first, middle, or last)');
+            throw new \Exception('parameter "type" is required (first, middle,'
+                    . ' or last)');
         }
         if (! in_array($options['type'], array_keys($this->patterns))) {
-            throw new \Exception("type {$options['type']} is invalid, must be either 'first', 'middle', or 'last'");
+            throw new \Exception("type {$options['type']} is invalid, must be "
+            . "either 'first', 'middle', or 'last'");
         }
         $this->type = $options['type'];
         if (isset($options['pattern'])) {
