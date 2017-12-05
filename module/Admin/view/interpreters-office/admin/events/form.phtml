@@ -42,8 +42,14 @@ $form->add([
 $form->prepare();
 $fieldset = $form->get('event');
 foreach (['date','time','end_time','submission_time'] as $time) :
-    if (! $fieldset->has($time)) : continue; endif;
-    $value = $fieldset->get($time)->getValue();
+    if (! $fieldset->has($time)) : continue; endif;    
+    $element = $fieldset->get($time);
+    $value = $element->getValue();
+    if ($value instanceof \DateTime) {
+        $format = 'date'== $time ? 'Y-m-d' : 'g:i a';            
+        $element->setValue($value->format($format));
+        continue;
+    } 
     if (2 == substr_count($value, ':')) {        
         $fieldset->get($time)->setValue(substr($value,0,5));
     }
