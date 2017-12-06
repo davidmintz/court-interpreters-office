@@ -57,11 +57,13 @@ class Module
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function($event){
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function($event) use ($user) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
-                $event->getApplication()->getMvcEvent()->getViewModel()
-                ->setVariables($routeMatch->getParams());                
+                $viewModel = $event->getApplication()->getMvcEvent()
+                        ->getViewModel();
+                $viewModel->setVariables($routeMatch->getParams());
+                $viewModel->user = $user;
             }
         });
         
