@@ -39,8 +39,8 @@ class RoleRepository extends EntityRepository
         if (! in_array($auth_user_role, ['administrator','manager'])) {
             throw new \RuntimeException("invalid auth_user_role parameter $auth_user_role");
         }
-        
-        if ($hat) {
+        $is_admin = 'administrator' === $auth_user_role;
+        if (!$is_admin && $hat && $hat->getRole()) {
             // select only the roles that are valid for this hat
             $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h JOIN h.role r 
                 WHERE r.id = '.$hat->getRole()->getId(). ' ORDER BY r.name ';
@@ -58,9 +58,9 @@ class RoleRepository extends EntityRepository
             return $return;
             
         } else {
-            
+            //echo "hello?";
             $dql = 'SELECT r FROM InterpretersOffice\Entity\Role r ';
-            if ('administrator' !== $auth_user_role) {
+            if (! $is_admin) {
                 // select only roles non-admin is allowed to manage
                 $dql .= 'WHERE r.name IN (\'submitter\',\'staff\')';
             }
