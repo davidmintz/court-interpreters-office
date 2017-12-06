@@ -6,6 +6,7 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use InterpretersOffice\Entity;
 
 /**
  * Role repository.
@@ -29,19 +30,42 @@ class RoleRepository extends EntityRepository
      * gets Role entities for populating Userfieldset role element
      *
      * @param string $auth_user_role
+     * @param Entity $hat
      * @return array
      * @throws \RuntimeException
      */
-    public function getRoles($auth_user_role)
+    public function getRoles($auth_user_role,Entity\Hat $hat = null)
     {
         if (! in_array($auth_user_role, ['administrator','manager'])) {
             throw new \RuntimeException("invalid auth_user_role parameter $auth_user_role");
         }
-        $dql = 'SELECT r FROM InterpretersOffice\Entity\Role r ';
-        if ('administrator' !== $auth_user_role) {
-            $dql .= 'WHERE r.name <> \'administrator\' ';
+        
+        if ($hat) {
+            // select only the roles that are valid for this hat
+            $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h JOIN h.role r 
+                WHERE r.id = '.$hat->getRole()->getId(). ' ORDER BY r.name ';
+            $data = $this->createQuery($dql)->getResult();
+            $return = [];
+            $seen = '';
+            foreach ($data as $object) {
+                $this_role = (string)$object->getRole();
+                if ($this_role == $seen) {
+                    continue;
+                }
+                $return[] = $object->getRole();
+                $seen = $this_role;
+            }
+            return $return;
+            
+        } else {
+            
+            $dql = 'SELECT r FROM InterpretersOffice\Entity\Role r ';
+            if ('administrator' !== $auth_user_role) {
+                // select only roles non-admin is allowed to manage
+                $dql .= 'WHERE r.name IN (\'submitter\',\'staff\')';
+            }
+            $dql .= 'ORDER BY r.name';
+            return $this->createQuery($dql)->getResult();
         }
-        $dql .= 'ORDER BY r.name';
-        return $this->createQuery($dql)->getResult();
     }
 }
