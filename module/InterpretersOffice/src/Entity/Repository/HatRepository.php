@@ -65,12 +65,12 @@ class HatRepository extends EntityRepository
                 $dql .= 'WHERE r.name = \'submitter\'';
                 break;
             case 'manager':
+                // FORMERLY we said:
                 // manager can update but not create users in role "submitter"
-                if ($action == 'update') {
-                    $dql .= 'WHERE r.name = \'submitter\'';
-                } else {
-                    $dql .= 'WHERE  r.name <> \'submitter\'';
-                }
+                //if ($action == 'update') {
+                    $dql .= 'WHERE r.name IN (\'submitter\' , \'staff\') '
+                    . ' OR h.name = \'Interpreters Office staff\' ';               
+               //} else {$dql .= 'WHERE  r.name <> \'submitter\'';}
                 break;
             case 'administrator':
                // nothing more to do
@@ -97,7 +97,8 @@ class HatRepository extends EntityRepository
     public function getInterpreterHats()
     {
         $query = $this->createQuery(
-            'SELECT h  FROM InterpretersOffice\Entity\Hat h WHERE h.name LIKE :what ORDER BY h.name'
+            'SELECT h  FROM InterpretersOffice\Entity\Hat h WHERE h.name '
+                . 'LIKE :what ORDER BY h.name'
         )->setParameters([':what' => '%court interpreter']);
 
         return $query->getResult();
