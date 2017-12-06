@@ -27,7 +27,7 @@ return [
             Controller\JudgesController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\InterpretersController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\InterpretersWriteController::class => Controller\Factory\PeopleControllerFactory::class,
-            Controller\UsersController::class => Controller\Factory\PeopleControllerFactory::class,
+            Controller\UsersController::class => Controller\Factory\UsersControllerFactory::class,
             Controller\EventsController::class => Controller\Factory\EventsControllerFactory::class,
         ],
     ],
@@ -78,7 +78,8 @@ return [
             'vault' => null,
             'auth' => null,
             'administrator'=> null,
-            // to be continued
+            'manager' => null,
+            'submitter'=> null,
         ],
         // how do we configure this to use Assertions?
         // I think we don't
@@ -96,6 +97,7 @@ return [
                  // ??
                 'vault' => null,
                 'auth' => ['logout'],
+                'submitter'=> null,
             ],
             'staff' => [
                 'admin-index' => ['index'],
