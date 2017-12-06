@@ -23,7 +23,7 @@ class MinimalUserLoader implements FixtureInterface
          // this depends on Hatloader to be run first
          (new HatLoader())->load($objectManager);
 
-         // create a Person
+         // create a Person : staff interpreter/manager
         $person = new Entity\Person();
         $person->setActive(true)
             ->setFirstname('Susie')
@@ -31,11 +31,7 @@ class MinimalUserLoader implements FixtureInterface
             ->setHat(
                 $objectManager->getRepository('InterpretersOffice\Entity\Hat')
                     ->findOneBy(
-                        [
-                                //'name'=>'staff, Interpreters Office',
-                                'name' => 'staff court interpreter',
-
-                            ]
+                        ['name' => 'staff court interpreter',]
                     )
             )
             ->setEmail('susie_somebody@nysd.uscourts.gov');
@@ -50,17 +46,13 @@ class MinimalUserLoader implements FixtureInterface
            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"));
         $objectManager->persist($user);
         
-        // create a person in the role of staff
+        // create a person in the role "staff"
         $staff_person =  new Entity\Person();
         $staff_person->setActive(true)->setFirstname('Staffie')->setLastname('Person')
                 ->setEMail('staff_person@nysd.uscourts.gov')
                 ->setHat( $objectManager->getRepository('InterpretersOffice\Entity\Hat')
                     ->findOneBy(
-                        [
-                                //'name'=>'staff, Interpreters Office',
-                                'name' => 'Interpreters Office staff',
-
-                            ]
+                        ['name' => 'Interpreters Office staff',]
                     )
             );
         $objectManager->persist($staff_person);
@@ -72,8 +64,30 @@ class MinimalUserLoader implements FixtureInterface
            ->setPassword('boink')
            ->setActive(true)->setLastLogin(new \DateTime("-1 weeks"));
         
-        $objectManager->persist($staff_user); 
+        $objectManager->persist($staff_user);
+        
+        $admin_person = new Entity\Person();
+        $admin_person->setActive(true)
+            ->setFirstname('Jane')
+            ->setLastname('Admin')
+            ->setHat(
+                $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+                    ->findOneBy(
+                        ['name' => 'staff court interpreter',]
+                    )
+            )
+            ->setEmail('jane_admin@nysd.uscourts.gov');
+        $objectManager->persist($admin_person);
+        // create a user entity
+        $user = new Entity\User();
+        $user->setPerson($admin_person)->setRole(
+            $objectManager->getRepository('InterpretersOffice\Entity\Role')
+                         ->findOneBy(['name' => 'administrator'])
+        )->setUsername('admin')
+           ->setPassword('boink')
+           ->setActive(true)->setLastLogin(new \DateTime("-24 hours"));
+        $objectManager->persist($user);
         $objectManager->flush();
-        //printf("\nlooking good at %d in %s\n",__LINE__,basename(__FILE__));
+        
     }
 }
