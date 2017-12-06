@@ -42,7 +42,7 @@ echo $this->doctype();
                     </div>
                     <div class="collapse navbar-collapse" id="navbar-main">
                         <?php echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml') ?>
-                        <div class="navbar-right" style="padding: 15px 10px;">other shit here?</div>
+                        <div class="navbar-right" style="padding: 15px 10px;"><?php if ($this->layout()->user): echo "current user: {$this->layout()->user->username}"; endif;?></div>
                     </div>
                 </nav>                
             </div><!-- /row -->            
