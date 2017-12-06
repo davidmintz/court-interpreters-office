@@ -17,7 +17,7 @@ use Zend\Authentication\AuthenticationService;
 use InterpretersOffice\Admin\Form\UserForm;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
-
+use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Service\Acl;
 
 /**
@@ -58,10 +58,11 @@ class UsersController extends AbstractActionController implements Authentication
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, 
+            AuthenticationServiceInterface $auth)
     {
         $this->entityManager = $entityManager;
-        
+        $this->setAuthenticationService($auth);        
     }
 
     /**
@@ -103,11 +104,12 @@ class UsersController extends AbstractActionController implements Authentication
             $person = $e->getParam('person');
             $hat = $person->getHat();
             $form = $e->getParam('form');
-            $hats_allowed = $form->get('user')->get('person')->get('hat')
+            $hat_options = $form->get('user')->get('person')->get('hat')
                     ->getValueOptions();
-            if (!in_array($hat->getId(), array_column($hats_allowed, 'value')))
+            $hats_allowed = array_column($hat_options, 'value');
+            if (!in_array($hat->getId(), $hats_allowed))
             {
-                $errorMessage = sprintf(
+                $message = sprintf(
                     'The person identified by id %d, %s %s, wears the hat %s, '
                     . 'but people in that category do not have user accounts '
                     . 'in this system.', 
@@ -118,39 +120,36 @@ class UsersController extends AbstractActionController implements Authentication
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
             }
-            $action = $e->getTarget()->params()->fromRoute('action');
-            
-            if ('add' == $action) {
-                // is there already a User account?
-                $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
-                        ->findOneBy(['person' => $person]);
-                if ($user) {
-                    $container = $e->getTarget()->getEvent()->getApplication()
-                            ->getServiceManager();
-
-                    $message = sprintf(
-                        'We can\'t create a new user account because the person '
-                        . 'whose id is %d (%s %s) already has one. ', 
-                        $person->getId(), $person->getFirstname(), 
-                        $person->getLastname());
-
-                    $resource_id = $user->getResourceId();
-                    $acl = $e->getTarget()->getEvent()->getApplication()
-                                    ->getServiceManager()->get('acl');
-                    // are they authorized to edit?
-                    if ( $acl->isAllowed($role_id, $resource_id)) {
-                        $helper = $container->get('ViewHelperManager')->get('url');
-                        $url = $helper('users/edit', ['id' => $user->getId()]);
-                        $message .= sprintf(
-                            'You can <a href="%s">edit it</a> if you want to.', 
-                             $url
-                        );
-                    }
-                    $controller = $e->getTarget();
-                    $controller->flashMessenger()->addErrorMessage($message);
-                    return $controller->redirect()->toRoute('users');
+            //$action = $e->getTarget()->params()->fromRoute('action');
+            //echo "action is $action";
+            //if ('add' == $action) {
+            // is there already a User account?
+            $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
+                    ->findOneBy(['person' => $person]);
+            if ($user) {
+                $container = $e->getTarget()->getEvent()->getApplication()
+                        ->getServiceManager();
+               
+                $message = sprintf(
+                    'We can\'t create a new user account because the person '
+                    . 'whose id is %d (%s %s) already has one. ', 
+                    $person->getId(), $person->getFirstname(), 
+                    $person->getLastname());
+                $acl = $e->getTarget()->getEvent()->getApplication()
+                                ->getServiceManager()->get('acl');
+                if ( $acl->isAllowed($role_id, $user->getResourceId())) {
+                    $helper = $container->get('ViewHelperManager')->get('url');
+                    $url = $helper('users/edit', ['id' => $user->getId()]);
+                    $message .= sprintf(
+                        'You can <a href="%s">edit it</a> if you want to.', 
+                         $url
+                    );
                 }
-            }
+                $controller = $e->getTarget();
+                $controller->flashMessenger()->addErrorMessage($message);
+                return $controller->redirect()->toRoute('users');
+            }    
+                
         });
         // are they authorized to edit this user account?       
         $events->attach('load-user', function (EventInterface $e) use ($role_id) {
@@ -159,7 +158,7 @@ class UsersController extends AbstractActionController implements Authentication
                             ->getServiceManager()->get('acl');
             if (!$acl->isAllowed($role_id, $resource_id)) {
                 $controller = $e->getTarget();
-                $message = 'Access denied to administrator\'s user account';
+                $message = "Access denied to {$resource_id}'s user account";
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
             }
@@ -243,6 +242,7 @@ class UsersController extends AbstractActionController implements Authentication
         $form = new UserForm($this->entityManager, [
             'action' => 'update',
             'auth_user_role' => $this->auth_user_role,
+            'user' => $user,
             ]);
         $person = $user->getPerson();
         /** @todo do this initialization somewhere else?  */
