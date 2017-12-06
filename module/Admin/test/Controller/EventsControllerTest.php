@@ -165,7 +165,7 @@ class EventControllerTest extends AbstractControllerTest
         $dom = new Dom\Query($this->getResponse()->getBody());
         $element = $dom->execute('#time')->current();
         $time = $element->getAttribute('value');
-        $time_expected = $entity->getTime()->format('H:i');
+        $time_expected = $entity->getTime()->format('g:i a');
         $this->assertEquals(html_entity_decode($time),$time_expected);
         
         $date_expected = $entity->getDate()->format('Y-m-d');
