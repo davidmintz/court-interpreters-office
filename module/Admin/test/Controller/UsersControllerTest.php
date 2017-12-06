@@ -49,4 +49,19 @@ class UsersControllerTest extends AbstractControllerTest
         $this->assertRedirect();
         $this->assertResponseStatusCode(303);        
     }
+    
+    public function testManagerCannotEditAdministratorAccount()
+    {
+        $em = FixtureManager::getEntityManager();
+        $admin_user_id = $em->getRepository(Entity\User::class)
+                ->findOneBy(['username'=>'admin'])
+                ->getId();        
+        $this->login('staffie','boink');
+        $this->reset(true);
+        $url = "/admin/users/edit/$admin_user_id";
+        $this->dispatch($url);
+        $this->assertRedirect();
+
+        
+    }
 }
