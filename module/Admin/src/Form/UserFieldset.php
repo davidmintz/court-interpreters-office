@@ -55,6 +55,13 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
      * @var string $auth_user_role
      */
     protected $auth_user_role;
+    
+    /**
+     * user, if we're an update
+     * 
+     * @var \InterpretersOffice\Entity\User
+     */
+    protected $user;
 
     /**
      * constructor
@@ -80,7 +87,10 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         }
         $this->auth_user_role = $options['auth_user_role'];
         unset($options['auth_user_role']);
-        
+        if (!empty($options['user'])) {
+            $this->user = $options['user'];  
+            unset($options['user']);
+        }
         /*
         if (! $options['auth'] instanceof AuthenticationServiceInterface) {
             throw new \RuntimeException(sprintf(
@@ -94,9 +104,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager, true))
-                //->setObject(new Entity\Person())
                 ->setUseAsBaseFieldset(true);
-        //foreach ($this->elements as $element) { $this->add($element);  }
+        
         $this->addElements();
     }
     /**
@@ -124,6 +133,11 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'id' => 'username',
              ],
         ]);
+        if ($this->user) {
+            $hat = $this->user->getPerson()->getHat();
+        } else {
+            $hat = null;
+        }
         $this->add(
             [
             'name' => 'role',
@@ -134,7 +148,10 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'label' => 'role',
                 'find_method' => [
                     'name' => 'getRoles',
-                    'params' => ['auth_user_role' => $this->auth_user_role ],
+                    'params' => [
+                        'auth_user_role' => $this->auth_user_role,
+                        'hat' => $hat,
+                    ],
                  ],
                 'property' => 'name',
             ],
@@ -213,7 +230,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 /** @todo stringlength validation */
             ],
             'role' => [
-                'required' => false,
+                'required' => true,
                 'allow_empty' => false,
                 'validators' => [
                     [
