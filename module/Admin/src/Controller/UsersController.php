@@ -258,11 +258,10 @@ class UsersController extends AbstractActionController implements Authentication
             }            
             $this->entityManager->flush(); // return $viewModel;
             $this->flashMessenger()
-                  ->addSuccessMessage(sprintf(
-                      'The user account for <strong>%s %s</strong> has been updated.',
-                      $person->getFirstname(),
-                      $person->getLastname()
-                  ));
+                ->addSuccessMessage(sprintf(
+                'The user account for <strong>%s %s</strong> has been updated.',
+                $person->getFirstname(), $person->getLastname()
+            ));
             $this->redirect()->toRoute('users');
         }
         return $viewModel;
