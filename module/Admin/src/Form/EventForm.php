@@ -198,10 +198,19 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
                     'invalid_time' => 'end time has to be later than start time',
                     'missing_start_time'=> 
                         'if end time is provided, start time is required',
+                    'is_future'=>'end time cannot be predicted for future events',
                 ];
                 public function isValid($value,$context = null) {                    
                     if (! trim($value)) {
                         return true;
+                    }
+                    if (isset($context['date']) && isset($context['time'])) {
+                        $datetime = strtotime("$context[date] $value");
+                        if ($datetime && time() < $datetime) {
+                            $this->error('is_future');
+                            return false;
+                        }
+
                     }
                     if ($value && ! $context['time']) {
                         $this->error('missing_start_time');
