@@ -86,7 +86,6 @@ class EventsController extends AbstractActionController
      */    
     public function getViewModel(Array $data = [])
     {
-
         if (! $this->viewModel) {
 
             $this->viewModel = new ViewModel();
@@ -105,8 +104,7 @@ class EventsController extends AbstractActionController
      *
      */
     public function indexAction()
-    {
-        
+    {        
         return ['title' => 'schedule'];
     }
 
@@ -178,7 +176,6 @@ class EventsController extends AbstractActionController
     
     /**
      * edits an court interpreting event
-     *
      *
      */
     public function editAction()
