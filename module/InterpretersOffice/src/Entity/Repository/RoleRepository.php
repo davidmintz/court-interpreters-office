@@ -27,7 +27,7 @@ class RoleRepository extends EntityRepository
     protected $cache_id = 'roles';
 
     /**
-     * gets Role entities for populating Userfieldset role element
+     * gets default Role entities for initializing Userfieldset role element
      *
      * @param string $auth_user_role
      * @param Entity $hat
@@ -37,7 +37,8 @@ class RoleRepository extends EntityRepository
     public function getRoles($auth_user_role,Entity\Hat $hat = null)
     {
         if (! in_array($auth_user_role, ['administrator','manager'])) {
-            throw new \RuntimeException("invalid auth_user_role parameter $auth_user_role");
+            throw new \RuntimeException('invalid auth_user_role parameter '
+                    . $auth_user_role);
         }
         $is_admin = 'administrator' === $auth_user_role;
         if (!$is_admin && $hat && $hat->getRole()) {
@@ -58,14 +59,61 @@ class RoleRepository extends EntityRepository
             return $return;
             
         } else {
-            //echo "hello?";
+            
             $dql = 'SELECT r FROM InterpretersOffice\Entity\Role r ';
             if (! $is_admin) {
                 // select only roles non-admin is allowed to manage
                 $dql .= 'WHERE r.name IN (\'submitter\',\'staff\')';
             }
             $dql .= 'ORDER BY r.name';
+            
             return $this->createQuery($dql)->getResult();
         }
+    }
+    
+    protected $role_authorization = [       
+        'manager'=>['staff',],
+        'administrator' => ['staff','administrator','manager'],        
+    ];
+    /**
+     * gets valid roles based on $hat_id and current user's role
+     * 
+     * for dynamically re-populating Userfieldset's role element
+     * based on state of Hat element and the current user's role
+     * 
+     * @param int $hat_id
+     * @param string $user_role
+     * @return array
+     */
+    public function getRoleOptionsForHatId($hat_id,$user_role)
+    {
+        $dql = 'SELECT r.id AS value, r.name AS label '
+                . 'FROM InterpretersOffice\Entity\Role r ';
+
+        $roles = $this->createQuery($dql)->getResult();
+        
+        $hat = (string)$this->getEntityManager()->find(Hat::class,$hat_id);
+        $dql = 'SELECT r.id AS value, r.name AS label '
+                . 'FROM InterpretersOffice\Entity\Role r ';
+        switch ($hat) {
+            case 'Courtroom Deputy':
+            case 'Law Clerk':
+            case 'USPO':
+            case 'Pretrial Services Officer':
+                $dql .= 'WHERE r.name = :role';
+                $params = [':role'=> 'submitter'];
+                break;
+            case 'staff court interpreter':
+            case 'Interpreters Office staff':
+                $dql .= 'WHERE r.name IN (:roles)';
+                $params = [':roles'=> $this->role_authorization[$user_role]];
+            default:
+                throw new \RuntimeException("hat $hat is not supported");
+                break;
+        }
+        $dql .= ' ORDER BY r.name';
+        $data =  $this->createQuery($dql)->setParameters($params)->getResult();
+        return $data;
+        
     }
 }

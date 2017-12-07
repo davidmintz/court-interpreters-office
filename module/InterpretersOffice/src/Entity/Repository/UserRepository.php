@@ -53,45 +53,4 @@ class UserRepository extends EntityRepository
         $this->cache->setNamespace('users');
     }
 
-    public function getRoleOptionsForHatId($hat_id,$user_role)
-    {
-        $hat = (string)$this->getEntityManager()->find(Hat::class,$hat_id);
-        switch ($hat) {
-            case 'Courtroom Deputy':
-            case 'Law Clerk':
-            case 'USPO':
-            case 'Pretrial Services Officer'
-                return "submitter"; // tmp
-                break;
-            case 'staff court interpreter':
-            case 'Interpreters Office staff':
-                return 'yadda'; // tmp
-                break;
-            default:
-                # code...
-                break;
-        }
-
-        
-    }
-/*
-                      |
-+---------------------------+
-| Courtroom Deputy          |
-| Interpreters Office staff |
-| Law Clerk                 |
-| Pretrial Services Officer |
-| staff court interpreter   |
-| USPO                      |
-+---------------------------+
-       |
-+---------------+
-| submitter     |
-| manager       |
-| administrator |
-| staff         |
-+---------------+
-
-*/
-
 }
