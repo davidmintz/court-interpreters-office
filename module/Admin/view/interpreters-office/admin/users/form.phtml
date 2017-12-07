@@ -5,6 +5,7 @@
  *  view script for rendering users add|edit form
  */
 $this->headTitle($this->title);
+$this->headScript()->appendFile($this->basePath('js/user-form.js'));
 ?>
 <div class="center-block" style="max-width:800px"><!-- wrapper -->
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
@@ -86,25 +87,3 @@ $user_active = $user_fieldset->get('active');?>
 <?php 
 echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
-<script type="text/javascript">
-    $(function(){
-    	// help enforce logical consistency between user-account "active"
-    	// and person "active" properties
-        var userActiveElement = $('#user-active');
-        var personActiveElement = $('#person-active');
-        $('#user-active, #person-active').on("change",function(event){
-            if (! personActiveElement.is(":checked")) {
-                userActiveElement.prop("checked",false);
-            }
-            if (userActiveElement.is(":checked")) {
-                personActiveElement.prop("checked",true);
-            }
-            if (event.target.id === 'user-active')  {
-            	if (! userActiveElement.is(':checked')  && ! personActiveElement.is(':checked')) {
-            		personActiveElement.prop("checked",true);
-            		userActiveElement.prop("checked",true);
-            	}
-            }      
-        });
-    });
-</script>

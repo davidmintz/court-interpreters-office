@@ -22,5 +22,24 @@ $(document).ready(function(){
                 roleElement.children(":last").attr({selected:"selected"});
             }
         });
-    });    
+    });
+    
+    // help enforce logical consistency between user-account "active"
+    // and person "active" properties
+    var userActiveElement = $('#user-active');
+    var personActiveElement = $('#person-active');
+    $('#user-active, #person-active').on("change",function(event){
+        if (! personActiveElement.is(":checked")) {
+            userActiveElement.prop("checked",false);
+        }
+        if (userActiveElement.is(":checked")) {
+            personActiveElement.prop("checked",true);
+        }
+        if (event.target.id === 'user-active')  {
+            if (! userActiveElement.is(':checked')  && ! personActiveElement.is(':checked')) {
+                personActiveElement.prop("checked",true);
+                userActiveElement.prop("checked",true);
+            }
+        }      
+    });
 });
