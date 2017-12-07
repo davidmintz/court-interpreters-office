@@ -196,7 +196,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'auth_user_role' => $this->auth_user_role,
             ]
         );
-
+        
         $this->add($fieldset);
 
         return $this;
@@ -226,7 +226,17 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ],
             'username' => [
                 'required' => true,
-                'allow_empty' => true,
+                'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'username is required (use the email address as a last resort)',
+                            ],
+                        ],
+                    ],
+                ],
                 /** @todo stringlength validation */
             ],
             'role' => [
