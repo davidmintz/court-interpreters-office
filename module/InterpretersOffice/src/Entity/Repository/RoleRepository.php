@@ -71,16 +71,12 @@ class RoleRepository extends EntityRepository
         }
     }
     
-    protected $role_authorization = [       
-        'manager'=>['staff',],
-        'administrator' => ['staff','administrator','manager'],        
-    ];
     /**
      * gets valid roles based on $hat_id and current user's role
      * 
      * for dynamically re-populating Userfieldset's role element
      * based on state of Hat element and the current user's role
-     * 
+     * @todo think of a better way than hard-coding
      * @param int $hat_id
      * @param string $user_role
      * @return array
@@ -90,12 +86,11 @@ class RoleRepository extends EntityRepository
         $dql = 'SELECT r.id AS value, r.name AS label '
                 . 'FROM InterpretersOffice\Entity\Role r ';
 
-        $roles = $this->createQuery($dql)->getResult();
-        
-        $hat = (string)$this->getEntityManager()->find(Hat::class,$hat_id);
+        $hat = (string)$this->getEntityManager()->find(Entity\Hat::class,$hat_id);
         $dql = 'SELECT r.id AS value, r.name AS label '
                 . 'FROM InterpretersOffice\Entity\Role r ';
         switch ($hat) {
+            // these can only be in the "submitter" role
             case 'Courtroom Deputy':
             case 'Law Clerk':
             case 'USPO':
@@ -103,10 +98,16 @@ class RoleRepository extends EntityRepository
                 $dql .= 'WHERE r.name = :role';
                 $params = [':role'=> 'submitter'];
                 break;
+            // these can have their role set depending 
+            // on the current user's role
             case 'staff court interpreter':
             case 'Interpreters Office staff':
                 $dql .= 'WHERE r.name IN (:roles)';
-                $params = [':roles'=> $this->role_authorization[$user_role]];
+                $params = [':roles'=> 
+                    $user_role == 'administrator' ? 
+                        ['staff','administrator','manager'] : ['staff']
+                 ];
+                break;
             default:
                 throw new \RuntimeException("hat $hat is not supported");
                 break;

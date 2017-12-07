@@ -5,8 +5,7 @@
 
 namespace InterpretersOffice\Entity\Repository;
 
-use InterpretersOffice\Entity\User;
-use InterpretersOffice\Entity\Hat;
+
 use Doctrine\ORM\EntityRepository;
 
 /**

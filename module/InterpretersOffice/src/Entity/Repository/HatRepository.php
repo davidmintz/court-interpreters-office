@@ -54,32 +54,26 @@ class HatRepository extends EntityRepository
      */
     public function getHatsForUserForm($auth_user_role, $action)
     {
-
         if (! in_array($action, ['create','update'])) {
             throw new \DomainException('invalid action parameter');
         }
         $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h JOIN h.role r ';
         switch ($auth_user_role) {
             case 'anonymous': // e.g., user registration
-            case 'submitter': // normally they cannot update, but...
+            case 'submitter': 
                 $dql .= 'WHERE r.name = \'submitter\'';
                 break;
             case 'manager':
-                // FORMERLY we said:
-                // manager can update but not create users in role "submitter"
-                //if ($action == 'update') {
                     $dql .= 'WHERE r.name IN (\'submitter\' , \'staff\') '
                     . ' OR h.name = \'Interpreters Office staff\' ';               
-               //} else {$dql .= 'WHERE  r.name <> \'submitter\'';}
                 break;
             case 'administrator':
                // nothing more to do
                 break;
             default:
                 throw new \RuntimeException(sprintf(
-                    '%s: %s denied to %s',
-                    __METHOD__,
-                    $action,
+                    '%s: unsupported auth user role %s',
+                    __METHOD__,                    
                     $auth_user_role
                 ));
         }
@@ -115,7 +109,8 @@ class HatRepository extends EntityRepository
     public function getHatByName($name)
     {
         return $query = $this->createQuery(
-            'SELECT h  FROM InterpretersOffice\Entity\Hat h WHERE h.name = :what ORDER BY h.name'
+            'SELECT h  FROM InterpretersOffice\Entity\Hat h '
+                . 'WHERE h.name = :what ORDER BY h.name'
         )->setParameters([':what' => $name])->setMaxResults(1)->getOneorNullResult();
     }
 
