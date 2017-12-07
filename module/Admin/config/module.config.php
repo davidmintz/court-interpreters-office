@@ -43,9 +43,8 @@ return [
     /** ACL configuration ====================================      **/
     // based on LearnZF2.
     
-    'acl' => [
-         include __DIR__.'/acl.php',
-    ],
+    'acl' =>    include __DIR__.'/acl.php',
+    
     'service_manager' => [
         'factories' => [
              Service\Acl::class  => Service\Factory\AclFactory::class,  
