@@ -45,7 +45,7 @@ $(document).ready(function()
                                 .data({type: item.type});
                     });
                     // discard existing option elements
-                    locationElement.children().not(":first").remove();
+                    locationElement.children().slice(1).remove();
                     locationElement.append(options)
                          .trigger("sdny.location-update-complete");
                     if (params && params.location_id) {
