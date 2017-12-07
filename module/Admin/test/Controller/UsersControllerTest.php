@@ -22,8 +22,7 @@ class UsersControllerTest extends AbstractControllerTest
 
         $fixtureExecutor->execute(
                 [
-                    new DataFixture\MinimalUserLoader(),
-                   
+                    new DataFixture\MinimalUserLoader(),                   
                 ]
         );
 
