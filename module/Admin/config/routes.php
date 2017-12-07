@@ -9,7 +9,7 @@ return  [
         'admin' => [
             'type' => Segment::class,
             'options' => [
-                'route' => '/admin', //[/]
+                'route' => '/admin', //[/]r
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\AdminIndexController::class,
@@ -446,6 +446,19 @@ return  [
                         ],
                     ],
                 ],
+                'role-options' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/role-options/:hat_id',
+                        'defaults' => [
+                            'action' => 'get-role-options-for-hat',
+
+                        ],
+                        'constraints' => [                            
+                            'hat_id' => '[1-9]\d*',
+                        ],
+                    ],
+                ]
             ],
         ],
         'vault-test' => [

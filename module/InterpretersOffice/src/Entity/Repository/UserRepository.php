@@ -6,7 +6,7 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use InterpretersOffice\Entity\User;
-
+use InterpretersOffice\Entity\Hat;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -53,38 +53,45 @@ class UserRepository extends EntityRepository
         $this->cache->setNamespace('users');
     }
 
-    /**
-     * experimental overrride of find() to cut down on db queries
-     *
-     * ...which maybe we no longer really need because we are no longer using
-     * Doctrine's authentication adapter
-     *
-     * @param mixed    $id          The identifier.
-     * @param int|null $lockMode    One of the \Doctrine\DBAL\LockMode::* constants
-     *                              or NULL if no specific lock mode should be used
-     *                              during the search.
-     * @param int|null $lockVersion The lock version.
-     * @return User  The User instance or NULL if the entity cannot be found.
-     */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function getRoleOptionsForHatId($hat_id,$user_role)
     {
+        $hat = (string)$this->getEntityManager()->find(Hat::class,$hat_id);
+        switch ($hat) {
+            case 'Courtroom Deputy':
+            case 'Law Clerk':
+            case 'USPO':
+            case 'Pretrial Services Officer'
+                return "submitter"; // tmp
+                break;
+            case 'staff court interpreter':
+            case 'Interpreters Office staff':
+                return 'yadda'; // tmp
+                break;
+            default:
+                # code...
+                break;
+        }
 
-        if (is_object($id)) {
-            $id = $id->getId();
-        }
-        // this seems to resolve "array to string conversion" notices
-        if (is_array($id) && isset($id['id'])) {
-            $id = $id['id'];
-        }
-        if ($this->cache->contains($id)) {
-            return $this->cache->fetch($id);
-        }
-
-        $user = parent::find($id, $lockMode, $lockVersion);
-        if (! $user) {
-            return null;
-        }
-        $this->cache->save($id, $user, $this->cache_lifetime);
-        return $user;
+        
     }
+/*
+                      |
++---------------------------+
+| Courtroom Deputy          |
+| Interpreters Office staff |
+| Law Clerk                 |
+| Pretrial Services Officer |
+| staff court interpreter   |
+| USPO                      |
++---------------------------+
+       |
++---------------+
+| submitter     |
+| manager       |
+| administrator |
+| staff         |
++---------------+
+
+*/
+
 }

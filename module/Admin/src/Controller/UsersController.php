@@ -278,4 +278,13 @@ class UsersController extends AbstractActionController implements Authentication
 
         return new ViewModel(['title' => 'admin | users','role' => $this->auth_user_role]);
     }
+
+    public function getRoleOptionsForHatAction()
+    {
+        $hat_id = $this->params()->fromRoute('hat_id',"fuck!");
+        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\User');
+        $data = $repository->getRoleOptionsForHatId($hat_id,$this->auth_user_role);
+        return false;
+
+    }
 }
