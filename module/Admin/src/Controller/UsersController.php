@@ -20,6 +20,8 @@ use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Service\Acl;
 
+use Zend\View\Model\JsonModel;
+
 /**
  * controller for admin/users.
  *
@@ -278,13 +280,23 @@ class UsersController extends AbstractActionController implements Authentication
 
         return new ViewModel(['title' => 'admin | users','role' => $this->auth_user_role]);
     }
-
+    
+    /**
+     * gets data for role element options
+     * 
+     * this is for dynamically re-populating the Role element options based on 
+     * the currently selected Hat. route is /admin/users/role-options
+     * 
+     * @return JsonModel
+     */
     public function getRoleOptionsForHatAction()
-    {
+    {        
         $hat_id = $this->params()->fromRoute('hat_id',"fuck!");
-        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\User');
-        $data = $repository->getRoleOptionsForHatId($hat_id,$this->auth_user_role);
-        return false;
-
+        $repository = $this->entityManager
+                ->getRepository('InterpretersOffice\Entity\Role');
+        $data = $repository->getRoleOptionsForHatId($hat_id,
+                $this->auth_user_role);
+        
+       return new JsonModel($data);
     }
 }
