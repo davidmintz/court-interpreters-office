@@ -8,7 +8,6 @@ namespace InterpretersOffice\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
-// sort of experimental
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
