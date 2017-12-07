@@ -73,12 +73,13 @@ class JudgesControllerTest extends AbstractControllerTest
                 'flavor' => $flavor->getId(),
                 'default_location' => $courtroom->getId(),
                 'active' => 1,
+                'email' => '',
             ],
             'csrf' => $this->getCsrfToken('/admin/judges/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(new Parameters($data));
         $this->dispatch('/admin/judges/add');
-        //echo $this->getResponse()->getBody(); //return;
+        //$this->getResponse()->getBody(); //return;
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/judges');
 
@@ -137,6 +138,7 @@ class JudgesControllerTest extends AbstractControllerTest
                 'flavor' => $flavor->getId(),
                 'default_location' => '',
                 'active' => 1,
+                'email' => '',
             ],
             'csrf' => $this->getCsrfToken('/admin/judges/add'),
         ];

@@ -235,7 +235,9 @@ class PeopleControllerTest extends AbstractControllerTest
                 'firstname' => 'John',
                 'middlename' => 'Peter',
                 'active' => 1,
-                'hat' => $person->getHat()->getId(),            ],
+                'hat' => $person->getHat()->getId(),
+                'email' => '',
+                ],
             'csrf' => $this->getCsrfToken($url),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
@@ -257,7 +259,9 @@ class PeopleControllerTest extends AbstractControllerTest
                 'lastname' => 'Somebody',
                 'firstname' => 'John (Killer)',
                 'active' => 1,
-                'hat' => $attorneyHat,            ],
+                'hat' => $attorneyHat,
+                'email' => '',
+                            ],
             'csrf' => $this->getCsrfToken('/admin/people/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
