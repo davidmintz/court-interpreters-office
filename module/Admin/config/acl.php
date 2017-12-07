@@ -3,7 +3,6 @@
 ==========  ACL configuration ====================================      
 // based on LearnZF2.
 */
-    
 
 return [
     'roles' => [
@@ -43,7 +42,7 @@ return [
         'submitter' => null,
         'staff'=> null,
     ],
-    // how do we configure this to use Assertions?$
+    // how do we configure this to use Assertions?
     // I think we don't
     'allow' => [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
