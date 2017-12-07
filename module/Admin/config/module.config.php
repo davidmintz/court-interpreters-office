@@ -40,10 +40,8 @@ return [
             'interpreters-office/admin' => __DIR__.'/../view',
         ],
     ],
-    /** ACL configuration ====================================      **/
-    // based on LearnZF2.
     
-    'acl' =>    include __DIR__.'/acl.php',
+    'acl' =>    include __DIR__.'/acl.php',    
     
     'service_manager' => [
         'factories' => [
