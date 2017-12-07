@@ -126,23 +126,23 @@ class EventsController extends AbstractActionController
         
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
-        $event = new Entity\Event();        
+        $event = new Entity\Event();
         $form->bind($event);
         // test
         if (false) {
-        $shit = $form->get("event");
-        $shit->get("date")->setValue('10/27/2017');
-        $shit->get("time")->setValue('10:00 am');
-        $shit->get("judge")->setValue(948);
-        $shit->get("language")->setValue(62);
-        $shit->get("parent_location")->setValue(6);
-        $shit->get("location")->setValue(11);
-        $shit->get("eventType")->setValue(1);
-        $shit->get("docket")->setValue("2016-CR-0345");
-        $shit->get("anonymousSubmitter")->setValue("6");
-        $shit->get("submission_date")->setValue("10/24/2017");
-        $shit->get("submission_time")->setValue("10:17 am");
-        $shit->get("submission_datetime")->setValue('2017-10-24 10:17:00');
+            $shit = $form->get("event");
+            $shit->get("date")->setValue('10/27/2017');
+            $shit->get("time")->setValue('10:00 am');
+            $shit->get("judge")->setValue(948);
+            $shit->get("language")->setValue(62);
+            $shit->get("parent_location")->setValue(6);
+            $shit->get("location")->setValue(11);
+            $shit->get("eventType")->setValue(1);
+            $shit->get("docket")->setValue("2016-CR-0345");
+            $shit->get("anonymousSubmitter")->setValue("6");
+            $shit->get("submission_date")->setValue("10/24/2017");
+            $shit->get("submission_time")->setValue("10:17 am");
+            $shit->get("submission_datetime")->setValue('2017-10-24 10:17:00');
         // end test
         }
         $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
@@ -151,19 +151,17 @@ class EventsController extends AbstractActionController
             $data = $request->getPost();
             $input = $data->get('event');
             $this->getEventManager()->trigger('pre.validate',$this,
-                ['input'=> $data,]);  
-            ///*
-            $form->setData($data);
-            
-            if (! $form->isValid()) {
-                //print_r($form->getMessages());
+                ['input'=> $data,]);              
+            $form->setData($data);            
+            if (! $form->isValid()) {                
                 if ($input) {
                     $defendantNames = isset($input['defendantNames']) ? 
-                            $input['defendantNames'] : [];
+                        $input['defendantNames'] : [];
                     $interpreters = isset($input['interpreterEvents']) ? 
-                            $input['interpreterEvents'] : [];
-                }//*/
-                return $viewModel->setVariables(compact('defendantNames','interpreters' ));
+                        $input['interpreterEvents'] : [];
+                }
+                return $viewModel
+                    ->setVariables(compact('defendantNames','interpreters'));
             } else {              
               
                 $this->entityManager->persist($event);
@@ -171,7 +169,6 @@ class EventsController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                      "This event has been added to the schedule.");                
                 return $this->redirect()->toRoute('events');
-
             }            
         }
         
