@@ -324,17 +324,17 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
             ],
             'email' => [
-                'required' => false,
+                'required' => true,
                 'allow_empty' => true,
                 'validators' => [
 
                     //if we want to constrain the domain to values found in a
                     //config, this would be a good place to set that up
-
                     [
                         'name' => 'Zend\Validator\EmailAddress',
                         'options' => [
                             'messages' => [
+                                Validator\EmailAddress::INVALID => 'email address is required',
                                 Validator\EmailAddress::INVALID_FORMAT => 'invalid email address',
                             ],
                         ],
