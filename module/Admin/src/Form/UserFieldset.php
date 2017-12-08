@@ -232,7 +232,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                         'name' => 'NotEmpty',
                         'options' => [
                             'messages' => [
-                                'isEmpty' => 'username is required (use the email address as a last resort)',
+                                'isEmpty' => 'username is required (use the '
+                                . 'email address as a last resort)',
                             ],
                         ],
                     ],
