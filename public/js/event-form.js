@@ -3,7 +3,7 @@
  */
 
 moment = window.moment; 
-Modernizr = window.Modernizr;
+//Modernizr = window.Modernizr;
 
 $(document).ready(function()
 {
@@ -73,7 +73,7 @@ $(document).ready(function()
         
         var language_id =  languageElement.val();
         // remove the interpreters if the language changes, except
-        // when we're initially triggered on page load, which we 
+        // when we're initially triggered on page load, which we will
         // find out from the "params" parameter
         if (! params || params.remove_existing !== false) {            
             $('#interpreters-assigned li').remove();
@@ -118,7 +118,8 @@ $(document).ready(function()
         } else {
             index = 0;
         }        
-        interpreterSelectElement.val("");        
+        interpreterSelectElement.val("");
+        // get the markup
         $.get('/admin/schedule/interpreter-template',
             {   interpreter_id : id, index : index, 
                 name : name, 
@@ -150,7 +151,8 @@ $(document).ready(function()
             judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
         );
     }).trigger('change');
-    //
+    
+    // get data to update submitter dropdown based on selected hat
     hatElement.on("change",function()
     {
         console.warn("shit changes");
@@ -159,7 +161,7 @@ $(document).ready(function()
             hatElement.children().not(":first").remove();
             return;
         }
-
+        // get data t
          $.getJSON('/admin/people/get',
                 { hat_id: hat_id },
                 function(data)
@@ -182,7 +184,7 @@ $(document).ready(function()
     //#event-type,
     $(' #judge').on('change',function(event){
                 
-        if (// make sure event-type is set, it's in-court, and judge is set
+        if (// return unless event-type is set, it's in-court, and judge is set
             ! judgeElement.val()
             || ! eventTypeElement.val() 
             || "in" !== eventTypeElement.children(":selected").data().category) 
@@ -216,6 +218,7 @@ $(document).ready(function()
             }
         }
     });
+    
     /** deft name autocompletion */
     $('#defendant-search').autocomplete(
         {
@@ -245,6 +248,7 @@ $(document).ready(function()
     
     /* ==================== */
 });
+
 formatTimeElement = function(timeElement) {
     
     var timeValue = timeElement.val();
