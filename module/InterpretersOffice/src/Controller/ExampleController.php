@@ -27,6 +27,15 @@ class ExampleController extends AbstractActionController
      */
     protected $objectManager;
 
+     
+    public function bootstrap4Action()
+    {
+        $this->layout()->setTemplate('layout/bs-4.layout.phtml');
+        $view = new ViewModel();
+        $view->setTemplate('interpreters-office/example/bootstrap4.phtml');
+        return $view;
+        //return false;
+    }
     /**
      * constructor.
      *
