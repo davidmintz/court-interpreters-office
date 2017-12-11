@@ -775,9 +775,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ];
             $spec[$field] = $shit;
         }
-        if ($this->has('end_time')) {
-            
-        }
+        //if ($this->has('end_time')) {}
         return $spec;
     }
    
