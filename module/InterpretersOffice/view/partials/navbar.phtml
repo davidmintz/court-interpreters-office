@@ -1,10 +1,10 @@
 <?php /** from https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */ ?>
 <ul class="nav navbar-nav"><?php foreach ($this->container as $page) { ?>            
-            <?php /* @var $page Zend\Navigation\Page\Mvc */ 
-            // when using partials we need to manually check for ACL conditions
-            if (!$page->isVisible() || !$this->navigation()->accept($page)) { continue; }
-            $hasChildren = $page->hasPages();            
-            if (!$hasChildren or false === $page->expand_children ) { //'interpreters' == $page->getLabel())
+        <?php /* @var $page Zend\Navigation\Page\Mvc */ 
+        // when using partials we need to manually check for ACL conditions
+        if (!$page->isVisible() || !$this->navigation()->accept($page)) { continue; }
+        $hasChildren = $page->hasPages();            
+        if (!$hasChildren or false === $page->expand_children ) { //'interpreters' == $page->getLabel())
 ?><li><a href="<?php echo $page->getHref() ?>"><?php echo $page->getLabel() ?></a></li>
 <?php } else { 
 ?><li class="dropdown">
@@ -22,6 +22,7 @@
         <?php } ?>
     </ul>
 </li>
-    <?php } ?>
-<?php } ?>
+    <?php }
+     } 
+?>
 </ul>
