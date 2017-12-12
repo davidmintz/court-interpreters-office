@@ -1,0 +1,28 @@
+<?php /** from https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */ ?>
+<ul class="navbar-nav mr-auto"><?php foreach ($this->container as $page) { ?>            
+        <?php /* @var $page Zend\Navigation\Page\Mvc */ 
+        // when using partials we need to manually check for ACL conditions
+        if (!$page->isVisible() || !$this->navigation()->accept($page)) { continue; }
+        $hasChildren = $page->hasPages();            
+        if (!$hasChildren or false === $page->expand_children ) { //'interpreters' == $page->getLabel())
+?><li class="nav-item"><a class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $page->getLabel() ?></a></li>
+<?php } else { 
+?><li class="nav-item dropdown">
+    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
+    <ul class="dropdown-menu"><?php foreach ($page->getPages() as $child) { ?>
+            <?php 
+            if (!$child->isVisible() || !$this->navigation()->accept($child)) { 
+                continue;                             
+            } 
+            if (in_array($child->getLabel(),['edit',])) {
+                // keep it from blowing up for lack of an id parameter
+                continue;
+            }                        
+            ?><li class="nav-item"><a class="nav-link" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a></li>
+        <?php } ?>
+    </ul>
+</li>
+    <?php }
+     } 
+?>
+</ul>
