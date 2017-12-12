@@ -12,8 +12,8 @@ echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
   ?>
     <!-- Bootstrap core CSS -->
     <link href="/css/<?php echo $BS_VERSION ?>/bootstrap.min.css" rel="stylesheet"><?php
- $this->headLink()->prependStylesheet($this->basePath('css/style.css'))
-                ->prependStylesheet($this->basePath('css/bootstrap/bootstrap-theme.min.css'));
+ $this->headLink()->appendStylesheet($this->basePath('css/style.css'));
+                //->prependStylesheet($this->basePath('css/bootstrap/bootstrap-theme.min.css'));
          //->prependStylesheet($this->basePath('css/bootstrap/bootstrap.min.css'))
  echo $this->headStyle();?>
 <style type="text/css">
@@ -33,15 +33,14 @@ echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
     padding : .25rem 1rem ;
     background-color: #f8f8f8;    
 }
+label { text-align:right;}
 .navbar-custom a.navbar-brand { color : #777 !important; }
 .navbar-custom li > a { color : #555 !important; }
 .navbar li.active { background-color: #fff !important; border-radius: 4px; border: 1px solid #9fcdff !important;  }
 </style>
-
   </head>
- 
   <body>
-    <div class="container">    
+    <div class="container">
     <nav class="navbar navbar-expand-md navbar-light bg-light rounded mb-3 navbar-custom">
       <a class="navbar-brand" href="#">InterpretersOffice</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,28 +48,13 @@ echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
       </button>
       <div class="collapse navbar-collapse" id="navbar-collapse">
        <?php  echo $this->navigation('default')->menu()->setPartial('partials/navbar_bs4.phtml')?>
-          <!-- 
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-        </ul>
-          <form class="form-inline mt-2 mt-md-0"> mt-* refers to margin-top
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form> -->
         <?php if ($this->layout()->user): // is navbar-right still a thing?  ?>
         <div class="navbar-right" style="padding: 15px 10px;"><?php echo "current user: {$this->layout()->user->username}"?></div>
-        <?php endif; ?>
-        
+        <?php endif; ?>        
       </div>
-
     </nav>
         <?php echo $this->content; ?>
     </div>
-     
-   
-
 <div class="container">
     <footer style="margin-top: 2em; border-top: 1px orange dotted">
         <p>[layout: footer]</p>
