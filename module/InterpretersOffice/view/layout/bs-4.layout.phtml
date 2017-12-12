@@ -21,7 +21,7 @@ echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
 	/* background-image: -webkit-linear-gradient(top,#fff 0,#f8f8f8 100%); */
 	/* background-image: -o-linear-gradient(top,#fff 0,#f8f8f8 100%); */
 	/* background-image: -webkit-gradient(linear,left top,left bottom,from(#fff),to(#f8f8f8)); */
-	background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
+	background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%) !important;
 	/* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0); */
 	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 	background-repeat: repeat-x;
@@ -31,8 +31,11 @@ echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
     border: 1px solid #e7e7e7 !important;
     /*padding: .5rem 1rem;*/
     padding : .25rem 1rem ;
-    
+    background-color: #f8f8f8;    
 }
+.navbar-custom a.navbar-brand { color : #777 !important; }
+.navbar-custom li > a { color : #555 !important; }
+.navbar li.active { background-color: #fff !important; border-radius: 4px; border: 1px solid #9fcdff !important;  }
 </style>
 
   </head>
@@ -51,15 +54,8 @@ echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
           <li class="nav-item active">
             <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">link</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">disabled</a>
-          </li>
         </ul>
-          -->
-        <!--  <form class="form-inline mt-2 mt-md-0"> mt-* refers to margin-top
+          <form class="form-inline mt-2 mt-md-0"> mt-* refers to margin-top
           <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form> -->
@@ -70,16 +66,16 @@ echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
       </div>
 
     </nav>
+        <?php echo $this->content; ?>
     </div>
-    <main role="main" class="container">
-      <div class="jumbotron">
-        <h1>Navbar example</h1>
-        <p><?php echo $this->content ?></p>
-        <p class="lead">This example is a quick exercise to illustrate how the top-aligned navbar works. As you scroll, this navbar remains in its original position and moves with the rest of the page.</p>      
-      </div>
-    </main>
+     
+   
 
-
+<div class="container">
+    <footer style="margin-top: 2em; border-top: 1px orange dotted">
+        <p>[layout: footer]</p>
+    </footer>
+</div>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -87,5 +83,12 @@ echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
     <!-- <script>window.jQuery || document.wite('<script src="../../../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
     <!-- <script src="../../../../assets/js/vendor/popper.min.js"></script> -->
     <script src="/js/lib/<?php echo $BS_VERSION ?>/bootstrap.bundle.js"></script>
+    <?php echo $this->inlineScript() ?>
+    <script>
+            basePath = '<?php echo $this->basePath() ?>';
+            $(document).ready(function () {
+               $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
+            });
+     </script>
   </body>
 </html>
