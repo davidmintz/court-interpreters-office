@@ -5,7 +5,7 @@ $BS_VERSION = 'bootstrap-4.0.0-beta.2';
   <head>
     <meta charset="utf-8">
      <?php echo $this->headMeta()
-                ->appendName('viewport', 'width=device-width, initial-scale=1.0, shrink-to-fit=no');?>    
+         ->appendName('viewport', 'width=device-width, initial-scale=1.0, shrink-to-fit=no');?>    
     <meta name="description" content="SDNY Interpreters Office court interpreter management system">
     <meta name="author" content="David Mintz, Interpreters Office, US District Court, Southern District of New York">
     <?php echo $this->headTitle('Court Interpreters Office')->setSeparator(' | ')->setAutoEscape(false) ?>
@@ -13,16 +13,17 @@ $BS_VERSION = 'bootstrap-4.0.0-beta.2';
     <link href="/css/<?php echo $BS_VERSION ?>/bootstrap.min.css" rel="stylesheet">
 <?php echo 
         $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
-        ->appendStylesheet($this->basePath('css/style.css'));
+        ->appendStylesheet($this->basePath('css/style.css'))
+        ->appendStylesheet($this->basePath('css/font-awesome/css/fontawesome-all.min.css'));
 echo $this->headStyle();?>
-<style type="text/css">
+<style>
 .navbar-custom {
 	/* background-image: -webkit-linear-gradient(top,#fff 0,#f8f8f8 100%); */
 	/* background-image: -o-linear-gradient(top,#fff 0,#f8f8f8 100%); */
 	/* background-image: -webkit-gradient(linear,left top,left bottom,from(#fff),to(#f8f8f8)); */
 	background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%) !important;
-	/* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0); */
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+	
+	/*filter: progid;DXImageTransform.Microsoft.gradient(enabled=false);*/
 	background-repeat: repeat-x;
 	border-radius: 4px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
@@ -42,7 +43,7 @@ label { text-align:right;}
     <div class="container">
     <nav class="navbar navbar-expand-md navbar-light bg-light rounded mb-3 navbar-custom">
       <a class="navbar-brand" href="#">InterpretersOffice</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbar-collapse">

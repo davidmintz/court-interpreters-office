@@ -29,7 +29,7 @@ $form->add([
    ->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal');
 ?>
-<div class="center-block" style="max-width:800px"><!-- wrapper -->
+<div class="center-block" style="max-width:700px"><!-- wrapper -->
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 $form->prepare();
@@ -86,7 +86,12 @@ echo $this->form()->openTag($form);?>
     <div role="tabpanel" class="tab-pane" id="administrative">
         
         <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
-                    $element = $fieldset->get($elementName);?>
+                    $element = $fieldset->get($elementName);
+                    $value = $element->getValue();
+                    if (is_object($value) && $value instanceof \DateTime) {
+                        $element->setValue($value->format('m/d/Y'));
+                    }
+         ?>
                 <div class="form-group">
                     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element)                   ?>
