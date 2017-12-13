@@ -30,12 +30,16 @@ $form->add([
    ->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal');
 ?>
-<div class="center-block" style="max-width:900px"><!-- wrapper -->
+<div class="center-block" style="max-width:900px; border:1px dotted gray"><!-- wrapper -->
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 
 <?php
 $form->prepare();
 $fieldset = $form->get('interpreter');
+/** tmp      */
+$fieldset->get('lastname')->setValue("Boink");
+$fieldset->get('firstname')->setValue("Doink");
+/** ========*/
 echo $this->form()->openTag($form);?>
 
 
@@ -45,7 +49,7 @@ echo $this->form()->openTag($form);?>
     <a class="nav-link active" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="true">contact</a>
   </li>
   <li class="nav-item">
-      <a class="nav-link" id="languages-tab" data-toggle="tab" href="#languages" role="tab" aria-controls="shit" aria-selected="false">languages &amp; notes</a>
+      <a class="nav-link" id="languages-tab" data-toggle="tab" href="#languages" role="tab" aria-controls="languages" aria-selected="false">languages &amp; notes</a>
   </li>
   <li class="nav-item">
     <a class="nav-link" id="administrative-tab" data-toggle="tab" href="#administrative" role="tab" aria-controls="administrative" aria-selected="false">administrative/security</a>
@@ -76,7 +80,9 @@ echo $this->form()->openTag($form);?>
                      /** @todo display fieldset validation errors ? */
            ?></div>
         </div>
-        <div class="form-group panel panel-default" id="languages-div">
+        <div class="form-group form-row" id="languages-div">
+            
+            
         <?php 
         $collection = $fieldset->get('interpreterLanguages');
         $helper = (new LanguageElementCollection())->setView($this);
@@ -87,10 +93,10 @@ echo $this->form()->openTag($form);?>
         endif;
         ?>
         </div><!-- /languages-div -->       
-    </div>
-  <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">shit here is concerning administrative shit</div>
+    </div><!-- /languages panel -->
+    <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">shit here is concerning administrative shit</div>
 
-</div>
+    </div>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
 <br><br><br>
