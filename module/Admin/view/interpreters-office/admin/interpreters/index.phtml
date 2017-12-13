@@ -2,18 +2,27 @@
 /** module/Admin/views/interpreters-office/admin/interpreters/index.phtml
  *  viewscript for main interpreter-administration page
  */
-$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
+$this->headScript()
+        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+        ->appendFile($this->basePath('js/interpreters-index.js'));
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.css'));
 $form = $this->form;
 // set some defaults for the search form
 foreach (['language_id','active','security_clearance_expiration'] as $e) :
-    if (isset($this->params[$e])) { $form->get($e)->setValue($this->params[$e]); }
+    $element =  $form->get($e);
+    if (isset($this->params[$e])) { 
+        $element->setValue($this->params[$e]);         
+    }
+    $element->setAttribute('class','form-control mx-2');
+    
 endforeach;
+$name_element = $form->get('name');
 if ($this->interpreter): 
-    $form->get('name')->setValue("{$interpreter->getLastname()}, {$interpreter->getFirstName()}");
+    $name_element->setValue("{$interpreter->getLastname()}, {$interpreter->getFirstName()}");
 else:
-    $form->get('name')->setValue(key_exists('name',$this->params)? $this->params['name']:'');
+    $name_element->setValue(key_exists('name',$this->params)? $this->params['name']:'');
 endif;
+$name_element->setAttribute('class','form-control mx-2');
 $this->headTitle($this->title);
 ?>
 <h2><a href="<?php echo $this->url('admin')?>">admin</a> | <?php echo $this->title ?></h2>
@@ -23,20 +32,19 @@ if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',]);
 endif;
 ?>
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="card">
+  <div class="card-body">
     <form>
     <div class="form-group form-inline panel-body">
-    <div id="form-errors" class="alert alert-warning hidden" style="display:none"></div>
-    Find interpreters of
-        <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language_id'))?>
-        who are <label for="active" class="sr-only">status</label>
+    <div id="form-errors" class="alert alert-warning hidden" style="display:none"></div>    
+        Find <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language_id'))?> 
+        interpreters who are <label for="active" class="sr-only">status</label>
         <?php echo $this->formSelect($form->get('active'))?>
         with security clearance <label for="security_clearance_expiration" class="sr-only">security clearance</label>
          <?php echo $this->formSelect($form->get('security_clearance_expiration'))?><!--
-    --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a> 
+    --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-primary"><span class="fa fa-search"></span> search</a> 
     </div>
-    <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-success"><span class="glyphicon glyphicon-search"></span> search</a></div> 
+    <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-primary"><span class="fa fa-search"></span> search</a></div> 
     </form>
   </div>
 </div>
@@ -53,20 +61,21 @@ if ($this->results):
     echo $this->paginationControl($this->results, null, 'partials/pagination_head'); 
 ?>
 
-<table class="table table-hover table-bordered" style="max-width:700px">
+<table class="table table-hover table-bordered table-sm" style="max-width:700px">
     <thead>
         <!-- <tr><th class="col-sm-10"></th><th class="col-sm-2"></th></tr> -->
     </thead>
     <tbody>
         <?php
         foreach ($this->results as $row) : /** note to self: use array hydration? */
-            $interpreter = $row[0];  ?>
-        <tr><td class="col-sm-10" style="vertical-align: middle"><a title="edit interpreter details" href="<?php echo $this->url('interpreters/edit',['id'=>$interpreter->getId()])?>"><?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></a>
+            $interpreter = $row[0]; 
+            $id = $interpreter->getId();
+            $view_url =  $this->url('interpreters/find_by_id',['id'=>$id])?>
+        <tr><td class="col-sm-10" style="vertical-align: middle"><a title="edit interpreter details" href="<?php echo $view_url ?>"><?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></a>
             </td>
-            <td class="col-sm-2">
-                
-                <div class="btn-group" role="group" aria-label="actions" style="display:inline-block"><a class="btn btn-info" title="view interpreter details" href="<?php echo $this->url('interpreters',['id'=>$interpreter->getId()])?>"><span class="glyphicon glyphicon-search"></span></a><?php
-                  ?><a class="btn btn-info" title="edit interpreter details" href="<?php echo $this->url('interpreters/edit',['id'=>$interpreter->getId()])?>"><span class="glyphicon glyphicon-edit"></span></a>
+            <td class="col-sm-2">                
+                <div class="btn-group" role="group" aria-label="actions" style="display:inline-block"><a class="btn btn-outline-primary" title="view interpreter details" href="<?php echo $view_url ?>"><span class="fa fa-search"></span><span class="sr-only">view details</span></a><?php
+                ?><a class="btn btn-outline-primary" title="edit interpreter details" href="<?php echo $this->url('interpreters/edit',['id'=>$interpreter->getId()])?>"><span class="fa fa-edit"></span><span class="sr-only">edit details</span></a>
                 </div>
             </td></tr>
 <?php  endforeach;  ?>
@@ -85,58 +94,6 @@ if ($this->results):
 ?><p>No matching records found.</p><?php 
     endif; 
 endif; ?>
-<a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-info">
-<span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new interpreter
+<a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-primary">
+<span aria-hidden="true" class="icon fa fa-plus"></span> new interpreter
 </a>
-<script type="text/javascript">
-$(function(){
-    var languageSelect = $('#language_id'); 
-    var languageButton = $('#btn-search-language');
-    languageButton.on("click",function(event){
-        event.preventDefault();
-        var language_id = languageSelect.val() || "0";  
-        var url = languageButton.attr('href');
-        url += '/language/' + language_id;        
-        url += '/active/'+$('#active').val();                
-        var security = $('#security_clearance_expiration').val();
-        url += '/security/'+security;
-        document.location = url;
-    });
-    var nameElement = $('#name');
-    nameElement.autocomplete({
-        source : /*window.basePath+*/'/admin/interpreters',
-        minLength : 2,
-        select : function( event, ui ) {            
-           nameElement.data({ interpreterName : ui.item.label, interpreterId: ui.item.id });
-           //console.log("select. shit is real");
-        }
-    });
-    
-    $('#btn-search-name').on("click",function(event){
-        event.preventDefault();       
-        var name = nameElement.val().trim();
-        if (! name) {
-            return;
-        }
-        
-        var url = /*window.basePath +*/ "/admin/interpreters";
-        var selected = nameElement.data();
-        // if we have an interpreter id, use it in the url
-        if (name === selected.interpreterName) {
-            url  += "/" + selected.interpreterId;
-        } else {            
-            //'route' => '/name/:lastname[/:firstname]',
-            var pos = name.lastIndexOf(',');
-            if (-1 === pos) {
-                url += "/name/"+name.trim();
-            } else {                
-                 var lastname = encodeURIComponent(name.substring(0,pos).trim());
-                 var firstname = encodeURIComponent(name.substr(pos+1).trim());
-                 url += "/name/"+ lastname + "/" + firstname;
-            }
-        }
-        document.location = url;
-    });
-});
-
-</script>
