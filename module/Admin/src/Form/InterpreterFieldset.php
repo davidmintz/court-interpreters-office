@@ -102,7 +102,7 @@ class InterpreterFieldset extends PersonFieldset
         [
              'name' => 'fingerprintDate',
             //'type' => 'text',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => 'Zend\Form\Element\Text',
             'attributes' => [
                 //'required' => 'required',
                 //'size' => 15,
@@ -121,7 +121,7 @@ class InterpreterFieldset extends PersonFieldset
         [
              'name' => 'securityClearanceDate',
             //'type' => 'text',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => 'Zend\Form\Element\Text',
             'attributes' => [
                 //'required' => 'required',
                 //'size' => 15,
@@ -140,7 +140,7 @@ class InterpreterFieldset extends PersonFieldset
         [
              'name' => 'contractExpirationDate',
             //'type' => 'text',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => 'Zend\Form\Element\Text',
             'attributes' => [
                 //'required' => 'required',
                 //'size' => 15,
@@ -158,7 +158,7 @@ class InterpreterFieldset extends PersonFieldset
         [
              'name' => 'oathDate',
             //'type' => 'text',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => 'Zend\Form\Element\Text',
             'attributes' => [
                 //'required' => 'required',
                 //'size' => 15,
