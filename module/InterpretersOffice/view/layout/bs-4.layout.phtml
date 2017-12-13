@@ -1,21 +1,20 @@
-<?php /** bootstrap 4 layout view script */
-echo $this->doctype(); $BS_VERSION = 'bootstrap-4.0.0-beta.2';?>
-<html lang="en">
+<?php /** bootstrap 4 layout view script */ 
+echo $this->doctype(); 
+$BS_VERSION = 'bootstrap-4.0.0-beta.2';
+?><html lang="en">
   <head>
     <meta charset="utf-8">
      <?php echo $this->headMeta()
                 ->appendName('viewport', 'width=device-width, initial-scale=1.0, shrink-to-fit=no');?>    
     <meta name="description" content="SDNY Interpreters Office court interpreter management system">
-    <meta name="author" content="David Mintz">
+    <meta name="author" content="David Mintz, Interpreters Office, US District Court, Southern District of New York">
     <?php echo $this->headTitle('Court Interpreters Office')->setSeparator(' | ')->setAutoEscape(false) ?>
-<?php echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico']);
-  ?>
     <!-- Bootstrap core CSS -->
-    <link href="/css/<?php echo $BS_VERSION ?>/bootstrap.min.css" rel="stylesheet"><?php
- $this->headLink()->appendStylesheet($this->basePath('css/style.css'));
-                //->prependStylesheet($this->basePath('css/bootstrap/bootstrap-theme.min.css'));
-         //->prependStylesheet($this->basePath('css/bootstrap/bootstrap.min.css'))
- echo $this->headStyle();?>
+    <link href="/css/<?php echo $BS_VERSION ?>/bootstrap.min.css" rel="stylesheet">
+<?php echo 
+        $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
+        ->appendStylesheet($this->basePath('css/style.css'));
+echo $this->headStyle();?>
 <style type="text/css">
 .navbar-custom {
 	/* background-image: -webkit-linear-gradient(top,#fff 0,#f8f8f8 100%); */
@@ -60,13 +59,9 @@ label { text-align:right;}
         <p>[layout: footer]</p>
     </footer>
 </div>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <!-- <script>window.jQuery || document.wite('<script src="../../../../assets/js/vendor/jquery.min.js"><\/script>')</script> -->
-    <!-- <script src="../../../../assets/js/vendor/popper.min.js"></script> -->
+    <script src="/js/lib/jquery.min.js"></script>
     <script src="/js/lib/<?php echo $BS_VERSION ?>/bootstrap.bundle.js"></script>
+    <?php echo $this->headScript()?>
     <?php echo $this->inlineScript() ?>
     <script>
             basePath = '<?php echo $this->basePath() ?>';
