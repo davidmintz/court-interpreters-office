@@ -16,17 +16,19 @@ class LanguageElementCollection extends AbstractHelper
      * @var string
      */
 	protected $template = <<<TEMPLATE
+<!-- shit begins -->
 <div class="col-sm-offset-1 col-sm-3  interpreter-language language-name" id="language-%d">
 %s
 </div>
-<div class="col-sm-5 form-inline interpreter-language language-certification">
+<div class="col-sm-8 form-inline interpreter-language language-certification">
     <label for="fed-certification-%d">fed-certified:</label>
           %s
-   <button class="btn btn-danger btn-xs btn-remove-language" title="remove this language"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+   <button class="btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="fa fa-minus-square" aria-hidden="true"></span>
         <span class="sr-only">remove this language</span></button>
     %s
 </div>
-
+<!-- shit ends -->
+            
 TEMPLATE;
     
     /**
