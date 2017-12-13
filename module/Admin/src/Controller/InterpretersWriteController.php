@@ -45,7 +45,7 @@ class InterpretersWriteController extends AbstractActionController
     {
 
         $this->entityManager = $entityManager;
-        $this->vault_enabled = $vault_enabled;
+        $this->vault_enabled = $vault_enabled;        
     }
 
     /**
@@ -53,8 +53,9 @@ class InterpretersWriteController extends AbstractActionController
      */
     public function addAction()
     {
+        $this->layout()->setTemplate('layout/bs-4.layout.phtml');
         $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/interpreters/form.phtml');
+            ->setTemplate('interpreters-office/admin/interpreters/bs-4.form.phtml');
         $form = new InterpreterForm($this->entityManager,
                 [ 'action' => 'create',
                  'vault_enabled' => $this->vault_enabled ]
