@@ -92,7 +92,7 @@ $(function(){
         }
         url = /*window.basePath +*/ "/admin/interpreters/language-fieldset";
         $.get(url,{index : index, id : language_id },function(data){
-            $('#languages').append(data);
+            $('#languages-div').append(data);
             languageSelect.val("");
             $('#languages .language-required').remove();
         });
@@ -120,7 +120,7 @@ $(function(){
            ! $(".interpreter-language input").length
         ) {
             if (! $('#languages-div .language-required').length) {
-                $('#languages').append(
+                $('#languages-div').append(
                     $('<div >').addClass("alert alert-warning validation-error language-required")
                     .text("at least one language is required")
                 );
