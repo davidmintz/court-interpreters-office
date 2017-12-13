@@ -115,7 +115,7 @@ TEMPLATE;
                     );
                 }
             }
-
+            
             $hidden_element->setValue($language_id);
             $language_markup = $this->view->formElement($hidden_element);
             $language_markup .= $label;
@@ -170,7 +170,8 @@ TEMPLATE;
                             0 => 'no',
                         ],               
                     'attributes' => [
-                        'class' => 'form-control'
+                        'class' => 'form-control',
+                        'id'    => "fed-certification-$language_id",
                     ]                    
                 ]);
         $certification_element->setAttributes(['class'=>'form-control']);
