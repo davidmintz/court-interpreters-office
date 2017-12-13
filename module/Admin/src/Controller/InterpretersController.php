@@ -67,6 +67,9 @@ class InterpretersController extends AbstractActionController
      */
     public function indexAction()
     {      
+        // for the temporary transition-to-bootstrap-4 phase
+        $this->layout()->setTemplate('layout/bs-4.layout.phtml');
+        
         $autocomplete_term = $this->params()->fromQuery('term');
         if ($autocomplete_term) {
             return $this->autocomplete($autocomplete_term);
