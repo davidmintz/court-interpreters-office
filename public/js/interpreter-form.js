@@ -5,13 +5,13 @@
  */
 //*/
 $(function(){
-    if (! window.Modernizr.inputtypes.date){
+   // if (! window.Modernizr.inputtypes.date){
         $('input.date').each(function(i,element){
             if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
                 element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
             }
         });    
-    }
+   // }
     // in order for server-side partial validation to know the context
     var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
@@ -42,7 +42,7 @@ $(function(){
             }
        });
     }
-    if (! Modernizr.inputtypes.date) {
+    //if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker({
             changeMonth: true,
             changeYear: true,
@@ -66,7 +66,7 @@ $(function(){
         $('#fingerprint_date, #oath_date, #security_clearance_date').datepicker("option",{            
             maxDate: 0
         });        */
-    }
+    //}
     /**
      * add a working language. 
      * @todo solve case where "at least one language is required" is printed twice
