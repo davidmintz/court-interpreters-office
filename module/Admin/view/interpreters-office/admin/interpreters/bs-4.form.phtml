@@ -1,5 +1,5 @@
 <?php
-use Zend\Form\Element;
+use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection;
 /**
  *  module/Admin/view/interpreters-office/admin/people/form.phtml
  *  view script for rendering interpreters create|update form
@@ -30,7 +30,7 @@ $form->add([
    ->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal');
 ?>
-<div class="center-block" style="max-width:700px"><!-- wrapper -->
+<div class="center-block" style="max-width:900px"><!-- wrapper -->
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 
 <?php
@@ -54,8 +54,40 @@ echo $this->form()->openTag($form);?>
 <!--  -->
 <!-- Tab panes -->
 <div class="tab-content">
-  <div class="tab-pane active" id="contact" role="tabpanel" aria-labelledby="contact-tab">no place quite like it</div>
-  <div class="tab-pane" id="languages" role="tabpanel" aria-labelledby="languages-tab">this is your shit</div>
+    <div class="tab-pane pt-3 active" id="contact" role="tabpanel" aria-labelledby="contact-tab"><!-- contact -->
+        <?php foreach (['lastname','firstname','middlename','email','officePhone','mobilePhone','homePhone',
+                    'address1','address2','city','state', 'zip'  ] as $elementName) :
+                        $element = $fieldset->get($elementName);
+               ?><div class="form-group form-row">
+                    <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
+                    <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>
+                    </div>
+                </div>
+        <?php endforeach; ?>        
+    </div><!-- /contact -->
+    <div class="tab-pane pt-3" id="languages" role="tabpanel" aria-labelledby="languages-tab">
+          <div class="form-group"><?php // select element for choosing languages //?>               
+            <div class="col-sm-10 col-sm-offset-2 form-inline"><?php 
+                    $languageSelect = $fieldset->get('language-select'); 
+                    echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
+                    ?><button id="btn-add-language" class="btn btn-info" title="add this language">
+                        <span class="fa fa-plus" aria-hidden="true"></span>
+                        <span class="sr-only">add language</span></button><?php                    
+                     /** @todo display fieldset validation errors ? */
+           ?></div>
+        </div>
+        <div class="form-group panel panel-default" id="languages-div">
+        <?php 
+        $collection = $fieldset->get('interpreterLanguages');
+        $helper = (new LanguageElementCollection())->setView($this);
+        echo $helper();
+        $collectionErrors = $this->formElementErrors($collection);
+        if (stristr($collectionErrors, 'language is required')) :
+            echo $collectionErrors;
+        endif;
+        ?>
+        </div><!-- /languages-div -->       
+    </div>
   <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">shit here is concerning administrative shit</div>
 
 </div>
