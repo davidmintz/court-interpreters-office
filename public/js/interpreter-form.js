@@ -116,10 +116,10 @@ $(function(){
     $('a[data-toggle="tab"]').on('click', function (event,params) {
         //alert("shit?");
         var id = '#'+$('div.active').attr('id');         
-        if (id.indexOf('languages') !== -1 && 
+        if (id.indexOf('languages') !== -1 && false && /** TEMPORARY **/
            ! $(".interpreter-language input").length
         ) {
-            if (! $('#languages .language-required').length) {
+            if (! $('#languages-div .language-required').length) {
                 $('#languages').append(
                     $('<div >').addClass("alert alert-warning validation-error language-required")
                     .text("at least one language is required")
