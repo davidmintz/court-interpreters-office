@@ -15,7 +15,9 @@ $(function(){
     // in order for server-side partial validation to know the context
     var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
-
+    
+    // pad the div holding the checkbox
+    $("#person-active").parent().addClass("pt-2");         
     // this is bullshit. what we really want is the button thingy on the same 
     // line as the input but it wraps unless we set the containing element's 
     // class to form-inline, which makes it too narrow. NOTE TO SELF: try "nowrap"
@@ -25,15 +27,17 @@ $(function(){
     }
     // ================================================
     
-    // make the first tab active, unless we are coming back from a validation
-    // error
-    //
-    //$('#nav-tabs a[aria-controls="'+"languages-pane"+'"]').tab("show");
+    // make the first tab active, unless we are coming back from 
+    // a validation failure      
+    
     if (! $(".validation-error").text()) {        
        $('#nav-tabs li:first a').tab("show");
     } else {
-       var pane = $(".validation-error").first().closest('div.tab-pane');
+       // not entirely satisfactory, it makes shit jump, 
+       // but better than nothing for now       
+       var pane = $(".validation-error").not(":empty").first().closest('div.tab-pane');
        var id = pane.attr("id");
+       // console.warn(id +  " is our id, bitch");
        $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
        $(".validation-error").each(function(){
             var div = $(this);
@@ -116,7 +120,7 @@ $(function(){
     $('a[data-toggle="tab"]').on('click', function (event,params) {
         //alert("shit?");
         var id = '#'+$('div.active').attr('id');         
-        if (id.indexOf('languages') !== -1 && false && /** TEMPORARY **/
+        if (id.indexOf('languages') !== -1 && 
            ! $(".interpreter-language input").length
         ) {
             if (! $('#languages-div .language-required').length) {
