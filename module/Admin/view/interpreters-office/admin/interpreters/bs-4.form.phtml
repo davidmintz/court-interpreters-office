@@ -94,9 +94,18 @@ echo $this->form()->openTag($form);?>
         ?>
         </div><!-- /languages-div -->       
     </div><!-- /languages panel -->
-    <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">shit here is concerning administrative shit</div>
-
+    <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">shit here is concerning administrative shit
     </div>
+</div>
+<div style="margin-top:1em" class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+        <?php
+        $csrf = $form->get('csrf');
+        echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+        echo $this->formHidden($fieldset->get('id'));
+        echo $this->formSubmit($form->get('submit'));?>
+    </div>       
+</div><!-- / .form-group -->
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
 <br><br><br>
