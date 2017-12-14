@@ -34,6 +34,15 @@ class InterpretersWriteController extends AbstractActionController
      * @var EntityManagerInterface
      */
     protected $entityManager;
+    
+    /**
+     * name of the form template
+     * 
+     * this is a temporary measure while moving to Bootstrap 4.x
+     * 
+     * @var string
+     */
+    protected $form_template;
 
    /**
      * constructor.
@@ -43,19 +52,25 @@ class InterpretersWriteController extends AbstractActionController
      */
     public function __construct(EntityManagerInterface $entityManager, $vault_enabled)
     {
-
+        
         $this->entityManager = $entityManager;
         $this->vault_enabled = $vault_enabled;        
     }
-
+    
+    public function onDispatch(\Zend\Mvc\MvcEvent $e) {
+        $this->layout()->setTemplate('layout/bs-4.layout.phtml');
+        $this->form_template = 'interpreters-office/admin/interpreters/bs-4.form.phtml';
+        parent::onDispatch($e);
+    }
+    
     /**
      * adds an Interpreter entity to the database.
      */
     public function addAction()
     {
-        $this->layout()->setTemplate('layout/bs-4.layout.phtml');
+        //$this->layout()->setTemplate('layout/bs-4.layout.phtml');
         $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/interpreters/bs-4.form.phtml');
+            ->setTemplate($this->form_template);
         $form = new InterpreterForm($this->entityManager,
                 [ 'action' => 'create',
                  'vault_enabled' => $this->vault_enabled ]
@@ -67,6 +82,7 @@ class InterpretersWriteController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
+                //printf("<pre>%s</pre>",print_r($form->getMessages(),true));
                 return $viewModel;
             }
             $this->entityManager->persist($entity);
@@ -100,7 +116,7 @@ class InterpretersWriteController extends AbstractActionController
         //var_dump($validator->isValid($value));
 
         $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/interpreters/form.phtml');
+            ->setTemplate($this->form_template);
         $id = $this->params()->fromRoute('id');
         $entity = $this->entityManager->find(Entity\Interpreter::class, $id);        
         if (! $entity) {
