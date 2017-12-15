@@ -148,7 +148,7 @@ class InterpreterFieldset extends PersonFieldset
                 'class' => 'date form-control',
             ],
              'options' => [
-                'label' => 'contract expiration date',
+                'label' => 'contract expires',
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
@@ -209,7 +209,7 @@ class InterpreterFieldset extends PersonFieldset
                 'name' => 'ssn',
                 'type' => 'Zend\Form\Element\Text',
                 'attributes' => ['id' => 'ssn','class' => 'form-control encrypted'],
-                'options' => ['label' => 'social security number'],
+                'options' => ['label' => 'social security no.'],
             ]);
         }
     }
