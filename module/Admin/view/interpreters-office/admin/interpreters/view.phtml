@@ -1,4 +1,49 @@
-<?php /** module/Admin/view/interpreters-office/admin/interpreters/view.phtml */ ?>
-<br>
-we have an object of class <?php echo get_class($this->interpreter) ?> to display
-<br>
+<?php /** module/Admin/view/interpreters-office/admin/interpreters/view.phtml */ 
+$i = $this->interpreter;
+?>
+
+<div class="card mb-2">
+    <div class="card-header text-center font-weight-bold ">
+        <?php echo $this->escapeHtml("{$i->getLastname()}, {$i->getFirstname()} {$i->getMiddleName()}");?><br>
+        <?php echo $i->getHat() ?>
+    </div>
+    <div class="card-body pl-5">
+        <?php
+        $languages = [];
+        foreach($i->getInterpreterLanguages() as $il): 
+           $languages[] = (string)$il->getLanguage();
+        endforeach;
+        $label = 'language';
+        if (count($languages) > 1): $label .= 's'; endif;
+        ?>
+        
+        <address class="mt-2" style="line-height: 120%">
+            <?php echo $this->escapeHtml($i->getAddress1()); ?><br>
+            <?php $addr2 = $i->getAddress2(); if ($addr2): echo $this->escapeHtml($addr2),'<br>';endif;  ?>
+            <?php 
+             $city = $i->getCity(); if ($city) : echo $this->escapeHtml($city);endif;
+             $state = $i->getState(); if ($state): echo $city ? ', ': ''; echo $this->escapeHtml($state); endif; 
+             $zip = $i->getZip(); if ($zip) : echo $state ? ' ':''; echo $this->escapeHtml($zip); endif;
+             ?>
+        </address>
+        <p>
+           <?php foreach(['mobile','office','home'] as $phone):
+               $number = $i->{'get'.ucfirst($phone).'Phone'}();
+               if (! $number) : continue; endif;
+           
+               ?><span class="fas fa-phone fa-rotate-180 mr-2"></span> <?php echo "$phone $number<br>";
+                
+            endforeach;
+            $email = $i->getEmail(); if ($email) :
+                ?><span class="fas fa-envelope mr-2"></span> <?php echo "$email<br>";
+            endif;?>
+        </p>        
+        <div class="row">
+            <div class="col">some shit here</div>
+            <div class="col">and other shit here</div>
+        </div>
+    </div>
+    
+    
+    
+</div>
