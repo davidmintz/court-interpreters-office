@@ -23,7 +23,7 @@ class LanguageElementCollection extends AbstractHelper
 <div class="col-sm-8 form-inline interpreter-language language-certification">
     <label for="fed-certification-%d">fed-certified:</label>
           %s
-   <button class="ml-3 btn btn-warning btn-xs btn-remove-language" title="remove this language"><span class="fa fa-times" aria-hidden="true"></span>
+   <button class="ml-3 btn btn-warning btn-xs btn-remove-language  border" title="remove this language"><span class="fas fa-times" aria-hidden="true"></span>
         <span class="sr-only">remove this language</span></button>
     %s
 </div>
