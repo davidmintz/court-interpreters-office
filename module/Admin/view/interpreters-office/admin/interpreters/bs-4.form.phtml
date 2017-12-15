@@ -5,7 +5,8 @@ use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection;
  *  view script for rendering interpreters create|update form
  */
 $this->headTitle('admin | interpreters | '.$this->layout()->action);
-$this->headLink()->appendStylesheet($this->basePath('css/jquery-bootstrap-datepicker.css'));
+$this->headLink()
+        ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headScript()
         ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
         ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
@@ -37,14 +38,14 @@ $form->add([
     $form->prepare();
     $fieldset = $form->get('interpreter');
     /** tmp      */
-    $fieldset->get('lastname')->setValue("Boink");
-    $fieldset->get('firstname')->setValue("Doink");
+    //$fieldset->get('lastname')->setValue("Boink");
+    //$fieldset->get('firstname')->setValue("Doink");
     /** ========*/
     echo $this->form()->openTag($form);?>
     <!-- nav tabs --><!-- -->
     <ul class="nav nav-tabs" id="nav-tabs" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="true">contact</a>
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="true">contact</a>
       </li>
       <li class="nav-item">
           <a class="nav-link" id="languages-tab" data-toggle="tab" href="#languages" role="tab" aria-controls="languages" aria-selected="false">languages &amp; notes</a>

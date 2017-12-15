@@ -50,7 +50,9 @@ $(function(){
         $('input.date').datepicker({
             changeMonth: true,
             changeYear: true,
-            constrainInput : false
+            constrainInput : false,
+            selectOtherMonths : true,
+            showOtherMonths : true
         });
         // if the dob field is enabled, set datepicker options
         if (!($('#dob').val())) { // i.e., if it isn't '**********'
