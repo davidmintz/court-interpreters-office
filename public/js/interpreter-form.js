@@ -18,15 +18,7 @@ $(function(){
     
     // pad the div holding the checkbox
     $("#person-active").parent().addClass("pt-2");         
-    // this is bullshit. what we really want is the button thingy on the same 
-    // line as the input but it wraps unless we set the containing element's 
-    // class to form-inline, which makes it too narrow. NOTE TO SELF: try "nowrap"
-    if ($("div.col-sm-9.encrypted").length) {
-        $('#dob[disabled="disabled"], #ssn[disabled="disabled"]')
-              .css({width:'70%'});//.attr({disabled:"disabled"});
-    }
-    // ================================================
-    
+
     // make the first tab active, unless we are coming back from 
     // a validation failure      
     
@@ -55,7 +47,7 @@ $(function(){
             showOtherMonths : true
         });
         // if the dob field is enabled, set datepicker options
-        if (!($('#dob').val())) { // i.e., if it isn't '**********'
+        if (!($('#dob').val())) { // i.e., if it isn't just '**********'
             $('#dob').datepicker("option",{
                 maxDate: "-18y",
                 minDate : "-100y",         
@@ -114,7 +106,7 @@ $(function(){
     // try to prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
     $('#login-modal').on("show.bs.modal",function(){
-         $('#identity, #password').val("");        
+         $('#identity, #password').val("");  // doesn't work, either. fuck.      
     });
    
     /** validate each tab pane before moving on **/
@@ -140,6 +132,11 @@ $(function(){
         var data =($(selector).serialize());
         //console.log(data);
         var that = this;
+        /**
+         * when they change panels, post the data in the panel they're leaving
+         * and expect a possible JSON data structure containing validation error
+         * messages
+         */
         $.post('/admin/interpreters/validate-partial?action='+action,
             data,
             function(response){
@@ -173,7 +170,7 @@ $(function(){
         );
         return false;
     });
-    
+    // we make them re-authenticate to display the password and dob field values
     $('#auth-submit').on("click",function(){
        
         var input = {
@@ -246,5 +243,5 @@ $(function(){
 test = function(){
     $('#languages-pane').tab("show");
     $('#language-select').val(62);
-    $('#btn-add-language').trigger("click")
-}
+    $('#btn-add-language').trigger("click");
+};
