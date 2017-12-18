@@ -33,60 +33,56 @@ $i = $this->interpreter;
                  $country = $i->getCountry();
                  if ($country && 'United States' != $country) : echo "<br>$country"; endif;
                  ?>
-                </address>
-             
+                </address>             
             </div>
-        <!--</div>
-        <div class="row"> -->
+        <?php
+            $email = $i->getEmail();?>
+            <div class="col-3 text-md-right">email <span class="fas fa-envelope mr-2"></span></div>
+            <div class="col-3"><?php echo $email ?: "&emdash;" ?></div><?php
+            foreach(['mobile','office','home'] as $phone): 
+                $number = $i->{'get'.ucfirst($phone).'Phone'}();
+                ?>        
+            <div class="col-3 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180"></span></div>
+            <div class="col-3"><?php echo $number ?: "--" ?></div>
             <?php
-                $email = $i->getEmail();?>
-                <div class="col-3 text-md-right">email <span class="fas fa-envelope mr-2"></span></div>
-                <div class="col-3"><?php echo $email ?: "&emdash;" ?></div><?php
-                foreach(['mobile','office','home'] as $phone): 
-                    $number = $i->{'get'.ucfirst($phone).'Phone'}();
-                    ?>        
-                <div class="col-3 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180"></span></div>
-                <div class="col-3"><?php echo $number ?: "--" ?></div>
-                <?php
-                endforeach;                
-                ?>
-                <div class="col-3 text-md-right">fingerprinted on </div>
-                <div class="col-3">
-                    <?php $fingerprinted = $i->getSecurityClearanceDate(); 
-                    if ($fingerprinted): echo $fingerprinted->format('m/d/Y'); endif;?>
-                </div>
-                <div class="col-3 text-md-right">security cleared on</div>
-                <div class="col-3">
-                    <?php $clearance = $i->getSecurityClearanceDate(); 
-                    if ($clearance): echo $clearance->format('m/d/Y'); endif;?>
-                </div>
-                <div class="col-3 text-md-right">oath taken on</div>
-                <div class="col-3">
-                    <?php $oath = $i->getOathDate(); 
-                    if ($oath): echo $oath->format('m/d/Y'); endif;?>
-                </div>
-                <div class="col-3 text-md-right">contract expiration</div>
-                <div class="col-3">
-                    <?php $contract_exp = $i->getContractExpirationDate(); 
-                    if ($contract_exp): echo $contract_exp->format('m/d/Y'); endif;?>
-                </div>
-                <div class="col-3 text-md-right">date of birth <?php /**
-                 @todo check if dob/ssn field is NULL before printing **** 
-                 */?>                
-                </div>
-                <div class="col-3" id="dob">*******
-                <button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
-                </div>
-                <div class="col-3 text-md-right">social security</div>
-                <div class="col-3" id="dob">*******<button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and social security number" class="btn btn-info btn-sm float-right  mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>                  
-                </div>
-                <div class="col-3 text-md-right mt-2">comments</div>
-                <div class="col-8 border mt-2"><?php echo $i->getComments() ?>                    
-                </div>
-                <div class="w-100"></div>
-                <div class="col-12 text-center pt-2"><a href="<?php echo $this->url('interpreters/edit',['id'=>$i->getId()])?>" class="btn btn-primary">edit</a></div>
-          </div>
-        
+            endforeach;                
+            ?>
+            <div class="col-3 text-md-right">fingerprinted on </div>
+            <div class="col-3">
+                <?php $fingerprinted = $i->getSecurityClearanceDate(); 
+                if ($fingerprinted): echo $fingerprinted->format('m/d/Y'); endif;?>
+            </div>
+            <div class="col-3 text-md-right">security cleared on</div>
+            <div class="col-3">
+                <?php $clearance = $i->getSecurityClearanceDate(); 
+                if ($clearance): echo $clearance->format('m/d/Y'); endif;?>
+            </div>
+            <div class="col-3 text-md-right">oath taken on</div>
+            <div class="col-3">
+                <?php $oath = $i->getOathDate(); 
+                if ($oath): echo $oath->format('m/d/Y'); endif;?>
+            </div>
+            <div class="col-3 text-md-right">contract expiration</div>
+            <div class="col-3">
+                <?php $contract_exp = $i->getContractExpirationDate(); 
+                if ($contract_exp): echo $contract_exp->format('m/d/Y'); endif;?>
+            </div>
+            <div class="col-3 text-md-right">date of birth <?php /**
+             @todo check if dob/ssn field is NULL before printing **** 
+             */?>                
+            </div>
+            <div class="col-3" id="dob">*******
+            <button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
+            </div>
+            <div class="col-3 text-md-right">social security</div>
+            <div class="col-3" id="dob">*******<button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and social security number" class="btn btn-info btn-sm float-right  mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>                  
+            </div>
+            <div class="col-3 text-md-right mt-2">comments</div>
+            <div class="col-8 border mt-2"><?php echo $i->getComments() ?>                    
+            </div>
+            <div class="w-100"></div>
+            <div class="col-12 text-center pt-2"><a href="<?php echo $this->url('interpreters/edit',['id'=>$i->getId()])?>" class="btn btn-primary">edit</a></div>
+        </div>        
     </div>   
 </div>
 <?php echo $this->render('modal-login');
