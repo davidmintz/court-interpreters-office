@@ -166,39 +166,7 @@ $form->add([
 
     <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
-<?php // the following is only for "edit" action: re-authentication dialog for reading DOB and SSN ?>
-<div class="modal" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="modal-auth-title">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-          <h4 id="modal-auth-title" class="modal-title ml-2">Please re-authenticate for access to dob/ssn</h4>
-      <div class="float-right">
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-        
-      </div>
-      <div class="modal-body">
-          <div id="div-auth-error" class="alert alert-warning alert-dismissable" style="display:none">Authentication failed.</div>
-          <form autocomplete="off" id="form-login">
-              <div class="form-group">
-                <label class="sr-only"  for="identity">username or email</label>
-                <input name="identity" autocomplete="off" value="" type="text" class="form-control" id="identity" placeholder="email or username">
-              </div>
-              <div class="form-group">
-                <label class="sr-only" for="password">password</label>
-                <input name="password" autocomplete="off" value="" type="password" class="form-control" id="password" placeholder="password">
-              </div>              
-              <?php if ($this->login_csrf): 
-                        echo $this->formHidden($this->login_csrf),$this->formElementErrors($this->login_csrf) ;
-                    endif;
-               ?>
-          </form>
-      </div>
-      <div class="modal-footer" style="text-align: center">
-        <button type="button" id="auth-submit" class="btn btn-primary">authenticate</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>        
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+<?php if ( $this->layout()->action == 'edit' ): 
+    echo $this->render('modal-login');
+ endif;
     
