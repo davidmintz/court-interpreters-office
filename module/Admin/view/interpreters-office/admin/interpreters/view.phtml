@@ -70,7 +70,9 @@ $i = $this->interpreter;
                     <?php $contract_exp = $i->getContractExpirationDate(); 
                     if ($contract_exp): echo $contract_exp->format('m/d/Y'); endif;?>
                 </div>
-                <div class="col-3 text-md-right">date of birth                
+                <div class="col-3 text-md-right">date of birth <?php /**
+                 @todo check if dob/ssn field is NULL before printing **** 
+                 */?>                
                 </div>
                 <div class="col-3" id="dob">*******
                 <button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
