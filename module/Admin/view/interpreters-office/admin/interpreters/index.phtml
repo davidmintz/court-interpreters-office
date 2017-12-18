@@ -35,7 +35,7 @@ endif;
 <div class="card">
   <div class="card-body">
     <form>
-    <div class="form-group form-inline panel-body">
+    <div class="form-group form-inline card-body py-0">
     <div id="form-errors" class="alert alert-warning hidden" style="display:none"></div>    
         Find <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language_id'))?> 
         interpreters who are <label for="active" class="sr-only">status</label>
@@ -52,10 +52,7 @@ endif;
 <br>
 <?php 
 if ($this->interpreter) :
-    
-    echo "<p>yes we have an interpreter. to do: create a view partial and render</p>";
     echo $this->render('view');
-
 endif;
 if ($this->results): 
     echo $this->paginationControl($this->results, null, 'partials/pagination_head'); 
