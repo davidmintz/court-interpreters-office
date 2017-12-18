@@ -2,48 +2,67 @@
 $i = $this->interpreter;
 ?>
 
-<div class="card mb-2">
+<div class="card mb-2 mx-auto" style="max-width:900px">
     <div class="card-header text-center font-weight-bold ">
-        <?php echo $this->escapeHtml("{$i->getLastname()}, {$i->getFirstname()} {$i->getMiddleName()}");?><br>
-        <?php echo $i->getHat() ?>
+        <h2>
+        <?php echo $this->escapeHtml("{$i->getLastname()}, {$i->getFirstname()} {$i->getMiddleName()}");?>
+        </h2>
+        <?php echo $i->getHat() ;
+       
+            $languages = [];
+            foreach($i->getInterpreterLanguages() as $il): 
+               $languages[] = (string)$il->getLanguage();
+            endforeach;
+            $label = 'language';
+            if (count($languages) > 1): $label .= 's'; endif;
+            
+        ?>
     </div>
     <div class="card-body pl-5">
-        <?php
-        $languages = [];
-        foreach($i->getInterpreterLanguages() as $il): 
-           $languages[] = (string)$il->getLanguage();
-        endforeach;
-        $label = 'language';
-        if (count($languages) > 1): $label .= 's'; endif;
-        ?>
-        
-        <address class="mt-2" style="line-height: 120%">
-            <?php echo $this->escapeHtml($i->getAddress1()); ?><br>
-            <?php $addr2 = $i->getAddress2(); if ($addr2): echo $this->escapeHtml($addr2),'<br>';endif;  ?>
-            <?php 
-             $city = $i->getCity(); if ($city) : echo $this->escapeHtml($city);endif;
-             $state = $i->getState(); if ($state): echo $city ? ', ': ''; echo $this->escapeHtml($state); endif; 
-             $zip = $i->getZip(); if ($zip) : echo $state ? ' ':''; echo $this->escapeHtml($zip); endif;
-             ?>
-        </address>
-        <p>
-           <?php foreach(['mobile','office','home'] as $phone):
-               $number = $i->{'get'.ucfirst($phone).'Phone'}();
-               if (! $number) : continue; endif;
-           
-               ?><span class="fas fa-phone fa-rotate-180 mr-2"></span> <?php echo "$phone $number<br>";
-                
-            endforeach;
-            $email = $i->getEmail(); if ($email) :
-                ?><span class="fas fa-envelope mr-2"></span> <?php echo "$email<br>";
-            endif;?>
-        </p>        
         <div class="row">
-            <div class="col">some shit here</div>
-            <div class="col">and other shit here</div>
-        </div>
-    </div>
-    
-    
-    
+            <div class="col-sm-auto"><?php echo $label ?></div>
+            <div class="col-4" style="font-size:110%"><?php echo implode(', ',$languages);?></div>
+            <div class="col-6">
+                <address style="line-height: 120%">
+                <?php echo $this->escapeHtml($i->getAddress1()); ?><br>
+                <?php $addr2 = $i->getAddress2(); if ($addr2): echo $this->escapeHtml($addr2),'<br>';endif;  ?>
+                <?php 
+                 $city = $i->getCity(); if ($city) : echo $this->escapeHtml($city);endif;
+                 $state = $i->getState(); if ($state): echo $city ? ', ': ''; echo $this->escapeHtml($state); endif; 
+                 $zip = $i->getZip(); if ($zip) : echo $state ? ' ':''; echo $this->escapeHtml($zip); endif;
+                 $country = $i->getCountry();
+                 if ($country && 'United States' != $country) : echo "<br>$country"; endif;
+                 ?>
+                </address>
+             
+            </div>
+        <div class="row">
+            <?php
+                $email = $i->getEmail();?>
+                <div class="col-2"><span class="fas fa-envelope mr-2"></span> email</div>
+                <div class="col-4"><?php echo $email ?: "&emdash;" ?></div><?php
+                foreach(['mobile','office','home'] as $phone): 
+                    $number = $i->{'get'.ucfirst($phone).'Phone'}();
+                    ?>        
+                <div class="col-2"><span class="fas fa-phone fa-rotate-180"></span> <?php echo $phone ?></div>
+                <div class="col-4"><?php echo $number ?: "--" ?></div>
+                <?php
+                endforeach;
+                ?>
+          </div>
+        </div>   
+    </div>   
 </div>
+<!--
+id
+
+security_clearance_date
+fingerprint_date
+oath_date
+contract_expiration_date
+
+comments
+dob
+ssn
+
+--.
