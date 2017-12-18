@@ -193,6 +193,7 @@ class Interpreter extends Person
      */
     public function setHomePhone($phone)
     {
+        
         $this->homePhone = $phone;
 
         return $this;
@@ -205,7 +206,8 @@ class Interpreter extends Person
      */
     public function getHomePhone()
     {
-        return $this->homePhone;
+        return $this->formatPhone($this->homePhone);
+        
     }
 
     /**

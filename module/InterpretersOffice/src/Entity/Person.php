@@ -318,7 +318,7 @@ class Person
      */
     public function getOfficePhone()
     {
-        return $this->officePhone;
+        return $this->formatPhone($this->officePhone);
     }
 
     /**
@@ -332,9 +332,8 @@ class Person
      */
     public function setMobilePhone($mobilePhone)
     {
-        $this->mobilePhone = $mobilePhone;
+        return $this->formatPhone($this->mobilePhone);
 
-        return $this;
     }
 
     /**
@@ -346,6 +345,28 @@ class Person
      */
     public function getMobilePhone()
     {
-        return $this->mobilePhone;
+        return $this->formatPhone($this->mobilePhone);
+    }
+    
+    /**
+     * formats phone number
+     * 
+     * attempts to return a 10-digit phone number formatted as nnn nnn-nnnn
+     * 
+     * @param string $phone
+     * @param string $format
+     * @return string
+     */
+    public function formatPhone($phone, $format='%s %s-%s')
+    {
+        if (preg_match('/^\d{3} \d{3}-\d{4}$/',$phone)) {
+            return $phone;
+        }
+        $digits = filter_var($phone,FILTER_SANITIZE_NUMBER_INT);
+        if (10 != strlen($digits)) {
+            return $phone;
+        }
+        return sprintf($format, substr($digits,0,3), substr($digits,3,3),
+            substr($digits,6,4));
     }
 }
