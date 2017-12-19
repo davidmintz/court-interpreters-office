@@ -70,8 +70,9 @@ $(document).ready(function()
     
     // (re)populate the interpreter select element according to the language
     languageElement.on('change',function(event,params){
-        
+        console.warn("shit?");
         var language_id =  languageElement.val();
+       
         // remove the interpreters if the language changes, except
         // when we're initially triggered on page load, which we will
         // find out from the "params" parameter
@@ -82,6 +83,7 @@ $(document).ready(function()
             interpreterSelectElement.attr("disabled","disabled");
             return;
         }
+         console.warn("shit? "+ language_id);
         $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
             {}, function(data){
             var options = data.map(function(item){

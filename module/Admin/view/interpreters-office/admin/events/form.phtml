@@ -30,7 +30,9 @@ if ($this->errorMessage) : ?>
 return;
 endif;
 $form = $this->form; 
-$form->setAttribute('class','form-horizontal form-event');
+$form
+        ->setAttribute('class','form-event mx-auto')
+        ->setAttribute('style','max-width:900px');
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
@@ -70,10 +72,111 @@ if (false) {
 
 // temporarily, let's just set this here
 $config = ['end_time' => true];
-echo $this->form()->openTag($form);  
-?>
+echo $this->form()->openTag($form); ?>
+<div class="form-row">
+    <div class="col-md-6">
+    <?php 
+        foreach (['date','time','eventType','judge', ] as $elementName) :
+            $element = $fieldset->get($elementName);        
+           ?>
+        <div class="form-group form-row">
+            <?php
+            if ('time' == $elementName && $config['end_time']): 
+                $end_time = $fieldset->get('end_time'); ?>
+                <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
+                <div class="col-sm-1 col-form-label  pr-1">from</div>
+                <div class="col-sm-7"><?php echo $this->formElement($element),$this->formElementErrors($element)?></div>
+                <label for="<?php $end_time->getAttribute('id')?>" class="offset-sm-4 col-sm-1 col-form-label  pr-1">to</label>
+                <div class="col-sm-7"><?php  echo $this->formElement($end_time),$this->formElementErrors($end_time)?></div>
+            <?php else: ?>
+            <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
+            <div class="col-sm-8"><?php echo $this->formElement($element), 
+                         $this->formElementErrors($element);?></div>
+            <?php endif; ?>        
+        </div>
+        <?php endforeach; $element = $fieldset->get('parent_location');?>
+        <div class="form-group form-row">
+            <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
+            <div class="col-sm-8"><?php 
+                    echo $this->formElement($element), 
+                         $this->formElement($fieldset->get('location')),
+                         $this->formElementErrors($element) ?>
+            </div>
+        </div>
+    <?php foreach (['language','docket', 'comments','admin_comments']  as $elementName) : 
+        $element = $fieldset->get($elementName); ?>
+        <div class="form-group form-row">
+            <label class="col-sm-4 col-form-label pr-1" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+            <div class="col-sm-8"><?php 
+                echo $this->formElement($element), $this->formElementErrors($element) ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+    </div>  
+    <div class="col-md-6 border"><!-- right side -->
+        <div class="form-group form-row">
+            <label class="col-sm-4 col-form-label pr-1" for="interpreter-select">interpreters</label>
+            <div class="col-sm-8">
+                <?php echo $this->formElement($fieldset->get('interpreter-select'));?>                
+                <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
+                <?php
+                /** THIS IS AwKWARD. re-think and start over? */
+                if  ($this->interpreters) {
+                    $helper = (new InterpreterElementCollection())->setView($this);
+                    echo $helper->fromPost($this->interpreters);
+                } else {
+                     $interpreters = $form->getObject()->getInterpreterEvents();                
+                    if ($interpreters->count()) {
+                        $helper = (new InterpreterElementCollection())->setView($this);
+                        echo $helper($fieldset->get('interpreterEvents'));
+                    } 
+                }
+                ?>
+                </ul>
+            </div>
+        </div>
+        
+    <?php foreach (['one','two','three'] as $i => $e) :?>
+        <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-1">shit</label>
+                <div class="col-sm-9">
+                    <?php echo $this->formText(new \Zend\Form\Element\Text('shit'));?>
+                </div>
+        </div>
+    <?php endforeach;  ?>
+    </div>
+</div>
+<?php echo $this->form()->closeTag(); return;?>
+
+<!-- 
+<form style="max-width:900px" class="mx-auto">
+    <div class="form-row">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label for="inputEmail3" class="col-sm-3 col-form-label  pr-1">email</label>
+                <div class="col-sm-9">
+                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="yadda" class="col-sm-3 col-form-label  pr-1">other </label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="yadda" placeholder="whatever">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label for="thing2" class="col-sm-3 col-form-label pr-1">some shit</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="thing2" placeholder="some shit">
+                </div>
+            </div>
+        </div>
+    </div>   
+</form>-->
 <div class="col-sm-6"><!-- left side -->
-    <div class="row">
+    <div class="form-row">
         <?php foreach (['date','time','eventType','judge', ] as $elementName) : 
             //if (! $fieldset->has($elementName)) { continue; } //experimental
             $element = $fieldset->get($elementName);
