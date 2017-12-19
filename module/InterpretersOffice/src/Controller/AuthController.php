@@ -58,11 +58,11 @@ class AuthController extends AbstractActionController
     {
         $form = new LoginForm();
         $request = $this->getRequest();
-
+        $is_xhr = $request->isXmlHttpRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                return $request->isXmlHttpRequest() ?
+                return $is_xhr ?
                         new JsonModel([
                             'validation_errors' => $form->getMessages(),
                             'authenticated' => false,
@@ -80,8 +80,11 @@ class AuthController extends AbstractActionController
             $event_params = ['result' => $result, 'identity' => $data['identity']];
             if (! $result->isValid()) {
                 $this->events->trigger(__FUNCTION__, $this, $event_params);
-
-                return new ViewModel(
+                return $is_xhr ? new JsonModel([
+                            'authenticated' => false,
+                            'error' => "authentication failed",
+                        ]) 
+                    : new ViewModel(
                     ['form' => $form, 'status' => $result->getCode()]
                 );
             }
