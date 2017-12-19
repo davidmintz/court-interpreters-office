@@ -1,5 +1,6 @@
 /** public/js/interpreters-index.js */
 $(function(){
+    
     var button = $('nav li:contains("interpreters")');
     if (! button.hasClass("active")) { button.addClass("active");}
         
@@ -22,6 +23,7 @@ $(function(){
         select : function( event, ui ) {            
            nameElement.data({ interpreterName : ui.item.label, interpreterId: ui.item.id });
            //console.log("select. shit is real");
+           $('#btn-search-name').trigger("click");
         }
     });    
     $('#btn-search-name').on("click",function(event){
@@ -48,5 +50,37 @@ $(function(){
             }
         }
         document.location = url;
+    });
+
+    $('#auth-submit').on("click",function(){
+
+    var input = {
+        identity : $('#identity').val(),
+        password : $('#password').val(),
+        login_csrf : $('input[name="login_csrf"').val()
+    };
+    var url = /*window.basePath +*/ '/login';
+    $.post(url, input, function(response)
+        {
+            if (response.validation_errors) {
+                //refresh the CSRF token
+                $('input[name="login_csrf"').val(response.login_csrf);
+                return displayValidationErrors(response.validation_errors);
+            }            
+            if (response.authenticated) {
+                //alert("good job");
+                $.post('/vault/decrypt',{
+                    dob  : $('#encrypted_dob').val(),
+                    ssn  : $('#encrypted_ssn').val(),
+                    csrf : response.csrf
+                },function(data){
+                    $('#dob').text(data.dob);
+                    $('#ssn').text(data.ssn);
+                    $('#login-modal').modal('hide');
+                });
+            } else {            
+                return $('#div-auth-error').text(response.error).removeClass("hidden");            
+            }
+        }); 
     });
 });
