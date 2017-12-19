@@ -1,0 +1,223 @@
+<?php
+use InterpretersOffice\Admin\Form\View\Helper\InterpreterElementCollection;
+use InterpretersOffice\Admin\Form\View\Helper\DefendantNameElementCollection;
+
+$this->headTitle('admin | events | '.$this->layout()->action);
+$this->headLink()
+        ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+$this->headScript()
+        ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
+        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
+        ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+        ->appendFile($this->basePath('js/event-form.js'))
+        ;
+$this->headStyle()->captureStart();?>
+.multi-input label, .multi-input div { border : 1px dotted gray; }
+form { max-width: 900px;}
+.multi-input div:first-of-type { padding-right: 0px; }
+.multi-input div:last-of-type { padding-left: 0px; }
+.multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
+<?php $this->headStyle()->captureEnd();
+
+$messenger = $this->flashMessenger();
+if ($messenger->hasErrorMessages()) : 
+    echo $messenger->render('error', ['alert','alert-warning',], false);   
+endif;
+
+if ($this->errorMessage) : ?>
+<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
+<?php
+return;
+endif;
+$form = $this->form; 
+$form->setAttribute('class','form-horizontal form-event');
+$form->add([
+    'name' => 'submit',
+    'type' => 'Zend\Form\Element\Submit',
+    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+])->setAttribute('method', 'post');
+?>
+<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<?php
+$form->prepare();
+$fieldset = $form->get('event');
+foreach (['date','time','end_time','submission_time'] as $time) :
+    if (! $fieldset->has($time)) : continue; endif;    
+    $element = $fieldset->get($time);
+    $value = $element->getValue();
+    if ($value instanceof \DateTime) {
+        $format = 'date'== $time ? 'Y-m-d' : 'g:i a';            
+        $element->setValue($value->format($format));
+        continue;
+    } 
+    if (2 == substr_count($value, ':')) {        
+        $fieldset->get($time)->setValue(substr($value,0,5));
+    }
+endforeach;
+// for testing
+if (false) {
+  
+    $fieldset->get('time')->setValue('10:00:00');
+    $fieldset->get('date')->setValue('2017-08-15');
+   // $fieldset->get('judge')->setValue(1);
+    $fieldset->get('eventType')->setValue(1);
+    $fieldset->get('language')->setValue(62);
+    $fieldset->get('parent_location')->setValue(1);
+    $fieldset->get('interpreterEvents')->populateValues([  
+          ['interpreter'=> 117] 
+]);
+}
+
+// temporarily, let's just set this here
+$config = ['end_time' => true];
+echo $this->form()->openTag($form);  
+?>
+<div class="col-sm-6"><!-- left side -->
+    <div class="row">
+        <?php foreach (['date','time','eventType','judge', ] as $elementName) : 
+            //if (! $fieldset->has($elementName)) { continue; } //experimental
+            $element = $fieldset->get($elementName);
+            if ('time' == $elementName && $config['end_time']): 
+                $end_time = $fieldset->get('end_time'); ?>
+            <div class="form-group">
+                 <label class="control-label col-sm-4" for="time">time</label>
+                 <div class="col-sm-1 control-label">from</div>
+                 <div class="col-sm-7"><?php echo $this->formElement($element), $this->formElementErrors($element);?></div>
+                 <label class="control-label col-sm-1 col-sm-offset-4" for="end_time">until </label>
+                 <div class="col-sm-7"><?php echo $this->formElement($end_time), $this->formElementErrors($end_time);?></div>                 
+            <?php else: ?>
+            <div class="form-group">
+                <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-8"><?php
+                    echo $this->formElement($element), 
+                         $this->formElementErrors($element);
+              ?></div>
+            <?php  endif; ?>
+            </div>
+        <?php endforeach;  $element = $fieldset->get('parent_location')?>
+            <div class="form-group">
+                <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-8"><?php 
+                    echo $this->formElement($element), 
+                         $this->formElement($fieldset->get('location')),
+                         $this->formElementErrors($element) ?>
+                </div>
+            </div>
+        <?php foreach (['language','docket', 'comments','admin_comments']  as $elementName) : 
+            $element = $fieldset->get($elementName); ?>
+            <div class="form-group">
+                <label class="control-label col-sm-4" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+                <div class="col-sm-8"><?php 
+                    echo $this->formElement($element), $this->formElementErrors($element) ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<div class="col-sm-6"><!-- right side -->
+    <div class="row"><!--  style="background-color: yellow" -->
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="interpreter-select">interpreters</label>
+            <div class="col-sm-8">
+                <?php echo $this->formElement($fieldset->get('interpreter-select'));?>                
+                <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
+                <?php
+                /** THIS IS AwKWARD. re-think and start over? */
+                if  ($this->interpreters) {
+                    $helper = (new InterpreterElementCollection())->setView($this);
+                    echo $helper->fromPost($this->interpreters);
+                } else {
+                     $interpreters = $form->getObject()->getInterpreterEvents();                
+                    if ($interpreters->count()) {
+                        $helper = (new InterpreterElementCollection())->setView($this);
+                        echo $helper($fieldset->get('interpreterEvents'));
+                    } 
+                }
+                ?>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="defendant-search">defendants</label>
+            <div class="col-sm-8">
+                <?php echo $this->formElement($fieldset->get('defendant-search'));?>
+                <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
+                <?php 
+                echo $this->formSelect($fieldset->get('defendantNames'));
+                if ($this->defendantNames) {                    
+                    foreach ($this->defendantNames as $id => $name) {
+                        echo $this->defendantName($id,$name);
+                    }
+                } else {                    
+                    $names = $form->getObject()->getDefendantNames()->toArray();
+                    //echo "DEBUG: # deft names is ". count($names);
+                    foreach ($names as $nameObject) {
+                        $name = $nameObject->getSurNames() . ', ' . $nameObject->getGivenNames();
+                        echo $this->defendantName($nameObject->getId(),$name);
+                    }
+                }
+            ?>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="hat">submitted by</label>
+            <div class="col-sm-8">
+            <?php 
+                echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
+            <?php $element = $fieldset->get('submitter'); 
+                echo $this->formElement($element), $this->formElementErrors($element);            
+            ?>                
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="submission_date">submitted on</label>
+            <div class="col-sm-8">
+            <?php $element = $fieldset->get('submission_date');
+                  echo $this->formElement($element),$this->formElementErrors($element);?>                
+            </div>
+            <label class="control-label col-sm-4 submission-time" for="submission_time">at</label>
+            <div class="col-sm-8 submission-time">
+            <?php $element = $fieldset->get('submission_time');
+                echo $this->formElement($element),$this->formElementErrors($element);?>                
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="cancellation">cancellation</label>
+            <div class="col-sm-8">
+            <?php $element = $fieldset->get('cancellationReason');
+                  echo $this->formElement($element);?>
+            <?php echo $this->formElementErrors($element);?>                
+            </div>
+        </div>
+    </div><!-- /.row -->
+</div><!-- /right side -->
+<div class="row">
+    <div style="margin-top:1em" class="form-group">
+        <div class="col-sm-12" style="text-align: center;">
+
+            <?php
+            $csrf = $form->get('csrf');            
+            echo $this->formHidden($fieldset->get('is_anonymous_judge'));
+            echo $this->formHidden($fieldset->get('anonymousJudge'));
+            echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+            echo $this->formHidden($fieldset->get('id'));
+            
+            if ($fieldset->has('submission_datetime')) {
+                echo $this->formHidden($fieldset->get('submission_datetime'));
+            }
+           
+            if ($form->has('modified')) {
+                $element = $form->get('modified');
+                $value = $element->getValue();
+                if (is_object($value)) {
+                    $element->setValue($value->format('Y-m-d H:i:s'));
+                }
+                echo $this->formHidden($element);   
+            }
+            echo $this->formSubmit($form->get('submit'));?>
+        </div>
+    </div><!-- / .form-group -->
+</div>
+<?php echo $this->form()->closeTag(); ?>
+
