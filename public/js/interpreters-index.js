@@ -51,7 +51,11 @@ $(function(){
         }
         document.location = url;
     });
-
+    
+    /**
+     * require re-authentication to decrypt and display ssn and dob
+     */
+    
     $('#auth-submit').on("click",function(){
 
     var input = {
@@ -67,19 +71,19 @@ $(function(){
                 $('input[name="login_csrf"').val(response.login_csrf);
                 return displayValidationErrors(response.validation_errors);
             }            
-            if (response.authenticated) {
-                //alert("good job");
+            if (response.authenticated) {                
                 $.post('/vault/decrypt',{
                     dob  : $('#encrypted_dob').val(),
                     ssn  : $('#encrypted_ssn').val(),
                     csrf : response.csrf
                 },function(data){
+                    /** @todo handle errors! */
                     $('#dob').text(data.dob);
                     $('#ssn').text(data.ssn);
                     $('#login-modal').modal('hide');
                 });
-            } else {            
-                return $('#div-auth-error').text(response.error).removeClass("hidden");            
+            } else {                
+                return $('#div-auth-error').text(response.error).show();            
             }
         }); 
     });

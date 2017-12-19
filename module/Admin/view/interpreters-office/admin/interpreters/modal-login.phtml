@@ -20,9 +20,11 @@
                 <label class="sr-only" for="password">password</label>
                 <input name="password" autocomplete="off" value="" type="password" class="form-control" id="password" placeholder="password">
               </div>              
-              <?php if ($this->login_csrf): 
-                        echo $this->formHidden($this->login_csrf),$this->formElementErrors($this->login_csrf) ;
-                    endif;
+              <?php if (! $this->login_csrf):
+                        $this->login_csrf = (new \Zend\Form\Element\Csrf('login_csrf'))
+                        ->setAttribute('id', 'login_csrf');                         
+                     endif;
+                     echo $this->formHidden($this->login_csrf),$this->formElementErrors($this->login_csrf) ;
                ?>
           </form>
       </div>

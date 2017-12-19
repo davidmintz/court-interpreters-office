@@ -21,8 +21,8 @@ $i = $this->interpreter;
     <div class="card-body">
         <div class="row">
             <div class="col-3 text-md-right"><?php echo $label ?></div>
-            <div class="col-3" style="font-size:110%"><?php echo implode(', ',$languages);?></div>
-            <div class="col-6">
+            <div class="col-3" style="font-size:110%;line-height: 120%"><?php echo implode(', ',$languages);?></div>
+            <div class="col-6 border border-right-0 border-top-0 border-bottom-0">
                 <address style="line-height: 120%">
                 <?php echo $this->escapeHtml($i->getAddress1()); ?><br>
                 <?php $addr2 = $i->getAddress2(); if ($addr2): echo $this->escapeHtml($addr2),'<br>';endif;  ?>
@@ -67,18 +67,45 @@ $i = $this->interpreter;
                 <?php $contract_exp = $i->getContractExpirationDate(); 
                 if ($contract_exp): echo $contract_exp->format('m/d/Y'); endif;?>
             </div>
-            <div class="col-3 text-md-right">date of birth <?php /**
-             @todo check if dob/ssn field is NULL before printing **** 
-             */?>                
+            <div class="col-3 text-md-right">date of birth
             </div>
-            <div class="col-3" id="dob">*******
-            <button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
+            <div class="col-3" id="dob">
+             <?php
+            /**/
+                $encrypted_dob = $i->getDob();
+                if (! $encrypted_dob) :
+                    ?> -- <?php
+                else:
+                    echo $this->formHidden((new \Zend\Form\Element\Hidden('encrypted_dob'))
+                            ->setAttributes(['id'=>'encrypted_dob'])
+                            ->setValue($encrypted_dob));
+                    
+                ?><span style="color:gray">**********</span><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and/or social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
+                    <?php
+                endif;
+             ?>                
+            
             </div>
             <div class="col-3 text-md-right">social security</div>
-            <div class="col-3" id="dob">*******<button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and social security number" class="btn btn-info btn-sm float-right  mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>                  
+            
+            <div class="col-3" id="ssn">
+                <?php
+            /**/
+                $encrypted_ssn = $i->getSsn();
+                if (! $encrypted_ssn) :
+                    ?> -- <?php
+                else:
+                    echo $this->formHidden((new \Zend\Form\Element\Hidden('encrypted_ssn'))
+                            ->setAttributes(['id'=>'encrypted_ssn'])
+                            ->setValue($encrypted_ssn));
+                    
+                ?><span style="color:gray">**********</span><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and/or social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
+                    <?php
+                endif;
+             ?>                
             </div>
-            <div class="col-3 text-md-right mt-2">comments</div>
-            <div class="col-8 border mt-2"><?php echo $i->getComments() ?>                    
+            <div class="col-3 text-md-right mt-2 pt-2">comments</div>
+            <div class="col-8 border mt-2 px-2 py-2" style="line-height: 120%"><?php echo $i->getComments() ?>                    
             </div>
             <div class="w-100"></div>
             <div class="col-12 text-center pt-2"><a href="<?php echo $this->url('interpreters/edit',['id'=>$i->getId()])?>" class="btn btn-primary">edit</a></div>
