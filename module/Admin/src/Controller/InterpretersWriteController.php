@@ -54,14 +54,16 @@ class InterpretersWriteController extends AbstractActionController
     {
         
         $this->entityManager = $entityManager;
-        $this->vault_enabled = $vault_enabled;        
-    }
-    
-    public function onDispatch(\Zend\Mvc\MvcEvent $e) {
-        $this->layout()->setTemplate('layout/bs-4.layout.phtml');
+        $this->vault_enabled = $vault_enabled;
         $this->form_template = 'interpreters-office/admin/interpreters/bs-4.form.phtml';
+    }
+    /*
+    public function onDispatch(\Zend\Mvc\MvcEvent $e) {
+        $this->layout()->setTemplate('layout/bs-4.layout.phtml');        
         parent::onDispatch($e);
     }
+    */
+    
     
     /**
      * adds an Interpreter entity to the database.

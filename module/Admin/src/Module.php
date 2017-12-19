@@ -64,9 +64,14 @@ class Module
                         ->getViewModel();
                 $viewModel->setVariables($routeMatch->getParams());
                 $viewModel->user = $user;
+                /**
+                 * temporary measure for phasing in BS 4 !!!!
+                 */
+                $viewModel->setTemplate("layout/bs-4.layout.phtml");
+                
+                
             }
         });
-        
         // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
