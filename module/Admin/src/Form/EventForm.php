@@ -169,7 +169,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
          * correspond to either the 'judge' or the 'anonymousJudge' property,
          * and we have to make sure one is null and the other is not-null. Some
          * Javascript in the viewscript watches the judge element 'change' 
-         * events and sets the is_anonymous_judge flag.
+         * event and sets the is_anonymous_judge flag.
          */
         if (empty($event['judge']) && empty($event['anonymousJudge'])) {
             $validator = new \Zend\Validator\NotEmpty([
@@ -191,45 +191,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         if (! empty($event['end_time'])) {
             $end_time_input = $this->getInputFilter()->get('event')
                     ->get('end_time');
-            $end_time_input->getValidatorChain()->attach(new EndTimeValidator());
-            /*
-            new class extends \Zend\Validator\AbstractValidator {
-                protected $messageTemplates = [
-                    'invalid_format'=> 'invalid time',
-                    'invalid_time' => 'end time has to be later than start time',
-                    'missing_start_time'=> 
-                        'if end time is provided, start time is required',
-                    'is_future'=>'end time cannot be predicted for future events',
-                ];
-                public function isValid($value,$context = null) {                    
-                    if (! trim($value)) {
-                        return true;
-                    }
-                    if (isset($context['date']) && isset($context['time'])) {
-                        $datetime = strtotime("$context[date] $value");
-                        if ($datetime && time() < $datetime) {
-                            $this->error('is_future');
-                            return false;
-                        }
-
-                    }
-                    if ($value && ! $context['time']) {
-                        $this->error('missing_start_time');
-                        return false;
-                    }
-                    $end = strtotime($value);
-                    $start = strtotime($context['time']);
-                    if (false === $end) {
-                        $this->error('invalid_format');
-                        return false;
-                    }
-                    if ($start && $end && $end <= $start) {
-                        $this->error('invalid_time');
-                        return false;
-                    }                    
-                    return true;
-                }
-            });*/
+            $end_time_input->getValidatorChain()->attach(new EndTimeValidator());            
         }
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null 
