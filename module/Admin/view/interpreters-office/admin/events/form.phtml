@@ -32,14 +32,14 @@ endif;
 $form = $this->form; 
 $form
         ->setAttribute('class','form-event mx-auto')
-        ->setAttribute('style','max-width:900px');
+        ->setAttribute('style','max-width:950px');
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
 ?>
-<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<h2 class="text-center mb-3"><a href="<?php echo $this->url('events')?>">schedule</a> | <?php echo $this->layout()->action?> event</h2>
 <?php
 $form->prepare();
 $fieldset = $form->get('event');
@@ -56,19 +56,6 @@ foreach (['date','time','end_time','submission_time'] as $time) :
         $fieldset->get($time)->setValue(substr($value,0,5));
     }
 endforeach;
-// for testing
-if (false) {
-  
-    $fieldset->get('time')->setValue('10:00:00');
-    $fieldset->get('date')->setValue('2017-08-15');
-   // $fieldset->get('judge')->setValue(1);
-    $fieldset->get('eventType')->setValue(1);
-    $fieldset->get('language')->setValue(62);
-    $fieldset->get('parent_location')->setValue(1);
-    $fieldset->get('interpreterEvents')->populateValues([  
-          ['interpreter'=> 117] 
-]);
-}
 
 // temporarily, let's just set this here
 $config = ['end_time' => true];
@@ -84,7 +71,7 @@ echo $this->form()->openTag($form); ?>
             if ('time' == $elementName && $config['end_time']): 
                 $end_time = $fieldset->get('end_time'); ?>
                 <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
-                <div class="col-sm-1 col-form-label  pr-1">from</div>
+                <div class="col-sm-1 col-form-label pr-1">from</div>
                 <div class="col-sm-7"><?php echo $this->formElement($element),$this->formElementErrors($element)?></div>
                 <label for="<?php $end_time->getAttribute('id')?>" class="offset-sm-4 col-sm-1 col-form-label  pr-1">to</label>
                 <div class="col-sm-7"><?php  echo $this->formElement($end_time),$this->formElementErrors($end_time)?></div>
@@ -113,7 +100,7 @@ echo $this->form()->openTag($form); ?>
         </div>
     <?php endforeach; ?>
     </div><!-- /left side -->  
-    <div class="col-md-6 border"><!-- right side -->
+    <div class="col-md-6"><!-- right side -->
         <div class="form-group form-row">
             <label class="col-sm-4 col-form-label pr-1" for="interpreter-select">interpreters</label>
             <div class="col-sm-8">
@@ -137,9 +124,9 @@ echo $this->form()->openTag($form); ?>
         </div>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="defendant-search">defendants</label>
-            <div class="col-sm-8">
+            <ul class="col-sm-8">
                 <?php echo $this->formElement($fieldset->get('defendant-search'));?>
-                <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
+                <div style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php 
                 echo $this->formSelect($fieldset->get('defendantNames'));
                 if ($this->defendantNames) {                    
@@ -155,8 +142,7 @@ echo $this->form()->openTag($form); ?>
                     }
                 }
             ?>
-                </ul>
-            </div>
+            </ul>            
         </div>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="hat">submitted by</label>

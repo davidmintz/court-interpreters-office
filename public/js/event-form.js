@@ -67,36 +67,40 @@ $(document).ready(function()
     if (! languageElement.val()) {
         interpreterSelectElement.attr("disabled","disabled");
     }
-    
+   
+   
     // (re)populate the interpreter select element according to the language
-    languageElement.on('change',function(event,params){
-        console.warn("shit?");
-        var language_id =  languageElement.val();
-       
+    languageElement.on('change',function(event,params){ 
+        var language_id = languageElement.val();
         // remove the interpreters if the language changes, except
         // when we're initially triggered on page load, which we will
         // find out from the "params" parameter
         if (! params || params.remove_existing !== false) {            
             $('#interpreters-assigned li').remove();
         }
-        if (! language_id) {
+        
+        if (! language_id) {            
             interpreterSelectElement.attr("disabled","disabled");
             return;
         }
-         console.warn("shit? "+ language_id);
         $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
             {}, function(data){
+            console.log("WTF?");
             var options = data.map(function(item){
                   return $('<option>').val(item.value).text(item.label);
              });
+             
             interpreterSelectElement.children().not(":first").remove();
             interpreterSelectElement.append(options)
                     .trigger("sdny.language-update-complete");
             if (options.length) {
                 interpreterSelectElement.removeAttr("disabled");
-            }
+            }            
         });
-    }).trigger("change",{remove_existing:false});
+    });
+    if (languageElement.val()) {
+        languageElement.trigger("change",{remove_existing:false});
+    }
     
     // add an interpreter to this event
     interpreterSelectElement.on('change',function(){
