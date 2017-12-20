@@ -16,14 +16,14 @@ class InterpreterElementCollection extends AbstractHelper
      * @var string
      */
     protected $template = <<<TEMPLATE
-        <li class="list-group-item interpreter-assigned">
+        <li class="list-group-item py-1 interpreter-assigned">
             <input name="event[interpreterEvents][%d][interpreter]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][event]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][name]" type="hidden" value="%s">
-             %s            
-            <button class="btn btn-danger btn-xs btn-remove-item pull-right" title="remove this interpreter">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <span class="align-middle">%s</span>
+            <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this interpreter">
+            <span class="fas fa-times" aria-hidden="true"></span>
             <span class="sr-only">remove this interpreter
             </button>
         </li>           
@@ -60,7 +60,7 @@ TEMPLATE;
             $interpreter = $interpEvent->getInterpreter();
             $event = $interpEvent->getEvent();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
-            // 9 placeholders, yes it's excessive!
+            // 9 placeholders, yes it is excessive!
             $markup .= sprintf($this->template,
                     $i, $interpreter->getId(),
                     $i, $event->getId(),
