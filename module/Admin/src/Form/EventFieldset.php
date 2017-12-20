@@ -223,7 +223,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'label' => 'defendants',
             ],
             'attributes' => [
-                'class' => 'hidden',
+                'style' => 'display:none',
                 'id' => 'deft-select',
                 'multiple' => 'multiple',
             ],
