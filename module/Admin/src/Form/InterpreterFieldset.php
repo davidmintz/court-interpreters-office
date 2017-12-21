@@ -693,12 +693,13 @@ class InterpreterFieldset extends PersonFieldset
                             'max' => 600,
                             'messages' => [
                             \Zend\Validator\StringLength::TOO_LONG =>
-                                'comments exceed maximumn length of 600 characters'
+                                'comments exceed maximum length of 600 characters'
                             ]
                         ]
                     ]
               ]
             ];
+            $spec['email']['allow_empty'] = false;
             return $spec;
     }
 }

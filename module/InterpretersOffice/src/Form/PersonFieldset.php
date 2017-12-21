@@ -327,7 +327,15 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'required' => true,
                 'allow_empty' => true,
                 'validators' => [
-
+                    [
+                    'name' => 'NotEmpty',
+                       'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => 'email is required',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
                     //if we want to constrain the domain to values found in a
                     //config, this would be a good place to set that up
                     [
@@ -347,7 +355,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ['name' => 'Null'],
                 ],
             ],
-            'active' => [
+            'active' => [ // really?
                 'required' => false,
                 'allow_empty' => true,
                 'validators' => [
