@@ -5,7 +5,8 @@
  */
 $this->headTitle($this->title);
 ?>
-<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<div class="center-block mx-auto" style="max-width:500px">
+<h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) : 
@@ -28,7 +29,7 @@ foreach ($this->judges as $entity): ?>
     </li>
 <?php endforeach ?>
 </ul>
-<a href="<?php echo $this->url('judges/add') ?>" role="button" title="add a new judge" id="btn-add-interpreter" class="btn btn-info">
-<span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new judge
+<a href="<?php echo $this->url('judges/add') ?>" role="button" title="add a new judge" id="btn-add-interpreter" class="btn btn-info mt-2">
+<span aria-hidden="true" class="fas fa-plus"></span> new judge
 </a>
-
+</div>
