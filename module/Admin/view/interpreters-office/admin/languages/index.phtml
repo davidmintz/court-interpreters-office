@@ -5,7 +5,8 @@
  */
 $this->headTitle($this->title);
 ?>
-<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<div class="center-block mx-auto" style="max-width: 800px">
+<h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 
 <?php
 $messenger = $this->flashMessenger();
@@ -22,7 +23,7 @@ endif;
 echo $this->paginationControl($this->languages, null, 'partials/pagination_head');
 ?>
 
-<table class="table table-hover table-bordered" style="max-width:700px">
+<table class="table table-hover table-bordered" style="max-width:600px">
     <thead>
     <tr><th class="col-sm-10">language</th><th class="col-sm-2">events</th></tr>
     </thead>
@@ -49,3 +50,4 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
 <a href="<?php echo $this->url('languages/add') ?>" role="button" title="add a new language" id="btn-add-language" class="btn btn-info">
 <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new language 
 </a>
+</div>
