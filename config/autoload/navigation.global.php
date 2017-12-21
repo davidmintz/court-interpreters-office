@@ -18,10 +18,33 @@ return [
                         'label' => 'add',
                         'route' => 'events/add'
                     ],
+                    [
+                        'label' => 'edit',
+                        'route' => 'events/edit'
+                    ],
                 ],
             ],
             // yes, two of these: the above to make the breadcrumbs helper work,
             // the next for the main nav
+            [
+                'label' => 'people',
+                'route' => 'people',
+                'resource' => 'people',
+                'expand_children' => false,
+                'display' => false,
+                'pages' => [
+                    [
+                    'label' => 'add',
+                    'route' => 'people/add'
+                    ],
+                    [
+                    'label' => 'add',
+                    'route' => 'people/edit'
+                    ],
+                ]
+            ],
+            
+            
             [
                 'label' => 'add event',
                 'route' => 'events/add',

@@ -39,7 +39,8 @@ $form->add([
     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
 ?>
-<h2 class="text-center mb-3"><a href="<?php echo $this->url('events')?>">schedule</a> | <?php echo $this->layout()->action?> event</h2>
+
+<h2 class="text-center mb-3"><?php echo (string)$this->navigation('default')->breadcrumbs() ;?></h2>
 <?php
 $form->prepare();
 $fieldset = $form->get('event');
