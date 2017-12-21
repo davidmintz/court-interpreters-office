@@ -7,61 +7,53 @@ form { max-width: 900px;}
 .multi-input div:first-of-type { padding-right: 0px; }
 .multi-input div:last-of-type { padding-left: 0px; }
 .multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
-<?php $this->headStyle()->captureEnd(); echo $this->headStyle() ;
+<?php $this->headStyle()->captureEnd(); 
+//echo $this->headStyle() ;
 $user = $this->identity() ?>
 <h2>admin</h2>
 <p>hello user <?php echo $user->username ?> in role <?php echo $user->role ?></p>
 <h3>scratch</h3>
-<p>how to get this effect...</p>
-<pre class="well">
- form { max-width: 900px;}
-.multi-input div:first-of-type { padding-right: 0px; }
-.multi-input div:last-of-type { padding-left: 0px; }
-.multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
-</pre>
-<form class="form-horizontal">
-	<div class="col-sm-6"><!-- left side -->
-	    <div class="row">
-            <div class="form-group multi-input">
-                <label class="control-label col-xs-4" for="time">time</label>
-                <div class="col-xs-3"><input class="form-control" type="time" name="time" id="time"></div>
-                <label class="col-xs-2 control-label" for="end_time">to</label>
-                <div class="col-xs-3"><input class="form-control" name="end_time" type="time" id="end_time"></div>                      
+
+
+<div class="row">    
+    <div class="col-6 border"><!-- left side -->
+        <form>
+            <div class="form-group form-row">               
+                <label class="col-form-label col-4 border" for="time">time</label>
+                <div class="col-3 border"><input class="form-control" type="time" name="time" id="time"></div>
+                <label class="col-2 col-form-label border text-center" for="end_time">to</label>
+                <div class="col-3 border"><input class="form-control" name="end_time" type="time" id="end_time"></div>                                  
             </div>
-            
-             <div class="form-group">
-                <label class="control-label col-sm-4" for="shit">shit</label>
-                 <div class="col-sm-8">
-                     <input class="form-control" name="shit" id="shit">
-                 </div>
-             </div>
-             <div class="form-group">
-                <label class="control-label col-sm-4" for="other-shit">other shit</label>
-                 <div class="col-sm-8">
-                     <input class="form-control" name="shit" id="other-shit">
-                 </div>
+            <div class="form-group form-row">
+                <label class="col-form-label col-4" for="other-1">some shit</label>
+                <div class="col-8">
+                    <input class="form-control" name="other-1" id="other-1">             
+                </div>
+            </div>
+            </div>
+            <div class="col-6 border"><!-- right side -->
+            <div class="form-group form-row">
+                    <label class="col-form-label col-4" for="other">other input</label>
+                     <div class="col-8">
+                         <input class="form-control" name="other" id="other">
+                     </div>
+            </div>
+            <div class="form-group form-row">
+                    <label class="col-form-label col-4" for="another">yet another</label>
+                     <div class="col-8">
+                        <input class="form-control" name="another" id="another">             
+                    </div>
             </div>
         </div>
-    </div>
-	<div class="col-sm-6"><!-- right side -->
-	    <div class="row">
-	    	 <div class="form-group">
-                <label class="control-label col-sm-4" for="other">other input</label>
-                 <div class="col-sm-8">
-                     <input class="form-control" name="other" id="other">
-                 </div>
-                         </div>
-             <div class="form-group">
-                <label class="control-label col-sm-4" for="another">yet another</label>
-                 <div class="col-sm-8">
-                     <input class="form-control" name="another" id="another">
-                 </div>
-            </div>
-	    </div>
-    </div>
-</form>
+    </form>
+</div>
+
+<div class="row border">
+    <div class="col-6 border">shit</div>
+    <div class="col-6 border">shit</div>
+</div>
 <div class="clearfix" style="clear:both" id='debug'></div>
-<script type="text/javascript">
+<script>
     $(document).ready(function(){
         $('#debug').append("shit<br>");
         var thing1 = $('.multi-input').first();
