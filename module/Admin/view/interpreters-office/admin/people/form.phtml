@@ -21,7 +21,7 @@ $form->add([
     ->setAttribute('class', 'form-horizontal')    ;
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
-<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<h2><?php echo (string)$this->navigation('default')->breadcrumbs() ?: "add a person" ?></h2>
 <?php
 $form->prepare();
 $fieldset = $form->get('person');
@@ -29,8 +29,8 @@ echo $this->form()->openTag($form);?>
 <div class="form-group">
 <?php
 $hat = $fieldset->get('hat');?>
-    <div class="form-group">
-        <label class="control-label col-sm-3"><?php echo $hat->getLabel()?></label>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3"><?php echo $hat->getLabel()?></label>
         <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>            
         </div>
     </div>
@@ -39,16 +39,16 @@ $hat = $fieldset->get('hat');?>
  // text inputs
 foreach (['lastname','middlename','firstname','email','officePhone','mobilePhone'] as $elementName) :
     $element = $fieldset->get($elementName);?>
-<div class="form-group">
-    <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
+<div class="form-group form-row">
+    <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
     <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>            
     </div>
 </div>
 <?php
 endforeach;
 $active = $fieldset->get('active');?>
-<div class="form-group">
-    <label class="control-label col-sm-3"><?php echo $active->getLabel()?></label>
+<div class="form-group form-row">
+    <label class="col-form-label col-sm-3"><?php echo $active->getLabel()?></label>
     <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
     </div>
  </div>
