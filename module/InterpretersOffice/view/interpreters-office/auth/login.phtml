@@ -8,33 +8,47 @@
 //$this->headScript()->appendFile($this->basepath().'/js/login.js');
 $this->headTitle($this->title);
 ?>
-<div class="panel-heading"><h2 class="navigation"><?php echo $this->title ?></h2></div>
+<h2 class="navigation text-center my-3">user login</h2>
 <?php
 foreach (['success','default','error','info','warning'] as $ns) {
     echo $this->flashMessenger()->render($ns, ['alert', 'alert-dismissible', "alert-{$ns}"]);
 }
-
 ?>
-<?php if ($this->status && $this->status != \Zend\Authentication\Result::SUCCESS) :?>
-<div class="alert alert-warning alert-dismissible">authentication failed: invalid identity and/or password. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
-<?php else :?>
-<p style="margin:1em 0 2em 0;font-size:120%">Please log in to continue.</p>    
-<?php endif;?>
-<form class="form-inline well" style="max-width:900px;display:inline-block" id="form-login" action="<?php echo $this->url('login') ?>" method="post">
-  <div class="form-group">
-    <label class="sr-only" for="identity">username or email</label>
-        <?php echo $this->formElementErrors($this->form->get('identity'))?>
-    <?php echo $this->formElement($this->form->get('identity')); //return; ?>
-  </div>
-  <div class="form-group">
-    <label class="sr-only" for="password">password</label>
-        <?php echo $this->formElementErrors($this->form->get('password')) ?>
-        <?php echo $this->formElement($this->form->get('password')); //return; ?>
-  </div>
-    <button type="submit" class="btn btn-default">log in</button>
-    <?php echo $this->formElement($form->get('login_csrf')) ?>
-    <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>
-</form>
+    <div class="row">
+        
+        <div class="offset-lg-3">
+                <!--<p style="margin:1em 0 2em 0;font-size:120%">Please log in to continue.</p>-->
+                <?php if ($this->status && $this->status != \Zend\Authentication\Result::SUCCESS) :?>
+                <div class="alert alert-warning alert-dismissible">authentication failed: invalid identity and/or password. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
+                <?php else :?>
+                    
+                <?php endif;?>
+            <form class="form-inline" style="align-content: center" id="form-login" action="<?php echo $this->url('login') ?>" method="post">
+                <div class="form-group">
+                  <label class="sr-only" for="identity">username or email</label>
+                      <?php echo $this->formElementErrors($this->form->get('identity'))?>
+                  <?php echo $this->formElement($this->form->get('identity')); //return; ?>
+                </div>
+                <div class="form-group pl-1">
+                  <label class="sr-only" for="password">password</label>
+                      <?php echo $this->formElementErrors($this->form->get('password')) ?>
+                      <?php echo $this->formElement($this->form->get('password')); //return; ?>
+                </div>
+                  <button type="submit" class="btn btn-info ml-1">log in</button>
+                  <?php echo $this->formElement($form->get('login_csrf')) ?>
+                  <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>
+              </form>
+        
+        </div>
+    </div>
+
+
+
+
+<!-- 
+</div></div>
+    -->
 <p style="margin-top:3em">
+<div class="text-center border"><button class="btn btn-primary btn-lg" style="background: linear-gradient(180deg, #4D82B6, #2991F9)">shit</button></div>
 <a href="#">Forgot password?</a> (too bad -- not yet implemented)</p>
 <p><a href="#">Need to create a user account?</a> (too bad -- not yet implemented)</p>
