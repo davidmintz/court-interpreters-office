@@ -261,7 +261,37 @@ class EventControllerTest extends AbstractControllerTest
         
     }
     
-   
+   public function testEventInputValidation()
+   {
+        $em = FixtureManager::getEntityManager();
+        $event = $this->getDummyData();
+        $this->login('david', 'boink');
+        $this->reset(true);        
+        $token = $this->getCsrfToken('/admin/schedule/add');
+        
+        // whatever the event date is, try making the submission date 1 day later
+        // i.e., impossible
+        
+        $event['submission_date'] = (new \DateTime("$event[date] + 1 day"))->format('Y-m-d');
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters([
+                    'event' => $event,
+                    'csrf' => $token,
+                ])
+        );
+        $count_before = $em
+          ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+          ->getSingleScalarResult();
+        $this->dispatch('/admin/schedule/add');
+        $count_after = $em
+          ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+          ->getSingleScalarResult();
+        $this->assertEquals($count_before,$count_after,
+                'Event count was incrememted where insertion should have failed'
+        );
+        
+        
+   }
     
     public function _testGetView()
     {
