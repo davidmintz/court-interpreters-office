@@ -1,0 +1,13 @@
+<?php
+/** module/InterpretersOffice/view/interpreters-office/defendants/search.phtml */
+
+if (! $this->paginator->count()):
+    echo "they ain't shit here";
+return;   
+endif;
+
+foreach ($paginator as $deft): 
+    
+    printf('%s, %s<br>', $deft->getLastname(), $deft->getFirstname());
+    
+endforeach;
