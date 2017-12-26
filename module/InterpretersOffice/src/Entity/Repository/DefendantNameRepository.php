@@ -106,9 +106,7 @@ class DefendantNameRepository extends EntityRepository
      */
     public function paginate($search_term, $page = 1)
     {
-
-        $dql = 'SELECT d
-            FROM InterpretersOffice\Entity\DefendantName d WHERE ';
+        $dql = 'SELECT d FROM InterpretersOffice\Entity\DefendantName d WHERE ';
         $name = $this->parseName($search_term);
         $parameters = ['surnames' => "$name[last]%"];
       
@@ -117,12 +115,10 @@ class DefendantNameRepository extends EntityRepository
         $query = $this->createQuery($dql)
                 ->setParameters($parameters)
                 ->setMaxResults(30);
-
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
-        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(30);
-
         
+        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(30);
     }
 
     /**
