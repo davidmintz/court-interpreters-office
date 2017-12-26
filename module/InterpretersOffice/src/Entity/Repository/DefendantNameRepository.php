@@ -9,6 +9,10 @@ use InterpretersOffice\Service\ProperNameParsingTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
 
+use Zend\Paginator\Paginator as ZendPaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+
 /**
  * custom EntityRepository class for the DefendantName entity.
  *
@@ -58,6 +62,19 @@ class DefendantNameRepository extends EntityRepository
                 . ' AS label FROM  InterpretersOffice\Entity\DefendantName d '
                 . ' WHERE ';
         
+        $dql .= $this->getDqlWhereClause($name,$parameters);
+        $dql   .= "ORDER BY d.surnames, d.givenNames";
+        $query = $this->createQuery($dql)
+                ->setParameters($parameters)
+                ->setMaxResults($limit);
+        
+        return $query->getResult();
+ 
+    }
+    
+    protected function getDqlWhereClause(Array $name, Array &$parameters)
+    {
+        $dql = '';
         // we don't do hyphens
         if (! strstr($name['last'],'-')) {
             $dql .= 'd.surnames LIKE :surnames ';
@@ -74,14 +91,38 @@ class DefendantNameRepository extends EntityRepository
             // we don't like empty first names, so if there are any (legacy)
             // rows that are missing a first name, avoid returning them
             $dql .= "AND d.givenNames <> '' " ;
-        }        
-        $dql   .= "ORDER BY d.surnames, d.givenNames";       
+        }
+        return $dql;
+        
+    }
+    
+    
+    /**
+     * returns defendant names wrapped in a paginator.
+     *
+     * @param string $search_term
+     * @param int $page
+     * @return ZendPaginator
+     */
+    public function paginate($search_term, $page = 1)
+    {
+
+        $dql = 'SELECT d
+            FROM InterpretersOffice\Entity\DefendantName d WHERE ';
+        $name = $this->parseName($search_term);
+        $parameters = ['surnames' => "$name[last]%"];
+      
+        $dql .= $this->getDqlWhereClause($name, $parameters);
+        $dql   .= "ORDER BY d.surnames, d.givenNames";
         $query = $this->createQuery($dql)
                 ->setParameters($parameters)
-                ->setMaxResults($limit);
+                ->setMaxResults(30);
+
+        $adapter = new DoctrineAdapter(new ORMPaginator($query));
+        $paginator = new ZendPaginator($adapter);
+        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(30);
+
         
-        return $query->getResult();
- 
     }
 
     /**

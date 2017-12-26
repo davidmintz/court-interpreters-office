@@ -7,6 +7,7 @@ namespace InterpretersOffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;       
 use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity;
@@ -81,6 +82,15 @@ class DefendantsController extends AbstractActionController {
         $data = $this->params()->fromQuery();            
         $html = $helper($data['id'],$data['name']);
         return $this->getResponse()->setContent($html);
+    }
+    
+    public function searchAction()
+    {
+        $search = $this->params()->fromQuery('term');
+        $repo = $this->entityManager->getRepository(Entity\DefendantName::class);
+        $paginator = $repo->paginate($search,$this->params()->fromQuery('page'));
+        
+        return new ViewModel(['paginator'=>$paginator]);
     }
 
 }
