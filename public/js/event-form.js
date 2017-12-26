@@ -101,9 +101,10 @@ $(document).ready(function()
     if (languageElement.val()) {
         languageElement.trigger("change",{remove_existing:false});
     }
-    
+    var interpreterButton = $('#btn-add-interpreter')
     // add an interpreter to this event
-    interpreterSelectElement.on('change',function(){
+    //interpreterSelectElement.on('change',
+    interpreterButton.on('click',  function(){
         
         var id = interpreterSelectElement.val();
         if (! id ) { return; }
@@ -253,6 +254,14 @@ $(document).ready(function()
     
     
     /* ==================== */
+    $('#btn-defendant-search').on("click",function(){
+        
+        
+        
+        
+        
+        
+    });
 });
 
 formatTimeElement = function(timeElement) {

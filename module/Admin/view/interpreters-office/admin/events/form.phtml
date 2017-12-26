@@ -108,7 +108,7 @@ echo $this->form()->openTag($form); ?>
                 <div class="input-group">
                     <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
                     <span class="input-group-btn">
-                        <button class="btn btn-info fas fa-plus" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
+                        <button class="btn btn-info fas fa-plus" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
                     </span>
                  </div>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
@@ -135,7 +135,7 @@ echo $this->form()->openTag($form); ?>
                 <div class="input-group">
                     <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                     <span class="input-group-btn">
-                        <button class="btn btn-info fas fa-search" type="button" id="btn-add-defendant"><span class="sr-only">add</span></button>
+                        <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
                     </span>
                 </div>
                 <div style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
