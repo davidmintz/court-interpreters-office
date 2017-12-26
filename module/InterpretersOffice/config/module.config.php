@@ -271,6 +271,17 @@ return [
                     ],
                 ],                
             ],
+            'defendant-search' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/defendants/search',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\DefendantsController::class,
+                        'action' => 'search',                        
+                    ],
+                ],                
+            ],
             'example' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
