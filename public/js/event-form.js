@@ -273,7 +273,8 @@ parseTime = function(event)
     var div = timeElement.closest('div.form-group');
     var errorDiv = timeElement.next('.validation-error');
     if (! errorDiv.length) {
-        timeElement.after($("<div>").addClass('validation-error'));
+       // console.log("what the fuck?");
+        timeElement.after($("<div>").addClass('alert alert-warning validation-error'));
         errorDiv = timeElement.next('.validation-error');
     }
     var time = timeElement.val().trim();
@@ -309,11 +310,11 @@ parseTime = function(event)
         }
         minute = matches[2];
     } else {
-        errorDiv.text("invalid time format").show();
-        div.addClass('has-error has-feedback');
+        errorDiv.addClass("alert alert-warning validation-error").text("invalid time").show();
+        //div.addClass('has-error has-feedback');
         return;
     }
-    div.removeClass('has-error has-feedback');
+    div.removeClass("alert alert-warning validation-error");
     errorDiv.empty().hide();
     timeElement.val((hour + ":" + minute + " " + ap).toLowerCase());
 };
@@ -328,7 +329,7 @@ formatDocketElement = function(event)
         errorDiv = $('#docket').parent().next('.validation-error');
         if (! errorDiv.length)  {
             // last resort
-            element.after($("<div>").addClass('validation-error'));
+            element.after($("<div>").addClass('alert alert-warning validation-error'));
             errorDiv = element.next('.validation-error');
         }
     }
