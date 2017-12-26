@@ -606,6 +606,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                                 'isEmpty' => 'date is required',
                             ],
                         ],
+                        'break_chain_on_failure' => true,
                     ],
                 ],
             ],
@@ -623,7 +624,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                             'messages'=> [
                                Callback::INVALID_VALUE => 'invalid time',                                
                             ],
-                        ],                        
+                        ],
+                        'break_chain_on_failure' => true,
                     ]
                 ],
             ],
@@ -770,12 +772,14 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                                 'isEmpty' => "$label is required"
                             ],
                         ],
+                        'break_chain_on_failure' => true,
                     ],
                 ],
             ];
             $spec[$field] = $shit;
         }
-        //if ($this->has('end_time')) {}
+        $spec['submission_time']['validators'][] = 
+                new Validator\EventSubmissionDateTime();
         return $spec;
     }
    
