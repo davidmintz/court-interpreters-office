@@ -105,28 +105,39 @@ echo $this->form()->openTag($form); ?>
         <div class="form-group form-row">
             <label class="col-sm-4 col-form-label pr-1" for="interpreter-select">interpreters</label>
             <div class="col-sm-8">
-                <?php echo $this->formElement($fieldset->get('interpreter-select'));?>                
+                <div class="input-group">
+                    <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
+                    <span class="input-group-btn">
+                        <button class="btn btn-info fas fa-plus" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
+                    </span>
+                 </div>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
-                <?php
-                /** THIS IS AwKWARD. re-think and start over? */
-                if  ($this->interpreters) {
-                    $helper = (new InterpreterElementCollection())->setView($this);
-                    echo $helper->fromPost($this->interpreters);
-                } else {
-                     $interpreters = $form->getObject()->getInterpreterEvents();                
-                    if ($interpreters->count()) {
+                    <?php
+                    /** THIS IS AwKWARD. re-think and start over? */
+                    if  ($this->interpreters) {
                         $helper = (new InterpreterElementCollection())->setView($this);
-                        echo $helper($fieldset->get('interpreterEvents'));
-                    } 
-                }
-                ?>
+                        echo $helper->fromPost($this->interpreters);
+                    } else {
+                         $interpreters = $form->getObject()->getInterpreterEvents();                
+                        if ($interpreters->count()) {
+                            $helper = (new InterpreterElementCollection())->setView($this);
+                            echo $helper($fieldset->get('interpreterEvents'));
+                        } 
+                    }
+                    ?>
                 </ul>
+               
             </div>
         </div>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="defendant-search">defendants</label>
             <ul class="col-sm-8">
-                <?php echo $this->formElement($fieldset->get('defendant-search'));?>
+                <div class="input-group">
+                    <?php echo $this->formElement($fieldset->get('defendant-search'));?>
+                    <span class="input-group-btn">
+                        <button class="btn btn-info fas fa-search" type="button" id="btn-add-defendant"><span class="sr-only">add</span></button>
+                    </span>
+                </div>
                 <div style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php 
                 echo $this->formSelect($fieldset->get('defendantNames'));
