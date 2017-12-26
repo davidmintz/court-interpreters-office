@@ -81,3 +81,5 @@ form .interpreter-language {
     
 }
 .form-event label { padding-right: 0;}
+
+.btn:hover { cursor: pointer;}
