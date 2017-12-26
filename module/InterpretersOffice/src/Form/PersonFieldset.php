@@ -355,18 +355,18 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ['name' => 'Null'],
                 ],
             ],
-            'active' => [ // really?
+            'active' => [ 
                 'required' => false,
                 'allow_empty' => true,
-                'validators' => [
-                    [
+                'validators' => [                    
+                    /*[
                     'name' => 'NotEmpty',
                        'options' => [
                             'messages' => [
                                 Validator\NotEmpty::IS_EMPTY => '"active" setting is required',
                             ],
                         ],
-                    ],
+                    ],*/
                     [
                     'name' => 'InArray',
                        'options' => [
