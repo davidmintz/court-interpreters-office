@@ -1,5 +1,4 @@
 <?php
-
 /** module/Admin/src/Form/EventFieldset.php */
 
 namespace InterpretersOffice\Admin\Form;
@@ -695,6 +694,16 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'hat' => [
                 'required' => false,
                 'allow_empty' => true,
+            ],
+            'docket' => [
+                'required' => true,
+                'allow_empty' => true,
+                'filters' => [
+                    ['name'=>Filter\Docket::class,],
+                ],
+                'validators' => [
+                    [ 'name' => Validator\Docket::class, ]                    
+                ],
             ],
             'anonymousSubmitter' => [
                 'required' => true,
