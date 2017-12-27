@@ -292,7 +292,8 @@ $(document).ready(function()
             {id:element.data('id'),name:element.text()},
             function(html){
                 $('#defendant-names').append(html);
-                 slideout.toggle("slide");
+                defendantSearchElement.val('');
+                slideout.toggle("slide");
             }
         );
     });

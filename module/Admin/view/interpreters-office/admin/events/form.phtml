@@ -39,18 +39,23 @@ $form->add([
     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
 ?>
-<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:15rem" class="border ml-4 bg-light">
-     <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">        
+<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:18rem" class="card border ml-4 bg-light">    
+    <div class="card-header">
+         <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">        
             <span aria-hidden="true">&times;</span>
-    </button>
-    <div class="card-header">        
-        <h4>say shit</h4>
+        </button>
+        <h4 class="card-title">defendant names</h4>
+        <!-- maybe add instructions if search results are non-zero? -->
+        <h6 style="display:none" class="card-subtitle text-muted"></h6>
     </div>
-    <div class="card-body pl-3 ">
-        <div class="card-text result">
-            shit is real!<br>
-            seriously.
-        </div>
+    <div class="card-body pl-3 mb-0">
+        <div class="card-text result">            
+        </div>        
+    </div>
+    <div class="text-center mt-0">
+        <button title="add a new defendant name" id="btn-add-defendant-name" class="btn btn-primary btn-sm">
+            <span aria-hidden="true" class="fas fa-plus"></span> new defendant name 
+        </button>
     </div>
 </div>
 <h2 class="text-center mb-3"><?php echo (string)$this->navigation('default')->breadcrumbs() ;?></h2>
