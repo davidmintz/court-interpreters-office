@@ -46,6 +46,7 @@ trait CsrfElementCreationTrait
                                 'messages' => [
                                     'notSame' => 'security error: invalid CSRF token',
                                 ],
+                                'timeout' => 600,
                             ],
                         ],
                     ],
