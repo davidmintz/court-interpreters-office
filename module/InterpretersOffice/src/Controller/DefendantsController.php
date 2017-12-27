@@ -84,13 +84,23 @@ class DefendantsController extends AbstractActionController {
         return $this->getResponse()->setContent($html);
     }
     
+    /**
+     * returns defendant-name search results
+     * 
+     * @return ViewModel
+     */
     public function searchAction()
     {
         $search = $this->params()->fromQuery('term');
         $repo = $this->entityManager->getRepository(Entity\DefendantName::class);
         $paginator = $repo->paginate($search,$this->params()->fromQuery('page'));
+        $viewModel = new ViewModel(['paginator'=>$paginator,'search'=>$search]);
+        $request = $this->getRequest();
+        if ($request->isXmlHttpRequest()) {
+            $viewModel->setTerminal(true);
+        }
         
-        return new ViewModel(['paginator'=>$paginator]);
+        return $viewModel;
     }
 
 }

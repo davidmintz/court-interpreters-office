@@ -39,22 +39,21 @@ $form->add([
     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
 ?>
-
-<h2 class="text-center mb-3"><?php echo (string)$this->navigation('default')->breadcrumbs() ;?></h2>
-<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:20rem" class="border ml-3 bg-light">
-     <button type="button" class="close float-right border" aria-label="Close">        
+<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:15rem" class="border ml-4 bg-light">
+     <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">        
             <span aria-hidden="true">&times;</span>
     </button>
     <div class="card-header">        
         <h4>say shit</h4>
     </div>
     <div class="card-body pl-3 ">
-        <div class="card-text">
+        <div class="card-text result">
             shit is real!<br>
             seriously.
         </div>
     </div>
 </div>
+<h2 class="text-center mb-3"><?php echo (string)$this->navigation('default')->breadcrumbs() ;?></h2>
 <?php
 $form->prepare();
 $fieldset = $form->get('event');

@@ -83,3 +83,5 @@ form .interpreter-language {
 .form-event label { padding-right: 0;}
 
 .btn:hover { cursor: pointer;}
+
+.result li.list-group-item:hover { background-color: #fdf5ce; cursor: pointer; text-decoration: underline; color: #007bff;}

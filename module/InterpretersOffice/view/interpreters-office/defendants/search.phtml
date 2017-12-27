@@ -5,13 +5,14 @@ if (! $this->paginator->count()):
     echo "no matching results found";
 return;   
 endif;
-?><ul class="list-group" style="font-size:90%"><?php
+?><ul class="list-group defendant-names" style="font-size:90%"><?php
 foreach ($paginator as $deft): 
     ?><li data-id="<?php echo $deft->getId()?>" class="list-group-item align-middle py-1 ">     
     <?php
     echo $this->escapeHtml(sprintf('%s, %s', $deft->getLastname(), $deft->getFirstname()));
-    ?>
+    ?><!--
     <span title="add this defendant" class="float-right bg-info text-light rounded p-1 fas fa-plus"></span>
+      -->
     </li>
    <?php
 endforeach;

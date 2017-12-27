@@ -226,8 +226,10 @@ $(document).ready(function()
         }
     });
     
+    var defendantSearchElement = $('#defendant-search');
+    var slideout = $('#slideout-toggle');
     /** deft name autocompletion */
-    $('#defendant-search').autocomplete(
+    defendantSearchElement.autocomplete(
         {
                 source: '/defendants/autocomplete',
                 //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
@@ -248,20 +250,53 @@ $(document).ready(function()
                 focus: function(event,ui) { 
                     event.preventDefault();
                     $(this).val(ui.item.label);
+                },
+                open : function() {
+                    if (slideout.is(':visible')) {
+                        slideout.hide();
+                    }
                 }
              }   
          );
-    
-    
-    /* ==================== */
+    /* ==================== */    
+    $('#slideout-toggle .close').on('click',
+        function(){slideout.toggle("slide");}
+     );    
+    /** =========  display defendant-name search results   ==============*/
     $('#btn-defendant-search').on("click",function(){
-        
-        
-        
-        
-        
+        var name = defendantSearchElement.val().trim();
+        if (! name) {
+            defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
+            return;
+        }
+        $.get('/defendants/search',{term:name,page:1},
+            function(data){
+                $('#slideout-toggle .result').html(data);
+                if (! slideout.is(':visible')) {
+                    slideout.toggle("slide");
+                }
+            });
+    });
+    /** =================================================================*/
+    
+    /** pagination links ================================================*/
+    slideout.on('click','.pagination a',function(event){
+        event.preventDefault();
+        $('#slideout-toggle .result').load(this.href);
         
     });
+     slideout.on('click','.defendant-names li',function(event){
+        var element = $(this);
+        $.get(
+            '/defendants/template',
+            {id:element.data('id'),name:element.text()},
+            function(html){
+                $('#defendant-names').append(html);
+                 slideout.toggle("slide");
+            }
+        );
+    });
+    /** =================================================================*/
 });
 
 formatTimeElement = function(timeElement) {
