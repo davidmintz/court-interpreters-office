@@ -1,7 +1,7 @@
 <?php
 /**
- * module/InterpretersOffice/view/application/defendants/pagination_control.phtml
- * pagination contro, partial view script for presented a page of paginated query
+ * module/InterpretersOffice/view/partials/pagination_control.phtml
+ * pagination control, partial view script for presenting links to paginated query
  * results. based on:
  * https://zf2.readthedocs.org/en/latest/tutorials/tutorial.pagination.html
  */
@@ -10,32 +10,34 @@ if ($this->pageCount < 2) :
     return;
 endif;
 
-$url = $this->url($this->route, isset($params) ? $params : []);?>
+$url = $this->url($this->route, $this->params ?: [],$this->query ? ['query'=>$this->query]:null);
+$SEP = $this->query ? '&' : '?';
+?>
 <nav>
 <ul class="pagination">
 <?php if ($this->first < $this->firstPageInRange) : ?>
-<li class="page-item"><a class="page-link" href="<?php echo "$url?page=$this->first"  ?>">&lt;&lt;</a></li>
+<li class="page-item"><a class="page-link" href="<?php echo "{$url}{$SEP}page=$this->first"  ?>">&lt;&lt;</a></li>
 <?php endif?>
 <?php if (isset($this->previous)) : ?>
-  <li class="page-item"><a class="page-link" title="previous page" href="<?php echo "$url?page=$this->previous" ?>">&lt;</a></li>
+  <li class="page-item"><a class="page-link" title="previous page" href="<?php echo "$url{$SEP}page=$this->previous" ?>">&lt;</a></li>
 <?php else :
-?><li class="disabled"><a class="page-link" href="#">&lt;</a></li>
+?><li class="disabled"><span class="page-link">&lt;</span></li>
 <?php endif; ?>
 <?php foreach ($this->pagesInRange as $page) : ?>
     <?php if ($page != $this->current) : ?>
-    <li class="page-item"><a class="page-link" href="<?php echo "$url?page=$page"; ?>"><?php echo $page; ?></a></li>
+    <li class="page-item"><a class="page-link" href="<?php echo "{$url}{$SEP}page=$page"; ?>"><?php echo $page; ?></a></li>
     <?php else : ?>
-    <li class="page-item active"><a class="page-link" href="#"><?php echo $page; ?></a></li>
+    <li class="page-item active"><span class="page-link"><?php echo $page; ?></span></li>
     <?php endif; ?>
 <?php endforeach; ?>
 <!-- Next page link -->
 <?php if (isset($this->next)) : ?>
-  <li class="page-item"><a class="page-link" href="<?php echo "$url?page={$this->next}"; ?>">&gt;</a></li>
+  <li class="page-item"><a class="page-link" href="<?php echo "{$url}{$SEP}page={$this->next}"; ?>">&gt;</a></li>
 <?php else : ?>
-  <li class="disabled"><a class="page-link" href="#">&gt;</a></li>
+  <li class="disabled"><span class="page-link">&gt;</span></li>
 <?php endif; ?>
 <?php if ($this->last > $this->lastPageInRange) : ?>
-<li class="page-item"><a class="page-link" title="last page of results" href="<?php echo "$url?page=$this->last"?>">&gt;&gt;</a></li>
+<li class="page-item"><a class="page-link" title="last page of results" href="<?php echo "{$url}{$SEP}page=$this->last"?>">&gt;&gt;</a></li>
 <?php endif?>
 </ul>
 </nav>
