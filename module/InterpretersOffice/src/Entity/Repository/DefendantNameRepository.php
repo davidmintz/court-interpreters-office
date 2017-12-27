@@ -108,17 +108,16 @@ class DefendantNameRepository extends EntityRepository
     {
         $dql = 'SELECT d FROM InterpretersOffice\Entity\DefendantName d WHERE ';
         $name = $this->parseName($search_term);
-        $parameters = ['surnames' => "$name[last]%"];
-      
+        $parameters = ['surnames' => "$name[last]%"];      
         $dql .= $this->getDqlWhereClause($name, $parameters);
         $dql   .= "ORDER BY d.surnames, d.givenNames";
         $query = $this->createQuery($dql)
                 ->setParameters($parameters)
-                ->setMaxResults(30);
+                ->setMaxResults(20);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
         
-        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(30);
+        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
     }
 
     /**
