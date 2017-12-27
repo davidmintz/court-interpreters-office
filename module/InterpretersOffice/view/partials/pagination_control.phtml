@@ -13,7 +13,7 @@ endif;
 $url = $this->url($this->route, $this->params ?: [],$this->query ? ['query'=>$this->query]:null);
 $SEP = $this->query ? '&' : '?';
 ?>
-<nav>
+<nav class="mb-1">
 <ul class="pagination">
 <?php if ($this->first < $this->firstPageInRange) : ?>
 <li class="page-item"><a class="page-link" href="<?php echo "{$url}{$SEP}page=$this->first"  ?>">&lt;&lt;</a></li>
