@@ -299,7 +299,43 @@ return  [
                 ],
             ],
         ],
+        'admin-defendants' => [
+            'type' => Segment::class,
+            'may_terminate' => true,
+            'options' => [
+                'route' => '/admin/defendants',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\DefendantsController::class,
+                    'action' => 'index',
+                ],
+            ],
+            'child_routes' => [
+                'add' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/add',
+                        'defaults' => [
+                            'action' => 'add',
+                        ],
+                    ],
+                ],
+                'edit' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:action/:id',
+                        'defaults' => [
+                            'action' => 'edit',
 
+                        ],
+                        'constraints' => [
+                            'action' => 'edit|delete',
+                            'id' => '[1-9]\d*',
+                        ],
+                    ],
+                ],
+            ],
+        ],
         'interpreters' => [
             'type' => Segment::class,
             'may_terminate' => true,

@@ -29,6 +29,7 @@ return [
         'judges' => 'events',
         'interpreters' => 'events',
         'interpreters-write' => 'events',
+        'defendants' => 'events',
         // the topmost controller
         'index' => null,
         'requests-index' => null,

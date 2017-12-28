@@ -29,6 +29,7 @@ return [
             Controller\InterpretersWriteController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\UsersController::class => Controller\Factory\UsersControllerFactory::class,
             Controller\EventsController::class => Controller\Factory\EventsControllerFactory::class,
+            Controller\DefendantsController::class => Controller\Factory\DefendantsControllerFactory::class,
         ],
     ],
     'view_manager' => [
