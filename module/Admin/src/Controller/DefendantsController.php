@@ -11,6 +11,8 @@ use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 
+use InterpretersOffice\Admin\Form\DefendantForm;
+
 /**
  * controller for admin/defendants.
  */
@@ -49,11 +51,11 @@ class DefendantsController extends AbstractActionController
     public function addAction()
     {
         $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/defendants/form.phtml');
+                ->setTemplate('interpreters-office/admin/defendants/form.phtml');
         $form = new DefendantForm($this->entityManager, ['action' => 'create']);
         $viewModel->setVariables(['form' => $form, 'title' => 'add a defendant name']);
         $request = $this->getRequest();
-        $entity = new Entity\Defendant();
+        $entity = new Entity\DefendantName();
         $form->bind($entity);
         if ($request->isPost()) {
             $form->setData($request->getPost());
