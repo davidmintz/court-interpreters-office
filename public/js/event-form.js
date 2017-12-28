@@ -311,6 +311,16 @@ $(document).ready(function()
         );
     });
     /** =================================================================*/
+    
+    slideout.on('click','#btn-add-defendant-name',function(){
+        if (! $('#slideout-toggle form').length) {
+            console.log("get the form");
+        } else {
+            console.log("post the form");
+        }
+        
+        
+    });
 });
 
 formatTimeElement = function(timeElement) {
