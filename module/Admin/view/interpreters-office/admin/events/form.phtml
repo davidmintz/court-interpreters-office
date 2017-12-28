@@ -39,14 +39,14 @@ $form->add([
     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
 ?>
-<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:18rem" class="card border ml-4 bg-light">    
+<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:18rem" class="card border ml-5 bg-light">    
     <div class="card-header">
          <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">        
             <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="card-title">defendant names</h4>
-        <!-- maybe add instructions if search results are non-zero? -->
-        <h6 style="display:none" class="card-subtitle text-muted"></h6>
+        <!-- instructions when search results are non-zero -->
+        <h6 class="card-subtitle text-muted">select a defendant name to add to this event</h6>
     </div>
     <div class="card-body pl-3 mb-0">
         <div class="card-text result">            

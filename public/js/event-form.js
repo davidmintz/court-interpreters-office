@@ -258,6 +258,14 @@ $(document).ready(function()
                 }
              }   
          );
+    var onDeftSlideoutShow = function(){
+        if ($('#slideout-toggle li').length) {
+            $('#slideout-toggle li a').first().focus();
+            $('#slideout-toggle h6').show();
+        } else {
+            $('#slideout-toggle h6').attr({visibility:'none'});
+        }
+    };
     /* ==================== */    
     $('#slideout-toggle .close').on('click',
         function(){slideout.toggle("slide");}
@@ -272,8 +280,9 @@ $(document).ready(function()
         $.get('/defendants/search',{term:name,page:1},
             function(data){
                 $('#slideout-toggle .result').html(data);
+                
                 if (! slideout.is(':visible')) {
-                    slideout.toggle("slide");
+                    slideout.toggle("slide",onDeftSlideoutShow);
                 }
             });
     });
@@ -282,8 +291,8 @@ $(document).ready(function()
     /** pagination links ================================================*/
     slideout.on('click','.pagination a',function(event){
         event.preventDefault();
-        $('#slideout-toggle .result').load(this.href);
-        
+        onDeftSlideoutShow();
+        $('#slideout-toggle .result').load(this.href,onDeftSlideoutShow);
     });
      slideout.on('click','.defendant-names li',function(event){
         var element = $(this);
@@ -293,7 +302,7 @@ $(document).ready(function()
             function(html){
                 $('#defendant-names').append(html);
                 defendantSearchElement.val('');
-                slideout.toggle("slide");
+                slideout.toggle("slide");                
             }
         );
     });
