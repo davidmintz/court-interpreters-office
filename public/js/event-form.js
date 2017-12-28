@@ -263,7 +263,7 @@ $(document).ready(function()
             $('#slideout-toggle li a').first().focus();
             $('#slideout-toggle h6').show();
         } else {
-            $('#slideout-toggle h6').attr({visibility:'none'});
+            $('#slideout-toggle h6').hide();
         }
     };
     /* ==================== */    
@@ -283,6 +283,10 @@ $(document).ready(function()
                 
                 if (! slideout.is(':visible')) {
                     slideout.toggle("slide",onDeftSlideoutShow);
+                } else {
+                    if (! $('#slideout-toggle li').length) {
+                        $('#slideout-toggle h6').hide();
+                    }
                 }
             });
     });
@@ -294,7 +298,7 @@ $(document).ready(function()
         onDeftSlideoutShow();
         $('#slideout-toggle .result').load(this.href,onDeftSlideoutShow);
     });
-     slideout.on('click','.defendant-names li',function(event){
+    slideout.on('click','.defendant-names li',function(event){
         var element = $(this);
         $.get(
             '/defendants/template',
