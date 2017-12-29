@@ -18,7 +18,7 @@ trait CsrfElementCreationTrait
 {
     /**
      * adds a CSRF element to the form.
-     *
+     * @param string $name of the csrf element
      * @return mixed. whatever $this is (Form or Fieldset instance)
      */
     public function addCsrfElement($name = 'csrf')
@@ -30,7 +30,7 @@ trait CsrfElementCreationTrait
         $inputFilter->merge(
             $factory->createInputFilter([
                 'csrf' => [
-                    'name' => 'csrf',
+                    'name' => $name,
                     'validators' => [
                         [
                             'name' => 'Zend\Validator\NotEmpty',
