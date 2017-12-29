@@ -23,37 +23,26 @@ trait CsrfElementCreationTrait
      */
     public function addCsrfElement($name = 'csrf')
     {
-        $this->add(new Csrf($name));
-        // customize validation error messages
-        $inputFilter = $this->getInputFilter();
-        $factory = new InputFilter\Factory();
-        $inputFilter->merge(
-            $factory->createInputFilter([
-                'csrf' => [
-                    'name' => $name,
-                    'validators' => [
-                        [
-                            'name' => 'Zend\Validator\NotEmpty',
-                            'options' => [
-                                'messages' => [
-                                    'isEmpty' => 'security error: missing CSRF token',
-                                ],
-                            ],
-                        ],
-                        [
-                            'name' => 'Zend\Validator\Csrf',
-                            'options' => [
-                                'messages' => [
-                                    'notSame' => 'security error: invalid/expired CSRF token',
-                                ],
-                                'timeout' => 600,
-                            ],
-                        ],
-                    ],
+        
+        $element = new Csrf($name);
+        $element->setAttribute('id', $name);
+        $element->setCsrfValidatorOptions(
+            ['messages'=>
+                [
+                    'notSame'=>'security error: invalid/expired CSRF token',                       
                 ],
-            ])
-        );
-
+                'timeout'=>600,
+            ]
+        );       
+        $this->add($element);
+        $input = $this->getInputFilter()->get($name);
+        $input->setAllowEmpty(false)->setRequired(true);
+        $validator = new \Zend\Validator\NotEmpty([
+                'messages' => ['isEmpty' => "security error: form is missing CSRF token"],
+                'break_chain_on_failure' => true,
+            ]);
+        $input->getValidatorChain()->attach($validator);
+        
         return $this;
     }
 }
