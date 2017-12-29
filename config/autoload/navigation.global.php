@@ -147,6 +147,21 @@ return [
                             ],
                         ]
                     ],
+                    [
+                        'label' => 'defendants',
+                        'route' => 'admin-defendants',
+                        'expand_children' => false,
+                        'pages' => [
+                            [
+                                'label' => 'add',
+                                'route' => 'admin-defendants/add'
+                            ],
+                            [
+                                'label' => 'edit',
+                                'route' => 'admin-defendants/edit'
+                            ],
+                        ]
+                    ],
                 ],
             ],
             [
