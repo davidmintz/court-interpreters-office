@@ -24,16 +24,19 @@ trait CsrfElementCreationTrait
     public function addCsrfElement($name = 'csrf')
     {
         
-        $element = new Csrf($name);
-        $element->setAttribute('id', $name);
+        $element = new Csrf($name);       
         $element->setCsrfValidatorOptions(
-            ['messages'=>
-                [
-                    'notSame'=>'security error: invalid/expired CSRF token',                       
-                ],
-                'timeout'=>600,
+            [
+                'messages'=>
+                    [
+                        'notSame'=>'security error: invalid/expired CSRF token',                       
+                    ],
+                'timeout'=>600,            
             ]
-        );       
+        );
+        // it's no use. formHidden() helper evidently doesn't 
+        // believe in id attribs, but...
+        $element->setAttribute('id', $name); 
         $this->add($element);
         $input = $this->getInputFilter()->get($name);
         $input->setAllowEmpty(false)->setRequired(true);
