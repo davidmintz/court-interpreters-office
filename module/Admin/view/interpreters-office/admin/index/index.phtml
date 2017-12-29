@@ -53,24 +53,3 @@ $user = $this->identity() ?>
     <div class="col-6 border">shit</div>
 </div>
 <div class="clearfix" style="clear:both" id='debug'></div>
-<script>
-    $(document).ready(function(){
-        $('#debug').append("shit<br>");
-        var thing1 = $('.multi-input').first();
-        //thing1.css({backgroundColor:'#ffffcc'});
-        var thing2 = $(".form-group").not(".multi-input").first();
-        $('#debug').append("thing 2 width is: "+ thing2.css("width"));
-        $('#debug').append("<br>thing 1 width is: "+ thing1.css("width"));
-       // $('#debug').append("<br>gonna adjust...");
-       // thing1.css("width",thing2.css("width"));
-        /*
-        $('label[for=time]').position({
-            my : 'left bottom',
-            at :  'left top',
-            of : $('label[for=shit]')
-        });
-        */
-       $('#debug').append("<br>thing1 left margin: "+ thing1.css("margin-left"));
-        $('#debug').append("<br>thing2 left margin: "+ thing2.css("margin-left"));
-    });
-</script>
