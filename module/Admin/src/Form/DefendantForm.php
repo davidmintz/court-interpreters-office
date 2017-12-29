@@ -51,26 +51,93 @@ class DefendantForm extends ZendForm implements  InputFilterProviderInterface
         parent::__construct($this->formName, $options);
         $this->setObjectManager($objectManager);
         $this->setHydrator(new DoctrineHydrator($objectManager, true));
-        /* putting this here instead of in the fieldset and handling the logic 
-         * ourself saves us some pain          
-        if ("update" == $this->options['action']) {
-            $this->add([
-                'type'=> 'Hidden',
-                'name'=> 'modified',  
-                'attributes' => ['id' => 'modified'],
-            ]);
-        }*/
-        $this->addCsrfElement();                
+        
+        $this->addCsrfElement('defendant_csrf');
+        $this->add(
+             [
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'surnames',
+            'options' => [
+                'label' => 'surname(s)',
+            ],
+            'attributes' => [
+                'class' => 'form-control',
+                'id' => 'surnames',
+            ],
+        ]);
+        $this->add(
+             [
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'given_names',
+            'options' => [
+                'label' => 'given name(s)',
+            ],
+            'attributes' => [
+                'class' => 'form-control',
+                'id' => 'given_names',
+            ],
+        ]);
+        
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'id',
+            'required' => true,
+            'allow_empty' => true,
+        ]);
+        /* TO BE CONTINUED: if $option['action'] == update, more elements... */
+        
     }
     
     /**
      * implements InputFilterProviderInterface
      *
      * @return array
+     * 
+     * @todo uniqueness validator. see PersonFieldset for an example
      */   
     function getInputFilterSpecification()
     {
-        return [];
+        return [
+            'surnames' => [
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'surname is required',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'InterpretersOffice\Form\Validator\ProperName',
+                        'options' => ['type' => 'last'],
+                    ],
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+            ],
+            'given_names' => [
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'given name is required',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'InterpretersOffice\Form\Validator\ProperName',
+                        'options' => ['type' => 'first'],
+                    ],
+                ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+            ]
+        ];
     }
-
 }
