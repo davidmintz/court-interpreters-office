@@ -163,7 +163,7 @@ class DefendantName
      */
     public function setSurnames($surnames)
     {
-        $this->surames = $surnames;
+        $this->surnames = $surnames;
 
         return $this;
     }
