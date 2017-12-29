@@ -1,0 +1,33 @@
+<?php /** module/Admin/view/interpreters-office/admin/defendants/form.phtml */
+
+$action = $this->layout()->action == 'add' ? $this->url('admin-defendants/add')
+        : $this->url('admin-defendants/edit', ['id' => $form->getObject()->getId() ]);
+$form = $this->form;
+$form->add([
+    'name' => 'submit',
+    'type' => 'Zend\Form\Element\Submit',
+    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+])->setAttribute('method', 'post')->setAttribute('action', $action);
+$form->prepare();
+?>
+<div class="center-block mx-auto" style="max-width:500px"><!-- wrapper -->
+    <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<?php
+    echo $this->form()->openTag($form);?>
+    <div class="form-group"><?php
+    $given_name = $form->get('given_names');
+    echo $this->formLabel($given_name),$this->formElement($given_name),$this->formElementErrors($given_name);
+    ?>
+    </div> 
+    <div class="form-group"><?php
+    $surname = $form->get('surnames');
+    echo $this->formLabel($surname),$this->formElement($surname), $this->formElementErrors($surname);
+    ?>   
+    </div>
+<?php 
+    $csrf = $form->get('defendant_csrf');
+    echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+    echo $this->formElement($form->get('id'));
+    echo $this->formSubmit($form->get('submit'));
+    echo $this->form()->closeTag() ?>
+</div>

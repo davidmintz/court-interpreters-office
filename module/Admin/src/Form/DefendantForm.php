@@ -97,7 +97,7 @@ class DefendantForm extends ZendForm implements  InputFilterProviderInterface
      */   
     function getInputFilterSpecification()
     {
-        return [
+        $spec = [
             'surnames' => [
                 'validators' => [
                     [
@@ -139,5 +139,6 @@ class DefendantForm extends ZendForm implements  InputFilterProviderInterface
                 ],
             ]
         ];
+        return $spec;
     }
 }
