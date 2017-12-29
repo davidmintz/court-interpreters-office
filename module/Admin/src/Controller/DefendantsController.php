@@ -57,24 +57,30 @@ class DefendantsController extends AbstractActionController
         $request = $this->getRequest();
         $entity = new Entity\DefendantName();
         $form->bind($entity);
+        if ($request->isXmlHttpRequest()) {
+            $viewModel->setTerminal(true);
+        }
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 return $viewModel;
             }
-            $this->entityManager->persist($entity);
-            $this->entityManager->flush();
-            /*
-            $this->flashMessenger()->addSuccessMessage(
+            try {
+                $this->entityManager->persist($entity);
+                $this->entityManager->flush();
+                $this->flashMessenger()->addSuccessMessage(
                 sprintf(
-                    'The person <strong>%s %s</strong> has been added to the database',
-                    $entity->getFirstname(),
-                    $entity->getLastname()
-                )
-            );
-            $this->redirect()->toRoute('people');
-             * 
-             */
+                    'The defendant name <strong>%s %s</strong> has been added to the database',
+                    $entity->getGivenNames(),
+                    $entity->getSurnames())
+                );
+                $this->redirect()->toRoute('admin-defendants');
+
+            } catch (\Exception $e) {
+               
+                echo "shit happened: ".$e->getMessage();
+                
+            }
         }
 
         return $viewModel;
