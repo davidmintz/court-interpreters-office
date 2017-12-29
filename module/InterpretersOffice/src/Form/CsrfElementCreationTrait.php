@@ -21,9 +21,9 @@ trait CsrfElementCreationTrait
      *
      * @return mixed. whatever $this is (Form or Fieldset instance)
      */
-    public function addCsrfElement()
+    public function addCsrfElement($name = 'csrf')
     {
-        $this->add(new Csrf('csrf'));
+        $this->add(new Csrf($name));
         // customize validation error messages
         $inputFilter = $this->getInputFilter();
         $factory = new InputFilter\Factory();
@@ -44,7 +44,7 @@ trait CsrfElementCreationTrait
                             'name' => 'Zend\Validator\Csrf',
                             'options' => [
                                 'messages' => [
-                                    'notSame' => 'security error: invalid CSRF token',
+                                    'notSame' => 'security error: invalid/expired CSRF token',
                                 ],
                                 'timeout' => 600,
                             ],
