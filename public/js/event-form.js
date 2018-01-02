@@ -315,10 +315,19 @@ $(document).ready(function()
     slideout.on('click','#btn-add-defendant-name',function(){
         if (! $('#slideout-toggle form').length) {
             console.log("get the form");
+            // may need to think about this...
+            $('#slideout-toggle .card-body').html($("<div/>")
+                    .attr({id:'deftname-form-wrapper'})//.addClass('text-left px-0 mx-0')                   
+                    .load('/admin/defendants/add form',function(){
+                        console.log("nice job");
+                        $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>')
+                        //$(this).find('label').addClass("text-left");
+                    })     
+            );
+            
         } else {
             console.log("post the form");
-        }
-        
+        }        
         
     });
 });
