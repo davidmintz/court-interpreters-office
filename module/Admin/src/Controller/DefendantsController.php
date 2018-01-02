@@ -6,11 +6,11 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-//use Zend\View\Model\JsonModel;
+use Zend\View\Model\JsonModel;
 //use InterpretersOffice\Form\PersonForm;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
-
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InterpretersOffice\Admin\Form\DefendantForm;
 
 /**
@@ -57,29 +57,50 @@ class DefendantsController extends AbstractActionController
         $request = $this->getRequest();
         $entity = new Entity\DefendantName();
         $form->bind($entity);
+        $xhr = false;
         if ($request->isXmlHttpRequest()) {
+            $xhr = true;
             $viewModel->setTerminal(true)->setVariables(['xhr'=>true]);
         }
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                return $viewModel;
+                return $xhr ? 
+                    new JsonModel(['validation_errors'=>$form->getMessages()])
+                    : $viewModel;
             }
             try {
                 $this->entityManager->persist($entity);
                 $this->entityManager->flush();
+                if ($xhr) {
+                    return new JsonModel(['id'=>$entity->getId(),'errors'=> null]);
+                }
                 $this->flashMessenger()->addSuccessMessage(
                 sprintf(
                     'The defendant name <strong>%s %s</strong> has been added to the database',
-                    $entity->getGivenNames(),
-                    $entity->getSurnames())
+                    $entity->getGivenNames(), $entity->getSurnames())
                 );
                 $this->redirect()->toRoute('admin-defendants');
 
-            } catch (\Exception $e) {
-               
-                echo "shit happened: ".$e->getMessage();
+            } catch (UniqueConstraintViolationException $e) {
+                $existing_entity =  $this->entityManager
+                        ->getRepository(Entity\DefendantName::class)
+                        ->findOneBy([
+                            'surnames'=>$entity->getSurnames(),
+                            'givenNames'=>$entity->getGivenNames()]);
                 
+                 return $xhr ? 
+                        new JsonModel([
+                            'duplicate_entry_error'=>true,
+                            'existing_entity'=>[
+                                'surnames'=>$existing_entity->getSurnames(),
+                                'given_names'=>$existing_entity->getGivenNames(),
+                                'id'=>$existing_entity->getId(),
+                            ]                           
+                        ])
+                         : 
+                        $viewModel->setVariables(['duplicate_entry_error'=>true,
+                            'existing_entity'=>$existing_entity]);
             }
         }
 

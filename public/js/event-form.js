@@ -101,9 +101,8 @@ $(document).ready(function()
     if (languageElement.val()) {
         languageElement.trigger("change",{remove_existing:false});
     }
-    var interpreterButton = $('#btn-add-interpreter')
+    var interpreterButton = $('#btn-add-interpreter');
     // add an interpreter to this event
-    //interpreterSelectElement.on('change',
     interpreterButton.on('click',  function(){
         
         var id = interpreterSelectElement.val();
@@ -259,11 +258,11 @@ $(document).ready(function()
              }   
          );
     var onDeftSlideoutShow = function(){
+                
         if ($('#slideout-toggle li').length) {
-            $('#slideout-toggle li a').first().focus();
-            $('#slideout-toggle h6').show();
+            $('#slideout-toggle li a').first().focus();            
         } else {
-            $('#slideout-toggle h6').hide();
+            //$('#slideout-toggle h6').hide();
         }
     };
     /* ==================== */    
@@ -272,6 +271,8 @@ $(document).ready(function()
      );    
     /** =========  display defendant-name search results   ==============*/
     $('#btn-defendant-search').on("click",function(){
+        // get rid of the new name insertion form, if it exists
+        $('#deftname-form-wrapper').remove();
         var name = defendantSearchElement.val().trim();
         if (! name) {
             defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
@@ -279,13 +280,13 @@ $(document).ready(function()
         }
         $.get('/defendants/search',{term:name,page:1},
             function(data){
-                $('#slideout-toggle .result').html(data);
                 
+                $('#slideout-toggle .result').html(data);                
                 if (! slideout.is(':visible')) {
                     slideout.toggle("slide",onDeftSlideoutShow);
                 } else {
                     if (! $('#slideout-toggle li').length) {
-                        $('#slideout-toggle h6').hide();
+                       // $('#slideout-toggle h6').hide();
                     }
                 }
             });
@@ -314,19 +315,65 @@ $(document).ready(function()
     
     slideout.on('click','#btn-add-defendant-name',function(){
         if (! $('#slideout-toggle form').length) {
-            console.log("get the form");
-            // may need to think about this...
-            $('#slideout-toggle .card-body').html($("<div/>")
-                    .attr({id:'deftname-form-wrapper'})//.addClass('text-left px-0 mx-0')                   
-                    .load('/admin/defendants/add form',function(){
-                        console.log("nice job");
-                        $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>')
-                        //$(this).find('label').addClass("text-left");
-                    })     
-            );
-            
+            // GET the form
+            $('#slideout-toggle .result').empty().after($("<div/>")
+                .attr({id:'deftname-form-wrapper'})              
+                .load('/admin/defendants/add form',function(){                       
+                    $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>');
+                })     
+            );            
         } else {
-            console.log("post the form");
+            // POST the form
+            var data = $('#defendant-form').serialize();
+            $.post('/admin/defendants/add',data,function(response){
+                if (response.validation_errors) {
+                    displayValidationErrors(response.validation_errors);
+                    return;
+                }
+                if (response.id) { // successful insert
+                    $.get('/defendants/template',
+                    {   id:response.id, 
+                        name: $('#surnames').val().trim() +", "
+                           +$("#given_names").val().trim() },
+                    function(html){
+                        $('#defendant-names').append(html);
+                        defendantSearchElement.val('');
+                        slideout.toggle("slide",
+                            function(){$('#deftname-form-wrapper').remove();});                
+                    });
+                }
+                if (response.duplicate_entry_error) {
+                    var existing = response.existing_entity;
+                    var exact_duplicate = 
+                        existing.surnames ===  $('#surnames').val().trim()
+                        &&
+                        existing.given_names ===  $('#given_names').val().trim();
+                    if (exact_duplicate) {
+                        $.get('/defendants/template',
+                    {   id: existing.id, 
+                        name: existing.surnames + ", "+ existing.given_names },
+                        function(html){
+                            $('#defendant-names').append(html);
+                            defendantSearchElement.val('');
+                            slideout.toggle("slide", 
+                                function(){$('#deftname-form-wrapper').remove();});                
+                        });
+                    } else {
+                        // fix the width
+                        slideout.css({width:slideout.width()});
+                        // this is a pain in the ass
+                        console.log("inexact duplicate.");
+                        var message = '<p>There already exists an inexact duplicate of '
+                        + 'this name in your database: <strong>'+existing.surnames
+                        + ', '+existing.given_names+'</strong>. Please choose one of the following:</p><p>'
+                        + '<button id="btn-use-existing" class="btn btn-warning btn-block border-secondary mb-0">discard my changes and use existing</button>'
+                        + '<button id="btn-update-existing" class="btn btn-warning btn-block border-secondary border-top-0 mt-0">apply my changes to existing name</button></p>';
+                        var div = $("<div></div>").html(message);
+                        $('#deftname-form-wrapper h4').after(div);
+                        
+                    }
+                }                                    
+            },'json');
         }        
         
     });
