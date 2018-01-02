@@ -28,6 +28,6 @@ $form->prepare();
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
-    echo $this->formSubmit($form->get('submit'));
+    if (! $this->xhr): echo $this->formSubmit($form->get('submit')); endif;
     echo $this->form()->closeTag() ?>
 </div>
