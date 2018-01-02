@@ -58,7 +58,7 @@ class DefendantsController extends AbstractActionController
         $entity = new Entity\DefendantName();
         $form->bind($entity);
         if ($request->isXmlHttpRequest()) {
-            $viewModel->setTerminal(true);
+            $viewModel->setTerminal(true)->setVariables(['xhr'=>true]);
         }
         if ($request->isPost()) {
             $form->setData($request->getPost());
