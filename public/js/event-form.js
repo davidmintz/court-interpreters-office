@@ -273,6 +273,9 @@ $(document).ready(function()
     $('#btn-defendant-search').on("click",function(){
         // get rid of the new name insertion form, if it exists
         $('#deftname-form-wrapper').remove();
+        if ($('#btn-add-defendant-name').attr("disabled")) {
+             $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
+         }
         var name = defendantSearchElement.val().trim();
         if (! name) {
             defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
@@ -312,8 +315,20 @@ $(document).ready(function()
         );
     });
     /** =================================================================*/
-    
+    var use_existing_name = function(existing){
+        $.get('/defendants/template',
+        {   id: existing.id, 
+            name: existing.surnames + ", "+ existing.given_names 
+        },
+        function(html){
+            $('#defendant-names').append(html);
+            defendantSearchElement.val('');
+            slideout.toggle("slide", 
+                function(){$('#deftname-form-wrapper').remove();});                
+        });        
+    };
     slideout.on('click','#btn-add-defendant-name',function(){
+         
         if (! $('#slideout-toggle form').length) {
             // GET the form
             $('#slideout-toggle .result').empty().after($("<div/>")
@@ -349,28 +364,30 @@ $(document).ready(function()
                         &&
                         existing.given_names ===  $('#given_names').val().trim();
                     if (exact_duplicate) {
-                        $.get('/defendants/template',
-                    {   id: existing.id, 
-                        name: existing.surnames + ", "+ existing.given_names },
-                        function(html){
-                            $('#defendant-names').append(html);
-                            defendantSearchElement.val('');
-                            slideout.toggle("slide", 
-                                function(){$('#deftname-form-wrapper').remove();});                
-                        });
-                    } else {
-                        // fix the width
+                        use_existing_name(existing);
+                    } else { // this is a pain in the ass
+                        // fix the width to keep it from expanding
                         slideout.css({width:slideout.width()});
-                        // this is a pain in the ass
-                        console.log("inexact duplicate.");
                         var message = '<p>There already exists an inexact duplicate of '
                         + 'this name in your database: <strong>'+existing.surnames
                         + ', '+existing.given_names+'</strong>. Please choose one of the following:</p><p>'
                         + '<button id="btn-use-existing" class="btn btn-warning btn-block border-secondary mb-0">discard my changes and use existing</button>'
-                        + '<button id="btn-update-existing" class="btn btn-warning btn-block border-secondary border-top-0 mt-0">apply my changes to existing name</button></p>';
+                        + '<button id="btn-update-existing" class="btn btn-warning btn-block border-secondary border-top-0 mt-0">apply my changes to existing name</button>'
+                        + '<button id="btn-cancel" class="btn btn-warning btn-block border-secondary border-top-0 mt-0" title="close this dialog">get me out of here</button></p>';
                         var div = $("<div></div>").html(message);
                         $('#deftname-form-wrapper h4').after(div);
-                        
+                        $('#btn-use-existing').on("click",function(){
+                            use_existing_name(existing);
+                        });
+                        $('#btn-update-existing').on("click",function(){
+                            
+                        });
+                        $('#btn-cancel').on("click",function(){
+                            slideout.toggle("slide", 
+                            function(){$('#deftname-form-wrapper').remove();}); 
+                        });
+                        //$('#defendant-form').one()
+                        $('#btn-add-defendant-name').attr({disabled:"disabled", 'aria-disabled':"true" });
                     }
                 }                                    
             },'json');
