@@ -166,8 +166,7 @@ $(document).ready(function()
         if (! hat_id) {
             hatElement.children().not(":first").remove();
             return;
-        }
-        // get data t
+        }      
          $.getJSON('/admin/people/get',
                 { hat_id: hat_id },
                 function(data)
@@ -184,7 +183,7 @@ $(document).ready(function()
                 }
             );
         
-    });
+    });//.trigger('change');
     var eventTypeElement = $('#event-type');
     // set the location automatically if possible
     //#event-type,
@@ -311,6 +310,11 @@ $(document).ready(function()
         );
     });
     /** =================================================================*/
+    
+    /**
+     * gets and inserts markup for defendant name
+     * @param {object} data 
+     */
     var append_deft_name = function(data){
         $.get('/defendants/template',
         {   id: data.id, 
@@ -327,9 +331,7 @@ $(document).ready(function()
          
         if (! $('#slideout-toggle form').length) {
             // GET the form
-            /** @todo get around the jumping that happens when width 
-             * suddenly gets smaller  ? */
-            $('#slideout-toggle .result').slideUp(function(){($this).empty()}).after($("<div/>")
+            $('#slideout-toggle .result').slideUp(function(){$(this).empty();}).after($("<div/>")
                 .attr({id:'deftname-form-wrapper'})              
                 .load('/admin/defendants/add form',function(){                       
                     $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>');
@@ -358,9 +360,11 @@ $(document).ready(function()
                         existing.given_names ===  $('#given_names').val().trim();
                     if (exact_duplicate) {
                         append_deft_name(existing);
-                    } else { // this is a pain in the ass
-                        // fix the width to keep it from expanding
+                    } else { // this is a pain in the ass, but...
+                        // fix the width to keep it from expanding further
                         slideout.css({width:slideout.width()});
+                        // give them three choices: use as existing in the
+                        // database; update database and use as modified; cancel
                         var message = '<p>There already exists an inexact duplicate of '
                         + 'this name in your database: <strong>'+existing.surnames
                         + ', '+existing.given_names+'</strong>. Please choose one of the following:</p><p>'
@@ -369,9 +373,11 @@ $(document).ready(function()
                         + '<button id="btn-cancel" class="btn btn-warning btn-block border-secondary border-top-0 mt-0" title="close this dialog">never mind, get me out of here</button></p>';
                         var div = $("<div></div>").html(message);
                         $('#deftname-form-wrapper h4').after(div);
+                        // easy enough
                         $('#btn-use-existing').on("click",function(){
                             append_deft_name(existing);
                         });
+                        // update the entity and use as modified
                         $('#btn-update-existing').data({id:existing.id}).on("click",function(){
                             $.post('/admin/defendants/edit/'+$(this).data('id'),data,                            
                             function(response){
@@ -382,27 +388,28 @@ $(document).ready(function()
                                         given_names : $("#given_names").val().trim()
                                     });                                    
                                 } else {
-                                    /** error. @todo do something */
+                                    /** error. @todo do something! */
                                 }                              
                             },'json');
                         });
+                        // forget the whole thing
                         $('#btn-cancel').on("click",function(){
                             slideout.toggle("slide", 
                             function(){$('#deftname-form-wrapper').remove();}); 
                         });
-                        // if they edit shit, all bets are off
+                        // and if they edit shit, all bets are off
                         $('#defendant-form').one("change",function(){                            
                             div.slideUp(function(){
                                 div.remove();
                                 $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
                             });                            
                         });
+                        // disable the button for submitting the form
                         $('#btn-add-defendant-name').attr({disabled:"disabled", 'aria-disabled':"true" });
                     }
                 }                                    
             },'json');
-        }        
-        
+        }                
     });
 });
 
