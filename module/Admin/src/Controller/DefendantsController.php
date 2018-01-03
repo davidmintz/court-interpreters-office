@@ -7,7 +7,7 @@ namespace InterpretersOffice\Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
-//use InterpretersOffice\Form\PersonForm;
+use Zend\Stdlib\RequestInterface as Request;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -42,6 +42,7 @@ class DefendantsController extends AbstractActionController
      */
     public function indexAction()
     {
+        echo get_class($this->getRequest());//Zend\Http\PhpEnvironment\Request 
         return new ViewModel(['title' => 'defendants']);
     }
 
@@ -90,20 +91,19 @@ class DefendantsController extends AbstractActionController
                             'givenNames'=>$entity->getGivenNames()]);
                 
                  return $xhr ? 
-                        new JsonModel([
-                            'duplicate_entry_error'=>true,
-                            'existing_entity'=>[
-                                'surnames'=>$existing_entity->getSurnames(),
-                                'given_names'=>$existing_entity->getGivenNames(),
-                                'id'=>$existing_entity->getId(),
-                            ]                           
-                        ])
-                         : 
-                        $viewModel->setVariables(['duplicate_entry_error'=>true,
+                    new JsonModel([
+                        'duplicate_entry_error'=>true,
+                        'existing_entity'=>[
+                            'surnames'=>$existing_entity->getSurnames(),
+                            'given_names'=>$existing_entity->getGivenNames(),
+                            'id'=>$existing_entity->getId(),
+                        ]])
+                    : 
+                    $viewModel->setVariables(['duplicate_entry_error'=>true,
                             'existing_entity'=>$existing_entity]);
             }
         }
-
+        
         return $viewModel;
     }
 
@@ -112,12 +112,56 @@ class DefendantsController extends AbstractActionController
      */
     public function editAction()
     {
+        $request = $this->getRequest();
+        if ($request->isXmlHttpRequest() && $request->isPost()) {
+            return $this->postXhrUpdate($request);
+        }
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/defendants/form.phtml')
                 ->setVariable('title', 'edit a defendant name');
         $id = $this->params()->fromRoute('id');
-
+        // to be continued
         return $viewModel;
     }
+    /**
+     * handles POST request to update entity
+     * 
+     * @param Request $request
+     * @return JsonModel
+     */
+    public function postXhrUpdate(Request $request)
+    {
+        
+        $id = $this->params()->fromRoute('id');
+        $entity = $this->entityManager->find(Entity\DefendantName::class,$id);
+        if (! $entity) {
+             return new JsonModel(['error'=>'database record not found. ']);
+        }
+        $form = new DefendantForm($this->entityManager, ['action' => 'update']);
+        $form->bind($entity)->setData($request->getPost());
+        if (! $form->isValid()) {
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);                    
+        }
+        try {
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+            return new JsonModel(['id'=>$id,'errors'=> null]);
+            
+        } catch (UniqueConstraintViolationException $e) {
+            $existing_entity = $this->entityManager
+                    ->getRepository(Entity\DefendantName::class)
+                    ->findOneBy([
+                        'surnames'=>$entity->getSurnames(),
+                        'givenNames'=>$entity->getGivenNames()]);
 
+             return new JsonModel([
+                'duplicate_entry_error'=>true,
+                'existing_entity'=>[
+                    'surnames'=>$existing_entity->getSurnames(),
+                    'given_names'=>$existing_entity->getGivenNames(),
+                    'id'=>$existing_entity->getId(),
+                ]                           
+            ]);
+        }       
+    }
 }

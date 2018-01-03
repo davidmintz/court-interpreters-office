@@ -275,7 +275,8 @@ $(document).ready(function()
         $('#deftname-form-wrapper').remove();
         if ($('#btn-add-defendant-name').attr("disabled")) {
              $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
-         }
+        }
+        
         var name = defendantSearchElement.val().trim();
         if (! name) {
             defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
@@ -283,14 +284,10 @@ $(document).ready(function()
         }
         $.get('/defendants/search',{term:name,page:1},
             function(data){
-                
+                slideout.css("width","");
                 $('#slideout-toggle .result').html(data);                
                 if (! slideout.is(':visible')) {
                     slideout.toggle("slide",onDeftSlideoutShow);
-                } else {
-                    if (! $('#slideout-toggle li').length) {
-                       // $('#slideout-toggle h6').hide();
-                    }
                 }
             });
     });
@@ -299,7 +296,6 @@ $(document).ready(function()
     /** pagination links ================================================*/
     slideout.on('click','.pagination a',function(event){
         event.preventDefault();
-        onDeftSlideoutShow();
         $('#slideout-toggle .result').load(this.href,onDeftSlideoutShow);
     });
     slideout.on('click','.defendant-names li',function(event){
@@ -315,10 +311,10 @@ $(document).ready(function()
         );
     });
     /** =================================================================*/
-    var use_existing_name = function(existing){
+    var append_deft_name = function(data){
         $.get('/defendants/template',
-        {   id: existing.id, 
-            name: existing.surnames + ", "+ existing.given_names 
+        {   id: data.id, 
+            name: data.surnames + ", "+ data.given_names 
         },
         function(html){
             $('#defendant-names').append(html);
@@ -331,7 +327,9 @@ $(document).ready(function()
          
         if (! $('#slideout-toggle form').length) {
             // GET the form
-            $('#slideout-toggle .result').empty().after($("<div/>")
+            /** @todo get around the jumping that happens when width 
+             * suddenly gets smaller  ? */
+            $('#slideout-toggle .result').slideUp(function(){($this).empty()}).after($("<div/>")
                 .attr({id:'deftname-form-wrapper'})              
                 .load('/admin/defendants/add form',function(){                       
                     $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>');
@@ -346,16 +344,11 @@ $(document).ready(function()
                     return;
                 }
                 if (response.id) { // successful insert
-                    $.get('/defendants/template',
-                    {   id:response.id, 
-                        name: $('#surnames').val().trim() +", "
-                           +$("#given_names").val().trim() },
-                    function(html){
-                        $('#defendant-names').append(html);
-                        defendantSearchElement.val('');
-                        slideout.toggle("slide",
-                            function(){$('#deftname-form-wrapper').remove();});                
-                    });
+                    append_deft_name({
+                        id : response.id,
+                        surnames : $('#surnames').val().trim(),
+                        given_names : $("#given_names").val().trim()
+                    });                   
                 }
                 if (response.duplicate_entry_error) {
                     var existing = response.existing_entity;
@@ -364,7 +357,7 @@ $(document).ready(function()
                         &&
                         existing.given_names ===  $('#given_names').val().trim();
                     if (exact_duplicate) {
-                        use_existing_name(existing);
+                        append_deft_name(existing);
                     } else { // this is a pain in the ass
                         // fix the width to keep it from expanding
                         slideout.css({width:slideout.width()});
@@ -373,20 +366,37 @@ $(document).ready(function()
                         + ', '+existing.given_names+'</strong>. Please choose one of the following:</p><p>'
                         + '<button id="btn-use-existing" class="btn btn-warning btn-block border-secondary mb-0">discard my changes and use existing</button>'
                         + '<button id="btn-update-existing" class="btn btn-warning btn-block border-secondary border-top-0 mt-0">apply my changes to existing name</button>'
-                        + '<button id="btn-cancel" class="btn btn-warning btn-block border-secondary border-top-0 mt-0" title="close this dialog">get me out of here</button></p>';
+                        + '<button id="btn-cancel" class="btn btn-warning btn-block border-secondary border-top-0 mt-0" title="close this dialog">never mind, get me out of here</button></p>';
                         var div = $("<div></div>").html(message);
                         $('#deftname-form-wrapper h4').after(div);
                         $('#btn-use-existing').on("click",function(){
-                            use_existing_name(existing);
+                            append_deft_name(existing);
                         });
-                        $('#btn-update-existing').on("click",function(){
-                            
+                        $('#btn-update-existing').data({id:existing.id}).on("click",function(){
+                            $.post('/admin/defendants/edit/'+$(this).data('id'),data,                            
+                            function(response){
+                                if (response.id) {
+                                    append_deft_name({
+                                        id : response.id,
+                                        surnames : $('#surnames').val().trim(),
+                                        given_names : $("#given_names").val().trim()
+                                    });                                    
+                                } else {
+                                    /** error. @todo do something */
+                                }                              
+                            },'json');
                         });
                         $('#btn-cancel').on("click",function(){
                             slideout.toggle("slide", 
                             function(){$('#deftname-form-wrapper').remove();}); 
                         });
-                        //$('#defendant-form').one()
+                        // if they edit shit, all bets are off
+                        $('#defendant-form').one("change",function(){                            
+                            div.slideUp(function(){
+                                div.remove();
+                                $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
+                            });                            
+                        });
                         $('#btn-add-defendant-name').attr({disabled:"disabled", 'aria-disabled':"true" });
                     }
                 }                                    
