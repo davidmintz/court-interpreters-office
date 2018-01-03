@@ -75,7 +75,20 @@ foreach (['date','time','end_time','submission_time'] as $time) :
         $fieldset->get($time)->setValue(substr($value,0,5));
     }
 endforeach;
-
+$hatElement = $fieldset->get('anonymousSubmitter');
+if ($this->hat_id):
+    $hatElement->setValue($hat_id);
+    $submitterElement = $fieldset->get('submitter');
+    $submitter = $submitterElement->getValue();
+    $options = $submitterElement->getValueOptions();
+    if ($submitter &&  1 <= sizeof($options)) :        
+        $data = $fieldset->getObjectManager()
+            ->getRepository('InterpretersOffice\Entity\Person')
+            ->getPersonOptions($hat_id);
+        $submitterElement->setValueOptions($options + $data);                
+    endif;
+//else : echo "FYI: no \$hat_id"    ;
+endif;
 // temporarily, let's just set this here
 $config = ['end_time' => true];
 echo $this->form()->openTag($form); ?>

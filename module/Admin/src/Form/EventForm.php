@@ -199,6 +199,9 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         $anonSubmitterElement = $this->get('event')->get('anonymousSubmitter');
         $hat_options = $anonSubmitterElement->getValueOptions();
         $hat_id = $event['anonymousSubmitter'];
+        // put the hat_id in the view -- to help persist submitter data
+        // if validation fails
+        $e->getTarget()->getViewModel()->hat_id = $hat_id;
         $key = array_search($hat_id, array_column($hat_options, 'value'));        
         $can_be_anonymous = (!$key) ? false : 
                 $hat_options[$key]['attributes']['data-can-be-anonymous'];
@@ -218,7 +221,6 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             $submitter_input->setAllowEmpty(false);
             $submitter_input->getValidatorChain()->attach($validator);            
         }
-        // end to-do ///////////////////////////////////////////////////////////
         
         // if NO submitter but YES anonymous submitter, submitter = NULL
         if (empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
@@ -229,8 +231,8 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             $event['anonymousSubmitter'] = null;
             // printf("did we just fuck ourself at %d?<br>",__LINE__);
         }
-        if (!empty($event['submission_date']) && !empty($event['submission_time'])) {            
-            $event['submission_datetime'] = 
+        if (!empty($event['submission_date']) && !empty($event['submission_time'])) {
+            $event['submission_datetime'] =
                 (new \DateTime("$event[submission_date] $event[submission_time]"))
                     ->format("Y-m-d H:i:s");
         }
