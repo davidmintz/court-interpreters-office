@@ -85,9 +85,11 @@ if ($this->hat_id):
         $data = $fieldset->getObjectManager()
             ->getRepository('InterpretersOffice\Entity\Person')
             ->getPersonOptions($hat_id);
-        $submitterElement->setValueOptions($options + $data);                
+        array_unshift($options, $data);
+        $submitterElement->setValueOptions($data);
+        // echo "we got shit...";
     endif;
-//else : echo "FYI: no \$hat_id"    ;
+    //else : echo "FYI: no \$hat_id"    ;
 endif;
 // temporarily, let's just set this here
 $config = ['end_time' => true];
