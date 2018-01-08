@@ -88,9 +88,14 @@ $form->add([
             $collectionErrors = $this->formElementErrors($collection);
             if (stristr($collectionErrors, 'language is required')) :
                 echo $collectionErrors;
-            endif;            
+            endif;           
             ?>
-            </div><!-- /languages-div -->       
+            </div><!-- /languages-div -->
+            <?php $element = $fieldset->get('comments');?>
+            <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
+            <div class="col-sm-9" style="margin-bottom:1em"><?php echo $this->formElement($element), $this->formElementErrors($element)?>
+            </div>
+
         </div><!-- /languages panel -->
         <!-- admin panel -->
         <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">
