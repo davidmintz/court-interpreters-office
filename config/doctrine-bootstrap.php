@@ -33,7 +33,17 @@ $entitiesPath = [
 ];
 $config = Setup::createAnnotationMetadataConfiguration($entitiesPath, true, null, null, false);
 $em = EntityManager::create($dbParams, $config);
-//$listener = new InterpretersOffice\Entity\Listener\InterpreterEntityListener();
-//$listener->setEventManager(new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager()));
-//$em->getConfiguration()->getEntityListenerResolver()->register($listener);
+$listener = new InterpretersOffice\Entity\Listener\InterpreterEntityListener();
+$listener->setEventManager(new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager()));
+$em->getConfiguration()->getEntityListenerResolver()->register($listener);
+
+// a (temporary?) fix for entity listener error that happens when we try to 
+// call methods on its logger instance which is set by the service manager that 
+// does not exist in this CLI environment
+
+$logger = new Zend\Log\Logger;
+$writer = new Zend\Log\Writer\Stream('php://output');
+$logger->addWriter($writer);
+$listener->setLogger($logger);
+
 return $em;
