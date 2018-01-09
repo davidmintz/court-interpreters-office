@@ -33,7 +33,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
 
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
-        $this->cache->setNamespace('languages');
+        
     }
 
     /**
@@ -112,7 +112,9 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
     public function deleteCache($cache_id = null)
     {
 
-        $cache = $this->getEntityManager()->getConfiguration()->getResultCacheImpl();
-        $cache->delete($this->cache_id_prefix . 'findAll');
+        $cache = $this->cache;
+	$cache->setNamespace('languages');
+	$cache->deleteAll();
+        //$cache->delete($this->cache_id_prefix . 'findAll');
     }
 }
