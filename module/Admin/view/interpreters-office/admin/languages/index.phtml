@@ -23,7 +23,7 @@ endif;
 echo $this->paginationControl($this->languages, null, 'partials/pagination_head');
 ?>
 
-<table class="table table-hover table-bordered" style="max-width:700px">
+<table class="table table-hover table-bordered table-sm" style="max-width:500px">
     <thead>
     <tr><th class="col-sm-10">language</th><th class="col-sm-2">events</th></tr>
     </thead>
@@ -47,7 +47,7 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
     'partials/pagination_control',
     ['route' => 'languages']
 );?>
-<a href="<?php echo $this->url('languages/add') ?>" role="button" title="add a new language" id="btn-add-language" class="btn btn-info">
+<a href="<?php echo $this->url('languages/add') ?>" role="button" title="add a new language" id="btn-add-language" class="btn btn-info mt-1">
 <span aria-hidden="true" class="fas fa-plus"></span> new language 
 </a>
 </div>
