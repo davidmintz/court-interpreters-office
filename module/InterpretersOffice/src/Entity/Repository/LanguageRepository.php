@@ -45,17 +45,16 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function findAllWithPagination($page = 1)
     {
-
-        $dql = 'SELECT partial l.{id,name}, COUNT(il.language) AS interpreters, 
-            COUNT(e.id) AS events 
+        // we want equivalent of: 
+        // SELECT l.name language, COUNT(ie.event_id) `count` 
+        // FROM languages l LEFT JOIN events e on l.id = e.language_id 
+        // LEFT JOIN interpreters_events ie ON ie.event_id = e.id GROUP BY l.name;
+        $dql = 'SELECT partial l.{id,name}, COUNT(ie.event) AS events 
             FROM InterpretersOffice\Entity\Language l 
-                LEFT JOIN l.interpreterLanguages il 
-                LEFT JOIN l.events e 
-            GROUP BY l.id ORDER BY l.name ASC';
-        //$dql = 'SELECT language FROM InterpretersOffice\Entity\Language language ORDER BY language.name';
+            LEFT JOIN l.events e  LEFT JOIN e.interpreterEvents ie 
+            GROUP BY l.name ORDER BY l.name ASC';
         $query = $this->createQuery(
-            $dql,
-            $this->cache_id_prefix . "findAllPage{$page}"
+            $dql //$this->cache_id_prefix . "findAllPage{$page}"
         )->setMaxResults(30);
 
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
