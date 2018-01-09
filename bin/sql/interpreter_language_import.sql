@@ -23,9 +23,13 @@ INSERT INTO people
     IF(freelance = "Y", 3, 1),
     "interpreter"
 FROM dev_interpreters.interpreters ORDER BY interp_id);
+
+/* be more strict about how "staff interpreter" is defined */
+UPDATE people SET hat_id = 3 WHERE hat_id = 1 AND id NOT IN 
+    (SELECT dev_interpreters.interp_id FROM dev_interpreters.interpreters 
+    WHERE lastname IN ('Garcia','Rich','de los Rios','Anderson','Fox','Hess','Gold','Festinger','Mintz','Olivero') 
+    AND freelance = 'N');
 /* followed by interpreters table */
-
-
 INSERT INTO interpreters (
 id, security_clearance_date, contract_expiration_date,fingerprint_date, oath_date,
 comments, address1, address2, city, state, zip, home_phone, country

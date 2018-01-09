@@ -38,34 +38,34 @@ $i = $this->interpreter;
         <?php
             $email = $i->getEmail();?>
             <div class="col-3 text-md-right">email <span class="fas fa-envelope mr-2"></span></div>
-            <div class="col-3"><?php echo $email ?: "&emdash;" ?></div><?php
+            <div class="col-3"><?php echo $email ?: '<span class="text-muted">&mdash;</span>' ?></div><?php
             foreach(['mobile','office','home'] as $phone): 
                 $number = $i->{'get'.ucfirst($phone).'Phone'}();
                 ?>        
             <div class="col-3 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180"></span></div>
-            <div class="col-3"><?php echo $number ?: "--" ?></div>
+            <div class="col-3"><?php echo $number ?: '<span class="text-muted">&mdash;</span>' ?></div>
             <?php
             endforeach;                
             ?>
             <div class="col-3 text-md-right">fingerprinted on </div>
             <div class="col-3">
                 <?php $fingerprinted = $i->getSecurityClearanceDate(); 
-                if ($fingerprinted): echo $fingerprinted->format('m/d/Y'); endif;?>
+                if ($fingerprinted): echo $fingerprinted->format('m/d/Y'); else: ?><span class="text-muted">&mdash;</span><?php endif;?>
             </div>
             <div class="col-3 text-md-right">security cleared on</div>
             <div class="col-3">
                 <?php $clearance = $i->getSecurityClearanceDate(); 
-                if ($clearance): echo $clearance->format('m/d/Y'); endif;?>
+                if ($clearance): echo $clearance->format('m/d/Y'); else: ?><span class="text-muted">&mdash;</span><?php endif;?>
             </div>
             <div class="col-3 text-md-right">oath taken on</div>
             <div class="col-3">
                 <?php $oath = $i->getOathDate(); 
-                if ($oath): echo $oath->format('m/d/Y'); endif;?>
+                if ($oath): echo $oath->format('m/d/Y'); else: ?><span class="text-muted">&mdash;</span><?php endif;?>
             </div>
             <div class="col-3 text-md-right">contract expiration</div>
             <div class="col-3">
                 <?php $contract_exp = $i->getContractExpirationDate(); 
-                if ($contract_exp): echo $contract_exp->format('m/d/Y'); endif;?>
+                if ($contract_exp): echo $contract_exp->format('m/d/Y');else: ?><span class="text-muted">&mdash;</span><?php endif;?>
             </div>
             <div class="col-3 text-md-right">date of birth
             </div>
@@ -74,7 +74,7 @@ $i = $this->interpreter;
             /**/
                 $encrypted_dob = $i->getDob();
                 if (! $encrypted_dob) :
-                    ?> -- <?php
+                    ?><span class="text-muted">&mdash;</span><?php
                 else:
                     echo $this->formHidden((new \Zend\Form\Element\Hidden('encrypted_dob'))
                             ->setAttributes(['id'=>'encrypted_dob'])
@@ -93,7 +93,7 @@ $i = $this->interpreter;
             /**/
                 $encrypted_ssn = $i->getSsn();
                 if (! $encrypted_ssn) :
-                    ?> -- <?php
+                    ?>&md<span class="text-muted">&mdash;</span><?php
                 else:
                     echo $this->formHidden((new \Zend\Form\Element\Hidden('encrypted_ssn'))
                             ->setAttributes(['id'=>'encrypted_ssn'])
