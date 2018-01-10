@@ -11,17 +11,17 @@ return [
 // override this with your local configuration
     
     'vault' => [    
-       
+        
+        // do not change this adapter
+        'adapter'       => 'Zend\Http\Client\Adapter\Curl',
         // do override these with a local configuration
         'vault_address' => 'https://vault.sdnyinterpreters.org:8200', 
         'sslcafile'     => '/usr/share/ca-certificates/ca-chain.cert.pem',
-        // these settings must match the configuration set in Vault
+        // these settings must match the configuration you set in Vault
         'ssl_key' => '/opt/ssl/vault/int807a.nysd.key.pem',
         'ssl_cert' => '/opt/ssl/vault/usr.int807a.cert.pem',    
         'path_to_secret' => '/path/to/your/secret', // including leading slash
-         'path_to_secret' => '/secret/sdny/encryption',
-        // do not change this adapter
-        'adapter'       => 'Zend\Http\Client\Adapter\Curl',
+        'path_to_secret' => '/secret/sdny/encryption',
        
     ],    
     'service_manager' => [
