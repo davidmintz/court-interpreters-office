@@ -14,7 +14,7 @@ post-install script mkdir data/log, mkdir data/cache and... attempt setfacl www-
 
 post-install script to check database config, prompt for connection parameters
 
-Bootstrap and similar resources: add to repo or manage e.g., w/ Bower
+Bootstrap, font-awesome etc: add to repo or else manage these deps e.g., w/ Bower
 
 
 
