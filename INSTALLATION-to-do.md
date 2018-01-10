@@ -10,7 +10,7 @@ list php requirements in documentation:
 - zip
 - mysql
 
-post-install script mkdir data/log and... setfacl www-data...
+post-install script mkdir data/log, mkdir data/cache and... attempt setfacl www-data?
 
 post-install script to check database config, prompt for connection parameters
 
