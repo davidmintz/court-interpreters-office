@@ -162,6 +162,23 @@ return [
                             ],
                         ]
                     ],
+                    // for the breadcrumbs only
+                    [
+                        'label' => 'schedule',
+                        'route' => 'events',
+                        'expand_children' => true,
+                        'display' => false,
+                        'pages' => [
+                            [
+                                'label' => 'add',
+                                'route' => 'events/add'
+                            ],
+                            [
+                                'label' => 'edit',
+                                'route' => 'events/edit'
+                            ],
+                        ]
+                    ],
                 ],
             ],
             [
