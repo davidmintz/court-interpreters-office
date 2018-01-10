@@ -60,7 +60,7 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest {
                 'dob' => '05/22/1971',
                 'ssn' => '123456789',
                 'language-select' => 1,
-                'interpreter-languages' => [
+                'interpreterLanguages' => [
                     [
                         'language_id' => $russian->getId(),
                         'interpreter_id' => '',
@@ -75,7 +75,7 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest {
                 new Parameters($data)
         );
         $this->dispatch($url);
-
+        //$this->dumpResponse(); return;
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/interpreters');
         
