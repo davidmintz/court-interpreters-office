@@ -194,20 +194,23 @@ $(document).ready(function()
     $(' #judge').on('change',function(event){
          
         if (// return unless event-type is set, it's in-court, and judge is set
-            ! judgeElement.val()
-            || ! eventTypeElement.val()  // do we really need this?
+            ! judgeElement.val() || ! eventTypeElement.val()// )
             || "in" !== eventTypeElement.children(":selected").data().category) 
         {
-            return;
+            //return;
         }
         /**/
-        var judge = judgeElement.children(':selected').data();
-        if (judge.default_parent_location && 
-              judge.default_parent_location !== parentLocationElement.val())
+        var judge_opt = judgeElement.children(':selected');
+        var judge_data = judge_opt.data();
+        var is_magistrate = judge_opt.text().toLowerCase()
+                .indexOf('magistrate') !== -1;
+        console.warn("magistrate? " + (is_magistrate ? "true":"false")); // to be continued
+        if (judge_data.default_parent_location && 
+              judge_data.default_parent_location !== parentLocationElement.val())
         {
-            parentLocationElement.val(judge.default_parent_location)
-                    .trigger("change", judge.default_location ?
-                        {location_id:judge.default_location} : null
+            parentLocationElement.val(judge_data.default_parent_location)
+                    .trigger("change", judge_data.default_location ?
+                        {location_id:judge_data.default_location} : null
             );
         }
     });
