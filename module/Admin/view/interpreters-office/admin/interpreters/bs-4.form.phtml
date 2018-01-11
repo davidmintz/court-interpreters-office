@@ -134,7 +134,7 @@ $form->add([
                     foreach (['dob','ssn'] as $elementName) :
                         if (! $fieldset->has($elementName)) : break; endif;
                     $element = $fieldset->get($elementName);?>
-                <div class="form-group form-row">
+                <div class="form-group form-row form-inline">
                     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <?php $encrypted = $element->getValue();
                     if (! $encrypted): // nothing to obscure
@@ -154,7 +154,7 @@ $form->add([
                     </div>    
                 <?php endif;?>                    
                 </div>
-
+                
              <?php endforeach; endif; ?>
 
         </div>
