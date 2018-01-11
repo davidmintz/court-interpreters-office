@@ -186,12 +186,16 @@ $(document).ready(function()
     });//.trigger('change');
     var eventTypeElement = $('#event-type');
     // set the location automatically if possible
-    //#event-type,
+    /**
+     * @todo if it's a pseudo-judge "magistrate" and no location has been set,
+     * let's consider setting the general location to the appropriate 
+     * courthouse
+     */
     $(' #judge').on('change',function(event){
-                
+         
         if (// return unless event-type is set, it's in-court, and judge is set
             ! judgeElement.val()
-            || ! eventTypeElement.val() 
+            || ! eventTypeElement.val()  // do we really need this?
             || "in" !== eventTypeElement.children(":selected").data().category) 
         {
             return;
