@@ -134,7 +134,7 @@ $form->add([
                     foreach (['dob','ssn'] as $elementName) :
                         if (! $fieldset->has($elementName)) : break; endif;
                     $element = $fieldset->get($elementName);?>
-                <div class="form-group form-row form-inline">
+                <div class="form-group form-row">
                     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <?php $encrypted = $element->getValue();
                     if (! $encrypted): // nothing to obscure
@@ -144,7 +144,7 @@ $form->add([
                     <div class="col-sm-9 encrypted">
                         <?php 
                             $element->setValue('**************');
-                        ?><div class="input-group-btn"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-info" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>                        
+                        ?><div class="input-group"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-info" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>                        
                         <?php 
                             echo $this->formElementErrors($element);
                             $hidden = (new \Zend\Form\Element\Hidden( 'encrypted.'.$elementName ))->setValue($encrypted);
