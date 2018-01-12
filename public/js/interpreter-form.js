@@ -198,8 +198,8 @@ $(function(){
                 $('input[name="login_csrf"').val(response.login_csrf);
                 // since we hacked the names, translate them back
                 var errors = {};
-                errors[$('.thing1').attr("name")] = response.validation_errors.identity;
-                errors[$('.thing2').attr("name")] = response.validation_errors.password;               
+                errors[$('.thing1').attr("id")] = response.validation_errors.identity;
+                errors[$('.thing2').attr("id")] = response.validation_errors.password;               
                 return displayValidationErrors(errors);
             }            
             if (response.authenticated) {

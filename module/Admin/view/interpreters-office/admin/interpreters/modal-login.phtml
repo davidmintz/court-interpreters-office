@@ -38,25 +38,3 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<!-- 
-
-<form autocomplete="off" id="form-login">
-              <div class="form-group">
-                  <?php $fake_identity =  bin2hex(openssl_random_pseudo_bytes(8));
-                        $fake_password =  bin2hex(openssl_random_pseudo_bytes(8));
-                  ?>
-                <label class="sr-only"  for="<?php echo $fake_identity?>">username or email</label>
-                <input name="<?php echo $fake_identity ?>" autocomplete="off" value="" type="text" class="form-control" id="<?php echo $fake_identity ?>" placeholder="email or username">
-              </div>
-              <div class="form-group">
-                <label class="sr-only" for="<?php echo $fake_password ?>">password</label>
-                <input name="<?php echo $fake_password ?>" autocomplete="off" value="" type="password" class="form-control" id="<?php echo $fake_password ?>" placeholder="password">
-              </div>              
-              <?php if ($this->login_csrf): 
-                        echo $this->formHidden($this->login_csrf),$this->formElementErrors($this->login_csrf) ;
-                    endif;
-               ?>
-          </form>
-
-
--->
