@@ -132,10 +132,8 @@ echo $this->form()->openTag($form); ?>
             <label class="col-sm-4 col-form-label pr-1" for="interpreter-select">interpreters</label>
             <div class="col-sm-8">
                 <div class="input-group">
-                    <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
-                    <span class="input-group-btn">
-                        <button class="btn btn-info fas fa-plus" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
-                    </span>
+                    <?php echo $this->formElement($fieldset->get('interpreter-select'));?>                    
+                        <button class="btn btn-info fas fa-plus" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>                    
                  </div>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                     <?php
@@ -159,10 +157,8 @@ echo $this->form()->openTag($form); ?>
             <label class="col-form-label pr-1 col-sm-4" for="defendant-search">defendants</label>
             <ul class="col-sm-8">
                 <div class="input-group">
-                    <?php echo $this->formElement($fieldset->get('defendant-search'));?>
-                    <span class="input-group-btn">
-                        <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
-                    </span>
+                    <?php echo $this->formElement($fieldset->get('defendant-search'));?>                    
+                     <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
                 </div>
                 <div style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php 
@@ -237,11 +233,3 @@ echo $this->form()->openTag($form); ?>
     </div>
 </div>
 <?php echo $this->form()->closeTag();?>
-<!--
-<div class="input-group mb-3">
-  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-  <div class="input-group-append">
-    <span class="input-group-text" id="basic-addon2">@example.com</span>
-  </div>
-</div> 
--->
