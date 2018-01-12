@@ -185,26 +185,30 @@ $(document).ready(function()
         
     });//.trigger('change');
     var eventTypeElement = $('#event-type');
-    // set the location automatically if possible
+    
     /**
-     * @todo if it's a pseudo-judge "magistrate" and no location has been set,
-     * let's consider setting the general location to the appropriate 
-     * courthouse
+     * sets the location based on the judge, if possible     
      */
-    $(' #judge').on('change',function(event){
+    $('#judge').on('change',function(event){
          
-        if (// return unless event-type is set, it's in-court, and judge is set
-            ! judgeElement.val() || ! eventTypeElement.val()// )
+        if (!  judgeElement.val()) {
+            return;
+        }
+        var judge_opt = judgeElement.children(':selected');
+        var is_magistrate = judge_opt.text().toLowerCase()
+                .indexOf('magistrate') !== -1 && judge_opt.data('pseudojudge');
+        var judge_data = judge_opt.data();       
+        if ( ! eventTypeElement.val()// )
             || "in" !== eventTypeElement.children(":selected").data().category) 
         {
-            //return;
+            // if it's magistrate, and they have not set a parent location,
+            // let's set it for them
+            if (is_magistrate && !parentLocationElement.val()) {                
+                parentLocationElement.val(judge_data.default_parent_location).trigger("change");
+                return;
+            }            
         }
-        /**/
-        var judge_opt = judgeElement.children(':selected');
-        var judge_data = judge_opt.data();
-        var is_magistrate = judge_opt.text().toLowerCase()
-                .indexOf('magistrate') !== -1;
-        console.warn("magistrate? " + (is_magistrate ? "true":"false")); // to be continued
+        
         if (judge_data.default_parent_location && 
               judge_data.default_parent_location !== parentLocationElement.val())
         {
@@ -217,8 +221,8 @@ $(document).ready(function()
     
     $("#event-form").on("submit",function(e){
         if (! locationElement.val()) {
-            // no specific location selected, so the general location
-            // should be submitted instead
+            // no specific location was selected, so the general location
+            // should be submitted in its place
             var location_id = parentLocationElement.val();
             if (location_id) {
                 locationElement.after(
