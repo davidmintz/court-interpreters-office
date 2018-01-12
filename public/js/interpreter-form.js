@@ -106,9 +106,16 @@ $(function(){
     // try to prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
     $('#login-modal').on("show.bs.modal",function(){
-         $('#identity, #password').val("");  // doesn't work, either. fuck.      
+         $('.thing1, .thing2').val("");  // doesn't work, either. fuck.
+         
+         //console.log($('.thing1, .thing2').length + " fucking elements");
+         $(".thing1").on("focus",function(){
+            console.log("am i imagining this?");           
+               $('.thing2').val("");
+               console.warn("WHAT THE FUCK!");
+        }).on("blur",function(){ $('.thing2').val("")});
     });
-   
+    
     /** validate each tab pane before moving on **/
     // note to self: is there a Bootstrap event to observe instead?
     $('a[data-toggle="tab"]').on('click', function (event,params) {
@@ -172,10 +179,16 @@ $(function(){
     });
     // we make them re-authenticate to display the password and dob field values
     $('#auth-submit').on("click",function(){
-       
+        // a sorry-ass attempt to defeat autocompletion.
+        // NOTE TO SELF:
+        // if you give up on the form and revert the re-naming,
+        // the handling of error-message presentation will also
+        // have to be reverted
+        var id = $('#form-login input.thing1').val(); 
+        var password = $('#form-login input.thing2').val(); 
         var input = {
-            identity : $('#identity').val(),
-            password : $('#password').val(),
+            identity : id,
+            password : password,
             login_csrf : $('input[name="login_csrf"').val()
         };
         var url = /*window.basePath +*/ '/login';
@@ -183,7 +196,11 @@ $(function(){
             if (response.validation_errors) {
                 //refresh the CSRF token
                 $('input[name="login_csrf"').val(response.login_csrf);
-                return displayValidationErrors(response.validation_errors);
+                // since we hacked the names, translate them back
+                var errors = {};
+                errors[$('.thing1').attr("name")] = response.validation_errors.identity;
+                errors[$('.thing2').attr("name")] = response.validation_errors.password;               
+                return displayValidationErrors(errors);
             }            
             if (response.authenticated) {
                 
