@@ -9,15 +9,7 @@ $this->headScript()
         ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
         ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-        ->appendFile($this->basePath('js/event-form.js'))
-        ;
-$this->headStyle()->captureStart();?>
-.multi-input label, .multi-input div { border : 1px dotted gray; }
-form { max-width: 900px;}
-.multi-input div:first-of-type { padding-right: 0px; }
-.multi-input div:last-of-type { padding-left: 0px; }
-.multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
-<?php $this->headStyle()->captureEnd();
+        ->appendFile($this->basePath('js/event-form.js'));
 
 $messenger = $this->flashMessenger();
 if ($messenger->hasErrorMessages()) : 
@@ -38,28 +30,7 @@ $form->add([
     'type' => 'Zend\Form\Element\Submit',
     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
-?>
-<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:22rem" class="card border ml-5 bg-light">    
-    <div class="card-header">
-         <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">        
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="card-title">defendant names</h4>
-        <!-- instructions (when search results are non-zero?)
-        <h6 class="card-subtitle text-muted">select a name to add to this event</h6> -->
-    </div>
-    <div class="card-body pl-3 mb-0">
-        <div class="card-text result">            
-        </div>        
-    </div>
-    <div class="mt-1 mb-2 mx-auto text-center">
-        <button title="add a new defendant name" id="btn-add-defendant-name" class="btn btn-primary btn-sm">
-            <span aria-hidden="true" class="fas fa-plus"></span> new defendant name 
-        </button>
-    </div>
-</div>
-<h2 class="text-center mb-3"><?php echo (string)$this->navigation('default')->breadcrumbs() ;?></h2>
-<?php
+
 $form->prepare();
 $fieldset = $form->get('event');
 foreach (['date','time','end_time','submission_time'] as $time) :
@@ -93,6 +64,28 @@ if ($this->hat_id):
 endif;
 // temporarily, let's just set this here
 $config = ['end_time' => true];
+?>
+<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:22rem" class="card border ml-5 bg-light">    
+    <div class="card-header">
+         <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">        
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="card-title">defendant names</h4>
+        <!-- instructions (when search results are non-zero?)
+        <h6 class="card-subtitle text-muted">select a name to add to this event</h6> -->
+    </div>
+    <div class="card-body pl-3 mb-0">
+        <div class="card-text result">            
+        </div>        
+    </div>
+    <div class="mt-1 mb-2 mx-auto text-center">
+        <button title="add a new defendant name" id="btn-add-defendant-name" class="btn btn-primary btn-sm">
+            <span aria-hidden="true" class="fas fa-plus"></span> new defendant name 
+        </button>
+    </div>
+</div>
+<h2 class="text-center mb-3"><?php echo (string)$this->navigation('default')->breadcrumbs() ;?></h2>
+<?php
 echo $this->form()->openTag($form); ?>
 <div class="form-row">
     <div class="col-md-6"><!-- left side -->
@@ -244,4 +237,11 @@ echo $this->form()->openTag($form); ?>
     </div>
 </div>
 <?php echo $this->form()->closeTag();?>
-
+<!--
+<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+  <div class="input-group-append">
+    <span class="input-group-text" id="basic-addon2">@example.com</span>
+  </div>
+</div> 
+-->
