@@ -27,6 +27,15 @@ $(document).ready(function()
   //  } else {console.log( "time element is supported!"); }
     $('input.docket').on("change",formatDocketElement);
     
+    // toggle the 'text-muted' class on all the select elements
+    $('select').on("change",function(){
+        var element = $(this);
+        if (element.val()) {
+            element.removeClass("text-muted");
+        } else {
+            element.addClass("text-muted");
+        }
+    }).trigger("change");
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
     
@@ -58,7 +67,7 @@ $(document).ready(function()
     if (! parentLocationElement.val()){
         locationElement.val("").attr({disabled : "disabled"});
     } else {
-        //parentLocationElement.trigger("change");
+        parentLocationElement.trigger("change");
     }
     /** this applies to admin form, not "request" form **/
     var languageElement = $('#language');

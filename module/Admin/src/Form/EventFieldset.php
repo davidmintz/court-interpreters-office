@@ -94,6 +94,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'id' => 'date',
                 'class' => 'date form-control',
+                'placeholder'=> '(required)',
             ],
              'options' => [
                 'label' => 'date',
@@ -120,6 +121,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'id' => 'docket',
                 'class' => 'docket form-control',
+                 'placeholder'=> '(strongly recommended)',
             ],
              'options' => [
                 'label' => 'docket',                
@@ -190,10 +192,11 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     'objectManager' => $objectManager,
                     'attributes'  => [
                         'id' => 'language',
+                        'class' => 'custom-select text-muted'
                     ],
                     'options' => [
                         'label' => 'language', 
-                        'empty_item_label' => '',
+                        'empty_item_label' => '(required)',
                     ],    
                 ]
             )
@@ -447,7 +450,9 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         $repo = $this->objectManager->getRepository(Entity\EventType::class);
         $value_options = array_merge(
                 [
-                  ['label'=> ' ','value' =>'','attributes'=>['label'=> ' ']]  
+                  ['label'=> '(required)','value' =>'',
+                      'attributes'=>['label'=> '(required)']
+                  ]  
                 ],
                 $repo->getEventTypeOptions()
          );
@@ -459,8 +464,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'label' => 'event type',
                 'value_options' => $value_options,
             ],
-            'attributes' => ['class' => 'form-control', 'id' => 'event-type'],
-        ]
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
+            ]
         );
         
         return $this;
@@ -491,7 +496,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 
             ],         
             'attributes' => [
-                'class' => 'form-control', 
+                'class' => 'form-control custom-select text-muted', 
                 'id' => 'parent_location'
             ],
         ]);
@@ -504,7 +509,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     'value_options' =>[],
                     'empty_option' => '(specific location)',                    
                 ],                
-                'attributes' => ['class' => 'form-control', 'id' => 'location'],
+                'attributes' => ['class' => 'form-control  custom-select text-muted', 'id' => 'location'],
         ];
         if (! $event or ! $event->getLocation()) {
              $this->add($element_spec);
@@ -555,7 +560,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'label' => 'judge',
                 'value_options' => $value_options,
             ],
-            'attributes' => ['class' => 'form-control', 'id' => 'judge'],
+            'attributes' => ['class' => 'form-control custom-select text-muted', 'id' => 'judge'],
          
         ]);
         $this->add(
