@@ -5,9 +5,8 @@
  */
 $this->headTitle($this->title);
 ?>
-<div class="center-block mx-auto" style="max-width: 800px">
+<div class="center-block mx-auto" style="max-width: 600px">
 <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
-
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
@@ -19,11 +18,9 @@ if (! $this->languages) :
     Go to <a href="/admin/languages/add">add</a> to start adding them.</div><?php
     return;
 endif;
-
 echo $this->paginationControl($this->languages, null, 'partials/pagination_head');
 ?>
-
-<table class="table table-hover table-bordered table-sm" style="max-width:500px">
+<table class="table table-hover table-bordered table-sm">
     <thead>
     <tr><th class="col-sm-10">language</th><th class="col-sm-2">events</th></tr>
     </thead>

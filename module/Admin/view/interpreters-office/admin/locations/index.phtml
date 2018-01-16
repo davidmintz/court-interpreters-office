@@ -1,21 +1,20 @@
 <?php
 /**
- * module/Admin/view/interpreters-office/admin/locations/form.phtml
+ * module/Admin/view/interpreters-office/admin/locations/index.phtml
  * view script for displaying locations. work in progress.
  */
 $this->headTitle($this->title);
 $this->headScript()->appendFile($this->basePath('js/locations-index.js'));
 ?>
-
+<div class="center-block mx-auto" style="max-width:600px">
 <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
-
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
 endif;
 ?>
-<div class="list-group" style="max-width: 400px">
+<div class="list-group">
 <p>Choose a type to display</p>
 <ul id="locations-list" class="list-group">
 <?php foreach ($this->locationTypes as $t) : ?>
@@ -25,3 +24,4 @@ endif;
   </li>
 <?php endforeach ?>
 </ul>
+</div>
