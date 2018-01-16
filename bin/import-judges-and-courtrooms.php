@@ -30,7 +30,7 @@ $flavors = $db->query('SELECT flavor, id FROM judge_flavors')->fetchAll(PDO::FET
 // translations
 $flavors['District'] = $flavors['USDJ'];
 $flavors['Magistrate'] = $flavors['USMJ'];
-
+$active = 1;
 $courthouses =  $db->query('SELECT name,id FROM locations WHERE type_id = '.TYPE_COURTHOUSE)->fetchAll(PDO::FETCH_KEY_PAIR);
 $courthouses['300 Quarropas'] = $courthouses['White Plains'];  // alias
 
@@ -39,7 +39,7 @@ $courtrooms = $db->query('SELECT CONCAT(name,"-",parent) AS location, id FROM vi
 
 $person_insert = $db->prepare(
     'INSERT INTO people (hat_id,lastname,firstname,middlename,active,discr) 
-        VALUES (:hat_id,:lastname,:firstname,:middlename,1, "judge")'
+        VALUES (:hat_id,:lastname,:firstname,:middlename,:active, "judge")'
 );
 
 $judge_insert = $db->prepare(
@@ -140,7 +140,7 @@ foreach ($data as $flavor => $judge) {
             try {
                 debug("inserting new judge ($lastname) at ".__LINE__);
                 $person_insert->execute(
-                    compact('hat_id','lastname','firstname','middlename')
+                    compact('hat_id','lastname','firstname','middlename','active')
                 );
                 $id = $db->query('SELECT last_insert_id()')->fetchColumn();
 
@@ -164,4 +164,29 @@ $old_db = new PDO('mysql:host=localhost;dbname=dev_interpreters', $db_params['us
 ]);
 
 // find judges from old database that are NOT in the new one
-$judge_sql = '';
+$judge_sql = 'SELECT lastname, firstname, middlename, flavor, IF(judges.active="Y",1,0) AS active FROM dev_interpreters.judges WHERE CONCAT(lastname,"-",firstname) NOT IN (SELECT CONCAT(lastname,"-",firstname) FROM office.people p WHERE p.discr = "judge") AND firstname <> ""';
+
+$results = $old_db->query($judge_sql,PDO::FETCH_ASSOC);
+
+while ($j = $results->fetch()) {
+    extract($j);
+    $active = $active == 'Y' ? 1 : 0 ;
+    if (!$flavor) {
+        $flavor = $flavors['USBJ'];
+    }
+    try {
+        debug("inserting inactive judge ($lastname) at ".__LINE__);
+        $person_insert->execute(
+            compact('hat_id','lastname','firstname','middlename','active')
+        );
+        $id = $db->query('SELECT last_insert_id()')->fetchColumn();
+        $judge_insert->execute([
+            ':id'=>$id,
+            ':default_location_id'=>NULL,
+            ':flavor_id' => $flavors[$flavor],
+        ]);
+    } catch (PDOException $e) {
+        printf("shit: %s\n",$e->getMessage());
+    }
+        
+}
