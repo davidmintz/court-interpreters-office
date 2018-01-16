@@ -22,9 +22,8 @@ $(document).ready(function(){
         if (! parent_id) {
             return courtroomSelect.val('').attr({disabled : "disabled"});
         }
-        var data = $.getJSON('/admin/locations/courtrooms/'+parent_id, null,
+        $.getJSON('/admin/locations/courtrooms/'+parent_id, null,
             function(data){
-
                 var options = [], i = -1;
                 $.each(data,function(){
                     options[++i] = $('<option/>').attr({label:this.name, value: this.id }).text(this.name);
@@ -80,35 +79,3 @@ $(document).ready(function(){
         });
     });
 });
-// borrowed from ourself
-__displayValidationErrors = function(validationErrors) {
-$('.validation-error').empty();
-for (var field in validationErrors) {
-    //console.log("examining field "+field);
-    for (var key in validationErrors[field]) {
-        // console.log("examining key "+key);
-        var message = validationErrors[field][key];
-        var element = $('#' +field);
-        var errorDiv = $('#error_'+field);
-        if (! errorDiv.length) { errorDiv = null;}
-        if (! element.length) { console.log("is there no element #"+field+ " ?");
-            // look for an existing div by id
-            if ($('#error_'+field).length) {
-                $('#error_'+field).html(message);
-            } else {
-                console.warn("no element with id "+field + ", and nowhere to put message "+message);
-            }
-        } else {
-            errorDiv = errorDiv || element.next('.validation-error');
-            if (! errorDiv.length) {
-                errorDiv = $('<div/>')
-                        .addClass('alert alert-warning validation-error')
-                        .attr({id:'error_'+field})
-                .insertAfter(element);
-            }
-            errorDiv.html(message).show();
-        }
-        break;
-    }
-} 
-};
