@@ -4,6 +4,9 @@
  *  view script for rendering people create|update form
  */
 $this->headTitle($this->title);
+$this->headScript()
+        ->appendFile($this->basePath('js/common.js'))
+        ->appendFile($this->basePath('js/judge-form.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -18,20 +21,19 @@ $form->add([
     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction)->setAttribute('class', 'form-horizontal')    ;
 ?>
-<div class="center-block" style="max-width:750px"><!-- wrapper -->
-<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<div class="center-block mx-auto" style="max-width:700px"><!-- wrapper -->
+<h2 class="my-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 //echo "SHIT? ..."; $fieldset = $form->get('judge');$shit = $fieldset->get('courthouse')->getValueOptions();echo count($shit);
 $form->prepare();
 $fieldset = $form->get('judge');
 // this is a bit beyond display logic and maybe should go somewhere else...
 $entity = $form->getObject();
-
 echo $this->form()->openTag($form);?>
 <?php
 $flavor = $fieldset->get('flavor');?>
-<div class="form-group">
-    <label class="control-label col-sm-3"><?php echo $flavor->getLabel()?></label>
+<div class="form-group form-row">
+    <label class="col-form-label col-sm-3"><?php echo $flavor->getLabel()?></label>
     <div class="col-sm-9"><?php echo $this->formSelect($flavor),$this->formElementErrors($flavor) ?>
     </div>
 </div>
@@ -43,8 +45,8 @@ $elements = ['lastname','middlename','firstname','email','officePhone',];
 <?php
 foreach ($elements as $elementName) :
     $element = $fieldset->get($elementName);?>
-<div class="form-group">
-    <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
+<div class="form-group form-row">
+    <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
     <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>            
     </div>
 </div>
@@ -52,22 +54,22 @@ foreach ($elements as $elementName) :
 endforeach;
 $courthouse = $fieldset->get('courthouse');
 $courtroom = $fieldset->get('courtroom');?>
-<div class="form-group">
-    <label class="control-label col-sm-3">default location</label>
+<div class="form-group form-row">
+    <label class="col-form-label col-sm-3">default location</label>
     <div class="col-sm-9">
-        <div class="form-group row">
-            <label class="control-label col-sm-2"><?php echo $courthouse->getLabel()?></label>
+        <div class="form-group form-row">
+            <label class="col-form-label col-sm-2"><?php echo $courthouse->getLabel()?></label>
             <div class="col-sm-10"><?php echo $this->formSelect($courthouse),$this->formElementErrors($courthouse) ?>
             </div>
         </div>
-        <div class="form-group row">
-            <label class="control-label col-sm-2">courtroom</label>
+        <div class="form-group form-row">
+            <label class="col-form-label col-sm-2">courtroom</label>
              <div class="col-sm-10"><?php echo $this->formSelect($courtroom),$this->formElementErrors($courtroom) ?>
                 <?php echo $this->formHidden($fieldset->get('defaultLocation')) ?>                 
              </div>
-             <div class="col-sm-offset-2 col-sm-10" style="margin-top: 4px">    
+             <div class="offset-2 col-sm-10" style="margin-top: 4px">    
                  <button type="button" data-toggle="modal" data-target="#add-location" title="add a new location" id="btn-add-location" class="btn btn-info btn-sm">
-                      <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new location 
+                      <span aria-hidden="true" class="fas fa-plus"></span> new location 
                 </button>
             </div>                
         </div>
@@ -76,14 +78,14 @@ $courtroom = $fieldset->get('courtroom');?>
 
 <?php if (false) : // this is simpler. maybe we'll change our mind back to this.
     $defaultLocation = $fieldset->get('defaultLocation'); ?>
-<div class="form-group">
+<div class="form-group form-row">
     <label class="control-label col-sm-3"><?php echo $defaultLocation->getLabel()?></label>
     <div class="col-sm-9">
         <div class="input-group">
             <?php echo $this->formSelect($defaultLocation) ?>    
             <span class="input-group-btn">
                 <button type="button" data-toggle="modal" data-target="#add-location" title="add a new location" id="btn-add-location" class="btn btn-info btn-sm">
-                  <span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span>  
+                  <span aria-hidden="true" class="fas fa-plus"></span>  
                 </button>   
             </span>
             <?php echo $this->formElementErrors($defaultLocation) ?>
@@ -93,13 +95,13 @@ $courtroom = $fieldset->get('courtroom');?>
 <?php endif ?>
 <?php
 $active = $fieldset->get('active');?>
-<div class="form-group" style="margin-top: -15px">
-    <label class="control-label col-sm-3" style="padding-top:2px"><?php echo $active->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
+<div class="form-group form-row" style="margin-top: -15px">
+    <label class="form-col-label col-sm-3" style="padding-top:2px"><?php echo $active->getLabel()?></label>
+    <div class="col-sm-9 pt-1"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
     </div>
 </div>
-<div class="form-group">
-    <div class="col-sm-offset-3 col-sm-9">
+<div class="form-group form-row">
+    <div class="offset-3 col-sm-9">
     <?php
         echo $this->formHidden($fieldset->get('hat'));
         echo $this->formHidden($fieldset->get('id'));
@@ -132,118 +134,4 @@ $active = $fieldset->get('active');?>
 </div>
 <script type="text/javascript">
     /** @todo move this to its own file(s) */
-    $(document).ready(function(){ 
-        // this whole thing needs cleaning up
-        $('#add-location').on('show.bs.modal',function(event){
-            console.log("show event fired");
-            // event.relatedTarget is the button they clicked, FYI
-            $('#add-location > div > div > div.modal-body').load(
-                '/admin/locations/add?form_context=judges form',
-                function(){
-                    $('.modal-header .modal-title').text("add a courthouse/courtroom")
-                    // use the modal's buttons instead
-                    $('#add-location input[name="submit"]').remove();
-            });
-        });
-        // if there is no courthouse selected, disable the courtroom control
-        var courthouseSelect = $('#courthouse');
-        var courtroomSelect = $('#courtroom');
-        if (! courthouseSelect.val()) {
-            courtroomSelect.val('').attr({disabled : "disabled"});
-        }
-        courthouseSelect.on('change',function(){
-            var parent_id = courthouseSelect.val();
-            if (! parent_id) {
-                return courtroomSelect.val('').attr({disabled : "disabled"});
-            }
-            var data = $.getJSON('/admin/locations/courtrooms/'+parent_id, null,
-                function(data){
-                    
-                    var options = [], i = -1;
-                    $.each(data,function(){
-                        options[++i] = $('<option/>').attr({label:this.name, value: this.id }).text(this.name);
-                    });            
-                    if (courtroomSelect.children().length > 1) {
-                        // might want to cache these later
-                        var discard = courtroomSelect.children().slice(1).remove();
-                    }
-                    courtroomSelect.append(options);
-                }
-             );
-        }); 
-        $('#courthouse, #courtroom').on('change',function(event){
-            var defaultLocation = $('#defaultLocation');
-            var selectElement = $(event.target);
-            // if the courtroom changed
-            if ('courtroom' === selectElement.attr("id")) {
-                defaultLocation.val(selectElement.val());
-            } else {
-                // the courthouse is what changed. if there is no courtroom,
-                // the courthouse value becomes the default location value
-                if (! courtroomSelect.val()) {
-                    defaultLocation.val(selectElement.val());
-                }
-                if (courthouseSelect.val()) {
-                    courtroomSelect.prop('disabled',false);
-                }
-            }
-            console.debug("set defaultLocation value to: "+defaultLocation.val());
-        });
-        $('#add-location').on("click",'#btn-add-location-submit', function(){
-            
-            $.post('/admin/locations/add?form_context=judges',$('#add-location form').serialize(),
-            function(response){
-                
-                if (! response.valid) {
-                   return displayValidationErrors(response.validationErrors);
-                }
-                $('#add-location').modal("hide");
-                $("#defaultLocation").val(response.entity.id);
-                $('#courthouse').prop('disabled',false);
-                entity = response.entity;
-                
-                var targetElement = $('#'+entity.type);
-                $("<option>")
-                    .attr({label: entity.name, value: entity.id})
-                    .text(entity.name)
-                    .appendTo(targetElement);
-                targetElement.val(response.entity.id);
-                if (entity.parent_location_id) {
-                    $('#courthouse').val(entity.parent_location_id);
-                }
-            });
-        });
-    });
-    // borrowed from ourself
-    displayValidationErrors = function(validationErrors) {
-    $('.validation-error').empty();
-    for (var field in validationErrors) {
-        //console.log("examining field "+field);
-        for (var key in validationErrors[field]) {
-            // console.log("examining key "+key);
-            var message = validationErrors[field][key];
-            var element = $('#' +field);
-            var errorDiv = $('#error_'+field);
-            if (! errorDiv.length) { errorDiv = null;}
-            if (! element.length) { console.log("is there no element #"+field+ " ?");
-                // look for an existing div by id
-                if ($('#error_'+field).length) {
-                    $('#error_'+field).html(message);
-                } else {
-                    console.warn("no element with id "+field + ", and nowhere to put message "+message);
-                }
-            } else {
-                errorDiv = errorDiv || element.next('.validation-error');
-                if (! errorDiv.length) {
-                    errorDiv = $('<div/>')
-                            .addClass('alert alert-warning validation-error')
-                            .attr({id:'error_'+field})
-                    .insertAfter(element);
-                }
-                errorDiv.html(message).show();
-            }
-            break;
-        }
-    } 
-};
 </script>
