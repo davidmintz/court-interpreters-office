@@ -67,7 +67,10 @@ so that interpreter-languages won't stack and look crappy on a small viewport
        margin-right: 10%;
     }
 }
-
+/* form labels align right unless width makes form controls and labels stack */
+@media (min-width: 576px) {
+    form label { text-align:right;}   
+}
 form label {
     font-weight: normal;
 }
@@ -88,4 +91,9 @@ form .interpreter-language {
     cursor: pointer; 
     text-decoration: underline; 
     color: #007bff;
+}
+
+ul.subgroup {
+    max-height: 500px;
+    overflow-y : scroll;
 }
