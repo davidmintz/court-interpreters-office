@@ -32,7 +32,7 @@ $(function(){
                         }
                         var href = 'locations/edit/' + data[i].id;
                         var html = $('<a/>').attr({href:href, title:"edit this location"}).text(text)
-                        items[i] = $('<li>').html(html).addClass('list-group-item');
+                        items[i] = $('<li>').html(html).addClass('list-group-item py-1');
                     }
                     items[++i]= $('<li>').html(thisButton).addClass('list-group-item'); 
                 }
