@@ -1,6 +1,6 @@
 <?php
 /**
- * imports judges and courtrooms using JSON data provided as stdin
+ * imports judges and courtrooms using JSON data coming from stdin
  */
 
 $json = file_get_contents("php://stdin");
@@ -64,20 +64,6 @@ $judge_select = $db->prepare('SELECT p.id, p.lastname, p.firstname, p.middlename
 
 $judge_update = null;
 
-/*mysql> explain locations;
-+--------------------+----------------------+------+-----+---------+----------------+
-| Field              | Type                 | Null | Key | Default | Extra          |
-+--------------------+----------------------+------+-----+---------+----------------+
-| id                 | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |
-| type_id            | smallint(5) unsigned | NO   | MUL | NULL    |                |
-| parent_location_id | smallint(5) unsigned | YES  | MUL | NULL    |                |
-| name               | varchar(60)          | NO   | MUL | NULL    |                |
-| comments           | varchar(200)         | NO   |     |         |                |
-| active             | tinyint(1)           | NO   |     | 1       |                |
-+--------------------+----------------------+------+-----+---------+----------------+
-*/
-
-
 foreach ($data as $flavor => $judge) {
     
     foreach ($judge as $name => $location) {
@@ -89,6 +75,11 @@ foreach ($data as $flavor => $judge) {
         } else {
             $firstname = $given_names; 
             $middlename = '';
+        } 
+        // BUT!
+        if (preg_match('/^[A-Z]\. +\S+$/',"$firstname $middlename")) {
+            $firstname .= " $middlename";
+            $middlename = '';            
         }
         
         list($courtroom, $courthouse) = preg_split('/, +/',$location);
@@ -166,46 +157,11 @@ foreach ($data as $flavor => $judge) {
         }        
     }
 }
-/*
- mysql> explain people;
-+--------------+----------------------+------+-----+---------+----------------+
-| Field        | Type                 | Null | Key | Default | Extra          |
-+--------------+----------------------+------+-----+---------+----------------+
-| id           | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |
-| hat_id       | smallint(5) unsigned | NO   | MUL | NULL    |                |
-| email        | varchar(50)          | YES  | MUL | NULL    |                |
-| lastname     | varchar(50)          | NO   |     | NULL    |                |
-| firstname    | varchar(50)          | NO   |     | NULL    |                |
-| middlename   | varchar(50)          | NO   |     |         |                |
-| office_phone | varchar(20)          | NO   |     |         |                |
-| mobile_phone | varchar(20)          | NO   |     |         |                |
-| active       | tinyint(1)           | NO   |     | NULL    |                |
-| discr        | varchar(255)         | NO   |     | NULL    |                |
-+--------------+----------------------+------+-----+---------+----------------+
-10 rows in set (0.00 sec)
+/* now, the dead judges */
 
-mysql> explain judges;
-+---------------------+----------------------+------+-----+---------+-------+
-| Field               | Type                 | Null | Key | Default | Extra |
-+---------------------+----------------------+------+-----+---------+-------+
-| id                  | smallint(5) unsigned | NO   | PRI | NULL    |       |
-| default_location_id | smallint(5) unsigned | YES  | MUL | NULL    |       |
-| flavor_id           | int(11)              | NO   | MUL | NULL    |       |
-+---------------------+----------------------+------+-----+---------+-------+
-3 rows in set (0.00 sec)
+$old_db = new PDO('mysql:host=localhost;dbname=dev_interpreters', $db_params['user'], $db_params['password'],[
+    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+]);
 
-mysql> explain locations;
-+--------------------+----------------------+------+-----+---------+----------------+
-| Field              | Type                 | Null | Key | Default | Extra          |
-+--------------------+----------------------+------+-----+---------+----------------+
-| id                 | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |
-| type_id            | smallint(5) unsigned | NO   | MUL | NULL    |                |
-| parent_location_id | smallint(5) unsigned | YES  | MUL | NULL    |                |
-| name               | varchar(60)          | NO   | MUL | NULL    |                |
-| comments           | varchar(200)         | NO   |     |         |                |
-| active             | tinyint(1)           | NO   |     | 1       |                |
-+--------------------+----------------------+------+-----+---------+----------------+
-6 rows in set (0.00 sec)
-
-
- */
+// find judges from old database that are NOT in the new one
+$judge_sql = '';
