@@ -36,13 +36,11 @@ class InterpretersWriteController extends AbstractActionController
     protected $entityManager;
     
     /**
-     * name of the form template
-     * 
-     * this is a temporary measure while moving to Bootstrap 4.x
+     * path to form template
      * 
      * @var string
      */
-    protected $form_template;
+    protected $form_template = 'interpreters-office/admin/interpreters/form.phtml';
 
    /**
      * constructor.
@@ -54,23 +52,14 @@ class InterpretersWriteController extends AbstractActionController
     {
         
         $this->entityManager = $entityManager;
-        $this->vault_enabled = $vault_enabled;
-        $this->form_template = 'interpreters-office/admin/interpreters/bs-4.form.phtml';
+        $this->vault_enabled = $vault_enabled;        
     }
-    /*
-    public function onDispatch(\Zend\Mvc\MvcEvent $e) {
-        $this->layout()->setTemplate('layout/bs-4.layout.phtml');        
-        parent::onDispatch($e);
-    }
-    */
-    
     
     /**
      * adds an Interpreter entity to the database.
      */
     public function addAction()
-    {
-        //$this->layout()->setTemplate('layout/bs-4.layout.phtml');
+    {        
         $viewModel = (new ViewModel())
             ->setTemplate($this->form_template);
         $form = new InterpreterForm($this->entityManager,

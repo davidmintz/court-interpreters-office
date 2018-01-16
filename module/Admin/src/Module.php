@@ -63,13 +63,7 @@ class Module
                 $viewModel = $event->getApplication()->getMvcEvent()
                         ->getViewModel();
                 $viewModel->setVariables($routeMatch->getParams());
-                $viewModel->user = $user;
-                /**
-                 * temporary measure for phasing in BS 4 !!!!
-                 */
-                $viewModel->setTemplate("layout/bs-4.layout.phtml");
-                
-                
+                $viewModel->user = $user;                
             }
         });
         // The following line instantiates the SessionManager and automatically
