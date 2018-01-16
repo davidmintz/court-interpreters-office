@@ -27,7 +27,9 @@ $cipher->setKey($ciphers['office']['cipher']);
 
 $old_db = new PDO('mysql:host=localhost;dbname=dev_interpreters', $db_params['user'], $db_params['password']);
 
-$new_db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_params['password']);
+$new_db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_params['password'], [
+    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+]);
 
 
 // test it 
