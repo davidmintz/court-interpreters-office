@@ -62,6 +62,9 @@ class JudgeFieldset extends PersonFieldset
                     $parent_location_id = $defaultLocation->getId();
                     $location_id = $parent_location_id;
                 }
+            } else {
+                $parent_location_id = 0;
+                $location_id = 0;
             }
         } else {
             // for getting courtrooms to populate select.
@@ -69,6 +72,7 @@ class JudgeFieldset extends PersonFieldset
             // the getCourtrooms() repository method knows to return an
             // empty array
             $parent_location_id = 0;
+            $location_id = 0;
         }
         // the following two elements are not properties of the entity,
         // but rather are only for the UI, so they can select the courthouse
@@ -133,10 +137,10 @@ class JudgeFieldset extends PersonFieldset
             ]);
             $element->setValueOptions($valueOptions);
         }
-        $this->get('courthouse')->setValue($parent_location_id);
-
+        $this->get('courthouse')->setValue(! $parent_location_id ? '' : $parent_location_id);
+        
         if ($options['action'] == 'update' && $location_id != $parent_location_id) {
-            $this->get('courtroom')->setValue($location_id);
+            $this->get('courtroom')->setValue($location_id ?: '');
         }
 
         // add the judge "flavor" element. this should be made immutable
