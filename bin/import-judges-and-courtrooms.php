@@ -43,6 +43,9 @@ $location_insert = $db->prepare(
     'INSERT INTO locations (type_id, parent_location_id,name,active) '
         . 'VALUES (:type_id,:parent_location_id,:name,1)'
 );
+
+$location_select = $db->prepare('SELECT id FROM locations WHERE name = :name and type_id = :type_id');
+
 /*mysql> explain locations;
 +--------------------+----------------------+------+-----+---------+----------------+
 | Field              | Type                 | Null | Key | Default | Extra          |
@@ -66,8 +69,10 @@ foreach ($USDJ as $name => $location) {
         $firstname = $given_names; 
         $middlename = '';
     }
-    
     list($courtroom, $courthouse) = preg_split('/, +/',$location);
+        //printf("courtroom: %s, courthouse %s\n",$courtroom, $courthouse);
+        //continue;
+    
     try {
         
         $location_insert->execute([
@@ -80,11 +85,10 @@ foreach ($USDJ as $name => $location) {
         
     } catch (Exception $e) {
         
-        printf("caught %s\n",get_class($e));
+        printf("caught %s: %s\n",get_class($e),$e->getMessage());
         
-        $stmt = $db->query('SELECT id FROM locations WHERE name = :name and type_id = '.TYPE_COURTROOM);
-        
-        $location_id = $stmt->execute([':name'=>$courtroom])->fetchColumn();
+        $location_select->execute(['name'=>$courtroom,'type_id'=>TYPE_COURTROOM]);   //.TYPE_COURTROOM);
+        $location_id = $location_select->fetchColumn();
         echo "found location ($courtroom) id $location_id already existing\n";
     }
     
