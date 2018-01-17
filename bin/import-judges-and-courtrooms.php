@@ -165,7 +165,10 @@ $old_db = new PDO('mysql:host=localhost;dbname=dev_interpreters', $db_params['us
 ]);
 
 // find judges from old database that are NOT in the new one
-$judge_sql = 'SELECT lastname, firstname, middlename, flavor, IF(judges.active="Y",1,0) AS active FROM dev_interpreters.judges WHERE CONCAT(lastname,"-",firstname) NOT IN (SELECT CONCAT(lastname,"-",firstname) FROM office.people p WHERE p.discr = "judge") AND firstname <> ""';
+$judge_sql = 'SELECT lastname, firstname, middlename, flavor, IF(judges.active="Y",1,0) AS active '
+        . 'FROM dev_interpreters.judges WHERE CONCAT(lastname,"-",firstname) '
+        . 'NOT IN (SELECT CONCAT(lastname,"-",firstname) FROM office.people p '
+        . 'WHERE p.discr = "judge") AND firstname <> ""';
 
 $results = $old_db->query($judge_sql,PDO::FETCH_ASSOC);
 
