@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * imports judges and courtrooms using JSON data coming from stdin
