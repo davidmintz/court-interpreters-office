@@ -30,6 +30,7 @@ $flavors = $db->query('SELECT flavor, id FROM judge_flavors')->fetchAll(PDO::FET
 // translations
 $flavors['District'] = $flavors['USDJ'];
 $flavors['Magistrate'] = $flavors['USMJ'];
+
 $active = 1;
 $courthouses =  $db->query('SELECT name,id FROM locations WHERE type_id = '.TYPE_COURTHOUSE)->fetchAll(PDO::FETCH_KEY_PAIR);
 $courthouses['300 Quarropas'] = $courthouses['White Plains'];  // alias
@@ -132,8 +133,7 @@ foreach ($data as $flavor => $judge) {
                 debug(sprintf("updating courtroom for judge %s at line %d",$judge_found['lastname'],__LINE__));
                 $judge_update->execute([
                     'id'=>$judge_found['id'],'location_id'=>$location_id]
-                );
-                
+                );                
             }
         } else {
             // judge NOT found, needs to be inserted
@@ -187,6 +187,7 @@ while ($j = $results->fetch()) {
         ]);
     } catch (PDOException $e) {
         printf("shit: %s\n",$e->getMessage());
-    }
-        
+    }        
 }
+
+exit(0);
