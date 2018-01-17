@@ -45,8 +45,8 @@ $db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_para
 */
 
 /*
-mysql> SELECT id, CONCAT(name,IF(parent IS NOT NULL,CONCAT(' - ',parent),'')) AS 
-name FROM  view_locations WHERE category NOT IN ("courtroom","courthouse") ORDER BY name;
+mysql> SELECT CONCAT(name,IF(parent IS NOT NULL,CONCAT(' - ',parent),'')) AS 
+name, id FROM  view_locations WHERE category NOT IN ("courtroom","courthouse") ORDER BY name;
 +-----+---------------------------------+
 | id  | name                            |
 +-----+---------------------------------+
