@@ -61,9 +61,10 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
         continue;
     }
     if ( 1 === preg_match('/PTS.+supervision/i', $type['type'])) {
-         $event_type_map[$type['proceeding_id']] = $ID_PTS_SUPERVISION;
-    }
-   
+        $event_type_map[$type['proceeding_id']] = $ID_PTS_SUPERVISION;
+        printf("skipping event type: %s\n",$type['type']);
+        continue;
+    }   
     if (! $type['display']) {
         // it is deprecated. make a note so we can deal with it later
         if ($type['comments']) {
