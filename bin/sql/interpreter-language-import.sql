@@ -13,6 +13,9 @@ DELETE FROM people WHERE hat_id IN (1,3);
 
 /* DELETE i, p FROM interpreters i JOIN people p ON i.id = p.id ;*/
 
+
+INSERT INTO languages (SELECT * FROM dev_interpreters.languages);
+
 /* INSERT INTO people table */
 INSERT INTO people 
 (id, lastname, firstname, middlename, office_phone, mobile_phone, email, active, hat_id,discr)
@@ -26,7 +29,7 @@ FROM dev_interpreters.interpreters ORDER BY interp_id);
 
 /* be more strict about how "staff interpreter" is defined */
 UPDATE people SET hat_id = 3 WHERE hat_id = 1 AND id NOT IN 
-    (SELECT dev_interpreters.interp_id FROM dev_interpreters.interpreters 
+    (SELECT interp_id FROM dev_interpreters.interpreters 
     WHERE lastname IN ('Garcia','Rich','de los Rios','Anderson','Fox','Hess','Gold','Festinger','Mintz','Olivero') 
     AND freelance = 'N');
 /* followed by interpreters table */
@@ -43,7 +46,7 @@ comments, address1, address2, city, state, zip, home_phone, country
     
 FROM dev_interpreters.interpreters ORDER BY interp_id);
 
-INSERT INTO languages (SELECT * FROM dev_interpreters.languages);
+
 
 INSERT INTO interpreters_languages (SELECT interp_id, lang_id,
     CASE fed_cert

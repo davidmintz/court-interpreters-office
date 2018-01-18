@@ -1,20 +1,23 @@
 #!/usr/bin/env php
 <?php
 /**
- * for importing events - work in progress
+ * for importing events from our old database to the new - a work in progress
  */
 
 $db_params = parse_ini_file(getenv('HOME').'/.my.cnf');
 $db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_params['password'],[
     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
 ]);
+
 // first: make sure all our non-courthouse locations have been inserted
 
 /* map old event-types to locations */
-
 $old_event_types = $db->query("SELECT proceeding_id as id, type as name FROM dev_interpreters.proceedings
   WHERE type REGEXP 'supervision|probation'")->fetchAll(PDO::FETCH_KEY_PAIR);
 
+// because we can't know for sure the ids (unless we decide to delete all the locations
+// and re-insert them with known ids -- maybe we should), use unique strings as keys
+// and ids as values
 $locations = $db->query("SELECT CONCAT(name,IF(parent IS NOT NULL,CONCAT(' - ',parent),'')) AS 
 name, id FROM  view_locations WHERE category NOT IN ('courtroom', 'courthouse') ORDER BY name")
         ->fetchAll(PDO::FETCH_KEY_PAIR);
@@ -26,13 +29,11 @@ $event_locations = [];
 foreach ($old_event_types as $id => $type) {
     switch ($id) {
     case 6:        
-        $key = 'MCC Manhattan';
-        
+        $key = 'MCC Manhattan';        
         break;
     case 19:
         $key = 'MDC Brooklyn';        
-        break;
-    
+        break;    
     case 20:
     case 35:  // 6th or 7th floor
     case 85:
@@ -64,7 +65,7 @@ foreach ($old_event_types as $id => $type) {
     case 57:
         $key = 'FCI Otisville';
         break;
-    case 62:
+    case 62: // probation "field interview"
         $key = '';
         break;
     case 66:
