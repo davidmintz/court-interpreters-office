@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * for importing events - work in progress
@@ -11,9 +12,91 @@ $db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_para
 
 /* map old event-types to locations */
 
-/*  SELECT dev_interpreters.proceeding_id as id, type as name FROM proceedings
-  WHERE type REGEXP 'supervision|probation' ;
-*/
+$old_event_types = $db->query("SELECT proceeding_id as id, type as name FROM dev_interpreters.proceedings
+  WHERE type REGEXP 'supervision|probation'")->fetchAll(PDO::FETCH_KEY_PAIR);
+
+$locations = $db->query("SELECT CONCAT(name,IF(parent IS NOT NULL,CONCAT(' - ',parent),'')) AS 
+name, id FROM  view_locations WHERE category NOT IN ('courtroom', 'courthouse') ORDER BY name")
+        ->fetchAll(PDO::FETCH_KEY_PAIR);
+
+$locations[''] = null;
+
+// old_event_type_id => new_location_id
+$event_locations = [];
+foreach ($old_event_types as $id => $type) {
+    switch ($id) {
+    case 6:        
+        $key = 'MCC Manhattan';
+        
+        break;
+    case 19:
+        $key = 'MDC Brooklyn';        
+        break;
+    
+    case 20:
+    case 35:  // 6th or 7th floor
+    case 85:
+    case 98:
+        $key = 'Probation - 500 Pearl';
+        break;
+    case 28:
+        $key = 'Westchester County Jail';
+        break;
+    case 34:
+        $key = 'Rikers';
+        break;
+    case 37:
+        $key = 'Probation - White Plains';
+        break;
+    case 41: // phone interviews
+    case 89:
+        $key = 'Interpreters Office - 500 Pearl';
+        break;
+    case 50:
+        $key = 'Putnam County Jail';
+        break;
+    case 53:
+    case 65;
+    case 68:
+    case 72:
+        $key = '233 Broadway';
+        break;
+    case 57:
+        $key = 'FCI Otisville';
+        break;
+    case 62:
+        $key = '';
+        break;
+    case 66:
+        $key = 'Queens PCF';
+        break;
+    case 67:
+        $key = '4th floor cellblock - 500 Pearl';
+        break;    
+    case 84:
+        $key = 'Orange County CF';
+        break;    
+    case 95:
+    case 97:
+        $key = 'Pretrial - 500 Pearl';
+        break;
+    default:
+        printf("ERROR: could not find a mapping for proceeding '$type',id $id at %d\n",__LINE__);
+        exit(1);
+    }
+    if (! key_exists($key,$locations)) {
+        printf("ERROR: could not find a mapping for location '$key' at %d\n",__LINE__);
+        exit(1);                
+    }
+    printf("saving event-type '$type' as location %s\n",$key?:'<none>');
+    $event_locations[$id] = $locations[$key];
+}
+print_r($event_locations);
+exit(0);
+
+
+
+
 /*
 +----+----------------------------------+
 | id | name                             |
@@ -45,24 +128,5 @@ $db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_para
 */
 
 /*
-mysql> SELECT CONCAT(name,IF(parent IS NOT NULL,CONCAT(' - ',parent),'')) AS 
-name, id FROM  view_locations WHERE category NOT IN ("courtroom","courthouse") ORDER BY name;
-+-----+---------------------------------+
-| id  | name                            |
-+-----+---------------------------------+
-| 503 | 233 Broadway                    |
-| 507 | 3rd floor cellblock - 40 Foley  |
-|   4 | 4th floor cellblock - 500 Pearl |
-|   5 | cafeteria - 500 Pearl           |
-|   7 | Interpreters Office - 500 Pearl |
-|  10 | MCC Manhattan                   |
-|   9 | MDC Brooklyn                    |
-| 504 | Pretrial - 500 Pearl            |
-| 502 | Probation - 500 Pearl           |
-| 506 | Probation - White Plains        |
-| 509 | Queens PCF                      |
-| 508 | Rikers                          |
-| 505 | Westchester County Jail         |
-+-----+---------------------------------+
-13 rows in set (0.00 sec)
 
+*/
