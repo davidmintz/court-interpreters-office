@@ -72,12 +72,6 @@ class JudgesController extends AbstractActionController
             $this->entityManager->persist($entity);
 
             $this->entityManager->flush();
-            // temporary:  a test of how to clear the judges cache
-            /** @todo move this into an event listener */
-            //$cache = $this->entityManager->getConfiguration()->getResultCacheImpl();
-            //$cache->setNamespace('judges');
-            //$cache->deleteAll();
-            ////
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
                     'Judge <strong>%s %s, %s</strong> has been added to the database',

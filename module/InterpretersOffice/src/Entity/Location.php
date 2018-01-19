@@ -89,7 +89,7 @@ class Location
      * @Annotation\Filter({"name":"StripTags"})
      * @Annotation\AllowEmpty()
      * @Annotation\Required(false)
-     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":50,
+     * @Annotation\Validator({"name":"StringLength", "options":{"min":2, "max":200,
      *  "messages":{"stringLengthTooShort":"comments must be at least 2 characters long",
      *   "stringLengthTooLong":"comments exceed maximum length of 200 characters"}}})
 

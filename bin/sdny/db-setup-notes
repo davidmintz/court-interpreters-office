@@ -1,0 +1,13 @@
+ 
+# mysqldump -t --where="parent_location_id IS NULL" other_office locations|grep INSERT|perl -p  -e  's/\([0-9]+/\(NULL/g'
+
+create database office
+mysql office < bin/sql/mysql-schema.sql
+mysql office < bin/sql/initial-data.sql
+mysql office < bin/sql/interpreter-language-import.sql
+mysql office < bin/sql/import-users.sql
+mysql office < bin/sql/import-ausas-and-def-attys.sql
+mysql office < $(cat bin/sql/parent-locations.sql bin/sql/more-locations.sql)
+/opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
+bin/import-judges-and-courtrooms.php < judges-courtrooms.json
+bin/import-event-types.php
