@@ -2,7 +2,7 @@
 <?php
 /**  fetches sensitive data from old interpreters database and insert into new */
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/../../vendor/autoload.php';
 
 use Zend\Crypt\BlockCipher;
 use Zend\Crypt\Symmetric\Openssl;
