@@ -7,8 +7,13 @@ nbproject
 .idea
 .project
 .settings
+.bowerrc
+.gitmodules
 vendor
 composer.phar
 court-interpreters-office.sublime-*
 data/*
 dev.local.conf
+node_modules
+*/sdny/*json
+
