@@ -1,9 +1,8 @@
-
--- MySQL dump 10.13  Distrib 5.7.20, for Linux (x86_64)
+-- MySQL dump 10.16  Distrib 10.2.12-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.20-0ubuntu0.16.04.1
+-- Server version	10.2.12-MariaDB-10.2.12+maria~xenial-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -98,7 +97,7 @@ CREATE TABLE `defendant_names` (
   `surnames` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_deftname` (`given_names`,`surnames`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,7 +113,7 @@ CREATE TABLE `defendants_events` (
   PRIMARY KEY (`event_id`,`defendant_id`),
   KEY `IDX_DBDD360771F7E88B` (`event_id`),
   KEY `IDX_DBDD36079960FFFB` (`defendant_id`),
-  CONSTRAINT `FK_DBDD360771F7E88B` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `FK_DBDD360771F7E88B` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`),
   CONSTRAINT `FK_DBDD36079960FFFB` FOREIGN KEY (`defendant_id`) REFERENCES `defendant_names` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -150,7 +149,7 @@ CREATE TABLE `event_types` (
   UNIQUE KEY `unique_event_type` (`name`),
   KEY `IDX_182B381C12469DE2` (`category_id`),
   CONSTRAINT `FK_182B381C12469DE2` FOREIGN KEY (`category_id`) REFERENCES `event_categories` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,7 +173,7 @@ CREATE TABLE `events` (
   `admin_comments` varchar(600) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `created` datetime NOT NULL,
   `modified` datetime DEFAULT NULL,
-  `eventType_id` smallint(5) unsigned NOT NULL,
+  `event_type_id` smallint(5) unsigned NOT NULL,
   `created_by_id` smallint(5) unsigned NOT NULL,
   `anonymous_judge_id` smallint(5) unsigned DEFAULT NULL,
   `anonymous_submitter_id` smallint(5) unsigned DEFAULT NULL,
@@ -183,7 +182,6 @@ CREATE TABLE `events` (
   `submission_datetime` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_5387574A82F1BAF4` (`language_id`),
-  KEY `IDX_5387574AC15B25DE` (`eventType_id`),
   KEY `IDX_5387574AB7D66194` (`judge_id`),
   KEY `IDX_5387574A919E5513` (`submitter_id`),
   KEY `IDX_5387574A64D218E` (`location_id`),
@@ -192,6 +190,8 @@ CREATE TABLE `events` (
   KEY `IDX_5387574A8453C906` (`cancellation_reason_id`),
   KEY `IDX_5387574AB03A8386` (`created_by_id`),
   KEY `IDX_5387574A99049ECE` (`modified_by_id`),
+  KEY `IDX_5387574A401B253C` (`event_type_id`),
+  CONSTRAINT `FK_5387574A401B253C` FOREIGN KEY (`event_type_id`) REFERENCES `event_types` (`id`),
   CONSTRAINT `FK_5387574A61A31DAE` FOREIGN KEY (`anonymous_submitter_id`) REFERENCES `hats` (`id`),
   CONSTRAINT `FK_5387574A64D218E` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `FK_5387574A82F1BAF4` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`),
@@ -200,9 +200,8 @@ CREATE TABLE `events` (
   CONSTRAINT `FK_5387574A99049ECE` FOREIGN KEY (`modified_by_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FK_5387574AB03A8386` FOREIGN KEY (`created_by_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FK_5387574AB7D66194` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`),
-  CONSTRAINT `FK_5387574AC15B25DE` FOREIGN KEY (`eventType_id`) REFERENCES `event_types` (`id`),
   CONSTRAINT `FK_5387574AFF915C63` FOREIGN KEY (`anonymous_judge_id`) REFERENCES `anonymous_judges` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +215,7 @@ CREATE TABLE `hats` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `role_id` smallint(5) unsigned DEFAULT NULL,
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `can_be_anonymous` tinyint(1) NOT NULL DEFAULT '0',
+  `can_be_anonymous` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hat_idx` (`name`),
   KEY `IDX_149C3D93D60322AC` (`role_id`),
@@ -278,15 +277,15 @@ CREATE TABLE `interpreters_events` (
   `interpreter_id` smallint(5) unsigned NOT NULL,
   `event_id` smallint(5) unsigned NOT NULL,
   `created` datetime NOT NULL,
-  `createdBy_id` smallint(5) unsigned NOT NULL,
+  `created_by_id` smallint(5) unsigned NOT NULL,
   PRIMARY KEY (`interpreter_id`,`event_id`),
   UNIQUE KEY `unique_interp_event` (`interpreter_id`,`event_id`),
   KEY `IDX_590E5B07AD59FFB1` (`interpreter_id`),
   KEY `IDX_590E5B0771F7E88B` (`event_id`),
-  KEY `IDX_590E5B073174800F` (`createdBy_id`),
-  CONSTRAINT `FK_590E5B073174800F` FOREIGN KEY (`createdBy_id`) REFERENCES `users` (`id`),
+  KEY `IDX_590E5B07B03A8386` (`created_by_id`),
   CONSTRAINT `FK_590E5B0771F7E88B` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`),
-  CONSTRAINT `FK_590E5B07AD59FFB1` FOREIGN KEY (`interpreter_id`) REFERENCES `interpreters` (`id`)
+  CONSTRAINT `FK_590E5B07AD59FFB1` FOREIGN KEY (`interpreter_id`) REFERENCES `interpreters` (`id`),
+  CONSTRAINT `FK_590E5B07B03A8386` FOREIGN KEY (`created_by_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -357,7 +356,7 @@ CREATE TABLE `languages` (
   `comments` varchar(300) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_language` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=152 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -389,14 +388,14 @@ CREATE TABLE `locations` (
   `parent_location_id` smallint(5) unsigned DEFAULT NULL,
   `name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `comments` varchar(200) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `active` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_name_and_parent` (`name`,`parent_location_id`),
   KEY `IDX_17E64ABAC54C8C93` (`type_id`),
   KEY `IDX_17E64ABA6D6133FE` (`parent_location_id`),
   CONSTRAINT `FK_17E64ABA6D6133FE` FOREIGN KEY (`parent_location_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `FK_17E64ABAC54C8C93` FOREIGN KEY (`type_id`) REFERENCES `location_types` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -422,7 +421,7 @@ CREATE TABLE `people` (
   UNIQUE KEY `active_email_idx` (`email`,`active`),
   KEY `IDX_28166A268C6A5980` (`hat_id`),
   CONSTRAINT `FK_28166A268C6A5980` FOREIGN KEY (`hat_id`) REFERENCES `hats` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1218 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1221 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -452,14 +451,14 @@ CREATE TABLE `users` (
   `role_id` smallint(5) unsigned NOT NULL,
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `username` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '0',
-  `last_login` datetime DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 0,
+  `last_login` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_1483A5E9217BBB47` (`person_id`),
   KEY `IDX_1483A5E9D60322AC` (`role_id`),
   CONSTRAINT `FK_1483A5E9217BBB47` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`),
   CONSTRAINT `FK_1483A5E9D60322AC` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -470,21 +469,23 @@ DROP TABLE IF EXISTS `view_locations`;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE VIEW `view_locations` AS SELECT 
- 1 AS `id`,
- 1 AS `type_id`,
- 1 AS `parent_location_id`,
- 1 AS `name`,
- 1 AS `comments`,
- 1 AS `active`,
- 1 AS `parent`,
- 1 AS `category`*/;
+/*!50001 CREATE TABLE `view_locations` (
+  `id` tinyint NOT NULL,
+  `type_id` tinyint NOT NULL,
+  `parent_location_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `comments` tinyint NOT NULL,
+  `active` tinyint NOT NULL,
+  `parent` tinyint NOT NULL,
+  `category` tinyint NOT NULL
+) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
 --
 -- Final view structure for view `view_locations`
 --
 
+/*!50001 DROP TABLE IF EXISTS `view_locations`*/;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -493,8 +494,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-
-/*!50001 VIEW `view_locations` AS select `locations`.`id` AS `id`,`locations`.`type_id` AS `type_id`,`locations`.`parent_location_id` AS `parent_location_id`,`locations`.`name` AS `name`,`locations`.`comments` AS `comments`,`locations`.`active` AS `active`,`parent`.`name` AS `parent`,`type`.`type` AS `category` from ((`locations` left join `locations` `parent` on((`locations`.`parent_location_id` = `parent`.`id`))) join `location_types` `type` on((`locations`.`type_id` = `type`.`id`))) */;
+/*!50001 VIEW `view_locations` AS select `locations`.`id` AS `id`,`locations`.`type_id` AS `type_id`,`locations`.`parent_location_id` AS `parent_location_id`,`locations`.`name` AS `name`,`locations`.`comments` AS `comments`,`locations`.`active` AS `active`,`parent`.`name` AS `parent`,`type`.`type` AS `category` from ((`locations` left join `locations` `parent` on(`locations`.`parent_location_id` = `parent`.`id`)) join `location_types` `type` on(`locations`.`type_id` = `type`.`id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -508,4 +508,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-25 13:50:00
+-- Dump completed on 2018-01-19 18:37:17
