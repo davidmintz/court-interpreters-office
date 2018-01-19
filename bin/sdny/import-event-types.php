@@ -1,7 +1,8 @@
 #!/usr/bin/env php
 <?php
 /**
- *
+ * imports the old event-types into the new database, and creates a JSON data file 
+ * mapping old_id => new_id for later reference
  */
 
 $db_params = parse_ini_file(getenv('HOME').'/.my.cnf');
