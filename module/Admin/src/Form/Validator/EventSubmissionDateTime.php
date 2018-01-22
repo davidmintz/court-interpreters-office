@@ -81,13 +81,13 @@ class EventSubmissionDateTime extends AbstractValidator
      * have their set break_chain_on_failure set to true, or else  bad things 
      * might happen.
      * 
-     * @return boolean treu if valid
+     * @return boolean true if valid
      */
     public function isValid($value, $context = null)
     {
         
         $event_datetime = new \DateTime($context['date'].' '.$context['time']);
-        $submission_datetime = new \DateTime($context['submission_datetime']);
+        $submission_datetime = new \DateTime($value .' '.$context['submission_date']);
         $diff = $submission_datetime->diff($event_datetime);
         if (0 == $diff->invert) {
             // any non-negative value is good
@@ -109,6 +109,4 @@ class EventSubmissionDateTime extends AbstractValidator
         
         return true;
     }
-    
-    
 }
