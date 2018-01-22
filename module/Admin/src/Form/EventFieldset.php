@@ -413,7 +413,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
              'options' => [
                 'label' => 'requested on',
-                'format' => 'Y-m-d',
+                //'format' => 'Y-m-d',
             ]             
         ]);
         $this->add(
@@ -428,15 +428,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
              'options' => [
                 'label' => 'time',
-                'format' => 'H:i:s',
+                //'format' => 'H:i:s',
              ],
         ]);
-        $this->add(
-        [
-            'name' => 'submission_datetime',
-            'type' => 'Hidden',
-            'attributes' => ['id' => 'submission_datetime',],
-        ]);
+        
         return $this;
     }
     
