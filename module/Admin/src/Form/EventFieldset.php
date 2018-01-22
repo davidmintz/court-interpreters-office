@@ -307,7 +307,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
          */
         
         $this->addSubmissionDateTimeElements();
-        //$empty_option =  ['value' => '','label'=>' ','attributes'=>['label'=>' ']];
+        
         
         // reason for cancellation
         $repository = $objectManager->getRepository(Entity\Event::class);
@@ -511,6 +511,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         } else { // the event location is set
            $parentLocation = $event->getLocation()->getParentLocation();
            if ($parentLocation) {
+                
                 $this->add([
                     'type'=>'DoctrineModule\Form\Element\ObjectSelect',
                     'name' => 'location',
@@ -531,6 +532,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             } else {
                 $this->add($element_spec);
             }
+            
         }
         
         return $this;         
@@ -767,28 +769,28 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'allow_empty'=> true,
             ],              
         ];
-        
-        foreach (['submission_date','submission_time'] as $field) {
-            $label = str_replace('_', ' ', $field);
-            $shit = [
-                'required' => true,
-                'allow_empty' => false,
-                'validators'=> [
-                    [
-                        'name' => 'NotEmpty',
-                        'options' => [
-                            'messages' => [
-                                'isEmpty' => "$label is required"
+        if (true) { // enable|disable temporarily
+            foreach (['submission_date', 'submission_time'] as $field) {
+                $label = str_replace('_', ' ', $field);
+                $shit = [
+                    'required' => true,
+                    'allow_empty' => false,
+                    'validators' => [
+                        [
+                            'name' => 'NotEmpty',
+                            'options' => [
+                                'messages' => [
+                                    'isEmpty' => "$label is required"
+                                ],
                             ],
+                            'break_chain_on_failure' => true,
                         ],
-                        'break_chain_on_failure' => true,
                     ],
-                ],
-            ];
-            $spec[$field] = $shit;
+                ];
+                $spec[$field] = $shit;
+            }
+            $spec['submission_time']['validators'][] = new Validator\EventSubmissionDateTime();
         }
-        $spec['submission_time']['validators'][] = 
-                new Validator\EventSubmissionDateTime();
         return $spec;
     }
    

@@ -161,10 +161,16 @@ class EventsController extends AbstractActionController
                 return $viewModel
                     ->setVariables(compact('defendantNames','interpreters'));
             } else {              
-              
+                //printf('<pre>%s</pre>', print_r($data, true)); //return;
+                //$fuckingShit = $form->getData();
+                //var_dump($fuckingShit->getDate());
+                //var_dump($fuckingShit->getSubmissionDate());
+                //exit();
+                //$events = $this->getEventManager();
+                //$form->attach($events);
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
-                $this->flashMessenger()->addSuccessMessage(
+                $this->flashMessenger()->addSuccessMessage(//echo gettype($value) . " is the data type of $time<br>";
                      "This event has been added to the schedule.");                
                 return $this->redirect()->toRoute('events');
             }            
