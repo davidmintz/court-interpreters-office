@@ -50,8 +50,8 @@ class EventControllerTest extends AbstractControllerTest
         $parent_location = $em->getRepository(Entity\Location::class)
                 ->findOneBy(['name'=>'500 Pearl']);          
         $data['parentLocation'] = $parent_location->getId();
-        $data['submissionDate'] = (new \DateTime('-1 day'))->format("m/d/Y");
-        $data['submissionTime'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
+        $data['submission_date'] = (new \DateTime('-1 day'))->format("m/d/Y");
+        $data['submission_time'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
         $clerk_hat =  $em->getRepository(Entity\Hat::class)
                 ->findOneBy(['name'=>'Law Clerk']);
         $data['anonymousSubmitter'] = $clerk_hat->getId();
@@ -272,7 +272,7 @@ class EventControllerTest extends AbstractControllerTest
         // whatever the event date is, try making the submission date 1 day later
         // i.e., impossible
         
-        $event['submissionDate'] = (new \DateTime("$event[date] + 1 day"))->format('Y-m-d');
+        $event['submission_date'] = (new \DateTime("$event[date] + 1 day"))->format('Y-m-d');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters([
                     'event' => $event,

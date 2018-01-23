@@ -403,7 +403,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     {
         $this->add(
         [
-             'name' => 'submissionDate',
+             'name' => 'submission_date',
             //'type' => 'text',
             'type' => self::DATE_ELEMENT_TYPE,
             'attributes' => [
@@ -418,7 +418,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         ]);
         $this->add(
         [
-            'name' => 'submissionTime',
+            'name' => 'submission_time',
 
             'type' => self::TIME_ELEMENT_TYPE,
             'attributes' => [
@@ -770,7 +770,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             ],
         ];
         if (true) { // enable|disable temporarily
-            foreach (['submissionDate', 'submissionTime'] as $field) {
+            foreach (['submission_date', 'submission_time'] as $field) {
                 $label = str_replace('_', ' ', $field);
                 $shit = [
                     'required' => true,
@@ -789,7 +789,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 ];
                 $spec[$field] = $shit;
             }
-            $spec['submissionTime']['validators'][] = new Validator\EventSubmissionDateTime();
+            $spec['submission_time']['validators'][] = new Validator\EventSubmissionDateTime();
         }
         return $spec;
     }

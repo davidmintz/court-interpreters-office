@@ -34,7 +34,7 @@ $form->add([
 $form->prepare();
 $fieldset = $form->get('event');
 
-foreach (['date','time','end_time','submissionTime', 'submissionDate'] as $time) :
+foreach (['date','time','end_time','submission_time', 'submission_date'] as $time) :
     if (! $fieldset->has($time)) : continue; endif;
     $element = $fieldset->get($time);
     $value = $element->getValue();
@@ -201,12 +201,12 @@ echo $this->form()->openTag($form); ?>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="submission_date">submitted on</label>
             <div class="col-sm-8">
-            <?php $element = $fieldset->get('submissionDate');
+            <?php $element = $fieldset->get('submission_date');
                   echo $this->formElement($element),$this->formElementErrors($element);?>
             </div>
             <label class="col-form-label pr-1 col-sm-4 submission-time" for="submission_time">at</label>
             <div class="col-sm-8 submission-time">
-            <?php $element = $fieldset->get('submissionTime');
+            <?php $element = $fieldset->get('submission_time');
                 echo $this->formElement($element),$this->formElementErrors($element);?>
             </div>
         </div>

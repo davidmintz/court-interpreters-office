@@ -57,7 +57,7 @@ class Event
      * @ORM\Column(type="date",nullable=false,name="submission_date")
      * @var \DateTime
      */    
-    protected $submissionDate;
+    protected $submission_date;
     
     /**
      * time at which the event was requested.
@@ -68,7 +68,7 @@ class Event
      * @ORM\Column(type="time",nullable=true,name="submission_time")
      * @var \DateTime
      */
-    protected $submissionTime;
+    protected $submission_time;
 
     /**
      * Every interpreter event implies a language.
@@ -652,7 +652,7 @@ class Event
      */
     public function setSubmissionDate($submissionDate)
     {
-        $this->submissionDate = $submissionDate;
+        $this->submission_date = $submissionDate;
 
         return $this;
     }
@@ -664,7 +664,7 @@ class Event
      */
     public function getSubmissionDate()
     {        
-        return $this->submissionDate;
+        return $this->submission_date;
     }
 
     /**
@@ -676,7 +676,7 @@ class Event
      */
     public function setSubmissionTime($submissionTime)
     {
-        $this->submissionTime = $submissionTime;
+        $this->submission_time = $submissionTime;
 
         return $this;
     }
@@ -688,7 +688,7 @@ class Event
      */
     public function getSubmissionTime()
     {
-        return $this->submissionTime;
+        return $this->submission_time;
     }
     
     /**

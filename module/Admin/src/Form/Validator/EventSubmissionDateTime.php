@@ -87,7 +87,7 @@ class EventSubmissionDateTime extends AbstractValidator
     {
 
         $event_datetime = new \DateTime($context['date'].' '.$context['time']);
-        $submission_datetime = new \DateTime($value .' '.$context['submissionDate']);
+        $submission_datetime = new \DateTime($value .' '.$context['submission_date']);
         $diff = $submission_datetime->diff($event_datetime);
         if (0 == $diff->invert) {
             // any non-negative value is good
