@@ -12,8 +12,8 @@ $this->headScript()
         ->appendFile($this->basePath('js/event-form.js'));
 
 $messenger = $this->flashMessenger();
-if ($messenger->hasErrorMessages()) : 
-    echo $messenger->render('error', ['alert','alert-warning',], false);   
+if ($messenger->hasErrorMessages()) :
+    echo $messenger->render('error', ['alert','alert-warning',], false);
 endif;
 
 if ($this->errorMessage) : ?>
@@ -21,7 +21,7 @@ if ($this->errorMessage) : ?>
 <?php
 return;
 endif;
-$form = $this->form; 
+$form = $this->form;
 $form
         ->setAttribute('class','form-event mx-auto')
         ->setAttribute('style','max-width:950px');
@@ -34,22 +34,22 @@ $form->add([
 $form->prepare();
 $fieldset = $form->get('event');
 
-foreach (['date','time','end_time','submission_time', 'submission_date'] as $time) :
-    if (! $fieldset->has($time)) : continue; endif;    
+foreach (['date','time','end_time','submissionTime', 'submissionDate'] as $time) :
+    if (! $fieldset->has($time)) : continue; endif;
     $element = $fieldset->get($time);
     $value = $element->getValue();
-    
+
     if ($value instanceof \DateTime) { //echo "shit is a DateTime: $time<br>";
-        $format = strstr($time, 'time') ? 'g:i a':'Y-m-d' ;            
+        $format = stristr($time, 'time') ? 'g:i a':'Y-m-d' ;
         $element->setValue($value->format($format));
         continue;
     } else {
        // echo " value of $time is  $value  ?<br>";
     }
-    if (2 == substr_count($value, ':')) {        
+    if (2 == substr_count($value, ':')) {
         $fieldset->get($time)->setValue(substr($value,0,5));
     }
-endforeach; 
+endforeach;
 /*
 printf("but submission date is a fucking %s<br>",get_class($form->getObject()->getSubmissionDate()));
 if ($form->getObject()->getSubmissionDate()) {
@@ -61,7 +61,7 @@ if ($this->hat_id):
     $submitterElement = $fieldset->get('submitter');
     $submitter = $submitterElement->getValue();
     $options = $submitterElement->getValueOptions();
-    if ($submitter &&  1 <= sizeof($options)) :        
+    if ($submitter &&  1 <= sizeof($options)) :
         $data = $fieldset->getObjectManager()
             ->getRepository('InterpretersOffice\Entity\Person')
             ->getPersonOptions($hat_id);
@@ -74,9 +74,9 @@ endif;
 // temporarily, let's just set this here
 $config = ['end_time' => true];
 ?>
-<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:22rem" class="card border ml-5 bg-light">    
+<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:22rem" class="card border ml-5 bg-light">
     <div class="card-header">
-         <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">        
+         <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="card-title">defendant names</h4>
@@ -84,12 +84,12 @@ $config = ['end_time' => true];
         <h6 class="card-subtitle text-muted">select a name to add to this event</h6> -->
     </div>
     <div class="card-body pl-3 mb-0">
-        <div class="card-text result">            
-        </div>        
+        <div class="card-text result">
+        </div>
     </div>
     <div class="mt-1 mb-2 mx-auto text-center">
         <button title="add a new defendant name" id="btn-add-defendant-name" class="btn btn-primary btn-sm">
-            <span aria-hidden="true" class="fas fa-plus"></span> new defendant name 
+            <span aria-hidden="true" class="fas fa-plus"></span> new defendant name
         </button>
     </div>
 </div>
@@ -98,13 +98,13 @@ $config = ['end_time' => true];
 echo $this->form()->openTag($form); ?>
 <div class="form-row">
     <div class="col-md-6"><!-- left side -->
-    <?php 
+    <?php
         foreach (['date','time','eventType','judge', ] as $elementName) :
-            $element = $fieldset->get($elementName);        
+            $element = $fieldset->get($elementName);
            ?>
         <div class="form-group form-row">
             <?php
-            if ('time' == $elementName && $config['end_time']): 
+            if ('time' == $elementName && $config['end_time']):
                 $end_time = $fieldset->get('end_time'); ?>
                 <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
                 <div class="col-sm-1 col-form-label pr-1">from</div>
@@ -113,36 +113,36 @@ echo $this->form()->openTag($form); ?>
                 <div class="col-sm-7"><?php  echo $this->formElement($end_time),$this->formElementErrors($end_time)?></div>
             <?php else: ?>
             <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
-            <div class="col-sm-8"><?php echo $this->formElement($element), 
+            <div class="col-sm-8"><?php echo $this->formElement($element),
                          $this->formElementErrors($element);?></div>
-            <?php endif; ?>        
+            <?php endif; ?>
         </div>
         <?php endforeach; $element = $fieldset->get('parent_location');?>
         <div class="form-group form-row">
             <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
-            <div class="col-sm-8"><?php 
-                    echo $this->formElement($element), 
+            <div class="col-sm-8"><?php
+                    echo $this->formElement($element),
                          $this->formElement($fieldset->get('location')),
                          $this->formElementErrors($element) ?>
             </div>
         </div>
-    <?php foreach (['language','docket', 'comments','admin_comments']  as $elementName) : 
+    <?php foreach (['language','docket', 'comments','admin_comments']  as $elementName) :
         $element = $fieldset->get($elementName); ?>
         <div class="form-group form-row">
             <label class="col-sm-4 col-form-label pr-1" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
-            <div class="col-sm-8"><?php 
+            <div class="col-sm-8"><?php
                 echo $this->formElement($element), $this->formElementErrors($element) ?>
             </div>
         </div>
     <?php endforeach; ?>
-    </div><!-- /left side -->  
+    </div><!-- /left side -->
     <div class="col-md-6"><!-- right side -->
         <div class="form-group form-row">
             <label class="col-sm-4 col-form-label pr-1" for="interpreter-select">interpreters</label>
             <div class="col-sm-8">
                 <div class="input-group">
-                    <?php echo $this->formElement($fieldset->get('interpreter-select'));?>                    
-                        <button class="btn btn-info fas fa-plus" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>                    
+                    <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
+                        <button class="btn btn-info fas fa-plus" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
                  </div>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                     <?php
@@ -151,32 +151,32 @@ echo $this->form()->openTag($form); ?>
                         $helper = (new InterpreterElementCollection())->setView($this);
                         echo $helper->fromPost($this->interpreters);
                     } else {
-                         $interpreters = $form->getObject()->getInterpreterEvents();                
+                         $interpreters = $form->getObject()->getInterpreterEvents();
                         if ($interpreters->count()) {
                             $helper = (new InterpreterElementCollection())->setView($this);
                             echo $helper($fieldset->get('interpreterEvents'));
-                        } 
+                        }
                     }
                     ?>
                 </ul>
-               
+
             </div>
         </div>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="defendant-search">defendants</label>
             <ul class="col-sm-8">
                 <div class="input-group">
-                    <?php echo $this->formElement($fieldset->get('defendant-search'));?>                    
+                    <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                      <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
                 </div>
                 <div style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
-                <?php 
+                <?php
                 echo $this->formSelect($fieldset->get('defendantNames'));
-                if ($this->defendantNames) {                    
+                if ($this->defendantNames) {
                     foreach ($this->defendantNames as $id => $name) {
                         echo $this->defendantName($id,$name);
                     }
-                } else {                    
+                } else {
                     $names = $form->getObject()->getDefendantNames()->toArray();
                     //echo "DEBUG: # deft names is ". count($names);
                     foreach ($names as $nameObject) {
@@ -185,29 +185,29 @@ echo $this->form()->openTag($form); ?>
                     }
                 }
             ?>
-            </ul>            
+            </ul>
         </div>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="hat">submitted by</label>
             <div class="col-sm-8">
-            <?php 
+            <?php
                 echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
-            <?php $element = $fieldset->get('submitter'); 
-                echo $this->formElement($element), $this->formElementErrors($element);            
-            ?>                
+            <?php $element = $fieldset->get('submitter');
+                echo $this->formElement($element), $this->formElementErrors($element);
+            ?>
             </div>
         </div>
         <?php if (true): // enable|disable temporarily ?>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="submission_date">submitted on</label>
             <div class="col-sm-8">
-            <?php $element = $fieldset->get('submission_date');
-                  echo $this->formElement($element),$this->formElementErrors($element);?>                
+            <?php $element = $fieldset->get('submissionDate');
+                  echo $this->formElement($element),$this->formElementErrors($element);?>
             </div>
             <label class="col-form-label pr-1 col-sm-4 submission-time" for="submission_time">at</label>
             <div class="col-sm-8 submission-time">
-            <?php $element = $fieldset->get('submission_time');
-                echo $this->formElement($element),$this->formElementErrors($element);?>                
+            <?php $element = $fieldset->get('submissionTime');
+                echo $this->formElement($element),$this->formElementErrors($element);?>
             </div>
         </div>
         <?php endif ?>
@@ -216,13 +216,13 @@ echo $this->form()->openTag($form); ?>
             <div class="col-sm-8">
             <?php $element = $fieldset->get('cancellationReason');
                   echo $this->formElement($element);?>
-            <?php echo $this->formElementErrors($element);?>                
+            <?php echo $this->formElementErrors($element);?>
             </div>
         </div>
     </div><!-- /col-md-6 -->
     <div class="col-12 text-center">
         <?php
-            $csrf = $form->get('csrf');            
+            $csrf = $form->get('csrf');
             echo $this->formHidden($fieldset->get('is_anonymous_judge'));
             echo $this->formHidden($fieldset->get('anonymousJudge'));
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
@@ -233,9 +233,9 @@ echo $this->form()->openTag($form); ?>
                 if (is_object($value)) {
                     $element->setValue($value->format('Y-m-d H:i:s'));
                 }
-                echo $this->formHidden($element);   
+                echo $this->formHidden($element);
             }
-            echo $this->formSubmit($form->get('submit'));?>        
+            echo $this->formSubmit($form->get('submit'));?>
     </div>
 </div>
 <?php echo $this->form()->closeTag();?>
