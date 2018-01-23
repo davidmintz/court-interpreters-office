@@ -113,12 +113,10 @@ class EventsController extends AbstractActionController
      */
     public function addAction()
     {
-        $form = new Form\EventForm(
-            $this->entityManager,
-            [   'action' => 'create',
-                'auth_user_role'=> $this->auth->getIdentity()->role,
-                'object' => null,
-            ]
+        $form = new Form\EventForm($this->entityManager,
+            ['action' => 'create',
+             'auth_user_role'=> $this->auth->getIdentity()->role,
+             'object' => null,]
         );
         $form->attach($this->getEventManager());
 
@@ -139,8 +137,7 @@ class EventsController extends AbstractActionController
             $shit->get("docket")->setValue("2016-CR-0345");
             $shit->get("anonymousSubmitter")->setValue("6");
             $shit->get("submission_date")->setValue("10/24/2017");
-            $shit->get("submission_time")->setValue("10:17 am");
-            $shit->get("submission_datetime")->setValue('2017-10-24 10:17:00');
+            $shit->get("submission_time")->setValue("10:17 am");            
         // end test
         }
         $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
@@ -162,16 +159,10 @@ class EventsController extends AbstractActionController
                 return $viewModel
                     ->setVariables(compact('defendantNames','interpreters'));
             } else {
-                //printf('<pre>%s</pre>', print_r($data, true)); //return;
-                //$fuckingShit = $form->getData();
-                //var_dump($fuckingShit->getDate());
-                //var_dump($fuckingShit->getSubmissionDate());
-                //exit();
-                //$events = $this->getEventManager();
-                //$form->attach($events);
+
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
-                $this->flashMessenger()->addSuccessMessage(//echo gettype($value) . " is the data type of $time<br>";
+                $this->flashMessenger()->addSuccessMessage(
                      "This event has been added to the schedule.");
                 return $this->redirect()->toRoute('events');
             }
