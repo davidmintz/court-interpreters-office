@@ -33,19 +33,28 @@ $form->add([
 
 $form->prepare();
 $fieldset = $form->get('event');
-foreach (['date','time','end_time','submission_time'] as $time) :
+
+foreach (['date','time','end_time','submission_time', 'submission_date'] as $time) :
     if (! $fieldset->has($time)) : continue; endif;    
     $element = $fieldset->get($time);
     $value = $element->getValue();
-    if ($value instanceof \DateTime) {
-        $format = 'date'== $time ? 'Y-m-d' : 'g:i a';            
+    
+    if ($value instanceof \DateTime) { //echo "shit is a DateTime: $time<br>";
+        $format = strstr($time, 'time') ? 'g:i a':'Y-m-d' ;            
         $element->setValue($value->format($format));
         continue;
-    } 
+    } else {
+       // echo " value of $time is  $value  ?<br>";
+    }
     if (2 == substr_count($value, ':')) {        
         $fieldset->get($time)->setValue(substr($value,0,5));
     }
-endforeach;
+endforeach; 
+/*
+printf("but submission date is a fucking %s<br>",get_class($form->getObject()->getSubmissionDate()));
+if ($form->getObject()->getSubmissionDate()) {
+    printf("shit is %s<br>" ,$form->getObject()->getSubmissionDate()->format('m/d/Y'));
+}*/
 $hatElement = $fieldset->get('anonymousSubmitter');
 if ($this->hat_id):
     $hatElement->setValue($hat_id);
@@ -188,6 +197,7 @@ echo $this->form()->openTag($form); ?>
             ?>                
             </div>
         </div>
+        <?php if (true): // enable|disable temporarily ?>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="submission_date">submitted on</label>
             <div class="col-sm-8">
@@ -200,6 +210,7 @@ echo $this->form()->openTag($form); ?>
                 echo $this->formElement($element),$this->formElementErrors($element);?>                
             </div>
         </div>
+        <?php endif ?>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="cancellation">cancellation</label>
             <div class="col-sm-8">
@@ -216,11 +227,6 @@ echo $this->form()->openTag($form); ?>
             echo $this->formHidden($fieldset->get('anonymousJudge'));
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
             echo $this->formHidden($fieldset->get('id'));
-            
-            if ($fieldset->has('submission_datetime')) {
-                echo $this->formHidden($fieldset->get('submission_datetime'));
-            }
-           
             if ($form->has('modified')) {
                 $element = $form->get('modified');
                 $value = $element->getValue();

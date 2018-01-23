@@ -8,17 +8,17 @@ moment = window.moment;
 $(document).ready(function()
 {
    // if (! Modernizr.inputtypes.date) {
-        $('input.date').datepicker({
-            changeMonth: true,
-            changeYear: true,
-            selectOtherMonths : true,
-            showOtherMonths : true
-        });
-        $('input.date').each(function(i,element){
-            if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
-                element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
-            }
-        });
+    $('input.date').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        selectOtherMonths : true,
+        showOtherMonths : true
+    });
+    $('input.date').each(function(i,element){
+        if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
+            element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
+        }
+    });
    // } else { console.log("date element is supported!");}
   //  if (! Modernizr.inputtypes.time) {
         $("input.time")
@@ -36,6 +36,7 @@ $(document).ready(function()
             element.addClass("text-muted");
         }
     }).trigger("change");
+    
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
     
@@ -67,7 +68,9 @@ $(document).ready(function()
     if (! parentLocationElement.val()){
         locationElement.val("").attr({disabled : "disabled"});
     } else {
-        parentLocationElement.trigger("change");
+        // on 2nd thought, don't. it unsets the value of #location
+        // when we load the form
+        // parentLocationElement.trigger("change");
     }
     /** this applies to admin form, not "request" form **/
     var languageElement = $('#language');

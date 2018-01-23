@@ -50,7 +50,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
      * 
      * @var array
      */
-    protected $datetime_props = ['date','submission_datetime','time','end_time'];
+    protected $datetime_props = ['date','time','end_time','submission_date', 'submission_time'];  
     
     /**
      * holds state of datetime fields
@@ -114,22 +114,22 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         // store state of date/time fields as strings for later comparison
         // using a consistent format
         foreach ($this->datetime_props as $prop) {
-            if (in_array($prop,['time','end_time'])) {
-                $format = 'g:i a';                                                
-            } elseif ('submission_datetime'== $prop) {
-                $format = 'Y-m-d H:i:s';
+            if (in_array($prop,['time','end_time','submission_time',])) {
+                $format = 'g:i a';                                                            
             } else {
                 $format = 'm/d/Y';
             }
             if (strstr($prop, '_')) {
                 $getter = 'get'.ucfirst(str_replace('_', '',$prop));
+                
             } else {
                 $getter = 'get'.ucfirst($prop);
-            }
+            }            
             $value = $entity->$getter();
             $this->state_before[$prop] = $value ? 
                     $value->format($format) : null;
         }
+        
     }
    
     /**
@@ -231,11 +231,12 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             $event['anonymousSubmitter'] = null;
             // printf("did we just fuck ourself at %d?<br>",__LINE__);
         }
+        /*
         if (!empty($event['submission_date']) && !empty($event['submission_time'])) {
             $event['submission_datetime'] =
                 (new \DateTime("$event[submission_date] $event[submission_time]"))
                     ->format("Y-m-d H:i:s");
-        }
+        }*/
         if (isset($event['defendantNames'])) {
             $event['defendantNames'] = array_keys($event['defendantNames']);
         }
@@ -283,7 +284,10 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             // set the judge element accordingly
             $judge_element->setValue($anonymous_judge->getId());
         }
+        //$shit = $fieldset->get('date');
+        //var_dump($shit->getValue());
         // this needs to be a string rather than an object
+        /*
         $submission_datetime = $fieldset->get('submission_datetime')->getValue();
         if (is_object($submission_datetime)) {
              $fieldset->get('submission_datetime')
@@ -296,7 +300,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             list($date,$time) = explode(' ',$submission_datetime_string);
             $fieldset->get('submission_date')->setValue($date);
             $fieldset->get('submission_time')->setValue($time);
-        }
+        }*/
         if ($this->has('modified')) {
             $date_obj = $event->getModified();
             if ($date_obj) {

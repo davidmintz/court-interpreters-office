@@ -33,9 +33,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
      * @var AuthenticationServiceInterface
      */
     protected $auth;
-    
-    
-    // protected $datetime_properties = ['date','time','modified','submission_datetime'];
+       
     
     /**
      * holds a copy of related entiti ids before update
