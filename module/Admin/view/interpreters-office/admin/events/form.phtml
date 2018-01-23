@@ -39,22 +39,16 @@ foreach (['date','time','end_time','submission_time', 'submission_date'] as $tim
     $element = $fieldset->get($time);
     $value = $element->getValue();
 
-    if ($value instanceof \DateTime) { //echo "shit is a DateTime: $time<br>";
-        $format = stristr($time, 'time') ? 'g:i a':'Y-m-d' ;
+    if ($value instanceof \DateTime) { 
+        $format = strstr($time, 'time') ? 'g:i a':'Y-m-d' ;
         $element->setValue($value->format($format));
         continue;
-    } else {
-       // echo " value of $time is  $value  ?<br>";
     }
     if (2 == substr_count($value, ':')) {
         $fieldset->get($time)->setValue(substr($value,0,5));
     }
 endforeach;
-/*
-printf("but submission date is a fucking %s<br>",get_class($form->getObject()->getSubmissionDate()));
-if ($form->getObject()->getSubmissionDate()) {
-    printf("shit is %s<br>" ,$form->getObject()->getSubmissionDate()->format('m/d/Y'));
-}*/
+
 $hatElement = $fieldset->get('anonymousSubmitter');
 if ($this->hat_id):
     $hatElement->setValue($hat_id);
@@ -67,10 +61,20 @@ if ($this->hat_id):
             ->getPersonOptions($hat_id);
         array_unshift($options, $data);
         $submitterElement->setValueOptions($data);
-        // echo "we got shit...";
-    endif;
-    //else : echo "FYI: no \$hat_id"    ;
+    endif;    
 endif;
+$parent = $fieldset->get('parent_location')->getValue();
+$location_element = $fieldset->get('location');
+$location_options = $location_element->getValueOptions();
+if ($parent && sizeof($location_options) <= 1) :
+    $repo = $fieldset->getObjectManager()
+        ->getRepository('InterpretersOffice\Entity\Location');
+    $data = $repo->getChildLocationValueOptions($parent);
+    $location_options = $location_element->getValueOptions();
+    array_unshift($location_options, $data);           
+    $location_element->setValueOptions($location_options[0]);                
+endif;
+
 // temporarily, let's just set this here
 $config = ['end_time' => true];
 ?>
@@ -122,7 +126,7 @@ echo $this->form()->openTag($form); ?>
             <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
             <div class="col-sm-8"><?php
                     echo $this->formElement($element),
-                         $this->formElement($fieldset->get('location')),
+                         $this->formElement($location_element),
                          $this->formElementErrors($element) ?>
             </div>
         </div>
@@ -197,7 +201,6 @@ echo $this->form()->openTag($form); ?>
             ?>
             </div>
         </div>
-        <?php if (true): // enable|disable temporarily ?>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="submission_date">submitted on</label>
             <div class="col-sm-8">
@@ -210,7 +213,6 @@ echo $this->form()->openTag($form); ?>
                 echo $this->formElement($element),$this->formElementErrors($element);?>
             </div>
         </div>
-        <?php endif ?>
         <div class="form-group form-row">
             <label class="col-form-label pr-1 col-sm-4" for="cancellation">cancellation</label>
             <div class="col-sm-8">

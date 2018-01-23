@@ -42,7 +42,7 @@ $(document).ready(function()
     
     parentLocationElement.on("change",function(event,params) {
         if (! parentLocationElement.val()) {
-            locationElement.attr({disabled : "disabled"});                        
+            locationElement.val("").attr({disabled : "disabled"});                        
         } else {
             locationElement.removeAttr("disabled");
             // populate with children of currently selected parent location                
@@ -58,8 +58,8 @@ $(document).ready(function()
                     locationElement.children().slice(1).remove();
                     locationElement.append(options)
                          .trigger("sdny.location-update-complete");
-                    if (params && params.location_id) {
-                        locationElement.val(params.location_id)
+                    if (params && params.location_id) {                        
+                        locationElement.val(params.location_id).removeClass("text-muted");
                     } 
             });
         }
@@ -67,6 +67,7 @@ $(document).ready(function()
     
     if (! parentLocationElement.val()){
         locationElement.val("").attr({disabled : "disabled"});
+        
     } else {
         // on 2nd thought, don't. it unsets the value of #location
         // when we load the form

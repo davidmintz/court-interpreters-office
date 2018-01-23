@@ -504,14 +504,14 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     'value_options' =>[],
                     'empty_option' => '(specific location)',
                 ],
-                'attributes' => ['class' => 'form-control  custom-select text-muted', 'id' => 'location'],
+                'attributes' => ['class' => 'form-control custom-select text-muted', 'id' => 'location'],
         ];
         if (! $event or ! $event->getLocation()) {
              $this->add($element_spec);
         } else { // the event location is set
-           $parentLocation = $event->getLocation()->getParentLocation();
+           $location = $event->getLocation();
+           $parentLocation = $location->getParentLocation();
            if ($parentLocation) {
-
                 $this->add([
                     'type'=>'DoctrineModule\Form\Element\ObjectSelect',
                     'name' => 'location',
@@ -528,11 +528,10 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     ],
                     'attributes' =>
                         ['class' => 'form-control', 'id' => 'location'],
-                ]);
-            } else {
+                ]);                
+            } else { // really?
                 $this->add($element_spec);
             }
-
         }
 
         return $this;
