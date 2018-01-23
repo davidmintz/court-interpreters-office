@@ -106,7 +106,7 @@ echo $this->form()->openTag($form); ?>
         foreach (['date','time','eventType','judge', ] as $elementName) :
             $element = $fieldset->get($elementName);
            ?>
-        <div class="form-group form-row">
+        <div class="form-group form-row my-2 my-2">
             <?php
             if ('time' == $elementName && $config['end_time']):
                 $end_time = $fieldset->get('end_time'); ?>
@@ -122,7 +122,7 @@ echo $this->form()->openTag($form); ?>
             <?php endif; ?>
         </div>
         <?php endforeach; $element = $fieldset->get('parent_location');?>
-        <div class="form-group form-row">
+        <div class="form-group form-row my-2 my-2">
             <label for="<?php $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
             <div class="col-sm-8"><?php
                     echo $this->formElement($element),
@@ -132,7 +132,7 @@ echo $this->form()->openTag($form); ?>
         </div>
     <?php foreach (['language','docket', 'comments','admin_comments']  as $elementName) :
         $element = $fieldset->get($elementName); ?>
-        <div class="form-group form-row">
+        <div class="form-group form-row my-2 my-2">
             <label class="col-sm-4 col-form-label pr-1" for="<?= $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
             <div class="col-sm-8"><?php
                 echo $this->formElement($element), $this->formElementErrors($element) ?>
@@ -141,7 +141,7 @@ echo $this->form()->openTag($form); ?>
     <?php endforeach; ?>
     </div><!-- /left side -->
     <div class="col-md-6"><!-- right side -->
-        <div class="form-group form-row">
+        <div class="form-group form-row my-2 my-2">
             <label class="col-sm-4 col-form-label pr-1" for="interpreter-select">interpreters</label>
             <div class="col-sm-8">
                 <div class="input-group">
@@ -166,7 +166,7 @@ echo $this->form()->openTag($form); ?>
 
             </div>
         </div>
-        <div class="form-group form-row">
+        <div class="form-group form-row my-2 my-2">
             <label class="col-form-label pr-1 col-sm-4" for="defendant-search">defendants</label>
             <ul class="col-sm-8">
                 <div class="input-group">
@@ -191,7 +191,7 @@ echo $this->form()->openTag($form); ?>
             ?>
             </ul>
         </div>
-        <div class="form-group form-row">
+        <div class="form-group form-row my-2 my-2">
             <label class="col-form-label pr-1 col-sm-4" for="hat">submitted by</label>
             <div class="col-sm-8">
             <?php
@@ -201,7 +201,7 @@ echo $this->form()->openTag($form); ?>
             ?>
             </div>
         </div>
-        <div class="form-group form-row">
+        <div class="form-group form-row my-2">
             <label class="col-form-label pr-1 col-sm-4" for="submission_date">submitted on</label>
             <div class="col-sm-8">
             <?php $element = $fieldset->get('submission_date');
@@ -213,7 +213,7 @@ echo $this->form()->openTag($form); ?>
                 echo $this->formElement($element),$this->formElementErrors($element);?>
             </div>
         </div>
-        <div class="form-group form-row">
+        <div class="form-group form-row my-2">
             <label class="col-form-label pr-1 col-sm-4" for="cancellation">cancellation</label>
             <div class="col-sm-8">
             <?php $element = $fieldset->get('cancellationReason');
