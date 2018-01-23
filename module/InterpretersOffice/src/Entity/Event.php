@@ -289,7 +289,7 @@ class Event
      *
      * @return Event
      */
-    public function setDate($date)
+    public function setDate(\DateTime $date)
     {
         $this->date = $date;
 
@@ -313,7 +313,7 @@ class Event
      *
      * @return Event
      */
-    public function setTime($time)
+    public function setTime(\DateTime $time)
     {
         $this->time = $time;
 
@@ -337,7 +337,7 @@ class Event
      *
      * @return Event
      */
-    public function setEndTime($endTime)
+    public function setEndTime(\DateTime $endTime = null)
     {
         $this->end_time = $endTime;
 
@@ -650,7 +650,7 @@ class Event
      *
      * @return Event
      */
-    public function setSubmissionDate($submissionDate)
+    public function setSubmissionDate(\DateTime $submissionDate)
     {
         $this->submission_date = $submissionDate;
 
@@ -674,7 +674,7 @@ class Event
      *
      * @return Event
      */
-    public function setSubmissionTime($submissionTime)
+    public function setSubmissionTime(\DateTime $submissionTime)
     {
         $this->submission_time = $submissionTime;
 
