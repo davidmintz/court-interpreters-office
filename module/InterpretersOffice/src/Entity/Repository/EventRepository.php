@@ -31,7 +31,7 @@ class EventRepository extends EntityRepository
          COALESCE(CONCAT(p.lastname,', ',p.firstname), anon_submitter.name) 
              AS submitter,
          h.name AS submitter_hat,
-         e.submission_datetime,
+         e.submissionDate, e.submissionTime,
          user1.username AS created_by,
          e.created,
          user2.username AS last_updated_by,

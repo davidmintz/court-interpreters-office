@@ -50,8 +50,8 @@ class EventControllerTest extends AbstractControllerTest
         $parent_location = $em->getRepository(Entity\Location::class)
                 ->findOneBy(['name'=>'500 Pearl']);          
         $data['parentLocation'] = $parent_location->getId();
-        $data['submission_date'] = (new \DateTime('-1 day'))->format("m/d/Y");
-        $data['submission_time'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
+        $data['submissionDate'] = (new \DateTime('-1 day'))->format("m/d/Y");
+        $data['submissionTime'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
         $clerk_hat =  $em->getRepository(Entity\Hat::class)
                 ->findOneBy(['name'=>'Law Clerk']);
         $data['anonymousSubmitter'] = $clerk_hat->getId();
@@ -212,12 +212,12 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertOptionIsSelected($submitter_select,$expected_person);
         $submission_date_element = $dom->execute('#submission_date')->current();
         $submission_date = $submission_date_element->getAttribute('value');
-        $expected = $entity->getSubmissionDatetime()->format('Y-m-d');
+        $expected = $entity->getSubmissionDate()->format('Y-m-d');
         $this->assertEquals($expected,$submission_date);
         
         $submission_time_element = $dom->execute('#submission_time')->current();
         $submission_time = $submission_time_element->getAttribute('value');
-        $expected = $entity->getSubmissionDatetime()->format('H:i');
+        $expected = $entity->getSubmissionTime()->format('g:i a');
         $this->assertEquals($expected,$submission_time);
         
         # try changing type to plea, hour to 3:00p
@@ -272,7 +272,7 @@ class EventControllerTest extends AbstractControllerTest
         // whatever the event date is, try making the submission date 1 day later
         // i.e., impossible
         
-        $event['submission_date'] = (new \DateTime("$event[date] + 1 day"))->format('Y-m-d');
+        $event['submissionDate'] = (new \DateTime("$event[date] + 1 day"))->format('Y-m-d');
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters([
                     'event' => $event,
@@ -287,7 +287,7 @@ class EventControllerTest extends AbstractControllerTest
           ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
           ->getSingleScalarResult();
         $this->assertEquals($count_before,$count_after,
-                'Event count was incrememted where insertion should have failed'
+                'Event count was incremented where insertion should have failed'
         );
         
         

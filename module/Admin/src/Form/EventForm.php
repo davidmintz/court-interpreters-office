@@ -50,7 +50,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
      * 
      * @var array
      */
-    protected $datetime_props = ['date','time','end_time','submission_date', 'submission_time'];  
+    protected $datetime_props = ['date','time','end_time','submissionDate', 'submissionTime'];  
     
     /**
      * holds state of datetime fields

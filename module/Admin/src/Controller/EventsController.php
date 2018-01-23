@@ -158,7 +158,7 @@ class EventsController extends AbstractActionController
                     $interpreters = isset($input['interpreterEvents']) ?
                         $input['interpreterEvents'] : [];
                 }
-                print_r($form->getMessages());
+                //print_r($form->getMessages());
                 return $viewModel
                     ->setVariables(compact('defendantNames','interpreters'));
             } else {
