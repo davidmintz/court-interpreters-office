@@ -194,10 +194,10 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
                 ->setParameters([':parent_id'=>$parent_id])->getResult();
          
         usort($data, function($a, $b) {
-            // if the types are the same, the label de
+            // if the types are the same, the label decides
             if ($a['type'] == $b['type']) {
                 return strnatcasecmp($a['label'], $b['label']);
-            // if either is a courtroom, it wins                                 
+            // if either is a courtroom, it wins (b/c the other isn't)
             } elseif ($a['type'] == 'courtroom') { 
                 return -1;
             } elseif ($b['type'] == 'courtroom') {
