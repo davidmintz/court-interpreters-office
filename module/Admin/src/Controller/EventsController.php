@@ -137,7 +137,7 @@ class EventsController extends AbstractActionController
             $shit->get("docket")->setValue("2016-CR-0345");
             $shit->get("anonymousSubmitter")->setValue("6");
             $shit->get("submission_date")->setValue("10/24/2017");
-            $shit->get("submission_time")->setValue("10:17 am");            
+            $shit->get("submission_time")->setValue("10:17 am");
         // end test
         }
         $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
@@ -173,7 +173,7 @@ class EventsController extends AbstractActionController
 
 
     /**
-     * edits an court interpreting event
+     * edits a court interpreting event
      *
      */
     public function editAction()

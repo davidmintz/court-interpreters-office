@@ -11,7 +11,7 @@ use InterpretersOffice\Entity\Listener;
 
 return [
 
-    'router' => 
+    'router' =>
         include __DIR__.'/routes.php'
     ,
     'controllers' => [
@@ -30,6 +30,7 @@ return [
             Controller\UsersController::class => Controller\Factory\UsersControllerFactory::class,
             Controller\EventsController::class => Controller\Factory\EventsControllerFactory::class,
             Controller\DefendantsController::class => Controller\Factory\DefendantsControllerFactory::class,
+            Controller\ScheduleController::class => Controller\Factory\ScheduleControllerFactory::class,
         ],
     ],
     'view_manager' => [
@@ -41,15 +42,15 @@ return [
             'interpreters-office/admin' => __DIR__.'/../view',
         ],
     ],
-    
-    'acl' =>    include __DIR__.'/acl.php',    
-    
+
+    'acl' =>    include __DIR__.'/acl.php',
+
     'service_manager' => [
         'factories' => [
-             Service\Acl::class  => Service\Factory\AclFactory::class,  
-             Listener\InterpreterEntityListener::class => 
+             Service\Acl::class  => Service\Factory\AclFactory::class,
+             Listener\InterpreterEntityListener::class =>
                 Listener\Factory\InterpreterEntityListenerFactory::class,
-             Listener\EventEntityListener::class => 
+             Listener\EventEntityListener::class =>
                 Listener\Factory\EventEntityListenerFactory::class,
         ],
         'aliases' => [
