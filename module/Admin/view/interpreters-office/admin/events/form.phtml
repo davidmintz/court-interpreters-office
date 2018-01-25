@@ -32,7 +32,7 @@ $form->add([
 
 $form->prepare();
 $fieldset = $form->get('event');
-
+/** @todo move this to somewhere else ! */
 foreach (['date','time','end_time','submission_time', 'submission_date'] as $time) :
     if (! $fieldset->has($time)) : continue; endif;
     $element = $fieldset->get($time);
@@ -73,7 +73,7 @@ if ($parent && sizeof($location_options) <= 1) :
     array_unshift($location_options, $data);           
     $location_element->setValueOptions($location_options[0]);                
 endif;
-
+/** ============================================================ ! */
 // temporarily, let's just set this here
 $config = ['end_time' => true];
 ?>
