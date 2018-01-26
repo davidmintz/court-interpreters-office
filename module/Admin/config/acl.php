@@ -35,7 +35,7 @@ return [
         Main\IndexController::class => null,
         Requests\RequestsIndexController::class => null,
         Admin\AdminIndexController::class => null,
-        'vault' => null,
+        'SDNY\Vault\Controller\VaultController' => null,
         Main\AuthController::class => null,
         // these refer to user resource ids. the User entity implements
         // Zend\Permissions\Acl\Resource\ResourceInterface
@@ -58,7 +58,7 @@ return [
             Admin\LanguagesController::class => null,
             Admin\EventsController::class => null,
             // ??
-            'vault' => null,
+            'SDNY\Vault\Controller\VaultController'=> null,
             Main\AuthController::class => ['logout'],
             'submitter' => null,
         ],
