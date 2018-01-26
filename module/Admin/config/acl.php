@@ -1,8 +1,11 @@
 <?php
 /** module/Admin/config/acl.php
-==========  ACL configuration ====================================      
+==========  ACL configuration ====================================
 // based on LearnZF2.
 */
+use InterpretersOffice\Admin\Controller as Admin;
+use InterpretersOffice\Controller as Main;
+use InterpretersOffice\Requests\Controller as Requests;
 
 return [
     'roles' => [
@@ -14,29 +17,27 @@ return [
         'staff' => null,
     ],
     /**
-     * most of the keys in the following array refer to controllers, with the 
-     * names normalized.
-     * 
+     *
      */
     'resources' => [
         // 'resource name (controller)' => 'parent resource'
-        'languages' => null,
-        'event-types' => 'languages',
-        'locations' => 'languages',
-        'events' => null,
-        'users' => 'events',
-        'people' => 'users',
-        'judges' => 'events',
-        'interpreters' => 'events',
-        'interpreters-write' => 'events',
-        'defendants' => 'events',
+        Admin\LanguagesController::class => null,
+        Admin\EventTypesController::class => Admin\LanguagesController::class,
+        Admin\LocationsController::class => Admin\LanguagesController::class,
+        Admin\EventsController::class => null,
+        Admin\UsersController::class => Admin\EventsController::class,
+        Admin\PeopleController::class => Admin\UsersController::class,
+        Admin\JudgesController::class => Admin\EventsController::class,
+        Admin\InterpretersController::class => Admin\EventsController::class,
+        Admin\InterpretersWriteController::class => Admin\EventsController::class,
+        Admin\DefendantsController::class => Admin\EventsController::class,
         // the topmost controller
-        'index' => null,
-        'requests-index' => null,
-        'admin-index' => null,        
+        Main\IndexController::class => null,
+        Requests\RequestsIndexController::class => null,
+        Admin\AdminIndexController::class => null,
         'vault' => null,
         'auth' => null,
-        // these refer to user resource ids. the User entity implements 
+        // these refer to user resource ids. the User entity implements
         // Zend\Permissions\Acl\Resource\ResourceInterface
         'administrator' => null,
         'manager' => null,
@@ -48,21 +49,21 @@ return [
     'allow' => [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
-            'requests-index' => ['create', 'view', 'index'],
-            'events' => ['index', 'view', 'search'],
+            Requests\RequestsIndexController::class => ['create', 'view', 'index'],
+            Admin\EventsController::class => ['index', 'view', 'search'],
             'auth' => ['logout'],
         ],
         'manager' => [
-            'admin-index' => null,
-            'languages' => null,
-            'events' => null,
+            Admin\AdminIndexController::class => null,
+            Admin\LanguagesController::class => null,
+            Admin\EventsController::class => null,
             // ??
             'vault' => null,
             'auth' => ['logout'],
             'submitter' => null,
         ],
         'staff' => [
-            'admin-index' => ['index'],
+            Admin\AdminIndexController::class => ['index'],
             'auth' => ['logout'],
         ],
         'administrator' => null,

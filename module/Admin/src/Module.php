@@ -51,9 +51,9 @@ class Module
         $navigation->findHelper('breadcrumbs')->setSeparator(' | ');
         $user = $container->get('auth')->getIdentity();
         if ($user) {
-            $navigation->setDefaultRole($user->role);            
+            $navigation->setDefaultRole($user->role);
         }
-        
+
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
@@ -63,17 +63,17 @@ class Module
                 $viewModel = $event->getApplication()->getMvcEvent()
                         ->getViewModel();
                 $viewModel->setVariables($routeMatch->getParams());
-                $viewModel->user = $user;                
+                $viewModel->user = $user;
             }
         });
         // The following line instantiates the SessionManager and automatically
         // makes the SessionManager the 'default' one:
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
         $container->get(SessionManager::class);// yes. just the getting is enough
-      
+
     }
 
-    
+
     /**
      * callback to check authentication on mvc route event.
      *
@@ -91,11 +91,11 @@ class Module
         $match = $event->getRouteMatch();
         if (! $match) {
             return;
-        }        
-        $module = $match->getParam('module');                      
+        }
+        $module = $match->getParam('module');
         if ( 'InterpretersOffice' == $module ) {
              // doesn't expose anything, so anyone is allowed access
-             return;             
+             return;
         }
         $allowed = true;
         $container = $event->getApplication()->getServiceManager();
@@ -105,19 +105,19 @@ class Module
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
             $flashMessenger->addWarningMessage('Authentication is required.');
-            $session = $container->get('Authentication'); 
+            $session = $container->get('Authentication');
             $session->redirect_url = $event->getRequest()->getUriString();
-            $allowed = false; 
-            
+            $allowed = false;
+
         } else {
             // check authorization
-            $user = $auth->getIdentity();            
-            $role = $user->role;            
+            $user = $auth->getIdentity();
+            $role = $user->role;
             if (! $this->checkAcl($event, $role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Access denied.');
-                $allowed = false;                
+                $allowed = false;
             }
         }
         if (! $allowed) {
@@ -130,9 +130,9 @@ class Module
      * @param MvcEvent $event
      * @param string $role
      * @return boolean true if current user is authorized access to current resource
-     * 
+     *
      * @todo consider changing the way controller-resources are named, e.g., use
-     * FQCN instead so that the short name does not have to be unique. And let 
+     * FQCN instead so that the short name does not have to be unique. And let
      * each module config have its own 'acl'=> [...]
      */
     public function checkAcl(MvcEvent $event, $role)
@@ -142,11 +142,11 @@ class Module
         if (! $match) {
             return;
         }
-        
-        $controllerFQCN = $match->getParam('controller');
+
+        $resource  = $match->getParam('controller');
         // really ?
-        $controllerName = substr($controllerFQCN, strrpos($controllerFQCN, '\\') + 1, -10);
-        $resource = strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter($controllerName));
+        //$controllerName = substr($controllerFQCN, strrpos($controllerFQCN, '\\') + 1, -10);
+        //$resource = strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter($controllerName));
         $privilege = $match->getParam('action');
         $acl = $event->getApplication()->getServiceManager()->get('acl');
         return $acl->isAllowed($role, $resource, $privilege);
@@ -167,7 +167,7 @@ class Module
             ->addHeaderLine('Location', $baseUrl.'/login');
         $response->setStatusCode(303);
         $response->sendHeaders();
-        
+
         return $response;
     }
 }
