@@ -1,6 +1,5 @@
 <?php /** bootstrap 4 layout view script */ 
 echo $this->doctype(); 
-$BS_VERSION = 'bootstrap-4.0.0-beta.3';
 ?><html lang="en">
   <head>
     <meta charset="utf-8">
@@ -10,7 +9,7 @@ $BS_VERSION = 'bootstrap-4.0.0-beta.3';
     <meta name="author" content="David Mintz, Interpreters Office, US District Court, Southern District of New York">
     <?php echo $this->headTitle('Court Interpreters Office')->setSeparator(' | ')->setAutoEscape(false) ?>
     <!-- Bootstrap core CSS -->
-    <link href="/css/<?php echo $BS_VERSION ?>/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap/bootstrap.min.css" rel="stylesheet">
 <?php echo 
         $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
         ->appendStylesheet($this->basePath('css/style.css'))
@@ -40,6 +39,7 @@ echo $this->headStyle();?>
 .navbar-custom a.navbar-brand { color : #777 ; }
 .navbar-custom li > a { color : #555 !important; }
 .navbar li.active { background-color: #fff !important; border-radius: 4px; border: 1px solid #9fcdff !important;  }
+.navbar li:hover { }
 </style>
   </head>
   <body>
@@ -64,7 +64,7 @@ echo $this->headStyle();?>
     </footer>
 </div>
     <script src="/js/lib/jquery.min.js"></script>
-    <script src="/js/lib/<?php echo $BS_VERSION ?>/bootstrap.bundle.js"></script>
+    <script src="/js/lib/bootstrap/bootstrap.bundle.js"></script>
     <script src="/js/common.js"></script>
     <?php echo $this->headScript()?>
     <?php echo $this->inlineScript() ?>
