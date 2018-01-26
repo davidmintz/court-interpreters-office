@@ -3,6 +3,9 @@
  *
  * still a work in progress
  */
+use InterpretersOffice\Controller as Main;
+
+use InterpretersOffice\Admin\Controller as Admin;
 return [
 
     'navigation' => [
@@ -10,7 +13,7 @@ return [
             [
                 'label' => 'schedule',
                 'route' => 'events',
-                'resource' => 'events',
+                'resource' => Admin\EventsController::class,
                 'expand_children' => false,
                 'pages' =>
                 [
@@ -29,7 +32,7 @@ return [
             [
                 'label' => 'people',
                 'route' => 'people',
-                'resource' => 'people',
+                'resource' => Admin\PeopleController::class,
                 'expand_children' => false,
                 'display' => false,
                 'pages' => [
@@ -48,13 +51,13 @@ return [
             [
                 'label' => 'add event',
                 'route' => 'events/add',
-                'resource' => 'interpreters',
+                'resource' => Admin\EventsController::class,
                 'privilege' => 'add',
             ],
             [
                 'label' => 'interpreters',
                 'route' => 'interpreters',
-                'resource' => 'interpreters',
+                'resource' => Admin\InterpretersController::class,
                 'expand_children' => false,
                 'pages' => [
                     [
@@ -70,7 +73,7 @@ return [
             [
                 'label' => 'admin',
                 'route' => 'admin',
-                'resource' => 'admin-index',
+                'resource' => Admin\AdminIndexController::class,
                 //'privilege' => 'index','action' => 'index',
                 'pages' => [
                     [
@@ -184,7 +187,7 @@ return [
             [
                 'label' => 'log out',
                 'route' => 'logout',
-                'resource' => 'auth',
+                'resource' => Main\AuthController::class,
                 'privilege' => 'logout',
             ],
         ],

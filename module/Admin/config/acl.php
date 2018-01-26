@@ -36,7 +36,7 @@ return [
         Requests\RequestsIndexController::class => null,
         Admin\AdminIndexController::class => null,
         'vault' => null,
-        'auth' => null,
+        Main\AuthController::class => null,
         // these refer to user resource ids. the User entity implements
         // Zend\Permissions\Acl\Resource\ResourceInterface
         'administrator' => null,
@@ -51,7 +51,7 @@ return [
         'submitter' => [
             Requests\RequestsIndexController::class => ['create', 'view', 'index'],
             Admin\EventsController::class => ['index', 'view', 'search'],
-            'auth' => ['logout'],
+            Main\AuthController::class => ['logout'],
         ],
         'manager' => [
             Admin\AdminIndexController::class => null,
@@ -59,24 +59,24 @@ return [
             Admin\EventsController::class => null,
             // ??
             'vault' => null,
-            'auth' => ['logout'],
+            Main\AuthController::class => ['logout'],
             'submitter' => null,
         ],
         'staff' => [
             Admin\AdminIndexController::class => ['index'],
-            'auth' => ['logout'],
+            Main\AuthController::class => ['logout'],
         ],
         'administrator' => null,
         'anonymous' => [
-            'auth' => 'login',
+            Main\AuthController::class => 'login',
         ]
     ],
     'deny' => [
         'administrator' => [
-            'requests-index' => null, //['add','edit','update','delete','cancel','index'],
+            Requests\RequestsIndexController::class => null, //['add','edit','update','delete','cancel','index'],
         ],
         'anonymous' => [
-            'auth' => 'logout'
+            Main\AuthController::class => 'logout'
         ],
     ]
 ];

@@ -8,6 +8,8 @@ namespace ApplicationTest;
 use ApplicationTest\AbstractControllerTest;
 use InterpretersOffice\Admin\Service\Acl;
 
+use InterpretersOffice\Admin\Controller as Admin;
+use InterpretersOffice\Requests\Controller as Requests;
 
 
 
@@ -38,20 +40,20 @@ class AuthenticationTest extends AbstractControllerTest
     public function testAcl()
     {
                 
-        $this->assertFalse($this->acl->isAllowed('submitter','events','update'),"submitter should NOT be allowed to edit events");
-        $this->assertFalse($this->acl->isAllowed('submitter','events','boink'),"submitter should NOT be allowed undefined privilege");
-        $this->assertFalse($this->acl->isAllowed('submitter','judges','edit'),"submitters should NOT be allowed to edit judges" );
-        $this->assertTrue($this->acl->isAllowed('submitter','requests-index','create') ,"submitted SHOULD be allowed to create a request");
-        $this->assertTrue($this->acl->isAllowed('manager','events','edit'),"manager SHOULD be allowed to edit events");
-        $this->assertTrue($this->acl->isAllowed('administrator','events','edit'),"admin SHOULD be allowed to edit events");
-        $this->assertTrue($this->acl->isAllowed('manager','event-types','edit'));
+        $this->assertFalse($this->acl->isAllowed('submitter',Admin\EventsController::class,'update'),"submitter should NOT be allowed to edit events");
+        $this->assertFalse($this->acl->isAllowed('submitter',Admin\EventsController::class,'boink'),"submitter should NOT be allowed undefined privilege");
+        $this->assertFalse($this->acl->isAllowed('submitter',Admin\JudgesController::class,'edit'),"submitters should NOT be allowed to edit judges" );
+        $this->assertTrue($this->acl->isAllowed('submitter',  Requests\RequestsIndexController::class,'create') ,"submitted SHOULD be allowed to create a request");
+        $this->assertTrue($this->acl->isAllowed('manager',Admin\EventsController::class,'edit'),"manager SHOULD be allowed to edit events");
+        $this->assertTrue($this->acl->isAllowed('administrator',Admin\EventsController::class,'edit'),"admin SHOULD be allowed to edit events");
+        $this->assertTrue($this->acl->isAllowed('manager',Admin\EventTypesController::class,'edit'));
         // too tedious! try something else....
         $allow = [
-            ['manager','event-types','edit'],
-            ['manager','users','edit'],
-            ['manager','users','add'],
-            ['manager','languages','edit'],
-            ['administrator','languages','edit'],
+            ['manager',Admin\EventTypesController::class,'edit'],
+            ['manager',  Admin\UsersController::class,'edit'],
+            ['manager',Admin\UsersController::class,'add'],
+            ['manager',Admin\LanguagesController::class,'edit'],
+            ['administrator',Admin\LanguagesController::class,'edit'],
         ];
         foreach ($allow as $rule) {
             list($role, $resource, $privilege) = $rule;
@@ -59,12 +61,12 @@ class AuthenticationTest extends AbstractControllerTest
         }
         $deny = [
             
-            ['staff','event-types','edit'],
-            ['staff','languages','add'],
-            ['staff','users','add'],
-            ['administrator','requests-index','edit'],
-            ['staff','requests-index','edit'],
-            ['staff','requests-index','edit'],
+            ['staff',Admin\EventTypesController::class,'edit'],
+            ['staff',Admin\LanguagesController::class,'add'],
+            ['staff',Admin\UsersController::class,'add'],
+            ['administrator',Requests\RequestsIndexController::class,'edit'],
+            ['staff',Requests\RequestsIndexController::class,'edit'],
+            ['staff',Requests\RequestsIndexController::class,'edit'],
             
             
         ];
