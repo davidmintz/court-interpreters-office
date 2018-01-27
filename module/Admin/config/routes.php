@@ -24,7 +24,7 @@ return  [
                 'route' => '/admin/schedule',
                 'defaults' => [
                     'module' => __NAMESPACE__,
-                    'controller' => Controller\EventsController::class,
+                    'controller' => Controller\ScheduleController::class,
                     'action' => 'index',
                 ],
             ],
@@ -365,7 +365,7 @@ return  [
                             'action' => 'add',
                         ],
                     ],
-                ],                   
+                ],
                 'edit' => [
                     'type' => Segment::class,
                     'options' => [
@@ -375,12 +375,12 @@ return  [
                             'action' => 'edit',
                         ],
                         'constraints' => [
-                            'action' => 'edit|delete',                                
+                            'action' => 'edit|delete',
                             'id' => '[1-9]\d*',
                         ],
                     ],
                 ],
-                // partial validation for interpreters form 
+                // partial validation for interpreters form
                 // when they change tabs
                  'validate-partial'  => [
 
@@ -402,7 +402,7 @@ return  [
                             'controller' => Controller\InterpretersWriteController::class,
                             'action' => 'language-fieldset',
                         ],
-                    ],                        
+                    ],
                 ],
                  'find_by_id' => [
                     'type' => Segment::class,
@@ -411,12 +411,12 @@ return  [
                         'defaults' => [
                             'action' => 'index',
                         ],
-                        'constraints' => [                                
+                        'constraints' => [
                             'id' => '[1-9]\d*',
                         ],
                     ],
                 ],
-                'find_by_name' => [ 
+                'find_by_name' => [
                     'type' => Segment::class,
                     'options' => [
                         'route' => '/name/:lastname[/:firstname]',
@@ -425,22 +425,22 @@ return  [
                             // for name-search text input
                             //'name' => '',
                             //'firstname'   => '',
-                        ],                           
+                        ],
                     ],
                 ],
                 ///*
-                'find_by_language' => [ 
+                'find_by_language' => [
                     'type' => Segment::class,
                     'options' => [
                         'route' => '/language/:language_id[/active/:active[/security/:security_clearance_expiration]]',
-                        'constraints' => [                                
+                        'constraints' => [
                             'language_id' => '[0-9]\d*',
                             'active' => '-?1|0',
                             // any value, as long as it's -2, -1, 0 or 1
                             'security_clearance_expiration' => '-[12]|[01]',
                         ],
                     ],
-                ],                    
+                ],
             ],
         ],
 
@@ -490,7 +490,7 @@ return  [
                             'action' => 'get-role-options-for-hat',
 
                         ],
-                        'constraints' => [                            
+                        'constraints' => [
                             'hat_id' => '[1-9]\d*',
                         ],
                     ],

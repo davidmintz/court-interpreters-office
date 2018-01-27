@@ -31,6 +31,7 @@ return [
         Admin\InterpretersController::class => Admin\EventsController::class,
         Admin\InterpretersWriteController::class => Admin\EventsController::class,
         Admin\DefendantsController::class => Admin\EventsController::class,
+        Admin\ScheduleController::class => Admin\EventsController::class,
         // the topmost controller
         Main\IndexController::class => null,
         Requests\RequestsIndexController::class => null,
