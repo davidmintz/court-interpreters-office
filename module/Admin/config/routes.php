@@ -34,6 +34,7 @@ return  [
                     'options' => [
                         'route' => '/add',
                         'defaults' => [
+                            'controller'=>Controller\EventsController::class,
                             'action' => 'add',
                         ],
                     ],
@@ -43,6 +44,7 @@ return  [
                     'options' => [
                         'route' => '/:action/:id',
                         'defaults' => [
+                            'controller'=>Controller\EventsController::class,
                             'action' => 'edit',
                         ],
                         'constraints' => [
@@ -56,6 +58,7 @@ return  [
                     'options' => [
                         'route' => '/interpreter-template',
                         'defaults' => [
+                            'controller'=>Controller\EventsController::class,
                             'action' => 'interpreter-template',
                         ],
                     ],
@@ -65,6 +68,7 @@ return  [
                     'options' => [
                         'route' => '/interpreter-options',
                         'defaults' => [
+                            'controller'=>Controller\EventsController::class,
                             'action' => 'interpreter-options',
                         ],
                     ],
