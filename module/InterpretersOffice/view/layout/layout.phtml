@@ -50,7 +50,7 @@ echo $this->headStyle();?>
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbar-collapse">
-       <?php  echo $this->navigation('default')->menu()->setPartial('partials/navbar_bs4.phtml')?>
+       <?php  echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml')?>
         <?php if ($this->layout()->user): // is navbar-right still a thing?  ?>
         <div class="navbar-right" style="padding: 15px 10px;"><?php echo "current user: {$this->layout()->user->username}"?></div>
         <?php endif; ?>        
