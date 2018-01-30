@@ -51,21 +51,110 @@ foreach( [
          }     
     }    
 }
+$sql="select CONCAT(name, IF(parent IS NOT NULL,CONCAT('-',parent),'')) AS name, id FROM view_locations WHERE category REGEXP 'jail|probation|pretrial|cell|courthouse' ORDER BY name;";
+$locations = $db->query($sql)->fetchAll(\PDO::FETCH_KEY_PAIR);
 // old => new
 $event_type_map = [];
+// old-event => (new) location
+$event_location_map = [];
+
 while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
+    $do_insert = true;
+    $is_probation_or_pts = false;
     if (stristr($type['type'],'probation')) {
         $this_id = stristr($type['type'],'supervision') ? $ID_PROBATION_SUPERVISION :  $ID_PROBATION_PSI;
-        $event_type_map[$type['proceeding_id']] = $this_id;
-        //or 1 === preg_match('/PTS.+supervision/i', $type['type'])) {
-        printf("skipping event type: %s\n",$type['type']);
-        continue;
+        $event_type_map[$type['proceeding_id']] = $this_id;        
+        printf("not inserting event type: %s\n",$type['type']);
+        $do_insert = false;
+        $is_probation_or_pts = true;
     }
     if ( 1 === preg_match('/PTS.+supervision/i', $type['type'])) {
         $event_type_map[$type['proceeding_id']] = $ID_PTS_SUPERVISION;
-        printf("skipping event type: %s\n",$type['type']);
+        printf("not inserting event type: %s\n",$type['type']);
+        $do_insert = false;
+        $is_probation_or_pts = true;
+    }
+    /* map old event types to new locations */
+    $location_id = null;
+    if ($is_probation_or_pts and ! key_exists($type['proceeding_id'],$event_location_map)) {
+        switch($type['type']) {
+        case 'probation MCC Manhattan':
+            $location_id = $locations['MCC Manhattan'];
+            break;
+        case 'probation MDC Brooklyn':
+            $location_id = $locations['MDC Brooklyn'];
+            break;
+        case '7th flr probation':
+        case '6th flr probation':
+        case 'probation interview 500 Pearl':
+        case 'probation supervision, 500 Pearl':
+            $location_id = $locations['Probation-500 Pearl'];
+            /* to do: make a note of which floor */
+            break;
+        case 'Valhalla probation':
+            $location_id = $locations['Westchester County Jail'];
+            break;
+        case 'Rikers probation':
+            $location_id = $locations['Rikers'];
+            break;
+        case '':
+            $location_id = $locations[''];
+            break;
+        case 'White Plains probation':
+            // $location_id = $locations[''];
+            /* @todo deal with this */
+            //echo "WARNING: don't know what location matches 'White Plains probation'\n";
+            break;
+        case 'probation phone interview':
+            // assume interpreters office?
+            break;
+        case 'Putnam County probation':
+            $location_id = $locations['Putnam County Jail'];
+            break;
+        case '233 Bway probation video':
+        case '233 Bway probation/supervision':
+        case '233 Bdwy probation':
+        case 'PTS supervision, 233 Bway':
+            $location_id = $locations['233 Broadway'];
+            break;
+        case 'Otisville probation':
+            $location_id = $locations['FCI Otisville'];
+            break;
+        case 'probation field interview':            
+            // by definition we have no clue
+            break;
+        case 'Queens PCF probation':
+            $location_id = $locations['Queens PCF'];
+            break;
+        case '4th flr cellblock probation':
+            $location_id = $locations['4th floor cellblock-500 Pearl'];
+            break;        
+        case 'Goshen County probation':
+            $location_id = $locations['Orange County CF'];
+            break;
+        case 'PTS supervision, phone':
+            // assume interpreters office?
+            break;
+        case '':
+            $location_id = $locations[''];
+            break;
+        case 'PTS supervision, 500 Pearl':
+            $location_id = $locations['500 Pearl'];
+            break;
+        case 'PTS supervision':
+            // really not sure what|where this means
+            break;
+        default:
+            printf("WARNING: can't figure out location for '%s'\n",$type['type']);
+        }
+        if ($location_id) {
+            $event_location_map[$type['proceeding_id']] = $location_id;
+        }
+    }
+    
+    if (! $do_insert) {
         continue;
-    }   
+    }
     if (! $type['display']) {
         // it is deprecated. make a note so we can deal with it later
         if ($type['comments']) {
@@ -76,15 +165,16 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
     if ('n/a' == $type['category']) {
         $type['category'] = 'not applicable';
     }
+    
     try {
-        printf("inserting '%s' ... ",$type['type']);
+        //printf("inserting '%s' ... ",$type['type']);
         $event_type_insert->execute([
             'name' => $type['type'],
             'category_id' => $event_categories[$type['category']],
             'comments' => $type['comments']
         ]);
         $event_type_map[$type['proceeding_id']] =$db->query('SELECT LAST_INSERT_ID()')->fetchColumn();
-        echo "OK\n";
+        
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
             // to do: prepare, parameterize!
@@ -103,6 +193,16 @@ if (false === $result) {
     exit(1);
 } elseif (0 === $result) {
     echo "SHIT. no data contained in our \$event_type_map";
+    exit(1);
+}
+$event_locations = json_encode($event_location_map);
+$path = __DIR__ . '/event-location-map.json';
+$result = file_put_contents($path,$event_locations);
+if (false === $result) {
+    echo "SHIT. failed writing \$event_locations to $path\n";
+    exit(1);
+} elseif (0 === $result) {
+    echo "SHIT. no data contained in our \$event_locations";
     exit(1);
 }
 exit(0);

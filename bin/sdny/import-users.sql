@@ -44,15 +44,16 @@ INSERT INTO users (
 	role_id,
 	username,
 	password,
+    /*last_login,*/
 	active)
 SELECT 
 	id,
 	1, /* role is "submitter" */
 	lower(email), /* temp(?) username */	
-	"shit", /* temp password */	
+	"shit", /* temp password */    
 	active
 FROM people WHERE hat_id IN (6,7,8,9);
-	
+
 /*
 UPDATE T1, T2,
 [INNER JOIN | LEFT JOIN] T1 ON T1.C1 = T2. C1

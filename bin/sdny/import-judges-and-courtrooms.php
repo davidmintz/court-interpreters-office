@@ -16,7 +16,7 @@ if (! $data) {
 }
 const TYPE_COURTHOUSE = 7;
 const TYPE_COURTROOM = 1;
-$VERBOSITY = true;
+$VERBOSITY = false;
 
 function debug($message) {
     
