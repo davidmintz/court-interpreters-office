@@ -96,14 +96,9 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
             break;
         case 'Rikers probation':
             $location_id = $locations['Rikers'];
-            break;
-        case '':
-            $location_id = $locations[''];
-            break;
+            break;        
         case 'White Plains probation':
-            // $location_id = $locations[''];
-            /* @todo deal with this */
-            //echo "WARNING: don't know what location matches 'White Plains probation'\n";
+            $locations['Probation-White Plains'];
             break;
         case 'probation phone interview':
             // assume interpreters office?
@@ -134,9 +129,6 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
             break;
         case 'PTS supervision, phone':
             // assume interpreters office?
-            break;
-        case '':
-            $location_id = $locations[''];
             break;
         case 'PTS supervision, 500 Pearl':
             $location_id = $locations['500 Pearl'];

@@ -25,6 +25,16 @@ name, id FROM  view_locations WHERE category NOT IN ('courtroom', 'courthouse') 
 $locations[''] = null;
 // old_event_type_id => new_location_id
 $event_locations = create_event_location_map($old_event_types);
+//print_r($event_locations);
+/*
+echo "there are ".count($old_event_types). " items in \$old_event_types\n"; 
+echo "there are ".count($event_locations). " items in \$event_locations\n"; 
+$str = file_get_contents('./event-location-map.json');
+$data = \json_decode($str,\JSON_OBJECT_AS_ARRAY);
+echo "there are ".count($data). " items in whatever\n"; 
+exit;
+*/  
+
 $event_types = \json_decode(file_get_contents(__DIR__.'/event-type-map.json'));
 if (! $event_types) {
     printf("failed to load \$event_types at %d\n",__LINE__); exit(1);
@@ -101,7 +111,16 @@ while ($event = $stmt->fetch(PDO::FETCH_ASSOC)) {
 $db->exec('use office');
 
 
-
+/**
+ * map old event types to locations
+ * 
+ * this implementation is more aggressive about deciding what event
+ * type goes with which location than the one found in import-event-types.php
+ * 
+ * @global type $locations
+ * @param array $old_event_types
+ * @return array
+ */
 function create_event_location_map(Array $old_event_types) {
     
     global $locations;
@@ -109,7 +128,9 @@ function create_event_location_map(Array $old_event_types) {
     $event_locations = [];
     
     foreach ($old_event_types as $id => $type) {
+        //printf("looking at %s\n",$type);
         switch ($id) {
+            
         case 6:        
             $key = 'MCC Manhattan';        
             break;
@@ -171,7 +192,7 @@ function create_event_location_map(Array $old_event_types) {
             printf("ERROR: could not find a mapping for location '$key' at %d\n",__LINE__);
             exit(1);                
         }
-        //printf("saving event-type '$type' as location %s\n",$key?:'<none>');        
+        //printf("'$type' => %s\n",$key?:'<none>');        
         $event_locations[$id] = $locations[$key];
     }    
     return $event_locations;
