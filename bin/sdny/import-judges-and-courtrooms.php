@@ -5,10 +5,7 @@
  */
 
 $json = file_get_contents("php://stdin");
-$db_params = parse_ini_file(getenv('HOME').'/.my.cnf');
-$db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_params['password'],[
-    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-]);
+$db = require(__DIR__."/connect.php");
 
 $data = json_decode($json,JSON_OBJECT_AS_ARRAY);
 if (! $data) {

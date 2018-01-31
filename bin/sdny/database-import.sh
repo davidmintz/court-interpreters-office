@@ -40,11 +40,11 @@ echo -n "inserting some locations..."
 cat bin/sdny/parent-locations.sql bin/sdny/more-locations.sql | mysql office
 OK;
 
-echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
-/opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
-OK;
+#echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
+#/opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
+#OK;
 
-echo -n "inserting judges and courtrooms with newly downloaded data..."
+echo -n "inserting judges and courtrooms with (newly?) downloaded data..."
 bin/sdny/import-judges-and-courtrooms.php < judges-courtrooms.json
 OK;
 
