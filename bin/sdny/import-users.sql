@@ -12,7 +12,6 @@ INSERT INTO people (
 	office_phone,
 	mobile_phone,
 	active,
-	/*last_login,*/
 	discr
 	
 ) 
@@ -30,13 +29,12 @@ SELECT
 	firstname,
 	phone,
 	mobile_phone,
-	active,
-	/*FROM_UNIXTIME(last_login),*/
+	active,	
 	"person"
 
 FROM dev_interpreters.request_users 
 	WHERE group_id <> 5
-	AND active
+	/*AND active*/
 ;
 
 INSERT INTO users (
@@ -44,14 +42,13 @@ INSERT INTO users (
 	role_id,
 	username,
 	password,
-    /*last_login,*/
-	active)
+	active, created)
 SELECT 
 	id,
 	1, /* role is "submitter" */
 	lower(email), /* temp(?) username */	
 	"shit", /* temp password */    
-	active
+	active,NOW()
 FROM people WHERE hat_id IN (6,7,8,9);
 
 /*
@@ -65,6 +62,7 @@ WHERE condition
 UPDATE users 
 	JOIN people ON users.person_id = people.id
 	JOIN dev_interpreters.request_users old_users ON  people.email = old_users.email
-SET users.password = old_users.password, 
+SET users.password = old_users.password, users.created = old_users.created,
 users.last_login = IF(old_users.last_login,FROM_UNIXTIME(old_users.last_login),NULL)
-WHERE old_users.active;
+/*WHERE old_users.active*/
+;
