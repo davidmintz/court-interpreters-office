@@ -35,9 +35,10 @@ echo "there are ".count($data). " items in whatever\n";
 exit;
 */  
 
-$event_types = \json_decode(file_get_contents(__DIR__.'/event-type-map.json'));
+$event_types = \json_decode(file_get_contents(__DIR__.'/event-type-map.json'),\JSON_OBJECT_AS_ARRAY);
 if (! $event_types) {
-    printf("failed to load \$event_types at %d\n",__LINE__); exit(1);
+    printf("failed to load %s at %d\n",__DIR__.'/event-type-map.json',__LINE__); 
+    exit(1);
 }
 
 // start with 3 months worth of (old) events data
@@ -102,9 +103,56 @@ $db->exec('use dev_interpreters');
 $stmt = $db->prepare($query);
 $stmt->execute();
 
-while ($event = $stmt->fetch(PDO::FETCH_ASSOC)) {
+while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $params = [];
-    print_r($event);
+    // the easy ones
+    foreach(['id','date','time','end_time','language_id','comments','admin_comments'] as $column) {
+        $params[":{$column}"]=$e[$column];
+    }
+    // event type is mapped
+    $params[':event_type_id'] = $event_types[$e['event_type_id']];
+    
+    // event locations is maybe mapped
+    if (key_exists($e['event_type_id'],$event_locations)) {
+        $params[':location_id'] = $event_locations[$e['event_type_id']];
+    } else {
+        $params[':location_id'] = null;
+    }
+    // figure out the judge
+    
+    // re-format the docket
+    
+    // figure out the submitter
+    
+    // figure out other meta:  created_by, modified_by_id
+    
+    print_r($params);/*Array
+(
+    [id] => 110885
+    [date] => 2017-11-01
+    [time] => 10:00:00
+    [end_time] => 11:15:00
+    [docket] => 2015CR00401
+    [event_type_id] => 2
+    [type] => plea
+    [language_id] => 62
+    [language] => Spanish
+    [judge_id] => 73
+    [judge_lastname] => Daniels
+    [judge_firstname] => George
+    [req_date] => 2017-10-30
+    [req_time] => 16:25:00
+    [req_by] => 458
+    [req_class] => 5
+    [created] => 2017-10-30 16:26:07
+    [created_by] => 27
+    [modified] => 2017-11-01 11:16:31
+    [modified_by_id] => 29
+    [cancel_reason] => N/A
+    [comments] => delayed
+    [admin_comments] => 
+)
+*/
     break;    
 }
 
