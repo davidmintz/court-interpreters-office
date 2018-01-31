@@ -40,19 +40,18 @@ if (! $event_types) {
     printf("failed to load %s at %d\n",__DIR__.'/event-type-map.json',__LINE__); 
     exit(1);
 }
+$judge_sql = "SELECT oj.judge_id old_id, j.id FROM people j JOIN hats ON j.hat_id = hats.id JOIN dev_interpreters.judges oj WHERE hats.name = 'Judge' AND j.lastname = oj.lastname AND j.firstname = oj.firstname";
+$judges = $db->query($judge_sql)->fetchAll(PDO::FETCH_KEY_PAIR);
 
 // start with 3 months worth of (old) events data
 
 $from = 'DATE_SUB(CURDATE(), INTERVAL 2 MONTH)';
 $to   = 'DATE_ADD(CURDATE(), INTERVAL 1 MONTH)';
 
-$languages = $db->query(
-    'SELECT dev_interpreters.languages.lang_id as old_id, l.id AS new_id 
-    FROM dev_interpreters.languages JOIN languages l 
-    ON dev_interpreters.languages.name = l.name')
-    ->fetchAll(PDO::FETCH_KEY_PAIR);
+//$languages = $db->query('SELECT dev_interpreters.languages.lang_id as old_id, l.id AS new_id  FROM dev_interpreters.languages JOIN languages l    ON dev_interpreters.languages.name = l.name')
+//    ->fetchAll(PDO::FETCH_KEY_PAIR);
+//print_r($languages); exit;
 
-//$db->exec('use dev_interpreters');
 $query = file_get_contents(__DIR__.'/events-query.sql');
 
 $insert = 'INSERT INTO events (
