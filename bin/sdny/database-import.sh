@@ -45,7 +45,7 @@ OK;
 #OK;
 
 echo -n "inserting judges and courtrooms with (newly?) downloaded data..."
-bin/sdny/import-judges-and-courtrooms.php < judges-courtrooms.json
+bin/sdny/import-judges-and-courtrooms.php < bin/sdny/judges-courtrooms.json
 OK;
 
 echo "importing event-types..."
@@ -54,6 +54,3 @@ OK;
 
 echo
 echo "all done for now."
-
-
-

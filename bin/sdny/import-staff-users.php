@@ -3,9 +3,9 @@
 $db = require(__DIR__."/connect.php");
 $db->exec("use dev_interpreters");
 $sql=
-'SELECT DISTINCT user_id, name, email, interpreter_id FROM users LEFT JOIN events 
-ON (events.lastmod_by = user_id OR events.created_by = user_id) 
-WHERE COALESCE(lastmod_by, created_by) 
+'SELECT DISTINCT user_id, name, email, interpreter_id FROM users LEFT JOIN events
+ON (events.lastmod_by = user_id OR events.created_by = user_id)
+WHERE COALESCE(lastmod_by, created_by)
 IS NOT NULL OR (req_class = 3 AND req_by = users.user_id)';
 
 $person_insert = $db->prepare(
@@ -15,6 +15,7 @@ $person_insert = $db->prepare(
 $user_insert = $db->prepare( 'INSERT INTO users (person_id,role_id,username,password,created, active '
         . ' VALUES (:person_id, :role_id, :username, :password, NOW(), active');
 
+/** @var $person_lookup \PDOStatement */
 $person_lookup = $db->prepare('SELECT id FROM office.people WHERE email = :email');
 
 define('STAFF_INTERPRETER',1);
@@ -59,20 +60,27 @@ define('OFFICE_STAFF',2);
 +---------+-----------+--------------------------------------+----------------+
 */
 $users = $db->query($sql)->fetchAll();
+
+// make some shit up
+$people = [
+    'pat' => [
+        ':lastname' => 'Lelandais',
+        ':firstname' =>'Pat',
+        ':email' => '',
+    ],
+
+];
 foreach ($users as $user) {
-    
+
     if ($user['interpreter_id']) { // staff interpreter
-        printf("$user[name] is a staff interpreter\n");
+        printf("$user[name] is a staff interpreter, person id is %s\n",$user['interpreter_id']);
     } else {
         if ($user['email']) {
             $person_lookup->execute(['email'=>$user['email']]);
-            
+            $id = $person_lookup->fetchColumn();
+            if (! $id) {
+                printf("need to insert a person for %s?\n",$user['name']);
+            }
         }
     }
-    
-    
-    
-    
-    
-    
 }
