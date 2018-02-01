@@ -98,7 +98,7 @@ foreach ($data as $flavor => $judge) {
                     ':parent_location_id' => $courthouses[$courthouse],
                 ]);
                 $location_id =  $db->query('SELECT last_insert_id()')->fetchColumn();
-                echo "inserted new location $courtroom with id $location_id\n";
+                //echo "inserted new location $courtroom with id $location_id\n";
                 $courtrooms[$key] = $location_id;
 
             } catch (PDOException $e) {
@@ -136,7 +136,7 @@ foreach ($data as $flavor => $judge) {
         } else {
             // judge NOT found, needs to be inserted
             try {
-                debug("inserting new judge ($lastname) at ".__LINE__);
+                //debug("inserting new judge ($lastname) at ".__LINE__);
                 $person_insert->execute(
                     compact('hat_id','lastname','firstname','middlename','active')
                 );
