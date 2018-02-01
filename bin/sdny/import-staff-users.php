@@ -30,7 +30,7 @@ $staff = [
         'firstname' =>'Gold',
         'email' => 'alexandra.gold@yahoo.com',
         'active' => 0,
-        'role_id'   => 3,
+        'role_id'   => 4,
     ],
     'jill' => [
         'lastname' => 'Jill',
@@ -75,6 +75,130 @@ $sql=
 'SELECT DISTINCT user_id, u.name, p.email person_email, u.email user_email, interpreter_id, p.id person_id, u.active FROM users u LEFT JOIN events ON (events.lastmod_by = user_id OR events.created_by = user_id) LEFT JOIN office.people p ON p.email = u.email;';
 
 $users = $db->query($sql)->fetchAll();
+/*
++----+---------------+----------+
+| id | name          | comments |
++----+---------------+----------+
+|  1 | submitter     |          |
+|  2 | manager       |          |
+|  3 | administrator |          |
+|  4 | staff         |          |
++----+---------------+----------+
+*/
+$db->exec('use office');
+foreach ($users as $user) {
+    $params = [];
+    if (in_array($user['name'],['maria','eileen','fnulnu'])) {
+        printf("NOTICE: skipping hopeless user name: %s\n",$user['name']);
+        continue;
+    }
+    if ($user['interpreter_id']) { // staff interpreter
+        // staff interpreter, with person id $user['interpreter_id']);
+        // do the user insert, role depending on who it is
+        printf("creating ONLY user (not person) for %s, active %s...",$user['name'], $user['active'] ? "YES":"NO");
+        /* // VALUES (:person_id, :role_id, :username, :password, NOW(), :active');*/
+        $params = [
+            ':person_id' =>  $user['interpreter_id'],
+            ':username' => $user['name'],
+            ':active' =>  $user['active'], 
+            ':role_id' =>  ($user['name'] == 'david' ? 3 : 2),
+            ':password'  => password_hash('boink',PASSWORD_DEFAULT),
+         ];
+        try {
+            $user_insert->execute($params);
+            printf("OK\n");
+        } catch (Exception $e) {
+            if (23000 == $e->getCode()) {
+                printf("\nWARNING: moving on despite '%s' while inserting user %s at %d\n",
+                        $e->getMessage(),$user['name'],__LINE__);
+            } else {
+                printf("caught exception %s at %d with user data %s\n",$e->getMessage(),__LINE__,print_r($params,true));
+                exit(1);
+            }
+        }
+    } else {
+        if ($user['person_id']) {
+            printf("\n%s has a fucking person id %d!!!\n",$user['name'],$user['person_id']);
+            // then the user should already exist in people
+            // BUT should ALSO exist as an separate, extinct person-user (inactive)
+            // with an 'interpreter staff' hat|office staff role 
+            
+            //... or not ???????
+            //SELECT p.lastname, p.firstname, h.name hat,r.name role FROM people p JOIN users u ON p.id = u.person_id JOIN hats h ON p.hat_id = h.id JOIN roles r ON r.id = u.role_id WHERE r.name <> "submitter";
+
+            try {
+                printf("creating INACTIVE user for: %s ...",$user['name']);                
+                // we can get the data from the people table
+                //$data = $db->query('select * from people where id = '.$user['person_id'])->fetch();
+                /*
+                $params = [
+                            ':email' => $user['user_email'] ?: $data['email'],
+                            ':active' => 0,
+                            ':discr' => 'person',
+                            ':lastname' => $data['lastname'],
+                            ':firstname' => $data['firstname'],
+                            ':hat_id'   => HAT_OFFICE_STAFF
+                        ];
+                $person_insert->execute($params);
+                $id = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn();
+                 */
+                $params = [
+                    //VALUES (:person_id, :role_id, :username, :password, NOW(), :active')
+                    ':person_id' => $user['person_id'],
+                    ':role_id' => 4,
+                    ':username' => $user['name'],
+                    ':password' => password_hash('boink',PASSWORD_DEFAULT),
+                    ':active' => 0,                    
+                ];
+                $user_insert->execute($params);
+                echo "OK\n";
+            } catch (Exception $e) {
+                if (23000 == $e->getCode()) {
+                printf("\nWARNING: moving on despite '%s' while inserting user %s at %d\n",
+                        $e->getMessage(),$user['name'],__LINE__);
+                } else {
+                    printf("while doing person query followed by person|user insert, caught exception \"%s\"\nat %d with params %s\n",$e->getMessage(),__LINE__,print_r($params,true));
+                    exit(1);
+                }
+            }
+            
+        } else {
+
+           printf("creating NEW %s person-user for %s...", $user['active'] ? "ACTIVE":"INACTIVE", $user['name'] );
+           if (! isset($staff[$user['name']])) {
+               printf("we have no data for user $user[name] at %d\n",__LINE__);
+               exit(1);
+           }
+           $data = $staff[$user['name']];
+           try {
+                $params = [ // VALUES (:lastname, :firstname, :email,:hat_id, :discr, :active)'
+                    ':email' => $user['user_email'] ?: $data['email'],
+                     ':active' => 0,
+                     ':discr' => 'person',
+                     ':lastname' => $data['lastname'],
+                     ':firstname' => $data['firstname'],
+                     ':hat_id'   => HAT_OFFICE_STAFF];
+                
+                $person_insert->execute($params);
+                $id = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn();
+                $params = [
+                //VALUES (:person_id, :role_id, :username, :password, NOW(), :active');
+                    ':person_id' => $id,
+                    ':role_id' => $data['role_id'],
+                    ':username' => $user['name'],
+                    ':password' => password_hash('boink',PASSWORD_DEFAULT),
+                    ':active' => 0,                    
+                ];
+                $user_insert->execute($params);
+                echo "OK\n";
+           } catch (Exception $e) {
+                printf("while doing person query followed by person|user insert, caught exception %s at %d with params %s\n",$e->getMessage(),__LINE__,print_r($params,true));
+                exit(1);
+           }           
+        }
+    }        
+}
+
 
 /*
 SELECT DISTINCT user_id, u.name, p.email person_email, u.email user_email, interpreter_id, p.id person_id FROM users u LEFT JOIN events ON (events.lastmod_by = user_id OR events.created_by = user_id) LEFT JOIN office.people p ON p.email = u.email;
@@ -108,128 +232,3 @@ SELECT DISTINCT user_id, u.name, p.email person_email, u.email user_email, inter
 23 rows in set (1.96 sec)
 
 */
-/*
-+----+---------------+----------+
-| id | name          | comments |
-+----+---------------+----------+
-|  1 | submitter     |          |
-|  2 | manager       |          |
-|  3 | administrator |          |
-|  4 | staff         |          |
-+----+---------------+----------+
-*/
-$db->exec('use office');
-foreach ($users as $user) {
-    $params = [];
-    if (in_array($user['name'],['maria','eileen','fnulnu'])) {
-        printf("NOTICE: we are skipping hopeless user name: %s\n",$user['name']);
-        continue;
-    }
-    if ($user['interpreter_id']) { // staff interpreter
-        // staff interpreter, with person id $user['interpreter_id']);
-        // do the user insert, role depending on who it is
-        printf("creating ONLY user (not person) for %s, active %s\n",$user['name'], $user['active'] ? "YES":"NO");
-        /* // VALUES (:person_id, :role_id, :username, :password, NOW(), :active');*/
-        $params = [
-            ':person_id' =>  $user['interpreter_id'],
-            ':username' => $user['name'],
-            ':active' =>  $user['active'], 
-            ':role_id' =>  ($user['name'] == 'david' ? 1 : 2),
-            ':password'  => password_hash('boink',PASSWORD_DEFAULT),
-         ];
-        try {
-            $user_insert->execute($params);
-            printf("successfully inserted user %s\n",$user['name']);
-        } catch (Exception $e) {
-            if (23000 == $e->getCode()) {
-                printf("WARNING: moving on despite '%s' while inserting user %s at %d\n",
-                        $e->getMessage(),$user['name'],__LINE__);
-            } else {
-                printf("caught exception %s at %d with user data %s\n",$e->getMessage(),__LINE__,print_r($params,true));
-                exit(1);
-            }
-        }
-    } else {
-        
-        //$data = print_r($user,true);
-        if ($user['person_id']) {
-            // then the user should already exist in people
-            // BUT should ALSO exist as an separate, extinct person-user (inactive)
-            // with an 'interpreter staff' hat|office staff role 
-            try {
-                printf("need to create INACTIVE person-user for: %s ...",$user['name']);                
-                // we can get the data from the people table
-                $data = $db->query('select * from people where id = '.$user['person_id'])->fetch();
-                
-                $params = [
-                            ':email' => $user['user_email'] ?: $data['email'],
-                            ':active' => 0,
-                            ':discr' => 'person',
-                            ':lastname' => $data['lastname'],
-                            ':firstname' => $data['firstname'],
-                            ':hat_id'   => HAT_OFFICE_STAFF
-                        ];
-                $person_insert->execute($params);
-                $id = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn();
-                $params = [
-                    //VALUES (:person_id, :role_id, :username, :password, NOW(), :active')
-                    ':person_id' => $id,
-                    ':role_id' => 4,
-                    ':username' => $user['name'],
-                    ':password' => password_hash('boink',PASSWORD_DEFAULT),
-                    ':active' => 0,                    
-                ];
-                $user_insert->execute($params);
-                echo "OK\n";
-            } catch (Exception $e) {
-                if (23000 == $e->getCode()) {
-                printf("WARNING: moving on despite '%s' while inserting user %s at %d\n",
-                        $e->getMessage(),$user['name'],__LINE__);
-                } else {
-                    printf("while doing person query followed by person|user insert, caught exception \"%s\"\nat %d with params %s\n",$e->getMessage(),__LINE__,print_r($params,true));
-                    exit(1);
-                }
-            }
-        } else {
-        /*
-            $person_insert = $db->prepare(
-                'INSERT INTO people (lastname, firstname, email, hat_id, active, discr)'
-                    . ' VALUES (:lastname, :firstname, :email,:hat_id, :discr, :active)'
-            );
-            $user_insert = $db->prepare( 'INSERT INTO users (person_id,role_id,username,password,created, active '
-            . ' VALUES (:person_id, :role_id, :username, :password, NOW(), :active');
-        */
-           printf("need to create totally NEW %s person-user for %s\n", $user['active'] ? "ACTIVE":"INACTIVE", $user['name'] );
-           if (! isset($staff[$user['name']])) {
-               printf("we have no data for user $user[name] at %d\n",__LINE__);
-               exit(1);
-           }
-           $data = $staff[$user['name']];
-           try {
-                $params = [ // VALUES (:lastname, :firstname, :email,:hat_id, :discr, :active)'
-                    ':email' => $user['user_email'] ?: $data['email'],
-                     ':active' => 0,
-                     ':discr' => 'person',
-                     ':lastname' => $data['lastname'],
-                     ':firstname' => $data['firstname'],
-                     ':hat_id'   => HAT_OFFICE_STAFF];
-                
-                $person_insert->execute($params);
-                $id = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn();
-                $params = [
-                //VALUES (:person_id, :role_id, :username, :password, NOW(), :active');
-                    ':person_id' => $id,
-                    ':role_id' => $data['role_id'],
-                    ':username' => $user['name'],
-                    ':password' => password_hash('boink',PASSWORD_DEFAULT),
-                    ':active' => 0,                    
-                ];
-                $user_insert->execute($params);
-           } catch (Exception $e) {
-                printf("while doing person query followed by person|user insert, caught exception %s at %d with params %s\n",$e->getMessage(),__LINE__,print_r($params,true));
-                exit(1);
-           }           
-        }
-     }
-        
-}
