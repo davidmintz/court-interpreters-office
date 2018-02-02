@@ -154,14 +154,24 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     }
     //print_r($e); print_r($params); echo "\n===================================\n";
     //if ($count == 200) { break; }
-}
+
     // re-format the docket
+    $docket = format_docket($e['docket']);
+    if ($docket !== false) {
+        $params[':docket'] = $docket;
+    } else {
+        printf("shit. could not format docket number for this event:\n%s",print_r($e,true));
+    }
+    
+    echo "looking good at iteration $count\r"; usleep(2000);
     
     // figure out the submitter
-    
+
+
     // figure out other meta:  created_by, modified_by_id
-    
-    
+   
+  }
+    echo "\n";
     /*Array
 (
     [id] => 110885
@@ -192,6 +202,22 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
    
 
 //$db->exec('use office');
+function format_docket($docket) {
+    // expected format is e.g. YYYY[CR|MAG|CIV]NNNNN
+    if (!$docket) { return ''; }
+        
+    if (! preg_match('/(\d{2})([A-Z]+)(\d{5})/', $docket, $matches)) {
+         return false;
+    }
+    $return = "$matches[1]-$matches[2]-";
+    // not too sure about this
+    if (0 === strpos($matches[3],'0')) {
+        $return .= substr($matches[3],1);
+    } else {
+        $return .= $matches[3];
+    }
+    return $return;
+}
 
 
 /**
