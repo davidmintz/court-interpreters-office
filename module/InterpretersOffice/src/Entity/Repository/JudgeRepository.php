@@ -135,13 +135,33 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 && $options['include_pseudo_judges']) {
             $data = array_merge($data,$this->getPseudoJudgeOptions());
             usort($data,function($a,$b){
+                if ($this->isAnonymousButNotMagistrate($a)
+                   && 
+                   ! $this->isAnonymousButNotMagistrate($b)) {                    
+                    return 1;
+                } elseif (! $this->isAnonymousButNotMagistrate($a)
+                   && 
+                   $this->isAnonymousButNotMagistrate($b)) {
+                    return -1;
+                }
                 return strnatcasecmp($a['label'], $b['label']);
             });
-        }
-        
+        }        
         return $data;     
     }
-    
+    /**
+     * is $judge a pseudo-judge known as 'unknown' or 'not applicable'?
+     * 
+     * a helper method for rigging the judge-sorting function that ensures
+     * these pseudo-types are last
+     * 
+     * @param array $judge
+     * @return boolean
+     */
+    protected function isAnonymousButNotMagistrate(Array $judge) {
+        
+        return preg_match('/^.?(:?unknown|not applicable)/i',$judge['label']);
+    }
     /**
      * gets pseudo-judges
      * 
