@@ -4,7 +4,7 @@
  * for importing events from our old database to the new - a work in progress
  */
 
-$db_params = parse_ini_file(getenv('HOME').'/.my.cnf');
+
 $db = require(__DIR__."/connect.php");
 
 // first: make sure all our non-courthouse locations have been inserted
