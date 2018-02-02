@@ -21,10 +21,11 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
  * @see http://stackoverflow.com/questions/37306930/doctrine-inheritance-strategy-when-two-different-subclasses-extend-the-same-enti
  *
  * @ORM\Entity
- * @ORM\Table(name="users")
+ * @ORM\Table(name="users",uniqueConstraints={@ORM\UniqueConstraint(name="uniq_person_role", columns={"person_id", "role_id"})})
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks
  */
+
 class User implements ResourceInterface
 {
     /**
