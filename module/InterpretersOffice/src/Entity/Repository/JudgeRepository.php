@@ -149,6 +149,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         }        
         return $data;     
     }
+    
     /**
      * is $judge a pseudo-judge known as 'unknown' or 'not applicable'?
      * 
