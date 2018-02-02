@@ -62,14 +62,10 @@ $judges = $db->query($judge_sql)->fetchAll(PDO::FETCH_KEY_PAIR);
 // this is very brittle and will fuck up if we so much as look at it wrong
                     // theirs => ours
 $anonymous_judges = [22 => 1, 85 => 4, 82 => 2, 75 => 3,];
+
 // start with 3 months worth of (old) events data
-
-$from = 'DATE_SUB(CURDATE(), INTERVAL 2 MONTH)';
-$to   = 'DATE_ADD(CURDATE(), INTERVAL 1 MONTH)';
-
-//$languages = $db->query('SELECT dev_interpreters.languages.lang_id as old_id, l.id AS new_id  FROM dev_interpreters.languages JOIN languages l    ON dev_interpreters.languages.name = l.name')
-//    ->fetchAll(PDO::FETCH_KEY_PAIR);
-//print_r($languages); exit;
+//$from = 'DATE_SUB(CURDATE(), INTERVAL 2 MONTH)';
+//$to   = 'DATE_ADD(CURDATE(), INTERVAL 1 MONTH)';
 
 $query = file_get_contents(__DIR__.'/events-query.sql');
 
@@ -149,8 +145,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         // oops
         printf("shit. could not find any judge for this event:\n%s",print_r($e,true));
-        exit(1);
-        
+        exit(1);        
     }
     //print_r($e); print_r($params); echo "\n===================================\n";
     //if ($count == 200) { break; }
@@ -165,7 +160,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     
     echo "looking good at iteration $count\r"; usleep(2000);
     
-    // figure out the submitter
+    // figure out the submitter !!!
 
 
     // figure out other meta:  created_by, modified_by_id
@@ -199,7 +194,8 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     [admin_comments] => 
 )
 */
-   
+
+
 
 //$db->exec('use office');
 function format_docket($docket) {
