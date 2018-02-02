@@ -160,7 +160,7 @@ foreach ($data as $flavor => $judge) {
     }
 }
 /* now, the dead judges */
-
+/* NOTE TO SELF find out if "use dev_interpreters" is sufficient */
 $old_db = new PDO('mysql:host=localhost;dbname=dev_interpreters', $db_params['user'], $db_params['password'],[
     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
 ]);
@@ -195,6 +195,15 @@ while ($j = $results->fetch()) {
         printf("shit: %s\n",$e->getMessage());
     }
 }
+// update generic magistrate's default location
+$db->exec(
+    sprintf('UPDATE anonymous_judges SET default_location_id = %d WHERE name="magistrate"',
+          $db->query('SELECT id FROM locations WHERE name = "5A"')->fetchColumn()
+    )
+);
+
+// and add an additional anonymous_judge: Magistrate with default location White Plains
+$db->exec(sprintf('INSERT INTO anonymous_judges (name, default_location_id) VALUES ("magistrate","%s")',$courthouses['White Plains']));
 printf("finished inserting %d courtrooms, %d judges\n",
     $locations_inserted,$judges_inserted);
 exit(0);
