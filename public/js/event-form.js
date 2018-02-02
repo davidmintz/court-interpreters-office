@@ -207,27 +207,42 @@ $(document).ready(function()
         if (!  judgeElement.val()) {
             return;
         }
-        var judge_opt = judgeElement.children(':selected');
-        var is_magistrate = judge_opt.text().toLowerCase()
-                .indexOf('magistrate') !== -1 && judge_opt.data('pseudojudge');
-        var judge_data = judge_opt.data();       
-        if ( ! eventTypeElement.val()// )
-            || "in" !== eventTypeElement.children(":selected").data().category) 
+        if ( ! eventTypeElement.val()
+            || "in" !== eventTypeElement.children(":selected").data().category ) 
         {
-            // if it's magistrate, and they have not set a parent location,
-            // let's set it for them
-            if (is_magistrate && !parentLocationElement.val()) {                
-                parentLocationElement.val(judge_data.default_parent_location).trigger("change");
-                return;
-            }            
+               return;                  
         }
-        
+        var judge_opt = judgeElement.children(':selected');
+        var judge_data = judge_opt.data();       
+        ///*
+        var is_magistrate = judge_opt.text().toLowerCase()
+             .indexOf('magistrate') !== -1 && judge_opt.data('pseudojudge');        
+        // if it's magistrate, and they have not set a parent location,
+        // let's set it for them        
+        if (is_magistrate ) {  //&& !parentLocationElement.val()
+            //console.log("shit is Magistrate... ");
+            parentLocationElement.val(judge_data.default_parent_location || judge_data.default_location)
+            .trigger("change", judge_data.default_location ?
+                    {location_id:judge_data.default_location} : null);
+            return;
+         }
+        // */
+        /* NOTE TO SELF:  try to remember why we are doing this.
+         * In English:
+         * If the currently selected judge has a default location
+         */
         if (judge_data.default_parent_location && 
+              /* and that default's ~parent~ location is other than the 
+               * currently selected parent location... 
+               */
               judge_data.default_parent_location !== parentLocationElement.val())
-        {
+        {   /* then set the parent location to the current judge's default... */
             parentLocationElement.val(judge_data.default_parent_location)
-                    .trigger("change", judge_data.default_location ?
-                        {location_id:judge_data.default_location} : null
+            /* and trigger its "change" event, passing the handler the
+             * currently selected judge's default location, if any
+             */
+             .trigger("change", judge_data.default_location ?
+                   {location_id:judge_data.default_location} : null
             );
         }
     });
@@ -255,7 +270,6 @@ $(document).ready(function()
         {
                 source: '/defendants/autocomplete',
                 //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
-
                 minLength: 2,
                 select: function( event, ui ) {                        
 
