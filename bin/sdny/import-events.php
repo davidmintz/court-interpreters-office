@@ -4,7 +4,6 @@
  * for importing events from our old database to the new - a work in progress
  */
 
-
 $db = require(__DIR__."/connect.php");
 
 // first: make sure all our non-courthouse locations have been inserted
@@ -41,6 +40,28 @@ if (! $event_types) {
 $judge_sql = "SELECT oj.judge_id old_id, j.id FROM people j JOIN hats ON j.hat_id = hats.id JOIN dev_interpreters.judges oj WHERE hats.name = 'Judge' AND j.lastname = oj.lastname AND j.firstname = oj.firstname";
 $judges = $db->query($judge_sql)->fetchAll(PDO::FETCH_KEY_PAIR);
 
+/*      +----------+----------------------+
+        | judge_id | lastname             |
+        +----------+----------------------+
+        |       22 | magistrate/NYC       |
+        |       75 | [unknown]            |
+        |       82 | [not applicable]     |
+        |       85 | magistrate/W. Plains |
+        +----------+----------------------+
+        SELECT aj.id, aj.name, l.name from anonymous_judges aj LEFT JOIN locations l ON aj.default_location_id = l.id;
+        +----+------------------+--------------+
+        | id | name             | name         |
+        +----+------------------+--------------+
+        |  2 | (not applicable) | NULL         |
+        |  3 | (unknown)        | NULL         |
+        |  4 | magistrate       | White Plains |
+        |  1 | magistrate       | 5A           |
+        +----+------------------+--------------+
+ */
+                
+// this is very brittle and will fuck up if we so much as look at it wrong
+                    // theirs => ours
+$anonymous_judges = [22 => 1, 85 => 4, 82 => 2, 75 => 3,];
 // start with 3 months worth of (old) events data
 
 $from = 'DATE_SUB(CURDATE(), INTERVAL 2 MONTH)';
@@ -99,8 +120,11 @@ $insert = 'INSERT INTO events (
 $db->exec('use dev_interpreters');
 $stmt = $db->prepare($query);
 $stmt->execute();
+$db->exec('use office');
 
+$count = 0;
 while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $count++;
     $params = [];
     // the easy ones
     foreach(['id','date','time','end_time','language_id','comments','admin_comments'] as $column) {
@@ -116,14 +140,29 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $params[':location_id'] = null;
     }
     // figure out the judge
-    
+    if (isset($judges[$e['judge_id']])) {
+        // problem solved
+        $params[':judge_id'] = $judges[$e['judge_id']];
+    } elseif (isset($anonymous_judges[$e['judge_id']])) {
+        // likewise solved
+        $params[':anonymous_judge_id'] = $anonymous_judges[$e['judge_id']];
+    } else {
+        // oops
+        printf("shit. could not find any judge for this event:\n%s",print_r($e,true));
+        exit(1);
+        
+    }
+    //print_r($e); print_r($params); echo "\n===================================\n";
+    //if ($count == 200) { break; }
+}
     // re-format the docket
     
     // figure out the submitter
     
     // figure out other meta:  created_by, modified_by_id
     
-    print_r($params);/*Array
+    
+    /*Array
 (
     [id] => 110885
     [date] => 2017-11-01
@@ -150,10 +189,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     [admin_comments] => 
 )
 */
-    break;    
-}
+   
 
-$db->exec('use office');
+//$db->exec('use office');
 
 
 /**
