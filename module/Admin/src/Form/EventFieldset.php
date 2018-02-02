@@ -251,7 +251,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'exclude' => true,
             ],
             'attributes' => [
-                'class' => 'form-control',
+                'class' => 'form-control custom-select',
                 'id' => 'interpreter-select',
             ],
 
@@ -322,7 +322,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'type' => 'select',
              'attributes' => [
                 'id'   => 'cancellation_reason',
-                'class' => 'form-control',
+                'class' => 'form-control custom-select',
              ],
              'options' => [
                 'label' => 'cancellation',
@@ -360,7 +360,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                         },
                 ],
             ],
-            'attributes' => ['class' => 'form-control', 'id' => 'hat'],
+            'attributes' => ['class' => 'form-control custom-select', 'id' => 'hat'],
         ]);
         $empty_option = [['value' => '','label'=>'(person\'s name)',
             'attributes'=>['label'=>'person\'s name']]];
@@ -387,7 +387,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 'label' => '',
                 'value_options' => $value_options,
             ],
-            'attributes' => ['class' => 'form-control', 'id' => 'submitter'],
+            'attributes' => ['class' => 'form-control custom-select', 'id' => 'submitter'],
         ]);
 
         return $this;
