@@ -371,7 +371,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             if (! $hat) {
                 throw new \Exception(sprintf(
                     'The database record for event id %d is in an invalid state: '
-                  . 'both the submitter and generic submitter fields are null.',
+                  . 'both the submitter and generic submitter fields are null. '
+                  . 'Please contact your database administrator about this.',
                     $event->getId()
                 ));
             }
