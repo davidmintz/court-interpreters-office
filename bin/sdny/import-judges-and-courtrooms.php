@@ -16,7 +16,7 @@ const TYPE_COURTROOM = 1;
 $VERBOSITY = false;
 
 function debug($message) {
-    
+
     global $VERBOSITY;
     if ($VERBOSITY) {
         echo "$message\n";
@@ -37,7 +37,7 @@ $courtrooms = $db->query('SELECT CONCAT(name,"-",parent) AS location, id FROM vi
         ->fetchAll(PDO::FETCH_KEY_PAIR);
 
 $person_insert = $db->prepare(
-    'INSERT INTO people (hat_id,lastname,firstname,middlename,active,discr) 
+    'INSERT INTO people (hat_id,lastname,firstname,middlename,active,discr)
         VALUES (:hat_id,:lastname,:firstname,:middlename,:active, "judge")'
 );
 
@@ -62,25 +62,27 @@ $judge_select = $db->prepare('SELECT p.id, p.lastname, p.firstname, p.middlename
         . 'AND middlename = :middlename ');
 
 $judge_update = null;
+$locations_inserted = 0;
+$judges_inserted = 0;
 
 foreach ($data as $flavor => $judge) {
-    
+
     foreach ($judge as $name => $location) {
-        
+
         // e.g: [Swain, Laura Taylor] => 17C, 500 Pearl
-        list($lastname,$given_names) = preg_split('/, +/',$name);    
+        list($lastname,$given_names) = preg_split('/, +/',$name);
         if (strstr($given_names,' ')) {
             list($firstname,$middlename) = preg_split('/ +/',$given_names);
         } else {
-            $firstname = $given_names; 
+            $firstname = $given_names;
             $middlename = '';
-        } 
+        }
         // BUT!
         if (preg_match('/^[A-Z]\. +\S+$/',"$firstname $middlename")) {
             $firstname .= " $middlename";
-            $middlename = '';            
+            $middlename = '';
         }
-        
+
         list($courtroom, $courthouse) = preg_split('/, +/',$location);
         // check the location
         if ($courthouse == '300 Quarropas') {
@@ -97,6 +99,7 @@ foreach ($data as $flavor => $judge) {
                     ':name' => $courtroom,
                     ':parent_location_id' => $courthouses[$courthouse],
                 ]);
+                $locations_inserted++;
                 $location_id =  $db->query('SELECT last_insert_id()')->fetchColumn();
                 //echo "inserted new location $courtroom with id $location_id\n";
                 $courtrooms[$key] = $location_id;
@@ -108,10 +111,10 @@ foreach ($data as $flavor => $judge) {
         // see if the judge already exists
         $judge_select->execute(compact('lastname','firstname','middlename'));
         $judge_found = $judge_select->fetch(PDO::FETCH_ASSOC);
-        
+
         if ($judge_found) {
             debug(sprintf("founding existing judge %s at line %d",$judge_found['lastname'],__LINE__));
-            // check the flavor            
+            // check the flavor
             if ($flavors[$flavor] == $judge_found['flavor_id']) {
                 // we very likely have this one already in the db, so no insert
             } else {
@@ -121,7 +124,7 @@ foreach ($data as $flavor => $judge) {
                 );
             }
             // see if location needs an update
-            if ($judge_found['location'] != $courtroom 
+            if ($judge_found['location'] != $courtroom
                     or $judge_found['parent_location'] != $courthouse) {
                 if (!$judge_update) {
                     $judge_update = $db->prepare(
@@ -131,7 +134,7 @@ foreach ($data as $flavor => $judge) {
                 debug(sprintf("updating courtroom for judge %s at line %d",$judge_found['lastname'],__LINE__));
                 $judge_update->execute([
                     'id'=>$judge_found['id'],'location_id'=>$location_id]
-                );                
+                );
             }
         } else {
             // judge NOT found, needs to be inserted
@@ -146,13 +149,14 @@ foreach ($data as $flavor => $judge) {
                     ':id'=>$id,
                     ':default_location_id'=>$location_id,
                     ':flavor_id' => $flavors[$flavor],
-                ]);
-                printf("judge %s added to people, judges with id %s\n",$lastname,$id);
+                ]);//
+                $judges_inserted++;
+                //printf("judge %s added to people, judges with id %s\n",$lastname,$id);
 
             } catch (PDOException $e) {
                 printf("insert FAILED: %s\n",$e->getMessage());
             }
-        }        
+        }
     }
 }
 /* now, the dead judges */
@@ -186,9 +190,11 @@ while ($j = $results->fetch()) {
             ':default_location_id'=>NULL,
             ':flavor_id' => $flavors[$flavor],
         ]);
+        $judges_inserted++;
     } catch (PDOException $e) {
         printf("shit: %s\n",$e->getMessage());
-    }        
+    }
 }
-
+printf("finished inserting %d courtrooms, %d judges\n",
+    $locations_inserted,$judges_inserted);
 exit(0);

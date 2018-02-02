@@ -32,6 +32,10 @@ echo  -n "importing (some) user accounts..."
 mysql office < bin/sdny/import-users.sql
 OK;
 
+echo "importing staff users...";
+bin/sdny/import-staff-users.php
+OK;
+
 echo  -n "importing AUSA and defense atty data..."
 mysql office < bin/sdny/import-ausas-and-def-attys.sql
 OK;
