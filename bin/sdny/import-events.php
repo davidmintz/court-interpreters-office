@@ -15,26 +15,37 @@ $old_event_types = $db->query("SELECT proceeding_id as id, type as name FROM dev
 // because we can't know for sure the ids (unless we decide to delete all the locations
 // and re-insert them with known ids -- maybe we should), use unique strings as keys
 // and ids as values
-$locations = $db->query("SELECT CONCAT(name,IF(parent IS NOT NULL,CONCAT(' - ',parent),'')) AS 
+$locations = $db->query("SELECT CONCAT(name,IF(parent IS NOT NULL,CONCAT(' - ',parent),'')) AS
 name, id FROM  view_locations WHERE category NOT IN ('courtroom', 'courthouse') ORDER BY name")
         ->fetchAll(PDO::FETCH_KEY_PAIR);
 
 $locations[''] = null;
 // old_event_type_id => new_location_id
 $event_locations = create_event_location_map($old_event_types);
-//print_r($event_locations);
+$hats = [
+    1 => 5,  // AUSA
+    2 => 8,   // USPO
+    6 => 12,  // Pretrial
+    7 => 13,  // Magistrates
+    3 => 1,   // staff interpreter
+    4 => 3,   // contract interpreter
+    5 => null, // either law clerk or courtroom dep
+    8 => 4,    // defense attorney
+    9 => null, // "other"
+    10 => 11,   // usao staff
+];
 /*
-echo "there are ".count($old_event_types). " items in \$old_event_types\n"; 
-echo "there are ".count($event_locations). " items in \$event_locations\n"; 
+echo "there are ".count($old_event_types). " items in \$old_event_types\n";
+echo "there are ".count($event_locations). " items in \$event_locations\n";
 $str = file_get_contents('./event-location-map.json');
 $data = \json_decode($str,\JSON_OBJECT_AS_ARRAY);
-echo "there are ".count($data). " items in whatever\n"; 
+echo "there are ".count($data). " items in whatever\n";
 exit;
-*/  
+*/
 
 $event_types = \json_decode(file_get_contents(__DIR__.'/event-type-map.json'),\JSON_OBJECT_AS_ARRAY);
 if (! $event_types) {
-    printf("failed to load %s at %d\n",__DIR__.'/event-type-map.json',__LINE__); 
+    printf("failed to load %s at %d\n",__DIR__.'/event-type-map.json',__LINE__);
     exit(1);
 }
 $judge_sql = "SELECT oj.judge_id old_id, j.id FROM people j JOIN hats ON j.hat_id = hats.id JOIN dev_interpreters.judges oj WHERE hats.name = 'Judge' AND j.lastname = oj.lastname AND j.firstname = oj.firstname";
@@ -58,7 +69,7 @@ $judges = $db->query($judge_sql)->fetchAll(PDO::FETCH_KEY_PAIR);
         |  1 | magistrate       | 5A           |
         +----+------------------+--------------+
  */
-                
+
 // this is very brittle and will fuck up if we so much as look at it wrong
                     // theirs => ours
 $anonymous_judges = [22 => 1, 85 => 4, 82 => 2, 75 => 3,];
@@ -89,7 +100,7 @@ $insert = 'INSERT INTO events (
             anonymous_submitter_id
             cancellation_reason_id
             modified_by_id
-            submission_datetime 
+            submission_datetime
         VALUES(
             :id
             :language_id
@@ -128,7 +139,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     }
     // event type is mapped
     $params[':event_type_id'] = $event_types[$e['event_type_id']];
-    
+
     // event locations is maybe mapped
     if (key_exists($e['event_type_id'],$event_locations)) {
         $params[':location_id'] = $event_locations[$e['event_type_id']];
@@ -145,7 +156,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         // oops
         printf("shit. could not find any judge for this event:\n%s",print_r($e,true));
-        exit(1);        
+        exit(1);
     }
     //print_r($e); print_r($params); echo "\n===================================\n";
     //if ($count == 200) { break; }
@@ -157,14 +168,24 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         printf("shit. could not format docket number for this event:\n%s",print_r($e,true));
     }
-    
-    echo "looking good at iteration $count\r"; usleep(2000);
-    
-    // figure out the submitter !!!
 
+    echo "looking good at iteration $count\r"; usleep(2000);
+
+    // figure out the submitter !!!
+/*
+SELECT rb.id , h.id hat_id, h.name hat FROM dev_interpreters.request_class rb JOIN hats h ON rb.type = h.name;
++----+--------+-------------+
+| id | hat_id | hat         |
++----+--------+-------------+
+|  1 |      5 | AUSA        |
+|  2 |      8 | USPO        |
+|  6 |     12 | Pretrial    |
+|  7 |     13 | Magistrates |
++----+--------+-------------+
+*/
 
     // figure out other meta:  created_by, modified_by_id
-   
+
   }
     echo "\n";
     /*Array
@@ -191,7 +212,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     [modified_by_id] => 29
     [cancel_reason] => N/A
     [comments] => delayed
-    [admin_comments] => 
+    [admin_comments] =>
 )
 */
 
@@ -201,7 +222,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
 function format_docket($docket) {
     // expected format is e.g. YYYY[CR|MAG|CIV]NNNNN
     if (!$docket) { return ''; }
-        
+
     if (! preg_match('/(\d{2})([A-Z]+)(\d{5})/', $docket, $matches)) {
          return false;
     }
@@ -218,30 +239,30 @@ function format_docket($docket) {
 
 /**
  * map old event types to locations
- * 
+ *
  * this implementation is more aggressive about deciding what event
  * type goes with which location than the one found in import-event-types.php
- * 
+ *
  * @global type $locations
  * @param array $old_event_types
  * @return array
  */
 function create_event_location_map(Array $old_event_types) {
-    
+
     global $locations;
-    
+
     $event_locations = [];
-    
+
     foreach ($old_event_types as $id => $type) {
         //printf("looking at %s\n",$type);
         switch ($id) {
-            
-        case 6:        
-            $key = 'MCC Manhattan';        
+
+        case 6:
+            $key = 'MCC Manhattan';
             break;
         case 19:
-            $key = 'MDC Brooklyn';        
-            break;    
+            $key = 'MDC Brooklyn';
+            break;
         case 20:
         case 35:  // 6th or 7th floor
         case 85:
@@ -281,10 +302,10 @@ function create_event_location_map(Array $old_event_types) {
             break;
         case 67:
             $key = '4th floor cellblock - 500 Pearl';
-            break;    
+            break;
         case 84:
             $key = 'Orange County CF';
-            break;    
+            break;
         case 95:
         case 97:
             $key = 'Pretrial - 500 Pearl';
@@ -295,11 +316,11 @@ function create_event_location_map(Array $old_event_types) {
         }
         if (! key_exists($key,$locations)) {
             printf("ERROR: could not find a mapping for location '$key' at %d\n",__LINE__);
-            exit(1);                
+            exit(1);
         }
-        //printf("'$type' => %s\n",$key?:'<none>');        
+        //printf("'$type' => %s\n",$key?:'<none>');
         $event_locations[$id] = $locations[$key];
-    }    
+    }
     return $event_locations;
 }
 exit(0);
