@@ -19,6 +19,7 @@ SELECT
 	CASE class_id
 		WHEN 1 THEN 5
 		WHEN 8 THEN 4
+        WHEN 10 THEN 11
 	END as hat_id,
 	email, 
 	lastname, 
@@ -29,4 +30,4 @@ SELECT
 	"person"
 FROM dev_interpreters.request_by
 
-WHERE class_id IN (1,8);
+WHERE class_id IN (1,8,10);

@@ -22,7 +22,12 @@ name, id FROM  view_locations WHERE category NOT IN ('courtroom', 'courthouse') 
 $locations[''] = null;
 // old_event_type_id => new_location_id
 $event_locations = create_event_location_map($old_event_types);
+
+$db->exec("set @from = '2009-01-01'");
+$db->exec("set @to = '2010-12-31'");
+
 $hats = [
+// old => new
     1 => 5,  // AUSA
     2 => 8,   // USPO
     6 => 12,  // Pretrial
@@ -34,14 +39,6 @@ $hats = [
     9 => null, // "other"
     10 => 11,   // usao staff
 ];
-/*
-echo "there are ".count($old_event_types). " items in \$old_event_types\n";
-echo "there are ".count($event_locations). " items in \$event_locations\n";
-$str = file_get_contents('./event-location-map.json');
-$data = \json_decode($str,\JSON_OBJECT_AS_ARRAY);
-echo "there are ".count($data). " items in whatever\n";
-exit;
-*/
 
 $event_types = \json_decode(file_get_contents(__DIR__.'/event-type-map.json'),\JSON_OBJECT_AS_ARRAY);
 if (! $event_types) {
@@ -158,7 +155,13 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         printf("shit. could not find any judge for this event:\n%s",print_r($e,true));
         exit(1);
     }
-    //print_r($e); print_r($params); echo "\n===================================\n";
+    // figure out the submitter !!!
+    printf ("%s %s\n",$e['submitter_name'],$e['submitter_hat']);
+    if (!$e['submitter_name']) {
+        print_r($e);
+        break;
+    }
+    //print_r($e); //print_r($params); echo "\n===================================\n";
     //if ($count == 200) { break; }
 
     // re-format the docket
@@ -169,9 +172,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         printf("shit. could not format docket number for this event:\n%s",print_r($e,true));
     }
 
-    echo "looking good at iteration $count\r"; usleep(2000);
+    //echo "looking good at iteration $count\r"; usleep(1000);
 
-    // figure out the submitter !!!
+    
 /*
 SELECT rb.id , h.id hat_id, h.name hat FROM dev_interpreters.request_class rb JOIN hats h ON rb.type = h.name;
 +----+--------+-------------+
