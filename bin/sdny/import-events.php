@@ -3,6 +3,8 @@
 /**
  * for importing events from our old database to the new - a work in progress
  */
+require(__DIR__.'/../../vendor/autoload.php');
+
 
 $db = require(__DIR__."/connect.php");
 
@@ -22,9 +24,6 @@ name, id FROM  view_locations WHERE category NOT IN ('courtroom', 'courthouse') 
 $locations[''] = null;
 // old_event_type_id => new_location_id
 $event_locations = create_event_location_map($old_event_types);
-
-$db->exec("set @from = '2009-01-01'");
-$db->exec("set @to = '2010-12-31'");
 
 $hats = [
 // old => new
@@ -122,11 +121,15 @@ $insert = 'INSERT INTO events (
         )';
 
 $db->exec('use dev_interpreters');
+$query .= "WHERE YEAR(event_date) BETWEEN 2001 AND 2004 ORDER BY e.event_id";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $db->exec('use office');
-
+$fucked = 0;
 $count = 0;
+$submitter_cache = [];
+$person_sql = 'select p.id FROM people p WHERE p.hat_id = :hat_id AND lastname = :lastname AND firstname = :firstname';
+$db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $count++;
     $params = [];
@@ -156,14 +159,40 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         exit(1);
     }
     // figure out the submitter !!!
-    printf ("%s %s\n",$e['submitter_name'],$e['submitter_hat']);
-    if (!$e['submitter_name']) {
-        print_r($e);
-        break;
-    }
+    /*Array
+(
+    [id] => 57559
+    [date] => 2009-01-12
+    [time] => 12:00:00
+    [end_time] => 
+    [docket] => 2009CR00012
+    [event_type_id] => 4
+    [type] => sentence
+    [language_id] => 62
+    [language] => Spanish
+    [judge_id] => 14
+    [judge_lastname] => Kaplan
+    [judge_firstname] => Lewis
+    [submission_date] => 2009-01-06
+    [submission_time] => 10:14:00
+    [submitter_id] => 32
+    [submitter_hat_id] => 5
+    [submitter_hat] => ctroom staff
+    [submitter_group] => Courtroom Deputy
+    [submitter] => Mohan, Andy
+    [submitter_group_id] => 1
+    [created] => 2009-01-06 10:15:42
+    [created_by] => 0
+    [modified] => 2009-01-12 11:02:42
+    [modified_by_id] => 2
+    [cancel_reason] => N/A
+    [comments] => 
+    [admin_comments] => 
+)
+*/
     //print_r($e); //print_r($params); echo "\n===================================\n";
     //if ($count == 200) { break; }
-
+    //printf("submitter: %s; id: %d; req_class id: %d\n",$e['submitter'] ?: "NULL",$e['submitter_id'],$e['submitter_hat_id']);
     // re-format the docket
     $docket = format_docket($e['docket']);
     if ($docket !== false) {
@@ -171,7 +200,17 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         printf("shit. could not format docket number for this event:\n%s",print_r($e,true));
     }
-
+    if ($e['submitter']===NULL) { 
+        $fucked++; 
+        printf("cannot determine submitter for event id %d\n",$e['id']);
+    } elseif ($e['submitter']=='[anonymous]') {
+        // $params[':anonymous_submitter_id'] = 
+        $params[':submitter_id'] = NULL;
+    } else {
+        
+        
+        
+    }
     //echo "looking good at iteration $count\r"; usleep(1000);
 
     
@@ -190,7 +229,7 @@ SELECT rb.id , h.id hat_id, h.name hat FROM dev_interpreters.request_class rb JO
     // figure out other meta:  created_by, modified_by_id
 
   }
-    echo "\n";
+    //echo "\n";
     /*Array
 (
     [id] => 110885
@@ -218,6 +257,11 @@ SELECT rb.id , h.id hat_id, h.name hat FROM dev_interpreters.request_class rb JO
     [admin_comments] =>
 )
 */
+
+printf("count: %d; fucked: %d\n",$count,$fucked);
+printf("memory usage %.2f MB\n",memory_get_usage()/1000000);
+printf("peak memory usage %.2f MB\n",memory_get_peak_usage()/1000000);
+
 
 
 

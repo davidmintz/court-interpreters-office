@@ -1,8 +1,16 @@
 /*  
-	import some AUSAs and defense attorneys for test purposes. 
+	import AUSAs, defense attorneys, and USAO staff. 
 	you can use 'mysql office --force < import-users.sql  
-*/
 
+track down inexact duplicates: 
+
+SELECT DISTINCT hat_id, h.name hat,lastname, firstname, email, p.id FROM people p JOIN hats h ON p.hat_id = h.id 
+WHERE CONCAT(lastname,"|",firstname) IN  ( SELECT  CONCAT(lastname,"|",firstname) 
+FROM people GROUP BY lastname,firstname,hat_id  HAVING COUNT(*) > 1) ORDER BY lastname, firstname ;
+
+SELECT lastname, firstname, h.name hat, hat_id, email, p.id FROM people p JOIN hats h ON p.hat_id = h.id  WHERE CONCAT(lastname,"|",firstname) IN  ( SELECT  CONCAT(lastname,"|",firstname)  FROM people GROUP BY lastname,firstname HAVING COUNT(*) > 1) ORDER BY lastname, firstname;
+
+*/
 INSERT INTO people (
 
 	hat_id,
