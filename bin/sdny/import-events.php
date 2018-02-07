@@ -70,6 +70,11 @@ $judges = $db->query($judge_sql)->fetchAll(PDO::FETCH_KEY_PAIR);
                     // theirs => ours
 $anonymous_judges = [22 => 1, 85 => 4, 82 => 2, 75 => 3,];
 
+// default creator is me
+$ID_DAVID = $db->query('select id from users where username = "david"')->fetchColumn();
+
+//printf("david is %d\n",$ID_DAVID);exit(0);
+
 // start with 3 months worth of (old) events data
 //$from = 'DATE_SUB(CURDATE(), INTERVAL 2 MONTH)';
 //$to   = 'DATE_ADD(CURDATE(), INTERVAL 1 MONTH)';
@@ -164,7 +169,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     [id] => 57559
     [date] => 2009-01-12
     [time] => 12:00:00
-    [end_time] => 
+    [end_time] =>
     [docket] => 2009CR00012
     [event_type_id] => 4
     [type] => sentence
@@ -186,8 +191,8 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     [modified] => 2009-01-12 11:02:42
     [modified_by_id] => 2
     [cancel_reason] => N/A
-    [comments] => 
-    [admin_comments] => 
+    [comments] =>
+    [admin_comments] =>
 )
 */
     //print_r($e); //print_r($params); echo "\n===================================\n";
@@ -200,20 +205,33 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         printf("shit. could not format docket number for this event:\n%s",print_r($e,true));
     }
-    if ($e['submitter']===NULL) { 
-        $fucked++; 
+    if ($e['submitter']===NULL) {
+        $fucked++;
         printf("cannot determine submitter for event id %d\n",$e['id']);
     } elseif ($e['submitter']=='[anonymous]') {
-        // $params[':anonymous_submitter_id'] = 
-        $params[':submitter_id'] = NULL;
+        // what is the submitter hat?
+        $hat_id = $e['submitter_hat_id'];
+        if (isset($hats[$hat_id])) {
+            $params[':anonymous_submitter_id'] = $hats[$hat_id];
+            $params[':submitter_id']  = NULL;
+        } else {
+            printf("event id %d: cannot figure out anon submitter, using admin user\n",
+                $e['id']
+            );
+            $params[':submitter_id'] = $ID_DAVID;
+            if ($e['admin_comments']) {
+                $params[':admin_comments'] .="\n";
+            }
+            $params[':admin_comments'] .= "metadata formerly was: submitted by unidentified courtroom personnel";
+        }
     } else {
-        
-        
-        
+        // figure out the person id!
+        printf("figure out person based on req_by = %d, req_class = %d a/k/a %s\n",
+            $e['submitter_id'], $e['submitter_hat_id'], $e['submitter']);
     }
     //echo "looking good at iteration $count\r"; usleep(1000);
 
-    
+
 /*
 SELECT rb.id , h.id hat_id, h.name hat FROM dev_interpreters.request_class rb JOIN hats h ON rb.type = h.name;
 +----+--------+-------------+

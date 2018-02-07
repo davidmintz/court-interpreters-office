@@ -509,6 +509,7 @@ CREATE TABLE `users` (
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `person_id` (`person_id`,`role_id`),
+  UNIQUE KEY `unique_username` (`username`),
   KEY `IDX_1483A5E9D60322AC` (`role_id`),
   CONSTRAINT `FK_1483A5E9D60322AC` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`)
@@ -562,4 +563,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-01 18:44:24
+-- Dump completed on 2018-02-06 18:51:14
