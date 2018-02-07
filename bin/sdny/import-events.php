@@ -112,7 +112,9 @@ $anonymous_judges = [22 => 1, 85 => 4, 82 => 2, 75 => 3,];
 // default creator is me
 $ID_DAVID = $db->query('select id from users where username = "david"')->fetchColumn();
 
-//printf("david is %d\n",$ID_DAVID);exit(0);
+$user_person_sql = 'select p.id FROM people p JOIN users u ON p.id = u.person_id WHERE p.active = :active AND p.email = :email';
+$user_person_stmt = $db->prepare($user_person_sql);
+
 
 // start with 3 months worth of (old) events data
 //$from = 'DATE_SUB(CURDATE(), INTERVAL 2 MONTH)';
@@ -174,14 +176,14 @@ if ($opts->to) {
     $query .= " = $from";
 }
 $query .= " ORDER BY e.event_id";
-exit;
+
 $stmt = $db->prepare($query);
 $stmt->execute();
 $db->exec('use office');
 $fucked = 0;
 $count = 0;
 $submitter_cache = [];
-$person_sql = 'select p.id FROM people p WHERE p.hat_id = :hat_id AND lastname = :lastname AND firstname = :firstname';
+
 $db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $count++;
@@ -233,7 +235,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     [submitter_hat_id] => 5
     [submitter_hat] => ctroom staff
     [submitter_group] => Courtroom Deputy
-    [submitter] => Mohan, Andy
+    [submitter] => Mohan, Andyevent data import
     [submitter_group_id] => 1
     [created] => 2009-01-06 10:15:42
     [created_by] => 0
@@ -311,8 +313,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         } else {
             // try to use original creator as submitter
             // otherwise fall back on me
-            if ($e['created_by']) {
-                
+            if ($e['created_by'] && key_exists($e['created_by'],$users)) {
+                $user = $users[$e['created_by']];
+                $params[':submitter_id'] = $user['person_id'];
             } else {
                 $params[':submitter_id'] = $ID_DAVID;
             }
@@ -320,15 +323,66 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             if ($e['admin_comments']) {
                 $params[':admin_comments'] .="\n";
             }
-            $params[':admin_comments'] .= "metadata formerly was: submitted by unidentified courtroom personnel";
+             $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s",
+                     $e['submitter_hat'] ?: 'person'
+             );
         }
     } else {
         // figure out the person id!
-        printf("figuring out person based on req_by = %d, req_class = %d a/k/a %s\n",
-            $e['submitter_id'], $e['submitter_hat_id'], $e['submitter']);
-        //printf("hat %s, hat id %d, group %s\n",);
+        //printf("figuring out person based on req_by = %d, req_class = %d a/k/a %s\n",
+        //    $e['submitter_id'], $e['submitter_hat_id'], $e['submitter']);
+        
+        if (! key_exists($e['submitter_hat_id'],$hats)) {
+            echo "FUCK?\n";
+        } else {
+            $submitter_hat_id = $hats[$e['submitter_hat_id']];
+            // $submitter_cache
+            if (null === $submitter_hat_id) {
+                if ($e['submitter_group'] == '[group unknown]') {
+                    // same deal: fall back on creator if possible
+                    if ($e['created_by'] && key_exists($e['created_by'],$users)) {
+                        $user = $users[$e['created_by']];
+                        $params[':submitter_id'] = $user['person_id'];
+                    } else {
+                        $params[':submitter_id'] = $ID_DAVID;
+                    }
+                    $meta_notes .= sprintf("metadata formerly was: submitted by %s",
+                    $e['submitter']);
+                } else {
+                    $email = $e['submitter_email'];
+                    $key = sprintf("%d-%d",$e['submitter_hat_id'],$e['submitter_id']);
+
+                    if (key_exists($key,$submitter_cache)) {
+                        $params[':submitter_id'] = $submitter_cache[$key];
+                        //printf("found %s in cache\n",$e['submitter']);
+                    } else {
+                        $user_person_stmt->execute([
+                           ':active'=>$e['submitter_active'],
+                           ':email' => $e['submitter_email']
+                        ]);
+                        $rows = $user_person_stmt->fetchAll();
+                        $row_count = count($rows);
+                        if ($row_count > 1) {
+                            printf("ambiguous identity in event id %d\n",$e['id']);exit(1);                        
+                        }
+                        if (! $row_count) {
+                            printf("could not locate submitter for event id %d: %s\n",
+                                    $e['id'],print_r($e,true));
+                            exit(1); 
+                        }
+                        $id = $rows[0]['id'];
+                        $submitter_cache[$key]=$id;
+                        $params[':submitter_id'] = $id;
+                        //printf("queried db for %s, cached as $key\n",$e['submitter']);
+                    }                    
+                }
+            } else {
+                echo "deal with: {$e['submitter_hat']} ({$e['submitter']})\n";
+            }
+        }
     }
-    //echo "looking good at iteration $count\r"; usleep(1000);
+    //echo "looking good at iteration $count\r"; 
+    //usleep(100);
 
 
 /*
@@ -375,7 +429,7 @@ SELECT rb.id , h.id hat_id, h.name hat FROM dev_interpreters.request_class rb JO
 )
 */
 
-printf("count: %d; fucked: %d\n",$count,$fucked);
+printf("\ncount: %d; fucked: %d\n",$count,$fucked);
 printf("memory usage %.2f MB\n",memory_get_usage()/1000000);
 printf("peak memory usage %.2f MB\n",memory_get_peak_usage()/1000000);
 

@@ -23,6 +23,8 @@ CASE
         "UNKNOWN"
 END AS submitter,
 g.id AS submitter_group_id,
+ru.active AS submitter_active,
+ru.email AS submitter_email,
 e.created, e.created_by AS created_by_id, u.name AS created_by,
 e.lastmod AS modified, e.lastmod_by AS modified_by_id,
 u_modifier.name as modified_by,
