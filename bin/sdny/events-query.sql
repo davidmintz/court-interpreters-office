@@ -18,7 +18,7 @@ CASE
     WHEN e.req_class = 4
     THEN CONCAT('lastname: ',i.lastname, '; firstname: ',i.firstname)
     WHEN e.req_class = 3
-    THEN CONCAT(u.name, "; staff user")
+    THEN CONCAT(u_submitter.name, "; staff user")
     ELSE
         "UNKNOWN"
 END AS submitter,

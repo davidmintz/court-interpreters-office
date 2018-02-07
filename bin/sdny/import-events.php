@@ -15,7 +15,7 @@ $opts = new Getopt(
 try { $opts->parse(); }
 catch (\Exception $e) {
     echo $e->getUsageMessage();
-    exit;
+    exit(1);
 }
 if (! $opts->from) {
     echo $opts->getUsageMessage();
@@ -115,6 +115,9 @@ $ID_DAVID = $db->query('select id from users where username = "david"')->fetchCo
 $user_person_sql = 'select p.id FROM people p JOIN users u ON p.id = u.person_id WHERE p.active = :active AND p.email = :email';
 $user_person_stmt = $db->prepare($user_person_sql);
 
+$submitter_person_stmt = $db->prepare(
+    'SELECT p.id FROM people p WHERE hat_id = :hat_id AND lastname = :lastname AND firstname = :firstname'
+);
 
 // start with 3 months worth of (old) events data
 //$from = 'DATE_SUB(CURDATE(), INTERVAL 2 MONTH)';
@@ -214,41 +217,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         printf("shit. could not find any judge for this event:\n%s",print_r($e,true));
         exit(1);
     }
-    // figure out the submitter !!!
-    /*Array
-(
-    [id] => 57559
-    [date] => 2009-01-12
-    [time] => 12:00:00
-    [end_time] =>
-    [docket] => 2009CR00012
-    [event_type_id] => 4
-    [type] => sentence
-    [language_id] => 62
-    [language] => Spanish
-    [judge_id] => 14
-    [judge_lastname] => Kaplan
-    [judge_firstname] => Lewis
-    [submission_date] => 2009-01-06
-    [submission_time] => 10:14:00
-    [submitter_id] => 32
-    [submitter_hat_id] => 5
-    [submitter_hat] => ctroom staff
-    [submitter_group] => Courtroom Deputy
-    [submitter] => Mohan, Andyevent data import
-    [submitter_group_id] => 1
-    [created] => 2009-01-06 10:15:42
-    [created_by] => 0
-    [modified] => 2009-01-12 11:02:42
-    [modified_by_id] => 2
-    [cancel_reason] => N/A
-    [comments] =>
-    [admin_comments] =>
-)
-*/
-    //print_r($e); //print_r($params); echo "\n===================================\n";
-    //if ($count == 200) { break; }
-    //printf("submitter: %s; id: %d; req_class id: %d\n",$e['submitter'] ?: "NULL",$e['submitter_id'],$e['submitter_hat_id']);
+
     // re-format the docket
     $docket = format_docket($e['docket']);
     if ($docket !== false) {
@@ -256,6 +225,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         printf("shit. could not format docket number for this event:\n%s",print_r($e,true));
     }
+    // figure out the submitter !!!
+    //printf("submitter: %s; id: %d; req_class id: %d\n",$e['submitter'] ?: "NULL",$e['submitter_id'],$e['submitter_hat_id']);
+
     if ($e['submitter']===NULL) {
         $fucked++;
         $meta_notes .= 'original request submitter unknown/unidentified. ';
@@ -270,41 +242,10 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $meta_notes .= 'event creator unknown, using admin user david as fallback.';
             $params[':submitter_id'] = $users['david']['person_id'];
         }
-        //echo "$meta_notes\n";
-        /*(
-    [id] => 1120
-    [date] => 2001-07-05
-    [time] => 09:00:00
-    [end_time] => 
-    [docket] => 2000CR01033
-    [event_type_id] => 19
-    [type] => probation MDC Brooklyn
-    [language_id] => 62
-    [language] => Spanish
-    [judge_id] => 6
-    [judge_lastname] => Preska
-    [judge_firstname] => Loretta
-    [submission_date] => 2001-07-02
-    [submission_time] => 10:03:00
-    [submitter_id] => 164
-    [submitter_hat_id] => 1
-    [submitter_hat] => AUSA
-    [submitter_group] => 
-    [submitter] => 
-    [submitter_group_id] => 
-    [created] => 2001-07-03 10:07:08
-    [created_by_id] => 0
-    [created_by] => eileen
-    [modified] => 2003-03-03 11:14:00
-    [modified_by_id] => 5
-    [modified_by] => pat
-    [cancel_reason] => N/A
-    [comments] => 
-    [admin_comments] => 
-)
-*/
+        
        
-    } elseif ($e['submitter']=='[anonymous]') {
+    } elseif ($e['submitter']=='[anonymous]') { 
+        // anonymous submitter
         // what is the submitter hat?
         $hat_id = $e['submitter_hat_id'];
         if (isset($hats[$hat_id])) {
@@ -319,65 +260,99 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             } else {
                 $params[':submitter_id'] = $ID_DAVID;
             }
-            
-            if ($e['admin_comments']) {
-                $params[':admin_comments'] .="\n";
-            }
              $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s",
                      $e['submitter_hat'] ?: 'person'
              );
         }
     } else {
-        // figure out the person id!
-        //printf("figuring out person based on req_by = %d, req_class = %d a/k/a %s\n",
-        //    $e['submitter_id'], $e['submitter_hat_id'], $e['submitter']);
+        // submitter is non-anonymous, and not NULL
         
         if (! key_exists($e['submitter_hat_id'],$hats)) {
-            echo "FUCK?\n";
-        } else {
-            $submitter_hat_id = $hats[$e['submitter_hat_id']];
-            // $submitter_cache
-            if (null === $submitter_hat_id) {
-                if ($e['submitter_group'] == '[group unknown]') {
-                    // same deal: fall back on creator if possible
-                    if ($e['created_by'] && key_exists($e['created_by'],$users)) {
-                        $user = $users[$e['created_by']];
-                        $params[':submitter_id'] = $user['person_id'];
-                    } else {
-                        $params[':submitter_id'] = $ID_DAVID;
-                    }
-                    $meta_notes .= sprintf("metadata formerly was: submitted by %s",
-                    $e['submitter']);
+            echo "FUCK? no hat equivalent to {$e['submitter_hat_id']}\n";
+            exit(1);
+        } 
+        $submitter_hat_id = $hats[$e['submitter_hat_id']];
+ 
+        if (null === $submitter_hat_id) {
+            if ($e['submitter_group'] == '[group unknown]') {
+                // same deal: fall back on creator if possible
+                if ($e['created_by'] && key_exists($e['created_by'],$users)) {
+                    $user = $users[$e['created_by']];
+                    $params[':submitter_id'] = $user['person_id'];
                 } else {
-                    $email = $e['submitter_email'];
-                    $key = sprintf("%d-%d",$e['submitter_hat_id'],$e['submitter_id']);
+                    $params[':submitter_id'] = $ID_DAVID;
+                }
+                $meta_notes .= sprintf("metadata formerly was: submitted by %s",
+                $e['submitter']);
+                
+            } else { // submitter group is not "unknown"
+                
+                //$email = $e['submitter_email'];
+                $key = sprintf("%d-%d",$e['submitter_hat_id'],$e['submitter_id']);
 
-                    if (key_exists($key,$submitter_cache)) {
-                        $params[':submitter_id'] = $submitter_cache[$key];
-                        //printf("found %s in cache\n",$e['submitter']);
-                    } else {
-                        $user_person_stmt->execute([
-                           ':active'=>$e['submitter_active'],
-                           ':email' => $e['submitter_email']
-                        ]);
-                        $rows = $user_person_stmt->fetchAll();
-                        $row_count = count($rows);
-                        if ($row_count > 1) {
-                            printf("ambiguous identity in event id %d\n",$e['id']);exit(1);                        
-                        }
-                        if (! $row_count) {
-                            printf("could not locate submitter for event id %d: %s\n",
-                                    $e['id'],print_r($e,true));
-                            exit(1); 
-                        }
-                        $id = $rows[0]['id'];
-                        $submitter_cache[$key]=$id;
-                        $params[':submitter_id'] = $id;
-                        //printf("queried db for %s, cached as $key\n",$e['submitter']);
-                    }                    
+                if (key_exists($key,$submitter_cache)) {
+                    $params[':submitter_id'] = $submitter_cache[$key];
+                    //printf("found %s in cache\n",$e['submitter']);
+                } else {
+                    $user_person_stmt->execute([
+                       ':active'=>$e['submitter_active'],
+                       ':email' => $e['submitter_email']
+                    ]);
+                    $rows = $user_person_stmt->fetchAll();
+                    $row_count = count($rows);
+                    if ($row_count > 1) {
+                        printf("ambiguous identity in event id %d\n",$e['id']);exit(1);                        
+                    }
+                    if (! $row_count) {
+                        printf("could not locate submitter for event id %d: %s\n",
+                                $e['id'],print_r($e,true));
+                        exit(1); 
+                    }
+                    $id = $rows[0]['id'];
+                    $submitter_cache[$key]=$id;
+                    $params[':submitter_id'] = $id;
+                    //printf("queried db for %s, cached as $key\n",$e['submitter']);
+                }                    
+            }
+        } else { // submitter_hat_id is NOT NULL
+            echo "dealing with: our hat $submitter_hat_id; {$e['submitter_hat']} ({$e['submitter']})\n";
+            //continue;
+            if (1 == $submitter_hat_id) {
+                // a staff user
+                $user = explode('; ',$e['submitter'])[0];
+                if ('eileen'==$user) {
+                    print_r($e); exit(1);
+                } else {
+                    //echo "submitter seems to be: $user\n"; continue;
+                    $params[':submitter_id'] = $users[$user]['person_id'];
                 }
             } else {
-                echo "deal with: {$e['submitter_hat']} ({$e['submitter']})\n";
+                
+                $key = sprintf("%d-%d",$e['submitter_hat_id'],$e['submitter_id']);
+                if (key_exists($key, $submitter_cache)) {
+                    $params[':submitter_id'] = $submitter_cache[$key];
+                } else {
+                    //lastname: Chan; firstname: Andrew                   
+                    preg_match('/lastname: (.+); firstname: (.*)$/',$e['submitter'],$n);
+                    if (!$n) {
+                        echo "FUCK????\n"; echo $e['submitter'],"\n";
+                        print_r($e);
+                        continue;
+                    }
+                    $shit = [':lastname' => $n[1], ':firstname' => $n[2], ':hat_id' => $submitter_hat_id];
+                    $submitter_person_stmt->execute($shit);
+                    $data = $submitter_person_stmt->fetchAll();                    
+                    $size = count($data);                    
+                    if ($size > 1) {
+                        printf("ambiguous identity for submitter, event id %d: %s\n",$e['id'],print_r($e,true));
+                        exit(1);
+                    } elseif (!$size) {
+                        printf("no identity found for submitter, event id %d: %s\n",$e['id'],print_r($e,true));
+                        exit(1);
+                    }
+                    $params[':submitter_id'] = $data[0]['id'];
+                    $submitter_cache[$key] =  $data[0]['id'];
+                }
             }
         }
     }
@@ -400,34 +375,7 @@ SELECT rb.id , h.id hat_id, h.name hat FROM dev_interpreters.request_class rb JO
     // figure out other meta:  created_by, modified_by_id
 
   }
-    //echo "\n";
-    /*Array
-(
-    [id] => 110885
-    [date] => 2017-11-01
-    [time] => 10:00:00
-    [end_time] => 11:15:00
-    [docket] => 2015CR00401
-    [event_type_id] => 2
-    [type] => plea
-    [language_id] => 62
-    [language] => Spanish
-    [judge_id] => 73
-    [judge_lastname] => Daniels
-    [judge_firstname] => George
-    [req_date] => 2017-10-30
-    [req_time] => 16:25:00
-    [req_by] => 458
-    [req_class] => 5
-    [created] => 2017-10-30 16:26:07
-    [created_by] => 27
-    [modified] => 2017-11-01 11:16:31
-    [modified_by_id] => 29
-    [cancel_reason] => N/A
-    [comments] => delayed
-    [admin_comments] =>
-)
-*/
+
 
 printf("\ncount: %d; fucked: %d\n",$count,$fucked);
 printf("memory usage %.2f MB\n",memory_get_usage()/1000000);
