@@ -4,8 +4,37 @@
  * for importing events from our old database to the new - a work in progress
  */
 require(__DIR__.'/../../vendor/autoload.php');
+use Zend\Console\Getopt;
 
-
+$opts = new Getopt(
+   [
+       'from|f=i' => "(starting) year from which to import events",
+       'to|t-i'   => "ending year"
+   ]
+);
+try { $opts->parse(); }
+catch (\Exception $e) {
+    echo $e->getUsageMessage();
+    exit;
+}
+if (! $opts->from) {
+    echo $opts->getUsageMessage();
+    exit(1);
+} else {
+    if ($opts->from < 2001 or $opts->from > date('Y')+2) {
+        echo $opts->getUsageMessage();
+        echo "$opts->from is not a valid year.\n";
+        exit(1);
+    }
+}
+$from = $opts->from;
+if ($opts->to) {
+    if ($opts->to < $from) {
+        echo $opts->getUsageMessage();
+        echo "--to year must be later than $from\n";
+        exit(1);
+    }
+}
 $db = require(__DIR__."/connect.php");
 
 // first: make sure all our non-courthouse locations have been inserted
@@ -38,6 +67,16 @@ $hats = [
     9 => null, // "other"
     10 => 11,   // usao staff
 ];
+$users = [];
+$user_data = $db
+        ->query('select username, role_id, id as user_id, person_id, du.user_id as old_user_id from users JOIN dev_interpreters.users du ON du.name = username where users.role_id <> 1')
+        ->fetchAll();
+foreach($user_data as $u) {
+    $username = $u['username'];
+    unset($u['username']);
+    $users[$username] = $u;
+}
+unset($user_data);
 
 $event_types = \json_decode(file_get_contents(__DIR__.'/event-type-map.json'),\JSON_OBJECT_AS_ARRAY);
 if (! $event_types) {
@@ -126,7 +165,16 @@ $insert = 'INSERT INTO events (
         )';
 
 $db->exec('use dev_interpreters');
-$query .= "WHERE YEAR(event_date) BETWEEN 2001 AND 2004 ORDER BY e.event_id";
+$query .= "WHERE YEAR(event_date) ";
+if ($opts->to) {
+    $query .= " BETWEEN $from AND $opts->to";
+    printf("fetching events for years %s through %s\n",$from,$opts->to);
+} else {
+    printf("fetching events for year %s\n",$from);
+    $query .= " = $from";
+}
+$query .= " ORDER BY e.event_id";
+exit;
 $stmt = $db->prepare($query);
 $stmt->execute();
 $db->exec('use office');
@@ -138,6 +186,7 @@ $db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $count++;
     $params = [];
+    $meta_notes = '';
     // the easy ones
     foreach(['id','date','time','end_time','language_id','comments','admin_comments'] as $column) {
         $params[":{$column}"]=$e[$column];
@@ -207,7 +256,52 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     }
     if ($e['submitter']===NULL) {
         $fucked++;
+        $meta_notes .= 'original request submitter unknown/unidentified. ';
         printf("cannot determine submitter for event id %d\n",$e['id']);
+        // try to use creator as submitter
+        if ($e['created_by_id']) {
+            $meta_notes .= 'using event creator as fallback';
+            $submitter = $users[$e['created_by']];
+            $params[':submitter_id'] =$submitter['person_id'];
+            
+        } else {
+            $meta_notes .= 'event creator unknown, using admin user david as fallback.';
+            $params[':submitter_id'] = $users['david']['person_id'];
+        }
+        //echo "$meta_notes\n";
+        /*(
+    [id] => 1120
+    [date] => 2001-07-05
+    [time] => 09:00:00
+    [end_time] => 
+    [docket] => 2000CR01033
+    [event_type_id] => 19
+    [type] => probation MDC Brooklyn
+    [language_id] => 62
+    [language] => Spanish
+    [judge_id] => 6
+    [judge_lastname] => Preska
+    [judge_firstname] => Loretta
+    [submission_date] => 2001-07-02
+    [submission_time] => 10:03:00
+    [submitter_id] => 164
+    [submitter_hat_id] => 1
+    [submitter_hat] => AUSA
+    [submitter_group] => 
+    [submitter] => 
+    [submitter_group_id] => 
+    [created] => 2001-07-03 10:07:08
+    [created_by_id] => 0
+    [created_by] => eileen
+    [modified] => 2003-03-03 11:14:00
+    [modified_by_id] => 5
+    [modified_by] => pat
+    [cancel_reason] => N/A
+    [comments] => 
+    [admin_comments] => 
+)
+*/
+       
     } elseif ($e['submitter']=='[anonymous]') {
         // what is the submitter hat?
         $hat_id = $e['submitter_hat_id'];
@@ -215,10 +309,14 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $params[':anonymous_submitter_id'] = $hats[$hat_id];
             $params[':submitter_id']  = NULL;
         } else {
-            printf("event id %d: cannot figure out anon submitter, using admin user\n",
-                $e['id']
-            );
-            $params[':submitter_id'] = $ID_DAVID;
+            // try to use original creator as submitter
+            // otherwise fall back on me
+            if ($e['created_by']) {
+                
+            } else {
+                $params[':submitter_id'] = $ID_DAVID;
+            }
+            
             if ($e['admin_comments']) {
                 $params[':admin_comments'] .="\n";
             }
