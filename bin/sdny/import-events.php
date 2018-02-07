@@ -226,8 +226,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         }
     } else {
         // figure out the person id!
-        printf("figure out person based on req_by = %d, req_class = %d a/k/a %s\n",
+        printf("figuring out person based on req_by = %d, req_class = %d a/k/a %s\n",
             $e['submitter_id'], $e['submitter_hat_id'], $e['submitter']);
+        //printf("hat %s, hat id %d, group %s\n",);
     }
     //echo "looking good at iteration $count\r"; usleep(1000);
 

@@ -15,13 +15,13 @@
 +----+------------------+
 
 */
-SELECT e.event_id AS id, e.event_date AS date, e.event_time AS time, e.end_time, e.docket, 
-e.proceeding_id  AS event_type_id, p.type, e.language_id, l.name language, 
+SELECT e.event_id AS id, e.event_date AS date, e.event_time AS time, e.end_time, e.docket,
+e.proceeding_id  AS event_type_id, p.type, e.language_id, l.name language,
 e.judge_id, j.lastname judge_lastname, j.firstname judge_firstname,
 
-e.req_date submission_date , 
-e.req_time submission_time, 
-e.req_by submitter_id, 
+e.req_date submission_date ,
+e.req_time submission_time,
+e.req_by submitter_id,
 e.req_class submitter_hat_id,
 rc.type AS submitter_hat,
 g.flavor AS submitter_group,
@@ -29,13 +29,13 @@ CASE
     WHEN e.req_by = 0
     THEN "[anonymous]"
     WHEN e.req_class IN (2,5,6)
-    THEN CONCAT('{"lastname":"',ru.lastname, '","firstname":"',ru.firstname,'"}')
+    THEN CONCAT('lastname: ',ru.lastname, '; firstname: ',ru.firstname)
     WHEN e.req_class IN (1,8,10)
-    THEN CONCAT('{"lastname":"',rb.lastname, '","firstname":"',rb.firstname,'"}')
+    THEN CONCAT('lastname: ',rb.lastname, '; firstname: ',rb.firstname)
     WHEN e.req_class = 4
-    THEN CONCAT('{"lastname":"',i.lastname, '","firstname":"',i.firstname,'"}')
+    THEN CONCAT('lastname: ',i.lastname, '; firstname: ',i.firstname)
     WHEN e.req_class = 3
-    THEN CONCAT(u.name, "; staff")
+    THEN CONCAT(u.name, "; staff user")
     ELSE
         "UNKNOWN"
 END AS submitter,
@@ -44,10 +44,10 @@ e.created, e.created_by, e.lastmod AS modified, e.lastmod_by AS modified_by_id,
 e.cancel_reason, e.notes AS comments, e.admin_notes AS admin_comments
 
 
-FROM events e 
+FROM events e
 
 
-JOIN proceedings p ON e.proceeding_id = p.proceeding_id 
+JOIN proceedings p ON e.proceeding_id = p.proceeding_id
 JOIN languages l ON l.lang_id = e.language_id
 JOIN judges j ON j.judge_id = e.judge_id
 LEFT JOIN request_class rc ON rc.id = e.req_class
