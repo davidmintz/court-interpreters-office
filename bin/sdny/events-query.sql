@@ -40,7 +40,7 @@ LEFT JOIN requests r ON r.event_id = e.event_id
 LEFT JOIN request_users ru ON ru.id = e.req_by
 LEFT JOIN request_by rb ON e.req_by = rb.id
 LEFT JOIN interpreters i ON e.req_by = i.interp_id
-LEFT JOIN groups g ON g.id = ru.group_id
+LEFT JOIN groups g ON g.id = ru.group_id AND e.req_class IN (2,5,6)
 LEFT JOIN users u_submitter ON u_submitter.user_id = e.req_by /*AND e.req_class = 3*/
 LEFT JOIN users u ON u.user_id = e.created_by
 LEFT JOIN users u_modifier ON u_modifier.user_id = e.lastmod_by
