@@ -36,7 +36,7 @@ if ($opts->to) {
     }
 }
 $db = require(__DIR__."/connect.php");
-
+$now = date("M-d-y H:i:s");
 // first: make sure all our non-courthouse locations have been inserted
 
 /* map old event-types to locations */
@@ -53,6 +53,9 @@ name, id FROM  view_locations WHERE category NOT IN ('courtroom', 'courthouse') 
 $locations[''] = null;
 // old_event_type_id => new_location_id
 $event_locations = create_event_location_map($old_event_types);
+
+$cancellations = array_flip(['N/A','deft not produced','no interpreter needed','adjourned w/o notice','party did not appear','forçe majeure','reason unknown','other']);
+
 
 $hats = [
 // old => new
@@ -143,7 +146,8 @@ $insert = 'INSERT INTO events (
             anonymous_submitter_id
             cancellation_reason_id
             modified_by_id
-            submission_datetime
+            submission_date,
+            submission_time)
         VALUES(
             :id
             :language_id
@@ -164,7 +168,8 @@ $insert = 'INSERT INTO events (
             :anonymous_submitter_id
             :cancellation_reason_id
             :modified_by_id
-            :submission_datetime
+            :submission_date,
+            :submission_time
         )';
 
 $db->exec('use dev_interpreters');
@@ -191,7 +196,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $params = [];
     $meta_notes = '';
     // the easy ones
-    foreach(['id','date','time','end_time','language_id','comments','admin_comments'] as $column) {
+    foreach(['id','date','time','end_time','language_id','comments','admin_comments','submission_date','submission_time'] as $column) {
         $params[":{$column}"]=$e[$column];
     }
     // event type is mapped
@@ -199,7 +204,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     // event locations is maybe mapped
     if (key_exists($e['event_type_id'],$event_locations)) {
-        $params[':location_id'] = $event_locations[$e['event_type_id']];
+        $params[':location_id'] = $event_locations[$e['event_type_id']];        
     } else {
         $params[':location_id'] = null;
     }
@@ -223,8 +228,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         printf("shit. could not format docket number for this event:\n%s",print_r($e,true));
     }
-    // figure out the submitter !!!
-    //printf("submitter: %s; id: %d; req_class id: %d\n",$e['submitter'] ?: "NULL",$e['submitter_id'],$e['submitter_hat_id']);
+    // figure out the submitter !!! ///////////////////////////////////////////
 
     if ($e['submitter']===NULL) {
         $fucked++;
@@ -275,7 +279,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         } else {
             $submitter_hat_id = $hats[$e['submitter_hat_id']];
         }
+        
         if (null === $submitter_hat_id) {
+            
             if ($e['submitter_group'] == '[group unknown]') {
                 // same deal: fall back on creator if possible
                 if ($e['created_by'] && key_exists($e['created_by'],$users)) {
@@ -361,9 +367,6 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             $e['id'],print_r($e,true));
                         echo "QUERY IS:\n$submitter_person_sql\nPARAMS ARE: ";
                         print_r($shit); exit(1);
-                        //$fucked++; continue;
-                        //$user_person_sql = 'select DISTINCT p.id FROM people p JOIN users u ON p.id = u.person_id WHERE p.active = :active AND p.email = :email';
-                        //$user_person_stmt = $db->prepare($user_person_sql);
                     }
                     $params[':submitter_id'] = $data[0]['id'];
                     $submitter_cache[$key] =  $data[0]['id'];
@@ -371,24 +374,31 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             }
         }
     }
-    //echo "looking good at iteration $count\r"; 
-    //usleep(100);
+    /// ------------   end figure out submitter identity ///////////////////////
+    
 
-
-/*
-SELECT rb.id , h.id hat_id, h.name hat FROM dev_interpreters.request_class rb JOIN hats h ON rb.type = h.name;
-+----+--------+-------------+
-| id | hat_id | hat         |
-+----+--------+-------------+
-|  1 |      5 | AUSA        |
-|  2 |      8 | USPO        |
-|  6 |     12 | Pretrial    |
-|  7 |     13 | Magistrates |
-+----+--------+-------------+
-*/
-
-    // figure out other meta:  created_by, modified_by_id
-
+    // figure out other meta:  created_by_id, modified_by_id
+    if (! $e['created_by_id'] or ! key_exists($e['created_by'], $users)) {
+        $meta_notes .= "\nidentity of original creator unknown --DMz $now";
+        $params[':created_by_id'] = $ID_DAVID;
+    } else {
+        $params[':created_by_id'] = $users[$e['created_by']]['user_id'];       
+    }
+    if (!$e['modified_by_id'] or ! key_exists($e['modified_by'], $users) ) {
+        $meta_notes .= "\nidentity of original last-updated-by unknown --DMz $now";
+        $params[':created_by_id'] = $ID_DAVID;
+    } else {
+         $params[':modified_by_id'] = $users[$e['modified_by']]['user_id'];   
+    }
+    // ['N/A','deft not produced','no interpreter needed','adjourned w/o notice','party did not appear','forçe majeure','reason unknown','other'];
+    if ($e['cancel_reason'] == 'N/A') {
+        $params[':cancellation_reason_id'] = NULL;
+    } else {
+        $params[':cancellation_reason_id'] = $cancellations[$e['cancel_reason']];
+    }
+    print_r($params);if ($count > 100) break;
+    //print_r($e); if ($count > 10) break;
+    echo "looking good at iteration $count\r"; 
   }
 
 
