@@ -197,6 +197,8 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $params = [];
     $meta_notes = '';
     // the easy ones
+   
+    
     foreach(['id','date','time','end_time','language_id','comments','admin_comments','submission_date','submission_time','created','modified'] as $column) {
         $params[":{$column}"]=$e[$column];
     }
@@ -267,13 +269,12 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 }                
             } else {
                 $params[':submitter_id'] = $users['david']['person_id'];
-            }
+            }            
             
-            $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s",
+        }
+        $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s",
                      $e['submitter_hat'] ?: 'person'
             );
-
-        }
     } else { // submitter is non-anonymous, and not NULL
         
         if (! key_exists($e['submitter_hat_id'],$hats)) {
@@ -335,6 +336,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 }                    
             }
         } else { // submitter_hat_id is NOT NULL
+        
             // echo "submitter: our hat $submitter_hat_id; {$e['submitter_hat']} ({$e['submitter']})\n";
             // continue;
             if (1 == $submitter_hat_id) {

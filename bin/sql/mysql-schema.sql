@@ -1,8 +1,8 @@
--- MySQL dump 10.16  Distrib 10.2.12-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.21, for Linux (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	10.2.12-MariaDB-10.2.12+maria~xenial-log
+-- Server version	5.7.21-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,7 +32,7 @@ CREATE TABLE `admin_users` (
   `password` varchar(16) NOT NULL,
   `created` datetime NOT NULL,
   `last_login` int(10) unsigned NOT NULL,
-  `active` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `active` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `map_to_userid` smallint(5) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idxUsername` (`username`)
@@ -55,18 +55,6 @@ CREATE TABLE `anonymous_judges` (
   KEY `IDX_5BD10E2D2BE3238` (`default_location_id`),
   CONSTRAINT `anonymous_judges_ibfk_1` FOREIGN KEY (`default_location_id`) REFERENCES `locations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `availability_invitees`
---
-
-DROP TABLE IF EXISTS `availability_invitees`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `availability_invitees` (
-  `interp_id` smallint(5) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,7 +82,7 @@ DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
   `name` char(120) NOT NULL DEFAULT '',
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `supercat_id` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `supercat_id` smallint(5) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -159,7 +147,7 @@ DROP TABLE IF EXISTS `defendants_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `defendants_events` (
-  `event_id` smallint(5) unsigned NOT NULL,
+  `event_id` mediumint(8) unsigned NOT NULL,
   `defendant_id` int(11) NOT NULL,
   PRIMARY KEY (`event_id`,`defendant_id`),
   KEY `IDX_DBDD360771F7E88B` (`event_id`),
@@ -211,7 +199,7 @@ DROP TABLE IF EXISTS `events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `events` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `language_id` smallint(5) unsigned NOT NULL,
   `judge_id` smallint(5) unsigned DEFAULT NULL,
   `submitter_id` smallint(5) unsigned DEFAULT NULL,
@@ -267,7 +255,7 @@ CREATE TABLE `hats` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `role_id` smallint(5) unsigned DEFAULT NULL,
   `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `can_be_anonymous` tinyint(1) NOT NULL DEFAULT 0,
+  `can_be_anonymous` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `hat_idx` (`name`),
   KEY `IDX_149C3D93D60322AC` (`role_id`),
@@ -327,7 +315,7 @@ DROP TABLE IF EXISTS `interpreters_events`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `interpreters_events` (
   `interpreter_id` smallint(5) unsigned NOT NULL,
-  `event_id` smallint(5) unsigned NOT NULL,
+  `event_id` mediumint(8) unsigned NOT NULL,
   `created` datetime NOT NULL,
   `created_by_id` smallint(5) unsigned NOT NULL,
   PRIMARY KEY (`interpreter_id`,`event_id`),
@@ -440,7 +428,7 @@ CREATE TABLE `locations` (
   `parent_location_id` smallint(5) unsigned DEFAULT NULL,
   `name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `comments` varchar(200) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_name_and_parent` (`name`,`parent_location_id`),
   KEY `IDX_17E64ABAC54C8C93` (`type_id`),
@@ -504,7 +492,7 @@ CREATE TABLE `users` (
   `role_id` smallint(5) unsigned NOT NULL,
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `username` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT 0,
+  `active` tinyint(1) NOT NULL DEFAULT '0',
   `last_login` datetime DEFAULT NULL,
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -524,23 +512,21 @@ DROP TABLE IF EXISTS `view_locations`;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE TABLE `view_locations` (
-  `id` tinyint NOT NULL,
-  `type_id` tinyint NOT NULL,
-  `parent_location_id` tinyint NOT NULL,
-  `name` tinyint NOT NULL,
-  `comments` tinyint NOT NULL,
-  `active` tinyint NOT NULL,
-  `parent` tinyint NOT NULL,
-  `category` tinyint NOT NULL
-) ENGINE=MyISAM */;
+/*!50001 CREATE VIEW `view_locations` AS SELECT 
+ 1 AS `id`,
+ 1 AS `type_id`,
+ 1 AS `parent_location_id`,
+ 1 AS `name`,
+ 1 AS `comments`,
+ 1 AS `active`,
+ 1 AS `parent`,
+ 1 AS `category`*/;
 SET character_set_client = @saved_cs_client;
 
 --
 -- Final view structure for view `view_locations`
 --
 
-/*!50001 DROP TABLE IF EXISTS `view_locations`*/;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -549,7 +535,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50001 VIEW `view_locations` AS select `locations`.`id` AS `id`,`locations`.`type_id` AS `type_id`,`locations`.`parent_location_id` AS `parent_location_id`,`locations`.`name` AS `name`,`locations`.`comments` AS `comments`,`locations`.`active` AS `active`,`parent`.`name` AS `parent`,`type`.`type` AS `category` from ((`locations` left join `locations` `parent` on(`locations`.`parent_location_id` = `parent`.`id`)) join `location_types` `type` on(`locations`.`type_id` = `type`.`id`)) */;
+/*!50001 VIEW `view_locations` AS select `locations`.`id` AS `id`,`locations`.`type_id` AS `type_id`,`locations`.`parent_location_id` AS `parent_location_id`,`locations`.`name` AS `name`,`locations`.`comments` AS `comments`,`locations`.`active` AS `active`,`parent`.`name` AS `parent`,`type`.`type` AS `category` from ((`locations` left join `locations` `parent` on((`locations`.`parent_location_id` = `parent`.`id`))) join `location_types` `type` on((`locations`.`type_id` = `type`.`id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -563,4 +549,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-06 18:51:14
+-- Dump completed on 2018-02-08 16:32:24

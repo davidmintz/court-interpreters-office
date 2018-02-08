@@ -118,7 +118,7 @@ foreach ($users as $user) {
         }
     } else {
         if ($user['person_id']) {
-            printf("\n%s has a fucking person id %d!!!\n",$user['name'],$user['person_id']);
+            
             // then the user should already exist in people
             // BUT should ALSO exist as an separate, extinct person-user (inactive)
             // with an 'interpreter staff' hat|office staff role 
