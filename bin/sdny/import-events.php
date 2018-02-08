@@ -236,7 +236,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     if ($e['submitter']===NULL) {
         $fucked++;
         $meta_notes .= 'original request submitter unknown/unidentified. ';
-        printf("cannot determine submitter for event id %d\n",$e['id']);
+        //printf("cannot determine submitter for event id %d\n",$e['id']);
         // try to use creator as submitter
         if ($e['created_by_id']) {
             $meta_notes .= 'using event creator as fallback';
@@ -396,9 +396,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         $params[':created_by_id'] = $users[$e['created_by']]['user_id'];       
     }
-    if (!$e['modified_by_id'] or ! key_exists($e['modified_by'], $users) ) {
+    if (! key_exists($e['modified_by'], $users) or !$e['modified_by_id']  ) {
         $meta_notes .= "\nidentity of original last-updated-by unknown --DMz $now";
-        $params[':created_by_id'] = $ID_DAVID;
+        $params[':modified_by_id'] = $ID_DAVID;
     } else {
          $params[':modified_by_id'] = $users[$e['modified_by']]['user_id'];   
     }
