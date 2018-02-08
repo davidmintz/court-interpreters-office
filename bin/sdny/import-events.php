@@ -112,12 +112,10 @@ $anonymous_judges = [22 => 1, 85 => 4, 82 => 2, 75 => 3,];
 // default creator is me
 $ID_DAVID = $db->query('select id from users where username = "david"')->fetchColumn();
 
-$user_person_sql = 'select p.id FROM people p JOIN users u ON p.id = u.person_id WHERE p.active = :active AND p.email = :email';
+$user_person_sql = 'select DISTINCT p.id FROM people p JOIN users u ON p.id = u.person_id WHERE p.active = :active AND p.email = :email';
 $user_person_stmt = $db->prepare($user_person_sql);
-
-$submitter_person_stmt = $db->prepare(
-    'SELECT p.id FROM people p WHERE hat_id = :hat_id AND lastname = :lastname AND firstname = :firstname'
-);
+$submitter_person_sql =  'SELECT p.id FROM people p WHERE hat_id = :hat_id AND lastname = :lastname AND firstname = :firstname';
+$submitter_person_stmt = $db->prepare($submitter_person_sql);
 
 // start with 3 months worth of (old) events data
 //$from = 'DATE_SUB(CURDATE(), INTERVAL 2 MONTH)';
@@ -242,7 +240,6 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $meta_notes .= 'event creator unknown, using admin user david as fallback.';
             $params[':submitter_id'] = $users['david']['person_id'];
         }
-        
        
     } elseif ($e['submitter']=='[anonymous]') { 
         // anonymous submitter
@@ -264,15 +261,20 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                      $e['submitter_hat'] ?: 'person'
              );
         }
-    } else {
-        // submitter is non-anonymous, and not NULL
+    } else { // submitter is non-anonymous, and not NULL
         
         if (! key_exists($e['submitter_hat_id'],$hats)) {
             echo "FUCK? no hat equivalent to {$e['submitter_hat_id']}\n";
             exit(1);
         } 
-        $submitter_hat_id = $hats[$e['submitter_hat_id']];
- 
+        
+        if ($e['submitter_group'] == 'Pretrial Services Officer') {
+            $submitter_hat_id = 9;
+        } elseif ($e['submitter_group'] == 'Law Clerk') {                    
+            $submitter_hat_id = 7;
+        } else {
+            $submitter_hat_id = $hats[$e['submitter_hat_id']];
+        }
         if (null === $submitter_hat_id) {
             if ($e['submitter_group'] == '[group unknown]') {
                 // same deal: fall back on creator if possible
@@ -301,7 +303,10 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $rows = $user_person_stmt->fetchAll();
                     $row_count = count($rows);
                     if ($row_count > 1) {
-                        printf("ambiguous identity in event id %d\n",$e['id']);exit(1);                        
+                        printf("ambiguous identity in event id %d\n",$e['id']);
+                        print_r($e);
+                        print_r($rows);
+                        exit(1);                        
                     }
                     if (! $row_count) {
                         printf("could not locate submitter for event id %d: %s\n",
@@ -315,7 +320,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 }                    
             }
         } else { // submitter_hat_id is NOT NULL
-            echo "dealing with: our hat $submitter_hat_id; {$e['submitter_hat']} ({$e['submitter']})\n";
+            echo "submitter: our hat $submitter_hat_id; {$e['submitter_hat']} ({$e['submitter']})\n";
             //continue;
             if (1 == $submitter_hat_id) {
                 // a staff user
@@ -339,16 +344,26 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         print_r($e);
                         continue;
                     }
+                    
                     $shit = [':lastname' => $n[1], ':firstname' => $n[2], ':hat_id' => $submitter_hat_id];
                     $submitter_person_stmt->execute($shit);
                     $data = $submitter_person_stmt->fetchAll();                    
                     $size = count($data);                    
                     if ($size > 1) {
-                        printf("ambiguous identity for submitter, event id %d: %s\n",$e['id'],print_r($e,true));
+                        printf("%d: ambiguous identity for submitter, event id %d: %s\n",
+                        __LINE__,
+                        $e['id'],print_r($e,true));
                         exit(1);
+                        //$fucked++; continue;
                     } elseif (!$size) {
-                        printf("no identity found for submitter, event id %d: %s\n",$e['id'],print_r($e,true));
-                        exit(1);
+                        printf("%d: no identity found for submitter, event id %d: %s\n",
+                            __LINE__,
+                            $e['id'],print_r($e,true));
+                        echo "QUERY IS:\n$submitter_person_sql\nPARAMS ARE: ";
+                        print_r($shit); exit(1);
+                        //$fucked++; continue;
+                        //$user_person_sql = 'select DISTINCT p.id FROM people p JOIN users u ON p.id = u.person_id WHERE p.active = :active AND p.email = :email';
+                        //$user_person_stmt = $db->prepare($user_person_sql);
                     }
                     $params[':submitter_id'] = $data[0]['id'];
                     $submitter_cache[$key] =  $data[0]['id'];
