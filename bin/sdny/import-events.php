@@ -126,48 +126,48 @@ $submitter_person_stmt = $db->prepare($submitter_person_sql);
 
 $query = file_get_contents(__DIR__.'/events-query.sql');
 
-$insert = 'INSERT INTO events (
-            id
-            language_id
-            judge_id
-            submitter_id
-            location_id
-            date
-            time
-            end_time
-            docket
-            comments
-            admin_comments
-            created
-            modified
-            event_type_id
-            created_by_id
-            anonymous_judge_id
-            anonymous_submitter_id
-            cancellation_reason_id
-            modified_by_id
+$insert_sql = 'INSERT INTO events (
+            id,
+            language_id,
+            judge_id,
+            submitter_id,
+            location_id,
+            date,
+            time,
+            end_time,
+            docket,
+            comments,
+            admin_comments,
+            created,
+            modified,
+            event_type_id,
+            created_by_id,
+            anonymous_judge_id,
+            anonymous_submitter_id,
+            cancellation_reason_id,
+            modified_by_id,
             submission_date,
             submission_time)
         VALUES(
-            :id
-            :language_id
-            :judge_id
-            :submitter_id
-            :location_id
-            :date
-            :time
-            :end_time
-            :docket
-            :comments
-            :admin_comments
-            :created
-            :modified
-            :event_type_id
-            :created_by_id
-            :anonymous_judge_id
-            :anonymous_submitter_id
-            :cancellation_reason_id
-            :modified_by_id
+            :id,
+            :language_id,
+            :judge_id,
+            :submitter_id,
+            :location_id,
+            :date,
+            :time,
+            :end_time,
+            :docket,
+            :comments,
+            :admin_comments,
+            :created,
+            :modified,
+            :event_type_id,
+            :created_by_id,
+            :anonymous_judge_id,
+            :anonymous_submitter_id,
+            :cancellation_reason_id,
+            :modified_by_id,
             :submission_date,
             :submission_time
         )';
@@ -186,6 +186,7 @@ $query .= " ORDER BY e.event_id";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $db->exec('use office');
+$event_insert = $db->prepare($insert_sql);
 $fucked = 0;
 $count = 0;
 $submitter_cache = [];
@@ -196,7 +197,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $params = [];
     $meta_notes = '';
     // the easy ones
-    foreach(['id','date','time','end_time','language_id','comments','admin_comments','submission_date','submission_time'] as $column) {
+    foreach(['id','date','time','end_time','language_id','comments','admin_comments','submission_date','submission_time','created','modified'] as $column) {
         $params[":{$column}"]=$e[$column];
     }
     // event type is mapped
@@ -212,9 +213,11 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     if (isset($judges[$e['judge_id']])) {
         // problem solved
         $params[':judge_id'] = $judges[$e['judge_id']];
+        $params[':anonymous_judge_id'] = null;
     } elseif (isset($anonymous_judges[$e['judge_id']])) {
         // likewise solved
         $params[':anonymous_judge_id'] = $anonymous_judges[$e['judge_id']];
+        $params[':judge_id'] = null;
     } else {
         // oops
         printf("shit. could not find any judge for this event:\n%s",print_r($e,true));
@@ -246,24 +249,30 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         }
        
     } elseif ($e['submitter']=='[anonymous]') { 
-        // anonymous submitter
-        // what is the submitter hat?
+        // anonymous submitter. what is the submitter hat?
         $hat_id = $e['submitter_hat_id'];
         if (isset($hats[$hat_id])) {
             $params[':anonymous_submitter_id'] = $hats[$hat_id];
             $params[':submitter_id']  = NULL;
+
         } else {
             // try to use original creator as submitter
             // otherwise fall back on me
-            if ($e['created_by'] && key_exists($e['created_by'],$users)) {
-                $user = $users[$e['created_by']];
-                $params[':submitter_id'] = $user['person_id'];
+            if ($e['created_by_id']) {
+                if (key_exists($e['created_by_id'],$users)) {
+                    $user = $users[$e['created_by']];
+                    $params[':submitter_id'] = $user['person_id'];
+                } else {
+                    $params[':submitter_id'] = $users['david']['person_id'];
+                }                
             } else {
-                $params[':submitter_id'] = $ID_DAVID;
+                $params[':submitter_id'] = $users['david']['person_id'];
             }
-             $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s",
+            
+            $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s",
                      $e['submitter_hat'] ?: 'person'
-             );
+            );
+
         }
     } else { // submitter is non-anonymous, and not NULL
         
@@ -326,8 +335,8 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 }                    
             }
         } else { // submitter_hat_id is NOT NULL
-            echo "submitter: our hat $submitter_hat_id; {$e['submitter_hat']} ({$e['submitter']})\n";
-            //continue;
+            // echo "submitter: our hat $submitter_hat_id; {$e['submitter_hat']} ({$e['submitter']})\n";
+            // continue;
             if (1 == $submitter_hat_id) {
                 // a staff user
                 $user = explode('; ',$e['submitter'])[0];
@@ -348,7 +357,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     if (!$n) {
                         echo "FUCK????\n"; echo $e['submitter'],"\n";
                         print_r($e);
-                        continue;
+                        exit(1);
                     }
                     
                     $shit = [':lastname' => $n[1], ':firstname' => $n[2], ':hat_id' => $submitter_hat_id];
@@ -373,6 +382,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 }
             }
         }
+        if (isset($params[':submitter_id'])) {
+            $params[':anonymous_submitter_id'] = null;
+        }
     }
     /// ------------   end figure out submitter identity ///////////////////////
     
@@ -396,8 +408,36 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         $params[':cancellation_reason_id'] = $cancellations[$e['cancel_reason']];
     }
-    print_r($params);if ($count > 100) break;
-    //print_r($e); if ($count > 10) break;
+    
+    if ($meta_notes) {
+        $meta_notes = trim($meta_notes);
+        if ($params[':admin_comments']) {
+            $params[':admin_comments'] .= "\n\n".$meta_notes;
+        } else {
+            $params[':admin_comments'] = $meta_notes;
+        }    $params[':anonymous_submitter_id'] = null;    
+    }
+    if (!assert($params[':anonymous_submitter_id'] === null xor $params[':submitter_id'] === null)) {
+        printf("shit failed anon-submitter XOR test at %d, parameters %s, data %s\n",
+                __LINE__,print_r($params,true),print_r($params,true));
+    }
+    if (!assert($params[':anonymous_judge_id'] === null xor $params[':judge_id'] === null)) {
+        printf("shit failed anon-judge XOR test at %d, parameters %s, data %s\n",
+                __LINE__,print_r($params,true),print_r($params,true));
+    }
+    
+    
+    try {
+        $event_insert->execute($params);
+    } catch (Exception $ex) {
+        printf("Shit. insert failed with event %d, data %s, params %s\nexception: %s\n",
+               $e['id'], print_r($e,true),print_r($params,true), $ex->getMessage()
+        );        
+        echo "YOU HAVE ".count($params). " parameters\n";
+        exit(1);
+    }
+    //print_r($e); 
+    //if ($count > 10) break;
     echo "looking good at iteration $count\r"; 
   }
 
