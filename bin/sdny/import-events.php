@@ -203,6 +203,7 @@ $submitter_cache = [];
 
 $db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
 while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    //if ($e['id'] != 4011) { continue; }
     $count++;
     $params = [];
     $meta_notes = '';
@@ -260,13 +261,18 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $params[':submitter_id'] = $users['david']['person_id'];
         }
        
-    } elseif ($e['submitter']=='[anonymous]') { 
+    } elseif ($e['submitter']=='[anonymous]') { //echo "\n", __LINE__ ,": HERE WE ARE WITH {$e['id']}\n";
+        
         // anonymous submitter. what is the submitter hat?
         $hat_id = $e['submitter_hat_id'];
         if (isset($hats[$hat_id])) {
             $params[':anonymous_submitter_id'] = $hats[$hat_id];
             $params[':submitter_id']  = NULL;
-
+            printf("at %d SHIT IS NOW submitter id %s, anon submitter is %s\n", __LINE__,
+                    $params[':submitter_id']?:"NULL",
+                    $params[':anonymous_submitter_id']?:"NULL"
+                    
+                 );
         } else {
             // try to use original creator as submitter
             // otherwise fall back on me
@@ -277,15 +283,18 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 } else {
                     $params[':submitter_id'] = $users['david']['person_id'];
                 }                
-            } else {
-                
+            } else {                
                 $params[':submitter_id'] = $users['david']['person_id'];
-            }            
+                $params[':anonymous_submitter_id'] = null;
+            }
+            //printf("\nthe submitter id is now: %s\n",$params[':submitter_id']?:"NULL");
+            //printf("at %d SHIT IS NOW submitter id %s, anon submitter is %s\n", __LINE__,$params[':submitter_id']?:"NULL",$params[':anonymous_submitter_id']?:"NULL");
             
         }
         $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s.",
                      $e['submitter_hat'] ?: 'person'
             );
+        
     } else { // submitter is non-anonymous, and not NULL
         
         if (! key_exists($e['submitter_hat_id'],$hats)) {
@@ -306,7 +315,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         } else {
             $submitter_hat_id = $hats[$e['submitter_hat_id']];
         }
-        
+        //printf("\nSHIT IS RUNNING AT %d with {$e['id']}\n",__LINE__);
         if (null === $submitter_hat_id) {
             
             if ($e['submitter_group'] == '[group unknown]') {
@@ -350,8 +359,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     //printf("queried db for %s, cached as $key\n",$e['submitter']);
                 }                    
             }
+            
         } else { // submitter_hat_id is NOT NULL
-        
+            
             // echo "submitter: our hat $submitter_hat_id; {$e['submitter_hat']} ({$e['submitter']})\n";
             // continue;
             if (1 == $submitter_hat_id) {
@@ -400,13 +410,13 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         $submitter_cache[$key] =  $data[0]['id'];
                     }
                 } else {
-                    
+                    // yes?
                 }                
             }
         }
-        if (isset($params[':submitter_id'])) {
-            $params[':anonymous_submitter_id'] = null;
-        }
+    }
+    if (isset($params[':submitter_id'])) {
+        $params[':anonymous_submitter_id'] = null;
     }
     /// ------------   end figure out submitter identity ///////////////////////
     
@@ -437,16 +447,16 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $params[':admin_comments'] .= "\n\n".$meta_notes;
         } else {
             $params[':admin_comments'] = $meta_notes;
-        }    $params[':anonymous_submitter_id'] = null;    
+        }    
     }
-    if (!assert($params[':anonymous_submitter_id'] === null xor $params[':submitter_id'] === null)) {
+    if (! ($params[':anonymous_submitter_id'] === null xor $params[':submitter_id'] === null)) {
         printf("shit failed anon-submitter XOR test at %d, parameters %s, data %s\n",
-                __LINE__,print_r($params,true),print_r($params,true));
+                __LINE__,print_r($params,true),print_r($e,true));
         exit(1);
     }
-    if (!assert($params[':anonymous_judge_id'] === null xor $params[':judge_id'] === null)) {
+    if (! ($params[':anonymous_judge_id'] === null xor $params[':judge_id'] === null)) {
         printf("shit failed anon-judge XOR test at %d, parameters %s, data %s\n",
-                __LINE__,print_r($params,true),print_r($params,true));
+                __LINE__,print_r($params,true),print_r($e,true));
         exit(1);
     }   
     
