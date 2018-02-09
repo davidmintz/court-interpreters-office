@@ -173,7 +173,7 @@ foreach ($users as $user) {
            try {
                 $params = [ // VALUES (:lastname, :firstname, :email,:hat_id, :discr, :active)'
                     ':email' => $user['user_email'] ?: $data['email'],
-                     ':active' => 0,
+                     ':active' => $user['active'],
                      ':discr' => 'person',
                      ':lastname' => $data['lastname'],
                      ':firstname' => $data['firstname'],

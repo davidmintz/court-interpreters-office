@@ -30,9 +30,7 @@ e.lastmod AS modified, e.lastmod_by AS modified_by_id,
 u_modifier.name as modified_by,
 e.cancel_reason, e.notes AS comments, e.admin_notes AS admin_comments
 
-
 FROM events e
-
 
 JOIN proceedings p ON e.proceeding_id = p.proceeding_id
 JOIN languages l ON l.lang_id = e.language_id
