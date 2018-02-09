@@ -25,7 +25,7 @@ use InterpretersOffice\Entity;
 /* some handy SQL
  SELECT e.id, e.date, e.time, t.name type, l.name language,
  COALESCE(j.lastname, a.name) AS judge, p.name AS place,
- COALESCE(s.lastname,as.name) submitter, submission_datetime FROM events e
+ COALESCE(s.lastname,as.name) submitter, submission_date, submission_time FROM events e
  JOIN event_types t ON e.event_type_id = t.id
  JOIN languages l ON e.language_id = l.id
  LEFT JOIN people j ON j.id = e.judge_id
