@@ -9,8 +9,8 @@ use Zend\Console\Getopt;
 $opts = new Getopt(
    [
        'from|f=i' => "(starting) year from which to import events",
-       'to|t-i'   => "ending year of range (inclusive)",
-       'begin-with-i' => "event id to begin with",
+       'to|t-i'   => "optional ending year of range (inclusive)",
+       'begin-with-i' => "optional event id to begin with",
    ]
 );
 try { $opts->parse(); }
@@ -268,11 +268,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         if (isset($hats[$hat_id])) {
             $params[':anonymous_submitter_id'] = $hats[$hat_id];
             $params[':submitter_id']  = NULL;
-            printf("at %d SHIT IS NOW submitter id %s, anon submitter is %s\n", __LINE__,
-                    $params[':submitter_id']?:"NULL",
-                    $params[':anonymous_submitter_id']?:"NULL"
-                    
-                 );
+            //printf("at %d SHIT IS NOW submitter id %s, anon submitter is %s\n", __LINE__,$params[':submitter_id']?:"NULL",$params[':anonymous_submitter_id']?:"NULL");
         } else {
             // try to use original creator as submitter
             // otherwise fall back on me
