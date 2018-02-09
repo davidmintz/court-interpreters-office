@@ -11,6 +11,7 @@ $opts = new Getopt(
        'from|f=i' => "(starting) year from which to import events",
        'to|t-i'   => "optional ending year of range (inclusive)",
        'begin-with-i' => "optional event id to begin with",
+       'import-only-s' => "event id(s) to import, one or more comma-separated"
    ]
 );
 try { $opts->parse(); }
@@ -18,24 +19,26 @@ catch (\Exception $e) {
     echo $e->getUsageMessage();
     exit(1);
 }
+$ids_to_import = $opts->{'import-only'};
 
-if (! $opts->from) {
+if (! $ids_to_import and ! $opts->from) {
     echo $opts->getUsageMessage();
     exit(1);
-} else {
+}
+if (! $ids_to_import) {
     if ($opts->from < 2001 or $opts->from > date('Y')+2) {
         echo $opts->getUsageMessage();
         echo "$opts->from is not a valid year.\n";
         exit(1);
     }
-}
-$from = $opts->from;
-if ($opts->to) {
-    if ($opts->to < $from) {
-        echo $opts->getUsageMessage();
-        echo "--to year must be later than $from\n";
-        exit(1);
-    }
+    $from = $opts->from;
+    if ($opts->to) {
+        if ($opts->to < $from) {
+            echo $opts->getUsageMessage();
+            echo "--to year must be later than $from\n";
+            exit(1);
+        }
+    }    
 }
 $id_to_begin_with = $opts->{'begin-with'};
 
@@ -177,7 +180,7 @@ $insert_sql = 'INSERT INTO events (
         )';
 
 $db->exec('use dev_interpreters');
-if (true) {
+if (! $ids_to_import) {
     $query .= "WHERE YEAR(event_date) ";
     if ($opts->to) {
         $query .= " BETWEEN $from AND $opts->to";
@@ -189,10 +192,12 @@ if (true) {
     if ($id_to_begin_with) {
         $query .= ' AND e.event_id >= '.$id_to_begin_with;
     }
+} else {
+    $query .= " WHERE e.event_id IN ($ids_to_import)";
 }
 //$query .= ' WHERE e.event_id = '. 48219;
 $query .= " ORDER BY e.event_id";
-
+exit("$query\n");
 $stmt = $db->prepare($query);
 $stmt->execute();
 $db->exec('use office');
@@ -208,8 +213,8 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $params = [];
     $meta_notes = '';
     // the easy ones
-   
-    
+
+
     foreach(['id','date','time','end_time','language_id','comments','admin_comments','submission_date','submission_time','created','modified'] as $column) {
         $params[":{$column}"]=$e[$column];
     }
@@ -218,7 +223,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     // event locations is maybe mapped
     if (key_exists($e['event_type_id'],$event_locations)) {
-        $params[':location_id'] = $event_locations[$e['event_type_id']];        
+        $params[':location_id'] = $event_locations[$e['event_type_id']];
     } else {
         $params[':location_id'] = null;
     }
@@ -246,7 +251,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     }
     // figure out the submitter !!! ///////////////////////////////////////////
     /** this is so twisted, it's really emabarassing. */
-    if ($e['submitter']===NULL) { 
+    if ($e['submitter']===NULL) {
         $fucked++;
         $meta_notes .= 'original request submitter unknown/unidentified. ';
         //printf("cannot determine submitter for event id %d\n",$e['id']);
@@ -255,14 +260,14 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $meta_notes .= 'using event creator as fallback';
             $submitter = $users[$e['created_by']];
             $params[':submitter_id'] = $submitter['person_id'];
-            
+
         } else {
             $meta_notes .= 'event creator unknown, using admin user david as fallback.';
             $params[':submitter_id'] = $users['david']['person_id'];
         }
-       
+
     } elseif ($e['submitter']=='[anonymous]') { //echo "\n", __LINE__ ,": HERE WE ARE WITH {$e['id']}\n";
-        
+
         // anonymous submitter. what is the submitter hat?
         $hat_id = $e['submitter_hat_id'];
         if (isset($hats[$hat_id])) {
@@ -278,29 +283,29 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $params[':submitter_id'] = $user['person_id'];
                 } else {
                     $params[':submitter_id'] = $users['david']['person_id'];
-                }                
-            } else {                
+                }
+            } else {
                 $params[':submitter_id'] = $users['david']['person_id'];
                 $params[':anonymous_submitter_id'] = null;
             }
             //printf("\nthe submitter id is now: %s\n",$params[':submitter_id']?:"NULL");
             //printf("at %d SHIT IS NOW submitter id %s, anon submitter is %s\n", __LINE__,$params[':submitter_id']?:"NULL",$params[':anonymous_submitter_id']?:"NULL");
-            
+
         }
         $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s.",
                      $e['submitter_hat'] ?: 'person'
             );
-        
+
     } else { // submitter is non-anonymous, and not NULL
-        
+
         if (! key_exists($e['submitter_hat_id'],$hats)) {
             echo "FUCK? no hat equivalent to {$e['submitter_hat_id']}\n";
             exit(1);
-        } 
-        
+        }
+
         if ($e['submitter_group'] == 'Pretrial Services Officer') {
             $submitter_hat_id = 9;
-        } elseif ($e['submitter_group'] == 'Law Clerk') {                    
+        } elseif ($e['submitter_group'] == 'Law Clerk') {
             $submitter_hat_id = 7;
         } elseif ($e['submitter_group'] == '[group unknown]') {
             // we will have to eat it
@@ -313,7 +318,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         }
         //printf("\nSHIT IS RUNNING AT %d with {$e['id']}\n",__LINE__);
         if (null === $submitter_hat_id) {
-            
+
             if ($e['submitter_group'] == '[group unknown]') {
                 // same deal: fall back on creator if possible
                 if ($e['created_by'] && key_exists($e['created_by'],$users)) {
@@ -324,9 +329,9 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 }
                 $meta_notes .= sprintf("metadata formerly was: submitted by %s.",
                 $e['submitter']);
-                
+
             } else { // submitter group is not "unknown"
-                
+
                 $key = sprintf("%d-%d",$e['submitter_hat_id'],$e['submitter_id']);
                 if (key_exists($key,$submitter_cache)) {
                     $params[':submitter_id'] = $submitter_cache[$key];
@@ -342,22 +347,22 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         printf("ambiguous identity in event id %d\n",$e['id']);
                         print_r($e);
                         print_r($rows);
-                        exit(1);                        
+                        exit(1);
                     }
                     if (! $row_count) {
                         printf("could not locate submitter for event id %d: %s\n",
                                 $e['id'],print_r($e,true));
-                        exit(1); 
+                        exit(1);
                     }
                     $id = $rows[0]['id'];
                     $submitter_cache[$key]=$id;
                     $params[':submitter_id'] = $id;
                     //printf("queried db for %s, cached as $key\n",$e['submitter']);
-                }                    
+                }
             }
-            
+
         } else { // submitter_hat_id is NOT NULL
-            
+
             // echo "submitter: our hat $submitter_hat_id; {$e['submitter_hat']} ({$e['submitter']})\n";
             // continue;
             if (1 == $submitter_hat_id) {
@@ -369,7 +374,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     //echo "submitter seems to be: $user\n"; continue;
                     $params[':submitter_id'] = $users[$user]['person_id'];
                 }
-                
+
             } else {
                 if ($e['submitter_group'] !== '[group unknown]') {
                     // then it has NOT yet been resolved
@@ -377,7 +382,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     if (key_exists($key, $submitter_cache)) {
                         $params[':submitter_id'] = $submitter_cache[$key];
                     } else {
-                        //lastname: Chan; firstname: Andrew                   
+                        //lastname: Chan; firstname: Andrew
                         preg_match('/lastname: (.+); firstname: (.*)$/',$e['submitter'],$n);
                         if (!$n) {
                             echo "FUCK????\n"; echo $e['submitter'],"\n";
@@ -387,8 +392,8 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                         $shit = [':lastname' => $n[1], ':firstname' => $n[2], ':hat_id' => $submitter_hat_id];
                         $submitter_person_stmt->execute($shit);
-                        $data = $submitter_person_stmt->fetchAll();                    
-                        $size = count($data);                    
+                        $data = $submitter_person_stmt->fetchAll();
+                        $size = count($data);
                         if ($size > 1) {
                             printf("%d: ambiguous identity for submitter, event id %d: %s\n",
                             __LINE__,
@@ -407,7 +412,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     }
                 } else {
                     // yes?
-                }                
+                }
             }
         }
     }
@@ -415,20 +420,20 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $params[':anonymous_submitter_id'] = null;
     }
     /// ------------   end figure out submitter identity ///////////////////////
-    
+
 
     // figure out other meta:  created_by_id, modified_by_id
     if (! $e['created_by_id'] or ! key_exists($e['created_by'], $users)) {
         $meta_notes .= "\nidentity of original creator unknown --DMz $now";
         $params[':created_by_id'] = $USER_ID_DAVID;
     } else {
-        $params[':created_by_id'] = $users[$e['created_by']]['user_id'];       
+        $params[':created_by_id'] = $users[$e['created_by']]['user_id'];
     }
     if (! key_exists($e['modified_by'], $users) or !$e['modified_by_id']  ) {
         $meta_notes .= "\nidentity of original last-updated-by unknown --DMz $now";
         $params[':modified_by_id'] = $USER_ID_DAVID;
     } else {
-         $params[':modified_by_id'] = $users[$e['modified_by']]['user_id'];   
+         $params[':modified_by_id'] = $users[$e['modified_by']]['user_id'];
     }
     // ['N/A','deft not produced','no interpreter needed','adjourned w/o notice','party did not appear','forçe majeure','reason unknown','other'];
     if ($e['cancel_reason'] == 'N/A') {
@@ -436,14 +441,14 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else {
         $params[':cancellation_reason_id'] = $cancellations[$e['cancel_reason']];
     }
-    
+
     if ($meta_notes) {
         $meta_notes = trim($meta_notes);
         if ($params[':admin_comments']) {
             $params[':admin_comments'] .= "\n\n".$meta_notes;
         } else {
             $params[':admin_comments'] = $meta_notes;
-        }    
+        }
     }
     if (! ($params[':anonymous_submitter_id'] === null xor $params[':submitter_id'] === null)) {
         printf("shit failed anon-submitter XOR test at %d, parameters %s, data %s\n",
@@ -454,21 +459,21 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         printf("shit failed anon-judge XOR test at %d, parameters %s, data %s\n",
                 __LINE__,print_r($params,true),print_r($e,true));
         exit(1);
-    }   
-    
-    
+    }
+
+
     try {
         $event_insert->execute($params);
     } catch (Exception $ex) {
         printf("Shit. insert failed with event %d, data %s, params %s\nexception: %s\n",
                $e['id'], print_r($e,true),print_r($params,true), $ex->getMessage()
-        );        
+        );
         echo "YOU HAVE ".count($params). " parameters\n";
         exit(1);
     }
-    //print_r($e); 
+    //print_r($e);
     //if ($count > 10) break;
-    echo "looking good at iteration $count\r"; 
+    echo "looking good at iteration $count\r";
   }
 
 
