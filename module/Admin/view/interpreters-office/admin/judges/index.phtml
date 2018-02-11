@@ -19,10 +19,10 @@ if (! $this->judges): ?>
 return;
 endif;
 ?>
-<pre><?php print_r($this->shit)?></pre>
+<pre><?php //print_r($this->shit)?></pre>
 <ul id="judges-list" class="list-group" style="max-width:400px">
 <?php
-foreach ($this->judges as $entity): break;?>
+foreach ($this->judges as $entity): //break;?>
     <li class="list-group-item">
         <a href="<?php echo $this->url('judges/edit',['id'=>$entity->getId()]) ?>"><?php
         echo $this->escapeHtml($entity)?>
