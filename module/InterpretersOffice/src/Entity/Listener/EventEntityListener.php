@@ -87,6 +87,7 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         }
         $this->getEventManager()->trigger(__FUNCTION__, $this);
     }
+    
     /**
      * preUpdate callback
      *
@@ -100,7 +101,13 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
     {
         
         $modified = false;
-        
+        $debug = '';
+        if ($args->getEntityChangeSet()) {
+            $modified = true;
+            // really?
+            $debug .= "what changed? "
+                    .print_r(array_keys($args->getEntityChangeSet()),true);
+        }
         $interpreters_before = $this->state_before['interpreter_ids'];
         $interpreters_after = [];
         $interpreterEvents = $eventEntity->getInterpreterEvents();
@@ -109,13 +116,13 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
                     $interpEvent->getInterpreter()->getId();
         }
         if ($interpreters_before != $interpreters_after) {            
-             $modified = true;            
+             $modified = true;
              $added = array_diff($interpreters_after,$interpreters_before);
              // client-side-supplied created_by should agree with 
              // currently authenticated user, but new entities can't get 
-             // inserted without a created_by id, so we have to check after
-             // the fact and correct if necessary (until we come up with a 
-             // better plan).
+             // inserted without a created_by id (we can't do cascade=persist 
+             // for Interpreter) so we have to check after the fact and correct 
+             // if necessary (until we come up with a better plan).
              
              /** @todo factor out into its own function?  */
              $current_user_id = $this->auth->getStorage()->read()->id;
@@ -146,23 +153,22 @@ class EventEntityListener implements  EventManagerAwareInterface, LoggerAwareInt
         }
         if ($defendants_after != $defendants_before) {
             $modified = true;
-        }
-
-        if ($modified) { // or count($other_props)) {
+        }        
+        if ($modified) {
             $eventEntity
                     ->setModified($this->now)
                     ->setModifiedBy(
                        $this->getAuthenticatedUser($args->getEntityManager()));
-            $debug = sprintf(
-                "real changes detected, updated event meta in with event id %s",
+            $debug .= sprintf(
+                " real changes detected, updating event meta for event id %s",
                     $eventEntity->getId()
             );
         } else {
-            $debug = "no actual update detected with event id "
+            $debug .= "no actual update detected with event id "
                     .$eventEntity->getId();
         }
-        $this->logger->debug($debug);
-       
+        
+        $this->logger->info($debug);       
     }
     
     
