@@ -67,10 +67,9 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f
         LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation pl ORDER BY
         j.lastname,j.firstname,j.middlename';
-        //print_r(get_class_methods($this->cache));
-
+        
         $data = $this->createQuery($dql, $this->cache_namespace)->getResult();
-        //$flavors = array_unique(array_column($data,'flavor'));
+        // $flavors = array_unique(array_column($data,'flavor'));
         /** @todo make this a config or something other than hard-coded */
         $judges = ['USDJ'=>[],'USMJ'=>[],'USBJ'=>[]];
         foreach($data as $j) {
