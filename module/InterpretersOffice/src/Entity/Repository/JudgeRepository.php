@@ -46,45 +46,68 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
     /**
      * gets all the Judge entities, sorted.
-     *
+     *f
      * @return array
      */
     public function findAll()
     {
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
                .'ORDER BY j.lastname, j.firstname';
-        
+
         return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
-    
+
+    public function list()
+    {
+        if ($this->cache->contains('judges-list')) {
+            return $this->cache->fetch('judges-list');
+        }
+        $dql = 'SELECT j.lastname, j.firstname, j.middlename, f.flavor,
+        j.active, l.name AS location, pl.name AS parent_location
+        FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f
+        LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation pl ORDER BY
+        j.lastname,j.firstname,j.middlename';
+        //print_r(get_class_methods($this->cache));
+
+        $data = $this->createQuery($dql, $this->cache_namespace)->getResult();
+        //$flavors = array_unique(array_column($data,'flavor'));
+        /** @todo make this a config or something other than hard-coded */
+        $judges = ['USDJ'=>[],'USMJ'=>[],'USBJ'=>[]];
+        foreach($data as $j) {
+            $judges[$j['flavor']][] = $j;
+        }
+        $this->cache->save('judges-list',$judges);
+
+        return $judges;
+    }
     /**
      * gets all the judge entities who are "active"
-     * 
+     *
      * @return array
      */
     public function findAllActive()
     {
         $dql = 'SELECT j FROM InterpretersOffice\Entity\Judge j '
                 . ' WHERE j.active = true ORDER BY j.lastname, j.firstname';
-        
+
         return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
-    
+
     /**
      * gets anonymous/generic judges
-     * 
-     * it may be a capital crime to put this here rather than in a separate 
+     *
+     * it may be a capital crime to put this here rather than in a separate
      * AnonymousJudgeRepository class, but for now, here it is
-     * 
+     *
      * @return array
      */
-        public function getAnonymousJudges()
+    public function getAnonymousJudges()
     {
         $dql = 'SELECT j FROM InterpretersOffice\Entity\AnonymousJudge j';
-        
+
         return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
-    
+
     /**
      * deletes cache
      *
@@ -130,45 +153,45 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
             ];
             $data[] = compact('label','value','attributes');
         }
-        
-        if (isset($options['include_pseudo_judges']) 
+
+        if (isset($options['include_pseudo_judges'])
                 && $options['include_pseudo_judges']) {
             $data = array_merge($data,$this->getPseudoJudgeOptions());
             usort($data,function($a,$b){
                 if ($this->isAnonymousButNotMagistrate($a)
-                   && 
-                   ! $this->isAnonymousButNotMagistrate($b)) {                    
+                   &&
+                   ! $this->isAnonymousButNotMagistrate($b)) {
                     return 1;
                 } elseif (! $this->isAnonymousButNotMagistrate($a)
-                   && 
+                   &&
                    $this->isAnonymousButNotMagistrate($b)) {
                     return -1;
                 }
                 return strnatcasecmp($a['label'], $b['label']);
             });
-        }        
-        return $data;     
+        }
+        return $data;
     }
-    
+
     /**
      * is $judge a pseudo-judge known as 'unknown' or 'not applicable'?
-     * 
+     *
      * a helper method for rigging the judge-sorting function that ensures
      * these pseudo-types are last
-     * 
+     *
      * @param array $judge
      * @return boolean
      */
     protected function isAnonymousButNotMagistrate(Array $judge) {
-        
+
         return preg_match('/^.?(:?unknown|not applicable)/i',$judge['label']);
     }
     /**
      * gets pseudo-judges
-     * 
+     *
      * helper to get anonymous (a/k/a pseudo-) judges for populating a select
      * elements
-     * 
+     *
      * @return array
      */
     protected function getPseudoJudgeOptions()
@@ -194,19 +217,19 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 $label .= ", $pjudge[parent_location]";
             }
             $attributes = [
-                'data-pseudojudge' => 1, 
+                'data-pseudojudge' => 1,
                 'data-default_location' => $pjudge['default_location_id'],
-                'data-default_parent_location' => 
+                'data-default_parent_location' =>
                     $pjudge['default_parent_location_id'],];
-            $data[] = compact('label','value','attributes');                
-        }       
+            $data[] = compact('label','value','attributes');
+        }
         return $data;
     }
-    
+
     /**
      * experimental method. @todo change argument to SomethingInterface
      * of which both Judge and AnonymousJudge are implementations?
-     * 
+     *
      * @param \InterpretersOffice\Entity\AnonymousJudge $judge
      * @return string
      */
