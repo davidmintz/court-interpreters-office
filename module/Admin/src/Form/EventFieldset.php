@@ -410,7 +410,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'id' => 'submission_date',
                 'class' => 'date form-control',
-                'placeholder'=> 'date request was received',
+                'placeholder'=> 'date',
             ],
              'options' => [
                 'label' => 'requested on',
@@ -425,7 +425,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'id' => 'submission_time',
                 'class' => 'time form-control',
-                'placeholder'=> 'time request was received',
+                'placeholder'=> 'time',
             ],
              'options' => [
                 'label' => 'time',
