@@ -208,13 +208,16 @@ echo $this->form()->openTag($form); ?>
             </div>
         </div>
         <div class="form-group form-row">               
-                <label class="col-form-label col-4" for="submission_date">submitted on</label>
-                <div class="col-4"><?php $element = $fieldset->get('submission_date');
-                  echo $this->formElement($element),$this->formElementErrors($element);?></div>
-                <label class="col-1 col-form-label text-center" for="end_time">at</label>
-                <div class="col-3"><?php $element = $fieldset->get('submission_time');
-                echo $this->formElement($element),$this->formElementErrors($element);?></div>                                  
+            <label class="col-form-label col-4" for="submission_date">submitted on</label>
+            <div class="col-4"><?php $element_date = $fieldset->get('submission_date');
+              echo $this->formElement($element_date);?></div>
+            <label class="col-1 col-form-label text-right" for="end_time">at</label>
+            <div class="col-3"><?php $element_time = $fieldset->get('submission_time');
+            echo $this->formElement($element_time)?></div>
+            <div class="offset-4 col-4"><?php echo $this->formElementErrors($element_date);?></div>
+            <div class="col-4"><?php echo $this->formElementErrors($element_time);?></div>
          </div>
+
         <?php $element = $fieldset->get('cancellationReason');?>
         <div class="form-group form-row my-2">
             <label class="col-form-label pr-1 col-sm-4" for="<?php echo $element->getAttribute('id')?>">cancellation</label>
