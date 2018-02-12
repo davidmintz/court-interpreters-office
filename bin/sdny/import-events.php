@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * for importing events from our old database to the new - a work in progress
+ * for importing events from our old database to the new 
  */
 require(__DIR__.'/../../vendor/autoload.php');
 use Zend\Console\Getopt;
@@ -63,6 +63,7 @@ $event_locations = create_event_location_map($old_event_types);
 
 $cancellations = array_flip(['N/A','deft not produced','no interpreter needed','adjourned w/o notice','party did not appear','forçe majeure','reason unknown','other']);
 
+// good to know: WHERE REGEXP '.*mag(i?s(trates?)?)? +cal'
 
 $hats = [
 // old => new
@@ -290,9 +291,12 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             //printf("at %d SHIT IS NOW submitter id %s, anon submitter is %s\n", __LINE__,$params[':submitter_id']?:"NULL",$params[':anonymous_submitter_id']?:"NULL");
 
         }
-        $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s.",
+        if (! in_array($e['submitter_hat'],['Pretrial','Magistrate','defense atty'])) {
+            $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s.",
                      $e['submitter_hat'] ?: 'person'
             );
+        }
+        
 
     } else { // submitter is non-anonymous, and not NULL
 
