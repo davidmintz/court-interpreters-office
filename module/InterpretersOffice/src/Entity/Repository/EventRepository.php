@@ -7,6 +7,8 @@ namespace InterpretersOffice\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
 
+use InterpretersOffice\Entity;
+
 /**
  * EventRepository
  *
@@ -108,5 +110,70 @@ DQL;
 
         return $result;
         
+    }
+    
+    /**
+     * gets the schedule 
+     * 
+     * @param array $options
+     * @return array
+     */
+    public function getSchedule(Array $options = [])
+    {
+        if (! isset($options['date'])) {
+            $options['date'] = date('Y-m-d');
+        }
+        $dql = 'SELECT e.id, e.date, e.time, 
+         COALESCE(j.lastname, aj.name) AS judge, 
+         t.name AS type,
+         lang.name AS language,
+         e.docket,
+         e.comments,
+         loc.name AS location,
+         ploc.name AS parent_location,
+         cat.category
+         FROM InterpretersOffice\Entity\Event e
+         LEFT JOIN e.judge j 
+         JOIN e.eventType t
+         JOIN t.category cat
+         LEFT JOIN e.anonymousJudge aj
+         JOIN e.language lang            
+         LEFT JOIN e.location loc
+         LEFT JOIN loc.parentLocation ploc 
+         WHERE e.date = :date
+         ORDER BY e.time';
+        
+        $data = $this->getEntityManager()->createQuery($dql)
+                ->setParameters([':date'=>$options['date']])
+                ->getResult();
+        
+        return $data;
+    }
+    
+    /**
+     * gets defendant names for a given set of events
+     * 
+     * @param array $options
+     * @return array
+     */
+    public function getDefendants(Array $options)
+    {
+        // this is bullshit as of right now
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('d.surnames')->from(Entity\DefendantName::class, 'd')
+        ->join(Entity\Event::class,'e')->where('e.date = :date')->setParameters([':date'=>new \DateTime()]);
+        echo $qb->getDQL();
+        $result = $qb->getQuery()->getResult();
+        echo " SHIT: " ,count($result);
+        return $result;
+    }
+    
+    /**
+     * @param array $options
+     * @return array
+     */
+    public function getInterpreters(Array $options)
+    {
+        return [];
     }
 }
