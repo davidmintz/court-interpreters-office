@@ -148,7 +148,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
                && $new_value->format('g:i a')==$old_value->format('g:i a')
             )) {
                 $setter = 's'.substr($getter,1);
-                $entity->$setter($this->$old_value);
+                $entity->$setter($old_value);
             }                    
         }
     }
