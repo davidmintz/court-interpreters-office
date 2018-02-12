@@ -50,7 +50,8 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
      * 
      * @var array
      */
-    protected $datetime_props = ['date','time','end_time','submission_date', 'submission_time'];  
+    protected $datetime_props = 
+            ['date','time','end_time','submission_date', 'submission_time'];  
     
     /**
      * holds state of datetime fields
@@ -98,61 +99,58 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     }
     
     /**
-     * entity load event listener
+     * Entity load event listener
      * 
-     * runs after entity is fetched but before form data is set
+     * Runs after entity is fetched, but before form data is set. We save the 
+     * original DateTime instances for later comparison so we can avoid wasting
+     * a needless update query.
      * 
      * @param EventInterface $e
      * @return void
      */
     public function postLoad(EventInterface $e)
-    {
-        
-        $entity = $e->getParam('entity');
-        $id = $entity->getId();
-        $fieldset = $this->get('event');
-        // store state of date/time fields as strings for later comparison
-        // using a consistent format
-        foreach ($this->datetime_props as $prop) {
-            if (in_array($prop,['time','end_time','submission_time',])) {
-                $format = 'g:i a';                                                            
-            } else {
-                $format = 'm/d/Y';
-            }
+    {        
+        $entity = $e->getParam('entity');        
+        foreach ($this->datetime_props as $prop) {            
             if (strstr($prop, '_')) {
-                $getter = 'get'.ucfirst(str_replace('_', '',$prop));
-                
+                $getter = 'get'.ucfirst(str_replace('_', '',$prop));                
             } else {
                 $getter = 'get'.ucfirst($prop);
-            }            
-            $value = $entity->$getter();
-            $this->state_before[$prop] = $value ? 
-                    $value->format($format) : null;
-        }
-        
+            }                        
+            $this->state_before[$prop] = $entity->$getter();
+        }        
     }
    
     /**
-     * removes unmodified datetime elements
+     * resets datetime properties to their original instances, if unchanged
      * 
-     * Checks whether date/time fields have been modified, and removes them if
-     * they have not. We do this to stop Doctrine from wasting an update query 
-     * when no data has actually changed.
+     * Checks whether date/time fields actual values been modified (not just the 
+     * object instances), and restores them if they have not. We do this to stop 
+     * Doctrine from wasting an update query when no data has actually changed.
      * 
      * @param EventInterface $e
      * @return void
      */
     public function postValidate(EventInterface $e)
     {
-        $input = $e->getTarget()->getRequest()->getPost();
-        $event = $input->get('event');
+        $entity = $this->getObject();
         foreach ($this->datetime_props as $prop) {
-            if ($event[$prop] == $this->state_before[$prop]) {   
-                //echo "$prop is now: {$event[$prop]}; was: {$this->state_before[$prop]}<br>";
-                //echo "$prop DID NOT CHANGE. removing $field_name<br>";
-                $this->get('event')->remove($prop);
-            }// else { echo "$prop has been modified... " ;}
-        }        
+
+            if (strstr($prop, '_')) {
+                $getter = 'get'.ucfirst(str_replace('_', '',$prop));                
+            } else {
+                $getter = 'get'.ucfirst($prop);
+            }            
+            $new_value = $entity->$getter();
+            $old_value = $this->state_before[$prop];
+            if ($old_value == $new_value or
+                (in_array($prop,['time','end_time','submission_time']) 
+               && $new_value->format('g:i a')==$old_value->format('g:i a')
+            )) {
+                $setter = 's'.substr($getter,1);
+                $entity->$setter($this->$old_value);
+            }                    
+        }
     }
     
    /**
@@ -231,12 +229,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             $event['anonymousSubmitter'] = null;
             // printf("did we just fuck ourself at %d?<br>",__LINE__);
         }
-        /*
-        if (!empty($event['submission_date']) && !empty($event['submission_time'])) {
-            $event['submission_datetime'] =
-                (new \DateTime("$event[submission_date] $event[submission_time]"))
-                    ->format("Y-m-d H:i:s");
-        }*/
+
         if (isset($event['defendantNames'])) {
             $event['defendantNames'] = array_keys($event['defendantNames']);
         }
