@@ -471,7 +471,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
  }
 
 
-printf("\ninserts: %d: %d\n",$count);
+printf("\ninserts: %d\n",$count);
 printf("memory usage %.2f MB\n",memory_get_usage()/1000000);
 printf("peak memory usage %.2f MB\n",memory_get_peak_usage()/1000000);
 
