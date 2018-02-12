@@ -46,7 +46,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
     /**
      * gets all the Judge entities, sorted.
-     *f
+     * 
      * @return array
      */
     public function findAll()
