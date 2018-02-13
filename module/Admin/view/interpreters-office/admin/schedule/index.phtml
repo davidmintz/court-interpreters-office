@@ -7,10 +7,9 @@ elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false); 
 endif;?>
 <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
-<pre><?php print_r($this->defts) ?></pre>
+<pre><?php //print_r($this->defts) ?></pre>
 <?php
-if ($this->data) :    
-    ?>
+if ($this->data) : ?>
 <table class="table table-hover table-bordered table-sm">
     <thead>
         <tr>
@@ -25,19 +24,16 @@ if ($this->data) :
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($this->data as $e): 
-           if ($e['category'] == 'not applicable') : 
-               $e['category'] = 'not-applicable';
-            endif;
+        <?php foreach ($this->data as $e):            
         ?>
-        <tr class="type-<?php echo $e['category'] ?>">
-            <td><?php echo $e['time']->format('h:i a')?></td>
-            <td><?php echo $e['type']?></td>
-            <td><?php echo $e['judge']?></td>
+        <tr data-id="<?php echo $e['id']?>" class="event-category-<?php echo str_replace(' ','-',$e['category']) ?>">
+            <td class="text-right text-nowrap"><?php echo $e['time']->format('g:i a')?></td>
+            <td style="line-height:1.2em" class="py-2"><?php echo $e['type']?></td>
+            <td class="text-nowrap"><?php echo $e['judge']?></td>
             <td><?php echo $e['language']?></td>
-            <td><?php echo substr($e['docket'],2)?></td>
+            <td class="text-nowrap"><?php echo substr($e['docket'],2)?></td>
             <td class="defendants">...</td>
-            <td><?php echo $e['comments']?></td>
+            <td style="line-height: 110%; font-size: 95%"><?php echo $e['comments']?></td>
             <td class="interpreters-assigned">...</td>
         </tr>
         <?php endforeach; ?>
