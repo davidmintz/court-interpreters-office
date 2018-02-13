@@ -34,9 +34,8 @@ class ScheduleController extends AbstractActionController
     {
         $repo = $this->entityManager->getRepository(Entity\Event::class);
         $data = $repo->getSchedule();
-        $defts = $repo->getDefendants([]);
         
-        return ['data'=>$data,'defts'=>$defts];
+        return ['data' => $data];
 
     }
 }
