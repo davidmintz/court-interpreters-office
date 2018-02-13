@@ -115,7 +115,7 @@ return [
              * Expects: bool
              * Default: false
              */
-            'enabled' => false,
+            'enabled' => include(__DIR__.'/toolbar.enabled.php'),
 
             /*
              * If enabled, every empty collector will be hidden.
