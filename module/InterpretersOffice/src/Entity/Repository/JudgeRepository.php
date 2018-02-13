@@ -56,8 +56,13 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
         return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
-
-    public function list()
+    
+    /**
+     * gets a listing of judges with default courtrooms
+     * 
+     * @return array
+     */
+    public function getList()
     {
         if ($this->cache->contains('judges-list')) {
             return $this->cache->fetch('judges-list');
@@ -79,6 +84,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
         return $judges;
     }
+    
     /**
      * gets all the judge entities who are "active"
      *
@@ -209,11 +215,11 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         foreach ($pseudo_judges as $pjudge) {
             $value = $pjudge['id'];
             $label = $pjudge['name'];
-            if ($pjudge['location']) {
-                $label .= " - $pjudge[location]";
-            }
             if ($pjudge['parent_location']) {
-                $label .= ", $pjudge[parent_location]";
+                $label .= " - $pjudge[parent_location]";
+            } elseif ($pjudge['location'])
+            {
+                $label .= " - $pjudge[location]";
             }
             $attributes = [
                 'data-pseudojudge' => 1,

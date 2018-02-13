@@ -44,7 +44,7 @@ class JudgesController extends AbstractActionController
                 ->getRepository('InterpretersOffice\Entity\Judge')
                 ->findAll();
         $shit = $this->entityManager
-                ->getRepository('InterpretersOffice\Entity\Judge')->list();
+                ->getRepository('InterpretersOffice\Entity\Judge')->getList();
         
         return new ViewModel(['title' => 'judges', 'judges' => $judges, 'shit' => $shit]);
     }
