@@ -188,7 +188,7 @@ class Event
      *
      * @see DefendantName
      *
-     * @ORM\ManyToMany(targetEntity="DefendantName",fetch="EAGER",cascade="remove") //,inversedBy="Events",
+     * @ORM\ManyToMany(targetEntity="DefendantName",fetch="EAGER",cascade="remove",inversedBy="events")
      * @ORM\JoinTable(name="defendants_events",
      *  joinColumns={@ORM\JoinColumn(name="event_id", referencedColumnName="id")},
      *  inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})

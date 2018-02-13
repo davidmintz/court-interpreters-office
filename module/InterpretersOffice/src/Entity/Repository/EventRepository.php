@@ -9,15 +9,20 @@ use Doctrine\Common\Cache\CacheProvider;
 
 use InterpretersOffice\Entity;
 
+
+
 /**
  * EventRepository
  *
  */
-class EventRepository extends EntityRepository
+class EventRepository extends EntityRepository implements CacheDeletionInterface
 {
     
     /**
      * DQL statement for human-friendly representation of Event
+     * 
+     * note to self: maybe re-implement with querybuilder as a learning
+     * exercise, and because Doctrine recommends it?
      * 
      * @var string 
      */
@@ -64,8 +69,22 @@ DQL;
     {       
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
-        $this->cache->setNamespace('events');
+        $this->cache->setNamespace($this->cache_namespace);
     }
+    
+    /**
+     * query result cache
+     * 
+     * @var \Doctrine\Common\Cache\Cache
+     */
+    protected $cache;
+    
+    /**
+     * cache namespace
+     * 
+     * @var string
+     */
+    protected $cache_namespace = 'events';
     
     /**
      * returns human-readable representation of event
@@ -115,6 +134,8 @@ DQL;
     /**
      * gets the schedule 
      * 
+     * to be continued
+     * 
      * @param array $options
      * @return array
      */
@@ -127,11 +148,11 @@ DQL;
          COALESCE(j.lastname, aj.name) AS judge, 
          t.name AS type,
          lang.name AS language,
-         e.docket,
-         e.comments,
+         e.docket, e.comments,
          loc.name AS location,
          ploc.name AS parent_location,
-         cat.category
+         cat.category,
+         loc_type.type AS location_type
          FROM InterpretersOffice\Entity\Event e
          LEFT JOIN e.judge j 
          JOIN e.eventType t
@@ -139,41 +160,77 @@ DQL;
          LEFT JOIN e.anonymousJudge aj
          JOIN e.language lang            
          LEFT JOIN e.location loc
+         LEFT JOIN loc.type as loc_type
          LEFT JOIN loc.parentLocation ploc 
          WHERE e.date = :date
          ORDER BY e.time';
         
-        $data = $this->getEntityManager()->createQuery($dql)
+        $events = $this->getEntityManager()->createQuery($dql)
                 ->setParameters([':date'=>$options['date']])
+                ->useResultCache(true)
                 ->getResult();
         
-        return $data;
+        if (! $events) {
+            return [];
+        }
+        $ids = array_column($events,'id');        
+        $defendants = $this->getDefendantsForEvents($ids);
+        $interpreters = $this->getInterpretersForEvents($ids);
+        
+        return compact('events','interpreters','defendants');
     }
     
     /**
      * gets defendant names for a given set of events
      * 
-     * @param array $options
+     * @param array $ids array of event ids
      * @return array
      */
-    public function getDefendants(Array $options)
+    public function getDefendantsForEvents(Array $ids)
     {
-        // this is bullshit as of right now
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('d.surnames')->from(Entity\DefendantName::class, 'd')
-        ->join(Entity\Event::class,'e')->where('e.date = :date')->setParameters([':date'=>new \DateTime()]);
-        echo $qb->getDQL();
-        $result = $qb->getQuery()->getResult();
-        echo " SHIT: " ,count($result);
-        return $result;
+        $query = $this->getEntityManager()->createQuery(
+         'SELECT e.id, d.id, d.surnames, d.givenNames FROM '
+            . 'InterpretersOffice\Entity\DefendantName d JOIN d.events e '
+            . 'INDEX BY e.id WHERE e.id IN (:ids)'
+        );       
+        
+        return $query->setParameters(['ids'=> $ids])
+                ->useResultCache(true)
+                ->getResult();        
     }
     
     /**
-     * @param array $options
+     * gets interpreters for a given set of events
+     * 
+     * @param array $ids event ids
      * @return array
      */
-    public function getInterpreters(Array $options)
+    public function getInterpretersForEvents(Array $ids)
     {
-        return [];
+        $query = $this->getEntityManager()->createQuery(
+        'SELECT e.id, i.id, i.lastname, i.firstname FROM '
+         . 'InterpretersOffice\Entity\InterpreterEvent ie JOIN ie.interpreter i '
+         . 'JOIN ie.event e INDEX BY e.id WHERE e.id IN (:ids)'
+        );
+        
+        return $query->setParameters(['ids'=> $ids])
+                ->useResultCache(true)
+                ->getResult();
+        
     }
+    
+    /**
+     * implements cache deletion
+     * 
+     * @param string $cache_id
+     * @return boolean true if successful(ish)
+     */
+    public function deleteCache($cache_id = null) {
+        if ($cache_id) {
+            return $this->cache->delete($cache_id);
+        }
+        $this->cache->setNamespace($this->cache_namespace);
+        
+        return $this->cache->deleteAll();
+    }    
 }

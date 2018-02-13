@@ -5,6 +5,8 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+
 
 /**
  * Entity modeling a defendant for whom an interpreter is required.
@@ -31,7 +33,7 @@ class DefendantName
      * given name(s), a/k/a first name(s).
      *
      * @ORM\Column(type="string",name="given_names",length=60,nullable=false)
-     *
+     * 
      * @var string
      */
     protected $givenNames;
@@ -44,7 +46,17 @@ class DefendantName
      * @var string
      */
     protected $surnames;
-
+    
+    /**
+     * related Event entities
+     * 
+     * no accessors etc seem to be necessary as of yet.
+     * 
+     * @ORM\ManyToMany(targetEntity="Event",mappedBy="defendantNames")
+     * @var Collection 
+     */
+    protected $events;
+   
     /**
      * returns "lastname, firstname".
      *
