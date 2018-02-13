@@ -32,20 +32,18 @@ $form->add([
 
 $form->prepare();
 $fieldset = $form->get('event');
+
 /** @todo move this to somewhere else ! */
 foreach (['date','time','end_time','submission_time', 'submission_date'] as $time) :
     if (! $fieldset->has($time)) : continue; endif;
     $element = $fieldset->get($time);
     $value = $element->getValue();
-
-    if ($value instanceof \DateTime) { 
-        $format = strstr($time, 'time') ? 'g:i a':'Y-m-d' ;
+    //renderer can't deal with DateTime objects
+    if ($value instanceof \DateTime) {
+        $format = strstr($time, 'time') ? 'g:i a':'m/d/Y' ;
         $element->setValue($value->format($format));
         continue;
-    }
-    if (2 == substr_count($value, ':')) {
-        $fieldset->get($time)->setValue(substr($value,0,5));
-    }
+    }    
 endforeach;
 
 $hatElement = $fieldset->get('anonymousSubmitter');
