@@ -11,7 +11,7 @@ use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity;
-use InterpretersOffice\View\Helper\DefendantName as DeftNameHelper;
+use InterpretersOffice\Form\View\Helper\DefendantName as DeftNameHelper;
 
 /** 
  *

@@ -1,7 +1,7 @@
 <?php
 /** module/InterpretersOffice/src/View/Helper/DefendantName.php */
 
-namespace InterpretersOffice\View\Helper;
+namespace InterpretersOffice\Form\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Helper\EscapeHtml;
