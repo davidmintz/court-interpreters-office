@@ -8,6 +8,10 @@ namespace InterpretersOffice;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 
+use Zend\ServiceManager\Factory\InvokableFactory;
+
+use InterpretersOffice\View\Helper as ViewHelper;
+
 $environment = getenv('APP_ENV') ?: 'development';
 
 // set to 'array' to disable
@@ -298,6 +302,15 @@ return [
     'view_helpers' => [
         'invokables' => [
             'formElementErrors' => 'InterpretersOffice\Form\View\Helper\FormElementErrors',
+        ],
+      
+        'aliases' => [
+            'defendants' => ViewHelper\DefendantNames::class,
+            'interpreters'=> ViewHelper\InterpreterNames::class
+        ],
+        'factories' => [
+            ViewHelper\DefendantNames::class => InvokableFactory::class,
+            ViewHelper\InterpreterNames::class => InvokableFactory::class,           
         ],
     ],
 

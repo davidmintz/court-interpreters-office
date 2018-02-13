@@ -32,9 +32,9 @@ if ($this->data) : ?><pre><?php //print_r($this->data)?></pre><?php //return; ?>
             <td class="text-nowrap"><?php echo $e['judge']?></td>
             <td><?php echo $e['language']?></td>
             <td class="text-nowrap"><?php echo substr($e['docket'],2)?></td>
-            <td class="defendants">...</td>
+            <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
             <td style="line-height: 1.2em; font-size: 95%"><?php echo $e['comments']?></td>
-            <td class="interpreters-assigned">...</td>
+            <td class="interpreters-assigned"><?php echo $this->interpreters($e['id'])?></td>
         </tr>
         <?php endforeach; ?>
     </tbody>

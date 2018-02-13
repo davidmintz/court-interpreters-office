@@ -33,7 +33,7 @@ class ScheduleController extends AbstractActionController
     public function indexAction()
     {
         $repo = $this->entityManager->getRepository(Entity\Event::class);
-        $data = $repo->getSchedule();
+        $data = $repo->getSchedule([]);
         
         return ['data' => $data];
 

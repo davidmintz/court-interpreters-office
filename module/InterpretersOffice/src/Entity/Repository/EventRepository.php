@@ -189,14 +189,26 @@ DQL;
     public function getDefendantsForEvents(Array $ids)
     {
         $query = $this->getEntityManager()->createQuery(
-         'SELECT e.id, d.id, d.surnames, d.givenNames FROM '
+         'SELECT e.id event_id, d.id, d.surnames, d.givenNames FROM '
             . 'InterpretersOffice\Entity\DefendantName d JOIN d.events e '
-            . 'INDEX BY e.id WHERE e.id IN (:ids)'
+            . 'WHERE e.id IN (:ids)'
         );       
+        $return = [];
         
-        return $query->setParameters(['ids'=> $ids])
-                ->useResultCache(true)
-                ->getResult();        
+        $data = $query->setParameters(['ids'=> $ids])
+                ->useResultCache(true)->getResult();
+        
+        foreach ($data as $deft) {
+            $event_id = $deft['event_id'];
+            unset($deft['event_id']);
+            if (isset($return[$event_id])) {
+                $return[$event_id][] = $deft;
+            } else {
+                $return[$event_id] = [ $deft ];
+            }           
+        }
+        
+        return $return;
     }
     
     /**
@@ -208,15 +220,28 @@ DQL;
     public function getInterpretersForEvents(Array $ids)
     {
         $query = $this->getEntityManager()->createQuery(
-        'SELECT e.id, i.id, i.lastname, i.firstname FROM '
+        'SELECT e.id event_id, i.id, i.lastname, i.firstname FROM '
          . 'InterpretersOffice\Entity\InterpreterEvent ie JOIN ie.interpreter i '
-         . 'JOIN ie.event e INDEX BY e.id WHERE e.id IN (:ids)'
+         . 'JOIN ie.event e WHERE e.id IN (:ids)'
         );
         
-        return $query->setParameters(['ids'=> $ids])
-                ->useResultCache(true)
-                ->getResult();
+       
+        $return = [];
         
+        $data = $query->setParameters(['ids'=> $ids])
+                ->useResultCache(true)->getResult();
+        
+        foreach ($data as $interpreter) {
+            $event_id = $interpreter['event_id'];
+            unset($interpreter['event_id']);
+            if (isset($return[$event_id])) {
+                $return[$event_id][] = $interpreter;
+            } else {
+                $return[$event_id] = [ $interpreter ];
+            }           
+        }
+        
+        return $return;
     }
     
     /**
