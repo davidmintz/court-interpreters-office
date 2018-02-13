@@ -4,6 +4,8 @@ namespace InterpretersOffice\Admin;
 use Zend\Router\Http\Segment;
 use Zend\Router\Http\Literal;
 
+//$today = new \DateTime();
+
 return  [
     'routes' => [
         'admin' => [
@@ -25,10 +27,34 @@ return  [
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\ScheduleController::class,
-                    'action' => 'index',
+                    'action' => 'index', 
+                    /*
+                    'year' => $today->format('Y'),
+                    'month' => $today->format('m'),
+                    'date' => $today->format('d'),                     
+                     */
                 ],
             ],
             'child_routes' => [
+                
+                'display' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route'=>'/:year/:month[/:date]',
+                        'defaults' => [
+                            'controller' => Controller\ScheduleController::class,
+                            'action' => 'index',
+                            // these could use refining.
+                            
+                        ],  
+                        'constraints' => [
+                                'year'=>'[12]\d\d\d',
+                                'month'=>'\d\d',
+                                'date' => '\d\d'
+                                
+                        ],
+                    ]
+                ],
                 'add' => [
                     'type' => Segment::class,
                     'options' => [
