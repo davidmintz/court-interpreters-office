@@ -7,7 +7,7 @@ namespace InterpretersOffice;
 
 use InterpretersOffice\Form\View\Helper;
 
-use InterpretersOffice\View\Helper as ViewHelper;
+use InterpretersOffice\Form\View\Helper as ViewHelper;
 
 use Zend\ServiceManager\Factory\InvokableFactory;
 
