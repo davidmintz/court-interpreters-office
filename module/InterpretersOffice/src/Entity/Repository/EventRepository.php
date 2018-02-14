@@ -64,8 +64,7 @@ DQL;
      * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
      */
-    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
-            
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)            
     {       
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
@@ -85,6 +84,16 @@ DQL;
      * @var string
      */
     protected $cache_namespace = 'events';
+    
+    /**
+     * enable result cache
+     * 
+     * for convenience during development
+     * 
+     * @var boolean whether to enable caching
+     */
+    protected $cache_enabled = false;
+    
     
     /**
      * returns human-readable representation of event
@@ -167,7 +176,7 @@ DQL;
         
         $events = $this->getEntityManager()->createQuery($dql)
                 ->setParameters([':date'=>$options['date']])
-                ->useResultCache(true)
+                ->useResultCache($this->cache_enabled)
                 ->getResult();
         
         if (! $events) {
@@ -196,7 +205,7 @@ DQL;
         $return = [];
         
         $data = $query->setParameters(['ids'=> $ids])
-                ->useResultCache(true)->getResult();
+                ->useResultCache($this->cache_enabled)->getResult();
         
         foreach ($data as $deft) {
             $event_id = $deft['event_id'];
@@ -229,7 +238,7 @@ DQL;
         $return = [];
         
         $data = $query->setParameters(['ids'=> $ids])
-                ->useResultCache(true)->getResult();
+                ->useResultCache($this->cache_enabled)->getResult();
         
         foreach ($data as $interpreter) {
             $event_id = $interpreter['event_id'];
