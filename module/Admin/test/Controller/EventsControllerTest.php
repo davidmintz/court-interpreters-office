@@ -168,7 +168,7 @@ class EventControllerTest extends AbstractControllerTest
         $time_expected = $entity->getTime()->format('g:i a');
         $this->assertEquals(html_entity_decode($time),$time_expected);
         
-        $date_expected = $entity->getDate()->format('Y-m-d');
+        $date_expected = $entity->getDate()->format('m/d/Y');
         $date = $dom->execute('#date')->current()->getAttribute('value');
         $this->assertEquals(html_entity_decode($date),$date_expected);
         
@@ -212,7 +212,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertOptionIsSelected($submitter_select,$expected_person);
         $submission_date_element = $dom->execute('#submission_date')->current();
         $submission_date = $submission_date_element->getAttribute('value');
-        $expected = $entity->getSubmissionDate()->format('Y-m-d');
+        $expected = $entity->getSubmissionDate()->format('m/d/Y');
         $this->assertEquals($expected,$submission_date);
         
         $submission_time_element = $dom->execute('#submission_time')->current();
