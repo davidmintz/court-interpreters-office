@@ -97,3 +97,9 @@ ul.subgroup {
     max-height: 500px;
     overflow-y : scroll;
 }
+/* schedule */
+td.interpreters-assigned { padding : 0; }
+td.interpreters-assigned div { padding: .3rem; }
+td.interpreters-assigned div:not(:last-child) { 
+    border-bottom: 1px solid #dee2e6;
+}
