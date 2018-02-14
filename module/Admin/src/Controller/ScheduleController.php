@@ -7,13 +7,13 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
+//use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
+//use Zend\Authentication\AuthenticationServiceInterface;
 
-use Zend\EventManager\Event;
+//use Zend\EventManager\Event;
 
-use InterpretersOffice\Admin\Form;
+//use InterpretersOffice\Admin\Form;
 
 use InterpretersOffice\Entity;
 
@@ -48,14 +48,49 @@ class ScheduleController extends AbstractActionController
     {
         $params = $this->params()->fromRoute();
         if (! isset($params['year'])) {
-            $date = (new \DateTime())->format('Y-m-d');
+            $date = new \DateTime();
         } else {
-            $date = sprintf('%s-%s-%s',$params['year'],$params['month'],$params['date']);
+            // @todo try/catch here?
+            $date = new \DateTime(sprintf('%s-%s-%s',$params['year'],$params['month'],$params['date']));
         }
         $repo = $this->entityManager->getRepository(Entity\Event::class);
-        $data = $repo->getSchedule(['date'=>$date]);
+        $data = $repo->getSchedule(['date'=>$date->format('Y-m-d')]);
+        $day_of_week = $date->format('w');
         
-        return ['data' => $data];
+        $viewModel = new ViewModel(['data' => $data, 'date'=>$date]);
+        $this->setPreviousAndNext($viewModel, $date);
 
+        return $viewModel;
+        
+    }
+    
+    public function setPreviousAndNext(ViewModel $view, \DateTime $date)
+    {
+        $string = $date->format('Y-m-d');
+        switch ($date->format('w')) {
+            case 0:
+                $next = '+1';
+                $prev = '-2';
+                break;
+            case 1:
+                $next = '+1';
+                $prev = '-3';
+                break;
+            case 5:
+                $next = '+3';
+                $prev = '-1';
+                break;
+            case 6:
+                $next = '+1';                
+                $prev = '-2';
+                break;
+            default:
+                $next = '+1';
+                $prev = '-1';                
+        }
+        $view->prev = (new \DateTime("$string $prev days"))->format('/Y/m/d');
+        $view->next = (new \DateTime("$string $next days"))->format('/Y/m/d');
+        
+        return $view;
     }
 }

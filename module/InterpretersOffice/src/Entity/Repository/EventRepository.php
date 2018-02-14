@@ -172,7 +172,7 @@ DQL;
          LEFT JOIN loc.type as loc_type
          LEFT JOIN loc.parentLocation ploc 
          WHERE e.date = :date
-         ORDER BY e.time';
+         ORDER BY e.time, e.id';
         
         $events = $this->getEntityManager()->createQuery($dql)
                 ->setParameters([':date'=>$options['date']])

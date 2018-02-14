@@ -6,11 +6,23 @@ if ($messenger->hasSuccessMessages()) :
 elseif ($messenger->hasErrorMessages()) : 
     echo $messenger->render('danger', ['alert','alert-danger',], false); 
 endif;?>
-<h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
-<pre><?php //print_r($this->data['defendants']) ?></pre>
-<?php
-if ($this->data) : ?><pre><?php //print_r($this->data)?></pre><?php //return; ?>
-<table class="table table-hover table-bordered table-sm">
+<div class="row mb-0 mt-3 py-2">
+    <div class="col-2 align-self-center pl-0 ml-0 text-left">
+    <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-left" style="font-size:1.2rem;background-color:#74b4fb" href="<?php 
+        echo $this->url('events').$this->prev
+    ?>"><span class="sr-only">previous</span></a>
+    </div>
+    <div class="col-8  text-center">
+    <h2 class="navigation pt-1"><a href="/admin">admin</a> | schedule <small class="text-muted"><?php echo $this->date->format('D d M Y')?></small></h2>
+    <!-- shit underneath -->
+    </div>
+    <div class="col-2 align-self-center pr-0 mr-0 text-right">
+    <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-right" style="font-size:1.2rem;background-color:#74b4fb" href="<?php 
+        echo $this->url('events').$this->next
+    ?>"><span class="sr-only">previous</span></a>
+    </div>
+    <?php if ($this->data) : ?>
+<table class="table table-hover table-bordered table-sm rounded mt-2">
     <thead>
         <tr>
             <th>time</th>
@@ -28,13 +40,22 @@ if ($this->data) : ?><pre><?php //print_r($this->data)?></pre><?php //return; ?>
         ?>
         <tr data-id="<?php echo $e['id']?>" class="event-category-<?php echo str_replace(' ','-',$e['category']) ?>">
             <td class="text-right text-nowrap"><?php echo $e['time']->format('g:i a')?></td>
-            <td style="line-height:1.2em" class="py-2"><?php echo $e['type']?></td>
-            <td class="text-nowrap"><?php echo $e['judge']?></td>
+            <td style="line-height:1.2em" title="event id <?php echo $e['id']?>" class="py-2"><a href="<?php 
+                echo $this->url('events/edit',['id'=>$e['id']])
+            ?>"><?php echo $e['type']; ?></a><?php if ($e['location_type']=='jail'):
+                    ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
+                    endif;
+            ?></td>
+            <td class="text-nowrap"><?php echo $e['judge'];
+                    if ($e['category']=="in" && $e['location']):
+                    ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
+                    endif;
+            ?></td>
             <td><?php echo $e['language']?></td>
             <td class="text-nowrap"><?php echo substr($e['docket'],2)?></td>
             <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
             <td style="line-height: 1.2em; font-size: 95%"><?php echo $e['comments']?></td>
-            <td class="interpreters-assigned"><?php echo $this->interpreters($e['id'])?></td>
+            <td class="interpreters-assigned text-nowrap"><?php echo $this->interpreters($e['id'])?></td>
         </tr>
         <?php endforeach; ?>
     </tbody>

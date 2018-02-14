@@ -10,4 +10,6 @@ use dev_interpreters;
 INSERT INTO office.interpreters_events (interpreter_id, event_id, created, created_by_id) 
 (SELECT interp_id, ie.event_id, ie.created,  COALESCE(u2.id,@user_david) AS created_by FROM interp_events ie 
     LEFT JOIN users u ON ie.created_by = u.user_id  
-    LEFT JOIN office.users u2 ON u.name = u2.username);
+    LEFT JOIN office.users u2 ON u.name = u2.username );
+
+/* WHERE ie.event_id >= 111940 */

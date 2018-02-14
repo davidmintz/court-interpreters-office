@@ -5,13 +5,13 @@
  * and open the template in the editor.
  */
 
-return true;
+return false;
 
 /*
 return
     ['zenddevelopertools' => [
         'toolbar' => [
-            'enabled' => true,
+            'enabled' => false,
         ],
     ]
 ];

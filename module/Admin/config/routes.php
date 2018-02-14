@@ -43,15 +43,13 @@ return  [
                         'route'=>'/:year/:month[/:date]',
                         'defaults' => [
                             'controller' => Controller\ScheduleController::class,
-                            'action' => 'index',
-                            // these could use refining.
-                            
+                            'action' => 'index',//'year'=>null,
+                            // these could use refining.                            
                         ],  
                         'constraints' => [
-                                'year'=>'[12]\d\d\d',
-                                'month'=>'\d\d',
-                                'date' => '\d\d'
-                                
+                            'year'=>'[12]\d\d\d',
+                            'month'=>'\d\d',
+                            'date' => '\d\d'                                
                         ],
                     ]
                 ],

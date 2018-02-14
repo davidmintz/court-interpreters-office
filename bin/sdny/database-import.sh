@@ -44,7 +44,7 @@ cat bin/sdny/parent-locations.sql bin/sdny/more-locations.sql | mysql office
 OK;
 # TO DO decide whether to scrape nysd.uscourts.gov, look at age of data file, or what
 
-	#echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
+#echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
 #/opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
 #OK;
 
@@ -60,4 +60,4 @@ echo "importing defendant names..."
 echo 'INSERT INTO defendant_names (id, given_names, surnames) (SELECT deft_id, firstname, lastname FROM dev_interpreters.deft_names ORDER BY deft_id)'|mysql office
 OK;
 echo
-echo "all done for now."
+echo "all done for now."	
