@@ -10,14 +10,14 @@ $form = $this->form;
 // set some defaults for the search form
 foreach (['language_id','active','security_clearance_expiration'] as $e) :
     $element =  $form->get($e);
-    if (isset($this->params[$e])) { 
-        $element->setValue($this->params[$e]);         
+    if (isset($this->params[$e])) {
+        $element->setValue($this->params[$e]);
     }
     $element->setAttribute('class','form-control mx-2');
-    
+
 endforeach;
 $name_element = $form->get('name');
-if ($this->interpreter): 
+if ($this->interpreter):
     $name_element->setValue("{$interpreter->getLastname()}, {$interpreter->getFirstName()}");
 else:
     $name_element->setValue(key_exists('name',$this->params)? $this->params['name']:'');
@@ -36,25 +36,25 @@ endif;
   <div class="card-body pb-1">
     <form>
     <div class="form-group form-inline card-body py-0">
-    <div id="form-errors" class="alert alert-warning hidden" style="display:none"></div>    
-        Find <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language_id'))?> 
+    <div id="form-errors" class="alert alert-warning hidden" style="display:none"></div>
+        Find <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language_id'))?>
         interpreters who are <label for="active" class="sr-only">status</label>
         <?php echo $this->formSelect($form->get('active'))?>
         with security clearance <label for="security_clearance_expiration" class="sr-only">security clearance</label>
          <?php echo $this->formSelect($form->get('security_clearance_expiration'))?><!--
-    --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-primary"><span class="fa fa-search"></span> search</a> 
+    --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-primary"><span class="fa fa-search"></span> search</a>
     </div>
-    <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-primary"><span class="fa fa-search"></span> search</a></div> 
+    <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-primary"><span class="fa fa-search"></span> search</a></div>
     </form>
   </div>
 </div>
 <br>
-<?php 
+<?php
 if ($this->interpreter) :
     echo $this->render('view');
 endif;
-if ($this->results): 
-    echo $this->paginationControl($this->results, null, 'partials/pagination_head'); 
+if ($this->results):
+    echo $this->paginationControl($this->results, null, 'partials/pagination_head');
 ?>
 
 <table class="table table-hover table-bordered table-sm" style="max-width:700px">
@@ -64,12 +64,14 @@ if ($this->results):
     <tbody>
         <?php
         foreach ($this->results as $row) : /** note to self: use array hydration? */
-            $interpreter = $row[0]; 
+            $interpreter = $row[0];
             $id = $interpreter->getId();
             $view_url =  $this->url('interpreters/find_by_id',['id'=>$id])?>
-        <tr><td class="col-sm-10" style="vertical-align: middle"><a title="edit interpreter details" href="<?php echo $view_url ?>"><?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></a>
+        <tr><td class="col-sm-10" style="vertical-align: middle"><a title="edit interpreter details" href="<?php echo $view_url ?>"><?php
+        echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></a>
+        <?php if ($row['hat'] == 'staff court interpreter'): ?> <span class="text-muted">staff interpreter</span><?php endif; ?>
             </td>
-            <td class="col-sm-2">                
+            <td class="col-sm-2">
                 <div class="btn-group" role="group" aria-label="actions" style="display:inline-block"><a class="btn btn-outline-primary" title="view interpreter details" href="<?php echo $view_url ?>"><span class="fa fa-search"></span><span class="sr-only">view details</span></a><?php
                 ?><a class="btn btn-outline-primary" title="edit interpreter details" href="<?php echo $this->url('interpreters/edit',['id'=>$interpreter->getId()])?>"><span class="fa fa-edit"></span><span class="sr-only">edit details</span></a>
                 </div>
@@ -82,13 +84,13 @@ if ($this->results):
     $this->results,
     'sliding',
     'partials/pagination_control',
-     ['route'=>$this->routeName,'params'=>$this->params]     
+     ['route'=>$this->routeName,'params'=>$this->params]
 );?>
-<?php 
-    else : 
+<?php
+    else :
         if ($this->isQuery and !$this->interpreter) :
-?><p>No matching records found.</p><?php 
-    endif; 
+?><p>No matching records found.</p><?php
+    endif;
 endif; ?>
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-primary">
 <span aria-hidden="true" class="icon fa fa-plus"></span> new interpreter
