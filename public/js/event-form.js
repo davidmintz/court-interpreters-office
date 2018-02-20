@@ -2,7 +2,7 @@
  * public/js/event-form.js
  */
 
-moment = window.moment; 
+moment = window.moment;
 //Modernizr = window.Modernizr;
 
 $(document).ready(function()
@@ -26,7 +26,7 @@ $(document).ready(function()
           .on("change",parseTime);
   //  } else {console.log( "time element is supported!"); }
     $('input.docket').on("change",formatDocketElement);
-    
+
     // toggle the 'text-muted' class on all the select elements
     $('select').on("change",function(){
         var element = $(this);
@@ -36,16 +36,16 @@ $(document).ready(function()
             element.addClass("text-muted");
         }
     }).trigger("change");
-    
+
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
-    
+
     parentLocationElement.on("change",function(event,params) {
         if (! parentLocationElement.val()) {
-            locationElement.val("").attr({disabled : "disabled"});                        
+            locationElement.val("").attr({disabled : "disabled"});
         } else {
             locationElement.removeAttr("disabled");
-            // populate with children of currently selected parent location                
+            // populate with children of currently selected parent location
             $.getJSON('/locations/get-children',
                 {parent_id:parentLocationElement.val()},
                 function(data){
@@ -58,16 +58,16 @@ $(document).ready(function()
                     locationElement.children().slice(1).remove();
                     locationElement.append(options)
                          .trigger("sdny.location-update-complete");
-                    if (params && params.location_id) {                        
+                    if (params && params.location_id) {
                         locationElement.val(params.location_id).removeClass("text-muted");
-                    } 
+                    }
             });
         }
     });
-    
+
     if (! parentLocationElement.val()){
         locationElement.val("").attr({disabled : "disabled"});
-        
+
     } else {
         // on 2nd thought, don't. it unsets the value of #location
         // when we load the form
@@ -76,23 +76,23 @@ $(document).ready(function()
     /** this applies to admin form, not "request" form **/
     var languageElement = $('#language');
     var interpreterSelectElement = $("#interpreter-select");
-    
+
     if (! languageElement.val()) {
         interpreterSelectElement.attr("disabled","disabled");
     }
-   
-   
+
+
     // (re)populate the interpreter select element according to the language
-    languageElement.on('change',function(event,params){ 
+    languageElement.on('change',function(event,params){
         var language_id = languageElement.val();
         // remove the interpreters if the language changes, except
         // when we're initially triggered on page load, which we will
         // find out from the "params" parameter
-        if (! params || params.remove_existing !== false) {            
+        if (! params || params.remove_existing !== false) {
             $('#interpreters-assigned li').remove();
         }
-        
-        if (! language_id) {            
+
+        if (! language_id) {
             interpreterSelectElement.attr("disabled","disabled");
             return;
         }
@@ -102,13 +102,13 @@ $(document).ready(function()
             var options = data.map(function(item){
                   return $('<option>').val(item.value).text(item.label);
              });
-             
+
             interpreterSelectElement.children().not(":first").remove();
             interpreterSelectElement.append(options)
                     .trigger("sdny.language-update-complete");
             if (options.length) {
                 interpreterSelectElement.removeAttr("disabled");
-            }            
+            }
         });
     });
     if (languageElement.val()) {
@@ -117,11 +117,11 @@ $(document).ready(function()
     var interpreterButton = $('#btn-add-interpreter');
     // add an interpreter to this event
     interpreterButton.on('click',  function(){
-        
+
         var id = interpreterSelectElement.val();
         if (! id ) { return; }
         var selector = '#interpreters-assigned li > input[value="'+id+'"]';
-        if ($(selector).length) { 
+        if ($(selector).length) {
             // duplicate. maybe do something to let them know?
             return interpreterSelectElement.val("");
         }
@@ -136,16 +136,16 @@ $(document).ready(function()
             }
         } else {
             index = 0;
-        }        
+        }
         interpreterSelectElement.val("");
         // get the markup
         $.get('/admin/schedule/interpreter-template',
-            {   interpreter_id : id, index : index, 
-                name : name, 
+            {   interpreter_id : id, index : index,
+                name : name,
                 event_id : $('#event_id').val()},
-            function(html){                
-                $('#interpreters-assigned').append(html);                
-        });        
+            function(html){
+                $('#interpreters-assigned').append(html);
+        });
     });
     // interpreter and deft name "remove" buttons event handler
     $('#interpreters-assigned, #defendant-names').on("click",".btn-remove-item",
@@ -153,14 +153,23 @@ $(document).ready(function()
         event.preventDefault();
         $(this).closest(".list-group-item").slideUp(
               function(){$(this).remove();}
-        );        
+        );
     });
-    
-    hatElement = $('#hat');    
-    submitterElement = $('#submitter');
-    
-    if (!hatElement.val()) {
+
+    var hatElement = $('#hat');
+    var submitterElement = $('#submitter');
+    var hat_id = hatElement.val();
+    var submitter_id = submitterElement.val();
+    if (! hat_id) {
         submitterElement.attr({disabled:"disabled"});
+    } else {
+        if (submitter_id) {
+            submitterElement.data({
+                init_submitter_id : submitter_id,
+                init_hat_id : hat_id,
+            });
+        }
+        console.log(submitterElement.data());
     }
     //
     var judgeElement = $('#judge');
@@ -170,16 +179,17 @@ $(document).ready(function()
             judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
         );
     }).trigger('change');
-    
+
+    ;
     // get data to update submitter dropdown based on selected hat
     hatElement.on("change",function()
     {
         console.warn("shit changes");
-        var hat_id = hatElement.val();
+
         if (! hat_id) {
             hatElement.children().not(":first").remove();
             return;
-        }      
+        }
          $.getJSON('/admin/people/get',
                 { hat_id: hat_id },
                 function(data)
@@ -195,30 +205,30 @@ $(document).ready(function()
                            .trigger("sdny.submitter-update-complete");
                 }
             );
-        
+
     });//.trigger('change');
     var eventTypeElement = $('#event-type');
-    
+
     /**
-     * sets the location based on the judge, if possible     
+     * sets the location based on the judge, if possible
      */
     $('#judge').on('change',function(event){
-         
+
         if (!  judgeElement.val()) {
             return;
         }
         if ( ! eventTypeElement.val()
-            || "in" !== eventTypeElement.children(":selected").data().category ) 
+            || "in" !== eventTypeElement.children(":selected").data().category )
         {
-               return;                  
+               return;
         }
         var judge_opt = judgeElement.children(':selected');
-        var judge_data = judge_opt.data();       
+        var judge_data = judge_opt.data();
         ///*
         var is_magistrate = judge_opt.text().toLowerCase()
-             .indexOf('magistrate') !== -1 && judge_opt.data('pseudojudge');        
+             .indexOf('magistrate') !== -1 && judge_opt.data('pseudojudge');
         // if it's magistrate, and they have not set a parent location,
-        // let's set it for them        
+        // let's set it for them
         if (is_magistrate ) {  //&& !parentLocationElement.val()
             //console.log("shit is Magistrate... ");
             parentLocationElement.val(judge_data.default_parent_location || judge_data.default_location)
@@ -231,9 +241,9 @@ $(document).ready(function()
          * In English:
          * If the currently selected judge has a default location
          */
-        if (judge_data.default_parent_location && 
-              /* and that default's ~parent~ location is other than the 
-               * currently selected parent location... 
+        if (judge_data.default_parent_location &&
+              /* and that default's ~parent~ location is other than the
+               * currently selected parent location...
                */
               judge_data.default_parent_location !== parentLocationElement.val())
         {   /* then set the parent location to the current judge's default... */
@@ -246,7 +256,7 @@ $(document).ready(function()
             );
         }
     });
-    
+
     $("#event-form").on("submit",function(e){
         if (! locationElement.val()) {
             // no specific location was selected, so the general location
@@ -262,7 +272,7 @@ $(document).ready(function()
             }
         }
     });
-    
+
     var defendantSearchElement = $('#defendant-search');
     var slideout = $('#slideout-toggle');
     /** deft name autocompletion */
@@ -271,7 +281,7 @@ $(document).ready(function()
                 source: '/defendants/autocomplete',
                 //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
                 minLength: 2,
-                select: function( event, ui ) {                        
+                select: function( event, ui ) {
 
                     that = $(this);
                     $.get(
@@ -283,7 +293,7 @@ $(document).ready(function()
                         }
                     );
                 },
-                focus: function(event,ui) { 
+                focus: function(event,ui) {
                     event.preventDefault();
                     $(this).val(ui.item.label);
                 },
@@ -292,20 +302,20 @@ $(document).ready(function()
                         slideout.hide();
                     }
                 }
-             }   
+             }
          );
     var onDeftSlideoutShow = function(){
-                
+
         if ($('#slideout-toggle li').length) {
-            $('#slideout-toggle li a').first().focus();            
+            $('#slideout-toggle li a').first().focus();
         } else {
             //$('#slideout-toggle h6').hide();
         }
     };
-    /* ==================== */    
+    /* ==================== */
     $('#slideout-toggle .close').on('click',
         function(){slideout.toggle("slide");}
-     );    
+     );
     /** =========  display defendant-name search results   ==============*/
     $('#btn-defendant-search').on("click",function(){
         // get rid of the new name insertion form, if it exists
@@ -313,7 +323,7 @@ $(document).ready(function()
         if ($('#btn-add-defendant-name').attr("disabled")) {
              $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
         }
-        
+
         var name = defendantSearchElement.val().trim();
         if (! name) {
             defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
@@ -322,14 +332,14 @@ $(document).ready(function()
         $.get('/defendants/search',{term:name,page:1},
             function(data){
                 slideout.css("width","");
-                $('#slideout-toggle .result').html(data);                
+                $('#slideout-toggle .result').html(data);
                 if (! slideout.is(':visible')) {
                     slideout.toggle("slide",onDeftSlideoutShow);
                 }
             });
     });
     /** =================================================================*/
-    
+
     /** pagination links ================================================*/
     slideout.on('click','.pagination a',function(event){
         event.preventDefault();
@@ -343,38 +353,38 @@ $(document).ready(function()
             function(html){
                 $('#defendant-names').append(html);
                 defendantSearchElement.val('');
-                slideout.toggle("slide");                
+                slideout.toggle("slide");
             }
         );
     });
     /** =================================================================*/
-    
+
     /**
      * gets and inserts markup for defendant name
-     * @param {object} data 
+     * @param {object} data
      */
     var append_deft_name = function(data){
         $.get('/defendants/template',
-        {   id: data.id, 
-            name: data.surnames + ", "+ data.given_names 
+        {   id: data.id,
+            name: data.surnames + ", "+ data.given_names
         },
         function(html){
             $('#defendant-names').append(html);
             defendantSearchElement.val('');
-            slideout.toggle("slide", 
-                function(){$('#deftname-form-wrapper').remove();});                
-        });        
+            slideout.toggle("slide",
+                function(){$('#deftname-form-wrapper').remove();});
+        });
     };
     slideout.on('click','#btn-add-defendant-name',function(){
-         
+
         if (! $('#slideout-toggle form').length) {
             // GET the form
             $('#slideout-toggle .result').slideUp(function(){$(this).empty();}).after($("<div/>")
-                .attr({id:'deftname-form-wrapper'})              
-                .load('/admin/defendants/add form',function(){                       
+                .attr({id:'deftname-form-wrapper'})
+                .load('/admin/defendants/add form',function(){
                     $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>');
-                })     
-            );            
+                })
+            );
         } else {
             // POST the form
             var data = $('#defendant-form').serialize();
@@ -388,11 +398,11 @@ $(document).ready(function()
                         id : response.id,
                         surnames : $('#surnames').val().trim(),
                         given_names : $("#given_names").val().trim()
-                    });                   
+                    });
                 }
                 if (response.duplicate_entry_error) {
                     var existing = response.existing_entity;
-                    var exact_duplicate = 
+                    var exact_duplicate =
                         existing.surnames ===  $('#surnames').val().trim()
                         &&
                         existing.given_names ===  $('#given_names').val().trim();
@@ -417,42 +427,42 @@ $(document).ready(function()
                         });
                         // update the entity and use as modified
                         $('#btn-update-existing').data({id:existing.id}).on("click",function(){
-                            $.post('/admin/defendants/edit/'+$(this).data('id'),data,                            
+                            $.post('/admin/defendants/edit/'+$(this).data('id'),data,
                             function(response){
                                 if (response.id) {
                                     append_deft_name({
                                         id : response.id,
                                         surnames : $('#surnames').val().trim(),
                                         given_names : $("#given_names").val().trim()
-                                    });                                    
+                                    });
                                 } else {
                                     /** error. @todo do something! */
-                                }                              
+                                }
                             },'json');
                         });
                         // forget the whole thing
                         $('#btn-cancel').on("click",function(){
-                            slideout.toggle("slide", 
-                            function(){$('#deftname-form-wrapper').remove();}); 
+                            slideout.toggle("slide",
+                            function(){$('#deftname-form-wrapper').remove();});
                         });
                         // and if they edit shit, all bets are off
-                        $('#defendant-form').one("change",function(){                            
+                        $('#defendant-form').one("change",function(){
                             div.slideUp(function(){
                                 div.remove();
                                 $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
-                            });                            
+                            });
                         });
                         // disable the button for submitting the form
                         $('#btn-add-defendant-name').attr({disabled:"disabled", 'aria-disabled':"true" });
                     }
-                }                                    
+                }
             },'json');
-        }                
+        }
     });
 });
 
 formatTimeElement = function(timeElement) {
-    
+
     var timeValue = timeElement.val();
     // reformat time;
     if (timeValue && timeValue.match(/^\d\d:\d\d$/)) {
@@ -497,7 +507,7 @@ parseTime = function(event)
         } else if (ap.length === 1) {
             ap = ap + 'm';
         }
-    } else if (matches = time.match(/^([01][0-9]|2[1-3])([0-5][0-9])$/)) {       
+    } else if (matches = time.match(/^([01][0-9]|2[1-3])([0-5][0-9])$/)) {
         hour = matches[1];
         ap = 'am';
         if (hour > 12) {
@@ -530,13 +540,13 @@ formatDocketElement = function(event)
         }
     }
     element.val(element.val().trim());
-    if (! element[0].value ) { 
+    if (! element[0].value ) {
         errorDiv.empty().hide();
         element.data('valid',1);
         return element;
     }
     matches = element[0].value.match(DocketRegExp);
-    if (element[0].value && ! matches) { 
+    if (element[0].value && ! matches) {
         errorDiv.text("invalid docket number").show().trigger("show");
         element.data('valid',0);
         return div.addClass('has-error has-feedback');
@@ -568,6 +578,5 @@ formatDocketElement = function(event)
     element.val(year + '-'  + flavor + '-' + number)
             .data('valid',1);
     errorDiv.empty().hide();
-    return element;  
+    return element;
 };
-
