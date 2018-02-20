@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * for importing events from our old database to the new 
+ * for importing events from our old database to the new
  */
 require(__DIR__.'/../../vendor/autoload.php');
 use Zend\Console\Getopt;
@@ -38,10 +38,10 @@ if (! $ids_to_import) {
             echo "--to year must be later than $from\n";
             exit(1);
         }
-    }    
+    }
 }
 $id_to_begin_with = $opts->{'begin-with'};
-
+/** @var $db \PDO */
 $db = require(__DIR__."/connect.php");
 $now = date("M-d-y H:i:s");
 // first: make sure all our non-courthouse locations have been inserted
@@ -117,7 +117,7 @@ $judges = $db->query($judge_sql)->fetchAll(PDO::FETCH_KEY_PAIR);
  */
 
 // this is very brittle and will fuck up if we so much as look at it wrong
-                    // theirs => ours
+// theirs => ours
 $anonymous_judges = [22 => 1, 85 => 4, 82 => 2, 75 => 3,];
 
 // default creator is me
@@ -181,24 +181,34 @@ $insert_sql = 'INSERT INTO events (
         )';
 
 $db->exec('use dev_interpreters');
+$count_sql = '';
 if (! $ids_to_import) {
     $query .= "WHERE YEAR(event_date) ";
+
     if ($opts->to) {
-        $query .= " BETWEEN $from AND $opts->to";
+        $what =  " BETWEEN $from AND $opts->to";
+        $query .= $what;
+        $count_sql = "SELECT COUNT(*) `total` FROM events WHERE YEAR(event_date) $what";
         printf("fetching events for years %s through %s\n",$from,$opts->to);
     } else {
         printf("fetching events for year %s\n",$from);
         $query .= " = $from";
+        $count_sql = "SELECT COUNT(*) `total` FROM events WHERE YEAR(event_date) = $from ";
     }
     if ($id_to_begin_with) {
         $query .= ' AND e.event_id >= '.$id_to_begin_with;
+        $count_sql .=  ' AND e.event_id >= '.$id_to_begin_with;
     }
 } else {
     $query .= " WHERE e.event_id IN ($ids_to_import)";
 }
 
 $query .= " ORDER BY e.event_id";
-
+if ($count_sql) {
+    $total = $db->query($count_sql)->fetchColumn();
+} else {
+    $total = null;
+}
 $stmt = $db->prepare($query);
 $stmt->execute();
 $db->exec('use office');
@@ -296,7 +306,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                      $e['submitter_hat'] ?: 'person'
             );
         }
-        
+
 
     } else { // submitter is non-anonymous, and not NULL
 
@@ -332,10 +342,10 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $meta_notes .= sprintf("metadata formerly was: submitted by %s.",
                 $e['submitter']);
 
-            } else { 
-                // submitter group is NOT "unknown", therefore submitter 
+            } else {
+                // submitter group is NOT "unknown", therefore submitter
                 // should be in the database
-                
+
                 $key = sprintf("%d-%d",$e['submitter_hat_id'],$e['submitter_id']);
                 if (key_exists($key,$submitter_cache)) {
                     $params[':submitter_id'] = $submitter_cache[$key];
@@ -365,7 +375,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             }
 
         } else { // i.e., submitter_hat_id is NOT NULL
-            
+
             if (1 == $submitter_hat_id) {
                 // a staff user
                 $user = explode('; ',$e['submitter'])[0];
@@ -377,7 +387,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 }
 
             } else {
-                
+
                 if ($e['submitter_group'] !== '[group unknown]') {
                     // then it has NOT yet been resolved
                     $key = sprintf("%d-%d",$e['submitter_hat_id'],$e['submitter_id']);
@@ -471,9 +481,12 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         echo "YOU HAVE ".count($params). " parameters\n";
         exit(1);
     }
-    echo "looking good at iteration $count\r";
+    $progress = "looking good at iteration $count";
+    if ($total) {
+        $progress .= " of $total";
+    }
+    echo "$progress\r";
  }
-
 
 printf("\ninserts: %d\n",$count);
 printf("memory usage %.2f MB\n",memory_get_usage()/1000000);
