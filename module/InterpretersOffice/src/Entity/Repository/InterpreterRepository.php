@@ -230,7 +230,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     }
     /**
      * gets active interpreters of language id $id
-     * 
+     *
      * @param int $id
      * @return Array
      */
@@ -247,7 +247,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             ->setParameters(['id' => $id]);
         $query = $qb->getQuery()->useResultCache(true, null,
                 "interp-options-language-$id");
-        
+
         return $query->getResult();
     }
 }
