@@ -28,11 +28,15 @@ class PersonRepository extends EntityRepository
      * @param int $hat_id
      * @var array
      */
-    public function getPersonOptions($hat_id)
+    public function getPersonOptions($hat_id, $person_id = null)
     {
-    	$dql = "SELECT p.id AS value, CONCAT(p.lastname, ', ', p.firstname) AS label "
+    	$dql = "SELECT DISTINCT p.id AS value, CONCAT(p.lastname, ', ', p.firstname) AS label "
             . 'FROM InterpretersOffice\Entity\Person p JOIN p.hat h '
-    		. 'WHERE h.id = :hat_id AND p.active = true ORDER BY p.lastname, p.firstname';
+    		. 'WHERE (h.id = :hat_id AND p.active = true)';
+        if ($person_id) {
+            $dql .= " OR p.id = $person_id";
+        }
+        $dql .= ' ORDER BY p.lastname, p.firstname';
     	return $this->createQuery($dql)
                 ->setParameters(['hat_id'=>$hat_id])
                 ->getResult();

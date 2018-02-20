@@ -367,7 +367,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes'=>['label'=>'person\'s name']]];
         $repo = $this->getObjectManager()->getRepository(Entity\Person::class);
         if ($event) {
-            $hat = $event->getSubmitter() ? $event->getSubmitter()->getHat() :
+            $submitter = $event->getSubmitter();
+            $hat = $submitter ? $submitter->getHat() :
                 $event->getAnonymousSubmitter();
             if (! $hat) {
                 throw new \Exception(sprintf(
@@ -377,7 +378,8 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     $event->getId()
                 ));
             }
-            $value_options = $repo->getPersonOptions($hat->getId());
+            $value_options = $repo->getPersonOptions($hat->getId(),
+                $submitter ? $submitter->getId() : null);
             array_unshift($value_options, $empty_option);
         } else {
             $value_options = $empty_option;
@@ -550,7 +552,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
         $repository = $this->getObjectManager()->getRepository(Judge::class);
         $opts = ['include_pseudo_judges'=>true];
         if ($event && $judge = $event->getJudge()) {
-            $opts['judge_id']=$judge->getId();            
+            $opts['judge_id']=$judge->getId();
         }
         $value_options = $repository->getJudgeOptions($opts);
         array_unshift($value_options,
