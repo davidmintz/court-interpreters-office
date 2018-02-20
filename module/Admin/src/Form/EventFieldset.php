@@ -15,6 +15,7 @@ use InterpretersOffice\Entity;
 
 use Zend\Validator\Callback;
 use InterpretersOffice\Entity\Judge;
+use InterpretersOffice\Entity\Repository\JudgeRepository;
 /**
  * Fieldset for Event form
  * Notes to self: make a base class that adds only the elements required for
@@ -41,7 +42,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
       */
      const DATE_ELEMENT_TYPE = 'Text';
 
-    /**
+    /**bootstrap 4 increase font size
      * name of the form.
      *
      * @var string
@@ -201,7 +202,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                 ]
             )
         );
-        $this->addJudgeElements()
+        $this->addJudgeElements($options['object'])
             ->addEventTypeElement()
             ->addLocationElements($options['object']);
 
@@ -529,7 +530,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
                     ],
                     'attributes' =>
                         ['class' => 'form-control', 'id' => 'location'],
-                ]);                
+                ]);
             } else { // really?
                 $this->add($element_spec);
             }
@@ -543,11 +544,15 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
      *
      * @return \InterpretersOffice\Admin\Form\EventFieldset
      */
-    public function addJudgeElements()
+    public function addJudgeElements(Entity\Event $event = null)
     {
+        /** @var $repository \InterpretersOffice\Entity\Repository\JudgeRepository */
         $repository = $this->getObjectManager()->getRepository(Judge::class);
-        $value_options =
-                $repository->getJudgeOptions(['include_pseudo_judges'=>true]);
+        $opts = ['include_pseudo_judges'=>true];
+        if ($event && $judge = $event->getJudge()) {
+            $opts['judge_id']=$judge->getId();            
+        }
+        $value_options = $repository->getJudgeOptions($opts);
         array_unshift($value_options,
                 [ 'value' => '','label'=>'(required)','attributes'=>['label'=>' '] ]);
         $this->add([

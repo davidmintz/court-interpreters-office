@@ -46,7 +46,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
     /**
      * gets all the Judge entities, sorted.
-     * 
+     *
      * @return array
      */
     public function findAll()
@@ -56,10 +56,10 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
         return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
-    
+
     /**
      * gets a listing of judges with default courtrooms
-     * 
+     *
      * @return array
      */
     public function getList()
@@ -72,7 +72,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f
         LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation pl ORDER BY
         j.lastname,j.firstname,j.middlename';
-        
+
         $data = $this->createQuery($dql, $this->cache_namespace)->getResult();
         // $flavors = array_unique(array_column($data,'flavor'));
         /** @todo make this a config or something other than hard-coded */
@@ -84,7 +84,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
         return $judges;
     }
-    
+
     /**
      * gets all the judge entities who are "active"
      *
@@ -133,12 +133,20 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      */
     public function getJudgeOptions($options = [])
     {
-        $dql = 'SELECT j.id, j.lastname, j.firstname, j.middlename, f.flavor '
+        if (isset($options['judge_id'])) {
+            $dql = 'SELECT DISTINCT';
+            $or  = ' OR j.id = '.$options['judge_id'];
+        } else {
+            $dql = 'SELECT';
+            $or = '';
+        }
+        $dql .= ' j.id, j.lastname, j.firstname, j.middlename, f.flavor '
                 . ', l.id AS location, pl.id AS parent_location'
                 . ' FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f '
                 . 'LEFT JOIN j.defaultLocation l '
                 . 'LEFT JOIN l.parentLocation pl '
-                . ' WHERE j.active = true ORDER BY j.lastname, j.firstname';
+                . ' WHERE j.active = true '. $or;
+        $dql .=  ' ORDER BY j.lastname, j.firstname';        
         $judges = $this->createQuery($dql, $this->cache_namespace)->getResult();
         $data = [];
         foreach ($judges as $judge) {
