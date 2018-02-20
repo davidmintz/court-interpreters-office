@@ -1,5 +1,23 @@
 #!/bin/bash -e
 
+# https://www.tutorialspoint.com/unix_commands/getopt.htm
+
+TEMP=`getopt -o '' --long whole-enchilada,everything,recent -- "$@"`
+eval set -- "$TEMP"
+
+while true ; do
+    case "$1" in
+        --whole-enchilada|--everything)
+        FULL_DATABASE=1
+        shift ;;
+        --recent)
+        RECENT_ONLY=1
+        shift ;;
+        --) shift ; break ;;
+        *) echo "Internal error!" ; exit 1 ;;
+    esac
+done
+
 
 # may need $RED later
 RED='\033[0;31m'
@@ -59,5 +77,20 @@ OK;
 echo "importing defendant names..."
 echo 'INSERT INTO defendant_names (id, given_names, surnames) (SELECT deft_id, firstname, lastname FROM dev_interpreters.deft_names ORDER BY deft_id)'|mysql office
 OK;
-echo
-echo "all done for now."	
+
+if [[ ! -z $FULL_DATABASE ]];
+    then echo "whole-enchilada|everything flag WAS set; gonna keep going."
+	./bin/sdny/import-events.php --from 2001 --to 2004 && \
+	./bin/sdny/import-events.php --from 2005 --to 2007 && \
+	./bin/sdny/import-events.php --from 2008 --to 2010 && \
+	./bin/sdny/import-events.php --from 2011 --to 2013 && \
+	./bin/sdny/import-events.php --from 2014 --to 2016 && \
+	./bin/sdny/import-events.php --from 2017 --to 2019
+	OK;
+	echo  -n "importing defendants_events and interpreters_events..."
+	mysql office < bin/sdny/import-deft-and-interp-events.sql
+	OK;
+fi;
+
+echo "success!"
+exit 0;
