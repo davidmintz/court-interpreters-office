@@ -91,7 +91,7 @@ if ($this->results):
         if ($this->isQuery and !$this->interpreter) :
 ?><p>No matching records found.</p><?php
     endif;
-endif; ?>
+endif; ?><br>
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-primary">
 <span aria-hidden="true" class="icon fa fa-plus"></span> new interpreter
 </a>
