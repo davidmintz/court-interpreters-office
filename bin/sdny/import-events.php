@@ -301,7 +301,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
             //printf("at %d SHIT IS NOW submitter id %s, anon submitter is %s\n", __LINE__,$params[':submitter_id']?:"NULL",$params[':anonymous_submitter_id']?:"NULL");
 
         }
-        if (! in_array($e['submitter_hat'],['Pretrial','Magistrate','defense atty'])) {
+        if (! in_array($e['submitter_hat'],['Pretrial','Magistrates','defense atty'])) {
             $meta_notes .= sprintf("metadata formerly was: submitted by unidentified %s.",
                      $e['submitter_hat'] ?: 'person'
             );
