@@ -99,16 +99,30 @@ DQL;
      * returns human-readable representation of event
      *
      * @param type $id
-     * @return array
+     * @return array|null if not found
      */
     public function getView($id)
     {
+        $entityManager = $this->getEntityManager();
+        $event = $entityManager
+            ->createQuery($this->view_dql . ' WHERE e.id = :id')
+             ->setParameters(['id'=>$id])
+             ->getOneOrNullResult();
+        if (! $event) {
+            return null;
+        }
+        $deft_dql = 'SELECT d.surnames, d.givenNames
+            FROM InterpretersOffice\Entity\DefendantName d
+            JOIN d.events e WHERE e.id = :id';
+        $event['defendants'] = $entityManager->createQuery($deft_dql)
+            ->setParameters(['id'=>$id])->getResult();
+        $interp_dql = 'SELECT i.lastname, i.firstname
+            FROM InterpretersOffice\Entity\InterpreterEvent ie JOIN ie.interpreter i JOIN ie.event e
+            WHERE e.id = :id';
+        $event['interpreters'] =  $entityManager->createQuery($interp_dql)
+            ->setParameters(['id'=>$id])->getResult();
+        return $event;
 
-         return $this
-                 ->getEntityManager()
-                 ->createQuery($this->view_dql . ' WHERE e.id = :id')
-                 ->setParameters(['id'=>$id])
-                 ->getOneOrNullResult();
     }
 
     /**
