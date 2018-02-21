@@ -14,6 +14,11 @@ composer.phar
 court-interpreters-office.sublime-*
 data/*
 dev.local.conf
+bower.json
+codeception.yml
+bin/scratch/*sh
+
 node_modules
 */sdny/*json
+doc/api
 
