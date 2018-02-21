@@ -183,21 +183,23 @@ $(document).ready(function()
     // get data to update submitter dropdown based on selected hat
     hatElement.on("change",function()
     {
-        console.warn("shit changes. behold!");
         var init_values = submitterElement.data();
         var hat_id = hatElement.val();
         if (! hat_id) {
             hatElement.children().not(":first").remove();
             return;
         } else {
+            // if the initial "submitter" value was an inactive person, extra
+            // effort is needed to fetch the person again if they change the "hat"
+            // and then change it back
             if (init_values && init_values.hat_id === hat_id) {
-                var submitter_id = init_values.submitter_id;
+                var person_id = init_values.submitter_id;
             } else {
-                var submitter_id = null;
+                var person_id = null;
             }
         }
         $.getJSON('/admin/people/get',
-                { hat_id: hat_id, person_id : submitter_id },
+                { hat_id: hat_id, person_id : person_id },
                 function(data)
                 {
                     var options = data.map(function(item){
