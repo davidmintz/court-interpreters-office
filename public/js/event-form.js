@@ -180,7 +180,6 @@ $(document).ready(function()
         );
     }).trigger('change');
 
-    ;
     // get data to update submitter dropdown based on selected hat
     hatElement.on("change",function()
     {
