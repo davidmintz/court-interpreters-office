@@ -29,12 +29,17 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
     protected $view_dql = <<<DQL
 
          SELECT e.id, e.date, e.time,
-         COALESCE(j.lastname, aj.name) AS judge,
+         COALESCE(
+             CONCAT(j.firstname, ' ',j.middlename,' ',j.lastname,', ',f.flavor),
+         aj.name) AS judge,
          t.name AS type,
+         c.category,
          lang.name AS language,
          e.docket,
          loc.name AS location,
          ploc.name AS parent_location,
+         ctrm.name AS default_courtroom,
+         ctrm_parent.name AS default_courthouse,
          COALESCE(CONCAT(p.lastname,', ',p.firstname), anon_submitter.name)
              AS submitter,
          h.name AS submitter_hat,
@@ -46,11 +51,16 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          e.comments,
          e.admin_comments
          FROM InterpretersOffice\Entity\Event e
-         LEFT JOIN e.judge j JOIN e.eventType t
+         JOIN e.eventType t
+         JOIN t.category c
+         LEFT JOIN e.judge j
+         LEFT JOIN j.flavor f
          LEFT JOIN e.anonymousJudge aj
          JOIN e.language lang
          LEFT JOIN e.location loc
          LEFT JOIN loc.parentLocation ploc
+         LEFT JOIN j.defaultLocation ctrm
+         LEFT JOIN ctrm.parentLocation ctrm_parent
          LEFT JOIN e.submitter p
          LEFT JOIN p.hat h
          LEFT JOIN e.anonymousSubmitter anon_submitter
@@ -125,7 +135,6 @@ DQL;
             ->useResultCache($this->cache_enabled)->getResult();
 
         return $event;
-
     }
 
     /**
