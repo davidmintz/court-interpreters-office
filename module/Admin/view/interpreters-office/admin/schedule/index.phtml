@@ -1,14 +1,14 @@
 <?php /* module/Admin/view/interpreters-office/admin/schedule/index.phtml */
 
 $messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) : 
-    echo $messenger->render('success', ['alert','alert-success',], false); 
-elseif ($messenger->hasErrorMessages()) : 
-    echo $messenger->render('danger', ['alert','alert-danger',], false); 
+if ($messenger->hasSuccessMessages()) :
+    echo $messenger->render('success', ['alert','alert-success',], false);
+elseif ($messenger->hasErrorMessages()) :
+    echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;?>
 <div class="row mb-0 mt-3 py-2">
     <div class="col-2 align-self-center pl-0 ml-0 text-left">
-    <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-left" style="font-size:1.2rem;background-color:#74b4fb" href="<?php 
+    <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-left" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
         echo $this->url('events').$this->prev
     ?>"><span class="sr-only">previous</span></a>
     </div>
@@ -17,7 +17,7 @@ endif;?>
     <!-- shit underneath -->
     </div>
     <div class="col-2 align-self-center pr-0 mr-0 text-right">
-    <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-right" style="font-size:1.2rem;background-color:#74b4fb" href="<?php 
+    <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-right" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
         echo $this->url('events').$this->next
     ?>"><span class="sr-only">previous</span></a>
     </div>
@@ -36,18 +36,18 @@ endif;?>
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($this->data['events'] as $e):  // $e['location_type'] contains e.g., "jail"   
+        <?php foreach ($this->data['events'] as $e):  // $e['location_type'] contains e.g., "jail"
         ?>
         <tr data-id="<?php echo $e['id']?>" class="event-category-<?php echo str_replace(' ','-',$e['category']) ?>">
             <td class="text-right text-nowrap"><?php echo $e['time']->format('g:i a')?></td>
-            <td style="line-height:1.2em" title="event id <?php echo $e['id']?>" class="py-2"><a href="<?php 
+            <td style="line-height:1.2em" title="event id <?php echo $e['id']?>" class="py-2"><a href="<?php
                 echo $this->url('events/edit',['id'=>$e['id']])
             ?>"><?php echo $e['type']; ?></a><?php if ($e['location_type']=='jail'):
                     ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
                     endif;
             ?></td>
             <td class="text-nowrap"><?php echo $e['judge'];
-                    if ($e['category']=="in" && $e['location']):
+                    if (($e['category']=="in" or 'magistrate'==$e['judge']) && $e['location']):
                     ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
                     endif;
             ?></td>
@@ -61,5 +61,5 @@ endif;?>
     </tbody>
     <tfoot></tfoot>
 </table>
-    <?php    
+    <?php
 endif;
