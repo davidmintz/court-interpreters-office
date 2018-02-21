@@ -1,5 +1,5 @@
 <?php /* module/Admin/view/interpreters-office/admin/schedule/index.phtml */
-
+$this->headTitle($this->date->format('D d M Y'));
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
