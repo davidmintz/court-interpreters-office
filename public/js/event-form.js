@@ -169,7 +169,6 @@ $(document).ready(function()
                 hat_id : hat_id,
             });
         }
-
     }
     //
     var judgeElement = $('#judge');
