@@ -140,19 +140,20 @@ class PeopleController extends AbstractActionController
         $route = strtolower($base).'s/edit';
         $this->redirect()->toRoute($route, ['id' => $entity->getId()]);
     }
-    
+
     /**
      * returns names and ids of people of a particular "hat"
-     * 
+     *
      * @return JsonModel
      */
     public function getAction()
     {
         $repo = $this->entityManager->getRepository(Entity\Person::class);
         $hat_id = $this->params()->fromQuery('hat_id');
-        $data = $repo->getPersonOptions($hat_id);
-        
-        return new JsonModel($data);  
-        
+        $person_id = $this->params()->fromQuery('person_id');
+        $data = $repo->getPersonOptions($hat_id,$person_id);
+
+        return new JsonModel($data);
+
     }
 }

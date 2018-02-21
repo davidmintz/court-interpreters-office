@@ -165,11 +165,11 @@ $(document).ready(function()
     } else {
         if (submitter_id) {
             submitterElement.data({
-                init_submitter_id : submitter_id,
-                init_hat_id : hat_id,
+                submitter_id : submitter_id,
+                hat_id : hat_id,
             });
         }
-        console.log(submitterElement.data());
+
     }
     //
     var judgeElement = $('#judge');
@@ -184,14 +184,21 @@ $(document).ready(function()
     // get data to update submitter dropdown based on selected hat
     hatElement.on("change",function()
     {
-        console.warn("shit changes");
-
+        console.warn("shit changes. behold!");
+        var init_values = submitterElement.data();
+        var hat_id = hatElement.val();
         if (! hat_id) {
             hatElement.children().not(":first").remove();
             return;
+        } else {
+            if (init_values && init_values.hat_id === hat_id) {
+                var submitter_id = init_values.submitter_id;
+            } else {
+                var submitter_id = null;
+            }
         }
-         $.getJSON('/admin/people/get',
-                { hat_id: hat_id },
+        $.getJSON('/admin/people/get',
+                { hat_id: hat_id, person_id : submitter_id },
                 function(data)
                 {
                     var options = data.map(function(item){
@@ -205,7 +212,6 @@ $(document).ready(function()
                            .trigger("sdny.submitter-update-complete");
                 }
             );
-
     });//.trigger('change');
     var eventTypeElement = $('#event-type');
 

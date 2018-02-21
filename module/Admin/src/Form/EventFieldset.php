@@ -42,7 +42,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
       */
      const DATE_ELEMENT_TYPE = 'Text';
 
-    /**bootstrap 4 increase font size
+    /**
      * name of the form.
      *
      * @var string

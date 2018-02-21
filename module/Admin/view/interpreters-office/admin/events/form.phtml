@@ -43,7 +43,7 @@ foreach (['date','time','end_time','submission_time', 'submission_date'] as $tim
         $format = strstr($time, 'time') ? 'g:i a':'m/d/Y' ;
         $element->setValue($value->format($format));
         continue;
-    }    
+    }
 endforeach;
 
 $hatElement = $fieldset->get('anonymousSubmitter');
@@ -58,7 +58,7 @@ if ($this->hat_id):
             ->getPersonOptions($hat_id);
         array_unshift($options, $data);
         $submitterElement->setValueOptions($data);
-    endif;    
+    endif;
 endif;
 $parent = $fieldset->get('parent_location')->getValue();
 $location_element = $fieldset->get('location');
@@ -68,9 +68,13 @@ if ($parent && sizeof($location_options) <= 1) :
         ->getRepository('InterpretersOffice\Entity\Location');
     $data = $repo->getChildLocationValueOptions($parent);
     $location_options = $location_element->getValueOptions();
-    array_unshift($location_options, $data);           
-    $location_element->setValueOptions($location_options[0]);                
+    array_unshift($location_options, $data);
+    $location_element->setValueOptions($location_options[0]);
 endif;
+$entity = $form->getObject();
+if ($entity->getLocation() && !$entity->getLocation()->getParentLocation()) {
+    $fieldset->get('parent_location')->setValue($entity->getLocation()->getId());
+}
 /** ============================================================ ! */
 // temporarily, let's just set this here
 $config = ['end_time' => true];
@@ -179,7 +183,7 @@ echo $this->form()->openTag($form); ?>
                      <?php echo $this->formSelect($fieldset->get('defendantNames')); ?>
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
-                <?php                
+                <?php
                 if ($this->defendantNames) {
                     foreach ($this->defendantNames as $id => $name) {
                         echo $this->defendantName($id,$name);
@@ -205,7 +209,7 @@ echo $this->form()->openTag($form); ?>
             ?>
             </div>
         </div>
-        <div class="form-group form-row">               
+        <div class="form-group form-row">
             <label class="col-form-label col-4" for="submission_date">submitted on</label>
             <div class="col-4"><?php $element_date = $fieldset->get('submission_date');
               echo $this->formElement($element_date);?></div>
@@ -219,7 +223,7 @@ echo $this->form()->openTag($form); ?>
         <?php $element = $fieldset->get('cancellationReason');?>
         <div class="form-group form-row my-2">
             <label class="col-form-label pr-1 col-sm-4" for="<?php echo $element->getAttribute('id')?>">cancellation</label>
-            <div class="col-sm-8"><?php            
+            <div class="col-sm-8"><?php
                   echo $this->formElement($element);?>
             <?php echo $this->formElementErrors($element);?>
             </div>
