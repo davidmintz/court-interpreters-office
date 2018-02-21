@@ -33,10 +33,10 @@ class DefendantName
      * given name(s), a/k/a first name(s).
      *
      * @ORM\Column(type="string",name="given_names",length=60,nullable=false)
-     * 
+     *
      * @var string
      */
-    protected $givenNames;
+    protected $given_names;
 
     /**
      * surname(s), a/k/a last name.
@@ -46,17 +46,17 @@ class DefendantName
      * @var string
      */
     protected $surnames;
-    
+
     /**
      * related Event entities
-     * 
+     *
      * no accessors etc seem to be necessary as of yet.
-     * 
+     *
      * @ORM\ManyToMany(targetEntity="Event",mappedBy="defendantNames")
-     * @var Collection 
+     * @var Collection
      */
     protected $events;
-   
+
     /**
      * returns "lastname, firstname".
      *
@@ -187,7 +187,7 @@ class DefendantName
      */
     public function getGivenNames()
     {
-        return $this->givenNames;
+        return $this->given_names;
     }
     /**
      * set given names.
@@ -198,7 +198,7 @@ class DefendantName
      */
     public function setGivenNames($given_names)
     {
-        $this->givenNames = $given_names;
+        $this->given_names = $given_names;
 
         return $this;
     }

@@ -58,12 +58,12 @@ class DefendantNameRepository extends EntityRepository
         $name = $this->parseName($term);
         $parameters = ['surnames' => "$name[last]%"];
         
-        $dql = "SELECT d.id AS value, CONCAT(d.surnames, ',  ',d.givenNames) "
+        $dql = "SELECT d.id AS value, CONCAT(d.surnames, ',  ',d.given_names) "
                 . ' AS label FROM  InterpretersOffice\Entity\DefendantName d '
                 . ' WHERE ';
         
         $dql .= $this->getDqlWhereClause($name,$parameters);
-        $dql   .= "ORDER BY d.surnames, d.givenNames";
+        $dql   .= "ORDER BY d.surnames, d.given_names";
         $query = $this->createQuery($dql)
                 ->setParameters($parameters)
                 ->setMaxResults($limit);
@@ -85,12 +85,12 @@ class DefendantNameRepository extends EntityRepository
         }        
         
         if ($name['first']) {
-            $parameters['givenNames'] = "$name[first]%";
-            $dql .= 'AND d.givenNames LIKE :givenNames ';
+            $parameters['given_names'] = "$name[first]%";
+            $dql .= 'AND d.given_names LIKE :given_names ';
         } else {
             // we don't like empty first names, so if there are any (legacy)
             // rows that are missing a first name, avoid returning them
-            $dql .= "AND d.givenNames <> '' " ;
+            $dql .= "AND d.given_names <> '' " ;
         }
         return $dql;
         
@@ -110,7 +110,7 @@ class DefendantNameRepository extends EntityRepository
         $name = $this->parseName($search_term);
         $parameters = ['surnames' => "$name[last]%"];      
         $dql .= $this->getDqlWhereClause($name, $parameters);
-        $dql   .= "ORDER BY d.surnames, d.givenNames";
+        $dql   .= "ORDER BY d.surnames, d.given_names";
         $query = $this->createQuery($dql)
                 ->setParameters($parameters)
                 ->setMaxResults(20);
