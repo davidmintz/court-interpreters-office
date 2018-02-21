@@ -27,16 +27,16 @@ return  [
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\ScheduleController::class,
-                    'action' => 'index', 
+                    'action' => 'index',
                     /*
                     'year' => $today->format('Y'),
                     'month' => $today->format('m'),
-                    'date' => $today->format('d'),                     
+                    'date' => $today->format('d'),
                      */
                 ],
             ],
             'child_routes' => [
-                
+
                 'display' => [
                     'type' => Segment::class,
                     'options' => [
@@ -44,14 +44,27 @@ return  [
                         'defaults' => [
                             'controller' => Controller\ScheduleController::class,
                             'action' => 'index',//'year'=>null,
-                            // these could use refining.                            
-                        ],  
+                            // these could use refining.
+                        ],
                         'constraints' => [
                             'year'=>'[12]\d\d\d',
                             'month'=>'\d\d',
-                            'date' => '\d\d'                                
+                            'date' => '\d\d'
                         ],
                     ]
+                ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/view/:id',
+                        'defaults' => [
+                            'controller'=>Controller\ScheduleController::class,
+                            'action' => 'view',
+                        ],
+                        'constraints' => [
+                            'id' => '[1-9]\d*',
+                        ],
+                    ],
                 ],
                 'add' => [
                     'type' => Segment::class,
@@ -77,6 +90,7 @@ return  [
                         ],
                     ],
                 ],
+
                 'interpreter-template' => [
                     'type' => Segment::class,
                     'options' => [
