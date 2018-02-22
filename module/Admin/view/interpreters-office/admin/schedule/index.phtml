@@ -1,4 +1,5 @@
 <?php /* module/Admin/view/interpreters-office/admin/schedule/index.phtml */
+$this->headScript()->appendFile($this->basePath('js/schedule.js'));
 $this->headTitle($this->date->format('D d M Y'));
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
@@ -12,26 +13,44 @@ endif;?>
         echo $this->url('events').$this->prev
     ?>"><span class="sr-only">previous</span></a>
     </div>
-    <div class="col-8  text-center">
+    <div class="col-8 text-center">
     <h2 class="navigation pt-1"><a href="/admin">admin</a> | schedule <small class="text-muted"><?php echo $this->date->format('D d M Y')?></small>
     </h2>
-    <div class="dropdown">
-      <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Dropdown button
-      </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item" href="#">Action</a>
-        <a class="dropdown-item" href="#">Another action</a>
-        <a class="dropdown-item" href="#">Something else here</a>
-      </div>
-    </div>
-
     </div>
     <div class="col-2 align-self-center pr-0 mr-0 text-right">
     <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-right" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
         echo $this->url('events').$this->next
     ?>"><span class="sr-only">previous</span></a>
     </div>
+    <div class="col-2 offset-md-2 text-md-right">language</div>
+    <div class="col-2">
+        <select class="custom-select" name="language">
+            <option label="all" value="all">all</option>
+            <option label="Spanish" value="Spanish">Spanish</option>
+            <option label="not Spanish" value="not-spanish">not Spanish</option>
+        </select>
+    </div>
+
+
+
+
+    </select>
+    <!--
+    <div class="col-md-4 offset-md-3">
+        <div id="language-dropdown" class="dropdown">
+              <button class="btn btn-outline-primary btn-sm  dropdown-toggle" type="button" id="btn-language" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                language:
+              </button>
+              <div class="dropdown-menu" aria-labelledby="btn-language">
+                  <a class="dropdown-item" href="#">all</a>
+                  <a class="dropdown-item" href="#">Spanish</a>
+                  <a class="dropdown-item" href="#">not Spanish</a>
+             </div>
+             <span class="pt-3" id="language-filter">(default)</span>
+        </div>
+    </div>
+    -->
+</div><!-- /row -->
     <?php if ($this->data) : ?>
 <table class="table table-hover table-bordered table-sm rounded mt-2">
     <thead>
