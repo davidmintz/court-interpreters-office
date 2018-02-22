@@ -40,7 +40,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          ploc.name AS parent_location,
          ctrm.name AS default_courtroom,
          ctrm_parent.name AS default_courthouse,
-         COALESCE(CONCAT(p.lastname,', ',p.firstname), anon_submitter.name)
+         COALESCE(CONCAT(p.firstname,' ',p.lastname), anon_submitter.name)
              AS submitter,
          h.name AS submitter_hat,
          e.submission_date, e.submission_time,

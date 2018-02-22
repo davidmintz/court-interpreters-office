@@ -6,64 +6,111 @@
 $event = $this->event;
 $this->headTitle('event details');
 // figure out location
-$IN_COURT =  $event['category'] == 'in';
 if ($event['location']):
-// etc <?php echo $event['default_courtroom']
+    $IS_DEFAULT_LOCATION = false;
+    $location = $event['location'];
+    if ($event['parent_location']) :
+        $location .= ', '.$event['parent_location'];
+    endif;
+
+elseif ($event['category'] == 'in' && $event['default_courtroom']):
+    // fall back on judge default
+    $IS_DEFAULT_LOCATION = true;
+    $location = $event['default_courtroom'];
+    if ($event['default_courthouse']):
+        $location .= ', '.$event['default_courthouse'];
+    endif;
+    $location .= ' <span class="text-muted text-md-right">*</span>';
 endif;
 ?>
-<h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="/admin">admin</a> | <a href="/admin/schedule">schedule</a> <small class="text-muted">event details</small></h2>
+<h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="/admin">admin</a> | <a href="/admin/schedule">schedule</a> <small class="text-muted text-md-right">event details</small></h2>
 
-<div class="row border mx-auto no-gutters py-2 pl-1" style="max-width:820px">
-    <div class="col-2 text-right text-muted pr-2">
+<div class="row border event-details mx-auto" style="max-width:850px">
+    <div class="col-sm-2 text-muted text-md-right">
         date
     </div>
-    <div class="col-4">
+    <div class="col-sm-4">
         <?php echo $event['date']->format('D d-M-Y'); ?>
         <!-- echo $event['time'] ? $event['time']->format('h:i a'): '<em>none set</em>'-->
     </div>
-    <div class="col-2 text-right text-muted pr-2">
-        type
-    </div>
-    <div class="col-4">
-        <?php echo $event['type'] ?>
-    </div>
-    <div class="col-2 text-right text-muted pr-2">
+    <div class="col-sm-2 text-muted text-md-right">
         time
     </div>
-    <div class="col-4">
+    <div class="col-sm-4">
         <?php echo $event['time'] ? $event['time']->format('h:i a'): '<em>?</em>' ?>
     </div>
-    <div class="col-2 text-right text-muted pr-2">
-        language
+    <div class="col-sm-2 text-muted text-md-right">
+        type
     </div>
-    <div class="col-4">
-        <?php echo $event['language']?>
-    </div>
-    <div class="col-2 text-right text-muted pr-2">
-        judge
-    </div>
-    <div class="col-4">
-        <?php echo $event['judge'] ?>
-    </div>
-    <div class="col-2 text-right text-muted pr-2">
-        location
-    </div>
-    <div class="col-4">
-        <?php echo "boink" ?>
-    </div><?php echo $event['default_courtroom'] ?>
-    <div class="col-2 text-right text-muted pr-2">
-        defendants
-    </div>
-    <div class="col-4"><?php
-        foreach($event['defendants'] as $d) :
-            echo "$d[surnames], $d[given_names]<br>";
-        endforeach;?>
-    </div>
-    <div class="col-2 text-right text-muted pr-2">
-        docket
-    </div>
-    <div class="col-4">
-        <?php echo $event['docket']?>
+    <div class="col-sm-4">
+        <?php echo $event['type'] ?>
     </div>
 
+    <div class="col-sm-2 text-muted text-md-right">
+        language
+    </div>
+    <div class="col-sm-4">
+        <?php echo $event['language']?>
+    </div>
+    <div class="col-sm-2 text-muted text-md-right">
+        judge
+    </div>
+    <div class="col-sm-4">
+        <?php echo $event['judge'] ?>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        location
+    </div>
+    <div class="col-sm-4">
+        <?php echo $location ?>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        defendants
+    </div>
+    <div class="col-sm-4"><?php
+    foreach($event['defendants'] as $d) :
+        echo "$d[surnames], $d[given_names]<br>";
+    endforeach;?>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        docket
+    </div>
+    <div class="col-sm-4">
+        <?php echo $event['docket']?>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        interpreters
+    </div>
+    <div class="col-sm-4"><?php
+    foreach ($event['interpreters'] as $i):
+        echo "$i[lastname], $i[firstname]<br>";
+    endforeach;
+    ?>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        submitted by
+    </div>
+    <div class="col-sm-4"><span class="avoidwrap">
+        <?php echo $event['submitter'] ;
+        ?><?php
+        if ($event['submitter_hat']):?>,</span> <span class="avoidwrap"><?php
+            echo "{$event['submitter_hat']}";
+        endif;?></span>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        comments
+    </div>
+    <div class="col-sm-4">
+        <?php echo 'shit'?>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        submitted on
+    </div>
+    <div class="col-sm-4">
+    <?php echo $event['submission_date']->format('d-M-Y');
+        if ($event['submission_time']):
+            echo $event['submission_time']->format(' h:i a');
+        endif;
+    ?>
+    </div>
 </div>
