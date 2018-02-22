@@ -15,6 +15,7 @@ use Zend\View\Model\JsonModel;
 use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection as
     LanguageCollectionHelper;
 use Zend\Stdlib\Parameters;
+use SDNY\Vault\Service\VaultException;
 
 /**
  * controller for admin/interpreters create|update|delete
@@ -90,9 +91,13 @@ class InterpretersWriteController extends AbstractActionController
                 //printf("<pre>%s</pre>",print_r($form->getMessages(),true));
                 return $viewModel;
             }
-            $this->entityManager->persist($entity);
-            $this->entityManager->flush();
-
+            try {
+                $this->entityManager->persist($entity);
+                $this->entityManager->flush();
+            } catch (VaultException $e) {
+                $viewModel->vault_error = $e->getMessage();
+                return $viewModel;
+            }
             $this->flashMessenger()->addSuccessMessage(
               sprintf(
                 'The interpreter <strong>%s %s</strong> has been added to the database',
@@ -151,7 +156,14 @@ class InterpretersWriteController extends AbstractActionController
                   ! $this->getEncryptedFieldsWereModified($values_before,$input);
                 return $viewModel;
             }
-            $this->entityManager->flush();
+            try {
+                //$this->entityManager->persist($entity);
+                $this->entityManager->flush();
+            } catch (VaultException $e) {
+                $viewModel->vault_error = $e->getMessage();
+                return $viewModel;
+            }
+
             $this->flashMessenger()->addSuccessMessage(sprintf(
                 'The interpreter <strong>%s %s</strong> has been updated.',
                 $entity->getFirstname(), $entity->getLastname()
