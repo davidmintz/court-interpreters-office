@@ -93,7 +93,7 @@ class DefendantName
     public function setFullname($surnames, $given_names)
     {
         $this->surnames = $surnames;
-        $this->givenNames = $given_names;
+        $this->given_names = $given_names;
 
         return $this;
     }
