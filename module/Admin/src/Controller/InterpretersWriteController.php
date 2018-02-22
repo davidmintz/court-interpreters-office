@@ -5,6 +5,7 @@
 namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Form\InterpreterForm;
@@ -16,7 +17,7 @@ use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection as
 use Zend\Stdlib\Parameters;
 
 /**
- * controller for admin/interpreters create|update|delete 
+ * controller for admin/interpreters create|update|delete
  *
  */
 class InterpretersWriteController extends AbstractActionController
@@ -34,13 +35,18 @@ class InterpretersWriteController extends AbstractActionController
      * @var EntityManagerInterface
      */
     protected $entityManager;
-    
+
     /**
      * path to form template
-     * 
+     *
      * @var string
      */
     protected $form_template = 'interpreters-office/admin/interpreters/form.phtml';
+
+    /**
+     * @var ViewModel
+     */
+    protected $viewModel;
 
    /**
      * constructor.
@@ -50,17 +56,25 @@ class InterpretersWriteController extends AbstractActionController
      */
     public function __construct(EntityManagerInterface $entityManager, $vault_enabled)
     {
-        
+
         $this->entityManager = $entityManager;
-        $this->vault_enabled = $vault_enabled;        
+        $this->vault_enabled = $vault_enabled;
+        $this->viewModel = new ViewModel(['vault_enabled' =>$vault_enabled]);
     }
-    
+
+    public function onDispatch(MvcEvent $e)
+    {
+        if ($this->vault_enabled) {
+            // ping the vault to make sure it's up
+        }
+        return parent::onDispatch($e);
+    }
     /**
      * adds an Interpreter entity to the database.
      */
     public function addAction()
-    {        
-        $viewModel = (new ViewModel())
+    {
+        $viewModel = $this->viewModel
             ->setTemplate($this->form_template);
         $form = new InterpreterForm($this->entityManager,
                 [ 'action' => 'create',
@@ -82,8 +96,7 @@ class InterpretersWriteController extends AbstractActionController
             $this->flashMessenger()->addSuccessMessage(
               sprintf(
                 'The interpreter <strong>%s %s</strong> has been added to the database',
-                $entity->getFirstname(),
-                $entity->getLastname()
+                $entity->getFirstname(), $entity->getLastname()
                 )
             );
             //echo "success. NOT redirecting. <a href=\"/admin/interpreters/add\">again</a>";
@@ -106,10 +119,10 @@ class InterpretersWriteController extends AbstractActionController
         ]);*/
         //var_dump($validator->isValid($value));
 
-        $viewModel = (new ViewModel())
+        $viewModel = $this->viewModel
             ->setTemplate($this->form_template);
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager->find(Entity\Interpreter::class, $id);        
+        $entity = $this->entityManager->find(Entity\Interpreter::class, $id);
         if (! $entity) {
             return $viewModel->setVariables(
                    ['errorMessage' => "interpreter with id $id not found"]);
@@ -118,7 +131,7 @@ class InterpretersWriteController extends AbstractActionController
             'dob' => $entity->getDob(),
             'ssn' => $entity->getSsn(),
         ];
-        $form = new InterpreterForm($this->entityManager, 
+        $form = new InterpreterForm($this->entityManager,
                 ['action' => 'update','vault_enabled' => $this->vault_enabled]);
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id,
@@ -131,11 +144,11 @@ class InterpretersWriteController extends AbstractActionController
         if ($request->isPost()) {
             $input = $request->getPost();
             $form->setData($input);
-            if (! $form->isValid()) {                
-                // whether the encrypted fields should be obscured (again) 
-                // or not depends on whether they changed them                
-                $viewModel->obscure_values = 
-                  ! $this->getEncryptedFieldsWereModified($values_before,$input);                
+            if (! $form->isValid()) {
+                // whether the encrypted fields should be obscured (again)
+                // or not depends on whether they changed them
+                $viewModel->obscure_values =
+                  ! $this->getEncryptedFieldsWereModified($values_before,$input);
                 return $viewModel;
             }
             $this->entityManager->flush();
@@ -149,7 +162,7 @@ class InterpretersWriteController extends AbstractActionController
         } else {    // not a POST
             if ($this->vault_enabled) {
                 $viewModel->obscure_values = true;
-            }           
+            }
         }
 
         return $viewModel;
@@ -161,13 +174,13 @@ class InterpretersWriteController extends AbstractActionController
      * @return boolean
      */
     public function getEncryptedFieldsWereModified(Array $values_before,
-            Parameters $input)            
+            Parameters $input)
     {
         return $input->get('dob') != $values_before['dob']
-                or 
+                or
                 $input->get('ssn') != $values_before['ssn'];
     }
-    
+
     /**
      * validates part of the Interpreter form
      *
@@ -195,21 +208,21 @@ class InterpretersWriteController extends AbstractActionController
                 if (! $form->isValid()) {
                     return new JsonModel([
                         'valid' => false,
-                        'validation_errors' => 
+                        'validation_errors' =>
                             $form->getMessages()['interpreter']
                     ]);
                 }
-            }       
+            }
             return new JsonModel(['valid' => true]);
         } catch (\Exception $e) {
             return new JsonModel(['valid' => false, 'error' => $e->getMessage()]);
         }
-        
+
     }
-    
+
     /**
      * creates form view helper for interpreter-language markup
-     * 
+     *
      * @return LanguageCollectionHelper
      */
     protected function getLanguageCollectionHelper()
@@ -219,13 +232,13 @@ class InterpretersWriteController extends AbstractActionController
             ->getApplication()->getServiceManager();
         $renderer = $container->get('ViewRenderer');
         $helper->setView($renderer);
-        
+
         return $helper;
     }
-    
+
      /**
      * renders HTML fragment for an interpreter language
-     * 
+     *
      * @return Zend\Http\PhpEnvironment\Response
      */
     public function languageFieldsetAction()
@@ -238,7 +251,7 @@ class InterpretersWriteController extends AbstractActionController
         }
         $helper = $this->getLanguageCollectionHelper();
         $content = $helper->fromArray(compact('language','index'));
-        
-        return $this->getResponse()->setContent($content);        
+
+        return $this->getResponse()->setContent($content);
     }
 }
