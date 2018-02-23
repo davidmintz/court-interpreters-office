@@ -55,6 +55,7 @@ class ScheduleController extends AbstractActionController
      */
     public function indexAction()
     {
+        /*
         $params = $this->params()->fromRoute();
         if (! isset($params['year'])) {
             $date = new \DateTime();
@@ -62,15 +63,55 @@ class ScheduleController extends AbstractActionController
             // @todo try/catch here?
             $date = new \DateTime(sprintf('%s-%s-%s',$params['year'],$params['month'],$params['date']));
         }
+        */
+        $filters = $this->getFilters();
+        $date = new \DateTime($filters['date']);
         $repo = $this->entityManager->getRepository(Entity\Event::class);
-        $data = $repo->getSchedule(['date'=>$date->format('Y-m-d')]);
-        $day_of_week = $date->format('w');
+        $data = $repo->getSchedule();
 
         $viewModel = new ViewModel(['data' => $data, 'date'=>$date]);
         $this->setPreviousAndNext($viewModel, $date);
 
         return $viewModel;
 
+    }
+    /**
+     * gets date and language filters for schedule
+     *
+     * look first to GET parameters, then the session, otherwise
+     * default to today's date and null language filter
+     *
+     * @return Array
+     */
+    public function getFilters()
+    {
+        $date_params = [];
+        $params = $this->params()->fromRoute();
+        foreach (['year','month','date'] as $p) {
+            if (isset($params[$p])) {
+                $date_params[$p] = $params[$p];
+            }
+        }
+        if ($date_params) {
+            $date = implode('-',$date_params);
+            $this->session->date = $date;
+        }  elseif ($this->session->date) {
+            $date = $this->session->date;
+        } else { // default to today
+            $date = date('Y-m-d');
+        }
+        $language = strtolower($this->params()->fromQuery('language'));
+        if (! in_array($language,['spanish','not-spanish'])) {
+            $language = null;
+        }
+        
+        if ($language) {
+            $this->session->language = $language;
+        } elseif ($this->session->language) {
+            $language = $this->session->language;
+        }
+
+        return [ 'date' => $date, 'language'=>$language];
     }
 
     /**
