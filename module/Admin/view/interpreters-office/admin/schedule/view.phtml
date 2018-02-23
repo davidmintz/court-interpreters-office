@@ -90,10 +90,30 @@ endif;
     ?>
     </div>
     <div class="col-sm-2  text-muted text-md-right">
+        submitted by
+    </div>
+    <div class="col-sm-4"><span class="avoidwrap">
+        <?php echo $event['submitter'] ;
+        ?><?php
+        if ($event['submitter_hat']):?>,</span> <span class="avoidwrap"><?php
+            echo "{$event['submitter_hat']}";
+        endif;?></span>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
         comments
     </div>
     <div class="col-sm-4">
         <?php echo $this->escapeHtml($event['comments'])?>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        submitted on
+    </div>
+    <div class="col-sm-4">
+    <?php echo $event['submission_date']->format('d-M-Y');
+        if ($event['submission_time']):
+            echo $event['submission_time']->format(' h:i a');
+        endif;
+    ?>
     </div>
     <div class="col-sm-2  text-muted text-md-right">
         created
@@ -101,7 +121,12 @@ endif;
     <div class="col-sm-4">
         <?php echo $event['created']->format('d-M-Y h:i a')?>
     </div>
-
+    <div class="col-sm-2  text-muted text-md-right">
+        and more
+    </div>
+    <div class="col-sm-4">
+        <?php echo "bullshit"?>
+    </div>
 
     <!--
     <div class="col-sm-2  text-muted text-md-right">
