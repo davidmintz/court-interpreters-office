@@ -177,7 +177,9 @@ DQL;
     public function getSchedule(Array $options = [])
     {
         if (! isset($options['date'])) {
-            $options['date'] = date('Y-m-d');
+            $date = date('Y-m-d');
+        } elseif ($options['date'] instanceof \DateTime) {
+            $date = $options['date']->format('Y-m-d');
         }
         $dql = 'SELECT e.id, e.date, e.time,
          COALESCE(j.lastname, aj.name) AS judge,
@@ -201,7 +203,7 @@ DQL;
          ORDER BY e.time, e.id';
 
         $events = $this->getEntityManager()->createQuery($dql)
-                ->setParameters([':date'=>$options['date']])
+                ->setParameters([':date'=>$date])
                 ->useResultCache($this->cache_enabled)
                 ->getResult();
 
