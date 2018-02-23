@@ -208,12 +208,13 @@ DQL;
          if (isset($options['language']) && 'all' != $options['language']) {
              $dql .= ' AND lang.name ';
              if ($options['language'] == 'spanish') {
-                 $dql .= ' = ' ;
+                 $dql .= " = 'Spanish'";
              } else {
-                 $dql .= ' <> ';
+                 $dql .= " <> 'Spanish'";
              }
-             $dql .= "'Spanish'";
          }
+         // interesting fact: if you do NOT make the sorting unique (e.g.,
+         // with the id) then the sort varies randomly. no default tie-breaker.
          $dql .= ' ORDER BY e.time, e.id';
 
         $events = $this->getEntityManager()->createQuery($dql)
