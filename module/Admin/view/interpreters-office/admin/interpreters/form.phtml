@@ -100,7 +100,7 @@ $form->add([
         <!-- admin panel ------------->
         <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">
         <?php if ($this->vault_error):?>
-            <div class="validation-error alert alert-warning">shit happened</div>
+            <div class="validation-error alert alert-warning">shit happened. <?php echo $this->vault_error ?></div>
         <?php endif; ?>
         <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
                     $element = $fieldset->get($elementName);
