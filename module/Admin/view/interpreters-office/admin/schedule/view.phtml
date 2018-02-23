@@ -33,13 +33,13 @@ endif;
     </div>
     <div class="col-sm-4">
         <?php echo $event['date']->format('D d-M-Y'); ?>
-        <!-- echo $event['time'] ? $event['time']->format('h:i a'): '<em>none set</em>'-->
+        <!-- echo $event['time'] ? $event['time']->format('g:i a'): '<em>none set</em>'-->
     </div>
     <div class="col-sm-2 text-muted text-md-right">
         time
     </div>
     <div class="col-sm-4">
-        <?php echo $event['time'] ? $event['time']->format('h:i a'): '<em>?</em>' ?>
+        <?php echo $event['time'] ? $event['time']->format('g:i a'): '<em>?</em>' ?>
     </div>
     <div class="col-sm-2 text-muted text-md-right">
         type
@@ -90,6 +90,21 @@ endif;
     ?>
     </div>
     <div class="col-sm-2  text-muted text-md-right">
+        comments
+    </div>
+    <div class="col-sm-4">
+        <?php echo $this->escapeHtml($event['comments'])?>
+    </div>
+    <div class="col-sm-2  text-muted text-md-right">
+        created
+    </div>
+    <div class="col-sm-4">
+        <?php echo $event['created']->format('d-M-Y h:i a')?>
+    </div>
+
+
+    <!--
+    <div class="col-sm-2  text-muted text-md-right">
         submitted by
     </div>
     <div class="col-sm-4"><span class="avoidwrap">
@@ -115,4 +130,5 @@ endif;
         endif;
     ?>
     </div>
+
 </div>
