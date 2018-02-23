@@ -7,16 +7,15 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-//use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
+//use Zend\View\Model\JsonModel;
 //use Zend\Authentication\AuthenticationServiceInterface;
-
 //use Zend\EventManager\Event;
-
 //use InterpretersOffice\Admin\Form;
 
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\Event;
+use Zend\Session\Container as Session;
 
 /**
  * ScheduleController
@@ -31,6 +30,13 @@ class ScheduleController extends AbstractActionController
     protected $entityManager;
 
     /**
+     * session
+     *
+     * @var Zend\Session\Container
+     */
+    protected $session;
+
+    /**
      * constructor
      *
      * @param EntityManagerInterface $e
@@ -38,7 +44,9 @@ class ScheduleController extends AbstractActionController
     public function __construct(EntityManagerInterface $e)
     {
         $this->entityManager = $e;
+        $this->session = new Session('schedule');
     }
+
 
     /**
      * index action

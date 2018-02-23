@@ -1,8 +1,12 @@
 
 $(function(){
-    $('#language-dropdown .dropdown-menu a').on("click",function(event){
-        event.preventDefault();
-        $('#language-filter').text($(this).text());
+    $('#language-select').on("click",function(event){
+        console.log("do shit");
     });
-
+    $('#date-input').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        selectOtherMonths : true,
+        showOtherMonths : true
+    });
 });

@@ -1,5 +1,7 @@
 <?php /* module/Admin/view/interpreters-office/admin/schedule/index.phtml */
-$this->headScript()->appendFile($this->basePath('js/schedule.js'));
+$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
+    ->appendFile($this->basePath('js/schedule.js'));
 $this->headTitle($this->date->format('D d M Y'));
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
@@ -22,35 +24,22 @@ endif;?>
         echo $this->url('events').$this->next
     ?>"><span class="sr-only">previous</span></a>
     </div>
-    <div class="col-2 offset-md-2 text-md-right">language</div>
+</div><!-- /row -->
+<div class="form-group form-row">
+    <label class="col-1 offset-md-3 col-form-label text-md-right">language</label>
     <div class="col-2">
-        <select class="custom-select" name="language">
+        <select class="form-control custom-select" id="language-select" name="language">
             <option label="all" value="all">all</option>
             <option label="Spanish" value="Spanish">Spanish</option>
             <option label="not Spanish" value="not-spanish">not Spanish</option>
         </select>
     </div>
-
-
-
-
-    </select>
-    <!--
-    <div class="col-md-4 offset-md-3">
-        <div id="language-dropdown" class="dropdown">
-              <button class="btn btn-outline-primary btn-sm  dropdown-toggle" type="button" id="btn-language" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                language:
-              </button>
-              <div class="dropdown-menu" aria-labelledby="btn-language">
-                  <a class="dropdown-item" href="#">all</a>
-                  <a class="dropdown-item" href="#">Spanish</a>
-                  <a class="dropdown-item" href="#">not Spanish</a>
-             </div>
-             <span class="pt-3" id="language-filter">(default)</span>
-        </div>
+    <label class="col-1 col-form-label text-md-right">date</label>
+    <div class="col-2">
+        <input type="text" name="date" id="date-input" class="form-control">
     </div>
-    -->
-</div><!-- /row -->
+</div>
+
     <?php if ($this->data) : ?>
 <table class="table table-hover table-bordered table-sm rounded mt-2">
     <thead>
@@ -92,4 +81,7 @@ endif;?>
     <tfoot></tfoot>
 </table>
     <?php
+else:?>
+<p>no events scheduled for this date and language.</p>
+<?php
 endif;
