@@ -21,6 +21,8 @@ elseif ($event['category'] == 'in' && $event['default_courtroom']):
         $location .= ', '.$event['default_courthouse'];
     endif;
     $location .= ' <span class="text-muted text-md-right">*</span>';
+else:
+    $location = '';
 endif;
 ?>
 <h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="/admin">admin</a> | <a href="/admin/schedule">schedule</a> <small class="text-muted text-md-right">event details</small></h2>

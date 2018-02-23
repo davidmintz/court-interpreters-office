@@ -1,6 +1,6 @@
 <?php /* module/Admin/view/interpreters-office/admin/schedule/index.phtml */
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
-$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
+$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
     ->appendFile($this->basePath('js/schedule.js'));
 $this->headTitle($this->date->format('D d M Y'));
 $messenger = $this->flashMessenger();
@@ -10,8 +10,8 @@ elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;?>
 <div class="row mb-0 mt-3 py-2">
-    <div class="col-2 align-self-center pl-0 ml-0 text-left">
-    <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-left" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
+    <div class="col-2 align-self-center text-left">
+    <a role="button" title="go back one day" data-toggle="tooltip" class="btn btn-lg btn-primary py-1 fas fa-arrow-left" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
         echo $this->url('events').$this->prev
     ?>"><span class="sr-only">previous</span></a>
     </div>
@@ -19,8 +19,8 @@ endif;?>
     <h2 class="navigation pt-1"><a href="/admin">admin</a> | schedule <small class="text-muted"><?php echo $this->date->format('D d M Y')?></small>
     </h2>
     </div>
-    <div class="col-2 align-self-center pr-0 mr-0 text-right">
-    <a role="button" class="btn btn-lg btn-primary py-1 fas fa-arrow-right" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
+    <div class="col-2 align-self-center text-right">
+    <a role="button" title="go forward one day" data-toggle="tooltip" class="btn btn-lg btn-primary py-1 fas fa-arrow-right" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
         echo $this->url('events').$this->next
     ?>"><span class="sr-only">previous</span></a>
     </div>
@@ -53,19 +53,24 @@ endif;?>
         </tr>
     </thead>
     <tbody>
-        <?php if ($this->data) : foreach ($this->data['events'] as $e):  // $e['location_type'] contains e.g., "jail"
+        <?php if ($this->data) :
+            foreach ($this->data['events'] as $e):
+                $view_url = $this->url('events/view',['id'=>$e['id']]);
+                if (stristr($e['judge'],'magistrate') !== false && !$e['location']) :
+                    $magistrate_default = $e['aj_default_location'];
+                endif;
         ?>
         <tr data-id="<?php echo $e['id']?>" class="event-category-<?php echo str_replace(' ','-',$e['category']) ?>">
             <td class="text-right text-nowrap"><?php echo $e['time']->format('g:i a')?></td>
-            <td style="line-height:1.2em" title="event id <?php echo $e['id']?>" class="py-2"><a href="<?php
-                echo $this->url('events/edit',['id'=>$e['id']])
-            ?>"><?php echo $e['type']; ?></a><?php if ($e['location_type']=='jail'):
+            <td style="line-height:1.2em" class="py-2"><a href="<?php echo $view_url ?>"><span class="float-right align-self-top fas fa-cog text-primary"></span>
+                <?php echo $e['type']; ?><?php
+                if ($e['location_type']=='jail'):
                     ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
-                    endif;
-            ?></td>
+                endif;
+            ?></a></td>
             <td class="text-nowrap"><?php echo $e['judge'];
-                    if (($e['category']=="in" or 'magistrate'==$e['judge']) && $e['location']):
-                    ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
+                    if (($e['category']=="in" or 'magistrate'==$e['judge'])):
+                    ?><br><span class="text-muted"><?php echo $e['location'] ?: $e['aj_default_location'];?></span><?php
                     endif;
             ?></td>
             <td><?php echo $e['language']?></td>

@@ -1,6 +1,8 @@
 /**  public/js/schedule.js */
 
 $(function() {
+    //$.widget.bridge('uitooltip', $.ui.tooltip);
+    $('[data-toggle="tooltip"]').tooltip();
     // strip route parameters /yyyy/mm/dd
     var url = document.location.pathname.replace(/\/\d+/g,'');
     var date_input = $('#date-input');
