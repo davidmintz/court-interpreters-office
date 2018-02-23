@@ -55,22 +55,14 @@ class ScheduleController extends AbstractActionController
      */
     public function indexAction()
     {
-        /*
-        $params = $this->params()->fromRoute();
-        if (! isset($params['year'])) {
-            $date = new \DateTime();
-        } else {
-            // @todo try/catch here?
-            $date = new \DateTime(sprintf('%s-%s-%s',$params['year'],$params['month'],$params['date']));
-        }
-        */
+
         $filters = $this->getFilters();
         $date = new \DateTime($filters['date']);
         $repo = $this->entityManager->getRepository(Entity\Event::class);
-        $data = $repo->getSchedule();
+        $data = $repo->getSchedule($filters);
 
         $viewModel = new ViewModel(['data' => $data, 'date'=>$date]);
-        $this->setPreviousAndNext($viewModel, $date);
+        $this->setPreviousAndNext($viewModel, $date)->setVariable('language', $filters['language']);
 
         return $viewModel;
 
@@ -101,14 +93,15 @@ class ScheduleController extends AbstractActionController
             $date = date('Y-m-d');
         }
         $language = strtolower($this->params()->fromQuery('language'));
-        if (! in_array($language,['spanish','not-spanish'])) {
+        if (! in_array($language,['spanish','not-spanish','all'])) {
             $language = null;
         }
-        
         if ($language) {
             $this->session->language = $language;
         } elseif ($this->session->language) {
             $language = $this->session->language;
+        } else {
+            $language = 'all';
         }
 
         return [ 'date' => $date, 'language'=>$language];

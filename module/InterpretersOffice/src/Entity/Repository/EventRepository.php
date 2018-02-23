@@ -180,6 +180,8 @@ DQL;
             $date = date('Y-m-d');
         } elseif ($options['date'] instanceof \DateTime) {
             $date = $options['date']->format('Y-m-d');
+        } else {
+            $date = $options['date'];
         }
         $dql = 'SELECT e.id, e.date, e.time,
          COALESCE(j.lastname, aj.name) AS judge,
@@ -199,8 +201,17 @@ DQL;
          LEFT JOIN e.location loc
          LEFT JOIN loc.type as loc_type
          LEFT JOIN loc.parentLocation ploc
-         WHERE e.date = :date
-         ORDER BY e.time, e.id';
+         WHERE e.date = :date';
+         if (isset($options['language']) && 'all' != $options['language']) {
+             $dql .= ' AND lang.name ';
+             if ($options['language'] == 'spanish') {
+                 $dql .= ' = ' ;
+             } else {
+                 $dql .= ' <> ';
+             }
+             $dql .= "'Spanish'";
+         }
+         $dql .= ' ORDER BY e.time, e.id';
 
         $events = $this->getEntityManager()->createQuery($dql)
                 ->setParameters([':date'=>$date])
