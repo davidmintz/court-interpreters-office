@@ -47,7 +47,6 @@ endif;
     <div class="col-sm-4">
         <?php echo $event['type'] ?>
     </div>
-
     <div class="col-sm-2 text-muted text-md-right">
         language
     </div>
@@ -58,7 +57,10 @@ endif;
         judge
     </div>
     <div class="col-sm-4">
-        <?php echo $event['judge'] ?>
+        <?php echo $event['judge'];
+        if ($event['aj_default_location']):
+            ?> <span class="text-muted"><?php echo $event['aj_default_location']?></span><?php
+        endif; ?>
     </div>
     <div class="col-sm-2  text-muted text-md-right">
         location
@@ -90,20 +92,11 @@ endif;
     ?>
     </div>
     <div class="col-sm-2  text-muted text-md-right">
-        comments
+        cancellation
     </div>
     <div class="col-sm-4">
-        <?php echo $this->escapeHtml($event['comments'])?>
+        <?php echo $event['reason_for_cancellation'] ?: '<span class="text-muted">n/a</span>'?>
     </div>
-    <div class="col-sm-2  text-muted text-md-right">
-        created
-    </div>
-    <div class="col-sm-4">
-        <?php echo $event['created']->format('d-M-Y h:i a')?>
-    </div>
-
-
-    <!--
     <div class="col-sm-2  text-muted text-md-right">
         submitted by
     </div>
@@ -114,21 +107,41 @@ endif;
             echo "{$event['submitter_hat']}";
         endif;?></span>
     </div>
-    <div class="col-sm-2  text-muted text-md-right">
-        comments
-    </div>
-    <div class="col-sm-4">
-        <?php echo 'shit'?>
-    </div>
-    <div class="col-sm-2  text-muted text-md-right">
+    <div class="col-sm-2 text-muted text-md-right">
         submitted on
     </div>
     <div class="col-sm-4">
     <?php echo $event['submission_date']->format('d-M-Y');
         if ($event['submission_time']):
-            echo $event['submission_time']->format(' h:i a');
+            echo $event['submission_time']->format(' g:i a');
         endif;
     ?>
     </div>
-
+    <div class="col-sm-2 text-muted text-md-right">
+        created
+    </div>
+    <div class="col-sm-4">
+        <?php echo $event['created']->format('d-M-Y g:i a'), " ({$event['created_by']})"; ?>
+    </div>
+    <div class="col-sm-2 text-muted text-md-right">
+        last updated
+    </div>
+    <div class="col-sm-4">
+        <?php echo $event['created']==$event['last_updated'] ? '<span class="text-muted">n/a</span>' :
+            $event['last_updated']->format('d-M-Y g:i a'), " ({$event['last_updated_by']})";
+        ?>
+    </div>
+    <div class="col-sm-2 text-muted text-md-right">
+        comments (public)
+    </div>
+    <div class="col-sm-10">
+        <?php echo $this->escapeHtml($event['comments']) ?>
+    </div>
+    <div class="col-sm-2 text-muted text-md-right">
+        comments (internal)
+    </div>
+    <div class="col-sm-10">
+        <?php echo $this->escapeHtml($event['admin_comments']) ?>
+    </div>
 </div>
+<pre><?php //print_r(array_keys($event))?></pre>

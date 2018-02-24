@@ -40,6 +40,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          ploc.name AS parent_location,
          ctrm.name AS default_courtroom,
          ctrm_parent.name AS default_courthouse,
+         COALESCE(aj_parent_location.name, aj_location.name) AS aj_default_location,
          COALESCE(CONCAT(p.firstname,' ',p.lastname), anon_submitter.name)
              AS submitter,
          h.name AS submitter_hat,
@@ -49,13 +50,17 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          user2.username AS last_updated_by,
          e.modified AS last_updated,
          e.comments,
-         e.admin_comments
+         e.admin_comments,
+         r.reason AS reason_for_cancellation
          FROM InterpretersOffice\Entity\Event e
          JOIN e.eventType t
          JOIN t.category c
+         LEFT JOIN e.cancellationReason r
          LEFT JOIN e.judge j
          LEFT JOIN j.flavor f
          LEFT JOIN e.anonymousJudge aj
+         LEFT JOIN aj.defaultLocation aj_location
+         LEFT JOIN aj_location.parentLocation aj_parent_location         
          JOIN e.language lang
          LEFT JOIN e.location loc
          LEFT JOIN loc.parentLocation ploc
