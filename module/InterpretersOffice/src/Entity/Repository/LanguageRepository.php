@@ -33,7 +33,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
 
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
-        
+
     }
 
     /**
@@ -45,17 +45,12 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function findAllWithPagination($page = 1)
     {
-        // we want equivalent of: 
-        // SELECT l.name language, COUNT(ie.event_id) `count` 
-        // FROM languages l LEFT JOIN events e on l.id = e.language_id 
-        // LEFT JOIN interpreters_events ie ON ie.event_id = e.id GROUP BY l.name;
-        $dql = 'SELECT partial l.{id,name}, COUNT(ie.event) AS events 
-            FROM InterpretersOffice\Entity\Language l 
-            LEFT JOIN l.events e  LEFT JOIN e.interpreterEvents ie 
+        $dql = 'SELECT partial l.{id,name},
+            SIZE(l.events) AS events, size(l.interpreterLanguages) AS interpreters
+            FROM InterpretersOffice\Entity\Language l
+            LEFT JOIN l.events e  LEFT JOIN e.interpreterEvents ie
             GROUP BY l.name ORDER BY l.name ASC';
-        $query = $this->createQuery(
-            $dql //$this->cache_id_prefix . "findAllPage{$page}"
-        )->setMaxResults(30);
+        $query = $this->createQuery($dql)->setMaxResults(30);
 
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
@@ -86,19 +81,19 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
     }
     /**
      * returns all Languages for which there is federal certification
-     * 
+     *
      * @return Array
      */
     public function findAllCertifiedLanguages()
     {
         $query = $this->createQuery(
             'SELECT l.id, l.name FROM InterpretersOffice\Entity\Language l '
-                . ' INDEX BY l.id '              
-                . ' WHERE l.name IN (:names)'           
+                . ' INDEX BY l.id '
+                . ' WHERE l.name IN (:names)'
         )->setParameters([
             ':names' => ['Spanish','Haitian Creole','Navajo'],
         ]);
-        
+
         return $query->getResult();
     }
 
