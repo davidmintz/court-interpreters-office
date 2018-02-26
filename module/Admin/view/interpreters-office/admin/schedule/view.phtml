@@ -27,7 +27,7 @@ endif;
 ?>
 <h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="/admin">admin</a> | <a href="/admin/schedule">schedule</a> <small class="text-muted text-md-right">event details</small></h2>
 
-<div class="row border event-details mx-auto" style="max-width:850px">
+<div class="row border event-details mx-auto" style="max-width:825px">
     <div class="col-sm-2 text-muted text-md-right">
         date
     </div>
@@ -93,7 +93,7 @@ endif;
     <div class="col-sm-2  text-muted text-md-right">
         cancellation
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 pl-2">
         <?php echo $event['reason_for_cancellation'] ?: '<span class="text-muted">n/a</span>'?>
     </div>
         <div class="col-sm-2  text-muted text-md-right">
@@ -144,9 +144,9 @@ endif;
     </div>
     <div class="col-12 d-flex">
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
-          <button type="button" class="btn btn-info">edit</button>
-          <button type="button" class="btn btn-info">repeat</button>
-          <button type="button" class="btn btn-info">delete</button>
+          <a href="<?php echo $this->url('events/edit',['id'=>$event['id']])?>" role="button" class="btn btn-success">edit</a>
+          <a href="" role="button" class="btn btn-success">repeat</a>
+          <a href="" role="button" class="btn btn-success">delete</a>
         </div>
     </div>
 </div>
