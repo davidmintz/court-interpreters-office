@@ -112,5 +112,11 @@ td.interpreters-assigned div:not(:last-child) {
 .event-details div:nth-last-child(-n+2) {
     border-bottom: none ;
 }
+.event-details button {
+    /*border-right : 2px solid #dee2e6 !important;*/
+}
+.event-details button:last-of-type {
+    /*border-right : 0;*/
+}
 
 span.avoidwrap { display:inline-block !important;}
