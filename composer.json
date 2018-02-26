@@ -60,8 +60,8 @@
         ],
         "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
         "test": "phpunit",
-        "toolbar-enable" : "sed -i -e 's/false/true/' config/autoload/toolbar.enabled.local.php"  ,     
-        "toolbar-disable" : "sed -i -e 's/true/false/' config/autoload/toolbar.enabled.local.php"       
+        "toolbar-enable" : "sed -i -e 's/false/true/' config/autoload/toolbar.enabled.php"  ,     
+        "toolbar-disable" : "sed -i -e 's/true/false/' config/autoload/toolbar.enabled.php"       
     },
     "require-dev": {
 		 "codeception/codeception": "^2.3"
