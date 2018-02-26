@@ -9,7 +9,7 @@ use Zend\Paginator\Paginator as ZendPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\EntityManagerInterface;
-
+use InterpretersOffice\Entity\Language;
 /**
  * custom EntityRepository class for Language entity.
  */
@@ -97,6 +97,16 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         return $query->getResult();
     }
 
+    public function hasRelatedEntities(Language $language)
+    {
+        return $this->createQuery(
+                'SELECT SUM(SIZE(l.events) + SIZE(l.interpreterLanguages))
+                FROM  InterpretersOffice\Entity\Language l
+                WHERE l.id = :id')
+            ->setParameters([':id'=>$language->getId()])
+            ->getSingleScalarResult();
+    }
+
     /**
      * experimental
      *
@@ -107,8 +117,8 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
     {
 
         $cache = $this->cache;
-	$cache->setNamespace('languages');
-	$cache->deleteAll();
-        //$cache->delete($this->cache_id_prefix . 'findAll');
+        $cache->setNamespace('languages');
+        var_dump($cache->deleteAll());
+
     }
 }

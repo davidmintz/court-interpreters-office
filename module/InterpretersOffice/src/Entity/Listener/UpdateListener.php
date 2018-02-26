@@ -157,6 +157,11 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postRemove(LifecycleEventArgs $args)
     {
+        $this->logger->debug(sprintf(
+            '%s happening on entity %s, bitch!',
+            __METHOD__,
+            get_class($entity)
+        ));
         return $this->postUpdate($args);
     }
 
@@ -217,6 +222,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function preRemove(LifecycleEventArgs $args)
     {
-                  
+
     }
 }

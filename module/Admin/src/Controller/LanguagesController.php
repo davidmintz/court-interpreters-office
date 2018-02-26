@@ -7,11 +7,12 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-//use Zend\ServiceManager\AbstractPluginManager;
+use Zend\View\Model\JsonModel;
 use InterpretersOffice\Form\Factory\FormFactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\Language;
 use InterpretersOffice\Form\AnnotatedFormCreationTrait;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 
 /**
  *  LanguagesController, for managing languages.
@@ -74,7 +75,6 @@ class LanguagesController extends AbstractActionController
                 ->getRepository('InterpretersOffice\Entity\Language')
                 ->findBy([],['name'=>'ASC']);
         */
-
         $page = $this->params()->fromQuery('page', 1);
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
         $languages = $repository->findAllWithPagination($page);
@@ -93,15 +93,18 @@ class LanguagesController extends AbstractActionController
         if (! $id) {
             return $this->getFormViewModel(['errorMessage' => 'invalid or missing id parameter']);
         }
-        $entity = $this->entityManager->find('InterpretersOffice\Entity\Language', $id);
+        $entity = $this->entityManager->find(Language::class, $id);
         if (! $entity) {
             return $this->getFormViewModel(['errorMessage' => "language with id $id not found"]);
         }
-        $form = $this->getForm(Language::class, ['object' => $entity, 'action' => 'update'])
+        $hasRelatedEntities = $this->entityManager->getRepository(Language::class)
+            ->hasRelatedEntities($entity);
+        $form = $this->getForm(Language::class,
+            ['object' => $entity, 'action' => 'update',])
                ->bind($entity);
-
         $viewModel = $this->getFormViewModel(
-            ['form' => $form, 'title' => 'edit a language', 'id' => $id]
+            [ 'form' => $form, 'has_related_entities' => $hasRelatedEntities,
+            'title' => 'edit a language', 'id' => $id ]
         );
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -117,16 +120,50 @@ class LanguagesController extends AbstractActionController
 
         return $viewModel;
     }
+
     /**
      * deletes a language.
-     *
-     * @return bool
+     * @todo log it
+     * @return JsonModel
      */
     public function deleteAction()
     {
-        echo 'YET TO BE IMPLEMENTED';
 
-        return false;
+        $request = $this->getRequest();
+
+        if ($request->isPost()) {
+            $id = $this->params()->fromRoute('id');
+            $name = $this->params()->fromPost('name');
+            $entity = $this->entityManager->find(Language::class,$id);
+            if ($entity) {
+                //$thing = $this->getEvent()->getApplication()->getServiceManager()->get('ViewHelperManager');
+                //$helper = $thing->get("url"); echo $helper('languages');
+                try {
+                    $this->entityManager->remove($entity);
+                    $this->entityManager->flush();
+                    $this->flashMessenger()
+                          ->addSuccessMessage("The language <strong>$entity</strong> has been deleted.");
+                    $result = 'success';
+                    $error = [];
+                } catch (ForeignKeyConstraintViolationException $e) {
+                    $result = 'error';
+                    $error = [
+                        'message' => $e->getMessage(),
+                        'code'=> $e->getCode(),
+                    ];
+                    $this->flashMessenger()
+                          ->addWarningMessage(
+                    "The language <strong>$name</strong> could not be deleted because it has related database records.");
+                }
+            } else {
+                $result = 'error';
+                $error = ['message'=>"language id $id not found"];
+                $this->flashMessenger()
+                      ->addWarningMessage("The language <strong>$name</strong> was not found.");
+            }
+        }
+
+        return new JsonModel(compact('result','error'));
     }
 
     /**

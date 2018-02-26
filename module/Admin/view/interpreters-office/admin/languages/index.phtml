@@ -9,12 +9,16 @@ $this->headTitle($this->title);
 <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 $messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) :
-    echo $messenger->render('success', ['alert','alert-success',], false);
-endif;
+foreach (['success','warning'] as $ns) :
+    $method = 'has'.ucfirst($ns).'Messages';
+    if ($messenger->$method()) :
+        echo $messenger->render($ns, ['alert',"alert-$ns",], false);
+    endif;
+endforeach;
+
 
 if (! $this->languages) :
-?><div class="alert alert-warning">There are no languages in your database. 
+?><div class="alert alert-warning">There are no languages in your database.
     Go to <a href="/admin/languages/add">add</a> to start adding them.</div><?php
     return;
 endif;
@@ -22,16 +26,17 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
 ?>
 <table class="table table-hover table-bordered table-sm">
     <thead>
-    <tr><th class="col-sm-10">language</th><th class="col-sm-2">events</th></tr>
+    <tr><th class="col-sm-8">language</th><th class="col-sm-2">interpreters</th><th class="col-sm-2 text-center">events</th></tr>
     </thead>
     <tbody>
         <?php
         foreach ($this->languages as $language) :
             $entity = $language[0];
             ?><tr>
-                <td><a href="<?php echo $this->url('languages/edit',['id'=> $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a> 
+                <td><a href="<?php echo $this->url('languages/edit',['id'=> $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
                 </td>
-                <td><?php echo $language['events'] ?></td>
+                <td class="text-right"><?php echo $language['interpreters'] ?></td>
+                <td class="text-right"><?php echo $language['events'] ?></td>
             </tr>
        <?php endforeach;
        ?>
@@ -45,6 +50,6 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
     ['route' => 'languages']
 );?>
 <a href="<?php echo $this->url('languages/add') ?>" role="button" title="add a new language" id="btn-add-language" class="btn btn-info mt-1">
-<span aria-hidden="true" class="fas fa-plus"></span> new language 
+<span aria-hidden="true" class="fas fa-plus"></span> new language
 </a>
 </div>

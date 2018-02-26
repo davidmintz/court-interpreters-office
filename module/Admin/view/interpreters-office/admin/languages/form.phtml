@@ -1,44 +1,47 @@
 <?php
 /** module/Admin/view/interpreters-office/admin/languages/form.phtml */
 $this->headTitle($this->title);
+$this->headScript()->appendFile($this->basePath('/js/language-form.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
 return;
 endif;
 $form = $this->form;
-if (strstr($this->title, 'add')) :
+if ($this->layout()->action == 'add') :
     $action = 'add' ;
     $actionAttrib = $this->url('languages/add');//,['action'=>'add']
 else :
     $action = 'edit';
     $actionAttrib = $this->url('languages/edit', ['id' => $this->id ]);
+    $form->setAttribute('data-language-name',$form->getObject()->getName());
 endif;
 ?>
 <div class="center-block mx-auto" style="max-width:750px"><!-- wrapper -->
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php if ($action == 'add') : ?>
-    <p class="warning">When adding a new language, please be careful 
-      to avoid inserting a language that is an inexact duplicate, alternate name 
+    <p class="warning">When adding a new language, please be careful
+      to avoid inserting a language that is an inexact duplicate, alternate name
     or spelling, or a superset of another that already exists in your database.</p>
 <?php endif;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
     'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
-])->setAttribute('method', 'post')->setAttribute('action', $actionAttrib);
-
+])->setAttribute('method', 'post')
+    ->setAttribute('action', $actionAttrib)
+    ->setAttribute('data-redirect_url',$this->url("languages"));
 $form->prepare();
 echo $this->form()->openTag($form);?>
 <div class="form-group"><?php
 $name = $form->get('name');
 echo $this->formLabel($name),$this->formElement($name),$this->formElementErrors($name);
 ?>
-</div> 
+</div>
 <div class="form-group"><?php
 $comments = $form->get('comments');
 echo $this->formLabel($comments),$this->formElement($comments), $this->formElementErrors($comments);
-?>      
+?>
 </div>
 <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
@@ -46,6 +49,11 @@ echo $this->formLabel($comments),$this->formElement($comments), $this->formEleme
     $csrf = $form->get('csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
-    echo $this->formSubmit($form->get('submit'));?></div>
+    echo $this->formSubmit($form->get('submit'));
+    if ($this->has_related_entities == '0'):
+        ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning" title="delete this language from your database" value="delete" id="btn-delete"><?php
+    endif;
+    ?>
+    </div>
 </div>
 </div><!-- /wrapper -->
