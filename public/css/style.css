@@ -109,7 +109,7 @@ td.interpreters-assigned div:not(:last-child) {
     border-bottom: 1px solid #dee2e6;
     padding : .3rem;
 }
-.event-details div:nth-last-child(-n+2) {
+.event-details div:last-child {
     border-bottom: none ;
 }
 .event-details button {
