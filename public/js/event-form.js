@@ -339,8 +339,12 @@ $(document).ready(function()
             function(data){
                 slideout.css("width","");
                 $('#slideout-toggle .result').html(data);
+                console.warn("WTF?");
                 if (! slideout.is(':visible')) {
                     slideout.toggle("slide",onDeftSlideoutShow);
+                }
+                if (! $('#slideout-toggle .result').is(':visible')) {
+                    $('#slideout-toggle .result').show();
                 }
             });
     });
@@ -415,23 +419,24 @@ $(document).ready(function()
                     if (exact_duplicate) {
                         append_deft_name(existing);
                     } else { // this is a pain in the ass, but...
+
                         // fix the width to keep it from expanding further
                         slideout.css({width:slideout.width()});
-                        // give them three choices: use as existing in the
-                        // database; update database and use as modified; cancel
-                        var message = '<p>There already exists an inexact duplicate of '
-                        + 'this name in your database: <strong>'+existing.surnames
-                        + ', '+existing.given_names+'</strong>. Please choose one of the following:</p><p>'
-                        + '<button id="btn-use-existing" class="btn btn-warning btn-block border-secondary mb-0">discard my changes and use existing</button>'
-                        + '<button id="btn-update-existing" class="btn btn-warning btn-block border-secondary border-top-0 mt-0">apply my changes to existing name</button>'
-                        + '<button id="btn-cancel" class="btn btn-warning btn-block border-secondary border-top-0 mt-0" title="close this dialog">never mind, get me out of here</button></p>';
-                        var div = $("<div></div>").html(message);
-                        $('#deftname-form-wrapper h4').after(div);
-                        // easy enough
+                        // splice in the name
+                        $('#deft-existing-duplicate-name').text(
+                            existing.surnames + ', '+existing.given_names);
+                        // disable default button actions (form submission)
+                        $('.duplicate-name button').on("click",function(event){
+                            event.preventDefault();
+                        });
+                        // display the instructions and options
+                        $(".duplicate-name").show();
+
+                        // easy enough: use the existing name as is
                         $('#btn-use-existing').on("click",function(){
                             append_deft_name(existing);
                         });
-                        // update the entity and use as modified
+                        // update the entity, then use as modified
                         $('#btn-update-existing').data({id:existing.id}).on("click",function(){
                             $.post('/admin/defendants/edit/'+$(this).data('id'),data,
                             function(response){

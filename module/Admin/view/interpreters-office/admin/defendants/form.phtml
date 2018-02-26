@@ -1,5 +1,4 @@
 <?php /** module/Admin/view/interpreters-office/admin/defendants/form.phtml */
-
 $action = $this->layout()->action == 'add' ? $this->url('admin-defendants/add')
         : $this->url('admin-defendants/edit', ['id' => $form->getObject()->getId() ]);
 $form = $this->form;
@@ -14,17 +13,23 @@ $form->prepare();
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
     echo $this->form()->openTag($form);?>
+    <p class="duplicate-name" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
+    <p class="duplicate-name" style="display:none">
+    <button id="btn-use-existing" class="btn btn-outline-primary btn-block mb-0 pl-4 text-left">discard my changes and use existing</button>
+    <button id="btn-update-existing" class="btn btn-outline-primary btn-block border-top-0 mt-0 pl-4 text-left">apply my changes to existing name</button>
+    <button id="btn-cancel" class="btn btn-outline-primary btn-block border-top-0 mt-0 pl-4 text-left" title="close this dialog">never mind, get me out of here</button>
+    </p >
     <div class="form-group"><?php
     $surname = $form->get('surnames');
     echo $this->formLabel($surname),$this->formElement($surname), $this->formElementErrors($surname);
-    ?>   
+    ?>
     </div>
     <div class="form-group"><?php
     $given_name = $form->get('given_names');
     echo $this->formLabel($given_name),$this->formElement($given_name),$this->formElementErrors($given_name);
     ?>
-    </div>    
-<?php 
+    </div>
+<?php
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
