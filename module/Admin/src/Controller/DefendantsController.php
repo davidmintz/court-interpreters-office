@@ -88,7 +88,7 @@ class DefendantsController extends AbstractActionController
                         ->getRepository(Entity\DefendantName::class)
                         ->findOneBy([
                             'surnames'=>$entity->getSurnames(),
-                            'givenNames'=>$entity->getGivenNames()]);
+                            'given_names'=>$entity->getGivenNames()]);
                 
                  return $xhr ? 
                     new JsonModel([
@@ -152,7 +152,7 @@ class DefendantsController extends AbstractActionController
                     ->getRepository(Entity\DefendantName::class)
                     ->findOneBy([
                         'surnames'=>$entity->getSurnames(),
-                        'givenNames'=>$entity->getGivenNames()]);
+                        'given_names'=>$entity->getGivenNames()]);
 
              return new JsonModel([
                 'duplicate_entry_error'=>true,
