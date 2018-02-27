@@ -279,6 +279,16 @@ class Person
     {
         return $this->active;
     }
+
+    /**
+     * alias for getActive()
+     *
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return $this->getActive();
+    }
     /**
      * sets the "active" property.
      *
@@ -347,12 +357,12 @@ class Person
     {
         return $this->formatPhone($this->mobilePhone);
     }
-    
+
     /**
      * formats phone number
-     * 
+     *
      * attempts to return a 10-digit phone number formatted as nnn nnn-nnnn
-     * 
+     *
      * @param string $phone
      * @param string $format
      * @return string
