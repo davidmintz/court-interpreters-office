@@ -38,12 +38,12 @@ $i = $this->interpreter;
             <div class="col-3 text-md-right">active</div><div class="col-3"><?php echo $i->getActive() ? "yes":"no"?></div>
         <?php
             $email = $i->getEmail();?>
-            <div class="col-3 text-md-right">email <span class="fas fa-envelope mr-2"></span></div>
+            <div class="col-3 text-md-right">email <span class="fas fa-envelope mr-2 text-info"></span></div>
             <div class="col-3"><?php echo $email ?: '<span class="text-muted">&mdash;</span>' ?></div><?php
             foreach(['mobile','office','home'] as $phone):
                 $number = $i->{'get'.ucfirst($phone).'Phone'}();
                 ?>
-            <div class="col-3 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180"></span></div>
+            <div class="col-3 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180 text-info"></span></div>
             <div class="col-3"><?php echo $number ?: '<span class="text-muted">&mdash;</span>' ?></div>
             <?php
             endforeach;
