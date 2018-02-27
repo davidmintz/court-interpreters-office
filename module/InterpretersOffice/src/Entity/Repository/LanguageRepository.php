@@ -33,6 +33,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
 
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace('languages');
 
     }
 
