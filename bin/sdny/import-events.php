@@ -11,7 +11,8 @@ $opts = new Getopt(
        'from|f=i' => "(starting) year from which to import events",
        'to|t-i'   => "optional ending year of range (inclusive)",
        'begin-with-i' => "optional event id to begin with",
-       'import-only-s' => "event id(s) to import, one or more comma-separated"
+       'import-only-s' => "event id(s) to import, one or more comma-separated",
+       'refresh-related-entities' => "whether to purge and reload defendants_events and interpreters_events",
    ]
 );
 try { $opts->parse(); }
@@ -19,6 +20,9 @@ catch (\Exception $e) {
     echo $e->getUsageMessage();
     exit(1);
 }
+
+//$opts->{'refresh-related-entities'}
+
 $ids_to_import = $opts->{'import-only'};
 
 if (! $ids_to_import and ! $opts->from) {
@@ -259,7 +263,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         printf("shit. could not format docket number for this event:\n%s",print_r($e,true));
     }
     // figure out the submitter !!! ///////////////////////////////////////////
-    /** this is so twisted, it's really emabarassing. */
+    /** this is so twisted, it's really embarassing. */
     if ($e['submitter']===NULL) {
         //$fucked++;
         $meta_notes .= 'original request submitter unknown/unidentified. ';
@@ -486,9 +490,51 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $progress .= " of $total";
     }
     echo "$progress\r";
- }
+}
 
-printf("\ninserts: %d\n",$count);
+if ($opts->{'refresh-related-entities'}) {
+    /** @var $db \PDO */
+    $db->beginTransaction();
+    echo("\npurging defendants_events...");
+    try {
+        $db->exec('DELETE FROM defendants_events');
+        $db->exec('DELETE FROM defendant_names');
+        echo "importing defendant names...\n";
+        $db->exec('INSERT INTO defendant_names (id, given_names, surnames)
+        (SELECT deft_id, firstname, lastname FROM dev_interpreters.deft_names ORDER BY deft_id)');
+        echo "importing defendants_events...\n";
+        $db->exec('INSERT INTO defendants_events (defendant_id,event_id) (SELECT deft_id, event_id FROM dev_interpreters.deft_events)');
+        $db->commit();
+        echo "finished defendants_events.\n";
+    } catch (\Exception $e) {
+        $db->rollBack();
+        printf("shit. failed with exception %s\n",$e->getMessage());
+    }
+    try {
+        echo "attempting interpreter_events import. purging interpreters_events...";
+        $db->beginTransaction();
+        $db->exec('DELETE FROM interpreters_events');
+        $db->exec('use dev_interpreters');
+        echo "importing interpreters_events...\n";
+        $db->exec("INSERT INTO office.interpreters_events (interpreter_id, event_id, created, created_by_id)
+        (SELECT interp_id, ie.event_id, ie.created,  COALESCE(u2.id,$USER_ID_DAVID) AS created_by
+            FROM interp_events ie
+            LEFT JOIN users u ON ie.created_by = u.user_id
+            LEFT JOIN office.users u2 ON u.name = u2.username)");
+        $db->commit();
+        echo "finished importing interpreters_events.\n";
+    } catch (\Exception $e) {
+        $db->rollBack();
+        printf("shit. failed with exception %s\n",$e->getMessage());
+    }
+}
+/* set @user_david = (SELECT id FROM office.users WHERE username = 'david');
+use dev_interpreters;
+INSERT INTO office.interpreters_events (interpreter_id, event_id, created, created_by_id)
+(SELECT interp_id, ie.event_id, ie.created,  COALESCE(u2.id,@user_david) AS created_by FROM interp_events ie
+    LEFT JOIN users u ON ie.created_by = u.user_id
+    LEFT JOIN office.users u2 ON u.name = u2.username );*/
+printf("\nevent inserts: %d\n",$count);
 printf("memory usage %.2f MB\n",memory_get_usage()/1000000);
 printf("peak memory usage %.2f MB\n",memory_get_peak_usage()/1000000);
 
