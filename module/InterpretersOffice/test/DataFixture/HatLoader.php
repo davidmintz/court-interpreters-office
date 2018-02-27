@@ -70,10 +70,10 @@ class HatLoader implements FixtureInterface
         }
         $objectManager->flush();
 
-        $judge_flavors = ['USDJ', 'USMJ'];
-        foreach ($judge_flavors as $flavor) {
+        $judge_flavors = ['USDJ' => 0, 'USMJ' => 5,'USBJ' => 10];
+        foreach ($judge_flavors as $flavor => $weight) {
             $entity = new Entity\JudgeFlavor();
-            $entity->setFlavor($flavor);
+            $entity->setFlavor($flavor)->setWeight($weight);
             $objectManager->persist($entity);
         }
         $objectManager->flush();
