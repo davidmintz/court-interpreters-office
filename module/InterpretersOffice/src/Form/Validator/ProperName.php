@@ -28,7 +28,7 @@ class ProperName extends AbstractValidator
     protected $patterns = [
 
         'last' => "/[^\pL '-]/u",
-        'first' => '/^(\p{Lu}\.( \pL+)?|[\pL ]+)$/u',
+        'first' => '/^(\p{Lu}\.( \pL+)?|[\pL \']+)$/u',
         'middle' => '/^(\pL\.?|\pL+)( (\pL\.|\pL+))*$/u',
     ];
 
