@@ -14,7 +14,7 @@ if ($this->layout()->action == 'add') :
 else :
     $action = 'edit';
     $actionAttrib = $this->url('languages/edit', ['id' => $this->id ]);
-    $form->setAttribute('data-language-name',$form->getObject()->getName());
+    $form->setAttribute('data-language_name',$form->getObject()->getName());
 endif;
 ?>
 <div class="center-block mx-auto" style="max-width:750px"><!-- wrapper -->
