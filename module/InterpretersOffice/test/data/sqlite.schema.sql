@@ -5,7 +5,7 @@ CREATE UNIQUE INDEX unique_cancel_reason ON cancellation_reasons (reason);
 CREATE TABLE hats (id INTEGER NOT NULL, role_id SMALLINT UNSIGNED DEFAULT NULL, name VARCHAR(50) NOT NULL, can_be_anonymous BOOLEAN DEFAULT '0' NOT NULL, PRIMARY KEY(id), CONSTRAINT FK_149C3D93D60322AC FOREIGN KEY (role_id) REFERENCES roles (id) NOT DEFERRABLE INITIALLY IMMEDIATE);
 CREATE INDEX IDX_149C3D93D60322AC ON hats (role_id);
 CREATE UNIQUE INDEX hat_idx ON hats (name);
-CREATE TABLE judge_flavors (id INTEGER NOT NULL, flavor VARCHAR(60) NOT NULL, PRIMARY KEY(id));
+CREATE TABLE judge_flavors (id INTEGER NOT NULL, flavor VARCHAR(60) NOT NULL, weight INTEGER NOT NULL, PRIMARY KEY(id));
 CREATE UNIQUE INDEX unique_judge_flavor ON judge_flavors (flavor);
 CREATE TABLE defendant_names (id INTEGER NOT NULL, given_names VARCHAR(60) NOT NULL, surnames VARCHAR(60) NOT NULL, PRIMARY KEY(id));
 CREATE UNIQUE INDEX unique_deftname ON defendant_names (given_names, surnames);
