@@ -1,6 +1,6 @@
-/*  
-	import some users for test purposes. 
-	you can use 'mysql office --force < import-users.sql  
+/*
+	import some users for test purposes.
+	you can use 'mysql office --force < import-users.sql
 */
 
 INSERT INTO people (
@@ -13,10 +13,10 @@ INSERT INTO people (
 	mobile_phone,
 	active,
 	discr
-	
-) 
+
+)
 /* group_id => hat_id */ /* might as well say group_id + 5 */
-SELECT  
+SELECT
 	CASE group_id
 		WHEN 1 THEN 6 /* Courtroom Deputy */
 		WHEN 2 THEN 7 /* Law Clerk */
@@ -29,12 +29,13 @@ SELECT
 	firstname,
 	phone,
 	mobile_phone,
-	active,	
+	active,
 	"person"
 
-FROM dev_interpreters.request_users 
-	WHERE group_id <> 5
+FROM dev_interpreters.request_users
+	WHERE group_id <> 5 /* the "unknown" category, strongly deprecated
 	/*AND active*/
+	/*AND id = 494 temp */
 ;
 
 INSERT INTO users (
@@ -43,23 +44,25 @@ INSERT INTO users (
 	username,
 	password,
 	active, created)
-SELECT 
+SELECT
 	id,
 	1, /* role is "submitter" */
-	lower(email), /* temp(?) username */	
-	"shit", /* temp password */    
+	lower(email), /* temp(?) username */
+	"shit", /* temp password */
 	active,NOW()
-FROM people WHERE hat_id IN (6,7,8,9);
+FROM people WHERE hat_id IN (6,7,8,9)
+ /*ORDER BY id DESC LIMIT 1 temp ! */
+;
 
 /*
 UPDATE T1, T2,
 [INNER JOIN | LEFT JOIN] T1 ON T1.C1 = T2. C1
-SET T1.C2 = T2.C2, 
+SET T1.C2 = T2.C2,
     T2.C3 = expr
 WHERE condition
 */
 
-UPDATE users 
+UPDATE users
 	JOIN people ON users.person_id = people.id
 	JOIN dev_interpreters.request_users old_users ON  people.email = old_users.email
 SET users.password = old_users.password, users.created = old_users.created,
