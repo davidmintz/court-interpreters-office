@@ -37,7 +37,7 @@ $hat = $fieldset->get('hat');?>
 </div>
 <?php
  // text inputs
-foreach (['lastname','middlename','firstname','email','officePhone','mobilePhone'] as $elementName) :
+foreach (['lastname','middlename','firstname','email','office_phone','mobile_phone'] as $elementName) :
     $element = $fieldset->get($elementName);?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>

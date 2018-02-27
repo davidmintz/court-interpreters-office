@@ -108,7 +108,7 @@ class Person
      *
      * @var string
      */
-    protected $officePhone = '';
+    protected $office_phone = '';
 
     /**
      * the mobile phone number.
@@ -117,7 +117,7 @@ class Person
      *
      * @var string
      */
-    protected $mobilePhone = '';
+    protected $mobile_phone = '';
 
     /**
      * Is the person "active," or only of historical interest?
@@ -308,13 +308,13 @@ class Person
      *
      * @todo deal with formatting/unformatting
      *
-     * @param string $officePhone
+     * @param string $office_phone
      *
      * @return Person
      */
-    public function setOfficePhone($officePhone)
+    public function setOfficePhone($office_phone)
     {
-        $this->officePhone = $officePhone;
+        $this->office_phone = $office_phone;
 
         return $this;
     }
@@ -322,13 +322,11 @@ class Person
     /**
      * gets the office phone number.
      *
-     * @todo deal with formatting/unformatting
-     *
      * @return string
      */
     public function getOfficePhone()
     {
-        return $this->formatPhone($this->officePhone);
+        return $this->formatPhone($this->office_phone);
     }
 
     /**
@@ -336,26 +334,24 @@ class Person
      *
      * @todo deal with formatting/unformatting
      *
-     * @param string $mobilePhone
+     * @param string $mobile_phone
      *
      * @return Person
      */
-    public function setMobilePhone($mobilePhone)
+    public function setMobilePhone($mobile_phone)
     {
-        return $this->formatPhone($this->mobilePhone);
+        return $this->formatPhone($this->mobile_phone);
 
     }
 
     /**
      * gets the mobile phone number.
-     *
-     * @todo deal with formatting/unformatting
-     *
+     *     
      * @return string
      */
     public function getMobilePhone()
     {
-        return $this->formatPhone($this->mobilePhone);
+        return $this->formatPhone($this->mobile_phone);
     }
 
     /**

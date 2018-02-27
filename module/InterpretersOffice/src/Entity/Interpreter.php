@@ -36,7 +36,7 @@ class Interpreter extends Person
      *
      * @var string
      */
-    protected $homePhone;
+    protected $home_phone;
 
     /**
      * date of birth.
@@ -193,8 +193,8 @@ class Interpreter extends Person
      */
     public function setHomePhone($phone)
     {
-        
-        $this->homePhone = $phone;
+
+        $this->home_phone = $phone;
 
         return $this;
     }
@@ -206,8 +206,8 @@ class Interpreter extends Person
      */
     public function getHomePhone()
     {
-        return $this->formatPhone($this->homePhone);
-        
+        return $this->formatPhone($this->home_phone);
+
     }
 
     /**

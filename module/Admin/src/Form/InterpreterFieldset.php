@@ -58,7 +58,7 @@ class InterpreterFieldset extends PersonFieldset
         $this->options = $options;
         ///*
         // this is making a comeback
-        // 
+        //
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterLanguages',
@@ -82,8 +82,8 @@ class InterpreterFieldset extends PersonFieldset
                     'name' => 'language-select','objectManager' => $objectManager,
                     'options' => [
                         'objectManager' => $objectManager,
-                        'option_attributes' => 
-                            ['data-certifiable' => 
+                        'option_attributes' =>
+                            ['data-certifiable' =>
                                 function (Entity\Language $language)
                                 {
                                     //echo "W T F ?????  ...";
@@ -96,7 +96,7 @@ class InterpreterFieldset extends PersonFieldset
                 ]
             )
         );
-        
+
         // fingerprint date
         $this->add(
         [
@@ -173,7 +173,7 @@ class InterpreterFieldset extends PersonFieldset
         ]);
         // home phone
         $this->add([
-            'name' => 'homePhone',
+            'name' => 'home_phone',
             'type' => 'Zend\Form\Element\Text',
             'attributes' => [ 'id' => 'home_phone', 'class' => 'form-control phone'],
             'options' => [ 'label' => 'home phone'],
@@ -314,8 +314,8 @@ class InterpreterFieldset extends PersonFieldset
         // require users to provide yes|no for federal-certified language
         // which we already know from the language select > option elements'
         // 'certifiable' attribute
-        
-        /** @todo 
+
+        /** @todo
             add a validator to enforce minumum one language
          */
         ///*
@@ -335,15 +335,15 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                     'break_chain_on_failure' => true,
                  ],
-                
+
                 // this is bullshit
 
-                 [   
+                 [
                     'name' => 'Callback',
                     'options' => [
                         'callback' => function ($value, $context) use ($certifiable) {
                             $languages_submitted = $context['interpreterLanguages'];
-                            foreach ($languages_submitted as $language) {                                
+                            foreach ($languages_submitted as $language) {
                                 $id = $language['language'];
                                // should never happen unless they are messing with us
                                 if (! isset($language['federalCertification'])) {
@@ -373,7 +373,7 @@ class InterpreterFieldset extends PersonFieldset
         $spec['language-select'] = [
             'required' => true,
             'allow_empty' => true,
-         ];         
+         ];
         // */
          $spec['hat'] = [
                 'validators' => [
@@ -412,7 +412,7 @@ class InterpreterFieldset extends PersonFieldset
                             'options' => [
                                 'callback' => function ($value, $context) {
                                     // it can't be in the future
-                                   
+
                                     list($M, $D, $Y) = explode('/', $value);
                                     $date = "$Y-$M-$D";
                                     $max = date('Y-m-d');
@@ -528,7 +528,7 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                 ],
- 
+
              ],
             ];
          // encrypted fields
@@ -604,7 +604,7 @@ class InterpreterFieldset extends PersonFieldset
              ],
             ];
 
-            $spec['homePhone'] = [
+            $spec['home_phone'] = [
              'allow_empty' => true,
              'required'  => false,
               'validators' => [

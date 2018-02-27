@@ -73,7 +73,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         ],
         'office_phone' => [
             'type' => 'Zend\Form\Element\Text',
-            'name' => 'officePhone',
+            'name' => 'office_phone',
             'required' => true,
             'allow_empty' => true,
             'options' => [
@@ -81,13 +81,13 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ],
              'attributes' => [
                 'class' => 'form-control phone',
-                'id' => 'officePhone',
+                'id' => 'office_phone',
              ],
 
         ],
         'mobile_phone' => [
             'type' => 'Zend\Form\Element\Text',
-            'name' => 'mobilePhone',
+            'name' => 'mobile_phone',
             'required' => false,
             'allow_empty' => true,
             'options' => [
@@ -95,7 +95,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
             ],
              'attributes' => [
                 'class' => 'form-control phone',
-                'id' => 'mobilePhone',
+                'id' => 'mobile_phone',
              ],
 
         ],
@@ -355,10 +355,10 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ['name' => 'Null'],
                 ],
             ],
-            'active' => [ 
+            'active' => [
                 'required' => false,
                 'allow_empty' => true,
-                'validators' => [                    
+                'validators' => [
                     /*[
                     'name' => 'NotEmpty',
                        'options' => [
@@ -385,7 +385,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 ],
                 //*/
             ],
-            'officePhone' => [
+            'office_phone' => [
                 'required' => false,
                 'allow_empty' => true,
                 'validators' => [
@@ -396,7 +396,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                     ['name' => 'Digits', ],
                 ],
             ],
-            'mobilePhone' => [
+            'mobile_phone' => [
                 'required' => false,
                 'allow_empty' => true,
                 'validators' => [

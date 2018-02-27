@@ -250,8 +250,8 @@ class JudgeFieldset extends PersonFieldset
             'required' => false,
             'allow_empty' => true,
         ];
-        if (key_exists('mobilePhone', $spec)) {
-            unset($spec['mobilePhone']);
+        if (key_exists('mobile_phone', $spec)) {
+            unset($spec['mobile_phone']);
         }
 
         return $spec;

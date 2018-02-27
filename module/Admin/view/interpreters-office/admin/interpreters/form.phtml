@@ -58,7 +58,7 @@ $form->add([
     <!-- tab panes -->
     <div class="tab-content pt-3">
         <div class="tab-pane active" id="contact" role="tabpanel" aria-labelledby="contact-tab"><!-- contact -->
-            <?php foreach (['lastname','firstname','middlename','email','officePhone','mobilePhone','homePhone',
+            <?php foreach (['lastname','firstname','middlename','email','office_phone','mobile_phone','home_phone',
                         'address1','address2','city','state', 'zip'  ] as $elementName) :
                             $element = $fieldset->get($elementName);
                    ?><div class="form-group form-row">
