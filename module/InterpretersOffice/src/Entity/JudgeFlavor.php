@@ -34,6 +34,14 @@ class JudgeFlavor
     protected $flavor;
 
     /**
+     * weight, for sorting
+     *
+     * @ORM\Column(type="integer",options={"nullable":false})
+     * @var int
+     */
+     protected $weight = 0;
+
+    /**
      * returns a string representation of this JudgeFlavor.
      *
      * @return string
@@ -75,5 +83,23 @@ class JudgeFlavor
         $this->flavor = $flavor;
 
         return $this;
+    }
+
+    /**
+     * sets weight
+     *
+     * @param int $weight
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+    }
+
+    /**
+     * gets weight
+     */
+    public function getWeight()
+    {
+        return $this->weight;
     }
 }

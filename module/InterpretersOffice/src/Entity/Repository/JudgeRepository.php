@@ -67,16 +67,18 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         if ($this->cache->contains('judges-list')) {
             return $this->cache->fetch('judges-list');
         }
-        $dql = 'SELECT j.lastname, j.firstname, j.middlename, f.flavor,
+        $dql = 'SELECT j.lastname, j.firstname, j.middlename, f.flavor, j.id,
         j.active, l.name AS location, pl.name AS parent_location
         FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f
         LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation pl ORDER BY
-        j.lastname,j.firstname,j.middlename';
+            j.lastname,j.firstname,j.middlename';
 
         $data = $this->createQuery($dql, $this->cache_namespace)->getResult();
-        // $flavors = array_unique(array_column($data,'flavor'));
-        /** @todo make this a config or something other than hard-coded */
-        $judges = ['USDJ'=>[],'USMJ'=>[],'USBJ'=>[]];
+        $flavors = array_column($this->createQuery(
+            'SELECT f.flavor FROM InterpretersOffice\Entity\JudgeFlavor f
+            ORDER BY f.weight')
+            ->getResult(),'flavor');
+        $judges = array_combine($flavors, [[],[],[]]);
         foreach($data as $j) {
             $judges[$j['flavor']][] = $j;
         }
@@ -146,7 +148,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 . 'LEFT JOIN j.defaultLocation l '
                 . 'LEFT JOIN l.parentLocation pl '
                 . ' WHERE j.active = true '. $or;
-        $dql .=  ' ORDER BY j.lastname, j.firstname';        
+        $dql .=  ' ORDER BY j.lastname, j.firstname';
         $judges = $this->createQuery($dql, $this->cache_namespace)->getResult();
         $data = [];
         foreach ($judges as $judge) {
