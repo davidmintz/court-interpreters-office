@@ -60,7 +60,8 @@ endif;?>
                     $magistrate_default = $e['aj_default_location'];
                 endif;
         ?>
-        <tr data-id="<?php echo $e['id']?>" class="event-category-<?php echo str_replace(' ','-',$e['category']) ?>">
+        <tr data-id="<?php echo $e['id']?>" class="event-category-<?php echo str_replace(' ','-',$e['category']) ?><?php
+            if ($e['cancellation']): echo " event-cancelled" ;endif;?>">
             <td class="text-right text-nowrap"><?php echo $e['time']->format('g:i a')?></td>
             <td style="line-height:1.2em" class="py-2"><a href="<?php echo $view_url ?>"><span class="float-right align-self-top fas fa-cog text-primary"></span>
                 <?php echo $e['type']; ?><?php
