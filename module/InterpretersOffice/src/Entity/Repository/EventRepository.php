@@ -60,7 +60,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          LEFT JOIN j.flavor f
          LEFT JOIN e.anonymousJudge aj
          LEFT JOIN aj.defaultLocation aj_location
-         LEFT JOIN aj_location.parentLocation aj_parent_location         
+         LEFT JOIN aj_location.parentLocation aj_parent_location
          JOIN e.language lang
          LEFT JOIN e.location loc
          LEFT JOIN loc.parentLocation ploc
@@ -193,10 +193,12 @@ DQL;
          COALESCE(aj_parent_location.name, aj_location.name) AS aj_default_location,
          t.name AS type,
          lang.name AS language,
-         e.docket, e.comments,
+         e.docket,
+         e.comments,
          loc.name AS location,
          ploc.name AS parent_location,
          cat.category,
+         cr.reason AS cancellation,
          loc_type.type AS location_type
          FROM InterpretersOffice\Entity\Event e
          JOIN e.language lang
@@ -209,6 +211,7 @@ DQL;
          LEFT JOIN e.location loc
          LEFT JOIN loc.type as loc_type
          LEFT JOIN loc.parentLocation ploc
+         LEFT JOIN e.cancellationReason cr
          WHERE e.date = :date';
          if (isset($options['language']) && 'all' != $options['language']) {
              $dql .= ' AND lang.name ';
