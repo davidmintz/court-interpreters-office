@@ -192,12 +192,12 @@ if (! $ids_to_import) {
     if ($opts->to) {
         $what =  " BETWEEN $from AND $opts->to";
         $query .= $what;
-        $count_sql = "SELECT COUNT(*) `total` FROM events WHERE YEAR(event_date) $what";
+        $count_sql = "SELECT COUNT(*) `total` FROM events e WHERE YEAR(event_date) $what";
         printf("fetching events for years %s through %s\n",$from,$opts->to);
     } else {
         printf("fetching events for year %s\n",$from);
         $query .= " = $from";
-        $count_sql = "SELECT COUNT(*) `total` FROM events WHERE YEAR(event_date) = $from ";
+        $count_sql = "SELECT COUNT(*) `total` FROM events e WHERE YEAR(event_date) = $from ";
     }
     if ($id_to_begin_with) {
         $query .= ' AND e.event_id >= '.$id_to_begin_with;
