@@ -23,6 +23,7 @@ endif;
 <?php
 $flavors = array_keys($this->judges);
 foreach ($flavors as $flavor):
+
 ?>
     <div class="card">
         <div class="card-header" id="heading-<?php echo $flavor ?>">
@@ -33,20 +34,31 @@ foreach ($flavors as $flavor):
             </a>
         </div>
         <div id="<?php echo $flavor ?>" class="collapse<?php if ($flavor == $flavors[0]): ?> show<?php endif;?>" aria-labelledby="heading-<?php echo $flavor ?>" data-parent="#accordion">
-            <div class="card-body">
-            <table class="table" style="max-width:400px">
+            <div class="card-body px-auto">
+            <table class="table" style="max-width:500px">
+                <tbody>
                 <?php
-                foreach($this->judges[$flavor] as $judge):?>
+                foreach($this->judges[$flavor] as $judge):
+                    $location = '';
+                    if ($judge['location']):
+                        $location .= $judge['location'];
+                        if ($judge['parent_location']):
+                            $location .= ', '. $judge['parent_location'];
+                        endif;
+                    endif; ?>
                 <tr>
                     <td class="align-self-center"><?php
-                    $name = sprintf("%s, %s %s<br>",$judge['lastname'],$judge['firstname'],$judge['middlename']);
+                    $name = sprintf("%s, %s %s",$judge['lastname'],$judge['firstname'],$judge['middlename']);
                     printf('<a data-toggle="tooltip" title="edit this database record" href="%s">%s</a>',$this->url('judges/edit',['id'=>$judge['id']]),$name);
-                    ?></td><td class="text-md-right">
+                    ?></td>
+                    <td><?php echo $location ?></td>
+                    <td class="text-md-right">
                         <span style="opacity:.75" class="align-self-center fas fa-<?php echo $judge['active'] ? "check text-success" : "times text-danger"?>"></span>
                     </td>
                     <td class="px-0"><a data-toggle="tooltip" title="edit this database record" href="<?php echo $this->url('judges/edit',['id'=>$judge['id']])?>"><span style="opacity:.75" class="align-self-center fas fa-cog"></span></a></td>
                 </tr>
             <?php endforeach;?>
+                </tbody>
             </table>
         </div>
         </div>

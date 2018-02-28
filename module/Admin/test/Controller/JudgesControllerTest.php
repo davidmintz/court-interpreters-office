@@ -46,7 +46,7 @@ class JudgesControllerTest extends AbstractControllerTest
         $this->assertQueryContentRegex('title', '/^judges/');
         //$this->dumpResponse();return;
         $this->assertQuery('div#USDJ');
-        $this->assertQueryCount('tr', $count);
+        $this->assertQueryCount('tbody tr', $count);
     }
 
     public function testAddAction()
