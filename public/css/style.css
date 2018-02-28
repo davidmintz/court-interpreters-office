@@ -30,7 +30,7 @@ div.remove-language {
 
 tr.event-cancelled {
     text-decoration: line-through;
-    text-decoration-color: red;
+    text-decoration-color: red;#515457
 }
 /*
 experimental, borrowed from http://stackoverflow.com/questions/40259391/bootstrap-form-inline-for-viewports-that-are-less-than-768px-wide\
@@ -101,15 +101,16 @@ ul.subgroup {
     max-height: 500px;
     overflow-y : scroll;
 }
-/* schedule */
+
+/* schedule ---------------------------- */
 td.interpreters-assigned { padding : 0; }
 td.interpreters-assigned div { padding: .3rem; }
 td.interpreters-assigned div:not(:last-child) {
     border-bottom: 1px solid #dee2e6;
 }
-
+/* event details view ---------------------------- */
 .event-details div {
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;#515457
     padding : .3rem;
 }
 .event-details div:last-child {
@@ -118,14 +119,14 @@ td.interpreters-assigned div:not(:last-child) {
 .event-details a {
     border-right : 2px solid #dee2e6 !important;
 }
-.event-details a:last-of-type {
-    /*border-right : 0;*/
-}
 
+/* maybe do away with this and add some margin instead */
 .btn:focus, .btn:active {
   outline: none ;
   box-shadow: none ;
   text-decoration: underline;
 }
-
+/*
+note to self: gray #515457
+*/
 span.avoidwrap { display:inline-block !important;}

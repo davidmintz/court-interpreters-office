@@ -51,11 +51,11 @@ foreach ($flavors as $flavor):
                     $name = sprintf("%s, %s %s",$judge['lastname'],$judge['firstname'],$judge['middlename']);
                     printf('<a data-toggle="tooltip" title="edit this database record" href="%s">%s</a>',$this->url('judges/edit',['id'=>$judge['id']]),$name);
                     ?></td>
-                    <td><?php echo $location ?></td>
+                    <td  style="color:#515457" class="pl-0"><?php echo $location ?></td>
                     <td class="text-md-right">
                         <span style="opacity:.75" class="align-self-center fas fa-<?php echo $judge['active'] ? "check text-success" : "times text-danger"?>"></span>
                     </td>
-                    <td class="px-0"><a data-toggle="tooltip" title="edit this database record" href="<?php echo $this->url('judges/edit',['id'=>$judge['id']])?>"><span style="opacity:.75" class="align-self-center fas fa-cog"></span></a></td>
+                    <td class="col-1 px-0"><a data-toggle="tooltip" title="edit this database record" href="<?php echo $this->url('judges/edit',['id'=>$judge['id']])?>"><span style="opacity:.75" class="align-self-center fas fa-cog"></span></a></td>
                 </tr>
             <?php endforeach;?>
                 </tbody>
