@@ -44,8 +44,9 @@ class JudgesControllerTest extends AbstractControllerTest
             ->getSingleScalarResult();
 
         $this->assertQueryContentRegex('title', '/^judges/');
-        $this->assertQuery('ul.list-group');
-        $this->assertQueryCount('ul.list-group li', $count);
+        //$this->dumpResponse();return;
+        $this->assertQuery('div#USDJ');
+        $this->assertQueryCount('tr', $count);
     }
 
     public function testAddAction()
