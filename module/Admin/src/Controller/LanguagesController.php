@@ -97,13 +97,11 @@ class LanguagesController extends AbstractActionController
         if (! $entity) {
             return $this->getFormViewModel(['errorMessage' => "language with id $id not found"]);
         }
-        $hasRelatedEntities = $this->entityManager->getRepository(Language::class)
-            ->hasRelatedEntities($entity);
         $form = $this->getForm(Language::class,
             ['object' => $entity, 'action' => 'update',])
                ->bind($entity);
         $viewModel = $this->getFormViewModel(
-            [ 'form' => $form, 'has_related_entities' => $hasRelatedEntities,
+            [ 'form' => $form, 'has_related_entities' => $entity->hasRelatedEntities(),
             'title' => 'edit a language', 'id' => $id ]
         );
         $request = $this->getRequest();

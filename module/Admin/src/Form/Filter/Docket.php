@@ -13,11 +13,23 @@ use Zend\Filter\FilterInterface;
  */
 class Docket implements FilterInterface
 {
-    
+
     const REGEX = '/^ *((?:19|20)?\d{2})[\- ]*(CR|CI?V|M(?:AG|ISC|J)?)(?:IM)?[ \-]*(\d+){1,5} *$/i';
-    
+
+    /**
+     * filters the docket number
+     *
+     *  returns $docket as YYYY-<CIV|CR|MAG|MISC>-[NN]NNN or empty string.
+     *
+     *  @todo this is one of those things that has to be somehow configurable,
+     *  not hard-coded, if we are to adapt this application for use in courts
+     *  other than federal.
+     *
+     * @param  string $docket
+     * @return string docket number formatted for the database
+     */
     function filter($docket) {
-        
+
         if (!$docket)  { return $docket; }
         $m = array();
         if (!preg_match(self::REGEX, $docket, $m)) {
@@ -39,5 +51,5 @@ class Docket implements FilterInterface
         }
         return $year .'-' . $flav . '-' . sprintf('%04d', $num);
     }
-    
+
 }
