@@ -97,17 +97,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
 
         return $query->getResult();
     }
-
-    public function hasRelatedEntities(Language $language)
-    {
-        return $this->createQuery(
-                'SELECT SUM(SIZE(l.events) + SIZE(l.interpreterLanguages))
-                FROM  InterpretersOffice\Entity\Language l
-                WHERE l.id = :id')
-            ->setParameters([':id'=>$language->getId()])
-            ->getSingleScalarResult();
-    }
-
+    
     /**
      * experimental
      *
