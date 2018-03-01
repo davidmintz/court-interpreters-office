@@ -5,13 +5,18 @@
  */
 $this->headTitle($this->title);?>
 <div class="center-block mx-auto" style="max-width:600px"><!-- wrapper -->
-<h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?>
- <span class="form-inline float-right">inactive judges: <select class="form-control">
-     <option value="1">show</option>
-     <option value="0">hide</option>
- </select>
- </span>
-</h2>
+<div class="row">
+    <h2 class="navigation mb-3 mt-4 col-6"><?php echo $this->navigation('default')->breadcrumbs() ?>
+    </h2>
+    <div class="col-6 form-inline float-right pt-2">
+         <label class="pr-1" for="judge-filter">inactive judges: </label>
+         <select id="judge-filter" class="form-control form-control-sm custom-select">
+             <option value="1">show</option>
+             <option value="0">hide</option>
+        </select>
+    </div>
+</div>
+
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
