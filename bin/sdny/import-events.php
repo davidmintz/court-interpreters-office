@@ -10,7 +10,7 @@ $opts = new Getopt(
    [
        'from|f=i' => "(starting) year from which to import events",
        'to|t-i'   => "optional ending year of range (inclusive)",
-       'begin-with-i' => "optional event id to begin with",
+       'begin-after-id-i' => "optional event id to begin after",
        'import-only-s' => "event id(s) to import, one or more comma-separated",
        'refresh-related-entities' => "whether to purge and reload defendants_events and interpreters_events",
    ]
@@ -44,7 +44,7 @@ if (! $ids_to_import) {
         }
     }
 }
-$id_to_begin_with = $opts->{'begin-with'};
+$id_to_begin_after = $opts->{'begin-after-id'};
 /** @var $db \PDO */
 $db = require(__DIR__."/connect.php");
 $now = date("M-d-y H:i:s");
@@ -199,9 +199,9 @@ if (! $ids_to_import) {
         $query .= " = $from";
         $count_sql = "SELECT COUNT(*) `total` FROM events e WHERE YEAR(event_date) = $from ";
     }
-    if ($id_to_begin_with) {
-        $query .= ' AND e.event_id >= '.$id_to_begin_with;
-        $count_sql .=  ' AND e.event_id >= '.$id_to_begin_with;
+    if ($id_to_begin_after) {
+        $query .= ' AND e.event_id > '.$id_to_begin_after;
+        $count_sql .=  ' AND e.event_id > '.$id_to_begin_after;
     }
 } else {
     $query .= " WHERE e.event_id IN ($ids_to_import)";
