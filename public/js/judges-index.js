@@ -1,6 +1,6 @@
 $(function(){
     $('#judge-filter').on('change',function(){
-        console.warn("change! " + $(this).val());
+
         if ($(this).val() === "1") {
             $('tr.inactive').show();
         } else {
@@ -9,7 +9,8 @@ $(function(){
     });
 
     // this works, but doesn't mitigate the problem where when you un-collapse
-    // the USMJ you have a rude scroll-all-the-way-to-the-bottom
+    // the USMJ when USDJ is already expanded, you have a rude
+    // scroll-all-the-way-to-the-bottom
     /*
     $('#USMJ').on("show.bs.collapse",function(event){
         //event.preventDefault();
@@ -17,5 +18,5 @@ $(function(){
         $('#USDJ').collapse("hide");
     });
     */
-    $('#USMJ').on("click",function(e){e.preventDefault()})
+
 });
