@@ -4,8 +4,14 @@
  * view script for judges admin main page
  */
 $this->headTitle($this->title);?>
-<div class="center-block mx-auto" style="max-width:500px"><!-- wrapper -->
-<h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<div class="center-block mx-auto" style="max-width:600px"><!-- wrapper -->
+<h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?>
+ <span class="form-inline float-right">inactive judges: <select class="form-control">
+     <option value="1">show</option>
+     <option value="0">hide</option>
+ </select>
+ </span>
+</h2>
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
