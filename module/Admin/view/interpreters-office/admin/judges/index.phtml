@@ -3,6 +3,7 @@
  * module/Admin/view/interpreters-office/admin/judges/index.phtml
  * view script for judges admin main page
  */
+$this->headScript()->appendFile($this->basePath('js/judges-index.js'));
 $this->headTitle($this->title);?>
 <div class="center-block mx-auto" style="max-width:600px"><!-- wrapper -->
 <div class="row">
@@ -11,12 +12,11 @@ $this->headTitle($this->title);?>
     <div class="col-6 form-inline float-right pt-2">
          <label class="pr-1" for="judge-filter">inactive judges: </label>
          <select id="judge-filter" class="form-control form-control-sm custom-select">
-             <option value="1">show</option>
              <option value="0">hide</option>
+             <option value="1">show</option>
         </select>
     </div>
 </div>
-
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
@@ -46,7 +46,7 @@ foreach ($flavors as $flavor):
         </div>
         <div id="<?php echo $flavor ?>" class="collapse<?php if ($flavor == $flavors[0]): ?> show<?php endif;?>" aria-labelledby="heading-<?php echo $flavor ?>" data-parent="#accordion">
             <div class="card-body px-auto">
-            <table class="table" style="max-width:500px">
+            <table class="table mx-auto" style="max-width:500px">
                 <tbody>
                 <?php
                 foreach($this->judges[$flavor] as $judge):
@@ -57,12 +57,12 @@ foreach ($flavors as $flavor):
                             $location .= ', '. $judge['parent_location'];
                         endif;
                     endif; ?>
-                <tr>
-                    <td class="align-self-center"><?php
+                <tr <?php if (! $judge['active']):?> class="inactive"<?php endif;?>>
+                    <td><?php
                     $name = sprintf("%s, %s %s",$judge['lastname'],$judge['firstname'],$judge['middlename']);
                     printf('<a data-toggle="tooltip" title="edit this database record" href="%s">%s</a>',$this->url('judges/edit',['id'=>$judge['id']]),$name);
                     ?></td>
-                    <td  style="color:#515457" class="pl-0"><?php echo $location ?></td>
+                    <td style="color:#515457" class="pl-0"><?php echo $location ?></td>
                     <td class="text-md-right">
                         <span style="opacity:.75" class="align-self-center fas fa-<?php echo $judge['active'] ? "check text-success" : "times text-danger"?>"></span>
                     </td>

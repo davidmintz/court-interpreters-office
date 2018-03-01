@@ -120,7 +120,7 @@ td.interpreters-assigned div:not(:last-child) {
     border-right : 2px solid #dee2e6 !important;
 }
 
-/* maybe do away with this and add some margin instead */
+/* maybe do away with this, and add some margin instead? */
 .btn:focus, .btn:active {
   outline: none ;
   box-shadow: none ;
@@ -130,3 +130,7 @@ td.interpreters-assigned div:not(:last-child) {
 note to self: gray #515457
 */
 span.avoidwrap { display:inline-block !important;}
+
+tr.inactive { /*e.g., for judges/index */
+    display: none;
+}
