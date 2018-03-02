@@ -5,6 +5,7 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Entity representing a Judge.
@@ -45,6 +46,35 @@ class Judge extends Person
      * @ORM\ManyToOne(targetEntity="JudgeFlavor",fetch="EAGER")
      */
     protected $flavor;
+
+    /**
+     * ArrayCollection related Events
+     *
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Event",mappedBy="judge")
+     */
+    protected $events;
+
+    /**
+     * constructor
+     *
+     */
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
+    }
+
+    /**
+     * does this entity have related entities?
+     *
+     * returns false if this Judge has no related
+     * entities and can therefore safely be deleted
+     * @return boolean true if there are related entities
+     */
+    public function hasRelatedEntities()
+    {
+        return ! $this->events->isEmpty();
+    }
 
     /**
      * Get id.
@@ -129,6 +159,7 @@ class Judge extends Person
             throw new \RuntimeException(
                 'Judge entity must have Hat type "Judge"'
             );
+            //$this->setHat(new Hat("Judge"));
         }
 
         if ($this->getDefaultLocation() !== null) {
@@ -146,7 +177,7 @@ class Judge extends Person
      * returns a string representation of the entity.
      */
     public function __toString()
-    {        
+    {
         $string = $this->getLastname().', ';
         $string .= $this->getFirstname();
         $middle = $this->getMiddlename();

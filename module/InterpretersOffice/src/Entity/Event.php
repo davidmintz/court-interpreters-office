@@ -49,20 +49,20 @@ class Event
      * @ORM\Column(type="time",nullable=true)
      */
     protected $end_time;
-    
-        
+
+
     /**
      * date on which the service was requested.
      *
      * @ORM\Column(type="date",nullable=false,name="submission_date")
      * @var \DateTime
-     */    
+     */
     protected $submission_date;
-    
+
     /**
      * time at which the event was requested.
-     * 
-     * this field is obligatory but there is legacy data from a time 
+     *
+     * this field is obligatory but there is legacy data from a time
      * when it wasn't. also, this makes it easier to change our mind later on.
      *
      * @ORM\Column(type="time",nullable=true,name="submission_time")
@@ -93,7 +93,7 @@ class Event
     /**
      * Most events have a Judge.
      *
-     * @ORM\ManyToOne(targetEntity="Judge")
+     * @ORM\ManyToOne(targetEntity="Judge",inversedBy="events")
      * @ORM\JoinColumn(nullable=true)
      *
      * @var Judge
@@ -171,8 +171,8 @@ class Event
     protected $cancellationReason;
 
     /* FROM our Request entity in the older project....
-     * 
-     * @ORM\ManyToMany(targetEntity="Application\Entity\DefendantName",fetch="EAGER") 
+     *
+     * @ORM\ManyToMany(targetEntity="Application\Entity\DefendantName",fetch="EAGER")
      * @ORM\JoinTable(name="defendants_requests",
      *      joinColumns={@ORM\JoinColumn(name="request_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="deft_id")}
@@ -181,8 +181,8 @@ class Event
      * cribbed from:
      * http://doctrine-orm.readthedocs.org/en/latest/reference/annotations-reference.html#annref-manytomany
      */
-    
-    
+
+
     /**
      * defendant(s) for whom an interpreter is required.
      *
@@ -663,7 +663,7 @@ class Event
      * @return \DateTime
      */
     public function getSubmissionDate()
-    {        
+    {
         return $this->submission_date;
     }
 
@@ -690,7 +690,7 @@ class Event
     {
         return $this->submission_time;
     }
-    
+
     /**
      * Set cancellationReason.
      *
@@ -714,9 +714,9 @@ class Event
     {
         return $this->cancellationReason;
     }
-    
-    
-    
+
+
+
     /**
      * Add defendant.
      *
@@ -750,7 +750,7 @@ class Event
     {
         return $this->getDefendantNames();
     }
-    
+
     /**
      * Get defendants.
      *
@@ -763,51 +763,51 @@ class Event
 
     /**
      * adds DefendantNames
-     * 
+     *
      * @param Collection $defendantNames
      */
     public function addDefendantNames(Collection $defendantNames)
     {
         //printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
-        foreach ($defendantNames as $defendantName) {           
+        foreach ($defendantNames as $defendantName) {
             $this->defendantNames->add($defendantName);
         }
     }
-    
+
     /**
      * removes DefendantNames
-     * 
+     *
      * @param Collection $defendantNames
      */
     public function removeDefendantNames(Collection $defendantNames)
-    {       
-        foreach ($defendantNames as $defendantName) {     
+    {
+        foreach ($defendantNames as $defendantName) {
             $this->defendantNames->removeElement($defendantName);
         }
     }
-    
+
     /**
      * adds InterpreterEvents
-     * 
+     *
      * @param Collection $interpreterEvents
      */
     public function addInterpreterEvents(Collection $interpreterEvents)
-    {        
-        foreach ($interpreterEvents as $interpreterEvent) {            
+    {
+        foreach ($interpreterEvents as $interpreterEvent) {
             $interpreterEvent->setEvent($this);
             $this->interpreterEvents->add($interpreterEvent);
         }
     }
-    
+
     /**
      * removes InterpretersEvents
-     * 
+     *
      * @param Collection $interpreterEvents
      */
     public function removeInterpreterEvents(Collection $interpreterEvents)
-    {        
-        foreach ($interpreterEvents as $interpreterEvent) {           
-            $interpreterEvent->setEvent(null);     
+    {
+        foreach ($interpreterEvents as $interpreterEvent) {
+            $interpreterEvent->setEvent(null);
             $this->interpreterEvents->removeElement($interpreterEvent);
         }
     }
@@ -869,7 +869,7 @@ class Event
     {
         return $this->modifiedBy;
     }
-  
+
     /**
      * convenience method for assigning an interpreter.
      *
@@ -883,8 +883,8 @@ class Event
                 ->add(new InterpreterEvent($interpreter, $this));
 
         return $this;
-    }    
-    
+    }
+
     /**
      * Lifecycle callback/sanity check for submitter and judge properties.
      *
