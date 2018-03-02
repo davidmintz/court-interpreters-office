@@ -76,13 +76,14 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         $data = $this->createQuery($dql, $this->cache_namespace)->getResult();
         $flavors = array_column($this->createQuery(
             'SELECT f.flavor FROM InterpretersOffice\Entity\JudgeFlavor f
-            ORDER BY f.weight')
-            ->getResult(),'flavor');
+            ORDER BY f.weight'
+        )
+            ->getResult(), 'flavor');
         $judges = array_combine($flavors, [[],[],[]]);
-        foreach($data as $j) {
+        foreach ($data as $j) {
             $judges[$j['flavor']][] = $j;
         }
-        $this->cache->save('judges-list',$judges);
+        $this->cache->save('judges-list', $judges);
 
         return $judges;
     }
@@ -148,7 +149,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 . 'LEFT JOIN j.defaultLocation l '
                 . 'LEFT JOIN l.parentLocation pl '
                 . ' WHERE j.active = true '. $or;
-        $dql .=  ' ORDER BY j.lastname, j.firstname';
+        $dql .= ' ORDER BY j.lastname, j.firstname';
         $judges = $this->createQuery($dql, $this->cache_namespace)->getResult();
         $data = [];
         foreach ($judges as $judge) {
@@ -166,13 +167,13 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 'data-default_location' => $judge['location'],
                 'data-default_parent_location' => $judge['parent_location'],
             ];
-            $data[] = compact('label','value','attributes');
+            $data[] = compact('label', 'value', 'attributes');
         }
 
         if (isset($options['include_pseudo_judges'])
                 && $options['include_pseudo_judges']) {
-            $data = array_merge($data,$this->getPseudoJudgeOptions());
-            usort($data,function($a,$b){
+            $data = array_merge($data, $this->getPseudoJudgeOptions());
+            usort($data, function ($a, $b) {
                 if ($this->isAnonymousButNotMagistrate($a)
                    &&
                    ! $this->isAnonymousButNotMagistrate($b)) {
@@ -197,9 +198,10 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      * @param array $judge
      * @return boolean
      */
-    protected function isAnonymousButNotMagistrate(Array $judge) {
+    protected function isAnonymousButNotMagistrate(array $judge)
+    {
 
-        return preg_match('/^.?(:?unknown|not applicable)/i',$judge['label']);
+        return preg_match('/^.?(:?unknown|not applicable)/i', $judge['label']);
     }
     /**
      * gets pseudo-judges
@@ -221,14 +223,14 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                     . 'ORDER BY j.name, location, parent_location';
         $pseudo_judges = $this->createQuery(
             $pseudojudge_dql,
-            $this->cache_namespace)->getResult();
+            $this->cache_namespace
+        )->getResult();
         foreach ($pseudo_judges as $pjudge) {
             $value = $pjudge['id'];
             $label = $pjudge['name'];
             if ($pjudge['parent_location']) {
                 $label .= " - $pjudge[parent_location]";
-            } elseif ($pjudge['location'])
-            {
+            } elseif ($pjudge['location']) {
                 $label .= " - $pjudge[location]";
             }
             $attributes = [
@@ -236,7 +238,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 'data-default_location' => $pjudge['default_location_id'],
                 'data-default_parent_location' =>
                     $pjudge['default_parent_location_id'],];
-            $data[] = compact('label','value','attributes');
+            $data[] = compact('label', 'value', 'attributes');
         }
         return $data;
     }
@@ -257,7 +259,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         $result = $this->createQuery($dql, $this->cache_namespace)
                 ->setParameters(['id' => $judge->getId()])
                 ->getOneOrNullResult();
-        if (! $result or !$result['name']) {
+        if (! $result or ! $result['name']) {
             return '';
         }
         $name = $result['name'];

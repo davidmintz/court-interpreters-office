@@ -28,11 +28,14 @@ class Docket implements FilterInterface
      * @param  string $docket
      * @return string docket number formatted for the database
      */
-    function filter($docket) {
+    function filter($docket)
+    {
 
-        if (!$docket)  { return $docket; }
-        $m = array();
-        if (!preg_match(self::REGEX, $docket, $m)) {
+        if (! $docket) {
+            return $docket;
+        }
+        $m = [];
+        if (! preg_match(self::REGEX, $docket, $m)) {
             return $docket;
         }
         list($year, $flav, $num) = array_slice($m, 1);
@@ -51,5 +54,4 @@ class Docket implements FilterInterface
         }
         return $year .'-' . $flav . '-' . sprintf('%04d', $num);
     }
-
 }

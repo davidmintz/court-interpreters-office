@@ -18,9 +18,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
  *
  *
  */
-class DefendantNameRepository extends EntityRepository
-    implements CacheDeletionInterface
-
+class DefendantNameRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
 
@@ -62,14 +60,13 @@ class DefendantNameRepository extends EntityRepository
                 . ' AS label FROM  InterpretersOffice\Entity\DefendantName d '
                 . ' WHERE ';
 
-        $dql .= $this->getDqlWhereClause($name,$parameters);
+        $dql .= $this->getDqlWhereClause($name, $parameters);
         $dql   .= "ORDER BY d.surnames, d.given_names";
         $query = $this->createQuery($dql)
                 ->setParameters($parameters)
                 ->setMaxResults($limit);
 
         return $query->getResult();
-
     }
 
     /**
@@ -81,14 +78,14 @@ class DefendantNameRepository extends EntityRepository
      * @param  Array  $parameters query parameters
      * @return string            DQL WHERE clause
      */
-    protected function getDqlWhereClause(Array $name, Array &$parameters)
+    protected function getDqlWhereClause(array $name, array &$parameters)
     {
         $dql = '';
         // we don't do hyphens
-        if (! strstr($name['last'],'-')) {
+        if (! strstr($name['last'], '-')) {
             $dql .= 'd.surnames LIKE :surnames ';
         } else {
-             $non_hypthenated = str_replace('-',' ',$name['last']);
+             $non_hypthenated = str_replace('-', ' ', $name['last']);
              $dql .= '(d.surnames LIKE :surnames OR d.surnames LIKE :non_hyphenated) ';
              $parameters['non_hyphenated'] = $non_hypthenated;
         }
@@ -139,7 +136,5 @@ class DefendantNameRepository extends EntityRepository
 
          $this->cache->setNamespace('defendants');
          $this->cache->deleteAll();
-
     }
-
 }

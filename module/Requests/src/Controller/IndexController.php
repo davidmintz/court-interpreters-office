@@ -9,7 +9,6 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Doctrine\Common\Persistence\ObjectManager;
 
-
 /**
  *  IndexController for Requests module
  *
@@ -32,7 +31,7 @@ class IndexController extends AbstractActionController
     {
         $this->objectManager = $objectManager;
     }
-    
+
 
     /**
      * index action.
@@ -41,7 +40,6 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-       return new ViewModel(['title' => 'schedule an interpreter']);
-        
+        return new ViewModel(['title' => 'schedule an interpreter']);
     }
 }

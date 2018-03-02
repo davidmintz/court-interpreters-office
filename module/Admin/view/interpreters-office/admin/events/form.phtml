@@ -22,12 +22,12 @@ if ($this->errorMessage) : ?>
 return;
 endif;
 $form = $this->form;
-$form->setAttribute('class','form-event mx-auto')
-        ->setAttribute('style','max-width:950px');
+$form->setAttribute('class', 'form-event mx-auto')
+        ->setAttribute('style', 'max-width:950px');
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+    'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
 
 $form->prepare();
@@ -35,19 +35,21 @@ $fieldset = $form->get('event');
 
 /** @todo move this to somewhere else ! */
 foreach (['date','time','end_time','submission_time', 'submission_date'] as $time) :
-    if (! $fieldset->has($time)) : continue; endif;
+    if (! $fieldset->has($time)) :
+        continue;
+    endif;
     $element = $fieldset->get($time);
     $value = $element->getValue();
     //renderer can't deal with DateTime objects
     if ($value instanceof \DateTime) {
-        $format = strstr($time, 'time') ? 'g:i a':'m/d/Y' ;
+        $format = strstr($time, 'time') ? 'g:i a' : 'm/d/Y' ;
         $element->setValue($value->format($format));
         continue;
     }
 endforeach;
 
 $hatElement = $fieldset->get('anonymousSubmitter');
-if ($this->hat_id):
+if ($this->hat_id) :
     $hatElement->setValue($hat_id);
     $submitterElement = $fieldset->get('submitter');
     $submitter = $submitterElement->getValue();
@@ -72,7 +74,7 @@ if ($parent && sizeof($location_options) <= 1) :
     $location_element->setValueOptions($location_options[0]);
 endif;
 $entity = $form->getObject();
-if ($entity->getLocation() && !$entity->getLocation()->getParentLocation()) {
+if ($entity->getLocation() && ! $entity->getLocation()->getParentLocation()) {
     $fieldset->get('parent_location')->setValue($entity->getLocation()->getId());
 }
 /** ============================================================ ! */
@@ -104,25 +106,26 @@ echo $this->form()->openTag($form); ?>
 <div class="form-row">
     <div class="col-md-6"><!-- left side -->
     <?php
-        foreach (['date','time','eventType','judge', ] as $elementName) :
-            $element = $fieldset->get($elementName);
-           ?>
+    foreach (['date','time','eventType','judge', ] as $elementName) :
+        $element = $fieldset->get($elementName);
+        ?>
         <div class="form-group form-row my-2">
-            <?php
-            if ('time' == $elementName && $config['end_time']):
-                $end_time = $fieldset->get('end_time'); ?>
+        <?php
+        if ('time' == $elementName && $config['end_time']) :
+            $end_time = $fieldset->get('end_time'); ?>
                 <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
                 <div class="col-sm-1 col-form-label pr-1">from</div>
                 <div class="col-sm-7"><?php echo $this->formElement($element),$this->formElementErrors($element)?></div>
                 <label for="<?php echo $end_time->getAttribute('id')?>" class="offset-sm-4 col-sm-1 col-form-label  pr-1">to</label>
                 <div class="col-sm-7"><?php  echo $this->formElement($end_time),$this->formElementErrors($end_time)?></div>
-            <?php else: ?>
+        <?php else : ?>
             <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
             <div class="col-sm-8"><?php echo $this->formElement($element),
                          $this->formElementErrors($element);?></div>
-            <?php endif; ?>
+        <?php endif; ?>
         </div>
-        <?php endforeach; $element = $fieldset->get('parent_location');?>
+    <?php endforeach;
+    $element = $fieldset->get('parent_location');?>
         <div class="form-group form-row my-2">
             <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
             <div class="col-sm-8"><?php
@@ -131,7 +134,7 @@ echo $this->form()->openTag($form); ?>
                          $this->formElementErrors($element) ?>
             </div>
         </div>
-    <?php foreach (['docket', 'comments','admin_comments']  as $elementName) :
+    <?php foreach (['docket', 'comments','admin_comments'] as $elementName) :
         $element = $fieldset->get($elementName); ?>
         <div class="form-group form-row my-2">
             <label class="col-sm-4 col-form-label pr-1" for="<?php echo $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
@@ -159,7 +162,7 @@ echo $this->form()->openTag($form); ?>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                     <?php
                     /** THIS IS AwKWARD. re-think and start over? */
-                    if  ($this->interpreters) {
+                    if ($this->interpreters) {
                         $helper = (new InterpreterElementCollection())->setView($this);
                         echo $helper->fromPost($this->interpreters);
                     } else {
@@ -180,20 +183,20 @@ echo $this->form()->openTag($form); ?>
                 <div class="input-group">
                     <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                      <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
-                     <?php echo $this->formSelect($fieldset->get('defendantNames')); ?>
+                        <?php echo $this->formSelect($fieldset->get('defendantNames')); ?>
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php
                 if ($this->defendantNames) {
                     foreach ($this->defendantNames as $id => $name) {
-                        echo $this->defendantName($id,$name);
+                        echo $this->defendantName($id, $name);
                     }
                 } else {
                     $names = $form->getObject()->getDefendantNames()->toArray();
                     //echo "DEBUG: # deft names is ". count($names);
                     foreach ($names as $nameObject) {
                         $name = $nameObject->getSurNames() . ', ' . $nameObject->getGivenNames();
-                        echo $this->defendantName($nameObject->getId(),$name);
+                        echo $this->defendantName($nameObject->getId(), $name);
                     }
                 }?>
                 </ul>
@@ -236,14 +239,14 @@ echo $this->form()->openTag($form); ?>
             echo $this->formHidden($fieldset->get('anonymousJudge'));
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
             echo $this->formHidden($fieldset->get('id'));
-            if ($form->has('modified')) {
-                $element = $form->get('modified');
-                $value = $element->getValue();
-                if (is_object($value)) {
-                    $element->setValue($value->format('Y-m-d H:i:s'));
-                }
-                echo $this->formHidden($element);
+        if ($form->has('modified')) {
+            $element = $form->get('modified');
+            $value = $element->getValue();
+            if (is_object($value)) {
+                $element->setValue($value->format('Y-m-d H:i:s'));
             }
+            echo $this->formHidden($element);
+        }
             echo $this->formSubmit($form->get('submit'));?>
     </div>
 </div>

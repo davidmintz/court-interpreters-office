@@ -6,6 +6,7 @@ namespace SDNY\Vault\Service;
 /**
  * VaultException
  */
-class VaultException extends \RuntimeException {
-    
+class VaultException extends \RuntimeException
+{
+
 }

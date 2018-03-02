@@ -21,22 +21,21 @@ foreach (['success','default','error','info','warning'] as $ns) {
                 <?php if ($this->status && $this->status != \Zend\Authentication\Result::SUCCESS) :?>
                 <div class="alert alert-warning alert-dismissible">authentication failed: invalid identity and/or password. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
                 <?php else :?>
-                    
                 <?php endif;?>
             <form class="form-inline" style="align-content: center" id="form-login" action="<?php echo $this->url('login') ?>" method="post">
                 <div class="form-group">
                   <label class="sr-only" for="identity">username or email</label>
-                      <?php echo $this->formElementErrors($this->form->get('identity'))?>
-                  <?php echo $this->formElement($this->form->get('identity')); //return; ?>
+                        <?php echo $this->formElementErrors($this->form->get('identity'))?>
+                    <?php echo $this->formElement($this->form->get('identity')); //return; ?>
                 </div>
                 <div class="form-group pl-1">
                   <label class="sr-only" for="password">password</label>
-                      <?php echo $this->formElementErrors($this->form->get('password')) ?>
-                      <?php echo $this->formElement($this->form->get('password')); //return; ?>
+                        <?php echo $this->formElementErrors($this->form->get('password')) ?>
+                        <?php echo $this->formElement($this->form->get('password')); //return; ?>
                 </div>
                   <button type="submit" class="btn btn-info ml-1">log in</button>
-                  <?php echo $this->formElement($form->get('login_csrf')) ?>
-                  <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>
+                    <?php echo $this->formElement($form->get('login_csrf')) ?>
+                    <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>
               </form>
         
         </div>

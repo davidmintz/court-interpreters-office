@@ -29,7 +29,7 @@ class Location
      *
      * @Annotation\Attributes({"type":"hidden"})
      * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
-     * 
+     *
      * @var integer
      */
     protected $id;
@@ -75,7 +75,7 @@ class Location
      *
      * @ORM\JoinColumn(name="parent_location_id",nullable=true)
      * @ORM\ManyToOne(targetEntity="Location",fetch="EAGER")
-     * 
+     *
      * @var Location
      */
     protected $parentLocation;

@@ -14,7 +14,7 @@ class DefendantsControllerFactory implements FactoryInterface
 {
     /**
      * yadda yadda
-     * 
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

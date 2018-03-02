@@ -39,12 +39,12 @@ class LanguageSelect extends ObjectSelect
     public function __construct($name = null, array $options)
     {
         $this->getProxy()->setObjectManager($options['objectManager']);
-        if (isset($options['options'])) {          
-            $constructor_options = array_merge($this->defaultOptions['options'],  $options['options']);
+        if (isset($options['options'])) {
+            $constructor_options = array_merge($this->defaultOptions['options'], $options['options']);
         } else {
             $constructor_options = $this->defaultOptions['options'];
         }
-        parent::__construct($name,$constructor_options);
+        parent::__construct($name, $constructor_options);
         $attributes = $this->defaultOptions['attributes'];
         if (key_exists('attributes', $options)) {
             $attributes = array_merge($attributes, $options['attributes']);

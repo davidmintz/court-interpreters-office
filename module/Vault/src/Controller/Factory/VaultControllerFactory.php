@@ -17,8 +17,9 @@ use SDNY\Vault\Service\Vault as VaultService;
  *
  * @author david@davidmintz.org
  */
-class VaultControllerFactory implements FactoryInterface {
-  
+class VaultControllerFactory implements FactoryInterface
+{
+
     /**
      * invocation, so to speak
      *
@@ -29,8 +30,7 @@ class VaultControllerFactory implements FactoryInterface {
      * @return Vault
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {        
-        return new VaultController($container->get(VaultService::class),$container->get('auth'));
+    {
+        return new VaultController($container->get(VaultService::class), $container->get('auth'));
     }
-
 }

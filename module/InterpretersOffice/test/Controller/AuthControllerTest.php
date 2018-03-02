@@ -24,9 +24,9 @@ class AuthControllerTest extends AbstractControllerTest
      */
     public function testLoginAdminUser()
     {
-        $token = $this->getCsrfToken('/login','login_csrf');
+        $token = $this->getCsrfToken('/login', 'login_csrf');
         $auth = $this->getApplicationServiceLocator()->get('auth');
-        
+
 //echo spl_object_hash($auth), " is the hash of our auth object in the unit test\n";
 
         $params =
@@ -39,14 +39,14 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(302);
         $this->assertRedirect();
         $this->assertRedirectTo('/admin');
-        
+
         // this shit broke, we know not when or how.
         //$auth = $this->getApplicationServiceLocator()->get('auth');
         //$this->assertTrue($auth->hasIdentity(),"failed asserting auth has identity");
 
         //echo $this->getResponseStatusCode()," is the response code \n";
         //echo $this->dumpResponse();
-        $this->assertTrue($auth->hasIdentity(),'failed asserting that $auth->hasIdentity()');
+        $this->assertTrue($auth->hasIdentity(), 'failed asserting that $auth->hasIdentity()');
 
         $auth->clearIdentity();
         // just checking :-)
@@ -76,7 +76,7 @@ class AuthControllerTest extends AbstractControllerTest
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'login_csrf' => $this->getCsrfToken('/login','login_csrf'),
+            'login_csrf' => $this->getCsrfToken('/login', 'login_csrf'),
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
@@ -99,17 +99,17 @@ class AuthControllerTest extends AbstractControllerTest
         [
             'identity' => 'susie',
             'password' => 'boink',
-            'login_csrf' => $this->getCsrfToken('/login','login_csrf'),
+            'login_csrf' => $this->getCsrfToken('/login', 'login_csrf'),
         ];
         $this->dispatch('/login', 'POST', $params);
         $this->assertRedirect();
-        
+
         //echo $this->getResponseHeader('Location'),"\n";
         //$auth = $this->getApplicationServiceLocator()->get('auth');
         //var_dump($auth->hasIdentity());
         //$em->refresh($user);
         //echo "role: {$user->getRole()}\n";
-        printf("\nTO DO: resolve failed \$this->assertNotRedirectTo('/admin/languages/add') in AuthControllerTest at %d?\n",__LINE__);
+        printf("\nTO DO: resolve failed \$this->assertNotRedirectTo('/admin/languages/add') in AuthControllerTest at %d?\n", __LINE__);
         // problem
         //$this->assertNotRedirectTo('/admin/languages/add');
     }
@@ -131,7 +131,7 @@ class AuthControllerTest extends AbstractControllerTest
         // sanity-check it first
         $this->assertEquals('submitter', (string) $susie->getRole());
 
-        $token = $this->getCsrfToken('/login','login_csrf');
+        $token = $this->getCsrfToken('/login', 'login_csrf');
         $params =
         [
             'identity' => 'susie',
@@ -158,7 +158,7 @@ class AuthControllerTest extends AbstractControllerTest
             'POST',
             ['identity' => 'susie',
                  'password' => 'notCorrect',
-                 'login_csrf' => $this->getCsrfToken('/login','login_csrf'),
+                 'login_csrf' => $this->getCsrfToken('/login', 'login_csrf'),
                ]
         );
         $this->assertNotRedirect();
@@ -171,7 +171,7 @@ class AuthControllerTest extends AbstractControllerTest
             'POST',
             ['identity' => 'nobody',
                      'password' => 'notCorrect',
-                     'login_csrf' => $this->getCsrfToken('/login','login_csrf'),
+                     'login_csrf' => $this->getCsrfToken('/login', 'login_csrf'),
                  ]
         );
         $this->assertNotRedirect();

@@ -52,7 +52,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $this->assertTrue(is_object($fixtureExecutor));
         $entityManager = FixtureManager::getEntityManager();
-       
+
         $fixtureExecutor->execute([
             new DataFixture\LanguageLoader(),
             new DataFixture\HatLoader(),
@@ -75,7 +75,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $count = (int) $connection->fetchColumn('select count(*) from languages');
 
         $this->assertEquals($count, count($languages));
-        
+
         $events = $entityManager->getRepository(Entity\Event::class)->findAll();
         /** @var $event InterpretersOffice\Entity\Event */
         $event = $events[0];
@@ -90,7 +90,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $defendants = $event->getDefendants();
         $this->assertTrue($defendants->count() >= 1);
         $defendant = $defendants->current();
-        $this->assertInstanceOf(Entity\DefendantName::class,$defendant);
+        $this->assertInstanceOf(Entity\DefendantName::class, $defendant);
     }
     /**
      * test that a RuntimeException will be thrown if we try to persist an Event
@@ -140,14 +140,13 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setCreated($now)
             ->setCreatedBy($user)
             ->setModifiedBy($user)
-            ->addDefendant($defendant) 
+            ->addDefendant($defendant)
             ->addInterpreterEvents(
-                    new ArrayCollection(
-                       [     
+                new ArrayCollection(
+                    [
                             (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
-                       ]
-                    )
-                
+                        ]
+                )
             );
            //->setJudge($judge);
 
@@ -197,7 +196,7 @@ class FixtureSetupTest extends AbstractControllerTest
                 ->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'French']);
         $mintz->addInterpreterLanguage(
-             new Entity\InterpreterLanguage($mintz, $french)
+            new Entity\InterpreterLanguage($mintz, $french)
         );
         $objectManager->flush();
         $languages = $mintz->getInterpreterLanguages();

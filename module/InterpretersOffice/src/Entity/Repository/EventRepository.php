@@ -9,8 +9,6 @@ use Doctrine\Common\Cache\CacheProvider;
 
 use InterpretersOffice\Entity;
 
-
-
 /**
  * EventRepository
  *
@@ -122,7 +120,7 @@ DQL;
         $event = $entityManager
             ->createQuery($this->view_dql . ' WHERE e.id = :id')
             ->useResultCache($this->cache_enabled)
-            ->setParameters(['id'=>$id])->getOneOrNullResult();
+            ->setParameters(['id' => $id])->getOneOrNullResult();
         if (! $event) {
             return null;
         }
@@ -130,13 +128,13 @@ DQL;
             FROM InterpretersOffice\Entity\DefendantName d
             JOIN d.events e WHERE e.id = :id';
         $event['defendants'] = $entityManager->createQuery($deft_dql)
-            ->setParameters(['id'=>$id])
+            ->setParameters(['id' => $id])
             ->useResultCache($this->cache_enabled)->getResult();
         $interp_dql = 'SELECT i.lastname, i.firstname
             FROM InterpretersOffice\Entity\InterpreterEvent ie
             JOIN ie.interpreter i JOIN ie.event e  WHERE e.id = :id';
-        $event['interpreters'] =  $entityManager->createQuery($interp_dql)
-            ->setParameters(['id'=>$id])
+        $event['interpreters'] = $entityManager->createQuery($interp_dql)
+            ->setParameters(['id' => $id])
             ->useResultCache($this->cache_enabled)->getResult();
 
         return $event;
@@ -159,16 +157,15 @@ DQL;
                 . 'InterpretersOffice\Entity\ReasonForCancellation r '
                 . ' ORDER BY r.reason';
         $result = $this->getEntityManager()->createQuery($dql)->getResult();
-        $index = array_search('other',array_column($result, 'label'));
+        $index = array_search('other', array_column($result, 'label'));
         if ($index) {
             $tmp = $result[$index];
             unset($result[$index]);
             $result[] = $tmp;
         }
-        $cache->save($id,$result);
+        $cache->save($id, $result);
 
         return $result;
-
     }
 
     /**
@@ -179,7 +176,7 @@ DQL;
      * @param array $options
      * @return array
      */
-    public function getSchedule(Array $options = [])
+    public function getSchedule(array $options = [])
     {
         if (! isset($options['date'])) {
             $date = date('Y-m-d');
@@ -213,31 +210,31 @@ DQL;
          LEFT JOIN loc.parentLocation ploc
          LEFT JOIN e.cancellationReason cr
          WHERE e.date = :date';
-         if (isset($options['language']) && 'all' != $options['language']) {
-             $dql .= ' AND lang.name ';
-             if ($options['language'] == 'spanish') {
-                 $dql .= " = 'Spanish'";
-             } else {
-                 $dql .= " <> 'Spanish'";
-             }
-         }
+        if (isset($options['language']) && 'all' != $options['language']) {
+            $dql .= ' AND lang.name ';
+            if ($options['language'] == 'spanish') {
+                $dql .= " = 'Spanish'";
+            } else {
+                $dql .= " <> 'Spanish'";
+            }
+        }
          // interesting fact: if you do NOT make the sorting unique (e.g.,
          // with the id) then the sort varies randomly. no default tie-breaker.
          $dql .= ' ORDER BY e.time, e.id';
 
         $events = $this->getEntityManager()->createQuery($dql)
-                ->setParameters([':date'=>$date])
+                ->setParameters([':date' => $date])
                 ->useResultCache($this->cache_enabled)
                 ->getResult();
 
         if (! $events) {
             return [];
         }
-        $ids = array_column($events,'id');
+        $ids = array_column($events, 'id');
         $defendants = $this->getDefendantsForEvents($ids);
         $interpreters = $this->getInterpretersForEvents($ids);
 
-        return compact('events','interpreters','defendants');
+        return compact('events', 'interpreters', 'defendants');
     }
 
     /**
@@ -246,16 +243,16 @@ DQL;
      * @param array $ids array of event ids
      * @return array
      */
-    public function getDefendantsForEvents(Array $ids)
+    public function getDefendantsForEvents(array $ids)
     {
         $query = $this->getEntityManager()->createQuery(
-         'SELECT e.id event_id, d.id, d.surnames, d.given_names FROM '
+            'SELECT e.id event_id, d.id, d.surnames, d.given_names FROM '
             . 'InterpretersOffice\Entity\DefendantName d JOIN d.events e '
             . 'WHERE e.id IN (:ids)'
         );
         $return = [];
 
-        $data = $query->setParameters(['ids'=> $ids])
+        $data = $query->setParameters(['ids' => $ids])
                 ->useResultCache($this->cache_enabled)->getResult();
 
         foreach ($data as $deft) {
@@ -277,18 +274,18 @@ DQL;
      * @param array $ids event ids
      * @return array
      */
-    public function getInterpretersForEvents(Array $ids)
+    public function getInterpretersForEvents(array $ids)
     {
         $query = $this->getEntityManager()->createQuery(
-        'SELECT e.id event_id, i.id, i.lastname, i.firstname FROM '
-         . 'InterpretersOffice\Entity\InterpreterEvent ie JOIN ie.interpreter i '
-         . 'JOIN ie.event e WHERE e.id IN (:ids)'
+            'SELECT e.id event_id, i.id, i.lastname, i.firstname FROM '
+            . 'InterpretersOffice\Entity\InterpreterEvent ie JOIN ie.interpreter i '
+            . 'JOIN ie.event e WHERE e.id IN (:ids)'
         );
 
 
         $return = [];
 
-        $data = $query->setParameters(['ids'=> $ids])
+        $data = $query->setParameters(['ids' => $ids])
                 ->useResultCache($this->cache_enabled)->getResult();
 
         foreach ($data as $interpreter) {
@@ -310,7 +307,8 @@ DQL;
      * @param string $cache_id
      * @return boolean true if successful(ish)
      */
-    public function deleteCache($cache_id = null) {
+    public function deleteCache($cache_id = null)
+    {
         if ($cache_id) {
             return $this->cache->delete($cache_id);
         }

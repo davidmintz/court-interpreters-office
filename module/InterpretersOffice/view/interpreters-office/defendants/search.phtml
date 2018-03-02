@@ -1,14 +1,14 @@
 <?php
 /** module/InterpretersOffice/view/interpreters-office/defendants/search.phtml */
 
-if (! $this->paginator->count()): 
+if (! $this->paginator->count()) :
     // add space after commas in search term
     $search = preg_replace('/,(\S+)/', ", $1", $this->search);
     echo "no names found matching <strong>$search</strong>";
-return;   
+    return;
 endif;
 ?><ul class="list-group defendant-names" style="font-size:90%"><?php
-foreach ($paginator as $deft): 
+foreach ($paginator as $deft) :
     ?><li data-id="<?php echo $deft->getId()?>" class="list-group-item align-middle py-1 ">
     <a href="javascript:void(0)">
     <?php
@@ -17,7 +17,7 @@ foreach ($paginator as $deft):
     <span title="add this defendant" class="float-right bg-info text-light rounded p-1 fas fa-plus"></span>
       -->
     </a></li>
-   <?php
+    <?php
 endforeach;
 ?></ul>
 <?php // return;
@@ -25,5 +25,5 @@ echo $this->paginationControl(
     $this->paginator,
     'sliding',
     'partials/pagination_control',
-    ['route' => 'defendant-search','query'=>['term'=>$this->search]]
+    ['route' => 'defendant-search','query' => ['term' => $this->search]]
 );?>

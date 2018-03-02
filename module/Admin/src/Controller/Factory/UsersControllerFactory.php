@@ -13,7 +13,7 @@ class UsersControllerFactory implements FactoryInterface
 {
     /**
      * implements FactoryInterface
-     * 
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options
@@ -22,8 +22,8 @@ class UsersControllerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new UsersController(
-                $container->get('entity-manager'),
-                $container->get('auth')
+            $container->get('entity-manager'),
+            $container->get('auth')
         );
         //$controller->setAuthenticationService
         //return $controller;

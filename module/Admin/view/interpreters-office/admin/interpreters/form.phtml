@@ -1,5 +1,6 @@
 <?php
 use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection;
+
 /**
  *  module/Admin/view/interpreters-office/admin/people/form.phtml
  *  view script for rendering interpreters create|update form
@@ -26,7 +27,7 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+    'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')
    ->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal');
@@ -61,7 +62,7 @@ $form->add([
             <?php foreach (['lastname','firstname','middlename','email','office_phone','mobile_phone','home_phone',
                         'address1','address2','city','state', 'zip'  ] as $elementName) :
                             $element = $fieldset->get($elementName);
-                   ?><div class="form-group form-row">
+                    ?><div class="form-group form-row">
                         <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
                         <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>
                         </div>
@@ -77,7 +78,7 @@ $form->add([
                             <span class="fas fa-plus" aria-hidden="true"></span>
                             <span class="sr-only">add language</span></button><?php
                          /** @todo display fieldset validation errors ? */
-               ?></div>
+                ?></div>
             </div>
             <div class="form-group form-row" id="languages-div">
             <!--languages-div -->
@@ -99,22 +100,22 @@ $form->add([
         </div><!-- /languages panel -->
         <!-- admin panel ------------->
         <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">
-        <?php if ($this->vault_error):?>
+        <?php if ($this->vault_error) :?>
             <div class="validation-error alert alert-warning">shit happened. <?php echo $this->vault_error ?></div>
         <?php endif; ?>
-        <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName):
+        <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName) :
                     $element = $fieldset->get($elementName);
                     $value = $element->getValue();
-                    if (is_object($value) && $value instanceof \DateTime) :
-                        $element->setValue($value->format('m/d/Y'));
-                    endif;
-         ?>
+            if (is_object($value) && $value instanceof \DateTime) :
+                $element->setValue($value->format('m/d/Y'));
+            endif;
+            ?>
                 <div class="form-group form-row">
                     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element)                   ?>
                     </div>
                 </div>
-                <?php endforeach; ?>
+        <?php endforeach; ?>
                 <!-- They say:
                     "Do not mix form groups or grid column classes directly with input groups.
                     Instead, nest the input group inside of the form group or grid-related element."
@@ -132,32 +133,35 @@ $form->add([
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
                 </div><?php
                     endforeach;
-                else:  // should be obscured, until they re-authenticate/decrypt
+                else :  // should be obscured, until they re-authenticate/decrypt
                     foreach (['dob','ssn'] as $elementName) :
-                        if (! $fieldset->has($elementName)) : break; endif;
-                    $element = $fieldset->get($elementName);?>
+                        if (! $fieldset->has($elementName)) :
+                            break;
+                        endif;
+                        $element = $fieldset->get($elementName);?>
                 <div class="form-group form-row">
                     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <?php $encrypted = $element->getValue();
-                    if (! $encrypted): // nothing to obscure
+                    if (! $encrypted) : // nothing to obscure
                         ?><div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div><?php
-                    else:  // display text inputs as encrypted/disabled
-                        $element->setAttribute('disabled','disabled');?>
+                    else :  // display text inputs as encrypted/disabled
+                        $element->setAttribute('disabled', 'disabled');?>
                     <div class="col-sm-9 encrypted">
                         <?php
                             $element->setValue('**************');
                         ?><div class="input-group"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-info" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
                         <?php
                             echo $this->formElementErrors($element);
-                            $hidden = (new \Zend\Form\Element\Hidden( 'encrypted.'.$elementName ))->setValue($encrypted);
+                            $hidden = (new \Zend\Form\Element\Hidden('encrypted.'.$elementName))->setValue($encrypted);
                             echo $this->formHidden($hidden);
                         ?>
                         </div>
                     </div>
-                <?php endif;?>
+                    <?php endif;?>
                 </div>
 
-             <?php endforeach; endif; ?>
+                    <?php endforeach;
+                endif; ?>
 
         </div>
     </div>
@@ -173,6 +177,6 @@ $form->add([
 
     <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
-<?php if ( $this->layout()->action == 'edit' ):
+<?php if ($this->layout()->action == 'edit') :
     echo $this->render('modal-login');
- endif;
+endif;

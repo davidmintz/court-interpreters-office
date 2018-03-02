@@ -245,8 +245,11 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             ->andWhere('i.active = true')
             ->orderBy('i.lastname, i.firstname')
             ->setParameters(['id' => $id]);
-        $query = $qb->getQuery()->useResultCache(true, null,
-                "interp-options-language-$id");
+        $query = $qb->getQuery()->useResultCache(
+            true,
+            null,
+            "interp-options-language-$id"
+        );
 
         return $query->getResult();
     }

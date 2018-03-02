@@ -15,7 +15,7 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-        'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+        'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction);
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
@@ -30,7 +30,9 @@ echo $this->formLabel($name),$this->formText($name),$this->formElementErrors($na
 </div>
 <div class="form-group"><?php
 $location_type = $form->get('type');
-if ($this->type_id) : $location_type->setValue($this->type_id); endif;
+if ($this->type_id) :
+    $location_type->setValue($this->type_id);
+endif;
 echo $this->formLabel($location_type),$this->formSelect($location_type),$this->formElementErrors($location_type);
 ?>
 </div>
@@ -46,10 +48,10 @@ $isActive = $active->getValue();
     <br>
     <input type="radio" id="active" name="active" value="1"<?php if ($isActive) :
 ?> checked="checked"<?php
-endif;?>> yes&nbsp;&nbsp;&nbsp;
+                                                           endif;?>> yes&nbsp;&nbsp;&nbsp;
     <input id="active_0" type="radio" name="active" value="0"<?php if (! $isActive) :
 ?> checked="checked"<?php
-endif;?>> no
+                                                             endif;?>> no
 <?php
  echo $this->formElementErrors($active);
 ?>

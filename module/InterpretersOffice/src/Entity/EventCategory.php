@@ -66,7 +66,7 @@ class EventCategory
     {
         return $this->category;
     }
-    
+
     /**
      * returns string representation
      */

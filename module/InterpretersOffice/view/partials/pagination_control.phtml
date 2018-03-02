@@ -10,7 +10,7 @@ if ($this->pageCount < 2) :
     return;
 endif;
 
-$url = $this->url($this->route, $this->params ?: [],$this->query ? ['query'=>$this->query]:null);
+$url = $this->url($this->route, $this->params ?: [], $this->query ? ['query' => $this->query] : null);
 $SEP = $this->query ? '&' : '?';
 ?>
 <nav class="mb-0">

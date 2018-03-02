@@ -59,14 +59,14 @@ class InterpretersController extends AbstractActionController
         //$id = $this->params()->fromRoute('id');
         return new ViewModel();
     }
-    
+
     /**
      * index action.
      *
      * @return ViewModel
      */
     public function indexAction()
-    {      
+    {
 
         $autocomplete_term = $this->params()->fromQuery('term');
         if ($autocomplete_term) {
@@ -81,11 +81,11 @@ class InterpretersController extends AbstractActionController
         $viewModel = new ViewModel([
             'title' => 'interpreters',
             //'objectManager' => $this->entityManager,
-            ] + compact('form', 'params', 'isQuery', 'routeName')
-        );
+            ] + compact('form', 'params', 'isQuery', 'routeName'));
         if ('interpreters/find_by_id' == $routeName) {
             $viewModel->interpreter = $this->entityManager->find(
-                 Entity\Interpreter::class, $this->params()->fromRoute('id')
+                Entity\Interpreter::class,
+                $this->params()->fromRoute('id')
             );
         } else {
             if ($isQuery) {
@@ -162,5 +162,4 @@ class InterpretersController extends AbstractActionController
 
         return $repository->search($params, $this->params()->fromQuery('page', 1));
     }
-    
 }

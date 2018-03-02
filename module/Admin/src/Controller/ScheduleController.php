@@ -61,11 +61,10 @@ class ScheduleController extends AbstractActionController
         $repo = $this->entityManager->getRepository(Entity\Event::class);
         $data = $repo->getSchedule($filters);
 
-        $viewModel = new ViewModel(['data' => $data, 'date'=>$date]);
+        $viewModel = new ViewModel(['data' => $data, 'date' => $date]);
         $this->setPreviousAndNext($viewModel, $date)->setVariable('language', $filters['language']);
 
         return $viewModel;
-
     }
     /**
      * gets date and language filters for schedule
@@ -85,15 +84,15 @@ class ScheduleController extends AbstractActionController
             }
         }
         if ($date_params) {
-            $date = implode('-',$date_params);
+            $date = implode('-', $date_params);
             $this->session->date = $date;
-        }  elseif ($this->session->date) {
+        } elseif ($this->session->date) {
             $date = $this->session->date;
         } else { // default to today
             $date = date('Y-m-d');
         }
         $language = strtolower($this->params()->fromQuery('language'));
-        if (! in_array($language,['spanish','not-spanish','all'])) {
+        if (! in_array($language, ['spanish','not-spanish','all'])) {
             $language = null;
         }
         if ($language) {
@@ -104,21 +103,21 @@ class ScheduleController extends AbstractActionController
             $language = 'all';
         }
 
-        return [ 'date' => $date, 'language'=>$language];
+        return [ 'date' => $date, 'language' => $language];
     }
 
     /**
      * displays event details
      *
      */
-     public function viewAction()
-     {
-         $id = $this->params()->fromRoute('id');
-         $event = $this->entityManager->getRepository(Entity\Event::class)
-            ->getView($id);
+    public function viewAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $event = $this->entityManager->getRepository(Entity\Event::class)
+           ->getView($id);
 
-         return compact('event','id');
-     }
+        return compact('event', 'id');
+    }
     /**
      * computes and sets the "next" and "previous" dates
      *

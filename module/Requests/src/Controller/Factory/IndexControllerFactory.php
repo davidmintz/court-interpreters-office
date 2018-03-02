@@ -30,4 +30,3 @@ class IndexControllerFactory implements FactoryInterface
         return $controller;
     }
 }
-

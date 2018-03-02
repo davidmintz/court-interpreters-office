@@ -7,7 +7,6 @@ namespace InterpretersOffice\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
-
 /**
  * Entity modeling a defendant for whom an interpreter is required.
  *

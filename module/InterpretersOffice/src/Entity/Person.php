@@ -341,12 +341,11 @@ class Person
     public function setMobilePhone($mobile_phone)
     {
         return $this->formatPhone($this->mobile_phone);
-
     }
 
     /**
      * gets the mobile phone number.
-     *     
+     *
      * @return string
      */
     public function getMobilePhone()
@@ -363,16 +362,20 @@ class Person
      * @param string $format
      * @return string
      */
-    public function formatPhone($phone, $format='%s %s-%s')
+    public function formatPhone($phone, $format = '%s %s-%s')
     {
-        if (preg_match('/^\d{3} \d{3}-\d{4}$/',$phone)) {
+        if (preg_match('/^\d{3} \d{3}-\d{4}$/', $phone)) {
             return $phone;
         }
-        $digits = filter_var($phone,FILTER_SANITIZE_NUMBER_INT);
+        $digits = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
         if (10 != strlen($digits)) {
             return $phone;
         }
-        return sprintf($format, substr($digits,0,3), substr($digits,3,3),
-            substr($digits,6,4));
+        return sprintf(
+            $format,
+            substr($digits, 0, 3),
+            substr($digits, 3, 3),
+            substr($digits, 6, 4)
+        );
     }
 }

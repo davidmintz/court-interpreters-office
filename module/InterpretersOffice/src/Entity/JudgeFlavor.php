@@ -39,7 +39,7 @@ class JudgeFlavor
      * @ORM\Column(type="integer",options={"nullable":false})
      * @var int
      */
-     protected $weight = 0;
+    protected $weight = 0;
 
     /**
      * returns a string representation of this JudgeFlavor.

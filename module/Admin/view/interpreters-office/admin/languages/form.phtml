@@ -14,7 +14,7 @@ if ($this->layout()->action == 'add') :
 else :
     $action = 'edit';
     $actionAttrib = $this->url('languages/edit', ['id' => $this->id ]);
-    $form->setAttribute('data-language_name',$form->getObject()->getName());
+    $form->setAttribute('data-language_name', $form->getObject()->getName());
 endif;
 ?>
 <div class="center-block mx-auto" style="max-width:750px"><!-- wrapper -->
@@ -27,10 +27,10 @@ endif;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+    'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')
     ->setAttribute('action', $actionAttrib)
-    ->setAttribute('data-redirect_url',$this->url("languages"));
+    ->setAttribute('data-redirect_url', $this->url("languages"));
 $form->prepare();
 echo $this->form()->openTag($form);?>
 <div class="form-group"><?php
@@ -50,7 +50,7 @@ echo $this->formLabel($comments),$this->formElement($comments), $this->formEleme
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
     echo $this->formSubmit($form->get('submit'));
-    if ($this->has_related_entities == '0'):
+    if ($this->has_related_entities == '0') :
         ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning" title="delete this language from your database" value="delete" id="btn-delete"><?php
     endif;
     ?>

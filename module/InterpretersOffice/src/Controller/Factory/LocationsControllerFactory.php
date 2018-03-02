@@ -14,7 +14,7 @@ class LocationsControllerFactory implements FactoryInterface
 {
     /**
      * implements FactoryInterface
-     * 
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

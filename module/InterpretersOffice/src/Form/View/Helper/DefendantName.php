@@ -11,10 +11,10 @@ use Zend\View\Helper\EscapeHtml;
  */
 class DefendantName extends AbstractHelper
 {
-    
+
      /**
      * markup template
-     * 
+     *
      * @var string
      */
     protected $template = <<<TEMPLATE
@@ -30,35 +30,34 @@ TEMPLATE;
 
     /**
      * EscapeHtml escaper
-     * 
+     *
      * @var EscapeHtml
      */
     protected $escaper;
 
     /**
      * renders markup
-     * 
+     *
      * @param integer $id
      * @param string $name
      * @return string
      */
-    public function __invoke($id,$name)
-    {               
+    public function __invoke($id, $name)
+    {
         $escaper = $this->escaper->getEscaper();
         $label = $escaper->escapeHtml($name);
         //$shit = print_r(get_class_methods(),true);
         //printf("<pre>%s</pre>",$shit);
-        return sprintf($this->template,$id,$label,$label);
+        return sprintf($this->template, $id, $label, $label);
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param EscapeHtml $escaper
      */
     public function __construct(EscapeHtml $escaper)
     {
-        $this->escaper= $escaper;
+        $this->escaper = $escaper;
     }
-    
 }

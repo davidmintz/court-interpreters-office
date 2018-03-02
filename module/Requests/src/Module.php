@@ -5,7 +5,6 @@
 
 namespace InterpretersOffice\Requests;
 
-
 /**
  * Module class for application's Requests module.
  */
@@ -21,5 +20,4 @@ class Module
     {
         return include __DIR__.'/../config/module.config.php';
     }
-
 }

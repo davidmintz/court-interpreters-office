@@ -60,12 +60,12 @@ class HatRepository extends EntityRepository
         $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h JOIN h.role r ';
         switch ($auth_user_role) {
             case 'anonymous': // e.g., user registration
-            case 'submitter': 
+            case 'submitter':
                 $dql .= 'WHERE r.name = \'submitter\'';
                 break;
             case 'manager':
                     $dql .= 'WHERE r.name IN (\'submitter\' , \'staff\') '
-                    . ' OR h.name = \'Interpreters Office staff\' ';               
+                    . ' OR h.name = \'Interpreters Office staff\' ';
                 break;
             case 'administrator':
                // nothing more to do
@@ -73,7 +73,7 @@ class HatRepository extends EntityRepository
             default:
                 throw new \RuntimeException(sprintf(
                     '%s: unsupported auth user role %s',
-                    __METHOD__,                    
+                    __METHOD__,
                     $auth_user_role
                 ));
         }
@@ -116,7 +116,7 @@ class HatRepository extends EntityRepository
 
     /**
      * fetches all the hats
-     * 
+     *
      * @return array
      */
     public function findAll()

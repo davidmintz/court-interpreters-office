@@ -1,7 +1,7 @@
 <?php
 /**
  * just thinking about taking a stab at a pagination adapter
- * 
+ *
  */
 namespace InterpretersOffice;
 
@@ -15,21 +15,21 @@ class Paginator implements AdapterInterface
 {
     /**
      * query
-     * 
+     *
      * @var Query
      */
     protected $query;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param Query $query
      */
     public function __construct(Query $query)
     {
         $this->query = $query;
     }
-    
+
     /**
      * Returns an array of items for a page.
      *
@@ -42,7 +42,7 @@ class Paginator implements AdapterInterface
         $this->query->setFirstResult($offset)->setMaxResults($itemCountPerPage);
         return $this->query->getResult();
     }
-    
+
     /**
      * implements Countable
      */

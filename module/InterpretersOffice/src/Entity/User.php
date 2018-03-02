@@ -84,12 +84,12 @@ class User implements ResourceInterface
      * @var bool true if account is active (enabled)
      */
     protected $active;
-    
+
     /**
      * last login timestamp
-     * 
+     *
      * @ORM\Column(type="datetime",name="last_login",options={"nullable":true})
-     * 
+     *
      * @var \DateTime
      */
     protected $lastLogin;
@@ -124,10 +124,10 @@ class User implements ResourceInterface
 
     /**
      * implements ResourceInterface
-     * 
-     * @return string 
+     *
+     * @return string
      */
-    
+
     public function getResourceId()
     {
         return $this->getRole()->getName();
@@ -137,7 +137,7 @@ class User implements ResourceInterface
      *
      * @param User   $user
      * @param string $submitted_password
-     * @return boolean 
+     * @return boolean
      */
     public static function verifyPassword(User $user, $submitted_password)
     {
@@ -316,26 +316,26 @@ class User implements ResourceInterface
     }
     /**
      * sets last login
-     * 
+     *
      * @param \DateTime $datetime
      * @return \InterpretersOffice\Entity\User
      */
     public function setLastLogin(\DateTime $datetime)
     {
         $this->lastLogin = $datetime;
-         
+
         return $this;
     }
     /**
-     * gets last login 
+     * gets last login
      *
      * @return \Datetime
-     */  
+     */
     public function getLastLogin()
     {
-         return $this->lastLogin;    
+         return $this->lastLogin;
     }
-    
+
     /**
      * Lifecycle callback to ensure User has an email address.
      *

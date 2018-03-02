@@ -66,11 +66,11 @@ class EventSubmissionDateTime extends AbstractValidator
      * @param array $options
      * @throws Exception
      */
-    public function __construct(Array $options = [])
+    public function __construct(array $options = [])
     {
         parent::__construct($options);
         if (isset($options['max_negative_minutes'])) {
-           $this->max_negative_minutes =  $options['max_negative_minutes'];
+            $this->max_negative_minutes = $options['max_negative_minutes'];
         }
     }
 

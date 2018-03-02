@@ -37,8 +37,8 @@ $listener = new InterpretersOffice\Entity\Listener\InterpreterEntityListener();
 $listener->setEventManager(new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager()));
 $em->getConfiguration()->getEntityListenerResolver()->register($listener);
 
-// a (temporary?) fix for entity listener error that happens when we try to 
-// call methods on its logger instance which is set by the service manager that 
+// a (temporary?) fix for entity listener error that happens when we try to
+// call methods on its logger instance which is set by the service manager that
 // does not exist in this CLI environment
 
 $logger = new Zend\Log\Logger;

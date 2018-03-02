@@ -61,9 +61,10 @@ class UsersController extends AbstractActionController implements Authentication
      * @param EntityManagerInterface $entityManager
      * @param AuthenticationServiceInterface $auth
      */
-    public function __construct(EntityManagerInterface $entityManager,
-            AuthenticationServiceInterface $auth)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        AuthenticationServiceInterface $auth
+    ) {
         $this->entityManager = $entityManager;
         $this->setAuthenticationService($auth);
     }
@@ -101,7 +102,7 @@ class UsersController extends AbstractActionController implements Authentication
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
         $events->attach('load-person', function (EventInterface $e)
-                use ($entityManager, $role_id) {
+ use ($entityManager, $role_id) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
@@ -109,14 +110,15 @@ class UsersController extends AbstractActionController implements Authentication
             $hat_options = $form->get('user')->get('person')->get('hat')
                     ->getValueOptions();
             $hats_allowed = array_column($hat_options, 'value');
-            if (!in_array($hat->getId(), $hats_allowed))
-            {
+            if (! in_array($hat->getId(), $hats_allowed)) {
                 $message = sprintf(
                     'The person identified by id %d, %s %s, wears the hat %s, '
                     . 'but people in that category do not have user accounts '
                     . 'in this system.',
-                    $person->getId(), $person->getFirstName(),
-                    $person->getLastname(), $hat
+                    $person->getId(),
+                    $person->getFirstName(),
+                    $person->getLastname(),
+                    $hat
                 );
                 $controller = $e->getTarget();
                 $controller->flashMessenger()->addErrorMessage($message);
@@ -135,30 +137,31 @@ class UsersController extends AbstractActionController implements Authentication
                 $message = sprintf(
                     'We can\'t create a new user account because the person '
                     . 'whose id is %d (%s %s) already has one. ',
-                    $person->getId(), $person->getFirstname(),
-                    $person->getLastname());
+                    $person->getId(),
+                    $person->getFirstname(),
+                    $person->getLastname()
+                );
                 $acl = $e->getTarget()->getEvent()->getApplication()
                                 ->getServiceManager()->get('acl');
-                if ( $acl->isAllowed($role_id, $user->getResourceId())) {
+                if ($acl->isAllowed($role_id, $user->getResourceId())) {
                     $helper = $container->get('ViewHelperManager')->get('url');
                     $url = $helper('users/edit', ['id' => $user->getId()]);
                     $message .= sprintf(
                         'You can <a href="%s">edit it</a> if you want to.',
-                         $url
+                        $url
                     );
                 }
                 $controller = $e->getTarget();
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
             }
-
         });
         // are they authorized to edit this user account?
         $events->attach('load-user', function (EventInterface $e) use ($role_id) {
             $resource_id = $e->getParam('user')->getResourceId();
             $acl = $e->getTarget()->getEvent()->getApplication()
                             ->getServiceManager()->get('acl');
-            if (!$acl->isAllowed($role_id, $resource_id)) {
+            if (! $acl->isAllowed($role_id, $resource_id)) {
                 $controller = $e->getTarget();
                 $message = "Access denied to {$resource_id}'s user account";
                 $controller->flashMessenger()->addErrorMessage($message);
@@ -188,10 +191,14 @@ class UsersController extends AbstractActionController implements Authentication
                     ->find('InterpretersOffice\Entity\Person', $person_id);
             if (! $person) {
                 return $viewModel->setVariables(
-                    ['errorMessage' => "person with id $person_id not found"]);
+                    ['errorMessage' => "person with id $person_id not found"]
+                );
             }
-            $this->events->trigger('load-person', $this,
-                    compact('person', 'form'));
+            $this->events->trigger(
+                'load-person',
+                $this,
+                compact('person', 'form')
+            );
             $user->setPerson($person);
             $form->get('user')->get('person')->setObject($person);
         }
@@ -240,7 +247,7 @@ class UsersController extends AbstractActionController implements Authentication
             return $viewModel->setVariables(['errorMessage' =>
                 "user with id $id was not found in your database."]);
         }
-        $this->events->trigger('load-user',$this,['user'=>$user,]);
+        $this->events->trigger('load-user', $this, ['user' => $user,]);
         $form = new UserForm($this->entityManager, [
             'action' => 'update',
             'auth_user_role' => $this->auth_user_role,
@@ -261,9 +268,10 @@ class UsersController extends AbstractActionController implements Authentication
             $this->entityManager->flush(); // return $viewModel;
             $this->flashMessenger()
                 ->addSuccessMessage(sprintf(
-                'The user account for <strong>%s %s</strong> has been updated.',
-                $person->getFirstname(), $person->getLastname()
-            ));
+                    'The user account for <strong>%s %s</strong> has been updated.',
+                    $person->getFirstname(),
+                    $person->getLastname()
+                ));
             $this->redirect()->toRoute('users');
         }
         return $viewModel;
@@ -291,12 +299,14 @@ class UsersController extends AbstractActionController implements Authentication
      */
     public function getRoleOptionsForHatAction()
     {
-        $hat_id = $this->params()->fromRoute('hat_id',"fuck!");
+        $hat_id = $this->params()->fromRoute('hat_id', "fuck!");
         $repository = $this->entityManager
                 ->getRepository('InterpretersOffice\Entity\Role');
-        $data = $repository->getRoleOptionsForHatId($hat_id,
-                $this->auth_user_role);
+        $data = $repository->getRoleOptionsForHatId(
+            $hat_id,
+            $this->auth_user_role
+        );
 
-       return new JsonModel($data);
+        return new JsonModel($data);
     }
 }

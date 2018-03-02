@@ -16,7 +16,9 @@ use Doctrine\ORM\Tools\SchemaTool;
  * for the sole purpose of allowing us to instantiate it,
  * call its setup() method, and get the DI container
  */
-class SetupHelper extends AbstractControllerTest {}
+class SetupHelper extends AbstractControllerTest
+{
+}
 
 
 final class FixtureManager
@@ -47,7 +49,7 @@ final class FixtureManager
         AnnotationRegistry::registerLoader('class_exists');
         $config->setMetadataDriverImpl($driver);
 
-        $entityManager = EntityManager::create($connectionParams, $config);        
+        $entityManager = EntityManager::create($connectionParams, $config);
         $helper = new SetupHelper();
         $helper->setUp();
         $container = $helper->getApplicationServiceLocator();
@@ -84,7 +86,7 @@ final class FixtureManager
             new ORMPurger(static::getEntityManager())
         );
     }
-    
+
     /**
      * loads enough data to test events controller
      */
@@ -92,7 +94,7 @@ final class FixtureManager
     {
         $executor = self::getFixtureExecutor();
         $executor->execute([
-            
+
             new DataFixture\LanguageLoader(),
             new DataFixture\HatLoader(),
             new DataFixture\EventTypeLoader(),
@@ -103,7 +105,7 @@ final class FixtureManager
             new DataFixture\CancellationReasonLoader(),
             new DataFixture\UserLoader(),
             new DataFixture\EventLoader(),
-            
+
         ]);
     }
 }

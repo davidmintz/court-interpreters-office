@@ -22,14 +22,12 @@ class PeopleControllerTest extends AbstractControllerTest
         $fixtureExecutor->execute(
             [new DataFixture\MinimalUserLoader()]
         );
-
-        
     }
 
     public function testAccessPeopleAdminPage()
     {
         $this->login('susie', 'boink');
-        $this->reset(true);        
+        $this->reset(true);
         $this->dispatch('/admin/people');
         $this->assertResponseStatusCode(200);
         //$this->assertModuleName('interpretersofficeadmin');
@@ -55,7 +53,7 @@ class PeopleControllerTest extends AbstractControllerTest
                         ->findByName('defense attorney')[0]->getId();
         $this->reset(true);
         $this->login('susie', 'boink');
-        $this->reset(true);        
+        $this->reset(true);
         $data = [
             'person' => [
                 'lastname' => 'Somebody',
@@ -68,7 +66,7 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->getRequest()->setMethod('POST')->setPost(
             new Parameters($data)
         );
-        
+
         $this->dispatch('/admin/people/add');
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/people');
@@ -97,11 +95,11 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->login('susie', 'boink');
         $this->reset(true);
         // is the guy really in there?
-        
+
         $person = $em->getRepository(Entity\Person::class)->findBy([
             'email' => 'john.somebody@lawfirm.com'
         ]);
-        printf(gettype($person[0]) ." is the data type of john somebody in %s\n",basename(__FILE__)); 
+        printf(gettype($person[0]) ." is the data type of john somebody in %s\n", basename(__FILE__));
         // try to add the same guy again
         $data = [
             'person' => [
@@ -166,8 +164,8 @@ class PeopleControllerTest extends AbstractControllerTest
             'csrf' => $this->getCsrfToken('/admin/people/add'),
         ];
         $this->getRequest()->setMethod('POST')->setPost(
-             new Parameters($data)
-         );
+            new Parameters($data)
+        );
         $this->dispatch('/admin/people/add');
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/people');
@@ -184,8 +182,8 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->reset(true);
         $data['csrf'] = $this->getCsrfToken($url);
         $this->getRequest()->setMethod('POST')->setPost(
-             new Parameters($data)
-         );
+            new Parameters($data)
+        );
 
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
@@ -207,7 +205,7 @@ class PeopleControllerTest extends AbstractControllerTest
         $em->persist($person);
         $em->flush();
         $this->login('susie', 'boink');
-        $this->reset(true);        
+        $this->reset(true);
         $url = '/admin/people/edit/'.$person->getId();
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
@@ -302,8 +300,8 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $data['person']['hat'] = '';
         $this->getRequest()->setMethod('POST')->setPost(
-             new Parameters($data)
-         );
+            new Parameters($data)
+        );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
         $this->assertQuery('div.validation-error');
@@ -325,7 +323,7 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         echo $this->getResponse()->getBody(); return;
         $this->assertNotRedirect();
-        
+
         $this->assertQuery('div.validation-error');
         $this->assertQueryContentRegex('div.validation-error', '/active.+required/');
 

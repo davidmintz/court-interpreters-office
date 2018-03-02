@@ -18,19 +18,18 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 
-
 /**
  * form for Event entity
  *
  */
-class DefendantForm extends ZendForm implements  InputFilterProviderInterface   
+class DefendantForm extends ZendForm implements InputFilterProviderInterface
 {
 
      use CsrfElementCreationTrait;
-     
+
      use ObjectManagerAwareTrait;
 
-   
+
 
     /**
      * name of the form
@@ -38,8 +37,8 @@ class DefendantForm extends ZendForm implements  InputFilterProviderInterface
      * @var string
      */
     protected $formName = 'defendant-form';
-    
-   
+
+
      /**
      * constructor.
      *
@@ -51,10 +50,10 @@ class DefendantForm extends ZendForm implements  InputFilterProviderInterface
         parent::__construct($this->formName, $options);
         $this->setObjectManager($objectManager);
         $this->setHydrator(new DoctrineHydrator($objectManager, true));
-        
+
         $this->addCsrfElement('defendant_csrf');
         $this->add(
-             [
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'surnames',
             'options' => [
@@ -64,9 +63,10 @@ class DefendantForm extends ZendForm implements  InputFilterProviderInterface
                 'class' => 'form-control',
                 'id' => 'surnames',
             ],
-        ]);
+             ]
+        );
         $this->add(
-             [
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'given_names',
             'options' => [
@@ -76,8 +76,9 @@ class DefendantForm extends ZendForm implements  InputFilterProviderInterface
                 'class' => 'form-control',
                 'id' => 'given_names',
             ],
-        ]);
-        
+             ]
+        );
+
         $this->add([
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
@@ -85,16 +86,15 @@ class DefendantForm extends ZendForm implements  InputFilterProviderInterface
             'allow_empty' => true,
         ]);
         /* TO BE CONTINUED: if $option['action'] == update, more elements... */
-        
     }
-    
+
     /**
      * implements InputFilterProviderInterface
      *
      * @return array
-     * 
+     *
      * @todo uniqueness validator. see PersonFieldset for an example
-     */   
+     */
     function getInputFilterSpecification()
     {
         $spec = [

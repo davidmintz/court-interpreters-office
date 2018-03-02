@@ -28,24 +28,22 @@ class LanguagesControllerTest extends AbstractControllerTest
         $this->login('susie', 'boink');
         $this->reset(true);
     }
-    
+
     public function testTestShit()
     {
-        
+
         $this->dispatch('/admin/languages');
         $this->assertResponseStatusCode(200);
         $entityManager = FixtureManager::getEntityManager();
-        
-        
     }
     /**
      * test the addLanguage action.
-     * 
+     *
      * @todo figure out the cache issue where repository->findAll() retrieves the old cache
      * even though it is supposed to have been cleared. This happens in the test environment
      * but not dev. It has something to do with cache namespaces or something but as of this
-     * writing I just don't understand it. 
-     * 
+     * writing I just don't understand it.
+     *
      */
     public function testAddLanguage()
     {
@@ -87,7 +85,7 @@ class LanguagesControllerTest extends AbstractControllerTest
         //$command = "echo 'select * from languages;'  | sqlite3 module/InterpretersOffice/test/data/office.sqlite";
         // | wc -l && echo";
         //system($command);
-        
+
         $vulcan = $repository->findOneBy(['name' => 'Vulcan']);
         $this->assertInstanceOf(Entity\Language::class, $vulcan);
 

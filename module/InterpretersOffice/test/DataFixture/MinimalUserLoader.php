@@ -45,16 +45,15 @@ class MinimalUserLoader implements FixtureInterface
            ->setPassword('boink')
            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"));
         $objectManager->persist($user);
-        
+
         // create a person in the role "staff"
-        $staff_person =  new Entity\Person();
+        $staff_person = new Entity\Person();
         $staff_person->setActive(true)->setFirstname('Staffie')->setLastname('Person')
                 ->setEMail('staff_person@nysd.uscourts.gov')
-                ->setHat( $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+                ->setHat($objectManager->getRepository('InterpretersOffice\Entity\Hat')
                     ->findOneBy(
                         ['name' => 'Interpreters Office staff',]
-                    )
-            );
+                    ));
         $objectManager->persist($staff_person);
         $staff_user = new Entity\User();
         $staff_user->setPerson($staff_person)->setRole(
@@ -63,9 +62,9 @@ class MinimalUserLoader implements FixtureInterface
         )->setUsername('staffie')
            ->setPassword('boink')
            ->setActive(true)->setLastLogin(new \DateTime("-1 weeks"));
-        
+
         $objectManager->persist($staff_user);
-        
+
         $admin_person = new Entity\Person();
         $admin_person->setActive(true)
             ->setFirstname('Jane')
@@ -88,6 +87,5 @@ class MinimalUserLoader implements FixtureInterface
            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"));
         $objectManager->persist($user);
         $objectManager->flush();
-        
     }
 }

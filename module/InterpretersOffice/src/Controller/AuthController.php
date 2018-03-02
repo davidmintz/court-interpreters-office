@@ -67,8 +67,7 @@ class AuthController extends AbstractActionController
                             'validation_errors' => $form->getMessages(),
                             'authenticated' => false,
                             'login_csrf' => $form->get('login_csrf')->getValue(),
-                            ]
-                            )
+                            ])
                         :
                          new ViewModel(['form' => $form]);
             }
@@ -83,10 +82,10 @@ class AuthController extends AbstractActionController
                 return $is_xhr ? new JsonModel([
                             'authenticated' => false,
                             'error' => "authentication failed",
-                        ]) 
+                        ])
                     : new ViewModel(
-                    ['form' => $form, 'status' => $result->getCode()]
-                );
+                        ['form' => $form, 'status' => $result->getCode()]
+                    );
             }
             // TMP DEBUG
             // echo (spl_object_hash($this->auth). " is the hash of our auth object in the Controller loginAction\n");

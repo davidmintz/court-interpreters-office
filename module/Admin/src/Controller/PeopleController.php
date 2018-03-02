@@ -151,9 +151,8 @@ class PeopleController extends AbstractActionController
         $repo = $this->entityManager->getRepository(Entity\Person::class);
         $hat_id = $this->params()->fromQuery('hat_id');
         $person_id = $this->params()->fromQuery('person_id');
-        $data = $repo->getPersonOptions($hat_id,$person_id);
+        $data = $repo->getPersonOptions($hat_id, $person_id);
 
         return new JsonModel($data);
-
     }
 }

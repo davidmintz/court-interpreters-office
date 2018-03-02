@@ -13,18 +13,18 @@ use InterpretersOffice\Entity;
 /**
  * fieldset for defendant names attached to an Event
  */
-class DefendantNamesFieldset extends Fieldset 
+class DefendantNamesFieldset extends Fieldset
     //implements InputFilterProviderInterface
 {
     use ObjectManagerAwareTrait;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param ObjectManager $objectManager
      * @param array $options
      */
-    public function __construct(ObjectManager $objectManager, Array $options = [])
+    public function __construct(ObjectManager $objectManager, array $options = [])
     {
 
         parent::__construct('defendantNames', $options);
@@ -32,13 +32,12 @@ class DefendantNamesFieldset extends Fieldset
         $this->setHydrator(new DoctrineHydrator($objectManager));
         $this->setObject(new Entity\DefendantName());
         $this->options = $options;
-        
+
         $this->add(
             [
-                'type'=>'hidden',
+                'type' => 'hidden',
                 'name' => 'defendantName'
             ]
         );
     }
-    
 }

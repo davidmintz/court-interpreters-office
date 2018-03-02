@@ -9,20 +9,19 @@ $this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.css'));
 $form = $this->form;
 // set some defaults for the search form
 foreach (['language_id','active','security_clearance_expiration'] as $e) :
-    $element =  $form->get($e);
+    $element = $form->get($e);
     if (isset($this->params[$e])) {
         $element->setValue($this->params[$e]);
     }
-    $element->setAttribute('class','form-control mx-2');
-
+    $element->setAttribute('class', 'form-control mx-2');
 endforeach;
 $name_element = $form->get('name');
-if ($this->interpreter):
+if ($this->interpreter) :
     $name_element->setValue("{$interpreter->getLastname()}, {$interpreter->getFirstName()}");
-else:
-    $name_element->setValue(key_exists('name',$this->params)? $this->params['name']:'');
+else :
+    $name_element->setValue(key_exists('name', $this->params) ? $this->params['name'] : '');
 endif;
-$name_element->setAttribute('class','form-control mx-2');
+$name_element->setAttribute('class', 'form-control mx-2');
 $this->headTitle($this->title);
 ?>
 <h2><a href="<?php echo $this->url('admin')?>">admin</a> | <?php echo $this->title ?></h2>
@@ -41,7 +40,7 @@ endif;
         interpreters who are <label for="active" class="sr-only">status</label>
         <?php echo $this->formSelect($form->get('active'))?>
         with security clearance <label for="security_clearance_expiration" class="sr-only">security clearance</label>
-         <?php echo $this->formSelect($form->get('security_clearance_expiration'))?><!--
+            <?php echo $this->formSelect($form->get('security_clearance_expiration'))?><!--
     --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-primary"><span class="fa fa-search"></span> search</a>
     </div>
     <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-primary"><span class="fa fa-search"></span> search</a></div>
@@ -53,7 +52,7 @@ endif;
 if ($this->interpreter) :
     echo $this->render('view');
 endif;
-if ($this->results): ?>
+if ($this->results) : ?>
 <table class="table table-hover table-bordered table-sm mx-auto" style="max-width:500px">
     <thead>
         <tr><th colspan="3" class="font-weight-normal pl-3">
@@ -65,21 +64,23 @@ if ($this->results): ?>
             $interpreter = $row[0];
             $id = $interpreter->getId();
             $status = $interpreter->isActive() ? 'active' : 'inactive';
-            $view_url =  $this->url('interpreters/find_by_id',['id'=>$id])?>
+            $view_url = $this->url('interpreters/find_by_id', ['id' => $id])?>
         <tr>
             <td class="pl-2 align-middle border-left-0 border-right-0 col-9">
                 <a   data-toggle="tooltip" title="view interpreter details" href="<?php echo $view_url?>">
-                <?php echo $this->escapeHtml(sprintf('%s, %s',$interpreter->getLastname(),$interpreter->getFirstname())) ?></a>
-                <?php if ($row['hat'] == 'staff court interpreter'): ?> <span class="text-muted">staff interpreter</span><?php endif; ?>
+                <?php echo $this->escapeHtml(sprintf('%s, %s', $interpreter->getLastname(), $interpreter->getFirstname())) ?></a>
+                <?php if ($row['hat'] == 'staff court interpreter') :
+?> <span class="text-muted">staff interpreter</span><?php
+                endif; ?>
             </td>
             <td class="align-middle text-center border-left-0 border-right-0 col-2 text-md-right">
                 <span style="opacity:.7" data-toggle="tooltip" title="this interpreter is currently flagged as <?php
                     echo $status ?>" class="pr-2 fas fa-<?php echo $status == 'active' ? "check text-success" : "times text-danger"?>"></span>
             </td><td class="border-left-0 text-md-left">
-                <a data-toggle="tooltip" title="edit interpreter details" href="<?php echo $this->url('interpreters/edit',['id'=>$interpreter->getId()])?>"><span class="fa fa-cog"></span><span class="sr-only">edit details</span></a>
+                <a data-toggle="tooltip" title="edit interpreter details" href="<?php echo $this->url('interpreters/edit', ['id' => $interpreter->getId()])?>"><span class="fa fa-cog"></span><span class="sr-only">edit details</span></a>
             </td>
         </tr>
-<?php  endforeach;  ?>
+        <?php  endforeach;  ?>
     </tbody>
 </table>
 <p>TO DO: action menu thingy for each table row, e.g: edit, view, cron, email</p>
@@ -87,11 +88,11 @@ if ($this->results): ?>
     $this->results,
     'sliding',
     'partials/pagination_control',
-     ['route'=>$this->routeName,'params'=>$this->params]
+    ['route' => $this->routeName,'params' => $this->params]
 );?>
 <?php
-    else :
-        if ($this->isQuery and !$this->interpreter) :
+else :
+    if ($this->isQuery and ! $this->interpreter) :
 ?><p>No matching records found.</p><?php
     endif;
 endif; ?><br>

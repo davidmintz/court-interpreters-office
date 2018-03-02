@@ -895,15 +895,15 @@ class Event
      */
     public function onSave()
     {
-        if (! ($this->anonymousSubmitter == null xor $this->submitter === null) ) {
+        if (! ($this->anonymousSubmitter == null xor $this->submitter === null)) {
             throw new \RuntimeException(
                 'Event entity submitter and anonymousSubmitter properties: '
                     .' one must be null and the other not-null'
             );
         }
-        if (! ($this->anonymousJudge === null xor $this->judge === null) ) {
-            $debug = "\nanonymousJudge: " .(is_null($this->anonymousJudge)?"null":"not null");
-            $debug .= "\nJudge: " .(is_null($this->judge)?"null":"not null");
+        if (! ($this->anonymousJudge === null xor $this->judge === null)) {
+            $debug = "\nanonymousJudge: " .(is_null($this->anonymousJudge) ? "null" : "not null");
+            $debug .= "\nJudge: " .(is_null($this->judge) ? "null" : "not null");
             throw new \RuntimeException(
                 'Event entity judge and anonymousJudge properties: '
                     .' one must be null and the other not-null. ' . $debug

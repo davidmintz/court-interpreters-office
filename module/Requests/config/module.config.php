@@ -24,10 +24,10 @@ return [
         'factories' => [
         ],
 
-    ],    
+    ],
     'router' => [
         'routes' => [
-            
+
             'requests' => [
                 'type' => Literal::class,
                 'may_terminate' => true,
@@ -41,5 +41,5 @@ return [
                 ],
             ],
         ],
-    ],    
+    ],
 ];

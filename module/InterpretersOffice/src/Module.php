@@ -26,55 +26,54 @@ class Module
     {
         return include __DIR__.'/../config/module.config.php';
     }
-    
+
     /**
-     * gets viewhelper config 
-     * 
+     * gets viewhelper config
+     *
      * @return array
      */
     public function getViewHelperConfig()
     {
         return [
-            
+
             'aliases' => [
-                'defendantName' =>  Helper\DefendantName::class,
+                'defendantName' => Helper\DefendantName::class,
             ],
             'factories' => [
-                ViewHelper\DefendantName::class => function($container){
+                ViewHelper\DefendantName::class => function ($container) {
                     $manager = $container->get('ViewHelperManager');
                     return new Helper\DefendantName($manager->get("escapeHtml"));
                 }
             ],
         ];
-        
     }
     /**
-     * module bootstrap, opportunity to attach listeners etc.     
+     * module bootstrap, opportunity to attach listeners etc.
      *
      * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
      */
     public function onBootstrap(\Zend\Mvc\MvcEvent $e)
     {
-       return;
-       
+        return;
+
        /** @todo remove this. nice try but this is not the way to go */
-       $container = $e->getApplication()->getServiceManager();
-       $entityManager = $container->get('entity-manager');
-       $eventManager = $entityManager->getEventManager();
-       $listeners = array_values($eventManager->getListeners('postLoad'));
-       $listener = null;
-       foreach ($listeners as $object) {
-           //echo get_class($object);
-           if ($object instanceof \InterpretersOffice\Entity\Listener\UpdateListener) {
-               $listener = $object;
-               break;
-           }
-       }
-       if ($listener) {
-           $listener->setAuthenticationService($container->get('auth'));
-           $container->get('log')
+        $container = $e->getApplication()->getServiceManager();
+        $entityManager = $container->get('entity-manager');
+        $eventManager = $entityManager->getEventManager();
+        $listeners = array_values($eventManager->getListeners('postLoad'));
+        $listener = null;
+        foreach ($listeners as $object) {
+            //echo get_class($object);
+            if ($object instanceof \InterpretersOffice\Entity\Listener\UpdateListener) {
+                $listener = $object;
+                break;
+            }
+        }
+        if ($listener) {
+            $listener->setAuthenticationService($container->get('auth'));
+            $container->get('log')
                    ->debug('auth service injected into UpdateListener in Admin Bootstrap');
-       } 
+        }
     }
     //
 

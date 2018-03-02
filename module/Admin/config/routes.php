@@ -40,15 +40,15 @@ return  [
                 'display' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route'=>'/:year/:month[/:date]',
+                        'route' => '/:year/:month[/:date]',
                         'defaults' => [
                             'controller' => Controller\ScheduleController::class,
                             'action' => 'index',//'year'=>null,
                             // these could use refining.
                         ],
                         'constraints' => [
-                            'year'=>'[12]\d\d\d',
-                            'month'=>'\d\d',
+                            'year' => '[12]\d\d\d',
+                            'month' => '\d\d',
                             'date' => '\d\d'
                         ],
                     ]
@@ -58,7 +58,7 @@ return  [
                     'options' => [
                         'route' => '/view/:id',
                         'defaults' => [
-                            'controller'=>Controller\ScheduleController::class,
+                            'controller' => Controller\ScheduleController::class,
                             'action' => 'view',
                         ],
                         'constraints' => [
@@ -71,7 +71,7 @@ return  [
                     'options' => [
                         'route' => '/add',
                         'defaults' => [
-                            'controller'=>Controller\EventsController::class,
+                            'controller' => Controller\EventsController::class,
                             'action' => 'add',
                         ],
                     ],
@@ -81,7 +81,7 @@ return  [
                     'options' => [
                         'route' => '/:action/:id',
                         'defaults' => [
-                            'controller'=>Controller\EventsController::class,
+                            'controller' => Controller\EventsController::class,
                             'action' => 'edit',
                         ],
                         'constraints' => [
@@ -96,7 +96,7 @@ return  [
                     'options' => [
                         'route' => '/interpreter-template',
                         'defaults' => [
-                            'controller'=>Controller\EventsController::class,
+                            'controller' => Controller\EventsController::class,
                             'action' => 'interpreter-template',
                         ],
                     ],
@@ -106,7 +106,7 @@ return  [
                     'options' => [
                         'route' => '/interpreter-options',
                         'defaults' => [
-                            'controller'=>Controller\EventsController::class,
+                            'controller' => Controller\EventsController::class,
                             'action' => 'interpreter-options',
                         ],
                     ],
@@ -239,8 +239,8 @@ return  [
                             'action' => 'add',
                         ],
                     ],
-                ],
-                'edit' => [
+                 ],
+                 'edit' => [
                     'type' => Segment::class,
                     'options' => [
                         'route' => '/:action/:id',
@@ -254,7 +254,7 @@ return  [
                         ],
                     ],
 
-                ],
+                 ],
             ],
         ],
         'people' => [
@@ -434,7 +434,7 @@ return  [
                             'action' => 'validate-partial',
                         ],
                     ],
-                ],
+                 ],
                 // for generating markup for an interpreter-language
                 'language-fieldset' => [
                     'type' => Segment::class,
@@ -457,7 +457,7 @@ return  [
                             'id' => '[1-9]\d*',
                         ],
                     ],
-                ],
+                 ],
                 'find_by_name' => [
                     'type' => Segment::class,
                     'options' => [

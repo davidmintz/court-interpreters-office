@@ -37,7 +37,7 @@ class InterpreterRosterForm extends Form
         );
 
         $this->add(
-             [
+            [
                  'type' => 'Zend\Form\Element\Select',
                  'name' => 'active',
                  'options' => [
@@ -56,7 +56,7 @@ class InterpreterRosterForm extends Form
         );
 
         $this->add(
-             [
+            [
                  'type' => 'Zend\Form\Element\Select',
                  'name' => 'security_clearance_expiration',
                  'options' => [
@@ -74,7 +74,7 @@ class InterpreterRosterForm extends Form
              ]
         );
         $this->add(
-             [
+            [
                  'type' => 'Zend\Form\Element\Text',
                  'name' => 'name',
                  'attributes' => [

@@ -3,8 +3,8 @@
 <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 $messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) : 
-    echo $messenger->render('success', ['alert','alert-success',], false); 
+if ($messenger->hasSuccessMessages()) :
+    echo $messenger->render('success', ['alert','alert-success',], false);
 endif;
 ?>
 <h3>to do</h3>

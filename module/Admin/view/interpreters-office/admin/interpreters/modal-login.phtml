@@ -12,9 +12,9 @@
       <div class="modal-body">
           <div id="div-auth-error" class="alert alert-warning alert-dismissable" style="display:none">Authentication failed.</div>
           <form autocomplete="off" id="form-login">
-              <?php  $fake_identity =  bin2hex(openssl_random_pseudo_bytes(8));
-                     $fake_password =  bin2hex(openssl_random_pseudo_bytes(8));
-               ?>
+                <?php  $fake_identity = bin2hex(openssl_random_pseudo_bytes(8));
+                     $fake_password = bin2hex(openssl_random_pseudo_bytes(8));
+                ?>
               <div class="form-group">
                 <label class="sr-only"  for="<?php echo $fake_identity ?>">username or email</label>
                 <input name="<?php echo $fake_identity ?>" autocomplete="off" value="" type="text" class="form-control thing1" id="<?php echo $fake_identity ?>" placeholder="email or username">
@@ -23,12 +23,12 @@
                 <label class="sr-only" for="<?php echo $fake_password ?>">password</label>
                 <input name="<?php echo $fake_password ?>" autocomplete="off" value="" type="password" class="form-control thing2" id="<?php echo $fake_password ?>" placeholder="password">
               </div>              
-              <?php if (! $this->login_csrf):
+                <?php if (! $this->login_csrf) :
                         $this->login_csrf = (new \Zend\Form\Element\Csrf('login_csrf'))
-                        ->setAttribute('id', 'login_csrf');                         
-                     endif;
+                        ->setAttribute('id', 'login_csrf');
+                endif;
                      echo $this->formHidden($this->login_csrf),$this->formElementErrors($this->login_csrf) ;
-               ?>
+                ?>
           </form>
       </div>
       <div class="modal-footer" style="text-align: center">

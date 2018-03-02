@@ -109,7 +109,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function getCourtrooms($parent_id)
     {
-        
+
         $dql = 'SELECT l FROM InterpretersOffice\Entity\Location l '
                 .'JOIN l.parentLocation p JOIN l.type t '
                 .'WHERE p.id = :parent_id AND t.type = \'courtroom\' ORDER BY l.name ASC';
@@ -124,7 +124,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $data;
     }
-    
+
     /**
      * gets children of parent location $parent_id
      *
@@ -133,23 +133,23 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
      * @return array
      * @todo refactor shit. make getCourtrooms proxy to this?
      */
-    public function getChildren($parent_id,$type_id = null)
+    public function getChildren($parent_id, $type_id = null)
     {
         $params = [':parent_id' => $parent_id];
-        $dql =  'SELECT l, t.type FROM InterpretersOffice\Entity\Location l '
+        $dql = 'SELECT l, t.type FROM InterpretersOffice\Entity\Location l '
                 . 'JOIN l.parentLocation p JOIN l.type t ';
         $where = 'p.id = :parent_id ';
         if ($type_id) {
-            $params[':type_id'] = $type_id;            
+            $params[':type_id'] = $type_id;
             $where .= 'AND t.id = :type_id ';
         }
-        $dql .= " WHERE $where";// ORDER BY t.type, l.name";        
-     
+        $dql .= " WHERE $where";// ORDER BY t.type, l.name";
+
         $data = $this->createQuery($dql)
                 ->useResultCache(true)
                 ->setParameters($params)->getResult();
-        usort($data,[$this,'sort']);
-        return array_column($data,0);        
+        usort($data, [$this,'sort']);
+        return array_column($data, 0);
     }
 
 
@@ -172,8 +172,8 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         if ($type_1 == $type_2) {
             return strnatcasecmp($a[0]->getName(), $b[0]->getName());
         } else {
-            return strcasecmp($type_1,$type_2);
-        }   
+            return strcasecmp($type_1, $type_2);
+        }
     }
 
     /**
@@ -184,31 +184,30 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function getChildLocationValueOptions($parent_id)
     {
-        $dql =  'SELECT l.id AS value, l.name AS label, t.type '
+        $dql = 'SELECT l.id AS value, l.name AS label, t.type '
                 . 'FROM InterpretersOffice\Entity\Location l '
                 . 'JOIN l.parentLocation p JOIN l.type t '
                 . ' WHERE  p.id = :parent_id ';
-                
+
          $data = $this->createQuery($dql)
                 ->useResultCache(true)
-                ->setParameters([':parent_id'=>$parent_id])->getResult();
-         
-        usort($data, function($a, $b) {
+                ->setParameters([':parent_id' => $parent_id])->getResult();
+
+        usort($data, function ($a, $b) {
             // if the types are the same, the label decides
             if ($a['type'] == $b['type']) {
                 return strnatcasecmp($a['label'], $b['label']);
             // if either is a courtroom, it wins (b/c the other isn't)
-            } elseif ($a['type'] == 'courtroom') { 
+            } elseif ($a['type'] == 'courtroom') {
                 return -1;
             } elseif ($b['type'] == 'courtroom') {
                 return 1;
-            } 
+            }
             return strnatcasecmp($a['type'], $b['type']);
-            
         });
         return $data;
     }
- 
+
     /**
      * find all locations of type id $type_id.
      *

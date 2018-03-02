@@ -63,7 +63,7 @@ return [
                     Entity\Listener\UpdateListener::class,
                 ],
             ],
-        ],  
+        ],
         'driver' => [
             // defines an annotation driver with one path, and names it `my_annotation_driver`
             'application_annotation_driver' => [
@@ -80,7 +80,7 @@ return [
                 'drivers' => [
                     // register `my_annotation_driver` for any entity under namespace `My\Namespace`
                     __NAMESPACE__.'\Entity' => 'application_annotation_driver',
-                ],                
+                ],
             ],
         ],
         'configuration' => [
@@ -89,10 +89,10 @@ return [
                 'result_cache' => $doctrine_cache,
                 'metadata_cache' => $doctrine_cache,
                 'hydration_cache' => $doctrine_cache,
-            ],            
+             ],
         ],
-        
-         'authentication' =>[
+
+         'authentication' => [
             'orm_default' => [
                 'object_manager' => 'Doctrine\ORM\EntityManager',
                 'identity_class' => 'InterpretersOffice\Entity\User',
@@ -100,7 +100,7 @@ return [
                 'credential_property' => 'password',
                 'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword'//[ new Entity\User, 'passwordCallback'],
             ],
-        ],
+         ],
     ],
 
     'service_manager' => [
@@ -116,7 +116,7 @@ return [
             \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
-            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,            
+            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
         ],
 
     ],
@@ -159,9 +159,9 @@ return [
                             ],
                         ],
                     ],
-                
+
                 ],
-            ],            
+            ],
             'login' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
@@ -231,7 +231,7 @@ return [
                     'reset-password' => [
                         'type' => Segment::class,
                         'options' => [
-                            // to do: add parameters 
+                            // to do: add parameters
                             'route' => '/reset-password',
                             'defaults' => [
                                 'action' => 'reset-password',
@@ -241,7 +241,7 @@ return [
                     'edit-profile' => [
                         'type' => Segment::class,
                         'options' => [
-                            // to do: add parameters 
+                            // to do: add parameters
                             'route' => '/edit',
                             'defaults' => [
                                 'action' => 'edit',
@@ -258,9 +258,9 @@ return [
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\DefendantsController::class,
-                        'action' => 'autocomplete',                        
+                        'action' => 'autocomplete',
                     ],
-                ],                
+                ],
             ],
             'defendant-template' => [
                 'type' => Segment::class,
@@ -269,9 +269,9 @@ return [
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\DefendantsController::class,
-                        'action' => 'template',                        
+                        'action' => 'template',
                     ],
-                ],                
+                ],
             ],
             'defendant-search' => [
                 'type' => Segment::class,
@@ -280,9 +280,9 @@ return [
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\DefendantsController::class,
-                        'action' => 'search',                        
+                        'action' => 'search',
                     ],
-                ],                
+                ],
             ],
             'example' => [
                 'type' => Segment::class,
@@ -303,14 +303,14 @@ return [
         'invokables' => [
             'formElementErrors' => 'InterpretersOffice\Form\View\Helper\FormElementErrors',
         ],
-      
+
         'aliases' => [
             'defendants' => ViewHelper\DefendantNames::class,
-            'interpreters'=> ViewHelper\InterpreterNames::class
+            'interpreters' => ViewHelper\InterpreterNames::class
         ],
         'factories' => [
             ViewHelper\DefendantNames::class => InvokableFactory::class,
-            ViewHelper\InterpreterNames::class => InvokableFactory::class,           
+            ViewHelper\InterpreterNames::class => InvokableFactory::class,
         ],
     ],
 

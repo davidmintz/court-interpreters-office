@@ -44,7 +44,7 @@ class InterpretersWriteController extends AbstractActionController
 
     /**
      * ViewModel
-     * 
+     *
      * @var ViewModel
      */
     protected $viewModel;
@@ -60,7 +60,7 @@ class InterpretersWriteController extends AbstractActionController
 
         $this->entityManager = $entityManager;
         $this->vault_enabled = $vault_enabled;
-        $this->viewModel = new ViewModel(['vault_enabled' =>$vault_enabled]);
+        $this->viewModel = new ViewModel(['vault_enabled' => $vault_enabled]);
     }
 
     /**
@@ -86,8 +86,9 @@ class InterpretersWriteController extends AbstractActionController
     {
         $viewModel = $this->viewModel
             ->setTemplate($this->form_template);
-        $form = new InterpreterForm($this->entityManager,
-                [ 'action' => 'create',
+        $form = new InterpreterForm(
+            $this->entityManager,
+            [ 'action' => 'create',
                  'vault_enabled' => $this->vault_enabled ]
         );
         $viewModel->form = $form;
@@ -108,9 +109,10 @@ class InterpretersWriteController extends AbstractActionController
                 return $viewModel;
             }
             $this->flashMessenger()->addSuccessMessage(
-              sprintf(
-                'The interpreter <strong>%s %s</strong> has been added to the database',
-                $entity->getFirstname(), $entity->getLastname()
+                sprintf(
+                    'The interpreter <strong>%s %s</strong> has been added to the database',
+                    $entity->getFirstname(),
+                    $entity->getLastname()
                 )
             );
             //echo "success. NOT redirecting. <a href=\"/admin/interpreters/add\">again</a>";
@@ -139,21 +141,23 @@ class InterpretersWriteController extends AbstractActionController
         $entity = $this->entityManager->find(Entity\Interpreter::class, $id);
         if (! $entity) {
             return $viewModel->setVariables(
-                   ['errorMessage' => "interpreter with id $id not found"]);
+                ['errorMessage' => "interpreter with id $id not found"]
+            );
         }
         $values_before = [
             'dob' => $entity->getDob(),
             'ssn' => $entity->getSsn(),
         ];
-        $form = new InterpreterForm($this->entityManager,
-                ['action' => 'update','vault_enabled' => $this->vault_enabled]);
+        $form = new InterpreterForm(
+            $this->entityManager,
+            ['action' => 'update','vault_enabled' => $this->vault_enabled]
+        );
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id,
             // for the re-authentication dialog
             'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))
                         ->setAttribute('id', 'login_csrf')
-            ]
-        );
+            ]);
         $request = $this->getRequest();
         if ($request->isPost()) {
             $input = $request->getPost();
@@ -162,7 +166,7 @@ class InterpretersWriteController extends AbstractActionController
                 // whether the encrypted fields should be obscured (again)
                 // or not depends on whether they changed them
                 $viewModel->obscure_values =
-                  ! $this->getEncryptedFieldsWereModified($values_before,$input);
+                  ! $this->getEncryptedFieldsWereModified($values_before, $input);
                 return $viewModel;
             }
             try {
@@ -175,7 +179,8 @@ class InterpretersWriteController extends AbstractActionController
 
             $this->flashMessenger()->addSuccessMessage(sprintf(
                 'The interpreter <strong>%s %s</strong> has been updated.',
-                $entity->getFirstname(), $entity->getLastname()
+                $entity->getFirstname(),
+                $entity->getLastname()
             ));
             $this->redirect()->toRoute('interpreters');
             // echo "<br>success. NOT redirecting...
@@ -194,9 +199,10 @@ class InterpretersWriteController extends AbstractActionController
      * @param $input \Zend\Stdlib\Parameters
      * @return boolean
      */
-    public function getEncryptedFieldsWereModified(Array $values_before,
-            Parameters $input)
-    {
+    public function getEncryptedFieldsWereModified(
+        array $values_before,
+        Parameters $input
+    ) {
         return $input->get('dob') != $values_before['dob']
                 or
                 $input->get('ssn') != $values_before['ssn'];
@@ -219,13 +225,16 @@ class InterpretersWriteController extends AbstractActionController
         try {
             $action = $this->params()->fromQuery('action');
             $params = $this->params()->fromPost();//['interpreter'];
-            $form = new InterpreterForm($this->entityManager,
-                 ['action' => $action,'vault_enabled' => $this->vault_enabled]);
+            $form = new InterpreterForm(
+                $this->entityManager,
+                ['action' => $action,'vault_enabled' => $this->vault_enabled]
+            );
             $request = $this->getRequest();
             $form->setData($request->getPost());
-            if (key_exists('interpreter',$params)) {
+            if (key_exists('interpreter', $params)) {
                 $form->setValidationGroup(
-                        ['interpreter' => array_keys($params['interpreter'])]);
+                    ['interpreter' => array_keys($params['interpreter'])]
+                );
                 if (! $form->isValid()) {
                     return new JsonModel([
                         'valid' => false,
@@ -238,7 +247,6 @@ class InterpretersWriteController extends AbstractActionController
         } catch (\Exception $e) {
             return new JsonModel(['valid' => false, 'error' => $e->getMessage()]);
         }
-
     }
 
     /**
@@ -265,13 +273,13 @@ class InterpretersWriteController extends AbstractActionController
     public function languageFieldsetAction()
     {
         $id = $this->params()->fromQuery('id');
-        $index = $this->params()->fromQuery('index',0);
-        $language = $this->entityManager->find(Entity\Language::class,$id);
+        $index = $this->params()->fromQuery('index', 0);
+        $language = $this->entityManager->find(Entity\Language::class, $id);
         if (! $language) {
             return $this->getResponse()->setContent("<br>WTF??");
         }
         $helper = $this->getLanguageCollectionHelper();
-        $content = $helper->fromArray(compact('language','index'));
+        $content = $helper->fromArray(compact('language', 'index'));
 
         return $this->getResponse()->setContent($content);
     }

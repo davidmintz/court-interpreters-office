@@ -29,7 +29,7 @@ class JudgesControllerTest extends AbstractControllerTest
             ]
         );
 
-       ;
+        ;
     }
 
     public function testIndexAction()
@@ -84,10 +84,12 @@ class JudgesControllerTest extends AbstractControllerTest
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/judges');
 
-        $this->assertEquals($count + 1,
+        $this->assertEquals(
+            $count + 1,
             $entityManager
             ->createQuery('SELECT COUNT(j.id) FROM InterpretersOffice\Entity\Judge j')
-            ->getSingleScalarResult());
+            ->getSingleScalarResult()
+        );
     }
 
     /**
@@ -104,7 +106,8 @@ class JudgesControllerTest extends AbstractControllerTest
         $query->getResult();
         // delete the location entities having a parent
         $entityManager->createQuery(
-            'DELETE InterpretersOffice\Entity\Location l where l.parentLocation IS NOT NULL')
+            'DELETE InterpretersOffice\Entity\Location l where l.parentLocation IS NOT NULL'
+        )
             ->getResult();
         // delete the rest
         $entityManager

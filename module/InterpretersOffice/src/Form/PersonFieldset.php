@@ -187,10 +187,12 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 
         if (isset($options['auth_user_role'])) {
             /** @todo let's not hard-code these roles */
-            if (! in_array($options['auth_user_role'],
-                 ['anonymous','staff','submitter','manager','administrator'])) {
+            if (! in_array(
+                $options['auth_user_role'],
+                ['anonymous','staff','submitter','manager','administrator']
+            )) {
                 throw new \RuntimeException(
-                 'invalid "auth_user_role" option in PersonFieldset constructor'
+                    'invalid "auth_user_role" option in PersonFieldset constructor'
                 );
             }
             $this->auth_user_role = $options['auth_user_role'];
@@ -468,7 +470,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
                 'break_chain_on_failure' => true,
             ];
         } else { // action is update, use the UniqueObject validator
-
             //printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
             $validatorClass = UniqueObject::class;
 

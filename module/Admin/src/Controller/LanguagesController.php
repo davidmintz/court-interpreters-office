@@ -97,8 +97,10 @@ class LanguagesController extends AbstractActionController
         if (! $entity) {
             return $this->getFormViewModel(['errorMessage' => "language with id $id not found"]);
         }
-        $form = $this->getForm(Language::class,
-            ['object' => $entity, 'action' => 'update',])
+        $form = $this->getForm(
+            Language::class,
+            ['object' => $entity, 'action' => 'update',]
+        )
                ->bind($entity);
         $viewModel = $this->getFormViewModel(
             [ 'form' => $form, 'has_related_entities' => $entity->hasRelatedEntities(),
@@ -132,7 +134,7 @@ class LanguagesController extends AbstractActionController
         if ($request->isPost()) {
             $id = $this->params()->fromRoute('id');
             $name = $this->params()->fromPost('name');
-            $entity = $this->entityManager->find(Language::class,$id);
+            $entity = $this->entityManager->find(Language::class, $id);
             if ($entity) {
                 //$thing = $this->getEvent()->getApplication()->getServiceManager()->get('ViewHelperManager');
                 //$helper = $thing->get("url"); echo $helper('languages');
@@ -147,21 +149,22 @@ class LanguagesController extends AbstractActionController
                     $result = 'error';
                     $error = [
                         'message' => $e->getMessage(),
-                        'code'=> $e->getCode(),
+                        'code' => $e->getCode(),
                     ];
                     $this->flashMessenger()
                           ->addWarningMessage(
-                    "The language <strong>$name</strong> could not be deleted because it has related database records.");
+                              "The language <strong>$name</strong> could not be deleted because it has related database records."
+                          );
                 }
             } else {
                 $result = 'error';
-                $error = ['message'=>"language id $id not found"];
+                $error = ['message' => "language id $id not found"];
                 $this->flashMessenger()
                       ->addWarningMessage("The language <strong>$name</strong> was not found.");
             }
         }
 
-        return new JsonModel(compact('result','error'));
+        return new JsonModel(compact('result', 'error'));
     }
 
     /**

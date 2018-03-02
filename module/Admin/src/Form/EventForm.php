@@ -14,14 +14,13 @@ use Zend\EventManager\EventInterface;
 
 use Zend\InputFilter\InputFilterProviderInterface;
 
-
-
 /**
  * form for Event entity
  *
  */
-class EventForm extends ZendForm implements ListenerAggregateInterface,
-     InputFilterProviderInterface
+class EventForm extends ZendForm implements
+    ListenerAggregateInterface,
+    InputFilterProviderInterface
 {
 
      use CsrfElementCreationTrait;
@@ -76,8 +75,8 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
          */
         if ("update" == $this->options['action']) {
             $this->add([
-                'type'=> 'Hidden',
-                'name'=> 'modified',
+                'type' => 'Hidden',
+                'name' => 'modified',
                 'attributes' => ['id' => 'modified'],
             ]);
         }
@@ -90,12 +89,12 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
      * @param EventManagerInterface $events
      * @param integer $priority
      */
-    public function attach(EventManagerInterface $events,$priority = 1)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $this->listeners[] = $events->attach('post.load',[$this, 'postLoad']);
+        $this->listeners[] = $events->attach('post.load', [$this, 'postLoad']);
         $this->listeners[] = $events->attach('pre.populate', [$this, 'prePopulate']);
-        $this->listeners[] = $events->attach('post.validate',[$this, 'postValidate']);
-        $this->listeners[] = $events->attach('pre.validate',[$this, 'preValidate']);
+        $this->listeners[] = $events->attach('post.validate', [$this, 'postValidate']);
+        $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);
     }
 
     /**
@@ -113,7 +112,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         $entity = $e->getParam('entity');
         foreach ($this->datetime_props as $prop) {
             if (strstr($prop, '_')) {
-                $getter = 'get'.ucfirst(str_replace('_', '',$prop));
+                $getter = 'get'.ucfirst(str_replace('_', '', $prop));
             } else {
                 $getter = 'get'.ucfirst($prop);
             }
@@ -135,19 +134,18 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     {
         $entity = $this->getObject();
         foreach ($this->datetime_props as $prop) {
-
             if (strstr($prop, '_')) {
-                $getter = 'get'.ucfirst(str_replace('_', '',$prop));
+                $getter = 'get'.ucfirst(str_replace('_', '', $prop));
             } else {
                 $getter = 'get'.ucfirst($prop);
             }
             $new_value = $entity->$getter();
             $old_value = $this->state_before[$prop];
             if ($old_value == $new_value or
-                (in_array($prop,['time','end_time','submission_time'])
-               && $new_value->format('g:i a')==$old_value->format('g:i a')
+                (in_array($prop, ['time','end_time','submission_time'])
+               && $new_value->format('g:i a') == $old_value->format('g:i a')
             )) {
-                $setter = 's'.substr($getter,1);
+                $setter = 's'.substr($getter, 1);
                 $entity->$setter($old_value);
             }
         }
@@ -177,7 +175,6 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
             $judge_input = $this->getInputFilter()->get('event')->get('judge');
             $judge_input->setAllowEmpty(false)->setRequired(true);
             $judge_input->getValidatorChain()->attach($validator);
-
         } elseif ($event['is_anonymous_judge']) {
             $event['anonymousJudge'] = $event['judge'];
             unset($event['judge']);
@@ -201,13 +198,13 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         // if validation fails
         $e->getTarget()->getViewModel()->hat_id = $hat_id;
         $key = array_search($hat_id, array_column($hat_options, 'value'));
-        $can_be_anonymous = (!$key) ? false :
+        $can_be_anonymous = (! $key) ? false :
                 $hat_options[$key]['attributes']['data-can-be-anonymous'];
         //echo "can be anonymous? " ;var_dump((boolean)$can_be_anonymous);
         //printf("did you just fuck yourself at %d?<br>",__LINE__);
         if ((empty($event['submitter']) && empty($event['anonymousSubmitter']))
                 or
-            (!$can_be_anonymous  && empty($event['submitter']))
+            (! $can_be_anonymous  && empty($event['submitter']))
         ) {
             $validator = new \Zend\Validator\NotEmpty([
                 'messages' =>
@@ -221,11 +218,11 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         }
 
         // if NO submitter but YES anonymous submitter, submitter = NULL
-        if (empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
+        if (empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
             $event['submitter'] = null;
             // printf("did we just fuck ourself at %d?<br>",__LINE__);
         // if YES submitter and YES anonymous submitter, anon submitter = NULL
-        } elseif (!empty($event['submitter']) && !empty($event['anonymousSubmitter'])) {
+        } elseif (! empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
             $event['anonymousSubmitter'] = null;
             // printf("did we just fuck ourself at %d?<br>",__LINE__);
         }
@@ -233,8 +230,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         if (isset($event['defendantNames'])) {
             $event['defendantNames'] = array_keys($event['defendantNames']);
         }
-        $input->set('event',$event);
-
+        $input->set('event', $event);
     }
 
 
@@ -269,7 +265,7 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         // judge element value needs to be an integer
         $judge = $fieldset->get('judge')->getValue();
         if (is_object($judge)) {
-           $fieldset->get('judge')->setValue($judge->getId());
+            $fieldset->get('judge')->setValue($judge->getId());
         }
         // if the anonymousJudge property is not null,
         $anonymous_judge = $event->getAnonymousJudge();
@@ -312,14 +308,14 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
     function getInputFilterSpecification()
     {
         $spec = [];
-        if (!$this->has('modified')) {
+        if (! $this->has('modified')) {
             return $spec;
         }
 
         $spec['modified'] = [
             'required' => true,
             'allow_empty' => false,
-            'validators'=> [
+            'validators' => [
                 [
                     'name' => 'NotEmpty',
                     'options' => [
@@ -345,13 +341,13 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
         $spec['modified']['validators'][] = [
             'name' => 'Callback',
             'options' => [
-                'callback' => function($value,$context) use ($em) {
+                'callback' => function ($value, $context) use ($em) {
                     $id = $context['event']['id'];
                     $dql = 'SELECT e.modified '
                             . 'FROM InterpretersOffice\Entity\Event e '
                             . 'WHERE e.id = :id';
                     $timestamp = $em->createQuery($dql)
-                            ->setParameters(['id'=>$id])
+                            ->setParameters(['id' => $id])
                             ->getSingleScalarResult();
                     //echo "comparing $timestamp : $value";
                     return $timestamp == $value;
@@ -366,7 +362,6 @@ class EventForm extends ZendForm implements ListenerAggregateInterface,
 
         ];
         return $spec;
-
     }
 
     /**

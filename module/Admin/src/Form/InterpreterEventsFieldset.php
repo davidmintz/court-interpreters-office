@@ -12,19 +12,17 @@ use InterpretersOffice\Entity;
 /**
  * fieldset for Interpreters assigned to an Event
  */
-class InterpreterEventsFieldset extends Fieldset 
-
-    implements InputFilterProviderInterface
+class InterpreterEventsFieldset extends Fieldset implements InputFilterProviderInterface
 {
     use ObjectManagerAwareTrait;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param ObjectManager $objectManager
      * @param array $options
      */
-    public function __construct(ObjectManager $objectManager, Array $options = [])
+    public function __construct(ObjectManager $objectManager, array $options = [])
     {
 
         parent::__construct('interpreterEvents', $options);
@@ -32,41 +30,42 @@ class InterpreterEventsFieldset extends Fieldset
         $this->setHydrator(new DoctrineHydrator($objectManager));
         $this->setObject(new Entity\InterpreterEvent());
         $this->options = $options;
-        
+
         $this->add(
             [
-                'type'=>'hidden',
+                'type' => 'hidden',
                 'name' => 'interpreter'
             ]
         );
         $this->add(
             [
-                'type'=>'hidden',
+                'type' => 'hidden',
                 'name' => 'event'
             ]
         );
         $this->add(
             [
-                'type'=>'hidden',
+                'type' => 'hidden',
                 'name' => 'createdBy'
             ]
         );
         $this->add(
             [
-                'type'=>'hidden',
+                'type' => 'hidden',
                 'name' => 'created'
             ]
         );
     }
-    
+
     /**
      * implements InputFilterProviderInterface
-     * 
+     *
      * @todo complete it
      * @return array
      */
-    public function getInputFilterSpecification() { //echo "Hello???? from ".__METHOD__. "....<br>";
+    public function getInputFilterSpecification()
+    {
+ //echo "Hello???? from ".__METHOD__. "....<br>";
         return [];
     }
-    
 }

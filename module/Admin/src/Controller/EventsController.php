@@ -71,9 +71,10 @@ class EventsController extends AbstractActionController
      * @param EntityManagerInterface $em
      * @param AuthenticationServiceInterface $auth
      */
-    public function __construct(EntityManagerInterface $em,
-            AuthenticationServiceInterface $auth)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        AuthenticationServiceInterface $auth
+    ) {
         $this->entityManager = $em;
         $this->auth = $auth;
     }
@@ -84,10 +85,9 @@ class EventsController extends AbstractActionController
      * @param array $data view variables to set
      * @return ViewModel
      */
-    public function getViewModel(Array $data = [])
+    public function getViewModel(array $data = [])
     {
         if (! $this->viewModel) {
-
             $this->viewModel = new ViewModel();
             $this->viewModel
                 ->setTemplate('interpreters-office/admin/events/form');
@@ -113,9 +113,10 @@ class EventsController extends AbstractActionController
      */
     public function addAction()
     {
-        $form = new Form\EventForm($this->entityManager,
+        $form = new Form\EventForm(
+            $this->entityManager,
             ['action' => 'create',
-             'auth_user_role'=> $this->auth->getIdentity()->role,
+             'auth_user_role' => $this->auth->getIdentity()->role,
              'object' => null,]
         );
         $form->attach($this->getEventManager());
@@ -145,8 +146,11 @@ class EventsController extends AbstractActionController
         if ($request->isPost()) {
             $data = $request->getPost();
             $input = $data->get('event');
-            $this->getEventManager()->trigger('pre.validate',$this,
-                ['input'=> $data,]);
+            $this->getEventManager()->trigger(
+                'pre.validate',
+                $this,
+                ['input' => $data,]
+            );
             $form->setData($data);
             if (! $form->isValid()) {
                 if ($input) {
@@ -157,13 +161,13 @@ class EventsController extends AbstractActionController
                 }
                 //print_r($form->getMessages());
                 return $viewModel
-                    ->setVariables(compact('defendantNames','interpreters'));
+                    ->setVariables(compact('defendantNames', 'interpreters'));
             } else {
-
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
                 $this->flashMessenger()->addSuccessMessage(
-                     "This event has been added to the schedule.");
+                    "This event has been added to the schedule."
+                );
                 return $this->redirect()->toRoute('events');
             }
         }
@@ -179,18 +183,19 @@ class EventsController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager->find(Entity\Event::class,$id);
+        $entity = $this->entityManager->find(Entity\Event::class, $id);
         if (! $entity) {
              return $this->getViewModel([
                 'errorMessage'  =>
                  "event with id $id was not found in the database." ]);
         }
         $form = new Form\EventForm(
-            $this->entityManager, ['action' => 'update','object'=>$entity,]
+            $this->entityManager,
+            ['action' => 'update','object' => $entity,]
         );
         $events = $this->getEventManager();
         $form->attach($events);
-        $events->trigger('post.load',$this,['entity'=>$entity]);
+        $events->trigger('post.load', $this, ['entity' => $entity]);
         $request = $this->getRequest();
         $form->bind($entity);
         $events->trigger('pre.populate');
@@ -198,13 +203,14 @@ class EventsController extends AbstractActionController
         if ($request->isPost()) {
             $data = $request->getPost();
             $input = $data->get('event'); //var_dump($input);
-            $events->trigger('pre.validate',$this);
+            $events->trigger('pre.validate', $this);
             $form->setData($data);
             if ($form->isValid()) {
-                $events->trigger('post.validate',$this);
+                $events->trigger('post.validate', $this);
                 $this->entityManager->flush();
                 $this->flashMessenger()->addSuccessMessage(
-                     "This event has been successfully saved in the database.");
+                    "This event has been successfully saved in the database."
+                );
                 return $this->redirect()->toRoute('events');
             }
             //printf('<pre>error:  %s</pre>',print_r($form->getMessages(),true));
@@ -213,7 +219,7 @@ class EventsController extends AbstractActionController
                         [\Zend\Validator\Callback::INVALID_VALUE];
                 $this->flashMessenger()->addErrorMessage($error);
                 return $this->redirect()
-                        ->toRoute('events/edit',['id'=>$id]);
+                        ->toRoute('events/edit', ['id' => $id]);
             }
             /** @todo put this task in the 'pre.validate' event listener ? */
             if ($input) {
@@ -224,10 +230,10 @@ class EventsController extends AbstractActionController
                 $form->get('event')->get('anonymousSubmitter')
                     ->setValue($input['anonymousSubmitter']);
                 $this->getViewModel()
-                ->setVariables(compact('defendantNames','interpreters','form'));
+                ->setVariables(compact('defendantNames', 'interpreters', 'form'));
             }
         }
-        return $this->getViewModel(['form'=>$form]);
+        return $this->getViewModel(['form' => $form]);
     }
 
 
@@ -249,10 +255,10 @@ class EventsController extends AbstractActionController
         if (! $inputFilter->isValid()) {
             throw new \RuntimeException(
                 "bad input parameters: "
-                    .json_encode($inputFilter->getMessages(),\JSON_PRETTY_PRINT)
+                    .json_encode($inputFilter->getMessages(), \JSON_PRETTY_PRINT)
             );
         }
-        $data['created_by'] =  $this->auth->getStorage()->read()->id;
+        $data['created_by'] = $this->auth->getStorage()->read()->id;
         $html = $helper->fromArray($data);
         return $this->getResponse()->setContent($html);
     }

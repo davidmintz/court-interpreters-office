@@ -46,7 +46,7 @@ class UserLoader implements FixtureInterface
                 ->findOneBy(['lastname' => 'Daniels']));
         $objectManager->persist($person);
         $objectManager->persist($another_user);
-        
+
         $clerk_to_dinklesnort = new Entity\Person();
         $clerk_to_dinklesnort->setFirstname('Jane')
                 ->setLastname('Zorkendoofer')

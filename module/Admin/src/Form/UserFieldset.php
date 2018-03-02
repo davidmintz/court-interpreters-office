@@ -55,10 +55,10 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
      * @var string $auth_user_role
      */
     protected $auth_user_role;
-    
+
     /**
      * user, if we're an update
-     * 
+     *
      * @var \InterpretersOffice\Entity\User
      */
     protected $user;
@@ -87,8 +87,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         }
         $this->auth_user_role = $options['auth_user_role'];
         unset($options['auth_user_role']);
-        if (!empty($options['user'])) {
-            $this->user = $options['user'];  
+        if (! empty($options['user'])) {
+            $this->user = $options['user'];
             unset($options['user']);
         }
         /*
@@ -105,7 +105,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager, true))
                 ->setUseAsBaseFieldset(true);
-        
+
         $this->addElements();
     }
     /**
@@ -196,7 +196,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'auth_user_role' => $this->auth_user_role,
             ]
         );
-        
+
         $this->add($fieldset);
 
         return $this;

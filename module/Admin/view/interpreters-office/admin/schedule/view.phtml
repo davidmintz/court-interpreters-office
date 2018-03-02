@@ -6,22 +6,21 @@
 $event = $this->event;
 $this->headTitle('event details');
 // figure out location
-if ($event['location']):
+if ($event['location']) :
     $IS_DEFAULT_LOCATION = false;
     $location = $event['location'];
     if ($event['parent_location']) :
         $location .= ', '.$event['parent_location'];
     endif;
-
-elseif ($event['category'] == 'in' && $event['default_courtroom']):
+elseif ($event['category'] == 'in' && $event['default_courtroom']) :
     // fall back on judge default
     $IS_DEFAULT_LOCATION = true;
     $location = $event['default_courtroom'];
-    if ($event['default_courthouse']):
+    if ($event['default_courthouse']) :
         $location .= ', '.$event['default_courthouse'];
     endif;
     $location .= ' <span class="text-muted text-md-right">*</span>';
-else:
+else :
     $location = '';
 endif;
 ?>
@@ -38,7 +37,7 @@ endif;
         time
     </div>
     <div class="col-sm-4">
-        <?php echo $event['time'] ? $event['time']->format('g:i a'): '<em>?</em>' ?>
+        <?php echo $event['time'] ? $event['time']->format('g:i a') : '<em>?</em>' ?>
     </div>
     <div class="col-sm-2 text-muted text-md-right">
         type
@@ -57,7 +56,7 @@ endif;
     </div>
     <div class="col-sm-4">
         <?php echo $event['judge'];
-        if ($event['aj_default_location']):
+        if ($event['aj_default_location']) :
             ?> <span class="text-muted"><?php echo $event['aj_default_location']?></span><?php
         endif; ?>
     </div>
@@ -71,7 +70,7 @@ endif;
         defendants
     </div>
     <div class="col-sm-4"><?php
-    foreach($event['defendants'] as $d) :
+    foreach ($event['defendants'] as $d) :
         echo "$d[surnames], $d[given_names]<br>";
     endforeach;?>
     </div>
@@ -85,7 +84,7 @@ endif;
         interpreters
     </div>
     <div class="col-sm-4"><?php
-    foreach ($event['interpreters'] as $i):
+    foreach ($event['interpreters'] as $i) :
         echo "$i[lastname], $i[firstname]<br>";
     endforeach;
     ?>
@@ -102,18 +101,19 @@ endif;
     <div class="col-sm-4"><span class="avoidwrap">
         <?php echo $event['submitter'] ;
         ?><?php
-        if ($event['submitter_hat']):?>,</span> <span class="avoidwrap"><?php
-            echo "{$event['submitter_hat']}";
-        endif;?></span>
+if ($event['submitter_hat']) :
+?>,</span> <span class="avoidwrap"><?php
+    echo "{$event['submitter_hat']}";
+endif;?></span>
     </div>
     <div class="col-sm-2 text-muted text-md-right">
         submitted on
     </div>
     <div class="col-sm-4">
     <?php echo $event['submission_date']->format('d-M-Y');
-        if ($event['submission_time']):
-            echo $event['submission_time']->format(' g:i a');
-        endif;
+    if ($event['submission_time']) :
+        echo $event['submission_time']->format(' g:i a');
+    endif;
     ?>
     </div>
     <div class="col-sm-2 text-muted text-md-right">
@@ -126,7 +126,7 @@ endif;
         last updated
     </div>
     <div class="col-sm-4">
-        <?php echo $event['created']==$event['last_updated'] ? '<span class="text-muted">n/a</span>' :
+        <?php echo $event['created'] == $event['last_updated'] ? '<span class="text-muted">n/a</span>' :
             $event['last_updated']->format('d-M-Y g:i a'), " ({$event['last_updated_by']})";
         ?>
     </div>
@@ -144,7 +144,7 @@ endif;
     </div>
     <div class="col-12 d-flex">
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
-          <a href="<?php echo $this->url('events/edit',['id'=>$event['id']])?>" role="button" class="btn btn-success">edit</a>
+          <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
           <a href="" role="button" class="btn btn-success">repeat</a>
           <a href="" role="button" class="btn btn-success">delete</a>
         </div>

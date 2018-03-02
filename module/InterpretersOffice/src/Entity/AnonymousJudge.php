@@ -46,12 +46,12 @@ class AnonymousJudge
      * @var Location
      */
     protected $defaultLocation;
-    
-    
+
+
 
     /**
      * returns string representation of AnonymousJudge entity.
-     * 
+     *
      * @todo this generates SQL queries that are not cached. think of a way
      * to avoid that.
      *
@@ -59,16 +59,18 @@ class AnonymousJudge
      */
     public function __toString()
     {
-        if (! $this->defaultLocation) { 
+        if (! $this->defaultLocation) {
             return $this->name;
         }
         if (! $this->defaultLocation->getParentLocation()) {
             return $this->name . ', '.$this->defaultLocation;
         }
-        return sprintf('%s, %s %s',
-                $this->name, 
-                $this->defaultLocation, 
-                $this->defaultLocation->getParentLocation());
+        return sprintf(
+            '%s, %s %s',
+            $this->name,
+            $this->defaultLocation,
+            $this->defaultLocation->getParentLocation()
+        );
     }
 
     /**

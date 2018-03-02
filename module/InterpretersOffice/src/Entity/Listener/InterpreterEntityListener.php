@@ -71,7 +71,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      *
      * doesn't really do anything at the moment.
      *
-     *      
+     *
      * @param Interpreter $interpreter
      * @param LifecycleEventArgs $event
      */
@@ -96,7 +96,8 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
         }
         //$this->log->debug(sprintf('getSsn() now returns %s', $interpreter->getSsn()));
         $this->log->debug(sprintf(
-            'hasChangedField? %s', $event->hasChangedField('ssn') ? "yes" : "no"
+            'hasChangedField? %s',
+            $event->hasChangedField('ssn') ? "yes" : "no"
         ));
         foreach (['dob','ssn'] as $prop) {
             if ($event->hasChangedField($prop)) {

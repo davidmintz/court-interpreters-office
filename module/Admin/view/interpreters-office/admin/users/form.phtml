@@ -21,7 +21,7 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'save','class'=>'btn btn-success btn-lg'],
+    'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal')    ;
 ?>
@@ -38,7 +38,7 @@ foreach (['lastname','firstname','middlename','email','office_phone','mobile_pho
     <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>            
     </div>
 </div>
-<?php endforeach; 
+<?php endforeach;
 $hat = $person_fieldset->get('hat');
 ?>
 <div class="form-group">
@@ -53,7 +53,7 @@ $person_active = $person_fieldset->get('active');?>
     <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($person_active),$this->formElementErrors($person_active) ?>            
     </div>
  </div>
-<?php 
+<?php
 $user_fieldset = $this->form->get("user");
 $role = $user_fieldset->get('role'); ?>
 <div class="form-group">
@@ -67,7 +67,7 @@ $role = $user_fieldset->get('role'); ?>
     <div class="col-sm-9"><?php echo $this->formElement($username),$this->formElementErrors($username) ?>            
     </div>
 </div>
-<?php 
+<?php
 $user_active = $user_fieldset->get('active');?>
 <div class="form-group">
     <label class="control-label col-sm-3">user account enabled</label>
@@ -79,11 +79,11 @@ $user_active = $user_fieldset->get('active');?>
     <?php
     $csrf = $form->get('csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
-    echo $this->formHidden($person_fieldset->get('id'));    
-    echo $this->formHidden($user_fieldset->get('id'));    
+    echo $this->formHidden($person_fieldset->get('id'));
+    echo $this->formHidden($user_fieldset->get('id'));
     echo $this->formSubmit($form->get('submit'));
-?></div> 	    
+?></div>        
 </div>
-<?php 
+<?php
 echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->

@@ -36,7 +36,6 @@ class DefendantNames extends AbstractHelper
         $this->defendants = $data['defendants'];
 
         return $this->defendants;
-
     }
 
     /**
@@ -61,14 +60,13 @@ class DefendantNames extends AbstractHelper
     {
          $return = '' ;
 
-         if (! $this->getDefendants() or ! isset($this->defendants[$id]))
-         {
-             return $return;
-         }
-         foreach ($this->defendants[$id] as $n) {
-             $return .= $this->getView()->escapeHtml($n['surnames']).'<br>';
-         }
+        if (! $this->getDefendants() or ! isset($this->defendants[$id])) {
+            return $return;
+        }
+        foreach ($this->defendants[$id] as $n) {
+            $return .= $this->getView()->escapeHtml($n['surnames']).'<br>';
+        }
 
          return $return;
-     }
+    }
 }

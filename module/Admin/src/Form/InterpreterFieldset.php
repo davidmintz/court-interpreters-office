@@ -75,7 +75,7 @@ class InterpreterFieldset extends PersonFieldset
         $this->add(
 
             new \InterpretersOffice\Form\Element\LanguageSelect(
-               'language-select',
+                'language-select',
                 [
                     //'objectManager' => $objectManager,
                     'type' => 'InterpretersOffice\Form\Element\LanguageSelect',
@@ -84,14 +84,13 @@ class InterpreterFieldset extends PersonFieldset
                         'objectManager' => $objectManager,
                         'option_attributes' =>
                             ['data-certifiable' =>
-                                function (Entity\Language $language)
-                                {
+                                function (Entity\Language $language) {
                                     //echo "W T F ?????  ...";
                                     return $language->isFederallyCertified() ? 1 : 0;
                                 }
                              ],
                         'empty_item_label' => '--- add a language ---',
-                        'exclude'=> true,// doesn't work?
+                        'exclude' => true,// doesn't work?
                     ],
                 ]
             )
@@ -99,7 +98,7 @@ class InterpreterFieldset extends PersonFieldset
 
         // fingerprint date
         $this->add(
-        [
+            [
              'name' => 'fingerprintDate',
             //'type' => 'text',
             'type' => 'Zend\Form\Element\Text',
@@ -114,11 +113,12 @@ class InterpreterFieldset extends PersonFieldset
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
-        ]);
+            ]
+        );
 
         // security clearance date
         $this->add(
-        [
+            [
              'name' => 'securityClearanceDate',
             //'type' => 'text',
             'type' => 'Zend\Form\Element\Text',
@@ -134,10 +134,11 @@ class InterpreterFieldset extends PersonFieldset
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
-        ]);
+            ]
+        );
         // contract expiration date
         $this->add(
-        [
+            [
              'name' => 'contractExpirationDate',
             //'type' => 'text',
             'type' => 'Zend\Form\Element\Text',
@@ -152,10 +153,11 @@ class InterpreterFieldset extends PersonFieldset
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
-        ]);
+            ]
+        );
         // date oath taken
         $this->add(
-        [
+            [
              'name' => 'oathDate',
             //'type' => 'text',
             'type' => 'Zend\Form\Element\Text',
@@ -170,7 +172,8 @@ class InterpreterFieldset extends PersonFieldset
                 //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
-        ]);
+            ]
+        );
         // home phone
         $this->add([
             'name' => 'home_phone',
@@ -195,7 +198,7 @@ class InterpreterFieldset extends PersonFieldset
         if ($options['vault_enabled']) {
             // complicated stuff
             $this->add(
-            [
+                [
                 'name' => 'dob',
                 'type' => 'Zend\Form\Element\Text',
                 'attributes' => ['id' => 'dob','class' => 'form-control encrypted date'],
@@ -203,14 +206,16 @@ class InterpreterFieldset extends PersonFieldset
                     'label' => 'date of birth',
                     //'format' => 'Y-m-d',
                     ],
-            ]);
+                ]
+            );
             $this->add(
-            [
+                [
                 'name' => 'ssn',
                 'type' => 'Zend\Form\Element\Text',
                 'attributes' => ['id' => 'ssn','class' => 'form-control encrypted'],
                 'options' => ['label' => 'social security no.'],
-            ]);
+                ]
+            );
         }
     }
 
@@ -483,7 +488,7 @@ class InterpreterFieldset extends PersonFieldset
                         'callback' => function ($value, $context) {
                             list($M, $D, $Y) = explode('/', $value);
                             $date = "$Y-$M-$D";
-                            $max =  (new \DateTime("+2 years"))->format('Y-m-d');
+                            $max = (new \DateTime("+2 years"))->format('Y-m-d');
                             $min = (new \DateTime("-5 years"))->format('Y-m-d');
                             return $date >= $min && $date <= $max;
                         },

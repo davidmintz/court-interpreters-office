@@ -15,8 +15,9 @@ use SDNY\Vault\Service\Vault;
  *
  * @author david@davidmintz.org
  */
-class VaultServiceFactory implements FactoryInterface {
-  
+class VaultServiceFactory implements FactoryInterface
+{
+
     /**
      * invocation, so to speak
      *
@@ -31,8 +32,7 @@ class VaultServiceFactory implements FactoryInterface {
         $service = new Vault(
             $container->get('config')['vault']
         );
-        
+
         return $service;
     }
-
 }

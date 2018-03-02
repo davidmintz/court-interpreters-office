@@ -30,4 +30,3 @@ class RequestsIndexControllerFactory implements FactoryInterface
         return $controller;
     }
 }
-

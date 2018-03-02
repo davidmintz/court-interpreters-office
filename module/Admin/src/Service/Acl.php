@@ -110,8 +110,11 @@ class Acl extends ZendAcl implements EventManagerAwareInterface
     {
         $allowed = parent::isAllowed($role, $resource, $privilege);
         if (! $allowed) {
-            $this->events->trigger('access-denied',
-                    $this, \compact('role', 'resource', 'privilege'));
+            $this->events->trigger(
+                'access-denied',
+                $this,
+                \compact('role', 'resource', 'privilege')
+            );
         }
         return $allowed;
     }

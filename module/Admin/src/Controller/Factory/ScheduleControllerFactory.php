@@ -13,7 +13,7 @@ class ScheduleControllerFactory implements FactoryInterface
 {
     /**
      * implements Zend\ServiceManager\FactoryInterface
-     * 
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

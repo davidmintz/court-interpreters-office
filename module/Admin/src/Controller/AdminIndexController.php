@@ -21,5 +21,5 @@ class AdminIndexController extends AbstractActionController
     {
 
         return new ViewModel(['title' => 'admin']);
-    }   
+    }
 }

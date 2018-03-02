@@ -28,7 +28,7 @@ class LocationLoader implements FixtureInterface
         $objectManager->flush();
         $repository = $objectManager->getRepository('InterpretersOffice\Entity\LocationType');
         $parentlocations = [
-            // name, 	type, 	parent
+            // name,    type,   parent
             ['500 Pearl',  $repository->findOneBy(['type' => 'courthouse']), null],
             ['40 Foley',  $repository->findOneBy(['type' => 'courthouse']), null],
         ];

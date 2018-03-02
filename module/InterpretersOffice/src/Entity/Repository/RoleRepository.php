@@ -34,14 +34,14 @@ class RoleRepository extends EntityRepository
      * @return array
      * @throws \RuntimeException
      */
-    public function getRoles($auth_user_role,Entity\Hat $hat = null)
+    public function getRoles($auth_user_role, Entity\Hat $hat = null)
     {
         if (! in_array($auth_user_role, ['administrator','manager'])) {
             throw new \RuntimeException('invalid auth_user_role parameter '
                     . $auth_user_role);
         }
         $is_admin = 'administrator' === $auth_user_role;
-        if (!$is_admin && $hat && $hat->getRole()) {
+        if (! $is_admin && $hat && $hat->getRole()) {
             // select only the roles that are valid for this hat
             $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h JOIN h.role r 
                 WHERE r.id = '.$hat->getRole()->getId(). ' ORDER BY r.name ';
@@ -57,23 +57,21 @@ class RoleRepository extends EntityRepository
                 $seen = $this_role;
             }
             return $return;
-            
         } else {
-            
             $dql = 'SELECT r FROM InterpretersOffice\Entity\Role r ';
             if (! $is_admin) {
                 // select only roles non-admin is allowed to manage
                 $dql .= 'WHERE r.name IN (\'submitter\',\'staff\')';
             }
             $dql .= 'ORDER BY r.name';
-            
+
             return $this->createQuery($dql)->getResult();
         }
     }
-    
+
     /**
      * gets valid roles based on $hat_id and current user's role
-     * 
+     *
      * for dynamically re-populating Userfieldset's role element
      * based on state of Hat element and the current user's role
      * @todo think of a better way than hard-coding
@@ -81,12 +79,12 @@ class RoleRepository extends EntityRepository
      * @param string $user_role
      * @return array
      */
-    public function getRoleOptionsForHatId($hat_id,$user_role)
+    public function getRoleOptionsForHatId($hat_id, $user_role)
     {
         $dql = 'SELECT r.id AS value, r.name AS label '
                 . 'FROM InterpretersOffice\Entity\Role r ';
 
-        $hat = (string)$this->getEntityManager()->find(Entity\Hat::class,$hat_id);
+        $hat = (string)$this->getEntityManager()->find(Entity\Hat::class, $hat_id);
         $dql = 'SELECT r.id AS value, r.name AS label '
                 . 'FROM InterpretersOffice\Entity\Role r ';
         switch ($hat) {
@@ -96,15 +94,15 @@ class RoleRepository extends EntityRepository
             case 'USPO':
             case 'Pretrial Services Officer':
                 $dql .= 'WHERE r.name = :role';
-                $params = [':role'=> 'submitter'];
+                $params = [':role' => 'submitter'];
                 break;
-            // these can have their role set depending 
+            // these can have their role set depending
             // on the current user's role
             case 'staff court interpreter':
             case 'Interpreters Office staff':
                 $dql .= 'WHERE r.name IN (:roles)';
-                $params = [':roles'=> 
-                    $user_role == 'administrator' ? 
+                $params = [':roles' =>
+                    $user_role == 'administrator' ?
                         ['staff','administrator','manager'] : ['staff']
                  ];
                 break;
@@ -113,8 +111,7 @@ class RoleRepository extends EntityRepository
                 break;
         }
         $dql .= ' ORDER BY r.name';
-        $data =  $this->createQuery($dql)->setParameters($params)->getResult();
+        $data = $this->createQuery($dql)->setParameters($params)->getResult();
         return $data;
-        
     }
 }

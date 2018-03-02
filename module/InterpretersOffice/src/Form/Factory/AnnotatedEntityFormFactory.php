@@ -289,7 +289,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         } else { // assume this is an update
             $validatorClass = UniqueObject::class;
             $validatorOptions['messages'] =
-              [UniqueObject::ERROR_OBJECT_NOT_UNIQUE => 
+              [UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
               'there is already an existing location with this name and parent location'];
         }
 

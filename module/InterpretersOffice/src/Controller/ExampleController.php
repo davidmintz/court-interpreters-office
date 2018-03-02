@@ -26,7 +26,7 @@ class ExampleController extends AbstractActionController
      * @var ObjectManager
      */
     protected $objectManager;
-    
+
     /**
      * constructor.
      *

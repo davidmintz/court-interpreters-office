@@ -6,7 +6,6 @@
 
 namespace InterpretersOffice\Admin;
 
-
 use InterpretersOffice\Entity\Listener;
 
 return [
@@ -43,7 +42,7 @@ return [
         ],
     ],
 
-    'acl' =>    include __DIR__.'/acl.php',
+    'acl' => include __DIR__.'/acl.php',
 
     'service_manager' => [
         'factories' => [

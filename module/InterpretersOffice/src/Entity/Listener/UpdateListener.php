@@ -183,26 +183,23 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         return;
 
         $entity = $args->getObject();
-         if ($entity instanceof Entity\InterpreterEvent) {
-
-             $this->logger->debug(sprintf("running %s on InterpreterEvent",__FUNCTION__));
-             $entity->setCreated($this->getTimeStamp());
-             if (is_null($entity->getCreatedBy())) {
-                 // to do: factor this out into a getter method
-                 // that returns User entity
-                 $em = $args->getObjectManager();
-                 $user = $em->find(Entity\User::class,$this->auth->getStorage()->read()->id);
-                 $entity->setCreatedBy($user);
-                 $this->logger->debug(sprintf("set createdBy for InterpreterEvent in %s",__FUNCTION__));
-             }
-             // $em = $args->getObjectManager();
-             // $user = $em->find(Entity\User::class,$this->auth->getStorage()->read()->id);
-             // $entity->setCreatedBy($user);
-             // trying to inject auth object so as to set createdBy resulted
-             // in functions-nested-over-256-levels error at factory instantiation
-
-
-         }
+        if ($entity instanceof Entity\InterpreterEvent) {
+            $this->logger->debug(sprintf("running %s on InterpreterEvent", __FUNCTION__));
+            $entity->setCreated($this->getTimeStamp());
+            if (is_null($entity->getCreatedBy())) {
+                // to do: factor this out into a getter method
+                // that returns User entity
+                $em = $args->getObjectManager();
+                $user = $em->find(Entity\User::class, $this->auth->getStorage()->read()->id);
+                $entity->setCreatedBy($user);
+                $this->logger->debug(sprintf("set createdBy for InterpreterEvent in %s", __FUNCTION__));
+            }
+            // $em = $args->getObjectManager();
+            // $user = $em->find(Entity\User::class,$this->auth->getStorage()->read()->id);
+            // $entity->setCreatedBy($user);
+            // trying to inject auth object so as to set createdBy resulted
+            // in functions-nested-over-256-levels error at factory instantiation
+        }
     }
 
     /**
@@ -213,11 +210,10 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function preUpdate(LifecycleEventArgs $args)
     {
          $entity = $args->getObject();
-         if ($entity instanceof Entity\InterpreterEvent) {
-             echo "um, these do NOT GET UPDATED, do they??? in ".__METHOD__. "<br>";
-             // to do: inject authenticated User entity, set user, set creation time
-         }
-
+        if ($entity instanceof Entity\InterpreterEvent) {
+            echo "um, these do NOT GET UPDATED, do they??? in ".__METHOD__. "<br>";
+            // to do: inject authenticated User entity, set user, set creation time
+        }
     }
 
     /**
@@ -228,6 +224,5 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function preRemove(LifecycleEventArgs $args)
     {
-
     }
 }

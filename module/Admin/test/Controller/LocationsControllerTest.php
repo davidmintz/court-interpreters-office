@@ -100,7 +100,7 @@ class LocationsControllerTest extends AbstractControllerTest
         $courtroom->setParentLocation($pearl);
         $em->persist($courtroom);
         $em->flush();
-        
+
         $this->login('susie', 'boink');
         $this->reset(true);
         $url = '/admin/locations/edit/'.$courtroom->getId();
@@ -148,7 +148,7 @@ class LocationsControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         $courtroom_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
                 ->findOneBy(['type' => 'courtroom']);
-        
+
         $this->login('susie', 'boink');
         $this->reset(true);
         // try adding a courtroom with no parent

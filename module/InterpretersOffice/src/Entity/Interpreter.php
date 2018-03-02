@@ -207,7 +207,6 @@ class Interpreter extends Person
     public function getHomePhone()
     {
         return $this->formatPhone($this->home_phone);
-
     }
 
     /**

@@ -12,6 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Admin\Form\UserFieldset;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\NotEmpty;
+
 /**
  * UserForm intended for administrative use
  *
@@ -47,6 +48,5 @@ class UserForm extends Form
                 ->get('person')->get('email');
         $email_input->setAllowEmpty(false)->setRequired(true)
                 ->getValidatorChain()->attach(new NotEmpty());
-        
     }
 }

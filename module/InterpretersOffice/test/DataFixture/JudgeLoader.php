@@ -15,7 +15,7 @@ class JudgeLoader implements FixtureInterface
         $failla = new Entity\Judge($judgeHat);
         $usdj = $objectManager->getRepository('InterpretersOffice\Entity\JudgeFlavor')
             ->findOneBy(['flavor' => 'USDJ']);
-        $locations =  $objectManager->getRepository(Entity\Location::class);
+        $locations = $objectManager->getRepository(Entity\Location::class);
         $courtroom_618 = $locations->findOneBy(['name' => '618']);
 
 

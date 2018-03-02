@@ -1,11 +1,12 @@
 <?php
-/** config/autoload/navigation.global.php 
+/** config/autoload/navigation.global.php
  *
  * still a work in progress
  */
 use InterpretersOffice\Controller as Main;
 
 use InterpretersOffice\Admin\Controller as Admin;
+
 return [
 
     'navigation' => [
@@ -46,8 +47,8 @@ return [
                     ],
                 ]
             ],
-            
-            
+
+
             [
                 'label' => 'add event',
                 'route' => 'events/add',

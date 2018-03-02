@@ -57,7 +57,7 @@ class Module
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function($event) use ($user) {
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
                 $viewModel = $event->getApplication()->getMvcEvent()
@@ -70,7 +70,6 @@ class Module
         // makes the SessionManager the 'default' one:
         // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
         $container->get(SessionManager::class);// yes. just the getting is enough
-
     }
 
 
@@ -93,14 +92,14 @@ class Module
             return;
         }
         $module = $match->getParam('module');
-        if ( 'InterpretersOffice' == $module ) {
+        if ('InterpretersOffice' == $module) {
              // doesn't expose anything, so anyone is allowed access
              return;
         }
         $allowed = true;
         $container = $event->getApplication()->getServiceManager();
         $auth = $container->get('auth');
-        if (! $auth->hasIdentity() ) {
+        if (! $auth->hasIdentity()) {
             // everything else requires authentication
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
@@ -108,7 +107,6 @@ class Module
             $session = $container->get('Authentication');
             $session->redirect_url = $event->getRequest()->getUriString();
             $allowed = false;
-
         } else {
             // check authorization
             $user = $auth->getIdentity();

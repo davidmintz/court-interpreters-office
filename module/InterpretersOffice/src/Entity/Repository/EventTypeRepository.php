@@ -57,22 +57,22 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
 
         return $this->createQuery($dql, 0, 'event-types-all')->getResult();
     }
-    
+
     /**
      * gets data for populating select elements
-     * 
+     *
      * @param array $options
      * @return array
      */
-    public function getEventTypeOptions(Array $options= [])
+    public function getEventTypeOptions(array $options = [])
     {
         $dql = 'SELECT t.id AS value, t.name AS label, c.category '
                 . 'FROM InterpretersOffice\Entity\EventType t '
                 . 'JOIN t.category c ORDER BY label';
-        $data =  $this->createQuery($dql)->getResult();
+        $data = $this->createQuery($dql)->getResult();
         $options = [];
         foreach ($data as $type) {
-            $options[] = ['label'=>$type['label'], 'value'=>$type['value'],
+            $options[] = ['label' => $type['label'], 'value' => $type['value'],
                     'attributes' => ['data-category' => $type['category']],
                 ];
         }

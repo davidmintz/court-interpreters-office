@@ -53,10 +53,10 @@ class InterpreterEvent
      * @var User
      */
     protected $createdBy;
-    
+
     /**
      * current data and time
-     * 
+     *
      * @var \DateTime
      */
     protected $now;
@@ -81,7 +81,7 @@ class InterpreterEvent
      */
     public function onPrePersist()
     {
-       
+
         $this->created = $this->now;
          return;
         $event = $this->getEvent();

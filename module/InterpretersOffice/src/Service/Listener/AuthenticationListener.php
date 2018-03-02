@@ -41,18 +41,18 @@ class AuthenticationListener
 
     /**
      * event handler for user login success or failure.
-     * 
-     * records outcome of the authentication attempt in the log. on success, 
+     *
+     * records outcome of the authentication attempt in the log. on success,
      * updates the last_login field of the user entity.
      *
      * @param Event
-     * 
+     *
      */
     public function onLogin(Event $e)
     {
         $params = $e->getParams();
         $result = $params['result'];
-        $ip = \filter_input(\INPUT_SERVER, 'REMOTE_ADDR', \FILTER_VALIDATE_IP) 
+        $ip = \filter_input(\INPUT_SERVER, 'REMOTE_ADDR', \FILTER_VALIDATE_IP)
                 ?: 'N/A';
         if ($result->isValid()) {
             $message = sprintf(
@@ -60,14 +60,13 @@ class AuthenticationListener
                 $params['identity'],
                 $ip
             );
-            $user =  $params['auth']->getStorage()->read();
+            $user = $params['auth']->getStorage()->read();
             $dql = 'UPDATE InterpretersOffice\Entity\User u '
                     . 'SET u.lastLogin = :when WHERE u.id = :id';
             $this->entityManager->createQuery($dql)->setParameters([
                 ':when' => new \DateTime(),
                 ':id'   => $user->id,
             ])->execute();
-            
         } else {
             $message = sprintf(
                 'login failed for user %s from IP address %s, reason: %s',

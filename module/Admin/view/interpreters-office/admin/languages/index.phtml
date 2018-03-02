@@ -33,13 +33,13 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
         foreach ($this->languages as $language) :
             $entity = $language[0];
             ?><tr>
-                <td><a href="<?php echo $this->url('languages/edit',['id'=> $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
+                <td><a href="<?php echo $this->url('languages/edit', ['id' => $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
                 </td>
                 <td class="text-right"><?php echo $language['interpreters'] ?></td>
                 <td class="text-right"><?php echo $language['events'] ?></td>
             </tr>
-       <?php endforeach;
-       ?>
+        <?php endforeach;
+        ?>
     </tbody>
 </table>
 

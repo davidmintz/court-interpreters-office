@@ -43,7 +43,7 @@ return [
         'administrator' => null,
         'manager' => null,
         'submitter' => null,
-        'staff'=> null,
+        'staff' => null,
     ],
     // how do we configure this to use Assertions?
     // I think we don't
@@ -59,7 +59,7 @@ return [
             Admin\LanguagesController::class => null,
             Admin\EventsController::class => null,
             // ??
-            'SDNY\Vault\Controller\VaultController'=> null,
+            'SDNY\Vault\Controller\VaultController' => null,
             Main\AuthController::class => ['logout'],
             'submitter' => null,
         ],

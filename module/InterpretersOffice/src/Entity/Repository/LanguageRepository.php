@@ -10,6 +10,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\Language;
+
 /**
  * custom EntityRepository class for Language entity.
  */
@@ -34,7 +35,6 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace('languages');
-
     }
 
     /**
@@ -75,7 +75,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         // and use the result cache
         $query = $this->createQuery(
             'SELECT l FROM InterpretersOffice\Entity\Language l ORDER BY l.name ASC'
-           //, $this->cache_id_prefix . 'findAll'
+            //, $this->cache_id_prefix . 'findAll'
         );
 
         return $query->getResult();
@@ -97,7 +97,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
 
         return $query->getResult();
     }
-    
+
     /**
      * experimental
      *
@@ -110,6 +110,5 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         $cache = $this->cache;
         $cache->setNamespace('languages');
         var_dump($cache->deleteAll());
-
     }
 }

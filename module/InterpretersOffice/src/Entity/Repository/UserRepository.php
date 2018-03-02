@@ -5,7 +5,6 @@
 
 namespace InterpretersOffice\Entity\Repository;
 
-
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -51,5 +50,4 @@ class UserRepository extends EntityRepository
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace('users');
     }
-
 }
