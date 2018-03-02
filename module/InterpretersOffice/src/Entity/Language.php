@@ -90,7 +90,7 @@ class Language
      * does this entity have related entities?
      *
      * returns false if this Language has no related
-     * entities and can therefore safely be isFederallyCertified
+     * entities and can therefore safely be deleted
      * @return boolean true if there are related entities
      */
     public function hasRelatedEntities()
@@ -98,7 +98,7 @@ class Language
         return ! $this->events->isEmpty() &&
             ! $this->interpreterLanguages->isEmpty();
     }
-    
+
     /**
      * Is there a federal certification program for this language?
      *
