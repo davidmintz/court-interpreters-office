@@ -47,10 +47,10 @@ class UsersController extends AbstractActionController implements Authentication
      * @var string $auth_user_role
      */
     protected $auth_user_role;
-    
+
     /**
      * acl
-     * 
+     *
      * @var Acl
      */
     protected $acl;
@@ -59,24 +59,24 @@ class UsersController extends AbstractActionController implements Authentication
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
+     * @param AuthenticationServiceInterface $auth
      */
-    public function __construct(EntityManagerInterface $entityManager, 
+    public function __construct(EntityManagerInterface $entityManager,
             AuthenticationServiceInterface $auth)
     {
         $this->entityManager = $entityManager;
-        $this->setAuthenticationService($auth);        
+        $this->setAuthenticationService($auth);
     }
 
     /**
      * implements AuthenticationAwareInterface
      *
      * @param AuthenticationService $auth
-     *
      */
     public function setAuthenticationService(AuthenticationService $auth)
     {
         $this->auth = $auth;
-        $this->auth_user_role = $auth->getIdentity()->role;        
+        $this->auth_user_role = $auth->getIdentity()->role;
     }
 
 
@@ -84,20 +84,20 @@ class UsersController extends AbstractActionController implements Authentication
     * attaches event handlers
     *
     * Before they try to create a user account, if they're attaching the account
-    * to a Person that already exists, this checks the Person's Hat property for 
-    * validity. We won't expose links that lead to an invalid situation, but a 
+    * to a Person that already exists, this checks the Person's Hat property for
+    * validity. We won't expose links that lead to an invalid situation, but a
     * person could manually edit the query parameters.
     *
-    * If they do load a valid Person in the addAction(), we check that an 
-    * associated User account does not already exist, and whether the current 
+    * If they do load a valid Person in the addAction(), we check that an
+    * associated User account does not already exist, and whether the current
     * user is authorized.
-    *   
+    *
     *
     * @param EventManagerInterface events
     */
     public function setEventManager(EventManagerInterface $events)
     {
-       
+
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
         $events->attach('load-person', function (EventInterface $e)
@@ -114,8 +114,8 @@ class UsersController extends AbstractActionController implements Authentication
                 $message = sprintf(
                     'The person identified by id %d, %s %s, wears the hat %s, '
                     . 'but people in that category do not have user accounts '
-                    . 'in this system.', 
-                    $person->getId(), $person->getFirstName(), 
+                    . 'in this system.',
+                    $person->getId(), $person->getFirstName(),
                     $person->getLastname(), $hat
                 );
                 $controller = $e->getTarget();
@@ -131,11 +131,11 @@ class UsersController extends AbstractActionController implements Authentication
             if ($user) {
                 $container = $e->getTarget()->getEvent()->getApplication()
                         ->getServiceManager();
-               
+
                 $message = sprintf(
                     'We can\'t create a new user account because the person '
-                    . 'whose id is %d (%s %s) already has one. ', 
-                    $person->getId(), $person->getFirstname(), 
+                    . 'whose id is %d (%s %s) already has one. ',
+                    $person->getId(), $person->getFirstname(),
                     $person->getLastname());
                 $acl = $e->getTarget()->getEvent()->getApplication()
                                 ->getServiceManager()->get('acl');
@@ -143,17 +143,17 @@ class UsersController extends AbstractActionController implements Authentication
                     $helper = $container->get('ViewHelperManager')->get('url');
                     $url = $helper('users/edit', ['id' => $user->getId()]);
                     $message .= sprintf(
-                        'You can <a href="%s">edit it</a> if you want to.', 
+                        'You can <a href="%s">edit it</a> if you want to.',
                          $url
                     );
                 }
                 $controller = $e->getTarget();
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
-            }    
-                
+            }
+
         });
-        // are they authorized to edit this user account?       
+        // are they authorized to edit this user account?
         $events->attach('load-user', function (EventInterface $e) use ($role_id) {
             $resource_id = $e->getParam('user')->getResourceId();
             $acl = $e->getTarget()->getEvent()->getApplication()
@@ -190,8 +190,8 @@ class UsersController extends AbstractActionController implements Authentication
                 return $viewModel->setVariables(
                     ['errorMessage' => "person with id $person_id not found"]);
             }
-            $this->events->trigger('load-person', $this, 
-                    compact('person', 'form'));            
+            $this->events->trigger('load-person', $this,
+                    compact('person', 'form'));
             $user->setPerson($person);
             $form->get('user')->get('person')->setObject($person);
         }
@@ -237,7 +237,7 @@ class UsersController extends AbstractActionController implements Authentication
                 ->setTemplate('interpreters-office/admin/users/form');
         $user = $this->entityManager->find('InterpretersOffice\Entity\User', $id);
         if (! $user) {
-            return $viewModel->setVariables(['errorMessage' => 
+            return $viewModel->setVariables(['errorMessage' =>
                 "user with id $id was not found in your database."]);
         }
         $this->events->trigger('load-user',$this,['user'=>$user,]);
@@ -255,9 +255,9 @@ class UsersController extends AbstractActionController implements Authentication
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if (! $form->isValid()) {                
+            if (! $form->isValid()) {
                 return $viewModel;
-            }            
+            }
             $this->entityManager->flush(); // return $viewModel;
             $this->flashMessenger()
                 ->addSuccessMessage(sprintf(
@@ -280,23 +280,23 @@ class UsersController extends AbstractActionController implements Authentication
 
         return new ViewModel(['title' => 'admin | users','role' => $this->auth_user_role]);
     }
-    
+
     /**
      * gets data for role element options
-     * 
-     * this is for dynamically re-populating the Role element options based on 
+     *
+     * this is for dynamically re-populating the Role element options based on
      * the currently selected Hat. route is /admin/users/role-options
-     * 
+     *
      * @return JsonModel
      */
     public function getRoleOptionsForHatAction()
-    {        
+    {
         $hat_id = $this->params()->fromRoute('hat_id',"fuck!");
         $repository = $this->entityManager
                 ->getRepository('InterpretersOffice\Entity\Role');
         $data = $repository->getRoleOptionsForHatId($hat_id,
                 $this->auth_user_role);
-        
+
        return new JsonModel($data);
     }
 }

@@ -1,5 +1,5 @@
-<?php
-/* module/Admin/src/Controller/Factory/UsersControllerFactory.php */
+<?php /** module/Admin/src/Controller/Factory/UsersControllerFactory.php */
+
 namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
@@ -12,6 +12,8 @@ use InterpretersOffice\Admin\Controller\UsersController;
 class UsersControllerFactory implements FactoryInterface
 {
     /**
+     * implements FactoryInterface
+     * 
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

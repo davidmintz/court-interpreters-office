@@ -1,4 +1,4 @@
-<?php
+<?php /**  module/Admin/src/Controller/Factory/ScheduleControllerFactory.php */
 
 namespace InterpretersOffice\Admin\Controller\Factory;
 
@@ -6,9 +6,14 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Controller\ScheduleController;
 
+/**
+ * ScheduleControllerFactory
+ */
 class ScheduleControllerFactory implements FactoryInterface
 {
     /**
+     * implements Zend\ServiceManager\FactoryInterface
+     * 
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

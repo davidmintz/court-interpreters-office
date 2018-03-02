@@ -15,6 +15,7 @@ use InterpretersOffice\Entity;
 
 use Zend\Validator\Callback;
 use InterpretersOffice\Entity\Judge;
+use InterpretersOffice\Entity\Event;
 use InterpretersOffice\Entity\Repository\JudgeRepository;
 /**
  * Fieldset for Event form
@@ -544,6 +545,7 @@ class EventFieldset extends Fieldset implements InputFilterProviderInterface,
     /**
      * adds the Judge element
      *
+     * @param Entity\Event $event
      * @return \InterpretersOffice\Admin\Form\EventFieldset
      */
     public function addJudgeElements(Entity\Event $event = null)

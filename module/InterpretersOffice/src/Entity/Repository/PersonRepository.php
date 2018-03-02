@@ -24,9 +24,15 @@ class PersonRepository extends EntityRepository
     protected $cache_id = 'people';
 
     /**
-     * gets "submitter" option data for events form
-     * @param int $hat_id
-     * @var array
+     * Gets "submitter" option data for events form
+     *
+     * If provided an optional $person_id, we make sure to fetch that person
+     * along with the results because the person might be "inactive," ergo
+     * not selected by default
+     *
+     * @param int $hat_id hat id of people to fetch
+     * @param int $person_id
+     * @return array
      */
     public function getPersonOptions($hat_id, $person_id = null)
     {

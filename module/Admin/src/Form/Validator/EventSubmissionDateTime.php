@@ -81,7 +81,10 @@ class EventSubmissionDateTime extends AbstractValidator
      * have their set break_chain_on_failure set to true, or else  bad things
      * might happen.
      *
-     * @return boolean true if valid
+     * @param  mixed $value
+     * @param array $context
+     * @return bool
+     * @throws Exception\RuntimeException If validation of $value is impossible
      */
     public function isValid($value, $context = null)
     {

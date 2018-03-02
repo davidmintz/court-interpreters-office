@@ -1,4 +1,4 @@
-<?php
+<?php /** module/Admin/src/Controller/Factory/DefendantsControllerFactory.php */
 
 namespace InterpretersOffice\Admin\Controller\Factory;
 
@@ -6,9 +6,14 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Controller\DefendantsController;
 
+/**
+ * DefendantsControllerFactory
+ */
 class DefendantsControllerFactory implements FactoryInterface
 {
     /**
+     * invocation
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

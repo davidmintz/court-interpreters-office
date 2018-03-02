@@ -1,7 +1,6 @@
-<?php
-/** module/Admin/src/Form/Validator/EndTimeValidator.php */
+<?php /** module/Admin/src/Form/Validator/EndTimeValidator.php */
 
-namespace InterpreterOffice\Admin\Form\Validator;
+namespace InterpretersOffice\Admin\Form\Validator;
 
 use Zend\Validator\AbstractValidator;
 
@@ -24,7 +23,7 @@ class EndTimeValidator extends AbstractValidator {
     ];
 
     /**
-     * isValid implementation
+     * isValid() implementation
      *
      * @param  string  $value
      * @param  array $context other variables in the fieldset/form

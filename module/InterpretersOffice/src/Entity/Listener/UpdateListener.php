@@ -174,6 +174,12 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function prePersist(LifecycleEventArgs $args)
     {
+        /*
+        $entity = $args->getObject();
+        if ($entity instanceof Entity\Judge) {
+
+        }
+        */
         return;
 
         $entity = $args->getObject();

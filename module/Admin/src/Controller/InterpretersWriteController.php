@@ -1,6 +1,4 @@
-<?php
-
-/** module/Admin/src/Controller/InterpretersController */
+<?php /** module/Admin/src/Controller/InterpretersController */
 
 namespace InterpretersOffice\Admin\Controller;
 
@@ -45,6 +43,8 @@ class InterpretersWriteController extends AbstractActionController
     protected $form_template = 'interpreters-office/admin/interpreters/form.phtml';
 
     /**
+     * ViewModel
+     * 
      * @var ViewModel
      */
     protected $viewModel;
@@ -63,10 +63,19 @@ class InterpretersWriteController extends AbstractActionController
         $this->viewModel = new ViewModel(['vault_enabled' =>$vault_enabled]);
     }
 
+    /**
+     * on dispatch event handler
+     *
+     * to be continued...
+     *
+     * @param  MvcEvent $e
+     * @return mixed
+     */
     public function onDispatch(MvcEvent $e)
     {
         if ($this->vault_enabled) {
-            // ping the vault to make sure it's up
+            // ping the vault to make sure it's reachable
+            // and if not, set an error message in the view
         }
         return parent::onDispatch($e);
     }

@@ -58,9 +58,11 @@ class Judge extends Person
     /**
      * constructor
      *
+     *
      */
-    public function __construct()
+    public function __construct(Hat $hat)
     {
+        $this->setHat($hat);
         $this->events = new ArrayCollection();
     }
 

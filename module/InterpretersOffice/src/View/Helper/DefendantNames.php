@@ -1,25 +1,29 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/** module/InterpretersOffice/src/View/Helper/DefendantNames.php */
 
 namespace InterpretersOffice\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 
 /**
- * Description of DefendantNames
+ * View help for displaying defendant names
  *
  * @author david
  */
 class DefendantNames extends AbstractHelper
 {
-     
+    /**
+     * defendant names
+     *
+     * @var Array
+     */
     protected $defendants;
-    
+
+    /**
+     * gets defendant names
+     *
+     * @return array
+     */
     protected function getDefendants()
     {
         if ($this->defendants) {
@@ -30,22 +34,41 @@ class DefendantNames extends AbstractHelper
             return false;
         }
         $this->defendants = $data['defendants'];
-        
+
         return $this->defendants;
-            
+
     }
-            
+
+    /**
+     * Invokes this helper to display defendant names
+     *
+     * We presume a view variable $defendants, an array in the form
+     * <code>
+     * [ event_id =>
+     *     [ 0=>
+     *         [
+     *              surnames=>"Some Surname",
+     *              given_names=> "Given Names"
+     *         ],
+     *         ...
+     *      ]
+     *  ]
+     * </code>
+     * @param  int $id of event
+     * @return string
+     */
     public function __invoke($id)
-     {
+    {
          $return = '' ;
+
          if (! $this->getDefendants() or ! isset($this->defendants[$id]))
          {
              return $return;
-         }        
-         foreach ($this->defendants[$id] as $n) {
-             $return .= $n['surnames'].'<br>';
          }
-         
+         foreach ($this->defendants[$id] as $n) {
+             $return .= $this->getView()->escapeHtml($n['surnames']).'<br>';
+         }
+
          return $return;
      }
 }
