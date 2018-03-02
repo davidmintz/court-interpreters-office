@@ -138,7 +138,7 @@ class JudgeFieldset extends PersonFieldset
             $element->setValueOptions($valueOptions);
         }
         $this->get('courthouse')->setValue(! $parent_location_id ? '' : $parent_location_id);
-        
+
         if ($options['action'] == 'update' && $location_id != $parent_location_id) {
             $this->get('courtroom')->setValue($location_id ?: '');
         }
@@ -195,11 +195,11 @@ class JudgeFieldset extends PersonFieldset
         return $options;
     }
 
-    /**
+    /*
      * adds the "Hat" element to our form.
      *
      * @return JudgeFieldset
-     */
+
     public function addHatElement()
     {
 
@@ -214,7 +214,7 @@ class JudgeFieldset extends PersonFieldset
             ]
         );
         return $this;
-    }
+    } */
 
     /**
      * gets input filter specification.
@@ -253,6 +253,11 @@ class JudgeFieldset extends PersonFieldset
         if (key_exists('mobile_phone', $spec)) {
             unset($spec['mobile_phone']);
         }
+        // override hat spec. we take care of that elsewhere
+        $spec['hat'] = [
+            'required' => false,
+            'allow_empty' => true,
+        ];
 
         return $spec;
     }
