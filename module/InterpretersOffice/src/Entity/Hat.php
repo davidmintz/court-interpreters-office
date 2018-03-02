@@ -56,6 +56,16 @@ class Hat
     protected $role;
 
     /**
+     * Constructor
+     *
+     * @param string $name name of Hat
+     */
+    public function __construct($name = null)
+    {
+        $this->name = $name;
+    }
+
+    /**
      * returns string representation of the entity.
      *
      * @return string
