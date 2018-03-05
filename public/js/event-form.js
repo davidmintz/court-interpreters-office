@@ -441,7 +441,6 @@ $(document).ready(function()
                             $.post('/admin/defendants/edit/'+$(this).data('id'),data,
                             function(response){
                                 if (response.id) {
-                                    console.log("shit is "+existing.id)
                                     var selector = 'input[name="event[defendant_names]['+
                                         existing.id +']"]';
                                     var defendant_name = $('#surnames').val().trim()
@@ -449,7 +448,6 @@ $(document).ready(function()
                                     console.log("selector is: "+selector);
                                     if ($(selector).length) {
                                         // update the existing thingy
-                                        console.warn("need to remove or replace shit");
                                         $(selector).val(defendant_name)
                                             .next().text(defendant_name);
                                     } else { // append new thingy

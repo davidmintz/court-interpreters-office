@@ -750,6 +750,11 @@ class Event
     {
         return $this->getDefendantNames();
     }
+
+    /**
+     * proxies to {@see getDefendantNames}
+     *
+     */
     public function getDefendant_names()
     {
         return $this->getDefendantNames();
