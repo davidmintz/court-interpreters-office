@@ -14,6 +14,7 @@ use Zend\EventManager\EventInterface;
 
 use Zend\InputFilter\InputFilterProviderInterface;
 
+
 /**
  * form for Event entity
  *
@@ -186,7 +187,8 @@ class EventForm extends ZendForm implements
         if (! empty($event['end_time'])) {
             $end_time_input = $this->getInputFilter()->get('event')
                     ->get('end_time');
-            $end_time_input->getValidatorChain()->attach(new EndTimeValidator());
+            $end_time_input->getValidatorChain()
+                ->attach(new Validator\EndTimeValidator());
         }
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null
@@ -212,7 +214,8 @@ class EventForm extends ZendForm implements
                         "identity or description of submitter is required"],
                 'break_chain_on_failure' => true,
             ]);
-            $submitter_input = $this->getInputFilter()->get('event')->get('submitter');
+            $submitter_input = $this->getInputFilter()->get('event')
+                ->get('submitter');
             $submitter_input->setAllowEmpty(false);
             $submitter_input->getValidatorChain()->attach($validator);
         }
@@ -220,11 +223,11 @@ class EventForm extends ZendForm implements
         // if NO submitter but YES anonymous submitter, submitter = NULL
         if (empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
             $event['submitter'] = null;
-            // printf("did we just fuck ourself at %d?<br>",__LINE__);
+
         // if YES submitter and YES anonymous submitter, anon submitter = NULL
         } elseif (! empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
             $event['anonymousSubmitter'] = null;
-            // printf("did we just fuck ourself at %d?<br>",__LINE__);
+
         }
 
         if (isset($event['defendantNames'])) {
