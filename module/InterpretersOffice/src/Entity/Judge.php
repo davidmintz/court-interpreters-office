@@ -58,7 +58,7 @@ class Judge extends Person
     /**
      * constructor
      *
-     *
+     * @param Hat $hat
      */
     public function __construct(Hat $hat)
     {
