@@ -14,7 +14,7 @@ use Zend\Log;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
- * entity listener for clearing caches etc
+ * entity listener for clearing cache
  */
 class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
 {
@@ -65,17 +65,17 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postLoad','postUpdate','postPersist','postRemove','preUpdate','prePersist','preRemove'];
+        return ['postUpdate','postPersist','postRemove',];
     }
 
-    /**
+    /*
      * postLoad handler
      *
      * keeps a reference to the Event entity in order to update
      * its meta later on in listeners that observe related entities
      *
      * @param LifecycleEventArgs $args
-     */
+
     public function postLoad(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
@@ -83,7 +83,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             $this->eventEntity = $entity;
         }
     }
-
+    */
 
     /**
      * sets the AuthenticationService
@@ -106,42 +106,51 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
 
         $entity = $args->getObject();
+        $class = get_class($entity);
         $this->logger->debug(sprintf(
             '%s happening on entity %s',
-            __METHOD__,
-            get_class($entity)
-        ));
-        $repository = $args->getObjectManager()->getRepository(get_class($entity));
+            __METHOD__, $class));
+        $repository = $args->getObjectManager()->getRepository($class);
+        // if $repository can delete its cache namespace, do it
         if ($repository instanceof CacheDeletionInterface) {
             $repository->deleteCache();
             $this->logger->debug("called delete cache on ".get_class($repository));
         } else {
-            $this->logger->debug("! not an implementation of CacheDeletionInterface:    ".get_class($repository));
+            $this->logger->debug("! not an implementation of CacheDeletionInterface: ".get_class($repository));
         }
-        $cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
-        if ($entity instanceof Entity\User) {
-            // delete the cache entry
-            //$cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
-            $cache->setNamespace('users');
-            $id = $entity->getId();
-            if ($cache->contains($id)) {
-                $cache->delete($id);
-                $this->logger->debug(sprintf("%s in UpdateListener deleted user id $id from cache", __FUNCTION__));
-            } else {
-                $this->logger->debug(sprintf('%s in UpdateListener: looks like users cache has no %d', __FUNCTION__, $id));
-            }
-        }
-        if ($entity instanceof Entity\InterpreterLanguage) {
-            $cache->setNamespace('languages');
-            $cache->deleteAll();
-            $this->logger->debug("InterpreterLanguage entity updated; language cache was purged.");
-        }
-        return;
-        if ($entity instanceof Entity\Event) {
-            // purge the whole cache
-            $cache->setNamespace(null);
-            $cache->deleteAll();
-            $this->logger->debug("purged (whole?) cache following Event update\insert? ".$cache->getNamespace());
+        /** @var $cache Doctrine\Common\Cache\CacheProvider */
+        $cache = $args->getObjectManager()->getConfiguration()
+            ->getResultCacheImpl();
+        switch ($class) {
+            case Entity\Event::class:
+                // flush everything, because there are so many related entities
+                $success = $cache->flushAll();
+                $this->logger->debug(
+                    sprintf("ran flushAll() on %s in %s with result: %s",
+                        $class, __METHOD__,$success ? "success":"failed"
+                    )
+                );
+                break;
+            case Entity\User::class:
+                // delete the cache entry
+                $cache->setNamespace('users');
+                $id = $entity->getId();
+                if ($cache->contains($id)) {
+                    $cache->delete($id);
+                    $debug = sprintf("%s in UpdateListener deleted user id $id from cache", __FUNCTION__);
+                } else {
+                    $debug = sprintf('%s in UpdateListener: looks like users-cache has no item %d', __FUNCTION__, $id);
+                }
+                $this->logger->debug($debug);
+                break;
+            case Entity\InterpreterLanguage::class:
+                $cache->setNamespace('languages');
+                $cache->deleteAll();
+                $this->logger->debug("InterpreterLanguage entity updated; language cache was purged.");
+                break;
+            default:
+                # code...
+                break;
         }
     }
 
@@ -173,48 +182,12 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         return $this->postUpdate($args);
     }
 
-    /**
-     * prePersist
-     *
-     *
-     * @todo get rid of this or put to some real use
-     * @param LifecycleEventArgs $args
-     */
-    public function prePersist(LifecycleEventArgs $args)
-    {
-        /*
-        $entity = $args->getObject();
-        if ($entity instanceof Entity\Judge) {
 
-        }
-        */
-        return;
-
-        $entity = $args->getObject();
-        if ($entity instanceof Entity\InterpreterEvent) {
-            $this->logger->debug(sprintf("running %s on InterpreterEvent", __FUNCTION__));
-            $entity->setCreated($this->getTimeStamp());
-            if (is_null($entity->getCreatedBy())) {
-                // to do: factor this out into a getter method
-                // that returns User entity
-                $em = $args->getObjectManager();
-                $user = $em->find(Entity\User::class, $this->auth->getStorage()->read()->id);
-                $entity->setCreatedBy($user);
-                $this->logger->debug(sprintf("set createdBy for InterpreterEvent in %s", __FUNCTION__));
-            }
-            // $em = $args->getObjectManager();
-            // $user = $em->find(Entity\User::class,$this->auth->getStorage()->read()->id);
-            // $entity->setCreatedBy($user);
-            // trying to inject auth object so as to set createdBy resulted
-            // in functions-nested-over-256-levels error at factory instantiation
-        }
-    }
-
-    /**
+    /*
      * preUpdate listener
      *
      * @param LifecycleEventArgs $args
-     */
+
     public function preUpdate(LifecycleEventArgs $args)
     {
          $entity = $args->getObject();
@@ -223,14 +196,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             // to do: inject authenticated User entity, set user, set creation time
         }
     }
+    */
 
-    /**
-     * preRemove
-     *
-     * @param LifecycleEventArgs $args
-     * @todo use it or lose it
-     */
-    public function preRemove(LifecycleEventArgs $args)
-    {
-    }
 }
