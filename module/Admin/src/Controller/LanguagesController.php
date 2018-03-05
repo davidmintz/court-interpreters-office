@@ -20,6 +20,7 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 class LanguagesController extends AbstractActionController
 {
     use AnnotatedFormCreationTrait;
+    use DeletionTrait;
 
     /**
      * FormFactoryInterface.
@@ -134,37 +135,11 @@ class LanguagesController extends AbstractActionController
         if ($request->isPost()) {
             $id = $this->params()->fromRoute('id');
             $name = $this->params()->fromPost('name');
+            $what = 'language';
             $entity = $this->entityManager->find(Language::class, $id);
-            if ($entity) {
-                //$thing = $this->getEvent()->getApplication()->getServiceManager()->get('ViewHelperManager');
-                //$helper = $thing->get("url"); echo $helper('languages');
-                try {
-                    $this->entityManager->remove($entity);
-                    $this->entityManager->flush();
-                    $this->flashMessenger()
-                          ->addSuccessMessage("The language <strong>$entity</strong> has been deleted.");
-                    $result = 'success';
-                    $error = [];
-                } catch (ForeignKeyConstraintViolationException $e) {
-                    $result = 'error';
-                    $error = [
-                        'message' => $e->getMessage(),
-                        'code' => $e->getCode(),
-                    ];
-                    $this->flashMessenger()
-                          ->addWarningMessage(
-                              "The language <strong>$name</strong> could not be deleted because it has related database records."
-                          );
-                }
-            } else {
-                $result = 'error';
-                $error = ['message' => "language id $id not found"];
-                $this->flashMessenger()
-                      ->addWarningMessage("The language <strong>$name</strong> was not found.");
-            }
+            
+            return $this->delete(compact('entity','id','name','what'));
         }
-
-        return new JsonModel(compact('result', 'error'));
     }
 
     /**

@@ -118,9 +118,10 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         } else {
             $this->logger->debug("! not an implementation of CacheDeletionInterface:    ".get_class($repository));
         }
+        $cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
         if ($entity instanceof Entity\User) {
             // delete the cache entry
-            $cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
+            //$cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
             $cache->setNamespace('users');
             $id = $entity->getId();
             if ($cache->contains($id)) {
@@ -131,10 +132,16 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             }
         }
         if ($entity instanceof Entity\InterpreterLanguage) {
-            $cache = $args->getObjectManager()->getConfiguration()->getResultCacheImpl();
             $cache->setNamespace('languages');
             $cache->deleteAll();
             $this->logger->debug("InterpreterLanguage entity updated; language cache was purged.");
+        }
+        return;
+        if ($entity instanceof Entity\Event) {
+            // purge the whole cache
+            $cache->setNamespace(null);
+            $cache->deleteAll();
+            $this->logger->debug("purged (whole?) cache following Event update\insert? ".$cache->getNamespace());
         }
     }
 

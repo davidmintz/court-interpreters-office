@@ -10,7 +10,6 @@ namespace InterpretersOffice\Service;
 trait ProperNameParsingTrait
 {
 
-
     /**
      * parses first and last names out of $input.
      *

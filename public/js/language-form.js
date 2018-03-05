@@ -9,7 +9,21 @@ $(function(){
         var url = $('form#language').data('redirect_url');
         var id = $('input[name="id"]').val();
         $.post('/admin/languages/delete/'+id,{name:name},function(response){
-            document.location = url;
-        });
+            if (response.redirect) {
+                // back to index page
+                //document.location = url;
+            } else {
+                // stay here and display error
+                var error = response.error.message;
+                if (! $('#failed_deletion_error').length) {
+                    $('<div/>')
+                        .addClass("alert alert-warning")
+                        .attr({id:"failed_deletion_error"}).html(error)
+                        .insertBefore($('form#language'));
+                } else {
+                    $('#failed_deletion_error').html(error);
+                }
+            }
+        },'json');
     });
 });
