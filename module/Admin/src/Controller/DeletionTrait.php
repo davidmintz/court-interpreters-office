@@ -15,6 +15,12 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
  */
 trait DeletionTrait
 {
+    /**
+     * deletes an entity
+     *
+     * @param  Array  $options
+     * @return JsonModel
+     */
     public function delete(Array $options)
     {
         $entity = $options['entity'];
@@ -35,7 +41,7 @@ trait DeletionTrait
                 $result = 'error';
                 $redirect = false;
                 $error = [ 'message' =>
-                    "This $what cannot be deleted because it has related database records",
+                    "This $what cannot be deleted because it there are other database records that refer to it.",
                     'code' => $e->getCode(),
                     'exception' => 'foreign_key_constraint',
                 ];
