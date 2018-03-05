@@ -8,10 +8,6 @@ use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 
 use Zend\Log\LoggerAwareInterface;
-// use Zend\Log\LoggerInterface;
-
-// maybe not
-// use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 
 use InterpretersOffice\Entity;
 use Zend\Log;
@@ -19,7 +15,9 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\ORM\EntityManager;
 
 /**
- * Event entity listener
+ * Event entity listener.
+ * Responsible for making sure certain meta data elements are set correctly.
+ * For cache-related functions see {@see UpdateListener}
  */
 class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInterface
 {
@@ -94,11 +92,9 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @param Entity\Event $eventEntity
      * @param PreUpdateEventArgs $args
      */
-    public function preUpdate(
-        Entity\Event $eventEntity,
-        PreUpdateEventArgs $args
-    ) {
-
+    public function preUpdate(Entity\Event $eventEntity,
+    PreUpdateEventArgs $args)
+    {
         $modified = false;
         $debug = '';
         if ($args->getEntityChangeSet()) {
@@ -124,7 +120,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
              // form field, check it after the fact, and correct it if (in the
              // improbable case) it's necessary (until we come up with a better
              // plan).for Interpreter
-
              /** @todo factor out into its own function?  */
             $current_user_id = $this->auth->getStorage()->read()->id;
             foreach ($interpreterEvents as $ie) {
@@ -137,10 +132,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                                 'submitted creator id inconsistent with current user'
                                 . ' in event id %d, interpreter id %d (%s)',
                                 $eventEntity->getId(),
-                                $added,
-                                $interpreter->getLastname()
-                            ),
-                            compact('creator_id', 'current_user_id')
+                                $added, $interpreter->getLastname()
+                            ), compact('creator_id', 'current_user_id')
                         );
                     }
                     $ie->setCreatedBy(
@@ -167,8 +160,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                     );
             $debug .= sprintf(
                 " real changes detected, updating event meta for event id %s",
-                $eventEntity->getId()
-            );
+                $eventEntity->getId());
         } else {
             $debug .= "no actual update detected with event id "
                     .$eventEntity->getId();
@@ -176,18 +168,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->logger->info($debug);
     }
 
-    /**
-     * postUpdate callback
-     *
-     * @param  EntityEvent        $eventEntity
-     * @param  LifecycleEventArgs $args
-     * @return void
-     */
-    function postUpdate(Entity\Event $eventEntity, LifecycleEventArgs $args)
-    {
-        $cachehe = $args->getEntityManager()->getCache();
-        $this->logger->debug(get_class($cache) . " is what we got here");
-    }
 
     /**
      * prePersist callback
