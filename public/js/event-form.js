@@ -441,11 +441,25 @@ $(document).ready(function()
                             $.post('/admin/defendants/edit/'+$(this).data('id'),data,
                             function(response){
                                 if (response.id) {
-                                    append_deft_name({
-                                        id : response.id,
-                                        surnames : $('#surnames').val().trim(),
-                                        given_names : $("#given_names").val().trim()
-                                    });
+                                    console.log("shit is "+existing.id)
+                                    var selector = 'input[name="event[defendant_names]['+
+                                        existing.id +']"]';
+                                    var defendant_name = $('#surnames').val().trim()
+                                        +", "+ $("#given_names").val().trim();
+                                    console.log("selector is: "+selector);
+                                    if ($(selector).length) {
+                                        // update the existing thingy
+                                        console.warn("need to remove or replace shit");
+                                        $(selector).val(defendant_name)
+                                            .next().text(defendant_name);
+                                    } else { // append new thingy
+                                        append_deft_name({
+                                            id : response.id,
+                                            surnames : $('#surnames').val().trim(),
+                                            given_names : $("#given_names").val().trim()
+                                        });
+                                    }
+
                                 } else {
                                     /** error. @todo do something! */
                                 }
