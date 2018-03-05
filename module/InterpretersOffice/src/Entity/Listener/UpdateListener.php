@@ -164,6 +164,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postRemove(LifecycleEventArgs $args)
     {
+        $entity = $args->getObject();
         $this->logger->debug(sprintf(
             '%s happening on entity %s, bitch!',
             __METHOD__,

@@ -51,7 +51,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      */
     public function __construct()
     {
-
         $this->now = new \DateTime();
     }
 
@@ -92,8 +91,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     /**
      * preUpdate callback
      *
-     * @todo if modified, set metadata accordingly
-     *
      * @param Entity\Event $eventEntity
      * @param PreUpdateEventArgs $args
      */
@@ -122,12 +119,14 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
              $added = array_diff($interpreters_after, $interpreters_before);
              // client-side-supplied created_by should agree with
              // currently authenticated user, but new entities can't get
-             // inserted without a created_by id (we can't do cascade=persist
-             // for Interpreter) so we have to check after the fact and correct
-             // if necessary (until we come up with a better plan).
+             // inserted without a created_by id (we can't cascade=persist
+             // for Interpreter with null id), so we have to set it in a hidden
+             // form field, check it after the fact, and correct it if (in the
+             // improbable case) it's necessary (until we come up with a better
+             // plan).for Interpreter
 
              /** @todo factor out into its own function?  */
-             $current_user_id = $this->auth->getStorage()->read()->id;
+            $current_user_id = $this->auth->getStorage()->read()->id;
             foreach ($interpreterEvents as $ie) {
                 $creator_id = $ie->getCreatedBy()->getId();
                 if (in_array($ie->getInterpreter()->getId(), $added)) {
@@ -174,10 +173,21 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             $debug .= "no actual update detected with event id "
                     .$eventEntity->getId();
         }
-
         $this->logger->info($debug);
     }
 
+    /**
+     * postUpdate callback
+     *
+     * @param  EntityEvent        $eventEntity
+     * @param  LifecycleEventArgs $args
+     * @return void
+     */
+    function postUpdate(Entity\Event $eventEntity, LifecycleEventArgs $args)
+    {
+        $cachehe = $args->getEntityManager()->getCache();
+        $this->logger->debug(get_class($cache) . " is what we got here");
+    }
 
     /**
      * prePersist callback
