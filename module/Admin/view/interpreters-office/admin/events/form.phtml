@@ -183,12 +183,12 @@ echo $this->form()->openTag($form); ?>
                 <div class="input-group">
                     <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                      <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
-                        <?php echo $this->formSelect($fieldset->get('defendantNames')); ?>
+                        <?php echo $this->formSelect($fieldset->get('defendant_names')); ?>
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php
-                if ($this->defendantNames) {
-                    foreach ($this->defendantNames as $id => $name) {
+                if ($this->defendant_names) {
+                    foreach ($this->defendant_names as $id => $name) {
                         echo $this->defendantName($id, $name);
                     }
                 } else {

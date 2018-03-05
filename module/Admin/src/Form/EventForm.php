@@ -230,8 +230,8 @@ class EventForm extends ZendForm implements
 
         }
 
-        if (isset($event['defendantNames'])) {
-            $event['defendantNames'] = array_keys($event['defendantNames']);
+        if (isset($event['defendant_names'])) {
+            $event['defendant_names'] = array_keys($event['defendant_names']);
         }
         $input->set('event', $event);
     }

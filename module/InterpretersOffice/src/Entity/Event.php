@@ -195,7 +195,7 @@ class Event
      *
      * @var Collection
      */
-    protected $defendantNames;
+    protected $defendant_names;
 
     /**
      * Interpreters assigned to this event.
@@ -268,7 +268,7 @@ class Event
      */
     public function __construct()
     {
-        $this->defendantNames = new ArrayCollection();
+        $this->defendant_names = new ArrayCollection();
         $this->interpreterEvents = new ArrayCollection();
     }
 
@@ -726,7 +726,7 @@ class Event
      */
     public function addDefendant(DefendantName $defendant)
     {
-        $this->defendantNames->add($defendant);
+        $this->defendant_names->add($defendant);
 
         return $this;
     }
@@ -750,7 +750,10 @@ class Event
     {
         return $this->getDefendantNames();
     }
-
+    public function getDefendant_names()
+    {
+        return $this->getDefendantNames();
+    }
     /**
      * Get defendants.
      *
@@ -758,7 +761,7 @@ class Event
      */
     public function getDefendantNames()
     {
-        return $this->defendantNames;
+        return $this->defendant_names;
     }
 
     /**
@@ -770,7 +773,7 @@ class Event
     {
         //printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
         foreach ($defendantNames as $defendantName) {
-            $this->defendantNames->add($defendantName);
+            $this->defendant_names->add($defendantName);
         }
     }
 
@@ -782,7 +785,7 @@ class Event
     public function removeDefendantNames(Collection $defendantNames)
     {
         foreach ($defendantNames as $defendantName) {
-            $this->defendantNames->removeElement($defendantName);
+            $this->defendant_names->removeElement($defendantName);
         }
     }
 
@@ -909,5 +912,29 @@ class Event
                     .' one must be null and the other not-null. ' . $debug
             );
         }
+    }
+
+    // aliases, to make the DoctrineHydrator happy. but I don't like
+    // them because the name is ugly
+
+    /**
+     * proxies to {@see addDefendantNames}
+     *
+     * @param Collection $defendantNames
+     *
+     */
+    public function addDefendant_names(Collection $defendantNames)
+    {
+        return $this->addDefendantNames($defendantNames);
+    }
+
+    /**
+     *  proxies to {@see removeDefendantNames}
+     *
+     * @param  Collection $defendantNames [description]
+     */
+    public function removeDefendant_names(Collection $defendantNames)
+    {
+        return $this->removeDefendantNames($defendantNames);
     }
 }

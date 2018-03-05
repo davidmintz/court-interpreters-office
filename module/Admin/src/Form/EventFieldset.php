@@ -224,7 +224,7 @@ class EventFieldset extends Fieldset implements
         ]);
         /* defendant names, not actually displayed */
         $this->add([
-            'name' => 'defendantNames',
+            'name' => 'defendant_names',
             'type' => 'Zend\Form\Element\Select',
             'options' => [
                 //'empty_option' => '',
@@ -611,7 +611,7 @@ class EventFieldset extends Fieldset implements
             'interpreterEvents' => [
                 'required' => false, 'allow_empty' => true,
             ],
-            'defendantNames'  => [
+            'defendant_names'  => [
                 'required' => false, 'allow_empty' => true,
             ],
             'id' => [

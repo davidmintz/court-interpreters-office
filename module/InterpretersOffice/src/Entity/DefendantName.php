@@ -51,7 +51,7 @@ class DefendantName
      *
      * no accessors etc seem to be necessary as of yet.
      *
-     * @ORM\ManyToMany(targetEntity="Event",mappedBy="defendantNames")
+     * @ORM\ManyToMany(targetEntity="Event",mappedBy="defendant_names")
      * @var Collection
      */
     protected $events;
