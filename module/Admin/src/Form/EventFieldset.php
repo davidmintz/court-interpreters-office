@@ -143,7 +143,6 @@ class EventFieldset extends Fieldset implements
                 'label' => 'defendants',
              ],
         ],
-
     ];
 
 
@@ -189,7 +188,6 @@ class EventFieldset extends Fieldset implements
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager,false))
                 ->setUseAsBaseFieldset(true);
-
         foreach ($this->elements as $element) {
             $this->add($element);
         }
@@ -213,7 +211,8 @@ class EventFieldset extends Fieldset implements
             ->addEventTypeElement()
             ->addLocationElements($options['object']);
 
-        $interpreterEventsFieldset = new InterpreterEventsFieldset($objectManager);
+        $interpreterEventsFieldset =
+            new InterpreterEventsFieldset($objectManager);
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterEvents',
@@ -240,11 +239,13 @@ class EventFieldset extends Fieldset implements
         ]);
 
         // figure out value options for interpreter select
-        $empty_option = ['value' => '','label' => ' ','attributes' => ['label' => ' ']];
+        $empty_option = ['value' => '','label' => ' ',
+            'attributes' => ['label' => ' ']];
         if ($options['object']) {
             $entity = $options['object'];
             $language_id = $entity->getLanguage()->getId();
-            $repository = $objectManager->getRepository(Entity\Interpreter::class);
+            $repository = $objectManager
+                ->getRepository(Entity\Interpreter::class);
             $value_options = $empty_option +
                 $repository->getInterpreterOptionsForLanguage($language_id);
         } else {
@@ -262,7 +263,6 @@ class EventFieldset extends Fieldset implements
                 'class' => 'form-control custom-select',
                 'id' => 'interpreter-select',
             ],
-
         ]);
 
         $this->addSubmitterElements($options['object']);
@@ -323,7 +323,8 @@ class EventFieldset extends Fieldset implements
         $cancellation_options = $repository->getCancellationOptions();
         $default_label = 'N/A';
         $default_opt = ['label' => $default_label,'value' => '',
-            'attributes' => ['label' => $default_label,'class' => 'cancellation-default'],
+            'attributes' => ['label' => $default_label,
+                'class' => 'cancellation-default'],
         ];
         array_unshift($cancellation_options, $default_opt);
         $this->add([
@@ -368,7 +369,8 @@ class EventFieldset extends Fieldset implements
                         },
                 ],
             ],
-            'attributes' => ['class' => 'form-control custom-select', 'id' => 'hat'],
+            'attributes' => ['class' => 'form-control custom-select',
+                'id' => 'hat'],
         ]);
         $empty_option = [['value' => '','label' => '(person\'s name)',
             'attributes' => ['label' => 'person\'s name']]];
@@ -379,9 +381,9 @@ class EventFieldset extends Fieldset implements
                 $event->getAnonymousSubmitter();
             if (! $hat) {
                 throw new \Exception(sprintf(
-                    'The database record for event id %d is in an invalid state: '
-                    . 'both the submitter and generic submitter fields are null. '
-                    . 'Please contact your database administrator about this.',
+                'The database record for event id %d is in an invalid state: '
+                . 'both the submitter and generic submitter fields are null. '
+                . 'Please contact your database administrator about this.',
                     $event->getId()
                 ));
             }
@@ -400,7 +402,8 @@ class EventFieldset extends Fieldset implements
                 'label' => '',
                 'value_options' => $value_options,
             ],
-            'attributes' => ['class' => 'form-control custom-select', 'id' => 'submitter'],
+            'attributes' => ['class' => 'form-control custom-select',
+                'id' => 'submitter'],
             ]
         );
 
@@ -475,7 +478,8 @@ class EventFieldset extends Fieldset implements
                 'label' => 'event type',
                 'value_options' => $value_options,
             ],
-            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
+            'attributes' => ['class' => 'custom-select text-muted',
+                'id' => 'event-type'],
             ]
         );
 
@@ -520,7 +524,9 @@ class EventFieldset extends Fieldset implements
                     'value_options' => [],
                     'empty_option' => '(specific location)',
                 ],
-                'attributes' => ['class' => 'form-control custom-select text-muted', 'id' => 'location'],
+                'attributes' =>
+                    ['class' => 'form-control custom-select text-muted',
+                        'id' => 'location'],
         ];
         if (! $event or ! $event->getLocation()) {
              $this->add($element_spec);
@@ -537,7 +543,8 @@ class EventFieldset extends Fieldset implements
                         'property' => 'name',
                         'find_method' => [
                             'name' => 'getChildren',
-                            'params' => ['parent_id' => $parentLocation->getId()]
+                            'params' => ['parent_id' =>
+                                $parentLocation->getId()]
                         ],
                         'display_empty_item' => true,
                         'empty_item_label' => '(specific location)',
@@ -561,7 +568,9 @@ class EventFieldset extends Fieldset implements
      */
     public function addJudgeElements(Entity\Event $event = null)
     {
-        /** @var $repository \InterpretersOffice\Entity\Repository\JudgeRepository */
+        /** @var $repository
+        *    \InterpretersOffice\Entity\Repository\JudgeRepository
+        */
         $repository = $this->getObjectManager()->getRepository(Judge::class);
         $opts = ['include_pseudo_judges' => true];
         if ($event && $judge = $event->getJudge()) {
@@ -570,7 +579,8 @@ class EventFieldset extends Fieldset implements
         $value_options = $repository->getJudgeOptions($opts);
         array_unshift(
             $value_options,
-            [ 'value' => '','label' => '(required)','attributes' => ['label' => ' '] ]
+            [ 'value' => '','label' => '(required)',
+                'attributes' => ['label' => ' '] ]
         );
         $this->add([
             'type' => 'Zend\Form\Element\Select',
@@ -579,7 +589,8 @@ class EventFieldset extends Fieldset implements
                 'label' => 'judge',
                 'value_options' => $value_options,
             ],
-            'attributes' => ['class' => 'form-control custom-select text-muted', 'id' => 'judge'],
+            'attributes' => ['class' => 'form-control custom-select text-muted',
+                'id' => 'judge'],
 
         ]);
         $this->add(
