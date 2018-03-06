@@ -120,37 +120,17 @@ class EventsController extends AbstractActionController
              'object' => null,]
         );
         $form->attach($this->getEventManager());
-
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
         $event = new Entity\Event();
         $form->bind($event);
-        // test
-        if (false) {
-            $shit = $form->get("event");
-            $shit->get("date")->setValue('10/27/2017');
-            $shit->get("time")->setValue('10:00 am');
-            $shit->get("judge")->setValue(948);
-            $shit->get("language")->setValue(62);
-            $shit->get("parent_location")->setValue(6);
-            $shit->get("location")->setValue(11);
-            $shit->get("eventType")->setValue(1);
-            $shit->get("docket")->setValue("2016-CR-0345");
-            $shit->get("anonymousSubmitter")->setValue("6");
-            $shit->get("submission_date")->setValue("10/24/2017");
-            $shit->get("submission_time")->setValue("10:17 am");
-        // end test
-        }
         $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
 
         if ($request->isPost()) {
             $data = $request->getPost();
             $input = $data->get('event');
             $this->getEventManager()->trigger(
-                'pre.validate',
-                $this,
-                ['input' => $data,]
-            );
+                'pre.validate', $this, ['input' => $data,]);
             $form->setData($data);
             if (! $form->isValid()) {
                 if ($input) {
@@ -165,8 +145,14 @@ class EventsController extends AbstractActionController
             } else {
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
+                $url = $this->getEvent()->getApplication()->getServiceManager()
+                ->get('ViewHelperManager')->get('url')('events');
+                $date = $event->getDate();
                 $this->flashMessenger()->addSuccessMessage(
-                    "This event has been added to the schedule."
+                    sprintf('This event has been added to the schedule for <a href="%s">%s</a>',
+                        $url . $date->format('/Y/m/d'),
+                        $date->format('l d-M-Y')
+                    )
                 );
                 return $this->redirect()->toRoute('events');
             }
@@ -199,7 +185,7 @@ class EventsController extends AbstractActionController
         $request = $this->getRequest();
         $form->bind($entity);
         $events->trigger('pre.populate');
-
+        $modified = $entity->getModified();
         if ($request->isPost()) {
             $data = $request->getPost();
             $input = $data->get('event'); //var_dump($input);
@@ -208,8 +194,17 @@ class EventsController extends AbstractActionController
             if ($form->isValid()) {
                 $events->trigger('post.validate', $this);
                 $this->entityManager->flush();
+                $url = $this->getEvent()->getApplication()->getServiceManager()
+                    ->get('ViewHelperManager')->get('url')('events');
+                $date = $entity->getDate();
+                $verbiage = $modified == $entity->getModified() ?
+                    'saved (unmodified)' : 'updated';
                 $this->flashMessenger()->addSuccessMessage(
-                    "This event has been successfully saved in the database."
+                    sprintf("This event has been successfully $verbiage on the "
+                     .'schedule for <a href="%s">%s</a>',
+                        $url . $date->format('/Y/m/d'),
+                        $date->format('l d-M-Y')
+                    )
                 );
                 return $this->redirect()->toRoute('events');
             }
