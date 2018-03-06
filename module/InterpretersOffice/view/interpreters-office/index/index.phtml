@@ -4,7 +4,7 @@
 <div class="jumbotron text-center">
     <h1>InterpretersOffice</h1>
     <p>A court interpreter management system.</p>
-    <?php if (! $this->identity()) : ?>            
+    <?php if (! $this->identity()) : ?>
     <a href="/login"><button class="btn btn-success btn-lg">log in</button></a>
     <?php endif; ?>
 </div>
@@ -21,17 +21,14 @@ current user role: <?php echo $this->identity() ? $this->identity()->role : 'ano
     <li class="list-group-item">interpreter edit form: display error when vault returns error</li>
     <li class="list-group-item">Event fieldset: validation for cancellation?</li>
     <li class="list-group-item">events/form information thingies and popovers for help?</li>
-    <li class="list-group-item">tests for Event metadata</li>    
+    <li class="list-group-item">tests for Event metadata</li>
     <li class="list-group-item">solve shared events and make 'access-denied' event <em>not</em> fire for mere navigation</li>
     <li class="list-group-item">tests for InterpreterEvent metadata</li>
     <li class="list-group-item">user management: add user where person already exists (?)</li>
     <li class="list-group-item">our own pagination adapter for DQL queries w/o entities?</li>
     <li class="list-group-item">rewrite logging stuff. Monolog? a listener that wraps a logger?</li>
-    <li class="list-group-item"><strong>users</strong>: registration, email verification/password recovery</li>    
+    <li class="list-group-item"><strong>users</strong>: registration, email verification/password recovery</li>
     <li class="list-group-item">interface for court closings/holidays</li>
     <li class="list-group-item">date calculation logic for Requests module, reporting</li>
-    <li class="list-group-item">data import: event-types, locations</li>
-    <li class="list-group-item">data import: judges,locations. scrape all courtrooms from court website</li>
-    <li class="list-group-item">data import: events, deft-names, requests</li>
     <li class="list-group-item">installation: simplify, scripting</li>
 </ul>
