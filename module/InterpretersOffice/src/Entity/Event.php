@@ -755,7 +755,7 @@ class Event
      * proxies to {@see getDefendantNames}
      *
      */
-    public function getDefendant_names()
+    public function _getDefendant_names()
     {
         return $this->getDefendantNames();
     }
@@ -774,7 +774,7 @@ class Event
      *
      * @param Collection $defendantNames
      */
-    public function addDefendantNames(Collection $defendantNames)
+    public function _addDefendantNames(Collection $defendantNames)
     {
         //printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
         foreach ($defendantNames as $defendantName) {
@@ -787,7 +787,7 @@ class Event
      *
      * @param Collection $defendantNames
      */
-    public function removeDefendantNames(Collection $defendantNames)
+    public function _removeDefendantNames(Collection $defendantNames)
     {
         foreach ($defendantNames as $defendantName) {
             $this->defendant_names->removeElement($defendantName);
@@ -922,24 +922,24 @@ class Event
     // aliases, to make the DoctrineHydrator happy. but I don't like
     // them because the name is ugly
 
-    /**
+    /*
      * proxies to {@see addDefendantNames}
      *
      * @param Collection $defendantNames
      *
-     */
-    public function addDefendant_names(Collection $defendantNames)
+     *
+    public function _addDefendant_names(Collection $defendantNames)
     {
         return $this->addDefendantNames($defendantNames);
     }
-
-    /**
+    */
+    /*
      *  proxies to {@see removeDefendantNames}
      *
      * @param  Collection $defendantNames [description]
-     */
-    public function removeDefendant_names(Collection $defendantNames)
+
+    public function _removeDefendant_names(Collection $defendantNames)
     {
         return $this->removeDefendantNames($defendantNames);
-    }
+    } */
 }

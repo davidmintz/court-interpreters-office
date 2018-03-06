@@ -187,7 +187,7 @@ class EventFieldset extends Fieldset implements
         parent::__construct($this->fieldset_name, $options);
 
         $this->objectManager = $objectManager;
-        $this->setHydrator(new DoctrineHydrator($objectManager))
+        $this->setHydrator(new DoctrineHydrator($objectManager,false))
                 ->setUseAsBaseFieldset(true);
 
         foreach ($this->elements as $element) {
