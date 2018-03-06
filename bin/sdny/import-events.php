@@ -122,8 +122,25 @@ $judges = $db->query($judge_sql)->fetchAll(PDO::FETCH_KEY_PAIR);
 
 // this is very brittle and will fuck up if we so much as look at it wrong
 // theirs => ours
-$anonymous_judges = [22 => 1, 85 => 4, 82 => 2, 75 => 3,];
-
+//
+$shit = 'SELECT l.name location ,aj.id magistrate_id from anonymous_judges aj LEFT JOIN locations l ON aj.default_location_id = l.id WHERE l.name IS NOT NULL';
+$magistrates = $db->query($shit)->fetchAll(PDO::FETCH_KEY_PAIR);
+$anonymous_judges = [
+    22 => $magistrates['5A'], // magistrate NY
+    85 => $magistrates['White Plains'], // magistrate White Plains
+    82 => 2,
+    75 => 3,
+];
+/*SELECT lastname,judge_id FROM dev_interpreters.judges WHERE lastname REGEXP 'applicable|unknown|magistrate';
++----------+----------------------+
+| judge_id | lastname             |
++----------+-----------------------
+|       22 | magistrate/NYC
+|       75 | [unknown]
+|       82 | [not applicable]
+|       85 | magistrate/W. Plains
++----------+----------------------+
+*/
 // default creator is me
 $USER_ID_DAVID = $db->query('select id from users where username = "david"')->fetchColumn();
 
@@ -193,9 +210,9 @@ if (! $ids_to_import) {
         $what =  " BETWEEN $from AND $opts->to";
         $query .= $what;
         $count_sql = "SELECT COUNT(*) `total` FROM events e WHERE YEAR(event_date) $what";
-        printf("fetching events for years %s through %s\n",$from,$opts->to);
+        printf("\nfetching events for years %s through %s\n",$from,$opts->to);
     } else {
-        printf("fetching events for year %s\n",$from);
+        printf("\nfetching events for year %s\n",$from);
         $query .= " = $from";
         $count_sql = "SELECT COUNT(*) `total` FROM events e WHERE YEAR(event_date) = $from ";
     }

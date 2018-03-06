@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 # https://www.tutorialspoint.com/unix_commands/getopt.htm
+echo beginning at $(date);
 
 TEMP=`getopt -o '' --long whole-enchilada,everything,recent -- "$@"`
 eval set -- "$TEMP"
@@ -93,4 +94,5 @@ if [[ ! -z $FULL_DATABASE ]];
 fi;
 
 echo "success!"
+echo completed at $(date);
 exit 0;
