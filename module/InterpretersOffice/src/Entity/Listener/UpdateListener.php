@@ -7,6 +7,7 @@ namespace InterpretersOffice\Entity\Listener;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
+use InterpretersOffice\Entity\Event;
 
 use InterpretersOffice\Entity;
 
@@ -39,6 +40,13 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     protected $eventEntity;
 
     /**
+     * entity state just after loading
+     *
+     * @var Array
+     */
+    protected $state_before;
+
+    /**
      * current datetime
      *
      * @var \DateTime
@@ -65,7 +73,26 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postPersist','postRemove',];
+        return ['postUpdate','postPersist','postRemove','postLoad'];//'postLoad'
+    }
+
+    public function postLoad(LifecycleEventArgs $args)
+    {
+        $entity = $args->getObject();
+        if ($entity instanceof Entity\Event) {
+            $this->state_before = [ 'interpreter_ids' => []];
+            $interpreterEvents = $entity->getInterpreterEvents();
+            foreach ($interpreterEvents as $ie) {
+                $this->state_before['interpreter_ids'][] =
+                    $ie->getInterpreter()->getId();
+            }
+            $this->state_before['modified'] = $entity->getModified();
+            $this->logger->debug(sprintf(
+                "postLoad: interp ids BEFORE: %s",
+                print_r($this->state_before['interpreter_ids'],true)
+            ));
+            $this->eventEntity = $entity;
+        }
     }
 
     /*
@@ -110,14 +137,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         $this->logger->debug(sprintf(
             '%s happening on entity %s',
             __METHOD__, $class));
-        $repository = $args->getObjectManager()->getRepository($class);
-        // if $repository can delete its cache namespace, do it
-        if ($repository instanceof CacheDeletionInterface) {
-            $repository->deleteCache();
-            $this->logger->debug("called delete cache on ".get_class($repository));
-        } else {
-            $this->logger->debug("! not an implementation of CacheDeletionInterface: ".get_class($repository));
-        }
+
         /** @var $cache Doctrine\Common\Cache\CacheProvider */
         $cache = $args->getObjectManager()->getConfiguration()
             ->getResultCacheImpl();
@@ -152,6 +172,14 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                 # code...
                 break;
         }
+        $repository = $args->getObjectManager()->getRepository($class);
+        // if $repository can delete its cache namespace, do it
+        if ($repository instanceof CacheDeletionInterface) {
+            $repository->deleteCache();
+            $this->logger->debug("called delete cache on ".get_class($repository));
+        } else {
+            $this->logger->debug("! not an implementation of CacheDeletionInterface: ".get_class($repository));
+        }
     }
 
     /**
@@ -162,7 +190,19 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        return $this->postUpdate($args);
+        $entity = $args->getObject();
+        if ($entity instanceof Entity\InterpreterEvent) {
+            $this->logger->debug("HELLO MOTHERFUCKER! this is an InterpreterEvent being created");
+            if ($this->eventEntity) {
+                $this->logger->debug("and we have an Event stashed away, whose timestamp and lastmodified_by should now be UPDATED");
+            }
+        }
+        $this->logger->debug(sprintf(
+            '%s happening on entity %s, bitch!',
+            __METHOD__,
+            get_class($entity)
+        ));
+        //return $this->postUpdate($args);
     }
 
     /**
@@ -179,23 +219,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             __METHOD__,
             get_class($entity)
         ));
-        return $this->postUpdate($args);
+        //return $this->postUpdate($args);
     }
 
-
-    /*
-     * preUpdate listener
-     *
-     * @param LifecycleEventArgs $args
-
-    public function preUpdate(LifecycleEventArgs $args)
-    {
-         $entity = $args->getObject();
-        if ($entity instanceof Entity\InterpreterEvent) {
-            echo "um, these do NOT GET UPDATED, do they??? in ".__METHOD__. "<br>";
-            // to do: inject authenticated User entity, set user, set creation time
-        }
-    }
-    */
 
 }

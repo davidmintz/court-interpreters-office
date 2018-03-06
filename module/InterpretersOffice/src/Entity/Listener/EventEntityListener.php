@@ -74,11 +74,16 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $eventEntity,
         LifecycleEventArgs $event
     ) {
-
+        /*
         foreach ($eventEntity->getInterpreterEvents() as $interpEvent) {
             $this->state_before['interpreter_ids'][] =
                     $interpEvent->getInterpreter()->getId();
         }
+        $this->logger->debug(sprintf(
+            'interpreters before: %s',
+            print_r($this->state_before['interpreter_ids'],true)
+        ));
+        */
         foreach ($eventEntity->getDefendantNames() as $defendant) {
             $this->state_before['defendant_ids'][] =
                     $defendant->getId();
@@ -103,6 +108,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             $debug .= "what changed? "
                     .print_r(array_keys($args->getEntityChangeSet()), true);
         }
+        $this->logger->debug("fucking ".__METHOD__. " is running");
         $interpreters_before = $this->state_before['interpreter_ids'];
         $interpreters_after = [];
         $interpreterEvents = $eventEntity->getInterpreterEvents();
@@ -142,7 +148,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                 }
             }
         }
-
         $defendants_before = $this->state_before['defendant_ids'];
         $defendants_after = [];
 
@@ -151,6 +156,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         }
         if ($defendants_after != $defendants_before) {
             $modified = true;
+            $this->logger->debug("defendants YES modified??");
         }
         if ($modified) {
             $eventEntity
