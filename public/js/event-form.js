@@ -441,7 +441,7 @@ $(document).ready(function()
                             $.post('/admin/defendants/edit/'+$(this).data('id'),data,
                             function(response){
                                 if (response.id) {
-                                    var selector = 'input[name="event[defendant_names]['+
+                                    var selector = 'input[name="event[defendantNames]['+
                                         existing.id +']"]';
                                     var defendant_name = $('#surnames').val().trim()
                                         +", "+ $("#given_names").val().trim();

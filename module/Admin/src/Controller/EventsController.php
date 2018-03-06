@@ -154,14 +154,14 @@ class EventsController extends AbstractActionController
             $form->setData($data);
             if (! $form->isValid()) {
                 if ($input) {
-                    $defendant_names = isset($input['defendant_names']) ?
-                        $input['defendant_names'] : [];
+                    $defendantNames = isset($input['defendantNames']) ?
+                        $input['defendantNames'] : [];
                     $interpreters = isset($input['interpreterEvents']) ?
                         $input['interpreterEvents'] : [];
                 }
                 //print_r($form->getMessages());
                 return $viewModel
-                    ->setVariables(compact('defendant_names', 'interpreters'));
+                    ->setVariables(compact('defendantNames', 'interpreters'));
             } else {
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
@@ -223,14 +223,14 @@ class EventsController extends AbstractActionController
             }
             /** @todo put this task in the 'pre.validate' event listener ? */
             if ($input) {
-                $defendant_names = isset($input['defendant_names']) ?
-                        $input['defendant_names'] : [];
+                $defendantNames = isset($input['defendantNames']) ?
+                        $input['defendantNames'] : [];
                 $interpreters = isset($input['interpreterEvents']) ?
                         $input['interpreterEvents'] : [];
                 $form->get('event')->get('anonymousSubmitter')
                     ->setValue($input['anonymousSubmitter']);
                 $this->getViewModel()
-                ->setVariables(compact('defendant_names', 'interpreters', 'form'));
+                ->setVariables(compact('defendantNames', 'interpreters', 'form'));
             }
         }
         return $this->getViewModel(['form' => $form]);

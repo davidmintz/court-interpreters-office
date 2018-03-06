@@ -105,7 +105,7 @@ DQL;
      *
      * @var boolean whether to enable caching
      */
-    protected $cache_enabled = true;
+    protected $cache_enabled = false;
 
 
     /**

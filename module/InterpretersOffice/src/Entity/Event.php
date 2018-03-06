@@ -195,7 +195,7 @@ class Event
      *
      * @var Collection
      */
-    protected $defendant_names;
+    protected $defendantNames;
 
     /**
      * Interpreters assigned to this event.
@@ -268,7 +268,7 @@ class Event
      */
     public function __construct()
     {
-        $this->defendant_names = new ArrayCollection();
+        $this->defendantNames = new ArrayCollection();
         $this->interpreterEvents = new ArrayCollection();
     }
 
@@ -726,7 +726,7 @@ class Event
      */
     public function addDefendant(DefendantName $defendant)
     {
-        $this->defendant_names->add($defendant);
+        $this->defendantNames->add($defendant);
 
         return $this;
     }
@@ -752,21 +752,13 @@ class Event
     }
 
     /**
-     * proxies to {@see getDefendantNames}
-     *
-     */
-    public function _getDefendant_names()
-    {
-        return $this->getDefendantNames();
-    }
-    /**
      * Get defendants.
      *
      * @return Collection
      */
     public function getDefendantNames()
     {
-        return $this->defendant_names;
+        return $this->defendantNames;
     }
 
     /**
@@ -774,11 +766,11 @@ class Event
      *
      * @param Collection $defendantNames
      */
-    public function _addDefendantNames(Collection $defendantNames)
+    public function addDefendantNames(Collection $defendantNames)
     {
         //printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
         foreach ($defendantNames as $defendantName) {
-            $this->defendant_names->add($defendantName);
+            $this->defendantNames->add($defendantName);
         }
     }
 
@@ -787,10 +779,10 @@ class Event
      *
      * @param Collection $defendantNames
      */
-    public function _removeDefendantNames(Collection $defendantNames)
+    public function removeDefendantNames(Collection $defendantNames)
     {
         foreach ($defendantNames as $defendantName) {
-            $this->defendant_names->removeElement($defendantName);
+            $this->defendantNames->removeElement($defendantName);
         }
     }
 
@@ -918,28 +910,4 @@ class Event
             );
         }
     }
-
-    // aliases, to make the DoctrineHydrator happy. but I don't like
-    // them because the name is ugly
-
-    /*
-     * proxies to {@see addDefendantNames}
-     *
-     * @param Collection $defendantNames
-     *
-     *
-    public function _addDefendant_names(Collection $defendantNames)
-    {
-        return $this->addDefendantNames($defendantNames);
-    }
-    */
-    /*
-     *  proxies to {@see removeDefendantNames}
-     *
-     * @param  Collection $defendantNames [description]
-
-    public function _removeDefendant_names(Collection $defendantNames)
-    {
-        return $this->removeDefendantNames($defendantNames);
-    } */
 }

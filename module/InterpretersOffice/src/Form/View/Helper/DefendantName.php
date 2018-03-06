@@ -19,7 +19,7 @@ class DefendantName extends AbstractHelper
      */
     protected $template = <<<TEMPLATE
         <li class="list-group-item defendant py-1">
-            <input name="event[defendant_names][%d]" type="hidden" value="%s">
+            <input name="event[defendantNames][%d]" type="hidden" value="%s">
             <span class="align-middle">%s</span>            
             <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this defendant">
             <span class="fas fa-times" aria-hidden="true"></span>

@@ -27,7 +27,7 @@ class DefendantNamesFieldset extends Fieldset
     public function __construct(ObjectManager $objectManager, array $options = [])
     {
 
-        parent::__construct('defendant_names', $options);
+        parent::__construct('defendantNames', $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager));
         $this->setObject(new Entity\DefendantName());
@@ -36,7 +36,7 @@ class DefendantNamesFieldset extends Fieldset
         $this->add(
             [
                 'type' => 'hidden',
-                'name' => 'defendant_name'
+                'name' => 'defendantName'
             ]
         );
     }
