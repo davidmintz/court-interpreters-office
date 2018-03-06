@@ -34,8 +34,7 @@ SELECT
 
 FROM dev_interpreters.request_users
 	WHERE group_id <> 5 /* the "unknown" category, strongly deprecated
-	/*AND active*/
-	/*AND id = 494 temp */
+	/* AND id = 494 temp */
 ;
 
 INSERT INTO users (
