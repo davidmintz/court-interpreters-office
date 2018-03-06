@@ -4,5 +4,5 @@ INSERT INTO `location_types` VALUES (1,'courtroom',''),(2,'jail',''),(3,'holding
 INSERT INTO `event_categories` VALUES (1,'in'),(3,'not applicable'),(2,'out');
 INSERT INTO `holidays` VALUES (1,'New Year\'s Day'),(2,'Martin Luther King Day'),(3,'Lincoln\'s Birthday'),(4,'President\'s Day'),(5,'Memorial Day'),(6,'Independence Day'),(7,'Labor Day'),(8,'Columbus Day'),(9,'Veterans\' Day'),(10,'Thanksgiving'),(11,'Christmas'),(12,'Election Day');
 INSERT INTO `cancellation_reasons` VALUES (3,'belatedly adjourned'),(1,'defendant not produced'),(5,'forçe majeure'),(2,'no interpreter needed'),(7,'other'),(4,'party did not appear'),(6,'reason unknown');
-INSERT INTO `judge_flavors` VALUES (3,'USBJ'),(1,'USDJ'),(2,'USMJ');
+INSERT INTO `judge_flavors` VALUES (1,'USDJ',0),(2,'USMJ',5),(3,'USBJ',10);
 INSERT INTO `anonymous_judges` VALUES (2,'(not applicable)',NULL),(3,'(unknown)',NULL),(1,'magistrate',NULL);
