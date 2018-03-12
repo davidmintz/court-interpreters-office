@@ -119,7 +119,7 @@ class InterpreterEvent
      *
      * @param \InterpretersOffice\Entity\Event $event
      *
-     * @return InterpreterAssignment
+     * @return InterpreterEvent
      */
     public function setEvent(\InterpretersOffice\Entity\Event $event = null)
     {
