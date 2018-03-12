@@ -7,6 +7,8 @@
 namespace InterpretersOffice\Admin;
 
 use InterpretersOffice\Entity\Listener;
+use InterpretersOffice\Entity\Listener\InterpreterEventEntityListener;
+use InterpretersOffice\Entity\Listener\Factory\InterpreterEntityListenerFactory;
 
 return [
 
@@ -51,6 +53,8 @@ return [
                 Listener\Factory\InterpreterEntityListenerFactory::class,
              Listener\EventEntityListener::class =>
                 Listener\Factory\EventEntityListenerFactory::class,
+            Listener\InterpreterEventEntityListener::class =>
+                Listener\Factory\InterpreterEventEntityListenerFactory::class
         ],
         'aliases' => [
             'acl' => Service\Acl::class,
