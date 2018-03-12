@@ -11,22 +11,29 @@ use InterpretersOffice\Entity\InterpreterEvent;
 use InterpretersOffice\Entity\Interpreter;
 use InterpretersOffice\Entity\Event;
 use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
-use Zend\Authentication\AuthenticationService;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 use InterpretersOffice\Entity;
 
 use Zend\Log;
-use InterpretersOffice\Service\Authentication\CurrentUserTrait;
+//use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 
 /**
- * entity listener for clearing cache
+ * entity listener for clearing caches and setting Event entity metadata
+ *
+ * Interesting facts:  if you delete an InterpreterEvent without adding any,
+ * the postRemove event is triggered; if you add an InterpreterEvent without
+ * removing any, the prePersist event is triggered; if you REPLACE, i.e.,
+ * both and remove InterpreterEvent entities, then the postUpdate event is
+ * triggered -- but neither prePersist nor postRemove
+ *
  */
 class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     //AuthenticationAwareInterface
 {
 
     use Log\LoggerAwareTrait;
-    use CurrentUserTrait;
+    //use CurrentUserTrait;
 
     /*
      * auth
@@ -50,7 +57,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      *
      * @var Array
      */
-    protected $state_before;
+    protected $state_before = [];
 
     /**
      * current datetime
@@ -79,7 +86,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postPersist','postRemove','postLoad','prePersist'];//'postLoad'
+        return ['postUpdate','postRemove','postLoad','prePersist'];
     }
 
     /**
@@ -94,22 +101,13 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        $this->logger->debug(__CLASS__.": what the FUCKING fuck is this???? is this not prePersist()?");
         $this->logger->debug('prePersist is happening on a '.get_class($entity));
         //exit("\nget the FUCK out!!!!!!!!\n");
         if ($entity instanceof Entity\InterpreterEvent) {
-            //$user_id = $this->auth->getStorage()->read()->id;
-            $user = $this->getAuthenticatedUser($args->getObjectManager()) ; //$args->getObjectManager()->find(Entity\User, $user_id);
-            if (! $user) {
-                throw new \Exception('WTF?! could not find User object for InterpreterEvent metadata, id '.$user_id);
-            }
-            if ( ! $entity->getCreatedBy()) {
-
-
-                $entity->setCreatedBy($user);
-
-            }
-            // last update time?
+            $this->logger->debug("OK looks like prePersist with an InterpreterEvent entity");
+            //$this->logger->debug(sprintf("auth is a what? %s",gettype($this->auth)));
+            //$this->logger->debug(sprintf("eventEntity instance var is a what? %s",gettype($this->eventEntity)));
+            $this->updateEventMetaData($args);
         }
     }
 
@@ -135,9 +133,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             */
             $this->eventEntity = $entity;
             $this->logger->debug(__METHOD__.":  postLoad hanging onto \$eventEntity instance ");
-            $this->logger->debug(__METHOD__.":  ".get_class($this->auth));
-            //$user = $this->getAuthenticatedUser($args->getObjectManager());
-            //$this->logger->debug(__METHOD__.": we have an authenticated User! ".$user->getUsername());
+            $this->logger->debug(__METHOD__.":  current user id is fuckin ".$this->auth->getIdentity()->id);
         }
     }
 
@@ -152,8 +148,24 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function setAuth(AuthenticationServiceInterface $auth)
     {
         $this->auth = $auth;
-        echo "Hello?";
+
         return $this;
+    }
+
+
+
+    public function updateEventMetaData(LifecycleEventArgs $args)
+    {
+        $this->logger->debug("entering: ".__METHOD__);
+        $previous_modified_by = $this->state_before['modified_by'];
+        $current_user = $this->auth->getIdentity();
+        if ($previous_modified_by->getUsername() != $current_user->username) {
+            $user = $args->getObjectManager()->find(Entity\User::class,$current_user->id);
+            $this->eventEntity->setModifiedBy($user);
+            $this->logger->debug("we updated the modified_by property on shit, did we NOT????");
+        }
+        $this->eventEntity->setModified($this->getTimeStamp());
+        $this->logger->debug("we definitely updated the modified property on shit, yes???");
     }
 
 
@@ -186,6 +198,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                 break;
             case Entity\InterpreterEvent::class:
                 $this->logger->debug("HOLY FUCKING SHIT it's an InterpreterEvent in postUpdate listener???");
+                $this->updateEventMetaData($args);
                 break;
             case Entity\User::class:
                 // delete the cache entry
@@ -202,45 +215,25 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             case Entity\InterpreterLanguage::class:
                 $cache->setNamespace('languages');
                 $cache->deleteAll();
-                $this->logger->debug("InterpreterLanguage entity updated; language cache was purged.");
+                $cache->setNamespace('interpreters');
+                $cache->deleteAll();
+                $this->logger->debug("InterpreterLanguage entity updated; interpreters and language caches were purged.");
                 break;
             default:
-                # code...
+                $repository = $args->getObjectManager()->getRepository($class);
+                // if $repository can delete its cache namespace, do it
+                if ($repository instanceof CacheDeletionInterface) {
+                    $repository->deleteCache();
+                    $this->logger->debug("called delete cache on ".get_class($repository));
+                } else {
+                    $this->logger->debug("! not an implementation of CacheDeletionInterface: ".get_class($repository));
+                }
                 break;
         }
-        $repository = $args->getObjectManager()->getRepository($class);
-        // if $repository can delete its cache namespace, do it
-        if ($repository instanceof CacheDeletionInterface) {
-            $repository->deleteCache();
-            $this->logger->debug("called delete cache on ".get_class($repository));
-        } else {
-            $this->logger->debug("! not an implementation of CacheDeletionInterface: ".get_class($repository));
-        }
+
     }
 
-    /**
-     * postPersist event handler
-     *
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function postPersist(LifecycleEventArgs $args)
-    {
-        /*
-        $entity = $args->getObject();
-        if ($entity instanceof Entity\InterpreterEvent) {
-            $this->logger->debug("HELLO MOTHERFUCKER! this is an InterpreterEvent being created");
-            if ($this->eventEntity) {
-                $this->logger->debug("and we have an Event stashed away, whose timestamp and lastmodified_by should now be UPDATED");
-            }
-        }*/
-        $this->logger->debug(sprintf(
-            '%s happening on entity %s, bitch! doing NOTHING at the moment',
-            __METHOD__,
-            get_class($entity)
-        ));
-        //return $this->postUpdate($args);
-    }
+
 
     /**
      * postRemove event handler
@@ -251,6 +244,9 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function postRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
+        if ($entity instanceof Entity\InterpreterEvent) {
+            $this->updateEventMetaData($args);
+        }
         $this->logger->debug(sprintf(
             '%s happening on entity %s, bitch!',
             __METHOD__,

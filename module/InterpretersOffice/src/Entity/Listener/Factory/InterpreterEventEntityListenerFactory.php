@@ -18,6 +18,8 @@ class InterpreterEventEntityListenerFactory implements FactoryInterface
     {
         $listener = new InterpreterEventEntityListener();
         $listener->setAuth($container->get('auth'));
+        $listener->setLogger($container->get('log'));
+        
         return $listener;
     }
 }

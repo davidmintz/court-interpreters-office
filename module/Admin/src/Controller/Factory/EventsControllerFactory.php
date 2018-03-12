@@ -7,7 +7,8 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller\EventsController;
 
-use InterpretersOffice\Entity\Listener\EventEntityListener;
+use InterpretersOffice\Entity\Listener;
+
 
 /**
  * Factory for instantiating EventController
@@ -34,7 +35,11 @@ class EventsControllerFactory implements FactoryInterface
         );
         //attach the Event entity listener
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
-        $resolver->register($container->get(EventEntityListener::class));
+        $resolver->register($container->get(Listener\EventEntityListener::class));        
+        // and set the authentication thing on the general entity listener
+        $updateListener = $container->get(Listener\UpdateListener::class);
+        $updateListener->setAuth($auth);
+
         return $controller;
     }
 }

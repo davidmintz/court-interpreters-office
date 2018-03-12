@@ -62,10 +62,14 @@ class InterpreterEventEntityListener implements EventManagerAwareInterface, Logg
         return $this;
     }
     /**
-     * postLoad callback
+     * prepersist callback
      *
-     * @param Entity\Event $eventEntity
-     * @param LifecycleEventArgs $event
+     * @param Entity\InterpreterEvent $interpreterEvent
+     * @param LifecycleEventArgs $args
      */
+    public function prePersist(Entity\InterpreterEvent $interpreterEvent, LifecycleEventArgs $args)
+    {
+        $this->logger->debug("!!!!!!!!!!!!!     well hello! this is fucking ".__METHOD__);//exit("fuck?");
+    }
 
 }

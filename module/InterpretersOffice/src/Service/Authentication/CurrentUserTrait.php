@@ -16,7 +16,7 @@ trait CurrentUserTrait
      *
      * @var AuthenticationServiceInterface
      */
-    protected $auth;
+    //protected $auth;
 
     /**
      * gets the User entity corresponding to authenticated identity
@@ -27,7 +27,7 @@ trait CurrentUserTrait
     protected function getAuthenticatedUser(EntityManager $em)
     {
         $dql = 'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id';
-        $id = $this->getAuth()->getIdentity()->id;
+        $id = $this->auth->getIdentity()->id;
         $query = $em->createQuery($dql)
                 ->setParameters(['id' => $id])
                 ->useResultCache(true);
