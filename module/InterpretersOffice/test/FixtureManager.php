@@ -11,6 +11,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 
+use InterpretersOffice\Entity\Listener;
+
 /**
  * a concrete implementation of AbstractControllerTest
  * for the sole purpose of allowing us to instantiate it,
@@ -56,8 +58,9 @@ final class FixtureManager
         $listener = $container->get('interpreter-listener');
         $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
         $resolver->register($listener);
-        $event_listener_fqcn = \InterpretersOffice\Entity\Listener\EventEntityListener::class;
-        $resolver->register($container->get($event_listener_fqcn));
+        $resolver->register($container->get(Listener\EventEntityListener::class));
+        $resolver->register($container->get(Listener\UpdateListener::class));
+
         return $entityManager;
     }
 
