@@ -12,7 +12,7 @@ use Zend\Stdlib\Parameters;
 
 use Zend\Dom;
 
-class EventControllerTest extends AbstractControllerTest
+class EventMetaDataControllerTest extends AbstractControllerTest
 {
 
     protected $dummy_data;
@@ -94,26 +94,27 @@ class EventControllerTest extends AbstractControllerTest
         $adapter->setIdentity('david@davidmintz.org')
             ->setCredential('boink')
             ->authenticate();
-        //$this->assertInstanceOf(AuthenticationService::class, $this->auth);
-        //$this->assertInstanceOf(\InterpretersOffice\Service\Authentication\Adapter::class, $adapter);
-
-        $result = $auth->authenticate();
         $em->flush();
 
-        $ievents = $event->getInterpreterEvents();
+        //$ievents = $event->getInterpreterEvents();
         // take David Mintz off the case
-        $ievents->removeElement($ievents->getValues()[0]);
+        //$ievents->removeElement($ievents->getValues()[0]);
+        //$em->flush();
+
+        // try adding a new Interpreter
+        $margarita = $em->createQuery('SELECT i FROM '.Entity\Interpreter::class . ' i '.
+            ' WHERE i.lastname = \'Somebody\'')->getResult()[0];
+        //printf("\nMargarita is a %s\n",get_class($margarita));
+
+        $shit = new Entity\InterpreterEvent( $margarita, $event );
+        $shit->setCreatedBy($em->find(Entity\User::class,$auth->getStorage()->read()->id));
+        $event->getInterpreterEvents()->add($shit);
         $em->flush();
         $this->assertTrue($event->getModified() > $old_timestamp);
         printf("\nold timestamp was:  %s\nnew timestamp is: %s\n",
             $old_timestamp->format('Y-m-d H:i:s'),
             $event->getModified()->format('Y-m-d H:i:s')
         );
-        // try adding a new Interpreter
-        $margarita = $em->createQuery('SELECT i FROM '.Entity\Interpreter::class . ' i '.
-            ' WHERE i.lastname = \'Somebody\'')->getResult()[0];
-        //printf("\nMargarita is a %s\n",get_class($margarita));
-        $ievents->addElement(new eEntityInterpreterEvent($margarita, $event));
     }
 
 }
