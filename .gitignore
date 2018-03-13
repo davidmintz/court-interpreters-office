@@ -22,3 +22,5 @@ node_modules
 */sdny/*json
 doc/api
 
+test.error.log
+zend-developer-tools.local-development.php
