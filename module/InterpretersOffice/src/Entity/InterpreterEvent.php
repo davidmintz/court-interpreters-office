@@ -75,6 +75,15 @@ class InterpreterEvent
     }
 
     /**
+     * toString
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getInterpreter()->getId();
+    }
+    /**
      * Automatically sets creation datetime.
      *
      * @ORM\PrePersist
