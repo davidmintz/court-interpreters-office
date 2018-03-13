@@ -31,15 +31,21 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      */
     protected $auth;
 
+    /**
+     * currently authenticated user
+     *
+     * @var Entity\User
+     */
+    protected $user;
 
     /**
-     * holds a copy of related entiti ids before update
+     * holds a copy of related entities before updating
      *
      * @var array
      */
     protected $state_before = [
-        'interpreter_ids' => [],
-        'defendant_ids'   => [],
+        'interpreterEvents' => [],
+        'defendants'   => [],
     ];
 
     /**
@@ -51,7 +57,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     {
         $this->now = new \DateTime();
     }
-
 
     /**
      * sets authentication service
@@ -74,20 +79,10 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $eventEntity,
         LifecycleEventArgs $event
     ) {
-        /*
-        foreach ($eventEntity->getInterpreterEvents() as $interpEvent) {
-            $this->state_before['interpreter_ids'][] =
-                    $interpEvent->getInterpreter()->getId();
-        }
-        $this->logger->debug(sprintf(
-            'interpreters before: %s',
-            print_r($this->state_before['interpreter_ids'],true)
-        ));
-        */
-        foreach ($eventEntity->getDefendantNames() as $defendant) {
-            $this->state_before['defendant_ids'][] =
-                    $defendant->getId();
-        }
+        $this->state_before['defendants'] = $eventEntity->getDefendantNames()
+            ->toArray();
+        $this->state_before['interpreterEvents'] =
+            $eventEntity->getInterpreterEvents()->toArray();
         $this->getEventManager()->trigger(__FUNCTION__, $this);
     }
 
@@ -98,8 +93,9 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @param PreUpdateEventArgs $args
      */
     public function preUpdate(Entity\Event $eventEntity,
-    PreUpdateEventArgs $args)
+        PreUpdateEventArgs $args)
     {
+        $this->logger->debug(__METHOD__. " is running");
         $modified = false;
         $debug = '';
         if ($args->getEntityChangeSet()) {
@@ -108,14 +104,10 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             $debug .= "what changed? "
                     .print_r(array_keys($args->getEntityChangeSet()), true);
         }
-        $this->logger->debug("fucking ".__METHOD__. " is running");
-        $interpreters_before = $this->state_before['interpreter_ids'];
-        $interpreters_after = [];
-        $interpreterEvents = $eventEntity->getInterpreterEvents();
-        foreach ($interpreterEvents as $interpEvent) {
-            $interpreters_after[] =
-                    $interpEvent->getInterpreter()->getId();
-        }
+
+        $interpreters_before = $this->state_before['interpreterEvents'];
+        $interpreters_after = $eventEntity->getInterpreterEvents()->toArray();
+
         if ($interpreters_before != $interpreters_after) {
              $modified = true;
              $added = array_diff($interpreters_after, $interpreters_before);
@@ -125,47 +117,45 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
              // for Interpreter with null id), so we have to set it in a hidden
              // form field, check it after the fact, and correct it if (in the
              // improbable case) it's necessary (until we come up with a better
-             // plan).for Interpreter
+             // plan)
              /** @todo factor out into its own function?  */
-            $current_user_id = $this->auth->getStorage()->read()->id;
-            foreach ($interpreterEvents as $ie) {
+            $current_user_id = $this->auth->getIdentity()->id;
+            foreach ($added as $ie) {
                 $creator_id = $ie->getCreatedBy()->getId();
-                if (in_array($ie->getInterpreter()->getId(), $added)) {
-                    if ($creator_id != $current_user_id) {
-                        $interpreter = $ie->getInterpreter();
-                        $this->logger->warn(
-                            sprintf(
-                                'submitted creator id inconsistent with current user'
-                                . ' in event id %d, interpreter id %d (%s)',
-                                $eventEntity->getId(),
-                                $added, $interpreter->getLastname()
-                            ), compact('creator_id', 'current_user_id')
-                        );
-                    }
-                    $ie->setCreatedBy(
-                        $this->getAuthenticatedUser($args->getEntityManager())
+                if ($creator_id != $current_user_id) {
+                    $interpreter = $ie->getInterpreter();
+                    $this->logger->warn(
+                        sprintf(
+                            'submitted creator id inconsistent with current user'
+                            . ' in event id %d, interpreter id %d (%s)',
+                            $eventEntity->getId(),
+                            $added, $interpreter->getLastname()
+                        ), compact('creator_id', 'current_user_id')
                     );
                 }
+                $ie->setCreatedBy(
+                    $this->getAuthenticatedUser($args->getEntityManager())
+                );
             }
         }
-        $defendants_before = $this->state_before['defendant_ids'];
-        $defendants_after = [];
-
-        foreach ($eventEntity->getDefendantNames() as $deft) {
-            $defendants_after[] = $deft->getId();
-        }
+        $defendants_before = $this->state_before['defendants'];
+        $defendants_after = $eventEntity->getDefendantNames()->toArray();
         if ($defendants_after != $defendants_before) {
             $modified = true;
-            $this->logger->debug("defendants YES modified??");
+            $this->logger->debug("defendants YES modified, right?");
         }
         if ($modified) {
+            $this->logger->debug(sprintf(
+                'event modification detected, setting modified and modifiedBy on '
+                . ' event entity in %s line %d', __METHOD__,__LINE__
+            ));
             $eventEntity
                     ->setModified($this->now)
                     ->setModifiedBy(
                         $this->getAuthenticatedUser($args->getEntityManager())
                     );
             $debug .= sprintf(
-                " real changes detected, updating event meta for event id %s",
+                " real changes detected, we updated event meta for event id %s",
                 $eventEntity->getId());
         } else {
             $debug .= "no actual update detected with event id "
@@ -208,20 +198,22 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     }
 
     /**
-     * gets the User entity corresponding to authenticated identity
+     * lazy-gets the User entity corresponding to authenticated identity
      *
      * @param EntityManager $em
      * @return Entity\User
      */
     protected function getAuthenticatedUser(EntityManager $em)
     {
-        $dql = 'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id';
-        $id = $this->auth->getIdentity()->id;
-        $query = $em->createQuery($dql)
-                ->setParameters(['id' => $id])
-                ->useResultCache(true);
-        $user = $query->getOneOrNullResult();
+        if (! $this->user) {
+            $dql = 'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id';
+            $id = $this->auth->getIdentity()->id;
+            $query = $em->createQuery($dql)
+                    ->setParameters(['id' => $id])
+                    ->useResultCache(true);
+            $this->user = $query->getOneOrNullResult();
+        }
 
-        return $user;
+        return $this->user;
     }
 }

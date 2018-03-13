@@ -33,12 +33,10 @@ class EventsControllerFactory implements FactoryInterface
             $em,
             $auth // maybe we won't need this
         );
-        //attach the Event entity listener
+        //attach the entity listeners
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
-        $resolver->register($container->get(Listener\EventEntityListener::class));        
-        // and set the authentication thing on the general entity listener
-        $updateListener = $container->get(Listener\UpdateListener::class);
-        $updateListener->setAuth($auth);
+        $resolver->register($container->get(Listener\EventEntityListener::class));
+        $resolver->register($container->get(Listener\UpdateListener::class));
 
         return $controller;
     }

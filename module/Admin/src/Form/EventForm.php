@@ -51,14 +51,14 @@ class EventForm extends ZendForm implements
      * @var array
      */
     protected $datetime_props =
-            ['date','time','end_time','submission_date', 'submission_time'];
+        ['date','time','end_time','submission_date', 'submission_time'];
 
     /**
      * holds state of datetime fields
      *
      * @var array
      */
-    protected $state_before = [];
+    protected $state_before = ['interpEvents' => [],];
 
      /**
      * constructor.
@@ -103,13 +103,17 @@ class EventForm extends ZendForm implements
      *
      * Runs after entity is fetched, but before form data is set. We save the
      * original DateTime instances for later comparison so we can avoid wasting
-     * a needless update query.
+     * a needless update query. Also, save a snapshot of the interpreterEvents
+     * so as to detect changes later.
      *
      * @param EventInterface $e
      * @return void
      */
     public function postLoad(EventInterface $e)
     {
+        //$controller = $e->getTarget();
+        //$logger = $controller->getEvent()->getApplication()
+        //    ->getServiceManager()->get('log');
         $entity = $e->getParam('entity');
         foreach ($this->datetime_props as $prop) {
             if (strstr($prop, '_')) {
@@ -119,6 +123,9 @@ class EventForm extends ZendForm implements
             }
             $this->state_before[$prop] = $entity->$getter();
         }
+        $this->state_before['interpreterEvents'] =
+            $entity->getInterpreterEvents()->toArray();
+
     }
 
     /**
@@ -134,6 +141,19 @@ class EventForm extends ZendForm implements
     public function postValidate(EventInterface $e)
     {
         $entity = $this->getObject();
+        $controller = $e->getTarget();
+        $logger = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
+        /** @var  Doctrine\ORM\PersistentCollection $collection */
+        $collection = $entity->getInterpreterEvents();
+        $interpreters_updated = ($collection->count() != count($this->state_before['interpreterEvents'])
+            or
+             ($this->state_before['interpreterEvents'] != $collection->toArray())
+        );
+        $logger->debug(($interpreters_updated ? "YES":"NO"). " shit changed");
+        if ($interpreters_updated) {
+            // this change suffices to trigger the Event entity's preUpdate()
+            $entity->setModified(new \DateTime());
+        }
         foreach ($this->datetime_props as $prop) {
             if (strstr($prop, '_')) {
                 $getter = 'get'.ucfirst(str_replace('_', '', $prop));
@@ -149,14 +169,6 @@ class EventForm extends ZendForm implements
                 $setter = 's'.substr($getter, 1);
                 $entity->$setter($old_value);
             }
-        }
-        $controller = $e->getTarget();
-        $logger = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
-        $logger->debug("hello from: ".__METHOD__);
-        $collection = $entity->getInterpreterEvents();
-        $logger->debug('collection dirty? '.($collection->isDirty()?"yes":"no"));
-        if ($collection->isDirty() && $this->options['action'] == 'update') {
-            $logger->debug("therefore, do shit...");
         }
     }
 
