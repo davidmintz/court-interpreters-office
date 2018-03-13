@@ -150,6 +150,14 @@ class EventForm extends ZendForm implements
                 $entity->$setter($old_value);
             }
         }
+        $controller = $e->getTarget();
+        $logger = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
+        $logger->debug("hello from: ".__METHOD__);
+        $collection = $entity->getInterpreterEvents();
+        $logger->debug('collection dirty? '.($collection->isDirty()?"yes":"no"));
+        if ($collection->isDirty() && $this->options['action'] == 'update') {
+            $logger->debug("therefore, do shit...");
+        }
     }
 
    /**
