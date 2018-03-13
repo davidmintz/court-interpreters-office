@@ -82,6 +82,10 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     /**
      * clears cache
      *
+     * @todo think about what happens when you ~update~ anything likely to have
+     * related entities, e.g, language, event-type. we need to flush just about
+     * everything, n'est-ce pas?
+     *
      * @param LifecycleEventArgs $args
      * @param string $trigger name of function that called us
      * @return void
@@ -130,7 +134,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                 $cache->deleteAll();
                 $this->logger->debug("InterpreterLanguage entity updated; interpreters and language caches were purged.");
                 break;
-                
+
             default:
 
                 $repository = $args->getObjectManager()->getRepository($class);
