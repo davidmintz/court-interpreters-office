@@ -25,7 +25,6 @@ class EventForm extends ZendForm implements
 {
 
      use CsrfElementCreationTrait;
-
      use ListenerAggregateTrait;
 
      /**
@@ -54,7 +53,7 @@ class EventForm extends ZendForm implements
         ['date','time','end_time','submission_date', 'submission_time'];
 
     /**
-     * holds state of datetime fields
+     * holds state of things before update
      *
      * @var array
      */
@@ -129,11 +128,13 @@ class EventForm extends ZendForm implements
     }
 
     /**
-     * resets datetime properties to their original instances, if unchanged
+     * checks for updates datetime fields, interpreters
      *
      * Checks whether date/time fields actual values been modified (not just the
      * object instances), and restores them if they have not. We do this to stop
      * Doctrine from wasting an update query when no data has actually changed.
+     * We also observe changes to the related InterpreterEvent entities and
+     * ensure that the Event entity metadata is updated, if appropriate.
      *
      * @param EventInterface $e
      * @return void
@@ -186,7 +187,7 @@ class EventForm extends ZendForm implements
          * correspond to either the 'judge' or the 'anonymousJudge' property,
          * and we have to make sure one is null and the other is not-null. Some
          * Javascript in the viewscript watches the judge element 'change'
-         * event and sets the is_anonymous_judge flag.
+         * event and sets the is_anonymouschanges in_judge flag.
          */
         if (empty($event['judge']) && empty($event['anonymousJudge'])) {
             $validator = new \Zend\Validator\NotEmpty([
@@ -220,10 +221,10 @@ class EventForm extends ZendForm implements
         // if validation fails
         $e->getTarget()->getViewModel()->hat_id = $hat_id;
         $key = array_search($hat_id, array_column($hat_options, 'value'));
+        // find out if this "hat" can be anonymous with hitting the database
         $can_be_anonymous = (! $key) ? false :
                 $hat_options[$key]['attributes']['data-can-be-anonymous'];
-        //echo "can be anonymous? " ;var_dump((boolean)$can_be_anonymous);
-        //printf("did you just fuck yourself at %d?<br>",__LINE__);
+
         if ((empty($event['submitter']) && empty($event['anonymousSubmitter']))
                 or
             (! $can_be_anonymous  && empty($event['submitter']))
@@ -249,7 +250,8 @@ class EventForm extends ZendForm implements
             $event['anonymousSubmitter'] = null;
 
         }
-
+        // get defendantNames human-readable labels back into the view
+        // @todo is this really necessary?
         if (isset($event['defendantNames'])) {
             $event['defendantNames'] = array_keys($event['defendantNames']);
         }
@@ -274,7 +276,7 @@ class EventForm extends ZendForm implements
             $fieldset->get('parent_location')->setValue($parentLocation->getId());
         }
         // seems like BULLSHIT that we have to do quite so much work here.
-        // am I doing something wrong that makes this necessary?
+        // what am I doing wrong that makes this necessary?
 
         // if submitter !== NULL, set anonymousSubmitter element = hat_id of submitter
         if (null !== $event->getSubmitter()) {
@@ -296,31 +298,12 @@ class EventForm extends ZendForm implements
             // set the judge element accordingly
             $judge_element->setValue($anonymous_judge->getId());
         }
-        //$shit = $fieldset->get('date');
-        //var_dump($shit->getValue());
-        // this needs to be a string rather than an object
-        /*
-        $submission_datetime = $fieldset->get('submission_datetime')->getValue();
-        if (is_object($submission_datetime)) {
-             $fieldset->get('submission_datetime')
-                 ->setValue($submission_datetime->format('Y-m-d H:i:s'));
-        }
-        // and now that it's a string, split it into two fields
-        $submission_datetime_string = $fieldset->get('submission_datetime')
-                ->getValue();
-        if ($submission_datetime_string) {
-            list($date,$time) = explode(' ',$submission_datetime_string);
-            $fieldset->get('submission_date')->setValue($date);
-            $fieldset->get('submission_time')->setValue($time);
-        }*/
         if ($this->has('modified')) {
             $date_obj = $event->getModified();
             if ($date_obj) {
                 $this->get('modified')->setValue($date_obj->format('Y-m-d H:i:s'));
             }
         }
-        //printf('<pre>%s</pre>',print_r($this->state_before,true));
-        return true;
     }
 
     /**
