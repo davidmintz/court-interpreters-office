@@ -1,8 +1,8 @@
 <?php
 /** module/Admin/config/acl.php
-==========  ACL configuration ====================================
-// based on LearnZF2.
-*/
+ *
+ *  ACL configuration based on LearnZF2.
+ */
 use InterpretersOffice\Admin\Controller as Admin;
 use InterpretersOffice\Controller as Main;
 use InterpretersOffice\Requests\Controller as Requests;
@@ -16,9 +16,7 @@ return [
         'administrator' => 'manager',
         'staff' => null,
     ],
-    /**
-     *
-     */
+
     'resources' => [
         // 'resource name (controller)' => 'parent resource'
         Admin\LanguagesController::class => null,
@@ -74,7 +72,8 @@ return [
     ],
     'deny' => [
         'administrator' => [
-            Requests\RequestsIndexController::class => null, //['add','edit','update','delete','cancel','index'],
+            Requests\RequestsIndexController::class => null,
+            //['add','edit','update','delete','cancel','index'],
         ],
         'anonymous' => [
             Main\AuthController::class => 'logout'

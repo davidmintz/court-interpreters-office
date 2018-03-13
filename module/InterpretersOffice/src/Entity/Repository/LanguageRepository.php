@@ -106,9 +106,8 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      */
     public function deleteCache($cache_id = null)
     {
-
         $cache = $this->cache;
         $cache->setNamespace('languages');
-        var_dump($cache->deleteAll());
+        $cache->deleteAll();
     }
 }
