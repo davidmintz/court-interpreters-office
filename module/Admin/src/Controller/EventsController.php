@@ -167,7 +167,7 @@ class EventsController extends AbstractActionController
      *
      */
     public function editAction()
-    {
+    {        
         $id = $this->params()->fromRoute('id');
         $entity = $this->entityManager->find(Entity\Event::class, $id);
         if (! $entity) {
@@ -188,7 +188,6 @@ class EventsController extends AbstractActionController
         $modified = $entity->getModified();
         if ($request->isPost()) {
             $data = $request->getPost();
-            $input = $data->get('event'); //var_dump($input);
             $events->trigger('pre.validate', $this);
             $form->setData($data);
             if ($form->isValid()) {
@@ -216,7 +215,8 @@ class EventsController extends AbstractActionController
                 return $this->redirect()
                         ->toRoute('events/edit', ['id' => $id]);
             }
-            /** @todo put this task in the 'pre.validate' event listener ? */
+            /** @todo DRY this up somehow */
+            $input = $data->get('event'); //var_dump($input);
             if ($input) {
                 $defendantNames = isset($input['defendantNames']) ?
                         $input['defendantNames'] : [];
