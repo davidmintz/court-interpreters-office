@@ -268,6 +268,22 @@ class EventControllerTest extends AbstractControllerTest
         }
     }
 
+    public function testAssigningInterpretersResultsInMetaDataUpdate()
+    {
+        $db = FixtureManager::getEntityManager()->getConnection();
+        $when = (new \DateTime('-10 minutes'))->format("Y-m-d H:i:s");
+        $db->executeQuery("UPDATE events SET modified = '$when' WHERE id = 1");
+
+        $this->login('david', 'boink');
+        $this->reset(true);
+        $this->dispatch('/admin/schedule/edit/1');
+        // sanity
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery('#event-form');
+        $this->assertQueryCount('ul.interpreters-assigned li',1);
+        // to be continued...
+        
+    }
     public function testEventInputValidation()
     {
         $em = FixtureManager::getEntityManager();
