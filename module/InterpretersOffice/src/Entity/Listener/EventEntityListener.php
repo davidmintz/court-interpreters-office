@@ -12,6 +12,7 @@ use Zend\Log\LoggerAwareInterface;
 use InterpretersOffice\Entity;
 use Zend\Log;
 use Zend\Authentication\AuthenticationServiceInterface;
+use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -23,6 +24,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
 {
     use Log\LoggerAwareTrait;
     use EventManagerAwareTrait;
+    use CurrentUserTrait;
 
     /**
      * authentication service
@@ -30,13 +32,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @var AuthenticationServiceInterface
      */
     protected $auth;
-
-    /**
-     * currently authenticated user
-     *
-     * @var Entity\User
-     */
-    protected $user;
 
     /**
      * holds a copy of related entities before updating
@@ -67,6 +62,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     public function setAuth(AuthenticationServiceInterface $auth)
     {
         $this->auth = $auth;
+
         return $this;
     }
 
@@ -114,21 +110,11 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                 'event modification detected, setting modified and modifiedBy on '
                 . ' event entity in %s line %d', __METHOD__,__LINE__
             ));
-            $eventEntity
-                    ->setModified($this->now)
-                    ->setModifiedBy(
-                        $this->getAuthenticatedUser($args->getEntityManager())
-                    );
-            $debug .= sprintf(
-                " real changes detected, we updated event meta for event id %s",
-                $eventEntity->getId());
-        } else {
-            $debug .= "no actual update detected with event id "
-                    .$eventEntity->getId();
-        }
-        $this->logger->info($debug);
-    }
+            $eventEntity->setModified($this->now)
+                    ->setModifiedBy($this->getAuthenticatedUser($args));
 
+        }
+    }
 
     /**
      * prePersist callback
@@ -155,23 +141,5 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->logger->debug(__FUNCTION__ . " in EventEntityListener prePersist really did shit");
     }
 
-    /**
-     * lazy-gets the User entity corresponding to authenticated identity
-     *
-     * @param EntityManager $em
-     * @return Entity\User
-     */
-    protected function getAuthenticatedUser(EntityManager $em)
-    {
-        if (! $this->user) {
-            $dql = 'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id';
-            $id = $this->auth->getIdentity()->id;
-            $query = $em->createQuery($dql)
-                    ->setParameters(['id' => $id])
-                    ->useResultCache(true);
-            $this->user = $query->getOneOrNullResult();
-        }
 
-        return $this->user;
-    }
 }

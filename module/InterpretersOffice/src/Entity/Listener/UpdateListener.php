@@ -10,7 +10,7 @@ use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Entity;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Log;
-
+use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 
 /**
  * entity listener for clearing caches
@@ -26,7 +26,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
 {
 
     use Log\LoggerAwareTrait;
-    //use CurrentUserTrait;
+    use CurrentUserTrait;
 
 
     /**
@@ -50,32 +50,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     protected $auth;
 
-    /**
-     * currently authenticated user
-     *
-     * @var Entity\User
-     */
-    protected $user;
 
-    /**
-     * gets current user
-     *
-     * @param  LifecycleEventArgs $args
-     * @return Entity\User
-     */
-    public function getAuthenticatedUser($args)
-    {
-        if (! $this->user) {
-            $em = $args->getObjectManager();
-            $id = $this->auth->getIdentity()->id;
-            $this->user = $em->createQuery('select u FROM InterpretersOffice\Entity\User u WHERE u.id = :id')
-                ->setParameters(['id'=>$id])->useResultCache(true)->getOneOrNullResult();
-        }
-        $this->logger->debug("UpdateListener dug up user ".
-            $this->user->getUsername());
-
-        return $this->user;
-    }
 
     /**
      * sets authentication service

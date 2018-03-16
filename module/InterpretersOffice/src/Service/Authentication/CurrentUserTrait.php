@@ -1,38 +1,40 @@
-<?php /** module/InterpretersOffice/src/Service/Authentication/CurrentUserTrait.php */
+<?php
+/**
+ * module/InterpretersOffice/src/Service/Authentication/CurrentUserTrait.php
+ */
 
 namespace InterpretersOffice\Service\Authentication;
 
-use Zend\Authentication\AuthenticationServiceInterface;
-use Doctrine\ORM\EntityManagerInterface as EntityManager;
+use InterpretersOffice\Entity;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 
 /**
- * gets the currently authenticated user
- *
+ * fetch current user
  */
 trait CurrentUserTrait
 {
-    /*
-     * auth
+    /**
+     * currently authenticated user
      *
-     * @var AuthenticationServiceInterface
+     * @var Entity\User
      */
-    //protected $auth;
+    protected $user;
 
     /**
-     * gets the User entity corresponding to authenticated identity
+     * gets current user
      *
-     * @param EntityManager $em
+     * @param  LifecycleEventArgs $args
      * @return Entity\User
      */
-    protected function getAuthenticatedUser(EntityManager $em)
+    public function getAuthenticatedUser(LifecycleEventArgs $args)
     {
-        $dql = 'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id';
-        $id = $this->auth->getIdentity()->id;
-        $query = $em->createQuery($dql)
-                ->setParameters(['id' => $id])
-                ->useResultCache(true);
-        $user = $query->getOneOrNullResult();
+        if (! $this->user) {
+            $em = $args->getObjectManager();
+            $id = $this->auth->getIdentity()->id;
+            $this->user = $em->createQuery('SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id')
+                ->setParameters(['id'=>$id])->useResultCache(true)->getOneOrNullResult();
+        }
 
-        return $user;
+        return $this->user;
     }
 }
