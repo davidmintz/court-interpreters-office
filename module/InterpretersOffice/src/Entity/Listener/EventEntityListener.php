@@ -90,14 +90,13 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     public function preUpdate(Entity\Event $eventEntity,
         PreUpdateEventArgs $args)
     {
-        $this->logger->debug(__METHOD__. " is running");
         $modified = false;
         $debug = '';
         if ($args->getEntityChangeSet()) {
             $modified = true;
             // really?
-            $debug .= "what changed? "
-                    .print_r(array_keys($args->getEntityChangeSet()), true);
+            $this->logger->debug("what changed: "
+                    .print_r(array_keys($args->getEntityChangeSet()), true));
         }
         $defendants_before = $this->state_before['defendants'];
         $defendants_after = $eventEntity->getDefendantNames()->toArray();
@@ -129,7 +128,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         if (! $eventEntity->getCreatedBy()) {
             // because in test environment, this might already have been done
             // for us
-            $user = $this->getAuthenticatedUser($args->getEntityManager());
+            $user = $this->getAuthenticatedUser($args);
             $eventEntity->setCreatedBy($user);
         } else {
             // so we don't blow up in the test environment
