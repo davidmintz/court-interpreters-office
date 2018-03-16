@@ -69,6 +69,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->auth = $auth;
         return $this;
     }
+
     /**
      * postLoad callback
      *
@@ -81,8 +82,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     ) {
         $this->state_before['defendants'] = $eventEntity->getDefendantNames()
             ->toArray();
-        //$this->state_before['interpreterEvents'] =
-        //    $eventEntity->getInterpreterEvents()->toArray();
         $this->getEventManager()->trigger(__FUNCTION__, $this);
     }
 
@@ -104,41 +103,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             $debug .= "what changed? "
                     .print_r(array_keys($args->getEntityChangeSet()), true);
         }
-        /*
-        $interpreters_before = $this->state_before['interpreterEvents'];
-        $interpreters_after = $eventEntity->getInterpreterEvents()->toArray();
-        $this->logger->debug("um, I guess ".__METHOD__ . " has found updates to Interpreters?");
-        if ($interpreters_before != $interpreters_after) {
-             $modified = true;
-             $added = array_diff($interpreters_after, $interpreters_before);
-             // client-side-supplied created_by should agree with
-             // currently authenticated user, but new entities can't get
-             // inserted without a created_by id (we can't cascade=persist
-             // for Interpreter with null id), so we have to set it in a hidden
-             // form field, check it after the fact, and correct it if (in the
-             // improbable case) it's necessary (until we come up with a better
-             // plan)
-             // @todo factor out into its own function?
-            $current_user_id = $this->auth->getIdentity()->id;
-            foreach ($added as $ie) {
-                $this->logger->debug(__METHOD__ . ": examining shit (InterpreterEvent)");
-                $creator_id = $ie->getCreatedBy()->getId();
-                if ($creator_id != $current_user_id) {
-                    $interpreter = $ie->getInterpreter();
-                    $this->logger->warn(
-                        sprintf(
-                            'submitted creator id inconsistent with current user'
-                            . ' in event id %d, interpreter id %d (%s)',
-                            $eventEntity->getId(),
-                            $added, $interpreter->getLastname()
-                        ), compact('creator_id', 'current_user_id')
-                    );
-                }
-                $ie->setCreatedBy(
-                    $this->getAuthenticatedUser($args->getEntityManager())
-                );
-            }
-        }*/
         $defendants_before = $this->state_before['defendants'];
         $defendants_after = $eventEntity->getDefendantNames()->toArray();
         if ($defendants_after != $defendants_before) {
@@ -172,30 +136,23 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * sets Event metadata, e.g., who created the Event and when
      *
      * @param \InterpretersOffice\Entity\Event $eventEntity
-     * @param LifecycleEventArgs $event
+     * @param LifecycleEventArgs $args
      */
-    public function prePersist(Entity\Event $eventEntity, LifecycleEventArgs $event)
+    public function prePersist(Entity\Event $eventEntity, LifecycleEventArgs $args)
     {
-
         if (! $eventEntity->getCreatedBy()) {
             // because in test environment, this might already have been done
             // for us
-            $user = $this->getAuthenticatedUser($event->getEntityManager());
+            $user = $this->getAuthenticatedUser($args->getEntityManager());
             $eventEntity->setCreatedBy($user);
         } else {
             // so we don't blow up in the test environment
             $user = $eventEntity->getCreatedBy();
         }
-
         $eventEntity->setCreated($this->now)
                 ->setModifiedBy($user)
                 ->setModified($this->now);
-        foreach ($eventEntity->getInterpreterEvents() as $interpreterEvent) {
-            $interpreterEvent
-                    ->setCreatedBy($user)
-                    ->setCreated($this->now);
-        }
-        $this->logger->debug(__FUNCTION__ . " in EventEntityListener really did shit");
+        $this->logger->debug(__FUNCTION__ . " in EventEntityListener prePersist really did shit");
     }
 
     /**

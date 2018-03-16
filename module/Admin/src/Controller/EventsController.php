@@ -167,7 +167,7 @@ class EventsController extends AbstractActionController
      *
      */
     public function editAction()
-    {        
+    {
         $id = $this->params()->fromRoute('id');
         $entity = $this->entityManager->find(Entity\Event::class, $id);
         if (! $entity) {
@@ -253,7 +253,7 @@ class EventsController extends AbstractActionController
                     .json_encode($inputFilter->getMessages(), \JSON_PRETTY_PRINT)
             );
         }
-        $data['created_by'] = $this->auth->getStorage()->read()->id;
+        // $data['created_by'] = "0";//$this->auth->getStorage()->read()->id;
         $html = $helper->fromArray($data);
         return $this->getResponse()->setContent($html);
     }

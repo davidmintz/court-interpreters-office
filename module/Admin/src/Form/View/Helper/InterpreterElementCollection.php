@@ -19,15 +19,16 @@ class InterpreterElementCollection extends AbstractHelper
         <li class="list-group-item py-1 interpreter-assigned">
             <input name="event[interpreterEvents][%d][interpreter]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][event]" type="hidden" value="%d">
-            <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][name]" type="hidden" value="%s">
             <span class="align-middle">%s</span>
             <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this interpreter">
             <span class="fas fa-times" aria-hidden="true"></span>
             <span class="sr-only">remove this interpreter
             </button>
-        </li>           
+        </li>
 TEMPLATE;
+
+// we removed <!-- <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="%d"> -->
 
     /**
      * invoke
@@ -62,18 +63,12 @@ TEMPLATE;
             $interpreter = $interpEvent->getInterpreter();
             $event = $interpEvent->getEvent();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
-            // 9 placeholders, yes it is excessive!
+            // 8 placeholders, yes it is excessive!
             $markup .= sprintf(
                 $this->template,
-                $i,
-                $interpreter->getId(),
-                $i,
-                $event->getId(),
-                $i,
-                $interpEvent->getCreatedBy()->getId(),
-                $i,
-                $name,
-                $name
+                $i, $interpreter->getId(),
+                $i, $event->getId(),
+                $i,$i,$name,$name // [sic]
             );
         }
         return $markup;
@@ -107,7 +102,7 @@ TEMPLATE;
             $data['index'],
             $data['event_id'],
             $data['index'],
-            $data['created_by'],
+            //$data['created_by'], // planning to do this server-side
             $data['index'],
             $data['name'],
             $data['name']

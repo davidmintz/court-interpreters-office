@@ -7,10 +7,8 @@ namespace InterpretersOffice\Entity\Listener;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
-use InterpretersOffice\Entity\InterpreterEvent;
-use InterpretersOffice\Entity\EventType;
 use InterpretersOffice\Entity;
-
+use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Log;
 
 
@@ -25,7 +23,6 @@ use Zend\Log;
  *
  */
 class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
-
 {
 
     use Log\LoggerAwareTrait;
@@ -46,25 +43,51 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     protected $now;
 
+    /**
+     * auth service
+     *
+     * @var AuthenticationServiceInterface;
+     */
     protected $auth;
 
-    public function setAuth($auth)
-    {
-        $this->auth = $auth;
-        return $this;
-    }
-
+    /**
+     * currently authenticated user
+     *
+     * @var Entity\User
+     */
     protected $user;
 
+    /**
+     * gets current user
+     *
+     * @param  LifecycleEventArgs $args
+     * @return Entity\User
+     */
     public function getAuthenticatedUser($args)
     {
         if (! $this->user) {
             $em = $args->getObjectManager();
             $id = $this->auth->getIdentity()->id;
             $this->user = $em->createQuery('select u FROM InterpretersOffice\Entity\User u WHERE u.id = :id')
-                ->setParameters(['id'=>$id])->getOneOrNullResult();
+                ->setParameters(['id'=>$id])->useResultCache(true)->getOneOrNullResult();
         }
+        $this->logger->debug("UpdateListener dug up user ".
+            $this->user->getUsername());
+
         return $this->user;
+    }
+
+    /**
+     * sets authentication service
+     *
+     * @param AuthenticationServiceInterface $auth
+     * @return UpdateListener
+     */
+    public function setAuth(AuthenticationServiceInterface $auth)
+    {
+        $this->auth = $auth;
+
+        return $this;
     }
 
     /**
@@ -100,16 +123,21 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         return $this->clearCache($args,__FUNCTION__);
     }
+
+    /**
+     * prePersist listener
+     *
+     * @param LifecycleEventArgs $args
+     * @return void
+     */
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        if (get_class($entity) == Entity\InterpreterEvent::class) {
-            $this->logger->debug("guess what: ievent being created, updating event");
-            $entity->getEvent()->setModified($this->now);
-            //$something = $args->getTarget();
-            //$this->logger->debug('btw: getTarget() returns: '.(is_object($something) ? get_class($something):gettype($something)));
+        if ($entity instanceof Entity\InterpreterEvent) {
+            $this->logger->debug("guess what: ievent is being created, updating event");
+            $entity->getEvent()->setModified($this->getTimeStamp());
             $user = $this->getAuthenticatedUser($args);
-            $object->setCreatedBy($user)->setCreated($this->now);
+            $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
             $this->logger->debug("we set createdBy on InterpreterEvent here in ".__METHOD__);
         }
     }
@@ -128,8 +156,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         $entity = $args->getObject();
         $class = get_class($entity);
-        $this->logger->debug(sprintf('%s happening on entity %s triggered by %s',
-            __METHOD__, $class, $trigger ?: '(unknown)'));
+        //$this->logger->debug(sprintf('%s happening on entity %s triggered by %s',
+        //    __METHOD__, $class, $trigger ?: '(unknown)'));
 
         /** @var $cache Doctrine\Common\Cache\CacheProvider */
         $cache = $args->getObjectManager()->getConfiguration()
@@ -207,5 +235,4 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         return $this->clearCache($args,__FUNCTION__);
     }
-
 }
