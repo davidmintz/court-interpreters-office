@@ -7,6 +7,7 @@ namespace InterpretersOffice\Entity\Listener;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
+use InterpretersOffice\Entity\InterpreterEvent;
 use InterpretersOffice\Entity\EventType;
 use InterpretersOffice\Entity;
 
@@ -45,6 +46,27 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     protected $now;
 
+    protected $auth;
+
+    public function setAuth($auth)
+    {
+        $this->auth = $auth;
+        return $this;
+    }
+
+    protected $user;
+
+    public function getAuthenticatedUser($args)
+    {
+        if (! $this->user) {
+            $em = $args->getObjectManager();
+            $id = $this->auth->getIdentity()->id;
+            $this->user = $em->createQuery('select u FROM InterpretersOffice\Entity\User u WHERE u.id = :id')
+                ->setParameters(['id'=>$id])->getOneOrNullResult();
+        }
+        return $this->user;
+    }
+
     /**
      * gets current datetime
      *
@@ -65,7 +87,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postRemove','postPersist'];
+        return ['postUpdate','postRemove','postPersist','prePersist'];
     }
 
     /**
@@ -78,7 +100,19 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         return $this->clearCache($args,__FUNCTION__);
     }
-
+    public function prePersist(LifecycleEventArgs $args)
+    {
+        $entity = $args->getObject();
+        if (get_class($entity) == Entity\InterpreterEvent::class) {
+            $this->logger->debug("guess what: ievent being created, updating event");
+            $entity->getEvent()->setModified($this->now);
+            //$something = $args->getTarget();
+            //$this->logger->debug('btw: getTarget() returns: '.(is_object($something) ? get_class($something):gettype($something)));
+            $user = $this->getAuthenticatedUser($args);
+            $object->setCreatedBy($user)->setCreated($this->now);
+            $this->logger->debug("we set createdBy on InterpreterEvent here in ".__METHOD__);
+        }
+    }
     /**
      * clears cache
      *
@@ -94,9 +128,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         $entity = $args->getObject();
         $class = get_class($entity);
-        $this->logger->debug(sprintf(
-            '%s happening on entity %s',
-            __METHOD__, $class));
+        $this->logger->debug(sprintf('%s happening on entity %s triggered by %s',
+            __METHOD__, $class, $trigger ?: '(unknown)'));
 
         /** @var $cache Doctrine\Common\Cache\CacheProvider */
         $cache = $args->getObjectManager()->getConfiguration()
@@ -124,9 +157,10 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                 }
                 $this->logger->debug($debug);
                 if ('postUpdate' == $trigger) {
-                    $cache->flushAll();
+                    $cache->flushAll(); // because.... why?
                 }
                 break;
+
             case Entity\InterpreterLanguage::class:
                 $cache->setNamespace('languages');
                 $cache->deleteAll();
@@ -144,7 +178,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                     $this->logger->debug("called delete cache on ".get_class($repository));
                 } else {
                     $this->logger->debug(
-                        "! not an implementation of CacheDeletionInterface: "
+                        "$class repository is not an implementation of CacheDeletionInterface: "
                         .get_class($repository));
                 }
                 break;
@@ -159,8 +193,9 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        return $this->clearCache($args);
+        return $this->clearCache($args,__FUNCTION__);
     }
+
 
     /**
      * postRemove event handler
@@ -170,6 +205,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postRemove(LifecycleEventArgs $args)
     {
-        return $this->clearCache($args);
+        return $this->clearCache($args,__FUNCTION__);
     }
+
 }

@@ -81,8 +81,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     ) {
         $this->state_before['defendants'] = $eventEntity->getDefendantNames()
             ->toArray();
-        $this->state_before['interpreterEvents'] =
-            $eventEntity->getInterpreterEvents()->toArray();
+        //$this->state_before['interpreterEvents'] =
+        //    $eventEntity->getInterpreterEvents()->toArray();
         $this->getEventManager()->trigger(__FUNCTION__, $this);
     }
 
@@ -104,10 +104,10 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             $debug .= "what changed? "
                     .print_r(array_keys($args->getEntityChangeSet()), true);
         }
-
+        /*
         $interpreters_before = $this->state_before['interpreterEvents'];
         $interpreters_after = $eventEntity->getInterpreterEvents()->toArray();
-
+        $this->logger->debug("um, I guess ".__METHOD__ . " has found updates to Interpreters?");
         if ($interpreters_before != $interpreters_after) {
              $modified = true;
              $added = array_diff($interpreters_after, $interpreters_before);
@@ -118,9 +118,10 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
              // form field, check it after the fact, and correct it if (in the
              // improbable case) it's necessary (until we come up with a better
              // plan)
-             /** @todo factor out into its own function?  */
+             // @todo factor out into its own function?
             $current_user_id = $this->auth->getIdentity()->id;
             foreach ($added as $ie) {
+                $this->logger->debug(__METHOD__ . ": examining shit (InterpreterEvent)");
                 $creator_id = $ie->getCreatedBy()->getId();
                 if ($creator_id != $current_user_id) {
                     $interpreter = $ie->getInterpreter();
@@ -137,7 +138,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                     $this->getAuthenticatedUser($args->getEntityManager())
                 );
             }
-        }
+        }*/
         $defendants_before = $this->state_before['defendants'];
         $defendants_after = $eventEntity->getDefendantNames()->toArray();
         if ($defendants_after != $defendants_before) {

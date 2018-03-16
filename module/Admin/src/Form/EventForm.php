@@ -57,7 +57,7 @@ class EventForm extends ZendForm implements
      *
      * @var array
      */
-    protected $state_before = ['interpEvents' => [],];
+    protected $state_before = ['interpreterEvents' => [],];
 
      /**
      * constructor.
@@ -110,9 +110,9 @@ class EventForm extends ZendForm implements
      */
     public function postLoad(EventInterface $e)
     {
-        //$controller = $e->getTarget();
-        //$logger = $controller->getEvent()->getApplication()
-        //    ->getServiceManager()->get('log');
+        $controller = $e->getTarget();
+        $logger = $controller->getEvent()->getApplication()
+            ->getServiceManager()->get('log');
         $entity = $e->getParam('entity');
         foreach ($this->datetime_props as $prop) {
             if (strstr($prop, '_')) {
@@ -122,9 +122,10 @@ class EventForm extends ZendForm implements
             }
             $this->state_before[$prop] = $entity->$getter();
         }
-        $this->state_before['interpreterEvents'] =
-            $entity->getInterpreterEvents()->toArray();
-
+        foreach ($entity->getInterpreterEvents() as $ie) {
+            $this->state_before['interpreterEvents'][] = (string)$ie;
+        }
+        $logger->debug(sprintf('postLoad: interpreterEvents state before is now: %s',print_r($this->state_before['interpreterEvents'],true)));
     }
 
     /**
@@ -146,15 +147,32 @@ class EventForm extends ZendForm implements
         $logger = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
         /** @var  Doctrine\ORM\PersistentCollection $collection */
         $collection = $entity->getInterpreterEvents();
-        $interpreters_updated = ($collection->count() != count($this->state_before['interpreterEvents'])
-            or
-             ($this->state_before['interpreterEvents'] != $collection->toArray())
-        );
-        $logger->debug(($interpreters_updated ? "YES":"NO"). " shit changed");
+        //*
+        if ($collection->count() != count($this->state_before['interpreterEvents'])) {
+            $interpreters_updated = true;
+        } else {
+            $after = [];
+            foreach ($collection as $ie) {
+                $after[] = (string)$ie;
+            }
+            $logger->debug(sprintf('postValidate: interpreterEvents state is now: %s',print_r($after,true)));
+            $before = $this->state_before['interpreterEvents'];
+            if (count($after) > 1) {
+                sort($before);
+                sort($after);
+            }
+            if ($before != $after) {
+                $interpreters_updated = true;
+            } else {
+                $interpreters_updated = false;
+            }
+        }
+        $logger->debug(($interpreters_updated ? "YES":"NO"). " interpreters have been changed?");
+
         if ($interpreters_updated) {
             // this change suffices to trigger the Event entity's preUpdate()
             $entity->setModified(new \DateTime());
-        }
+        }//*/
         foreach ($this->datetime_props as $prop) {
             if (strstr($prop, '_')) {
                 $getter = 'get'.ucfirst(str_replace('_', '', $prop));
