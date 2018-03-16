@@ -4,6 +4,12 @@
  * @var \InterpretersOffice\Entity\Event $event
  */
 $event = $this->event;
+if (! $event):
+    ?>
+    <p class="alert alert-warning">event not found!</p>
+    <?php
+    return;
+endif;
 $this->headTitle('event details');
 // figure out location
 if ($event['location']) :
