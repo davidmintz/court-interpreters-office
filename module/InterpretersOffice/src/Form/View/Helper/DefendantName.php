@@ -20,12 +20,12 @@ class DefendantName extends AbstractHelper
     protected $template = <<<TEMPLATE
         <li class="list-group-item defendant py-1">
             <input name="event[defendantNames][%d]" type="hidden" value="%s">
-            <span class="align-middle">%s</span>            
+            <span class="align-middle">%s</span>
             <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this defendant">
             <span class="fas fa-times" aria-hidden="true"></span>
             <span class="sr-only">remove this defendant
             </button>
-        </li>            
+        </li>
 TEMPLATE;
 
     /**
@@ -46,8 +46,7 @@ TEMPLATE;
     {
         $escaper = $this->escaper->getEscaper();
         $label = $escaper->escapeHtml($name);
-        //$shit = print_r(get_class_methods(),true);
-        //printf("<pre>%s</pre>",$shit);
+
         return sprintf($this->template, $id, $label, $label);
     }
 
