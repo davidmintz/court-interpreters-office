@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Entity representing a Judge.
  *
- * Judge inherits from Person.
+ * Judge inherits from Person. boink.
  *
  * @see InterpretersOffice\Entity\Person
  *
