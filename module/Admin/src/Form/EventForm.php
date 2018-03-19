@@ -140,7 +140,7 @@ class EventForm extends ZendForm implements
      * object instances), and restores them if they have not. We do this to stop
      * Doctrine from wasting an update query when no data has actually changed.
      * We also observe changes to the related entities and ensure that the Event
-     * Wentity metadata is updated, if appropriate.
+     * entity metadata is updated, if appropriate.
      *
      * @param EventInterface $e
      * @return void
