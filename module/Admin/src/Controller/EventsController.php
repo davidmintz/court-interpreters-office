@@ -177,10 +177,8 @@ class EventsController extends AbstractActionController
                  "event with id $id was not found in the database." ]);
         }
         $form = new Form\EventForm(
-            $this->entityManager,
-            ['action' => 'update','object' => $entity,]
+            $this->entityManager, ['action' => 'update','object' => $entity,]
         );
-
         $events = $this->getEventManager();
         $form->attach($events);
         $events->trigger('post.load', $this, ['entity' => $entity]);
@@ -189,7 +187,7 @@ class EventsController extends AbstractActionController
         $events->trigger('pre.populate');
         $modified = $entity->getModified();
         if ($request->isPost()) {
-            
+
             $data = $request->getPost();
             $events->trigger('pre.validate', $this);
             $form->setData($data);
