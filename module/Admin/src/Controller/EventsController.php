@@ -169,6 +169,7 @@ class EventsController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
+        /** @var \InterpretersOffice\Entity\Event $entity  */
         $entity = $this->entityManager->find(Entity\Event::class, $id);
         if (! $entity) {
              return $this->getViewModel([
@@ -179,6 +180,7 @@ class EventsController extends AbstractActionController
             $this->entityManager,
             ['action' => 'update','object' => $entity,]
         );
+
         $events = $this->getEventManager();
         $form->attach($events);
         $events->trigger('post.load', $this, ['entity' => $entity]);
@@ -187,6 +189,7 @@ class EventsController extends AbstractActionController
         $events->trigger('pre.populate');
         $modified = $entity->getModified();
         if ($request->isPost()) {
+            
             $data = $request->getPost();
             $events->trigger('pre.validate', $this);
             $form->setData($data);
@@ -216,10 +219,8 @@ class EventsController extends AbstractActionController
                         ->toRoute('events/edit', ['id' => $id]);
             }
             /** @todo DRY this up somehow */
-            $input = $data->get('event'); //var_dump($input);
+            $input = $data->get('event'); //var_dump($input['defendantNames']);
             if ($input) {
-                $defendantNames = isset($input['defendantNames']) ?
-                        $input['defendantNames'] : [];
                 $interpreters = isset($input['interpreterEvents']) ?
                         $input['interpreterEvents'] : [];
                 $form->get('event')->get('anonymousSubmitter')

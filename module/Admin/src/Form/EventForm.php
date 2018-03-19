@@ -57,7 +57,9 @@ class EventForm extends ZendForm implements
      *
      * @var array
      */
-    protected $state_before = ['interpreterEvents' => [],];
+    protected $state_before = [
+        'interpreterEvents' => [],
+    ];
 
      /**
      * constructor.
@@ -125,6 +127,7 @@ class EventForm extends ZendForm implements
         foreach ($entity->getInterpreterEvents() as $ie) {
             $this->state_before['interpreterEvents'][] = (string)$ie;
         }
+
         $logger->debug(sprintf(
             'postLoad: interpreterEvents state before is now: %s',
             print_r($this->state_before['interpreterEvents'],true)));
@@ -136,8 +139,8 @@ class EventForm extends ZendForm implements
      * Checks whether date/time fields actual values been modified (not just the
      * object instances), and restores them if they have not. We do this to stop
      * Doctrine from wasting an update query when no data has actually changed.
-     * We also observe changes to the related InterpreterEvent entities and
-     * ensure that the Event entity metadata is updated, if appropriate.
+     * We also observe changes to the related entities and ensure that the Event
+     * Wentity metadata is updated, if appropriate.
      *
      * @param EventInterface $e
      * @return void
@@ -148,10 +151,11 @@ class EventForm extends ZendForm implements
         $controller = $e->getTarget();
         $logger = $controller->getEvent()->getApplication()
             ->getServiceManager()->get('log');
+        $updated = false;
         /** @var  Doctrine\ORM\PersistentCollection $collection */
         $collection = $entity->getInterpreterEvents();
         if ($collection->count() != count($this->state_before['interpreterEvents'])) {
-            $interpreters_updated = true;
+            $updated = true;
         } else {
             $after = [];
             foreach ($collection as $ie) {
@@ -160,17 +164,22 @@ class EventForm extends ZendForm implements
             $logger->debug(sprintf('postValidate: interpreterEvents state is now: %s',print_r($after,true)));
             $before = $this->state_before['interpreterEvents'];
             if (count($after) > 1) {
-                sort($before);
-                sort($after);
+                sort($before); sort($after);
             }
             if ($before != $after) {
-                $interpreters_updated = true;
-            } else {
-                $interpreters_updated = false;
+                $updated = true;
             }
         }
-        $logger->debug(($interpreters_updated ? "YES":"NO"). " interpreters have been changed");
-        if ($interpreters_updated) {
+        $logger->debug(($updated ? "YES":"NO"). " interpreters have been changed");
+        $post = $controller->params()->fromPost()['event'];
+        $defendantNames = isset($post['defendantNames'])
+            ? $post['defendantNames'] : [];
+        if (! $defendantNames && count($entity->getDefendantNames())) {
+            $logger->debug("we went from non-zero to zero deftnames!");
+            $entity->getDefendantNames()->clear();
+            $updated = true;
+        }
+        if ($updated) {
             // this change suffices to trigger the Event entity's preUpdate()
             $entity->setModified(new \DateTime());
         }
