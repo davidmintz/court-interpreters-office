@@ -63,12 +63,12 @@ TEMPLATE;
             $interpreter = $interpEvent->getInterpreter();
             $event = $interpEvent->getEvent();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
-            // 8 placeholders, yes it is excessive!
+            // 7 placeholders, yes it is excessive!
             $markup .= sprintf(
                 $this->template,
                 $i, $interpreter->getId(),
                 $i, $event->getId(),
-                $i,$i,$name,$name // [sic]
+                $i,$name,$name // [sic]
             );
         }
         return $markup;
@@ -97,15 +97,9 @@ TEMPLATE;
         }
         $markup = sprintf(
             $this->template,
-            $data['index'],
-            $data['interpreter_id'],
-            $data['index'],
-            $data['event_id'],
-            $data['index'],
-            //$data['created_by'], // planning to do this server-side
-            $data['index'],
-            $data['name'],
-            $data['name']
+            $data['index'], $data['interpreter_id'],
+            $data['index'], $data['event_id'],
+            $data['index'], $data['name'], $data['name']
         );
         return $markup;
     }
@@ -127,7 +121,7 @@ TEMPLATE;
                 [
                     'index' => $index,
                     'name'  => $ie['name'],
-                    'created_by' => $ie['createdBy'],
+                    //'created_by' => $ie['createdBy'],
                     'event_id'  => $ie['event'],
                     'interpreter_id' => $ie['interpreter']
                 ]
