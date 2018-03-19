@@ -21,6 +21,7 @@ use InterpretersOffice\Form\AnnotatedFormCreationTrait;
 class LocationsController extends AbstractActionController
 {
     use AnnotatedFormCreationTrait;
+    use DeletionTrait;
 
     /**
      * implementation of FormFactoryInterface.
@@ -162,17 +163,10 @@ class LocationsController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
 
-        if (! $id) { // get rid of this, since it will otherwise be 404?
-            return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
-        }
-
         $entity = $this->entityManager->find('InterpretersOffice\Entity\Location', $id);
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
-        } else {
-            $viewModel->id = $id;
         }
-
         $form = $this->getForm(
             Location::class,
             ['object' => $entity, 'action' => 'update']
@@ -210,5 +204,24 @@ class LocationsController extends AbstractActionController
         $data = $repository->getCourtroomValueOptions($parent_id);
 
         return new JsonModel($data);
+    }
+
+    /**
+     * deletes a location.
+     * @todo logging?
+     * @return JsonModel
+     */
+    public function deleteAction()
+    {
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $id = $this->params()->fromRoute('id');
+            $name = $this->params()->fromPost('name');
+            $what = 'location';
+            $entity = $this->entityManager->find(Location::class, $id);
+
+            return $this->delete(compact('entity','id','name','what'));
+        }
     }
 }

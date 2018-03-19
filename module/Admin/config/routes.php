@@ -216,7 +216,6 @@ return  [
                         ],
                     ],
                 ],
-
             ],
         ],
         'event-types' => [

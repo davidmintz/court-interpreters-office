@@ -148,7 +148,7 @@ class Event
     /**
      * event location.
      *
-     * @ORM\ManyToOne(targetEntity="Location")
+     * @ORM\ManyToOne(targetEntity="Location",inversedBy="events")
      * @ORM\JoinColumn(nullable=true)
      *
      * @var Location
