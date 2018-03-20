@@ -42,7 +42,7 @@ return [
                     'route' => 'people/add'
                     ],
                     [
-                    'label' => 'add',
+                    'label' => 'edit',
                     'route' => 'people/edit'
                     ],
                 ]
