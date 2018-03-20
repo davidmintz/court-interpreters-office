@@ -83,7 +83,7 @@ class Event
     /**
      * Every event is of some type or other.
      *
-     * @ORM\ManyToOne(targetEntity="EventType")
+     * @ORM\ManyToOne(targetEntity="EventType",inversedBy="events")
      * @ORM\JoinColumn(nullable=false,name="event_type_id")
      *
      * @var EventType

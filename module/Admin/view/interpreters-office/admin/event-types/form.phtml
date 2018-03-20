@@ -7,19 +7,32 @@ if ($this->errorMessage) : ?>
 return;
 endif;
 $form = $this->form;
+
+$action = $this->layout()->action;
+if ($action == 'add'):
+    $actionAttrib = $this->url('event-types/add');
+    $delete_button = false;
+else:
+    $entity = $form->getObject();
+    $actionAttrib = $this->url('event-types/edit', ['id' => $entity->getId()]);
+    $form->setAttribute('data-event-type_name',$entity->getName());
+    $delete_button = ! $entity->hasRelatedEntities();
+endif;
+$form->setAttribute('action',$actionAttrib);
+/*
 if (strstr($this->title, 'add')) :
     $action = 'add' ;
     $actionAttrib = $this->url('event-types/add');
 else :
     $action = 'edit';
     $actionAttrib = $this->url('event-types/edit', ['id' => $this->id ]);
-endif;
+endif;*/
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
     <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
 <?php if ($action == 'add') : ?>
-    <p>Use this form to add a new event type. Please be careful 
-      to avoid adding a type that is a subtype of, or partially redundant with, 
+    <p>Use this form to add a new event type. Please be careful
+      to avoid adding a type that is a subtype of, or partially redundant with,
       one that already exists.</p>
 <?php endif;
 $form->add([
@@ -39,15 +52,18 @@ echo $this->formLabel($name),$this->formElement($name),$this->formElementErrors(
 $category = $form->get('category');
 echo $this->formLabel($category),$this->formSelect($category),$this->formElementErrors($category);
 ?>
-</div> 
+</div>
 <div class="form-group"><?php
 $comments = $form->get('comments');
 echo $this->formLabel($comments),$this->formElement($comments), $this->formElementErrors($comments);
-?>      
+?>
 </div>
 <div class="form-group"><?php
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
+if ($delete_button):
+    ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning" title="delete this location from your database" value="delete" id="btn-delete"><?php
+endif;
 $csrf = $form->get('csrf');
 echo $this->formElement($csrf),$this->formElementErrors($csrf);
 echo $this->form()->closeTag();
