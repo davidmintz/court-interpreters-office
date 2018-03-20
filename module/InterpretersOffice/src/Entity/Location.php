@@ -148,13 +148,13 @@ class Location
      *
      * returns false if this Location has no related
      * entities and can therefore safely be deleted
-     * 
+     *
      * @return boolean true if there are related entities
      */
     public function hasRelatedEntities()
     {
-        return ! $this->events->isEmpty() &&
-            ! $this->judges->isEmpty();
+        return !$this->events->isEmpty() or
+                 !$this->judges->isEmpty();
     }
 
     /**

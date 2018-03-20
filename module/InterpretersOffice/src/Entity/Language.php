@@ -95,14 +95,12 @@ class Language
      */
     public function hasRelatedEntities()
     {
-        return ! $this->events->isEmpty() &&
+        return ! $this->events->isEmpty() or
             ! $this->interpreterLanguages->isEmpty();
     }
 
     /**
      * Is there a federal certification program for this language?
-     *
-     * There are only three such languages and that is very unlikely to change.
      * So unlikely that we can hard-code them.
      *
      * @return bool
