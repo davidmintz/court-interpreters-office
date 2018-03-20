@@ -6,6 +6,7 @@ namespace InterpretersOffice\Admin\Controller\Factory;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller;
+use InterpretersOffice\Admin\Controller\PeopleController;
 
 use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
 
@@ -36,6 +37,11 @@ class PeopleControllerFactory implements FactoryInterface
             $listener = $container->get('interpreter-listener');
             $resolver = $em->getConfiguration()->getEntityListenerResolver();
             $resolver->register($listener);
+
+        } elseif ($requestedName == Controller\PeopleController::class) {
+            $controller = new $requestedName($em);
+            $controller->setFormConfig($container->get('config')['forms']);
+
         } else {
             $controller = new $requestedName($em);
         }
