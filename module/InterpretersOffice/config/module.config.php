@@ -20,8 +20,9 @@ $doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
 return [
     'form_elements' => [
         'factories' => [
-            Entity\Language::class => Form\Factory\AnnotatedEntityFormFactory::class,
-            Entity\Location::class => Form\Factory\AnnotatedEntityFormFactory::class,
+            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
+            //Entity\Language::class => Form\Factory\AnnotatedEntityFormFactory::class,
+            //Entity\Location::class => Form\Factory\AnnotatedEntityFormFactory::class,
         ],
     ],
     'controllers' => [
@@ -116,7 +117,7 @@ return [
             \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
-            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
+            //Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
         ],
 
     ],
