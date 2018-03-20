@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="module/InterpretersOffice/test/Bootstrap.php">
+<phpunit colors="true" stopOnFailure="true" bootstrap="module/InterpretersOffice/test/Bootstrap.php">
     <testsuites>
         <testsuite name="CourtInterpretersOffice Test Suite">
             <directory>./module/InterpretersOffice/test</directory>
             <directory>./module/Admin/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
             <exclude>./module/Admin/test/WebDriver/</exclude>
-      
+
         </testsuite>
-    
+
     </testsuites>
-	<php>	 
-	  <ini name="error_log" value="./data/test.error.log"/>	 
-	  <ini name="log_errors" value="On"/>	 
+	<php>
+	  <ini name="error_log" value="./data/test.error.log"/>
+	  <ini name="log_errors" value="On"/>
 	</php>
 </phpunit>
