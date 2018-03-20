@@ -19,7 +19,7 @@ use InterpretersOffice\Form\AnnotatedFormCreationTrait;
 class EventTypesController extends AbstractActionController
 {
     use AnnotatedFormCreationTrait;
-
+    use DeletionTrait;
     /**
      * FormFactoryInterface.
      *
@@ -142,4 +142,24 @@ class EventTypesController extends AbstractActionController
 
         return $view;
     }
+
+
+        /**
+         * deletes an event-type.
+         * @todo logging?
+         * @return JsonModel
+         */
+        public function deleteAction()
+        {
+
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $id = $this->params()->fromRoute('id');
+                $name = $this->params()->fromPost('name');
+                $what = "event-type";
+                $entity = $this->entityManager->find(EventType::class, $id);
+
+                return $this->delete(compact('entity','id','name','what'));
+            }
+        }
 }
