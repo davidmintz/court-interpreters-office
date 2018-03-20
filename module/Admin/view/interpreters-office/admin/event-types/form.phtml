@@ -1,6 +1,7 @@
 <?php
 /** module/Admin/view/interpreters-office/admin/event-types/form.phtml */
 $this->headTitle($this->title);
+$this->headScript()->appendFile($this->basePath('/js/event-types-form.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -18,15 +19,8 @@ else:
     $form->setAttribute('data-event-type_name',$entity->getName());
     $delete_button = ! $entity->hasRelatedEntities();
 endif;
-$form->setAttribute('action',$actionAttrib);
-/*
-if (strstr($this->title, 'add')) :
-    $action = 'add' ;
-    $actionAttrib = $this->url('event-types/add');
-else :
-    $action = 'edit';
-    $actionAttrib = $this->url('event-types/edit', ['id' => $this->id ]);
-endif;*/
+$form->setAttribute('action',$actionAttrib)
+    ->setAttribute('data-redirect_url',$this->url('event-types'));
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
     <h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
@@ -62,7 +56,7 @@ echo $this->formLabel($comments),$this->formElement($comments), $this->formEleme
 echo $this->formSubmit($form->get('submit'));
 echo $this->formElement($form->get('id'));
 if ($delete_button):
-    ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning" title="delete this location from your database" value="delete" id="btn-delete"><?php
+    ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning" title="delete this event-type from your database" value="delete" id="btn-delete"><?php
 endif;
 $csrf = $form->get('csrf');
 echo $this->formElement($csrf),$this->formElementErrors($csrf);
