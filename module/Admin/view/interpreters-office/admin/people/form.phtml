@@ -9,19 +9,18 @@ if ($this->errorMessage) : ?>
 <?php
 return;
 endif;
-$formAction = strstr($this->title, 'add') ? $this->url('people/add')
+$formAction = $this->layout()->action == 'add' ? $this->url('people/add')
     : $this->url('people/edit', ['id' => $this->id ]);
 $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
      'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
-])->setAttribute('method', 'post')
-   ->setAttribute('action', $formAction)
+])->setAttribute('method', 'post')->setAttribute('action', $formAction)
     ->setAttribute('class', 'form-horizontal')    ;
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
-<h2><?php echo (string)$this->navigation('default')->breadcrumbs() ?: "add a person" ?></h2>
+<h2><?php echo (string)$this->navigation('default')->breadcrumbs() ?></h2>
 <?php
 $form->prepare();
 $fieldset = $form->get('person');
@@ -31,7 +30,7 @@ echo $this->form()->openTag($form);?>
 $hat = $fieldset->get('hat');?>
     <div class="form-group form-row">
         <label class="col-form-label col-sm-3"><?php echo $hat->getLabel()?></label>
-        <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>            
+        <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>
         </div>
     </div>
 </div>
@@ -41,7 +40,7 @@ foreach (['lastname','middlename','firstname','email','office_phone','mobile_pho
     $element = $fieldset->get($elementName);?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>            
+    <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>
     </div>
 </div>
 <?php
@@ -49,7 +48,7 @@ endforeach;
 $active = $fieldset->get('active');?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $active->getLabel()?></label>
-    <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>            
+    <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>
     </div>
  </div>
 <div class="form-group">
