@@ -224,7 +224,7 @@ class InterpreterFieldset extends PersonFieldset
      *
      * @return \InterpretersOffice\Admin\Form\InterpreterFieldset
      */
-    public function addHatElement()
+    public function addHatElement(Array $exclude = [])
     {
         $this->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',

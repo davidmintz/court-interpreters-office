@@ -209,7 +209,9 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         foreach ($this->elements as $element) {
             $this->add($element);
         }
-        $this->addHatElement($options['anonymous_hats']);
+        $exclude = isset($otions['anonymous_hats']) ? $options['anonymous_hats']
+            : [];
+        $this->addHatElement($exclude);
     }
 
     /**
