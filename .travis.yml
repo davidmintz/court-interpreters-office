@@ -1,12 +1,12 @@
 
 
-# this is .travis.yml 
+# this is .travis.yml
 # comments also gives us something to edit and thus contrive
 # a reason to `git push` and trigger a build to see if it's working
 
 language: php
 
-php: 
+php:
 # we broke 5.6 compatibility, so disable this at least for the time being
 # - 5.6
   - 7.0
@@ -14,12 +14,13 @@ php:
 
 install:  composer install
 
-# there may be a better way, but to compel travis-ci to use our test 
+# there may be a better way, but to compel travis-ci to use our test
 # config (sqlite) we replace the configuration file.
 
-before_script:  
+before_script:
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
-    - mkdir -p data/log   
+    - cp config/autoload/forms.test.php config/autoload/forms.local.php
+    - mkdir -p data/log
     - mkdir data/cache
     - phpenv config-rm xdebug.ini
 
