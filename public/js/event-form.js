@@ -183,6 +183,13 @@ $(document).ready(function()
     hatElement.on("change",function()
     {
         var init_values = submitterElement.data();
+        var anonymity = hatElement.children(':selected').data('anonymity');
+        if (anonymity === 1) {
+            submitterElement.attr("disabled","disabled");
+            return;
+        } else {
+            submitterElement.removeAttr("disabled");
+        }
         var hat_id = hatElement.val();
         if (! hat_id) {
             hatElement.children().not(":first").remove();
