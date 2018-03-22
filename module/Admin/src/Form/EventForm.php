@@ -211,11 +211,11 @@ class EventForm extends ZendForm implements
     {
         $input = $e->getTarget()->getRequest()->getPost();
         $event = $input->get('event');
-        /* there is one form control for the judge but its value may
+        /* there is one form control for the judge, but its value may
          * correspond to either the 'judge' or the 'anonymousJudge' property,
          * and we have to make sure one is null and the other is not-null. Some
-         * Javascript in the viewscript watches the judge element 'change'
-         * event and sets the is_anonymouschanges in_judge flag.
+         * Javascript (loaded by form.phtml) watches the judge element 'change'
+         * event and sets the is_anonymous_judge flag.
          */
         if (empty($event['judge']) && empty($event['anonymousJudge'])) {
             $validator = new \Zend\Validator\NotEmpty([
@@ -249,9 +249,9 @@ class EventForm extends ZendForm implements
         // if validation fails
         $e->getTarget()->getViewModel()->hat_id = $hat_id;
         $key = array_search($hat_id, array_column($hat_options, 'value'));
-        // find out if this "hat" can be anonymous with hitting the database
+        // find out if this "hat" can be anonymous without hitting the database
         $can_be_anonymous = (! $key) ? false :
-                $hat_options[$key]['attributes']['data-can-be-anonymous'];
+                $hat_options[$key]['attributes']['data-anonymity'] <> "0";
 
         if ((empty($event['submitter']) && empty($event['anonymousSubmitter']))
                 or

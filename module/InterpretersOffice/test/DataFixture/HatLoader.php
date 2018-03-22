@@ -34,24 +34,24 @@ class HatLoader implements FixtureInterface
 
         // create the Hat entities: name, can_be_anonymous, role
         $hats = [
-            ['AUSA', false, null],
-            ['contract court interpreter', false, null],
-            ['Courtroom Deputy', false, $submitter],
-            ['defense attorney', true, null],
-            ['Law Clerk', false, $submitter],
-            ['paralegal', false, null],
-            ['Pretrial Services Officer', false, $submitter],
-            ['staff court interpreter', false, $submitter],
-            ['Interpreters Office staff', false, $manager],
-            ['staff, US Attorneys Office', false, null],
-            ['USPO', false, $submitter],
-            ['Magistrates', true, null],
-            ['Pretrial', true, null],
-            ['Judge', false, null],
+            ['AUSA', 2, null],
+            ['contract court interpreter', 0, null],
+            ['Courtroom Deputy', 0, $submitter],
+            ['defense attorney', 2, null],
+            ['Law Clerk', 0, $submitter],
+            ['paralegal', 2, null],
+            ['Pretrial Services Officer', 0, $submitter],
+            ['staff court interpreter', 0, $submitter],
+            ['Interpreters Office staff', 0, $manager],
+            ['staff, US Attorneys Office', 2, null],
+            ['USPO', 0, $submitter],
+            ['Magistrates', 1, null],
+            ['Pretrial', 1, null],
+            ['Judge', 0, null],
         ];
         foreach ($hats as $hat) {
             $entity = new Entity\Hat();
-            $entity->setName($hat[0])->setAnonymous($hat[1]);
+            $entity->setName($hat[0])->setAnonymity($hat[1]);
             if ($hat[2]) {
                 $entity->setRole($hat[2]);
             }

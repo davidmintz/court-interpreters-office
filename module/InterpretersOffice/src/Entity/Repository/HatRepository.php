@@ -7,6 +7,8 @@ namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use InterpretersOffice\Entity\Hat;
+
 /**
  * Hat repository.
  *
@@ -22,6 +24,7 @@ class HatRepository extends EntityRepository
      * @var string $cache_id
      */
     protected $cache_id = 'hats';
+
     /**
      * returns Hat entities for Person form's select element.
      *
@@ -31,23 +34,31 @@ class HatRepository extends EntityRepository
      *
      * @return array
      */
-    public function getHatsForPersonForm(Array $exclude)
+    public function getHatsForPersonForm()
     {
         // this returns "AUSA", "defense attorney", etc as well as
         // the usually-anonymous "Magistrate" and "Pretrial" unless
         // they are in the $exclude array
         $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h '
            .' WHERE h.name NOT LIKE \'%court interpreter%\' AND h.name <> \'Judge\''
-           .' AND h.role IS NULL ';
-         if ($exclude) {
-             $dql .= ' AND h.name NOT IN (:exclude)';
-             $params = compact('exclude');
-         } else {
-             $params = [];
-         }
-        $query = $this->createQuery($dql)->setParameters($params);
+           .' AND h.role IS NULL AND h.anonymity <> 1';
+        $query = $this->createQuery($dql);
 
         return $query->getResult();
+    }
+
+    /**
+     * gets array of options for populating forms
+     *
+     * @return Array $options
+     */
+    public function getAnonymityOptions()
+    {
+        return [
+            ['label'=>'never','value'=>Hat::ANONYMITY_NEVER],
+            ['label'=>'always','value'=>Hat::ANONYMITY_ALWAYS],
+            ['label'=>'optional','value'=>Hat::ANONYMITY_OPTIONAL],
+        ];
     }
 
      /**

@@ -58,7 +58,8 @@ class PeopleController extends AbstractActionController
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/people/form.phtml');
         $form = new PersonForm($this->entityManager,
-            ['action' => 'create','anonymous_hats'=>$this->formConfig['anonymous_hats']]);
+            ['action' => 'create',
+            'anonymous_hats'=>$this->formConfig['anonymous_hats']]);
         $viewModel->setVariables(['form' => $form, 'title' => 'add a person']);
         $request = $this->getRequest();
         $entity = new Entity\Person();

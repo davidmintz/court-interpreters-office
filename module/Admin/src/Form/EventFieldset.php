@@ -362,9 +362,9 @@ class EventFieldset extends Fieldset implements
                 'display_empty_item' => true,
                 'empty_item_label' => '(title/description)',
                 'option_attributes' => [
-                    'data-can-be-anonymous' =>
+                    'data-anonymity' =>
                         function ($hat) {
-                            return $hat->getAnonymous() ? 1 : 0;
+                            return $hat->getAnonymity();
                         },
                 ],
             ],
@@ -381,7 +381,7 @@ class EventFieldset extends Fieldset implements
                 throw new \Exception(sprintf(
                     'The database record for event id %d is in an invalid state: '
                     . 'both the submitter and generic submitter fields are null. '
-                    . 'Please contact your database administrator about this.',
+                    . 'Please contact your site administrator about this.',
                     $event->getId()
                 ));
             }

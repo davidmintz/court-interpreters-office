@@ -15,9 +15,15 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\HatRepository")
  * @ORM\Table(name="hats",uniqueConstraints={@ORM\UniqueConstraint(name="hat_idx",columns={"name"})})
+ * @ORM\HasLifecycleCallbacks
  */
 class Hat
 {
+
+    const ANONYMITY_NEVER = 0;
+    const ANONYMITY_ALWAYS = 1;
+    const ANONYMITY_OPTIONAL = 2;
+
     /**
      * entity id.
      *
@@ -35,11 +41,11 @@ class Hat
     protected $name;
 
     /**
-     * @ORM\Column(type="boolean",nullable=false,name="can_be_anonymous",options={"default":false})
+     * @ORM\Column(type="integer",nullable=false,name="anonymity",options={"default":0,"unsigned":true})
      *
-     * @var bool true if this Hat does not have to be identified
+     * @var int anonymity when submitting: 0 => never, 1 => always, 2 => optional,
      */
-    protected $anonymous = false;
+    protected $anonymity = 0;
 
     /**
      * The Role corresponding to this Hat.
@@ -63,6 +69,34 @@ class Hat
     public function __construct($name = null)
     {
         $this->name = $name;
+    }
+
+    /**
+     * Lifecycle callback to ensure valid state.
+     *
+     * This will also be enforced at the form validation level, but we do
+     * this for redundancy's sake.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     *
+     * @throws \RuntimeException
+     */
+    public function onSave()
+    {
+        if ($this->getRole() && $this->anonymity != 0) {
+            throw new \RuntimeException(
+                'If a Hat has a Role, its anonymity must be "never"');
+        }
+        /* not so. 'contract court interpreter' has no Role but can't be
+            anonymous
+        if (! $this->getRole() && $this->anonymity == 0) {
+            throw new \RuntimeException( sprintf(
+                'Error saving Hat %s: if no Role is set, anonymity cannot be "never"',
+                $this->getName()
+            ));
+
+        }*/
     }
 
     /**
@@ -119,36 +153,47 @@ class Hat
         return $this->name;
     }
 
-    /**
-     * get anonymous.
-     *
-     * @return bool
-     */
-    public function getAnonymous()
-    {
-        return $this->anonymous;
-    }
 
     /**
-     * set anonymous property.
+     * Set the anonymity property.
      *
-     * @param bool $flag
+     * Permitted values are: 0 (never); 1 (always); 2 (optional).
+     * Determines whether a Person bearing this Hat may, must or must not
+     * be anonymous when requesting an interpreter, hence the input validation
+     * rules for the Event form. For example, we may decide "defense attorney"
+     * can be unidentified or not, but Courtroom Deputy or US Probation Officer
+     * must always be identified (i.e., not anonymous). Any Hat that has a Role
+     * is never anonymous, because role implies user implies user account
+     * implies a known person, so we are required to identity that person rather
+     * than allowing insertion of an inexact duplicate person. Most of your Hats
+     * will likely have anonymity settings of either "never" or "optional."
+     * "always" implies a category for which you don't at all care who the
+     * actual person is who requests the interpreter, only the organizational
+     * unit (Hat) onwhose behalf the request is submitted.
+     *
+     * @param int $anonymity
      *
      * @return Hat
      */
-    public function setAnonymous($flag)
+    public function setAnonymity($anonymity)
     {
-        $this->anonymous = $flag;
+        if (! in_array($anonymity,[0,1,2])) {
+            throw new \RuntimeException(
+                'illegal value passed to setAnonymity(): '.$anonymity);
+        }
+        $this->anonymity = $anonymity;
 
         return $this;
     }
 
     /**
-     * proxies to getAnonymous().
+     * gets anonymity
+     *
+     * @var int
      */
-    public function anonymous()
+    public function getAnonymity()
     {
-        return $this->getAnonymous();
+        return $this->anonymity;
     }
     /**
      * returns the Role of this Hat.

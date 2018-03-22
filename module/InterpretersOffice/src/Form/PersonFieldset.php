@@ -204,14 +204,13 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager, true))
-                //->setObject(new Entity\Person())
                 ->setUseAsBaseFieldset($use_as_base_fieldset);
         foreach ($this->elements as $element) {
             $this->add($element);
         }
-        $exclude = isset($options['anonymous_hats']) ? $options['anonymous_hats']
-            : [];
-        $this->addHatElement($exclude);
+        //$exclude = isset($options['anonymous_hats']) ? $options['anonymous_hats']
+        //    : [];
+        $this->addHatElement();
     }
 
     /**
@@ -226,15 +225,14 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
      * Subclasses should override this to provide an appropriately configured
      * Hat select element
      */
-    public function addHatElement(Array $exclude = [])
+    public function addHatElement()
     {
         // if we are the base fieldset, it's a Person form, or a subclass;
         // otherwise, we are in the context of a User form
-         var_dump($exclude);
+
         $form_context = $this->useAsBaseFieldset ? 'person' : 'user';
         if ($form_context == 'person') {
-            $find_method = ['name' => 'getHatsForPersonForm',
-                'params' =>[ 'exclude' => $exclude ]
+            $find_method = ['name' => 'getHatsForPersonForm',                
             ];
         } else {
             $find_method = [
