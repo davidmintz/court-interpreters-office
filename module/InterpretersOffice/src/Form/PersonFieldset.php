@@ -209,7 +209,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
         foreach ($this->elements as $element) {
             $this->add($element);
         }
-        $exclude = isset($otions['anonymous_hats']) ? $options['anonymous_hats']
+        $exclude = isset($options['anonymous_hats']) ? $options['anonymous_hats']
             : [];
         $this->addHatElement($exclude);
     }
@@ -230,6 +230,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
     {
         // if we are the base fieldset, it's a Person form, or a subclass;
         // otherwise, we are in the context of a User form
+         var_dump($exclude);
         $form_context = $this->useAsBaseFieldset ? 'person' : 'user';
         if ($form_context == 'person') {
             $find_method = ['name' => 'getHatsForPersonForm',
