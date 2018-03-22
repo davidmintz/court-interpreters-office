@@ -6,13 +6,14 @@ namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Zend\Form\Annotation;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Entity representing a person in the court interpreters office management
  * system.
  *
  * We tried this with Annotations and Annotation/Type("Fieldset"), and could not
- * get validators don't run.
+ * get validators to run.
  * http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
  *
  * @see InterpretersOffice\Entity\Hat
@@ -122,13 +123,22 @@ class Person
     /**
      * Is the person "active," or only of historical interest?
      *
-     * If false, the entity should not be displayed in dropdown menus.
+     * If false, the entity by default will not be displayed in dropdown menus.
      *
      * @ORM\Column(type="boolean",nullable=false)
      *
      * @var bool
      */
     protected $active = true;
+
+    /**
+     * ArrayCollection of related Events
+     *
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Event",mappedBy="submitter")
+     */
+    protected $events;
+
 
     /**
      * constructor.
@@ -139,7 +149,16 @@ class Person
     {
         $this->hat = $hat;
     }
-
+    
+    /**
+     * does this Person have a data history?
+     *
+     * @return boolean true if the Person has requested an interpreter
+     */
+    public function hasRelatedEntities()
+    {
+        return ! $this->events->isEmpty();
+    }
     /**
      * Get id.
      *

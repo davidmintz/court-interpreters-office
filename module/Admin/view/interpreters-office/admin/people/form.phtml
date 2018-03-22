@@ -27,7 +27,11 @@ $fieldset = $form->get('person');
 echo $this->form()->openTag($form);?>
 <div class="form-group">
 <?php
-$hat = $fieldset->get('hat');?>
+$hat = $fieldset->get('hat');
+if ($form->getObject()->hasRelatedEntities()):
+    $hat->setAttribute("disabled","disabled");
+endif;
+?>
     <div class="form-group form-row">
         <label class="col-form-label col-sm-3"><?php echo $hat->getLabel()?></label>
         <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>

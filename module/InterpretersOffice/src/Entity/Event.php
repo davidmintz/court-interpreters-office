@@ -93,7 +93,7 @@ class Event
     /**
      * Most events have a Judge.
      *
-     * @ORM\ManyToOne(targetEntity="Judge",inversedBy="events")
+     * @ORM\ManyToOne(targetEntity="Judge") //,inversedBy="events"
      * @ORM\JoinColumn(nullable=true)
      *
      * @var Judge
@@ -116,7 +116,7 @@ class Event
     /**
      * The interpreter is requested by a Person (submitter).
      *
-     * @ORM\ManyToOne(targetEntity="Person")
+     * @ORM\ManyToOne(targetEntity="Person",inversedBy="events")
      * @ORM\JoinColumn(nullable=true)
      *
      * @var Person
