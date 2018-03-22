@@ -38,11 +38,6 @@ class PeopleControllerFactory implements FactoryInterface
             $resolver = $em->getConfiguration()->getEntityListenerResolver();
             $resolver->register($listener);
 
-        } elseif ($requestedName == Controller\PeopleController::class) {
-            
-            $controller = new $requestedName($em);
-            $controller->setFormConfig($container->get('config')['forms']);
-
         } else {
             $controller = new $requestedName($em);
         }
