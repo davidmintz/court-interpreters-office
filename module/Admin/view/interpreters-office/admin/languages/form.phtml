@@ -18,7 +18,7 @@ else :
 endif;
 ?>
 <div class="center-block mx-auto" style="max-width:750px"><!-- wrapper -->
-    <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+    <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
 <?php if ($action == 'add') : ?>
     <p class="warning">When adding a new language, please be careful
       to avoid inserting a language that is an inexact duplicate, alternate name

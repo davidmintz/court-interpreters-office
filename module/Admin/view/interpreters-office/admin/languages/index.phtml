@@ -6,7 +6,7 @@
 $this->headTitle($this->title);
 ?>
 <div class="center-block mx-auto" style="max-width: 500px">
-<h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
 <?php
 $messenger = $this->flashMessenger();
 foreach (['success','warning'] as $ns) :

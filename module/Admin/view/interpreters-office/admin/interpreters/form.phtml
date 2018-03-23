@@ -34,7 +34,7 @@ $form->add([
 ?>
 <div class="mx-auto" style="max-width:700px;"><!-- wrapper -->
 
-    <h2 class="mb-3"><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+    <h2 class="mb-3"><h2><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs()?></h2></h2>
     <?php
     $form->prepare();
     $fieldset = $form->get('interpreter');

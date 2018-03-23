@@ -1,4 +1,4 @@
-<h2><?= $this->navigation('default')->breadcrumbs()->setSeparator(' | ') ?></h2>
+<h2><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
@@ -8,6 +8,7 @@ if ($messenger->hasErrorMessages()) :
     echo $messenger->render('error', ['alert','alert-warning',], false);
 endif;
 ?>
+
 <p>current user's role is: <?php echo $this->identity()->role ?></p>
 <p>To edit an existing user account, search the database to find it.</p>
 <p>To create a new user account, first check to see if the user is already in your database.</p>

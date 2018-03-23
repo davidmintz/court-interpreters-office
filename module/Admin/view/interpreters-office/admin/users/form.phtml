@@ -8,7 +8,7 @@ $this->headTitle($this->title);
 $this->headScript()->appendFile($this->basePath('js/user-form.js'));
 ?>
 <div class="center-block" style="max-width:800px"><!-- wrapper -->
-<h2><?php echo $this->navigation('default')->breadcrumbs() ?></h2>
+<h2><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
 <?php // echo $this->url('users/edit',['id'=> 3]);?>
 <?php if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div></div>
@@ -35,7 +35,7 @@ foreach (['lastname','firstname','middlename','email','office_phone','mobile_pho
     $element = $person_fieldset->get($elementName);?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $element->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>            
+    <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>
     </div>
 </div>
 <?php endforeach;
@@ -43,14 +43,14 @@ $hat = $person_fieldset->get('hat');
 ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $hat->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formElement($hat),$this->formElementErrors($hat) ?>            
+    <div class="col-sm-9"><?php echo $this->formElement($hat),$this->formElementErrors($hat) ?>
     </div>
 </div>
 <?php
 $person_active = $person_fieldset->get('active');?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $person_active->getLabel()?></label>
-    <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($person_active),$this->formElementErrors($person_active) ?>            
+    <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($person_active),$this->formElementErrors($person_active) ?>
     </div>
  </div>
 <?php
@@ -58,20 +58,20 @@ $user_fieldset = $this->form->get("user");
 $role = $user_fieldset->get('role'); ?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $role->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formElement($role),$this->formElementErrors($role) ?>            
+    <div class="col-sm-9"><?php echo $this->formElement($role),$this->formElementErrors($role) ?>
     </div>
 </div>
 <?php $username = $user_fieldset->get('username');?>
 <div class="form-group">
     <label class="control-label col-sm-3"><?php echo $username->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formElement($username),$this->formElementErrors($username) ?>            
+    <div class="col-sm-9"><?php echo $this->formElement($username),$this->formElementErrors($username) ?>
     </div>
 </div>
 <?php
 $user_active = $user_fieldset->get('active');?>
 <div class="form-group">
     <label class="control-label col-sm-3">user account enabled</label>
-    <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($user_active),$this->formElementErrors($user_active) ?>            
+    <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($user_active),$this->formElementErrors($user_active) ?>
     </div>
  </div>
 <div class="form-group">
@@ -82,7 +82,7 @@ $user_active = $user_fieldset->get('active');?>
     echo $this->formHidden($person_fieldset->get('id'));
     echo $this->formHidden($user_fieldset->get('id'));
     echo $this->formSubmit($form->get('submit'));
-?></div>        
+?></div>
 </div>
 <?php
 echo $this->form()->closeTag(); ?>
