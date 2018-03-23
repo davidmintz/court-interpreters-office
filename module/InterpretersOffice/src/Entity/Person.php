@@ -148,8 +148,9 @@ class Person
     public function __construct(Hat $hat = null)
     {
         $this->hat = $hat;
+        $this->events = new ArrayCollection();
     }
-    
+
     /**
      * does this Person have a data history?
      *
