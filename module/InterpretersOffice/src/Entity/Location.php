@@ -74,7 +74,7 @@ class Location
      * a self-referencing Many-To-One relationship.
      *
      * @ORM\JoinColumn(name="parent_location_id",nullable=true)
-     * @ORM\ManyToOne(targetEntity="Location",fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Location",fetch="EAGER",inversedBy="childLocations")
      *
      * @var Location
      */
@@ -135,12 +135,23 @@ class Location
     protected $events;
 
     /**
+     * ArrayCollection child locations
+     *
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Location",mappedBy="parentLocation")
+     */
+    protected $childLocations;
+
+
+
+    /**
      * constructor
      */
     public function __construct()
     {
         $this->judges = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->childLocations = new ArrayCollection();
     }
 
     /**
@@ -153,8 +164,8 @@ class Location
      */
     public function hasRelatedEntities()
     {
-        return !$this->events->isEmpty() or
-                 !$this->judges->isEmpty();
+        return !$this->events->isEmpty() or !$this->judges->isEmpty()
+            or !$this->childLocations->isEmpty();
     }
 
     /**
