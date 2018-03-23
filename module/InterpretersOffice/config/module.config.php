@@ -119,6 +119,9 @@ return [
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
             //Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
         ],
+        'abstract_factories' => [
+            \Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
+        ],
 
     ],
     'session_containers' => [
