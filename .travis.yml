@@ -19,7 +19,7 @@ install:  composer install
 
 before_script:
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
-    - cp config/autoload/forms.test.php config/autoload/forms.local.php
+    #- cp config/autoload/forms.test.php config/autoload/forms.local.php
     - mkdir -p data/log
     - mkdir data/cache
     - phpenv config-rm xdebug.ini
