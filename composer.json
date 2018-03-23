@@ -64,6 +64,6 @@
         "toolbar-disable" : "sed -i -e 's/true/false/' config/autoload/toolbar.enabled.php"       
     },
     "require-dev": {
-		 "codeception/codeception": "^2.3"
+        "codeception/codeception": "^2.4"
     }
 }
