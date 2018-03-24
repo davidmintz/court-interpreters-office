@@ -42,7 +42,7 @@ class DefendantsController extends AbstractActionController
      */
     public function indexAction()
     {
-        echo get_class($this->getRequest());//Zend\Http\PhpEnvironment\Request
+        //echo get_class($this->getRequest());//Zend\Http\PhpEnvironment\Request
         return new ViewModel(['title' => 'defendants']);
     }
 
@@ -122,8 +122,16 @@ class DefendantsController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/defendants/form.phtml')
                 ->setVariable('title', 'edit a defendant name');
         $id = $this->params()->fromRoute('id');
+        $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
+        if (! $entity) {
+            return $viewModel->setVariables([
+                'errorMessage' =>"defendant with id $id not found in the database"
+            ]);
+        }
+        $form = new DefendantForm($this->entityManager,['action'=>'update']);
+        $form->bind($entity);
         // to be continued
-        return $viewModel;
+        return $viewModel->setVariables(['form' => $form]);
     }
     /**
      * handles POST request to update entity
