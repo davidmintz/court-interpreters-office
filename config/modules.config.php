@@ -9,13 +9,13 @@
  * This should be an array of module namespaces used in the application.
  */
 $modules = [
-    'Zend\Log',
+    //'Zend\Log', // maybe not necessary
     'Zend\Mvc\Plugin\FlashMessenger',
-    'Zend\Session',
+    'Zend\Session',// yes necessary
     'DoctrineModule',
     'DoctrineORMModule',
     //'Zend\Cache',
-    'Zend\Form',
+    'Zend\Form',// yes necessary
     //'Zend\InputFilter',
     //'Zend\Filter',
     //'Zend\Paginator',

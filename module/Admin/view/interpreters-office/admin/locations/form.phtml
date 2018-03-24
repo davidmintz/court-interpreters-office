@@ -8,6 +8,7 @@ $this->headScript()->appendFile($this->basePath('/js/locations-form.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
+
 return;
 $form = $this->form;
 endif;

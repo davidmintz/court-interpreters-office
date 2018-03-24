@@ -93,9 +93,6 @@ return [
                     [
                         'label' => 'people',
                         'route' => 'people',
-                        //'resource' => Admin\PeopleController::class,
-                        //'expand_children' => false,
-                        //'display' => false,
                         'pages' => [
                             [
                             'label' => 'add',
@@ -146,6 +143,20 @@ return [
                             [
                                 'label' => 'edit',
                                 'route' => 'locations/edit'
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => 'defendants',
+                        'route' => 'admin-defendants',
+                        'pages' => [
+                            [
+                                'label' => 'add',
+                                'route' => 'admin-defendants/add'
+                            ],
+                            [
+                                'label' => 'edit',
+                                'route' => 'admin-defendants/edit'
                             ],
                         ]
                     ],

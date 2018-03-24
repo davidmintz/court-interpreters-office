@@ -130,8 +130,15 @@ class DefendantsController extends AbstractActionController
         }
         $form = new DefendantForm($this->entityManager,['action'=>'update']);
         $form->bind($entity);
+        $occurences = $this->entityManager
+            ->getRepository(Entity\DefendantName::class)
+            ->findDocketAndJudges($id);
+        if ($request->isPost()){
+            var_dump($_POST['occurences']);
+        }
+        return $viewModel->setVariables(
+            ['form' => $form,'occurences'=>$occurences]);
         // to be continued
-        return $viewModel->setVariables(['form' => $form]);
     }
     /**
      * handles POST request to update entity

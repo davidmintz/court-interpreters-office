@@ -133,8 +133,29 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      */
     public function deleteCache($cache_id = null)
     {
-
          $this->cache->setNamespace('defendants');
          $this->cache->deleteAll();
     }
+
+    /**
+     * finds occurences of defendant id by judge and docket number
+     *
+     * @param  int $id defendant id
+     * @return array
+     */
+    public function findDocketAndJudges($id)
+    {
+        $dql = 'SELECT COUNT(e.id) events, e.docket,
+            COALESCE(j.lastname, aj.name) judge, j.id judge_id,
+            aj.id anon_judge_id
+            FROM InterpretersOffice\Entity\Event e
+            JOIN e.defendantNames d LEFT JOIN e.judge j
+            LEFT JOIN e.anonymousJudge aj
+            WHERE d.id = :id GROUP BY e.docket,aj.id,j.id';
+            
+        return $this->createQuery($dql)->setParameters(['id'=>$id])->getResult();
+    }
+
+
+
 }
