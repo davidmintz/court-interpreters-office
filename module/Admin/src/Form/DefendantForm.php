@@ -85,7 +85,17 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
             'required' => true,
             'allow_empty' => true,
         ]);
+
+
         /* TO BE CONTINUED: if $option['action'] == update, more elements... */
+        if ($options['action'] == 'update') {
+            $this->add([
+                'type' => 'Zend\Form\Element\Select',
+                'name' => 'occurrences',
+                'attributes' => ['multiple'=>'multiple'],
+
+            ]);
+        }
     }
 
     /**
