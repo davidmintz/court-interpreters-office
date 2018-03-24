@@ -6,6 +6,7 @@ namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use InterpretersOffice\Entity\DefendantName;
 
 /**
  * Entity modeling a defendant for whom an interpreter is required.
@@ -55,6 +56,18 @@ class DefendantName
      * @var Collection
      */
     protected $events;
+
+    /**
+     * returns true if this name == $name
+     *
+     * @param  DefendantName $name
+     * @return boolean true if name matches exactly
+     */
+    public function equals(DefendantName $name)
+    {
+        return $this->given_names == $name->getGivenNames()
+        && $this->surnames == $name->getSurnames();
+    }
 
     /**
      * returns "lastname, firstname".
