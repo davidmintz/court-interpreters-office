@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use InterpretersOffice\Entity\DefendantName;
+
 /**
  * Entity representing an defendant-event.
  *
