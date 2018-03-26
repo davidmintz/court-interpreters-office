@@ -3,6 +3,7 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use InterpretersOffice\Entity\DefendantName;
 /**
  * Entity representing an defendant-event.
  *
@@ -37,7 +38,50 @@ class DefendantEvent
 
     }
 
-    
+    /**
+     * Set event.
+     *
+     * @param \InterpretersOffice\Entity\Event $event
+     *
+     * @return InterpreterEvent
+     */
+    public function setEvent(Event $event = null)
+    {
+        $this->event = $event;
 
+        return $this;
+    }
 
+    /**
+     * Get event.
+     *
+     * @return Event
+     */
+    public function getEvent()
+    {
+        return $this->event;
+    }
+
+    /**
+     * sets DefendantName
+     *
+     * @param DefendantName $defendant
+     * @return DefendantEvent
+     */
+    public function setDefendantName(DefendantName $defendant)
+    {
+        $this->defendant  = $defendant;
+
+        return $this;
+    }
+
+    /**
+     * gets DefendantName
+     *
+     * @return DefendantName
+     */
+    public function getDefendantName()
+    {
+        return $this->defendant;
+    }
 }
