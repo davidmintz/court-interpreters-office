@@ -42,6 +42,8 @@ class DefendantsController extends AbstractActionController
      */
     public function indexAction()
     {
+        $query = $this->entityManager->createQuery();
+        echo get_class($query);
         //echo get_class($this->getRequest());//Zend\Http\PhpEnvironment\Request
         return new ViewModel(['title' => 'defendants']);
     }
@@ -109,11 +111,18 @@ class DefendantsController extends AbstractActionController
         return $viewModel;
     }
 
+    public function test()
+    {
+
+    }
     /**
      * updates a defendant entity.
      */
     public function editAction()
     {
+
+        //if ($this->getRequest()->isPost()){ return $this->test();}
+
         $request = $this->getRequest();
         if ($request->isXmlHttpRequest() && $request->isPost()) {
             return $this->postXhrUpdate($request);
@@ -133,7 +142,7 @@ class DefendantsController extends AbstractActionController
         $occurrences = $this->entityManager
             ->getRepository(Entity\DefendantName::class)
             ->findDocketAndJudges($id);
-        if ($request->isPost()){
+        if ($request->isPost()) {
             //var_dump($_POST['occurrences
             $form->setData($request->getPost());
             if (!$form->isValid()) {
@@ -143,6 +152,21 @@ class DefendantsController extends AbstractActionController
                 var_dump(
                     $request->getPost()->get('occurrences')
                 );
+                // do we already have a match?
+                $existing_name =  $this->entityManager
+                    ->getRepository(Entity\DefendantName::class)
+                    ->findOneBy([
+                        'given_names'=> $entity->getGivenNames(),
+                        'surnames'=> $entity->getSurNames(),
+                    ]);
+                printf("searching for: %s, %s<br>", $entity->getSurNames(),$entity->getGivenNames());
+                echo gettype($existing_name)," ...";
+                echo "<br>",$existing_name ? "YES" : "NO", " existing name<br>";
+                if ($existing_name) {
+                    echo " ...exact match? ", ($existing_name->equals($entity) ? "YES":"NO");
+                    echo "<br>",$existing_name;
+                }
+
             }
         }
         return $viewModel->setVariables(

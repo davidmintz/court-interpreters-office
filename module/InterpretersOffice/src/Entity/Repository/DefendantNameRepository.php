@@ -5,6 +5,7 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use InterpretersOffice\Service\ProperNameParsingTrait;
+use InterpretersOffice\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
@@ -152,10 +153,24 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             JOIN e.defendantNames d LEFT JOIN e.judge j
             LEFT JOIN e.anonymousJudge aj
             WHERE d.id = :id GROUP BY e.docket,aj.id,j.id';
-            
+
         return $this->createQuery($dql)->setParameters(['id'=>$id])->getResult();
     }
 
-
-
+    public function updateDefendantEvents(Entity\DefendantName $defendantName,
+        Array $event_ids)
+    {
+        $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent de
+            JOIN de.event e JOIN de.defendant d WHERE
+                d.id <> :id AND e.id IN (:event_ids)';
+        $deft_events = $this->getEntityManager()->createQuery($dql)
+            ->setParameters(['event_ids'=>$event_ids,'id'=>$defendantName->getId()])
+            ->getResult();
+        printf("we have %s results<br>",count($deft_events));
+        foreach ($deft_events as $entity) {
+            //printf("and shit is: %d<br>",$entity->getEvent()->getId());
+            /** @var InterpretersOffice\Entity\DefendantEvent $entity */
+            $entity->setDefendantName($defendantName);
+        }
+    }
 }
