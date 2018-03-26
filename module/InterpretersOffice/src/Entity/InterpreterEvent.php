@@ -104,7 +104,7 @@ class InterpreterEvent
      *
      * @param \InterpretersOffice\Entity\Interpreter $interpreter
      *
-     * @return InterpreterAssignment
+     * @return InterpreterEvent
      */
     public function setInterpreter(\InterpretersOffice\Entity\Interpreter $interpreter)
     {
