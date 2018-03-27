@@ -166,7 +166,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         $deft_events = $this->getEntityManager()->createQuery($dql)
             ->setParameters(['event_ids'=>$event_ids,'id'=>$defendantName->getId()])
             ->getResult();
-        printf("we have %s results<br>",count($deft_events));
+        //printf("we have %s results<br>",count($deft_events));
         foreach ($deft_events as $entity) {
             //printf("and shit is: %d<br>",$entity->getEvent()->getId());
             /** @var InterpretersOffice\Entity\DefendantEvent $entity */

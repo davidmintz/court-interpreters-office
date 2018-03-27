@@ -29,7 +29,8 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
 
      use ObjectManagerAwareTrait;
 
-
+     const USE_EXISTING = 'use_existing';
+     const UPDATE_EXISTING = 'update_existing';
 
     /**
      * name of the form
@@ -95,6 +96,17 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
                 'attributes' => ['multiple'=>'multiple'],
 
             ]);
+            $this->add([
+                'type' => 'Zend\Form\Element\Radio',
+                'name' => 'duplicate_resolution',
+                'attributes' => ['id'=>'duplicate_resolution'],
+                'options' =>[
+                    'value_options' => [
+                        self::USE_EXISTING => 'use the existing version as is',
+                        self::UPDATE_EXISTING => 'update the existing version (as shown below)',
+                    ],
+                ]
+            ]);
         }
     }
 
@@ -147,8 +159,39 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
                 'filters' => [
                     ['name' => 'StringTrim'],
                 ],
-            ]
+            ],
+            'occurrences' => [
+                'required' => false,
+                'allow_empty'=>true,
+            ],
+            'duplicate_resolution' => [
+                'required' => false,
+                'allow_empty'=>true,
+            ],
         ];
         return $spec;
     }
+
+    public function attachOccurencesValidator()
+    {
+        $input = $this->getInputFilter()->get('occurrences')
+            ->setRequired(true)->setAllowEmpty(false);
+        $validator = new \Zend\Validator\NotEmpty([
+            'messages' => ['isEmpty' => "at least one of the above must be selected"],
+            'break_chain_on_failure' => true,
+        ]);
+        $input->getValidatorChain()->attach($validator);
+    }
+
+    public function attachDuplicateResolutionValidator()
+    {
+        $input = $this->getInputFilter()->get('duplicate_resolution')
+            ->setRequired(true)->setAllowEmpty(false);
+        $validator = new \Zend\Validator\NotEmpty([
+            'messages' => ['isEmpty' => "at least one of the above must be selected"],
+            'break_chain_on_failure' => true,
+        ]);
+        $input->getValidatorChain()->attach($validator);
+    }
+
 }

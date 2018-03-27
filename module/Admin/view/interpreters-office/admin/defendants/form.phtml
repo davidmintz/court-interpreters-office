@@ -6,7 +6,7 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
+    'attributes' => ['value' => 'save','id'=> 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
 ])->setAttribute('method', 'post')->setAttribute('action', $action);
 $this->headTitle('admin | defendants');
 $form->prepare();
@@ -14,8 +14,17 @@ $form->prepare();
 <div class="center-block mx-auto" style="max-width:500px"><!-- wrapper -->
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('adm_breadcrumbs')->breadcrumbs() ?></h2>
 <?php
-    echo $this->form()->openTag($form);?>
-    <p class="duplicate-name" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
+    echo $this->form()->openTag($form);
+    ?>
+    <p class="duplicate-name duplicate-name-instructions" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
+    <div id="duplicate_resolution" class="form-group duplicate-resolution-radio mb-1" style="display:none" >
+        <?php $opts = $form->get('duplicate_resolution')->getValueOptions();
+        foreach($opts as $value => $label):
+            ?><div class="form-check"><input name="duplicate_resolution" value="<?php echo $value?>" class="form-check-input" type="radio" id="radio-<?php echo $value?>">
+            <label for="radio-<?php echo $value?>" name="duplicate_resolution" value="<?php echo $value?>" class="form-check-label"><?php echo $label ?></label></div>
+                <?php
+        endforeach;?>
+    </div>
     <p class="duplicate-name" style="display:none">
     <button id="btn-use-existing" class="btn btn-outline-primary btn-block mb-0 pl-4 text-left">discard my changes and use existing</button>
     <button id="btn-update-existing" class="btn btn-outline-primary btn-block border-top-0 mt-0 pl-4 text-left">apply my changes to existing name</button>
@@ -34,8 +43,9 @@ $form->prepare();
     <?php
     if ($this->occurrences):?>
     occurrences <span class="text-muted">-- select those to which update should apply:</span><br>
-    <div class="form-group form-check">
-        <?php foreach($this->occurrences as $i => $item):
+    <div id="occurrences" class="form-group form-check mb-2">
+        <?php
+        foreach($this->occurrences as $i => $item):
                 $value = json_encode([
                     'docket'=>$item['docket'],
                     'judge_id'=>$item['judge_id']?:$item['anon_judge_id'],
@@ -51,7 +61,7 @@ $form->prepare();
         <?php endforeach;?>
     </div>
 
-<?php endif;
+<?php else: echo "daFUQ???";endif;
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));

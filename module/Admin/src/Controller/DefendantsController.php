@@ -111,9 +111,18 @@ class DefendantsController extends AbstractActionController
         return $viewModel;
     }
 
-    public function test()
+    /**
+     * for posting updates to an inexact-duplicate defendant name
+     * in the events/form context
+     *
+     */
+    public function updateExistingAction()
     {
-
+        $request = $this->getRequest();
+        if ($request->isXmlHttpRequest() && $request->isPost()) {
+            return $this->postXhrUpdate($request);
+        }
+        return $this->redirect()->toRoute('admin-defendants');
     }
     /**
      * updates a defendant entity.
@@ -121,12 +130,9 @@ class DefendantsController extends AbstractActionController
     public function editAction()
     {
 
-        //if ($this->getRequest()->isPost()){ return $this->test();}
         // 21832 change to Rios Lopez
         $request = $this->getRequest();
-        if ($request->isXmlHttpRequest() && $request->isPost()) {
-            return $this->postXhrUpdate($request);
-        }
+
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/defendants/form.phtml')
                 ->setVariable('title', 'edit a defendant name');
@@ -142,32 +148,56 @@ class DefendantsController extends AbstractActionController
         $occurrences = $this->entityManager
             ->getRepository(Entity\DefendantName::class)
             ->findDocketAndJudges($id);
+        if (count($occurrences) > 0) {
+            $form->attachOccurencesValidator();
+        }
         if ($request->isPost()) {
-            //var_dump($_POST['occurrences
-            $form->setData($request->getPost());
+
+            $response = [];
+            $input = $request->getPost();
+            if (null !== $input->get('duplicate_resolution_required')) {
+                $form->attachDuplicateResolutionValidator();
+            }
+            $form->setData($input);
+
+            $DEBUG = '';
             if (!$form->isValid()) {
-                var_dump($form->getMessages());
-            } else {
-                echo "VALID!";
-                var_dump(
-                    $request->getPost()->get('occurrences')
-                );
-                // do we already have a match?
+                return new JsonModel(['validation_errors'=>$form->getMessages()]);
+            }
+            try {
+                // do we have an existing match?
                 $existing_name =  $this->entityManager
                     ->getRepository(Entity\DefendantName::class)
                     ->findOneBy([
                         'given_names'=> $entity->getGivenNames(),
                         'surnames'=> $entity->getSurNames(),
                     ]);
-                printf("searching for: %s, %s<br>", $entity->getSurNames(),$entity->getGivenNames());
-                echo gettype($existing_name)," ...";
-                echo "<br>",$existing_name ? "YES" : "NO", " existing name<br>";
+                $DEBUG .= sprintf("searching for: %s, %s<br>", $entity->getSurNames(),$entity->getGivenNames());
+                $DEBUG .=  gettype($existing_name)." ..."; $DEBUG .=  "\n"
+                    .($existing_name ? "YES" : "NO"). " existing name\n";
                 if ($existing_name) {
-                    echo " ...exact match? ", ($existing_name->equals($entity) ? "YES":"NO");
-                    echo "<br>",$existing_name;
-                }
+                    $exact_match = $existing_name->equals($entity);
+                    if (! $exact_match) {
+                        $resolution = $form->get('duplicate_resolution')->getValue();
+                        if (! $resolution) {
+                            $response['inexact_duplicate_found'] = 1;
+                            $response['existing_entity'] = (string)$existing_name;
 
+                        } else {
+                            $response['debug'] = $DEBUG;
+                            $response['conclusion']='time to do shit';
+                        }
+                    }
+                    $DEBUG .= " ...exact match? ". ($exact_match ? "YES":"NO");
+                    $DEBUG .= "\n".$existing_name;
+                }
+                $response['debug']=$DEBUG;
+                //return new JsonModel($response);
+            } catch (\Exception $e) {
+                $response['error'] = $e->getMessage();
             }
+            return new JsonModel($response);
+
         }
         return $viewModel->setVariables(
             ['form' => $form,
@@ -177,6 +207,10 @@ class DefendantsController extends AbstractActionController
     }
     /**
      * handles POST request to update entity
+     *
+     * this is for the event form and adding a new defendant name to
+     * the database
+     *
      *
      * @param Request $request
      * @return JsonModel
@@ -197,7 +231,7 @@ class DefendantsController extends AbstractActionController
         try {
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
-            return new JsonModel(['id' => $id,'errors' => null]);
+            return new JsonModel(['id' => $id,'errors' => null, 'status'=>'success']);
         } catch (UniqueConstraintViolationException $e) {
             $existing_entity = $this->entityManager
                     ->getRepository(Entity\DefendantName::class)

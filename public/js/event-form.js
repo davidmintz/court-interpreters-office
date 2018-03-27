@@ -286,6 +286,8 @@ $(document).ready(function()
         }
     });
 
+    /* ============  stuff related to defendant names =======================*/
+
     var defendantSearchElement = $('#defendant-search');
     var slideout = $('#slideout-toggle');
     /** deft name autocompletion */
@@ -445,7 +447,7 @@ $(document).ready(function()
                         });
                         // update the entity, then use as modified
                         $('#btn-update-existing').data({id:existing.id}).on("click",function(){
-                            $.post('/admin/defendants/edit/'+$(this).data('id'),data,
+                            $.post('/admin/defendants/update-existing/'+$(this).data('id'),data,
                             function(response){
                                 if (response.id) {
                                     var selector = 'input[name="event[defendantNames]['+
