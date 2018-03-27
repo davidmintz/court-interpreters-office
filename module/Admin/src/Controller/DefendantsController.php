@@ -122,7 +122,7 @@ class DefendantsController extends AbstractActionController
     {
 
         //if ($this->getRequest()->isPost()){ return $this->test();}
-
+        // 21832 change to Rios Lopez
         $request = $this->getRequest();
         if ($request->isXmlHttpRequest() && $request->isPost()) {
             return $this->postXhrUpdate($request);
