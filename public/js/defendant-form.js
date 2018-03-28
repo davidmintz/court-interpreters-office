@@ -1,6 +1,9 @@
 /** public/js/defendant-form.js */
 
 $(function(){
+
+    console.warn("the FUCK????");
+
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
         var form = $('#defendant-form');
@@ -20,7 +23,7 @@ $(function(){
                 return $(shit).show();
             }
             if (response.error) {
-                alert('shit. there was an error: '+response.error);
+                return alert('shit. there was an error: '+response.error);
             }
 
 

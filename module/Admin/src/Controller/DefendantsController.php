@@ -159,22 +159,19 @@ class DefendantsController extends AbstractActionController
                 $form->attachDuplicateResolutionValidator();
             }
             $form->setData($input);
-
             $DEBUG = '';
             if (!$form->isValid()) {
                 return new JsonModel(['validation_errors'=>$form->getMessages()]);
             }
             try {
+                $repository =  $this->entityManager
+                    ->getRepository(Entity\DefendantName::class);
                 // do we have an existing match?
-                $existing_name =  $this->entityManager
-                    ->getRepository(Entity\DefendantName::class)
-                    ->findOneBy([
+                $existing_name = $repository->findOneBy([
                         'given_names'=> $entity->getGivenNames(),
                         'surnames'=> $entity->getSurNames(),
                     ]);
-                $DEBUG .= sprintf("searching for: %s, %s<br>", $entity->getSurNames(),$entity->getGivenNames());
-                $DEBUG .=  gettype($existing_name)." ..."; $DEBUG .=  "\n"
-                    .($existing_name ? "YES" : "NO"). " existing name\n";
+                $DEBUG .=  ($existing_name ? "YES" : "NO") . " existing name\n";
                 if ($existing_name) {
                     $exact_match = $existing_name->equals($entity);
                     if (! $exact_match) {
@@ -185,7 +182,9 @@ class DefendantsController extends AbstractActionController
 
                         } else {
                             $response['debug'] = $DEBUG;
-                            $response['conclusion']='time to do shit';
+                            $response['result'] = $repository->updateDefendantEvents(
+                                $entity,$occurrences,$existing_name,$resolution);
+                            //$response['conclusion']='time to do shit';
                         }
                     }
                     $DEBUG .= " ...exact match? ". ($exact_match ? "YES":"NO");
