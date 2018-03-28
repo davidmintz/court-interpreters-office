@@ -129,10 +129,8 @@ class DefendantsController extends AbstractActionController
      */
     public function editAction()
     {
-
         // 21832 change to Rios Lopez
         $request = $this->getRequest();
-
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/defendants/form.phtml')
                 ->setVariable('title', 'edit a defendant name');
@@ -167,24 +165,27 @@ class DefendantsController extends AbstractActionController
                 $repository =  $this->entityManager
                     ->getRepository(Entity\DefendantName::class);
                 // do we have an existing match?
-                $existing_name = $repository->findOneBy([
-                        'given_names'=> $entity->getGivenNames(),
-                        'surnames'=> $entity->getSurNames(),
-                    ]);
+                $existing_name = $repository->findDuplicate($entity);
                 $DEBUG .=  ($existing_name ? "YES" : "NO") . " existing name\n";
+                $resolution =  $form->get('duplicate_resolution')->getValue();
+                $response['result']= $repository->updateDefendantEvents(
+                    $entity,$occurrences,$existing_name,$resolution);
+                /*
                 if ($existing_name) {
                     $exact_match = $existing_name->equals($entity);
                     if (! $exact_match) {
                         $resolution = $form->get('duplicate_resolution')->getValue();
                         if (! $resolution) {
+
                             $response['inexact_duplicate_found'] = 1;
                             $response['existing_entity'] = (string)$existing_name;
+                            $response['your entity'] = (string)$entity;
 
                         } else {
                             $response['debug'] = $DEBUG;
                             $response['result'] = $repository->updateDefendantEvents(
                                 $entity,$occurrences,$existing_name,$resolution);
-                            //$response['conclusion']='time to do shit';
+                            $response['conclusion']='time to do shit';
                         }
                     }
                     $DEBUG .= " ...exact match? ". ($exact_match ? "YES":"NO");
@@ -193,11 +194,13 @@ class DefendantsController extends AbstractActionController
                     $response['result'] = $repository->updateDefendantEvents($entity,$occurrences);
                 }
                 $response['debug']=$DEBUG;
+                */
                 //return new JsonModel($response);
             } catch (\Exception $e) {
                 $response['error'] = $e->getMessage();
             }
             return new JsonModel($response);
+            //var_dump($response);
 
         }
         return $viewModel->setVariables(

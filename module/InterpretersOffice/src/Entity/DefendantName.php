@@ -58,15 +58,16 @@ class DefendantName
     protected $events;
 
     /**
-     * returns true if this name == $name
+     * is this name is spelled exactly like $name?
      *
      * @param  DefendantName $name
-     * @return boolean true if name matches exactly
+     * @return boolean true if $name is the same in all respects except id
      */
     public function equals(DefendantName $name)
     {
         return $this->given_names == $name->getGivenNames()
-        && $this->surnames == $name->getSurnames();
+        && $this->surnames == $name->getSurnames()
+        && $name->getId() != $this->getId();
     }
 
     /**
