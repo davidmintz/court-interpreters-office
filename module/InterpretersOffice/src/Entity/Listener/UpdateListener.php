@@ -7,6 +7,7 @@ namespace InterpretersOffice\Entity\Listener;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
+use InterpretersOffice\Entity\DefendantEvent;
 use InterpretersOffice\Entity;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Log;
@@ -139,6 +140,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             ->getResultCacheImpl();
         switch ($class) {
             case Entity\Event::class:
+            case Entity\DefendantEvent::class:
                 // flush everything, because there are so many related entities
                 $success = $cache->flushAll();
                 $this->logger->debug(

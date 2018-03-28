@@ -169,7 +169,7 @@ class DefendantsController extends AbstractActionController
                 $DEBUG .=  ($existing_name ? "YES" : "NO") . " existing name\n";
                 $resolution =  $form->get('duplicate_resolution')->getValue();
                 $response['result']= $repository->updateDefendantEvents(
-                    $entity,$occurrences,$existing_name,$resolution);
+                    $entity,$input->get('occurrences'),$existing_name,$resolution);
                 /*
                 if ($existing_name) {
                     $exact_match = $existing_name->equals($entity);
@@ -199,7 +199,7 @@ class DefendantsController extends AbstractActionController
             } catch (\Exception $e) {
                 $response['error'] = $e->getMessage();
             }
-            return new JsonModel($response);
+            return new JsonModel($response['result']);
             //var_dump($response);
 
         }

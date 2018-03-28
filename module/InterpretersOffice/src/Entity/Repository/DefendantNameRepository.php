@@ -11,9 +11,11 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
 
 use Zend\Paginator\Paginator as ZendPaginator;
+use Zend\Dom\Exception\RuntimeException;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
-
+use InterpretersOffice\Admin\Form\DefendantForm;
+use InterpretersOffice\Entity\DefendantName;
 /**
  * custom EntityRepository class for the DefendantName entity.
  *
@@ -171,88 +173,167 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             'id' => $defendantName->getId()
         ])->getOneOrNullResult();
     }
+    public function getDefendantEventsForDefendant(Entity\DefendantName $defendantName)
+    {
+        $dql = 'SELECT  de FROM InterpretersOffice\Entity\DefendantEvent
+            de JOIN de.defendant d WHERE d.id = :id';
+
+        return  $this->createQuery($dql)
+            ->setParameters(['id'=>$defendantName->getId()])
+            ->getResult();
+    }
 
     public function updateDefendantEvents(Entity\DefendantName $defendantName,
         Array $occurrences,Entity\DefendantName $existing_name  = null,
             $duplicate_resolution = null)
-        {
-            $number_of_contexts = count($occurrences);
-            $em = $this->getEntityManager();
-            $debug = sprintf("existing name: %s, occurrences: %d; ",
-                $existing_name ? (string)$existing_name : '<none>',
-                $number_of_contexts
-            );
-            if ($existing_name) {
-                $literal_match = $existing_name->equals($defendantName);
-                $debug .= sprintf('literal match? %s; ',$literal_match?"yes":"no");
-            } else {
-                $literal_match = null;
-            }
-            $all_occurences = $this->findDocketAndJudges($defendantName->getId());
-            $global_update = $all_occurences == $occurrences;
-            $debug .= sprintf("global update? %s; ",$global_update ? "yes":"no");
-            // scenario:  name occurs in one or zero contexts, and there is
-            // no collision expected with an existing name
-            if ($number_of_contexts < 2 && ! $existing_name) {
-                // nothing more to do, just update globally
-                $em->flush();
-                return ['status'=>'success','debug'=>$debug];
-            }
-            if ($global_update && $literal_match) {
-                $debug .= "we think there is a literal match and global update; ";
-                $dql = 'SELECT  de FROM InterpretersOffice\Entity\DefendantEvent
-                    de JOIN de.defendant d WHERE d.id = :id';//JOIN de.event e
-
-                $shit= $this->createQuery($dql)
-                    ->setParameters(['id'=>$defendantName->getId()])
-                    ->getResult();
-                $debug .= sprintf("found %d events; ",count($shit));
-                $debug .= sprintf(' of data type: %s; ',get_class($shit[0]));
+    {
+        $number_of_contexts = count($occurrences);
+        $em = $this->getEntityManager();
+        $debug = sprintf("existing name: %s, occurrences: %d; ",
+            $existing_name ? (string)$existing_name : '<none>',
+            $number_of_contexts
+        );
+        if ($existing_name) {
+            $literal_match = $existing_name->equals($defendantName);
+            $debug .= sprintf('literal match? %s; ',$literal_match?"yes":"no");
+        } else {
+            $literal_match = null;
+        }
+        $all_occurrences = $this->findDocketAndJudges($defendantName->getId());
+        $global_update = $all_occurrences == $occurrences;
+        $debug .= sprintf("global update? %s; ",$global_update ? "yes":"no");
+        // scenario:  name occurs in one or zero contexts, and there is
+        // no collision expected with an existing name
+        if ($number_of_contexts < 2 && ! $existing_name) {
+            // nothing more to do, just update globally
+            $em->flush();
+            return ['status'=>'success','debug'=>$debug];
+        }
+        if ($global_update) {
+            // they are updating the name in all contexts
+            if ($literal_match) {
+                // and there is a literal match already existing
+                $debug .= "there is a literal match, and global update; ";
+                $shit = $this->getDefendantEventsForDefendant($defendantName);
+                $debug .= sprintf("found %d deft-events; ",count($shit));
                 foreach($shit as $deft_event) {
                     $deft_event->setDefendantName($existing_name);
                 }
-                $em->detach($defendantName);
-                $em->flush();
-                return ['status'=>'success','debug'=>$debug];
-            }
-            // scenario: name occurs in more than one context,
-            if ($number_of_contexts > 1 ) {
-                // did they select ALL the contexts?
-                // get the whole enchilada again
 
-                // and there is no collision expected.
-
-                if (! $existing_name) {
-                    // there is no existing name
-                    $all_occurences = $this->findDocketAndJudges($defendantName->getId());
-                    if ($occurrences == $all_occurences) {
-                        $response['status'] = 'we think it is a global update';
-                        $em->flush();
-                        $response['status'] .= ' ...success';
-                        return $response;
-                    }
-
-                } else { // yes there is an existing name
-
+            } elseif (false === $literal_match) {
+                // there is an inexact duplicate of the name they are
+                // turning $defendantName into; id is different
+                if (! $duplicate_resolution) {
+                    $response = [
+                        'inexact_duplicate_found' => 1,
+                        'debug' => $debug,
+                        'existing_entity'=>(string)$existing_name,
+                    ];
+                    return $response;
                 }
+                if (! in_array($duplicate_resolution,
+                    [ DefendantForm::UPDATE_EXISTING,
+                    DefendantForm::USE_EXISTING]))
+                throw new \RuntimeException('invalid value for duplicate resolution');
+                if ($duplicate_resolution == DefendantForm::UPDATE_EXISTING) {
+                    $existing_name
+                        ->setGivenNames($defendantName->getGivenNames())
+                        ->setSurnames($defendantName->getSurnames());
+                }
+                $shit = $this->getDefendantEventsForDefendant($defendantName);
+                foreach ($shit as $deft_event) {
+                    $deft_event->setDefendantName($existing_name);
+                }
+                $debug .= sprintf("updated %s defendant-events",count($shit));
             }
+            $em->detach($defendantName);
+            $em->flush();
+            return ['status'=>'success','debug'=>$debug];
+        }
 
-            /** @var Doctrine\DBAL\Connection  $db */
-            $db = $em->getConnection();
-            return ['shit' => get_class($db),'debug'=>$debug];
+        // else, they want to update a subset of defendant-events
 
-        /*
         $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent de
-            JOIN de.event e JOIN de.defendant d WHERE
-                d.id <> :id AND e.id IN (:event_ids)';
-        $deft_events = $this->getEntityManager()->createQuery($dql)
-            ->setParameters(['event_ids'=>$event_ids,'id'=>$defendantName->getId()])
+        JOIN de.defendant d JOIN de.event e
+        LEFT JOIN e.anonymousJudge aj LEFT JOIN e.judge j
+        WHERE d.id = :id AND ';
+        $where = [];
+
+        foreach ($occurrences as $occurrence) {
+            $data = json_decode($occurrence);
+            $where[]  = sprintf(
+                "(e.docket = '{$data->docket}' AND %s.id = %d)",
+                $data->anonymous ? 'aj' : 'j',
+                $data->judge_id
+            );
+        }
+        $string = implode(' OR ',$where);
+        if (count($where) > 1) {
+            $string = "($string)";
+        }
+        $dql .= $string;
+        $shit = $this->createQuery($dql)
+            ->setParameters(['id'=>$defendantName->getId()])
             ->getResult();
-        //printf("we have %s results<br>",count($deft_events));
-        foreach ($deft_events as $entity) {
-            //printf("and shit is: %d<br>",$entity->getEvent()->getId());
-            // @var InterpretersOffice\Entity\DefendantEvent $entity //
-            $entity->setDefendantName($defendantName);
-        }*/
+
+
+        //return ['shit'=> 'got as far as '.__LINE__];
+        if (! $existing_name) {
+            $debug .= "updating a subset, no existing name, inserting new";
+            $new_entity = (new Entity\DefendantName())
+                ->setGivenNames($defendantName->getGivenNames())
+                ->setSurnames($defendantName->getSurnames());
+            $em->persist($new_entity);
+            foreach($shit as $deft_event) {
+                $deft_event->setDefendantName($new_entity);
+            }
+            $em->detach($defendantName);
+            $em->flush();
+
+            return ['status'=>'success','debug'=>$debug];
+        } else {
+            //return ['shit'=> 'got as far as '.__LINE__];
+        }
+
+        if (false === $literal_match) {
+            // there is an inexact duplicate of the name they are
+            // turning $defendantName into; id is different
+            if (! $duplicate_resolution) {
+                $response = [
+                    'inexact_duplicate_found' => 1,
+                    'debug' => $debug,
+                    'existing_entity'=>(string)$existing_name,
+                ];
+                return $response;
+            }
+            if (! in_array($duplicate_resolution,
+                [ DefendantForm::UPDATE_EXISTING,
+                DefendantForm::USE_EXISTING]))
+            throw new \RuntimeException('invalid value for duplicate resolution');
+
+            if ($duplicate_resolution == DefendantForm::UPDATE_EXISTING) {
+                $existing_name
+                    ->setGivenNames($defendantName->getGivenNames())
+                    ->setSurnames($defendantName->getSurnames());
+            }
+            foreach ($shit as $deft_event) {
+                $deft_event->setDefendantName($existing_name);
+            }
+            $debug .= sprintf("updated %s defendant-events",count($shit));
+            $em->detach($defendantName);
+            $em->flush();
+
+            return ['status'=>'success','debug'=>$debug];
+        } else {
+            foreach ($shit as $deft_event) {
+                $deft_event->setDefendantName($existing_name);
+            }
+            $em->detach($defendantName);
+            $em->flush();
+
+            return ['debug'=>$debug,'shit'=>'we are at '.__LINE__,'moreshit'=>gettype($existing_name)];
+        }
+
+        return ['WTF'=> "this should not happen",'debug'=>$debug];
     }
 }
