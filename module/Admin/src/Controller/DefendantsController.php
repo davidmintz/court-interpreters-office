@@ -189,6 +189,8 @@ class DefendantsController extends AbstractActionController
                     }
                     $DEBUG .= " ...exact match? ". ($exact_match ? "YES":"NO");
                     $DEBUG .= "\n".$existing_name;
+                } else {
+                    $response['result'] = $repository->updateDefendantEvents($entity,$occurrences);
                 }
                 $response['debug']=$DEBUG;
                 //return new JsonModel($response);

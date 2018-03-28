@@ -157,11 +157,18 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         return $this->createQuery($dql)->setParameters(['id'=>$id])->getResult();
     }
 
-    public function updateDefendantEvents(Entity\DefendantName $defendantName = null,
-        Array $occurrences,Entity\DefendantName $existing_name, $duplicate_resolution)
+    public function updateDefendantEvents(Entity\DefendantName $defendantName,
+        Array $occurrences,Entity\DefendantName $existing_name  = null, $duplicate_resolution = null)
         {
             $em = $this->getEntityManager();
+            if (! $occurrences && ! $existing_name) {
+                // nothing more to do
+                $em->flush();
+                return ['status'=>'success'];
+            }
+            /** @var Doctrine\DBAL\Connection  $db */
             $db = $em->getConnection();
+
             return ['shit' => get_class($db)];
 
         /*
