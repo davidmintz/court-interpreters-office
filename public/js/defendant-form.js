@@ -22,9 +22,7 @@ $(function(){
             if (response.error) {
                 return alert('ah, shit. there was an error: '+response.error);
             }
-            // should be all good
-            var output = JSON.stringify(response,null,4);
-            form.prepend('<pre>'+output+'</pre>');
+            document.location = form.data('redirect_url');
 
         },'json');
     });
