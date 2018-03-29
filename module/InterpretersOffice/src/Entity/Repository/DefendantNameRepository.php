@@ -193,7 +193,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         $number_of_contexts = count($occurrences);
         $em = $this->getEntityManager();
         $debug = sprintf("existing name: %s, occurrences: %d; ",
-            $existing_name ? (string)$existing_name : '<none>',
+            $existing_name ? (string)$existing_name : '[none]',
             $number_of_contexts
         );
         if ($existing_name) {
@@ -203,16 +203,23 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             $literal_match = null;
         }
         $all_occurrences = $this->findDocketAndJudges($defendantName->getId());
-        $global_update = $all_occurrences == $occurrences;
-        $debug .= sprintf("global update? %s; ",$global_update ? "yes":"no");
-        // scenario:  name occurs in one or zero contexts, and there is
-        // no collision expected with an existing name
+        foreach ($occurrences as $i=>$occurrence) {
+            $occurrences[$i] = json_decode($occurrence, JSON_OBJECT_AS_ARRAY);
+        }
+        $global_update = ($all_occurrences == $occurrences);
+        $logger = $this->getLogger();  $shit = print_r( $all_occurrences,true);
+        $debug .= sprintf("global update? %s; ",($global_update ? "yes":"no"));
         if ($number_of_contexts < 2 && ! $existing_name) {
             // nothing more to do, just update globally
             $em->flush();
             return ['status'=>'success','debug'=>$debug];
         }
         if ($global_update) {
+
+            if (! $existing_name) {
+                $em->flush();
+                return ['status'=>'success','debug'=>$debug. " all done"];
+            }
             // they are updating the name in all contexts
             if ($literal_match) {
                 // and there is a literal match already existing
