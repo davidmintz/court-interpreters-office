@@ -26,6 +26,9 @@ class DefendantsController extends AbstractActionController
      */
     protected $entityManager;
     protected $repository;
+
+    use DeletionTrait;
+
     /**
      * constructor.
      *
@@ -170,7 +173,6 @@ class DefendantsController extends AbstractActionController
                     ->getRepository(Entity\DefendantName::class);
                 // do we have an existing match?
                 $existing_name = $repository->findDuplicate($entity);
-                $DEBUG .=  ($existing_name ? "YES" : "NO") . " existing name\n";
                 $resolution =  $form->get('duplicate_resolution')->getValue();
                 $response['result']= $repository->updateDefendantEvents(
                     $entity,$input->get('occurrences'),$existing_name,$resolution);
@@ -227,6 +229,22 @@ class DefendantsController extends AbstractActionController
                     'id' => $existing_entity->getId(),
                 ]
              ]);
+        }
+    }
+
+    public function deleteAction()
+    {
+
+        $request = $this->getRequest();
+
+        if ($request->isPost()) {
+            $id = $this->params()->fromRoute('id');
+            $name = $this->params()->fromPost('name');
+            $what = 'defendant name';
+
+            $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
+
+            return $this->delete(compact('entity','id','name','what'));
         }
     }
 }

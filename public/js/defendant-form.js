@@ -3,10 +3,9 @@
 $(function(){
 
     console.warn("the FUCK??? hello?");
-
+    var form = $('#defendant-form');
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
-        var form = $('#defendant-form');
         var data = form.serialize();
 
         $.post(form.attr('action'),data,function(response){
@@ -29,6 +28,32 @@ $(function(){
             var output = JSON.stringify(response,null,4);
             form.prepend('<pre>'+output+'</pre>');
 
+        },'json');
+    });
+    $('#btn-delete').on("click",function(event){
+        event.preventDefault();
+        if (! window.confirm("Are you sure you want to delete this defendant name?")) {
+            return;
+        }
+        var name = form.data('defendant_name');
+        var url = form.data('redirect_url');
+        var id = $('input[name="id"]').val();
+        $.post('/admin/defendants/delete/'+id,{name:name},function(response){
+            if (response.redirect) {
+                // back to index page
+                document.location = url;
+            } else {
+                // stay here and display error
+                var error = response.error.message;
+                if (! $('#failed_deletion_error').length) {
+                    $('<div/>')
+                        .addClass("alert alert-warning")
+                        .attr({id:"failed_deletion_error"}).html(error)
+                        .insertBefore(form);
+                } else {
+                    $('#failed_deletion_error').html(error);
+                }
+            }
         },'json');
     });
 });
