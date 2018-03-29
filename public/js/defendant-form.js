@@ -1,11 +1,6 @@
 /** public/js/defendant-form.js */
 
 $(function(){
-
-<<<<<<< HEAD
-=======
-
->>>>>>> defendant-name-update
     var form = $('#defendant-form');
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
