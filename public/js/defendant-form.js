@@ -2,7 +2,7 @@
 
 $(function(){
 
-    console.warn("the FUCK????");
+    console.warn("the FUCK??? hello?");
 
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
@@ -23,9 +23,11 @@ $(function(){
                 return $(shit).show();
             }
             if (response.error) {
-                return alert('shit. there was an error: '+response.error);
+                return alert('ah, shit. there was an error: '+response.error);
             }
-
+            // should be all good
+            var output = JSON.stringify(response,null,4);
+            form.prepend('<pre>'+output+'</pre>');
 
         },'json');
     });

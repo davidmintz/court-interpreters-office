@@ -42,15 +42,11 @@ $form->prepare();
     </div>
     <?php
     if ($this->occurrences):?>
-    occurrences <span class="text-muted">-- select those to which update should apply:</span><br>
+    occurrences <span class="text-muted">-- select the contexts where this update should apply:</span><br>
     <div id="occurrences" class="form-group form-check mb-2">
         <?php
         foreach($this->occurrences as $i => $item):
-                $value = json_encode([
-                    'docket'=>$item['docket'],
-                    'judge_id'=>$item['judge_id']?:$item['anon_judge_id'],
-                    'anonymous'=>$item['judge_id']?0:1,
-                ])
+                $value = json_encode($item);
             ?>
             <input class="form-check-input" type="checkbox" name="occurrences[]" value="<?php echo $this->escapeHtml($value)?>" <?php
                 if (in_array($value,$this->checked)):?> checked="checked"<?php endif;
