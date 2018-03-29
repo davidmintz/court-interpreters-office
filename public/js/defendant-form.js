@@ -2,6 +2,10 @@
 
 $(function(){
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> defendant-name-update
     var form = $('#defendant-form');
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
@@ -25,6 +29,19 @@ $(function(){
             document.location = form.data('redirect_url');
 
         },'json');
+    });
+    $('#btn-select-all, #btn-invert-selection').on("click",function(event){
+        event.preventDefault();
+        var checkboxes = $('form input[type=checkbox]');
+        if ($(event.target).attr('id')=='btn-select-all') {
+            checkboxes.prop("checked",true);
+        } else {
+            checkboxes.each(function(){
+                var checkbox = $(this);
+                var checked = checkbox.prop("checked");
+                checkbox.prop("checked",!checked);
+            });
+        }
     });
     $('#btn-delete').on("click",function(event){
         event.preventDefault();

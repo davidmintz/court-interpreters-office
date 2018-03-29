@@ -52,16 +52,21 @@ $form->prepare();
     occurrences <span class="text-muted">-- select the contexts where this update should apply:</span><br>
     <div id="occurrences" class="form-group form-check mb-2">
         <?php
+        $count = count($this->occurrences);
         foreach($this->occurrences as $i => $item):
                 $value = json_encode($item);
             ?>
             <input class="form-check-input" type="checkbox" name="occurrences[]" value="<?php echo $this->escapeHtml($value)?>" <?php
-                if (in_array($value,$this->checked)):?> checked="checked"<?php endif;
+                if (1 == $count or in_array($value,$this->checked)):?> checked="checked"<?php endif;
             ?> id="checkbox-<?php echo $i?>">
             <label class="form-check-label" for="checkbox-<?php echo $i?>"><?php
                 printf("%s - %s (%d events)",$item['docket']?:"(no docket numer)",$item['judge'],$item['events']);
             ?></label><br>
         <?php endforeach;?>
+        <?php if ($count > 2): ?>
+            <button id="btn-select-all" class="btn btn-sm btn-default border border-info">select all</button><!--
+        --><button id="btn-invert-selection" class="btn btn-sm btn-default border border-info">invert selection</button>
+        <?php endif;?>
     </div>
 
 <?php endif;
