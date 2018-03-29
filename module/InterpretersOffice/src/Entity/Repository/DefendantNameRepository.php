@@ -16,9 +16,11 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use InterpretersOffice\Admin\Form\DefendantForm;
 use InterpretersOffice\Entity\DefendantName;
+
+use Zend\Log\LoggerAwareInterface;
+use Zend\Log\LoggerAwareTrait;
 /**
  * custom EntityRepository class for the DefendantName entity.
- *
  *
  */
 class DefendantNameRepository extends EntityRepository implements CacheDeletionInterface
@@ -26,6 +28,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
     use ResultCachingQueryTrait;
 
     use ProperNameParsingTrait;
+    use LoggerAwareTrait;
 
     /**
      * cache
