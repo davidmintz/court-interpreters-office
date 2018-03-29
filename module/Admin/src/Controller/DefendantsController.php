@@ -46,10 +46,10 @@ class DefendantsController extends AbstractActionController
      */
     public function indexAction()
     {
-        $query = $this->entityManager->createQuery();
-        echo get_class($query);
+        //$query = $this->entityManager->createQuery();
+        //echo get_class($query);
         //echo get_class($this->getRequest());//Zend\Http\PhpEnvironment\Request
-        return new ViewModel(['title' => 'defendants']);
+        return new ViewModel();
     }
 
     /**
@@ -141,9 +141,8 @@ class DefendantsController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
         if (! $entity) {
-            return $viewModel->setVariables([
-                'errorMessage' =>"defendant with id $id not found in the database"
-            ]);
+            $this->flashMessenger()->addErrorMessage("Defendant with id was $id not found in your database.");
+            return $this->redirect()->toRoute('admin-defendants');
         }
         $form = new DefendantForm($this->entityManager,['action'=>'update']);
         $form->bind($entity);
