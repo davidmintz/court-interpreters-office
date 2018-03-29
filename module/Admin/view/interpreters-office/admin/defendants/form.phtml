@@ -15,7 +15,7 @@ $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
     'attributes' => ['value' => 'save','id'=> 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
-])->setAttribute('method', 'post')->setAttribute('action', $action);
+])->setAttribute('method', 'post');
 $this->headTitle('admin | defendants |'.$action);
 $form->prepare();
 ?>
