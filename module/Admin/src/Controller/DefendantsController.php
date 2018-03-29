@@ -149,9 +149,10 @@ class DefendantsController extends AbstractActionController
         }
         $form = new DefendantForm($this->entityManager,['action'=>'update']);
         $form->bind($entity);
+        // at least for now...
         $logger = $this->getEvent()->getApplication()->getServiceManager()
-            ->get('log');
-        $this->repository->setLogger($logger);
+            ->get('log'); $this->repository->setLogger($logger);
+        //
         $occurrences = $this->repository->findDocketAndJudges($id);
         if (count($occurrences) > 0) {
             $form->attachOccurencesValidator();
@@ -164,7 +165,6 @@ class DefendantsController extends AbstractActionController
                 $form->attachDuplicateResolutionValidator();
             }
             $form->setData($input);
-            $DEBUG = '';
             if (!$form->isValid()) {
                 return new JsonModel(['validation_errors'=>$form->getMessages()]);
             }
@@ -179,8 +179,12 @@ class DefendantsController extends AbstractActionController
             } catch (\Exception $e) {
                 $response['error'] = $e->getMessage();
             }
+            if ("success" == $response['result']['status']) {
+                $this->flashMessenger()->addSuccessMessage(
+                "The defendant name <strong>$entity</strong> name has been updated"
+                );
+            }
             return new JsonModel($response['result']);
-            //var_dump($response);
         }
         return $viewModel->setVariables(
             ['form' => $form,
