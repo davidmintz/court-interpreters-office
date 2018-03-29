@@ -2,7 +2,7 @@
 
 $(function(){
 
-    console.warn("the FUCK??? hello?");
+
     var form = $('#defendant-form');
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
@@ -25,10 +25,24 @@ $(function(){
                 return alert('ah, shit. there was an error: '+response.error);
             }
             // should be all good
-            var output = JSON.stringify(response,null,4);
-            form.prepend('<pre>'+output+'</pre>');
+            if ('success'==response.status) {
+                return document.url = form.data('redirect_url');
+            }
 
         },'json');
+    });
+    $('#btn-select-all, #btn-invert-selection').on("click",function(event){
+        event.preventDefault();
+        var checkboxes = $('form input[type=checkbox]');
+        if ($(event.target).attr('id')=='btn-select-all') {
+            checkboxes.prop("checked",true);
+        } else {
+            checkboxes.each(function(){
+                var checkbox = $(this);
+                var checked = checkbox.prop("checked");
+                checkbox.prop("checked",!checked);
+            });
+        }
     });
     $('#btn-delete').on("click",function(event){
         event.preventDefault();
