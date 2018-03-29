@@ -2,12 +2,10 @@
 
 $(function(){
 
-    console.warn("the FUCK??? hello?");
     var form = $('#defendant-form');
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
         var data = form.serialize();
-
         $.post(form.attr('action'),data,function(response){
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors);

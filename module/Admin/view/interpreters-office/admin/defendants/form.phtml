@@ -3,19 +3,18 @@ $this->headScript()->appendFile($this->basePath('/js/defendant-form.js'));
 $form = $this->form;
 $action = $this->layout()->action;
 if ($action == 'add') {
-    $form->setAttribute('action', $this->url('admin-defendants/add'));
+    $url = $this->url('admin-defendants/add');
 } else {
-    $form->setAttribute('action',
-    $this->url('admin-defendants/edit', ['id' => $form->getObject()->getId() ]))
-    ->setAttribute('data-defendant_name',(string)$form->getObject())
-    ->setAttribute('data-redirect_url', $this->url("admin-defendants"));
+    $url =  $this->url('admin-defendants/edit',['id' => $form->getObject()->getId()]);
+    $form->setAttribute('data-defendant_name',(string)$form->getObject())
+        ->setAttribute('data-redirect_url', $this->url("admin-defendants"));
 }
 
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
     'attributes' => ['value' => 'save','id'=> 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
-])->setAttribute('method', 'post')->setAttribute('action', $action);
+])->setAttribute('method', 'post')->setAttribute('action', $url);
 $this->headTitle('admin | defendants |'.$action);
 $form->prepare();
 ?>
@@ -70,7 +69,7 @@ $form->prepare();
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
 if (! $this->xhr) :
-    echo $this->formSubmit($form->get('submit'));if (! $this->occurences):?><input id="btn-delete" type="button" class="btn btn-lg btn-warning mt-2" title="delete this defendant name from your database" value="delete" id="btn-delete"><?php endif;
+    echo $this->formSubmit($form->get('submit'));if (! $this->occurrences):?><input id="btn-delete" type="button" class="btn btn-lg btn-warning mt-2" title="delete this defendant name from your database" value="delete" id="btn-delete"><?php endif;
 endif;
     echo $this->form()->closeTag() ?>
 </div>
