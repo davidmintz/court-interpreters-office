@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InterpretersOffice\Admin\Form\DefendantForm;
+use InterpretersOffice\Entity\DefendantName;
 
 /**
  * controller for admin/defendants.
@@ -24,7 +25,7 @@ class DefendantsController extends AbstractActionController
      * @var EntityManagerInterface
      */
     protected $entityManager;
-
+    protected $repository;
     /**
      * constructor.
      *
@@ -33,6 +34,9 @@ class DefendantsController extends AbstractActionController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $repository = $entityManager->getRepository(Entity\DefendantName::class);
+        $this->repository = $repository;
+
     }
 
     /**
@@ -143,9 +147,10 @@ class DefendantsController extends AbstractActionController
         }
         $form = new DefendantForm($this->entityManager,['action'=>'update']);
         $form->bind($entity);
-        $occurrences = $this->entityManager
-            ->getRepository(Entity\DefendantName::class)
-            ->findDocketAndJudges($id);
+        $logger = $this->getEvent()->getApplication()->getServiceManager()
+            ->get('log');
+        $this->repository->setLogger($logger);
+        $occurrences = $this->repository->findDocketAndJudges($id);
         if (count($occurrences) > 0) {
             $form->attachOccurencesValidator();
         }
@@ -170,51 +175,23 @@ class DefendantsController extends AbstractActionController
                 $resolution =  $form->get('duplicate_resolution')->getValue();
                 $response['result']= $repository->updateDefendantEvents(
                     $entity,$input->get('occurrences'),$existing_name,$resolution);
-                /*
-                if ($existing_name) {
-                    $exact_match = $existing_name->equals($entity);
-                    if (! $exact_match) {
-                        $resolution = $form->get('duplicate_resolution')->getValue();
-                        if (! $resolution) {
-
-                            $response['inexact_duplicate_found'] = 1;
-                            $response['existing_entity'] = (string)$existing_name;
-                            $response['your entity'] = (string)$entity;
-
-                        } else {
-                            $response['debug'] = $DEBUG;
-                            $response['result'] = $repository->updateDefendantEvents(
-                                $entity,$occurrences,$existing_name,$resolution);
-                            $response['conclusion']='time to do shit';
-                        }
-                    }
-                    $DEBUG .= " ...exact match? ". ($exact_match ? "YES":"NO");
-                    $DEBUG .= "\n".$existing_name;
-                } else {
-                    $response['result'] = $repository->updateDefendantEvents($entity,$occurrences);
-                }
-                $response['debug']=$DEBUG;
-                */
-                //return new JsonModel($response);
             } catch (\Exception $e) {
                 $response['error'] = $e->getMessage();
             }
             return new JsonModel($response['result']);
             //var_dump($response);
-
         }
         return $viewModel->setVariables(
             ['form' => $form,
             'checked' => $request->getPost()->get('occurrences') ?: [],
             'occurrences'=>$occurrences]);
-        // to be continued
+
     }
     /**
      * handles POST request to update entity
      *
      * this is for the event form and adding a new defendant name to
      * the database
-     *
      *
      * @param Request $request
      * @return JsonModel
