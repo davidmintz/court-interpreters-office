@@ -174,9 +174,23 @@ $(document).ready(function()
     var judgeElement = $('#judge');
     var anon_judge = $('#is_anonymous_judge');
     judgeElement.on('change',function(){
+        // keep track of whether this is a person or a generic role
          anon_judge.val(
             judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
         );
+        var judge = judgeElement.children(':selected');
+        var is_magistrate = judge.text().indexOf('magistrate') > -1;
+        // when it's the magistrate, set the courthouse if possible
+        /** @todo start loading location_type_id as parent_location data element
+            so that we can know whether to switch courthouses if they change
+            from one generic magistrate to the other
+         */
+        if (is_magistrate && ! parentLocationElement.val()) {
+            var default_courthouse = judge.data().default_parent_location;
+            if (default_courthouse) {
+                parentLocationElement.val(default_courthouse).trigger("change");
+            }
+        }
     }).trigger('change');
 
     // get data to update submitter dropdown based on selected hat
