@@ -173,24 +173,54 @@ $(document).ready(function()
     //
     var judgeElement = $('#judge');
     var anon_judge = $('#is_anonymous_judge');
-    judgeElement.on('change',function(){
+    judgeElement.on('change',function()
+    {
+        if (!  judgeElement.val()) {
+            return;
+        }
         // keep track of whether this is a person or a generic role
          anon_judge.val(
             judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
         );
         var judge = judgeElement.children(':selected');
-        var is_magistrate = judge.text().indexOf('magistrate') > -1;
+        var is_magistrate = judge.data('pseudojudge') &&
+            judge.text().toLowerCase().indexOf('magistrate') > -1;
         // when it's the magistrate, set the courthouse if possible
         /** @todo start loading location_type_id as parent_location data element
             so that we can know whether to switch courthouses if they change
-            from one generic magistrate to the other
-         */
-        if (is_magistrate && ! parentLocationElement.val()) {
-            var default_courthouse = judge.data().default_parent_location;
-            if (default_courthouse) {
-                parentLocationElement.val(default_courthouse).trigger("change");
-            }
-        }
+            from one generic magistrate to the other?
+        */
+        if (is_magistrate  && !parentLocationElement.val()) {
+            //console.log("shit is Magistrate... ");
+            var location_id = judge.data("default_parent_location")
+                || judge.data("default_location");
+            parentLocationElement.val(location_id)
+            .trigger("change", location_id ? {location_id:location_id}:null);
+            return;
+         }
+         if (! eventTypeElement.val() ||
+            "in" !== eventTypeElement.children(":selected").data().category) {
+             return;
+         }
+          /*
+          * If the currently selected judge has a default location
+          */
+         var judge_parent_location = judge.data("default_parent_location");
+         var judge_default_location = judge.data("default_location");
+         if (judge_parent_location &&
+               /* and that default's ~parent~ location is other than the
+                * currently selected parent location...
+                */
+               judge_parent_location !== parentLocationElement.val())
+         {   /* then set the parent location to the current judge's default... */
+             parentLocationElement.val(judge_parent_location)
+             /* and trigger its "change" event, passing the handler the
+              * currently selected judge's default location, if any
+              */
+              .trigger("change", judge_default_location ?
+                    {location_id:judge_default_location} : null
+             );
+         }
     }).trigger('change');
 
     // get data to update submitter dropdown based on selected hat
@@ -236,53 +266,6 @@ $(document).ready(function()
     });//.trigger('change');
     var eventTypeElement = $('#event-type');
 
-    /**
-     * sets the location based on the judge, if possible
-     */
-    $('#judge').on('change',function(event){
-
-        if (!  judgeElement.val()) {
-            return;
-        }
-        if ( ! eventTypeElement.val()
-            || "in" !== eventTypeElement.children(":selected").data().category )
-        {
-               return;
-        }
-        var judge_opt = judgeElement.children(':selected');
-        var judge_data = judge_opt.data();
-        ///*
-        var is_magistrate = judge_opt.text().toLowerCase()
-             .indexOf('magistrate') !== -1 && judge_opt.data('pseudojudge');
-        // if it's magistrate, and they have not set a parent location,
-        // let's set it for them
-        if (is_magistrate ) {  //&& !parentLocationElement.val()
-            //console.log("shit is Magistrate... ");
-            parentLocationElement.val(judge_data.default_parent_location || judge_data.default_location)
-            .trigger("change", judge_data.default_location ?
-                    {location_id:judge_data.default_location} : null);
-            return;
-         }
-        // */
-        /* NOTE TO SELF:  try to remember why we are doing this.
-         * In English:
-         * If the currently selected judge has a default location
-         */
-        if (judge_data.default_parent_location &&
-              /* and that default's ~parent~ location is other than the
-               * currently selected parent location...
-               */
-              judge_data.default_parent_location !== parentLocationElement.val())
-        {   /* then set the parent location to the current judge's default... */
-            parentLocationElement.val(judge_data.default_parent_location)
-            /* and trigger its "change" event, passing the handler the
-             * currently selected judge's default location, if any
-             */
-             .trigger("change", judge_data.default_location ?
-                   {location_id:judge_data.default_location} : null
-            );
-        }
-    });
 
     $("#event-form").on("submit",function(e){
         if (! locationElement.val()) {
