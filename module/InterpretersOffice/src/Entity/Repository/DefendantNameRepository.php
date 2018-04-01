@@ -16,6 +16,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use InterpretersOffice\Admin\Form\DefendantForm;
 use InterpretersOffice\Entity\DefendantName;
+use InterpretersOffice\Entity\DefendantEvent;
 
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerAwareTrait;
@@ -163,7 +164,12 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         return $this->createQuery($dql)->setParameters(['id'=>$id])
             ->getResult();
     }
-
+    /**
+     * find existing entity with same properties except id
+     *
+     * @param  EntityDefendantName $defendantName
+     * @return DefendantName|null
+     */
     public function findDuplicate(Entity\DefendantName $defendantName)
     {
         $dql = 'SELECT d FROM InterpretersOffice\Entity\DefendantName d
@@ -176,9 +182,16 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             'id' => $defendantName->getId()
         ])->getOneOrNullResult();
     }
+
+    /**
+     * gets all the DefendantEvents for DefendantName
+     *
+     * @param  EntityDefendantName $defendantName
+     * @return Array
+     */
     public function getDefendantEventsForDefendant(Entity\DefendantName $defendantName)
     {
-        $dql = 'SELECT  de FROM InterpretersOffice\Entity\DefendantEvent
+        $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent
             de JOIN de.defendant d WHERE d.id = :id';
 
         return  $this->createQuery($dql)
@@ -186,12 +199,23 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             ->getResult();
     }
 
+
+    /**
+     * updates DefendantName and DefendantEvent entities
+     *
+     * totally a work in progress
+     *
+     * @param  Entity\DefendantName $defendantName
+     * @param  Array $occurrences array of JSON strings
+     * @param  Entity\DefendantName              $existing_name
+     * @param  string $duplicate_resolution
+     * @return Array result
+     */
     public function updateDefendantEvents(Entity\DefendantName $defendantName,
         Array $occurrences,Entity\DefendantName $existing_name  = null,
             $duplicate_resolution = null)
     {
         $number_of_contexts = count($occurrences);
-        $em = $this->getEntityManager();
         $debug = sprintf("existing name: %s, occurrences: %d; ",
             $existing_name ? (string)$existing_name : '[none]',
             $number_of_contexts
@@ -209,7 +233,9 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         $global_update = ($all_occurrences == $occurrences);
         $logger = $this->getLogger();  $shit = print_r( $all_occurrences,true);
         $debug .= sprintf("global update? %s; ",($global_update ? "yes":"no"));
+        $em = $this->getEntityManager();
         if ($number_of_contexts < 2 && ! $existing_name) {
+            // actually, WRONG!!!! 
             // nothing more to do, just update globally
             $em->flush();
             return ['status'=>'success','debug'=>$debug];
