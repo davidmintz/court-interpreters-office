@@ -175,7 +175,7 @@ class DefendantsController extends AbstractActionController
                 $existing_name = $repository->findDuplicate($entity);
                 $resolution =  $form->get('duplicate_resolution')->getValue();
                 $response['result']= $repository->updateDefendantEvents(
-                    $entity,$input->get('occurrences'),$existing_name,$resolution);
+                    $entity,$input->get('occurrences',[]),$existing_name,$resolution);
             } catch (\Exception $e) {
                 $response['error'] = $e->getMessage();
             }

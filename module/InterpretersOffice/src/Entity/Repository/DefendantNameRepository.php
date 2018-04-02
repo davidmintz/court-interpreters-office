@@ -211,7 +211,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      * @return Array result
      */
     public function updateDefendantEvents(Entity\DefendantName $defendantName,
-        Array $occurrences,Entity\DefendantName $existing_name  = null,
+        Array $occurrences = [],Entity\DefendantName $existing_name  = null,
             $duplicate_resolution = null)
     {
         $logger = $this->getLogger(); // temporary, perhaps
@@ -305,14 +305,15 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             }
 
         } else { // PARTIAL update.
+
             $deft_events = $this
                 ->getDeftEventsForOccurrences($occurrences, $defendantName);
             $logger->debug(sprintf(
-                'at line %d: existing is %s, submitted is now %s; %d occurrences, %d deft events found; ',
+                'at line %d: existing is %s, submitted is now %s; '
+                .'%d occurrences, %d deft events found; ',
                 __LINE__, $existing_name, $defendantName,
                 count($occurrences), count($deft_events)
             ));
-            $logger->warn(__LINE__ . ":  fuck me!!!");
             switch ($MATCH) {
                 case false:
                 // a new name has to be inserted, this one has to be detached
