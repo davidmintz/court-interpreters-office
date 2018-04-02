@@ -18,8 +18,8 @@ $(function(){
                 var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
                 return $(shit).show();
             }
-            if (response.error) {
-                return alert('ah, shit. there was an error: '+response.error);
+            if (response.status == 'error') {
+                return alert('ah, shit. there was an error: '+response.status.message);
             }
             document.location = form.data('redirect_url');
 
