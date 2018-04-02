@@ -218,16 +218,18 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         $em = $this->getEntityManager();
 
         /** is it a global update, or an update of only a subset? */
-        // unpack submitted JSON strings
+
         foreach ($occurrences as $i=>$occurrence) {
+            // unpack submitted JSON strings
             $occurrences[$i] = json_decode($occurrence, JSON_OBJECT_AS_ARRAY);
         }
         // get all the contexts (occurences) from database
         $all_occurrences = $this->findDocketAndJudges($defendantName);
         // if what's in the database == what was submitted, it's a global update
         $GLOBAL_UPDATE = ($all_occurrences == $occurrences);
-        $logger->debug("\$all_occurrences looks like: ".print_r($all_occurrences,true));
-        $logger->debug("\$occurrences looks like: ".print_r($occurrences,true));
+        //$logger->debug("\$all_occurrences looks like: ".print_r($all_occurrences,true));
+        //$logger->debug("\$occurrences looks like: ".print_r($occurrences,true));
+
         // is there a matching name already existing?
         if (! $existing_name) {
             $MATCH = false;
@@ -383,7 +385,8 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             $string = "($string)";
         }
         $dql .= $string;
-        $this->getLogger()->debug("DQL: $dql\nparams:\n".print_r(['id'=>$defendantName->getId()],true));
+        //$this->getLogger()->debug("DQL: $dql\nparams:\n"
+        // . print_r(['id'=>$defendantName->getId()],true));
         return $this->createQuery($dql)->useResultCache(false)
             ->setParameters(['id'=>$defendantName->getId()])
             ->getResult();
