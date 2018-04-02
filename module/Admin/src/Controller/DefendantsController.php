@@ -136,15 +136,15 @@ class DefendantsController extends AbstractActionController
      */
     public function editAction()
     {
-        // 21832 change to Rios Lopez
+        // 21832 can be changed to Rios Lopez
         $request = $this->getRequest();
         $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/defendants/form.phtml')
-                ->setVariable('title', 'edit a defendant name');
+            ->setTemplate('interpreters-office/admin/defendants/form.phtml');
         $id = $this->params()->fromRoute('id');
         $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
         if (! $entity) {
-            $this->flashMessenger()->addErrorMessage("Defendant with id was $id not found in your database.");
+            $this->flashMessenger()->addErrorMessage(
+                "Defendant with id was $id not found in your database.");
             return $this->redirect()->toRoute('admin-defendants');
         }
         $form = new DefendantForm($this->entityManager,['action'=>'update']);
@@ -159,7 +159,6 @@ class DefendantsController extends AbstractActionController
         }
         if ($request->isPost()) {
 
-            $response = [];
             $input = $request->getPost();
             if (null !== $input->get('duplicate_resolution_required')) {
                 $form->attachDuplicateResolutionValidator();
@@ -169,29 +168,29 @@ class DefendantsController extends AbstractActionController
                 return new JsonModel(['validation_errors'=>$form->getMessages()]);
             }
             try {
-                $repository =  $this->entityManager
-                    ->getRepository(Entity\DefendantName::class);
                 // do we have an existing match?
-                $existing_name = $repository->findDuplicate($entity);
+                $existing_name = $this->repository->findDuplicate($entity);
                 $resolution =  $form->get('duplicate_resolution')->getValue();
-                $response['result']= $repository->updateDefendantEvents(
-                    $entity,$input->get('occurrences',[]),$existing_name,$resolution);
+                $result = $this->repository->updateDefendantEvents(
+                    $entity, $input->get('occurrences',[]), $existing_name,
+                    $resolution);
             } catch (\Exception $e) {
-                $response['error'] = $e->getMessage();
+                $result = ['message' => $e->getMessage(), 'status' => 'error'];
             }
-            if ("success" == $response['result']['status']) {
+            if ("success" == $result['status']) {
                 $this->flashMessenger()->addSuccessMessage(
                 "The defendant name <strong>$entity</strong> name has been updated"
                 );
             }
-            return new JsonModel($response['result']);
+            return new JsonModel($result);
         }
+
         return $viewModel->setVariables(
             ['form' => $form,
             'checked' => $request->getPost()->get('occurrences') ?: [],
             'occurrences'=>$occurrences]);
-
     }
+
     /**
      * handles POST request to update entity
      *

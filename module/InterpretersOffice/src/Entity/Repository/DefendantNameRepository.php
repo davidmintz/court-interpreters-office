@@ -207,11 +207,11 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      * @param  Entity\DefendantName $defendantName
      * @param  Array $occurrences array of JSON strings
      * @param  Entity\DefendantName $existing_name
-     * @param  string $duplicate_resolution
+     * @param  string $duplicate_resolution whether to update or use existing
      * @return Array result
      */
     public function updateDefendantEvents(Entity\DefendantName $defendantName,
-        Array $occurrences = [],Entity\DefendantName $existing_name  = null,
+        Array $occurrences, Entity\DefendantName $existing_name  = null,
             $duplicate_resolution = null)
     {
         $logger = $this->getLogger(); // temporary, perhaps
