@@ -279,14 +279,13 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                         ->setSurnames($defendantName->getSurnames());
                     $logger->debug("we updated existing name");
                 }
-                // don't break
                 // swap out $deftName for existing, and detach
                 $deft_events = $this->getDefendantEventsForDefendant($defendantName);
                 foreach ($deft_events as $de) {
                     $de->setDefendantName($existing_name);
                 }
                 $em->detach($defendantName);
-                break;
+                break; // pro forma
             }
             try {
                 $logger->debug("flushing $MATCH match at ". __LINE__);
@@ -316,7 +315,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             ));
             switch ($MATCH) {
                 case false:
-                // a new name has to be inserted, this one has to be detached
+                // a new name has to be inserted; this one has to be detached
                 $new = (new Entity\DefendantName)
                     ->setGivenNames($defendantName->getGivenNames())
                     ->setSurnames($defendantName->getSurnames());
