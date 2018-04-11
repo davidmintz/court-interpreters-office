@@ -141,6 +141,12 @@ class DefendantsController extends AbstractActionController
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/defendants/form.phtml');
         $id = $this->params()->fromRoute('id');
+        $xhr = false;
+        if ($request->isXmlHttpRequest()) {
+            $xhr = true;
+            $viewModel->setTerminal(true)->setVariables(['xhr' => true]);
+        }
+
         $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
         if (! $entity) {
             $this->flashMessenger()->addErrorMessage(

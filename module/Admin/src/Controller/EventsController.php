@@ -193,20 +193,26 @@ class EventsController extends AbstractActionController
             $form->setData($data);
             if ($form->isValid()) {
                 $events->trigger('post.validate', $this);
-                $this->entityManager->flush();
-                $url = $this->getEvent()->getApplication()->getServiceManager()
-                    ->get('ViewHelperManager')->get('url')('events');
-                $date = $entity->getDate();
-                $verbiage = $modified == $entity->getModified() ?
-                    'saved (unmodified)' : 'updated';
-                $this->flashMessenger()->addSuccessMessage(
-                    sprintf("This event has been successfully $verbiage on the "
-                     .'schedule for <a href="%s">%s</a>',
-                        $url . $date->format('/Y/m/d'),
-                        $date->format('l d-M-Y')
-                    )
-                );
-                return $this->redirect()->toRoute('events');
+                try {
+                    $this->entityManager->flush();
+                    $url = $this->getEvent()->getApplication()->getServiceManager()
+                        ->get('ViewHelperManager')->get('url')('events');
+                    $date = $entity->getDate();
+                    $verbiage = $modified == $entity->getModified() ?
+                        'saved (unmodified)' : 'updated';
+                    $this->flashMessenger()->addSuccessMessage(
+                        sprintf("This event has been successfully $verbiage on the "
+                         .'schedule for <a href="%s">%s</a>',
+                            $url . $date->format('/Y/m/d'),
+                            $date->format('l d-M-Y')
+                        )
+                    );
+                    return $this->redirect()->toRoute('events');
+                } catch (\Exception $e) {
+                    echo $e->getMessage();
+                    echo '<pre>';print_r($_POST);echo '</pre>';
+                }
+
             }
             //printf('<pre>error:  %s</pre>',print_r($form->getMessages(),true));
             if ($form->hasTimestampMismatchError()) {

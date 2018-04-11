@@ -180,7 +180,7 @@ $(document).ready(function()
     judgeElement.on('change',function()
     {
         if (!  judgeElement.val()) {
-            return;
+            //return;
         }
         // keep track of whether judge is a person or a generic role
          anon_judge.val(
@@ -224,14 +224,22 @@ $(document).ready(function()
                 * currently selected judge's default location, if any
                 */
                 .trigger("change", judge_default_location ?
-                {location_id:judge_default_location } : null);
+                { location_id:judge_default_location } : null);
                 return;
             } else { // same parent location, just update the courtroom
                 locationElement.val(judge_default_location);
              }
          }
     });
-
+    // initialize this stuff
+    /** @todo get rid of unnecessary stuff? */
+    if (judgeElement.val()) {
+            var data = judgeElement.children(":selected").data();
+            if (data.pseudojudge) {
+                anon_judge.val(1);
+                $('#anonymousJudge').val(judgeElement.val());
+            }
+    }
     // get data to update submitter dropdown based on selected hat
     hatElement.on("change",function()
     {
@@ -272,8 +280,7 @@ $(document).ready(function()
                            .trigger("sdny.submitter-update-complete");
                 }
             );
-    });//.trigger('change');
-
+    });
     $("#event-form").on("submit",function(e){
         if (! locationElement.val()) {
             // no specific location was selected, so the general location
@@ -287,6 +294,13 @@ $(document).ready(function()
                     }).val(location_id)
                 );
             }
+        }
+        // if there is no judge selected, clear this so form validation
+        // doesn't give us false positive followed by Event entity exception
+        // due to both judge and anon judge props being null
+        if (! judgeElement.val()) {
+            anon_judge.val(0);
+            $('#anonymousJudge').val(judgeElement.val());
         }
     });
 
@@ -495,6 +509,30 @@ $(document).ready(function()
             },'json');
         }
     });
+    $("li.defendant span").on("click",
+        function(){
+            console.log("shit?");
+            var div = $('#deftname-editor .modal-body');
+            var id = 23133; // for now
+            var input = $(this).prev("input");console.log(input.attr("name"));
+            div.load('/admin/defendants/edit/'+id + ' #defendant-form',
+                function(){$('#deftname-editor').modal("show");}
+            );
+        }
+    );
+    /* <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deftname-editor">
+      demo modal
+    </button>
+*/
+    /** in-place defendant name editing **/
+    $('#deftname-editor').on("show.bs.modal",function(event){
+        //var div = $('#deftname-editor .modal-body');
+        //var id = 23133; // for now
+        //div.load('/admin/defendants/edit/'+id + ' #defendant-form');
+    });
+
+    /** =========================== **/
+
 });
 
 formatTimeElement = function(timeElement) {

@@ -134,3 +134,5 @@ span.avoidwrap { display:inline-block !important;}
 tr.inactive { /*e.g., for judges/index */
     display: none;
 }
+
+li.defendant span:hover { cursor : pointer; text-decoration: underline; color : rgb(0, 123, 255)}

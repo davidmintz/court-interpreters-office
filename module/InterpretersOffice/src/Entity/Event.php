@@ -313,7 +313,7 @@ class Event
      *
      * @return Event
      */
-    public function setTime(\DateTime $time)
+    public function setTime(\DateTime $time = null)
     {
         $this->time = $time;
 

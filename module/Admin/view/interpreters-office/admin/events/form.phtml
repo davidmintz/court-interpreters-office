@@ -189,14 +189,18 @@ echo $this->form()->openTag($form); ?>
                 <?php
                 if ($this->defendantNames) {
                     foreach ($this->defendantNames as $id => $name) {
-                        echo $this->defendantName($id, $name);
+                        echo //'<span>',
+                        $this->defendantName($id, $name);//,'</span>';
                     }
                 } else {
                     $names = $form->getObject()->getDefendantNames()->toArray();
                     //echo "DEBUG: # deft names is ". count($names);
                     foreach ($names as $nameObject) {
                         $name = $nameObject->getSurNames() . ', ' . $nameObject->getGivenNames();
-                        echo $this->defendantName($nameObject->getId(), $name);
+                        echo  //'<span>',
+                            $this->defendantName($nameObject->getId(), $name)
+                            //,'</span>'
+                            ;
                     }
                 }?>
                 </ul>
@@ -251,10 +255,7 @@ echo $this->form()->openTag($form); ?>
     </div>
 </div>
 <?php echo $this->form()->closeTag();?>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deftname-editor">
-  demo modal
-  </button>
-
+<?php /** move this into a partial ? **/?>
 <div  id="deftname-editor" class="modal" role="dialog" aria-labelledby="deft-editor-header" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -265,13 +266,9 @@ echo $this->form()->openTag($form); ?>
             </button>
           </div>
           <div class="modal-body">
-            [form goes here]<br>
-            see  <a href="https://getbootstrap.com/docs/4.0/components/modal/#varying-modal-content">https://getbootstrap.com/docs/4.0/components/modal/#varying-modal-content</a>
-
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+          <div class="modal-footer justify-content-center text-center">
+            <button type="button" class="btn btn-success mr-0">update</button><button type="button" class="btn btn-secondary ml-1" data-dismiss="modal">cancel</button>
           </div>
         </div>
      </div>

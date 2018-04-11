@@ -191,6 +191,24 @@ class EventForm extends ZendForm implements
             }
             $new_value = $entity->$getter();
             $old_value = $this->state_before[$prop];
+            $really_modified = true; // presumptively
+            if ($old_value == $new_value) {
+                $really_modified = false;
+            } elseif (in_array($prop, ['time','end_time','submission_time'])) {
+                // a time field, not a date
+                // brace against possible NULL
+                $new_string = $new_value instanceof \DateTime ?
+                     $new_value->format('g:i a') : '';
+                $old_string = $old_value instanceof \DateTime ?
+                    $old_value->format('g:i a') : '';
+                $really_modified = $new_string != $old_string;
+            }
+            if (! $really_modified) {
+                // set it back to the previous object instance
+                $setter = 's'.substr($getter, 1);
+                $entity->$setter($old_value);
+            }
+            /*
             if ($old_value == $new_value or
                 (in_array($prop, ['time','end_time','submission_time'])
                && $new_value->format('g:i a') == $old_value->format('g:i a')
@@ -198,6 +216,7 @@ class EventForm extends ZendForm implements
                 $setter = 's'.substr($getter, 1);
                 $entity->$setter($old_value);
             }
+            */
         }
     }
 
