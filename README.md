@@ -3,17 +3,17 @@ is a web application for managing busy court interpreters offices (in the Englis
 
 At this writing, the application is far from complete, but I am actively working on it. The intention is to make it available to any court interpreter offices that are interested in adopting it. The motivation is that there is to my knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote (and which sprang into being precisely because of this dearth of alternatives), and it works great, but needs updating and has too many baked-in features that are peculiar only to our Interpreters Office's needs. So this project will become the world's finest federal court interpreter management system by far (the competition being pretty scarce).
 
-InterpretersOffice is designed primarily with the US District Court system in mind, but I'm trying to keep it flexible enough for use in state courts as well.
+InterpretersOffice is designed primarily with the US District Court system in mind, but I'm trying to keep it flexible enough for use in state courts as well. (I should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is the language of the court.)
+
 
 # requirements
 
 If you're considering adopting this software for managing your own interpreters office, 
 you'll be pleased to know that the requirements, in addition to the application source code 
-itself, are straightforward. In more or less plain English: you are going to need standard 
+itself, are straightforward. In more or less non-technical terms: you are going to need standard 
 hardware and software for serving a web application. That means a computer on a network with its firewall 
 configured to allow web traffic; installed on that computer, a properly configured web 
-server such as [Apache](https://httpd.apache.org/); the [MySQL](https://www.mysql.com/) database 
-server (others will likely work, but we haven't gone there yet); and the programming language
+server such as [Apache](https://httpd.apache.org/); [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/) as a database server (others will likely work, but we haven't gone there yet); and the programming language
 [PHP](http://php.net/) version 7.0 or 7.1. On the client side, users will need no more than a 
 standard web browser and network access to the server where the application is installed.
 

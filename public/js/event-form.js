@@ -39,6 +39,8 @@ $(document).ready(function()
 
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
+    var eventTypeElement = $('#event-type');
+
 
     parentLocationElement.on("change",function(event,params) {
         if (! parentLocationElement.val()) {
@@ -58,12 +60,14 @@ $(document).ready(function()
                     locationElement.children().slice(1).remove();
                     locationElement.append(options)
                          .trigger("sdny.location-update-complete");
+                    // if we were triggered with a location_id to set...
                     if (params && params.location_id) {
-                        locationElement.val(params.location_id).removeClass("text-muted");
+                        locationElement.val(params.location_id)
+                            .removeClass("text-muted");
                     }
             });
         }
-    });
+    });//.trigger("change");
 
     if (! parentLocationElement.val()){
         locationElement.val("").attr({disabled : "disabled"});
@@ -178,7 +182,7 @@ $(document).ready(function()
         if (!  judgeElement.val()) {
             return;
         }
-        // keep track of whether this is a person or a generic role
+        // keep track of whether judge is a person or a generic role
          anon_judge.val(
             judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
         );
@@ -203,25 +207,30 @@ $(document).ready(function()
              return;
          }
           /*
+          * We are dealing with an in-court event
           * If the currently selected judge has a default location
           */
          var judge_parent_location = judge.data("default_parent_location");
          var judge_default_location = judge.data("default_location");
-         if (judge_parent_location &&
-               /* and that default's ~parent~ location is other than the
-                * currently selected parent location...
-                */
-               judge_parent_location !== parentLocationElement.val())
-         {   /* then set the parent location to the current judge's default... */
-             parentLocationElement.val(judge_parent_location)
-             /* and trigger its "change" event, passing the handler the
-              * currently selected judge's default location, if any
+         var current_parent_loc_id = parseInt(parentLocationElement.val());
+         if (judge_parent_location) {
+             /* and that default's ~parent~ location is other than the
+              * currently selected parent location...
               */
-              .trigger("change", judge_default_location ?
-                    {location_id:judge_default_location} : null
-             );
+             if (judge_parent_location !== current_parent_loc_id) {
+                /* then set the parent location to the current judge's default... */
+                parentLocationElement.val(judge_parent_location)
+                /* and trigger its "change" event, passing the handler the
+                * currently selected judge's default location, if any
+                */
+                .trigger("change", judge_default_location ?
+                {location_id:judge_default_location } : null);
+                return;
+            } else { // same parent location, just update the courtroom
+                locationElement.val(judge_default_location);
+             }
          }
-    }).trigger('change');
+    });
 
     // get data to update submitter dropdown based on selected hat
     hatElement.on("change",function()
@@ -264,8 +273,6 @@ $(document).ready(function()
                 }
             );
     });//.trigger('change');
-    var eventTypeElement = $('#event-type');
-
 
     $("#event-form").on("submit",function(e){
         if (! locationElement.val()) {
