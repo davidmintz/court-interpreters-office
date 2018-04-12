@@ -352,7 +352,13 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 foreach ($deft_events as $de) {
                     $de->setDefendantName($existing_name);
                 }
-                $em->detach($defendantName);
+                if (! $defendantName->hasRelatedEntities()) {
+                    $logger->debug("no related entities for $defendantName at ".__LINE__);
+                    $em->remove($defendantName);
+                } else {
+                    $logger->debug("yes related entities for $defendantName, gonna detach() at ".__LINE__);
+                    $em->detach($defendantName);
+                }
                 break;
             }
             //  that should do it ==================================//
