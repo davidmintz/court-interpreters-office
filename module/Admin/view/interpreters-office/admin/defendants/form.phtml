@@ -2,14 +2,21 @@
 $this->headScript()->appendFile($this->basePath('/js/defendant-form.js'));
 $form = $this->form;
 $action = $this->layout()->action;
-if ($action == 'add') {
+if ($this->error) :?>
+<div id="defendant-form">
+    <div class="alert alert-danger">
+        <?php echo $this->error ?>
+    </div>
+</div>
+<?php return;
+endif;
+if ($action == 'add') :
     $url = $this->url('admin-defendants/add');
-} else {
+else :
     $url =  $this->url('admin-defendants/edit',['id' => $form->getObject()->getId()]);
     $form->setAttribute('data-defendant_name',(string)$form->getObject())
-        ->setAttribute('data-redirect_url', $this->url("admin-defendants"));
-}
-
+    ->setAttribute('data-redirect_url', $this->url("admin-defendants"));
+endif;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
@@ -22,6 +29,10 @@ $form->prepare();
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('adm_breadcrumbs')->breadcrumbs() ?></h2>
 <?php
     echo $this->form()->openTag($form);
+    if ($this->error) :?>
+    <?php echo $this->form()->closeTag() ?>
+    </div>
+    <?php return; endif;
     ?>
     <p class="duplicate-name duplicate-name-instructions" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
     <div id="duplicate_resolution" class="form-group duplicate-resolution-radio mb-1" style="display:none" >
@@ -32,6 +43,7 @@ $form->prepare();
                 <?php
         endforeach;?>
     </div>
+
     <p class="duplicate-name" style="display:none">
     <button id="btn-use-existing" class="btn btn-outline-primary btn-block mb-0 pl-4 text-left">discard my changes and use existing</button>
     <button id="btn-update-existing" class="btn btn-outline-primary btn-block border-top-0 mt-0 pl-4 text-left">apply my changes to existing name</button>

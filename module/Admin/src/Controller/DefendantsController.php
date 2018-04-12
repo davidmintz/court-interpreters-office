@@ -146,14 +146,19 @@ class DefendantsController extends AbstractActionController
             $xhr = true;
             $viewModel->setTerminal(true)->setVariables(['xhr' => true]);
         }
+        $form = new DefendantForm($this->entityManager,['action'=>'update']);
 
         $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
         if (! $entity) {
-            $this->flashMessenger()->addErrorMessage(
-                "Defendant with id was $id not found in your database.");
-            return $this->redirect()->toRoute('admin-defendants');
+            $message = "Defendant with id was $id not found in your database.";
+            if (! $xhr) {
+                $this->flashMessenger()->addErrorMessage($message);
+                return $this->redirect()->toRoute('admin-defendants');
+            } else {
+                return $viewModel->setVariables(
+                    ['error'=>$message,'status'=>'NOT FOUND','form' => $form]);
+            }
         }
-        $form = new DefendantForm($this->entityManager,['action'=>'update']);
         $form->bind($entity);
         // at least for now...
         $logger = $this->getEvent()->getApplication()->getServiceManager()

@@ -19,12 +19,12 @@ $(document).ready(function()
             element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
         }
     });
-   // } else { console.log("date element is supported!");}
+  // }
   //  if (! Modernizr.inputtypes.time) {
         $("input.time")
           .each(function(){formatTimeElement($(this));})
           .on("change",parseTime);
-  //  } else {console.log( "time element is supported!"); }
+  //  }
     $('input.docket').on("change",formatDocketElement);
 
     // toggle the 'text-muted' class on all the select elements
@@ -40,7 +40,6 @@ $(document).ready(function()
     var parentLocationElement = $('#parent_location');
     var locationElement = $('#location');
     var eventTypeElement = $('#event-type');
-
 
     parentLocationElement.on("change",function(event,params) {
         if (! parentLocationElement.val()) {
@@ -446,7 +445,6 @@ $(document).ready(function()
                     if (exact_duplicate) {
                         append_deft_name(existing);
                     } else { // this is a pain in the ass, but...
-
                         // fix the width to keep it from expanding further
                         slideout.css({width:slideout.width()});
                         // splice in the name
@@ -509,29 +507,21 @@ $(document).ready(function()
             },'json');
         }
     });
+    /** =========================== **/
     $("li.defendant span").on("click",
         function(){
             console.log("shit?");
             var div = $('#deftname-editor .modal-body');
-            var id = 23133; // for now
-            var input = $(this).prev("input");console.log(input.attr("name"));
+            var id = $(this).data('id')+'832764';
             div.load('/admin/defendants/edit/'+id + ' #defendant-form',
                 function(){$('#deftname-editor').modal("show");}
             );
         }
     );
-    /* <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deftname-editor">
-      demo modal
-    </button>
-*/
-    /** in-place defendant name editing **/
-    $('#deftname-editor').on("show.bs.modal",function(event){
-        //var div = $('#deftname-editor .modal-body');
-        //var id = 23133; // for now
-        //div.load('/admin/defendants/edit/'+id + ' #defendant-form');
-    });
+    $('#deftname-editor-submit').on("click",function(){
 
-    /** =========================== **/
+
+    });
 
 });
 
