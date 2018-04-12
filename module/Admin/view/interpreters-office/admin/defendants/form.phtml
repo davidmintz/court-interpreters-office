@@ -3,7 +3,7 @@ $this->headScript()->appendFile($this->basePath('/js/defendant-form.js'));
 $form = $this->form;
 $action = $this->layout()->action;
 if ($this->error) :?>
-<div id="defendant-form">
+<div data-status="<?php echo $this->status ?>" id="defendant-form">
     <div class="alert alert-danger">
         <?php echo $this->error ?>
     </div>

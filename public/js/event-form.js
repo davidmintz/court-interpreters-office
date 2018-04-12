@@ -142,6 +142,7 @@ $(document).ready(function()
         }
         interpreterSelectElement.val("");
         // get the markup
+        //** @todo think about using Vue and a component for this and similar */
         $.get('/admin/schedule/interpreter-template',
             {   interpreter_id : id, index : index,
                 name : name,
@@ -314,7 +315,6 @@ $(document).ready(function()
                 //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
                 minLength: 2,
                 select: function( event, ui ) {
-
                     that = $(this);
                     $.get(
                         '/defendants/template',
@@ -508,21 +508,52 @@ $(document).ready(function()
         }
     });
     /** =========================== **/
-    $("li.defendant span").on("click",
+    $("ul.defendant-names").on("click","li.defendant span",
         function(){
-            console.log("shit?");
             var div = $('#deftname-editor .modal-body');
-            var id = $(this).data('id')+'832764';
-            div.load('/admin/defendants/edit/'+id + ' #defendant-form',
-                function(){$('#deftname-editor').modal("show");}
+            var id = $(this).data('id');
+            var selector = '/admin/defendants/edit/'+ id + ' #defendant-form';
+            var that = this;
+            $('#deftname-editor-submit').show();
+            div.load(selector,function()
+                {
+                    $('#deftname-editor').modal("show");
+                    if ($('#defendant-form').data('status')=="NOT FOUND") {
+                        $('#defendant-form div.alert').append(
+                        " The underlying record might have been deleted out from under you. Please try again.");
+                        var submitButton = $('#deftname-editor-submit');
+                        var cancelButton = submitButton.next("button");
+                        submitButton.hide();
+                        cancelButton.text("OK").one("click",function(){
+                            // we have said this very snippet before, but...
+                            $(that).closest(".list-group-item").slideUp(
+                                function(){$(this).remove();}
+                            );
+                        });
+                        return;
+                    }
+                    var docket = $("#docket").val();
+                    if (docket) {
+                        $('#occurrences .form-check-input').each(function(){
+                            if (-1 !== $(this).val().indexOf(docket)) {
+                                $(this).attr({checked:"checked"});
+                            }
+                        });
+                    }
+                }
+
             );
         }
     );
     $('#deftname-editor-submit').on("click",function(){
-
-
+        console.log("shit is real!");
+        var id = $('#deftname-editor input[name=id]').val();
+        var url = '/admin/defendants/edit/'+ id;
+        $.post(url,$("#defendant-form").serialize(),'json')
+            .then(function(data){
+                console.log("shit working ok?!")
+        });
     });
-
 });
 
 formatTimeElement = function(timeElement) {
