@@ -507,7 +507,27 @@ $(document).ready(function()
             },'json');
         }
     });
-    /** =========================== **/
+
+    /** ======  for editing defendant names ================= **/
+
+    var submitButton = $('#deftname-editor-submit');
+    var cancelButton = submitButton.next("button");
+
+    $('#deftname-editor').on("click",'#btn-select-all, #btn-invert-selection',
+    // if this look familiar, it's because it's found in defendant-form.js
+    function(event){
+        event.preventDefault();
+        var checkboxes = $('form input[type=checkbox]');
+        if ($(event.target).attr('id')=='btn-select-all') {
+            checkboxes.prop("checked",true);
+        } else {
+            checkboxes.each(function(){
+                var checkbox = $(this);
+                var checked = checkbox.prop("checked");
+                checkbox.prop("checked",!checked);
+            });
+        }
+    });
     $("ul.defendant-names").on("click","li.defendant span",
         function(){
             var div = $('#deftname-editor .modal-body');
@@ -521,8 +541,6 @@ $(document).ready(function()
                     if ($('#defendant-form').data('status')=="NOT FOUND") {
                         $('#defendant-form div.alert').append(
                         " The underlying record might have been deleted out from under you. Please try again.");
-                        var submitButton = $('#deftname-editor-submit');
-                        var cancelButton = submitButton.next("button");
                         submitButton.hide();
                         cancelButton.text("OK").one("click",function(){
                             // we have said this very snippet before, but...
@@ -540,18 +558,65 @@ $(document).ready(function()
                             }
                         });
                     }
+                    // save the initial state so we can tell if it changed
+                    $('#given_names').data({was : $('#given_names').val()});
+                    $('#surnames').data({was : $('#surnames').val()});
                 }
-
             );
         }
     );
     $('#deftname-editor-submit').on("click",function(){
-        console.log("shit is real!");
+
+        // did they really change anything?
+        var modified = $('#surnames').val() != $('#surnames').data("was")
+            ||  $('#given_names').val() != $('#given_names').data("was");
+        if (! modified) {
+            $('#defendant-form-error').text("This name has not been modified. Please press cancel if you don't need to make any changes.").show();
+            return;
+        } else { $('#defendant-form-error').hide() }
+
         var id = $('#deftname-editor input[name=id]').val();
-        var url = '/admin/defendants/edit/'+ id;
-        $.post(url,$("#defendant-form").serialize(),'json')
-            .then(function(data){
-                console.log("shit working ok?!")
+        var url = '/admin/defendants/edit/'+ id +'?context=events';
+        var defendantForm = $("#defendant-form");
+        $.post(url,defendantForm.serialize(),'json')
+            .then(function(response){
+                if (response.validation_errors !== undefined) {
+                    return displayValidationErrors(response.validation_errors);
+                }
+                if (response.inexact_duplicate_found) {
+                    var existing = response.existing_entity;
+                    defendantForm.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
+                    $('#deft-existing-duplicate-name').text(existing);
+                    var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
+                    return $(shit).show();
+                }
+                if (response.status != 'success') {
+                    $('#defendant-form-error').html(
+                        "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
+                    ).show();
+                } else {
+                    console.log("looking good, bitch!");
+                    var selector = 'input[name="event[defendantNames][' +
+                        id +']"]';
+                    var input = $(selector);
+                    var defendant_name = $('#surnames').val().trim()
+                        +", "+ $("#given_names").val().trim();
+                        // update the existing thingy
+                        input.val(defendant_name)
+                            .next().text(defendant_name);
+                    if (response.insert_id) {
+                        input.attr({name : selector.replace(id,response.insert_id)});
+                        console.log("did that work? id was "+id);
+                        console.log("input name attribute is now: "+input.attr("name"));
+                    }
+                    $('#defendant-form-success').text("This name has been updated.").show();
+                    window.setTimeout(function(){
+                        $('#defendant-form-success').hide();
+                        //$('#deftname-editor').modal("hide");
+
+                    },2000);
+                }
+
         });
     });
 });

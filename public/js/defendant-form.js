@@ -25,7 +25,7 @@ $(function(){
 
         },'json');
     });
-    $('#btn-select-all, #btn-invert-selection').on("click",function(event){
+    form.on("click",'#btn-select-all, #btn-invert-selection',function(event){
         event.preventDefault();
         var checkboxes = $('form input[type=checkbox]');
         if ($(event.target).attr('id')=='btn-select-all') {

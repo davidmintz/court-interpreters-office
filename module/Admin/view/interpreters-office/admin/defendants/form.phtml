@@ -34,6 +34,8 @@ $form->prepare();
     </div>
     <?php return; endif;
     ?>
+    <div id="defendant-form-success" class="alert alert-success" style="display:none"></div>
+<?php if ($form->has('duplicate_resolution')) :?>
     <p class="duplicate-name duplicate-name-instructions" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
     <div id="duplicate_resolution" class="form-group duplicate-resolution-radio mb-1" style="display:none" >
         <?php $opts = $form->get('duplicate_resolution')->getValueOptions();
@@ -43,12 +45,12 @@ $form->prepare();
                 <?php
         endforeach;?>
     </div>
-
     <p class="duplicate-name" style="display:none">
     <button id="btn-use-existing" class="btn btn-outline-primary btn-block mb-0 pl-4 text-left">discard my changes and use existing</button>
     <button id="btn-update-existing" class="btn btn-outline-primary btn-block border-top-0 mt-0 pl-4 text-left">apply my changes to existing name</button>
     <button id="btn-cancel" class="btn btn-outline-primary btn-block border-top-0 mt-0 pl-4 text-left" title="close this dialog">never mind, get me out of here</button>
-    </p >
+    </p>
+<?php endif; // form has duplicate_resolution element ?>
     <div class="form-group"><?php
     $surname = $form->get('surnames');
     echo $this->formLabel($surname),$this->formElement($surname), $this->formElementErrors($surname);
@@ -80,7 +82,7 @@ $form->prepare();
         --><button id="btn-invert-selection" class="btn btn-sm btn-default border border-info">invert selection</button>
         <?php endif;?>
     </div>
-
+    <div id="defendant-form-error" class="alert alert-warning" style="display:none"></div>
 <?php endif;
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;

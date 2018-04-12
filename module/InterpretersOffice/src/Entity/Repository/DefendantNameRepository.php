@@ -174,12 +174,12 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
     {
         $dql = 'SELECT d FROM InterpretersOffice\Entity\DefendantName d
         WHERE d.given_names = :given_names
-        AND d.surnames = :surnames AND d.id <> :id';
+        AND d.surnames = :surnames ';//AND d.id <> :id';
 
         return $this->createQuery($dql)->setParameters([
             'given_names' => $defendantName->getGivenNames(),
             'surnames' => $defendantName->getSurnames(),
-            'id' => $defendantName->getId()
+            //'id' => $defendantName->getId()
         ])->getOneOrNullResult();
     }
 
@@ -220,7 +220,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         /** is it a global update, or an update of only a subset? */
 
         foreach ($occurrences as $i=>$occurrence) {
-            // unpack submitted JSON strings
+            // unpack submitted JSON stringsschedule
             $occurrences[$i] = json_decode($occurrence, JSON_OBJECT_AS_ARRAY);
         }
         // get all the contexts (occurences) from database
@@ -233,6 +233,8 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         // is there a matching name already existing?
         if (! $existing_name) {
             $MATCH = false;
+        } elseif ($defendantName->getId() == $existing_name->getId()) {
+            $MATCH = 'identical';
         } else {
             // if there's a match, is it literal or inexact?
             $MATCH = $defendantName->equals($existing_name) ? 'literal'
@@ -255,12 +257,13 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         if ($GLOBAL_UPDATE) {
             switch ($MATCH) {
                 case false:
+                case 'identical':
                 try {
                     $logger->debug("flushing out global update");
                     $em->flush();
                     return [
                         'status' => 'success',
-                        'debug' => 'no existing match, global entity update.',
+                        'debug' => 'no collision with existing match, global entity update.',
                     ];
                 } catch (\Exception $e) {
                     return [
@@ -277,14 +280,22 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                     $existing_name
                         ->setGivenNames($defendantName->getGivenNames())
                         ->setSurnames($defendantName->getSurnames());
-                    $logger->debug("we updated existing name");
+                    $logger->debug("we updated the existing name");
                 }
                 // swap out $deftName for existing, and detach
                 $deft_events = $this->getDefendantEventsForDefendant($defendantName);
                 foreach ($deft_events as $de) {
                     $de->setDefendantName($existing_name);
                 }
-                $em->detach($defendantName);
+                $logger->debug(sprintf("is there a childless name to remove? (at %d)",__LINE__));
+                if (! $defendantName->hasRelatedEntities()) {
+                    $logger->debug("we think so");
+                    $em->remove($defendantName);
+                } else {
+                    $logger->debug("we think not.");
+                    $em->detach($defendantName);
+                }
+
                 break; // pro forma
             }
             try {
@@ -292,7 +303,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 $em->flush();
                 return [
                     'status' => 'success',
-                    'debug' => 'match was $MATCH',
+                    'debug' => "match was $MATCH",
                     'deft_events updated' => count($deft_events),
                 ];
             } catch (\Exception $e) {
@@ -314,6 +325,9 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 count($occurrences), count($deft_events)
             ));
             switch ($MATCH) {
+                case 'identical':
+                    $logger->debug('submitted is identical with found at '.__LINE__);
+                    break; // simple flush() should do it
                 case false:
                 // a new name has to be inserted; this one has to be detached
                 $new = (new Entity\DefendantName)
@@ -324,7 +338,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 foreach ($deft_events as $de) {
                     $de->setDefendantName($new);
                 }
-                $logger->debug('no existing match, created new defendant name');
+                $logger->debug('no existing match, will create new defendant name at line '.__LINE__);
                 break;
 
                 case 'inexact':
@@ -344,10 +358,14 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             //  that should do it ==================================//
             try {
                 $em->flush();
-                return [
+                $return = [
                     'status' => 'success',
                     'deft_events updated' => count($deft_events),
                 ];
+                if (isset($new)) {
+                    $return['insert_id'] = $new->getId();
+                }
+                return $return;
             } catch (\Exception $e) {
                 return [
                     'status' => 'error',

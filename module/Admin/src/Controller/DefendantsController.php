@@ -188,7 +188,8 @@ class DefendantsController extends AbstractActionController
             } catch (\Exception $e) {
                 $result = ['message' => $e->getMessage(), 'status' => 'error'];
             }
-            if ("success" == $result['status']) {
+            $context = $this->params()->fromQuery('context','defendants');
+            if ("success" == $result['status'] && 'events' !== $context) {
                 $this->flashMessenger()->addSuccessMessage(
                 "The defendant name <strong>$entity</strong> name has been updated"
                 );
