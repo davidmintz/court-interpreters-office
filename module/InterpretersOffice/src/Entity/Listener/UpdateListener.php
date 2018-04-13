@@ -202,7 +202,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                     break 2;
 
                 default:
-                    $repository = $args->getObjectManager()->getRepository($event['class']);
+                    $repository = $args->getEntityManager()->getRepository($event['class']);
                     // if $repository can delete its cache namespace, do it
                     if ($repository instanceof CacheDeletionInterface) {
                         $repository->deleteCache();
