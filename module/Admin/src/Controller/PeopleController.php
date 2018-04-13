@@ -23,8 +23,18 @@ class PeopleController extends AbstractActionController
      */
     protected $entityManager;
 
+    /**
+     * form configuration
+     *
+     * @var Array
+     */
     protected $formConfig;
 
+    /**
+     * sets form configuration
+     *
+     * @param Array $config
+     */
     public function setFormConfig(Array $config)
     {
         $this->formConfig = $config;

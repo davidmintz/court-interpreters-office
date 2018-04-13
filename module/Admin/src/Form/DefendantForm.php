@@ -172,6 +172,11 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
         return $spec;
     }
 
+    /**
+     * attaches validator for "occurrences" of a given name/docket
+     *
+     * @return DefendantForm
+     */
     public function attachOccurencesValidator()
     {
         $input = $this->getInputFilter()->get('occurrences')
@@ -181,8 +186,15 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
             'break_chain_on_failure' => true,
         ]);
         $input->getValidatorChain()->attach($validator);
+
+        return $this;
     }
 
+    /**
+     * attaches validator for the duplicate resolution policy
+     *
+     * @return DefendantForm
+     */
     public function attachDuplicateResolutionValidator()
     {
         $input = $this->getInputFilter()->get('duplicate_resolution')
@@ -192,6 +204,8 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
             'break_chain_on_failure' => true,
         ]);
         $input->getValidatorChain()->attach($validator);
+
+        return $this;
     }
 
 }

@@ -33,16 +33,15 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      */
     protected $auth;
 
-    /*
-     * holds a copy of related entities before updating
+    /**
+     * whether our modification metadata has been changed
      *
-     * @var array
-
-    protected $state_before = [
-        'interpreterEvents' => [],
-        'defendants'   => [],
-    ];
-    */
+     * The name is a little misleading in that are also thinking of
+     * our modified_by (User) property.
+     *
+     * @var boolean
+     */
+    private $timestamp_was_updated = false;
 
     /**
      * constructor
@@ -92,16 +91,21 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         PreUpdateEventArgs $args)
     {
 
-        if ($this->logger) {
+        if ($this->timestamp_was_updated) {
+            $this->logger->debug(__METHOD__.
+            ": we think last-modification update has been done, returning");
+            return;
+        }
         $this->logger->debug(sprintf(
             'event modification detected, setting modified and modifiedBy on '
             . ' event entity in %s line %d', __METHOD__,__LINE__
-        ));}
+        ));
         if (! $args->hasChangedField('modified')) {
             $eventEntity->setModified($this->now);
         }
-        $this->logger->debug("for the record, I am: ".spl_object_hash($this));
+        $this->logger->debug("for the record, I am EventEntityListener: ".spl_object_hash($this));
         $eventEntity->setModifiedBy($this->getAuthenticatedUser($args));
+        $this->timestamp_was_updated = true;
     }
 
     /**
@@ -126,7 +130,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $eventEntity->setCreated($this->now)
                 ->setModifiedBy($user)
                 ->setModified($this->now);
-        $this->logger->debug(__FUNCTION__ . " in EventEntityListener prePersist really did shit");
+        $this->logger->debug(__FUNCTION__
+        . " in EventEntityListener prePersist really did shit");
     }
 
 

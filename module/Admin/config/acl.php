@@ -42,6 +42,8 @@ return [
         'manager' => null,
         'submitter' => null,
         'staff' => null,
+        // probably don't need this in production :-)
+        'DoctrineORMModule\Yuml\YumlController' => null,
     ],
     // how do we configure this to use Assertions?
     // I think we don't

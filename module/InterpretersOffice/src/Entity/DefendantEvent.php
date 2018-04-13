@@ -7,9 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Entity representing an defendant-event.
  *
+ * We are not using this as an association class related to Event, but rather
+ * for managing DefendantName entities.
+ *
  * @ORM\Entity
  * @ORM\Table(name="defendants_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_defendant_event",columns={"defendant_id","event_id"})})
- *
  */
 class DefendantEvent
 {
@@ -33,17 +35,12 @@ class DefendantEvent
      */
     protected $event;
 
-    public function __construct()
-    {
-
-    }
-
     /**
      * Set event.
      *
      * @param \InterpretersOffice\Entity\Event $event
      *
-     * @return InterpreterEvent
+     * @return DefendantEvent
      */
     public function setEvent(Event $event = null)
     {

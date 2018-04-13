@@ -157,7 +157,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
                 /* worth considering...
                 if (! $this->hasVault()) {
                     throw new \RuntimeException(
-                      "cannot save interpreter $field without encyption");
+                      "cannot save interpreter $field without encryption");
                 }
                  */
                 $setter = 'set'.lcfirst($field);

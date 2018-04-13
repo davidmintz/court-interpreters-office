@@ -5,6 +5,8 @@
 namespace InterpretersOffice\Entity\Listener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Entity\DefendantEvent;
@@ -20,7 +22,7 @@ use InterpretersOffice\Service\Authentication\CurrentUserTrait;
  * the postRemove event is triggered; if you add an InterpreterEvent without
  * removing any, the prePersist event is triggered; if you REPLACE, i.e.,
  * both and remove InterpreterEvent entities, then the postUpdate event is
- * triggered -- but neither prePersist nor postRemove
+ * triggered -- but neither prePersist nor postRemove events are triggered
  *
  */
 class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
@@ -51,7 +53,12 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     protected $auth;
 
-
+    /**
+     * names of classes and triggering events
+     *
+     * @var Array
+     */
+    private $caches_to_clear = [];
 
     /**
      * sets authentication service
@@ -86,7 +93,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postRemove','postPersist','prePersist'];
+        return ['postUpdate','postRemove','postPersist','prePersist','postFlush',];
     }
 
     /**
@@ -97,7 +104,9 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
-        return $this->clearCache($args,__FUNCTION__);
+        $entity = $args->getObject();
+        $this->caches_to_clear[] =
+            ['class'=>get_class($entity),'trigger'=>__FUNCTION__];
     }
 
     /**
@@ -110,86 +119,96 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         $entity = $args->getObject();
         if ($entity instanceof Entity\InterpreterEvent) {
-            $this->logger->debug("guess what: ievent is being created, updating event");
+            $this->logger->debug("interp_event is being created, updating event");
             $entity->getEvent()->setModified($this->getTimeStamp());
             $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
             $this->logger->debug("we set createdBy on InterpreterEvent here in ".__METHOD__);
         }
     }
+
     /**
-     * clears cache
+     * postFlush event listener
      *
-     * @todo think about what happens when you ~update~ anything likely to have
-     * related entities, e.g, language, event-type. we need to flush just about
-     * everything, n'est-ce pas?
+     * After flush, we clear the cache as needed. The events that might require
+     * a cache-clearing are queued up in $this->caches_to_clear. We loop through
+     * and if we encounter a reasons to clear the whole cache, we exit the loop
+     * because there is nothing more to do. In certain cases (updating
+     * DefendantEvent collections) we might otherwise pointlessly clear the
+     * cache several times.
      *
-     * @param LifecycleEventArgs $args
-     * @param string $trigger name of function that called us
+     * @param  PostFlushEventArgs $args
      * @return void
      */
-    public function clearCache(LifecycleEventArgs $args, $trigger = null)
-    {
-        $entity = $args->getObject();
-        $class = get_class($entity);
-        //$this->logger->debug(sprintf('%s happening on entity %s triggered by %s',
-        //    __METHOD__, $class, $trigger ?: '(unknown)'));
+    public function postFlush(PostFlushEventArgs $args) {
 
-        /** @var $cache Doctrine\Common\Cache\CacheProvider */
-        $cache = $args->getObjectManager()->getConfiguration()
-            ->getResultCacheImpl();
-        switch ($class) {
-            case Entity\Event::class:
-            case Entity\DefendantEvent::class:
-                // flush everything, because there are so many related entities
-                $success = $cache->flushAll();
-                $this->logger->debug(
-                    sprintf("ran flushAll() on %s in %s with result: %s",
-                        $class, __METHOD__,$success ? "success":"failed"
-                    )
-                );
-                break;
-
-            case Entity\User::class:
-                // delete the cache entry
-                $cache->setNamespace('users');
-                $id = $entity->getId();
-                if ($cache->contains($id)) {
-                    $cache->delete($id);
-                    $debug = sprintf("%s in UpdateListener deleted user id $id from cache", __FUNCTION__);
-                } else {
-                    $debug = sprintf('%s in UpdateListener: looks like users-cache has no item %d', __FUNCTION__, $id);
-                }
-                $this->logger->debug($debug);
-                if ('postUpdate' == $trigger) {
-                    $cache->flushAll(); // because.... why?
-                }
-                break;
-
-            case Entity\InterpreterLanguage::class:
-                $cache->setNamespace('languages');
-                $cache->deleteAll();
-                $cache->setNamespace('interpreters');
-                $cache->deleteAll();
-                $this->logger->debug("InterpreterLanguage entity updated; interpreters and language caches were purged.");
-                break;
-
-            default:
-
-                $repository = $args->getObjectManager()->getRepository($class);
-                // if $repository can delete its cache namespace, do it
-                if ($repository instanceof CacheDeletionInterface) {
-                    $repository->deleteCache();
-                    $this->logger->debug("called delete cache on ".get_class($repository));
-                } else {
-                    $this->logger->debug(
-                        "$class repository is not an implementation of CacheDeletionInterface: "
-                        .get_class($repository));
-                }
-                break;
+        if (! $this->caches_to_clear) {
+            $this->logger->info("postFlush() thinks no cache needs clearing.");
+            return;
         }
+        $em = $args->getEntityManager();
+        /** @var $cache Doctrine\Common\Cache\CacheProvider */
+        $cache = $args->getEntityManager()->getConfiguration()
+            ->getResultCacheImpl();
+        foreach($this->caches_to_clear as $event) {
+            switch ($event['class']) {
+                case Entity\Event::class:
+                case Entity\DefendantEvent::class:
+                    // flush everything, because there are so many related entities
+                    $success = $cache->flushAll();
+                    $this->logger->debug(
+                        sprintf("ran flushAll() on %s in %s with result: %s, done.",
+                            $event['class'], __METHOD__,$success ? "success":"failed"
+                        )
+                    );
+                break 2;
 
+                case Entity\User::class:
+                    // delete the cache entry
+                    /** @todo  this is weird and needs re-thinking **/
+                    $cache->setNamespace('users');
+                    $id = $entity->getId();
+                    if ($cache->contains($id)) {
+                        $cache->delete($id);
+                        $debug = sprintf("%s in UpdateListener deleted user id $id from cache", __FUNCTION__);
+                    } else {
+                        $debug = sprintf('%s in UpdateListener: looks like users-cache has no item %d', __FUNCTION__, $id);
+                    }
+                    $this->logger->debug($debug);
+                    if ('postUpdate' == $event['trigger']) {
+                        // because.... why? probably because persist() doesn't
+                        // require a flush, and remove() is a rarity
+                        $cache->flushAll();
+                    }
+                    $debug .= sprintf("ran flushAll() on %s in %s with result: %s",
+                        $event['class'], __METHOD__,$success ? "success":"failed"
+                    );
+                    $this->logger->debug($debug);
+                break 2;
+
+                case Entity\InterpreterLanguage::class:
+                    $cache->setNamespace('languages');
+                    $cache->deleteAll();
+                    $cache->setNamespace('interpreters');
+                    $cache->deleteAll();
+                    $this->logger->debug("InterpreterLanguage entity updated; interpreters and language caches were purged.");
+                break 2;
+
+                default:
+                    $repository = $args->getObjectManager()->getRepository($event['class']);
+                    // if $repository can delete its cache namespace, do it
+                    if ($repository instanceof CacheDeletionInterface) {
+                        $repository->deleteCache();
+                        $this->logger->debug("called delete cache on ".get_class($repository));
+                    } else {
+                        $this->logger->debug(
+                        "$event[class] repository doesn't implement CacheDeletionInterface: "
+                        .get_class($repository));
+                    }
+            }
+        }
     }
+
     /**
      * postPersist event handler
      *
@@ -198,7 +217,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        return $this->clearCache($args,__FUNCTION__);
+        $entity = $args->getObject();
+        $this->caches_to_clear[] = ['class'=>get_class($entity),'trigger'=>__FUNCTION__];
     }
 
 
@@ -210,6 +230,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postRemove(LifecycleEventArgs $args)
     {
-        return $this->clearCache($args,__FUNCTION__);
+        $entity = $args->getObject();
+        $this->caches_to_clear[] = ['class'=>get_class($entity),'trigger'=>__FUNCTION__];
+
     }
 }

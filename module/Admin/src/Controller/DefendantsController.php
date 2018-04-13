@@ -25,6 +25,12 @@ class DefendantsController extends AbstractActionController
      * @var EntityManagerInterface
      */
     protected $entityManager;
+
+    /**
+     * defendantName repository
+     * 
+     * @var Entity\Repository\DefendantNameRepository
+     */
     protected $repository;
 
     use DeletionTrait;
@@ -253,6 +259,10 @@ class DefendantsController extends AbstractActionController
         }
     }
 
+    /**
+     * deletes a defendant
+     *
+     */
     public function deleteAction()
     {
 
