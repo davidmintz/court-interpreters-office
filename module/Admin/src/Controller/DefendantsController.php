@@ -64,13 +64,14 @@ class DefendantsController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/defendants/form.phtml');
         $form = new DefendantForm($this->entityManager, ['action' => 'create']);
         $viewModel->setVariables(['form' => $form, 'title' => 'add a defendant name']);
+        /** @var Zend\Http\PhpEnvironment\Request  $request */
         $request = $this->getRequest();
         $entity = new Entity\DefendantName();
         $form->bind($entity);
         $xhr = false;
         if ($request->isXmlHttpRequest()) {
             $xhr = true;
-            $viewModel->setTerminal(true)->setVariables(['xhr' => true]);
+            $viewModel->setTerminal(true)->setVariables(['xhr' => true,]);
         }
         if ($request->isPost()) {
             $form->setData($request->getPost());
