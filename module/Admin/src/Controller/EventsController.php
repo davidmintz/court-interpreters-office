@@ -236,10 +236,10 @@ class EventsController extends AbstractActionController
                 $form->get('event')->get('anonymousSubmitter')
                     ->setValue($input['anonymousSubmitter']);
                 $this->getViewModel()
-                ->setVariables(compact('defendantNames', 'interpreters', 'form'));
+                ->setVariables(compact('defendantNames', 'interpreters', 'form', 'id'));
             }
         }
-        return $this->getViewModel(['form' => $form]);
+        return $this->getViewModel(['form' => $form, 'id'=>$id]);
     }
 
 

@@ -22,8 +22,13 @@ if ($this->errorMessage) : ?>
 return;
 endif;
 $form = $this->form;
+if ($this->layout()->action == 'add') :
+    $action = $this->url('events/add');
+else:
+    $action = $this->url('events/edit',['id'=>$this->id]);
+endif;
 $form->setAttribute('class', 'form-event mx-auto')
-        ->setAttribute('style', 'max-width:950px');
+    ->setAttribute('style', 'max-width:950px')->setAttribute('action',$action);
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',

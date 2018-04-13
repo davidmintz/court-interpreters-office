@@ -579,6 +579,11 @@ $(document).ready(function()
 
         var id = $('#deftname-editor input[name=id]').val();
         var url = '/admin/defendants/edit/'+ id +'?context=events';
+        // we may need the event id
+        var event_id = $('input[name="event[id]"]').val() || false;
+        if (event_id) {
+            url += '&event_id='+event_id;
+        }
         var defendantForm = $("#defendant-form");
         $.post(url,defendantForm.serialize(),'json')
             .then(function(response){
@@ -597,6 +602,9 @@ $(document).ready(function()
                         "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
                     ).show();
                 } else {
+                    /** @todo check for duplicate defendant-name in the form
+                    before doing this
+                    */
                     console.log("looking good, bitch!");
                     var selector = 'input[name="event[defendantNames][' +
                         id +']"]';
@@ -608,7 +616,7 @@ $(document).ready(function()
                             .next().text(defendant_name);
                     if (response.insert_id) {
                         input.attr({name : selector.replace(id,response.insert_id)});
-                        console.log("did that work? id was "+id);
+                        console.log("did that really work? id was "+id);
                         console.log("input name attribute is now: "+input.attr("name"));
                     }
                     $('#defendant-form-success').text("This name has been updated.").show();
