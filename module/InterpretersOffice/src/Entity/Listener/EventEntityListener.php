@@ -100,7 +100,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         if (! $args->hasChangedField('modified')) {
             $eventEntity->setModified($this->now);
         }
-        $this->logger("for the record, I am: ".spl_object_hash($this));
+        $this->logger->debug("for the record, I am: ".spl_object_hash($this));
         $eventEntity->setModifiedBy($this->getAuthenticatedUser($args));
     }
 
