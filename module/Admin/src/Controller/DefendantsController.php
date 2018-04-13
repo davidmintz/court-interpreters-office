@@ -161,9 +161,14 @@ class DefendantsController extends AbstractActionController
         }
         $form->bind($entity);
         // at least for now...
-        $logger = $this->getEvent()->getApplication()->getServiceManager()
-            ->get('log'); $this->repository->setLogger($logger);
-        //
+        $container =  $this->getEvent()->getApplication()->getServiceManager();
+        $logger = $container->get('log');
+        $this->repository->setLogger($logger);
+        $listener = $container->get('InterpretersOffice\Entity\Listener\EventEntityListener');
+        if (! $listener->getLogger()) {
+            $listener->setLogger($logger);
+        }
+        /////////
         $occurrences = $this->repository->findDocketAndJudges($id);
         if (count($occurrences) > 0) {
             $form->attachOccurencesValidator();

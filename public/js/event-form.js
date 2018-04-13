@@ -555,6 +555,8 @@ $(document).ready(function()
                         $('#occurrences .form-check-input').each(function(){
                             if (-1 !== $(this).val().indexOf(docket)) {
                                 $(this).attr({checked:"checked"});
+                            } else {
+                                console.log("so, is this a name that has not been used yet?");
                             }
                         });
                     }
