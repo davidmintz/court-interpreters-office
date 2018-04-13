@@ -28,7 +28,7 @@ class DefendantsController extends AbstractActionController
 
     /**
      * defendantName repository
-     * 
+     *
      * @var Entity\Repository\DefendantNameRepository
      */
     protected $repository;
@@ -45,7 +45,6 @@ class DefendantsController extends AbstractActionController
         $this->entityManager = $entityManager;
         $repository = $entityManager->getRepository(Entity\DefendantName::class);
         $this->repository = $repository;
-
     }
 
     /**
@@ -153,7 +152,7 @@ class DefendantsController extends AbstractActionController
             $xhr = true;
             $viewModel->setTerminal(true)->setVariables(['xhr' => true]);
         }
-        $form = new DefendantForm($this->entityManager,['action'=>'update']);
+        $form = new DefendantForm($this->entityManager, ['action' => 'update']);
 
         $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
         if (! $entity) {
@@ -163,12 +162,13 @@ class DefendantsController extends AbstractActionController
                 return $this->redirect()->toRoute('admin-defendants');
             } else {
                 return $viewModel->setVariables(
-                    ['error'=>$message,'status'=>'NOT FOUND','form' => $form]);
+                    ['error' => $message,'status' => 'NOT FOUND','form' => $form]
+                );
             }
         }
         $form->bind($entity);
         // at least for now...
-        $container =  $this->getEvent()->getApplication()->getServiceManager();
+        $container = $this->getEvent()->getApplication()->getServiceManager();
         $logger = $container->get('log');
         $this->repository->setLogger($logger);
         $listener = $container->get('InterpretersOffice\Entity\Listener\EventEntityListener');
@@ -181,29 +181,31 @@ class DefendantsController extends AbstractActionController
             $form->attachOccurencesValidator();
         }
         if ($request->isPost()) {
-
             $input = $request->getPost();
             if (null !== $input->get('duplicate_resolution_required')) {
                 $form->attachDuplicateResolutionValidator();
             }
             $form->setData($input);
-            if (!$form->isValid()) {
-                return new JsonModel(['validation_errors'=>$form->getMessages()]);
+            if (! $form->isValid()) {
+                return new JsonModel(['validation_errors' => $form->getMessages()]);
             }
             try {
                 // do we have an existing match?
                 $existing_name = $this->repository->findDuplicate($entity);
-                $resolution =  $form->get('duplicate_resolution')->getValue();
+                $resolution = $form->get('duplicate_resolution')->getValue();
                 $result = $this->repository->updateDefendantEvents(
-                    $entity, $input->get('occurrences',[]), $existing_name,
-                    $resolution);
+                    $entity,
+                    $input->get('occurrences', []),
+                    $existing_name,
+                    $resolution
+                );
             } catch (\Exception $e) {
                 $result = ['message' => $e->getMessage(), 'status' => 'error'];
             }
-            $context = $this->params()->fromQuery('context','defendants');
+            $context = $this->params()->fromQuery('context', 'defendants');
             if ("success" == $result['status'] && 'events' !== $context) {
                 $this->flashMessenger()->addSuccessMessage(
-                "The defendant name <strong>$entity</strong> name has been updated"
+                    "The defendant name <strong>$entity</strong> name has been updated"
                 );
             }
             return new JsonModel($result);
@@ -212,7 +214,8 @@ class DefendantsController extends AbstractActionController
         return $viewModel->setVariables(
             ['form' => $form,
             'checked' => $request->getPost()->get('occurrences') ?: [],
-            'occurrences'=>$occurrences]);
+            'occurrences' => $occurrences]
+        );
     }
 
     /**
@@ -240,7 +243,7 @@ class DefendantsController extends AbstractActionController
         try {
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
-            return new JsonModel(['id' => $id,'errors' => null, 'status'=>'success']);
+            return new JsonModel(['id' => $id,'errors' => null, 'status' => 'success']);
         } catch (UniqueConstraintViolationException $e) {
             $existing_entity = $this->entityManager
                     ->getRepository(Entity\DefendantName::class)
@@ -275,7 +278,7 @@ class DefendantsController extends AbstractActionController
 
             $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
 
-            return $this->delete(compact('entity','id','name','what'));
+            return $this->delete(compact('entity', 'id', 'name', 'what'));
         }
     }
 }

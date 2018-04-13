@@ -132,7 +132,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      * gets data for populating Judge select menu
      *
      * The judge's default courtroom/courthouse location ids are returned as
-     * data attributes location and parent_location. 
+     * data attributes location and parent_location.
      *
      * @param array $options
      * @return array

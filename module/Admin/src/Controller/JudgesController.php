@@ -74,10 +74,10 @@ class JudgesController extends AbstractActionController
 
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(sprintf(
-              'Judge <strong>%s %s, %s</strong> has been added to the database',
-              $entity->getFirstname(),
-              $entity->getLastname(),
-              (string) $entity->getFlavor()
+                'Judge <strong>%s %s, %s</strong> has been added to the database',
+                $entity->getFirstname(),
+                $entity->getLastname(),
+                (string) $entity->getFlavor()
             ));
             $this->redirect()->toRoute('judges');
         }
@@ -96,7 +96,8 @@ class JudgesController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         if (! $id) { // get rid of this, since it will otherwise be 404?
             return $viewModel->setVariables(
-                ['errorMessage' => 'invalid or missing id parameter']);
+                ['errorMessage' => 'invalid or missing id parameter']
+            );
         }
         $entity = $this->entityManager
             ->find('InterpretersOffice\Entity\Judge', $id);
@@ -106,8 +107,10 @@ class JudgesController extends AbstractActionController
         } else {
             $viewModel->id = $id;
         }
-        $form = new JudgeForm($this->entityManager,
-            ['action' => 'update', 'object' => $entity]);
+        $form = new JudgeForm(
+            $this->entityManager,
+            ['action' => 'update', 'object' => $entity]
+        );
         $form->bind($entity);
         $viewModel->form = $form;
 

@@ -221,7 +221,7 @@ class LocationsController extends AbstractActionController
             $what = 'location';
             $entity = $this->entityManager->find(Location::class, $id);
 
-            return $this->delete(compact('entity','id','name','what'));
+            return $this->delete(compact('entity', 'id', 'name', 'what'));
         }
     }
 }

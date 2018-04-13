@@ -37,7 +37,6 @@ class PeopleControllerFactory implements FactoryInterface
             $listener = $container->get('interpreter-listener');
             $resolver = $em->getConfiguration()->getEntityListenerResolver();
             $resolver->register($listener);
-
         } else {
             $controller = new $requestedName($em);
         }

@@ -87,9 +87,10 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @param Entity\Event $eventEntity
      * @param PreUpdateEventArgs $args
      */
-    public function preUpdate(Entity\Event $eventEntity,
-        PreUpdateEventArgs $args)
-    {
+    public function preUpdate(
+        Entity\Event $eventEntity,
+        PreUpdateEventArgs $args
+    ) {
 
         if ($this->timestamp_was_updated) {
             $this->logger->debug(__METHOD__.
@@ -98,7 +99,9 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         }
         $this->logger->debug(sprintf(
             'event modification detected, setting modified and modifiedBy on '
-            . ' event entity in %s line %d', __METHOD__,__LINE__
+            . ' event entity in %s line %d',
+            __METHOD__,
+            __LINE__
         ));
         if (! $args->hasChangedField('modified')) {
             $eventEntity->setModified($this->now);
@@ -133,6 +136,4 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->logger->debug(__FUNCTION__
         . " in EventEntityListener prePersist really did shit");
     }
-
-
 }

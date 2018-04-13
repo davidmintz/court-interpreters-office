@@ -106,7 +106,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         $entity = $args->getObject();
         $this->caches_to_clear[] =
-            ['class'=>get_class($entity),'trigger'=>__FUNCTION__];
+            ['class' => get_class($entity),'trigger' => __FUNCTION__];
     }
 
     /**
@@ -140,7 +140,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      * @param  PostFlushEventArgs $args
      * @return void
      */
-    public function postFlush(PostFlushEventArgs $args) {
+    public function postFlush(PostFlushEventArgs $args)
+    {
 
         if (! $this->caches_to_clear) {
             $this->logger->info("postFlush() thinks no cache needs clearing.");
@@ -150,18 +151,21 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         /** @var $cache Doctrine\Common\Cache\CacheProvider */
         $cache = $args->getEntityManager()->getConfiguration()
             ->getResultCacheImpl();
-        foreach($this->caches_to_clear as $event) {
+        foreach ($this->caches_to_clear as $event) {
             switch ($event['class']) {
                 case Entity\Event::class:
                 case Entity\DefendantEvent::class:
                     // flush everything, because there are so many related entities
                     $success = $cache->flushAll();
                     $this->logger->debug(
-                        sprintf("ran flushAll() on %s in %s with result: %s, done.",
-                            $event['class'], __METHOD__,$success ? "success":"failed"
+                        sprintf(
+                            "ran flushAll() on %s in %s with result: %s, done.",
+                            $event['class'],
+                            __METHOD__,
+                            $success ? "success" : "failed"
                         )
                     );
-                break 2;
+                    break 2;
 
                 case Entity\User::class:
                     // delete the cache entry
@@ -180,11 +184,14 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                         // require a flush, and remove() is a rarity
                         $cache->flushAll();
                     }
-                    $debug .= sprintf("ran flushAll() on %s in %s with result: %s",
-                        $event['class'], __METHOD__,$success ? "success":"failed"
+                    $debug .= sprintf(
+                        "ran flushAll() on %s in %s with result: %s",
+                        $event['class'],
+                        __METHOD__,
+                        $success ? "success" : "failed"
                     );
                     $this->logger->debug($debug);
-                break 2;
+                    break 2;
 
                 case Entity\InterpreterLanguage::class:
                     $cache->setNamespace('languages');
@@ -192,7 +199,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                     $cache->setNamespace('interpreters');
                     $cache->deleteAll();
                     $this->logger->debug("InterpreterLanguage entity updated; interpreters and language caches were purged.");
-                break 2;
+                    break 2;
 
                 default:
                     $repository = $args->getObjectManager()->getRepository($event['class']);
@@ -202,8 +209,9 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                         $this->logger->debug("called delete cache on ".get_class($repository));
                     } else {
                         $this->logger->debug(
-                        "$event[class] repository doesn't implement CacheDeletionInterface: "
-                        .get_class($repository));
+                            "$event[class] repository doesn't implement CacheDeletionInterface: "
+                            .get_class($repository)
+                        );
                     }
             }
         }
@@ -218,7 +226,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        $this->caches_to_clear[] = ['class'=>get_class($entity),'trigger'=>__FUNCTION__];
+        $this->caches_to_clear[] = ['class' => get_class($entity),'trigger' => __FUNCTION__];
     }
 
 
@@ -231,7 +239,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function postRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        $this->caches_to_clear[] = ['class'=>get_class($entity),'trigger'=>__FUNCTION__];
-
+        $this->caches_to_clear[] = ['class' => get_class($entity),'trigger' => __FUNCTION__];
     }
 }

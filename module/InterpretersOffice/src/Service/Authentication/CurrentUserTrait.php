@@ -32,7 +32,7 @@ trait CurrentUserTrait
             $em = $args->getObjectManager();
             $id = $this->auth->getIdentity()->id;
             $this->user = $em->createQuery('SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id')
-                ->setParameters(['id'=>$id])->useResultCache(true)->getOneOrNullResult();
+                ->setParameters(['id' => $id])->useResultCache(true)->getOneOrNullResult();
         }
 
         return $this->user;

@@ -13,14 +13,14 @@ endif;
 if ($action == 'add') :
     $url = $this->url('admin-defendants/add');
 else :
-    $url =  $this->url('admin-defendants/edit',['id' => $form->getObject()->getId()]);
-    $form->setAttribute('data-defendant_name',(string)$form->getObject())
+    $url = $this->url('admin-defendants/edit', ['id' => $form->getObject()->getId()]);
+    $form->setAttribute('data-defendant_name', (string)$form->getObject())
     ->setAttribute('data-redirect_url', $this->url("admin-defendants"));
 endif;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'save','id'=> 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
+    'attributes' => ['value' => 'save','id' => 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
 ])->setAttribute('method', 'post')->setAttribute('action', $url);
 $this->headTitle('admin | defendants |'.$action);
 $form->prepare();
@@ -29,17 +29,18 @@ $form->prepare();
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('adm_breadcrumbs')->breadcrumbs() ?></h2>
 <?php
     echo $this->form()->openTag($form);
-    if ($this->error) :?>
+if ($this->error) :?>
     <?php echo $this->form()->closeTag() ?>
     </div>
-    <?php return; endif;
+    <?php return;
+endif;
     ?>
     <div id="defendant-form-success" class="alert alert-success" style="display:none"></div>
 <?php if ($form->has('duplicate_resolution')) :?>
     <p class="duplicate-name duplicate-name-instructions" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
     <div id="duplicate_resolution" class="form-group duplicate-resolution-radio mb-1" style="display:none" >
         <?php $opts = $form->get('duplicate_resolution')->getValueOptions();
-        foreach($opts as $value => $label):
+        foreach ($opts as $value => $label) :
             ?><div class="form-check"><input name="duplicate_resolution" value="<?php echo $value?>" class="form-check-input" type="radio" id="radio-<?php echo $value?>">
             <label for="radio-<?php echo $value?>" name="duplicate_resolution" value="<?php echo $value?>" class="form-check-label"><?php echo $label ?></label></div>
                 <?php
@@ -62,33 +63,37 @@ $form->prepare();
     ?>
     </div>
     <?php
-    if ($this->occurrences):?>
+    if ($this->occurrences) :?>
     occurrences <span class="text-muted">-- select the contexts where this update should apply:</span><br>
     <div id="occurrences" class="form-group form-check mb-2">
         <?php
         $count = count($this->occurrences);
-        foreach($this->occurrences as $i => $item):
+        foreach ($this->occurrences as $i => $item) :
                 $value = json_encode($item);
             ?>
             <input class="form-check-input" type="checkbox" name="occurrences[]" value="<?php echo $this->escapeHtml($value)?>" <?php
-                if (1 == $count or in_array($value,$this->checked)):?> checked="checked"<?php endif;
+            if (1 == $count or in_array($value, $this->checked)) :
+?> checked="checked"<?php
+            endif;
             ?> id="checkbox-<?php echo $i?>">
             <label class="form-check-label" for="checkbox-<?php echo $i?>"><?php
-                printf("%s - %s (%d events)",$item['docket']?:"(no docket numer)",$item['judge'],$item['events']);
+                printf("%s - %s (%d events)", $item['docket'] ?: "(no docket numer)", $item['judge'], $item['events']);
             ?></label><br>
         <?php endforeach;?>
-        <?php if ($count > 2): ?>
+        <?php if ($count > 2) : ?>
             <button id="btn-select-all" class="btn btn-sm btn-default border border-info">select all</button><!--
         --><button id="btn-invert-selection" class="btn btn-sm btn-default border border-info">invert selection</button>
         <?php endif;?>
     </div>
     <div id="defendant-form-error" class="alert alert-warning" style="display:none"></div>
-<?php endif;
+    <?php endif;
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
-if (! $this->xhr) :
-    echo $this->formSubmit($form->get('submit'));if (! $this->occurrences):?><input id="btn-delete" type="button" class="btn btn-lg btn-warning mt-2" title="delete this defendant name from your database" value="delete" id="btn-delete"><?php endif;
-endif;
+    if (! $this->xhr) :
+        echo $this->formSubmit($form->get('submit'));if (! $this->occurrences) :
+?><input id="btn-delete" type="button" class="btn btn-lg btn-warning mt-2" title="delete this defendant name from your database" value="delete" id="btn-delete"><?php
+        endif;
+    endif;
     echo $this->form()->closeTag() ?>
 </div>

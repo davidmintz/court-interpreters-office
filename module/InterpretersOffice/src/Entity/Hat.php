@@ -86,7 +86,8 @@ class Hat
     {
         if ($this->getRole() && $this->anonymity != 0) {
             throw new \RuntimeException(
-                'If a Hat has a Role, its anonymity must be "never"');
+                'If a Hat has a Role, its anonymity must be "never"'
+            );
         }
         /* not so. 'contract court interpreter' has no Role but can't be
             anonymous
@@ -177,9 +178,10 @@ class Hat
      */
     public function setAnonymity($anonymity)
     {
-        if (! in_array($anonymity,[0,1,2])) {
+        if (! in_array($anonymity, [0,1,2])) {
             throw new \RuntimeException(
-                'illegal value passed to setAnonymity(): '.$anonymity);
+                'illegal value passed to setAnonymity(): '.$anonymity
+            );
         }
         $this->anonymity = $anonymity;
 

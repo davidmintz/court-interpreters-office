@@ -35,7 +35,7 @@ class PeopleController extends AbstractActionController
      *
      * @param Array $config
      */
-    public function setFormConfig(Array $config)
+    public function setFormConfig(array $config)
     {
         $this->formConfig = $config;
     }
@@ -67,9 +67,11 @@ class PeopleController extends AbstractActionController
     {
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/people/form.phtml');
-        $form = new PersonForm($this->entityManager,
+        $form = new PersonForm(
+            $this->entityManager,
             ['action' => 'create',
-            'anonymous_hats'=>$this->formConfig['anonymous_hats']]);
+            'anonymous_hats' => $this->formConfig['anonymous_hats']]
+        );
         $viewModel->setVariables(['form' => $form, 'title' => 'add a person']);
         $request = $this->getRequest();
         $entity = new Entity\Person();

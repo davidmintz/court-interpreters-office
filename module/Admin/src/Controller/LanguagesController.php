@@ -137,8 +137,8 @@ class LanguagesController extends AbstractActionController
             $name = $this->params()->fromPost('name');
             $what = 'language';
             $entity = $this->entityManager->find(Language::class, $id);
-            
-            return $this->delete(compact('entity','id','name','what'));
+
+            return $this->delete(compact('entity', 'id', 'name', 'what'));
         }
     }
 

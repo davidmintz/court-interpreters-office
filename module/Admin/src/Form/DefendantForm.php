@@ -93,14 +93,14 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
             $this->add([
                 'type' => 'Zend\Form\Element\Select',
                 'name' => 'occurrences',
-                'attributes' => ['multiple'=>'multiple'],
+                'attributes' => ['multiple' => 'multiple'],
 
             ]);
             $this->add([
                 'type' => 'Zend\Form\Element\Radio',
                 'name' => 'duplicate_resolution',
-                'attributes' => ['id'=>'duplicate_resolution'],
-                'options' =>[
+                'attributes' => ['id' => 'duplicate_resolution'],
+                'options' => [
                     'value_options' => [
                         self::USE_EXISTING => 'use the existing version as is',
                         self::UPDATE_EXISTING => 'update the existing version (as shown below)',
@@ -162,11 +162,11 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
             ],
             'occurrences' => [
                 'required' => false,
-                'allow_empty'=>true,
+                'allow_empty' => true,
             ],
             'duplicate_resolution' => [
                 'required' => false,
-                'allow_empty'=>true,
+                'allow_empty' => true,
             ],
         ];
         return $spec;
@@ -207,5 +207,4 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
 
         return $this;
     }
-
 }

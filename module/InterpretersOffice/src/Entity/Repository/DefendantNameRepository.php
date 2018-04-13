@@ -20,6 +20,7 @@ use InterpretersOffice\Entity\DefendantEvent;
 
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerAwareTrait;
+
 /**
  * custom EntityRepository class for the DefendantName entity.
  *
@@ -161,7 +162,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             WHERE d.id = :id GROUP BY e.docket,aj.id,j.id
             ORDER BY e.docket, judge';
 
-        return $this->createQuery($dql)->setParameters(['id'=>$id])
+        return $this->createQuery($dql)->setParameters(['id' => $id])
             ->getResult();
     }
     /**
@@ -195,7 +196,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             de JOIN de.defendant d WHERE d.id = :id';
 
         return  $this->createQuery($dql)
-            ->setParameters(['id'=>$defendantName->getId()])
+            ->setParameters(['id' => $defendantName->getId()])
             ->getResult();
     }
 
@@ -210,16 +211,18 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      * @param  string $duplicate_resolution whether to update or use existing
      * @return Array result
      */
-    public function updateDefendantEvents(Entity\DefendantName $defendantName,
-        Array $occurrences, Entity\DefendantName $existing_name  = null,
-            $duplicate_resolution = null)
-    {
+    public function updateDefendantEvents(
+        Entity\DefendantName $defendantName,
+        array $occurrences,
+        Entity\DefendantName $existing_name = null,
+        $duplicate_resolution = null
+    ) {
         $logger = $this->getLogger(); // temporary, perhaps
         $em = $this->getEntityManager();
 
         /** is it a global update, or an update of only a subset? */
 
-        foreach ($occurrences as $i=>$occurrence) {
+        foreach ($occurrences as $i => $occurrence) {
             // unpack submitted JSON stringsschedule
             $occurrences[$i] = json_decode($occurrence, JSON_OBJECT_AS_ARRAY);
         }
@@ -247,56 +250,59 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 'inexact_duplicate_found' => 1,
                 'status' => 'aborted',
                 'debug' => 'required duplicate resolution not provided',
-                'existing_entity'=>(string)$existing_name,
+                'existing_entity' => (string)$existing_name,
             ];
         }
-        $logger->debug(sprintf('in %s at %d match is %s, update is %s',
-            __CLASS__,__LINE__,$MATCH ?:'false',
-                    $GLOBAL_UPDATE ? 'global' : 'partial')
-        );
+        $logger->debug(sprintf(
+            'in %s at %d match is %s, update is %s',
+            __CLASS__,
+            __LINE__,
+            $MATCH ?: 'false',
+            $GLOBAL_UPDATE ? 'global' : 'partial'
+        ));
         if ($GLOBAL_UPDATE) {
             switch ($MATCH) {
                 case false:
                 case 'identical':
-                try {
-                    $logger->debug("flushing out global update");
-                    $em->flush();
-                    return [
+                    try {
+                        $logger->debug("flushing out global update");
+                        $em->flush();
+                        return [
                         'status' => 'success',
                         'debug' => 'no collision with existing match, global entity update.',
-                    ];
-                } catch (\Exception $e) {
-                    return [
+                        ];
+                    } catch (\Exception $e) {
+                        return [
                         'status' => 'error',
                         'exception_class' => get_class($e),
                         'message' => $e->getMessage(),
-                    ];
-                }
-                break;
+                        ];
+                    }
+                    break;
 
                 case 'inexact':
                 case 'literal':
-                if ($duplicate_resolution == DefendantForm::UPDATE_EXISTING) {
-                    $existing_name
+                    if ($duplicate_resolution == DefendantForm::UPDATE_EXISTING) {
+                        $existing_name
                         ->setGivenNames($defendantName->getGivenNames())
                         ->setSurnames($defendantName->getSurnames());
-                    $logger->debug("we updated the existing name");
-                }
+                        $logger->debug("we updated the existing name");
+                    }
                 // swap out $deftName for existing, and detach
-                $deft_events = $this->getDefendantEventsForDefendant($defendantName);
-                foreach ($deft_events as $de) {
-                    $de->setDefendantName($existing_name);
-                }
-                $logger->debug(sprintf("is there a childless name to remove? (at %d)",__LINE__));
-                if (! $defendantName->hasRelatedEntities()) {
-                    $logger->debug("we think so");
-                    $em->remove($defendantName);
-                } else {
-                    $logger->debug("we think not.");
-                    $em->detach($defendantName);
-                }
+                    $deft_events = $this->getDefendantEventsForDefendant($defendantName);
+                    foreach ($deft_events as $de) {
+                        $de->setDefendantName($existing_name);
+                    }
+                    $logger->debug(sprintf("is there a childless name to remove? (at %d)", __LINE__));
+                    if (! $defendantName->hasRelatedEntities()) {
+                        $logger->debug("we think so");
+                        $em->remove($defendantName);
+                    } else {
+                        $logger->debug("we think not.");
+                        $em->detach($defendantName);
+                    }
 
-                break; // pro forma
+                    break; // pro forma
             }
             try {
                 $logger->debug("flushing $MATCH match at ". __LINE__);
@@ -313,16 +319,17 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                     'message' => $e->getMessage(),
                 ];
             }
-
         } else { // PARTIAL update.
-
             $deft_events = $this
                 ->getDeftEventsForOccurrences($occurrences, $defendantName);
             $logger->debug(sprintf(
                 'at line %d: existing is %s, submitted is now %s; '
                 .'%d occurrences, %d deft events found; ',
-                __LINE__, $existing_name, $defendantName,
-                count($occurrences), count($deft_events)
+                __LINE__,
+                $existing_name,
+                $defendantName,
+                count($occurrences),
+                count($deft_events)
             ));
             switch ($MATCH) {
                 case 'identical':
@@ -330,36 +337,36 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                     break; // simple flush() should do it
                 case false:
                 // a new name has to be inserted; this one has to be detached
-                $new = (new Entity\DefendantName)
+                    $new = (new Entity\DefendantName)
                     ->setGivenNames($defendantName->getGivenNames())
                     ->setSurnames($defendantName->getSurnames());
-                $em->persist($new);
-                $em->detach($defendantName);
-                foreach ($deft_events as $de) {
-                    $de->setDefendantName($new);
-                }
-                $logger->debug('no existing match, will create new defendant name at line '.__LINE__);
-                break;
+                    $em->persist($new);
+                    $em->detach($defendantName);
+                    foreach ($deft_events as $de) {
+                        $de->setDefendantName($new);
+                    }
+                    $logger->debug('no existing match, will create new defendant name at line '.__LINE__);
+                    break;
 
                 case 'inexact':
-                if ($duplicate_resolution == DefendantForm::UPDATE_EXISTING) {
-                    $existing_name
+                    if ($duplicate_resolution == DefendantForm::UPDATE_EXISTING) {
+                        $existing_name
                         ->setGivenNames($defendantName->getGivenNames())
                         ->setSurnames($defendantName->getSurnames());
-                }
+                    }
                 // don't break
                 case 'literal':
-                foreach ($deft_events as $de) {
-                    $de->setDefendantName($existing_name);
-                }
-                if (! $defendantName->hasRelatedEntities()) {
-                    $logger->debug("no related entities for $defendantName at ".__LINE__);
-                    $em->remove($defendantName);
-                } else {
-                    $logger->debug("yes related entities for $defendantName, gonna detach() at ".__LINE__);
-                    $em->detach($defendantName);
-                }
-                break;
+                    foreach ($deft_events as $de) {
+                        $de->setDefendantName($existing_name);
+                    }
+                    if (! $defendantName->hasRelatedEntities()) {
+                        $logger->debug("no related entities for $defendantName at ".__LINE__);
+                        $em->remove($defendantName);
+                    } else {
+                        $logger->debug("yes related entities for $defendantName, gonna detach() at ".__LINE__);
+                        $em->detach($defendantName);
+                    }
+                    break;
             }
             //  that should do it ==================================//
             try {
@@ -389,9 +396,10 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      * @param  EntityDefendantName $defendantName
      * @return Entity\DefendantName[]
      */
-    private function getDeftEventsForOccurrences(Array $occurrences,
-        Entity\DefendantName $defendantName)
-    {
+    private function getDeftEventsForOccurrences(
+        array $occurrences,
+        Entity\DefendantName $defendantName
+    ) {
         $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent de
         JOIN de.defendant d JOIN de.event e
         LEFT JOIN e.anonymousJudge aj LEFT JOIN e.judge j
@@ -404,7 +412,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 $occurrence['anon_judge_id'] ?: $occurrence['judge_id']
             );
         }
-        $string = implode(' OR ',$where);
+        $string = implode(' OR ', $where);
         if (count($where) > 1) {
             $string = "($string)";
         }
@@ -412,7 +420,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         //$this->getLogger()->debug("DQL: $dql\nparams:\n"
         // . print_r(['id'=>$defendantName->getId()],true));
         return $this->createQuery($dql)->useResultCache(false)
-            ->setParameters(['id'=>$defendantName->getId()])
+            ->setParameters(['id' => $defendantName->getId()])
             ->getResult();
     }
 }

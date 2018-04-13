@@ -130,7 +130,10 @@ class EventsController extends AbstractActionController
             $data = $request->getPost();
             $input = $data->get('event');
             $this->getEventManager()->trigger(
-                'pre.validate', $this, ['input' => $data,]);
+                'pre.validate',
+                $this,
+                ['input' => $data,]
+            );
             $form->setData($data);
             if (! $form->isValid()) {
                 if ($input) {
@@ -149,7 +152,8 @@ class EventsController extends AbstractActionController
                 ->get('ViewHelperManager')->get('url')('events');
                 $date = $event->getDate();
                 $this->flashMessenger()->addSuccessMessage(
-                    sprintf('This event has been added to the schedule for <a href="%s">%s</a>',
+                    sprintf(
+                        'This event has been added to the schedule for <a href="%s">%s</a>',
                         $url . $date->format('/Y/m/d'),
                         $date->format('l d-M-Y')
                     )
@@ -177,7 +181,8 @@ class EventsController extends AbstractActionController
                  "event with id $id was not found in the database." ]);
         }
         $form = new Form\EventForm(
-            $this->entityManager, ['action' => 'update','object' => $entity,]
+            $this->entityManager,
+            ['action' => 'update','object' => $entity,]
         );
         $events = $this->getEventManager();
         $form->attach($events);
@@ -187,7 +192,6 @@ class EventsController extends AbstractActionController
         $events->trigger('pre.populate');
         $modified = $entity->getModified();
         if ($request->isPost()) {
-
             $data = $request->getPost();
             $events->trigger('pre.validate', $this);
             $form->setData($data);
@@ -201,8 +205,9 @@ class EventsController extends AbstractActionController
                     $verbiage = $modified == $entity->getModified() ?
                         'saved (unmodified)' : 'updated';
                     $this->flashMessenger()->addSuccessMessage(
-                        sprintf("This event has been successfully $verbiage on the "
-                         .'schedule for <a href="%s">%s</a>',
+                        sprintf(
+                            "This event has been successfully $verbiage on the "
+                            .'schedule for <a href="%s">%s</a>',
                             $url . $date->format('/Y/m/d'),
                             $date->format('l d-M-Y')
                         )
@@ -210,9 +215,10 @@ class EventsController extends AbstractActionController
                     return $this->redirect()->toRoute('events');
                 } catch (\Exception $e) {
                     echo $e->getMessage();
-                    echo '<pre>';print_r($_POST);echo '</pre>';
+                    echo '<pre>';
+                    print_r($_POST);
+                    echo '</pre>';
                 }
-
             }
             //printf('<pre>error:  %s</pre>',print_r($form->getMessages(),true));
             if ($form->hasTimestampMismatchError()) {

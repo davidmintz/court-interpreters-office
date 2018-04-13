@@ -7,6 +7,7 @@ namespace InterpretersOffice\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Zend\Form\Annotation;
 use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Entity representing a type of court interpreter proceeding or event.
  *
@@ -120,7 +121,7 @@ class EventType
      */
     public function hasRelatedEntities()
     {
-        return !$this->events->isEmpty();
+        return ! $this->events->isEmpty();
     }
 
     /**

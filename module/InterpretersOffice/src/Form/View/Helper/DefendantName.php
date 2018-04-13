@@ -47,7 +47,7 @@ TEMPLATE;
         $escaper = $this->escaper->getEscaper();
         $label = $escaper->escapeHtml($name);
 
-        return sprintf($this->template, $id, $label,$id, $label);
+        return sprintf($this->template, $id, $label, $id, $label);
     }
 
     /**

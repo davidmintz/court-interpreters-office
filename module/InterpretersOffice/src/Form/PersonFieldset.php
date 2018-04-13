@@ -232,7 +232,7 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface, O
 
         $form_context = $this->useAsBaseFieldset ? 'person' : 'user';
         if ($form_context == 'person') {
-            $find_method = ['name' => 'getHatsForPersonForm',                
+            $find_method = ['name' => 'getHatsForPersonForm',
             ];
         } else {
             $find_method = [

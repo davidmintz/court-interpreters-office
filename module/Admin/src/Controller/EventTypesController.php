@@ -149,17 +149,17 @@ class EventTypesController extends AbstractActionController
          * @todo logging?
          * @return JsonModel
          */
-        public function deleteAction()
-        {
+    public function deleteAction()
+    {
 
-            $request = $this->getRequest();
-            if ($request->isPost()) {
-                $id = $this->params()->fromRoute('id');
-                $name = $this->params()->fromPost('name');
-                $what = "event-type";
-                $entity = $this->entityManager->find(EventType::class, $id);
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $id = $this->params()->fromRoute('id');
+            $name = $this->params()->fromPost('name');
+            $what = "event-type";
+            $entity = $this->entityManager->find(EventType::class, $id);
 
-                return $this->delete(compact('entity','id','name','what'));
-            }
+            return $this->delete(compact('entity', 'id', 'name', 'what'));
         }
+    }
 }

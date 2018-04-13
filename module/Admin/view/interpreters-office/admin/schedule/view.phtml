@@ -4,7 +4,7 @@
  * @var \InterpretersOffice\Entity\Event $event
  */
 $event = $this->event;
-if (! $event):
+if (! $event) :
     ?>
     <p class="alert alert-warning">event not found!</p>
     <?php
@@ -134,7 +134,7 @@ endif;?></span>
     <div class="col-sm-4">
         <?php echo $event['created'] != $event['last_updated'] ?
         $event['last_updated']->format('d-M-Y g:i a'). " ({$event['last_updated_by']})"
-        :'<span class="text-muted">n/a</span>';
+        : '<span class="text-muted">n/a</span>';
         ?>
     </div>
     <div class="col-sm-2 text-muted text-md-right">

@@ -280,9 +280,8 @@ class EventControllerTest extends AbstractControllerTest
         // sanity
         $this->assertResponseStatusCode(200);
         $this->assertQuery('#event-form');
-        $this->assertQueryCount('ul.interpreters-assigned li',1);
+        $this->assertQueryCount('ul.interpreters-assigned li', 1);
         // to be continued...
-        
     }
     public function testEventInputValidation()
     {

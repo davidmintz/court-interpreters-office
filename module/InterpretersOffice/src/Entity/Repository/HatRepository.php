@@ -55,9 +55,9 @@ class HatRepository extends EntityRepository
     public function getAnonymityOptions()
     {
         return [
-            ['label'=>'never','value'=>Hat::ANONYMITY_NEVER],
-            ['label'=>'always','value'=>Hat::ANONYMITY_ALWAYS],
-            ['label'=>'optional','value'=>Hat::ANONYMITY_OPTIONAL],
+            ['label' => 'never','value' => Hat::ANONYMITY_NEVER],
+            ['label' => 'always','value' => Hat::ANONYMITY_ALWAYS],
+            ['label' => 'optional','value' => Hat::ANONYMITY_OPTIONAL],
         ];
     }
 

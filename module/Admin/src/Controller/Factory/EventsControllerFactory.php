@@ -9,7 +9,6 @@ use InterpretersOffice\Admin\Controller\EventsController;
 
 use InterpretersOffice\Entity\Listener;
 
-
 /**
  * Factory for instantiating EventController
  */

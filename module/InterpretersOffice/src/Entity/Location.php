@@ -164,8 +164,8 @@ class Location
      */
     public function hasRelatedEntities()
     {
-        return !$this->events->isEmpty() or !$this->judges->isEmpty()
-            or !$this->childLocations->isEmpty();
+        return ! $this->events->isEmpty() or ! $this->judges->isEmpty()
+            or ! $this->childLocations->isEmpty();
     }
 
     /**

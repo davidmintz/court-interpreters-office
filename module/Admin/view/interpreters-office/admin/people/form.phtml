@@ -28,8 +28,8 @@ echo $this->form()->openTag($form);?>
 <div class="form-group">
 <?php
 $hat = $fieldset->get('hat');
-if ($form->getObject()->hasRelatedEntities()):
-    $hat->setAttribute("disabled","disabled");
+if ($form->getObject()->hasRelatedEntities()) :
+    $hat->setAttribute("disabled", "disabled");
 endif;
 ?>
     <div class="form-group form-row">

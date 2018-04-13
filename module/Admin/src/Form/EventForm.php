@@ -14,7 +14,6 @@ use Zend\EventManager\EventInterface;
 
 use Zend\InputFilter\InputFilterProviderInterface;
 
-
 /**
  * form for Event entity
  *
@@ -130,7 +129,8 @@ class EventForm extends ZendForm implements
 
         $logger->debug(sprintf(
             'postLoad: interpreterEvents state before is now: %s',
-            print_r($this->state_before['interpreterEvents'],true)));
+            print_r($this->state_before['interpreterEvents'], true)
+        ));
     }
 
     /**
@@ -161,16 +161,17 @@ class EventForm extends ZendForm implements
             foreach ($collection as $ie) {
                 $after[] = (string)$ie;
             }
-            $logger->debug(sprintf('postValidate: interpreterEvents state is now: %s',print_r($after,true)));
+            $logger->debug(sprintf('postValidate: interpreterEvents state is now: %s', print_r($after, true)));
             $before = $this->state_before['interpreterEvents'];
             if (count($after) > 1) {
-                sort($before); sort($after);
+                sort($before);
+                sort($after);
             }
             if ($before != $after) {
                 $updated = true;
             }
         }
-        $logger->debug(($updated ? "YES":"NO"). " interpreters have been changed");
+        $logger->debug(($updated ? "YES" : "NO"). " interpreters have been changed");
         $post = $controller->params()->fromPost()['event'];
         $defendantNames = isset($post['defendantNames'])
             ? $post['defendantNames'] : [];
@@ -295,7 +296,6 @@ class EventForm extends ZendForm implements
         // if YES submitter and YES anonymous submitter, anon submitter = NULL
         } elseif (! empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
             $event['anonymousSubmitter'] = null;
-
         }
         // get defendantNames human-readable labels back into the view
         // @todo is this really necessary?

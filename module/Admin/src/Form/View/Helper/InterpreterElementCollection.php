@@ -66,9 +66,13 @@ TEMPLATE;
             // 7 placeholders, yes it is excessive!
             $markup .= sprintf(
                 $this->template,
-                $i, $interpreter->getId(),
-                $i, $event->getId(),
-                $i,$name,$name // [sic]
+                $i,
+                $interpreter->getId(),
+                $i,
+                $event->getId(),
+                $i,
+                $name,
+                $name // [sic]
             );
         }
         return $markup;
@@ -97,9 +101,13 @@ TEMPLATE;
         }
         $markup = sprintf(
             $this->template,
-            $data['index'], $data['interpreter_id'],
-            $data['index'], $data['event_id'],
-            $data['index'], $data['name'], $data['name']
+            $data['index'],
+            $data['interpreter_id'],
+            $data['index'],
+            $data['event_id'],
+            $data['index'],
+            $data['name'],
+            $data['name']
         );
         return $markup;
     }

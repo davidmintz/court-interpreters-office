@@ -21,7 +21,7 @@ trait DeletionTrait
      * @param  Array  $options
      * @return JsonModel
      */
-    public function delete(Array $options)
+    public function delete(array $options)
     {
         $entity = $options['entity'];
         $what = $options['what'];
@@ -54,6 +54,6 @@ trait DeletionTrait
                   ->addWarningMessage("$verbose_name was not found.");
         }
 
-        return new JsonModel(compact('result', 'error','redirect'));
+        return new JsonModel(compact('result', 'error', 'redirect'));
     }
 }
