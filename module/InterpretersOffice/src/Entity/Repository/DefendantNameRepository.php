@@ -210,6 +210,10 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      * @param  Entity\DefendantName $existing_name
      * @param  string $duplicate_resolution whether to update or use existing
      * @return Array result
+     *
+     * @todo when an orphaned name is dropped and swapped for an existing
+     * one, return the id of the existing to the controller for the controller
+     * to send back to update the view
      */
     public function updateDefendantEvents(
         Entity\DefendantName $defendantName,

@@ -14,14 +14,15 @@ if ($action == 'add') :
     $url = $this->url('admin-defendants/add');
 else :
     $url = $this->url('admin-defendants/edit', ['id' => $form->getObject()->getId()]);
-    $form->setAttribute('data-defendant_name', (string)$form->getObject())
-    ->setAttribute('data-redirect_url', $this->url("admin-defendants"));
+    $form->setAttribute('data-defendant_name', (string)$form->getObject());
 endif;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
     'attributes' => ['value' => 'save','id' => 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
-])->setAttribute('method', 'post')->setAttribute('action', $url);
+])->setAttribute('method', 'post')->setAttribute('action', $url)
+->setAttribute('data-redirect_url', $this->url("admin-defendants"));
+
 $this->headTitle('admin | defendants |'.$action);
 $form->prepare();
 ?>
@@ -91,7 +92,8 @@ endif;
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
     if (! $this->xhr) :
-        echo $this->formSubmit($form->get('submit'));if (! $this->occurrences) :
+        echo $this->formSubmit($form->get('submit'));if (! $this->occurrences
+        && $action == 'edit') :
 ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning mt-2" title="delete this defendant name from your database" value="delete" id="btn-delete"><?php
         endif;
     endif;

@@ -88,17 +88,17 @@ class DefendantsController extends AbstractActionController
             try {
                 $this->entityManager->persist($entity);
                 $this->entityManager->flush();
-                if ($xhr) {
-                    return new JsonModel(['id' => $entity->getId(),
-                        'errors' => null]);
-                }
                 $this->flashMessenger()->addSuccessMessage(
                     sprintf(
                         'The defendant name <strong>%s %s</strong> has been added to the database',
                         $entity->getGivenNames(),
                         $entity->getSurnames()
-                    )
-                );
+                        )
+                    );
+                if ($xhr) {
+                    return new JsonModel(['id' => $entity->getId(),
+                        'errors' => null]);
+                }
                 $this->redirect()->toRoute('admin-defendants');
             } catch (UniqueConstraintViolationException $e) {
                 $existing_entity = $this->entityManager
