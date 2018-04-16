@@ -264,6 +264,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             $MATCH ?: 'false',
             $GLOBAL_UPDATE ? 'global' : 'partial'
         ));
+        $result = [ 'match' => $MATCH ];
         if ($GLOBAL_UPDATE) {
             switch ($MATCH) {
                 case false:
@@ -271,16 +272,16 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                     try {
                         $logger->debug("flushing out global update");
                         $em->flush();
-                        return [
+                        return array_merge($result, [
                         'status' => 'success',
                         'debug' => 'no collision with existing match, global entity update.',
-                        ];
+                    ]);
                     } catch (\Exception $e) {
-                        return [
+                        return array_merge($result, [
                         'status' => 'error',
                         'exception_class' => get_class($e),
                         'message' => $e->getMessage(),
-                        ];
+                        ]);
                     }
                     break;
 
@@ -291,37 +292,41 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                         ->setGivenNames($defendantName->getGivenNames())
                         ->setSurnames($defendantName->getSurnames());
                         $logger->debug("we updated the existing name");
+                        $result['updated_deftname'] = $existing_name->getId();
+
                     }
                 // swap out $deftName for existing, and detach
                     $deft_events = $this->getDefendantEventsForDefendant($defendantName);
+                    $result['count_deft_events_updated'] = count($deft_events);
                     foreach ($deft_events as $de) {
                         $de->setDefendantName($existing_name);
                     }
                     $logger->debug(sprintf("is there a childless name to remove? (at %d)", __LINE__));
                     if (! $defendantName->hasRelatedEntities()) {
                         $logger->debug("we think so");
+                        $result['deftname_deleted'] = $defendantName->getId();
                         $em->remove($defendantName);
                     } else {
                         $logger->debug("we think not.");
                         $em->detach($defendantName);
                     }
-
+                    $result['deftname_replaced_by'] = $existing_name->getId();
                     break; // pro forma
             }
             try {
                 $logger->debug("flushing $MATCH match at ". __LINE__);
                 $em->flush();
-                return [
+                return array_merge($result,[
                     'status' => 'success',
                     'debug' => "match was $MATCH",
-                    'deft_events updated' => count($deft_events),
-                ];
+                    'deft_events_updated' => count($deft_events),
+                ]);
             } catch (\Exception $e) {
-                return [
+                array_merge($result, [
                     'status' => 'error',
                     'exception_class' => get_class($e),
                     'message' => $e->getMessage(),
-                ];
+                ]);
             }
         } else { // PARTIAL update.
             $deft_events = $this
@@ -337,7 +342,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             ));
             switch ($MATCH) {
                 case 'identical':
-                    $logger->debug('submitted is identical with found at '.__LINE__);
+                    $logger->debug('submitted entity is identical with entity found at '.__LINE__);
                     break; // simple flush() should do it
                 case false:
                 // a new name has to be inserted; this one has to be detached
@@ -370,25 +375,26 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                         $logger->debug("yes related entities for $defendantName, gonna detach() at ".__LINE__);
                         $em->detach($defendantName);
                     }
+                    $result['deftname_replaced_by'] = $existing_name->getId();
                     break;
             }
             //  that should do it ==================================//
             try {
                 $em->flush();
-                $return = [
+                $return = array_merge($result,[
                     'status' => 'success',
-                    'deft_events updated' => count($deft_events),
-                ];
+                    'deft_events_updated' => count($deft_events),
+                ]);
                 if (isset($new)) {
                     $return['insert_id'] = $new->getId();
                 }
                 return $return;
             } catch (\Exception $e) {
-                return [
+                return array_merge($result, [
                     'status' => 'error',
                     'exception_class' => get_class($e),
                     'message' => $e->getMessage(). ' at '.__LINE__,
-                ];
+                ]);
             }
         }
     }

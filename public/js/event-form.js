@@ -601,6 +601,7 @@ $(document).ready(function()
                     $('#defendant-form-error').html(
                         "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
                     ).show();
+                    console.debug(response);
                 } else {
                     /** @todo check for duplicate defendant-name in the form
                     before doing this
@@ -614,15 +615,16 @@ $(document).ready(function()
                         // update the existing thingy
                         input.val(defendant_name)
                             .next().text(defendant_name);
-                    if (response.insert_id) {
-                        input.attr({name : selector.replace(id,response.insert_id)});
-                        console.log("did that really work? id was "+id);
+                    var new_deft_id = response.insert_id || response.deftname_replaced_by;
+                    if (new_deft_id) {
+                        input.attr({name : selector.replace(id, new_deft_id)});
+                        console.log("did that really work? id was " + id);
                         console.log("input name attribute is now: "+input.attr("name"));
                     }
                     $('#defendant-form-success').text("This name has been updated.").show();
                     window.setTimeout(function(){
                         $('#defendant-form-success').hide();
-                        //$('#deftname-editor').modal("hide");
+                        $('#deftname-editor').modal("hide");
 
                     },2000);
                 }

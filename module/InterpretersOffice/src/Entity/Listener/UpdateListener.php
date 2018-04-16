@@ -153,7 +153,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         if (count($this->caches_to_clear) > 1) {
             // clear out duplicates
             $tmp  = array_unique(array_map(function($i){return json_encode($i);},$this->caches_to_clear));
-            $this->caches_to_clear = array_map(function($i){return json_decode($i);},$tmp);
+            $this->caches_to_clear = array_map(function($i){return json_decode($i,\JSON_OBJECT_AS_ARRAY);},$tmp);
         }
         $this->logger->debug('and now: '.print_r($this->caches_to_clear,true));
         $em = $args->getEntityManager();
@@ -163,6 +163,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         foreach ($this->caches_to_clear as $event) {
             switch ($event['class']) {
                 case Entity\Event::class:
+                case 'DoctrineORMModule\Proxy\__CG__\InterpretersOffice\Entity\Event':
                 case Entity\DefendantEvent::class:
                     // flush everything, because there are so many related entities
                     $success = $cache->flushAll();

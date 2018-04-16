@@ -142,7 +142,6 @@ class DefendantsController extends AbstractActionController
      */
     public function editAction()
     {
-        // 21832 can be changed to Rios Lopez
         $request = $this->getRequest();
         $viewModel = (new ViewModel())
             ->setTemplate('interpreters-office/admin/defendants/form.phtml');
