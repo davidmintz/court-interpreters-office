@@ -196,7 +196,8 @@ class DefendantsController extends AbstractActionController
                     $entity,
                     $input->get('occurrences', []),
                     $existing_name,
-                    $resolution
+                    $resolution,
+                    $this->params()->fromQuery('event_id')
                 );
             } catch (\Exception $e) {
                 $result = ['message' => $e->getMessage(), 'status' => 'error'];

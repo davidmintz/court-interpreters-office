@@ -629,6 +629,8 @@ $(document).ready(function()
                     },2000);
                 }
 
+        }).then(function(){
+            console.warn("I am ANOTHER callback");
         });
     });
 });

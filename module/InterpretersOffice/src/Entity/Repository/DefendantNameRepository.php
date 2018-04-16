@@ -187,17 +187,21 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
     /**
      * gets all the DefendantEvents for DefendantName
      *
+     * interesting fact: INDEX BY does not trigger an error but neither
+     * does it seem to work unless the other columns are scalar
+     *
      * @param  EntityDefendantName $defendantName
      * @return Array
      */
     public function getDefendantEventsForDefendant(Entity\DefendantName $defendantName)
     {
-        $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent
-            de JOIN de.defendant d WHERE d.id = :id';
-
-        return  $this->createQuery($dql)
+        $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent de
+            JOIN de.defendant d JOIN de.event e WHERE d.id = :id';
+            // INDEX BY e.id -- before WHERE
+        return   $this->createQuery($dql)
             ->setParameters(['id' => $defendantName->getId()])
             ->getResult();
+
     }
 
     /**
@@ -209,6 +213,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      * @param  Array $occurrences array of JSON strings
      * @param  Entity\DefendantName $existing_name
      * @param  string $duplicate_resolution whether to update or use existing
+     * @param  int $event_id id of event related to $defendantName
      * @return Array result
      *
      * @todo when an orphaned name is dropped and swapped for an existing
@@ -219,15 +224,17 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         Entity\DefendantName $defendantName,
         array $occurrences,
         Entity\DefendantName $existing_name = null,
-        $duplicate_resolution = null
+        $duplicate_resolution = null,
+        $event_id = null
     ) {
         $logger = $this->getLogger(); // temporary, perhaps
         $em = $this->getEntityManager();
 
         /** is it a global update, or an update of only a subset? */
+        $logger->debug("event id: " . ($event_id ?: "null"));
 
         foreach ($occurrences as $i => $occurrence) {
-            // unpack submitted JSON stringsschedule
+            // unpack submitted JSON strings schedule
             $occurrences[$i] = json_decode($occurrence, JSON_OBJECT_AS_ARRAY);
         }
         // get all the contexts (occurences) from database
@@ -236,6 +243,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         $GLOBAL_UPDATE = ($all_occurrences == $occurrences);
         //$logger->debug("\$all_occurrences looks like: ".print_r($all_occurrences,true));
         //$logger->debug("\$occurrences looks like: ".print_r($occurrences,true));
+        $GLOBAL_OR_PARTIAL = $GLOBAL_UPDATE ? 'global' : 'partial';
 
         // is there a matching name already existing?
         if (! $existing_name) {
@@ -255,16 +263,16 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 'status' => 'aborted',
                 'debug' => 'required duplicate resolution not provided',
                 'existing_entity' => (string)$existing_name,
+                'update_type' => $GLOBAL_OR_PARTIAL
             ];
         }
         $logger->debug(sprintf(
             'in %s at %d match is %s, update is %s',
             __CLASS__,
             __LINE__,
-            $MATCH ?: 'false',
-            $GLOBAL_UPDATE ? 'global' : 'partial'
+            $MATCH ?: 'false',$GLOBAL_OR_PARTIAL
         ));
-        $result = [ 'match' => $MATCH ];
+        $result = [ 'match' => $MATCH,'update_type' => $GLOBAL_OR_PARTIAL, 'events_affected' => [] ];
         if ($GLOBAL_UPDATE) {
             switch ($MATCH) {
                 case false:
@@ -293,13 +301,13 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                         ->setSurnames($defendantName->getSurnames());
                         $logger->debug("we updated the existing name");
                         $result['updated_deftname'] = $existing_name->getId();
-
                     }
                 // swap out $deftName for existing, and detach
                     $deft_events = $this->getDefendantEventsForDefendant($defendantName);
                     $result['count_deft_events_updated'] = count($deft_events);
                     foreach ($deft_events as $de) {
                         $de->setDefendantName($existing_name);
+                        $result['events_affected'][] = $de->getEvent()->getId();
                     }
                     $logger->debug(sprintf("is there a childless name to remove? (at %d)", __LINE__));
                     if (! $defendantName->hasRelatedEntities()) {
@@ -316,7 +324,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             try {
                 $logger->debug("flushing $MATCH match at ". __LINE__);
                 $em->flush();
-                return array_merge($result,[
+                $return  = array_merge($result,[
                     'status' => 'success',
                     'debug' => "match was $MATCH",
                     'deft_events_updated' => count($deft_events),
@@ -353,8 +361,9 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                     $em->detach($defendantName);
                     foreach ($deft_events as $de) {
                         $de->setDefendantName($new);
+                        $result['events_affected'][] = $de->getEvent()->getId();
                     }
-                    $logger->debug('no existing match, will create new defendant name at line '.__LINE__);
+                    $logger->debug('no existing match, we created new defendant name at line '.__LINE__);
                     break;
 
                 case 'inexact':
@@ -378,7 +387,35 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                     $result['deftname_replaced_by'] = $existing_name->getId();
                     break;
             }
-            //  that should do it ==================================//
+            if ($event_id) {
+                /*
+                 * interesting problem. the related Event gets it modification timestamp
+                 * updated AFTER this has run, not before. so we can't get the new
+                 * time to send back because it hasn't yet been updated
+                 */
+                // do it manually ourself
+                /** @var Entity\Event $event_entity */
+                $event_entity = $this->getEntityManager()->find(Entity\Event::class,$event_id);
+                if (!in_array($event_id,$result['events_affected'])) {
+                    $this->logger->debug("and $event_id was NOT(?) among the affected?");
+
+                    $collection = $event_entity->getDefendantNames();
+                    $what = isset($new) ? $new : $existing_name;
+                    if (! $collection->contains($what)) {
+                        $this->logger->debug(sprintf('DID NOT add defendant name %s to event %d',$what,$event_id));
+                        //$collection->add($what);
+                        $result['event_modification_timestamp'] = $event_entity->getModified()->format("Y-m-d H:i:s");
+                    } else {
+                        $this->logger->debug(sprintf('defendant name %s already on event %d?',$what,$event_id));
+                    }
+                    $this->logger->debug("see what happens");
+                } else {
+                    $this->logger->debug("you say $event_id was NOT among the affected? we didn't do shit");
+                    // do this anyway just for now
+                    $result['event_modification_timestamp'] = $event_entity->getModified()->format("Y-m-d H:i:s");
+                }
+
+            }
             try {
                 $em->flush();
                 $return = array_merge($result,[
@@ -388,7 +425,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 if (isset($new)) {
                     $return['insert_id'] = $new->getId();
                 }
-                return $return;
+
             } catch (\Exception $e) {
                 return array_merge($result, [
                     'status' => 'error',
@@ -397,6 +434,9 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                 ]);
             }
         }
+
+        $this->logger->debug(sprintf("FYI: returning from %s at %d",__FUNCTION__,__LINE__));
+        return $return;
     }
 
     /**
