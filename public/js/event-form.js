@@ -617,7 +617,8 @@ $(document).ready(function()
                             .next().text(defendant_name);
                     var new_deft_id = response.insert_id || response.deftname_replaced_by;
                     if (new_deft_id) {
-                        input.attr({name : selector.replace(id, new_deft_id)});
+                        var attr = input.attr("name");
+                        input.attr({name : attr.replace(id, new_deft_id)});
                         console.log("did that really work? id was " + id);
                         console.log("input name attribute is now: "+input.attr("name"));
                     }
