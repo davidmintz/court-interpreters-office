@@ -141,8 +141,7 @@ class EventsController extends AbstractActionController
                         $input['defendantNames'] : [];
                     $interpreters = isset($input['interpreterEvents']) ?
                         $input['interpreterEvents'] : [];
-                }
-                //print_r($form->getMessages());
+                }//print_r($form->getMessages());
                 return $viewModel
                     ->setVariables(compact('defendantNames', 'interpreters'));
             } else {
@@ -215,9 +214,7 @@ class EventsController extends AbstractActionController
                     return $this->redirect()->toRoute('events');
                 } catch (\Exception $e) {
                     echo $e->getMessage();
-                    echo '<pre>';
-                    print_r($_POST);
-                    echo '</pre>';
+                    echo '<pre>'; print_r($_POST); echo '</pre>';
                 }
             }
             //printf('<pre>error:  %s</pre>',print_r($form->getMessages(),true));
@@ -286,5 +283,22 @@ class EventsController extends AbstractActionController
             $result = $repository->getInterpreterOptionsForLanguage($language_id);
         }
         return new JsonModel($result);
+    }
+
+    /**
+     * gets last modification timestamp for entity
+     *
+     * @return JsonModel
+     */
+    public function getModificationTimeAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $modified = $this->entityManager->getRepository(Entity\Event::class)
+            ->getModificationTime($id);
+        if (is_string($modified)) {
+            return new JsonModel(['modified'=>$modified]);
+        } else { // array with error message
+            return new JsonModel($modified);
+        }
     }
 }

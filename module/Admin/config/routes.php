@@ -111,6 +111,17 @@ return  [
                         ],
                     ],
                 ],
+                'get-modification-time' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/get-modification-time/:id',
+                        'defaults' => [
+                            'controller' => Controller\EventsController::class,
+                            'action' => 'get-modification-time',
+                            'id' => '[1-9]\d*',
+                        ],
+                    ],
+                ]
             ],
         ],
         'languages' => [
