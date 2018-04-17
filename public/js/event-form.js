@@ -579,59 +579,71 @@ $(document).ready(function()
 
         var id = $('#deftname-editor input[name=id]').val();
         var url = '/admin/defendants/edit/'+ id +'?context=events';
-        // we may need the event id
+        // we may need to supply an event id
         var event_id = $('input[name="event[id]"]').val() || false;
         if (event_id) {
             url += '&event_id='+event_id;
         }
         var defendantForm = $("#defendant-form");
         $.post(url,defendantForm.serialize(),'json')
-            .then(function(response){
-                if (response.validation_errors !== undefined) {
-                    return displayValidationErrors(response.validation_errors);
+        .then(function(response){
+            if (response.validation_errors !== undefined) {
+                return displayValidationErrors(response.validation_errors);
+            }
+            if (response.inexact_duplicate_found) {
+                var existing = response.existing_entity;
+                defendantForm.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
+                $('#deft-existing-duplicate-name').text(existing);
+                var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
+                return $(shit).show();
+            }
+            if (response.status != 'success') {
+                $('#defendant-form-error').html(
+                    "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
+                ).show();
+                console.debug(response);
+            } else {
+                /** @todo check for duplicate defendant-name in the form
+                before doing this
+                */
+                console.log("looking good, bitch!");
+                var selector = 'input[name="event[defendantNames][' +
+                    id +']"]';
+                var input = $(selector);
+                var defendant_name = $('#surnames').val().trim()
+                    +", "+ $("#given_names").val().trim();
+                    // update the existing thingy
+                    input.val(defendant_name)
+                        .next().text(defendant_name);
+                var new_deft_id = response.insert_id || response.deftname_replaced_by;
+                if (new_deft_id) {
+                    var name = input.attr("name").replace(id, new_deft_id);
+                    input.attr({name : name });
+                    console.log("did that really work? id was " + id);
+                    console.log("input name attribute is now: "+input.attr("name"));
                 }
-                if (response.inexact_duplicate_found) {
-                    var existing = response.existing_entity;
-                    defendantForm.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
-                    $('#deft-existing-duplicate-name').text(existing);
-                    var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
-                    return $(shit).show();
-                }
-                if (response.status != 'success') {
-                    $('#defendant-form-error').html(
-                        "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
-                    ).show();
-                    console.debug(response);
-                } else {
-                    /** @todo check for duplicate defendant-name in the form
-                    before doing this
-                    */
-                    console.log("looking good, bitch!");
-                    var selector = 'input[name="event[defendantNames][' +
-                        id +']"]';
-                    var input = $(selector);
-                    var defendant_name = $('#surnames').val().trim()
-                        +", "+ $("#given_names").val().trim();
-                        // update the existing thingy
-                        input.val(defendant_name)
-                            .next().text(defendant_name);
-                    var new_deft_id = response.insert_id || response.deftname_replaced_by;
-                    if (new_deft_id) {
-                        var attr = input.attr("name");
-                        input.attr({name : attr.replace(id, new_deft_id)});
-                        console.log("did that really work? id was " + id);
-                        console.log("input name attribute is now: "+input.attr("name"));
-                    }
-                    $('#defendant-form-success').text("This name has been updated.").show();
-                    window.setTimeout(function(){
-                        $('#defendant-form-success').hide();
-                        $('#deftname-editor').modal("hide");
+                $('#defendant-form-success').text("This name has been updated.").show();
+                window.setTimeout(function(){
+                    $('#defendant-form-success').hide();
+                    $('#deftname-editor').modal("hide");
 
-                    },2000);
-                }
+                },2000);
+            }
 
         }).then(function(){
-            console.warn("I am ANOTHER callback");
+            if (! event_id) { return; }
+            $.get('/admin/schedule/get-modification-time/'+event_id)
+            .then(function(response){
+                if (response.modified) {
+                    var val_before = $('#modified').val();
+                    if (val_before != response.modified) {
+                        console.log("updating last modification timestamp!");
+                        $('#modified').val(response.modified)
+                    } else {
+                        console.log("looks like no update to mod time?");
+                    }
+                }
+            })
         });
     });
 });
