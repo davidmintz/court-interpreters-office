@@ -219,7 +219,8 @@ DQL;
             }
         }
          // interesting fact: if you do NOT make the sorting unique (e.g.,
-         // with the id) then the sort varies randomly. no default tie-breaker.
+         // with the id) then the sort varies randomly. IOW there is
+         // no default tie-breaker.
          $dql .= ' ORDER BY e.time, e.id';
 
         $events = $this->getEntityManager()->createQuery($dql)
@@ -315,5 +316,19 @@ DQL;
         $this->cache->setNamespace($this->cache_namespace);
 
         return $this->cache->deleteAll();
+    }
+
+    public function getModificationTime($id)
+    {
+        $dql = 'SELECT e.modified FROM InterpretersOffice\Entity\Event e
+        WHERE e.id = :id';
+        try {
+            $result = $this->getEntityManager()->createQuery($dql)
+                ->setParameters(['id'=>$id])->getSingleScalarResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            $result = ['modified' => null, 'error' => 'ENTITY NOT FOUND'];
+        }
+        return $result;
+
     }
 }
