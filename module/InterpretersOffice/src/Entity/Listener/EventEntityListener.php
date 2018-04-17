@@ -34,16 +34,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     protected $auth;
 
     /**
-     * whether our modification metadata has been changed
-     *
-     * The name is a little misleading in that are also thinking of
-     * our modified_by (User) property.
-     *
-     * @var boolean
-     */
-    private $timestamp_was_updated = false;
-
-    /**
      * constructor
      *
      * @param \DateTime
@@ -92,16 +82,11 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         PreUpdateEventArgs $args
     ) {
 
-        if ($this->timestamp_was_updated) {
-            $this->logger->debug(__METHOD__.
-            ": we think last-modification update has been done, returning");
-            return;
-        }
+
         $this->logger->debug(sprintf(
-            'event modification detected, setting modified and modifiedBy on '
-            . ' event entity in %s line %d',
-            __METHOD__,
-            __LINE__
+            'event modification detected, listener setting modified and modifiedBy on '
+            . ' event entity id %s in %s line %d',
+            $eventEntity->getId(), __FUNCTION__, __LINE__
         ));
         if (! $args->hasChangedField('modified')) {
             $eventEntity->setModified($this->now);
