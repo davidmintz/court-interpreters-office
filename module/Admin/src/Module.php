@@ -9,6 +9,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\Session\SessionManager;
 
 use InterpretersOffice\Admin\Controller;
+use InterpretersOffice\Entity\Listener\EventEntityListener;
 
 //use InterpretersOffice\Controller;
 /**
@@ -20,7 +21,7 @@ class Module
     /**
      * are we authenticated?
      *
-     * @var booleam
+     * @var boolean
      */
     protected $authenticated = false;
 
@@ -53,7 +54,7 @@ class Module
         if ($user) {
             $navigation->setDefaultRole($user->role);
         }
-
+        
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);

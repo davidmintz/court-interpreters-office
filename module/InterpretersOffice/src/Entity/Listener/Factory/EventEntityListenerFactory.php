@@ -6,7 +6,7 @@ namespace InterpretersOffice\Entity\Listener\Factory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
-
+use InterpretersOffice\Admin\Service\ScheduleListener;
 /**
  * factory class for the Event entity listener
  */
@@ -27,7 +27,21 @@ class EventEntityListenerFactory implements FactoryInterface
         $listener->setLogger($container->get('log'));
         /** @todo see what happens if we make this a constructor dependency */
         $listener->setAuth($container->get('auth'));
-        // echo "is this an issue in ".__METHOD__. "?  ....... ";
+
+        $sharedEvents = $container->get('SharedEventManager');
+        /*
+        $shit = function($e) use ($log,$user){
+            $message = sprintf('event was %s; triggered by %s; current user is %s',
+            $e->getName(),get_class($e->getTarget()),print_r($user,true)
+           );
+            $log->info($message);
+        };
+        */
+        $sharedEvents->attach(
+             EventEntityListener::class,
+             '*',
+             [$container->get(ScheduleListener::class),'doShit']
+        );
         return $listener;
     }
 }

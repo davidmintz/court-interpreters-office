@@ -55,7 +55,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
 
         return $this;
     }
-
     /**
      * postLoad callback
      *
@@ -68,7 +67,22 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     ) {
         //$this->state_before['defendants'] = $eventEntity->getDefendantNames()
         //    ->toArray();
-        $this->getEventManager()->trigger(__FUNCTION__, $this);
+
+    }
+    /**
+     * preRemove callback
+     *
+     * @param Entity\Event $eventEntity
+     * @param LifecycleEventArgs $event
+     */
+    public function preRemove(
+        Entity\Event $eventEntity,
+        LifecycleEventArgs $args
+    ) {
+        //$this->state_before['defendants'] = $eventEntity->getDefendantNames()
+        //    ->toArray();
+        $this->getEventManager()->trigger(__FUNCTION__, $this,compact('args','eventEntity'));
+        throw new \Exception("don't do it");
     }
 
     /**
