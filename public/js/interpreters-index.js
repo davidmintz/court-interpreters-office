@@ -57,10 +57,9 @@ $(function(){
      */
 
     $('#auth-submit').on("click",function(){
-
     var input = {
-        identity : $('#identity').val(),
-        password : $('#password').val(),
+        identity : $('#form-login input.thing1').val(),
+        password : $('#form-login input.thing2').val(),
         login_csrf : $('input[name="login_csrf"').val()
     };
     var url = /*window.basePath +*/ '/login';
@@ -69,7 +68,11 @@ $(function(){
             if (response.validation_errors) {
                 //refresh the CSRF token
                 $('input[name="login_csrf"').val(response.login_csrf);
-                return displayValidationErrors(response.validation_errors);
+                // since we hacked the names, translate them back
+                var errors = {};
+                errors[$('.thing1').attr("id")] = response.validation_errors.identity;
+                errors[$('.thing2').attr("id")] = response.validation_errors.password;
+                return displayValidationErrors(errors);
             }
             if (response.authenticated) {
                 $.post('/vault/decrypt',{
