@@ -7,10 +7,13 @@ namespace InterpretersOffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\Http\Response;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\PersonForm;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Form\CreateBlogPostForm;
+
+use SDNY\Vault\Service\Vault;
 
 /**
  *  ExampleController.
@@ -35,6 +38,22 @@ class ExampleController extends AbstractActionController
     public function __construct(ObjectManager $objectManager)
     {
         $this->objectManager = $objectManager;
+    }
+
+    public function shitAction() {
+        //return (new \Zend\Http\Response)->setContent("OK");
+        $container = $this->getEvent()->getApplication()->getServiceManager();
+        $config = $container->get('config')['vault'];
+        printf('<pre>%s</pre>',print_r($config,true));
+        ?><pre>readable $config['ssl_key']? <?php echo is_readable($config['ssl_key']) ?"yes":"no"?></pre><?php
+        ?><pre>readable $config['ssl_cert']? <?php echo is_readable($config['ssl_cert']) ?"yes":"no"?></pre><?php
+        /** @var Vault  $vault */
+        $vault = $container->get('SDNY\Vault\Service\Vault');
+        $shit = $vault->getEncryptionKey();
+        echo $shit;
+        return new ViewModel();
+
+
     }
     /**
      * just for doodling with examples from Doctrine github site.
