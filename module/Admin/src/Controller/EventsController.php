@@ -202,10 +202,9 @@ class EventsController extends AbstractActionController
                         ->getServiceManager()
                         ->get('ViewHelperManager')->get('url')('events');
                     $date = $entity->getDate();
-                    if ($modified != $entity->getModified()
-                        or !empty($data['deftnames_modified']))
-                    {
-                            $verbiage = 'updated';
+                    if ($modified != $entity->getModified() or
+                        $this->params()->fromPost('deftnames_modified')) {
+                        $verbiage = 'updated';
                     } else {
                         $verbiage = 'saved (unmodified)';
                     }
@@ -219,6 +218,7 @@ class EventsController extends AbstractActionController
                     );
                     return $this->redirect()->toRoute('events');
                 } catch (\Exception $e) {
+                    /** @todo  need to do better than this */
                     echo $e->getMessage();
                     echo '<pre>'; print_r($_POST); echo '</pre>';
                 }
@@ -228,8 +228,7 @@ class EventsController extends AbstractActionController
                 $error = $form->getMessages()['modified']
                         [\Zend\Validator\Callback::INVALID_VALUE];
                 $this->flashMessenger()->addErrorMessage($error);
-                return $this->redirect()
-                        ->toRoute('events/edit', ['id' => $id]);
+                return $this->redirect()->toRoute('events/edit', ['id' => $id]);
             }
             /** @todo DRY this up somehow */
             $input = $data->get('event'); //var_dump($input['defendantNames']);
@@ -238,14 +237,41 @@ class EventsController extends AbstractActionController
                         $input['interpreterEvents'] : [];
                 $form->get('event')->get('anonymousSubmitter')
                     ->setValue($input['anonymousSubmitter']);
-                $this->getViewModel()
-                ->setVariables(compact('defendantNames', 'interpreters', 'form', 'id'));
+                $this->getViewModel()->setVariables(
+                    compact('defendantNames', 'interpreters', 'form', 'id'));
             }
         }
         return $this->getViewModel(['form' => $form, 'id'=>$id]);
     }
 
+    public function deleteAction()
+    {
+        if (! $this->getRequest()->isPost()) {
+            return $this->redirect()->toRoute('events');
+        }
+        $id = $this->params()->fromRoute('id');
+        $entity = $this->entityManager->find(Entity\Event::class, $id);
+        if (! $entity) {
+            $result = [
+                'status' => 'ENTITY NOT FOUND',
+                'deleted' => false,
+                'message' => "Event id $id was not found in the database"
+            ];
+            return new JsonModel($result);
+        }
+        try {
+            $this->entityManager->remove($entity);
+            $this->entityManager->flush();
+            return new JsonModel(['deleted'=>true,'status'=>'success',
+                'message'=> "this event has been deleted"]
+            );
+        } catch (\Exception $e) {
+            return new JsonModel(['deleted'=>false,'status'=>'error',
+                'message'=> $e->getMessage()]
+            );
+        }
 
+    }
     /**
      * generates markup for an interpreter
      *
