@@ -136,3 +136,19 @@ tr.inactive { /*e.g., for judges/index */
 }
 
 li.defendant span:hover { cursor : pointer; text-decoration: underline; color : rgb(0, 123, 255)}
+
+ul.ui-autocomplete {
+    background-image: none;
+    background-color: white;
+    font-size: 100% ;
+}
+
+/*  does NOT fucking work w/o "important" even though our style.css
+   is loaded after  jquery-ui.css
+*/
+ul.ui-autocomplete .ui-state-active
+ {
+	background: none !important;
+	font-weight: inherit !important;
+	color: rgb(0, 123, 255) !important;
+}
