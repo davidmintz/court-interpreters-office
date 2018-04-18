@@ -198,11 +198,17 @@ class EventsController extends AbstractActionController
                 $events->trigger('post.validate', $this);
                 try {
                     $this->entityManager->flush();
-                    $url = $this->getEvent()->getApplication()->getServiceManager()
+                    $url = $this->getEvent()->getApplication()
+                        ->getServiceManager()
                         ->get('ViewHelperManager')->get('url')('events');
                     $date = $entity->getDate();
-                    $verbiage = $modified == $entity->getModified() ?
-                        'saved (unmodified)' : 'updated';
+                    if ($modified != $entity->getModified()
+                        or !empty($data['deftnames_modified']))
+                    {
+                            $verbiage = 'updated';
+                    } else {
+                        $verbiage = 'saved (unmodified)';
+                    }
                     $this->flashMessenger()->addSuccessMessage(
                         sprintf(
                             "This event has been successfully $verbiage on the "

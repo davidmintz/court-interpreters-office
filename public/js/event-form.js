@@ -282,6 +282,7 @@ $(document).ready(function()
             );
     });
     $("#event-form").on("submit",function(e){
+        var form = $(this);
         if (! locationElement.val()) {
             // no specific location was selected, so the general location
             // should be submitted in its place
@@ -292,6 +293,14 @@ $(document).ready(function()
                         name : "event[location]",
                         type : "hidden"
                     }).val(location_id)
+                );
+            }
+            if (form.data("deftnames_modified")) {
+                // hint to the controller that there was an update
+                // even though it looks like there wasn't
+                form.append(
+                     $("<input>")
+                     .attr({name:"deftnames_modified",type:"hidden"}).val(1)
                 );
             }
         }
@@ -619,10 +628,11 @@ $(document).ready(function()
                 if (new_deft_id) {
                     var name = input.attr("name").replace(id, new_deft_id);
                     input.attr({name : name });
-                    console.log("did that really work? id was " + id);
-                    console.log("input name attribute is now: "+input.attr("name"));
+                    console.log("id was " + id);
+                    console.log("input name attrib is now: "+input.attr("name"));
                 }
                 $('#defendant-form-success').text("This name has been updated.").show();
+                $("#event-form").data({deftnames_modified : 1});
                 window.setTimeout(function(){
                     $('#defendant-form-success').hide();
                     $('#deftname-editor').modal("hide");
@@ -638,7 +648,7 @@ $(document).ready(function()
                     var val_before = $('#modified').val();
                     if (val_before != response.modified) {
                         console.log("updating last modification timestamp!");
-                        $('#modified').val(response.modified)
+                        $('#modified').val(response.modified);
                     } else {
                         console.log("looks like no update to mod time?");
                     }
