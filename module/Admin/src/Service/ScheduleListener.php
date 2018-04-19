@@ -1,5 +1,4 @@
 <?php
-
 /** module/Admin/src/Service/ScheduleListener.php  */
 
 namespace InterpretersOffice\Admin\Service;
@@ -31,7 +30,7 @@ class ScheduleListener
 
     /**
      * constructor
-     *InterpretersOffice\Entity\Listener\EventEntityListener
+     *
      * @param LoggerInterface                $log
      * @param AuthenticationServiceInterface $auth
      */
@@ -42,6 +41,12 @@ class ScheduleListener
 
     }
 
+    /**
+     * scheduleChange observer
+     *
+     * @param  Event  $e
+     * @return void
+     */
     public function scheduleChange(Event $e)
     {
         $target = is_object($e->getTarget())? get_class($e->getTarget())
@@ -51,19 +56,29 @@ class ScheduleListener
         if (Entity\Listener\EventEntityListener::class == $target) {
             return $this->eventUpdateHandler($e);
         }
-        $this->logger->info(sprintf('ScheduleListener not doing anything with %s:%s',
+        $this->logger->info(sprintf(
+            'ScheduleListener not doing anything with %s:%s',
             $target, $e->getName()
         ));
 
     }
 
+    /**
+     * eventUpdateHandler
+     *
+     * observes update, delete, etc on Event entities. Still a WIP.
+     *
+     * @param  Event  $e
+     * @return void
+     */
     public function eventUpdateHandler(Event $e)
     {
         $user = $this->auth->getIdentity()->username;
         switch ($e->getName()) {
         case 'preRemove':
         case 'postRemove':
-            $repo = $e->getParam('args')->getEntityManager()->getRepository(Entity\Event::class);
+            $repo = $e->getParam('args')->getEntityManager()
+                ->getRepository(Entity\Event::class);
             $entity = $e->getParam('eventEntity');
             $data = $repo->getView($entity->getId());
             $info = [
@@ -86,6 +101,5 @@ class ScheduleListener
             ));
         }
     }
-
 
 }
