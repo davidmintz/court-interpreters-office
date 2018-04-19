@@ -5,9 +5,8 @@ namespace InterpretersOffice\Admin\Service;
 
 use Zend\EventManager\Event;
 use Zend\Log\LoggerInterface;
-use InterpretersOffice\Entity;
-
 use Zend\Authentication\AuthenticationServiceInterface;
+use InterpretersOffice\Entity;
 
 /**
  * listener for schedule changes
@@ -38,7 +37,6 @@ class ScheduleListener
     {
         $this->logger = $log;
         $this->auth = $auth;
-
     }
 
     /**
@@ -60,7 +58,6 @@ class ScheduleListener
             'ScheduleListener not doing anything with %s:%s',
             $target, $e->getName()
         ));
-
     }
 
     /**
