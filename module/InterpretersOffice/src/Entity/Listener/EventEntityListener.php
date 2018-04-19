@@ -65,8 +65,9 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $eventEntity,
         LifecycleEventArgs $args
     ) {
-        $this->getEventManager()->trigger(__FUNCTION__, $this,compact('args','eventEntity'));
-
+        // just a temporary/debugging thing
+        $this->getEventManager()->trigger(__FUNCTION__,
+        $this,compact('args','eventEntity'));
     }
     /**
      * preRemove callback
@@ -78,10 +79,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $eventEntity,
         LifecycleEventArgs $args
     ) {
-        //$this->state_before['defendants'] = $eventEntity->getDefendantNames()
-        //    ->toArray();
-        $this->getEventManager()->trigger(__FUNCTION__, $this,compact('args','eventEntity'));
-        throw new \Exception("don't do it");
+        $this->getEventManager()->trigger(__FUNCTION__, $this,
+        compact('args','eventEntity'));
     }
 
     /**
