@@ -9,6 +9,9 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 /**
  * attempts to delete an entity
  *
+ * suitable for relatively simple entities, i.e., those other
+ * than the Event entity
+ *
  * @param $entity object
  * @param string $name
  * @return JsonModel
@@ -44,6 +47,14 @@ trait DeletionTrait
                     "This $what cannot be deleted because it there are other database records that refer to it.",
                     'code' => $e->getCode(),
                     'exception' => 'foreign_key_constraint',
+                ];
+            } catch (\Exception $e) {
+                $result = 'error';
+                $redirect = false;
+                $error = [ 'message' =>
+                    "Sorry, we hit an unexpected system error.",
+                    'code' => $e->getCode(),
+                    'exception' => get_class($e)
                 ];
             }
         } else {
