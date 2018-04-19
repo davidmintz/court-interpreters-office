@@ -11,10 +11,9 @@ use InterpretersOffice\Entity;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
- * listener for scheduling events
+ * listener for schedule changes
  */
 class ScheduleListener
-
 {
 
     /**
@@ -32,7 +31,7 @@ class ScheduleListener
 
     /**
      * constructor
-     *
+     *InterpretersOffice\Entity\Listener\EventEntityListener
      * @param LoggerInterface                $log
      * @param AuthenticationServiceInterface $auth
      */
@@ -43,25 +42,49 @@ class ScheduleListener
 
     }
 
-    public function doShit(Event $e)
+    public function scheduleChange(Event $e)
     {
-        $this->logger->info("doing shit in ScheduleListener because of ".$e->getName());
-        $this->logger->info(
-            'user: '. $this->auth->getIdentity()->username
-
-        );
         $target = is_object($e->getTarget())? get_class($e->getTarget())
             : $e->getTarget();
-        if (Entity\Event\Listener\EventEntityListener::class == $target) {
-            if (strstr('remove',$e->getName())) {
-
-            }
+        $this->logger->debug("ScheduleListener observing ".$e->getName()
+            . " on target $target");
+        if (Entity\Listener\EventEntityListener::class == $target) {
+            return $this->eventUpdateHandler($e);
         }
-        $repo = $e->getParam('args')->getEntityManager()->getRepository(Entity\Event::class);
-        $entity = $e->getParam('eventEntity');
-        $data = $repo->getView($entity->getId());
-        $this->logger->info(json_encode($data));
+        $this->logger->info(sprintf('ScheduleListener not doing anything with %s:%s',
+            $target, $e->getName()
+        ));
 
+    }
+
+    public function eventUpdateHandler(Event $e)
+    {
+        $user = $this->auth->getIdentity()->username;
+        switch ($e->getName()) {
+        case 'preRemove':
+        case 'postRemove':
+            $repo = $e->getParam('args')->getEntityManager()->getRepository(Entity\Event::class);
+            $entity = $e->getParam('eventEntity');
+            $data = $repo->getView($entity->getId());
+            $info = [
+                'user'=>$user,
+                'action' => $e->getName(),
+                'event_data' => $data,
+            ];
+            $this->logger->info(json_encode($info));
+            break;
+
+        case 'postLoad':
+            $this->logger->info("$user has loaded event id "
+                . $e->getParam('eventEntity')->getId());
+            break;
+
+        default :
+            $this->logger->info(sprintf(
+                'user %s is doing %s with event id %d',
+                $user, $e->getName(), $e->getParam('eventEntity')->getId()
+            ));
+        }
     }
 
 

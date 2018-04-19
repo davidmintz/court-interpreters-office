@@ -40,7 +40,7 @@ class EventEntityListenerFactory implements FactoryInterface
         $sharedEvents->attach(
              EventEntityListener::class,
              '*',
-             [$container->get(ScheduleListener::class),'doShit']
+             [$container->get(ScheduleListener::class),'scheduleChange']
         );
         return $listener;
     }

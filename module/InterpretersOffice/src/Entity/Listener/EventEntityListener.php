@@ -59,14 +59,13 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * postLoad callback
      *
      * @param Entity\Event $eventEntity
-     * @param LifecycleEventArgs $event
+     * @param LifecycleEventArgs $args
      */
     public function postLoad(
         Entity\Event $eventEntity,
-        LifecycleEventArgs $event
+        LifecycleEventArgs $args
     ) {
-        //$this->state_before['defendants'] = $eventEntity->getDefendantNames()
-        //    ->toArray();
+        $this->getEventManager()->trigger(__FUNCTION__, $this,compact('args','eventEntity'));
 
     }
     /**
