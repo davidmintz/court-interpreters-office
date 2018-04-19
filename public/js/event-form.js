@@ -5,267 +5,272 @@
 moment = window.moment;
 //Modernizr = window.Modernizr;
 
-$(document).ready(function()
-{
-   // if (! Modernizr.inputtypes.date) {
-    $('input.date').datepicker({
-        changeMonth: true,
-        changeYear: true,
-        selectOtherMonths : true,
-        showOtherMonths : true
-    });
-    $('input.date').each(function(i,element){
-        if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
-            element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
-        }
-    });
-  // }
-  //  if (! Modernizr.inputtypes.time) {
+var eventForm = (function(){
+    console.log("eventForm: say shit!");
+    var init = function() {
+        $('input.docket').on("change",formatDocketElement);
+        $('input.date').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            selectOtherMonths : true,
+            showOtherMonths : true
+        });
+        $('input.date').each(function(i,element){
+            if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
+                element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
+            }
+        });
         $("input.time")
           .each(function(){formatTimeElement($(this));})
           .on("change",parseTime);
-  //  }
-    $('input.docket').on("change",formatDocketElement);
+        $('input.docket').on("change",formatDocketElement);
 
-    // toggle the 'text-muted' class on all the select elements
-    $('select').on("change",function(){
-        var element = $(this);
-        if (element.val()) {
-            element.removeClass("text-muted");
-        } else {
-            element.addClass("text-muted");
-        }
-    }).trigger("change");
-
-    var parentLocationElement = $('#parent_location');
-    var locationElement = $('#location');
-    var eventTypeElement = $('#event-type');
-
-    parentLocationElement.on("change",function(event,params) {
-        if (! parentLocationElement.val()) {
-            locationElement.val("").attr({disabled : "disabled"});
-        } else {
-            locationElement.removeAttr("disabled");
-            // populate with children of currently selected parent location
-            $.getJSON('/locations/get-children',
-                {parent_id:parentLocationElement.val()},
-                function(data){
-                    var options = data.map(function(item){
-                        return $('<option>').val(item.value)
-                                .text(item.label)
-                                .data({type: item.type});
-                    });
-                    // discard existing option elements
-                    locationElement.children().slice(1).remove();
-                    locationElement.append(options)
-                         .trigger("sdny.location-update-complete");
-                    // if we were triggered with a location_id to set...
-                    if (params && params.location_id) {
-                        locationElement.val(params.location_id)
-                            .removeClass("text-muted");
-                    }
-            });
-        }
-    });//.trigger("change");
-
-    if (! parentLocationElement.val()){
-        locationElement.val("").attr({disabled : "disabled"});
-
-    } else {
-        // on 2nd thought, don't. it unsets the value of #location
-        // when we load the form
-        // parentLocationElement.trigger("change");
-    }
-    /** this applies to admin form, not "request" form **/
-    var languageElement = $('#language');
-    var interpreterSelectElement = $("#interpreter-select");
-
-    if (! languageElement.val()) {
-        interpreterSelectElement.attr("disabled","disabled");
-    }
-
-
-    // (re)populate the interpreter select element according to the language
-    languageElement.on('change',function(event,params){
-        var language_id = languageElement.val();
-        // remove the interpreters if the language changes, except
-        // when we're initially triggered on page load, which we will
-        // find out from the "params" parameter
-        if (! params || params.remove_existing !== false) {
-            $('#interpreters-assigned li').remove();
-        }
-
-        if (! language_id) {
-            interpreterSelectElement.attr("disabled","disabled");
-            return;
-        }
-        $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
-            {}, function(data){
-            console.log("WTF?");
-            var options = data.map(function(item){
-                  return $('<option>').val(item.value).text(item.label);
-             });
-
-            interpreterSelectElement.children().not(":first").remove();
-            interpreterSelectElement.append(options)
-                    .trigger("sdny.language-update-complete");
-            if (options.length) {
-                interpreterSelectElement.removeAttr("disabled");
-            }
-        });
-    });
-    if (languageElement.val()) {
-        languageElement.trigger("change",{remove_existing:false});
-    }
-    var interpreterButton = $('#btn-add-interpreter');
-    // add an interpreter to this event
-    interpreterButton.on('click',  function(){
-
-        var id = interpreterSelectElement.val();
-        if (! id ) { return; }
-        var selector = '#interpreters-assigned li > input[value="'+id+'"]';
-        if ($(selector).length) {
-            // duplicate. maybe do something to let them know?
-            return interpreterSelectElement.val("");
-        }
-        var name = interpreterSelectElement.children(":selected").text();
-        var last = $('#interpreters-assigned li > input').last();
-        if (last.length) {
-            var m = last.attr("name").match(/\[(\d+)\]/);
-            if (m.length) {
-                index = parseInt(m.pop()) + 1;
+        $('select').on("change",function(){
+            var element = $(this);
+            if (element.val()) {
+                element.removeClass("text-muted");
             } else {
-                // this is an error. to do: do something
+                element.addClass("text-muted");
             }
-        } else {
-            index = 0;
-        }
-        interpreterSelectElement.val("");
-        // get the markup
-        //** @todo think about using Vue and a component for this and similar */
-        $.get('/admin/schedule/interpreter-template',
-            {   interpreter_id : id, index : index,
-                name : name,
-                event_id : $('#event_id').val()},
-            function(html){
-                $('#interpreters-assigned').append(html);
-        });
-    });
-    // interpreter and deft name "remove" buttons event handler
-    $('#interpreters-assigned, #defendant-names').on("click",".btn-remove-item",
-    function(event){
-        event.preventDefault();
-        $(this).closest(".list-group-item").slideUp(
-              function(){$(this).remove();}
-        );
-    });
+        }).trigger("change");
 
-    var hatElement = $('#hat');
-    var submitterElement = $('#submitter');
-    var hat_id = hatElement.val();
-    var submitter_id = submitterElement.val();
-    if (! hat_id) {
-        submitterElement.attr({disabled:"disabled"});
-    } else {
-        if (submitter_id) {
-            submitterElement.data({
-                submitter_id : submitter_id,
-                hat_id : hat_id,
-            });
+        var parentLocationElement = $('#parent_location');
+
+        var locationElement = $('#location');
+
+        var eventTypeElement = $('#event-type');
+
+        var languageElement = $('#language');
+
+
+        if (! languageElement.val()) {
+            interpreterSelectElement.attr("disabled","disabled");
+        } else {
+            //languageElement.trigger("change",{remove_existing:false});
         }
-    }
-    //
-    var judgeElement = $('#judge');
-    var anon_judge = $('#is_anonymous_judge');
-    judgeElement.on('change',function()
-    {
-        if (!  judgeElement.val()) {
-            //return;
+
+        var interpreterSelectElement = $("#interpreter-select");
+
+        var parentLocationChange = function(event,params){
+            console.log("woo hooo!");
+            if (! parentLocationElement.val()) {
+                locationElement.val("").attr({disabled : "disabled"});
+            } else {
+                locationElement.removeAttr("disabled");
+                // populate with children of currently selected parent location
+                $.getJSON('/locations/get-children',
+                    {parent_id:parentLocationElement.val()},
+                    function(data){
+                        var options = data.map(function(item){
+                            return $('<option>').val(item.value)
+                                    .text(item.label)
+                                    .data({type: item.type});
+                        });
+                        // discard existing option elements
+                        locationElement.children().slice(1).remove();
+                        locationElement.append(options)
+                             .trigger("sdny.location-update-complete");
+                        // if we were triggered with a location_id to set...
+                        if (params && params.location_id) {
+                            locationElement.val(params.location_id)
+                                .removeClass("text-muted");
+                        }
+                });
+            }
+        };
+        if (! parentLocationElement.val()){
+            locationElement.val("").attr({disabled : "disabled"});
         }
-        // keep track of whether judge is a person or a generic role
-         anon_judge.val(
-            judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
-        );
-        var judge = judgeElement.children(':selected');
-        var is_magistrate = judge.data('pseudojudge') &&
-            judge.text().toLowerCase().indexOf('magistrate') > -1;
-        // when it's the magistrate, set the courthouse if possible
-        /** @todo start loading location_type_id as parent_location data element
-            so that we can know whether to switch courthouses if they change
-            from one generic magistrate to the other?
-        */
-        if (is_magistrate  && !parentLocationElement.val()) {
-            //console.log("shit is Magistrate... ");
-            var location_id = judge.data("default_parent_location")
-                || judge.data("default_location");
-            parentLocationElement.val(location_id)
-            .trigger("change", location_id ? {location_id:location_id}:null);
-            return;
-         }
-         if (! eventTypeElement.val() ||
-            "in" !== eventTypeElement.children(":selected").data().category) {
-             return;
-         }
-          /*
-          * We are dealing with an in-court event
-          * If the currently selected judge has a default location
-          */
-         var judge_parent_location = judge.data("default_parent_location");
-         var judge_default_location = judge.data("default_location");
-         var current_parent_loc_id = parseInt(parentLocationElement.val());
-         if (judge_parent_location) {
-             /* and that default's ~parent~ location is other than the
-              * currently selected parent location...
-              */
-             if (judge_parent_location !== current_parent_loc_id) {
-                /* then set the parent location to the current judge's default... */
-                parentLocationElement.val(judge_parent_location)
-                /* and trigger its "change" event, passing the handler the
-                * currently selected judge's default location, if any
-                */
-                .trigger("change", judge_default_location ?
-                { location_id:judge_default_location } : null);
+        parentLocationElement.on("change",parentLocationChange);
+
+        // (re)populate the interpreter select element according to the language
+        var languageElementChange = function(event,params) {
+            var language_id = languageElement.val();
+            // remove the interpreters if the language changes, except
+            // when we're initially triggered on page load, which we will
+            // find out from the "params" parameter
+            if (! params || params.remove_existing !== false) {
+                $('#interpreters-assigned li').remove();
+            }
+
+            if (! language_id) {
+                interpreterSelectElement.attr("disabled","disabled");
                 return;
-            } else { // same parent location, just update the courtroom
-                locationElement.val(judge_default_location);
+            }
+            $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
+                {}, function(data){
+                var options = data.map(function(item){
+                      return $('<option>').val(item.value).text(item.label);
+                 });
+                interpreterSelectElement.children().not(":first").remove();
+                interpreterSelectElement.append(options)
+                        .trigger("sdny.language-update-complete");
+                if (options.length) {
+                    interpreterSelectElement.removeAttr("disabled");
+                }
+            });
+        };
+        languageElement.on('change',languageElementChange);
+
+        var interpreterButton = $('#btn-add-interpreter');
+
+        var interpreterButtonClick = function(event){
+            var id = interpreterSelectElement.val();
+            if (! id ) { return; }
+            var selector = '#interpreters-assigned li > input[value="'+id+'"]';
+            if ($(selector).length) {
+                // duplicate. maybe do something to let them know?
+                return interpreterSelectElement.val("");
+            }
+            var name = interpreterSelectElement.children(":selected").text();
+            var last = $('#interpreters-assigned li > input').last();
+            if (last.length) {
+                var m = last.attr("name").match(/\[(\d+)\]/);
+                if (m.length) {
+                    index = parseInt(m.pop()) + 1;
+                } else {
+                    // this is an error. to do: do something
+                }
+            } else {
+                index = 0;
+            }
+            interpreterSelectElement.val("");
+            // get the markup
+            //** @todo think about using Vue and a component for this and similar */
+            $.get('/admin/schedule/interpreter-template',
+                {   interpreter_id : id, index : index,
+                    name : name,
+                    event_id : $('#event_id').val()},
+                function(html){
+                    $('#interpreters-assigned').append(html);
+            });
+        };
+
+        interpreterButton.on("click",interpreterButtonClick);
+
+        // interpreter and deft name "remove" buttons event handler
+        $('#interpreters-assigned, #defendant-names').on("click",".btn-remove-item",
+            function(event){
+                event.preventDefault();
+                $(this).closest(".list-group-item").slideUp(
+                    function(){ $(this).remove();} );
+            }
+        );
+
+        var hatElement = $('#hat');
+
+        var hat_id = hatElement.val();
+
+        var submitterElement = $('#submitter');
+
+        var submitter_id = submitterElement.val();
+
+        if (! hat_id) {
+            submitterElement.attr({disabled:"disabled"});
+        } else {
+            if (submitter_id) {
+                submitterElement.data({
+                    submitter_id : submitter_id,
+                    hat_id : hat_id,
+                });
+            }
+        }
+        var judgeElement = $('#judge');
+
+        var anon_judge = $('#is_anonymous_judge');
+
+        var judgeElementChange = function(event) {
+            if (!  judgeElement.val()) {
+                //return;
+            }
+            // keep track of whether judge is a person or a generic role
+             anon_judge.val(
+                judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
+            );
+            var judge = judgeElement.children(':selected');
+            var is_magistrate = judge.data('pseudojudge') &&
+                judge.text().toLowerCase().indexOf('magistrate') > -1;
+            // when it's the magistrate, set the courthouse if possible
+            /** @todo start loading location_type_id as parent_location data element
+                so that we can know whether to switch courthouses if they change
+                from one generic magistrate to the other?
+            */
+            if (is_magistrate  && !parentLocationElement.val()) {
+                //console.log("shit is Magistrate... ");
+                var location_id = judge.data("default_parent_location")
+                    || judge.data("default_location");
+                parentLocationElement.val(location_id)
+                .trigger("change", location_id ? {location_id:location_id}:null);
+                return;
              }
-         }
-    });
-    // initialize this stuff
-    /** @todo get rid of unnecessary stuff? */
-    if (judgeElement.val()) {
+             if (! eventTypeElement.val() ||
+                "in" !== eventTypeElement.children(":selected").data().category) {
+                 return;
+             }
+              /*
+              * We are dealing with an in-court event
+              * If the currently selected judge has a default location
+              */
+             var judge_parent_location = judge.data("default_parent_location");
+             var judge_default_location = judge.data("default_location");
+             var current_parent_loc_id = parseInt(parentLocationElement.val());
+             if (judge_parent_location) {
+                 /* and that default's ~parent~ location is other than the
+                  * currently selected parent location...
+                  */
+                 if (judge_parent_location !== current_parent_loc_id) {
+                    /* then set the parent location to the current judge's default... */
+                    parentLocationElement.val(judge_parent_location)
+                    /* and trigger its "change" event, passing the handler the
+                    * currently selected judge's default location, if any
+                    */
+                    .trigger("change", judge_default_location ?
+                        { location_id:judge_default_location } : null);
+                    return;
+                } else { // same parent location, just update the courtroom
+                    locationElement.val(judge_default_location);
+                 }
+             }
+        };
+
+        judgeElement.on('change',judgeElementChange);
+
+        // initialize this stuff
+        /** @todo get rid of unnecessary stuff? */
+        if (judgeElement.val()) {
             var data = judgeElement.children(":selected").data();
             if (data.pseudojudge) {
                 anon_judge.val(1);
                 $('#anonymousJudge').val(judgeElement.val());
             }
-    }
-    // get data to update submitter dropdown based on selected hat
-    hatElement.on("change",function()
-    {
-        var init_values = submitterElement.data();
-        var anonymity = hatElement.children(':selected').data('anonymity');
-        if (anonymity === 1) {
-            submitterElement.attr("disabled","disabled");
-            return;
-        } else {
-            submitterElement.removeAttr("disabled");
         }
-        var hat_id = hatElement.val();
-        if (! hat_id) {
-            hatElement.children().not(":first").remove();
-            return;
-        } else {
-            // if the initial "submitter" value was an inactive person, extra
-            // effort is needed to fetch the person again if they change the "hat"
-            // and then change it back
-            if (init_values && init_values.hat_id === hat_id) {
-                var person_id = init_values.submitter_id;
+
+        // get data to update submitter dropdown based on selected hat
+        var hatElementChange = function(event) {
+
+            var init_values = submitterElement.data();
+            var anonymity = hatElement.children(':selected').data('anonymity');
+            if (anonymity === 1) {
+                submitterElement.attr("disabled","disabled");
+                return;
             } else {
-                var person_id = null;
+                submitterElement.removeAttr("disabled");
             }
-        }
-        $.getJSON('/admin/people/get',
+            var hat_id = hatElement.val();
+            if (! hat_id) {
+                hatElement.children().not(":first").remove();
+                return;
+            } else {
+                // if the initial "submitter" value was an inactive person, extra
+                // effort is needed to fetch the person again if they change the "hat"
+                // and then change it back
+                if (init_values && init_values.hat_id === hat_id) {
+                    var person_id = init_values.submitter_id;
+                } else {
+                    var person_id = null;
+                }
+            }
+            $.getJSON('/admin/people/get',
                 { hat_id: hat_id, person_id : person_id },
                 function(data)
                 {
@@ -277,41 +282,57 @@ $(document).ready(function()
                     submitterElement.removeAttr("disabled");
                     submitterElement.children().not(":first").remove();
                     submitterElement.append(options)
-                           .trigger("sdny.submitter-update-complete");
+                          .trigger("sdny.submitter-update-complete");
                 }
             );
-    });
-    $("#event-form").on("submit",function(e){
-        var form = $(this);
-        if (! locationElement.val()) {
-            // no specific location was selected, so the general location
-            // should be submitted in its place
-            var location_id = parentLocationElement.val();
-            if (location_id) {
-                locationElement.after(
-                     $("<input>").attr({
-                        name : "event[location]",
-                        type : "hidden"
-                    }).val(location_id)
-                );
+        };
+        hatElement.on("change",hatElementChange);
+
+        var form = $('#event-form');
+
+        var formSubmit = function(event){
+
+            if (! locationElement.val()) {
+                // no specific location was selected, so the general location
+                // should be submitted in its place
+                var location_id = parentLocationElement.val();
+                if (location_id) {
+                    locationElement.after(
+                         $("<input>").attr({
+                            name : "event[location]",
+                            type : "hidden"
+                        }).val(location_id)
+                    );
+                }
+                if (form.data("deftnames_modified")) {
+                    // hint to the controller that there was an update
+                    // even though it looks like there wasn't
+                    form.append(
+                         $("<input>")
+                         .attr({name:"deftnames_modified",type:"hidden"}).val(1)
+                    );
+                }
             }
-            if (form.data("deftnames_modified")) {
-                // hint to the controller that there was an update
-                // even though it looks like there wasn't
-                form.append(
-                     $("<input>")
-                     .attr({name:"deftnames_modified",type:"hidden"}).val(1)
-                );
+            // if there is no judge selected, clear this so form validation
+            // doesn't give us false positive followed by Event entity exception
+            // due to both judge and anon judge props being null
+            if (! judgeElement.val()) {
+                anon_judge.val(0);
+                $('#anonymousJudge').val(judgeElement.val());
             }
-        }
-        // if there is no judge selected, clear this so form validation
-        // doesn't give us false positive followed by Event entity exception
-        // due to both judge and anon judge props being null
-        if (! judgeElement.val()) {
-            anon_judge.val(0);
-            $('#anonymousJudge').val(judgeElement.val());
-        }
-    });
+        };
+
+        form.on("submit".formSubmit);
+    };
+
+    return { init : init }
+})();
+
+$(document).ready(function()
+{
+    eventForm.init();
+
+
 
     /* ============  stuff related to defendant names =======================*/
 

@@ -240,10 +240,15 @@ class EventsController extends AbstractActionController
                 $this->getViewModel()->setVariables(
                     compact('defendantNames', 'interpreters', 'form', 'id'));
             }
-        }
+        } // not POST
         return $this->getViewModel(['form' => $form, 'id'=>$id]);
     }
 
+    /**
+     * deletes an entity
+     *
+     * @return JsonModel
+     */
     public function deleteAction()
     {
         if (! $this->getRequest()->isPost()) {
@@ -260,6 +265,7 @@ class EventsController extends AbstractActionController
             return new JsonModel($result);
         }
         try {
+            return new JsonModel(['message'=>"this is only a test"]);
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
             return new JsonModel(['deleted'=>true,'status'=>'success',
@@ -270,7 +276,6 @@ class EventsController extends AbstractActionController
                 'message'=> $e->getMessage()]
             );
         }
-
     }
     /**
      * generates markup for an interpreter

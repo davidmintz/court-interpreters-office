@@ -9,7 +9,8 @@ $this->headScript()
         ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
         ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-        ->appendFile($this->basePath('js/event-form.js'));
+        ->appendFile($this->basePath('js/event-form.js'))
+        ->appendFile($this->basePath('js/event-delete.js'));
 
 $messenger = $this->flashMessenger();
 if ($messenger->hasErrorMessages()) :
@@ -27,6 +28,7 @@ if ($this->layout()->action == 'add') :
 else:
     $action = $this->url('events/edit',['id'=>$this->id]);
 endif;
+
 $form->setAttribute('class', 'form-event mx-auto')
     ->setAttribute('style', 'max-width:950px')->setAttribute('action',$action);
 $form->add([
@@ -192,22 +194,17 @@ echo $this->form()->openTag($form); ?>
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php
-                if ($this->defendantNames) {
-                    foreach ($this->defendantNames as $id => $name) {
-                        echo //'<span>',
-                        $this->defendantName($id, $name);//,'</span>';
-                    }
-                } else {
+                if ($this->defendantNames) :
+                    foreach ($this->defendantNames as $id => $name) :
+                        echo  $this->defendantName($id, $name);
+                    endforeach;
+                else:
                     $names = $form->getObject()->getDefendantNames()->toArray();
-                    //echo "DEBUG: # deft names is ". count($names);
-                    foreach ($names as $nameObject) {
+                    foreach ($names as $nameObject) :
                         $name = $nameObject->getSurNames() . ', ' . $nameObject->getGivenNames();
-                        echo  //'<span>',
-                            $this->defendantName($nameObject->getId(), $name)
-                            //,'</span>'
-                            ;
-                    }
-                }?>
+                        echo $this->defendantName($nameObject->getId(), $name);  //'<span></span>'
+                    endforeach;
+                endif; ?>
                 </ul>
             </div>
         </div>
@@ -256,7 +253,9 @@ echo $this->form()->openTag($form); ?>
             }
             echo $this->formHidden($element);
         }
-            echo $this->formSubmit($form->get('submit'));?>
+            echo $this->formSubmit($form->get('submit')); if ($this->id):
+            ?><a id="btn-delete" role="button" href="<?php echo $this->url('events/edit',['action'=>'delete','id'=>$this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
+            endif;?>
     </div>
 </div>
 <?php echo $this->form()->closeTag();?>
