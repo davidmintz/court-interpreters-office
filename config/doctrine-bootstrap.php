@@ -11,6 +11,8 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
+use InterpretersOffice\Entity\Listener;
+use InterpretersOffice\Entity\Listener\EventEntityListener;
 //$reader = new FileCacheReader( new AnnotationReader(), __DIR__.'/../data/cache',$debug = true);
 //$reader = new AnnotationReader();
 
@@ -33,9 +35,28 @@ $entitiesPath = [
 ];
 $config = Setup::createAnnotationMetadataConfiguration($entitiesPath, true, null, null, false);
 $em = EntityManager::create($dbParams, $config);
-$listener = new InterpretersOffice\Entity\Listener\InterpreterEntityListener();
-$listener->setEventManager(new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager()));
-$em->getConfiguration()->getEntityListenerResolver()->register($listener);
+return $em;
+
+/*
+We thought at some point that the following was necessary in order to use
+"doctrine run-dql ...", but apparently not.
+
+We HAVE discovered that if you do not set --depth 2 or at most 3, it will seem
+to hang, and if you wait long enough, maybe it would run out of memory.
+My guess: Doctrine run-dql by default tries to fetch ~everything~ by way of
+related entities, and relations of relations, etc., unless you specify otherwise.
+
+$listener = new Listener\InterpreterEntityListener();
+$eventManager = new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager());
+$listener->setEventManager($eventManager);
+$resolver = $em->getConfiguration()->getEntityListenerResolver();
+$resolver->register($listener);
+
+// and another one?
+//$listener = new Listener\EventEntityListener();
+//$listener->setEventManager($eventManager);
+//$resolver->register($listener);
+
 
 // a (temporary?) fix for entity listener error that happens when we try to
 // call methods on its logger instance which is set by the service manager that
@@ -45,5 +66,3 @@ $logger = new Zend\Log\Logger;
 $writer = new Zend\Log\Writer\Stream('php://output');
 $logger->addWriter($writer);
 $listener->setLogger($logger);
-
-return $em;
