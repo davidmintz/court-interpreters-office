@@ -363,7 +363,9 @@ var defendantNameForm = (function(){
                 function(){$('#deftname-form-wrapper').remove();});
         });
     };
+
     var addDeftnameCallback = function(response){
+
         if (response.validation_errors) {
             displayValidationErrors(response.validation_errors);
             return;
@@ -401,31 +403,11 @@ var defendantNameForm = (function(){
                     append_deft_name(existing);
                 });
                 // update the entity, then use as modified
-                $('#btn-update-existing').data({id:existing.id}).on("click",function(){
-                    $.post('/admin/defendants/update-existing/'+$(this).data('id'),data,
-                    function(response){
-                        if (response.id) {
-                            var selector = 'input[name="event[defendantNames]['+
-                                existing.id +']"]';
-                            var defendant_name = $('#surnames').val().trim()
-                                +", "+ $("#given_names").val().trim();
-                            console.log("selector is: "+selector);
-                            if ($(selector).length) {
-                                // update the existing thingy
-                                $(selector).val(defendant_name)
-                                    .next().text(defendant_name);
-                            } else { // append new thingy
-                                append_deft_name({
-                                    id : response.id,
-                                    surnames : $('#surnames').val().trim(),
-                                    given_names : $("#given_names").val().trim()
-                                });
-                            }
-
-                        } else {
-                            /** error. @todo do something! */
-                        }
-                    },'json');
+                $('#btn-update-existing').data({id:existing.id})
+                    .on("click",function(){
+                        var url = '/admin/defendants/update-existing/'
+                            +$(this).data('id');
+                        $.post(url, data, updateDefendantNameCallback,'json');
                 });
                 // forget the whole thing
                 $('#btn-cancel').on("click",function(){
@@ -433,6 +415,7 @@ var defendantNameForm = (function(){
                     function(){$('#deftname-form-wrapper').remove();});
                 });
                 // and if they edit shit, all bets are off
+                var div = $('#deftname-editor .modal-body');
                 $('#defendant-form').one("change",function(){
                     div.slideUp(function(){
                         div.remove();
@@ -444,76 +427,105 @@ var defendantNameForm = (function(){
             }
         }
     };
+
+    var updateDefendantNameCallback = function(response){
+        if (response.id) {
+            var selector = 'input[name="event[defendantNames]['+
+                existing.id +']"]';
+            var defendant_name = $('#surnames').val().trim()
+                +", "+ $("#given_names").val().trim();
+            console.log("selector is: "+selector);
+            if ($(selector).length) {
+                // update the existing thingy
+                $(selector).val(defendant_name)
+                    .next().text(defendant_name);
+            } else { // append new thingy
+                append_deft_name({
+                    id : response.id,
+                    surnames : $('#surnames').val().trim(),
+                    given_names : $("#given_names").val().trim()
+                });
+            }
+
+        } else {  /** error. @todo do something! */   }
+    };
+
+    var onDeftSlideoutShow = function(){
+        if ($('#slideout-toggle li').length) {
+            $('#slideout-toggle li a').first().focus();
+        }
+    };
+
+    var autoCompleteOptions = {
+        source: '/defendants/autocomplete',
+        //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
+        minLength: 2,
+        select: function( event, ui ) {
+            that = $(this);
+            $.get(
+                '/defendants/template',
+                {id:ui.item.value,name:ui.item.label},
+                function(html){
+                    $('#defendant-names').append(html);
+                    that.val("");
+                }
+            );
+        },
+        focus: function(event,ui) {
+            event.preventDefault();
+            $(this).val(ui.item.label);
+        },
+        open : function() {
+            if (slideout.is(':visible')) {
+                slideout.hide();
+            }
+        }
+    };
+
+    var deftNameSearchButtonClick = function() {
+        // get rid of the new name insertion form, if it exists
+        $('#deftname-form-wrapper').remove();
+        if ($('#btn-add-defendant-name').attr("disabled")) {
+             $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
+        }
+
+        var name = defendantSearchElement.val().trim();
+        if (! name) {
+            defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
+            return;
+        }
+        $.get('/defendants/search',{term:name,page:1},
+            function(data){
+                slideout.css("width","");
+                $('#slideout-toggle .result').html(data);
+                if (! slideout.is(':visible')) {
+                    slideout.toggle("slide",onDeftSlideoutShow);
+                }
+                if (! $('#slideout-toggle .result').is(':visible')) {
+                    $('#slideout-toggle .result').show();
+                }
+            }
+        );
+    };
+
+    var defendantNameEditFormSubmit = function()
+    {
+
+    };
+
     var init = function() {
 
         /* ============  stuff related to defendant names =======================*/
 
         /** deft name autocompletion */
-        defendantSearchElement.autocomplete(
-            {
-                    source: '/defendants/autocomplete',
-                    //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
-                    minLength: 2,
-                    select: function( event, ui ) {
-                        that = $(this);
-                        $.get(
-                            '/defendants/template',
-                            {id:ui.item.value,name:ui.item.label},
-                            function(html){
-                                $('#defendant-names').append(html);
-                                that.val("");
-                            }
-                        );
-                    },
-                    focus: function(event,ui) {
-                        event.preventDefault();
-                        $(this).val(ui.item.label);
-                    },
-                    open : function() {
-                        if (slideout.is(':visible')) {
-                            slideout.hide();
-                        }
-                    }
-                 }
-             );
-        var onDeftSlideoutShow = function(){
+        defendantSearchElement.autocomplete(autoCompleteOptions);
 
-            if ($('#slideout-toggle li').length) {
-                $('#slideout-toggle li a').first().focus();
-            } else {
-                //$('#slideout-toggle h6').hide();
-            }
-        };
         /* ==================== */
         $('#slideout-toggle .close').on('click',
             function(){slideout.toggle("slide");}
          );
         /** =========  display defendant-name search results   ==============*/
-        $('#btn-defendant-search').on("click",function(){
-            // get rid of the new name insertion form, if it exists
-            $('#deftname-form-wrapper').remove();
-            if ($('#btn-add-defendant-name').attr("disabled")) {
-                 $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
-            }
-
-            var name = defendantSearchElement.val().trim();
-            if (! name) {
-                defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
-                return;
-            }
-            $.get('/defendants/search',{term:name,page:1},
-                function(data){
-                    slideout.css("width","");
-                    $('#slideout-toggle .result').html(data);
-                    console.warn("WTF?");
-                    if (! slideout.is(':visible')) {
-                        slideout.toggle("slide",onDeftSlideoutShow);
-                    }
-                    if (! $('#slideout-toggle .result').is(':visible')) {
-                        $('#slideout-toggle .result').show();
-                    }
-                });
-        });
+        $('#btn-defendant-search').on("click",deftNameSearchButtonClick);
         /** =================================================================*/
 
         /** pagination links ================================================*/
@@ -521,10 +533,10 @@ var defendantNameForm = (function(){
             event.preventDefault();
             $('#slideout-toggle .result').load(this.href,onDeftSlideoutShow);
         });
+        /** listener for deft name search result items */
         slideout.on('click','.defendant-names li',function(event){
             var element = $(this);
-            $.get(
-                '/defendants/template',
+            $.get('/defendants/template',
                 {id:element.data('id'),name:element.text()},
                 function(html){
                     $('#defendant-names').append(html);
@@ -533,8 +545,8 @@ var defendantNameForm = (function(){
                 }
             );
         });
-        /** =================================================================*/
 
+        /** listener for add-defendant-name button  */
         slideout.on('click','#btn-add-defendant-name',function(){
 
             if (! $('#slideout-toggle form').length) {
@@ -548,7 +560,7 @@ var defendantNameForm = (function(){
             } else {
                 // POST the form
                 var data = $('#defendant-form').serialize();
-                $.post('/admin/defendants/add',data,addDeftnameCallback,
+                $.post('/admin/defendants/add', data, addDeftnameCallback,
                 'json');
             }
         });
@@ -601,7 +613,7 @@ var defendantNameForm = (function(){
                                 if (-1 !== $(this).val().indexOf(docket)) {
                                     $(this).attr({checked:"checked"});
                                 } else {
-                                    console.log("so, is this a name that has not been used yet?");
+                                    console.log("so, is this a name that has not yet been attached to an event?");
                                 }
                             });
                         }
