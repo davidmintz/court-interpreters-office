@@ -86,8 +86,8 @@ endif;
         --><button id="btn-invert-selection" class="btn btn-sm btn-default border border-info">invert selection</button>
         <?php endif;?>
     </div>
-    <div id="defendant-form-error" class="alert alert-warning" style="display:none"></div>
-    <?php endif;
+<?php endif; //occurrences ?>
+    <div id="defendant-form-error" class="alert alert-warning" style="display:none"></div><?php
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
