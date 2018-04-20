@@ -3,11 +3,257 @@
  */
 
 moment = window.moment;
+
 //Modernizr = window.Modernizr;
 
 var eventForm = (function(){
+
     console.log("eventForm: say shit!");
+
+    var parentLocationChange = function(event,params){
+        console.log("woo hooo!");
+        if (! parentLocationElement.val()) {
+            locationElement.val("").attr({disabled : "disabled"});
+        } else {
+            locationElement.removeAttr("disabled");
+            // populate with children of currently selected parent location
+            $.getJSON('/locations/get-children',
+            {parent_id:parentLocationElement.val()},
+            function(data){
+                var options = data.map(function(item){
+                    return $('<option>').val(item.value)
+                    .text(item.label)
+                    .data({type: item.type});
+                });
+                // discard existing option elements
+                locationElement.children().slice(1).remove();
+                locationElement.append(options)
+                .trigger("sdny.location-update-complete");
+                // if we were triggered with a location_id to set...
+                if (params && params.location_id) {
+                    locationElement.val(params.location_id)
+                    .removeClass("text-muted");
+                }
+            });
+        }
+    };
+
+    // (re)populate the interpreter select element according to the language
+    var interpreterButtonClick = function(event){
+        var id = interpreterSelectElement.val();
+        if (! id ) { return; }
+        var selector = '#interpreters-assigned li > input[value="'+id+'"]';
+        if ($(selector).length) {
+            // duplicate. maybe do something to let them know?
+            return interpreterSelectElement.val("");
+        }
+        var name = interpreterSelectElement.children(":selected").text();
+        var last = $('#interpreters-assigned li > input').last();
+        if (last.length) {
+            var m = last.attr("name").match(/\[(\d+)\]/);
+            if (m.length) {
+                index = parseInt(m.pop()) + 1;
+            } else {
+                // this is an error. to do: do something
+            }
+        } else {
+            index = 0;
+        }
+        interpreterSelectElement.val("");
+        // get the markup
+        //** @todo think about using Vue and a component for this and similar */
+        $.get('/admin/schedule/interpreter-template',
+        {   interpreter_id : id, index : index,
+            name : name,
+            event_id : $('#event_id').val()},
+            function(html){
+                $('#interpreters-assigned').append(html);
+            });
+    };
+
+    var languageElementChange = function(event,params) {
+        var language_id = languageElement.val();
+        // remove the interpreters if the language changes, except
+        // when we're initially triggered on page load, which we will
+        // find out from the "params" parameter
+        if (! params || params.remove_existing !== false) {
+            $('#interpreters-assigned li').remove();
+        }
+
+        if (! language_id) {
+            interpreterSelectElement.attr("disabled","disabled");
+            return;
+        }
+        $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
+            {}, function(data){
+            var options = data.map(function(item){
+                  return $('<option>').val(item.value).text(item.label);
+             });
+            interpreterSelectElement.children().not(":first").remove();
+            interpreterSelectElement.append(options)
+                    .trigger("sdny.language-update-complete");
+            if (options.length) {
+                interpreterSelectElement.removeAttr("disabled");
+            }
+        });
+    };
+
+    var judgeElement = $('#judge');
+
+    var judgeElementChange = function(event) {
+        if (!  judgeElement.val()) {
+            //return;
+        }
+        // keep track of whether judge is a person or a generic role
+         anon_judge.val(
+            judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
+        );
+        var judge = judgeElement.children(':selected');
+        var is_magistrate = judge.data('pseudojudge') &&
+            judge.text().toLowerCase().indexOf('magistrate') > -1;
+        // when it's the magistrate, set the courthouse if possible
+        /** @todo start loading location_type_id as parent_location data element
+            so that we can know whether to switch courthouses if they change
+            from one generic magistrate to the other?
+        */
+        if (is_magistrate  && !parentLocationElement.val()) {
+            //console.log("shit is Magistrate... ");
+            var location_id = judge.data("default_parent_location")
+                || judge.data("default_location");
+            parentLocationElement.val(location_id)
+            .trigger("change", location_id ? {location_id:location_id}:null);
+            return;
+         }
+         if (! eventTypeElement.val() ||
+            "in" !== eventTypeElement.children(":selected").data().category) {
+             return;
+         }
+          /*
+          * We are dealing with an in-court event
+          * If the currently selected judge has a default location
+          */
+         var judge_parent_location = judge.data("default_parent_location");
+         var judge_default_location = judge.data("default_location");
+         var current_parent_loc_id = parseInt(parentLocationElement.val());
+         if (judge_parent_location) {
+             /* and that default's ~parent~ location is other than the
+              * currently selected parent location...
+              */
+             if (judge_parent_location !== current_parent_loc_id) {
+                /* then set the parent location to the current judge's default... */
+                parentLocationElement.val(judge_parent_location)
+                /* and trigger its "change" event, passing the handler the
+                * currently selected judge's default location, if any
+                */
+                .trigger("change", judge_default_location ?
+                    { location_id:judge_default_location } : null);
+                return;
+            } else { // same parent location, just update the courtroom
+                locationElement.val(judge_default_location);
+             }
+         }
+    };
+
+    var parentLocationElement = $('#parent_location');
+
+    var locationElement = $('#location');
+
+    var eventTypeElement = $('#event-type');
+
+    var languageElement = $('#language');
+
+    var anon_judge = $('#is_anonymous_judge');
+
+    var interpreterSelectElement = $("#interpreter-select");
+
+    var interpreterButton = $('#btn-add-interpreter');
+
+    var form = $('#event-form');
+
+    var hatElement = $('#hat');
+
+    var hat_id = hatElement.val();
+
+    var submitterElement = $('#submitter');
+
+    var submitter_id = submitterElement.val();
+
+    // get data to update submitter dropdown based on selected hat
+    var hatElementChange = function(event) {
+
+        var init_values = submitterElement.data();
+        var anonymity = hatElement.children(':selected').data('anonymity');
+        if (anonymity === 1) {
+            submitterElement.attr("disabled","disabled");
+            return;
+        } else {
+            submitterElement.removeAttr("disabled");
+        }
+        var hat_id = hatElement.val();
+        if (! hat_id) {
+            hatElement.children().not(":first").remove();
+            return;
+        } else {
+            // if the initial "submitter" value was an inactive person, extra
+            // effort is needed to fetch the person again if they change the "hat"
+            // and then change it back
+            if (init_values && init_values.hat_id === hat_id) {
+                var person_id = init_values.submitter_id;
+            } else {
+                var person_id = null;
+            }
+        }
+        $.getJSON('/admin/people/get',
+            { hat_id: hat_id, person_id : person_id },
+            function(data)
+            {
+                var options = data.map(function(item){
+                    return $('<option>').val(item.value)
+                        .text(item.label)
+                        .data({type: item.type});
+                });
+                submitterElement.removeAttr("disabled");
+                submitterElement.children().not(":first").remove();
+                submitterElement.append(options)
+                      .trigger("sdny.submitter-update-complete");
+            }
+        );
+    };
+
+    var formSubmit = function(event){
+
+        if (! locationElement.val()) {
+            // no specific location was selected, so the general location
+            // should be submitted in its place
+            var location_id = parentLocationElement.val();
+            if (location_id) {
+                locationElement.after(
+                    $("<input>").attr({
+                        name : "event[location]",
+                        type : "hidden"
+                    }).val(location_id)
+                );
+            }
+            if (form.data("deftnames_modified")) {
+                // hint to the controller that there was an update
+                // even though it looks like there wasn't
+                form.append(
+                    $("<input>")
+                    .attr({name:"deftnames_modified",type:"hidden"}).val(1)
+                );
+            }
+        }
+        // if there is no judge selected, clear this so form validation
+        // doesn't give us false positive followed by Event entity exception
+        // due to both judge and anon judge props being null
+        if (! judgeElement.val()) {
+            anon_judge.val(0);
+            $('#anonymousJudge').val(judgeElement.val());
+        }
+    };
+
     var init = function() {
+
         $('input.docket').on("change",formatDocketElement);
         $('input.date').datepicker({
             changeMonth: true,
@@ -20,9 +266,8 @@ var eventForm = (function(){
                 element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
             }
         });
-        $("input.time")
-          .each(function(){formatTimeElement($(this));})
-          .on("change",parseTime);
+        $("input.time").each(function(){formatTimeElement($(this));})
+            .on("change",parseTime);
         $('input.docket').on("change",formatDocketElement);
 
         $('select').on("change",function(){
@@ -34,14 +279,6 @@ var eventForm = (function(){
             }
         }).trigger("change");
 
-        var parentLocationElement = $('#parent_location');
-
-        var locationElement = $('#location');
-
-        var eventTypeElement = $('#event-type');
-
-        var languageElement = $('#language');
-
 
         if (! languageElement.val()) {
             interpreterSelectElement.attr("disabled","disabled");
@@ -49,121 +286,24 @@ var eventForm = (function(){
             //languageElement.trigger("change",{remove_existing:false});
         }
 
-        var interpreterSelectElement = $("#interpreter-select");
-
-        var parentLocationChange = function(event,params){
-            console.log("woo hooo!");
-            if (! parentLocationElement.val()) {
-                locationElement.val("").attr({disabled : "disabled"});
-            } else {
-                locationElement.removeAttr("disabled");
-                // populate with children of currently selected parent location
-                $.getJSON('/locations/get-children',
-                    {parent_id:parentLocationElement.val()},
-                    function(data){
-                        var options = data.map(function(item){
-                            return $('<option>').val(item.value)
-                                    .text(item.label)
-                                    .data({type: item.type});
-                        });
-                        // discard existing option elements
-                        locationElement.children().slice(1).remove();
-                        locationElement.append(options)
-                             .trigger("sdny.location-update-complete");
-                        // if we were triggered with a location_id to set...
-                        if (params && params.location_id) {
-                            locationElement.val(params.location_id)
-                                .removeClass("text-muted");
-                        }
-                });
-            }
-        };
         if (! parentLocationElement.val()){
             locationElement.val("").attr({disabled : "disabled"});
         }
+
         parentLocationElement.on("change",parentLocationChange);
 
-        // (re)populate the interpreter select element according to the language
-        var languageElementChange = function(event,params) {
-            var language_id = languageElement.val();
-            // remove the interpreters if the language changes, except
-            // when we're initially triggered on page load, which we will
-            // find out from the "params" parameter
-            if (! params || params.remove_existing !== false) {
-                $('#interpreters-assigned li').remove();
-            }
-
-            if (! language_id) {
-                interpreterSelectElement.attr("disabled","disabled");
-                return;
-            }
-            $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
-                {}, function(data){
-                var options = data.map(function(item){
-                      return $('<option>').val(item.value).text(item.label);
-                 });
-                interpreterSelectElement.children().not(":first").remove();
-                interpreterSelectElement.append(options)
-                        .trigger("sdny.language-update-complete");
-                if (options.length) {
-                    interpreterSelectElement.removeAttr("disabled");
-                }
-            });
-        };
         languageElement.on('change',languageElementChange);
-
-        var interpreterButton = $('#btn-add-interpreter');
-
-        var interpreterButtonClick = function(event){
-            var id = interpreterSelectElement.val();
-            if (! id ) { return; }
-            var selector = '#interpreters-assigned li > input[value="'+id+'"]';
-            if ($(selector).length) {
-                // duplicate. maybe do something to let them know?
-                return interpreterSelectElement.val("");
-            }
-            var name = interpreterSelectElement.children(":selected").text();
-            var last = $('#interpreters-assigned li > input').last();
-            if (last.length) {
-                var m = last.attr("name").match(/\[(\d+)\]/);
-                if (m.length) {
-                    index = parseInt(m.pop()) + 1;
-                } else {
-                    // this is an error. to do: do something
-                }
-            } else {
-                index = 0;
-            }
-            interpreterSelectElement.val("");
-            // get the markup
-            //** @todo think about using Vue and a component for this and similar */
-            $.get('/admin/schedule/interpreter-template',
-                {   interpreter_id : id, index : index,
-                    name : name,
-                    event_id : $('#event_id').val()},
-                function(html){
-                    $('#interpreters-assigned').append(html);
-            });
-        };
-
-        interpreterButton.on("click",interpreterButtonClick);
 
         // interpreter and deft name "remove" buttons event handler
         $('#interpreters-assigned, #defendant-names').on("click",".btn-remove-item",
-            function(event){
-                event.preventDefault();
-                $(this).closest(".list-group-item").slideUp(
-                    function(){ $(this).remove();} );
+        function(event){
+            event.preventDefault();
+            $(this).closest(".list-group-item").slideUp(
+                function(){ $(this).remove();} );
             }
         );
 
-        var hatElement = $('#hat');
-
-        var hat_id = hatElement.val();
-
-        var submitterElement = $('#submitter');
-
-        var submitter_id = submitterElement.val();
+        interpreterButton.on("click",interpreterButtonClick);
 
         if (! hat_id) {
             submitterElement.attr({disabled:"disabled"});
@@ -175,64 +315,6 @@ var eventForm = (function(){
                 });
             }
         }
-        var judgeElement = $('#judge');
-
-        var anon_judge = $('#is_anonymous_judge');
-
-        var judgeElementChange = function(event) {
-            if (!  judgeElement.val()) {
-                //return;
-            }
-            // keep track of whether judge is a person or a generic role
-             anon_judge.val(
-                judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
-            );
-            var judge = judgeElement.children(':selected');
-            var is_magistrate = judge.data('pseudojudge') &&
-                judge.text().toLowerCase().indexOf('magistrate') > -1;
-            // when it's the magistrate, set the courthouse if possible
-            /** @todo start loading location_type_id as parent_location data element
-                so that we can know whether to switch courthouses if they change
-                from one generic magistrate to the other?
-            */
-            if (is_magistrate  && !parentLocationElement.val()) {
-                //console.log("shit is Magistrate... ");
-                var location_id = judge.data("default_parent_location")
-                    || judge.data("default_location");
-                parentLocationElement.val(location_id)
-                .trigger("change", location_id ? {location_id:location_id}:null);
-                return;
-             }
-             if (! eventTypeElement.val() ||
-                "in" !== eventTypeElement.children(":selected").data().category) {
-                 return;
-             }
-              /*
-              * We are dealing with an in-court event
-              * If the currently selected judge has a default location
-              */
-             var judge_parent_location = judge.data("default_parent_location");
-             var judge_default_location = judge.data("default_location");
-             var current_parent_loc_id = parseInt(parentLocationElement.val());
-             if (judge_parent_location) {
-                 /* and that default's ~parent~ location is other than the
-                  * currently selected parent location...
-                  */
-                 if (judge_parent_location !== current_parent_loc_id) {
-                    /* then set the parent location to the current judge's default... */
-                    parentLocationElement.val(judge_parent_location)
-                    /* and trigger its "change" event, passing the handler the
-                    * currently selected judge's default location, if any
-                    */
-                    .trigger("change", judge_default_location ?
-                        { location_id:judge_default_location } : null);
-                    return;
-                } else { // same parent location, just update the courtroom
-                    locationElement.val(judge_default_location);
-                 }
-             }
-        };
-
         judgeElement.on('change',judgeElementChange);
 
         // initialize this stuff
@@ -245,82 +327,7 @@ var eventForm = (function(){
             }
         }
 
-        // get data to update submitter dropdown based on selected hat
-        var hatElementChange = function(event) {
-
-            var init_values = submitterElement.data();
-            var anonymity = hatElement.children(':selected').data('anonymity');
-            if (anonymity === 1) {
-                submitterElement.attr("disabled","disabled");
-                return;
-            } else {
-                submitterElement.removeAttr("disabled");
-            }
-            var hat_id = hatElement.val();
-            if (! hat_id) {
-                hatElement.children().not(":first").remove();
-                return;
-            } else {
-                // if the initial "submitter" value was an inactive person, extra
-                // effort is needed to fetch the person again if they change the "hat"
-                // and then change it back
-                if (init_values && init_values.hat_id === hat_id) {
-                    var person_id = init_values.submitter_id;
-                } else {
-                    var person_id = null;
-                }
-            }
-            $.getJSON('/admin/people/get',
-                { hat_id: hat_id, person_id : person_id },
-                function(data)
-                {
-                    var options = data.map(function(item){
-                        return $('<option>').val(item.value)
-                            .text(item.label)
-                            .data({type: item.type});
-                    });
-                    submitterElement.removeAttr("disabled");
-                    submitterElement.children().not(":first").remove();
-                    submitterElement.append(options)
-                          .trigger("sdny.submitter-update-complete");
-                }
-            );
-        };
         hatElement.on("change",hatElementChange);
-
-        var form = $('#event-form');
-
-        var formSubmit = function(event){
-
-            if (! locationElement.val()) {
-                // no specific location was selected, so the general location
-                // should be submitted in its place
-                var location_id = parentLocationElement.val();
-                if (location_id) {
-                    locationElement.after(
-                         $("<input>").attr({
-                            name : "event[location]",
-                            type : "hidden"
-                        }).val(location_id)
-                    );
-                }
-                if (form.data("deftnames_modified")) {
-                    // hint to the controller that there was an update
-                    // even though it looks like there wasn't
-                    form.append(
-                         $("<input>")
-                         .attr({name:"deftnames_modified",type:"hidden"}).val(1)
-                    );
-                }
-            }
-            // if there is no judge selected, clear this so form validation
-            // doesn't give us false positive followed by Event entity exception
-            // due to both judge and anon judge props being null
-            if (! judgeElement.val()) {
-                anon_judge.val(0);
-                $('#anonymousJudge').val(judgeElement.val());
-            }
-        };
 
         form.on("submit".formSubmit);
     };
@@ -328,102 +335,17 @@ var eventForm = (function(){
     return { init : init }
 })();
 
-$(document).ready(function()
-{
-    eventForm.init();
-
-
-
-    /* ============  stuff related to defendant names =======================*/
+/**
+ * initializes defendant-name stuff
+ *
+ * reorganization is a WIP
+ *
+ * @return {object}\
+ */
+var defendantNameForm = (function(){
 
     var defendantSearchElement = $('#defendant-search');
     var slideout = $('#slideout-toggle');
-    /** deft name autocompletion */
-    defendantSearchElement.autocomplete(
-        {
-                source: '/defendants/autocomplete',
-                //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
-                minLength: 2,
-                select: function( event, ui ) {
-                    that = $(this);
-                    $.get(
-                        '/defendants/template',
-                        {id:ui.item.value,name:ui.item.label},
-                        function(html){
-                            $('#defendant-names').append(html);
-                            that.val("");
-                        }
-                    );
-                },
-                focus: function(event,ui) {
-                    event.preventDefault();
-                    $(this).val(ui.item.label);
-                },
-                open : function() {
-                    if (slideout.is(':visible')) {
-                        slideout.hide();
-                    }
-                }
-             }
-         );
-    var onDeftSlideoutShow = function(){
-
-        if ($('#slideout-toggle li').length) {
-            $('#slideout-toggle li a').first().focus();
-        } else {
-            //$('#slideout-toggle h6').hide();
-        }
-    };
-    /* ==================== */
-    $('#slideout-toggle .close').on('click',
-        function(){slideout.toggle("slide");}
-     );
-    /** =========  display defendant-name search results   ==============*/
-    $('#btn-defendant-search').on("click",function(){
-        // get rid of the new name insertion form, if it exists
-        $('#deftname-form-wrapper').remove();
-        if ($('#btn-add-defendant-name').attr("disabled")) {
-             $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
-        }
-
-        var name = defendantSearchElement.val().trim();
-        if (! name) {
-            defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
-            return;
-        }
-        $.get('/defendants/search',{term:name,page:1},
-            function(data){
-                slideout.css("width","");
-                $('#slideout-toggle .result').html(data);
-                console.warn("WTF?");
-                if (! slideout.is(':visible')) {
-                    slideout.toggle("slide",onDeftSlideoutShow);
-                }
-                if (! $('#slideout-toggle .result').is(':visible')) {
-                    $('#slideout-toggle .result').show();
-                }
-            });
-    });
-    /** =================================================================*/
-
-    /** pagination links ================================================*/
-    slideout.on('click','.pagination a',function(event){
-        event.preventDefault();
-        $('#slideout-toggle .result').load(this.href,onDeftSlideoutShow);
-    });
-    slideout.on('click','.defendant-names li',function(event){
-        var element = $(this);
-        $.get(
-            '/defendants/template',
-            {id:element.data('id'),name:element.text()},
-            function(html){
-                $('#defendant-names').append(html);
-                defendantSearchElement.val('');
-                slideout.toggle("slide");
-            }
-        );
-    });
-    /** =================================================================*/
 
     /**
      * gets and inserts markup for defendant name
@@ -441,242 +363,342 @@ $(document).ready(function()
                 function(){$('#deftname-form-wrapper').remove();});
         });
     };
-    slideout.on('click','#btn-add-defendant-name',function(){
 
-        if (! $('#slideout-toggle form').length) {
-            // GET the form
-            $('#slideout-toggle .result').slideUp(function(){$(this).empty();}).after($("<div/>")
-                .attr({id:'deftname-form-wrapper'})
-                .load('/admin/defendants/add form',function(){
-                    $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>');
-                })
-            );
-        } else {
-            // POST the form
-            var data = $('#defendant-form').serialize();
-            $.post('/admin/defendants/add',data,function(response){
-                if (response.validation_errors) {
-                    displayValidationErrors(response.validation_errors);
-                    return;
-                }
-                if (response.id) { // successful insert
-                    append_deft_name({
-                        id : response.id,
-                        surnames : $('#surnames').val().trim(),
-                        given_names : $("#given_names").val().trim()
-                    });
-                }
-                if (response.duplicate_entry_error) {
-                    var existing = response.existing_entity;
-                    var exact_duplicate =
-                        existing.surnames ===  $('#surnames').val().trim()
-                        &&
-                        existing.given_names ===  $('#given_names').val().trim();
-                    if (exact_duplicate) {
-                        append_deft_name(existing);
-                    } else { // this is a pain in the ass, but...
-                        // fix the width to keep it from expanding further
-                        slideout.css({width:slideout.width()});
-                        // splice in the name
-                        $('#deft-existing-duplicate-name').text(
-                            existing.surnames + ', '+existing.given_names);
-                        // disable default button actions (form submission)
-                        $('.duplicate-name button').on("click",function(event){
-                            event.preventDefault();
-                        });
-                        // display the instructions and options
-                        $(".duplicate-name").show();
+    var init = function() {
 
-                        // easy enough: use the existing name as is
-                        $('#btn-use-existing').on("click",function(){
-                            append_deft_name(existing);
-                        });
-                        // update the entity, then use as modified
-                        $('#btn-update-existing').data({id:existing.id}).on("click",function(){
-                            $.post('/admin/defendants/update-existing/'+$(this).data('id'),data,
-                            function(response){
-                                if (response.id) {
-                                    var selector = 'input[name="event[defendantNames]['+
-                                        existing.id +']"]';
-                                    var defendant_name = $('#surnames').val().trim()
-                                        +", "+ $("#given_names").val().trim();
-                                    console.log("selector is: "+selector);
-                                    if ($(selector).length) {
-                                        // update the existing thingy
-                                        $(selector).val(defendant_name)
-                                            .next().text(defendant_name);
-                                    } else { // append new thingy
-                                        append_deft_name({
-                                            id : response.id,
-                                            surnames : $('#surnames').val().trim(),
-                                            given_names : $("#given_names").val().trim()
-                                        });
-                                    }
+        /* ============  stuff related to defendant names =======================*/
 
-                                } else {
-                                    /** error. @todo do something! */
-                                }
-                            },'json');
-                        });
-                        // forget the whole thing
-                        $('#btn-cancel').on("click",function(){
-                            slideout.toggle("slide",
-                            function(){$('#deftname-form-wrapper').remove();});
-                        });
-                        // and if they edit shit, all bets are off
-                        $('#defendant-form').one("change",function(){
-                            div.slideUp(function(){
-                                div.remove();
-                                $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
-                            });
-                        });
-                        // disable the button for submitting the form
-                        $('#btn-add-defendant-name').attr({disabled:"disabled", 'aria-disabled':"true" });
+        /** deft name autocompletion */
+        defendantSearchElement.autocomplete(
+            {
+                    source: '/defendants/autocomplete',
+                    //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
+                    minLength: 2,
+                    select: function( event, ui ) {
+                        that = $(this);
+                        $.get(
+                            '/defendants/template',
+                            {id:ui.item.value,name:ui.item.label},
+                            function(html){
+                                $('#defendant-names').append(html);
+                                that.val("");
+                            }
+                        );
+                    },
+                    focus: function(event,ui) {
+                        event.preventDefault();
+                        $(this).val(ui.item.label);
+                    },
+                    open : function() {
+                        if (slideout.is(':visible')) {
+                            slideout.hide();
+                        }
                     }
+                 }
+             );
+        var onDeftSlideoutShow = function(){
+
+            if ($('#slideout-toggle li').length) {
+                $('#slideout-toggle li a').first().focus();
+            } else {
+                //$('#slideout-toggle h6').hide();
+            }
+        };
+        /* ==================== */
+        $('#slideout-toggle .close').on('click',
+            function(){slideout.toggle("slide");}
+         );
+        /** =========  display defendant-name search results   ==============*/
+        $('#btn-defendant-search').on("click",function(){
+            // get rid of the new name insertion form, if it exists
+            $('#deftname-form-wrapper').remove();
+            if ($('#btn-add-defendant-name').attr("disabled")) {
+                 $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
+            }
+
+            var name = defendantSearchElement.val().trim();
+            if (! name) {
+                defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
+                return;
+            }
+            $.get('/defendants/search',{term:name,page:1},
+                function(data){
+                    slideout.css("width","");
+                    $('#slideout-toggle .result').html(data);
+                    console.warn("WTF?");
+                    if (! slideout.is(':visible')) {
+                        slideout.toggle("slide",onDeftSlideoutShow);
+                    }
+                    if (! $('#slideout-toggle .result').is(':visible')) {
+                        $('#slideout-toggle .result').show();
+                    }
+                });
+        });
+        /** =================================================================*/
+
+        /** pagination links ================================================*/
+        slideout.on('click','.pagination a',function(event){
+            event.preventDefault();
+            $('#slideout-toggle .result').load(this.href,onDeftSlideoutShow);
+        });
+        slideout.on('click','.defendant-names li',function(event){
+            var element = $(this);
+            $.get(
+                '/defendants/template',
+                {id:element.data('id'),name:element.text()},
+                function(html){
+                    $('#defendant-names').append(html);
+                    defendantSearchElement.val('');
+                    slideout.toggle("slide");
                 }
-            },'json');
-        }
-    });
+            );
+        });
+        /** =================================================================*/
 
-    /** ======  for editing defendant names ================= **/
+        slideout.on('click','#btn-add-defendant-name',function(){
 
-    var submitButton = $('#deftname-editor-submit');
-    var cancelButton = submitButton.next("button");
-
-    $('#deftname-editor').on("click",'#btn-select-all, #btn-invert-selection',
-    // if this look familiar, it's because it's found in defendant-form.js
-    function(event){
-        event.preventDefault();
-        var checkboxes = $('form input[type=checkbox]');
-        if ($(event.target).attr('id')=='btn-select-all') {
-            checkboxes.prop("checked",true);
-        } else {
-            checkboxes.each(function(){
-                var checkbox = $(this);
-                var checked = checkbox.prop("checked");
-                checkbox.prop("checked",!checked);
-            });
-        }
-    });
-    $("ul.defendant-names").on("click","li.defendant span",
-        function(){
-            var div = $('#deftname-editor .modal-body');
-            var id = $(this).data('id');
-            var selector = '/admin/defendants/edit/'+ id + ' #defendant-form';
-            var that = this;
-            $('#deftname-editor-submit').show();
-            div.load(selector,function()
-                {
-                    $('#deftname-editor').modal("show");
-                    if ($('#defendant-form').data('status')=="NOT FOUND") {
-                        $('#defendant-form div.alert').append(
-                        " The underlying record might have been deleted out from under you. Please try again.");
-                        submitButton.hide();
-                        cancelButton.text("OK").one("click",function(){
-                            // we have said this very snippet before, but...
-                            $(that).closest(".list-group-item").slideUp(
-                                function(){$(this).remove();}
-                            );
-                        });
+            if (! $('#slideout-toggle form').length) {
+                // GET the form
+                $('#slideout-toggle .result').slideUp(function(){$(this).empty();}).after($("<div/>")
+                    .attr({id:'deftname-form-wrapper'})
+                    .load('/admin/defendants/add form',function(){
+                        $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>');
+                    })
+                );
+            } else {
+                // POST the form
+                var data = $('#defendant-form').serialize();
+                $.post('/admin/defendants/add',data,function(response){
+                    if (response.validation_errors) {
+                        displayValidationErrors(response.validation_errors);
                         return;
                     }
-                    var docket = $("#docket").val();
-                    if (docket) {
-                        $('#occurrences .form-check-input').each(function(){
-                            if (-1 !== $(this).val().indexOf(docket)) {
-                                $(this).attr({checked:"checked"});
-                            } else {
-                                console.log("so, is this a name that has not been used yet?");
-                            }
+                    if (response.id) { // successful insert
+                        append_deft_name({
+                            id : response.id,
+                            surnames : $('#surnames').val().trim(),
+                            given_names : $("#given_names").val().trim()
                         });
                     }
-                    // save the initial state so we can tell if it changed
-                    $('#given_names').data({was : $('#given_names').val()});
-                    $('#surnames').data({was : $('#surnames').val()});
-                }
-            );
-        }
-    );
-    $('#deftname-editor-submit').on("click",function(){
+                    if (response.duplicate_entry_error) {
+                        var existing = response.existing_entity;
+                        var exact_duplicate =
+                            existing.surnames ===  $('#surnames').val().trim()
+                            &&
+                            existing.given_names ===  $('#given_names').val().trim();
+                        if (exact_duplicate) {
+                            append_deft_name(existing);
+                        } else { // this is a pain in the ass, but...
+                            // fix the width to keep it from expanding further
+                            slideout.css({width:slideout.width()});
+                            // splice in the name
+                            $('#deft-existing-duplicate-name').text(
+                                existing.surnames + ', '+existing.given_names);
+                            // disable default button actions (form submission)
+                            $('.duplicate-name button').on("click",function(event){
+                                event.preventDefault();
+                            });
+                            // display the instructions and options
+                            $(".duplicate-name").show();
 
-        // did they really change anything?
-        var modified = $('#surnames').val() != $('#surnames').data("was")
-            ||  $('#given_names').val() != $('#given_names').data("was");
-        if (! modified) {
-            $('#defendant-form-error').text("This name has not been modified. Please press cancel if you don't need to make any changes.").show();
-            return;
-        } else { $('#defendant-form-error').hide() }
+                            // easy enough: use the existing name as is
+                            $('#btn-use-existing').on("click",function(){
+                                append_deft_name(existing);
+                            });
+                            // update the entity, then use as modified
+                            $('#btn-update-existing').data({id:existing.id}).on("click",function(){
+                                $.post('/admin/defendants/update-existing/'+$(this).data('id'),data,
+                                function(response){
+                                    if (response.id) {
+                                        var selector = 'input[name="event[defendantNames]['+
+                                            existing.id +']"]';
+                                        var defendant_name = $('#surnames').val().trim()
+                                            +", "+ $("#given_names").val().trim();
+                                        console.log("selector is: "+selector);
+                                        if ($(selector).length) {
+                                            // update the existing thingy
+                                            $(selector).val(defendant_name)
+                                                .next().text(defendant_name);
+                                        } else { // append new thingy
+                                            append_deft_name({
+                                                id : response.id,
+                                                surnames : $('#surnames').val().trim(),
+                                                given_names : $("#given_names").val().trim()
+                                            });
+                                        }
 
-        var id = $('#deftname-editor input[name=id]').val();
-        var url = '/admin/defendants/edit/'+ id +'?context=events';
-        // we may need to supply an event id
-        var event_id = $('input[name="event[id]"]').val() || false;
-        if (event_id) {
-            url += '&event_id='+event_id;
-        }
-        var defendantForm = $("#defendant-form");
-        $.post(url,defendantForm.serialize(),'json')
-        .then(function(response){
-            if (response.validation_errors !== undefined) {
-                return displayValidationErrors(response.validation_errors);
-            }
-            if (response.inexact_duplicate_found) {
-                var existing = response.existing_entity;
-                defendantForm.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
-                $('#deft-existing-duplicate-name').text(existing);
-                var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
-                return $(shit).show();
-            }
-            if (response.status != 'success') {
-                $('#defendant-form-error').html(
-                    "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
-                ).show();
-                console.debug(response);
-            } else {
-                /** @todo check for duplicate defendant-name in the form
-                before doing this
-                */
-                console.log("looking good, bitch!");
-                var selector = 'input[name="event[defendantNames][' +
-                    id +']"]';
-                var input = $(selector);
-                var defendant_name = $('#surnames').val().trim()
-                    +", "+ $("#given_names").val().trim();
-                    // update the existing thingy
-                    input.val(defendant_name)
-                        .next().text(defendant_name);
-                var new_deft_id = response.insert_id || response.deftname_replaced_by;
-                if (new_deft_id) {
-                    var name = input.attr("name").replace(id, new_deft_id);
-                    input.attr({name : name });
-                    console.log("id was " + id);
-                    console.log("input name attrib is now: "+input.attr("name"));
-                }
-                $('#defendant-form-success').text("This name has been updated.").show();
-                $("#event-form").data({deftnames_modified : 1});
-                window.setTimeout(function(){
-                    $('#defendant-form-success').hide();
-                    $('#deftname-editor').modal("hide");
-
-                },2000);
-            }
-
-        }).then(function(){
-            if (! event_id) { return; }
-            $.get('/admin/schedule/get-modification-time/'+event_id)
-            .then(function(response){
-                if (response.modified) {
-                    var val_before = $('#modified').val();
-                    if (val_before != response.modified) {
-                        console.log("updating last modification timestamp!");
-                        $('#modified').val(response.modified);
-                    } else {
-                        console.log("looks like no update to mod time?");
+                                    } else {
+                                        /** error. @todo do something! */
+                                    }
+                                },'json');
+                            });
+                            // forget the whole thing
+                            $('#btn-cancel').on("click",function(){
+                                slideout.toggle("slide",
+                                function(){$('#deftname-form-wrapper').remove();});
+                            });
+                            // and if they edit shit, all bets are off
+                            $('#defendant-form').one("change",function(){
+                                div.slideUp(function(){
+                                    div.remove();
+                                    $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
+                                });
+                            });
+                            // disable the button for submitting the form
+                            $('#btn-add-defendant-name').attr({disabled:"disabled", 'aria-disabled':"true" });
+                        }
                     }
-                }
-            })
+                },'json');
+            }
         });
-    });
+
+        /** ======  for editing defendant names ================= **/
+
+        var submitButton = $('#deftname-editor-submit');
+        var cancelButton = submitButton.next("button");
+
+        $('#deftname-editor').on("click",'#btn-select-all, #btn-invert-selection',
+        // if this look familiar, it's because it's found in defendant-form.js
+        function(event){
+            event.preventDefault();
+            var checkboxes = $('form input[type=checkbox]');
+            if ($(event.target).attr('id')=='btn-select-all') {
+                checkboxes.prop("checked",true);
+            } else {
+                checkboxes.each(function(){
+                    var checkbox = $(this);
+                    var checked = checkbox.prop("checked");
+                    checkbox.prop("checked",!checked);
+                });
+            }
+        });
+        $("ul.defendant-names").on("click","li.defendant span",
+            function(){
+                var div = $('#deftname-editor .modal-body');
+                var id = $(this).data('id');
+                var selector = '/admin/defendants/edit/'+ id + ' #defendant-form';
+                var that = this;
+                $('#deftname-editor-submit').show();
+                div.load(selector,function()
+                    {
+                        $('#deftname-editor').modal("show");
+                        if ($('#defendant-form').data('status')=="NOT FOUND") {
+                            $('#defendant-form div.alert').append(
+                            " The underlying record might have been deleted out from under you. Please try again.");
+                            submitButton.hide();
+                            cancelButton.text("OK").one("click",function(){
+                                // we have said this very snippet before, but...
+                                $(that).closest(".list-group-item").slideUp(
+                                    function(){$(this).remove();}
+                                );
+                            });
+                            return;
+                        }
+                        var docket = $("#docket").val();
+                        if (docket) {
+                            $('#occurrences .form-check-input').each(function(){
+                                if (-1 !== $(this).val().indexOf(docket)) {
+                                    $(this).attr({checked:"checked"});
+                                } else {
+                                    console.log("so, is this a name that has not been used yet?");
+                                }
+                            });
+                        }
+                        // save the initial state so we can tell if it changed
+                        $('#given_names').data({was : $('#given_names').val()});
+                        $('#surnames').data({was : $('#surnames').val()});
+                    }
+                );
+            }
+        );
+        $('#deftname-editor-submit').on("click",function(){
+
+            // did they really change anything?
+            var modified = $('#surnames').val() != $('#surnames').data("was")
+                ||  $('#given_names').val() != $('#given_names').data("was");
+            if (! modified) {
+                $('#defendant-form-error').text("This name has not been modified. Please press cancel if you don't need to make any changes.").show();
+                return;
+            } else { $('#defendant-form-error').hide() }
+
+            var id = $('#deftname-editor input[name=id]').val();
+            var url = '/admin/defendants/edit/'+ id +'?context=events';
+            // we may need to supply an event id
+            var event_id = $('input[name="event[id]"]').val() || false;
+            if (event_id) {
+                url += '&event_id='+event_id;
+            }
+            var defendantForm = $("#defendant-form");
+            $.post(url,defendantForm.serialize(),'json')
+            .then(function(response){
+                if (response.validation_errors !== undefined) {
+                    return displayValidationErrors(response.validation_errors);
+                }
+                if (response.inexact_duplicate_found) {
+                    var existing = response.existing_entity;
+                    defendantForm.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
+                    $('#deft-existing-duplicate-name').text(existing);
+                    var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
+                    return $(shit).show();
+                }
+                if (response.status != 'success') {
+                    $('#defendant-form-error').html(
+                        "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
+                    ).show();
+                    console.debug(response);
+                } else {
+                    /** @todo check for duplicate defendant-name in the form
+                    before doing this
+                    */
+                    console.log("looking good, bitch!");
+                    var selector = 'input[name="event[defendantNames][' +
+                        id +']"]';
+                    var input = $(selector);
+                    var defendant_name = $('#surnames').val().trim()
+                        +", "+ $("#given_names").val().trim();
+                        // update the existing thingy
+                        input.val(defendant_name)
+                            .next().text(defendant_name);
+                    var new_deft_id = response.insert_id || response.deftname_replaced_by;
+                    if (new_deft_id) {
+                        var name = input.attr("name").replace(id, new_deft_id);
+                        input.attr({name : name });
+                        console.log("id was " + id);
+                        console.log("input name attrib is now: "+input.attr("name"));
+                    }
+                    $('#defendant-form-success').text("This name has been updated.").show();
+                    $("#event-form").data({deftnames_modified : 1});
+                    window.setTimeout(function(){
+                        $('#defendant-form-success').hide();
+                        $('#deftname-editor').modal("hide");
+
+                    },2000);
+                }
+
+            }).then(function(){
+                if (! event_id) { return; }
+                $.get('/admin/schedule/get-modification-time/'+event_id)
+                .then(function(response){
+                    if (response.modified) {
+                        var val_before = $('#modified').val();
+                        if (val_before != response.modified) {
+                            console.log("updating last modification timestamp!");
+                            $('#modified').val(response.modified);
+                        } else {
+                            console.log("looks like no update to mod time?");
+                        }
+                    }
+                })
+            });
+        });
+    }
+    return { init : init };
+})();
+
+$(document).ready(function()
+{
+    eventForm.init();
+    defendantNameForm.init();
 });
 
 formatTimeElement = function(timeElement) {
