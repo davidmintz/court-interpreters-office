@@ -9,8 +9,7 @@ $this->headScript()
         ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
         ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-        ->appendFile($this->basePath('js/event-form.js'))
-        ->appendFile($this->basePath('js/event-delete.js'));
+        ->appendFile($this->basePath('js/event-form.js'));
 
 $messenger = $this->flashMessenger();
 if ($messenger->hasErrorMessages()) :
@@ -27,6 +26,7 @@ if ($this->layout()->action == 'add') :
     $action = $this->url('events/add');
 else:
     $action = $this->url('events/edit',['id'=>$this->id]);
+    $this->headScript()->appendFile($this->basePath('js/event-delete.js'));
 endif;
 
 $form->setAttribute('class', 'form-event mx-auto')
