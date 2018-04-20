@@ -7,6 +7,7 @@ use Zend\EventManager\Event;
 use Zend\Log\LoggerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Admin\Service\ScheduleListener;
 
 /**
  * listener for schedule changes
@@ -37,6 +38,22 @@ class ScheduleListener
     {
         $this->logger = $log;
         $this->auth = $auth;
+    }
+
+
+    /**
+     * sets auth instance
+     *
+     * primarily for rigging tests
+     * 
+     * @param AuthenticationServiceInterface $auth
+     * @return ScheduleListener;
+     */
+    public function setAuth(AuthenticationServiceInterface $auth)
+    {
+        $this->auth = $auth;
+
+        return $this;
     }
 
     /**
