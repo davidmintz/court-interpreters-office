@@ -363,7 +363,87 @@ var defendantNameForm = (function(){
                 function(){$('#deftname-form-wrapper').remove();});
         });
     };
+    var addDeftnameCallback = function(response){
+        if (response.validation_errors) {
+            displayValidationErrors(response.validation_errors);
+            return;
+        }
+        if (response.id) { // successful insert
+            append_deft_name({
+                id : response.id,
+                surnames : $('#surnames').val().trim(),
+                given_names : $("#given_names").val().trim()
+            });
+        }
+        if (response.duplicate_entry_error) {
+            var existing = response.existing_entity;
+            var exact_duplicate =
+                existing.surnames ===  $('#surnames').val().trim()
+                &&
+                existing.given_names ===  $('#given_names').val().trim();
+            if (exact_duplicate) {
+                append_deft_name(existing);
+            } else { // this is a pain in the ass, but...
+                // fix the width to keep it from expanding further
+                slideout.css({width:slideout.width()});
+                // splice in the name
+                $('#deft-existing-duplicate-name').text(
+                    existing.surnames + ', '+existing.given_names);
+                // disable default button actions (form submission)
+                $('.duplicate-name button').on("click",function(event){
+                    event.preventDefault();
+                });
+                // display the instructions and options
+                $(".duplicate-name").show();
 
+                // easy enough: use the existing name as is
+                $('#btn-use-existing').on("click",function(){
+                    append_deft_name(existing);
+                });
+                // update the entity, then use as modified
+                $('#btn-update-existing').data({id:existing.id}).on("click",function(){
+                    $.post('/admin/defendants/update-existing/'+$(this).data('id'),data,
+                    function(response){
+                        if (response.id) {
+                            var selector = 'input[name="event[defendantNames]['+
+                                existing.id +']"]';
+                            var defendant_name = $('#surnames').val().trim()
+                                +", "+ $("#given_names").val().trim();
+                            console.log("selector is: "+selector);
+                            if ($(selector).length) {
+                                // update the existing thingy
+                                $(selector).val(defendant_name)
+                                    .next().text(defendant_name);
+                            } else { // append new thingy
+                                append_deft_name({
+                                    id : response.id,
+                                    surnames : $('#surnames').val().trim(),
+                                    given_names : $("#given_names").val().trim()
+                                });
+                            }
+
+                        } else {
+                            /** error. @todo do something! */
+                        }
+                    },'json');
+                });
+                // forget the whole thing
+                $('#btn-cancel').on("click",function(){
+                    slideout.toggle("slide",
+                    function(){$('#deftname-form-wrapper').remove();});
+                });
+                // and if they edit shit, all bets are off
+                $('#defendant-form').one("change",function(){
+                    div.slideUp(function(){
+                        div.remove();
+                        $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
+                    });
+                });
+                // disable the button for submitting the form
+                $('#btn-add-defendant-name').attr({disabled:"disabled", 'aria-disabled':"true" });
+            }
+        }
+    };
     var init = function() {
 
         /* ============  stuff related to defendant names =======================*/
@@ -468,87 +548,8 @@ var defendantNameForm = (function(){
             } else {
                 // POST the form
                 var data = $('#defendant-form').serialize();
-                $.post('/admin/defendants/add',data,function(response){
-                    if (response.validation_errors) {
-                        displayValidationErrors(response.validation_errors);
-                        return;
-                    }
-                    if (response.id) { // successful insert
-                        append_deft_name({
-                            id : response.id,
-                            surnames : $('#surnames').val().trim(),
-                            given_names : $("#given_names").val().trim()
-                        });
-                    }
-                    if (response.duplicate_entry_error) {
-                        var existing = response.existing_entity;
-                        var exact_duplicate =
-                            existing.surnames ===  $('#surnames').val().trim()
-                            &&
-                            existing.given_names ===  $('#given_names').val().trim();
-                        if (exact_duplicate) {
-                            append_deft_name(existing);
-                        } else { // this is a pain in the ass, but...
-                            // fix the width to keep it from expanding further
-                            slideout.css({width:slideout.width()});
-                            // splice in the name
-                            $('#deft-existing-duplicate-name').text(
-                                existing.surnames + ', '+existing.given_names);
-                            // disable default button actions (form submission)
-                            $('.duplicate-name button').on("click",function(event){
-                                event.preventDefault();
-                            });
-                            // display the instructions and options
-                            $(".duplicate-name").show();
-
-                            // easy enough: use the existing name as is
-                            $('#btn-use-existing').on("click",function(){
-                                append_deft_name(existing);
-                            });
-                            // update the entity, then use as modified
-                            $('#btn-update-existing').data({id:existing.id}).on("click",function(){
-                                $.post('/admin/defendants/update-existing/'+$(this).data('id'),data,
-                                function(response){
-                                    if (response.id) {
-                                        var selector = 'input[name="event[defendantNames]['+
-                                            existing.id +']"]';
-                                        var defendant_name = $('#surnames').val().trim()
-                                            +", "+ $("#given_names").val().trim();
-                                        console.log("selector is: "+selector);
-                                        if ($(selector).length) {
-                                            // update the existing thingy
-                                            $(selector).val(defendant_name)
-                                                .next().text(defendant_name);
-                                        } else { // append new thingy
-                                            append_deft_name({
-                                                id : response.id,
-                                                surnames : $('#surnames').val().trim(),
-                                                given_names : $("#given_names").val().trim()
-                                            });
-                                        }
-
-                                    } else {
-                                        /** error. @todo do something! */
-                                    }
-                                },'json');
-                            });
-                            // forget the whole thing
-                            $('#btn-cancel').on("click",function(){
-                                slideout.toggle("slide",
-                                function(){$('#deftname-form-wrapper').remove();});
-                            });
-                            // and if they edit shit, all bets are off
-                            $('#defendant-form').one("change",function(){
-                                div.slideUp(function(){
-                                    div.remove();
-                                    $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
-                                });
-                            });
-                            // disable the button for submitting the form
-                            $('#btn-add-defendant-name').attr({disabled:"disabled", 'aria-disabled':"true" });
-                        }
-                    }
-                },'json');
+                $.post('/admin/defendants/add',data,addDeftnameCallback,
+                'json');
             }
         });
 
