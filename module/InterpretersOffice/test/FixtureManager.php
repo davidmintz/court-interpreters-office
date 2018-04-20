@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 
 use InterpretersOffice\Entity\Listener;
+use Zend\Authentication\Result;
+use Zend\Authentication\AuthenticationServiceInterface;
+use ApplicationTest\FixtureSetupTest;
 
 /**
  * a concrete implementation of AbstractControllerTest
@@ -22,6 +25,30 @@ class SetupHelper extends AbstractControllerTest
 {
 }
 
+/**
+ * we seem to need this to get us past FixtureSetupTest
+ */
+class FakeAuth implements \Zend\Authentication\AuthenticationServiceInterface
+{
+        public function hasIdentity()
+        {
+            return true;
+        }
+        public function getIdentity()
+        {
+            return (object)[
+                'username'=> 'david'
+            ];
+        }
+        public function authenticate()
+        {
+            return new ZendAuthenticationResult(1, $this->getIdentity());
+        }
+
+        public function clearIdentity()
+        {
+        }
+}
 
 final class FixtureManager
 {
@@ -54,10 +81,18 @@ final class FixtureManager
         $entityManager = EntityManager::create($connectionParams, $config);
         $helper = new SetupHelper();
         $helper->setUp();
+        /** @var Zend\ServiceManager\ServiceManager $container */
         $container = $helper->getApplicationServiceLocator();
         $listener = $container->get('interpreter-listener');
         $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
         $resolver->register($listener);
+
+        // looks like we need to be authenticated before EventListenerFactory
+        // injects auth in ScheduleListener, hence...
+
+        $auth = new FakeAuth();
+        $container->get('InterpretersOffice\Admin\Service\ScheduleListener')
+            ->setAuth($auth);
         $resolver->register($container->get(Listener\EventEntityListener::class));
         $resolver->register($container->get(Listener\UpdateListener::class));
 
