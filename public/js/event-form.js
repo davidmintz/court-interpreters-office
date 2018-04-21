@@ -84,18 +84,20 @@ var eventForm = (function(){
             interpreterSelectElement.attr("disabled","disabled");
             return;
         }
-        $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id,
-            {}, function(data){
-            var options = data.map(function(item){
-                  return $('<option>').val(item.value).text(item.label);
-             });
-            interpreterSelectElement.children().not(":first").remove();
-            interpreterSelectElement.append(options)
-                    .trigger("sdny.language-update-complete");
-            if (options.length) {
-                interpreterSelectElement.removeAttr("disabled");
+        $.getJSON('/admin/schedule/interpreter-options?language_id='+language_id)
+        .success(
+            function(data){
+                var options = data.map(function(item){
+                    return $('<option>').val(item.value).text(item.label);
+                });
+                interpreterSelectElement.children().not(":first").remove();
+                interpreterSelectElement.append(options)
+                .trigger("sdny.language-update-complete");
+                if (options.length) {
+                    interpreterSelectElement.removeAttr("disabled");
+                }
             }
-        });
+        );
     };
 
     var judgeElement = $('#judge');
@@ -598,9 +600,7 @@ var defendantNameForm = (function(){
                 },2000);
             }
         },'json')
-        .then(function(response){
-            getEventModificationTime(event_id);
-        });
+        .then(function(response){ getEventModificationTime(event_id);});
     };
 
     var init = function() {
