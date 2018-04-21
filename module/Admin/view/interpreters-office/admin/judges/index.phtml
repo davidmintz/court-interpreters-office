@@ -69,11 +69,7 @@ foreach ($flavors as $flavor) :
                     <td class="text-md-right">
                         <span style="opacity:.75" class="align-self-center fas fa-<?php echo $judge['active'] ? "check text-success" : "times text-danger"?>"></span>
                     </td>
-<<<<<<< Updated upstream
-                    <td class="col-1 px-0"><a data-toggle="tooltip" title="edit this database record" href="<?php echo $this->url('judges/edit', ['id' => $judge['id']])?>"><span style="opacity:.75" class="align-self-center fas fa-cog"></span></a></td>
-=======
                     <td class="px-0"><a data-toggle="tooltip" title="edit this database record" href="<?php echo $this->url('judges/edit', ['id' => $judge['id']])?>"><span style="opacity:.75" class="align-self-center fas fa-cog"></span></a></td>
->>>>>>> Stashed changes
                 </tr>
                 <?php endforeach;?>
                 </tbody>
