@@ -600,7 +600,9 @@ var defendantNameForm = (function(){
                 },2000);
             }
         },'json')
-        .then(function(response){ getEventModificationTime(event_id);});
+        .then(function(response){
+            getEventModificationTime(event_id);
+        });
     };
 
     var init = function() {
