@@ -335,6 +335,7 @@ var eventForm = (function(){
     return { init : init }
 })();
 
+
 /**
  * initializes defendant-name stuff
  *
@@ -542,6 +543,15 @@ var defendantNameForm = (function(){
             url += '&event_id='+event_id;
         }
         var defendantForm = $("#defendant-form");
+        /*
+        console.log("first one...");
+        $.get('/').done(function(x){
+          console.log("first one done, second...");
+          $.get('/login');
+        }).done(function(x){
+          console.log("second done");
+        });
+        */
         $.post(url,defendantForm.serialize(),
         function(response) {
             if (response.validation_errors !== undefined) {
