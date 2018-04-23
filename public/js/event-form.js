@@ -2,57 +2,153 @@
  * public/js/event-form.js
  */
 
-moment = window.moment;
-
-
 /**
  * initializes event handlers for the "event" form
- * @todo deal with the fact that some of this doesn't apply to "request" form
+ *
+ * need need to: deal with the fact that some of this doesn't apply to "request" form
  * @return {object}
  */
-var eventForm = (function(){
 
+var $;
+
+var eventForm = (function () {
+    "use strict";
     /**
     * the event update|create form
     * @type {jQuery}
     */
-    var form = $('#event-form');
-    /**
-     * callback for parent location "change" event
-     *
-     * @param  {object} event
-     * @param  {object} params
-     * @todo cache
-     * @return {void}
-     */
-    var parentLocationChange = function(event,params){
+    var form = $('#event-form'),
 
-        if (! parentLocationElement.val()) {
-            locationElement.val("").attr({disabled : "disabled"});
-        } else {
-            locationElement.removeAttr("disabled");
-            // populate with children of currently selected parent location
-            $.getJSON('/locations/get-children',
-            {parent_id:parentLocationElement.val()},
-            function(data){
-                var options = data.map(function(item){
-                    return $('<option>').val(item.value)
-                    .text(item.label)
-                    .data({type: item.type});
-                });
-                // discard existing option elements (for now)
-                locationElement.children().slice(1).remove();
-                locationElement.append(options)
-                // custom event doesn't do anything yet
-                .trigger("sdny.location-update-complete");
-                // if we were triggered with a location_id to set...
-                if (params && params.location_id) {
-                    locationElement.val(params.location_id)
-                    .removeClass("text-muted");
-                }
-            });
-        }
-    };
+        /**
+        * parent location select element
+        *
+        * the general location/building where specific location is found
+        * @type {jQuery}
+        */
+        parentLocationElement = $('#parent_location'),
+
+        /**
+        * location select element
+        * @type {jQuery}
+        */
+        locationElement = $('#location'),
+
+        /**
+        * event-type select element
+        * @type {jQuery}
+        */
+        eventTypeElement = $('#event-type'),
+
+        /**
+        * language select element
+        * @type {jQuery}
+        */
+        languageElement = $('#language'),
+
+        /**
+        * judge select element
+        * @type {jQuery}
+        */
+        judgeElement = $('#judge'),
+
+        /**
+        * hidden flag for whether a generic, "anonymous" judge is selected
+        *
+        * sometimes also known as pseudojudge. yeah I know.
+        * @type {jQuery}
+        */
+        anon_judge = $('#is_anonymous_judge'),
+
+        /**
+        * interpreter select element
+        * @type {jQuery}
+        */
+        interpreterSelectElement = $("#interpreter-select"),
+
+        /**
+        * button for adding the selected interpreter to the event
+        * @type {jQuery}
+        */
+        interpreterButton = $('#btn-add-interpreter'),
+
+        /**
+        * the "hat" select element
+        * the title|description|category (a/k/a hat) of the person who
+        * submitted the request to schedule an interpreter
+        * @type {jQuery}
+        */
+        hatElement = $('#hat'),
+
+        /**
+        * initial value of hat element
+        * @type {integer}
+        */
+        hat_id = hatElement.val(),
+
+        /**
+        * submitter -- the person (or dept etc) who requested an interpreter
+        * @type {jQuery}
+        */
+        submitterElement = $('#submitter'),
+
+        /**
+        * initial value of submitter element
+        * @type {integer}
+        */
+        submitter_id = submitterElement.val(),
+
+        /**
+         * button for defendant-name search
+         * @type {jQuery}
+         */
+        defendantSearchElement = $('#defendant-search'),
+
+        /**
+         * div for containing defendant-name search results
+         * @type {jQuery}
+         */
+        slideout = $('#slideout-toggle'),
+
+        /**
+         * callback for parent location "change" event
+         *
+         * @param  {object} event
+         * @param  {object} params
+         * tofuckingdo: cache
+         * @return {void}
+         */
+        parentLocationChange = function (event, params) {
+            /*jslint unparam: true */
+
+            if (!parentLocationElement.val()) {
+                locationElement.val("").attr({disabled : "disabled"});
+            } else {
+                locationElement.removeAttr("disabled");
+                // populate with children of currently selected parent location
+                $.getJSON('/locations/get-children',
+                    {parent_id : parentLocationElement.val()},
+                    function (data) {
+                        var options = data.map(function (item) {
+                            return $('<option>').val(item.value)
+                                .text(item.label)
+                                .data({type: item.type});
+                        });
+                        // discard existing option elements (for now)
+                        locationElement.children().slice(1).remove();
+                        locationElement.append(options)
+                            // custom event doesn't do anything yet
+                            .trigger("sdny.location-update-complete");
+                        // if we were triggered with a location_id to set...
+                        if (params && params.location_id) {
+                            locationElement.val(params.location_id)
+                                .removeClass("text-muted");
+                        }
+                    }
+                    );
+            }
+
+        };
+    /*jslint unparam: false */
 
     /**
      * callback for assign-interpreter button's click event
@@ -72,19 +168,18 @@ var eventForm = (function(){
         }
         var name = interpreterSelectElement.children(":selected").text();
         var last = $('#interpreters-assigned li > input').last();
+        var index;
         if (last.length) {
             var m = last.attr("name").match(/\[(\d+)\]/);
             if (m.length) {
                 index = parseInt(m.pop()) + 1;
-            } else {
-                // this is an error. to do: do something
-            }
+            } //else { // this is an error. to do: do something  }
         } else {
             index = 0;
         }
         interpreterSelectElement.val("");
         // get the markup
-        //** @todo think about using Vue and a component for this and similar */
+        //** to do: think about using Vue and a component for this and similar */
         $.get('/admin/schedule/interpreter-template',
         {   interpreter_id : id, index : index,
             name : name,
@@ -133,12 +228,6 @@ var eventForm = (function(){
     };
 
     /**
-     * judge select element
-     * @type {jQuery}
-     */
-    var judgeElement = $('#judge');
-
-    /**
      * callback for judge "change" event
      * @param  {object} event
      * @return {void}
@@ -156,7 +245,7 @@ var eventForm = (function(){
         var is_magistrate = judge.data('pseudojudge') &&
             judge.text().toLowerCase().indexOf('magistrate') > -1;
         // when it's the magistrate, set the courthouse if possible
-        /** @todo start loading location_type_id as parent_location data element
+        /** to do: start loading location_type_id as parent_location data element
             so that we can know whether to switch courthouses if they change
             from one generic magistrate to the other?
         */
@@ -199,78 +288,6 @@ var eventForm = (function(){
     };
 
     /**
-     * parent location select element
-     *
-     * the general location/building where specific location is
-     * found
-     * @type {jQuery}
-     */
-    var parentLocationElement = $('#parent_location');
-    /**
-     * location select element
-     * @type {jQuery}
-     */
-    var locationElement = $('#location');
-
-    /**
-     * event-type select element
-     * @type {jQuery}
-     */
-    var eventTypeElement = $('#event-type');
-
-    /**
-     * language select element
-     * @type {jQuery}
-     */
-    var languageElement = $('#language');
-
-    /**
-     * hidden flag for whether a generic, "anonymous" judge is selected
-     *
-     * sometimes also known as pseudojudge. yeah I know.
-     * @type {jQuery}
-     */
-    var anon_judge = $('#is_anonymous_judge');
-
-    /**
-     * interpreter select element
-     * @type {jQuery}
-     */
-    var interpreterSelectElement = $("#interpreter-select");
-
-    /**
-     * button for adding the selected interpreter to the event
-     * @type {jQuery}
-     */
-    var interpreterButton = $('#btn-add-interpreter');
-
-    /**
-     * the "hat" select element
-     * the title|description|category (a/k/a hat) of the person who
-     * submitted the request to schedule an interpreter
-     * @type {jQuery}
-     */
-    var hatElement = $('#hat');
-
-    /**
-     * initial value of hat element
-     * @type {integer}
-     */
-    var hat_id = hatElement.val();
-
-     /**
-     * select element for the person who submitted the request
-     * @type {jQuery}
-     */
-    var submitterElement = $('#submitter');
-
-    /**
-     * initial value of submitter element
-     * @type {integer}
-     */
-    var submitter_id = submitterElement.val();
-
-    /**
      * callback for hat-select's change event
      *
      * gets data to update submitter dropdown based on selected hat
@@ -288,7 +305,7 @@ var eventForm = (function(){
         } else {
             submitterElement.removeAttr("disabled");
         }
-        var hat_id = hatElement.val();
+
         if (! hat_id) {
             hatElement.children().not(":first").remove();
             return;
@@ -299,7 +316,7 @@ var eventForm = (function(){
             if (init_values && init_values.hat_id === hat_id) {
                 var person_id = init_values.submitter_id;
             } else {
-                var person_id = null;
+                person_id = null;
             }
         }
         $.getJSON('/admin/people/get',
@@ -358,8 +375,232 @@ var eventForm = (function(){
     };
 
     /**
+     * callback for defendant search result "show" event
+     * @return {void}
+     */
+    var onDeftSlideoutShow = function(){
+        if ($('#slideout-toggle li').length) {
+            $('#slideout-toggle li a').first().focus();
+        }
+    };
+
+    /**
+     * callback for defendant-name search button's "click" event
+     * @return {void}
+     */
+    var deftNameSearchButtonClick = function() {
+        // get rid of the new name insertion form, if it exists
+        $('#deftname-form-wrapper').remove();
+        if ($('#btn-add-defendant-name').attr("disabled")) {
+             $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
+        }
+
+        var name = defendantSearchElement.val().trim();
+        if (! name) {
+            defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
+            return;
+        }
+        $.get('/defendants/search',{term:name,page:1},
+            function(data){
+                slideout.css("width","");
+                $('#slideout-toggle .result').html(data);
+                if (! slideout.is(':visible')) {
+                    slideout.toggle("slide",onDeftSlideoutShow);
+                }
+                if (! $('#slideout-toggle .result').is(':visible')) {
+                    $('#slideout-toggle .result').show();
+                }
+            }
+        );
+    };
+    /**
+     * defendant name auto-complete options
+     * @type {Object}
+     */
+    var deftname_autocomplete_options = {
+        source: '/defendants/autocomplete',
+        //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
+        minLength: 2,
+        select: function( event, ui ) {
+            that = $(this);
+            $.get(
+                '/defendants/template',
+                {id:ui.item.value,name:ui.item.label},
+                function(html){
+                    $('#defendant-names').append(html);
+                    that.val("");
+                }
+            );
+        },
+        focus: function(event,ui) {
+            event.preventDefault();
+            $(this).val(ui.item.label);
+        },
+        open : function() {
+            if (slideout.is(':visible')) {
+                slideout.hide();
+            }
+        }
+    };
+
+    /**
+     * gets and inserts markup for defendant name
+     * @param {object} data
+     */
+    var append_deft_name = function(data){
+        $.get('/defendants/template',
+        {   id: data.id,
+            name: data.surnames + ", "+ data.given_names
+        },
+        function(html){
+            $('#defendant-names').append(html);
+            defendantSearchElement.val('');
+            slideout.toggle("slide",
+                function(){$('#deftname-form-wrapper').remove();});
+        });
+    };
+
+    /**
+     * formats "time" elements
+     *
+     * meaning inputs with our .time class, not HTML5 time elements
+     *
+     * @param  {jQuery} timeElement
+     * @return {jQuery} timeElement (the same one)
+     */
+    var formatTimeElement = function(timeElement) {
+
+        var timeValue = timeElement.val();
+        // reformat time;
+        if (timeValue && timeValue.match(/^\d\d:\d\d$/)) {
+            var formatted = moment(timeValue, 'HH:mm:ss').format('h:mm a');
+            //console.log('formatted time is: '+formatted);
+            timeElement.val(formatted);
+        }
+        return timeElement;
+    };
+
+    /**
+     * tries to figure out time of day based on string
+     * @param  {object} event
+     * @return {void}
+     */
+    var parseTime = function(event)
+    {
+        var timeElement = $(event.target);
+        var div = timeElement.closest('div.form-group');
+        var errorDiv = timeElement.next('.validation-error');
+        if (! errorDiv.length) {
+            timeElement.after($("<div>").addClass('alert alert-warning validation-error'));
+            errorDiv = timeElement.next('.validation-error');
+        }
+        var time = timeElement.val().trim();
+        if ("" === time) {
+            return;
+        }
+        var re = /^(0?[1-9]|1[0-2]):?([0-5]\d)?\s*((a|p)m?)?$/i;
+        var hour; var minute; var ap;
+        matches = time.match(re);
+        if (matches)
+        {
+            hour = matches[1];
+            if ("0" === hour[0]) { // no leading zero
+                hour = hour.substring(1);
+            }
+            minute = matches[2] ? matches[2] : "00";
+            ap = matches[3];
+            if (!ap) {
+                if (hour === "12") {
+                    ap = "pm";
+                } else {
+                    ap = hour < 9 ? "pm" : "am";
+                }
+            } else if (ap.length === 1) {
+                ap = ap + 'm';
+            }
+        } else if (matches = time.match(/^([01][0-9]|2[1-3])([0-5][0-9])$/)) {
+            hour = matches[1];
+            ap = 'am';
+            if (hour > 12) {
+                hour -= 12;
+                ap = 'pm';
+            }
+            minute = matches[2];
+        } else {
+            errorDiv.addClass("alert alert-warning validation-error")
+            .text("invalid time").show();
+            return;
+        }
+        div.removeClass("alert alert-warning validation-error");
+        errorDiv.empty().hide();
+        timeElement.val((hour + ":" + minute + " " + ap).toLowerCase());
+    };
+
+    /**
+     * tries to format a string as a US District Court docket number
+     * @param  {object} event
+     * @return {jQuery} event's target element
+     */
+    var formatDocketElement = function(event)
+    {
+        var element = $(event.target);
+        var div = element.closest('div.form-group');
+        var errorDiv = element.next('.validation-error');
+        if (! errorDiv.length) {
+            // try something else
+            errorDiv = $('#docket').parent().next('.validation-error');
+            if (! errorDiv.length)  {
+                // last resort
+                element.after($("<div>").addClass('alert alert-warning validation-error'));
+                errorDiv = element.next('.validation-error');
+            }
+        }
+        element.val(element.val().trim());
+        if (! element[0].value ) {
+            errorDiv.empty().hide();
+            element.data('valid',1);
+            return element;
+        }
+        var matches = element[0].value.match(DocketRegExp);
+        if (element[0].value && ! matches) {
+            errorDiv.text("invalid docket number").show().trigger("show");
+            element.data('valid',0);
+            div.addClass('has-error has-feedback');
+            return;
+
+        } else {
+            div.removeClass('has-error has-feedback');
+            var year = matches[1];
+            var flavor = matches[2];
+            var number = matches[3];
+        }
+        if (year.length === 2) {
+            year = year <= 50 ? "20"+year : "19"+year;
+        }
+        flavor = flavor.toUpperCase();
+        if (-1 !== flavor.indexOf('CR')) {
+            flavor = 'CR';
+        } else if (flavor[0] === 'M') {
+            flavor = 'MAG';
+        } else {
+            flavor = 'CIV';
+        }
+        if (number.length < 4) {
+            var padding = new Array(5 - number.length).join("0");
+            number = padding + number;
+        } else if (number.length === 5) {
+            // four digits with up to three leading zeroes is enough
+            number = number.replace(/^00/,"0");
+        }
+        element.val(year + '-'  + flavor + '-' + number)
+                .data('valid',1);
+        errorDiv.empty().hide();
+        return element;
+    };
+
+    /**
      * initializes form state and event handlers
-     * @return {void} [description]
+     * @return {void}
      */
     var init = function() {
 
@@ -384,7 +625,38 @@ var eventForm = (function(){
                 element.addClass("text-muted");
             }
         }).trigger("change");
+        /* ============  stuff related to defendant names =======================*/
 
+        /** deft name autocompletion */
+        $('#defendant-search').autocomplete(deftname_autocomplete_options);
+
+        /** =========  display defendant-name search results   ==============*/
+        $('#btn-defendant-search').on("click",deftNameSearchButtonClick);
+        /** =================================================================*/
+
+        /** defendant search result: pagination links ========================*/
+        slideout.on('click','.pagination a',function(event){
+            event.preventDefault();
+            $('#slideout-toggle .result').load(this.href,onDeftSlideoutShow);
+        });
+
+        /** listener for deft name search result items */
+        slideout.on('click','.defendant-names li',function(event){
+            var element = $(this);
+            $.get('/defendants/template',
+                {id:element.data('id'),name:element.text()},
+                function(html){
+                    $('#defendant-names').append(html);
+                    defendantSearchElement.val('');
+                    slideout.toggle("slide");
+                }
+            );
+        });
+
+        /* ==================== */
+        $('#slideout-toggle .close').on('click',
+            function(){slideout.toggle("slide");}
+         );
 
         if (! languageElement.val()) {
             interpreterSelectElement.attr("disabled","disabled");
@@ -417,14 +689,14 @@ var eventForm = (function(){
             if (submitter_id) {
                 submitterElement.data({
                     submitter_id : submitter_id,
-                    hat_id : hat_id,
+                    hat_id : hat_id
                 });
             }
         }
         judgeElement.on('change',judgeElementChange);
 
         // initialize this stuff
-        /** @todo get rid of unnecessary stuff? */
+        /** to do: get rid of unnecessary stuff? */
         if (judgeElement.val()) {
             var data = judgeElement.children(":selected").data();
             if (data.pseudojudge) {
@@ -438,47 +710,25 @@ var eventForm = (function(){
         form.on("submit".formSubmit);
     };
 
-    return { init : init }
+    return {
+        init : init,
+        defendants : {
+            elements : {
+                slideout : slideout
+            }
+            //,callbacks : {},
+        }
+    };
 })();
 
 
 /**
- * initializes defendantName-related stuff
+ * initializes defendant_name-related stuff
  *
- * reorganization is a WIP
- *
- * @return {object}\
+ * depends on a global eventForm
+ * @return {object}
  */
 var defendantNameForm = (function(){
-
-    /**
-     * button for defendant-name search
-     * @type {jQuery}
-     */
-    var defendantSearchElement = $('#defendant-search');
-
-    /**
-     * div for containing defendant-name search results
-     * @type {jQuery}
-     */
-    var slideout = $('#slideout-toggle');
-
-    /**
-     * gets and inserts markup for defendant name
-     * @param {object} data
-     */
-    var append_deft_name = function(data){
-        $.get('/defendants/template',
-        {   id: data.id,
-            name: data.surnames + ", "+ data.given_names
-        },
-        function(html){
-            $('#defendant-names').append(html);
-            defendantSearchElement.val('');
-            slideout.toggle("slide",
-                function(){$('#deftname-form-wrapper').remove();});
-        });
-    };
 
     var addDeftnameCallback = function(response){
 
@@ -563,71 +813,28 @@ var defendantNameForm = (function(){
                 });
             }
 
-        } else {  /** error. @todo do something! */   }
+        } else {  /** error. to do: do something! */   }
     };
 
-    var onDeftSlideoutShow = function(){
-        if ($('#slideout-toggle li').length) {
-            $('#slideout-toggle li a').first().focus();
-        }
-    };
+    var slideout = eventForm.defendants.elements.slideout;
+    /** listener for add-defendant-name button  */
+    slideout.on('click','#btn-add-defendant-name',function(){
 
-    var deftNameSearchButtonClick = function() {
-        // get rid of the new name insertion form, if it exists
-        $('#deftname-form-wrapper').remove();
-        if ($('#btn-add-defendant-name').attr("disabled")) {
-             $('#btn-add-defendant-name').removeAttr("disabled aria-disabled");
-        }
-
-        var name = defendantSearchElement.val().trim();
-        if (! name) {
-            defendantSearchElement.val('').attr({placeholder:"enter a lastname to search for"});
-            return;
-        }
-        $.get('/defendants/search',{term:name,page:1},
-            function(data){
-                slideout.css("width","");
-                $('#slideout-toggle .result').html(data);
-                if (! slideout.is(':visible')) {
-                    slideout.toggle("slide",onDeftSlideoutShow);
-                }
-                if (! $('#slideout-toggle .result').is(':visible')) {
-                    $('#slideout-toggle .result').show();
-                }
-            }
-        );
-    };
-
-    var deftNameAutoCompleteOptions = {
-        source: '/defendants/autocomplete',
-        //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
-        minLength: 2,
-        select: function( event, ui ) {
-            that = $(this);
-            $.get(
-                '/defendants/template',
-                {id:ui.item.value,name:ui.item.label},
-                function(html){
-                    $('#defendant-names').append(html);
-                    that.val("");
-                }
+        if (! $('#slideout-toggle form').length) {
+            // GET the form
+            $('#slideout-toggle .result').slideUp(function(){$(this).empty();}).after($("<div/>")
+                .attr({id:'deftname-form-wrapper'})
+                .load('/admin/defendants/add form',function(){
+                    $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>');
+                })
             );
-        },
-        focus: function(event,ui) {
-            event.preventDefault();
-            $(this).val(ui.item.label);
-        },
-        open : function() {
-            if (slideout.is(':visible')) {
-                slideout.hide();
-            }
+        } else {
+            // POST the form
+            var data = $('#defendant-form').serialize();
+            $.post('/admin/defendants/add', data, addDeftnameCallback,
+            'json');
         }
-    };
-
-    /** deft name autocompletion */
-    $('#defendant-search').autocomplete(deftNameAutoCompleteOptions);
-
-    //var defendantNameEditFormSubmit = function()};
+    });
 
     var getEventModificationTime = function(event_id){
         $.get('/admin/schedule/get-modification-time/'+event_id,
@@ -688,7 +895,7 @@ var defendantNameForm = (function(){
                 ).show();
                 console.debug(response);
             } else {
-                /** @todo check for duplicate defendant-name in the form
+                /** to do: check for duplicate defendant-name in the form
                 before doing this
                 */
                 console.log("looking good, bitch!");
@@ -722,54 +929,6 @@ var defendantNameForm = (function(){
     };
 
     var init = function() {
-
-        /* ============  stuff related to defendant names =======================*/
-
-
-        /* ==================== */
-        $('#slideout-toggle .close').on('click',
-            function(){slideout.toggle("slide");}
-         );
-        /** =========  display defendant-name search results   ==============*/
-        $('#btn-defendant-search').on("click",deftNameSearchButtonClick);
-        /** =================================================================*/
-
-        /** pagination links ================================================*/
-        slideout.on('click','.pagination a',function(event){
-            event.preventDefault();
-            $('#slideout-toggle .result').load(this.href,onDeftSlideoutShow);
-        });
-        /** listener for deft name search result items */
-        slideout.on('click','.defendant-names li',function(event){
-            var element = $(this);
-            $.get('/defendants/template',
-                {id:element.data('id'),name:element.text()},
-                function(html){
-                    $('#defendant-names').append(html);
-                    defendantSearchElement.val('');
-                    slideout.toggle("slide");
-                }
-            );
-        });
-
-        /** listener for add-defendant-name button  */
-        slideout.on('click','#btn-add-defendant-name',function(){
-
-            if (! $('#slideout-toggle form').length) {
-                // GET the form
-                $('#slideout-toggle .result').slideUp(function(){$(this).empty();}).after($("<div/>")
-                    .attr({id:'deftname-form-wrapper'})
-                    .load('/admin/defendants/add form',function(){
-                        $(this).prepend('<h4 class="text-center bg-primary text-white rounded p-1 mt-2">add new name</h4>');
-                    })
-                );
-            } else {
-                // POST the form
-                var data = $('#defendant-form').serialize();
-                $.post('/admin/defendants/add', data, addDeftnameCallback,
-                'json');
-            }
-        });
 
         /** ======  for editing defendant names ================= **/
 
@@ -831,44 +990,8 @@ var defendantNameForm = (function(){
             }
         );
 
-        /** this needs work. can't move it to a named function without causing
-        an error. probably misusing "then()"  */
         $('#deftname-editor-submit').on("click",defendantUpdateSubmit);
-        /*
-        function(){
-            // did they really change anything?
-            var modified = $('#surnames').val() != $('#surnames').data("was")
-                ||  $('#given_names').val() != $('#given_names').data("was");
-            if (! modified) {
-                $('#defendant-form-error').text("This name has not been modified. Please press cancel if you don't need to make any changes.").show();
-                return;
-            } else { $('#defendant-form-error').hide() }
 
-            var id = $('#deftname-editor input[name=id]').val();
-            var url = '/admin/defendants/edit/'+ id +'?context=events';
-            // we may need to supply an event id
-            var event_id = $('input[name="event[id]"]').val() || false;
-            if (event_id) {
-                url += '&event_id='+event_id;
-            }
-            var defendantForm = $("#defendant-form");
-            $.post(url,defendantForm.serialize(),defendantUpdateSubmitCallback,'json')
-            .then(function(){
-                if (! event_id) { return; }
-                $.get('/admin/schedule/get-modification-time/'+event_id)
-                .then(function(response){
-                    if (response.modified) {
-                        var val_before = $('#modified').val();
-                        if (val_before != response.modified) {
-                            console.log("updating last modification timestamp!");
-                            $('#modified').val(response.modified);
-                        } else {
-                            console.log("looks like no update to mod time?");
-                        }
-                    }
-                })
-            });
-        });*/
     }
     return { init : init };
 })();
@@ -878,123 +1001,3 @@ $(document).ready(function()
     eventForm.init();
     defendantNameForm.init();
 });
-
-formatTimeElement = function(timeElement) {
-
-    var timeValue = timeElement.val();
-    // reformat time;
-    if (timeValue && timeValue.match(/^\d\d:\d\d$/)) {
-        var formatted = moment(timeValue, 'HH:mm:ss').format('h:mm a');
-        //console.log('formatted time is: '+formatted);
-        timeElement.val(formatted);
-    }
-    return timeElement;
-};
-
-parseTime = function(event)
-{
-    var timeElement = $(event.target);
-    var div = timeElement.closest('div.form-group');
-    var errorDiv = timeElement.next('.validation-error');
-    if (! errorDiv.length) {
-       // console.log("what the fuck?");
-        timeElement.after($("<div>").addClass('alert alert-warning validation-error'));
-        errorDiv = timeElement.next('.validation-error');
-    }
-    var time = timeElement.val().trim();
-    if ("" === time) {
-        return;
-    }
-    var re = /^(0?[1-9]|1[0-2]):?([0-5]\d)? *((a|p)m?)?$/i;
-    var hour, minute, ap;
-    matches = time.match(re);
-    if (matches)
-    {
-        hour = matches[1];
-        if ("0" === hour[0]) { // no leading zero
-            hour = hour.substring(1);
-        }
-        minute = matches[2] ? matches[2] : "00";
-        ap = matches[3];
-        if (!ap) {
-            if (hour === "12") {
-                ap = "pm";
-            } else {
-                ap = hour < 9 ? "pm" : "am";
-            }
-        } else if (ap.length === 1) {
-            ap = ap + 'm';
-        }
-    } else if (matches = time.match(/^([01][0-9]|2[1-3])([0-5][0-9])$/)) {
-        hour = matches[1];
-        ap = 'am';
-        if (hour > 12) {
-            hour -= 12;
-            ap = 'pm';
-        }
-        minute = matches[2];
-    } else {
-        errorDiv.addClass("alert alert-warning validation-error").text("invalid time").show();
-        //div.addClass('has-error has-feedback');
-        return;
-    }
-    div.removeClass("alert alert-warning validation-error");
-    errorDiv.empty().hide();
-    timeElement.val((hour + ":" + minute + " " + ap).toLowerCase());
-};
-
-formatDocketElement = function(event)
-{
-    element = $(event.target);
-    var div = element.closest('div.form-group');
-    var errorDiv = element.next('.validation-error');
-    if (! errorDiv.length) {
-        // try something else
-        errorDiv = $('#docket').parent().next('.validation-error');
-        if (! errorDiv.length)  {
-            // last resort
-            element.after($("<div>").addClass('alert alert-warning validation-error'));
-            errorDiv = element.next('.validation-error');
-        }
-    }
-    element.val(element.val().trim());
-    if (! element[0].value ) {
-        errorDiv.empty().hide();
-        element.data('valid',1);
-        return element;
-    }
-    matches = element[0].value.match(DocketRegExp);
-    if (element[0].value && ! matches) {
-        errorDiv.text("invalid docket number").show().trigger("show");
-        element.data('valid',0);
-        return div.addClass('has-error has-feedback');
-
-    } else {
-        div.removeClass('has-error has-feedback');
-        var year = matches[1];
-        var flavor = matches[2];
-        var number = matches[3];
-    }
-    if (year.length === 2) {
-        year = year <= 50 ? "20"+year : "19"+year;
-    }
-    flavor = flavor.toUpperCase();
-    if (-1 !== flavor.indexOf('CR')) {
-        flavor = 'CR';
-    } else if (flavor[0] === 'M') {
-        flavor = 'MAG';
-    } else {
-        flavor = 'CIV';
-    }
-    if (number.length < 4) {
-        var padding = new Array(5 - number.length).join("0");
-        number = padding + number;
-    } else if (number.length === 5) {
-        // four digits with up to three leading zeroes is enough
-        number = number.replace(/^00/,"0");
-    }
-    element.val(year + '-'  + flavor + '-' + number)
-            .data('valid',1);
-    errorDiv.empty().hide();
-    return element;
-};

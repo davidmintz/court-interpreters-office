@@ -1,5 +1,5 @@
-/** public/js/common.js 
- * 
+/** public/js/common.js
+ *
  * code that is common to most if not all pages in the application
  */
 
@@ -15,23 +15,20 @@ $( document ).ajaxComplete(function(event, xhr) {
 
 /** experimental: prepend basePath if such exists */
 jQuery.ajaxSetup({
-    beforeSend : function(xhr,settings) {         
+    beforeSend : function(xhr,settings) {
         if (window.basePath && window.basePath.length) {
             settings.url = window.basePath + settings.url;
         }
     }
 });
-$(document).ready(function(){
-    /*
-    
-    */
-}); 
-
+/**
+ * regular expression for docket numbers
+ * @type {object} regular expression
+ */
 DocketRegExp = /^(?:s-?[1-9] *)?((?:19|20)?\d{2})[- .]*(c(?:r(?:im)?|i?v)|m(?:ag|j)?)[- .]*(\d{1,5})(?: *\([a-z]{2,3}\))?$/i;
-
 /**
  * displays validation errors on a form
- * 
+ *
  * @param object validationErrors
  * @returns void
  */
@@ -48,15 +45,15 @@ displayValidationErrors = function(validationErrors) {
             }
             var errorDiv = $('#error_'+field);
             if (! errorDiv.length) { errorDiv = null;}
-            if (! element.length) { 
+            if (! element.length) {
                 console.log("is there no element "+field+ " ?");
                 // look for an existing div by id
                 if ($('#error_'+field).length) {
                     $('#error_'+field).html(message).show();
-                } else {                    
+                } else {
                     console.warn("no element with id "+field + ", and nowhere to put message: "+message);
                 }
-            } else {               
+            } else {
                 errorDiv = errorDiv || element.next('.validation-error');
                 if (! errorDiv.length) {
                     errorDiv = $('<div/>')
@@ -68,5 +65,5 @@ displayValidationErrors = function(validationErrors) {
             }
             break;
         }
-    } 
+    }
 };
