@@ -4,14 +4,29 @@
 
 moment = window.moment;
 
-//Modernizr = window.Modernizr;
 
+/**
+ * initializes event handlers for the "event" form
+ * @todo deal with the fact that some of this doesn't apply to "request" form
+ * @return {object}
+ */
 var eventForm = (function(){
 
-    console.log("eventForm: say shit!");
-
+    /**
+    * the event update|create form
+    * @type {jQuery}
+    */
+    var form = $('#event-form');
+    /**
+     * callback for parent location "change" event
+     *
+     * @param  {object} event
+     * @param  {object} params
+     * @todo cache
+     * @return {void}
+     */
     var parentLocationChange = function(event,params){
-        console.log("woo hooo!");
+
         if (! parentLocationElement.val()) {
             locationElement.val("").attr({disabled : "disabled"});
         } else {
@@ -25,9 +40,10 @@ var eventForm = (function(){
                     .text(item.label)
                     .data({type: item.type});
                 });
-                // discard existing option elements
+                // discard existing option elements (for now)
                 locationElement.children().slice(1).remove();
                 locationElement.append(options)
+                // custom event doesn't do anything yet
                 .trigger("sdny.location-update-complete");
                 // if we were triggered with a location_id to set...
                 if (params && params.location_id) {
@@ -38,7 +54,14 @@ var eventForm = (function(){
         }
     };
 
-    // (re)populate the interpreter select element according to the language
+    /**
+     * callback for assign-interpreter button's click event
+     *
+     * fetches from server and inserts markup containing human-readable label,
+     * interpreter id, and a button for removing the interpreter
+     * @param  {object} event
+     * @return {void}
+     */
     var interpreterButtonClick = function(event){
         var id = interpreterSelectElement.val();
         if (! id ) { return; }
@@ -71,11 +94,19 @@ var eventForm = (function(){
             });
     };
 
+    /**
+     * callback for language-select's change event
+     *
+     * repopulates the interpreter select element according to the language
+     * @param  {object} event
+     * @param  {object} params
+     * @return {void}
+     */
     var languageElementChange = function(event,params) {
         var language_id = languageElement.val();
-        // remove the interpreters if the language changes, except
-        // when we're initially triggered on page load, which we will
-        // find out from the "params" parameter
+        // remove the interpreters/options if the language changes, except
+        // when we're initially triggered on page load, which we find out
+        // from the "params" parameter
         if (! params || params.remove_existing !== false) {
             $('#interpreters-assigned li').remove();
         }
@@ -93,6 +124,7 @@ var eventForm = (function(){
                 interpreterSelectElement.children().not(":first").remove();
                 interpreterSelectElement.append(options)
                 .trigger("sdny.language-update-complete");
+                    // ^ ...doesn't yet do anything
                 if (options.length) {
                     interpreterSelectElement.removeAttr("disabled");
                 }
@@ -100,13 +132,23 @@ var eventForm = (function(){
         );
     };
 
+    /**
+     * judge select element
+     * @type {jQuery}
+     */
     var judgeElement = $('#judge');
 
+    /**
+     * callback for judge "change" event
+     * @param  {object} event
+     * @return {void}
+     */
     var judgeElementChange = function(event) {
         if (!  judgeElement.val()) {
             //return;
+            // note to self:  decide: why (not) return if no judge is selected?
         }
-        // keep track of whether judge is a person or a generic role
+        // keep track of whether judge is a person or a generic/pseudojudge
          anon_judge.val(
             judgeElement.children(':selected').data('pseudojudge') ? 1 : 0
         );
@@ -132,7 +174,7 @@ var eventForm = (function(){
          }
           /*
           * We are dealing with an in-court event
-          * If the currently selected judge has a default location
+          * If the currently selected judge has a default location...
           */
          var judge_parent_location = judge.data("default_parent_location");
          var judge_default_location = judge.data("default_location");
@@ -156,31 +198,86 @@ var eventForm = (function(){
          }
     };
 
+    /**
+     * parent location select element
+     *
+     * the general location/building where specific location is
+     * found
+     * @type {jQuery}
+     */
     var parentLocationElement = $('#parent_location');
-
+    /**
+     * location select element
+     * @type {jQuery}
+     */
     var locationElement = $('#location');
 
+    /**
+     * event-type select element
+     * @type {jQuery}
+     */
     var eventTypeElement = $('#event-type');
 
+    /**
+     * language select element
+     * @type {jQuery}
+     */
     var languageElement = $('#language');
 
+    /**
+     * hidden flag for whether a generic, "anonymous" judge is selected
+     *
+     * sometimes also known as pseudojudge. yeah I know.
+     * @type {jQuery}
+     */
     var anon_judge = $('#is_anonymous_judge');
 
+    /**
+     * interpreter select element
+     * @type {jQuery}
+     */
     var interpreterSelectElement = $("#interpreter-select");
 
+    /**
+     * button for adding the selected interpreter to the event
+     * @type {jQuery}
+     */
     var interpreterButton = $('#btn-add-interpreter');
 
-    var form = $('#event-form');
-
+    /**
+     * the "hat" select element
+     * the title|description|category (a/k/a hat) of the person who
+     * submitted the request to schedule an interpreter
+     * @type {jQuery}
+     */
     var hatElement = $('#hat');
 
+    /**
+     * initial value of hat element
+     * @type {integer}
+     */
     var hat_id = hatElement.val();
 
+     /**
+     * select element for the person who submitted the request
+     * @type {jQuery}
+     */
     var submitterElement = $('#submitter');
 
+    /**
+     * initial value of submitter element
+     * @type {integer}
+     */
     var submitter_id = submitterElement.val();
 
-    // get data to update submitter dropdown based on selected hat
+    /**
+     * callback for hat-select's change event
+     *
+     * gets data to update submitter dropdown based on selected hat
+     *
+     * @param  {object} event
+     * @return {void}
+     */
     var hatElementChange = function(event) {
 
         var init_values = submitterElement.data();
@@ -222,6 +319,12 @@ var eventForm = (function(){
         );
     };
 
+    /**
+     * callback for form's submit event
+     *
+     * @param  {object} event
+     * @return {void}
+     */
     var formSubmit = function(event){
 
         if (! locationElement.val()) {
@@ -254,22 +357,23 @@ var eventForm = (function(){
         }
     };
 
+    /**
+     * initializes form state and event handlers
+     * @return {void} [description]
+     */
     var init = function() {
 
         $('input.docket').on("change",formatDocketElement);
+
         $('input.date').datepicker({
             changeMonth: true,
             changeYear: true,
             selectOtherMonths : true,
             showOtherMonths : true
         });
-        $('input.date').each(function(i,element){
-            if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
-                element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
-            }
-        });
-        $("input.time").each(function(){formatTimeElement($(this));})
-            .on("change",parseTime);
+
+        $("input.time").on("change",parseTime);
+
         $('input.docket').on("change",formatDocketElement);
 
         $('select').on("change",function(){
@@ -339,7 +443,7 @@ var eventForm = (function(){
 
 
 /**
- * initializes defendant-name stuff
+ * initializes defendantName-related stuff
  *
  * reorganization is a WIP
  *
@@ -347,7 +451,16 @@ var eventForm = (function(){
  */
 var defendantNameForm = (function(){
 
+    /**
+     * button for defendant-name search
+     * @type {jQuery}
+     */
     var defendantSearchElement = $('#defendant-search');
+
+    /**
+     * div for containing defendant-name search results
+     * @type {jQuery}
+     */
     var slideout = $('#slideout-toggle');
 
     /**
@@ -459,32 +572,6 @@ var defendantNameForm = (function(){
         }
     };
 
-    var autoCompleteOptions = {
-        source: '/defendants/autocomplete',
-        //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
-        minLength: 2,
-        select: function( event, ui ) {
-            that = $(this);
-            $.get(
-                '/defendants/template',
-                {id:ui.item.value,name:ui.item.label},
-                function(html){
-                    $('#defendant-names').append(html);
-                    that.val("");
-                }
-            );
-        },
-        focus: function(event,ui) {
-            event.preventDefault();
-            $(this).val(ui.item.label);
-        },
-        open : function() {
-            if (slideout.is(':visible')) {
-                slideout.hide();
-            }
-        }
-    };
-
     var deftNameSearchButtonClick = function() {
         // get rid of the new name insertion form, if it exists
         $('#deftname-form-wrapper').remove();
@@ -510,6 +597,35 @@ var defendantNameForm = (function(){
             }
         );
     };
+
+    var deftNameAutoCompleteOptions = {
+        source: '/defendants/autocomplete',
+        //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
+        minLength: 2,
+        select: function( event, ui ) {
+            that = $(this);
+            $.get(
+                '/defendants/template',
+                {id:ui.item.value,name:ui.item.label},
+                function(html){
+                    $('#defendant-names').append(html);
+                    that.val("");
+                }
+            );
+        },
+        focus: function(event,ui) {
+            event.preventDefault();
+            $(this).val(ui.item.label);
+        },
+        open : function() {
+            if (slideout.is(':visible')) {
+                slideout.hide();
+            }
+        }
+    };
+
+    /** deft name autocompletion */
+    $('#defendant-search').autocomplete(deftNameAutoCompleteOptions);
 
     //var defendantNameEditFormSubmit = function()};
 
@@ -609,8 +725,6 @@ var defendantNameForm = (function(){
 
         /* ============  stuff related to defendant names =======================*/
 
-        /** deft name autocompletion */
-        defendantSearchElement.autocomplete(autoCompleteOptions);
 
         /* ==================== */
         $('#slideout-toggle .close').on('click',
