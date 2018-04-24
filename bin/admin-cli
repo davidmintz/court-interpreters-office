@@ -2,11 +2,11 @@
 <?php
 /**
  * rought draft of a command-line tool for initial database setup.
- * 
+ *
  * assumes database exists and Doctrine has been configured
- * 
+ *
  * @todo move CreateAdminUserCommand to its own file
- * 
+ *
  */
 namespace InterpretersOffice;
 require __DIR__.'/../vendor/autoload.php';
@@ -43,7 +43,7 @@ class LoadInitialDataCommand extends Command
     }
     /**
      * load the required initial data
-     * 
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      * @throws \Exception
@@ -57,24 +57,24 @@ class LoadInitialDataCommand extends Command
             //$command->execute($input,$output); // nice try.
             $entityManager = require __DIR__.'/../config/doctrine-bootstrap.php';
             $connection = $entityManager->getConnection();
-            $sql_file = trim(file_get_contents(__DIR__ . '/sql/initial_data.sql'));
+            $sql_file = trim(file_get_contents(__DIR__ . '/sql/initial-data.sql'));
             if (false === $sql_file) {
                 throw new \Exception("sorry, could not read initial_data.sql file");
             }
             $queries = explode(';',rtrim($sql_file,';'));
-            foreach ($queries as $q) {               
+            foreach ($queries as $q) {
                $connection->exec($q);
-            }            
+            }
             $io->success("Required initial data loaded successfully.");
         } catch (\Exception $e) {
             $io->error("Sorry! caught exception: ".$e->getMessage());
-        }        
+        }
     }
 }
 
 class ClearCacheCommand extends Command
 {
- 
+
     protected function configure()
     {
         $this->setName("admin:clear-cache")
@@ -111,12 +111,12 @@ class CreateAdminUserCommand extends Command
                 ]
          ));
     }
-    
+
     /**
      * ugly temporary helper for wrapping shit in <question> tags
-     * 
+     *
      * written before we read https://symfony.com/doc/current/console/style.html
-     * 
+     *
      * @param type $string
      * @return string
      */
@@ -124,8 +124,8 @@ class CreateAdminUserCommand extends Command
     {
         return '<question>'.$string.'</question>';
     }
-    
-    
+
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input,$output);
@@ -139,21 +139,21 @@ class CreateAdminUserCommand extends Command
                 sprintf('Exception %s encountered with error message: ',get_class($e)),
                 $e->getMessage(),
                 'Please check your configuration and try again.'
-                
+
             ]);
             return;
         }
-        try 
-        {            
+        try
+        {
             $role = $entityManager->createQuery('SELECT r FROM InterpretersOffice\Entity\Role r WHERE r.name = :name')
                 ->setParameters([':name'=>'administrator'])
                 ->getSingleResult();
-            
+
             $hats = $entityManager->createQuery('SELECT h FROM  InterpretersOffice\Entity\Hat h INDEX BY h.id WHERE h.id < 3')->getResult();
             if (! $hats) {
                 throw new \Doctrine\ORM\NoResultException();
             }
-            
+
         } catch (\Doctrine\ORM\NoResultException $e) {
            return $io->error("Initial database setup does not seem to have been completed. Please run [something] and then try again.");
         } catch (\Exception $e) {
@@ -161,14 +161,14 @@ class CreateAdminUserCommand extends Command
         }
         if ($input->getOption('no-prompt')) {
             // non-interactive, just defaults
-            $username = 'david'; 
+            $username = 'david';
             $pwd1 = 'boink';
-            $hat = $hats[1]; 
-            $firstname = 'David'; 
+            $hat = $hats[1];
+            $firstname = 'David';
             $lastname='Mintz';
-            $email = 'david@davidmintz.org'; 
+            $email = 'david@davidmintz.org';
             $entityClass= Entity\Interpreter::class;
-            
+
         } else { // ask the questions
 
             /**
@@ -208,20 +208,20 @@ class CreateAdminUserCommand extends Command
             $pwd2 = $helper->ask($input, $output, $question_confirm_password);
 
             while ($pwd1 != $pwd2) {
-                $output->writeln("<error>passwords do not match. once again...</error>");          
+                $output->writeln("<error>passwords do not match. once again...</error>");
                 $pwd1 = $helper->ask($input, $output, $question_password);
                 $pwd2 = $helper->ask($input, $output, $question_confirm_password);
             }
 
-            $hat_choices = [            
+            $hat_choices = [
                    1 => 'staff Court Interpreter',
-                   2 => 'other member of the Court Interpreters Office staff'            
+                   2 => 'other member of the Court Interpreters Office staff'
             ];
 
             $hat_question = new ChoiceQuestion(
             $this->q('Choose the most appropriate "Hat" for this admin user [default: staff Court Interpreter]'),
                     $hat_choices,
-                    1       
+                    1
             );
             $hat_string = $helper->ask($input, $output,$hat_question);
             $hat_id =  array_flip($hat_choices)[$hat_string];
@@ -240,40 +240,40 @@ class CreateAdminUserCommand extends Command
             $email_validator = new EmailValidator();
 
             while (! $email_validator->isValid($email)) {
-                $output->writeln("<error>$email is not a valid email address. Please try again...</error>");  
+                $output->writeln("<error>$email is not a valid email address. Please try again...</error>");
                 $helper->ask($input,$output,new Question($this->q("user's email address? ")));
             }
             $entityClass= $hat_id == 1 ? Entity\Interpreter::class : Entity\Person::class;
 
         }
-        
+
         // check if the person exists
         $person = $entityManager->getRepository($entityClass)
                         ->findOneBy(['email'=> $email]);
         if (! $person) {
-            $person = new $entityClass;            
-        } 
-        
+            $person = new $entityClass;
+        }
+
         $person->setFirstname($firstname)
                 ->setLastname($lastname)
                 ->setEmail($email);
         $person->setHat($hat);
-        
+
         $user = new Entity\User();
-        
-        $user 
+
+        $user
             ->setUsername($username)
             ->setPassword($pwd1)
             ->setActive(true)
             ->setRole($role)
             ->setPerson($person);
-     
+
         $entityManager->persist($person);
-        $entityManager->persist($user);        
+        $entityManager->persist($user);
         $entityManager->flush();
-     
+
         $io->success("Initial admin user has been created.");
-         
+
     }
 }
 
@@ -285,4 +285,3 @@ $application->add($cmd = new CreateSchemaCommand);
 $cmd->setDescription("runs the Doctrine orm:schema-create command directly against your database");
 $application->add(new ClearCacheCommand);
 $application->run();
- 
