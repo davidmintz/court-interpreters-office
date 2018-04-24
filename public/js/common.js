@@ -3,12 +3,15 @@
  * code that is common to most if not all pages in the application
  */
 
+
+var $, jQuery;
+var basePath;
 /**
  * redirect to login page if, e.g., session has timed out
  */
 $( document ).ajaxComplete(function(event, xhr) {
-    if (xhr.getResponseHeader('X-Authentication-required')) {
-        document.location = (basePath || "/") + 'login';
+    if (xhr.getResponseHeader("X-Authentication-required")) {
+        document.location = (basePath || "/") + "login";
         //var doc = $(xhr.responseText);
     }
 });
@@ -21,45 +24,41 @@ jQuery.ajaxSetup({
         }
     }
 });
-/**
- * regular expression for docket numbers
- * @type {object} regular expression
- */
-DocketRegExp = /^(?:s-?[1-9] *)?((?:19|20)?\d{2})[- .]*(c(?:r(?:im)?|i?v)|m(?:ag|j)?)[- .]*(\d{1,5})(?: *\([a-z]{2,3}\))?$/i;
+
 /**
  * displays validation errors on a form
  *
  * @param object validationErrors
  * @returns void
  */
-displayValidationErrors = function(validationErrors) {
-    $('.validation-error').hide();
+var displayValidationErrors = function(validationErrors) {
+    $(".validation-error").hide();
     for (var field in validationErrors) {
         for (var key in validationErrors[field]) {
             var message = validationErrors[field][key];
-            var element = $('#' +field);
+            var element = $("#" +field);
             if (! element.length) {
                 // nothing to lose by trying harder; undo camelcase
-                var field = '#' + field.replace(/([A-Z])/g,"_$1").toLowerCase();
-                element = $(field);
+                var id = "#" + field.replace(/([A-Z])/g,"_$1").toLowerCase();
+                element = $(id);
             }
-            var errorDiv = $('#error_'+field);
+            var errorDiv = $("#error_"+field);
             if (! errorDiv.length) { errorDiv = null;}
             if (! element.length) {
                 console.log("is there no element "+field+ " ?");
                 // look for an existing div by id
-                if ($('#error_'+field).length) {
-                    $('#error_'+field).html(message).show();
+                if ($("#error_"+field).length) {
+                    $("#error_"+field).html(message).show();
                 } else {
                     console.warn("no element with id "+field + ", and nowhere to put message: "+message);
                 }
             } else {
-                errorDiv = errorDiv || element.next('.validation-error');
+                errorDiv = errorDiv || element.next(".validation-error");
                 if (! errorDiv.length) {
-                    errorDiv = $('<div/>')
-                        .addClass('alert alert-warning validation-error')
-                        .attr({id:'error_'+field})
-                    .insertAfter(element);
+                    errorDiv = $("<div/>")
+                        .addClass("alert alert-warning validation-error")
+                        .attr({id:"error_"+field})
+                        .insertAfter(element);
                 }
                 errorDiv.html(message).show();
             }

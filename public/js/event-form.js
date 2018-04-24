@@ -562,6 +562,11 @@ var eventForm = (function () {
     };
 
     /**
+     * regular expression for docket numbers
+     * @type {object} regular expression
+     */
+    var DocketRegExp = /^(?:s-?[1-9] *)?((?:19|20)?\d{2})[- .]*(c(?:r(?:im)?|i?v)|m(?:ag|j)?)[- .]*(\d{1,5})(?: *\([a-z]{2,3}\))?$/i;
+    /**
      * tries to format a string as a US District Court docket number
      * @param  {object} event
      * @return {jQuery} event's target element
