@@ -213,6 +213,7 @@ class UsersController extends AbstractActionController implements Authentication
                 //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
                 return $viewModel;
             }
+            $user->setCreated(new \DateTime());
             $this->entityManager->persist($user);
             if (! $person_id) {
                 $this->entityManager->persist($user->getPerson());

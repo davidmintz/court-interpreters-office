@@ -20,7 +20,7 @@ class UserLoader implements FixtureInterface
 
         $user->setPerson($person)
             ->setPassword('boink')
-            ->setRole($role)
+            ->setRole($role)->setCreated(new \DateTime("-2 days"))
             ->setActive(true)->setLastLogin(new \DateTime("-24 hours"))
             ->setUsername('david');
         $objectManager->persist($user);
@@ -41,6 +41,7 @@ class UserLoader implements FixtureInterface
         )
             ->setActive(true)->setLastLogin(new \DateTime("-24 hours"))
             ->setPerson($person)
+            ->setCreated(new \DateTime())
             ->setPassword('gack!')
              ->addJudge($objectManager->getRepository('InterpretersOffice\Entity\Judge')
                 ->findOneBy(['lastname' => 'Daniels']));
@@ -63,7 +64,7 @@ class UserLoader implements FixtureInterface
         )
             ->setActive(true)->setLastLogin(new \DateTime("-24 hours"))
             ->setPerson($clerk_to_dinklesnort)
-            ->setPassword('gack!')
+            ->setPassword('gack!')->setCreated(new \DateTime())
              ->addJudge($objectManager->getRepository('InterpretersOffice\Entity\Judge')
              ->findOneBy(['lastname' => 'Dinklesnort']));
         $objectManager->persist($clerk_to_dinklesnort);

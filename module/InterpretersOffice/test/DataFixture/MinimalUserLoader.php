@@ -42,7 +42,7 @@ class MinimalUserLoader implements FixtureInterface
             $objectManager->getRepository('InterpretersOffice\Entity\Role')
                          ->findOneBy(['name' => 'manager'])
         )->setUsername('susie')
-           ->setPassword('boink')
+           ->setPassword('boink')->setCreated(new \DateTime())
            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"));
         $objectManager->persist($user);
 
@@ -60,7 +60,7 @@ class MinimalUserLoader implements FixtureInterface
             $objectManager->getRepository('InterpretersOffice\Entity\Role')
                          ->findOneBy(['name' => 'staff'])
         )->setUsername('staffie')
-           ->setPassword('boink')
+           ->setPassword('boink')->setCreated(new \DateTime())
            ->setActive(true)->setLastLogin(new \DateTime("-1 weeks"));
 
         $objectManager->persist($staff_user);
@@ -83,7 +83,7 @@ class MinimalUserLoader implements FixtureInterface
             $objectManager->getRepository('InterpretersOffice\Entity\Role')
                          ->findOneBy(['name' => 'administrator'])
         )->setUsername('admin')
-           ->setPassword('boink')
+           ->setPassword('boink')->setCreated(new \DateTime("-2 days"))
            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"));
         $objectManager->persist($user);
         $objectManager->flush();

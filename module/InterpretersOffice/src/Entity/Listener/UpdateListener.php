@@ -11,6 +11,7 @@ use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Entity\DefendantEvent;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Module;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Log;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
@@ -61,6 +62,13 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     private $caches_to_clear = [];
 
     /**
+     * the entity on which we are operating
+     *
+     * @var InterpretersOffice\Entity
+     */
+    private $entity;
+
+    /**
      * sets authentication service
      *
      * @param AuthenticationServiceInterface $auth
@@ -105,6 +113,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function postUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
+        $this->entity = $entity;
         $this->caches_to_clear[] =
             ['class' => get_class($entity),'trigger' => __FUNCTION__];
     }
@@ -137,8 +146,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      * DefendantEvent collections) we might otherwise pointlessly clear the
      * cache several times.
      *
-     * @todo examine that array and take out duplicates!
-     *
      * @param  PostFlushEventArgs $args
      * @return void
      */
@@ -160,6 +167,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         /** @var $cache Doctrine\Common\Cache\CacheProvider */
         $cache = $args->getEntityManager()->getConfiguration()
             ->getResultCacheImpl();
+
+
         foreach ($this->caches_to_clear as $event) {
             switch ($event['class']) {
                 case Entity\Event::class:
@@ -179,28 +188,29 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
 
                 case Entity\User::class:
                     // delete the cache entry
-                    /** @todo  this is weird and needs re-thinking **/
-                    $cache->setNamespace('users');
-                    $id = $entity->getId();
-                    if ($cache->contains($id)) {
-                        $cache->delete($id);
-                        $debug = sprintf("%s in UpdateListener deleted user id $id from cache", __FUNCTION__);
-                    } else {
-                        $debug = sprintf('%s in UpdateListener: looks like users-cache has no item %d', __FUNCTION__, $id);
-                    }
-                    $this->logger->debug($debug);
+                    /** @todo  this is fucked up and needs re-thinking **/
                     if ('postUpdate' == $event['trigger']) {
-                        // because.... why? probably because persist() doesn't
-                        // require a flush, and remove() is a rarity
-                        $cache->flushAll();
+                        $entity = $this->entity;
+                        $cache->setNamespace('users');
+                        $id = $entity->getId();
+                        if ($cache->contains($id)) {
+                            $cache->delete($id);
+                            $debug = sprintf("%s in UpdateListener deleted user id $id from cache", __FUNCTION__);
+                        } else {
+                            $debug = sprintf('%s in UpdateListener: looks like users-cache has no item %d', __FUNCTION__, $id);
+                        }
+                        $this->logger->debug($debug);
+                    } else {
+                        $success = $cache->flushAll();
+                        $debug = sprintf(
+                            "ran flushAll() on %s in %s with result: %s",
+                            $event['class'],
+                            __METHOD__,
+                            $success ? "success" : "failed"
+                        );
+                        $this->logger->debug($debug);
                     }
-                    $debug .= sprintf(
-                        "ran flushAll() on %s in %s with result: %s",
-                        $event['class'],
-                        __METHOD__,
-                        $success ? "success" : "failed"
-                    );
-                    $this->logger->debug($debug);
+
                     break 2;
 
                 case Entity\InterpreterLanguage::class:

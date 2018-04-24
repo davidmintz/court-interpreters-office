@@ -115,6 +115,15 @@ class User implements ResourceInterface
     protected $judges;
 
     /**
+     * account creation date
+     *
+     * @ORM\Column(type="datetime")//,options={"nullable":false}
+     *
+     * @var \DateTime
+     */
+    protected $created;
+
+    /**
      * constructor.
      */
     public function __construct()
@@ -355,4 +364,27 @@ class User implements ResourceInterface
             );
         }
     }
+
+    /**
+     * gets creation date
+     *
+     * @return \Datetime
+     */
+    public function getCreated()
+    {
+         return $this->created;
+    }
+
+    /**
+     * sets creation date
+     *
+     * @return User
+     */
+    public function setCreated(\DateTime $created)
+    {
+         $this->created = $created;
+
+         return $this;
+    }
+
 }
