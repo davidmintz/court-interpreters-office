@@ -50,7 +50,6 @@ class Event
      */
     protected $end_time;
 
-
     /**
      * date on which the service was requested.
      *
@@ -272,6 +271,19 @@ class Event
         $this->interpreterEvents = new ArrayCollection();
     }
 
+    /**
+     * returns a short description
+     *
+     * @return string
+     */
+    public function describe()
+    {
+        $type = (string)$this->getEventType();
+        $date = $this->getDate()->format('d-M-Y');
+        $language = (string)$this->getLanguage();
+        return sprintf('%s %s on %s',$language,$type,$date);
+
+    }
     /**
      * Get id.
      *
