@@ -35,22 +35,28 @@ $entitiesPath = [
 ];
 $config = Setup::createAnnotationMetadataConfiguration($entitiesPath, true, null, null, false);
 $em = EntityManager::create($dbParams, $config);
-return $em;
-
-/*
-We thought at some point that the following was necessary in order to use
-"doctrine run-dql ...", but apparently not.
-
-We HAVE discovered that if you do not set --depth 2 or at most 3, it will seem
-to hang, and if you wait long enough, maybe it would run out of memory.
-My guess: Doctrine run-dql by default tries to fetch ~everything~ by way of
-related entities, and relations of relations, etc., unless you specify otherwise.
 
 $listener = new Listener\InterpreterEntityListener();
 $eventManager = new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager());
 $listener->setEventManager($eventManager);
+
+$logger = new Zend\Log\Logger;
+$writer = new Zend\Log\Writer\Stream('php://output');
+$logger->addWriter($writer);
+$listener->setLogger($logger);
+
 $resolver = $em->getConfiguration()->getEntityListenerResolver();
 $resolver->register($listener);
+
+return $em;
+
+/*
+When running orm:run-dql:
+We have discovered that if you do not set --depth 2 or at most 3, it will seem
+to hang, and if you were to wait long enough, maybe it would run out of memory.
+My guess: Doctrine run-dql by default tries to fetch ~everything~ by way of
+related entities, and relations of relations, etc., unless you specify otherwise.
+
 
 // and another one?
 //$listener = new Listener\EventEntityListener();
@@ -62,8 +68,4 @@ $resolver->register($listener);
 // call methods on its logger instance which is set by the service manager that
 // does not exist in this CLI environment
 
-$logger = new Zend\Log\Logger;
-$writer = new Zend\Log\Writer\Stream('php://output');
-$logger->addWriter($writer);
-$listener->setLogger($logger);
 */
