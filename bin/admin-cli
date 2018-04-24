@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+//namespace InterpretersOffice;
 /**
  * rought draft of a command-line tool for initial database setup.
  *
@@ -8,7 +9,6 @@
  * @todo move CreateAdminUserCommand to its own file
  *
  */
-namespace InterpretersOffice;
 require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
@@ -42,7 +42,7 @@ class LoadInitialDataCommand extends Command
         ->setHelp('inserts some essential data that is required in order to run the application');
     }
     /**
-     * load the required initial data
+     * loads the required initial data
      *
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -59,7 +59,7 @@ class LoadInitialDataCommand extends Command
             $connection = $entityManager->getConnection();
             $sql_file = trim(file_get_contents(__DIR__ . '/sql/initial-data.sql'));
             if (false === $sql_file) {
-                throw new \Exception("sorry, could not read initial_data.sql file");
+                throw new \Exception("sorry, could not read initial-data.sql file");
             }
             $queries = explode(';',rtrim($sql_file,';'));
             foreach ($queries as $q) {
@@ -71,6 +71,7 @@ class LoadInitialDataCommand extends Command
         }
     }
 }
+
 
 class ClearCacheCommand extends Command
 {
@@ -266,7 +267,8 @@ class CreateAdminUserCommand extends Command
             ->setPassword($pwd1)
             ->setActive(true)
             ->setRole($role)
-            ->setPerson($person);
+            ->setPerson($person)
+            ->setCreated(new \DateTime());
 
         $entityManager->persist($person);
         $entityManager->persist($user);
