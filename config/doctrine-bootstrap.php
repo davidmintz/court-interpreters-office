@@ -66,3 +66,4 @@ $logger = new Zend\Log\Logger;
 $writer = new Zend\Log\Writer\Stream('php://output');
 $logger->addWriter($writer);
 $listener->setLogger($logger);
+*/
