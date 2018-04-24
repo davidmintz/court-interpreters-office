@@ -447,7 +447,7 @@ var eventForm = (function () {
         //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
         minLength: 2,
         select: function( event, ui ) {
-            that = $(this);
+            var that = $(this);
             $.get(
                 '/defendants/template',
                 {id:ui.item.value,name:ui.item.label},
@@ -769,7 +769,7 @@ var defendantNameForm = (function(){
         if (response.id) { // successful insert
             append_deft_name({
                 id : response.id,
-                surnames : $('#surnames').val().trim(),defendant_name-related stuff
+                surnames : $('#surnames').val().trim(),
                 given_names : $("#given_names").val().trim()
             });
         }
@@ -880,16 +880,64 @@ var defendantNameForm = (function(){
             }
         });
     };
+    var defendantFormSubmitCallback = function(response) {
+        if (response.validation_errors !== undefined) {
+            return displayValidationErrors(response.validation_errors);
+        }
+        if (response.inexact_duplicate_found) {
+            var existing = response.existing_entity;
+            defendantForm.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
+            $('#deft-existing-duplicate-name').text(existing);
+            var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
+            return $(shit).show();
+        }
+        if (response.status !== 'success') {
+            $('#defendant-form-error').html(
+                "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
+            ).show();
+            console.debug(response);
+        } else {
+            /** to do: check for duplicate defendant-name in the form
+            before doing this
+            */
+            console.log("looking good, bitch!");
+            var id = $('#deftname-editor input[name=id]').val();
+            var selector = 'input[name="event[defendantNames][' +
+                id +']"]';
+            var input = $(selector);
+            var defendant_name = $('#surnames').val().trim()
+                +", "+ $("#given_names").val().trim();
+                // update the existing thingy
+                input.val(defendant_name)
+                    .next().text(defendant_name);
+            var new_deft_id = response.insert_id || response.deftname_replaced_by;
+            if (new_deft_id) {
+                var name = input.attr("name").replace(id, new_deft_id);
+                input.attr({name : name });
+                console.log("id was " + id);
+                console.log("input name attrib is now: "+input.attr("name"));
+            }
+            $('#defendant-form-success').text("This name has been updated.").show();
+            $("#event-form").data({deftnames_modified : 1});
+            window.setTimeout(function(){
+                $('#defendant-form-success').hide();
+                $('#deftname-editor').modal("hide");
+
+            },2000);
+        }
+    };
     var defendantUpdateSubmit = function()
     {
         // did they really change anything?
         var modified = $('#surnames').val() != $('#surnames').data("was")
             ||  $('#given_names').val() != $('#given_names').data("was");
         if (! modified) {
-            $('#defendant-form-error').text("This name has not been modified. Please press cancel if you don't need to make any changes.").show();
+            $('#defendant-form-error').text(
+                "This name has not been modified. Please press cancel "
+                +"if you don't need to make any changes.").show();
             return;
-        } else { $('#defendant-form-error').hide() }
-
+        } else { $('#defendant-form-error').hide(); }
+        // we repeat ourself... |-:
         var id = $('#deftname-editor input[name=id]').val();
         var url = '/admin/defendants/edit/'+ id +'?context=events';
         // we may need to supply an event id
@@ -908,52 +956,9 @@ var defendantNameForm = (function(){
         });
         */
         $.post(url,defendantForm.serialize(),
-        function(response) {
-            if (response.validation_errors !== undefined) {
-                return displayValidationErrors(response.validation_errors);
-            }
-            if (response.inexact_duplicate_found) {
-                var existing = response.existing_entity;
-                defendantForm.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
-                $('#deft-existing-duplicate-name').text(existing);
-                var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
-                return $(shit).show();
-            }
-            if (response.status != 'success') {
-                $('#defendant-form-error').html(
-                    "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
-                ).show();
-                console.debug(response);
-            } else {
-                /** to do: check for duplicate defendant-name in the form
-                before doing this
-                */
-                console.log("looking good, bitch!");
-                var selector = 'input[name="event[defendantNames][' +
-                    id +']"]';
-                var input = $(selector);
-                var defendant_name = $('#surnames').val().trim()
-                    +", "+ $("#given_names").val().trim();
-                    // update the existing thingy
-                    input.val(defendant_name)
-                        .next().text(defendant_name);
-                var new_deft_id = response.insert_id || response.deftname_replaced_by;
-                if (new_deft_id) {
-                    var name = input.attr("name").replace(id, new_deft_id);
-                    input.attr({name : name });
-                    console.log("id was " + id);
-                    console.log("input name attrib is now: "+input.attr("name"));
-                }
-                $('#defendant-form-success').text("This name has been updated.").show();
-                $("#event-form").data({deftnames_modified : 1});
-                window.setTimeout(function(){
-                    $('#defendant-form-success').hide();
-                    $('#deftname-editor').modal("hide");
-
-                },2000);
-            }
-        },'json')
-        .then(function(response){
+            defendantFormSubmitCallback,
+            'json')
+        .success(function(response){
             getEventModificationTime(event_id);
         });
     };
