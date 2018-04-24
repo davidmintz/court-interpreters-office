@@ -9,9 +9,16 @@ $(function(){
         if (! confirm("Are you sure you want to delete this event from the schedule?")){
             return;
         }
-        console.log("delete shit");
+        console.log("deleting shit...");
         var url = '/admin/schedule/delete/'+event_id;
-        var redirect_url = '/admin/schedule';
-        $.post(url).then(function(response){console.log(response)});
+        var redirect_url = document.referrer||'/admin/schedule';
+        $.post(url,"json")
+            .success(function(response){
+                if (response.status === "success" ) {
+                    document.location = redirect_url;
+                } else {
+                    // deal with it
+                }
+            });
     });
 });

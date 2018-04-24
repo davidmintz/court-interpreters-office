@@ -265,9 +265,13 @@ class EventsController extends AbstractActionController
             return new JsonModel($result);
         }
         try {
-            return new JsonModel(['message'=>"this is only a test"]);
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
+            $this->flashMessenger()->addSuccessMessage(
+                sprintf('this event (%s) has been deleted from the schedule',
+                    $entity->describe()
+                )
+            );
             return new JsonModel(['deleted'=>true,'status'=>'success',
                 'message'=> "this event has been deleted"]
             );
