@@ -5,7 +5,8 @@
 /**
  * initializes event handlers for the "event" form
  *
- * need need to: deal with the fact that some of this doesn't apply to "request" form
+ * still need to: deal with the fact that some of this doesn't apply
+ * to "request" form
  * @return {object}
  */
 
@@ -61,12 +62,16 @@ var eventForm = (function () {
 
         /**
         * interpreter select element
+        *
+        * note: this is for admin mode only
         * @type {jQuery}
         */
         interpreterSelectElement = $("#interpreter-select"),
 
         /**
         * button for adding the selected interpreter to the event
+        *
+        *  note: this is for admin mode only
         * @type {jQuery}
         */
         interpreterButton = $('#btn-add-interpreter'),
@@ -74,25 +79,33 @@ var eventForm = (function () {
         /**
         * the "hat" select element
         * the title|description|category (a/k/a hat) of the person who
-        * submitted the request to schedule an interpreter
+        * submitted the request to schedule an interpreter. for admin mode only.
         * @type {jQuery}
         */
         hatElement = $('#hat'),
 
         /**
-        * initial value of hat element
+        * initial value of hat element.
+        *
+        * for admin mode only.
         * @type {integer}
         */
         hat_id = hatElement.val(),
 
         /**
         * submitter -- the person (or dept etc) who requested an interpreter
+        *
+        * admin mode only
+        *
         * @type {jQuery}
         */
         submitterElement = $('#submitter'),
 
         /**
         * initial value of submitter element
+        *
+        * admin mode only
+        *
         * @type {integer}
         */
         submitter_id = submitterElement.val(),
@@ -144,9 +157,8 @@ var eventForm = (function () {
                                 .removeClass("text-muted");
                         }
                     }
-                    );
+                );
             }
-
         };
     /*jslint unparam: false */
 
@@ -155,6 +167,9 @@ var eventForm = (function () {
      *
      * fetches from server and inserts markup containing human-readable label,
      * interpreter id, and a button for removing the interpreter
+     *
+     * for admin mode only
+     *
      * @param  {object} event
      * @return {void}
      */
@@ -193,6 +208,9 @@ var eventForm = (function () {
      * callback for language-select's change event
      *
      * repopulates the interpreter select element according to the language
+     *
+     * for admin mode only
+     *
      * @param  {object} event
      * @param  {object} params
      * @return {void}
@@ -229,6 +247,9 @@ var eventForm = (function () {
 
     /**
      * callback for judge "change" event
+     *
+     * for admin mode only
+     *
      * @param  {object} event
      * @return {void}
      */
@@ -292,6 +313,8 @@ var eventForm = (function () {
      *
      * gets data to update submitter dropdown based on selected hat
      *
+     * for admin mode only
+     *
      * @param  {object} event
      * @return {void}
      */
@@ -339,6 +362,8 @@ var eventForm = (function () {
     /**
      * callback for form's submit event
      *
+     * admin mode only
+     *
      * @param  {object} event
      * @return {void}
      */
@@ -358,7 +383,7 @@ var eventForm = (function () {
             }
             if (form.data("deftnames_modified")) {
                 // hint to the controller that there was an update
-                // even though it looks like there wasn't
+                // even though may look like like there wasn't. experimental.
                 form.append(
                     $("<input>")
                     .attr({name:"deftnames_modified",type:"hidden"}).val(1)
@@ -660,8 +685,6 @@ var eventForm = (function () {
 
         if (! languageElement.val()) {
             interpreterSelectElement.attr("disabled","disabled");
-        } else {
-            //languageElement.trigger("change",{remove_existing:false});
         }
 
         if (! parentLocationElement.val()){
@@ -680,7 +703,7 @@ var eventForm = (function () {
                 function(){ $(this).remove();} );
             }
         );
-
+        /** for admin mode only */
         interpreterButton.on("click",interpreterButtonClick);
 
         if (! hat_id) {
@@ -693,6 +716,7 @@ var eventForm = (function () {
                 });
             }
         }
+        /** needs revision for request mode */
         judgeElement.on('change',judgeElementChange);
 
         // initialize this stuff
@@ -704,7 +728,7 @@ var eventForm = (function () {
                 $('#anonymousJudge').val(judgeElement.val());
             }
         }
-
+        /** these next are for admin mode */
         hatElement.on("change",hatElementChange);
 
         form.on("submit".formSubmit);
@@ -723,9 +747,10 @@ var eventForm = (function () {
 
 
 /**
- * initializes defendant_name-related stuff
+ * initializes handlers for defendant-name editing
  *
- * depends on a global eventForm
+ * depends on a global eventForm. for admin mode only. we need a different
+ * approach for request mode.
  * @return {object}
  */
 var defendantNameForm = (function(){
@@ -739,7 +764,7 @@ var defendantNameForm = (function(){
         if (response.id) { // successful insert
             append_deft_name({
                 id : response.id,
-                surnames : $('#surnames').val().trim(),
+                surnames : $('#surnames').val().trim(),defendant_name-related stuff
                 given_names : $("#given_names").val().trim()
             });
         }
