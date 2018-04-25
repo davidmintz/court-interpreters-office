@@ -66,7 +66,6 @@ class EventLoader implements FixtureInterface
              );
 
         $objectManager->persist($event);
-
         $objectManager->flush();
 
         //$objectManager->remove($event);

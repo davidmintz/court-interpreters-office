@@ -20,6 +20,8 @@ class DefendantNameLoader implements FixtureInterface
             ['Ajmanabalahadji', 'Mohammed'],
             ['Zheng', 'Xao Xui'],
             ['Rodríguez', 'José Luis'],
+            ['Rodriguez', 'Jose'],
+            ['Rodríguez Medina', 'Jose'],
             ['Rodríguez', 'Eusebio'],
             ['Rodríguez', 'Ramón'],
             ['Romero', 'Pepe'],

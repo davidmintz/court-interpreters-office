@@ -128,11 +128,11 @@ final class FixtureManager
     /**
      * loads enough data to test events controller
      */
-    public static function dataSetup()
+    public static function dataSetup(Array $more = null)
     {
         $executor = self::getFixtureExecutor();
-        $executor->execute([
 
+        $fixtures = [
             new DataFixture\LanguageLoader(),
             new DataFixture\HatLoader(),
             new DataFixture\EventTypeLoader(),
@@ -143,7 +143,12 @@ final class FixtureManager
             new DataFixture\CancellationReasonLoader(),
             new DataFixture\UserLoader(),
             new DataFixture\EventLoader(),
-
-        ]);
+        ];
+        if ($more) {
+            foreach ($more as $fixture) {
+                $fixtures[] = $fixture;
+            }
+        }
+        $executor->execute($fixtures);
     }
 }
