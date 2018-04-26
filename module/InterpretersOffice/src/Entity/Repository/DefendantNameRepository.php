@@ -194,7 +194,8 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      * @param  int $exclude_event_id event to exclude from query
      * @return Array
      */
-    public function getDefendantEventsForDefendant(Entity\DefendantName $defendantName,$exclude_event_id = null)
+    public function getDefendantEventsForDefendant(
+        Entity\DefendantName $defendantName, $exclude_event_id = null)
     {
         $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent de
             JOIN de.defendant d JOIN de.event e WHERE d.id = :id';
@@ -392,7 +393,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                     $result['deftname_replaced_by'] = $existing_name->getId();
                     break;
             }
-            
+
             try {
                 $em->flush();
                 $return = array_merge($result,[
