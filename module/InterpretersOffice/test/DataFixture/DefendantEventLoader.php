@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\Language;
 use InterpretersOffice\Entity\EventType;
+use InterpretersOffice\Entity\AnonymousJudge;
 
 /**
  * DefendantEventLoader.
@@ -171,6 +172,52 @@ class DefendantEventLoader implements FixtureInterface
                  ->addDefendant($rodriguez_jose);
             $objectManager->persist(${$entity});
         }
+      $magistrate = $objectManager->getRepository(Entity\AnonymousJudge::class)->findOneBy(['name'=>'magistrate']);
+      $event_type_repo =  $objectManager->getRepository(Entity\EventType::class);
+      $atty_client = $event_type_repo->findOneBy(['name'=>'attorney/client interview']);
+      $presentment = $event_type_repo->findOneBy(['name'=>'presentment']);
+      $anon_submitter =  $objectManager->getRepository(Entity\Hat::class)->findOneBy(['name'=>'Magistrates']);
+      $magistrate_stuff = [
+            [
+              'date'=> new \DateTime(),
+              'time' => new \DateTime('today 3:00 pm'),
+              'type' =>  $atty_client,
+              'submission_date'=> new \DateTime(),
+              'submission_time'=> new \DateTime('-1 hours'),
+            ],
+            [
+              'date'=> new \DateTime(),
+              'time' => new \DateTime('today 4:45 pm'),
+              'type' =>  $presentment,
+              'submission_date'=> new \DateTime(),
+              'submission_time'=> new \DateTime('-1 hours'),
+            ],
+      ];
+      //['Rodríguez', 'Eusebio Morales']
+      $eusebio = $deft_repo->findOneBy(['given_names'=>'Eusebio Morales']);
+      foreach ($magistrate_stuff as $i => $shit) {
+          $entity = 'mag_event'.$i;
+          ${$entity} = new Entity\Event();
+          ${$entity}
+              ->setDate($shit['date'])
+              ->setTime($shit['time'])
+              ->setAnonymousJudge($magistrate)
+              ->setLanguage($spanish)
+              ->setEventType($shit['type'])
+              ->setDocket('2018-MAG-4321')
+              //->setComments($comments)
+              //->setAdminComments('')
+              ->setAnonymousSubmitter( $anon_submitter )
+              ->setModified($shit['submission_date'])
+              ->setCreated($shit['submission_date'])
+              ->setCreatedBy($user_mintz)
+              //->setLocation($location)
+              ->setModifiedBy($user_mintz)
+               ->setSubmissionDate($shit['submission_date'])
+               ->setSubmissionTime($shit['submission_time'])
+               ->addDefendant($eusebio);
+          $objectManager->persist(${$entity});
+      }
       $objectManager->flush();
     }
 }

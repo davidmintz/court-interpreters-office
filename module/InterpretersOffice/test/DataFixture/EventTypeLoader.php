@@ -27,7 +27,7 @@ class EventTypeLoader implements FixtureInterface
         $types = [
             ['pretrial conference', 'in'],
             ['sentence', 'in'],
-            ['attorny/client interview', 'out'],
+            ['attorney/client interview', 'out'],
             ['plea', 'in'],
             ['conference', 'in'],
             ['presentment', 'in'],

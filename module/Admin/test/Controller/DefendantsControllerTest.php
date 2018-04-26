@@ -31,7 +31,7 @@ class DefendantsControllerTest extends AbstractControllerTest
         //    [  new DataFixture\DefendantEventLoader(),]
         //);
 
-        //$this->login('susie', 'boink');
+        //$this->login('susie', 'boink');$data = $this->repository->findDocketAndJudges($rodriguez_jose->getId());
         //$this->reset(true);
     }
 
@@ -68,8 +68,14 @@ class DefendantsControllerTest extends AbstractControllerTest
         $this->assertTrue(is_object($rodriguez_jose));
         $rodriguez_jose->setFirstname("José Improbable");
         $data = $this->repository->findDocketAndJudges($rodriguez_jose->getId());
+        //printf("\n%s\n",'data for jose rodriguez'); print_r($data);
         // update only for Dinklesnort
-        $result = $this->repository->updateDefendantEvents($rodriguez_jose,[json_encode($data[0])]);
+        // // they are ordered by docket followed by judge, so
+        // Dinklesnort 15-CR-... will be first
+        list($dinklesnort_events, $noobieheimer_events) = $data;
+
+        $result = $this->repository->updateDefendantEvents($rodriguez_jose,
+            [json_encode($dinklesnort_events)]);
         $this->assertTrue(is_array($result));
         // 5 events should have been affected
         /* (
@@ -96,10 +102,28 @@ class DefendantsControllerTest extends AbstractControllerTest
         // a new name should have been inserted
         $this->assertTrue(key_exists('insert_id', $result));
 
-        // still need to check that other events are unchanged
+        // check that other events are unchanged
+        $this->repository->deleteCache();
+        $data = $this->repository->findDocketAndJudges($rodriguez_jose);
+        $this->assertEquals(1,count($data));
+        $this->assertEquals($noobieheimer_events,$data[0]);
 
+        // new guy's events should look like former guy's Dinklesnort
+        $data = $this->repository->findDocketAndJudges($result['insert_id']);
+        $this->assertEquals(1,count($data));
+        $this->assertEquals($dinklesnort_events,$data[0]);
 
+    }
 
+    public function testGlobalNameUpdateWithNoExistingMatch()
+    {
+        //['Rodríguez', 'Eusebio Morales']
+        $eusebio = $this->repository->findOneBy(['given_names'=>'Eusebio Morales']);
+        $contexts = $this->repository->findDocketAndJudges($eusebio);
+        // sanity check
+        $this->assertTrue(is_array($contexts));
+        $this->assertEquals(2,$contexts[0]['events']);
+        //print_r($contexts);
     }
 
 }
