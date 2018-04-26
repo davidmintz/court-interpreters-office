@@ -60,12 +60,45 @@ class DefendantsControllerTest extends AbstractControllerTest
 
     }
 
-    public function __testPartialUpdateWithoutDeftNameUpdate()
+    public function testPartialUpdateWithoutDeftNameUpdateAndNoExistingMatch()
     {
+        /** @var Entity\DefendantName $rodriguez_jose */
         $rodriguez_jose = $this->repository->findOneBy(['surnames'=>'Rodriguez','given_names'=>'Jose']);
+        // sanity
+        $this->assertTrue(is_object($rodriguez_jose));
+        $rodriguez_jose->setFirstname("José Improbable");
         $data = $this->repository->findDocketAndJudges($rodriguez_jose->getId());
+        // update only for Dinklesnort
         $result = $this->repository->updateDefendantEvents($rodriguez_jose,[json_encode($data[0])]);
-        print_r($result);
+        $this->assertTrue(is_array($result));
+        // 5 events should have been affected
+        /* (
+            [match] =>
+            [update_type] => partial
+            [events_affected] => Array
+                (
+                    [0] => 7
+                    [1] => 8
+                    [2] => 9
+                    [3] => 10
+                    [4] => 11
+                )
+
+            [status] => success
+            [deft_events_updated] => 5
+            [insert_id] => 13
+        )
+        */
+        // five events should have been events_affected
+        $this->assertTrue(is_array($result['events_affected']));
+        $this->assertEquals(5,count($result['events_affected']));
+
+        // a new name should have been inserted
+        $this->assertTrue(key_exists('insert_id', $result));
+
+        // still need to check that other events are unchanged
+
+
 
     }
 
