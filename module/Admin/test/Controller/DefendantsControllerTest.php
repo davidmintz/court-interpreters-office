@@ -7,6 +7,7 @@ use ApplicationTest\DataFixture;
 
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\Repository\DefendantNameRepository;
+use InterpretersOffice\Entity\DefendantName;
 use Zend\Stdlib\Parameters;
 
 use Zend\Dom;
@@ -16,6 +17,8 @@ class DefendantsControllerTest extends AbstractControllerTest
 
     /** @var Entity\Repository\DefendantNameRepository $repository */
     protected $repository;
+
+    //
 
     public function setUp()
     {
@@ -81,15 +84,7 @@ class DefendantsControllerTest extends AbstractControllerTest
         /* (
             [match] =>
             [update_type] => partial
-            [events_affected] => Array
-                (
-                    [0] => 7
-                    [1] => 8
-                    [2] => 9
-                    [3] => 10
-                    [4] => 11
-                )
-
+            [events_affected] => Array [....]
             [status] => success
             [deft_events_updated] => 5
             [insert_id] => 13
@@ -118,12 +113,51 @@ class DefendantsControllerTest extends AbstractControllerTest
     public function testGlobalNameUpdateWithNoExistingMatch()
     {
         //['Rodríguez', 'Eusebio Morales']
+        /** @var Entity\DefendantName $eusebio */
         $eusebio = $this->repository->findOneBy(['given_names'=>'Eusebio Morales']);
+        $id = $eusebio->getId();
         $contexts = $this->repository->findDocketAndJudges($eusebio);
         // sanity check
         $this->assertTrue(is_array($contexts));
+        $this->assertEquals(1,count($contexts));
         $this->assertEquals(2,$contexts[0]['events']);
-        //print_r($contexts);
-    }
+        $eusebio->setGivenNames("Eusebio")->setSurnames("Rodríguez Morales");
 
+        $result = $this->repository->updateDefendantEvents(
+            $eusebio,[json_encode($contexts[0])]);
+
+        $this->repository->deleteCache();
+        // NB: no events are considered to have been updated, because an element of
+        // the DefendantNames collection has changed, but not the collection itself.
+
+        // old version should be gone...
+        $null = $this->repository->findOneBy(['given_names'=>'Eusebio Morales']);
+        $this->assertNull($null);
+
+        $eusebio_redux = $this->repository->find($id);
+        $this->assertEquals('Rodríguez Morales, Eusebio',(string)$eusebio_redux);
+    }
+    public function testGlobalNameUpdateWithExistingMatchUsingExisting()
+    {
+        $objectManager = FixtureManager::getEntityManager();
+        /** @var Entity\DefendantName $rodriguez_jose */
+        $rodriguez_jose = $this->repository->findOneBy(['surnames'=>'Rodriguez','given_names'=>'Jose']);
+        $contexts = $this->repository->findDocketAndJudges($rodriguez_jose);
+
+        // already existing: ['Rodríguez Medina', 'José'],
+        $rodriguez_jose->setSurnames('Rodriguez Medina')->setGivenNames('José');
+        $match = $this->repository->findDuplicate($rodriguez_jose);
+        // issue: SQLite3 does not enforce duplicate entry constraints or
+        // compare strings the same way MySQL does, or at least not by default
+        printf("\nmatch: %s\n",gettype($match));
+
+        $result = $this->repository->updateDefendantEvents(
+            $rodriguez_jose,
+            [json_encode($contexts[0])],
+            $match,
+            'use_existing'
+        );
+        print_r($result);
+        $this->assertTrue(is_array($result));
+    }
 }

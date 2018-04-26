@@ -21,7 +21,7 @@ class DefendantNameLoader implements FixtureInterface
             ['Zheng', 'Xao Xui'],
             ['Rodríguez', 'José Luis'],
             ['Rodriguez', 'Jose'],// for adding diactriticals
-            ['Rodríguez Medina', 'Jose'],
+            ['Rodríguez Medina', 'José'],
             ['Rodríguez', 'Eusebio Morales'],// for fixing surnames
             ['Rodríguez', 'Ramón'],
             ['Romero', 'Pepe'],
