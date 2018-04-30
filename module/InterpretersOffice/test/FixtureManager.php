@@ -65,14 +65,16 @@ final class FixtureManager
 
         ];
         $isDevMode = true;
+        $config = Setup::createConfiguration($isDevMode);
         $connectionParams = [
-            'driver' => 'pdo_sqlite',
-            //'user'     => $config['user'],
-            //'password' => $config['password'],
-            'path' => 'module/InterpretersOffice/test/data/office.sqlite',
+            'driver' => 'pdo_mysql',
+            'user'     => 'travis',//$config['user'],
+            'password' => '', //$config['password'],
+            'dbname' => 'test_office',
+
+            //'path' => 'module/InterpretersOffice/test/data/office.sqlite',
         ];
 
-        $config = Setup::createConfiguration($isDevMode);
         $driver = new AnnotationDriver(new AnnotationReader(), $paths);
 
         AnnotationRegistry::registerLoader('class_exists');
@@ -119,6 +121,7 @@ final class FixtureManager
      */
     public static function getFixtureExecutor()
     {
+        self::start();
         return new ORMExecutor(
             static::getEntityManager(),
             new ORMPurger(static::getEntityManager())

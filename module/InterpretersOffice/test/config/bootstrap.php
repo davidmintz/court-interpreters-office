@@ -18,7 +18,7 @@ foreach ($files as $file) {
 
 $config = require __DIR__.'/../config/autoload/doctrine.test.php';
 $dbParams = $config['doctrine']['connection']['orm_default']['params'];
-$dbParams['driver'] = 'pdo_sqlite';
+$dbParams['driver'] = 'pdo_mysql';
 
 $entitiesPath = [
     //__DIR__ .'/../../../../module/Requests/src/Requests/Entity/',

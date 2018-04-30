@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller;
 use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
+use InterpretersOffice\Entity\User;
 
 class AuthControllerTest extends AbstractControllerTest
 {
@@ -26,7 +27,16 @@ class AuthControllerTest extends AbstractControllerTest
     {
         $token = $this->getCsrfToken('/login', 'login_csrf');
         $auth = $this->getApplicationServiceLocator()->get('auth');
+        // sanity check
+        //$em = FixtureManager::getEntityManager();
+        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $user = $em->getRepository(User::class)->findOneBy(['username'=>'susie']);
+        $this->assertInstanceOf(User::class, $user);
+        $hash = $user->getPassword();
+        //printf("\nthe FUCKING password for %s is %s\n",$user->getUsername(),$password); //return;
+        $valid = password_verify('boink',$hash);
 
+        printf("\nthe fucking FUCK??? %s\n",$valid?"true":"false");
 //echo spl_object_hash($auth), " is the hash of our auth object in the unit test\n";
 
         $params =
@@ -36,6 +46,7 @@ class AuthControllerTest extends AbstractControllerTest
             'login_csrf' => $token,
         ];
         $this->dispatch('/login', 'POST', $params);
+        //$this->dumpResponse();
         $this->assertResponseStatusCode(302);
         $this->assertRedirect();
         $this->assertRedirectTo('/admin');
