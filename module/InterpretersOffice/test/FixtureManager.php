@@ -106,14 +106,17 @@ final class FixtureManager
      */
     public static function start()
     {
+        /*
         $schemaTool = new SchemaTool(static::getEntityManager());
         $metadatas = static::getEntityManager()
                         ->getMetadataFactory()
                         ->getAllMetadata();
         $schemaTool->dropSchema($metadatas);
         $schemaTool->createSchema($metadatas);
-
+        */
         //echo "\nexiting start() in ".__CLASS__."\n";
+        $em = static::getEntityManager();
+
     }
 
     /**
@@ -121,7 +124,7 @@ final class FixtureManager
      */
     public static function getFixtureExecutor()
     {
-        self::start();
+        //static::start();
         return new ORMExecutor(
             static::getEntityManager(),
             new ORMPurger(static::getEntityManager())
