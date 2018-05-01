@@ -12,7 +12,9 @@
 <p>
 We hope you enjoy it.
 </p>
-<p>FYI, driver is <?php echo $this->driver ?>.
+<p id="database-info">FYI, driver is <?php echo $this->driver ?>; database is <?php echo $this->dbname ?>
+</p>
+<p>
 current user role: <?php echo $this->identity() ? $this->identity()->role : 'anonymous' ?>
 </p>
 
