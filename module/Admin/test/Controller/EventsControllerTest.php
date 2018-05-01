@@ -166,7 +166,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->login('david', 'boink');
         $this->reset(true);
         $url = '/admin/schedule/edit/'.$id;
-        $this->dispatch($url);
+        $this->dispatch($url);$this->dumpResponse(); return;
         $this->assertQueryCount('form#event-form', 1);
         $dom = new Dom\Query($this->getResponse()->getBody());
         $element = $dom->execute('#time')->current();

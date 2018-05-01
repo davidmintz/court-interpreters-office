@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * for managing DefendantName entities.
  *
  * @ORM\Entity
- * ORM\Table(name="defendants_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_defendant_event",columns={"defendant_id","event_id"})})
+ * @ORM\Table(name="defendants_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_defendant_event",columns={"defendant_id","event_id"})})
  */
 class DefendantEvent
 {

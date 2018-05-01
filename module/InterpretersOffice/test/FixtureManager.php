@@ -115,7 +115,7 @@ final class FixtureManager
         $schemaTool->createSchema($metadatas);
         */
         //echo "\nexiting start() in ".__CLASS__."\n";
-        $em = static::getEntityManager();
+        //$em = static::getEntityManager();
 
     }
 
