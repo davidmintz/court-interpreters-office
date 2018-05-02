@@ -15,7 +15,7 @@ class Hats extends AbstractFixture implements DependentFixtureInterface
         $submitter = $this->getReference('role-submitter');
         $manager = $this->getReference('role-manager');
 
-        // create the Hat entities: name, can_be_anonymous, role
+        // create the Hat entities: name, anonymity, role
         $hats = [
             ['AUSA', 2, null],
             ['contract court interpreter', 0, null],

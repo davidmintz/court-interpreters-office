@@ -1,5 +1,4 @@
 <?php
-
 namespace ApplicationTest\DataFixture;
 
 use Doctrine\Common\Persistence\ObjectManager;

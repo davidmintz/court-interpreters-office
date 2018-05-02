@@ -32,13 +32,17 @@ class Users extends AbstractFixture implements DependentFixtureInterface
                 'role'=>$this->getReference("role-submitter"),
                 'judges'=>['Dinklesnort',]],
 
-            [ 'lastname'=> 'Probationary','firstname'=> 'John','email'=> 'john_probationary@nysp.uscourts.gov',
+            [   'lastname'=> 'Probationary','firstname'=> 'John',
+                'email'=> 'john_probationary@nysp.uscourts.gov',
                 'hat'=>'USPO',  'role'=>$this->getReference("role-submitter"),
                 'judges'=>[]],
-            [ 'lastname'=> 'Somebody','firstname'=> 'John','email'=> 'john_somebody@nysd.uscourts.gov',
+            [   'lastname'=> 'Somebody','firstname'=> 'John',
+                'email'=> 'john_somebody@nysd.uscourts.gov',
                 'hat'=>'Courtroom Deputy',
-                'role'=>$this->getReference("role-submitter"),'judges'=>['NoobieHeimer']],
+                'role'=>$this->getReference("role-submitter"),
+                'judges'=>['NoobieHeimer']],
         ];
+
         foreach($data as $shit) {
             $person = new Entity\Person();
             $person->setActive(true)

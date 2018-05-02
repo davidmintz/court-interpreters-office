@@ -15,6 +15,7 @@ class Interpreters extends AbstractFixture
     {
         $resolver = $objectManager->getConfiguration()->getEntityListenerResolver();
         $listener = new Entity\Listener\InterpreterEntityListener();
+        // keep from blowing up if we are outside the MVC context
         if (! $listener->getLogger()) {
             $logger = new Log\Logger();
             $logger->addWriter(new Log\Writer\Noop);
