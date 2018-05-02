@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Doctrine\Common\DataFixtures\Loader;
 
 use ApplicationTest\DataFixture;
+use ApplicationTest\DataFixture\LanguageLoader;
 
 use InterpretersOffice\Entity;
 
@@ -19,7 +20,7 @@ use Doctrine\ORM\EntityManager;
 class TestTestCase extends TestCase
 {
 
-    private $loader;
+    //private $loader;
 
     /** @var \Doctrine\ORM\EntityManager */
     private $em;
@@ -28,28 +29,25 @@ class TestTestCase extends TestCase
     {
         $loader = new Loader();
 
-        //$loader->addFixture(new DataFixture\MyFixture());
-        $this->loader = $loader;
         $em = Bootstrap::getEntityManager();
         $this->em = $em;
         // this will make the ids start over, if we care enough...
         $pdo = $em->getConnection()->getWrappedConnection();
         $pdo->exec('SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE languages');
-
-        
-        $loader->addFixture(new DataFixture\MyFixture($em));
+        //$loader->addFixture(new DataFixture\LanguageLoader($em));
         $executor = Bootstrap::getFixtureExecutor();
-        $executor->execute($loader->getFixtures());
+        $executor->execute([new LanguageLoader()]);
     }
 
     public function testSomething()
     {
-        $this->assertTrue(is_object($this->loader));
+        $this->assertTrue(true);
         $em = $this->em;
         $repo = $em->getRepository(Entity\Language::class);
         $something = $repo->findOneBy([
             'name' => 'Spanish'
         ]);
+        //printf("\nshit is: %s\n",gettype($something));
         $this->assertInstanceOf(Entity\Language::class, $something);
     }
 
