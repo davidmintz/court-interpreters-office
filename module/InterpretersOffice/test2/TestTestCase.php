@@ -7,7 +7,9 @@ use PHPUnit\Framework\TestCase;
 use Doctrine\Common\DataFixtures\Loader;
 
 use ApplicationTest\DataFixture;
+
 use ApplicationTest\DataFixture\LanguageLoader;
+use ApplicationTest\DataFixture\LocationLoader;
 
 use InterpretersOffice\Entity;
 
@@ -27,7 +29,6 @@ class TestTestCase extends TestCase
 
     public function setUp()
     {
-        $loader = new Loader();
 
         $em = Bootstrap::getEntityManager();
         $this->em = $em;
@@ -36,7 +37,29 @@ class TestTestCase extends TestCase
         $pdo->exec('SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE languages');
         //$loader->addFixture(new DataFixture\LanguageLoader($em));
         $executor = Bootstrap::getFixtureExecutor();
-        $executor->execute([new LanguageLoader()]);
+        $executor->execute([
+            //new LocationLoader(),
+            new LanguageLoader(),
+        ]);
+    }
+
+    public function testOtherThing()
+    {
+
+        $repository = $this->em->getRepository('InterpretersOffice\Entity\LocationType');
+        $parentlocations = [
+            // name,    type,   parent
+            ['500 Pearl',  $repository->findOneBy(['type' => 'courthouse']), null],
+            ['40 Foley',  $repository->findOneBy(['type' => 'courthouse']), null],
+        ];
+        foreach ($parentlocations as $p) {
+            $locationEntity = new Entity\Location();
+            $locationEntity->setName($p[0])->setType($p[1])->setParentLocation($p[2])->setComments('');
+            $objectManager->persist($locationEntity);
+        }
+        $objectManager->flush();
+
+
     }
 
     public function testSomething()
@@ -51,8 +74,5 @@ class TestTestCase extends TestCase
         $this->assertInstanceOf(Entity\Language::class, $something);
     }
 
-    public function tearDown()
-    {
 
-    }
 }

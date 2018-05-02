@@ -15,7 +15,7 @@ class Bootstrap
 
     /**
      * gets entity manager
-     * 
+     *
      * @return \Doctrine\ORM\EntityManager
      */
     static public function getEntityManager()
@@ -37,7 +37,7 @@ class Bootstrap
     static public function getFixtureExecutor()
     {
         if (self::$fixtureExecutor) {
-            return $fixtureExecutor;
+            return self::$fixtureExecutor;
         }
         $purger = new ORMPurger();
         $executor = new ORMExecutor(self::getEntityManager(), $purger);
