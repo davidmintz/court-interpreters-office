@@ -1,0 +1,48 @@
+<?php
+
+namespace ApplicationTest\DataFixture;
+
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use InterpretersOffice\Entity;
+
+class EventTypes extends AbstractFixture implements DependentFixtureInterface
+{
+    public function load(ObjectManager $objectManager)
+    {
+
+        $in = $objectManager->getRepository('InterpretersOffice\Entity\EventCategory')
+                ->findOneBy(['category' => 'in']);
+
+        $out = $objectManager->getRepository('InterpretersOffice\Entity\EventCategory')
+                ->findOneBy(['category' => 'out']);
+        $types = [
+            ['pretrial conference', 'in'],
+            ['sentence', 'in'],
+            ['attorney/client interview', 'out'],
+            ['plea', 'in'],
+            ['conference', 'in'],
+            ['presentment', 'in'],
+            ['arraignment', 'in'],
+            ['pretrial services intake', 'out'],
+            ['probation PSI interview', 'out'],
+        ];
+        foreach ($types as $type) {
+            $entity = new Entity\EventType();
+            $entity
+                    ->setCategory(${$type[1]})
+                    ->setName($type[0])
+                    ->setComments('');
+            $objectManager->persist($entity);
+        }
+
+        $objectManager->flush();
+    }
+
+    public function getDependencies()
+    {
+        printf("\nfuckin shit is running in %s\n",__METHOD__);
+        return [ 'EventTypeCategories' ];
+    }
+}

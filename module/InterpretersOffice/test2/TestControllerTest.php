@@ -47,6 +47,5 @@ class TestControllerTest extends AbstractHttpControllerTestCase
         $dbname = $em->getConnection()->getDatabase();
         $this->assertEquals('test_office',$dbname);
 
-
     }
 }

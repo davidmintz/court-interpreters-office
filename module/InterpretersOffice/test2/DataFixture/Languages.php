@@ -3,10 +3,11 @@
 namespace ApplicationTest\DataFixture;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use InterpretersOffice\Entity\Language;
 
-class LanguageLoader implements FixtureInterface
+class Languages extends AbstractFixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
@@ -18,6 +19,7 @@ class LanguageLoader implements FixtureInterface
             ['name' => 'Mandarin'],
             ['name' => 'Arabic'],
             ['name' => 'French'],
+            ['name' => 'Italian'],
 
         ];
         foreach ($languages as $language) {
@@ -26,5 +28,14 @@ class LanguageLoader implements FixtureInterface
             $manager->persist($entity);
         }
         $manager->flush();
+    }
+
+    /**
+     * implements OrderedFixtureInterface
+     * doesn't seem to work. I'm not impressed.
+     */
+    public function getOrder()
+    {
+        return 2;
     }
 }
