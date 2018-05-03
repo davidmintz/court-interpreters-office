@@ -16,11 +16,12 @@ install:  composer install
 
 services:
     - mysql
-    
+
 # there may be a better way, but to compel travis-ci to use our test
 # config (sqlite) we replace the configuration file.
 
 before_script:
+    - bin/initialize-test-database.sh
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
     #- cp config/autoload/forms.test.php config/autoload/forms.local.php
     - mkdir -p data/log
