@@ -41,11 +41,8 @@
     "autoload-dev": {
         "psr-4": {
             "ApplicationTest\\": [
-                "module/InterpretersOffice/test/",
-                "module/Admin/test/",
-                "module/Requests/test/"
-            ],
-            "SDNY\\Vault\\Test\\" : "module/Vault/test/"
+                "module/InterpretersOffice/test/"
+            ]            
         }
     },
     "extra": [],
@@ -60,7 +57,7 @@
         ],
         "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
         "test": "phpunit",
-        "toolbar-enable" : "sed -i -e 's/false/true/' config/autoload/toolbar-enabled.local.php"  ,     
+        "toolbar-enable" : "sed -i -e 's/false/true/' config/autoload/toolbar-enabled.local.php"  ,
         "toolbar-disable" : "sed -i -e 's/true/false/' config/autoload/toolbar-enabled.local.php"
     },
     "require-dev": {

@@ -147,6 +147,9 @@ class EventControllerTest extends AbstractControllerTest
     public function testUpdateInCourtEvent(Entity\Event $entity)
     {
         $em = FixtureManager::getEntityManager();
+        $count_before = $em->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+        ->getSingleScalarResult();
+         printf("\nDEBUG count_before is %s in %s\n",$count_before,basename(__FILE__));
         $event = $this->getDummyData();
         $this->login('david', 'boink');
         $this->reset(true);
@@ -161,12 +164,16 @@ class EventControllerTest extends AbstractControllerTest
           ->getSingleScalarResult();
         // sanity check
         $this->assertEquals(2, (integer)$count_after);
-        $id = $count_after; // as it so happens
+        printf("\nDEBUG count_after is %s in %s\n",$count_after,basename(__FILE__));
+        $id = $em->createQuery('SELECT e.id FROM InterpretersOffice\Entity\Event e ORDER BY e.id')
+            ->setMaxResults(1)->getSingleScalarResult();
         $this->reset(true);
         $this->login('david', 'boink');
         $this->reset(true);
         $url = '/admin/schedule/edit/'.$id;
         $this->dispatch($url);
+        //$this->dumpResponse();
+        //return;
         $this->assertQueryCount('form#event-form', 1);
         $dom = new Dom\Query($this->getResponse()->getBody());
         $element = $dom->execute('#time')->current();

@@ -65,14 +65,16 @@ final class FixtureManager
 
         ];
         $isDevMode = true;
+        $config = Setup::createConfiguration($isDevMode);
         $connectionParams = [
-            'driver' => 'pdo_sqlite',
-            //'user'     => $config['user'],
-            //'password' => $config['password'],
-            'path' => 'module/InterpretersOffice/test/data/office.sqlite',
+            'driver' => 'pdo_mysql',
+            'user'     => 'travis',//$config['user'],
+            'password' => '', //$config['password'],
+            'dbname' => 'test_office',
+
+            //'path' => 'module/InterpretersOffice/test/data/office.sqlite',
         ];
 
-        $config = Setup::createConfiguration($isDevMode);
         $driver = new AnnotationDriver(new AnnotationReader(), $paths);
 
         AnnotationRegistry::registerLoader('class_exists');
@@ -96,7 +98,9 @@ final class FixtureManager
         $resolver->register($container->get(Listener\EventEntityListener::class));
         $resolver->register($container->get(Listener\UpdateListener::class));
 
-        return $entityManager;
+        return $entityManager;$purger = new ORMPurger();
+$executor = new ORMExecutor($em, $purger);
+$executor->execute($loader->getFixtures());
     }
 
     /**
@@ -104,14 +108,17 @@ final class FixtureManager
      */
     public static function start()
     {
+        /*
         $schemaTool = new SchemaTool(static::getEntityManager());
         $metadatas = static::getEntityManager()
                         ->getMetadataFactory()
                         ->getAllMetadata();
         $schemaTool->dropSchema($metadatas);
         $schemaTool->createSchema($metadatas);
-
+        */
         //echo "\nexiting start() in ".__CLASS__."\n";
+        //$em = static::getEntityManager();
+
     }
 
     /**
@@ -119,6 +126,7 @@ final class FixtureManager
      */
     public static function getFixtureExecutor()
     {
+        //static::start();
         return new ORMExecutor(
             static::getEntityManager(),
             new ORMPurger(static::getEntityManager())

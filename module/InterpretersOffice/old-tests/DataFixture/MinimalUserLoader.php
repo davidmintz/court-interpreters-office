@@ -87,5 +87,7 @@ class MinimalUserLoader implements FixtureInterface
            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"));
         $objectManager->persist($user);
         $objectManager->flush();
+
+        printf("\nshit has run successfully in %s at %d\n",__FILE__,__LINE__);
     }
 }
