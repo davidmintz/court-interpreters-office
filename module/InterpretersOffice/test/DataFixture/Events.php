@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use InterpretersOffice\Entity;
 
 use Zend\Log;
+use ApplicationTest\FakeAuth;
 
 class Events implements FixtureInterface
 {
@@ -16,14 +17,24 @@ class Events implements FixtureInterface
 
         $resolver = $objectManager->getConfiguration()->getEntityListenerResolver();
         $listener = new Entity\Listener\EventEntityListener();
-        // keep from blowing up if we are outside the MVC context
+        // to keep us from blowing up if we are outside the MVC context
+        // or if the injection of things happens in an unfavorable sequence
         if (! $listener->getLogger()) {
             $logger = new Log\Logger();
             $logger->addWriter(new Log\Writer\Noop);
             $listener->setLogger($logger);
         }
+        if (! $listener->getAuth() or ! $listener->hasIdentity()) {
+            $user = $objectManager->getRepository(Entity\User::class)
+                ->findOneBy(['username'=>'david']);
+            if (! $user) {
+                throw new \RuntimeException('no user david found in repo');
+            }
+            $listener->setAuth(new FakeAuth($user));
+        }
+
         $resolver->register($listener);
-        
+
         $date = new \DateTime('next monday');
 
         $time = new \DateTime('10:00 am');
