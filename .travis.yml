@@ -21,6 +21,7 @@ services:
 # config (sqlite) we replace the configuration file.
 
 before_script:
+    - echo 'CREATE DATABASE IF NOT EXISTS test_office' |mysql
     - bin/initialize-test-db.sh
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
     #- cp config/autoload/forms.test.php config/autoload/forms.local.php
