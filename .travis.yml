@@ -14,6 +14,9 @@ php:
 
 install:  composer install
 
+services:
+    - mysql
+    
 # there may be a better way, but to compel travis-ci to use our test
 # config (sqlite) we replace the configuration file.
 
