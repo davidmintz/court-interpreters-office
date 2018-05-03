@@ -23,6 +23,7 @@ services:
 before_script:
     - echo 'CREATE DATABASE IF NOT EXISTS test_office' |mysql
     - bin/initialize-test-db.sh
+    # this next line is to be removed
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
     #- cp config/autoload/forms.test.php config/autoload/forms.local.php
     - mkdir -p data/log
