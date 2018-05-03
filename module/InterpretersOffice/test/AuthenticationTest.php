@@ -4,15 +4,19 @@
  * module/Application/test/AuthenticationTest.php.
  */
 
-namespace ApplicationTest\Controller;
+namespace ApplicationTest;
 
-use ApplicationTest\AbstractControllerTest;
-use ApplicationTest\FixtureManager;
+namespace ApplicationTest;
+
+use PHPUnit\Framework\TestCase;
+
 use ApplicationTest\DataFixture;
+
+
 use InterpretersOffice\Service\Authentication;
 use Zend\Authentication\AuthenticationService;
 
-class AuthenticationTest extends AbstractControllerTest
+class AuthenticationTest extends TestCase
 {
     /**
      * @var Zend\Authentication\AuthenticationService
@@ -21,17 +25,18 @@ class AuthenticationTest extends AbstractControllerTest
 
     public function setUp()
     {
-        $fixtureExecutor = FixtureManager::getFixtureExecutor();
+        $fixtureExecutor = Bootstrap::getFixtureExecutor();
         $fixtureExecutor->execute([
-            new DataFixture\LanguageLoader(),
-            new DataFixture\HatLoader(),
-            new DataFixture\InterpreterLoader(),
-            new DataFixture\LocationLoader(),
-            new DataFixture\JudgeLoader(),
-            new DataFixture\UserLoader(),
+            new DataFixture\Languages(),
+            new DataFixture\Roles(),
+            new DataFixture\Hats(),
+            new DataFixture\Interpreters(),
+            new DataFixture\Locations(),
+            new DataFixture\Judges(),
+            new DataFixture\Users(),
         ]);
         $adapter = new Authentication\Adapter(
-            FixtureManager::getEntityManager()
+            Bootstrap::getEntityManager()
         );
         $this->auth = new AuthenticationService(null, $adapter);
         parent::setUp();
@@ -59,7 +64,7 @@ class AuthenticationTest extends AbstractControllerTest
     {
         $adapter = $this->auth->getAdapter();
         $adapter->setIdentity('david@davidmintz.org')->setCredential('boink');
-        $em = FixtureManager::getEntityManager();
+        $em = Bootstrap::getEntityManager();
         $david = $em->getRepository('InterpretersOffice\Entity\User')
                 ->findOneBy(['username' => 'david']);
         $david->setActive(false);

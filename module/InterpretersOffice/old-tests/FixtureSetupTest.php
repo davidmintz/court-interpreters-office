@@ -143,10 +143,9 @@ class FixtureSetupTest extends AbstractControllerTest
             ->addDefendant($defendant)
             ->addInterpreterEvents(
                 new ArrayCollection(
-                    [
-                            (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
-                        ]
-                )
+                [
+                    (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user)
+                ])
             );
            //->setJudge($judge);
 

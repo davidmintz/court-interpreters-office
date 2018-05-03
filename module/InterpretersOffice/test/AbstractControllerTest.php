@@ -33,7 +33,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
             $configOverrides
         ));
         parent::setUp();
-        
+
     }
 
     /**
