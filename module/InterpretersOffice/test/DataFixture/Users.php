@@ -26,7 +26,7 @@ class Users extends AbstractFixture implements DependentFixtureInterface
 
         // some submitters
         $data = [
-            [  'lastname'=> 'ZorkenDoofer','firstname'=> 'Jane',
+            [  'lastname'=> 'Zorkendoofer','firstname'=> 'Jane',
                 'email'=> 'jane_zorkendoofer@nysd.uscourts.gov',
                 'hat'=>'Law Clerk',
                 'role'=>$this->getReference("role-submitter"),
