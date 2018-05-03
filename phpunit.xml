@@ -3,11 +3,11 @@
     <testsuites>
         <testsuite name="CourtInterpretersOffice Test Suite">
             <directory>./module/InterpretersOffice/test</directory>
+            <directory>./module/Admin/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
             <exclude>./module/Admin/test/WebDriver/</exclude>
 			<exclude>./module/InterpretersOffice/test/codecept/</exclude>
         </testsuite>
-
     </testsuites>
 	<php>
 	  <ini name="error_log" value="./data/test.error.log"/>

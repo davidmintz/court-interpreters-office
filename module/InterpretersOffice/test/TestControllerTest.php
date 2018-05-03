@@ -2,10 +2,10 @@
 namespace ApplicationTest;
 
 use Zend\Stdlib\ArrayUtils;
-//use Zend\Stdlib\Parameters;
+
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
-//use Zend\Dom\Document;
+use InterpretersOffice\Controller;
 
 class TestControllerTest extends AbstractHttpControllerTestCase
 {
@@ -47,5 +47,28 @@ class TestControllerTest extends AbstractHttpControllerTestCase
         $dbname = $em->getConnection()->getDatabase();
         $this->assertEquals('test_office',$dbname);
 
+    }
+    public function testIndexActionCanBeAccessed()
+    {
+        $this->dispatch('/', 'GET');
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName('interpretersoffice');
+        $this->assertControllerName(Controller\IndexController::class); // as specified in router's controller name alias
+        $this->assertControllerClass('IndexController');
+        $this->assertMatchedRouteName('home');
+
+        //echo $this->getResponse()->getBody();
+    }
+
+    public function testIndexActionViewModelTemplateRenderedWithinLayout()
+    {
+        $this->dispatch('/', 'GET');
+        $this->assertQuery('.container');
+    }
+
+    public function testInvalidRouteDoesNotCrash()
+    {
+        $this->dispatch('/invalid/route', 'GET');
+        $this->assertResponseStatusCode(404);
     }
 }
