@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ApplicationTest;
 
 use PHPUnit\Framework\TestCase;
-use Doctrine\Common\DataFixtures\Loader;
 
 use ApplicationTest\DataFixture;
 
@@ -21,14 +20,11 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 class TestTestCase extends TestCase
 {
 
-    //private $loader;
-
     /** @var \Doctrine\ORM\EntityManager */
     private $em;
 
     public function setUp()
     {
-
 
         $em = Bootstrap::getEntityManager();
         $this->em = $em;
@@ -53,13 +49,13 @@ class TestTestCase extends TestCase
             new DataFixture\Judges(),
             new DataFixture\Interpreters(),
             new DataFixture\Users(),
+            new DataFixture\Events(),
         ]);
     }
 
-    public function testOtherThing()
+    public function testFixtureInitialization()
     {
-
-        $repository = $this->em->getRepository('InterpretersOffice\Entity\LocationType');
+        $repository = $this->em->getRepository(Entity\LocationType::class);
         $this->assertTrue(is_object($repository));
         $shit = $repository->findOneBy(['type' => 'courthouse']);
         $this->assertTrue(is_object($shit));
@@ -68,19 +64,24 @@ class TestTestCase extends TestCase
         $this->assertTrue(count($hats) > 0);
         $defts_repo =  $this->em->getRepository(Entity\DefendantName::class);
         $this->assertTrue(count($defts_repo->findAll()) > 0);
+        $languages = $this->em->getRepository(Entity\Language::class);
+
+        $spanish = $languages->findOneBy(['name' => 'Spanish']);
+        $this->assertInstanceOf(Entity\Language::class, $spanish);
+        $all_languages = $languages->findAll();
+        $this->assertTrue(is_array($all_languages));
+        $this->assertGreaterThan(1,count($all_languages));
+        $repo = $this->em->getRepository(Entity\Event::class);
+        $events = $repo->findAll();
+        $this->assertTrue(is_array($events));
+        $this->assertGreaterThan(0,count($events));
+        /** @var Entity\Event $entity */
+        $entity = $events[0];
+        $this->assertTrue(is_object($entity));
+        $somebody = $entity->getDefendantNames()->current();
+        $this->assertInstanceOf(Entity\DefendantName::class,$somebody);
+        $interpreter = $entity->getInterpreterEvents()->current()->getInterpreter();
+        $this->assertInstanceOf(Entity\Interpreter::class,$interpreter);
 
     }
-
-    public function testSomething()
-    {
-        $this->assertTrue(true);
-        $em = $this->em;
-        $repo = $em->getRepository(Entity\Language::class);
-        $something = $repo->findOneBy([
-            'name' => 'Spanish'
-        ]);
-        $this->assertInstanceOf(Entity\Language::class, $something);
-    }
-
-
 }
