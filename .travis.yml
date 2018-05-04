@@ -28,8 +28,11 @@ before_script:
     - mkdir -p data/log
     - mkdir data/cache
     - phpenv config-rm xdebug.ini
+    - echo "Database version? " && echo 'SELECT VERSION();'|mysql
 
-script: vendor/bin/phpunit module/Admin/test/Controller/EventsControllerTest.php && vendor/bin/phpunit
+script:
+    - vendor/bin/phpunit module/Admin/test/Controller/EventsControllerTest.php
+    - vendor/bin/phpunit
 
 # thank you, https://gist.github.com/Pierstoval/5d3101055e9d6a5fc19e
 cache:
