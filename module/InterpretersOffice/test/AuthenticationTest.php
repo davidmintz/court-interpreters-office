@@ -35,9 +35,11 @@ class AuthenticationTest extends TestCase
             new DataFixture\Roles(),
             new DataFixture\Hats(),
             new DataFixture\Interpreters(),
+            new DataFixture\LocationTypes(),
             new DataFixture\Locations(),
             new DataFixture\Judges(),
-            new DataFixture\Users(),        ]);
+            new DataFixture\Users(),
+        ]);
         $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
         $adapter = new Authentication\Adapter(
             Bootstrap::getEntityManager()

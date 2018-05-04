@@ -12,7 +12,7 @@ class EventTypes extends AbstractFixture implements DependentFixtureInterface
     public function load(ObjectManager $objectManager)
     {
 
-        (new EventTypeCategories())->load($objectManager);
+        //(new EventTypeCategories())->load($objectManager);
 
         $repo = $objectManager->getRepository('InterpretersOffice\Entity\EventCategory');
         $in = $repo->findOneBy(['category' => 'in']);
@@ -42,7 +42,7 @@ class EventTypes extends AbstractFixture implements DependentFixtureInterface
 
     public function getDependencies()
     {
-        printf("\nfuckin shit is running in %s\n",__METHOD__);
+        printf("\nfuckin shit is running: %s\n",__METHOD__);
         return [ 'EventTypeCategories' ];
     }
 }

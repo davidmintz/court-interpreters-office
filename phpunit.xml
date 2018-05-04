@@ -3,11 +3,13 @@
     <testsuites>
         <testsuite name="CourtInterpretersOffice Test Suite">
             <directory>./module/InterpretersOffice/test</directory>
-            <!--<directory>./module/Admin/test</directory>-->
+            <directory>./module/Admin/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
             <exclude>./module/Admin/test/WebDriver/</exclude>
+            <!-- -->
+            <exclude>./module/Admin/test/Controller/EventsControllerTest.php</exclude>
+            <!-- -->
 			<exclude>./module/InterpretersOffice/test/codecept/</exclude>
-			<exclude>./module/InterpretersOffice/test/Controller/AuthControllerTest.php</exclude>
         </testsuite>
     </testsuites>
 	<php>
