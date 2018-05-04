@@ -73,11 +73,15 @@ class Bootstrap
     {
         $executor = self::getFixtureExecutor();
         $em = self::getEntityManager();
-        $pdo = $em->getConnection()->getWrappedConnection();
-        $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+        $driver = $em->getConnection()->getDriver()->getName();
+        if ('pdo_mysql' == $driver) {
+            $pdo = $em->getConnection()->getWrappedConnection();
+            $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+        }
         $executor->execute($fixtures);
-        $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
-
+        if ('pdo_mysql' == $driver) {
+            $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+        }
     }
 
 }
