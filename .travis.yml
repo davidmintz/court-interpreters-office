@@ -28,9 +28,12 @@ before_script:
     - mkdir -p data/log
     - mkdir data/cache
     - phpenv config-rm xdebug.ini
-    - echo "Database version? " && echo 'SELECT VERSION();'|mysql
+    - echo  "Database version: $(echo 'SELECT VERSION();'|mysql -s)"
 
 script:
+    # if EventsControllerTest is run in the same invocation of phpunit as the
+    # rest of the tests, shit breaks with an arcane error I do not understand
+    # and this seems to work around it, much as I hate it!
     - vendor/bin/phpunit module/Admin/test/Controller/EventsControllerTest.php
     - vendor/bin/phpunit
 
