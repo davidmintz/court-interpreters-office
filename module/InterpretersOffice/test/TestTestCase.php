@@ -30,11 +30,12 @@ class TestTestCase extends TestCase
         $this->em = $em;
         // to make the ids start over, if we care enough...
         /*
-        $pdo = $em->getConnection()->getWrappedConnection();
         $pdo->exec('SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE languages; TRUNCATE TABLE locations; TRUNCATE TABLE location_types;');
         $pdo->exec('TRUNCATE TABLE hats; TRUNCATE TABLE roles;');
         $pdo->exec('SET FOREIGN_KEY_CHECKS = 1;');
         */
+        $pdo = $em->getConnection()->getWrappedConnection();
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
         $executor = Bootstrap::getFixtureExecutor();
 
         $executor->execute([
@@ -42,14 +43,17 @@ class TestTestCase extends TestCase
             new DataFixture\Languages(),
             new DataFixture\Roles(),
             new DataFixture\Hats(),
-            new DataFixture\Locations(),            
             new DataFixture\EventTypes(),
             new DataFixture\DefendantNames(),
+            new DataFixture\Locations(),
             new DataFixture\Judges(),
             new DataFixture\Interpreters(),
             new DataFixture\Users(),
+            /*
+            */
             new DataFixture\Events(),
         ]);
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
     }
 
     public function testFixtureInitialization()
@@ -70,6 +74,7 @@ class TestTestCase extends TestCase
         $all_languages = $languages->findAll();
         $this->assertTrue(is_array($all_languages));
         $this->assertGreaterThan(1,count($all_languages));
+        //return;
         $repo = $this->em->getRepository(Entity\Event::class);
         $events = $repo->findAll();
         $this->assertTrue(is_array($events));

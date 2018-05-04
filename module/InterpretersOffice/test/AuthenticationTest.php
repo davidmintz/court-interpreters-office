@@ -10,6 +10,7 @@ namespace ApplicationTest;
 
 use PHPUnit\Framework\TestCase;
 
+use ApplicationTest\Bootstrap;
 use ApplicationTest\DataFixture;
 
 
@@ -25,16 +26,19 @@ class AuthenticationTest extends TestCase
 
     public function setUp()
     {
-        $fixtureExecutor = Bootstrap::getFixtureExecutor();
-        $fixtureExecutor->execute([
+        $pdo = Bootstrap::getEntityManager()->getConnection()->getWrappedConnection();
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+        $executor = Bootstrap::getFixtureExecutor();
+
+        $executor->execute([
             new DataFixture\Languages(),
             new DataFixture\Roles(),
             new DataFixture\Hats(),
             new DataFixture\Interpreters(),
             new DataFixture\Locations(),
             new DataFixture\Judges(),
-            new DataFixture\Users(),
-        ]);
+            new DataFixture\Users(),        ]);
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
         $adapter = new Authentication\Adapter(
             Bootstrap::getEntityManager()
         );
