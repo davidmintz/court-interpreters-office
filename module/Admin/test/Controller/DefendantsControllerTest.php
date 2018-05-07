@@ -173,8 +173,6 @@ class DefendantsControllerTest extends AbstractControllerTest
             $match,'use_existing');
         $this->assertTrue(is_array($result));
         $this->assertEquals(5, $result['deft_events_updated']);
-        printf("\nbullshit in %s at %d?\n",basename(__FILE__),__LINE__);
-        print_r($result);
-        //$this->assertTrue(is_int($result['deftname_replaced_by']));
+        $this->assertTrue(is_int($result['deftname_replaced_by']));
     }
 }
