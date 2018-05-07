@@ -11,12 +11,17 @@ use InterpretersOffice\Entity\DefendantName;
 use Zend\Stdlib\Parameters;
 
 use Zend\Dom;
+use Zend\Log\Writer\Noop;
+use Doctrine\ORM\EntityManager;
 
 class DefendantsControllerTest extends AbstractControllerTest
 {
 
     /** @var Entity\Repository\DefendantNameRepository $repository */
     protected $repository;
+
+    /** @var \Doctrine\ORM\EntityManager $em */
+    private $em;
 
     //
 
@@ -25,11 +30,14 @@ class DefendantsControllerTest extends AbstractControllerTest
         parent::setUp();
         FixtureManager::dataSetup([  new DataFixture\DefendantEventLoader(),]);
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
-        $this->repository = FixtureManager::getEntityManager()
-            ->getRepository(Entity\DefendantName::class);
-        $container = $this->getApplicationServiceLocator();
-        //$container->get('log');
-        $this->repository->setLogger($container->get('log'));
+        $this->em = FixtureManager::getEntityManager();
+        $this->repository = $this->em->getRepository(Entity\DefendantName::class);
+        //$this->repository
+        //$container = $this->getApplicationServiceLocator();
+        $log = new \Zend\Log\Logger();
+        $log->addWriter(new \Zend\Log\Writer\Noop());
+        //$this->repository->setLogger($container->get('log'));
+        $this->repository->setLogger($log);
         //$fixtureExecutor->execute(
         //    [  new DataFixture\DefendantEventLoader(),]
         //);
@@ -39,7 +47,7 @@ class DefendantsControllerTest extends AbstractControllerTest
     }
 
     /**
-     * test findDocketAndJudges
+     * tests findDocketAndJudges
      *
      * ensures there are two docket-contexts for defendant name
      * "Rodriguez, Jose", each with 5 events. sort of a sanity check of data
@@ -139,11 +147,19 @@ class DefendantsControllerTest extends AbstractControllerTest
     }
     public function testGlobalNameUpdateWithExistingMatchUsingExisting()
     {
-        $objectManager = FixtureManager::getEntityManager();
+        //$objectManager = FixtureManager::getEntityManager();
         /** @var Entity\DefendantName $rodriguez_jose */
         $rodriguez_jose = $this->repository->findOneBy(['surnames'=>'Rodriguez','given_names'=>'Jose']);
+        //printf("\nfound: $rodriguez_jose\n");
         $contexts = $this->repository->findDocketAndJudges($rodriguez_jose);
-
+        // WTF?
+        /*
+        $bullshit = $this->em->createQuery(
+            'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\DefendantName d '
+            . 'WHERE d.surnames LIKE :surnames  AND d.given_names LIKE :given_names'
+        )->useResultCache(false)->setParameters(['surnames'=>'rod%','given_names'=> 'Jo%'])->getResult();
+        print_r($bullshit);
+        */
         // already existing: ['Rodríguez Medina', 'José'],
         $rodriguez_jose->setSurnames('Rodriguez Medina')->setGivenNames('José');
         $match = $this->repository->findDuplicate($rodriguez_jose);
@@ -151,6 +167,9 @@ class DefendantsControllerTest extends AbstractControllerTest
         // compare strings the same way MySQL does, or at least not by default
         printf("\nmatch: %s\n",gettype($match));
 
+        //$shit = $this->getApplicationServiceLocator()->get('entity-manager');
+        //$db = $this->em->getConnection()->getDatabase();
+        //printf("\nour shit is: %s\n)",$db);
         $result = $this->repository->updateDefendantEvents(
             $rodriguez_jose,
             [json_encode($contexts[0])],
@@ -159,5 +178,11 @@ class DefendantsControllerTest extends AbstractControllerTest
         );
         print_r($result);
         $this->assertTrue(is_array($result));
+        $bullshit = $this->em->createQuery(
+            'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\DefendantName d '
+            . 'WHERE d.surnames LIKE :surnames  AND d.given_names LIKE :given_names'
+        )->useResultCache(false)->setParameters(['surnames'=>'rod%','given_names'=> 'Jo%'])->getResult();
+        print_r($bullshit);
+        printf("fuckin database? %s\n",$this->em->getConnection()->getDriver()->getName());
     }
 }
