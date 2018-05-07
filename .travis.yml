@@ -28,8 +28,7 @@ before_script:
     - mkdir -p data/log
     - mkdir data/cache
     - phpenv config-rm xdebug.ini
-    - echo 'Database version: ' 
-    - echo 'SELECT VERSION();'|mysql -s
+    - echo  "Database version: $(echo 'SELECT VERSION();'|mysql -s)"
 
 script:
     # if EventsControllerTest is run in the same invocation of phpunit as the
