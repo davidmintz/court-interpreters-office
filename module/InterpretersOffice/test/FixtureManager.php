@@ -12,8 +12,10 @@ use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 
 use InterpretersOffice\Entity\Listener;
+use InterpretersOffice\Entity\Listener\EventEntityListener;
 use Zend\Authentication\Result;
 use Zend\Authentication\AuthenticationServiceInterface;
+use ApplicationTest\FakeAuth;
 use ApplicationTest\FixtureSetupTest;
 
 /**
@@ -37,7 +39,8 @@ class FakeAuth implements \Zend\Authentication\AuthenticationServiceInterface
         public function getIdentity()
         {
             return (object)[
-                'username'=> 'david'
+                'username'=> 'david',
+                'id' => 117,
             ];
         }
         public function authenticate()
@@ -65,10 +68,13 @@ final class FixtureManager
 
         ];
         $isDevMode = true;
+        $config = (include(__DIR__.'/config/autoload/doctrine.test.php'))
+            ['doctrine']['connection']['orm_default']['params'];
         $connectionParams = [
-            'driver' => 'pdo_sqlite',
-            //'user'     => $config['user'],
-            //'password' => $config['password'],
+            'driver'   => $config['driver'],
+            'user'     => $config['user'],
+            'password' => $config['password'],
+            'dbname'   => $config['dbname'],
             'path' => 'module/InterpretersOffice/test/data/office.sqlite',
         ];
 
@@ -84,6 +90,8 @@ final class FixtureManager
         /** @var Zend\ServiceManager\ServiceManager $container */
         $container = $helper->getApplicationServiceLocator();
         $listener = $container->get('interpreter-listener');
+        $event_entity_listener = $container->get(Listener\EventEntityListener::class);
+        $event_entity_listener->setAuth(new FakeAuth());
         $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
         $resolver->register($listener);
 
