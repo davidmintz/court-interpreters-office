@@ -99,7 +99,8 @@ final class FixtureManager
         $resolver->register($container->get(Listener\UpdateListener::class));
 
         return $entityManager;$purger = new ORMPurger();
-
+$executor = new ORMExecutor($em, $purger);
+$executor->execute($loader->getFixtures());
     }
 
     /**
