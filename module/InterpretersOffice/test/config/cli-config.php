@@ -1,7 +1,10 @@
 <?php
-/**  module/InterpretersOffice/test2/config/cli-config.php */
 
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 
-$entityManager = require(__DIR__.'/bootstrap.php');
+// replace with file to your own project bootstrap
+$entityManager = require __DIR__.'/bootstrap.php';
+
+// replace with mechanism to retrieve EntityManager in your app
+
 return ConsoleRunner::createHelperSet($entityManager);

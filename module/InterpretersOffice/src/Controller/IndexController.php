@@ -51,8 +51,8 @@ class IndexController extends AbstractActionController
     {
         $connection = $this->em->getConnection();
         $driver = $connection->getDriver()->getName();
-        $dbname = $connection->getDatabase();
-        return new ViewModel(['driver' => $driver,'dbname'=>$dbname]);
+
+        return new ViewModel(['driver' => $driver]);
     }
     /**
      * temporary action for experimenting and doodling.

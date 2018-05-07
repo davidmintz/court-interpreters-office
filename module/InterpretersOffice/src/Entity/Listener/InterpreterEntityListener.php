@@ -11,7 +11,7 @@ use Zend\EventManager\EventManagerAwareTrait;
 
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerInterface;
-use Zend\Log\LoggerAwareTrait;
+
 use SDNY\Vault\Service\Vault;
 
 /**
@@ -23,9 +23,13 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
 {
 
     use EventManagerAwareTrait;
-    use LoggerAwareTrait;
 
-
+    /**
+     * log
+     *
+     * @var Zend\Log\LoggerInterface
+     */
+    protected $log;
 
     /**
      * Vault client
@@ -34,7 +38,15 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      */
     protected $vault;
 
-
+    /**
+     * sets logger instance
+     *
+     * @param LoggerInterface $log
+     */
+    public function setLogger(LoggerInterface $log)
+    {
+        $this->log = $log;
+    }
 
     /**
      * encrypted values
@@ -82,8 +94,8 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
         if (! $this->vault) {
             return;
         }
-        //$this->logger->debug(sprintf('getSsn() now returns %s', $interpreter->getSsn()));
-        $this->logger->debug(sprintf(
+        //$this->log->debug(sprintf('getSsn() now returns %s', $interpreter->getSsn()));
+        $this->log->debug(sprintf(
             'hasChangedField? %s',
             $event->hasChangedField('ssn') ? "yes" : "no"
         ));
@@ -95,24 +107,24 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
                 // if there is NO old value, but there IS a new value,
                 // just encrypt it without further ado
                 if ($new_value && ! $old_value) {
-                    $this->logger->debug("updating from null $prop to $new_value (not-null)?");
+                    $this->log->debug("updating from null $prop to $new_value (not-null)?");
                     $setter = 'set'.lcfirst($prop);
                     $encrypted = $this->vault->encrypt($new_value);
                     $interpreter->$setter($encrypted);
                 } elseif ($old_value && ! $new_value) {
                     // pass. nothing to encrypt.
-                    $this->logger->debug("updating from  not-null $prop  to null?");
+                    $this->log->debug("updating from  not-null $prop  to null?");
                 } else {
                     // compare old value ~decrypted~ with new
-                    $this->logger->debug("comparing old-decrypted $prop to new");
+                    $this->log->debug("comparing old-decrypted $prop to new");
                     $decrypted_old_value = ! $old_value ? null : $this->vault->decrypt($old_value);
                     if ($decrypted_old_value != $new_value) {
                         // it really changed. encrypt
-                        $this->logger->debug("...and $prop really was updated");
+                        $this->log->debug("...and $prop really was updated");
                         $interpreter->$setter($this->vault->encrypt($new_value));
                     } else {
                         // not really modified.
-                        $this->logger->debug("$prop NOT really updated, resetting to old encrypted value");
+                        $this->log->debug("$prop NOT really updated, resetting to old encrypted value");
                         $interpreter->$setter($old_value);
                     }
                 }
@@ -134,7 +146,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
     {
 
         if (! $this->hasVault()) {
-            $this->logger->debug("no vault enabled, not encrypting any interpreter data");
+            $this->log->info("no vault enabled, not encrypting any interpreter data");
             return;
         }
         // @todo throw Exception if they try to save w/o encryption??
@@ -150,7 +162,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
                  */
                 $setter = 'set'.lcfirst($field);
                 $interpreter->$setter($this->vault->encrypt($value));
-                $this->logger->debug("we have encrypted $field in ".__FUNCTION__);
+                $this->log->debug("we have encrypted $field in ".__FUNCTION__);
             }
         }
     }
