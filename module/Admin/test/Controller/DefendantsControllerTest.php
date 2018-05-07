@@ -4,7 +4,7 @@ namespace ApplicationTest\Controller;
 use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FakeAuth;
 
-use ApplicationTest\Bootstrap;
+use ApplicationTest\Bootstrap as FixtureManager;
 use ApplicationTest\DataFixture;
 
 use InterpretersOffice\Entity;
@@ -20,21 +20,25 @@ class DefendantsControllerTest extends AbstractControllerTest
     /** @var Entity\Repository\DefendantNameRepository $repository */
     protected $repository;
 
+    //
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->repository = Bootstrap::getEntityManager()
+        $fixtureExecutor = FixtureManager::getFixtureExecutor();
+        $this->repository = FixtureManager::getEntityManager()
             ->getRepository(Entity\DefendantName::class);
         $container = $this->getApplicationServiceLocator();
+        //$auth = $container->get('auth');
+        //$listener = $container->get(Entity\Listener\EventEntityListener::class);
+        //$listener->setAuth(new FakeAuth());
         $this->repository->setLogger($container->get('log'));
-        Bootstrap::load(
+        $fixtureExecutor->execute(
             [
-                new DataFixture\LocationTypes(),
                 new DataFixture\Locations(),
                 new DataFixture\Languages(),
                 new DataFixture\DefendantNames(),
-                new DataFixture\EventTypeCategories(),
                 new DataFixture\EventTypes(),
                 new DataFixture\Roles(),
                 new DataFixture\Hats(),
@@ -152,7 +156,7 @@ class DefendantsControllerTest extends AbstractControllerTest
         //$this->assertTrue($auth->hasIdentity());
 
         $container = $this->getApplicationServiceLocator();
-        $objectManager = $container->get('entity-manager');//Bootstrap::getEntityManager();
+        $objectManager = $container->get('entity-manager');//FixtureManager::getEntityManager();
         /** @var Entity\DefendantName $rodriguez_jose */
         $rodriguez_jose = $this->repository->findOneBy(['surnames'=>'Rodriguez','given_names'=>'Jose']);
         $contexts = $this->repository->findDocketAndJudges($rodriguez_jose);

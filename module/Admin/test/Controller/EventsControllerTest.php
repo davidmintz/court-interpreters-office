@@ -10,7 +10,7 @@ use Zend\Stdlib\Parameters;
 
 use Zend\Dom;
 
-class EventsControllerTest extends AbstractControllerTest
+class EventControllerTest extends AbstractControllerTest
 {
 
     protected $dummy_data;
@@ -18,13 +18,11 @@ class EventsControllerTest extends AbstractControllerTest
     public function setUp()
     {
         parent::setUp();
-        Bootstrap::load(
+        Bootstrap::getFixtureExecutor()->execute(
             [
-                new DataFixture\LocationTypes(),
                 new DataFixture\Locations(),
                 new DataFixture\Languages(),
                 new DataFixture\DefendantNames(),
-                new DataFixture\EventTypeCategories(),
                 new DataFixture\EventTypes(),
                 new DataFixture\Roles(),
                 new DataFixture\Hats(),
@@ -186,6 +184,7 @@ class EventsControllerTest extends AbstractControllerTest
         $this->reset(true);
         $this->login('david', 'boink');
         $this->reset(true);
+
         $url = '/admin/schedule/edit/'.$id;
         $this->dispatch($url);
         //$this->dumpResponse();//return;
@@ -203,11 +202,8 @@ class EventsControllerTest extends AbstractControllerTest
         $judge_select = $dom->execute('#judge')->current();
         $judge_options = $judge_select->childNodes;
         $judge_lastname = $entity->getJudge()->getLastname();
-        // can't do this without the full-ass name
-        //$this->assertOptionIsSelected($judge_select,$judge_lastname);
         //printf("\njudge id is %d\n",$entity->getJudge()->getId());
         //printf("\nlooking for $judge_lastname in %s %d\n",basename(__FILE__),__LINE__);
-        ///*
         $found = false;
         foreach ($judge_options as $opt) {
             $name = $opt->nodeValue;
@@ -219,7 +215,7 @@ class EventsControllerTest extends AbstractControllerTest
         $this->assertTrue($found);
         $this->assertTrue($opt->hasAttribute('selected'));
         $this->assertEquals($opt->getAttribute('selected'), 'selected');
-        //*/
+
         $language_select = $dom->execute('#language')->current();
         $expected = $entity->getLanguage()->getName();
         $this->assertOptionIsSelected($language_select, $expected);

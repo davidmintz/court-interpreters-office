@@ -15,10 +15,10 @@ class AuthControllerTest extends AbstractControllerTest
     public function setUp()
     {
         parent::setUp();
-        Bootstrap::load([
+        $fixtureExecutor = Bootstrap::getFixtureExecutor();
+        $fixtureExecutor->execute([
             new DataFixture\Roles(),
             new DataFixture\Hats(),
-            new DataFixture\LocationTypes(),
             new DataFixture\Locations(),
             new DataFixture\Judges(),
             new DataFixture\Languages(),
