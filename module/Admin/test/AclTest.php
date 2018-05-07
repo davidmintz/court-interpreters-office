@@ -11,7 +11,7 @@ use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Admin\Controller as Admin;
 use InterpretersOffice\Requests\Controller as Requests;
 
-class AclTest extends AbstractControllerTest
+class AuthenticationTest extends AbstractControllerTest
 {
 
     /**
