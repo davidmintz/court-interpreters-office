@@ -44,15 +44,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     }
 
     /**
-     * gets auth
-     * 
-     * @return AuthenticationServiceInterface
-     */
-    public function getAuth()
-    {
-        return $this->auth;
-    }
-    /**
      * sets authentication service
      *
      * @param AuthenticationServiceInterface $auth
