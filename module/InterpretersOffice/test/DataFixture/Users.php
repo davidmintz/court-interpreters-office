@@ -40,7 +40,7 @@ class Users extends AbstractFixture implements DependentFixtureInterface
                 'email'=> 'john_somebody@nysd.uscourts.gov',
                 'hat'=>'Courtroom Deputy',
                 'role'=>$this->getReference("role-submitter"),
-                'judges'=>['Noobieheimer']],
+                'judges'=>['NoobieHeimer']],
         ];
 
         foreach($data as $shit) {

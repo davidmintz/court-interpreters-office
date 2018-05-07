@@ -43,7 +43,7 @@ class Judges extends AbstractFixture
                 'default_location'=>'14A',
             ],
             [
-                'lastname' => 'Noobieheimer',
+                'lastname' => 'NoobieHeimer',
                 'firstname' => 'Susie',
                 'middlename' => '',
                 'default_location'=>'40 Foley',

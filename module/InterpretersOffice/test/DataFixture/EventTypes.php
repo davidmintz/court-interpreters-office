@@ -11,9 +11,6 @@ class EventTypes extends AbstractFixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $objectManager)
     {
-
-        (new EventTypeCategories())->load($objectManager);
-
         $repo = $objectManager->getRepository('InterpretersOffice\Entity\EventCategory');
         $in = $repo->findOneBy(['category' => 'in']);
         $out = $repo->findOneBy(['category' => 'out']);
