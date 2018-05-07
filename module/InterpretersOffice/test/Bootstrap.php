@@ -45,12 +45,4 @@ class Bootstrap
         return $executor;
     }
 
-    static public function load(Array $fixtures)
-    {
-        $executor = self::getFixtureExecutor();
-        $em = self::getEntityManager();
-        // to be continued
-
-    }
-
 }
