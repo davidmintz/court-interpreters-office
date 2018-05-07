@@ -5,7 +5,7 @@
 // $path = getcwd() . '/module/InterpretersOffice/test/data/office.sqlite';
 
 //DOES work from module/Application/test
-$path = __DIR__.'/../../data/office.sqlite';
+$path = realpath( __DIR__.'/../../data/office.sqlite');
 
 return [
 
@@ -36,7 +36,17 @@ return [
         'connection' => [
             'orm_default' => [
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOSqlite\Driver',
-                'params' => ['path' => $path],
+                'params' => [
+                    'path' => $path,
+                    'driver' => 'pdo_sqlite',
+                    'user' => 'travis',
+                    'password' => '',
+                    'dbname' => 'test_office',
+                    //'driver' => 'pdo_mysql',
+                    //'host' => 'localhost',
+                    //'port' => '3306',
+
+                ],
             ],
              'configuration' => [
                 'orm_default' => [
