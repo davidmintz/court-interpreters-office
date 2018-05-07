@@ -322,13 +322,14 @@ var eventForm = (function () {
 
         var init_values = submitterElement.data();
         var anonymity = hatElement.children(':selected').data('anonymity');
+        console.log('the FUCK???');
         if (anonymity === 1) {
             submitterElement.attr("disabled","disabled");
             return;
         } else {
             submitterElement.removeAttr("disabled");
         }
-
+        var hat_id = $(this).val();
         if (! hat_id) {
             hatElement.children().not(":first").remove();
             return;
@@ -525,7 +526,7 @@ var eventForm = (function () {
         }
         var re = /^(0?[1-9]|1[0-2]):?([0-5]\d)?\s*((a|p)m?)?$/i;
         var hour; var minute; var ap;
-        matches = time.match(re);
+        var matches = time.match(re);
         if (matches)
         {
             hour = matches[1];
