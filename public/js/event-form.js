@@ -524,15 +524,19 @@ var eventForm = (function () {
             } else if (ap.length === 1) {
                 ap = ap + "m";
             }
-        } else if (matches = time.match(/^([01][0-9]|2[1-3])([0-5][0-9])$/)) {
-            hour = matches[1];
-            ap = "am";
-            if (hour > 12) {
-                hour -= 12;
-                ap = "pm";
-            }
-            minute = matches[2];
         } else {
+            matches = time.match(/^([01][0-9]|2[1-3])([0-5][0-9])$/);
+            if (matches) {
+                hour = matches[1];
+                ap = "am";
+                if (hour > 12) {
+                    hour -= 12;
+                    ap = "pm";
+                }
+                minute = matches[2];
+            }
+        }
+        if (! matches) {
             errorDiv.addClass("alert alert-warning validation-error")
                 .text("invalid time").show();
             return;
@@ -652,7 +656,7 @@ var eventForm = (function () {
         });
 
         /** listener for deft name search result items */
-        slideout.on("click",".defendant-names li",function(event){
+        slideout.on("click",".defendant-names li",function(){
             var element = $(this);
             $.get("/defendants/template",
                 {id:element.data("id"),name:element.text()},
@@ -743,6 +747,7 @@ var defendantNameForm = (function(){
 
     var addDeftnameCallback = function(response){
 
+        var defendantForm = $("#defendant-form");
         if (response.validation_errors) {
             displayValidationErrors(response.validation_errors);
             return;
@@ -772,6 +777,9 @@ var defendantNameForm = (function(){
                 $(".duplicate-name button").on("click",function(event){
                     event.preventDefault();
                 });
+                if (!$(".duplicate-name").length) {
+                    window.alert("we have a problem");
+                }
                 // display the instructions and options
                 $(".duplicate-name").show();
 
@@ -784,6 +792,7 @@ var defendantNameForm = (function(){
                     .on("click",function(){
                         var url = "/admin/defendants/update-existing/"
                             +$(this).data("id");
+                        var data = $("#defendant-form").serialize();
                         $.post(url, data, updateDefendantNameCallback,"json");
                     });
                 // forget the whole thing
@@ -800,7 +809,7 @@ var defendantNameForm = (function(){
                     });
                 });
                 // disable the button for submitting the form
-                $("#btn-add-defendant-name").attr({disabled:"disabled", "aria-disabled":"true" });
+                //$("#btn-add-defendant-name").attr({disabled:"disabled", "aria-disabled":"true" });
             }
         }
     };
