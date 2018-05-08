@@ -89,7 +89,7 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
 
 
         /* TO BE CONTINUED: if $option['action'] == update, more elements... */
-        if ($options['action'] == 'update') {
+        //if ($options['action'] == 'update') {
             $this->add([
                 'type' => 'Zend\Form\Element\Select',
                 'name' => 'occurrences',
@@ -107,7 +107,7 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
                     ],
                 ]
             ]);
-        }
+        //}
     }
 
     /**

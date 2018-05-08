@@ -817,7 +817,7 @@ var defendantNameForm = (function(){
     var updateDefendantNameCallback = function(response){
         if (response.id) {
             var selector = "input[name=\"event[defendantNames]["+
-                existing.id +"]\"]";
+                response.id +"]\"]";
             var defendant_name = $("#surnames").val().trim()
                 +", "+ $("#given_names").val().trim();
             console.log("selector is: "+selector);
@@ -871,6 +871,7 @@ var defendantNameForm = (function(){
             });
     };
     var defendantFormSubmitCallback = function(response) {
+        console.warn("running your defendantFormSubmitCallback");
         if (response.validation_errors !== undefined) {
             return displayValidationErrors(response.validation_errors);
         }
@@ -916,8 +917,15 @@ var defendantNameForm = (function(){
             },2000);
         }
     };
+
+    /**
+     * submit handler for editing a defendant name within the
+     * event edit|update context
+     * @return void
+     */
     var defendantUpdateSubmit = function()
     {
+        console.warn("defendantUpdateSubmit: bitch here we go!");
         // did they really change anything?
         var modified = $("#surnames").val() != $("#surnames").data("was")
             ||  $("#given_names").val() != $("#given_names").data("was");
@@ -977,6 +985,7 @@ var defendantNameForm = (function(){
             });
         $("ul.defendant-names").on("click","li.defendant span",
             function(){
+                console.log("ok here shit goes...");
                 var div = $("#deftname-editor .modal-body");
                 var id = $(this).data("id");
                 var selector = "/admin/defendants/edit/"+ id + " #defendant-form";
