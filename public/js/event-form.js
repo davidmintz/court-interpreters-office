@@ -487,26 +487,6 @@ var eventForm = (function () {
     };
 
     /**
-     * formats "time" elements
-     *
-     * meaning inputs with our .time class, not HTML5 time elements
-     *
-     * @param  {jQuery} timeElement
-     * @return {jQuery} timeElement (the same one)
-     */
-    var formatTimeElement = function(timeElement) {
-
-        var timeValue = timeElement.val();
-        // reformat time;
-        if (timeValue && timeValue.match(/^\d\d:\d\d$/)) {
-            var formatted = moment(timeValue, "HH:mm:ss").format("h:mm a");
-            //console.log('formatted time is: '+formatted);
-            timeElement.val(formatted);
-        }
-        return timeElement;
-    };
-
-    /**
      * tries to figure out time of day based on string
      * @param  {object} event
      * @return {void}
