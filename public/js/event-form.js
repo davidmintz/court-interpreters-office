@@ -2,164 +2,166 @@
  * public/js/event-form.js
  */
 
-/**
- * initializes event handlers for the "event" form
- *
- * still need to: deal with the fact that some of this doesn't apply
- * to "request" form
- * @return {object}
- */
 
+/* to cheat eslint out of complaining */
 var $;
+var displayValidationErrors;
 
+/**
+* initializes event handlers for the "event" form
+*
+* still need to: deal with the fact that some of this doesn't apply
+* to "request" form
+* @return {object}
+*/
 var eventForm = (function () {
     "use strict";
     /**
     * the event update|create form
     * @type {jQuery}
     */
-    var form = $("#event-form"),
+    var form = $("#event-form");
 
-        /**
-        * parent location select element
-        *
-        * the general location/building where specific location is found
-        * @type {jQuery}
-        */
-        parentLocationElement = $("#parent_location"),
+    /**
+    * parent location select element
+    *
+    * the general location/building where specific location is found
+    * @type {jQuery}
+    */
+    var parentLocationElement = $("#parent_location");
 
-        /**
-        * location select element
-        * @type {jQuery}
-        */
-        locationElement = $("#location"),
+    /**
+    * location select element
+    * @type {jQuery}
+    */
+    var locationElement = $("#location");
 
-        /**
-        * event-type select element
-        * @type {jQuery}
-        */
-        eventTypeElement = $("#event-type"),
+    /**
+    * event-type select element
+    * @type {jQuery}
+    */
+    var eventTypeElement = $("#event-type");
 
-        /**
-        * language select element
-        * @type {jQuery}
-        */
-        languageElement = $("#language"),
+    /**
+    * language select element
+    * @type {jQuery}
+    */
+    var languageElement = $("#language");
 
-        /**
-        * judge select element
-        * @type {jQuery}
-        */
-        judgeElement = $("#judge"),
+    /**
+    `* judge select element
+    * @type {jQuery}
+    */
+    var judgeElement = $("#judge");
 
-        /**
-        * hidden flag for whether a generic, "anonymous" judge is selected
-        *
-        * sometimes also known as pseudojudge. yeah I know.
-        * @type {jQuery}
-        */
-        anon_judge = $("#is_anonymous_judge"),
+    /**
+    * hidden flag for whether a generic, "anonymous" judge is selected
+    *
+    * sometimes also known as pseudojudge. yeah I know.
+    * @type {jQuery}
+    */
+    var anon_judge = $("#is_anonymous_judge");
 
-        /**
-        * interpreter select element
-        *
-        * note: this is for admin mode only
-        * @type {jQuery}
-        */
-        interpreterSelectElement = $("#interpreter-select"),
+    /**
+    * interpreter select element
+    *
+    * note: this is for admin mode only
+    * @type {jQuery}
+    */
+    var interpreterSelectElement = $("#interpreter-select");
 
-        /**
-        * button for adding the selected interpreter to the event
-        *
-        *  note: this is for admin mode only
-        * @type {jQuery}
-        */
-        interpreterButton = $("#btn-add-interpreter"),
+    /**
+    * button for adding the selected interpreter to the event
+    *
+    *  note: this is for admin mode only
+    * @type {jQuery}
+    */
+    var interpreterButton = $("#btn-add-interpreter");
 
-        /**
-        * the "hat" select element
-        * the title|description|category (a/k/a hat) of the person who
-        * submitted the request to schedule an interpreter. for admin mode only.
-        * @type {jQuery}
-        */
-        hatElement = $("#hat"),
+    /**
+    * the "hat" select element
+    * the title|description|category (a/k/a hat) of the person who
+    * submitted the request to schedule an interpreter. for admin mode only.
+    * @type {jQuery}
+    */
+    var hatElement = $("#hat");
 
-        /**
-        * initial value of hat element.
-        *
-        * for admin mode only.
-        * @type {integer}
-        */
-        hat_id = hatElement.val(),
+    /**
+    * initial value of hat element.
+    *
+    * for admin mode only.
+    * @type {integer}
+    */
+    var hat_id = hatElement.val();
 
-        /**
-        * submitter -- the person (or dept etc) who requested an interpreter
-        *
-        * admin mode only
-        *
-        * @type {jQuery}
-        */
-        submitterElement = $("#submitter"),
+    /**
+    * submitter -- the person (or dept etc) who requested an interpreter
+    *
+    * admin mode only
+    *
+    * @type {jQuery}
+    */
+    var submitterElement = $("#submitter");
 
-        /**
-        * initial value of submitter element
-        *
-        * admin mode only
-        *
-        * @type {integer}
-        */
-        submitter_id = submitterElement.val(),
+    /**
+    * initial value of submitter element
+    *
+    * admin mode only
+    *
+    * @type {integer}
+    */
+    var submitter_id = submitterElement.val();
 
-        /**
-         * button for defendant-name search
-         * @type {jQuery}
-         */
-        defendantSearchElement = $("#defendant-search"),
+    /**
+     * button for defendant-name search
+     * @type {jQuery}
+     */
+    var defendantSearchElement = $("#defendant-search");
 
-        /**
-         * div for containing defendant-name search results
-         * @type {jQuery}
-         */
-        slideout = $("#slideout-toggle"),
+    /**
+     * div for containing defendant-name search results
+     * @type {jQuery}
+     */
+    var slideout = $("#slideout-toggle");
 
-        /**
-         * callback for parent location "change" event
-         *
-         * @param  {object} event
-         * @param  {object} params
-         * tofuckingdo: cache
-         * @return {void}
-         */
-        parentLocationChange = function (event, params) {
-            /*jslint unparam: true */
+    /**
+     * callback for parent location "change" event
+     *
+     * @param  {object} event
+     * @param  {object} params
+     * tofuckingdo: cache
+     * @return {void}
+     */
+    var parentLocationChange = function (event, params) {
+    /*jslint unparam: true */
 
-            if (!parentLocationElement.val()) {
-                locationElement.val("").attr({disabled : "disabled"});
-            } else {
-                locationElement.removeAttr("disabled");
-                // populate with children of currently selected parent location
-                $.getJSON("/locations/get-children",
-                    {parent_id : parentLocationElement.val()},
-                    function (data) {
-                        var options = data.map(function (item) {
-                            return $("<option>").val(item.value)
-                                .text(item.label)
-                                .data({type: item.type});
-                        });
-                        // discard existing option elements (for now)
-                        locationElement.children().slice(1).remove();
-                        locationElement.append(options)
-                            // custom event doesn't do anything yet
-                            .trigger("sdny.location-update-complete");
-                        // if we were triggered with a location_id to set...
-                        if (params && params.location_id) {
-                            locationElement.val(params.location_id)
-                                .removeClass("text-muted");
-                        }
+        if (!parentLocationElement.val()) {
+            locationElement.val("").attr({disabled : "disabled"});
+        } else {
+            locationElement.removeAttr("disabled");
+            // populate with children of currently selected parent location
+            $.getJSON("/locations/get-children",
+                {parent_id : parentLocationElement.val()},
+                function (data) {
+                    var options = data.map(function (item) {
+                        return $("<option>").val(item.value)
+                            .text(item.label)
+                            .data({type: item.type});
+                    });
+                    // discard existing option elements (for now)
+                    locationElement.children().slice(1).remove();
+                    locationElement.append(options)
+                    // custom event doesn't do anything yet
+                        .trigger("sdny.location-update-complete");
+                    // if we were triggered with a location_id to set...
+                    if (params && params.location_id) {
+                        locationElement.val(params.location_id)
+                            .removeClass("text-muted");
                     }
-                );
-            }
-        };
+                }
+            );
+        }
+    };
     /*jslint unparam: false */
 
     /**
@@ -322,7 +324,6 @@ var eventForm = (function () {
 
         var init_values = submitterElement.data();
         var anonymity = hatElement.children(":selected").data("anonymity");
-        console.log("the FUCK???");
         if (anonymity === 1) {
             submitterElement.attr("disabled","disabled");
             return;
@@ -747,7 +748,6 @@ var defendantNameForm = (function(){
 
     var addDeftnameCallback = function(response){
 
-        var defendantForm = $("#defendant-form");
         if (response.validation_errors) {
             displayValidationErrors(response.validation_errors);
             return;
@@ -820,7 +820,7 @@ var defendantNameForm = (function(){
                 response.id +"]\"]";
             var defendant_name = $("#surnames").val().trim()
                 +", "+ $("#given_names").val().trim();
-            console.log("selector is: "+selector);
+            //console.log("selector is: "+selector);
             if ($(selector).length) {
                 // update the existing thingy
                 $(selector).val(defendant_name)
@@ -862,16 +862,15 @@ var defendantNameForm = (function(){
                 if (response.modified) {
                     var val_before = $("#modified").val();
                     if (val_before != response.modified) {
-                        console.log("updating last modification timestamp!");
+                        //console.log("updating last modification timestamp!");
                         $("#modified").val(response.modified);
-                    } else {
-                        console.log("looks like no update to mod time?");
-                    }
+                    } //else {console.log("looks like no update to mod time?");}
                 }
             });
     };
     var defendantFormSubmitCallback = function(response) {
-        console.warn("running your defendantFormSubmitCallback");
+
+        var defendantForm = $("#defendant-form");
         if (response.validation_errors !== undefined) {
             return displayValidationErrors(response.validation_errors);
         }
@@ -886,12 +885,12 @@ var defendantNameForm = (function(){
             $("#defendant-form-error").html(
                 "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
             ).show();
-            console.debug(response);
+
         } else {
             /** to do: check for duplicate defendant-name in the form
             before doing this
             */
-            console.log("looking good, bitch!");
+            //console.log("looking good, bitch!");
             var id = $("#deftname-editor input[name=id]").val();
             var selector = "input[name=\"event[defendantNames][" +
                 id +"]\"]";
@@ -905,8 +904,8 @@ var defendantNameForm = (function(){
             if (new_deft_id) {
                 var name = input.attr("name").replace(id, new_deft_id);
                 input.attr({name : name });
-                console.log("id was " + id);
-                console.log("input name attrib is now: "+input.attr("name"));
+                //console.log("id was " + id + "; input name attrib is now: "
+                //    +input.attr("name"));
             }
             $("#defendant-form-success").text("This name has been updated.").show();
             $("#event-form").data({deftnames_modified : 1});
@@ -925,7 +924,6 @@ var defendantNameForm = (function(){
      */
     var defendantUpdateSubmit = function()
     {
-        console.warn("defendantUpdateSubmit: bitch here we go!");
         // did they really change anything?
         var modified = $("#surnames").val() != $("#surnames").data("was")
             ||  $("#given_names").val() != $("#given_names").data("was");
@@ -985,7 +983,6 @@ var defendantNameForm = (function(){
             });
         $("ul.defendant-names").on("click","li.defendant span",
             function(){
-                console.log("ok here shit goes...");
                 var div = $("#deftname-editor .modal-body");
                 var id = $(this).data("id");
                 var selector = "/admin/defendants/edit/"+ id + " #defendant-form";
@@ -1011,8 +1008,6 @@ var defendantNameForm = (function(){
                         $("#occurrences .form-check-input").each(function(){
                             if (-1 !== $(this).val().indexOf(docket)) {
                                 $(this).attr({checked:"checked"});
-                            } else {
-                                console.log("so, is this a name that has not yet been attached to an event?");
                             }
                         });
                     }
