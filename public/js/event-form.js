@@ -133,7 +133,6 @@ var eventForm = (function () {
      * @return {void}
      */
     var parentLocationChange = function (event, params) {
-    /*jslint unparam: true */
 
         if (!parentLocationElement.val()) {
             locationElement.val("").attr({disabled : "disabled"});
@@ -162,7 +161,6 @@ var eventForm = (function () {
             );
         }
     };
-    /*jslint unparam: false */
 
     /**
      * callback for assign-interpreter button's click event
@@ -175,7 +173,7 @@ var eventForm = (function () {
      * @param  {object} event
      * @return {void}
      */
-    var interpreterButtonClick = function(){
+    var interpreterButtonClick = function(event,params){
         var id = interpreterSelectElement.val();
         if (! id ) { return; }
         var selector = "#interpreters-assigned li > input[value=\""+id+"\"]";
@@ -203,6 +201,12 @@ var eventForm = (function () {
                 event_id : $("#event_id").val()},
             function(html){
                 $("#interpreters-assigned").append(html);
+                if (params && params.submit) {
+                    console.warn("am I submitting shit or what???");
+                    console.log(params);
+                    form.submit();
+
+                }
             });
     };
 
@@ -369,7 +373,7 @@ var eventForm = (function () {
      * @param  {object} event
      * @return {void}
      */
-    var formSubmit = function(){
+    var formSubmit = function(event){
 
         if (! locationElement.val()) {
             // no specific location was selected, so the general location
@@ -398,6 +402,18 @@ var eventForm = (function () {
         if (! judgeElement.val()) {
             anon_judge.val(0);
             $("#anonymousJudge").val(judgeElement.val());
+        }
+        if (interpreterSelectElement.val()) {
+            var interp_name = interpreterSelectElement
+                .children("option:selected").text()
+            if (window.confirm("Did you intend to assign the interpreter "
+                + interp_name + " to this event?")) {
+                event.preventDefault();
+                interpreterButton.trigger("click",{submit:true});
+            }
+        } else {
+            //console.log("the FUCK???????????????????");
+            //return true;
         }
     };
 
