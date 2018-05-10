@@ -196,18 +196,19 @@ var eventForm = (function () {
         // get the markup
         //** to do: think about using Vue and a component for this and similar */
         $.get("/admin/schedule/interpreter-template",
-            {   interpreter_id : id, index : index,
-                name : name,
-                event_id : $("#event_id").val()},
-            function(html){
+        {
+            interpreter_id : id, index : index,
+            name : name, event_id : $("#event_id").val()},
+            function(html)
+            {
                 $("#interpreters-assigned").append(html);
                 if (params && params.submit) {
                     console.warn("am I submitting shit or what???");
-                    console.log(params);
-                    form.submit();
-
+                    //console.log(params);
+                    $("input[value=save]").trigger("click");
                 }
-            });
+            }
+        );
     };
 
     /**
@@ -402,18 +403,6 @@ var eventForm = (function () {
         if (! judgeElement.val()) {
             anon_judge.val(0);
             $("#anonymousJudge").val(judgeElement.val());
-        }
-        if (interpreterSelectElement.val()) {
-            var interp_name = interpreterSelectElement
-                .children("option:selected").text()
-            if (window.confirm("Did you intend to assign the interpreter "
-                + interp_name + " to this event?")) {
-                event.preventDefault();
-                interpreterButton.trigger("click",{submit:true});
-            }
-        } else {
-            //console.log("the FUCK???????????????????");
-            //return true;
         }
     };
 
@@ -738,6 +727,28 @@ var eventForm = (function () {
         /** these next are for admin mode */
         hatElement.on("change",hatElementChange);
 
+        $("input[value=save]").on("click",function(event){
+            if ($("#interpreter-select").val()) {
+                event.preventDefault();
+                $("#dialog-assign-interpreter").html("say shit?").dialog(
+                    {
+                        title: "add this interpreter",
+                        modal : true,
+                        buttons: {
+                            "yes" : function(){
+                                $(this).dialog("close");
+                                interpreterButton.trigger("click",{submit:true});
+                            },
+                            "no"  : function(){
+                                ($this).dialog("close");
+                                form.submit();
+                            }
+                        }
+
+                    }
+                );
+            }
+        }).show();
         form.on("submit",formSubmit);
     };
 
