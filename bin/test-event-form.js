@@ -1,18 +1,11 @@
-/*
-var casper = require('casper').create({
-    verbose:true,
-    logLevel:'info'
-});
-"public/js/lib/jquery.min.js"
-"public/js/lib/bootstrap/bootstrap.bundle.js"
-"public/js/common.js"
-"public/js/lib/jquery-ui/jquery-ui.js"
-"public/js/lib/moment/min/moment.min.js"
-"public/js/event-form.js"
-*/
-
+/**
+ casperjs test for admin/schedule/add
+ */
 //var baseUrl = "https://office.localhost";
-var casper;
+//
+var casper, moment, $; // make eslint happy
+//logLevel: 'debug'
+casper.options.logLevel = "debug";
 
 casper.test.begin("Authenticate and Add Event", function suite(test)
 {
@@ -30,7 +23,7 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
         }, true);
         this.waitForUrl("https://office.localhost/admin");
     });
-    ///*
+
     casper.thenOpen("https://office.localhost/admin/schedule/add",
         function()
         {
@@ -85,9 +78,6 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
             this.waitFor(function(){
                 return this.evaluate(function(){return $("#parent_location").val() != "";});
             });
-
-            //var courthouse =  this.getFormValues("#event-form")["event[parent_location]"];
-            //this.echo("courthouse is: "+courthouse);
             var courthouse = this.evaluate(function(){
                 return $("#parent_location option:selected").text();
             });
@@ -105,37 +95,41 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
                     return $("#location option").length;
                 });
                 test.assert(location_option_count > 10,
-                    "there are now no fewer than 10 location elements");
+                    "there are now more than 10 location options");
                 var courtroom = this.evaluate(function(){
                     return $("#location option:selected").text();
                 });
                 // courtroom names look like "23B" or " 706"
-                var re = /^\d{2}(?:[A-D]|\d)/;
+                var re = /^\d{2}(?:[A-D]|\d)$/;
                 test.assert( 1 === courtroom.match(re).length,
-                 "courtroom is automatically selected when judge and in-court event are set");
+                    "courtroom is automatically selected when judge and in-court event are set");
             });
         });
 
+    casper.then(function(){
+        this.echo("I fucking love my life!");
+        test.assertExists("#language");
+        var initial_interpreter_count = this.evaluate(function(){
+            return $("#interpreter-select option").length;
+        });
+        test.assert(initial_interpreter_count === 1,"no interpreter options initially set")
+        //this.echo("shit is: "+initial_interpreter_count);
+        casper.fillSelectors(
+            "#event-form", {"#language":"Spanish" },false
+        );
+        var spanish_interpreter_count;
+        casper.waitFor(function check(){
+            return this.evaluate(function() { return $("#interpreter-select option").length > 10;} )
+        }).then(function(){
+            spanish_interpreter_count = this.evaluate(
+                function(){ return $("#interpreter-select option[value!='']").length; }
+            );
+            test.assert(spanish_interpreter_count > 10,
+                "after setting language, >10 Spanish interpreter options are in the select menu (total is "+spanish_interpreter_count+")")
+        });
+
+        //,function then(){this.echo("yay!");});
+
+    });
     casper.run(function() {  test.done();   });
 });
-
-/*
-var login = function(){
-    //this.log("attempting login",'warning');
-    this.fillSelectors("form", {
-        "#identity":    "david",
-        "#password":    "boink"
-    },true);
-};
-
-casper.start(baseUrl + '/login',function(){
-    this.log("attempting login",'warning');
-    this.fillSelectors('form', {
-        '#identity':    'david',
-        '#password':    'boink'
-    }, true);
-});
-casper.thenOpen(baseUrl+"/schedule/add");
-
-casper.run();
-*/
