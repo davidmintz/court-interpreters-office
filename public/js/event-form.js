@@ -726,7 +726,8 @@ var eventForm = (function () {
         }
         /** these next are for admin mode */
         hatElement.on("change",hatElementChange);
-
+        /** work  in progress: help them out if they chose an interpreter but
+        did not click the button */
         $("input[value=save]").on("click",function(event){
             if ($("#interpreter-select").val()) {
                 event.preventDefault();
