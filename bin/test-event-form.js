@@ -5,7 +5,8 @@
 //
 var casper, moment, $; // make eslint happy
 //logLevel: 'debug'
-casper.options.logLevel = "debug";
+casper.options.logLevel = "info";
+casper.options.verbose = false;
 
 casper.test.begin("Authenticate and Add Event", function suite(test)
 {
@@ -13,7 +14,7 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
         test.assertTitleMatches(/Court Interpreters Office/i,"main page title looks good");
         this.clickLabel("log in");
     });
-
+    casper.log("shit is running","info");
     casper.then(function() {
         test.assertTitleMatches(/user login/,"login page is accessible, title looks good");
 
@@ -65,7 +66,6 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
                     "#judge": judge_name
                 }
             );
-
             test.assertExists("#docket","docket element exists");
             this.sendKeys("#docket","18cr4321");
             this.waitFor(function(){
@@ -105,31 +105,64 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
                     "courtroom is automatically selected when judge and in-court event are set");
             });
         });
+        
+    /**
+     * set language to Spanish and assign an interpreter
+     */
+    casper.then(function setLanguageAndAssignAnInterpreter() {
 
-    casper.then(function(){
-        this.echo("I fucking love my life!");
         test.assertExists("#language");
         var initial_interpreter_count = this.evaluate(function(){
             return $("#interpreter-select option").length;
         });
-        test.assert(initial_interpreter_count === 1,"no interpreter options initially set")
-        //this.echo("shit is: "+initial_interpreter_count);
-        casper.fillSelectors(
+        test.assert(initial_interpreter_count === 1,"no interpreter options initially set");
+
+        this.fillSelectors(
             "#event-form", {"#language":"Spanish" },false
         );
-        var spanish_interpreter_count;
-        casper.waitFor(function check(){
-            return this.evaluate(function() { return $("#interpreter-select option").length > 10;} )
-        }).then(function(){
-            spanish_interpreter_count = this.evaluate(
+
+        this.waitFor(function check(){
+            return this.evaluate(function() {
+                return $("#interpreter-select option").length > 10;}
+            );
+        })
+        .then(function(){
+            var spanish_interpreter_count = this.evaluate(
                 function(){ return $("#interpreter-select option[value!='']").length; }
             );
             test.assert(spanish_interpreter_count > 10,
-                "after setting language, >10 Spanish interpreter options are in the select menu (total is "+spanish_interpreter_count+")")
+                "after setting language, >10 Spanish interpreter options are in "
+                + "the select menu (total is "+spanish_interpreter_count+")");
+        })
+        .then(function(){
+            this.fillSelectors(
+                "#event-form", {"#interpreter-select":"Mintz, David" },false
+            );
+            this.click("#btn-add-interpreter");
+            this.waitFor(
+                function(){
+                    return this.evaluate(function(){
+                        return $("li.interpreter-assigned").length;
+                    });
+                }
+            )
+        .then(function(){
+                var text = this.fetchText("li.interpreter-assigned").trim();
+                var name = "Mintz, David";
+                test.assert(0 === text.indexOf(name),
+                    "element li.interpreter-assigned contains string \""+name+"\"");
+            });
+        });
+        /** add a defendant name */
+        casper.then(function addDefendantName(){
+
         });
 
-        //,function then(){this.echo("yay!");});
+
+
 
     });
-    casper.run(function() {  test.done();   });
+    casper.run(function() {  test.done();
+    /*require('utils').dump(this.result.log);*/
+    });
 });
