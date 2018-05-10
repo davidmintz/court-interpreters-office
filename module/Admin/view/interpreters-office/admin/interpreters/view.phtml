@@ -2,7 +2,7 @@
 $i = $this->interpreter;
 ?>
 
-<div class="card mb-2 mx-auto" style="max-width:900px">
+<div class="card mb-2 mx-auto" style="max-width:1000px">
     <div class="card-header text-center font-weight-bold bg-light">
         <h2>
         <?php echo $this->escapeHtml("{$i->getLastname()}, {$i->getFirstname()} {$i->getMiddleName()}");?>
@@ -22,8 +22,8 @@ $i = $this->interpreter;
     </div>
     <div class="card-body bg-light">
         <div class="row">
-            <div class="col-3 text-md-right"><?php echo $label ?></div>
-            <div class="col-3" style="font-size:110%;line-height: 120%"><?php echo implode(', ', $languages);?></div>
+            <div class="col-2 text-md-right"><?php echo $label ?></div>
+            <div class="col-4" style="font-size:110%;line-height: 120%"><?php echo implode(', ', $languages);?></div>
             <div class="col-6 border border-right-0 border-top-0 border-bottom-0">
                 <address style="line-height: 120%">
                 <?php echo $this->escapeHtml($i->getAddress1()); ?><br>
@@ -53,21 +53,21 @@ $i = $this->interpreter;
                     ?>
                 </address>
             </div>
-            <div class="col-3 text-md-right">active</div><div class="col-3"><?php echo $i->getActive() ? "yes" : "no"?></div>
+            <div class="col-2 text-md-right">active</div><div class="col-4"><?php echo $i->getActive() ? "yes" : "no"?></div>
         <?php
             $email = $i->getEmail();?>
-            <div class="col-3 text-md-right">email <span class="fas fa-envelope mr-2 text-info"></span></div>
-            <div class="col-3"><?php echo $email ?: '<span class="text-muted">&mdash;</span>' ?></div><?php
+            <div class="col-2 text-md-right">email <span class="fas fa-envelope mr-2 text-info"></span></div>
+            <div class="col-4"><?php echo $email ?: '<span class="text-muted">&mdash;</span>' ?></div><?php
             foreach (['mobile','office','home'] as $phone) :
                 $number = $i->{'get'.ucfirst($phone).'Phone'}();
                 ?>
-            <div class="col-3 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180 text-info"></span></div>
-            <div class="col-3"><?php echo $number ?: '<span class="text-muted">&mdash;</span>' ?></div>
+            <div class="col-2 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180 text-info"></span></div>
+            <div class="col-4"><?php echo $number ?: '<span class="text-muted">&mdash;</span>' ?></div>
             <?php
             endforeach;
             ?>
-            <div class="col-3 text-md-right">fingerprinted on </div>
-            <div class="col-3">
+            <div class="col-2 text-md-right">fingerprinted on </div>
+            <div class="col-4">
                 <?php $fingerprinted = $i->getSecurityClearanceDate();
                 if ($fingerprinted) :
                     echo $fingerprinted->format('m/d/Y');
@@ -75,8 +75,8 @@ $i = $this->interpreter;
 ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
-            <div class="col-3 text-md-right">security cleared on</div>
-            <div class="col-3">
+            <div class="col-2 text-md-right">security cleared on</div>
+            <div class="col-4">
                 <?php $clearance = $i->getSecurityClearanceDate();
                 if ($clearance) :
                     echo $clearance->format('m/d/Y');
@@ -84,8 +84,8 @@ $i = $this->interpreter;
 ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
-            <div class="col-3 text-md-right">oath taken on</div>
-            <div class="col-3">
+            <div class="col-2 text-md-right">oath taken on</div>
+            <div class="col-4">
                 <?php $oath = $i->getOathDate();
                 if ($oath) :
                     echo $oath->format('m/d/Y');
@@ -93,8 +93,8 @@ $i = $this->interpreter;
 ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
-            <div class="col-3 text-md-right">contract expiration</div>
-            <div class="col-3">
+            <div class="col-2 text-md-right">contract expiration</div>
+            <div class="col-4">
                 <?php $contract_exp = $i->getContractExpirationDate();
                 if ($contract_exp) :
                     echo $contract_exp->format('m/d/Y');
@@ -102,7 +102,7 @@ $i = $this->interpreter;
 ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
-            <div class="col-3 text-md-right">date of birth
+            <div class="col-2 text-md-right">date of birth
             </div>
             <div class="col-3" id="dob">
                 <?php
@@ -121,7 +121,7 @@ $i = $this->interpreter;
                 ?>
 
             </div>
-            <div class="col-3 text-md-right">social security</div>
+            <div class="col-2 text-md-right">social security</div>
 
             <div class="col-3" id="ssn">
                 <?php
