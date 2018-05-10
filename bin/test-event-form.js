@@ -181,19 +181,14 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
             })
             .then(function(){
                 var name = this.fetchText("#defendant-names li.defendant span:first-of-type").trim();
-                test.assert(
-                    name.match(/^rodr.+, j.+/i) !== null,
+                test.assert(name.match(/^rodr.+, j.+/i) !== null,
                     "a defendant name li element has been added and its text ("
                     + name + ") matches search input"
                 );
             });
-
         });
-
-
-
-
     });
+    
     casper.run(function() {
         test.done();
         /*require('utils').dump(this.result.log);*/
