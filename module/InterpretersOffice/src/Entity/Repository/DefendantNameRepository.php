@@ -64,7 +64,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         $name = $this->parseName($term);
         $parameters = ['surnames' => "$name[last]%"];
 
-        $dql = "SELECT d.id AS value, CONCAT(d.surnames, ',  ',d.given_names) "
+        $dql = "SELECT d.id AS value, CONCAT(d.surnames, ', ', d.given_names) "
                 . ' AS label FROM  InterpretersOffice\Entity\DefendantName d '
                 . ' WHERE ';
 
