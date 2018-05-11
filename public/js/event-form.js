@@ -203,9 +203,8 @@ var eventForm = (function () {
             {
                 $("#interpreters-assigned").append(html);
                 if (params && params.submit) {
-                    console.warn("am I submitting shit or what???");
-                    //console.log(params);
-                    $("#event-form").trigger("submit");
+                    $("#event-form input[value=save]")
+                        .trigger("click");
                 }
             }
         );
@@ -404,6 +403,7 @@ var eventForm = (function () {
             anon_judge.val(0);
             $("#anonymousJudge").val(judgeElement.val());
         }
+        console.log("we have run formSubmit callback");
     };
 
     /**
@@ -730,21 +730,23 @@ var eventForm = (function () {
         did not click the button */
         $("input[value=save]").on("click",function(event){
             var submitButton = $(this);
+            console.log("clicked submit button.");
             if ($("#interpreter-select").val()) {
                 event.preventDefault();
-                //var thatEvent = event;
                 $("#modal-assign-interpreter .modal-footer button").on(
                     "click",function(event) {
                         var button = $(event.target);
+                        submitButton.off("click");
                         if (button.text()==="yes") {
+                            console.log("clicked yes");
                             // this shit doesn't get a chance to happen if
                             // submitButton thing happens after else block
                             interpreterButton.trigger("click",{submit:true});
-                            console.log("click the shit the submit oaram=true");
+                            console.log("triggered click with submit param=true");
                         } else {
-                            console.log("submit the shit");
-                            form.trigger("submit");
-                            submitButton.off("click").trigger("click");
+                            $("#interpreter-select").val("");
+                            //console.log("submitting the shit");
+                            submitButton.trigger("click");
                         }
                     }
                 );
@@ -754,24 +756,9 @@ var eventForm = (function () {
                     + name + "</strong> to this event?");
                 $("#modal-assign-interpreter").modal();
 
-                /*$("#dialog-assign-interpreter").html("say shit?").dialog(
-                    {
-                        title: "add this interpreter",
-                        modal : true,
-                        buttons: {
-                            "yes" : function(){
-                                $(this).dialog("close");
-                                interpreterButton.trigger("click",{submit:true});
-                            },
-                            "no"  : function(){
-                                ($this).dialog("close");
-                                form.submit();
-                            }
-                        }
-                    }
-                );*/
             }
         });
+
         form.on("submit",formSubmit);
     };
 
