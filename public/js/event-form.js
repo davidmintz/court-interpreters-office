@@ -205,7 +205,7 @@ var eventForm = (function () {
                 if (params && params.submit) {
                     console.warn("am I submitting shit or what???");
                     //console.log(params);
-                    $("input[value=save]").trigger("click");
+                    $("#event-form").trigger("submit");
                 }
             }
         );
@@ -729,13 +729,29 @@ var eventForm = (function () {
         /** work  in progress: help them out if they chose an interpreter but
         did not click the button */
         $("input[value=save]").on("click",function(event){
+            var submitButton = $(this);
             if ($("#interpreter-select").val()) {
                 event.preventDefault();
+                //var thatEvent = event;
+                $("#modal-assign-interpreter .modal-footer button").on(
+                    "click",function(event) {
+                        var button = $(event.target);
+                        if (button.text()==="yes") {
+                            // this shit doesn't get a chance to happen if
+                            // submitButton thing happens after else block
+                            interpreterButton.trigger("click",{submit:true});
+                            console.log("click the shit the submit oaram=true");
+                        } else {
+                            console.log("submit the shit");
+                            form.trigger("submit");
+                            submitButton.off("click").trigger("click");
+                        }
+                    }
+                );
                 var name = $("#interpreter-select option:selected").text()
                 $("#modal-assign-interpreter .modal-body").html(
                     "Did you mean to assign interpreter <strong>"
-                    + name + "</strong> to this event?"
-                )
+                    + name + "</strong> to this event?");
                 $("#modal-assign-interpreter").modal();
 
                 /*$("#dialog-assign-interpreter").html("say shit?").dialog(
