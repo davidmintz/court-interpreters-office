@@ -3,8 +3,41 @@
  */
 //var baseUrl = "https://office.localhost";
 //
-var casper, moment, $; // make eslint happy
-//logLevel: 'debug'
+var casper, $; // make eslint happy
+var moment = require("moment");
+var now = moment();
+var day_of_the_week = now.format("ddd");
+var hour = now.hour();
+var month = now.month();
+
+/**
+ * date manipulation - we want to set the event date/time and request
+ * submission date/time depending on when now is, so that we can
+ * set a valid submission time, i.e., not in the future
+ * work in progress
+ */
+var then = moment();
+//*
+if (hour >= 16) {
+    var interval = 1;
+    if ("Fri" === day_of_the_week) {
+        interval = 3;
+    }
+    // next business day at 10
+    then.add(interval, "days").hour(10);
+} else {
+// today at 4p
+    then.hour(16).minute(0);
+}
+//*/
+
+
+// to click a particular day
+//$("td[data-month=4]:contains(14)").trigger("click")
+
+// advance to the next month
+//$("a.ui-datepicker-next").trigger("click");
+
 casper.options.logLevel = "info";
 casper.options.verbose = false;
 
@@ -17,14 +50,13 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
     casper.log("shit is running","info");
     casper.then(function() {
         test.assertTitleMatches(/user login/,"login page is accessible, title looks good");
-
         this.fillSelectors("form", {
             "#identity":    "david",
             "#password":    "boink"
         }, true);
         this.waitForUrl("https://office.localhost/admin");
     });
-
+    /** test the setting of data and time */
     casper.thenOpen("https://office.localhost/admin/schedule/add",
         function()
         {
@@ -42,15 +74,23 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
             this.click("#date");
             this.waitUntilVisible("#ui-datepicker-div");
             test.assertExists("td a.ui-state-highlight","highlighted date td cell exists");
-            this.click("td a.ui-state-highlight");
+            if (then.day() == now.day()) {
+                this.click("td a.ui-state-highlight");
+            } else {
+                // to do: advance the month if necessary...
+                //if (then.month() > now.month()) {  } else {  }
+                this.evaluate(
+                    function(m,d){
+                        $("td[data-month="+m+"]:contains("+d+")").trigger("click");
+                    }, then.month(), then.date()
+                );
+            }
             this.waitWhileVisible("#ui-datepicker-div");
             var event_date = this.getFormValues("#event-form")["event[date]"];
-            var expected = this.evaluate(function(){
-                return moment().format("MM/DD/YYYY");
-            });
-            test.assertEquals(event_date, expected, "today's date is in the date field");
-
+            var expected = then.format("MM/DD/YYYY");
+            test.assertEquals(event_date, expected, "event scheduled date is in the date field");
         });
+
     /**
      * set the event type and judge, and test automatic setting
      * of judge's default courthouse and courtroom. test automatic
@@ -189,9 +229,7 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
         });
 
         /** test selecting a submitter "hat" and an individual person */
-
         casper.then(
-
             function(){
                 this.fillSelectors("#event-form",{
                     "#hat":"Courtroom Deputy"
@@ -209,13 +247,20 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
                             function(){ return $("#submitter option[value!='']").length; }
                         );
                         test.assert(submitter_count > 10,
-                            ">10 options in #submitter menu (total "+submitter_count+")")
+                            ">10 options in #submitter menu (total "+submitter_count+")");
+                        var person_label = this.evaluate(function(){
+                            return $("#submitter option:contains('Pecorino')").text();
+                        });
+                        test.assert(typeof person_label === "string" && person_label.length > 0,
+                            "found submitter option containing text \""+person_label+"\""
+                        );
+                        this.fillSelectors("#event-form",{
+                            "#submitter": person_label
+                        });
                     }
-
                 );
             }
         );
-
     });
 
     casper.run(function() {
