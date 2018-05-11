@@ -336,7 +336,7 @@ var eventForm = (function () {
         }
         var hat_id = $(this).val();
         if (! hat_id) {
-            hatElement.children().not(":first").remove();
+            submitterElement.children().not(":first").remove();
             return;
         } else {
             // if the initial "submitter" value was an inactive person, extra
