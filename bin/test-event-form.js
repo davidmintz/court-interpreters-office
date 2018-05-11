@@ -182,13 +182,42 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
             .then(function(){
                 var name = this.fetchText("#defendant-names li.defendant span:first-of-type").trim();
                 test.assert(name.match(/^rodr.+, j.+/i) !== null,
-                    "a defendant name li element has been added and its text ("
-                    + name + ") matches search input"
+                    "a defendant-name li element has been added and its text ("
+                    + name + ") matches search input \"rodr, j\""
                 );
             });
         });
+
+        /** test selecting a submitter "hat" and an individual person */
+
+        casper.then(
+
+            function(){
+                this.fillSelectors("#event-form",{
+                    "#hat":"Courtroom Deputy"
+                });
+
+                this.waitFor(
+                    function(){
+                        return this.evaluate(function(){
+                            return $("#submitter option").length > 10;
+                        });
+                    }
+                ).then(
+                    function(){
+                        var submitter_count = this.evaluate(
+                            function(){ return $("#submitter option[value!='']").length; }
+                        );
+                        test.assert(submitter_count > 10,
+                            ">10 options in #submitter menu (total "+submitter_count+")")
+                    }
+
+                );
+            }
+        );
+
     });
-    
+
     casper.run(function() {
         test.done();
         /*require('utils').dump(this.result.log);*/
