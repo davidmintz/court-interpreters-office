@@ -731,7 +731,14 @@ var eventForm = (function () {
         $("input[value=save]").on("click",function(event){
             if ($("#interpreter-select").val()) {
                 event.preventDefault();
-                $("#dialog-assign-interpreter").html("say shit?").dialog(
+                var name = $("#interpreter-select option:selected").text()
+                $("#modal-assign-interpreter .modal-body").html(
+                    "Did you mean to assign interpreter <strong>"
+                    + name + "</strong> to this event?"
+                )
+                $("#modal-assign-interpreter").modal();
+
+                /*$("#dialog-assign-interpreter").html("say shit?").dialog(
                     {
                         title: "add this interpreter",
                         modal : true,
@@ -745,11 +752,10 @@ var eventForm = (function () {
                                 form.submit();
                             }
                         }
-
                     }
-                );
+                );*/
             }
-        }).show();
+        });
         form.on("submit",formSubmit);
     };
 
