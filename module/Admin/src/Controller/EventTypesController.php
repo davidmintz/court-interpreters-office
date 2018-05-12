@@ -20,6 +20,7 @@ class EventTypesController extends AbstractActionController
 {
     use AnnotatedFormCreationTrait;
     use DeletionTrait;
+
     /**
      * FormFactoryInterface.
      *
@@ -144,11 +145,11 @@ class EventTypesController extends AbstractActionController
     }
 
 
-        /**
-         * deletes an event-type.
-         * @todo logging?
-         * @return JsonModel
-         */
+    /**
+     * deletes an event-type.
+     * @todo logging?
+     * @return JsonModel
+     */
     public function deleteAction()
     {
 
