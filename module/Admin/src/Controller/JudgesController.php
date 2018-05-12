@@ -11,14 +11,17 @@ use InterpretersOffice\Admin\Form\JudgeForm;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 
+
+
 /**
  * JudgesController.
  */
 class JudgesController extends AbstractActionController
 {
+    use DeletionTrait;
+
     /**
      * entity manager.
-     *
      * @var EntityManagerInterface
      */
     protected $entityManager;
@@ -108,8 +111,7 @@ class JudgesController extends AbstractActionController
             $viewModel->id = $id;
         }
         $form = new JudgeForm(
-            $this->entityManager,
-            ['action' => 'update', 'object' => $entity]
+            $this->entityManager, ['action' => 'update', 'object' => $entity]
         );
         $form->bind($entity);
         $viewModel->form = $form;
@@ -124,8 +126,7 @@ class JudgesController extends AbstractActionController
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
                       'Judge <strong>%s %s, %s</strong> has been updated.',
-                      $entity->getFirstname(),
-                      $entity->getLastname(),
+                      $entity->getFirstname(), $entity->getLastname(),
                       (string) $entity->getFlavor()
                   ));
             $this->redirect()->toRoute('judges');
@@ -133,4 +134,25 @@ class JudgesController extends AbstractActionController
 
         return $viewModel;
     }
+
+
+        /**
+         * deletes a judge.
+         *
+         * @return JsonModel
+         */
+        public function deleteAction()
+        {
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+
+                $id = $this->params()->fromRoute('id');
+                $name = $this->params()->fromPost('name');
+                $what = "Judge";
+                $entity = $this->entityManager->find(Entity\Judge::class, $id);
+
+                return $this->delete(compact('entity', 'id', 'name', 'what'));
+            }
+        }
+
 }

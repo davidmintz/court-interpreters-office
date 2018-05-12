@@ -7,13 +7,29 @@ $this->headTitle($this->title);
 $this->headScript()
         ->appendFile($this->basePath('js/common.js'))
         ->appendFile($this->basePath('js/judge-form.js'));
-if ($this->errorMessage) : ?>
-<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-<?php
-return;
+?>
+<div class="center-block mx-auto" style="max-width:700px"><!-- wrapper -->
+    <h2 class="my-4"><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
+<?php  if ($this->errorMessage) : ?>
+        <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
+</div>
+    <?php return;
 endif;
+$action = $this->layout()->action;
+if ($action == 'add') :
+    $actionAttrib = $this->url('judges/add');
+    $delete_button = false;
+else :
+    $entity = $form->getObject();
+    $actionAttrib = $this->url('judges/edit', ['id' => $entity->getId()]);
+    $form->setAttribute('data-event-type_name', (string)$entity);
+    $delete_button = ! $entity->hasRelatedEntities();
+    echo "WTF";
+endif;
+$form->setAttribute('action', $actionAttrib)
+    ->setAttribute('data-redirect_url', $this->url('judges'));
 $formAction = strstr($this->title, 'add') ? $this->url('judges/add')
-    : $this->url('judges/edit', ['id' => $this->id ]);
+    : $this->url('judges/edit', ['id' => $entity->getId() ]);
 $form = $this->form;
 $form->add([
     'name' => 'submit',
@@ -21,14 +37,11 @@ $form->add([
     'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction)->setAttribute('class', 'form-horizontal')    ;
 ?>
-<div class="center-block mx-auto" style="max-width:700px"><!-- wrapper -->
-<h2 class="my-4"><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
 <?php
 //echo "SHIT? ..."; $fieldset = $form->get('judge');$shit = $fieldset->get('courthouse')->getValueOptions();echo count($shit);
 $form->prepare();
 $fieldset = $form->get('judge');
 // this is a bit beyond display logic and maybe should go somewhere else...
-$entity = $form->getObject();
 echo $this->form()->openTag($form);?>
 <?php
 $flavor = $fieldset->get('flavor');?>
@@ -37,12 +50,8 @@ $flavor = $fieldset->get('flavor');?>
     <div class="col-sm-9"><?php echo $this->formSelect($flavor),$this->formElementErrors($flavor) ?>
     </div>
 </div>
-
 <?php // text inputs
 $elements = ['lastname','middlename','firstname','email','office_phone',];
-?>
-
-<?php
 foreach ($elements as $elementName) :
     $element = $fieldset->get($elementName);?>
 <div class="form-group form-row">
@@ -69,7 +78,7 @@ $courtroom = $fieldset->get('courtroom');?>
              </div>
              <div class="offset-2 col-sm-10" style="margin-top: 4px">
                  <button type="button" data-toggle="modal" data-target="#add-location" title="add a new location" id="btn-add-location" class="btn btn-info btn-sm">
-                      <span aria-hidden="true" class="fas fa-plus"></span> new location
+                      <span aria-hidden="true" class="fas fa-plus"></span> add new location
                 </button>
             </div>
         </div>
@@ -107,6 +116,9 @@ $active = $fieldset->get('active');?>
         $csrf = $form->get('csrf');
         echo $this->formHidden($csrf), $this->formElementErrors($csrf);
         echo $this->formSubmit($form->get('submit'));
+        if ($delete_button):
+?><input id="btn-delete" type="button" class="btn btn-lg btn-warning" title="delete this judge from your database" value="delete" id="btn-delete"><?php
+        endif;
         ?>
     </div>
 </div>
