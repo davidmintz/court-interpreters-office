@@ -44,7 +44,7 @@ trait DeletionTrait
                 $result = 'error';
                 $redirect = false;
                 $error = [ 'message' =>
-                    "This $what cannot be deleted because it there are other database records that refer to it.",
+                    "This $what database record cannot be deleted because there are other records that refer to it.",
                     'code' => $e->getCode(),
                     'exception' => 'foreign_key_constraint',
                 ];
