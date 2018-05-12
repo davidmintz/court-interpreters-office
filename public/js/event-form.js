@@ -196,9 +196,9 @@ var eventForm = (function () {
         // get the markup
         //** to do: think about using Vue and a component for this and similar */
         $.get("/admin/schedule/interpreter-template",
-        {
-            interpreter_id : id, index : index,
-            name : name, event_id : $("#event_id").val()},
+            {
+                interpreter_id : id, index : index,
+                name : name, event_id : $("#event_id").val()},
             function(html)
             {
                 $("#interpreters-assigned").append(html);
@@ -373,7 +373,7 @@ var eventForm = (function () {
      * @param  {object} event
      * @return {void}
      */
-    var formSubmit = function(event){
+    var formSubmit = function(){
 
         if (! locationElement.val()) {
             // no specific location was selected, so the general location
@@ -403,7 +403,6 @@ var eventForm = (function () {
             anon_judge.val(0);
             $("#anonymousJudge").val(judgeElement.val());
         }
-        console.log("we have run formSubmit callback");
     };
 
     /**
@@ -726,36 +725,31 @@ var eventForm = (function () {
         }
         /** these next are for admin mode */
         hatElement.on("change",hatElementChange);
-        /** work  in progress: help them out if they chose an interpreter but
-        did not click the button */
+
+        /**
+         * help them out if they chose an interpreter but
+         * did not click the button
+         */
         $("input[value=save]").on("click",function(event){
             var submitButton = $(this);
-            console.log("clicked submit button.");
             if ($("#interpreter-select").val()) {
                 event.preventDefault();
-                $("#modal-assign-interpreter .modal-footer button").on(
-                    "click",function(event) {
+                $("#modal-assign-interpreter .modal-footer button").on("click",
+                    function(event) {
                         var button = $(event.target);
                         submitButton.off("click");
                         if (button.text()==="yes") {
-                            console.log("clicked yes");
-                            // this shit doesn't get a chance to happen if
-                            // submitButton thing happens after else block
                             interpreterButton.trigger("click",{submit:true});
-                            console.log("triggered click with submit param=true");
                         } else {
                             $("#interpreter-select").val("");
-                            //console.log("submitting the shit");
                             submitButton.trigger("click");
                         }
-                    }
-                );
-                var name = $("#interpreter-select option:selected").text()
+                    });
+                var name = $("#interpreter-select option:selected").text();
                 $("#modal-assign-interpreter .modal-body").html(
                     "Did you mean to assign interpreter <strong>"
                     + name + "</strong> to this event?");
                 $("#modal-assign-interpreter").modal();
-
             }
         });
 
