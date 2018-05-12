@@ -111,6 +111,7 @@ class EventType
     {
         $this->events = new ArrayCollection();
     }
+    
     /**
      * does this entity have related entities?
      *
