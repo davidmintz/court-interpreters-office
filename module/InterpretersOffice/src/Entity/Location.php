@@ -155,20 +155,6 @@ class Location
     }
 
     /**
-     * does this entity have related entities?
-     *
-     * returns false if this Location has no related
-     * entities and can therefore safely be deleted
-     *
-     * @return boolean true if there are related entities
-     */
-    public function hasRelatedEntities()
-    {
-        return ! $this->events->isEmpty() or ! $this->judges->isEmpty()
-            or ! $this->childLocations->isEmpty();
-    }
-
-    /**
      * Get id.
      *
      * @return int

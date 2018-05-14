@@ -266,4 +266,22 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     }
 
      */
+
+     /**
+      * does entity $id have related entities?
+      *
+      * returns false if this Location has no related
+      * entities and can therefore safely be deleted
+      * @param int $id entity id
+      * @return boolean true if there are related entities
+      */
+     public function hasRelatedEntities($id)
+     {
+
+         $dql = 'SELECT COUNT(e.id)  +  COUNT(c.id)  + COUNT(j.id)
+         FROM InterpretersOffice\Entity\Location l LEFT JOIN l.events e
+         LEFT JOIN l.childLocations c LEFT JOIN l.judges j WHERE l.id = :id';
+         return $this->getEntityManager()->createQuery($dql)->setParameters(
+             ['id'=>$id])->getSingleScalarResult() ? true : false;
+     }
 }

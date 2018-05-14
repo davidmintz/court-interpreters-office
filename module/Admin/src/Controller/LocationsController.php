@@ -143,8 +143,8 @@ class LocationsController extends AbstractActionController
                      ]
                 );
             }
-            $this->flashMessenger()
-                  ->addSuccessMessage("The location  <strong>{$entity->getName()}</strong> has been added.");
+            $this->flashMessenger()->addSuccessMessage(
+                "The location  <strong>{$entity->getName()}</strong> has been added.");
             $this->redirect()->toRoute('locations');
         }
 
@@ -162,17 +162,17 @@ class LocationsController extends AbstractActionController
             ->setVariables(['title' => 'edit a location']);
 
         $id = $this->params()->fromRoute('id');
-
-        $entity = $this->entityManager->find('InterpretersOffice\Entity\Location', $id);
+        $repo = $this->entityManager->getRepository(Location::class);
+        $entity = $repo->find($id);
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
         }
-        $form = $this->getForm(
-            Location::class,
-            ['object' => $entity, 'action' => 'update']
-        )
-               ->bind($entity);
-        $viewModel->form = $form;
+        $form = $this->getForm(Location::class,
+            [   'object' => $entity, 'action' => 'update',
+            ])
+            ->bind($entity);
+        $viewModel->setVariables(['form'=>$form,
+            'has_related_entities'=>$repo->hasRelatedEntities($id)]);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
