@@ -35,7 +35,7 @@ class AuthenticationTest extends AbstractControllerTest
         $this->assertInstanceOf(Acl::class, $this->getApplicationServiceLocator()->get('acl'));
     }
 
-    public function testAcl()
+    public function testAclRules()
     {
 
         $this->assertFalse($this->acl->isAllowed('submitter', Admin\EventsController::class, 'update'), "submitter should NOT be allowed to edit events");

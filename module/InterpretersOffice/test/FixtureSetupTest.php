@@ -16,7 +16,7 @@ class FixtureSetupTest extends AbstractControllerTest
     {
         return $this->getApplicationServiceLocator()->get('entity-manager');
     }
-    public function testSomething()
+    public function testBasicEnvironmentSanity()
     {
         $container = $this->getApplicationServiceLocator();
         $this->assertTrue($container instanceof \Interop\Container\ContainerInterface);
@@ -28,6 +28,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $this->dispatch('/');
         $this->assertResponseStatusCode(200);
     }
+
     public function loadTestEventData()
     {
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
@@ -46,6 +47,7 @@ class FixtureSetupTest extends AbstractControllerTest
             new DataFixture\EventLoader(),
          ]);
     }
+
     public function testDataFixtureSanity()
     {
         $this->assertTrue(class_exists('ApplicationTest\FixtureManager'));
