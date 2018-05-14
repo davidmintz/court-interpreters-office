@@ -119,14 +119,16 @@ class EventTypesController extends AbstractActionController
         if (! $id) {
             return $view->setVariables(['errorMessage' => 'invalid or missing id parameter']);
         }
-        $entity = $this->entityManager->find('InterpretersOffice\Entity\EventType', $id);
+        $repo = $this->entityManager->getRepository(EventType::class);
+        $entity = $repo->find($id);
         if (! $entity) {
             return $view->setVariables(['errorMessage' => "event-type with id $id not found"]);
         }
         $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'update'])
                ->bind($entity);
 
-        $view->setVariables(['form' => $form, 'id' => $id]);
+        $view->setVariables(['form' => $form, 'id' => $id,
+            'has_related_entities' => $repo->hasRelatedEntities($id)]);
 
         $request = $this->getRequest();
 

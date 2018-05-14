@@ -105,10 +105,9 @@ class PeopleController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/people/form.phtml')
                 ->setVariable('title', 'edit a person');
         $id = $this->params()->fromRoute('id');
-        if (! $id) { // get rid of this, since it will otherwise be 404?
-            return $viewModel->setVariables(['errorMessage' => 'invalid or missing id parameter']);
-        }
-        $entity = $this->entityManager->find('InterpretersOffice\Entity\Person', $id);
+
+        $repo = $this->entityManager->getRepository(Entity\Person::class);
+        $entity = $repo->find($id);
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "person with id $id not found"]);
         } else {
@@ -120,7 +119,8 @@ class PeopleController extends AbstractActionController
         }
         $form = new PersonForm($this->entityManager, ['action' => 'update']);
         $form->bind($entity);
-        $viewModel->form = $form;
+        $viewModel->setVariables(['form' => $form,
+            'has_related_entities' => $repo->hasRelatedEntities($id)]);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

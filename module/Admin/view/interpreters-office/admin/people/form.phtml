@@ -28,7 +28,7 @@ echo $this->form()->openTag($form);?>
 <div class="form-group">
 <?php
 $hat = $fieldset->get('hat');
-if ($form->getObject()->hasRelatedEntities()) :
+if ($this->has_related_entities) :
     $hat->setAttribute("disabled", "disabled");
 endif;
 ?>
@@ -55,8 +55,8 @@ $active = $fieldset->get('active');?>
     <div class="col-sm-9" style="padding-top:.25em"><?php echo $this->formCheckbox($active),$this->formElementErrors($active) ?>
     </div>
  </div>
-<div class="form-group">
-    <div class="col-sm-offset-3 col-sm-9">
+<div class="form-group form-row">
+    <div class="offset-sm-3 col-sm-9">
     <?php
     $csrf = $form->get('csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
