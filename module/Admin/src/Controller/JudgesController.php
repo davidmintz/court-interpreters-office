@@ -97,8 +97,8 @@ class JudgesController extends AbstractActionController
                 ->setTemplate('interpreters-office/admin/judges/form.phtml')
                 ->setVariables(['title' => 'edit a judge']);
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager
-            ->find('InterpretersOffice\Entity\Judge', $id);
+        $repo = $this->entityManager->getRepository(Entity\Judge::class);
+        $entity = $repo->find($id);
         if (! $entity) {
             return $viewModel
             ->setVariables(['errorMessage' => "judge with id $id not found"]);
@@ -106,10 +106,11 @@ class JudgesController extends AbstractActionController
             $viewModel->id = $id;
         }
         $form = new JudgeForm(
-            $this->entityManager, ['action' => 'update', 'object' => $entity]
+            $this->entityManager, ['action' => 'update', 'object' => $entity,]
         );
         $form->bind($entity);
-        $viewModel->form = $form;
+        $viewModel->setVariables(['form' => $form,
+            'has_related_entities' => $repo->hasRelatedEntities($id)]);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
