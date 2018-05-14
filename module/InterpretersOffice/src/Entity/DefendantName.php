@@ -58,16 +58,6 @@ class DefendantName
     protected $events;
 
     /**
-     * does this have related entities?
-     *
-     * @return boolean true if it does have related entities
-     */
-    public function hasRelatedEntities()
-    {
-        return $this->events->count() ? false : true;
-    }
-
-    /**
      * is this name is spelled exactly like $name?
      *
      * @param  DefendantName $name

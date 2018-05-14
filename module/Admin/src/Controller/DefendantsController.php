@@ -170,7 +170,7 @@ class DefendantsController extends AbstractActionController
         $container = $this->getEvent()->getApplication()->getServiceManager();
         $logger = $container->get('log');
         $this->repository->setLogger($logger);
-        $listener = $container->get('InterpretersOffice\Entity\Listener\EventEntityListener');
+        $listener = $container->get(Entity\Listener\EventEntityListener::class);
         if (! $listener->getLogger()) {
             $listener->setLogger($logger);
         }

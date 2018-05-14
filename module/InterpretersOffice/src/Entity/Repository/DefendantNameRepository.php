@@ -451,4 +451,20 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             ->setParameters(['id' => $defendantName->getId()])
             ->getResult();
     }
+
+    /**
+     * whether defendant name $id has related entities
+     *
+     * @param int $id entity id
+     * @return boolean true if related entities exist
+     */
+    public function hasRelatedEntities($id)
+    {
+        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\DefendantName
+            d  JOIN d.events e  WHERE d.id = :id';
+        return $this->getEntityManager()->createQuery($dql)->setParameters([
+            'id' => $id
+        ])->getSingleScalarResult() ? true : false;
+
+    }
 }
