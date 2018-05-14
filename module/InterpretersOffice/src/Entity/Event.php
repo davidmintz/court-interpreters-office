@@ -72,7 +72,7 @@ class Event
     /**
      * Every interpreter event implies a language.
      *
-     * @ORM\ManyToOne(targetEntity="Language",inversedBy="events")
+     * @ORM\ManyToOne(targetEntity="Language") //,inversedBy="events"
      * @ORM\JoinColumn(nullable=false)
      *
      * @var Language
