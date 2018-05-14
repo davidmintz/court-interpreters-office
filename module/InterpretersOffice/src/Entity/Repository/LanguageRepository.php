@@ -37,6 +37,34 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         $this->cache->setNamespace('languages');
     }
 
+
+    /**
+     * does this entity have related entities?
+     *
+     * returns false if this Language has no related
+     * entities and can therefore safely be deleted
+     *
+     * @param int $id the id of the language
+     * @return boolean true if there are related entities
+     */
+    public function hasRelatedEntities($id)
+    {
+        $em = $this->getEntityManager();
+        $event_count_dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event
+            e JOIN e.language l WHERE l.id = :id';
+        $events = $em->createQuery($event_count_dql)->setParameters(['id'=>$id])
+            ->getSingleScalarResult();
+        if ($events) {
+            return true;
+        }
+        $interp_lang_dql = 'SELECT COUNT(l.id) FROM
+        InterpretersOffice\Entity\InterpreterLanguage il JOIN il.language l
+            WHERE l.id = :id';
+        $interpreters = $em->createQuery($interp_lang_dql)->setParameters(
+            ['id'=>$id])->getSingleScalarResult();
+        return $interpreters ? true : false;
+    }
+
     /**
      * returns all languages wrapped in a paginator.
      *

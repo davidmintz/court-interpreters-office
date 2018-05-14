@@ -57,6 +57,28 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         return $this->createQuery($dql, $this->cache_namespace)->getResult();
     }
 
+
+    /**
+     * does entity $id have related entities?
+     *
+     * returns false if this Judge has no related
+     * entities and can therefore safely be deleted
+     *
+     * @return boolean true if there are related entities
+     */
+    public function hasRelatedEntities($id)
+    {
+        $q = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e JOIN
+            e.judge j WHERE j.id = :id';
+        // it is theoretically possible a judge could personally request an
+        // interpreter and thereby created a related event even without ever
+        // being related by event.judge_id, but it seems highly improbable
+        $events = $this->getEntityManager()->createQuery($q)
+            ->setParameters(['id'=>$id])->getSingleScalarResult();
+        return $events ? true : false;
+    }
+
+
     /**
      * gets a listing of judges with default courtrooms
      *

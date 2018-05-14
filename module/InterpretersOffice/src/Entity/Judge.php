@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Entity representing a Judge.
  *
- * Judge inherits from Person. boink.
+ * Judge inherits from Person.
  *
  * @see InterpretersOffice\Entity\Person
  *
@@ -64,18 +64,6 @@ class Judge extends Person
     {
         $this->setHat($hat);
         $this->events = new ArrayCollection();
-    }
-
-    /**
-     * does this entity have related entities?
-     *
-     * returns false if this Judge has no related
-     * entities and can therefore safely be deleted
-     * @return boolean true if there are related entities
-     */
-    public function hasRelatedEntities()
-    {
-        return ! $this->events->isEmpty();
     }
 
     /**
