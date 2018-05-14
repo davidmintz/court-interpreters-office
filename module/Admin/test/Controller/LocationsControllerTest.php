@@ -275,4 +275,46 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->assertQueryCount('.validation-error', 1);
         $this->assertQueryContentRegex('.validation-error', '/location type is required/');
     }
+
+    public function testDeleteLocation()
+    {
+        $em = FixtureManager::getEntityManager();
+        $parent = $em->getRepository('InterpretersOffice\Entity\Location')
+                ->findOneBy(['name' => '500 Pearl']);
+
+        $type = $em->getRepository('InterpretersOffice\Entity\LocationType')
+                ->findOneBy(['type' => 'courtroom']);
+        $this->reset(true);
+        $this->login('susie', 'boink');
+        $this->reset(true);
+        $data = [
+            'name' => '29F', // twilight zone
+            'parentLocation' => $parent->getId(),
+            'type' => $type->getId(),
+            'comments' => 'shit is real',
+            'active' => 1,
+            'csrf' => $this->getCsrfToken('/admin/locations/add'),
+        ];
+
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($data)
+        );
+        $this->dispatch('/admin/locations/add');
+        $this->assertRedirect();
+        $this->assertRedirectTo('/admin/locations');
+
+        $id = $em->createQuery("SELECT l.id FROM InterpretersOffice\Entity\Location l ORDER BY l.id DESC")
+            ->setMaxResults(1)->getSingleScalarResult();
+        $this->reset(true);
+        $this->login('susie', 'boink');
+        $this->reset(true);
+        $url = '/admin/locations/edit/'.$id;
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertQueryCount('#btn-delete', 1);
+
+        // to be continued
+
+    }
+
 }
