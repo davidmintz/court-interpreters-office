@@ -47,4 +47,21 @@ class PersonRepository extends EntityRepository
                 ->setParameters(['hat_id' => $hat_id])
                 ->getResult();
     }
+
+
+
+    /**
+     * does this Person $id have a data history?
+     *
+     * @param int $id person id
+     * @return boolean true if the Person has requested an interpreter
+     */
+    public function hasRelatedEntities($id)
+    {
+        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Person p
+            JOIN p.events e  WHERE p.id = :id';
+
+        return $this->getEntityManager()->createQuery($dql)->setParameters(
+            ['id'=>$id])->getSingleScalarResult() ? true : false;
+    }
 }

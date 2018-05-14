@@ -39,7 +39,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
 
 
     /**
-     * does this entity have related entities?
+     * does entity $id have related entities?
      *
      * returns false if this Language has no related
      * entities and can therefore safely be deleted
@@ -50,8 +50,9 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
     public function hasRelatedEntities($id)
     {
         $em = $this->getEntityManager();
-        $event_count_dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event
-            e JOIN e.language l WHERE l.id = :id';
+        $event_count_dql = 'SELECT COUNT(e.id) FROM
+            InterpretersOffice\Entity\Event e JOIN e.language l
+            WHERE l.id = :id';
         $events = $em->createQuery($event_count_dql)->setParameters(['id'=>$id])
             ->getSingleScalarResult();
         if ($events) {

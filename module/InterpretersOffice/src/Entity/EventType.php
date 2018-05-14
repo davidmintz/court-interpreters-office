@@ -110,20 +110,7 @@ class EventType
     public function __construct()
     {
         $this->events = new ArrayCollection();
-    }
-    
-    /**
-     * does this entity have related entities?
-     *
-     * returns false if this event-type has no related
-     * entities and can therefore safely be deleted
-     *
-     * @return boolean true if there are related entities
-     */
-    public function hasRelatedEntities()
-    {
-        return ! $this->events->isEmpty();
-    }
+    }    
 
     /**
      * Get id.

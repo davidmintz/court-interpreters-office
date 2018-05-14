@@ -152,15 +152,6 @@ class Person
     }
 
     /**
-     * does this Person have a data history?
-     *
-     * @return boolean true if the Person has requested an interpreter
-     */
-    public function hasRelatedEntities()
-    {
-        return ! $this->events->isEmpty();
-    }
-    /**
      * Get id.
      *
      * @return int

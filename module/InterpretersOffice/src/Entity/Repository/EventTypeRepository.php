@@ -93,4 +93,22 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
          // for debugging
          return sprintf('ran %s at line %d', __METHOD__, __LINE__);
     }
+
+    /**
+     * does entity $id have related entities?
+     *
+     * returns false if this event-type has no related
+     * entities and can therefore safely be deleted
+     * @param int $id
+     * @return boolean true if there are related entities
+     */
+    public function hasRelatedEntities($id)
+    {
+        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+            JOIN e.eventType t WHERE t.id = :id';
+            
+        return $this->getEntityManager()->createQuery($dql)->setParameters(
+            ['id'=>$id])->getSingleScalarResult() ? true : false;
+    }
+
 }
