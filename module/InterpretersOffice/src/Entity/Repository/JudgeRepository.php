@@ -71,7 +71,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         $q = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e JOIN
             e.judge j WHERE j.id = :id';
         // it is theoretically possible a judge could personally request an
-        // interpreter and thereby created a related event even without ever
+        // interpreter and thereby create a related event even without ever
         // being related by event.judge_id, but it seems highly improbable
         $events = $this->getEntityManager()->createQuery($q)
             ->setParameters(['id'=>$id])->getSingleScalarResult();
