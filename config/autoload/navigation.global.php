@@ -183,7 +183,7 @@ return [
                 'privilege' => 'add',
             ],
             [
-                'label' => 'interpreter roster',
+                'label' => 'interpreters',
                 'route' => 'interpreters',
                 'resource' => Admin\InterpretersController::class,
             ],
