@@ -166,19 +166,24 @@ return [
         // main navigation menu
         'default' => [
             [
+                'label' => 'admin',
+                'route' => 'admin',
+                'resource' => Admin\AdminIndexController::class,
+            ],
+            [
                 'label' => 'schedule',
                 'route' => 'events',
                 'resource' => Admin\EventsController::class,
 
             ],
             [
-                'label' => 'add an event',
+                'label' => 'add event',
                 'route' => 'events/add',
                 'resource' => Admin\EventsController::class,
                 'privilege' => 'add',
             ],
             [
-                'label' => 'roster of interpreters',
+                'label' => 'interpreter roster',
                 'route' => 'interpreters',
                 'resource' => Admin\InterpretersController::class,
             ],
@@ -242,12 +247,14 @@ return [
                     ],
                 ],
             ],
+            /*
             [
                 'label' => 'log out',
                 'route' => 'logout',
                 'resource' => Main\AuthController::class,
                 'privilege' => 'logout',
             ],
+            */
         ],
     ],
     'service_manager' => [

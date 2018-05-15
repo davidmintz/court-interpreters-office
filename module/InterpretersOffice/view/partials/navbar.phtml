@@ -1,32 +1,35 @@
 <?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */ ?>
-<ul class="navbar-nav mr-auto"><?php foreach ($this->container as $page) { ?>            
-        <?php /* @var $page Zend\Navigation\Page\Mvc */ 
+<ul class="navbar-nav mr-auto"><?php
+$action = $this->layout()->action;
+foreach ($this->container as $page) { ?>
+        <?php /* @var $page Zend\Navigation\Page\Mvc */
         // when using partials we need to manually check for ACL conditions
         if (false === $page->display ||!$page->isVisible() || !$this->navigation()->accept($page)) { continue; }
-        $hasChildren = $page->hasPages();            
+        $hasChildren = $page->hasPages();
         if (!$hasChildren or false === $page->expand_children ) {
-?><li class="nav-item"><a class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $page->getLabel() ?></a></li>
-<?php } else { 
-?><li class="nav-item dropdown">
+            $label = $page->getLabel();
+?><li class="nav-item border-left <?php if ($action == $label): ?> active<?php endif; ?>"><a class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
+<?php } else {
+?><li class="nav-item dropdown border-left">
     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
     <div class="dropdown-menu"><?php foreach ($page->getPages() as $child) { ?>
-            <?php 
-            if (!$child->isVisible() || !$this->navigation()->accept($child)) { 
-                continue;                             
-            } 
+            <?php
+            if (!$child->isVisible() || !$this->navigation()->accept($child)) {
+                continue;
+            }
             if (in_array($child->getLabel(),['edit',])) {
                 // keep it from blowing up for lack of an id parameter
                 continue;
-            }                        
+            }
             ?><a class="dropdown-item" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
         <?php } ?>
     </div>
 </li>
     <?php }
-     } 
+     }
 ?>
 </ul>
-<?php /* their example 
+<?php /* their example
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">Navbar</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

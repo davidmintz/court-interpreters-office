@@ -154,9 +154,13 @@ ul.ui-autocomplete .ui-state-active
 }
 
 td.defendants, div.defendants {
-    line-height: 1.25rem;
+    line-height: 1.25rem;border
 }
 
 div.event-details .col-sm-4 {
     padding-left: 5px;
+}
+
+#navbar-collapse ul > li {
+/*    border-left: 1px solid #ACC4D2;*/
 }
