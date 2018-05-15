@@ -22,8 +22,8 @@ if ($action == 'add') :
 else :
     $entity = $form->getObject();
     $actionAttrib = $this->url('judges/edit', ['id' => $entity->getId()]);
-    $form->setAttribute('data-event-type_name', (string)$entity);
-    //$delete_button = ! $this->has_related_entities;    echo "WTF";
+    $form->setAttribute('data-judge_name', (string)$entity);
+    
 endif;
 $form->setAttribute('action', $actionAttrib)
     ->setAttribute('data-redirect_url', $this->url('judges'));
