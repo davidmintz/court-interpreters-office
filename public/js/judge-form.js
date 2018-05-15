@@ -48,7 +48,7 @@ $(document).ready(function(){
             defaultLocation.val(selectElement.val());
         } else {
             // the courthouse is what changed. if there is no courtroom,
-            // the courthouse value becomes the default location value
+            // the courthouse value becomes the default-location value
             if (! courtroomSelect.val()) {
                 defaultLocation.val(selectElement.val());
             }
