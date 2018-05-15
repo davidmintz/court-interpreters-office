@@ -1,6 +1,6 @@
 <?php
 /**
- * module/Admin/src/Controller/LanguagesController.php.
+ * module/Admin/src/Controller/EventsController.php.
  */
 
 namespace InterpretersOffice\Admin\Controller;
@@ -255,6 +255,14 @@ class EventsController extends AbstractActionController
             return $this->redirect()->toRoute('events');
         }
         $id = $this->params()->fromRoute('id');
+        $validator = new \Zend\Validator\Csrf('csrf');
+        $token = $this->params()->fromPost('csrf');
+        if (! $validator->isValid($token)) {
+            return new JsonModel(['status' => 'error','message'=>
+                'invalid or missing security token. '
+                .'Please refresh this page and try again.']
+            );
+        }
         $entity = $this->entityManager->find(Entity\Event::class, $id);
         if (! $entity) {
             $result = [

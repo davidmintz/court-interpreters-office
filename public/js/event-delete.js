@@ -1,5 +1,6 @@
 $(function(){
     var event_id =  $('#event_id').val() || $(".event-details").data("event_id");
+    var csrf_token = $('#csrf').val();
     if (! event_id) {
         console.warn("could not figure out event id in event-delete.js");
         return;
@@ -12,7 +13,7 @@ $(function(){
         console.log("deleting shit...");
         var url = '/admin/schedule/delete/'+event_id;
         var redirect_url = document.referrer||'/admin/schedule';
-        $.post(url,"json")
+        $.post(url,{csrf:csrf_token},"json")
             .success(function(response){
                 if (response.status === "success" ) {
                     document.location = redirect_url;
