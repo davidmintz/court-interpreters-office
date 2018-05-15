@@ -316,7 +316,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                         $result['events_affected'][] = $de->getEvent()->getId();
                     }
                     $logger->debug(sprintf("is there a childless name to remove? (at %d)", __LINE__));
-                    if (! $defendantName->hasRelatedEntities()) {
+                    if (! $this->hasRelatedEntities($defendantName->getId())) {
                         $logger->debug("we think so");
                         $result['deftname_deleted'] = $defendantName->getId();
                         $em->remove($defendantName);
