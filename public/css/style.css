@@ -144,11 +144,19 @@ ul.ui-autocomplete {
 }
 
 /*  does NOT fucking work w/o "important" even though our style.css
-   is loaded after  jquery-ui.css
+   is loaded ~after~ jquery-ui.css. why???
 */
 ul.ui-autocomplete .ui-state-active
  {
 	background: none !important;
 	font-weight: inherit !important;
 	color: rgb(0, 123, 255) !important;
+}
+
+td.defendants, div.defendants {
+    line-height: 1.25rem;
+}
+
+div.event-details .col-sm-4 {
+    padding-left: 5px;
 }

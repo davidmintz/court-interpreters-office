@@ -5,8 +5,7 @@ $this->headScript()->appendFile($this->basePath('js/event-delete.js'));
  * @var \InterpretersOffice\Entity\Event $event
  */
 $event = $this->event;
-if (! $event) :
-    ?>
+if (! $event) :  ?>
     <p class="alert alert-warning">event not found!</p>
     <?php
     return;
@@ -76,7 +75,7 @@ endif;
     <div class="col-sm-2 text-muted text-md-right">
         defendants
     </div>
-    <div class="col-sm-4"><?php
+    <div class="col-sm-4  defendants"><?php
     foreach ($event['defendants'] as $d) :
         echo "$d[surnames], $d[given_names]<br>";
     endforeach;?>
