@@ -172,26 +172,23 @@ return [
 
             ],
             [
-                'label' => 'add event',
+                'label' => 'add an event',
                 'route' => 'events/add',
                 'resource' => Admin\EventsController::class,
                 'privilege' => 'add',
             ],
             [
-                'label' => 'interpreters',
+                'label' => 'roster of interpreters',
                 'route' => 'interpreters',
                 'resource' => Admin\InterpretersController::class,
             ],
             [
-                'label' => 'other data',
+                'label' => 'other lists',
                 'route' => 'admin',
                 'resource' => Admin\AdminIndexController::class,
                 //'privilege' => 'index','action' => 'index',
                 'pages' => [
-                    [
-                        'label' => 'main',
-                        'route' => 'admin',
-                    ],
+
                     [
                         'label' => 'languages',
                         'route' => 'languages',

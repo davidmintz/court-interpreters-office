@@ -4,6 +4,7 @@
  */
 $this->headTitle($this->title);
 ?>
+<div class="center-block mx-auto" style="max-width: 500px">
 <h2><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
 <?php
 $messenger = $this->flashMessenger();
@@ -11,21 +12,23 @@ if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert', 'alert-success'], false);
 endif;
 if (! $this->eventTypes) :?>
-<div class="alert alert-warning alert-dismissable">
-    There are no event-types in your database. You should go to <a href="<?php echo $this->url('event-types/add') ?>">/admin/event-types/add</a>
-    to starting adding some.
+    <div class="alert alert-warning alert-dismissable">
+        There are no event-types in your database. You should go to <a href="<?php echo $this->url('event-types/add') ?>">/admin/event-types/add</a>
+        to starting adding some.
+    </div>
 </div>
 <?php return;
 endif; ?>
-
 <ul id="event-types-list" class="list-group" style="max-width:400px">
-    <?php
+<?php
     foreach ($this->eventTypes as $entity) : ?>
-            <li class="list-group-item">
-                <a href="<?php echo $this->url('event-types/edit', ['id' => $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
-            </li>
-    <?php endforeach ?>
+    <li class="list-group-item py-2">
+        <a href="<?php echo $this->url('event-types/edit', ['id' => $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
+    </li>
+<?php endforeach ?>
 </ul>
-<a href="<?php echo $this->url('event-types/add') ?>" role="button" title="add a new event-type" id="btn-add-event-type" class="btn btn-info">
-<span aria-hidden="true" class="icon glyphicon glyphicon-plus"></span> new event-type
+
+<a href="<?php echo $this->url('event-types/add') ?>" role="button" title="add a new event-type" id="btn-add-language" class="btn btn-info mt-1">
+<span aria-hidden="true" class="fas fa-plus"></span> new event-type
 </a>
+</div>
