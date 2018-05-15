@@ -23,7 +23,6 @@ else :
     $entity = $form->getObject();
     $actionAttrib = $this->url('judges/edit', ['id' => $entity->getId()]);
     $form->setAttribute('data-judge_name', (string)$entity);
-    
 endif;
 $form->setAttribute('action', $actionAttrib)
     ->setAttribute('data-redirect_url', $this->url('judges'));
@@ -37,17 +36,22 @@ $form->add([
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction)->setAttribute('class', 'form-horizontal')    ;
 ?>
 <?php
-//echo "SHIT? ..."; $fieldset = $form->get('judge');$shit = $fieldset->get('courthouse')->getValueOptions();echo count($shit);
 $form->prepare();
 $fieldset = $form->get('judge');
-// this is a bit beyond display logic and maybe should go somewhere else...
 echo $this->form()->openTag($form);?>
 <?php
 $flavor = $fieldset->get('flavor');?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $flavor->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formSelect($flavor),$this->formElementErrors($flavor) ?>
-    </div>
+    <div class="col-sm-9"><?php
+        if (false !== $this->has_related_entities) :
+            $flavor->setAttribute('disabled','disabled');
+            ?><input type="hidden" name="judge[flavor]" value="<?php echo $flavor->getValue()?>"><?php
+        endif;
+        echo $this->formSelect($flavor),$this->formElementErrors($flavor);
+
+    ?>
+</div>
 </div>
 <?php // text inputs
 $elements = ['lastname','middlename','firstname','email','office_phone',];
