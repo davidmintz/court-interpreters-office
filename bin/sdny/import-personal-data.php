@@ -13,14 +13,14 @@ $opts = new Getopt(
         'check-only' => "just read values from \"office\" database",
         'skip-check' => "run import without reading back out",
         'help|h'       => "print usage statement",
-    ]   
+    ]
 );
 if ($opts->getOption('help')) { echo $opts->getUsageMessage(); exit(); }
 $skipCheck = $opts->getOption('skip-check');
 $checkOnly = $opts->getOption('check-only');
 
 $db_params = parse_ini_file(getenv('HOME').'/.my.cnf');
-$ciphers = parse_ini_file(__DIR__.'/../config/dev.local.conf',true);
+$ciphers = parse_ini_file(__DIR__.'/../../config/dev.local.conf',true);
 
 $cipher = new BlockCipher(new Openssl);
 $cipher->setKey($ciphers['office']['cipher']);
@@ -32,7 +32,7 @@ $new_db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_
 ]);
 
 
-// test it 
+// test it
 function read_it_back($db_connection,$cipher)
 {
     $select_2 = $db_connection->query('SELECT id, ssn, dob FROM interpreters WHERE ssn IS NOT NULL or dob IS NOT NULL');
@@ -41,7 +41,7 @@ function read_it_back($db_connection,$cipher)
         $ssn =  $row->ssn ? $cipher->decrypt($row->ssn) : NULL;
         $dob = $row->dob ? $cipher->decrypt($row->dob) : NULL;
         printf("id %d; dob: %s, ssn: %s\n",$row->id,$dob,$ssn);
-        
+
         if ($dob && ! preg_match('/^\d{4}-\d{2}-\d{2}$/',$dob)) {
             echo "! MALFORMED dob for id $row->id: $dob\n";
         }
@@ -50,10 +50,10 @@ function read_it_back($db_connection,$cipher)
             echo "! possible MALFORMED ssn for id $row->id: $ssn\n";
         }
     }
-    
+
 }
 if ($checkOnly) {
-    read_it_back($new_db,$cipher); 
+    read_it_back($new_db,$cipher);
     exit;
 }
 
@@ -71,15 +71,15 @@ if (! $result) {
 $i = 0;
 echo "\n";
 while ($data = $select->fetch(\PDO::FETCH_OBJ)) {
-    
+
     $ssn = $data->ssn ? $cipher->encrypt($data->ssn) : null;
     $dob = $data->dob ?$cipher->encrypt($data->dob) : null;
     printf("running update on  %d of %d\r",++$i, $total);
-    
+
     if (! $update->execute(['ssn'=>$ssn,'dob'=>$dob,'id'=>$data->id])) {
          exit(print_r($old_db->errorInfo(),true));
     }
-    
+
 }
 // one more
 $update->execute([
@@ -90,8 +90,5 @@ $update->execute([
 echo "\ndone.\n";
 
 if (! $skipCheck) {
-    read_it_back($new_db,$cipher); 
+    read_it_back($new_db,$cipher);
 }
-
-
-
