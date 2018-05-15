@@ -101,8 +101,10 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postRemove','postPersist','prePersist','postFlush',];
+        return ['postUpdate','postRemove','postPersist',
+            'prePersist','postFlush',];
     }
+
 
     /**
      * postUpdate listener
@@ -116,6 +118,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         $this->entity = $entity;
         $this->caches_to_clear[] =
             ['class' => get_class($entity),'trigger' => __FUNCTION__];
+
     }
 
     /**

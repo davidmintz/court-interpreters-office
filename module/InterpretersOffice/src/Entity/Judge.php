@@ -157,8 +157,15 @@ class Judge extends Person
                 (string) $this->getDefaultLocation()->getType(),
                 ['courtroom', 'courthouse']
             )) {
+                $what = (string) $this->getDefaultLocation()->getType();
                 throw new \RuntimeException(
-                    'Judge entity must have default location of type "courtroom" or "courthouse"'
+                    sprintf(
+                    'Judge entity must have default location of type "courtroom" or "courthouse", got ""%s"
+                    for default location %s (id: %d)',
+                    $what, (string)$this->getDefaultLocation(),
+                    $this->getDefaultLocation()->getId()
+                    )
+
                 );
             }
         }

@@ -166,6 +166,11 @@ return [
         // main navigation menu
         'default' => [
             [
+                'label' => 'admin',
+                'route' => 'admin',
+                'resource' => Admin\AdminIndexController::class,
+            ],
+            [
                 'label' => 'schedule',
                 'route' => 'events',
                 'resource' => Admin\EventsController::class,
@@ -183,15 +188,12 @@ return [
                 'resource' => Admin\InterpretersController::class,
             ],
             [
-                'label' => 'other data',
+                'label' => 'other lists',
                 'route' => 'admin',
                 'resource' => Admin\AdminIndexController::class,
                 //'privilege' => 'index','action' => 'index',
                 'pages' => [
-                    [
-                        'label' => 'main',
-                        'route' => 'admin',
-                    ],
+
                     [
                         'label' => 'languages',
                         'route' => 'languages',
@@ -245,12 +247,14 @@ return [
                     ],
                 ],
             ],
+            /*
             [
                 'label' => 'log out',
                 'route' => 'logout',
                 'resource' => Main\AuthController::class,
                 'privilege' => 'logout',
             ],
+            */
         ],
     ],
     'service_manager' => [

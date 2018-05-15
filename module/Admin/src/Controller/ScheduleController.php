@@ -53,7 +53,7 @@ class ScheduleController extends AbstractActionController
      *
      * @return mixed
      */
-    public function indexAction()
+    public function scheduleAction()
     {
 
         $filters = $this->getFilters();

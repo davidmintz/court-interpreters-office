@@ -27,7 +27,7 @@ return  [
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\ScheduleController::class,
-                    'action' => 'index',
+                    'action' => 'schedule',
                     /*
                     'year' => $today->format('Y'),
                     'month' => $today->format('m'),
@@ -43,7 +43,7 @@ return  [
                         'route' => '/:year/:month[/:date]',
                         'defaults' => [
                             'controller' => Controller\ScheduleController::class,
-                            'action' => 'index',//'year'=>null,
+                            'action' => 'schedule',//'year'=>null,
                             // these could use refining.
                         ],
                         'constraints' => [

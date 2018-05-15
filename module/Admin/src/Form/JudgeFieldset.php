@@ -148,14 +148,10 @@ class JudgeFieldset extends PersonFieldset
         // formerly a DoctrineModule\Form\Element\ObjectSelect, we're changing
         // it so we can cache results without having to write a custom repository
         $this->add([
-            //'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'type' => 'Zend\Form\Element\Select',
             'name' => 'flavor',
             'options' => [
                 'value_options' => $this->getJudgeFlavorOptions(),
-                //'object_manager' => $this->objectManager,
-                //'target_class' => 'InterpretersOffice\Entity\JudgeFlavor',
-                //'property' => 'flavor',
                 'label' => 'flavor',
             ],
              'attributes' => [
@@ -163,19 +159,6 @@ class JudgeFieldset extends PersonFieldset
                 'id' => 'flavor',
              ],
         ]);
-        // hack designed to please HTML5 validator
-        /*
-        $element = $this->get('flavor');
-        $options = $element->getValueOptions();
-        array_unshift($options, [
-           'label' => ' ',
-           'value' => '',
-           'attributes' => [
-               'label' => ' ',
-           ],
-        ]);
-        $element->setValueOptions($options);
-`       */
     }
 
     /**
@@ -194,27 +177,6 @@ class JudgeFieldset extends PersonFieldset
         }
         return $options;
     }
-
-    /*
-     * adds the "Hat" element to our form.
-     *
-     * @return JudgeFieldset
-
-    public function addHatElement()
-    {
-
-        // the Hat is not up for discussion; it has to be Judge.
-        // so, we use no select menu. however, might there be a better
-        // solution, e.g., an entity listener?
-        $this->add(
-            [
-                'name' => 'hat',
-                'type' => 'Zend\Form\Element\Hidden',
-                'attributes' => ['id' => 'hat'],
-            ]
-        );
-        return $this;
-    } */
 
     /**
      * gets input filter specification.
