@@ -11,13 +11,13 @@ $(function(){
         }
         console.log("deleting shit...");
         var url = '/admin/schedule/delete/'+event_id;
-        var redirect_url = document.referrer||'/admin/schedule';
+
         $.post(url,"json")
             .success(function(response){
                 if (response.status === "success" ) {
-                    document.location = redirect_url;
+                    document.location = '/admin/schedule';
                 } else {
-                    // deal with it
+                    // to do: deal with it. trigger a global ajax error?
                 }
             });
     });
