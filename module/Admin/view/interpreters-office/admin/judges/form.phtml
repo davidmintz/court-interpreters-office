@@ -48,10 +48,8 @@ $flavor = $fieldset->get('flavor');?>
             $flavor->setAttribute('disabled','disabled');
             ?><input type="hidden" name="judge[flavor]" value="<?php echo $flavor->getValue()?>"><?php
         endif;
-        echo $this->formSelect($flavor),$this->formElementErrors($flavor);
-
-    ?>
-</div>
+        echo $this->formSelect($flavor),$this->formElementErrors($flavor);  ?>
+    </div>
 </div>
 <?php // text inputs
 $elements = ['lastname','middlename','firstname','email','office_phone',];
