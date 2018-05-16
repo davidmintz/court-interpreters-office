@@ -13,7 +13,7 @@ var month = now.month();
 /**
  * date manipulation - we want to set the event date/time and request
  * submission date/time depending on when now is, so that we can
- * set a valid submission time, i.e., not in the future
+ * set a valid submission time, i.e., not in the future.
  * work in progress
  */
 var then = moment();
@@ -26,17 +26,15 @@ if (hour >= 16) {
     // next business day at 10
     then.add(interval, "days").hour(10);
 } else {
-// today at 4p
+    // make it today at 4p
     then.hour(16).minute(0);
 }
 //*/
 
-
+// console.log("note: setting date to next month");
+// then.add(1,"months");
 // to click a particular day
 //$("td[data-month=4]:contains(14)").trigger("click")
-
-// advance to the next month
-//$("a.ui-datepicker-next").trigger("click");
 
 casper.options.logLevel = "info";
 casper.options.verbose = false;
@@ -65,30 +63,48 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
             test.assertTitleMatches(/admin/, "title contains admin");
             test.assertExists("#event-form", "element #event-form exists");
             test.assertExists("#time","a time field exists");
-            this.sendKeys("#time","330");
+            var time = then.format("hmm");
+            this.sendKeys("#time",time);
             this.waitFor(function check(){
-                return this.evaluate(function(){return $("#time").val() != "330";});
+                return this.evaluate(function(time){return $("#time").val() != time;},time);
             });
             var event_time = this.evaluate(function(){return $("#time").val();});
-            test.assertEquals(event_time,"3:30 pm","time field is automatically formatted as expected");
+            var expected_time = then.format("h:mm a");
+            test.assertEquals(event_time,expected_time,
+                "time field is automatically formatted as expected: "+expected_time);
             this.click("#date");
             this.waitUntilVisible("#ui-datepicker-div");
             test.assertExists("td a.ui-state-highlight","highlighted date td cell exists");
             if (then.day() == now.day()) {
                 this.click("td a.ui-state-highlight");
             } else {
-                // to do: advance the month if necessary...
-                //if (then.month() > now.month()) {  } else {  }
+                var m = then.month();
+                var d = then.date();
+                var td_selector = "td[data-month="+m+"]:contains("+d+")";
+
+                if (then.month() > now.month()) {
+                  // advance to the next month and wait for it
+                  this.evaluate(
+                      function(){
+                          $("a.ui-datepicker-next").trigger("click");
+                      }
+                  );
+                  console.log("waiting for: "+td_selector+ "...")
+                  this.waitFor(function(){
+                      return this.evaluate(function(td_selector){ return $(td_selector).length;},td_selector);
+                  }).then(function(){console.log("yay!")});
+                  //test.assertExists(td_selector);
+                }
                 this.evaluate(
-                    function(m,d){
-                        $("td[data-month="+m+"]:contains("+d+")").trigger("click");
-                    }, then.month(), then.date()
-                );
+                    function(td_selector){
+                        $(td_selector).trigger("click");
+                    }, td_selector);
             }
             this.waitWhileVisible("#ui-datepicker-div");
             var event_date = this.getFormValues("#event-form")["event[date]"];
             var expected = then.format("MM/DD/YYYY");
-            test.assertEquals(event_date, expected, "event scheduled date is in the date field");
+            test.assertEquals(event_date, expected, "event scheduled date is in the date field: "+expected);
+
         });
 
     /**
@@ -261,6 +277,37 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
                 );
             }
         );
+        /** set submission date and time */
+        casper.then(
+            function(){
+                test.assertExists("#submission_date");
+                test.assertExists("#submission_time");
+                this.click("#submission_date");
+                this.waitUntilVisible("#ui-datepicker-div");
+                test.assertExists("td a.ui-state-highlight","highlighted date td cell exists");
+                this.click("td a.ui-state-highlight");
+                this.waitWhileVisible("#ui-datepicker-div");
+                var submission_date = this.getFormValues("#event-form")["event[date]"];
+                var expected_date = now.format("MM/DD/YYYY");
+                test.assertEquals(submission_date,expected_date,"submission date is set and formatted: "+expected_date);
+                var time = now.format("hmm");
+                this.sendKeys("#submission_time",time);
+                this.waitFor(function(){
+                    return this.evaluate(function(time){return $("#time").val() != time;},
+                    time);
+                });
+                var actual = this.getFormValues("#event-form")["event[submission_time]"];
+                var expected_time = now.format("h:mm a");
+                test.assertEquals(actual,expected_time,
+                    "time is set and formatted as: "+expected_time);
+            }
+        );
+        /** and submit */
+        casper.then(function(){
+            test.assertExists('textarea#comments',"#comments textarea exists");
+            this.sendKeys('#comments',"test event/shocking news: a belated submission");
+            this.click("input[name=submit]");
+        });
     });
 
     casper.run(function() {
