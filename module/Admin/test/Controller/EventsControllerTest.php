@@ -251,7 +251,7 @@ class EventControllerTest extends AbstractControllerTest
             ['event' => $event, 'csrf' => $token, 'modified' => $modified]
         );
         $this->assertRedirect();
-        $this->assertRedirectTo('/admin/schedule/view/2');
+        $this->assertRedirectTo('/admin/schedule/view/'. $entity->getId());
 
         $type_before = $type_expected;
         $time_before = $time_expected;
