@@ -35,37 +35,40 @@ echo $this->headStyle();?>
   </head>
   <body>
     <div class="container" style="min-height:400px">
-    <nav class="navbar navbar-expand-lg navbar-light rounded mb-3 navbar-custom py-0">
-        <a class="navbar-brand" href="<?php echo $this->url('home')?>">InterpretersOffice</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbar-collapse">
-        <?php  echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml')?>
-        <?php if ($this->layout()->user) : // is navbar-right still a thing?  ?>
-        <div class="navbar-right" ><?php echo "current user: {$this->layout()->user->username}"?>
-            <span class="px-2 py-1 border-left"><a href="<?php echo $this->url('logout')?>">log out</a></span>
-        </div>
-        <?php endif; ?>
-      </div>
-  </nav>
+        <nav class="navbar navbar-expand-lg navbar-light rounded mb-3 navbar-custom py-0">
+                <a class="navbar-brand" href="<?php echo $this->url('home')?>">InterpretersOffice</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+          <div class="collapse navbar-collapse" id="navbar-collapse">
+            <?php  echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml')?>
+            <?php if ($this->layout()->user) : // is navbar-right still a thing?  ?>
+            <div class="navbar-right" ><?php echo "current user: {$this->layout()->user->username}"?>
+                <span class="px-2 py-1 border-left"><a href="<?php echo $this->url('logout')?>">log out</a></span>
+            </div>
+            <?php endif; ?>
+          </div>
+      </nav>
         <?php echo $this->content; ?>
     </div>
-<div  class="container" >
-    <footer style="margin-top: 2em; border-top: 1px orange dotted">
-        <p>[layout: footer]</p>
-    </footer>
-</div>
-    <script src="/js/lib/jquery.min.js"></script>
-    <script src="/js/lib/bootstrap/bootstrap.bundle.js"></script>
-    <script src="/js/common.js"></script>
-    <?php echo $this->headScript()?>
-    <?php echo $this->inlineScript() ?>
-    <script>
-            basePath = '<?php echo $this->basePath() ?>';
-            $(document).ready(function () {
-               $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
-            });
-     </script>
+    <div  class="container" >
+        <footer style="margin-top: 2em; border-top: 1px orange dotted">
+            <p>[layout: footer]</p>
+        </footer>
+    </div>
+        <script src="/js/lib/jquery.min.js"></script>
+        <script src="/js/lib/bootstrap/bootstrap.bundle.js"></script>
+        <script src="/js/common.js"></script>
+        <?php echo $this->headScript()?>
+        <?php echo $this->inlineScript() ?>
+        <script>
+                basePath = '<?php echo $this->basePath() ?>';
+                /*
+                $(document).ready(function () {
+                   $('a[href="' + this.location.pathname + '"]')
+                    .parent().addClass('active');
+                });
+                */
+         </script>
   </body>
 </html>

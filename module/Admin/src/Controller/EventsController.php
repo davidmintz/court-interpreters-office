@@ -157,7 +157,7 @@ class EventsController extends AbstractActionController
                         $date->format('l d-M-Y')
                     )
                 );
-                return $this->redirect()->toRoute('events');
+                return $this->redirect()->toRoute('events/view',['id'=>$event->getId()]);
             }
         }
 
@@ -216,7 +216,8 @@ class EventsController extends AbstractActionController
                             $date->format('l d-M-Y')
                         )
                     );
-                    return $this->redirect()->toRoute('events');
+                    return $this->redirect()->toRoute('events/view',
+                        ['id'=>$entity->getId()]);
                 } catch (\Exception $e) {
                     /** @todo  need to do better than this */
                     echo $e->getMessage();
