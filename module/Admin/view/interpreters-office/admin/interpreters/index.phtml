@@ -35,13 +35,13 @@ endif;
   <div class="card-body pb-1">
     <form>
     <div class="form-group form-inline card-body py-0">
-    <div id="form-errors" class="alert alert-warning hidden" style="display:none"></div>
+        <div id="form-errors" class="alert alert-warning hidden" style="display:none"></div>
         Find <label for="language" class="sr-only">language</label> <?php echo $this->formElement($form->get('language_id'))?>
         interpreters who are <label for="active" class="sr-only">status</label>
         <?php echo $this->formSelect($form->get('active'))?>
         with security clearance <label for="security_clearance_expiration" class="sr-only">security clearance</label>
             <?php echo $this->formSelect($form->get('security_clearance_expiration'))?><!--
-    --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-primary"><span class="fa fa-search"></span> search</a>
+            --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-primary"><span class="fa fa-search"></span> search</a>
     </div>
     <div class="form-group form-inline">or whose name is <?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-primary"><span class="fa fa-search"></span> search</a></div>
     </form>
@@ -71,7 +71,7 @@ if ($this->results) : ?>
                 <?php echo $this->escapeHtml(sprintf('%s, %s', $interpreter->getLastname(), $interpreter->getFirstname())) ?></a>
                 <?php if ($row['hat'] == 'staff court interpreter') :
 ?> <span class="text-muted">staff interpreter</span><?php
-                endif; ?>
+endif; ?>
             </td>
             <td class="align-middle text-center border-left-0 border-right-0 col-2 text-md-right">
                 <span style="opacity:.7" data-toggle="tooltip" title="this interpreter is currently flagged as <?php

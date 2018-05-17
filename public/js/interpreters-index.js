@@ -1,9 +1,6 @@
 /** public/js/interpreters-index.js */
 $(function(){
     $('[data-toggle="tooltip"]').tooltip();
-    var button = $('nav li:contains("interpreters")');
-    if (! button.hasClass("active")) { button.addClass("active");}
-
     var languageSelect = $('#language_id');
     var languageButton = $('#btn-search-language');
     languageButton.on("click",function(event){
