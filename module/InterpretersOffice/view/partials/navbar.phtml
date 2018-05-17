@@ -1,13 +1,15 @@
-<?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */ ?>
-<ul class="navbar-nav mr-auto"><?php
+<?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */
+
 $route = $this->layout()->routeMatch;
 $labels_routes = [
     'events/add' => 'add event',
     'events'  => 'schedule',
     'events/edit'  => 'schedule',
-];
-foreach ($this->container as $page) { ?>
-    <?php /* @var $page Zend\Navigation\Page\Mvc */
+    'admin-defendants'  => 'defendants',
+];?>
+<ul class="navbar-nav mr-auto"><?php
+    /* @var $page Zend\Navigation\Page\Mvc */
+    foreach ($this->container as $page) :
     // when using partials we need to manually check for ACL conditions
     $label = $page->getLabel();
     $active = false;
@@ -17,67 +19,36 @@ foreach ($this->container as $page) { ?>
         or (str_replace('admin/', '', $route) == $label)):
         $active = true;
     endif;
-    if (false === $page->display || !$page->isVisible() || !$this->navigation()->accept($page)) { continue; }
+    if (false === $page->display || !$page->isVisible() || !$this->navigation()->accept($page)) :
+        continue;
+    endif;
     $hasChildren = $page->hasPages();
-
-    if (!$hasChildren or false === $page->expand_children ) {
-
+    if (!$hasChildren or false === $page->expand_children ) :
 ?><li class="nav-item border-left<?php if ($active): ?> active<?php endif; ?>"><a class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
-<?php } else {
-?><li class="nav-item dropdown border-left<?php if ($active): ?> active<?php endif;?>">
+<?php else :
+?><li class="nav-item dropdown border-left">
     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
-    <div class="dropdown-menu"><?php foreach ($page->getPages() as $child) { ?>
+    <div class="dropdown-menu"><?php foreach ($page->getPages() as $child) : ?>
         <?php
-        if (!$child->isVisible() || !$this->navigation()->accept($child)) {
+        $debug = '';
+        if (!$child->isVisible() || !$this->navigation()->accept($child)) :
             continue;
-        }
-        if (in_array($child->getLabel(),['edit',])) {
+        endif;
+        if (in_array($child->getLabel(),['edit',])) :
             // keep it from blowing up for lack of an id parameter
             continue;
-        }
-        ?><a class="dropdown-item" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
-        <?php } ?>
+        endif;
+        $label = $child->getLabel();
+        if (($label == $route) or ( isset($labels_routes[$route]) && $label == $labels_routes[$route] )) :
+            $active = true;
+        else:
+            $active = false;
+        endif;
+        ?><a class="dropdown-item<?php if ($active): ?> active<?php endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
+    <?php endforeach; ?>
     </div>
 </li>
-    <?php }
-     }
-?>
+<?php endif; ?>
+<?php endforeach; ?>
 </ul>
-<?php
-/* their example
- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
- */
+<pre><?php echo $debug ?></pre>
