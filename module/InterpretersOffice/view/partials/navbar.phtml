@@ -1,7 +1,7 @@
 <?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */
 
 $route = $this->layout()->routeMatch;
-$labels_routes = [
+$routes_labels = [
     'events/add' => 'add event',
     'events'  => 'schedule',
     'events/edit'  => 'schedule',
@@ -14,7 +14,7 @@ $labels_routes = [
     $label = $page->getLabel();
     $active = false;
     if ($label == $route
-        or (isset($labels_routes[$route]) && $label == $labels_routes[$route])
+        or (isset($routes_labels[$route]) && $label == $routes_labels[$route])
         or strpos($route, $label) === 0
         or (str_replace('admin/', '', $route) == $label)):
         $active = true;
@@ -39,7 +39,7 @@ $labels_routes = [
             continue;
         endif;
         $label = $child->getLabel();
-        if (($label == $route) or ( isset($labels_routes[$route]) && $label == $labels_routes[$route] )) :
+        if ($label == $route or ( isset($routes_labels[$route]) && $label == $routes_labels[$route] )) :
             $active = true;
         else:
             $active = false;

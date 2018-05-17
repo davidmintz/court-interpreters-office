@@ -29,7 +29,8 @@ echo $this->headStyle();?>
 }
 .navbar-custom a.navbar-brand { color : #777 ; } /*  letter-spacing: .1rem;*/
 .navbar-custom li > a { color : #555 !important; }
-.navbar li.active { background-color: #fff !important; border-radius: 4px; border: 1px solid #9fcdff !important;  }
+.navbar li.active{ background-color: #fff !important; border-radius: 4px; border: 1px solid #9fcdff !important;  }
+.navbar a.active {}
 .navbar li:hover { }
 </style>
   </head>
@@ -49,27 +50,16 @@ echo $this->headStyle();?>
             <?php endif; ?>
           </div>
       </nav>
-        <?php echo $this->layout()->routeMatch ;
-        echo $this->content; ?>
+    <?php  echo $this->content; ?>
     </div>
-    <div  class="container" >
-        <footer style="margin-top: 2em; border-top: 1px orange dotted">
-            <p>[layout: footer]</p>
-        </footer>
+    <div class="container" >
+        <footer class="border-top border-bottom mt-3">[layout: footer]</footer>
     </div>
         <script src="/js/lib/jquery.min.js"></script>
         <script src="/js/lib/bootstrap/bootstrap.bundle.js"></script>
         <script src="/js/common.js"></script>
         <?php echo $this->headScript()?>
         <?php echo $this->inlineScript() ?>
-        <script>
-                basePath = '<?php echo $this->basePath() ?>';
-                /*
-                $(document).ready(function () {
-                   $('a[href="' + this.location.pathname + '"]')
-                    .parent().addClass('active');
-                });
-                */
-         </script>
+        <script>basePath = '<?php echo $this->basePath() ?>';</script>
   </body>
 </html>
