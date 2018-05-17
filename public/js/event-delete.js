@@ -12,10 +12,15 @@ $(function(){
         }
         console.log("deleting shit...");
         var url = '/admin/schedule/delete/'+event_id;
+<<<<<<< HEAD
 
         $.post(url,"json")
             .success(function(response){
                 if (response.status === "success" ) {
+=======
+        $.post(url,"json").success(function(response){
+              if (response.status === "success" ) {
+>>>>>>> 8f539034865c2c05e6c22c7645b24cc79596da94
                     document.location = '/admin/schedule';
                 } else {
                     // to do: deal with it. trigger a global ajax error?
