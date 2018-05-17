@@ -1,17 +1,30 @@
 <?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */ ?>
 <ul class="navbar-nav mr-auto"><?php
 $route = $this->layout()->routeMatch;
+$labels_routes = [
+    'events/add' => 'add event',
+    'events'  => 'schedule',
+    'events/edit'  => 'schedule',
+];
 foreach ($this->container as $page) { ?>
-        <?php /* @var $page Zend\Navigation\Page\Mvc */
-        // when using partials we need to manually check for ACL conditions
-        if (false === $page->display || !$page->isVisible() || !$this->navigation()->accept($page)) { continue; }
-        $hasChildren = $page->hasPages();
-        if (!$hasChildren or false === $page->expand_children ) {
-            $label = $page->getLabel();
-            //$active = strpos()
-?><li class="nav-item border-left<?php if (false): ?> active<?php endif; ?>"><a class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
+    <?php /* @var $page Zend\Navigation\Page\Mvc */
+    // when using partials we need to manually check for ACL conditions
+    $label = $page->getLabel();
+    $active = false;
+    if ($label == $route
+        or (isset($labels_routes[$route]) && $label == $labels_routes[$route])
+        or strpos($route, $label) === 0
+        or (str_replace('admin/', '', $route) == $label)):
+        $active = true;
+    endif;
+    if (false === $page->display || !$page->isVisible() || !$this->navigation()->accept($page)) { continue; }
+    $hasChildren = $page->hasPages();
+
+    if (!$hasChildren or false === $page->expand_children ) {
+
+?><li class="nav-item border-left<?php if ($active): ?> active<?php endif; ?>"><a class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
 <?php } else {
-?><li class="nav-item dropdown border-left">
+?><li class="nav-item dropdown border-left<?php if ($active): ?> active<?php endif;?>">
     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
     <div class="dropdown-menu"><?php foreach ($page->getPages() as $child) { ?>
         <?php
@@ -30,7 +43,8 @@ foreach ($this->container as $page) { ?>
      }
 ?>
 </ul>
-<?php /* their example
+<?php
+/* their example
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">Navbar</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

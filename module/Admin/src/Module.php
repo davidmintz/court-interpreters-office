@@ -54,7 +54,7 @@ class Module
         if ($user) {
             $navigation->setDefaultRole($user->role);
         }
-        
+
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
@@ -65,6 +65,7 @@ class Module
                         ->getViewModel();
                 $viewModel->setVariables($routeMatch->getParams());
                 $viewModel->user = $user;
+                $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
             }
         });
         // The following line instantiates the SessionManager and automatically
