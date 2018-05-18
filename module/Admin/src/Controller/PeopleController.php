@@ -57,7 +57,10 @@ class PeopleController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel(['title' => 'people']);
+        $repo = $this->entityManager->getRepository(Entity\Hat::class);
+        $opts = $repo->getHatOptions([Entity\Hat::ANONYMITY_NEVER, Entity\Hat::ANONYMITY_OPTIONAL]);
+
+        return new ViewModel(['title' => 'people','options'=>$opts]);
     }
 
     /**

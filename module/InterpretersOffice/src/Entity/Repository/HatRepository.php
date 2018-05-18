@@ -141,4 +141,16 @@ class HatRepository extends EntityRepository
         return $this->createQuery('SELECT h FROM InterpretersOffice\Entity\Hat h ORDER BY h.name')
             ->getResult();
     }
+
+    public function getHatOptions(array $anonymity = null)
+    {
+        $dql = 'SELECT h.id value, h.name label FROM ' . Hat::class . ' h';
+        $q = $this->createQuery('');
+        if ($anonymity !== null) {
+            $dql .= ' WHERE h.anonymity IN (:anonymity)';
+            $q->setParameters(['anonymity' => $anonymity]);
+        }
+        $dql .= ' ORDER BY h.name';
+        return $q->setDql($dql)->getResult();
+    }
 }
