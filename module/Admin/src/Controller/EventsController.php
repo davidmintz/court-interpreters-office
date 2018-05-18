@@ -260,7 +260,7 @@ class EventsController extends AbstractActionController
         $token = $this->params()->fromPost('csrf');
         if (! $validator->isValid($token)) {
             return new JsonModel(['status' => 'error','message'=>
-                'invalid or missing security token. '
+                'Invalid or missing security token. '
                 .'Please refresh this page and try again.']
             );
         }
