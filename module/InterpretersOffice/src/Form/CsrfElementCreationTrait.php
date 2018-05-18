@@ -29,7 +29,8 @@ trait CsrfElementCreationTrait
             [
                 'messages' =>
                     [
-                        'notSame' => 'security error: invalid/expired CSRF token',
+                        'notSame' => 'Security error: invalid/expired CSRF token.'
+                        .' Please reload the page and try again.',
                     ],
                 'timeout' => 600,
             ]
@@ -41,7 +42,7 @@ trait CsrfElementCreationTrait
         $input = $this->getInputFilter()->get($name);
         $input->setAllowEmpty(false)->setRequired(true);
         $validator = new \Zend\Validator\NotEmpty([
-                'messages' => ['isEmpty' => "security error: form is missing CSRF token"],
+                'messages' => ['isEmpty' => "Security error: form is missing CSRF token"],
                 'break_chain_on_failure' => true,
             ]);
         $input->getValidatorChain()->attach($validator);
