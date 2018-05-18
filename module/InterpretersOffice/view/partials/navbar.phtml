@@ -30,7 +30,6 @@ $routes_labels = [
     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
     <div class="dropdown-menu"><?php foreach ($page->getPages() as $child) : ?>
         <?php
-        $debug = '';
         if (!$child->isVisible() || !$this->navigation()->accept($child)) :
             continue;
         endif;
@@ -51,4 +50,3 @@ $routes_labels = [
 <?php endif; ?>
 <?php endforeach; ?>
 </ul>
-<pre><?php echo $debug ?></pre>
