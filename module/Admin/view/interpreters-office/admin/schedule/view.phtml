@@ -1,5 +1,8 @@
 <?php /** module/Admin/view/interpreters-office/admin/schedule/view.phtml  */
-$this->headScript()->appendFile($this->basePath('js/event-delete.js'));
+$this->headScript()->appendFile($this->basePath('js/event-delete.js'))
+->appendFile($this->basePath('js/lib/sweetalert2.min.js'));
+$this->headLink()->appendStylesheet($this->basePath('css/sweetalert2.css'));
+//$this->headStyle()->captureStart();?><?php //$this->headStyle()->captureEnd();
 /**
  *
  * @var \InterpretersOffice\Entity\Event $event
@@ -160,12 +163,8 @@ endif;?></span>
           <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
           <a href="" role="button" class="btn btn-success">repeat</a>
           <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action'=>'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
-
         </div>
     </div>
 </div>
-
 <!-- -->
-
 <!-- -->
-<pre><?php //print_r(array_keys($event))?></pre>

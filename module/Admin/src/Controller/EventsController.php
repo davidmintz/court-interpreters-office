@@ -261,7 +261,7 @@ class EventsController extends AbstractActionController
         if (! $validator->isValid($token)) {
             return new JsonModel(['status' => 'error','message'=>
                 'Invalid or missing security token. '
-                .'Please refresh this page and try again.']
+                .'You may need to refresh this page and try again.']
             );
         }
         $entity = $this->entityManager->find(Entity\Event::class, $id);
