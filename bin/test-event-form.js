@@ -302,11 +302,15 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
                     "time is set and formatted as: "+expected_time);
             }
         );
-        /** and submit */
+        /** and add comments, and submit */
         casper.then(function(){
             test.assertExists('textarea#comments',"#comments textarea exists");
             this.sendKeys('#comments',"test event/shocking news: a belated submission");
             this.click("input[name=submit]");
+
+            this.waitForUrl(/admin\/schedule\/view\/\d+$/,function(){
+                test.assertTitleMatches(/event details/i, "title matches \"event details\"");
+            });
         });
     });
 
