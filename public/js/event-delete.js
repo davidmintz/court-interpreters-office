@@ -1,6 +1,6 @@
 $(function(){
     var event_id =  $('#event_id').val() || $(".event-details").data("event_id");
-    var csrf_token = $('#csrf').val();
+    var csrf_token = $('#csrf').val() || $('#btn-delete').data("csrf");
     if (! event_id) {
         console.warn("could not figure out event id in event-delete.js");
         return;
@@ -12,18 +12,13 @@ $(function(){
         }
         console.log("deleting shit...");
         var url = '/admin/schedule/delete/'+event_id;
-<<<<<<< HEAD
-
-        $.post(url,"json")
+        var redirect_url = '/admin/schedule';
+        $.post(url,{csrf:csrf_token},"json")
             .success(function(response){
                 if (response.status === "success" ) {
-=======
-        $.post(url,"json").success(function(response){
-              if (response.status === "success" ) {
->>>>>>> 8f539034865c2c05e6c22c7645b24cc79596da94
-                    document.location = '/admin/schedule';
+                    document.location = redirect_url;
                 } else {
-                    // to do: deal with it. trigger a global ajax error?
+                    // deal with it
                 }
             });
     });
