@@ -115,8 +115,9 @@ class ScheduleController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $event = $this->entityManager->getRepository(Entity\Event::class)
            ->getView($id);
+        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
 
-        return compact('event', 'id');
+        return compact('event', 'id','csrf');
     }
     /**
      * computes and sets the "next" and "previous" dates
