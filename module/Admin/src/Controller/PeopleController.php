@@ -64,6 +64,21 @@ class PeopleController extends AbstractActionController
     }
 
     /**
+     * autocompletion for people lookup
+     *
+     */
+    public function autocompleteAction()
+    {
+        $repo = $this->entityManager->getRepository(Entity\Person::class);
+        $term = $this->params()->fromQuery('term');
+        $hat  = $this->params()->fromQuery('hat');
+        $active = $this->params()->fromQuery('active');
+        $data = $repo->autocomplete($term,$hat,$active);
+
+        return new JsonModel($data);
+
+    }
+    /**
      * adds a Person entity to the database.
      */
     public function addAction()

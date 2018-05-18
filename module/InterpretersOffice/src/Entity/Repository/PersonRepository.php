@@ -6,7 +6,7 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
+use InterpretersOffice\Service\ProperNameParsingTrait;
 /**
  * Hat repository.
  *
@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityRepository;
 class PersonRepository extends EntityRepository
 {
     use ResultCachingQueryTrait;
+    use ProperNameParsingTrait;
 
     /**
      * the cache id
@@ -63,5 +64,44 @@ class PersonRepository extends EntityRepository
 
         return $this->getEntityManager()->createQuery($dql)->setParameters(
             ['id'=>$id])->getSingleScalarResult() ? true : false;
+    }
+
+    /**
+     * returns an array of value => label for person autocompletion
+     *
+     * @param string $term
+     * @param int $hat hat
+     * @param int $active
+     * @param int $limit max number of rows
+     */
+    public function autocomplete($term, $hat = null, $active = null, $limit = 20)
+    {
+        $name = $this->parseName($term);
+        $parameters = ['lastname' => "$name[last]%"];
+
+        $dql = "SELECT p.id AS value, CONCAT(p.lastname, ', ', p.firstname) AS label"
+                . '  FROM InterpretersOffice\Entity\Person p ';
+        if ($hat) {
+            $dql .= ' JOIN p.hat h WHERE h.id = :hat AND';
+            $parameters['hat'] = $hat;
+        } else {
+            $dql .=  ' WHERE';
+        }
+        $dql .=  ' p.lastname LIKE :lastname';
+        $parameters['lastname'] = "$name[last]%";
+        if ($name['first']) {
+            $dql .= ' AND p.firstname LIKE :firstname';
+            $parameters['firstname'] = "$name[first]%";
+        }
+        if ($active !== null) {
+            $dql .= ' AND p.active = '.($active ? 'TRUE':'FALSE');
+        }
+        $dql   .= " ORDER BY p.lastname, p.firstname";
+        $query = $this->createQuery($dql)
+                ->setParameters($parameters)
+                ->setMaxResults($limit);
+
+        return $query->getResult();
+        //*/
     }
 }

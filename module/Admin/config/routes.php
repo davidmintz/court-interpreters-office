@@ -302,6 +302,20 @@ return  [
                         ],
                     ],
                 ],
+                'autocomplete' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/autocomplete',
+                        'defaults' => [
+                            'action' => 'autocomplete',
+
+                        ],
+                        'constraints' => [
+                            //'action' => 'edit|delete',
+                            //'id' => '[1-9]\d*',
+                        ],
+                    ],
+                ],
 
                 'people_options' => [
                     'type' => Segment::class,
