@@ -194,4 +194,12 @@ class PeopleController extends AbstractActionController
 
         return new JsonModel($data);
     }
+
+    /**
+     * search
+     */
+    public function searchAction()
+    {
+        return new JsonModel(["shit"=>"fuck you"]);
+    }
 }

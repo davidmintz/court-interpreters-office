@@ -7,7 +7,7 @@ $hat_element = (new Element\Select(
     'hat', ['value_options'=> $this->options,
             'empty_option' => ' -- select hat --',]
 ))->setAttributes(['class'=>'custom-select','id'=>'hat'])
-->setValue($this->hat ?: '');
+    ->setValue($this->hat ?: '');
 $status_element = (new Element\Select(
     'active', ['value_options'=> [1 => 'active',0 => 'inactive',],
     'empty_option' => ' any status ',]
@@ -27,8 +27,7 @@ if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',]);
 endif;
 ?>
-
-<div class="form-inline shadow-sm border rounded pl-3 py-3 mx-auto" style="max-width:850px">
+<div class="form-inline shadow-sm border rounded pl-3 py-3 mx-auto mt-4" style="max-width:850px">
     <label class="my-1 mr-2" for="hat">hat</label>
     <?php echo $this->formElement($hat_element); ?>
     <label class="my-1 mx-2" for="status">status</label>

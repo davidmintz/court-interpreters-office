@@ -302,17 +302,15 @@ return  [
                         ],
                     ],
                 ],
-                'autocomplete' => [
+                'find' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/autocomplete',
+                        'route' => '/:action',
                         'defaults' => [
-                            'action' => 'autocomplete',
-
+                            'action' => 'search',
                         ],
                         'constraints' => [
-                            //'action' => 'edit|delete',
-                            //'id' => '[1-9]\d*',
+                            'action' => 'autocomplete|search',
                         ],
                     ],
                 ],
