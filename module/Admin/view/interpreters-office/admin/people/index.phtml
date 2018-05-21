@@ -27,12 +27,15 @@ if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',]);
 endif;
 ?>
-<div class="form-inline shadow-sm border rounded pl-3 py-3 mx-auto mt-4" style="max-width:850px">
+<form id="search-form" class="form-inline shadow-sm border rounded pl-3 py-3 mx-auto mt-4" style="max-width:850px">
     <label class="my-1 mr-2" for="hat">hat</label>
     <?php echo $this->formElement($hat_element); ?>
     <label class="my-1 mx-2" for="status">status</label>
     <?php echo $this->formElement($status_element); ?>
     <label class="my-1 mx-2" for="name">name</label>
-    <input type="text" id="name" class="form-control" value="<?php echo $this->name ? $this->escapeHtml($this->name) : ''?>" placeholder="last name[, first ]">
+    <input type="text" id="name" name="name" class="form-control" value="<?php echo $this->name ? $this->escapeHtml($this->name) : ''?>" placeholder="last name[, first ]">
     <button type="submit" id="btn-search" class="btn btn-primary my-1 ml-1 "><span class="icon fa fa-search"></span> search</button>
+</form>
+<div class="mx-auto results" style="max-width:850px">
+
 </div>

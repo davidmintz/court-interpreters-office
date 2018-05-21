@@ -7,6 +7,11 @@ namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use InterpretersOffice\Service\ProperNameParsingTrait;
+use InterpretersOffice\Entity\Person;
+use Zend\Paginator\Paginator as ZendPaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Doctrine\ORM\Query;
 
 /**
  * Person repository.
@@ -105,16 +110,57 @@ class PersonRepository extends EntityRepository
     }
 
     /**
-     * ...maybe not
+     * look up people
+     *
+     * @param array $parameters
+     * @return \Zend\Zend\Paginator\Paginator
      */
-    public function findPersonById($id)
+    public function search(array $parameters)
     {
-        $dql = "SELECT partial p.{lastname, firstname, middlename, email, id,
-        active, home_phone}, h.name hat FROM InterpretersOffice\Entity\Person p
-        WHERE p.id = :id";
-        $person = $this->createQuery($dql)->setParameters($parameters)
-            ->getOneorNullResult();
-        return $person;
+        if (isset($parameters['page']) && is_numeric($parameters['page'])) {
+            $page = $parameters['page'];
+        } else {
+            $page = 1;
+        }
+        // this partial syntax is NOT optional.
+        // https://github.com/doctrine/doctrine2/issues/2596#issuecomment-162359725
+        $dql = 'SELECT partial p.{lastname, firstname, id, active, email, mobile_phone,
+            office_phone }, h.name hat FROM '. Person::class .' p JOIN p.hat h ';
+        $where = [];
+        $p = [];
+        // if we have an id, use it and nothing else
+        if (isset($parameters['id'])) {
+            $where[] = 'p.id = :id';
+            $p['id'] = $parameters['id'];
+        } else {
+        // use "hat", "active" and "name" parameters
+            if (isset($parameters['active']) && $parameters['active'] !== '') {
+                $where[] = 'p.active = '.($parameters['active'] ? "true":"false");
+            }
+            if (isset($parameters['hat']) && $parameters['hat'] !== '' ) {
+                $where[] = 'h.id = :hat';
+                $p['hat'] = $parameters['hat'];
+            }
+            if (isset($parameters['name']) && $parameters['name'] !== '') {
+                $fullname = $this->parseName($parameters['name']);
+                foreach($fullname as $name=>$value) {
+                    if ($value) {
+                        $where[] = "p.{$name}name = :{$name}name";
+                        $p["{$name}name"] = $value . '%';
+                    }
+                }
+            }
+        }
+        if ($where) {
+            $dql .= ' WHERE ' . implode(' AND ',$where) ;
+        }
+        $dql .= ' ORDER BY p.lastname, p.firstname, h.name';
+        $query = $this->createQuery($dql)->setParameters($p)
+            ->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        $adapter = new DoctrineAdapter(new ORMPaginator($query));
+        $paginator = new ZendPaginator($adapter);
+        $paginator->setCurrentPageNumber($page)->setItemCountPerPage(40);
 
+        return $paginator;
     }
 }

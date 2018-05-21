@@ -7,6 +7,7 @@ namespace InterpretersOffice\Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use Zend\Paginator\Paginator;
 use InterpretersOffice\Form\PersonForm;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
@@ -200,17 +201,14 @@ class PeopleController extends AbstractActionController
      */
     public function searchAction()
     {
-        //$repo = $this->entityManager->getRepository(Entity\Person::class);
+        $repo = $this->entityManager->getRepository(Entity\Person::class);
         $id = $this->params()->fromQuery('id');
-        if ($id) {
-            $q = $this->entityManager->createQuery('SELECT p, h FROM '
-                .Entity\Person::class .' p JOIN p.hat h WHERE p.id = :id')
-            ->setParameters(['id'=>$id]);
-            $result = $q->getArrayResult();
-            return new JsonModel($result);
-        }
-        // else
-        //
-        //return new JsonModel(["shit"=>"whatever"]);
+        /** @var \Zend\Paginator\Paginator $paginator */
+        $paginator = $repo->search($this->params()->fromQuery());
+        return new JsonModel([
+            'data'=>$paginator->getCurrentItems(),
+            'count'=>$paginator->getTotalItemCount(),
+            'pages' => $paginator->getPages()
+        ]);
     }
 }
