@@ -200,6 +200,17 @@ class PeopleController extends AbstractActionController
      */
     public function searchAction()
     {
-        return new JsonModel(["shit"=>"fuck you"]);
+        //$repo = $this->entityManager->getRepository(Entity\Person::class);
+        $id = $this->params()->fromQuery('id');
+        if ($id) {
+            $q = $this->entityManager->createQuery('SELECT p, h FROM '
+                .Entity\Person::class .' p JOIN p.hat h WHERE p.id = :id')
+            ->setParameters(['id'=>$id]);
+            $result = $q->getArrayResult();
+            return new JsonModel($result);
+        }
+        // else
+        //
+        //return new JsonModel(["shit"=>"whatever"]);
     }
 }

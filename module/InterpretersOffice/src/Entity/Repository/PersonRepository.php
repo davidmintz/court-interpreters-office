@@ -7,8 +7,9 @@ namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use InterpretersOffice\Service\ProperNameParsingTrait;
+
 /**
- * Hat repository.
+ * Person repository.
  *
  * @author david
  */
@@ -48,7 +49,6 @@ class PersonRepository extends EntityRepository
                 ->setParameters(['hat_id' => $hat_id])
                 ->getResult();
     }
-
 
 
     /**
@@ -102,6 +102,19 @@ class PersonRepository extends EntityRepository
                 ->setMaxResults($limit);
 
         return $query->getResult();
-        //*/
+    }
+
+    /**
+     * ...maybe not
+     */
+    public function findPersonById($id)
+    {
+        $dql = "SELECT partial p.{lastname, firstname, middlename, email, id,
+        active, home_phone}, h.name hat FROM InterpretersOffice\Entity\Person p
+        WHERE p.id = :id";
+        $person = $this->createQuery($dql)->setParameters($parameters)
+            ->getOneorNullResult();
+        return $person;
+
     }
 }
