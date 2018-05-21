@@ -1,3 +1,17 @@
+var view = new Vue({
+
+    el : "#results",
+    data : {
+        //message : "shit is real.",
+        people  : [],
+    },
+    methods : {
+        setPeople : function(people) {
+            this.people = people;
+        }
+    }
+});
+
 $(function(){
     var button = $("#btn-search");
     var name_element = $("#name");
@@ -66,15 +80,17 @@ $(function(){
         }
         $.get("/admin/people/search?",$("#search-form").serialize(),"json")
             .success(function(response){
-
-                results_div.html(response.count + " rows found");
+                results_div.empty().prepend(response.count + " rows found<br>");
+                var tmp = [];
                 if (response.count) {
                     var people = [];
                     for (var i in response.data) {
                         var p = response.data[i][0];
-                        people.push(p.lastname,+", "+p.firstname);
+                        people.push(p.lastname+", "+p.firstname);
+                        //tmp.push[p];
                     }
-                    results.append
+                    results_div.append(people.join("<br>"));
+
                 }
                 //for (var i in window.my_data.data) { console.log(  window.my_data.data[i][0].lastname ) }
 

@@ -61,7 +61,9 @@ class PeopleController extends AbstractActionController
         $repo = $this->entityManager->getRepository(Entity\Hat::class);
         $opts = $repo->getHatOptions([Entity\Hat::ANONYMITY_NEVER, Entity\Hat::ANONYMITY_OPTIONAL]);
 
-        return new ViewModel(['title' => 'people','options'=>$opts]);
+        return (new ViewModel(['title' => 'people','options'=>$opts]))
+            // for fun
+            ->setTemplate('interpreters-office/admin/people/vue.phtml');
     }
 
     /**
