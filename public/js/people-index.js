@@ -2,12 +2,12 @@ var view = new Vue({
 
     el : "#results",
     data : {
-        //message : "shit is real.",
         people  : [],
+        pages : 0,
+        total : 0
     },
-    methods : {
-        setPeople : function(people) { this.people = people;}
-    }
+    methods : {} //setPeople : function(people) { this.people = people;}
+
 });
 
 $(function(){
@@ -64,19 +64,14 @@ $(function(){
         event.preventDefault();
         var params = {};
         var url = "/admin/people/search";
-        console.log("click");
-        var id = name_element.data("id");
+        var id = name_element.data("id"), query;
         if (id) {
-            console.log("id is "+id);
-            $.get("/admin/people/search?id="+id,"json")
-            .success(function(data){
-                results_div.html(data.length + " found");
-            });
-            return;
+            //console.log("id is "+id);
+            query = "id="+id;
         } else {
-            console.log("no id attrib in name element");
+            query = $("#search-form").serialize();
         }
-        $.getJSON("/admin/people/search?"+$("#search-form").serialize())
+        $.getJSON(url+"?"+query)
         .success(function(response){
             results_div.children(".status-message").text(response.count + " found").show();
             if (response.count) {
@@ -87,6 +82,8 @@ $(function(){
                 }
                 view.people = p;
             }
+            view.total = response.count;
+            view.pages = response.pages;
         });
     })
 });
