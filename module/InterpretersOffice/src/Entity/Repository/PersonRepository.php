@@ -159,7 +159,10 @@ class PersonRepository extends EntityRepository
             ->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
-        $paginator->setCurrentPageNumber($page)->setItemCountPerPage(40);
+        $items_per_page = isset($parameters['items_per_page']) ?
+            $parameters['items_per_page'] : 20;
+        $paginator->setCurrentPageNumber($page)
+            ->setItemCountPerPage($items_per_page);
 
         return $paginator;
     }

@@ -37,23 +37,19 @@ endif;
     <input type="text" id="name" name="name" class="form-control" value="<?php echo $this->name ? $this->escapeHtml($this->name) : ''?>" placeholder="last name[, first ]">
     <button type="submit" id="btn-search" class="btn btn-primary my-1 ml-1 "><span class="icon fa fa-search"></span> search</button>
 </form>
+
 <div id="results" class="mx-auto results" style="max-width:850px">
     <p class="status-message" style="display:none"></p>
     <ul class="list-group">
-        <li class="list-group-item" v-for="p in people">
+        <li class="list-group-item py-1" v-for="p in people">
           {{ p.lastname }}, {{ p.firstname}}
         </li>
     </ul>
- 
-<!--
- <nav aria-label="Page navigation example">
-  <ul class="pagination mt-2">
-    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-  </ul>
+<nav id="pagination" aria-label="navigation">
+    <ul class="pagination mt-2" >
+        <li class="page-item" v-if="1 > 2">shit</li>
+        <li v-if="pages.pageCount > 1" v-for="i in pages.pagesInRange" v-bind:class="['page-item',{active: i == current}]"><a class="page-link" v-bind:href="url + '&page=' + i">{{i}}</a></li>
+        <li class="page-item" v-if="1 > 2">shit</li>
+    </ul>
 </nav>
--->
 </div>
