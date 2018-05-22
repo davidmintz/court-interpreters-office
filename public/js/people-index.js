@@ -3,8 +3,12 @@ var view = new Vue({
     el : "#results",
     data : {
         people  : [],
-        pages : 0,
-        total : 0
+        pages : {
+            pageCount : 0
+        },
+        current : 0,
+        total : 0,
+        url : ""
     },
     methods : {} //setPeople : function(people) { this.people = people;}
 
@@ -60,10 +64,19 @@ $(function(){
         }
     });
     results_div = $("#results");
-    button.on("click",function(event){
+    $("#pagination").on("click","a",function(event){
         event.preventDefault();
-        var params = {};
+        var page = $(this).text();
+        button.data({page:page});
+        button.trigger("click");
+    });
+    button.on("click",function(event)
+    {
         var url = "/admin/people/search";
+        event.preventDefault();
+        var page = button.data("page") || 1;
+        console.warn("my page is "+page);
+        var params = {};
         var id = name_element.data("id"), query;
         if (id) {
             //console.log("id is "+id);
@@ -71,9 +84,11 @@ $(function(){
         } else {
             query = $("#search-form").serialize();
         }
-        $.getJSON(url+"?"+query)
-        .success(function(response){
-            results_div.children(".status-message").text(response.count + " found").show();
+        url += "?"+query;
+        $.getJSON(url+"&page="+page).success(function(response)
+        {
+            results_div.children(".status-message")
+                .text(response.count + " found.").show();
             if (response.count) {
                 var data = response.data;
                 var p = [];
@@ -81,9 +96,17 @@ $(function(){
                     p.push(data[i][0]);
                 }
                 view.people = p;
+                view.current = page;
+            } else {
+                $('p.status-message').text(
+                    "We found nobody in the database  matching the above criteria"
+                ).show();
+                view.current = 0;
             }
             view.total = response.count;
             view.pages = response.pages;
+            view.url = url;
+            button.data({page : null});
         });
     })
 });
