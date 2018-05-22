@@ -145,7 +145,7 @@ class PersonRepository extends EntityRepository
                 $fullname = $this->parseName($parameters['name']);
                 foreach($fullname as $name=>$value) {
                     if ($value) {
-                        $where[] = "p.{$name}name = :{$name}name";
+                        $where[] = "p.{$name}name LIKE :{$name}name";
                         $p["{$name}name"] = $value . '%';
                     }
                 }
@@ -163,7 +163,7 @@ class PersonRepository extends EntityRepository
             $parameters['items_per_page'] : 20;
         $paginator->setCurrentPageNumber($page)
             ->setItemCountPerPage($items_per_page);
-
+            
         return $paginator;
     }
 }
