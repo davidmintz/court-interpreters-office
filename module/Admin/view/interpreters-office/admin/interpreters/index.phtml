@@ -43,7 +43,7 @@ endif;
             <?php echo $this->formSelect($form->get('security_clearance_expiration')) ?><!--
             --><a id="btn-search-language" href="<?php echo $this->url('interpreters') ?>" class="btn btn-primary"><span class="fa fa-search"></span> search</a>
     </div>
-    <div class="form-group form-inline"><label class="pr-1" for="name">Or: whose name is</label><?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-primary"><span class="fa fa-search"></span> search</a></div>
+    <div class="form-group form-inline"><label class="pr-1" for="name">Or whose name is</label><?php echo $this->formElement($form->get('name'))?><a href="<?php echo $this->url('interpreters')?>" id="btn-search-name" class="btn btn-primary"><span class="fa fa-search"></span> search</a></div>
     </form>
   </div>
 </div>
@@ -52,8 +52,10 @@ endif;
 if ($this->interpreter) :
     echo $this->render('view');
 endif;
-if ($this->results) : ?>
+?>
 <div class="mx-auto" style="max-width:600px">
+<?php
+if ($this->results) : ?>
 <table class="table table-hover table-bordered table-sm mx-auto">
     <thead>
         <tr><th colspan="3" class="font-weight-normal pl-3">
@@ -94,10 +96,16 @@ endif; ?>
 <?php
 else :
     if ($this->isQuery and ! $this->interpreter) :
-?><p>No matching records found.</p><?php
+    ?><p>No matching records found.</p><br>
+<?php
     endif;
-endif; ?><br>
+endif;
+// make them work for it
+if ($this->isQuery):
+?>
+<br>
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-primary">
 <span aria-hidden="true" class="icon fa fa-plus"></span> new interpreter
 </a>
+<?php endif; ?>
 </div>
