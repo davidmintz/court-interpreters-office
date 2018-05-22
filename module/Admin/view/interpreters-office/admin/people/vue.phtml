@@ -42,14 +42,14 @@ endif;
     <p class="status-message" style="display:none"></p>
     <ul class="list-group">
         <li class="list-group-item py-1" v-for="p in people">
-          {{ p.lastname }}, {{ p.firstname}}
+          {{ p.lastname }}, {{ p.firstname}}<span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
         </li>
     </ul>
 <nav id="pagination" aria-label="navigation">
     <ul class="pagination mt-2" >
-        <li class="page-item" v-if="1 > 2">shit</li>
+        <li class="page-item" v-if="pages.firstPageInRange > pages.first"><a class="page-link first" v-bind:href="url + '&page=1'">&lt;&lt;</a></li>
         <li v-if="pages.pageCount > 1" v-for="i in pages.pagesInRange" v-bind:class="['page-item',{active: i == current}]"><a class="page-link" v-bind:href="url + '&page=' + i">{{i}}</a></li>
-        <li class="page-item" v-if="1 > 2">shit</li>
+        <li class="page-item" v-if="pages.lastPageInRange < pages.last"><a class="page-link last" v-bind:href="url + '&page=' + pages.last">&gt;&gt;</a></li>
     </ul>
 </nav>
 </div>

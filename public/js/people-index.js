@@ -8,7 +8,9 @@ var view = new Vue({
         },
         current : 0,
         total : 0,
-        url : ""
+        url : "",
+        hat : false,
+        active : null
     },
     methods : {} //setPeople : function(people) { this.people = people;}
 
@@ -62,11 +64,16 @@ $(function(){
         if (name_element.val()) {
             name_element.autocomplete("search");
         }
+        view[($(this).attr('id'))] = $(this).val();
     });
     results_div = $("#results");
     $("#pagination").on("click","a",function(event){
         event.preventDefault();
-        var page = $(this).text();
+        var link = $(this);
+        var page = parseInt(link.text());
+        if (! page) {
+            page = link.hasClass("first") ? 1 : view.pages.last;
+        }
         button.data({page:page});
         button.trigger("click");
     });
@@ -75,7 +82,7 @@ $(function(){
         var url = "/admin/people/search";
         event.preventDefault();
         var page = button.data("page") || 1;
-        console.warn("my page is "+page);
+        // console.warn("my page is "+page);
         var params = {};
         var id = name_element.data("id"), query;
         if (id) {
@@ -93,14 +100,17 @@ $(function(){
                 var data = response.data;
                 var p = [];
                 for (var i in data) {
-                    p.push(data[i][0]);
+                    var person = data[i][0];
+                    person.hat = data[i].hat;
+                    p.push(person);
                 }
                 view.people = p;
                 view.current = page;
             } else {
                 $('p.status-message').text(
-                    "We found nobody in the database  matching the above criteria"
+                    "We found nobody in the database matching the above criteria"
                 ).show();
+                view.people = [];
                 view.current = 0;
             }
             view.total = response.count;
