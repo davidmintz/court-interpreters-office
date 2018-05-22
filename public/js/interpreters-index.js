@@ -23,6 +23,12 @@ $(function(){
            $('#btn-search-name').trigger("click");
         }
     });
+
+    if (document.referrer.indexOf('interpreters/language')!== -1) {
+        // for their convenience, point back to index page in its previous state
+        $("h2 a:contains(interpreters)").attr({href:document.referrer })
+    }
+
     $('#btn-search-name').on("click",function(event){
         event.preventDefault();
         var name = nameElement.val().trim();
@@ -47,6 +53,8 @@ $(function(){
             }
         }
         document.location = url;
+
+
     });
 
     /**
