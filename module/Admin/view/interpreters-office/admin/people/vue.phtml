@@ -43,6 +43,7 @@ endif;
     <ul class="list-group">
         <li class="list-group-item py-1" v-for="p in people">
           {{ p.lastname }}, {{ p.firstname}}<span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
+          <span  class="text-muted" v-if="active === '' && ! p.active">(inactive)</span>
         </li>
     </ul>
 <nav id="pagination" aria-label="navigation">

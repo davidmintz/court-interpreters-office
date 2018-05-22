@@ -59,7 +59,6 @@ $(function(){
         }
     };
     name_element.autocomplete(autocomplete_options);
-        //.on("change",function(){ console.log("name changed"); });
     $("#hat, #active").on("change",function(event){
         if (name_element.val()) {
             name_element.autocomplete("search");

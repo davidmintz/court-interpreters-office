@@ -207,6 +207,7 @@ class PeopleController extends AbstractActionController
         $id = $this->params()->fromQuery('id');
         /** @var \Zend\Paginator\Paginator $paginator */
         $paginator = $repo->search($this->params()->fromQuery());
+        
         return new JsonModel([
             'data'=>$paginator->getCurrentItems(),
             'count'=>$paginator->getTotalItemCount(),
