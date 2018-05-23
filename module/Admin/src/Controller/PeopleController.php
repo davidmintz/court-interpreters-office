@@ -12,6 +12,8 @@ use InterpretersOffice\Form\PersonForm;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 
+use Zend\Session\Container as Session;
+
 /**
  * controller for admin/people.
  */
@@ -58,10 +60,12 @@ class PeopleController extends AbstractActionController
      */
     public function indexAction()
     {
+        $session = new Session('people_index');
         $repo = $this->entityManager->getRepository(Entity\Hat::class);
         $opts = $repo->getHatOptions([Entity\Hat::ANONYMITY_NEVER, Entity\Hat::ANONYMITY_OPTIONAL]);
 
-        return (new ViewModel(['title' => 'people','options'=>$opts]))
+        return (new ViewModel(
+            ['title' => 'people','defaults'=>$session->defaults,'options'=>$opts]))
             // for fun
             ->setTemplate('interpreters-office/admin/people/vue.phtml');
     }
@@ -205,9 +209,12 @@ class PeopleController extends AbstractActionController
     {
         $repo = $this->entityManager->getRepository(Entity\Person::class);
         $id = $this->params()->fromQuery('id');
+        $session = new Session('people_index');
+        $params = $this->params()->fromQuery();
+        $session->defaults = $params;
         /** @var \Zend\Paginator\Paginator $paginator */
-        $paginator = $repo->search($this->params()->fromQuery());
-        
+        $paginator = $repo->search($params);
+
         return new JsonModel([
             'data'=>$paginator->getCurrentItems(),
             'count'=>$paginator->getTotalItemCount(),
