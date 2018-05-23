@@ -46,7 +46,7 @@ endif;
         <span v-else>Displaying {{ from }} through {{ to }} of {{ total }} people found.</span>
     </p>
     <ul class="list-group">
-        <li class="list-group-item py-1" v-for="p in people"><a v-on:click.prevent="doShit(p, $event)" v-bind:href="base_path +'/view/' + p.id">{{ p.lastname }}, {{ p.firstname }}</a><span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
+        <li class="list-group-item py-1" v-for="p in people"><a v-on:click.prevent="showDetails(p, $event)" v-bind:href="base_path +'/view/' + p.id">{{ p.lastname }}, {{ p.firstname }}</a><span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
           <span class="text-muted" v-if="active === null && ! p.active">(inactive)</span>
           <a v-bind:href="base_path +'/edit/' + p.id" class="pt-1 float-right fas fa-edit text-primary"><span class="sr-only">edit</span></a>
         </li>
@@ -54,7 +54,7 @@ endif;
 <nav id="pagination" aria-label="navigation">
     <ul class="pagination mt-2" >
         <li class="page-item" v-if="pages.firstPageInRange > pages.first"><a class="page-link first" v-bind:href="url + '&page=1'">&lt;&lt;</a></li>
-        <li v-if="pages.pageCount > 1" v-for="i in pages.pagesInRange" v-bind:class="['page-item',{active: i == current}]"><a class="page-link" v-bind:href="url + '&page=' + i">{{i}}</a></li>
+        <li v-if="pages.pageCount > 1" v-for="i in pages.pagesInRange" v-bind:class="['page-item',{active: i == pages.current}]"><a class="page-link" v-bind:href="url + '&page=' + i">{{i}}</a></li>
         <li class="page-item" v-if="pages.lastPageInRange < pages.last"><a class="page-link last" v-bind:href="url + '&page=' + pages.last">&gt;&gt;</a></li>
     </ul>
 </nav>

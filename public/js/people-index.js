@@ -4,11 +4,7 @@ var view = new Vue({
     el : "#results",
     data : {
         people  : [],
-        pages : {
-            pageCount : 0
-        },
-        current : 0,
-        total : 0,
+        pages : {},
         url : "",
         hat : false,
         active : null,
@@ -16,16 +12,15 @@ var view = new Vue({
         base_path : window.document.location.pathname
     },
     methods : {
-        // checking whether you can do this
-        test : function(){console.log(typeof $);},
-        doShit : function(p,event) {
+        showDetails : function(p,event) {
             var li = $(event.target).closest("li");
             if (li.children(".details").length) {
                 var details = li.children(".details")
                 if (details.is(":visible")) {
                     details.slideUp();
                 } else {
-                    details.slideDown();
+                    var shit = 'slideDown'
+                    details[shit]();
                 }
                 return;
             }
@@ -37,16 +32,16 @@ var view = new Vue({
             }
             $("<div/>").addClass("details").css({display:"none"}).html(text)
                 .appendTo(li).slideDown();
-            //console.log(str);
         }
     },
     computed : {
         from : function() {
-            return (this.current - 1) * this.pages.itemCountPerPage + 1;
+            return (this.pages.current - 1) * this.pages.itemCountPerPage + 1;
         },
         to : function() {
             return this.from + this.pages.currentItemCount - 1;
-        }
+        },
+        total : function() { return this.pages.totalItemCount; }
     }
 });
 
@@ -112,7 +107,6 @@ $(function(){
         var page = button.data("page") || 1;
         var id = name_element.data("id"), query;
         if (id) {
-            //console.log("id is "+id);
             query = "id="+id;
         } else {
             query = $("#search-form").serialize();
@@ -130,15 +124,15 @@ $(function(){
                     p.push(person);
                 }
                 view.people = p;
-                view.current = page;
+                //view.current = page;
                 view.not_found = false;
             } else {
                 //$("p.status-message").text("We found nobody in the database matching the above criteria.").show();
                 view.people = [];
-                view.current = 0;
+                //view.current = 0;
                 view.not_found = true;
             }
-            view.total = response.count;
+            //view.total = response.count;
             view.pages = response.pages;
             view.url = url;
             button.data({page : null});
