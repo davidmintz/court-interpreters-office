@@ -3,7 +3,7 @@
  *  viewscript for main people-administration page
  */
 use Zend\Form\Element;
-$defaults = $this->defaults ?: ['hat'=>'','active'=>1,'name'=>'','page'=> 1];
+$defaults = array_merge(['hat'=>'','active'=>1,'name'=>'','page'=> 1], $this->defaults ?: []);
 $hat_element = (new Element\Select(
     'hat', ['value_options'=> $this->options,
             'empty_option' => ' -- select hat --',]
@@ -28,6 +28,7 @@ $messenger = $this->flashMessenger()->setAutoEscape(false);
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',]);
 endif;
+
 ?>
 <form <?php if ($this->defaults): ?>data-session_defaults="1" <?php endif ?>id="search-form" class="form-inline shadow-sm border rounded pl-3 py-3 mx-auto mt-4" style="max-width:850px">
     <label class="my-1 mr-2" for="hat">hat</label>
@@ -39,15 +40,15 @@ endif;
     <button type="submit" data-page="<?php echo $this->defaults['page'] ?>" id="btn-search" class="btn btn-primary my-1 ml-1 "><span class="icon fa fa-search"></span> search</button>
 </form>
 <?php /** vue.js learning exercise follows. may not be doing it "right" but here goes */?>
-<div id="results" class="mx-auto results" style="max-width:850px">
+<div data-base_url="<?php echo $this->url('people')?>" id="results" class="mx-auto results" style="max-width:650px">
     <p class="status-message" style="display:none">
         <span v-if="not_found">We found nobody in the database matching the above criteria.</span>
         <span v-else>Displaying {{ from }} through {{ to }} of {{ total }} people found.</span>
     </p>
     <ul class="list-group">
-        <li class="list-group-item py-1" v-for="p in people">
-          {{ p.lastname }}, {{ p.firstname }}<span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
-          <span  class="text-muted" v-if="active === null && ! p.active">(inactive)</span>
+        <li class="list-group-item py-1" v-for="p in people"><a v-on:click.prevent="doShit(p, $event)" v-bind:href="document.location.pathname +'/view/' + p.id">{{ p.lastname }}, {{ p.firstname }}</a><span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
+          <span class="text-muted" v-if="active === null && ! p.active">(inactive)</span>
+          <a v-bind:href="document.location.pathname +'/edit/' + p.id" class="pt-1 float-right fas fa-edit text-primary"><span class="sr-only">edit</span></a>
         </li>
     </ul>
 <nav id="pagination" aria-label="navigation">

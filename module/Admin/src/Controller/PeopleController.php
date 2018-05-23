@@ -144,6 +144,11 @@ class PeopleController extends AbstractActionController
         }
         $form = new PersonForm($this->entityManager, ['action' => 'update']);
         $form->bind($entity);
+        $has_related = $repo->hasRelatedEntities($id);
+        if ($has_related) {
+            $form->getInputFilter()->get('person')->get('hat')
+            ->setRequired(false)->setAllowEmpty(true);            
+        }
         $viewModel->setVariables(['form' => $form,
             'has_related_entities' => $repo->hasRelatedEntities($id)]);
 

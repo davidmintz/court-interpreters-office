@@ -16,7 +16,28 @@ var view = new Vue({
     },
     methods : {
         // checking whether you can do this
-        test : function(){console.log(typeof $);}
+        test : function(){console.log(typeof $);},
+        doShit : function(p,event) {
+            var li = $(event.target).closest("li");
+            if (li.children(".details").length) {
+                var details = li.children(".details")
+                if (details.is(":visible")) {
+                    details.slideUp();
+                } else {
+                    details.slideDown();
+                }
+                return;
+            }
+            var text = "";
+            var fields = ['email','office_phone' , 'mobile_phone'];
+            for (var i = 0; i < fields.length; i++) {
+                var label = fields[i].replace('_',' ')+":";
+                text += label + " " + (p[fields[i]] || '<span class="text-muted"> &mdash; </span>' )+ "<br>";
+            }
+            $("<div/>").addClass("details").css({display:"none"}).html(text)
+                .appendTo(li).slideDown();
+            //console.log(str);
+        }
     },
     computed : {
         from : function() {
@@ -121,6 +142,7 @@ $(function(){
             view.url = url;
             button.data({page : null});
             $('#results .status-message').show();
+            $("li div.details").remove();
         });
     });
     if ($("#search-form").data("session_defaults")) {
