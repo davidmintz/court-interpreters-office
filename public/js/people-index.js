@@ -1,3 +1,4 @@
+var $, Vue;
 var view = new Vue({
 
     el : "#results",
@@ -19,7 +20,7 @@ var view = new Vue({
 $(function(){
     var button = $("#btn-search");
     var name_element = $("#name");
-    autocomplete_options = {
+    var autocomplete_options = {
         source: function(request,response) {
             var params = { term : request.term };
             if ($("#hat").val() !== "") {
@@ -28,7 +29,7 @@ $(function(){
             if ($("#active").val() !== "") {
                 params.active = $("#active").val();
             }
-            $.get('/admin/people/autocomplete',params,"json").then(
+            $.get("/admin/people/autocomplete",params,"json").then(
                 function(data){
                     if (! data.length) {
                         name_element.data({id:""});
@@ -48,24 +49,19 @@ $(function(){
             event.preventDefault();
             $(this).val(ui.item.label);
         },
-        change : function(event, ui) {
-            console.log("autocomplete change event fired")
-            var id = $(this).data("id");
-            console.log(id ? "id is "+id : "NO id is set");
-        },
-        open : function(event, ui) {
-            console.log("autocomplete OPEN event fired. unsetting id");
+        open : function() {
+            //console.log("autocomplete OPEN event fired. unsetting id");
             $(this).data("id",null);
         }
     };
     name_element.autocomplete(autocomplete_options);
-    $("#hat, #active").on("change",function(event){
+    $("#hat, #active").on("change",function(){
         if (name_element.val()) {
             name_element.autocomplete("search");
         }
-        view[($(this).attr('id'))] = $(this).val();
+        view[($(this).attr("id"))] = $(this).val();
     });
-    results_div = $("#results");
+    var results_div = $("#results");
     $("#pagination").on("click","a",function(event){
         event.preventDefault();
         var link = $(this);
@@ -81,8 +77,6 @@ $(function(){
         event.preventDefault();
         var url = "/admin/people/search";
         var page = button.data("page") || 1;
-        // console.warn("my page is "+page);
-        var params = {};
         var id = name_element.data("id"), query;
         if (id) {
             //console.log("id is "+id);
@@ -106,7 +100,7 @@ $(function(){
                 view.people = p;
                 view.current = page;
             } else {
-                $('p.status-message').text(
+                $("p.status-message").text(
                     "We found nobody in the database matching the above criteria."
                 ).show();
                 view.people = [];
