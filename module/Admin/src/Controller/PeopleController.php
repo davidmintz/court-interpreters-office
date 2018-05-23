@@ -62,11 +62,11 @@ class PeopleController extends AbstractActionController
     {
         $session = new Session('people_index');
         $repo = $this->entityManager->getRepository(Entity\Hat::class);
-        $opts = $repo->getHatOptions([Entity\Hat::ANONYMITY_NEVER, Entity\Hat::ANONYMITY_OPTIONAL]);
-
+        $opts = $repo->getHatOptions([Entity\Hat::ANONYMITY_NEVER,
+            Entity\Hat::ANONYMITY_OPTIONAL]);
         return (new ViewModel(
             ['title' => 'people','defaults'=>$session->defaults,'options'=>$opts]))
-            // for fun
+            // for a vue.js learning exercise
             ->setTemplate('interpreters-office/admin/people/vue.phtml');
     }
 

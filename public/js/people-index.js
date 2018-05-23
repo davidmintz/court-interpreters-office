@@ -78,8 +78,8 @@ $(function(){
     });
     button.on("click",function(event)
     {
-        var url = "/admin/people/search";
         event.preventDefault();
+        var url = "/admin/people/search";
         var page = button.data("page") || 1;
         // console.warn("my page is "+page);
         var params = {};
@@ -107,7 +107,7 @@ $(function(){
                 view.current = page;
             } else {
                 $('p.status-message').text(
-                    "We found nobody in the database matching the above criteria"
+                    "We found nobody in the database matching the above criteria."
                 ).show();
                 view.people = [];
                 view.current = 0;
@@ -117,5 +117,8 @@ $(function(){
             view.url = url;
             button.data({page : null});
         });
-    })
+    });
+    if ($("#search-form").data("session_defaults")) {
+        button.trigger("click");
+    }
 });
