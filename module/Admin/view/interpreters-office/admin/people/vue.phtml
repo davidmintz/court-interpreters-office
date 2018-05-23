@@ -16,7 +16,7 @@ $status_element = (new Element\Select(
 ->setValue($defaults['active']);
 $this->headScript()
     ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
-    ->appendFile($this->basePath('js/lib/vue.min.js'))
+    ->appendFile($this->basePath('js/lib/vue.js'))
     ->appendFile($this->basePath('js/people-index.js'));
     $this->headLink()
             ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
@@ -46,9 +46,9 @@ endif;
         <span v-else>Displaying {{ from }} through {{ to }} of {{ total }} people found.</span>
     </p>
     <ul class="list-group">
-        <li class="list-group-item py-1" v-for="p in people"><a v-on:click.prevent="doShit(p, $event)" v-bind:href="document.location.pathname +'/view/' + p.id">{{ p.lastname }}, {{ p.firstname }}</a><span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
+        <li class="list-group-item py-1" v-for="p in people"><a v-on:click.prevent="doShit(p, $event)" v-bind:href="base_path +'/view/' + p.id">{{ p.lastname }}, {{ p.firstname }}</a><span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
           <span class="text-muted" v-if="active === null && ! p.active">(inactive)</span>
-          <a v-bind:href="document.location.pathname +'/edit/' + p.id" class="pt-1 float-right fas fa-edit text-primary"><span class="sr-only">edit</span></a>
+          <a v-bind:href="base_path +'/edit/' + p.id" class="pt-1 float-right fas fa-edit text-primary"><span class="sr-only">edit</span></a>
         </li>
     </ul>
 <nav id="pagination" aria-label="navigation">

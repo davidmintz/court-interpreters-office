@@ -12,7 +12,8 @@ var view = new Vue({
         url : "",
         hat : false,
         active : null,
-        not_found : false
+        not_found : false,
+        base_path : window.document.location.pathname
     },
     methods : {
         // checking whether you can do this
