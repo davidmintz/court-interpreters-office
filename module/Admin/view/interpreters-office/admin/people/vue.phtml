@@ -16,7 +16,7 @@ $status_element = (new Element\Select(
 ->setValue($defaults['active']);
 $this->headScript()
     ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
-    ->appendFile($this->basePath('js/lib/vue.js'))
+    ->appendFile($this->basePath('js/lib/vue.min.js'))
     ->appendFile($this->basePath('js/people-index.js'));
     $this->headLink()
             ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
@@ -40,11 +40,14 @@ endif;
 </form>
 <?php /** vue.js learning exercise follows. may not be doing it "right" but here goes */?>
 <div id="results" class="mx-auto results" style="max-width:850px">
-    <p class="status-message" style="display:none"></p>
+    <p class="status-message" style="display:none">
+        <span v-if="not_found">We found nobody in the database matching the above criteria.</span>
+        <span v-else>Displaying {{ from }} through {{ to }} of {{ total }} people found.</span>
+    </p>
     <ul class="list-group">
         <li class="list-group-item py-1" v-for="p in people">
           {{ p.lastname }}, {{ p.firstname }}<span v-if="! hat" class="text-muted hat">, {{p.hat}}</span>
-          <span  class="text-muted" v-if="active === '' && ! p.active">(inactive)</span>
+          <span  class="text-muted" v-if="active === null && ! p.active">(inactive)</span>
         </li>
     </ul>
 <nav id="pagination" aria-label="navigation">

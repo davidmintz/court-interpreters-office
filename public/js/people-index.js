@@ -11,10 +11,21 @@ var view = new Vue({
         total : 0,
         url : "",
         hat : false,
-        active : null
+        active : null,
+        not_found : false
     },
-    methods : {} //setPeople : function(people) { this.people = people;}
-
+    methods : {
+        // checking whether you can do this
+        test : function(){console.log(typeof $);}
+    },
+    computed : {
+        from : function() {
+            return (this.current - 1) * this.pages.itemCountPerPage + 1;
+        },
+        to : function() {
+            return this.from + this.pages.currentItemCount - 1;
+        }
+    }
 });
 
 $(function(){
@@ -87,8 +98,7 @@ $(function(){
         url += "?"+query;
         $.getJSON(url+"&page="+page).success(function(response)
         {
-            results_div.children(".status-message")
-                .text(response.count + " found.").show();
+            //results_div.children(".status-message").text(response.count + " found.").show();
             if (response.count) {
                 var data = response.data;
                 var p = [];
@@ -99,17 +109,18 @@ $(function(){
                 }
                 view.people = p;
                 view.current = page;
+                view.not_found = false;
             } else {
-                $("p.status-message").text(
-                    "We found nobody in the database matching the above criteria."
-                ).show();
+                //$("p.status-message").text("We found nobody in the database matching the above criteria.").show();
                 view.people = [];
                 view.current = 0;
+                view.not_found = true;
             }
             view.total = response.count;
             view.pages = response.pages;
             view.url = url;
             button.data({page : null});
+            $('#results .status-message').show();
         });
     });
     if ($("#search-form").data("session_defaults")) {
