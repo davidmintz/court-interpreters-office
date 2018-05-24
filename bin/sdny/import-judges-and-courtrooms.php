@@ -206,4 +206,12 @@ $db->exec(
 $db->exec(sprintf('INSERT INTO anonymous_judges (name, default_location_id) VALUES ("magistrate","%s")',$courthouses['White Plains']));
 printf("finished inserting %d courtrooms, %d judges\n",
     $locations_inserted,$judges_inserted);
+
+// now try to get all the clerks_judges in here,a work-in-progress
+$judge_map = $db->query('select old.judge_id old_id, new.id new_id FROM dev_interpreters.judges as old, people as new
+    WHERE old.lastname = new.lastname and old.firstname = new.firstname and new.discr = "judge"')
+            ->fetchAll(PDO::FETCH_KEY_PAIR);
+
+//SELECT ru.id as old_id, ru.email as old_email, p.id, p.email as new FROM dev_interpreters.request_users ru LEFT JOIN people p ON ru.email = p.email;
+
 exit(0);
