@@ -18,17 +18,30 @@ use Doctrine\ORM\Query;
  *
  * @author david
  */
-class PersonRepository extends EntityRepository
+class PersonRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ResultCachingQueryTrait;
     use ProperNameParsingTrait;
 
     /**
-     * the cache id
+     * constructor
      *
-     * @var string $cache_id
+     * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
      */
-    protected $cache_id = 'people';
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    {
+
+        parent::__construct($em, $class);
+        $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace($this->cache_namespace);
+    }
+    /**
+     * cache namespace
+     *
+     * @var string $cache_namespace
+     */
+    protected $cache_namespace = 'people';
 
     /**
      * Gets "submitter" option data for events form
@@ -163,7 +176,19 @@ class PersonRepository extends EntityRepository
             $parameters['items_per_page'] : 20;
         $paginator->setCurrentPageNumber($page)
             ->setItemCountPerPage($items_per_page);
-            
+
         return $paginator;
+    }
+
+    /**
+     * implements cache deletion
+     *
+     * @param string $cache_id
+     */
+    public function deleteCache($cache_id = null)
+    {
+        $cache = $this->cache;
+        $cache->setNamespace($this->cache_namespace);
+        $cache->deleteAll();
     }
 }
