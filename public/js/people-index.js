@@ -92,6 +92,7 @@ $(function(){
     {
         event.preventDefault();
         var url;
+        //console.log("page is: "+button.data("page"));
         if (! params || ! params.url) {
             url = "/admin/people/search";
             var id = name_element.data("id");
@@ -101,33 +102,31 @@ $(function(){
             } else {
                 query = $("#search-form").serialize();
             }
-            url += "?"+query;
+            url += "?"+query+"&page="+button.data("page");
         } else {
             url = params.url;
         }
         $.getJSON(url).success(function(response)
         {
+            var people = [];
             if (response.count) {
                 var data = response.data;
-                var p = [];
                 for (var i in data) {
                     var person = data[i][0];
                     person.hat = data[i].hat;
-                    p.push(person);
+                    people.push(person);
                 }
-                view.people = p;
                 view.not_found = false;
-                if (id) {
-                    // unset the name element's person-id
+                if (id) { // unset the name element's person-id
                     name_element.data({id : null });
                 }
             } else {
-                view.people = [];
                 view.not_found = true;
             }
+            view.people = people;
             view.pages = response.pages;
             view.url = url.replace(/&page=\d+/,"");
-            button.data({page : null});
+            button.data({page : 1});
             $('#results .status-message').show();
             $("li div.details").remove();
         });

@@ -29,7 +29,9 @@ if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',]);
 endif;
 ?>
-<!-- <pre><?php //print_r($this->defaults)?></pre> -->
+<!--
+<pre><?php // print_r($this->defaults)?></pre>
+-->
 <form <?php if ($this->defaults): ?>data-session_defaults="1" <?php endif ?>id="search-form" class="form-inline shadow-sm border rounded pl-3 py-3 mx-auto mt-4" style="max-width:850px">
     <label class="my-1 mr-2" for="hat">hat</label>
     <?php echo $this->formElement($hat_element); ?>
