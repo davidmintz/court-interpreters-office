@@ -37,7 +37,7 @@ endif;
     <?php echo $this->formElement($status_element); ?>
     <label class="my-1 mx-2" for="name">name</label>
     <input type="text" data-id="<?php echo $defaults['id']?>" id="name" name="name" class="form-control" value="<?php echo $this->escapeHtml($defaults['name']) ?>" placeholder="last name[, first ]">
-    <button type="submit" data-page="<?php echo $this->defaults['page'] ?>" id="btn-search" class="btn btn-primary my-1 ml-1 "><span class="icon fa fa-search"></span> search</button>
+    <button type="submit" data-page="<?php echo $defaults['page'] ?>" id="btn-search" class="btn btn-primary my-1 ml-1 "><span class="icon fa fa-search"></span> search</button>
 </form>
 <?php /** vue.js learning exercise follows. may not be doing it "right" but here goes */?>
 <div data-base_url="<?php echo $this->url('people')?>" id="results" class="mx-auto results" style="max-width:650px">

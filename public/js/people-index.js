@@ -81,33 +81,31 @@ $(function(){
         if (name_element.val()) {
             name_element.autocomplete("search");
         }
-        view[($(this).attr("id"))] = $(this).val();
+        view[($(this).attr("id"))] = $(this).val() || null;
     });
     var results_div = $("#results");
     $("#pagination").on("click","a",function(event){
         event.preventDefault();
-        var link = $(this);
-        var page = parseInt(link.text());
-        if (! page) {
-            // this is really crude and needs to be revised
-            page = link.hasClass("first") ? 1 : view.pages.last;
-        }
-        button.data({page:page});
-        button.trigger("click");
+        button.trigger("click",{url:this.href});
     });
-    button.on("click",function(event)
+    button.on("click",function(event,params)
     {
         event.preventDefault();
-        var url = "/admin/people/search";
-        var page = button.data("page") || 1;
-        var id = name_element.data("id"), query;
-        if (id) {
-            query = "id="+id;
+        var url;
+        if (! params || ! params.url) {
+            url = "/admin/people/search";
+            var id = name_element.data("id");
+            var query;
+            if (id) {
+                query = "id="+id;
+            } else {
+                query = $("#search-form").serialize();
+            }
+            url += "?"+query;
         } else {
-            query = $("#search-form").serialize();
+            url = params.url;
         }
-        url += "?"+query;
-        $.getJSON(url+"&page="+page).success(function(response)
+        $.getJSON(url).success(function(response)
         {
             if (response.count) {
                 var data = response.data;
@@ -128,7 +126,7 @@ $(function(){
                 view.not_found = true;
             }
             view.pages = response.pages;
-            view.url = url;
+            view.url = url.replace(/&page=\d+/,"");
             button.data({page : null});
             $('#results .status-message').show();
             $("li div.details").remove();
