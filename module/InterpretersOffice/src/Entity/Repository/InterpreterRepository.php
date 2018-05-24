@@ -30,7 +30,6 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
      */
     protected $cache;
 
-
     /**
      * constructor.
      *
@@ -165,6 +164,8 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     public function deleteCache($cache_id = null)
     {
         $this->cache->setNamespace($this->cache_namespace);
+        $this->cache->deleteAll();
+        $this->cache->setNamespace('people');
         return $this->cache->deleteAll();
     }
 
