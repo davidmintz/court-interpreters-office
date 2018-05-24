@@ -64,17 +64,15 @@ $(function(){
         },
         minLength: 2,
         select: function( event, ui ) {
-            //console.warn(ui);
             event.preventDefault();
             name_element.val(ui.item.label).data({id:ui.item.value});
-            //button.trigger("click");
         },
         focus: function(event,ui) {
             event.preventDefault();
             $(this).val(ui.item.label);
         },
         open : function() {
-            //console.log("autocomplete OPEN event fired. unsetting id");
+            //console.log("autocomplete OPEN event: unsetting id");
             $(this).data("id",null);
         }
     };
@@ -91,6 +89,7 @@ $(function(){
         var link = $(this);
         var page = parseInt(link.text());
         if (! page) {
+            // this is really crude and needs to be revised
             page = link.hasClass("first") ? 1 : view.pages.last;
         }
         button.data({page:page});
@@ -110,7 +109,6 @@ $(function(){
         url += "?"+query;
         $.getJSON(url+"&page="+page).success(function(response)
         {
-            //results_div.children(".status-message").text(response.count + " found.").show();
             if (response.count) {
                 var data = response.data;
                 var p = [];
@@ -120,15 +118,15 @@ $(function(){
                     p.push(person);
                 }
                 view.people = p;
-                //view.current = page;
                 view.not_found = false;
+                if (id) {
+                    // unset the name element's person-id
+                    name_element.data({id : null });
+                }
             } else {
-                //$("p.status-message").text("We found nobody in the database matching the above criteria.").show();
                 view.people = [];
-                //view.current = 0;
                 view.not_found = true;
             }
-            //view.total = response.count;
             view.pages = response.pages;
             view.url = url;
             button.data({page : null});
