@@ -16,9 +16,8 @@ endif;?>
     ?>"><span class="sr-only">previous</span></a>
     </div>
     <div class="col-8 text-center border rounded">
-
-    <h2 class="navigation pt-1"><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs()?> <small class="text-muted"><?php echo $this->date->format('D d M Y')?></small>
-    </h2>
+        <h2 class="navigation pt-1"><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs()?> <small class="text-muted"><?php echo $this->date->format('D d M Y')?></small>
+        </h2>
     </div>
     <div class="col-2 align-self-center text-right">
     <a role="button" title="go forward one day" data-toggle="tooltip" class="btn btn-lg btn-primary py-1 fas fa-arrow-right" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
@@ -69,7 +68,7 @@ endif;?>
             echo " event-cancelled" ;
         endif;?>">
             <td class="text-right text-nowrap"><?php echo $e['time'] ? $e['time']->format('g:i a') : ''?></td>
-            <td style="line-height:1.2em" class="py-2 clearfix"><a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>"><span data-toggle="tooltip" title="edit this event" class="float-right align-self-top fas fa-cog text-primary mr-2"></span><span class="sr-only">edit this event</span></a>
+            <td style="line-height:1.2em" class="py-2 clearfix"><a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>"><span data-toggle="tooltip" title="edit this event" class="float-right align-self-top fas fa-edit text-primary mr-2"></span><span class="sr-only">edit this event</span></a>
                 <a data-toggle="tooltip" title="view event details" href="<?php echo $this->url('events/view', ['id' => $e['id']]);?>"><?php echo $e['type']; ?><?php
                 if ($e['location_type'] == 'jail') :
                     ?><br><span class="text-muted"><?php echo $e['location'];?></span></a><?php

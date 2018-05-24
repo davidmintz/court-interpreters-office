@@ -80,7 +80,7 @@ endif; ?>
                 <span style="opacity:.7" data-toggle="tooltip" title="this interpreter is currently flagged as <?php
                     echo $status ?>" class="pr-2 fas fa-<?php echo $status == 'active' ? "check text-success" : "times text-danger"?>"></span>
             </td><td class="border-left-0 text-md-left">
-                <a data-toggle="tooltip" title="edit interpreter details" href="<?php echo $this->url('interpreters/edit', ['id' => $interpreter->getId()])?>"><span class="fa fa-cog"></span><span class="sr-only">edit details</span></a>
+                <a data-toggle="tooltip" title="edit interpreter details" href="<?php echo $this->url('interpreters/edit', ['id' => $interpreter->getId()])?>"><span class="fas fa-edit"></span><span class="sr-only">edit details</span></a>
             </td>
         </tr>
         <?php  endforeach;  ?>
