@@ -5,7 +5,7 @@ namespace InterpretersOffice\Requests\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-use InterpretersOffice\RequestsController\IndexController;
+use InterpretersOffice\Requests\Controller\IndexController;
 
 /**
  * Factory class for instantiating Requests\IndexController.

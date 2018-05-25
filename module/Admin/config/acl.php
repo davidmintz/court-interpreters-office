@@ -32,7 +32,7 @@ return [
         Admin\ScheduleController::class => Admin\EventsController::class,
         // the topmost controller
         Main\IndexController::class => null,
-        Requests\RequestsIndexController::class => null,
+        Requests\IndexController::class => null,
         Admin\AdminIndexController::class => null,
         'SDNY\Vault\Controller\VaultController' => null,
         Main\AuthController::class => null,
@@ -50,7 +50,7 @@ return [
     'allow' => [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
-            Requests\RequestsIndexController::class => ['create', 'view', 'index'],
+            Requests\IndexController::class => ['create', 'view', 'index'],
             Admin\EventsController::class => ['index', 'view', 'search'],
             Main\AuthController::class => ['logout'],
         ],
@@ -74,7 +74,7 @@ return [
     ],
     'deny' => [
         'administrator' => [
-            Requests\RequestsIndexController::class => null,
+            Requests\IndexController::class => null,
             //['add','edit','update','delete','cancel','index'],
         ],
         'anonymous' => [

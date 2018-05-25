@@ -1,6 +1,6 @@
 <?php
 /**
- * module/InterpretersOffice/src/Controller/ExampleController.php.
+ * module/Requests/src/Controller/IndexController.php
  */
 
 namespace InterpretersOffice\Requests\Controller;
