@@ -32,13 +32,11 @@ endif;?>
             <select class="form-control form-control-sm custom-select" id="language-select" name="language">
                 <option label="all" value="all">all</option>
                 <option label="Spanish" <?php if ($this->language == 'spanish') :
-?>selected="selected" <?php
-                                        endif;?>value="spanish">Spanish</option>
+                    ?>selected="selected" <?php endif;?>value="spanish">Spanish</option>
                 <option label="not Spanish" <?php if ($this->language == 'not-spanish') :
-?>selected="selected" <?php
-                                            endif;?>value="not-spanish">not Spanish</option>
+                    ?>selected="selected" <?php endif;?>value="not-spanish">not Spanish</option>
             </select>
-            <label for="date-input" class="text-md-right pl-2 pr-1">date</label>
+            <label for="date-col-12 d-flexinput" class="text-md-right pl-2 pr-1">date</label>
             <input type="text" name="date" id="date-input" class="form-control  form-control-sm" style="max-width:125px">
         </div>
     </div>
@@ -68,12 +66,17 @@ endif;?>
             echo " event-cancelled" ;
         endif;?>">
             <td class="text-right text-nowrap"><?php echo $e['time'] ? $e['time']->format('g:i a') : ''?></td>
-            <td style="line-height:1.2em" class="py-2 clearfix"><a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>"><span data-toggle="tooltip" title="edit this event" class="float-right align-self-top fas fa-edit text-primary mr-2"></span><span class="sr-only">edit this event</span></a>
+            <td style="line-height:1.2em" class="py-2 clearfix">
+                <a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>">
+                    <span data-toggle="tooltip" title="edit this event" class="float-right align-self-top fas fa-edit text-primary mr-2"> </span>
+                    <span class="sr-only">edit this event</span>
+                </a>
                 <a data-toggle="tooltip" title="view event details" href="<?php echo $this->url('events/view', ['id' => $e['id']]);?>"><?php echo $e['type']; ?><?php
                 if ($e['location_type'] == 'jail') :
-                    ?><br><span class="text-muted"><?php echo $e['location'];?></span></a><?php
+                    ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
                 endif;
-            ?></td>
+                ?></a>
+            </td>
             <td class="text-nowrap"><?php echo $e['judge'];
             if (($e['category'] == "in" or 'magistrate' == $e['judge'])) :
             ?><br><span class="text-muted"><?php echo $e['location'] ?: $e['aj_default_location'];?></span><?php
