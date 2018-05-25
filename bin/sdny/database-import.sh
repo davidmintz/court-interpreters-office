@@ -71,6 +71,12 @@ echo -n "inserting judges and courtrooms with (newly?) downloaded data..."
 bin/sdny/import-judges-and-courtrooms.php < bin/sdny/judges-courtrooms.json
 OK;
 
+
+echo -n "inserting clerks-judges..."
+cat bin/sdny/import-clerks-judges.sql | mysql office
+OK;
+
+
 echo "importing event-types..."
 bin/sdny/import-event-types.php
 OK;
@@ -81,6 +87,7 @@ OK;
 
 if [[ ! -z $FULL_DATABASE ]];
     then echo "whole-enchilada|everything flag WAS set; gonna keep going."
+    # separate, consecutive processes to limit memory consumption
 	./bin/sdny/import-events.php --from 2001 --to 2004 && \
 	./bin/sdny/import-events.php --from 2005 --to 2007 && \
 	./bin/sdny/import-events.php --from 2008 --to 2010 && \
