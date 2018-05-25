@@ -16,8 +16,7 @@ var view = new Vue({
             var li = $(event.target).closest("li");
             if (li.children(".details").length) {
                 var details = li.children(".details");
-                var what = 'slide' + (details.is(":visible") ? "Up":"Down");
-                console.warn(what);
+                var what = 'slide' + (details.is(":visible") ? "Up":"Down");                
                 details[what]();
                 return;
             }
