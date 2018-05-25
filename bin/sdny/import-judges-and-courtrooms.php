@@ -207,11 +207,20 @@ $db->exec(sprintf('INSERT INTO anonymous_judges (name, default_location_id) VALU
 printf("finished inserting %d courtrooms, %d judges\n",
     $locations_inserted,$judges_inserted);
 
-// now try to get all the clerks_judges in here,a work-in-progress
+// now try to get all the clerks_judges in here, a work-in-progress
 $judge_map = $db->query('select old.judge_id old_id, new.id new_id FROM dev_interpreters.judges as old, people as new
     WHERE old.lastname = new.lastname and old.firstname = new.firstname and new.discr = "judge"')
             ->fetchAll(PDO::FETCH_KEY_PAIR);
 
-//SELECT ru.id as old_id, ru.email as old_email, p.id, p.email as new FROM dev_interpreters.request_users ru LEFT JOIN people p ON ru.email = p.email;
+/*
+
+INSERT INTO clerks_judges (SELECT u.id, p.id FROM  dev_interpreters.judges j
+JOIN people p ON j.lastname = p.lastname AND j.firstname = p.firstname and
+p.discr = "judge" LEFT JOIN dev_interpreters.clerks_judges cj
+ON j.judge_id = cj.judge_id JOIN dev_interpreters.request_users ru
+ON cj.user_id = ru.id JOIN people p2 ON p2.email = ru.email
+join users u on p2.id = u.person_id);
+Query OK, 251 rows affe
+ */
 
 exit(0);
