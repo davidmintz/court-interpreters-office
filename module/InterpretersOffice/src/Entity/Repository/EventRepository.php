@@ -318,6 +318,16 @@ DQL;
         return $this->cache->deleteAll();
     }
 
+
+    /**
+     * gets modification timestamp for event $id
+     *
+     * used by EventsController and event-form.js to refresh form's timestamp
+     * when editing defendant names causes event entity to get updated.
+     *
+     * @param  int $id    event id
+     * @return string     modification timestamp
+     */
     public function getModificationTime($id)
     {
         $dql = 'SELECT e.modified FROM InterpretersOffice\Entity\Event e

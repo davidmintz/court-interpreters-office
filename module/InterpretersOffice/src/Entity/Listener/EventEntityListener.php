@@ -73,7 +73,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * preRemove callback
      *
      * @param Entity\Event $eventEntity
-     * @param LifecycleEventArgs $event
+     * @param LifecycleEventArgs $args
      */
     public function preRemove(
         Entity\Event $eventEntity,

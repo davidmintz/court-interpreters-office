@@ -378,6 +378,7 @@ class User implements ResourceInterface
     /**
      * sets creation date
      *
+     * @param \Datetime $created
      * @return User
      */
     public function setCreated(\DateTime $created)

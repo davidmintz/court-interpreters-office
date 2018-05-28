@@ -150,11 +150,10 @@ class EventsController extends AbstractActionController
                 $url = $this->getEvent()->getApplication()->getServiceManager()
                 ->get('ViewHelperManager')->get('url')('events');
                 $date = $event->getDate();
-                $this->flashMessenger()->addSuccessMessage(
-                    sprintf(
-                        'This event has been added to the schedule for <a href="%s">%s</a>',
-                        $url . $date->format('/Y/m/d'),
-                        $date->format('l d-M-Y')
+                $this->flashMessenger()->addSuccessMessage(sprintf(
+            'This event has been added to the schedule for <a href="%s">%s</a>',
+                    $url . $date->format('/Y/m/d'),
+                    $date->format('l d-M-Y')
                     )
                 );
                 return $this->redirect()->toRoute('events/view',['id'=>$event->getId()]);

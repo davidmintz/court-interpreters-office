@@ -64,6 +64,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      * returns false if this Judge has no related
      * entities and can therefore safely be deleted
      *
+     * @param int $id
      * @return boolean true if there are related entities
      */
     public function hasRelatedEntities($id)

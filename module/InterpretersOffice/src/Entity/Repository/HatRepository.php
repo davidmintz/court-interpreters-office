@@ -138,10 +138,17 @@ class HatRepository extends EntityRepository
      */
     public function findAll()
     {
-        return $this->createQuery('SELECT h FROM InterpretersOffice\Entity\Hat h ORDER BY h.name')
+        return $this->createQuery('SELECT h FROM InterpretersOffice\Entity\Hat h
+            ORDER BY h.name')
             ->getResult();
     }
 
+    /**
+     * gets Hat options
+     *
+     * @param  array $anonymity array of Hat class constants
+     * @return array of key-value pairs for populating a form
+     */
     public function getHatOptions(array $anonymity = null)
     {
         $dql = 'SELECT h.id value, h.name label FROM ' . Hat::class . ' h';

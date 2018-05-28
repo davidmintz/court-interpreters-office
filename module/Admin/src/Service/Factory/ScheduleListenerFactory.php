@@ -13,6 +13,8 @@ use InterpretersOffice\Admin\Service\ScheduleListener;
 class ScheduleListenerFactory implements FactoryInterface
 {
     /**
+     * implements FactoryInterface.
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options
