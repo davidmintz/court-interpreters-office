@@ -41,7 +41,7 @@ class AuthenticationTest extends AbstractControllerTest
         $this->assertFalse($this->acl->isAllowed('submitter', Admin\EventsController::class, 'update'), "submitter should NOT be allowed to edit events");
         $this->assertFalse($this->acl->isAllowed('submitter', Admin\EventsController::class, 'boink'), "submitter should NOT be allowed undefined privilege");
         $this->assertFalse($this->acl->isAllowed('submitter', Admin\JudgesController::class, 'edit'), "submitters should NOT be allowed to edit judges");
-        $this->assertTrue($this->acl->isAllowed('submitter', Requests\RequestsIndexController::class, 'create'), "submitted SHOULD be allowed to create a request");
+        $this->assertTrue($this->acl->isAllowed('submitter', Requests\IndexController::class, 'create'), "submitted SHOULD be allowed to create a request");
         $this->assertTrue($this->acl->isAllowed('manager', Admin\EventsController::class, 'edit'), "manager SHOULD be allowed to edit events");
         $this->assertTrue($this->acl->isAllowed('administrator', Admin\EventsController::class, 'edit'), "admin SHOULD be allowed to edit events");
         $this->assertTrue($this->acl->isAllowed('manager', Admin\EventTypesController::class, 'edit'));
