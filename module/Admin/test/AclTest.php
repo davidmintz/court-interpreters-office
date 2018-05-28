@@ -62,9 +62,9 @@ class AuthenticationTest extends AbstractControllerTest
             ['staff',Admin\EventTypesController::class,'edit'],
             ['staff',Admin\LanguagesController::class,'add'],
             ['staff',Admin\UsersController::class,'add'],
-            ['administrator',Requests\RequestsIndexController::class,'edit'],
-            ['staff',Requests\RequestsIndexController::class,'edit'],
-            ['staff',Requests\RequestsIndexController::class,'edit'],
+            ['administrator',Requests\IndexController::class,'edit'],
+            ['staff',Requests\IndexController::class,'edit'],
+            ['staff',Requests\IndexController::class,'edit'],
 
 
         ];
