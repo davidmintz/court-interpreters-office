@@ -336,7 +336,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                     'deft_events_updated' => count($deft_events),
                 ]);
             } catch (\Exception $e) {
-                array_merge($result, [
+                return array_merge($result, [
                     'status' => 'error',
                     'exception_class' => get_class($e),
                     'message' => $e->getMessage(),
