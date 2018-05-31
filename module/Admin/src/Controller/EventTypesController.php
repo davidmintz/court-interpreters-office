@@ -124,7 +124,7 @@ class EventTypesController extends AbstractActionController
         }
         $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'update'])
                ->bind($entity);
-        
+
         $view->setVariables(['form' => $form, 'id' => $id,
             'has_related_entities' => $repo->hasRelatedEntities($id)]);
 

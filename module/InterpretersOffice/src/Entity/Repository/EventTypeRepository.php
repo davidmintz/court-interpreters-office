@@ -106,9 +106,9 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
     {
         $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
             JOIN e.eventType t WHERE t.id = :id';
-            
-        return $this->getEntityManager()->createQuery($dql)->setParameters(
-            ['id'=>$id])->getSingleScalarResult() ? true : false;
-    }
 
+        return $this->getEntityManager()->createQuery($dql)->setParameters(
+            ['id' => $id]
+        )->getSingleScalarResult() ? true : false;
+    }
 }

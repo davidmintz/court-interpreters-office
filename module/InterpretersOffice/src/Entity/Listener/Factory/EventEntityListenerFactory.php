@@ -7,6 +7,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
 use InterpretersOffice\Admin\Service\ScheduleListener;
+
 /**
  * factory class for the Event entity listener
  */
@@ -38,9 +39,9 @@ class EventEntityListenerFactory implements FactoryInterface
         };
         */
         $sharedEvents->attach(
-             EventEntityListener::class,
-             '*',
-             [$container->get(ScheduleListener::class),'scheduleChange']
+            EventEntityListener::class,
+            '*',
+            [$container->get(ScheduleListener::class),'scheduleChange']
         );
         return $listener;
     }

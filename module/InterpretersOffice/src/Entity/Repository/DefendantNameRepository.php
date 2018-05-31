@@ -195,8 +195,9 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
      * @return Array
      */
     public function getDefendantEventsForDefendant(
-        Entity\DefendantName $defendantName, $exclude_event_id = null)
-    {
+        Entity\DefendantName $defendantName,
+        $exclude_event_id = null
+    ) {
         $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent de
             JOIN de.defendant d JOIN de.event e WHERE d.id = :id';
         $params = ['id' => $defendantName->getId()];
@@ -207,7 +208,6 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         return   $this->createQuery($dql)
             ->setParameters($params)
             ->getResult();
-
     }
 
     /**
@@ -276,7 +276,8 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             'in %s at %d match is %s, update is %s',
             __CLASS__,
             __LINE__,
-            $MATCH ?: 'false',$GLOBAL_OR_PARTIAL
+            $MATCH ?: 'false',
+            $GLOBAL_OR_PARTIAL
         ));
         $result = [ 'match' => $MATCH,'update_type' => $GLOBAL_OR_PARTIAL, 'events_affected' => [] ];
         if ($GLOBAL_UPDATE) {
@@ -289,7 +290,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                         return array_merge($result, [
                         'status' => 'success',
                         'debug' => 'no collision with existing match, global entity update.',
-                    ]);
+                        ]);
                     } catch (\Exception $e) {
                         return array_merge($result, [
                         'status' => 'error',
@@ -309,7 +310,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
                         $result['updated_deftname'] = $existing_name->getId();
                     }
                 // swap out $deftName for existing, and detach
-                    $deft_events = $this->getDefendantEventsForDefendant($defendantName,$event_id);
+                    $deft_events = $this->getDefendantEventsForDefendant($defendantName, $event_id);
                     $result['count_deft_events_updated'] = count($deft_events);
                     foreach ($deft_events as $de) {
                         $de->setDefendantName($existing_name);
@@ -330,7 +331,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             try {
                 $logger->debug("flushing $MATCH match at ". __LINE__);
                 $em->flush();
-                $return  = array_merge($result,[
+                $return  = array_merge($result, [
                     'status' => 'success',
                     'debug' => "match was $MATCH",
                     'deft_events_updated' => count($deft_events),
@@ -396,14 +397,13 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
 
             try {
                 $em->flush();
-                $return = array_merge($result,[
+                $return = array_merge($result, [
                     'status' => 'success',
                     'deft_events_updated' => count($deft_events),
                 ]);
                 if (isset($new)) {
                     $return['insert_id'] = $new->getId();
                 }
-
             } catch (\Exception $e) {
                 return array_merge($result, [
                     'status' => 'error',
@@ -413,7 +413,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             }
         }
 
-        $this->logger->debug(sprintf("FYI: returning from %s at %d",__FUNCTION__,__LINE__));
+        $this->logger->debug(sprintf("FYI: returning from %s at %d", __FUNCTION__, __LINE__));
         return $return;
     }
 
@@ -465,6 +465,5 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
         return $this->getEntityManager()->createQuery($dql)->setParameters([
             'id' => $id
         ])->getSingleScalarResult() ? true : false;
-
     }
 }

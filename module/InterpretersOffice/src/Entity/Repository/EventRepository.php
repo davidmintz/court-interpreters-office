@@ -334,11 +334,10 @@ DQL;
         WHERE e.id = :id';
         try {
             $result = $this->getEntityManager()->createQuery($dql)
-                ->setParameters(['id'=>$id])->getSingleScalarResult();
+                ->setParameters(['id' => $id])->getSingleScalarResult();
         } catch (\Doctrine\ORM\NoResultException $e) {
             $result = ['modified' => null, 'error' => 'ENTITY NOT FOUND'];
         }
         return $result;
-
     }
 }

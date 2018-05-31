@@ -93,8 +93,8 @@ class DefendantsController extends AbstractActionController
                         'The defendant name <strong>%s %s</strong> has been added to the database',
                         $entity->getGivenNames(),
                         $entity->getSurnames()
-                        )
-                    );
+                    )
+                );
                 if ($xhr) {
                     return new JsonModel(['id' => $entity->getId(),
                         'errors' => null]);

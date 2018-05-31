@@ -387,5 +387,4 @@ class User implements ResourceInterface
 
          return $this;
     }
-
 }

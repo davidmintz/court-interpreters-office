@@ -86,7 +86,7 @@ class Language
         $this->interpreterLanguages = new ArrayCollection();
         $this->events = new ArrayCollection();
     }
-    
+
     /**
      * Is there a federal certification program for this language?
      * So unlikely that we can hard-code them.

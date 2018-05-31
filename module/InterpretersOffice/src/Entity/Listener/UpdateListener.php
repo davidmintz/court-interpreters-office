@@ -118,7 +118,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         $this->entity = $entity;
         $this->caches_to_clear[] =
             ['class' => get_class($entity),'trigger' => __FUNCTION__];
-
     }
 
     /**
@@ -162,8 +161,12 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         //$this->logger->debug('$this->caches_to_clear: '.print_r($this->caches_to_clear,true));
         if (count($this->caches_to_clear) > 1) {
             // clear out duplicates
-            $tmp  = array_unique(array_map(function($i){return json_encode($i);},$this->caches_to_clear));
-            $this->caches_to_clear = array_map(function($i){return json_decode($i,\JSON_OBJECT_AS_ARRAY);},$tmp);
+            $tmp  = array_unique(array_map(function ($i) {
+                return json_encode($i);
+            }, $this->caches_to_clear));
+            $this->caches_to_clear = array_map(function ($i) {
+                return json_decode($i, \JSON_OBJECT_AS_ARRAY);
+            }, $tmp);
         }
         //$this->logger->debug('and now: '.print_r($this->caches_to_clear,true));
         $em = $args->getEntityManager();

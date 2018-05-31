@@ -110,7 +110,7 @@ class EventType
     public function __construct()
     {
         $this->events = new ArrayCollection();
-    }    
+    }
 
     /**
      * Get id.

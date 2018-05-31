@@ -66,8 +66,11 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         LifecycleEventArgs $args
     ) {
         // just a temporary/debugging thing
-        $this->getEventManager()->trigger(__FUNCTION__,
-        $this,compact('args','eventEntity'));
+        $this->getEventManager()->trigger(
+            __FUNCTION__,
+            $this,
+            compact('args', 'eventEntity')
+        );
     }
     /**
      * preRemove callback
@@ -79,8 +82,11 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $eventEntity,
         LifecycleEventArgs $args
     ) {
-        $this->getEventManager()->trigger(__FUNCTION__, $this,
-        compact('args','eventEntity'));
+        $this->getEventManager()->trigger(
+            __FUNCTION__,
+            $this,
+            compact('args', 'eventEntity')
+        );
     }
 
     /**
@@ -96,15 +102,20 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->logger->debug(sprintf(
             'event modification detected, listener setting modified and modifiedBy on '
             . ' event entity id %s in %s line %d',
-            $eventEntity->getId(), __FUNCTION__, __LINE__
+            $eventEntity->getId(),
+            __FUNCTION__,
+            __LINE__
         ));
         if (! $args->hasChangedField('modified')) {
             $eventEntity->setModified($this->now);
         }
         $eventEntity->setModifiedBy($this->getAuthenticatedUser($args));
         //$this->timestamp_was_updated = true;
-        $this->getEventManager()->trigger(__FUNCTION__, $this,
-            compact('args','eventEntity'));
+        $this->getEventManager()->trigger(
+            __FUNCTION__,
+            $this,
+            compact('args', 'eventEntity')
+        );
     }
 
     /**
@@ -131,7 +142,10 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                 ->setModified($this->now);
         $this->logger->debug(__FUNCTION__
         . " in EventEntityListener really did shit");
-        $this->getEventManager()->trigger(__FUNCTION__, $this,
-            compact('args','eventEntity'));
+        $this->getEventManager()->trigger(
+            __FUNCTION__,
+            $this,
+            compact('args', 'eventEntity')
+        );
     }
 }

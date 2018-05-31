@@ -151,12 +151,11 @@ class EventsController extends AbstractActionController
                 ->get('ViewHelperManager')->get('url')('events');
                 $date = $event->getDate();
                 $this->flashMessenger()->addSuccessMessage(sprintf(
-            'This event has been added to the schedule for <a href="%s">%s</a>',
+                    'This event has been added to the schedule for <a href="%s">%s</a>',
                     $url . $date->format('/Y/m/d'),
                     $date->format('l d-M-Y')
-                    )
-                );
-                return $this->redirect()->toRoute('events/view',['id'=>$event->getId()]);
+                ));
+                return $this->redirect()->toRoute('events/view', ['id' => $event->getId()]);
             }
         }
 
@@ -215,12 +214,16 @@ class EventsController extends AbstractActionController
                             $date->format('l d-M-Y')
                         )
                     );
-                    return $this->redirect()->toRoute('events/view',
-                        ['id'=>$entity->getId()]);
+                    return $this->redirect()->toRoute(
+                        'events/view',
+                        ['id' => $entity->getId()]
+                    );
                 } catch (\Exception $e) {
                     /** @todo  need to do better than this */
                     echo $e->getMessage();
-                    echo '<pre>'; print_r($_POST); echo '</pre>';
+                    echo '<pre>';
+                    print_r($_POST);
+                    echo '</pre>';
                 }
             }
             //printf('<pre>error:  %s</pre>',print_r($form->getMessages(),true));
@@ -238,10 +241,11 @@ class EventsController extends AbstractActionController
                 $form->get('event')->get('anonymousSubmitter')
                     ->setValue($input['anonymousSubmitter']);
                 $this->getViewModel()->setVariables(
-                    compact('defendantNames', 'interpreters', 'form', 'id'));
+                    compact('defendantNames', 'interpreters', 'form', 'id')
+                );
             }
         } // not POST
-        return $this->getViewModel(['form' => $form, 'id'=>$id]);
+        return $this->getViewModel(['form' => $form, 'id' => $id]);
     }
 
     /**
@@ -258,10 +262,9 @@ class EventsController extends AbstractActionController
         $validator = new \Zend\Validator\Csrf('csrf');
         $token = $this->params()->fromPost('csrf');
         if (! $validator->isValid($token)) {
-            return new JsonModel(['status' => 'error','message'=>
+            return new JsonModel(['status' => 'error','message' =>
                 'Invalid or missing security token. '
-                .'You may need to refresh this page and try again.']
-            );
+                .'You may need to refresh this page and try again.']);
         }
         $entity = $this->entityManager->find(Entity\Event::class, $id);
         if (! $entity) {
@@ -276,17 +279,16 @@ class EventsController extends AbstractActionController
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(
-                sprintf('this event (%s) has been deleted from the schedule',
+                sprintf(
+                    'this event (%s) has been deleted from the schedule',
                     $entity->describe()
                 )
             );
-            return new JsonModel(['deleted'=>true,'status'=>'success',
-                'message'=> "this event has been deleted"]
-            );
+            return new JsonModel(['deleted' => true,'status' => 'success',
+                'message' => "this event has been deleted"]);
         } catch (\Exception $e) {
-            return new JsonModel(['deleted'=>false,'status'=>'error',
-                'message'=> $e->getMessage()]
-            );
+            return new JsonModel(['deleted' => false,'status' => 'error',
+                'message' => $e->getMessage()]);
         }
     }
     /**
@@ -345,7 +347,7 @@ class EventsController extends AbstractActionController
         $modified = $this->entityManager->getRepository(Entity\Event::class)
             ->getModificationTime($id);
         if (is_string($modified)) {
-            return new JsonModel(['modified'=>$modified]);
+            return new JsonModel(['modified' => $modified]);
         } else { // array with error message
             return new JsonModel($modified);
         }

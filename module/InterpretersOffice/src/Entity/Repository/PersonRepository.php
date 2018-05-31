@@ -81,7 +81,8 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
             JOIN p.events e  WHERE p.id = :id';
 
         return $this->getEntityManager()->createQuery($dql)->setParameters(
-            ['id'=>$id])->getSingleScalarResult() ? true : false;
+            ['id' => $id]
+        )->getSingleScalarResult() ? true : false;
     }
 
     /**
@@ -103,16 +104,16 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
             $dql .= ' JOIN p.hat h WHERE h.id = :hat AND';
             $parameters['hat'] = $hat;
         } else {
-            $dql .=  ' WHERE';
+            $dql .= ' WHERE';
         }
-        $dql .=  ' p.lastname LIKE :lastname';
+        $dql .= ' p.lastname LIKE :lastname';
         $parameters['lastname'] = "$name[last]%";
         if ($name['first']) {
             $dql .= ' AND p.firstname LIKE :firstname';
             $parameters['firstname'] = "$name[first]%";
         }
         if ($active !== null) {
-            $dql .= ' AND p.active = '.($active ? 'TRUE':'FALSE');
+            $dql .= ' AND p.active = '.($active ? 'TRUE' : 'FALSE');
         }
         $dql   .= " ORDER BY p.lastname, p.firstname";
         $query = $this->createQuery($dql)
@@ -148,15 +149,15 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         } else {
         // use "hat", "active" and "name" parameters
             if (isset($parameters['active']) && $parameters['active'] !== '') {
-                $where[] = 'p.active = '.($parameters['active'] ? "true":"false");
+                $where[] = 'p.active = '.($parameters['active'] ? "true" : "false");
             }
-            if (isset($parameters['hat']) && $parameters['hat'] !== '' ) {
+            if (isset($parameters['hat']) && $parameters['hat'] !== '') {
                 $where[] = 'h.id = :hat';
                 $p['hat'] = $parameters['hat'];
             }
             if (isset($parameters['name']) && $parameters['name'] !== '') {
                 $fullname = $this->parseName($parameters['name']);
-                foreach($fullname as $name=>$value) {
+                foreach ($fullname as $name => $value) {
                     if ($value) {
                         $where[] = "p.{$name}name LIKE :{$name}name";
                         $p["{$name}name"] = $value . '%';
@@ -165,7 +166,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
             }
         }
         if ($where) {
-            $dql .= ' WHERE ' . implode(' AND ',$where) ;
+            $dql .= ' WHERE ' . implode(' AND ', $where) ;
         }
         $dql .= ' ORDER BY p.lastname, p.firstname, h.name';
         $query = $this->createQuery($dql)->setParameters($p)

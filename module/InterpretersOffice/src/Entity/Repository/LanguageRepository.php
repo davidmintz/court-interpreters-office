@@ -53,7 +53,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         $event_count_dql = 'SELECT COUNT(e.id) FROM
             InterpretersOffice\Entity\Event e JOIN e.language l
             WHERE l.id = :id';
-        $events = $em->createQuery($event_count_dql)->setParameters(['id'=>$id])
+        $events = $em->createQuery($event_count_dql)->setParameters(['id' => $id])
             ->getSingleScalarResult();
         if ($events) {
             return true;
@@ -62,7 +62,8 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         InterpretersOffice\Entity\InterpreterLanguage il JOIN il.language l
             WHERE l.id = :id';
         $interpreters = $em->createQuery($interp_lang_dql)->setParameters(
-            ['id'=>$id])->getSingleScalarResult();
+            ['id' => $id]
+        )->getSingleScalarResult();
         return $interpreters ? true : false;
     }
 

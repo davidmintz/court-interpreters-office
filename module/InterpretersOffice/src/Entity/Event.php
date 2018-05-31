@@ -281,8 +281,7 @@ class Event
         $type = (string)$this->getEventType();
         $date = $this->getDate()->format('d-M-Y');
         $language = (string)$this->getLanguage();
-        return sprintf('%s %s on %s',$language,$type,$date);
-
+        return sprintf('%s %s on %s', $language, $type, $date);
     }
     /**
      * Get id.

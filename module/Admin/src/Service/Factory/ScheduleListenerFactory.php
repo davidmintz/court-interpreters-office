@@ -22,6 +22,6 @@ class ScheduleListenerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ScheduleListener($container->get('log'),$container->get('auth'));
+        return new ScheduleListener($container->get('log'), $container->get('auth'));
     }
 }

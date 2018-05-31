@@ -75,7 +75,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         // interpreter and thereby create a related event even without ever
         // being related by event.judge_id, but it seems highly improbable
         $events = $this->getEntityManager()->createQuery($q)
-            ->setParameters(['id'=>$id])->getSingleScalarResult();
+            ->setParameters(['id' => $id])->getSingleScalarResult();
         return $events ? true : false;
     }
 

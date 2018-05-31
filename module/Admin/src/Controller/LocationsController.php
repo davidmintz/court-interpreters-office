@@ -144,7 +144,8 @@ class LocationsController extends AbstractActionController
                 );
             }
             $this->flashMessenger()->addSuccessMessage(
-                "The location  <strong>{$entity->getName()}</strong> has been added.");
+                "The location  <strong>{$entity->getName()}</strong> has been added."
+            );
             $this->redirect()->toRoute('locations');
         }
 
@@ -167,12 +168,14 @@ class LocationsController extends AbstractActionController
         if (! $entity) {
             return $viewModel->setVariables(['errorMessage' => "location with id $id not found"]);
         }
-        $form = $this->getForm(Location::class,
+        $form = $this->getForm(
+            Location::class,
             [   'object' => $entity, 'action' => 'update',
-            ])
+            ]
+        )
             ->bind($entity);
-        $viewModel->setVariables(['form'=>$form,
-            'has_related_entities'=>$repo->hasRelatedEntities($id)]);
+        $viewModel->setVariables(['form' => $form,
+            'has_related_entities' => $repo->hasRelatedEntities($id)]);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

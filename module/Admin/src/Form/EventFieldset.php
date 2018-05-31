@@ -247,7 +247,7 @@ class EventFieldset extends Fieldset implements
             $repository = $objectManager->getRepository(Entity\Interpreter::class);
             $value_options = // $empty_option +
                 $repository->getInterpreterOptionsForLanguage($language_id);
-            array_unshift($value_options,$empty_option);
+            array_unshift($value_options, $empty_option);
         } else {
             $value_options = [$empty_option];
         }

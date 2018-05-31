@@ -65,7 +65,8 @@ class PeopleController extends AbstractActionController
         $opts = $repo->getHatOptions([Entity\Hat::ANONYMITY_NEVER,
             Entity\Hat::ANONYMITY_OPTIONAL]);
         return (new ViewModel(
-            ['title' => 'people','defaults'=>$session->defaults,'options'=>$opts]))
+            ['title' => 'people','defaults' => $session->defaults,'options' => $opts]
+        ))
             // for a vue.js learning exercise
             ->setTemplate('interpreters-office/admin/people/vue.phtml');
     }
@@ -80,10 +81,9 @@ class PeopleController extends AbstractActionController
         $term = $this->params()->fromQuery('term');
         $hat  = $this->params()->fromQuery('hat');
         $active = $this->params()->fromQuery('active');
-        $data = $repo->autocomplete($term,$hat,$active);
+        $data = $repo->autocomplete($term, $hat, $active);
 
         return new JsonModel($data);
-
     }
     /**
      * adds a Person entity to the database.
@@ -147,7 +147,7 @@ class PeopleController extends AbstractActionController
         $has_related = $repo->hasRelatedEntities($id);
         if ($has_related) {
             $form->getInputFilter()->get('person')->get('hat')
-            ->setRequired(false)->setAllowEmpty(true);            
+            ->setRequired(false)->setAllowEmpty(true);
         }
         $viewModel->setVariables(['form' => $form,
             'has_related_entities' => $repo->hasRelatedEntities($id)]);
@@ -221,8 +221,8 @@ class PeopleController extends AbstractActionController
         $paginator = $repo->search($params);
 
         return new JsonModel([
-            'data'=>$paginator->getCurrentItems(),
-            'count'=>$paginator->getTotalItemCount(),
+            'data' => $paginator->getCurrentItems(),
+            'count' => $paginator->getTotalItemCount(),
             'pages' => $paginator->getPages()
         ]);
     }

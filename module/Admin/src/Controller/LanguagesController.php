@@ -95,7 +95,7 @@ class LanguagesController extends AbstractActionController
             return $this->getFormViewModel(['errorMessage' => 'invalid or missing id parameter']);
         }
         $repo = $this->entityManager->getRepository(Language::class);
-        $entity = $repo->findOneBy(['id'=>$id]);
+        $entity = $repo->findOneBy(['id' => $id]);
         if (! $entity) {
             return $this->getFormViewModel(['errorMessage' => "language with id $id not found"]);
         }

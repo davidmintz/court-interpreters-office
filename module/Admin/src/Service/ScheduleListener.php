@@ -45,7 +45,7 @@ class ScheduleListener
      * sets auth instance
      *
      * primarily for rigging tests
-     * 
+     *
      * @param AuthenticationServiceInterface $auth
      * @return ScheduleListener;
      */
@@ -64,7 +64,7 @@ class ScheduleListener
      */
     public function scheduleChange(Event $e)
     {
-        $target = is_object($e->getTarget())? get_class($e->getTarget())
+        $target = is_object($e->getTarget()) ? get_class($e->getTarget())
             : $e->getTarget();
         $this->logger->debug("ScheduleListener observing ".$e->getName()
             . " on target $target");
@@ -73,7 +73,8 @@ class ScheduleListener
         }
         $this->logger->info(sprintf(
             'ScheduleListener not doing anything with %s:%s',
-            $target, $e->getName()
+            $target,
+            $e->getName()
         ));
     }
 
@@ -89,31 +90,32 @@ class ScheduleListener
     {
         $user = $this->auth->getIdentity()->username;
         switch ($e->getName()) {
-        case 'preRemove':
-        case 'postRemove':
-            $repo = $e->getParam('args')->getEntityManager()
+            case 'preRemove':
+            case 'postRemove':
+                $repo = $e->getParam('args')->getEntityManager()
                 ->getRepository(Entity\Event::class);
-            $entity = $e->getParam('eventEntity');
-            $data = $repo->getView($entity->getId());
-            $info = [
-                'user'=>$user,
+                $entity = $e->getParam('eventEntity');
+                $data = $repo->getView($entity->getId());
+                $info = [
+                'user' => $user,
                 'action' => $e->getName(),
                 'event_data' => $data,
-            ];
-            $this->logger->info(json_encode($info));
-            break;
+                ];
+                $this->logger->info(json_encode($info));
+                break;
 
-        case 'postLoad':
-            $this->logger->info("$user has loaded event id "
+            case 'postLoad':
+                $this->logger->info("$user has loaded event id "
                 . $e->getParam('eventEntity')->getId());
-            break;
+                break;
 
-        default :
-            $this->logger->info(sprintf(
-                'user %s is doing %s with event id %d',
-                $user, $e->getName(), $e->getParam('eventEntity')->getId()
-            ));
+            default:
+                $this->logger->info(sprintf(
+                    'user %s is doing %s with event id %d',
+                    $user,
+                    $e->getName(),
+                    $e->getParam('eventEntity')->getId()
+                ));
         }
     }
-
 }
