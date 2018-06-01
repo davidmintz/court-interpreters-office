@@ -1,1 +1,57 @@
-<p>this is register.phtml</p>
+<?php /** module/InterpretersOffice/view/interpreters-office/account/register.phtml */
+
+$form = $this->form;?>
+
+<div class="center-block" style="max-width:700px"><!-- wrapper -->
+<h2 class="text-center mb-3">account registration</h2>
+<?php
+$form->prepare();
+$fieldset = $form->get('user')->get('person');
+$hat = $fieldset->get('hat');
+$hat->setLabel('job title/description');
+echo $this->form()->openTag($form);
+$csrf = $form->get('csrf');
+echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+?>
+<!-- carousel-->
+<div id="carousel" class="carousel slide" data-interval="0">
+    <div class="carousel-inner">
+        <fieldset id="fieldset-personal-data" class="carousel-item active"><legend class="offset-sm-3">step 1 of 3: personal data</legend>
+        <?php
+             // text inputs
+            $fieldset->get('email')->setAttribute('placeholder','(required)');
+            foreach (['lastname','middlename','firstname','email','office_phone','mobile_phone'] as $elementName) :
+                $element = $fieldset->get($elementName);?>
+            <div class="form-group form-row">
+                <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
+                <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>
+                </div>
+            </div>
+            <?php
+            endforeach;
+            ?>
+        </fieldset>
+        <fieldset style="min-height:300px" id="fieldset-hat" class="carousel-item"><legend class="offset-sm-3">step 2 of 3: your job title/department</legend>
+            <div class="form-group form-row">
+                <label class="col-form-label col-sm-3"><?php echo $hat->getLabel()?></label>
+                <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset id="fieldset-password" class="carousel-item"><legend class="offset-sm-3">step 3 of 3: set your password</legend>
+            <div class="form-group form-row">
+                <label class="col-form-label col-sm-3">enter password</label>
+                <div class="col-sm-9"><input name="user[password]" value="" type="password" class="form-control">
+                </div>
+            </div>
+        </fieldset>
+        <!-- /carousel-->
+    </div>
+</div>
+<div class="form-group form-row">
+    <div class="offset-sm-3 col-sm-9">[buttons]</div>
+</div>
+<?php
+echo $this->form()->openTag($form);?>
+<?php echo $this->form()->closeTag(); ?>
+</div><!-- /wrapper -->

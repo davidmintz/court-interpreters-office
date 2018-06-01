@@ -13,6 +13,8 @@ use InterpretersOffice\Entity;
 
 use Zend\Authentication\AuthenticationServiceInterface;
 
+use InterpretersOffice\Form\User\RegistrationForm;
+
 /**
  *  AccountController.
  *
@@ -35,6 +37,7 @@ class AccountController extends AbstractActionController
      * @var AuthenticationServiceInterface
      */
     protected $auth;
+
     /**
      * constructor.
      *
@@ -62,7 +65,8 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-        return new ViewModel();
+        $form = new RegistrationForm($this->objectManager);
+        return new ViewModel(['form'=>$form]);
     }
 
     /**

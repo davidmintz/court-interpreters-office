@@ -36,6 +36,13 @@ class RoleRepository extends EntityRepository
      */
     public function getRoles($auth_user_role, Entity\Hat $hat = null)
     {
+        if (in_array($auth_user_role,['submitter','anonymous'])) {
+            return $this->createQuery(
+                'SELECT r FROM InterpretersOffice\Entity\Role r
+                WHERE r.name = \'submitter\'
+                ')
+            ->getResult();
+        }
         if (! in_array($auth_user_role, ['administrator','manager'])) {
             throw new \RuntimeException('invalid auth_user_role parameter '
                     . $auth_user_role);
@@ -43,7 +50,7 @@ class RoleRepository extends EntityRepository
         $is_admin = 'administrator' === $auth_user_role;
         if (! $is_admin && $hat && $hat->getRole()) {
             // select only the roles that are valid for this hat
-            $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h JOIN h.role r 
+            $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h JOIN h.role r
                 WHERE r.id = '.$hat->getRole()->getId(). ' ORDER BY r.name ';
             $data = $this->createQuery($dql)->getResult();
             $return = [];
