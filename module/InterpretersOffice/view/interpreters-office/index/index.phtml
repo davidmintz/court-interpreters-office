@@ -5,7 +5,11 @@
     <h1>InterpretersOffice</h1>
     <p>A court interpreter management system.</p>
     <?php if (! $this->identity()) : ?>
-    <a href="/login"><button class="btn btn-success btn-lg">log in</button></a>
+    <div class="mx-auto" style="max-width:500px">
+        <a href="/login"><button class="btn btn-primary btn-lg btn-block">log in</button></a>
+        or
+        <a href="/user/register"><button class="btn btn-primary btn-lg border btn-block">create an account</button></a>
+    </div>
     <?php endif; ?>
 </div>
 <?php echo $this->flashMessenger()->render();?>
