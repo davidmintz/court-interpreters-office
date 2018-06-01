@@ -20,7 +20,7 @@ $form->add([
     ->setAttribute('class', 'form-horizontal')    ;
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
-<h2 class="text-center"><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs()?></h2>
+<h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
 <?php
 $form->prepare();
 $fieldset = $form->get('person');

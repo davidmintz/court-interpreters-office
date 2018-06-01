@@ -20,7 +20,7 @@ $form->setAttribute('action', $actionAttrib)
     ->setAttribute('data-redirect_url', $this->url('event-types'));
 ?>
 <div class="center-block mx-auto" style="max-width:600px"><!-- wrapper -->
-    <h2><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
+    <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php if ($action == 'add') : ?>
     <p>Use this form to add a new event type. Please be careful
       to avoid adding a type that is a subtype of, or partially redundant with,

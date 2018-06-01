@@ -24,7 +24,7 @@ endif;
 $name_element->setAttribute('class', 'form-control mx-2');
 $this->headTitle($this->title);
 ?>
-<h2 class="text-center"><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs()?></h2>
+<h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
 <?php
 $messenger = $this->flashMessenger()->setAutoEscape(false);
 if ($messenger->hasSuccessMessages()) :

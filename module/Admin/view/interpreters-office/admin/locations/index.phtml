@@ -7,7 +7,7 @@ $this->headTitle($this->title);
 $this->headScript()->appendFile($this->basePath('js/locations-index.js'));
 ?>
 <div class="center-block mx-auto" style="max-width:600px">
-<h2><?php echo $this->navigation('Zend\Navigation\Admin_Breadcrumbs')->breadcrumbs() ?></h2>
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
