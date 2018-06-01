@@ -15,7 +15,6 @@ foreach (['success','default','error','info','warning'] as $ns) {
 }
 ?>
     <div class="row">
-        
         <div class="offset-lg-3">
                 <!--<p style="margin:1em 0 2em 0;font-size:120%">Please log in to continue.</p>-->
                 <?php if ($this->status && $this->status != \Zend\Authentication\Result::SUCCESS) :?>
@@ -36,15 +35,14 @@ foreach (['success','default','error','info','warning'] as $ns) {
                   <button type="submit" class="btn btn-info ml-1">log in</button>
                     <?php echo $this->formElement($form->get('login_csrf')) ?>
                     <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>
-              </form>
-        
+              </form>        
         </div>
     </div>
 
 
 
 
-<!-- 
+<!--
 </div></div>
     -->
 <p style="margin-top:3em">
