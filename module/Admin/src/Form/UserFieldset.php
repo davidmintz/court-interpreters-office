@@ -14,6 +14,9 @@ use InterpretersOffice\Form\ObjectManagerAwareTrait;
 
 use InterpretersOffice\Form\PersonFieldset;
 
+use Zend\InputFilter\InputFilterInterface;
+use Zend\InputFilter\Input;
+use Zend\Validator\Identical;
 //use Zend\Authentication\AuthenticationServiceInterface;
 
 //use InterpretersOffice\Admin\Service\Authentication\AuthenticationAwareInterface;
@@ -208,8 +211,48 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
      */
     public function addPasswordElements()
     {
-        // to be implemented
+
+        $this->add([
+            'type' => 'password','name'=>'password',
+            'attributes' => ['class'=>'form-control','id'=>'password']
+        ]);
+        $this->add([
+            'type' => 'password','name'=>'password-confirm',
+            'attributes' => ['class'=>'form-control','id'=>'password-confirm']
+        ]);
         return $this;
+    }
+
+    /**
+     * adds password validation
+     *
+     * @param InputFilterInterface $inputFilter
+     */
+    public function addPasswordValidators(InputFilterInterface $inputFilter)
+    {
+        //return;
+        $input = new Input('password');
+        $chain = $input->getValidatorChain();
+        $input->getFilterChain()->attachByName('StringTrim');
+        $chain->attachByName('NotEmpty', [
+                'required' => true,
+                'messages' => ['isEmpty' => 'password field is required',]
+                , true])
+            ->attachByName('StringLength', ['min'=>8,'max'=>'150','messages'=>[
+                'stringLengthTooLong' => 'password length exceeds maximum (150 characters)',
+                'stringLengthTooShort' => 'password length must be a minimum of 8 characters',
+        ]],true);
+        $inputFilter->add($input);
+        $confirmation_input = new Input('confirm-password');
+        $confirmation_input->getFilterChain()->attachByName('StringTrim');
+        $chain = $confirmation_input->getValidatorChain();
+        //$shit = new \Zend\Validator\ZendValidatorIdentical();
+        //\Zend\Validator\Identical::NOT_SAME
+        $chain->attachByName('Identical',['token'=>'password','messages'=> [
+            'notSame' => 'password confirmation field does not match'
+        ]]);
+        $inputFilter->add($confirmation_input);
+
     }
 
     /**
