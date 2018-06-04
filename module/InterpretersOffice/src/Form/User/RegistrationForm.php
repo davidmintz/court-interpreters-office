@@ -20,7 +20,7 @@ class RegistrationForm extends Form
      *
      * @var string
      */
-    protected $form_name = 'user-form';
+    protected $form_name = 'registration-form';
 
     /**
      * Doctrine entity manager
@@ -37,12 +37,14 @@ class RegistrationForm extends Form
      */
      public function __construct($objectManager)
      {
-         parent::__construct('registration-form');
+         parent::__construct($this->form_name);
          $this->objectManager = $objectManager;
-         $fieldset = new UserFieldset($objectManager,
-            ['action'=>'create', 'auth_user_role'=>'anonymous','use_as_base_fieldset'=>false]);
-         $this->add($fieldset);
          $this->addCsrfElement();
-        
+         $fieldset = new UserFieldset($objectManager,
+            ['action'=>'create', 'auth_user_role'=>'anonymous',]);
+         $fieldset->addPasswordElements();
+        // $fieldset->addPasswordValidators($this->getInputFilter());
+         $this->add($fieldset);
+
      }
 }

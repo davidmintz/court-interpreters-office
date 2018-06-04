@@ -41,7 +41,14 @@ echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
         <fieldset id="fieldset-password" class="carousel-item"><legend class="offset-sm-3">step 3 of 3: set your password</legend>
             <div class="form-group form-row">
                 <label class="col-form-label col-sm-3">enter password</label>
-                <div class="col-sm-9"><input name="user[password]" value="" type="password" class="form-control">
+                <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password')),
+                    $this->formElementErrors($form->get('user')->get('password'))?>
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <label class="col-form-label col-sm-3">confirm password</label>
+                <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password-confirm')),
+                    $this->formElementErrors($form->get('user')->get('password-confirm'))?>
                 </div>
             </div>
         </fieldset>
@@ -51,7 +58,6 @@ echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
 <div class="form-group form-row">
     <div class="offset-sm-3 col-sm-9">[buttons]</div>
 </div>
-<?php
-echo $this->form()->openTag($form);?>
+<?php //echo $this->form()->openTag($form);?>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
