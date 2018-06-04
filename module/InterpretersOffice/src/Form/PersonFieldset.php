@@ -16,7 +16,8 @@ use Zend\Validator;
 /**
  * Fieldset for Person entity.
  */
-class PersonFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
+class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
+    ObjectManagerAwareInterface
 {
     use ObjectManagerAwareTrait;
 
