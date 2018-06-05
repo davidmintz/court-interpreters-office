@@ -212,6 +212,15 @@ return [
                             ],
                         ],
                     ],
+                    'validate' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/register/validate',
+                            'defaults' => [
+                                'action' => 'validate',
+                            ],
+                        ],
+                    ],
                     // to do: experiment with collapsing the ones
                     // with no url params into one config array
                     'verify-email' => [

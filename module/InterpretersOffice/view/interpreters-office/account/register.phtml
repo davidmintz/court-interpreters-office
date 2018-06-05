@@ -1,5 +1,5 @@
 <?php /** module/InterpretersOffice/view/interpreters-office/account/register.phtml */
-
+$this->headScript()->appendFile($this->basePath('js/register.js'));
 $form = $this->form;?>
 
 <div class="center-block" style="max-width:700px"><!-- wrapper -->
@@ -55,7 +55,7 @@ echo $this->form()->openTag($form);
     </div>
 </div>
 <div class="form-group form-row">
-    <div class="offset-sm-3 col-sm-9">[buttons]</div>
+    <div class="offset-sm-3 col-sm-9"><button id="btn-next" class="btn btn-large btn-primary">next</button></div>
     <?php
     echo $this->formHidden($person_fieldset->get('id'));
     echo $this->formHidden($user_fieldset->get('id'));

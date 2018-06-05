@@ -126,6 +126,9 @@ td.interpreters-assigned div:not(:last-child) {
   box-shadow: none ;
   text-decoration: underline;
 }
+.btn:disabled {
+    text-decoration: none;
+}
 /*
 note to self: gray #515457
 */
@@ -154,7 +157,7 @@ ul.ui-autocomplete .ui-state-active
 }
 
 td.defendants, div.defendants {
-    line-height: 1.25rem;border
+    line-height: 1.25rem;
 }
 
 div.event-details .col-sm-4 {

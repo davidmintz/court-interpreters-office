@@ -7,6 +7,7 @@ namespace InterpretersOffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Form\User\RegistrationForm;
@@ -55,6 +56,25 @@ class AccountController extends AbstractActionController
     {
         return new ViewModel();
     }
+
+    /**
+     * partial validation
+     *
+     * @return JsonModel
+     */
+    public function validateAction()
+    {
+        $params = $this->fromQuery();
+        $form = new RegistrationForm($this->objectManager, [
+            'action' => 'create','auth_user_role' => 'anonymous',
+            ]);
+        $form->setValidationGroup(array_keys($params));
+        if (! $form->isValid()) {
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+        }
+        return new JsonModel(['valid'=>true]);
+    }
+
     /**
      * registers a new user account
      *
@@ -72,12 +92,10 @@ class AccountController extends AbstractActionController
         // handle POST
         $user = new Entity\User();
         $request = $this->getRequest();
-        //$shit = $request->getPost();
-        //printf('<pre>%s</pre>',print_r($shit->toArray(),true));
         $form->bind($user);
         $input = $request->getPost();
         $user = $input->get('user');
-        
+
         $form->setData($input);
         if (! $form->isValid()) {
             printf('<pre>%s</pre>',print_r($form->getMessages(),true));
