@@ -37,7 +37,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'class' => 'form-control',
                 'id' => 'lastname',
-                'placeholder' => '(required)',
             ],
         ],
         'firstname' => [
@@ -49,7 +48,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'class' => 'form-control',
                 'id' => 'firstname',
-                'placeholder' => '(required)',
             ],
         ],
         'middlename' => [
@@ -61,7 +59,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
             'attributes' => [
                 'class' => 'form-control',
                 'id' => 'middlename',
-                'placeholder' => '(optional)',
             ],
         ],
         'email' => [
@@ -86,7 +83,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
              'attributes' => [
                 'class' => 'form-control phone',
                 'id' => 'office_phone',
-                'placeholder' => '(strongly recommended)',
              ],
 
         ],
@@ -101,7 +97,6 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
              'attributes' => [
                 'class' => 'form-control phone',
                 'id' => 'mobile_phone',
-                'placeholder' => '(optional)',
              ],
 
         ],
@@ -205,8 +200,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
         }
         $this->action = $options['action'];
         unset($options['action']);
+        //printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
         $use_as_base_fieldset = isset($options['use_as_base_fieldset']) ? $options['use_as_base_fieldset'] : true;
-        //printf('DEBUG use-as-base-fs is %s in PersonFieldset line %d<br>', $use_as_base_fieldset?'true':'false',__LINE__);
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager, true))

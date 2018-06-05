@@ -13,8 +13,6 @@ use InterpretersOffice\Entity;
 
 use Zend\Authentication\AuthenticationServiceInterface;
 
-use InterpretersOffice\Form\User\RegistrationForm;
-
 /**
  *  AccountController.
  *
@@ -37,7 +35,6 @@ class AccountController extends AbstractActionController
      * @var AuthenticationServiceInterface
      */
     protected $auth;
-
     /**
      * constructor.
      *
@@ -65,23 +62,7 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-        $form = new \InterpretersOffice\Admin\Form\UserForm($this->objectManager,['action'=>'create','auth_user_role'=>'anonymous']);
-        $form = new RegistrationForm($this->objectManager,['action'=>'create','auth_user_role'=>'anonymous']);
-        $user = new Entity\User();
-        //$person = new Entity\Person();
-        $form->bind($user);//->setPerson($person)
-        $request = $this->getRequest();
-        if (! $request->isPost()) {
-            return new ViewModel(['form'=>$form]);
-        }
-
-        $data = $request->getPost();
-        printf("<pre>%s</pre>",print_r($_POST,true));
-        $form->setData($data);
-        if (! $form->isValid()) {
-            print_r($form->getMessages());
-        } else { echo "valid?";}
-        return new ViewModel(['form'=>$form]);
+        return new ViewModel();
     }
 
     /**
