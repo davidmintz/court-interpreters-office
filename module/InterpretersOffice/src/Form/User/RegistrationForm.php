@@ -45,6 +45,12 @@ class RegistrationForm extends Form
         $this->add($user_fieldset);
         $this->addCsrfElement();
 
+        $this->getInputFilter()->get('user')->get('role')
+            ->setRequired(false)
+            ->setAllowEmpty(true);
+        $this->getInputFilter()->get('user')->get('person')->get('active')
+            ->setRequired(false)
+            ->setAllowEmpty(true);
     }
 
     /**
