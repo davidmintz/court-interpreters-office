@@ -8,9 +8,8 @@ namespace InterpretersOffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Doctrine\Common\Persistence\ObjectManager;
-use InterpretersOffice\Form\UserForm;
 use InterpretersOffice\Entity;
-
+use InterpretersOffice\Form\User\RegistrationForm;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
@@ -62,7 +61,7 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-        return new ViewModel();
+        return new ViewModel(['form' => new RegistrationForm($this->objectManager)]);
     }
 
     /**
