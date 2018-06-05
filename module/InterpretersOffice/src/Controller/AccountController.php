@@ -68,7 +68,15 @@ class AccountController extends AbstractActionController
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
-        $form->setValidationGroup(array_keys($params['person']));
+        /* if (key_exists('interpreter', $params)) {
+            $form->setValidationGroup(
+                ['interpreter' => array_keys($params['interpreter'])]
+            );
+        */
+        if (key_exists('person',$params)) {
+            $form->setValidationGroup(['person'=>array_keys($params['person'])]);
+        }
+
         $form->setData($params);
         if (! $form->isValid()) {
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
