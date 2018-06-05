@@ -94,7 +94,6 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             $this->user = $options['user'];
             unset($options['user']);
         }
-        echo "the fuck...?";
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager, true))
@@ -211,6 +210,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             'type' => 'password','name'=>'password-confirm',
             'attributes' => ['class'=>'form-control','id'=>'password-confirm']
         ]);
+
         return $this;
     }
 
@@ -266,8 +266,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                         'name' => 'NotEmpty',
                         'options' => [
                             'messages' => [
-                                'isEmpty' => 'username is required (use the '
-                                . 'email address as a last resort)',
+                                'isEmpty' => 'username is required (you can '
+                                .'use the email address)',
                             ],
                         ],
                     ],
