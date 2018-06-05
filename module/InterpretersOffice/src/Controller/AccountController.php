@@ -64,11 +64,12 @@ class AccountController extends AbstractActionController
      */
     public function validateAction()
     {
-        $params = $this->fromQuery();
+        $params = $this->params()->fromQuery();
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
-        $form->setValidationGroup(array_keys($params));
+        $form->setValidationGroup(array_keys($params['person']));
+        $form->setData($params);
         if (! $form->isValid()) {
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
