@@ -94,16 +94,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             $this->user = $options['user'];
             unset($options['user']);
         }
-        /*
-        if (! $options['auth'] instanceof AuthenticationServiceInterface) {
-            throw new \RuntimeException(sprintf(
-                   'UserFieldset constructor expected instance of %s, got %s',
-                   AuthenticationServiceInterface::class,
-                    is_object($options['auth']) ? get_class($options['auth'])
-                     : gettype($options['auth'])
-            ));
-        }
-        */
+        echo "the fuck...?";
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager, true))

@@ -11,6 +11,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Form\User\RegistrationForm;
 use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Form\FormInterface;
 
 /**
  *  AccountController.
@@ -61,7 +62,29 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-        return new ViewModel(['form' => new RegistrationForm($this->objectManager)]);
+
+        $form = new RegistrationForm($this->objectManager, [
+            'action' => 'create','auth_user_role' => 'anonymous',
+            ]);
+        if (! $this->getRequest()->isPost()) {
+            return new ViewModel(['form' => $form]);
+        }
+        // handle POST
+        $user = new Entity\User();
+        $request = $this->getRequest();
+        //$shit = $request->getPost();
+        //printf('<pre>%s</pre>',print_r($shit->toArray(),true));
+        $form->bind($user);
+        $input = $request->getPost();
+        $user = $input->get('user');
+        
+        $form->setData($input);
+        if (! $form->isValid()) {
+            printf('<pre>%s</pre>',print_r($form->getMessages(),true));
+        }
+        //printf('<pre>%s</pre>',print_r($form->getData(\Zend\Form\FormInterface::VALUES_AS_ARRAY),true));
+
+        return new ViewModel(['form' => $form]);
     }
 
     /**

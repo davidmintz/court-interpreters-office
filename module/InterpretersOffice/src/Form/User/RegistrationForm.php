@@ -29,16 +29,33 @@ class RegistrationForm extends Form
      */
     protected $objectManager;
 
-
     /**
      * constructor
      *
      * @param ObjectManager $objectManager
+     * @param Array $options
      */
-     public function __construct($objectManager)
+
+    public function __construct(ObjectManager $objectManager, $options = [])
+    {
+
+        parent::__construct($this->form_name, $options);
+        $user_fieldset = new UserFieldset($objectManager, $options);
+        $user_fieldset->addPasswordElements();
+        $this->add($user_fieldset);
+        $this->addCsrfElement();
+
+    }
+
+    /**
+     * (not) constructor
+     *
+     * @param ObjectManager $objectManager
+     */
+     public function __fuckedconstruct($objectManager)
      {
-         parent::__construct($this->form_name);
          $this->objectManager = $objectManager;
+         parent::__construct($this->form_name);
          $this->addCsrfElement();
          $fieldset = new UserFieldset($objectManager,
             ['action'=>'create', 'auth_user_role'=>'anonymous',]);
