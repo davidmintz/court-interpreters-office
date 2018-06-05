@@ -21,13 +21,6 @@ use InterpretersOffice\Entity;
 class InterpreterLanguageFieldset extends Fieldset implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
     use ObjectManagerAwareTrait;
-    /*
-     public function bindValues(array $values = array(), array $validationGroup = null) {
-        var_dump($values);
-        echo "WTF? ";
-        return parent::bindValues($values, $validationGroup);
-    }
-    */
 
     /**
      * constructor.
