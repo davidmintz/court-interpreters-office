@@ -3,6 +3,7 @@
 namespace InterpretersOffice\Form\User;
 
 use Zend\Form\Form;
+use Zend\Validator\ValidatorChain;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Admin\Form\UserFieldset;
@@ -44,13 +45,59 @@ class RegistrationForm extends Form
         $user_fieldset->addPasswordElements();
         $this->add($user_fieldset);
         $this->addCsrfElement();
+        
+        // we will set these ourself
+        $inputFilter = $this->getInputFilter();
+        $inputFilter->get('user')->get('role')
+            ->setRequired(false)
+            ->setAllowEmpty(true);
+        $inputFilter->get('user')->get('person')->get('active')
+            ->setRequired(false)
+            ->setAllowEmpty(true);
 
-        $this->getInputFilter()->get('user')->get('role')
-            ->setRequired(false)
-            ->setAllowEmpty(true);
-        $this->getInputFilter()->get('user')->get('person')->get('active')
-            ->setRequired(false)
-            ->setAllowEmpty(true);
+        // add password validation
+        $inputFilter->get('user')->get('password')
+                ->setRequired(true)
+                ->setAllowEmpty(false)
+                ->getValidatorChain()->attachByName('NotEmpty',
+                    ['messages'=>['isEmpty'=>'password is required']],
+                    true
+                )->attachByName('StringLength',
+                [
+                    'min' => 8,'max'=>150, 'messages'=>
+                    [
+                    'stringLengthTooShort'=>
+                        'password is too short (minimum %min% characters)',
+                    'stringLengthTooLong'=>
+                        'password exceeds maximum length (%max% characters)',
+                    ]
+                ]);
+        $inputFilter->get('user')->get('password-confirm')->getValidatorChain()
+            ->attachByName('NotEmpty',
+            ['messages'=>['isEmpty'=>'password confirmation is required']],
+            true
+            )
+            ->attachByName('Identical',[
+                'token' => ['user' => 'password'],
+                'messages'=> [
+                    'notSame'=>'password and password confirmation do not match'
+                ],
+            ]);
+        // filter: trim
+        foreach (['password','password-confirm'] as $field) {
+            $inputFilter->get('user')->get($field)->getFilterChain()
+                ->attachByName('StringTrim');
+        }
+
+        // tweak error message for "hat" element
+        $chain = $inputFilter->get('user')->get('person')->get('hat')
+            ->getValidatorChain();
+        /** @var \Zend\Validator\NotEmpty $shit */
+        $shit = $chain->getValidators()[0]['instance'];
+        $shit->setOptions( ['messages'=> ['isEmpty'=>'job title or department is required']]);
+
+
+
     }
 
     /**
