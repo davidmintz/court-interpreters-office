@@ -13,6 +13,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 
 use InterpretersOffice\Form\PersonFieldset;
+use InterpretersOffice\Entity;
 
 use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\Input;
@@ -194,6 +195,44 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
 
         return $this;
     }
+
+    public function addJudgeElement()
+    {
+        /* judge names */
+        $this->add([
+            'name' => 'judges',
+            'type' => 'Zend\Form\Element\Select',
+            'options' => [
+                //'empty_option' => '',
+                'value_options' => [],
+                'disable_inarray_validator' => true,
+                'label' => 'defendants',
+            ],
+            'attributes' => [
+                'style' => 'display:none',
+                'id' => 'judges',
+                'multiple' => 'multiple',
+            ],
+        ]);
+        /** @var \InterpretersOffice\Entity\Repository\JudgeRepository $repository */
+        $repository = $this->getObjectManager()->getRepository(Entity\Judge::class);
+        $opts = $repository->getJudgeOptions();
+        $this->add([
+            'name' => 'judge-select',
+            'type' => 'Zend\Form\Element\Select',
+            'options' => [
+                //'empty_option' => '',
+                'value_options' => $opts,
+                //'disable_inarray_validator' => true,
+                'label' => 'your Judge(s)',
+            ],
+            'attributes' => [
+                'class' => 'form-control',
+                'id' => 'judge-select',
+            ],
+        ]);
+    }
+
     /**
      * adds password and confirm-password elements
      *

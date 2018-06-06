@@ -36,6 +36,15 @@ echo $this->form()->openTag($form);
                 <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>
                 </div>
             </div>
+            <div style="display:none" class="form-group form-row">
+                <label class="col-form-label col-sm-3"><?php echo $form->get('user')->get('judge-select')->getLabel() ?></label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input id="judges" name=user['judges'][] type="hidden"><!--  ¿ temporary ? placeholder -->
+                        <?php echo $this->formSelect($form->get('user')->get('judge-select'))?><button class="btn btn-info fas fa-plus" title="identify the currently selected Judge as one for whom you work" type="button" id="btn-add-judge"><span class="sr-only">select</span></button>
+                    </div>
+                </div>
+            </div>
         </fieldset>
         <fieldset id="fieldset-password" class="carousel-item"><legend class="offset-sm-3">step 3 of 3: set your password</legend>
             <div class="form-group form-row">

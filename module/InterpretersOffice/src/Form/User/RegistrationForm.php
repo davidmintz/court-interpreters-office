@@ -42,7 +42,7 @@ class RegistrationForm extends Form
 
         parent::__construct($this->form_name, $options);
         $user_fieldset = new UserFieldset($objectManager, $options);
-        $user_fieldset->addPasswordElements();
+        $user_fieldset->addPasswordElements()->addJudgeElement();
         $this->add($user_fieldset);
         $this->addCsrfElement();
 

@@ -64,35 +64,33 @@ class AccountController extends AbstractActionController
      */
     public function validateAction()
     {
-        $params = $this->params()->fromQuery();
+        $params = $this->params()->fromPost();
+        $step = $this->params()->fromQuery('step');
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
-        /* if (key_exists('interpreter', $params)) {
-            $form->setValidationGroup(
-                ['interpreter' => array_keys($params['interpreter'])]
-            );
-        */
-        if (key_exists('user',$params)) {
-            $input = $params['user'];
-            if (key_exists('person', $input)) {
-                $person_fields = true;
-                $group = ['user'=>['person'=>array_keys($params['user']['person'])]];
-
-            } else {
-                $person_fields = false;
-                $group = ['user'=>array_keys($params['user'])];
-            }
-            $form->setValidationGroup($group);
+        if ($step == 'fieldset-personal-data') {
+            // step one: 'person' fields only
+            $group = ['user'=>['person'=>array_keys($params['user']['person'])]];
+        } else {
+            // step two: 'person' and possibly 'user'(judges).
+            // attention: after much fiddling, we find that this
+            // is the notation that works!
+            $group = [
+                'user'=> [
+                    'judges',
+                    'person' => array_keys($params['user']['person']),
+                ]
+            ];
         }
+        $form->setValidationGroup($group);
 
         $form->setData($params);
         if (! $form->isValid()) {
             $messages = $form->getMessages()['user'];
-            return new JsonModel(['validation_errors'=> $person_fields  ?
-                $messages['person'] : $messages]);
+            return new JsonModel(['validation_errors'=> $messages]);
         }
-        return new JsonModel(['valid'=>true]);
+        return new JsonModel(['valid'=>true, 'debug'=>$group]);
     }
 
     /**
