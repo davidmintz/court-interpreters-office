@@ -45,7 +45,7 @@ class RegistrationForm extends Form
         $user_fieldset->addPasswordElements();
         $this->add($user_fieldset);
         $this->addCsrfElement();
-        
+
         // we will set these ourself
         $inputFilter = $this->getInputFilter();
         $inputFilter->get('user')->get('role')
@@ -72,6 +72,16 @@ class RegistrationForm extends Form
                         'password exceeds maximum length (%max% characters)',
                     ]
                 ]);
+        // make the email required
+        $email_input = $this->getInputFilter()->get('user')
+                ->get('person')->get('email');
+        $email_input->setAllowEmpty(false)->setRequired(true)
+                        ->getValidatorChain()->prependByName(
+                            'NotEmpty',
+                            ['messages'=>['isEmpty'=>'email is required']],
+                            true
+                        );
+
         $inputFilter->get('user')->get('password-confirm')->getValidatorChain()
             ->attachByName('NotEmpty',
             ['messages'=>['isEmpty'=>'password confirmation is required']],

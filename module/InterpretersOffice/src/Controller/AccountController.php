@@ -73,13 +73,24 @@ class AccountController extends AbstractActionController
                 ['interpreter' => array_keys($params['interpreter'])]
             );
         */
-        if (key_exists('person',$params)) {
-            $form->setValidationGroup(['person'=>array_keys($params['person'])]);
+        if (key_exists('user',$params)) {
+            $input = $params['user'];
+            if (key_exists('person', $input)) {
+                $person_fields = true;
+                $group = ['user'=>['person'=>array_keys($params['user']['person'])]];
+
+            } else {
+                $person_fields = false;
+                $group = ['user'=>array_keys($params['user'])];
+            }
+            $form->setValidationGroup($group);
         }
 
         $form->setData($params);
         if (! $form->isValid()) {
-            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+            $messages = $form->getMessages()['user'];
+            return new JsonModel(['validation_errors'=> $person_fields  ?
+                $messages['person'] : $messages]);
         }
         return new JsonModel(['valid'=>true]);
     }
