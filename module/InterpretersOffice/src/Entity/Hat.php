@@ -62,6 +62,17 @@ class Hat
     protected $role;
 
     /**
+     * Is the person "active," or only of historical interest?
+     *
+     * If false, the entity by default will not be displayed in dropdown menus.
+     *
+     * @ORM\Column(type="boolean",nullable=false,name="is_judges_staff")
+     *
+     * @var bool
+     */
+    protected $isJudgeStaff = false;
+
+    /**
      * Constructor
      *
      * @param string $name name of Hat
@@ -86,10 +97,11 @@ class Hat
     {
         if ($this->getRole() && $this->anonymity != 0) {
             throw new \RuntimeException(
-                'If a Hat has a Role, its anonymity must be "never"'
+                'If a Hat has a Role, its anonymity must be set to 0 ("never")'
             );
         }
-        /* not so. 'contract court interpreter' has no Role but can't be
+        /*
+        not so. 'contract court interpreter' has no Role but can't be
             anonymous
         if (! $this->getRole() && $this->anonymity == 0) {
             throw new \RuntimeException( sprintf(
@@ -216,6 +228,27 @@ class Hat
     public function setRole(Role $role)
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * gets is-judge-staff flag
+     * @return boolean
+     */
+    public function getIsJudgeStaff()
+    {
+        return $this->isJudgeStaff;
+    }
+
+    /**
+     * sets is-judge-staff flag
+     * 
+     * @return Hat
+     */
+    public function setIsJudgeStaff($is_judges_staff)
+    {
+        $this->isJudgeStaff = $is_judges_staff;
 
         return $this;
     }
