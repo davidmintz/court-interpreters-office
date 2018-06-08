@@ -36,7 +36,7 @@ echo $this->form()->openTag($form);
                 <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>
                 </div>
             </div>
-            <div style="display:none" class="form-group form-row">
+            <div id="judge-div" class="form-group form-row">
                 <label class="col-form-label col-sm-3"><?php echo $form->get('user')->get('judge-select')->getLabel() ?></label>
                 <div class="col-sm-9">
                     <div class="input-group">

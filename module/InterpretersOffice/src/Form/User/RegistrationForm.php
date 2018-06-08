@@ -8,6 +8,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Admin\Form\UserFieldset;
 use InterpretersOffice\Entity;
+
+
 /**
  * user registration form
  */
@@ -29,6 +31,21 @@ class RegistrationForm extends Form
      * @var ObjectManager
      */
     protected $objectManager;
+
+
+    /**
+     * examines input and conditionally modifies validators
+     *
+     * @param EventInterface $e
+     * @return void
+     */
+     public function preValidate(Array $input)
+     {
+         return print_r($input,true);
+     }
+
+
+
 
     /**
      * constructor

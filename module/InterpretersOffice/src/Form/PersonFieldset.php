@@ -225,6 +225,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
      * controller action.
      * Subclasses should override this to provide an appropriately configured
      * Hat select element
+     *
+     * @todo make judge-staff thing a data attribute
      */
     public function addHatElement()
     {

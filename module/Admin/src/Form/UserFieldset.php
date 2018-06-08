@@ -206,7 +206,6 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 //'empty_option' => '',
                 'value_options' => [],
                 'disable_inarray_validator' => true,
-                'label' => 'defendants',
             ],
             'attributes' => [
                 'style' => 'display:none',
@@ -216,12 +215,12 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         ]);
         /** @var \InterpretersOffice\Entity\Repository\JudgeRepository $repository */
         $repository = $this->getObjectManager()->getRepository(Entity\Judge::class);
-        $opts = $repository->getJudgeOptions();
+        $opts = $repository->getJudgeOptions();        
         $this->add([
             'name' => 'judge-select',
             'type' => 'Zend\Form\Element\Select',
             'options' => [
-                //'empty_option' => '',
+                'empty_option' => '',
                 'value_options' => $opts,
                 //'disable_inarray_validator' => true,
                 'label' => 'your Judge(s)',

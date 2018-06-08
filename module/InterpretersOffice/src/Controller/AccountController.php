@@ -56,13 +56,47 @@ class AccountController extends AbstractActionController
     {
         return new ViewModel();
     }
-
     /**
      * partial validation
      *
      * @return JsonModel
      */
     public function validateAction()
+    {
+        $params = $this->params()->fromPost();
+
+        if (! isset($params['user']) or ! isset($params['user']['person'])) {
+            return new JsonModel(['valid'=>false,
+                'error'=>'malformed input data']);
+        }
+        // it's a 3-step form. the first two are handled as partial validation
+        $form_step = $this->params()->fromQuery('step');
+        $form = new RegistrationForm($this->objectManager, [
+            'action' => 'create','auth_user_role' => 'anonymous',
+            ]);
+        $validation_group = ['user'=>
+            [ 'person'=> array_keys($params['user']['person'])]
+        ];
+        if ($form_step == 'fieldset-hat') {
+            $shit = $form->preValidate($params['user']);
+            $validation_group['user'][] = 'judges';
+        }
+        $form->setValidationGroup($validation_group);
+
+        $form->setData($params);
+        if (! $form->isValid()) {
+            $messages = $form->getMessages()['user'];
+            return new JsonModel(['validation_errors'=> $messages,'debug'=>$shit]);
+        }
+        return new JsonModel(['valid'=>true, 'debug'=>$shit]);
+    }
+
+    /**
+     * partial validation
+     *
+     * @return JsonModel
+     */
+    public function __validateAction()
     {
         $params = $this->params()->fromPost();
         $step = $this->params()->fromQuery('step');
