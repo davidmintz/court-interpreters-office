@@ -14,15 +14,15 @@ php:
 
 install:  composer install
 
-services:
-    - mysql
+#services:
+#    - mysql
 
 # there may be a better way, but to compel travis-ci to use our test
 # config (sqlite) we replace the configuration file.
 
 before_script:
-    - echo 'CREATE DATABASE IF NOT EXISTS test_office' |mysql
-    - bin/initialize-test-db.sh
+    #- echo 'CREATE DATABASE IF NOT EXISTS test_office' |mysql
+    #- bin/initialize-test-db.sh
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
     #- cp config/autoload/forms.test.php config/autoload/forms.local.php
     - mkdir -p data/log
@@ -31,7 +31,7 @@ before_script:
     - echo "Database version? " && echo 'SELECT VERSION();'|mysql
 
 script:
-    - vendor/bin/phpunit module/Admin/test/Controller/EventsControllerTest.php
+    # - vendor/bin/phpunit module/Admin/test/Controller/EventsControllerTest.php
     - vendor/bin/phpunit
 
 # thank you, https://gist.github.com/Pierstoval/5d3101055e9d6a5fc19e
