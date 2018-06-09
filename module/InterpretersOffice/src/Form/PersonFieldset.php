@@ -12,6 +12,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
 use InterpretersOffice\Form\Validator\UniqueObject;
 use Zend\Validator;
+use InterpretersOffice\Entity\Hat;
 
 /**
  * Fieldset for Person entity.
@@ -248,23 +249,27 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
         }
         $this->add(
             [
-            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
-            'name' => 'hat',
-            'options' => [
-                'object_manager' => $this->objectManager,
-                'target_class' => 'InterpretersOffice\Entity\Hat',
-                'property' => 'name',
-                'label' => 'hat',
-                'display_empty_item' => true,
-                'empty_item_label' => '',
-                'find_method' => $find_method,
-             ],
-             'attributes' => [
-                'class' => 'form-control',
-                'id' => 'hat',
-             ],
-            ]
-        );
+                'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+                'name' => 'hat',
+                'attributes' => [
+                    'class' => 'form-control',
+                    'id' => 'hat',
+                ],
+                'options' => [
+                    'object_manager' => $this->objectManager,
+                    'target_class' => Hat::class,
+                    'property' => 'name',
+                    'label' => 'hat',
+                    'display_empty_item' => true,
+                    'empty_item_label' => '',
+                    'find_method' => $find_method,
+                    'option_attributes' => [
+                        'data-is_judges_staff' => function (Hat $hat) {
+                            return $hat->getIsJudgeStaff();
+                        },
+                    ],
+                ]
+            ]);
     }
 
     /**
