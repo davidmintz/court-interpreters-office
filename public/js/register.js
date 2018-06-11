@@ -56,6 +56,7 @@ $(function(){
                 .attr({type:"hidden",name:"user[judges][]",value:id}))
             .appendTo($("#judges"));
         $("#judge-select").val("");
+        $('#judge-div .validation-error').hide();
     });
 
     /** remove a judge */
