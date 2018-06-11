@@ -69,6 +69,7 @@ class AccountController extends AbstractActionController
             return new JsonModel(['valid'=>false,
                 'error'=>'malformed input data']);
         }
+        $shit = 'whatever';
         // it's a 3-step form. the first two are handled as partial validation
         $form_step = $this->params()->fromQuery('step');
         $form = new RegistrationForm($this->objectManager, [
