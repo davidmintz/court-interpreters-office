@@ -29,10 +29,12 @@ jQuery.ajaxSetup({
  * displays validation errors on a form
  *
  * @param object validationErrors
+ * @param object options
  * @returns void
  */
-var displayValidationErrors = function(validationErrors) {
+var displayValidationErrors = function(validationErrors,options) {
     $(".validation-error").hide();
+    var debug = (options && options.debug) || false;
     for (var field in validationErrors) {
         for (var key in validationErrors[field]) {
             var message = validationErrors[field][key];
@@ -45,12 +47,14 @@ var displayValidationErrors = function(validationErrors) {
             var errorDiv = $("#error_"+field);
             if (! errorDiv.length) { errorDiv = null;}
             if (! element.length) {
-                // console.log("is there no element "+field+ " ?");
+                if (debug) { console.log("is there no element "+field+ " ?"); }
                 // look for an existing div by id
                 if ($("#error_"+field).length) {
                     $("#error_"+field).html(message).show();
                 } else {
-                    console.warn("no element with id "+field + ", and nowhere to put message: "+message);
+                    if (debug) {
+                        console.warn("no element with id "+field + ", and nowhere to put message: "+message);
+                    }
                 }
             } else {
                 errorDiv = errorDiv || element.next(".validation-error");

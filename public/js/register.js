@@ -28,6 +28,7 @@ $(function(){
             $('#judge-div').hide();
             return;
         }
+        
         var hat = $(this).children(":selected");
         if (hat.data().is_judges_staff) {
             $('#judge-div').slideDown();
@@ -77,15 +78,10 @@ $(function(){
                         if ( id === "fieldset-personal-data") {
                             return displayValidationErrors(errors.person);
                         } else {
-                            window.errors = response.validation_errors;
-                            console.log("WTF????");
                             displayValidationErrors(errors);
                             if (errors.person) {
                                 displayValidationErrors(errors.person);
                             }
-
-                            //displayValidationErrors(errors.person);
-                            //console.warn(errors);
                         }
                     } else {
                         $("fieldset:visible .validation-error").hide();

@@ -327,6 +327,10 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                     ],
                 ],
             ],
+            'judge-select' => [
+                'required' => false,
+                'allow_empty' => true,
+            ],
             'active' => [
                 'required' => false,
                 'allow_empty' => true,
@@ -343,7 +347,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                                 $person_active = $context['person']['active'];
                                 $user_active = $value;
                                 if ($user_active && ! $person_active) {
-                                    return false;
+                                    return false;//
                                 }
                                 if (! $person_active && $user_active) {
                                     return false;
