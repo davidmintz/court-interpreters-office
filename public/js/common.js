@@ -45,7 +45,7 @@ var displayValidationErrors = function(validationErrors) {
             var errorDiv = $("#error_"+field);
             if (! errorDiv.length) { errorDiv = null;}
             if (! element.length) {
-                console.log("is there no element "+field+ " ?");
+                // console.log("is there no element "+field+ " ?");
                 // look for an existing div by id
                 if ($("#error_"+field).length) {
                     $("#error_"+field).html(message).show();

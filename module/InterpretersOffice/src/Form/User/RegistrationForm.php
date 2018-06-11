@@ -6,6 +6,8 @@ use Zend\Form\Form;
 use Zend\Validator\ValidatorChain;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
+use InterpretersOffice\Form\ObjectManagerAwareTrait;
+use InterpretersOffice\Form\User\RegistrationForm;
 use InterpretersOffice\Admin\Form\UserFieldset;
 use InterpretersOffice\Entity;
 
@@ -17,6 +19,7 @@ class RegistrationForm extends Form
 {
 
     use CsrfElementCreationTrait;
+    use ObjectManagerAwareTrait;
 
     /**
      * name of the form.
@@ -25,23 +28,41 @@ class RegistrationForm extends Form
      */
     protected $form_name = 'registration-form';
 
-    /**
+    /*\
      * Doctrine entity manager
+     protected $objectManager;
      *
      * @var ObjectManager
      */
-    protected $objectManager;
 
 
     /**
      * examines input and conditionally modifies validators
      *
-     * @param EventInterface $e
-     * @return void
+     * @param Array $input
+     * @return RegistrationForm
      */
      public function preValidate(Array $input)
      {
-         return print_r($input,true);
+         $hat_id = $input['person']['hat'];
+         $inputFilter = $this->getInputFilter();
+         $inputFilter->get('user')->get('judges')
+             ->setRequired(false)
+             ->setAllowEmpty(true);
+         if (! $hat_id) {
+             // we can't know if judges are required or not
+            return $this;
+         }
+         $hat = $this->objectManager->find(Entity\Hat::class,$hat_id);
+         // if it's a judge-staff kind of Hat, judges element is required
+         if ($hat->getIsJudgeStaff()) {
+             $inputFilter->get('user')->get('judges')
+                ->setAllowEmpty(false)
+                ->setRequired(true)
+                ->getValidatorChain()->attachByName('NotEmpty',
+                 ['messages'=>['isEmpty'=>'a Judge is required']],
+                 true);
+         }
      }
 
 
@@ -58,6 +79,7 @@ class RegistrationForm extends Form
     {
 
         parent::__construct($this->form_name, $options);
+        $this->objectManager = $objectManager;
         $user_fieldset = new UserFieldset($objectManager, $options);
         $user_fieldset->addPasswordElements()->addJudgeElement();
         $this->add($user_fieldset);

@@ -54,12 +54,12 @@ $(function(){
         element.prepend(name).prepend(
             $("<input>")
                 .attr({type:"hidden",name:"user[judges][]",value:id}))
-            .appendTo($("#list-judges"));
+            .appendTo($("#judges"));
         $("#judge-select").val("");
     });
-    
+
     /** remove a judge */
-    $("#list-judges").on("click",".remove-div",function(){
+    $("#judges").on("click",".remove-div",function(){
         $(this).parent().remove();
     });
 
@@ -72,14 +72,22 @@ $(function(){
             $.post("/user/register/validate?step="+id,params).then(
                 function(response){
                     if (response.validation_errors) {
+                        var errors = response.validation_errors;
                         if ( id === "fieldset-personal-data") {
-                            var errors = response.validation_errors.person
-                            return displayValidationErrors(errors);
+                            return displayValidationErrors(errors.person);
                         } else {
-                            console.log("shit is step two?");
-                            console.warn(response.validation_errors);
+                            window.errors = response.validation_errors;
+                            console.log("WTF????");
+                            displayValidationErrors(errors);
+                            if (errors.person) {
+                                displayValidationErrors(errors.person);
+                            }
+
+                            //displayValidationErrors(errors.person);
+                            //console.warn(errors);
                         }
                     } else {
+                        $("fieldset:visible .validation-error").hide();
                         $(".carousel").carousel("next");
                     }
                 }
@@ -90,6 +98,9 @@ $(function(){
     });
 });
 /*
+// sort of an experiment, worked on it for a while, abandoned...
+// have a good look at:
+// https://vuejs.org/v2/guide/list.html#v-for-with-a-Component
 var vm = new Vue({
     el : "#registration-form",
     data: {
@@ -97,7 +108,6 @@ var vm = new Vue({
             person : {},
             judges : []
         },
-
     },
     methods : {
         addJudge : function() {
