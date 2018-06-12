@@ -78,6 +78,7 @@ class AccountController extends AbstractActionController
         $validation_group = ['user'=>
             [ 'person'=> array_keys($params['user']['person'])]
         ];
+        $shit = $validation_group;
         if ($form_step == 'fieldset-hat') {
             $shit = $form->preValidate($params['user']);
             $validation_group['user'][] = 'judges';

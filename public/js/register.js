@@ -28,7 +28,7 @@ $(function(){
             $('#judge-div').hide();
             return;
         }
-        
+
         var hat = $(this).children(":selected");
         if (hat.data().is_judges_staff) {
             $('#judge-div').slideDown();
@@ -41,8 +41,9 @@ $(function(){
         '<button type="button" title="click to remove this judge" class="btn '
         + 'btn-warning btn-sm float-right remove-div">X</button>'
     );
+
     /** append a judge */
-    $("#btn-add-judge").on("click",function(event){
+    var appendJudge = function(event) {
         event.preventDefault();
         var id = $("#judge-select").val();
         if (! id) { return ; }
@@ -58,7 +59,9 @@ $(function(){
             .appendTo($("#judges"));
         $("#judge-select").val("");
         $('#judge-div .validation-error').hide();
-    });
+    };
+    /** assign handler */
+    $("#btn-add-judge").on("click",appendJudge);
 
     /** remove a judge */
     $("#judges").on("click",".remove-div",function(){

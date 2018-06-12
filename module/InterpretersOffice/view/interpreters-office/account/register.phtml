@@ -17,11 +17,11 @@ echo $this->form()->openTag($form);
 <!-- carousel-->
 <div id="carousel" class="carousel slide" data-interval="0">
     <div class="carousel-inner">
-        <fieldset id="fieldset-personal-data" class="carousel-item active"><legend class="offset-sm-3 py-3">step 1 of 3: personal data</legend>
+        <fieldset id="fieldset-personal-data" class="carousel-item active"><legend class="offset-sm-3 py-3">step 1 of 3: contact details</legend>
         <?php
              // text inputs
-            $person_fieldset->get('email')->setAttribute('placeholder','(required)');
-            foreach (['lastname','middlename','firstname','email','office_phone','mobile_phone'] as $elementName) :
+            $person_fieldset->get('email')->setAttribute('placeholder','your uscourts.gov address');
+            foreach (['lastname','middlename','firstname','office_phone','mobile_phone'] as $elementName) :
                 $element = $person_fieldset->get($elementName);?>
             <div class="form-group form-row">
                 <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
@@ -49,7 +49,13 @@ echo $this->form()->openTag($form);
                 </div>
             </div>
         </fieldset>
-        <fieldset id="fieldset-password" class="carousel-item"><legend class="offset-sm-3 py-3">step 3 of 3: set your password</legend>
+        <fieldset id="fieldset-password" class="carousel-item"><legend class="offset-sm-3 py-3">step 3 of 3: account details</legend>
+            <?php $element = $person_fieldset->get('email'); $element->setOption("placeholder","shit")?>
+            <div class="form-group form-row">
+                <label class="col-form-label col-sm-3" for="email">email address</label>
+                <div class="col-sm-9"><?php  echo $this->formElement($element);?>
+                </div>
+            </div>
             <div class="form-group form-row">
                 <label class="col-form-label col-sm-3">enter password</label>
                 <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password')),
