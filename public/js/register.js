@@ -69,33 +69,60 @@ $(function(){
     });
 
     /** validate each section */
-    $('#btn-next').on("click",function(event){
+    $('#btn-next').on("click",function(event)
+    {
         event.preventDefault();
         var id = $("fieldset:visible").attr('id');
         if (id === "fieldset-personal-data" || id === "fieldset-hat") {
-            var params = $("fieldset:visible").serialize();
-            $.post("/user/register/validate?step="+id,params).then(
-                function(response){
-                    if (response.validation_errors) {
-                        var errors = response.validation_errors;
-                        if ( id === "fieldset-personal-data") {
-                            return displayValidationErrors(errors.person);
-                        } else {
-                            displayValidationErrors(errors);
-                            if (errors.person) {
-                                displayValidationErrors(errors.person);
+            if (hasIncompleteJudgeSelection(id)) {
+                $("#modal-select-judge .modal-body").html(
+                    "Did you mean to select Judge <strong>" +
+                    $("#judge-select option:selected").text()
+                    + "</strong>?"
+                );
+                $("#modal-select-judge").modal();
+                $("#btn-yes-add-judge").one("click",function(){
+                    appendJudge(event);
+                    $("#modal-select-judge").modal("hide");
+                    $('#btn-next').trigger("click");
+                });
+            } else {
+                var params = $("fieldset:visible").serialize();
+                $.post("/user/register/validate?step="+id,params).then(
+                    function(response){
+                        if (response.validation_errors) {
+                            var errors = response.validation_errors;
+                            if ( id === "fieldset-personal-data") {
+                                return displayValidationErrors(errors.person);
+                            } else {
+                                displayValidationErrors(errors);
+                                if (errors.person) {
+                                    displayValidationErrors(errors.person);
+                                }
                             }
+                        } else {
+                            $("fieldset:visible .validation-error").hide();
+                            $(".carousel").carousel("next");
                         }
-                    } else {
-                        $("fieldset:visible .validation-error").hide();
-                        $(".carousel").carousel("next");
                     }
+                );
+            }
+        } else {
+            var params = $("#registration-form").serialize();
+            $.post("/user/register",params).then(
+                function(response) {
+                    console.log(response);
                 }
             );
-        } else {
-            console.log("submit the whole form");
+            console.log("submitting the whole form");
         }
     });
+
+    var hasIncompleteJudgeSelection = function(id)
+    {
+        return id === "fieldset-hat" //&& $("#judges li").length === 0
+            && $("#judge-select").val();
+    };
 });
 /*
 // sort of an experiment, worked on it for a while, abandoned...
