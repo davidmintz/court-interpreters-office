@@ -87,3 +87,15 @@ echo $this->form()->openTag($form);
 <?php //echo $this->form()->openTag($form);?>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
+<div id="modal-assign-interpreter" class="modal" tabindex="-1" role="dialog" aria-labelledby="add-judge-label" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header sr-only" id="assign-interp-label">Add judge?</div>
+      <div class="modal-body"></div>
+      <div class="modal-footer justify-content-center text-center">
+        <button id="btn-yes-add-judge" type="button" class="btn btn-success mr-0" data-dismiss="modal">yes</button><!--
+        --><button id="btn-no-add-judge" type="button" class="btn btn-secondary ml-1" data-dismiss="modal">no</button>
+      </div>
+    </div>
+  </div>
+</div>
