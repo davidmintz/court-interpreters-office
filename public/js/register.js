@@ -122,8 +122,18 @@ $(function(){
     {
         return id === "fieldset-hat" //&& $("#judges li").length === 0
             && $("#judge-select").val();
-    };
+    }
 });
+var stuff = function()
+{
+
+    $("#firstname").val("Boinker");
+    $("#lastname").val("Doinker");
+    $(".carousel").carousel("next");
+    $("#hat").val(6).trigger("change");
+    $("#email").val("boinker_doinker@nysd.uscourts.gov");
+
+}
 /*
 // sort of an experiment, worked on it for a while, abandoned...
 // have a good look at:
