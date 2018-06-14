@@ -84,7 +84,7 @@ class User implements ResourceInterface
      *
      * @var bool true if account is active (enabled)
      */
-    protected $active;
+    protected $active = false;
 
     /**
      * last login timestamp
@@ -364,6 +364,9 @@ class User implements ResourceInterface
                 'A user entity\'s related Person\'s email property cannot be null'
             );
         }
+        if (! $this->id) {
+            $this->created = new \DateTime();
+        }
     }
 
     /**
@@ -400,7 +403,7 @@ class User implements ResourceInterface
             $this->judges->add($judge);
         }
     }
-    
+
     /**
      * removes judges.
      *

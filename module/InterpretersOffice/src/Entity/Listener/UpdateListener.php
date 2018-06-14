@@ -32,7 +32,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     use Log\LoggerAwareTrait;
     use CurrentUserTrait;
 
-
     /**
      * entity state just after loading
      *
