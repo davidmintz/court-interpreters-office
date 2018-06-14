@@ -27,7 +27,8 @@
         "zendframework/zend-permissions-acl": "^2.6",
         "zendframework/zend-crypt": "^3.2",
         "zendframework/zend-http": "^2.6",
-        "zendframework/zend-navigation": "^2.8"
+        "zendframework/zend-navigation": "^2.8",
+        "zendframework/zend-mail": "^2.10"
 
     },
     "autoload": {

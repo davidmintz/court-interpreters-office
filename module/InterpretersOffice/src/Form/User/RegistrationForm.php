@@ -4,6 +4,7 @@ namespace InterpretersOffice\Form\User;
 
 use Zend\Form\Form;
 use Zend\Validator\ValidatorChain;
+use Zend\Validator\Callback;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
@@ -28,14 +29,25 @@ class RegistrationForm extends Form
      */
     protected $form_name = 'registration-form';
 
-    /*\
-     * Doctrine entity manager
-     protected $objectManager;
+
+    /**
+     * (possible) existing user -- experimental
      *
-     * @var ObjectManager
+     * @var Entity\User
      */
+     protected $existing_user;
 
-
+     /**
+      * sets the existing user found in the database
+      *
+      * this is experimental.
+      *
+      * @param Entity\User $user
+      */
+     public function setExistingUser(Entity\User $user)
+     {
+         $this->existing_user = $user;
+     }
     /**
      * examines input and conditionally modifies validators
      *
@@ -148,6 +160,32 @@ class RegistrationForm extends Form
         $shit->setOptions(['messages'=>
             [ 'isEmpty' => 'job title or department is required' ]
         ]);
+
+        // make sure there is not already an existing user account
+        /** @var Zend\Validator\ValidatorChain $chain */
+        $chain = $inputFilter->get('user')->get('person')->get('email')->getValidatorChain();
+        $objectManager = $this->objectManager;
+        $form = $this;
+        $validator = new Callback(
+            [
+                'callback' => function($value, $context) use ($objectManager,$form){
+                    $repo = $objectManager->getRepository(Entity\User::class);
+                    $user = $repo->findSubmitterByEmail($value);
+                    if ($user) {
+                        // maybe: this is experimental
+                        $form->setExistingUser($user);
+                        // definitely...
+                        return false;
+                    }
+                    return true;
+                },
+                'messages' => [
+                    Callback::INVALID_VALUE =>
+                    'There is already a user account associated with this email address.'
+                ]
+            ]
+        );
+        $chain->prependValidator($validator,true);
 
     }
 }

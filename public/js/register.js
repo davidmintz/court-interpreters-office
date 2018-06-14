@@ -111,10 +111,34 @@ $(function(){
             var params = $("#registration-form").serialize();
             $.post("/user/register",params).then(
                 function(response) {
-                    console.log(response);
+                    if (response.validation_errors) {
+                        var errors = response.validation_errors;
+                        if (errors.user.person) {
+                            displayValidationErrors(errors.user.person,{debug:true});
+                            //delete errors.user.person;
+                        }
+                        displayValidationErrors(errors.user,{debug:true});
+                        /*
+                        console.warn("hello?????");
+                        if (errors.user) {
+                            if (errors.user.person) {
+                                console.log("yes, errors.user.person, calling display on it");
+                                displayValidationErrors(errors.user.person,{debug:true});
+                            }
+                            console.log("yes, errors.user, calling display on it");
+                            displayValidationErrors(errors.user,{debug:true});
+                        }*/
+                        //displayValidationErrors(errors,{debug:true});
+                        // if they managed to beat the inter-fieldset validation,
+                        // put them back on the first fieldset with errors
+                        //var fs = $(".validation_errors").first().closest("fieldset");
+
+                    } else {
+                        alert("WTF");
+                    }
                 }
             );
-            console.log("submitting the whole form");
+
         }
     });
 

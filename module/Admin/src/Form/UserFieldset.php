@@ -15,14 +15,6 @@ use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\PersonFieldset;
 use InterpretersOffice\Entity;
 
-use Zend\InputFilter\InputFilterInterface;
-use Zend\InputFilter\Input;
-use Zend\Validator\Identical;
-//use Zend\Authentication\AuthenticationServiceInterface;
-
-//use InterpretersOffice\Admin\Service\Authentication\AuthenticationAwareInterface;
-
-
 /**
  *
  * Fieldset for User entity
