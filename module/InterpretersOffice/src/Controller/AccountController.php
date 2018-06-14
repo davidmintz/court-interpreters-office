@@ -126,12 +126,21 @@ class AccountController extends AbstractActionController
 
         $form->setData($input);
         if (! $form->isValid()) {
+            $errors = $form->getMessages();
+            if (isset($errors['user'])) {
+                if (isset($errors['user']['person'])) {
+                    $errors = array_merge($errors,$errors['user']['person']);
+                    unset($errors['user']['person']);
+                }
+                $errors = array_merge($errors, $errors['user']);
+                unset($errors['user']);
+            }
             return new JsonModel(
-                ['validation_errors' => $form->getMessages()]
+                ['validation_errors' => $errors]
             );
         }
         try {
-            
+
             $user->setRole($this->getDefaultRole());
             $this->objectManager->persist($user);
             $this->objectManager->persist($user->getPerson());
