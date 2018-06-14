@@ -7,6 +7,7 @@ namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
@@ -386,5 +387,30 @@ class User implements ResourceInterface
          $this->created = $created;
 
          return $this;
+    }
+
+
+
+    /**
+     * adds Judges.
+     *
+     * @param Collection $judges
+     */
+    public function addJudges(Collection $judges)
+    {
+        foreach ($judges as $judge) {
+            $this->judges->add($judge);
+        }
+    }
+    /**
+     * removes judges.
+     *
+     * @param Collection $judges
+     */
+    public function removeJudges(Collection $judges)
+    {
+        foreach ($judges as $judge) {
+            $this->judges->removeElement($judge);
+        }
     }
 }
