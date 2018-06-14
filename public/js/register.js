@@ -120,10 +120,26 @@ $(function(){
 
     var hasIncompleteJudgeSelection = function(id)
     {
-        return id === "fieldset-hat" //&& $("#judges li").length === 0
-            && $("#judge-select").val();
+        return id === "fieldset-hat" && $("#judge-select").val();
     };
+
+    stuffIt();
 });
+function stuffIt()
+{
+    $('#firstname').val("Wanker");
+    $('#lastname').val("Boink");
+    $('#email').val("wanker_boink@nysd.uscourts.gov");
+    $("#hat").val(6).trigger("change");
+    $("#judge-select").val(
+        $("#judge-select option:contains(Engelmayer)").attr("value")
+    );
+    $("#btn-add-judge").trigger("click");
+    $("#password").val("fuck you!");
+    $("#password-confirm").val("fuck you!");
+    $(".carousel").carousel(2);
+
+}
 /*
 // sort of an experiment, worked on it for a while, abandoned...
 // have a good look at:
@@ -141,7 +157,7 @@ var vm = new Vue({
             var id = $("#judge-select").val();
             if (id && this.user.judges.indexOf(id) === -1) {
                 this.user.judges.push(id);
-            }
+            }'password-confirm' => 'fuck you','confirm-password' => 'fuck you',
         },
         removeJudge : function(id) {
             var index = this.user.judges.indexOf(id);
