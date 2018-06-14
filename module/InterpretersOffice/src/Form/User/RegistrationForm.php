@@ -65,9 +65,6 @@ class RegistrationForm extends Form
          }
      }
 
-
-
-
     /**
      * constructor
      *
@@ -127,7 +124,7 @@ class RegistrationForm extends Form
             true
             )
             ->attachByName('Identical',[
-                'token' => ['user' => 'password'],
+                'token' =>'password',
                 'messages'=> [
                     'notSame'=>'password and password confirmation do not match'
                 ],
