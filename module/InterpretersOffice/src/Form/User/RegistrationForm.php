@@ -91,44 +91,49 @@ class RegistrationForm extends Form
             ->setRequired(false)
             ->setAllowEmpty(true);
 
+        $inputFilter->get('user')->get('username')
+            ->setRequired(false)->setAllowEmpty(true);
+
         // add password validation
         $inputFilter->get('user')->get('password')
-                ->setRequired(true)
-                ->setAllowEmpty(false)
-                ->getValidatorChain()->attachByName('NotEmpty',
-                    ['messages'=>['isEmpty'=>'password is required']],
-                    true
-                )->attachByName('StringLength',
+            ->setRequired(true)
+            ->setAllowEmpty(false)
+            ->getValidatorChain()->attachByName('NotEmpty',
+                ['messages'=>['isEmpty'=>'password is required']],
+                true
+            )->attachByName('StringLength',
+            [
+                'min' => 8,'max'=>150, 'messages'=>
                 [
-                    'min' => 8,'max'=>150, 'messages'=>
-                    [
-                    'stringLengthTooShort'=>
-                        'password is too short (minimum %min% characters)',
-                    'stringLengthTooLong'=>
-                        'password exceeds maximum length (%max% characters)',
-                    ]
-                ]);
+                'stringLengthTooShort'=>
+                    'password is too short (minimum %min% characters)',
+                'stringLengthTooLong'=>
+                    'password exceeds maximum length (%max% characters)',
+                ]
+        ]);
         // make the email required
         $email_input = $this->getInputFilter()->get('user')
                 ->get('person')->get('email');
         $email_input->setAllowEmpty(false)->setRequired(true)
-                        ->getValidatorChain()->prependByName(
-                            'NotEmpty',
-                            ['messages'=>['isEmpty'=>'email is required']],
-                            true
-                        );
+                ->getValidatorChain()->prependByName(
+                    'NotEmpty',
+                    ['messages'=>['isEmpty'=>'email is required']],
+                    true
+                );
 
+        // password
         $inputFilter->get('user')->get('password-confirm')->getValidatorChain()
             ->attachByName('NotEmpty',
             ['messages'=>['isEmpty'=>'password confirmation is required']],
-            true
+                true
             )
             ->attachByName('Identical',[
-                'token' =>'password',
+                'token' =>'password', // this actually works. don't fuck it up.
                 'messages'=> [
                     'notSame'=>'password and password confirmation do not match'
                 ],
             ]);
+
         // filter: trim
         foreach (['password','password-confirm'] as $field) {
             $inputFilter->get('user')->get($field)->getFilterChain()
@@ -140,27 +145,9 @@ class RegistrationForm extends Form
             ->getValidatorChain();
         /** @var \Zend\Validator\NotEmpty $shit */
         $shit = $chain->getValidators()[0]['instance'];
-        $shit->setOptions( ['messages'=> ['isEmpty'=>'job title or department is required']]);
-
-
+        $shit->setOptions(['messages'=>
+            [ 'isEmpty' => 'job title or department is required' ]
+        ]);
 
     }
-
-    /**
-     * (not) constructor
-     *
-     * @param ObjectManager $objectManager
-     */
-     public function __fuckedconstruct($objectManager)
-     {
-         $this->objectManager = $objectManager;
-         parent::__construct($this->form_name);
-         $this->addCsrfElement();
-         $fieldset = new UserFieldset($objectManager,
-            ['action'=>'create', 'auth_user_role'=>'anonymous',]);
-         $fieldset->addPasswordElements();
-        // $fieldset->addPasswordValidators($this->getInputFilter());
-         $this->add($fieldset);
-
-     }
 }
