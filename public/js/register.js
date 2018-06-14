@@ -112,12 +112,13 @@ $(function(){
             $.post("/user/register",params).then(
                 function(response) {
                     if (response.validation_errors) {
+                        /*
                         var errors = response.validation_errors;
                         if (errors.user.person) {
                             displayValidationErrors(errors.user.person,{debug:true});
                             //delete errors.user.person;
-                        }
-                        displayValidationErrors(errors.user,{debug:true});
+                        }*/
+                        displayValidationErrors(response.validation_errors,{debug:true});
                         /*
                         console.warn("hello?????");
                         if (errors.user) {
