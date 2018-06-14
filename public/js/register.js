@@ -111,27 +111,57 @@ $(function(){
             var params = $("#registration-form").serialize();
             $.post("/user/register",params).then(
                 function(response) {
-                    console.log(response);
+                    if (response.validation_errors) {
+                        var errors = response.validation_errors;
+                        if (errors.user.person) {
+                            displayValidationErrors(errors.user.person,{debug:true});
+                            //delete errors.user.person;
+                        }
+                        displayValidationErrors(errors.user,{debug:true});
+                        /*
+                        console.warn("hello?????");
+                        if (errors.user) {
+                            if (errors.user.person) {
+                                console.log("yes, errors.user.person, calling display on it");
+                                displayValidationErrors(errors.user.person,{debug:true});
+                            }
+                            console.log("yes, errors.user, calling display on it");
+                            displayValidationErrors(errors.user,{debug:true});
+                        }*/
+                        //displayValidationErrors(errors,{debug:true});
+                        // if they managed to beat the inter-fieldset validation,
+                        // put them back on the first fieldset with errors
+                        //var fs = $(".validation_errors").first().closest("fieldset");
+
+                    } else {
+                        alert("WTF");
+                    }
                 }
             );
-            console.log("submitting the whole form");
+
         }
     });
 
     var hasIncompleteJudgeSelection = function(id)
     {
-        return id === "fieldset-hat" //&& $("#judges li").length === 0
-            && $("#judge-select").val();
-    }
-});
-var stuff = function()
-{
+        return id === "fieldset-hat" && $("#judge-select").val();
+    };
 
-    $("#firstname").val("Boinker");
-    $("#lastname").val("Doinker");
-    $(".carousel").carousel("next");
+    stuffIt();
+});
+function stuffIt()
+{
+    $('#firstname').val("Wanker");
+    $('#lastname').val("Boink");
+    $('#email').val("wanker_boink@nysd.uscourts.gov");
     $("#hat").val(6).trigger("change");
-    $("#email").val("boinker_doinker@nysd.uscourts.gov");
+    $("#judge-select").val(
+        $("#judge-select option:contains(Engelmayer)").attr("value")
+    );
+    $("#btn-add-judge").trigger("click");
+    $("#password").val("fuck you!");
+    $("#password-confirm").val("fuck you!");
+    $(".carousel").carousel(2);
 
 }
 /*
@@ -151,7 +181,7 @@ var vm = new Vue({
             var id = $("#judge-select").val();
             if (id && this.user.judges.indexOf(id) === -1) {
                 this.user.judges.push(id);
-            }
+            }'password-confirm' => 'fuck you','confirm-password' => 'fuck you',
         },
         removeJudge : function(id) {
             var index = this.user.judges.indexOf(id);

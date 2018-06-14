@@ -4,6 +4,7 @@ namespace InterpretersOffice\Form\User;
 
 use Zend\Form\Form;
 use Zend\Validator\ValidatorChain;
+use Zend\Validator\Callback;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
@@ -28,14 +29,25 @@ class RegistrationForm extends Form
      */
     protected $form_name = 'registration-form';
 
-    /*\
-     * Doctrine entity manager
-     protected $objectManager;
+
+    /**
+     * (possible) existing user -- experimental
      *
-     * @var ObjectManager
+     * @var Entity\User
      */
+     protected $existing_user;
 
-
+     /**
+      * sets the existing user found in the database
+      *
+      * this is experimental.
+      *
+      * @param Entity\User $user
+      */
+     public function setExistingUser(Entity\User $user)
+     {
+         $this->existing_user = $user;
+     }
     /**
      * examines input and conditionally modifies validators
      *
@@ -65,9 +77,6 @@ class RegistrationForm extends Form
          }
      }
 
-
-
-
     /**
      * constructor
      *
@@ -94,44 +103,49 @@ class RegistrationForm extends Form
             ->setRequired(false)
             ->setAllowEmpty(true);
 
+        $inputFilter->get('user')->get('username')
+            ->setRequired(false)->setAllowEmpty(true);
+
         // add password validation
         $inputFilter->get('user')->get('password')
-                ->setRequired(true)
-                ->setAllowEmpty(false)
-                ->getValidatorChain()->attachByName('NotEmpty',
-                    ['messages'=>['isEmpty'=>'password is required']],
-                    true
-                )->attachByName('StringLength',
+            ->setRequired(true)
+            ->setAllowEmpty(false)
+            ->getValidatorChain()->attachByName('NotEmpty',
+                ['messages'=>['isEmpty'=>'password is required']],
+                true
+            )->attachByName('StringLength',
+            [
+                'min' => 8,'max'=>150, 'messages'=>
                 [
-                    'min' => 8,'max'=>150, 'messages'=>
-                    [
-                    'stringLengthTooShort'=>
-                        'password is too short (minimum %min% characters)',
-                    'stringLengthTooLong'=>
-                        'password exceeds maximum length (%max% characters)',
-                    ]
-                ]);
+                'stringLengthTooShort'=>
+                    'password is too short (minimum %min% characters)',
+                'stringLengthTooLong'=>
+                    'password exceeds maximum length (%max% characters)',
+                ]
+        ]);
         // make the email required
         $email_input = $this->getInputFilter()->get('user')
                 ->get('person')->get('email');
         $email_input->setAllowEmpty(false)->setRequired(true)
-                        ->getValidatorChain()->prependByName(
-                            'NotEmpty',
-                            ['messages'=>['isEmpty'=>'email is required']],
-                            true
-                        );
+                ->getValidatorChain()->prependByName(
+                    'NotEmpty',
+                    ['messages'=>['isEmpty'=>'email is required']],
+                    true
+                );
 
+        // password
         $inputFilter->get('user')->get('password-confirm')->getValidatorChain()
             ->attachByName('NotEmpty',
             ['messages'=>['isEmpty'=>'password confirmation is required']],
-            true
+                true
             )
             ->attachByName('Identical',[
-                'token' => ['user' => 'password'],
+                'token' =>'password', // this actually works. don't fuck it up.
                 'messages'=> [
                     'notSame'=>'password and password confirmation do not match'
                 ],
             ]);
+
         // filter: trim
         foreach (['password','password-confirm'] as $field) {
             $inputFilter->get('user')->get($field)->getFilterChain()
@@ -143,27 +157,35 @@ class RegistrationForm extends Form
             ->getValidatorChain();
         /** @var \Zend\Validator\NotEmpty $shit */
         $shit = $chain->getValidators()[0]['instance'];
-        $shit->setOptions( ['messages'=> ['isEmpty'=>'job title or department is required']]);
+        $shit->setOptions(['messages'=>
+            [ 'isEmpty' => 'job title or department is required' ]
+        ]);
 
-
+        // make sure there is not already an existing user account
+        /** @var Zend\Validator\ValidatorChain $chain */
+        $chain = $inputFilter->get('user')->get('person')->get('email')->getValidatorChain();
+        $objectManager = $this->objectManager;
+        $form = $this;
+        $validator = new Callback(
+            [
+                'callback' => function($value, $context) use ($objectManager,$form){
+                    $repo = $objectManager->getRepository(Entity\User::class);
+                    $user = $repo->findSubmitterByEmail($value);
+                    if ($user) {
+                        // maybe: this is experimental
+                        $form->setExistingUser($user);
+                        // definitely...
+                        return false;
+                    }
+                    return true;
+                },
+                'messages' => [
+                    Callback::INVALID_VALUE =>
+                    'There is already a user account associated with this email address.'
+                ]
+            ]
+        );
+        $chain->prependValidator($validator,true);
 
     }
-
-    /**
-     * (not) constructor
-     *
-     * @param ObjectManager $objectManager
-     */
-     public function __fuckedconstruct($objectManager)
-     {
-         $this->objectManager = $objectManager;
-         parent::__construct($this->form_name);
-         $this->addCsrfElement();
-         $fieldset = new UserFieldset($objectManager,
-            ['action'=>'create', 'auth_user_role'=>'anonymous',]);
-         $fieldset->addPasswordElements();
-        // $fieldset->addPasswordValidators($this->getInputFilter());
-         $this->add($fieldset);
-
-     }
 }

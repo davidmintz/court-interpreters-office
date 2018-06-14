@@ -54,18 +54,19 @@ echo $this->form()->openTag($form);
             <div class="form-group form-row">
                 <label class="col-form-label col-sm-3" for="email">email address</label>
                 <div class="col-sm-9"><?php  echo $this->formElement($element);?>
+                <div id="error_email" class="validation-error" style="display:none"></div>
                 </div>
             </div>
             <div class="form-group form-row">
                 <label class="col-form-label col-sm-3">enter password</label>
-                <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password')),
-                    $this->formElementErrors($form->get('user')->get('password'))?>
+                <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password'))?>
+                <div id="error_password" class="validation-error" style="display:none"></div>
                 </div>
             </div>
             <div class="form-group form-row">
                 <label class="col-form-label col-sm-3">confirm password</label>
-                <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password-confirm')),
-                    $this->formElementErrors($form->get('user')->get('password-confirm'))?>
+                <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password-confirm'))?>
+                <div id="error_password-confirm" class="validation-error" style="display:none"></div>
                 </div>
             </div>
         </fieldset>

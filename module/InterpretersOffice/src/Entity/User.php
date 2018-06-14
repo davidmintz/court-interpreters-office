@@ -7,6 +7,7 @@ namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
@@ -83,7 +84,7 @@ class User implements ResourceInterface
      *
      * @var bool true if account is active (enabled)
      */
-    protected $active;
+    protected $active = false;
 
     /**
      * last login timestamp
@@ -363,6 +364,9 @@ class User implements ResourceInterface
                 'A user entity\'s related Person\'s email property cannot be null'
             );
         }
+        if (! $this->id) {
+            $this->created = new \DateTime();
+        }
     }
 
     /**
@@ -386,5 +390,29 @@ class User implements ResourceInterface
          $this->created = $created;
 
          return $this;
+    }
+
+    /**
+     * adds Judges.
+     *
+     * @param Collection $judges
+     */
+    public function addJudges(Collection $judges)
+    {
+        foreach ($judges as $judge) {
+            $this->judges->add($judge);
+        }
+    }
+
+    /**
+     * removes judges.
+     *
+     * @param Collection $judges
+     */
+    public function removeJudges(Collection $judges)
+    {
+        foreach ($judges as $judge) {
+            $this->judges->removeElement($judge);
+        }
     }
 }

@@ -36,7 +36,9 @@ var displayValidationErrors = function(validationErrors,options) {
     $(".validation-error").hide();
     var debug = (options && options.debug) || false;
     for (var field in validationErrors) {
+        if (debug) { console.log("looking at: "+field); }
         for (var key in validationErrors[field]) {
+            if (debug) { console.log("looking at: "+key); }
             var message = validationErrors[field][key];
             var element = $("#" +field);
             if (! element.length) {
@@ -53,7 +55,12 @@ var displayValidationErrors = function(validationErrors,options) {
                     $("#error_"+field).html(message).show();
                 } else {
                     if (debug) {
+                        console.log(typeof message);
                         console.warn("no element with id "+field + ", and nowhere to put message: "+message);
+                    }
+                    if ("object" === typeof message) {
+                        console.warn("recursing");
+                        displayValidationErrors(message);
                     }
                 }
             } else {
@@ -66,7 +73,7 @@ var displayValidationErrors = function(validationErrors,options) {
                 }
                 errorDiv.html(message).show();
             }
-            break;
+            //break;
         }
     }
 };
