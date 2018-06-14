@@ -389,8 +389,6 @@ class User implements ResourceInterface
          return $this;
     }
 
-
-
     /**
      * adds Judges.
      *
@@ -402,6 +400,7 @@ class User implements ResourceInterface
             $this->judges->add($judge);
         }
     }
+    
     /**
      * removes judges.
      *
