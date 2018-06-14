@@ -54,7 +54,8 @@ class FixtureSetupTest extends AbstractControllerTest
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $this->assertTrue(is_object($fixtureExecutor));
         $entityManager = FixtureManager::getEntityManager();
-
+        $this->loadTestEventData();
+        /*
         $fixtureExecutor->execute([
             new DataFixture\LanguageLoader(),
             new DataFixture\HatLoader(),
@@ -67,7 +68,7 @@ class FixtureSetupTest extends AbstractControllerTest
             new DataFixture\UserLoader(),
             new DataFixture\EventLoader(),
          ]);
-
+         */
         $this->assertTrue(is_object($entityManager));
         //echo get_class($entityManager);
         $languages = $entityManager->getRepository(Entity\Language::class)->findAll();
