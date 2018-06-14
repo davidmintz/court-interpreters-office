@@ -49,6 +49,16 @@ class AccountController extends AbstractActionController
     }
 
     /**
+     * gets the 'submitter' role
+     * @return Entity\Role
+     */
+    protected function getDefaultRole()
+    {
+        return $this->objectManager->getRepository(Entity\Role::class)
+            ->findOneBy(['name' => 'submitter']);
+    }
+
+    /**
      * index action
      * @return ViewModel
      */
@@ -94,42 +104,6 @@ class AccountController extends AbstractActionController
     }
 
     /**
-     * partial validation
-     *
-     * @return JsonModel
-     */
-    public function __validateAction()
-    {
-        $params = $this->params()->fromPost();
-        $step = $this->params()->fromQuery('step');
-        $form = new RegistrationForm($this->objectManager, [
-            'action' => 'create','auth_user_role' => 'anonymous',
-            ]);
-        if ($step == 'fieldset-personal-data') {
-            // step one: 'person' fields only
-            $group = ['user'=>['person'=>array_keys($params['user']['person'])]];
-        } else {
-            // step two: 'person' and possibly 'user'(judges).
-            // attention: after much fiddling, we find that this
-            // is the notation that works!
-            $group = [
-                'user'=> [
-                    'judges',
-                    'person' => array_keys($params['user']['person']),
-                ]
-            ];
-        }
-        $form->setValidationGroup($group);
-
-        $form->setData($params);
-        if (! $form->isValid()) {
-            $messages = $form->getMessages()['user'];
-            return new JsonModel(['validation_errors'=> $messages]);
-        }
-        return new JsonModel(['valid'=>true, 'debug'=>$group]);
-    }
-
-    /**
      * registers a new user account
      *
      * @return ViewModel
@@ -148,15 +122,36 @@ class AccountController extends AbstractActionController
         $request = $this->getRequest();
         $form->bind($user);
         $input = $request->getPost();
-        $user = $input->get('user');
+        $data = $input->get('user');
 
         $form->setData($input);
         if (! $form->isValid()) {
-            printf('<pre>%s</pre>',print_r($form->getMessages(),true));
+            return new JsonModel(
+                ['validation_errors' => $form->getMessages()]
+            );
         }
-        //printf('<pre>%s</pre>',print_r($form->getData(\Zend\Form\FormInterface::VALUES_AS_ARRAY),true));
+        try {
+            
+            $user->setRole($this->getDefaultRole());
+            $this->objectManager->persist($user);
+            $this->objectManager->persist($user->getPerson());
+            $this->objectManager->flush();
 
-        return new ViewModel(['form' => $form]);
+        } catch (\Exception $e) {
+            return new JsonModel(
+                [   'validation_errors' => null,
+                    'data'=>$data,
+                    'status' => 'error',
+                    'exception' => get_class($e),
+                    'message'=> $e->getMessage(),
+                ]
+            );
+        }
+
+        // else ...
+        return new JsonModel(
+            ['validation_errors' => null, 'data'=>$data, 'status'=>'success']
+        );
     }
 
     /**
