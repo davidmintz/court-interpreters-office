@@ -19,7 +19,7 @@ class DefendantEvent
      * The defendantName.
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="DefendantName")
+     * @ORM\ManyToOne(targetEntity="DefendantName",inversedBy="defendantsEvents")
      *
      * @var DefendantName
      */
@@ -29,7 +29,7 @@ class DefendantEvent
      * The Event.
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Event")
+     * @ORM\ManyToOne(targetEntity="Event",inversedBy="defendantsEvents")
      *
      * @var Event
      */

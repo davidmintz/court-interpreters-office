@@ -169,20 +169,16 @@ class Event
      */
     protected $cancellationReason;
 
-    /* FROM our Request entity in the older project....
-     *
-     * @ORM\ManyToMany(targetEntity="Application\Entity\DefendantName",fetch="EAGER")
-     * @ORM\JoinTable(name="defendants_requests",
-     *      joinColumns={@ORM\JoinColumn(name="request_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="deft_id")}
-     * )
-     *  //, unique=true ?
-     * cribbed from:
-     * http://doctrine-orm.readthedocs.org/en/latest/reference/annotations-reference.html#annref-manytomany
-     */
-
-
     /**
+     * ArrayCollection association class DefendantEvent.
+     *
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="event")
+     */
+    protected $defendantsEvents;
+
+
+    /*
      * defendant(s) for whom an interpreter is required.
      *
      * @see DefendantName
@@ -193,8 +189,8 @@ class Event
      *  inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
      *
      * @var Collection
+     *protected $defendantNames;
      */
-    protected $defendantNames;
 
     /**
      * Interpreters assigned to this event.
