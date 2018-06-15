@@ -93,17 +93,16 @@ class AccountController extends AbstractActionController
             array_push($validation_group['user'],'password','password-confirm');
         }
         if ($form_step == 'fieldset-hat') {
-            $shit = $form->preValidate($params['user']);
+            $form->preValidate($params['user']);
             $validation_group['user'][] = 'judges';
         }
         $form->setValidationGroup($validation_group);
 
         $form->setData($params);
         if (! $form->isValid()) {
-            //$messages = $form->getMessages()['user'];
             return new JsonModel([
                 'validation_errors'=> $form->getFlattenedErrorMessages(),
-                'debug'=>$form->getMessages()]);
+                ]);
         }
         return new JsonModel(['valid'=>true, 'debug'=>$validation_group]);
     }
@@ -115,7 +114,6 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
@@ -136,12 +134,10 @@ class AccountController extends AbstractActionController
             );
         }
         try {
-
             $user->setRole($this->getDefaultRole());
             $this->objectManager->persist($user);
             $this->objectManager->persist($user->getPerson());
             $this->objectManager->flush();
-
         } catch (\Exception $e) {
             return new JsonModel(
                 [   'validation_errors' => null,
@@ -152,7 +148,6 @@ class AccountController extends AbstractActionController
                 ]
             );
         }
-
         // else ...
         return new JsonModel(
             ['validation_errors' => null, 'data'=>$data, 'status'=>'success']
