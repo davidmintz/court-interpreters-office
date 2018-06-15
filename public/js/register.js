@@ -104,34 +104,17 @@ $(function(){
             $.post("/user/register",params).then(
                 function(response) {
                     if (response.validation_errors) {
-                        /*
-                        var errors = response.validation_errors;
-                        if (errors.user.person) {
-                            displayValidationErrors(errors.user.person,{debug:true});
-                            //delete errors.user.person;
-                        }*/
-                        displayValidationErrors(response.validation_errors,{debug:true});
-                        /*
-                        console.warn("hello?????");
-                        if (errors.user) {
-                            if (errors.user.person) {
-                                console.log("yes, errors.user.person, calling display on it");
-                                displayValidationErrors(errors.user.person,{debug:true});
-                            }
-                            console.log("yes, errors.user, calling display on it");
-                            displayValidationErrors(errors.user,{debug:true});
-                        }*/
-                        //displayValidationErrors(errors,{debug:true});
+                        displayValidationErrors(response.validation_errors);
                         // if they managed to beat the inter-fieldset validation,
                         // put them back on the first fieldset with errors
-                        //var fs = $(".validation_errors").first().closest("fieldset");
-
+                        var i = $("fieldset .validation-error").first()
+                            .closest("fieldset").index();
+                        $(".carousel").carousel(i);
                     } else {
-                        alert("WTF");
+                        alert("Yay!");
                     }
                 }
             );
-
         }
     });
 
