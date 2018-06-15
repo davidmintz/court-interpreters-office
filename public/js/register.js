@@ -87,19 +87,11 @@ $(function(){
                     $('#btn-next').trigger("click");
                 });
             } else {
-                var params = $("fieldset:visible").serialize();
+                var params = $("fieldset:visible, #csrf").serialize();
                 $.post("/user/register/validate?step="+id,params).then(
                     function(response){
                         if (response.validation_errors) {
-                            var errors = response.validation_errors;
-                            if ( id === "fieldset-personal-data") {
-                                return displayValidationErrors(errors.person);
-                            } else {
-                                displayValidationErrors(errors);
-                                if (errors.person) {
-                                    displayValidationErrors(errors.person);
-                                }
-                            }
+                            displayValidationErrors(response.validation_errors);
                         } else {
                             $("fieldset:visible .validation-error").hide();
                             $(".carousel").carousel("next");

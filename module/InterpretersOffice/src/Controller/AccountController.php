@@ -85,8 +85,9 @@ class AccountController extends AbstractActionController
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
-        $validation_group = ['user'=>
-            [ 'person'=> array_keys($params['user']['person'])]
+        $validation_group = [
+            'csrf',//????
+            'user'=> [ 'person'=> array_keys($params['user']['person'])]
         ];
         $shit = $validation_group;
         if ($form_step == 'fieldset-hat') {
@@ -97,8 +98,10 @@ class AccountController extends AbstractActionController
 
         $form->setData($params);
         if (! $form->isValid()) {
-            $messages = $form->getMessages()['user'];
-            return new JsonModel(['validation_errors'=> $messages,'debug'=>$shit]);
+            //$messages = $form->getMessages()['user'];
+            return new JsonModel([
+                'validation_errors'=> $form->getFlattenedErrorMessages(),
+                'debug'=>$shit]);
         }
         return new JsonModel(['valid'=>true, 'debug'=>$shit]);
     }
@@ -126,17 +129,8 @@ class AccountController extends AbstractActionController
 
         $form->setData($input);
         if (! $form->isValid()) {
-            $errors = $form->getMessages();
-            if (isset($errors['user'])) {
-                if (isset($errors['user']['person'])) {
-                    $errors = array_merge($errors,$errors['user']['person']);
-                    unset($errors['user']['person']);
-                }
-                $errors = array_merge($errors, $errors['user']);
-                unset($errors['user']);
-            }
             return new JsonModel(
-                ['validation_errors' => $errors]
+                ['validation_errors' => $form->getFlattenedErrorMessages()]
             );
         }
         try {

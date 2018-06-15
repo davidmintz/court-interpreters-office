@@ -186,6 +186,19 @@ class RegistrationForm extends Form
             ]
         );
         $chain->prependValidator($validator,true);
+    }
 
+    function getFlattenedErrorMessages()
+    {
+        $errors = $this->getMessages();
+        if (isset($errors['user'])) {
+            if (isset($errors['user']['person'])) {
+                $errors = array_merge($errors,$errors['user']['person']);
+                unset($errors['user']['person']);
+            }
+            $errors = array_merge($errors, $errors['user']);
+            unset($errors['user']);
+        }
+        return $errors;
     }
 }
