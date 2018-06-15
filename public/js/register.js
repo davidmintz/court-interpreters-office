@@ -73,57 +73,73 @@ $(function(){
     {
         event.preventDefault();
         var id = $("fieldset:visible").attr('id');
-        if (id === "fieldset-personal-data" || id === "fieldset-hat") {
+        console.log("the id is: "+id);
+        if (id === "fieldset-hat") { // last step
             if (hasIncompleteJudgeSelection(id)) {
-                $("#modal-select-judge .modal-body").html(
+                $("#modal-add-judge .modal-body").html(
                     "Did you mean to select Judge <strong>" +
                     $("#judge-select option:selected").text()
                     + "</strong>?"
                 );
-                $("#modal-select-judge").modal();
+                $("#modal-add-judge").modal();
                 $("#btn-yes-add-judge").one("click",function(){
                     appendJudge(event);
-                    $("#modal-select-judge").modal("hide");
+                    $("#modal-add-judge").modal("hide");
                     $('#btn-next').trigger("click");
                 });
-            } else {
-                var params = $("fieldset:visible, #csrf").serialize();
-                $.post("/user/register/validate?step="+id,params).then(
-                    function(response){
+
+            } else { // last step. submit the whole form
+
+                var params = $("#registration-form").serialize();
+                $.post("/user/register",params).then(
+                    function(response) {
                         if (response.validation_errors) {
                             displayValidationErrors(response.validation_errors);
+                            // if they managed to beat the inter-fieldset validation,
+                            // put them back on the first fieldset with errors
+                            var i = $("fieldset .validation-error").first()
+                                .closest("fieldset").index();
+                            $(".carousel").carousel(i);
                         } else {
-                            $("fieldset:visible .validation-error").hide();
-                            $(".carousel").carousel("next");
+                            alert("Yay!");
                         }
                     }
                 );
             }
-        } else {
-            var params = $("#registration-form").serialize();
-            $.post("/user/register",params).then(
-                function(response) {
-                    if (response.validation_errors) {
-                        displayValidationErrors(response.validation_errors);
-                        // if they managed to beat the inter-fieldset validation,
-                        // put them back on the first fieldset with errors
-                        var i = $("fieldset .validation-error").first()
-                            .closest("fieldset").index();
-                        $(".carousel").carousel(i);
-                    } else {
-                        alert("Yay!");
-                    }
-                }
-            );
         }
-    });
+        // inter-fieldset validation
+        if (id === "fieldset-personal-data" || id === "fieldset-password") {
+            var params = $("fieldset:visible, #csrf").serialize();
+            $.post("/user/register/validate?step="+id,params)
+            .then(
+                function(response){
+                    if (response.validation_errors) {
+                        var errors = response.validation_errors;
+                        var url = window.basePath + "/user/request-password";
+                        // special case: duplicate account
+                        if (errors.email && errors.email.callbackValue) {
+                            $("#modal-duplicate-account .modal-body").html(
+                "A user account has previously been created for this email address."
+                + " If you need to reset your password, please go to <a href=\""
+                + url + "\">"+ url +"</a>.");
+                            $("#modal-duplicate-account").modal();
+                        }
+                        displayValidationErrors(errors);
+                    } else {
+                        $("fieldset:visible .validation-error").hide();
+                        $(".carousel").carousel("next");
+                    }
+                });
+            }
+        }
+    );
 
     var hasIncompleteJudgeSelection = function(id)
     {
         return id === "fieldset-hat" && $("#judge-select").val();
     };
 
-    stuffIt();
+    //stuffIt();
 });
 function stuffIt()
 {

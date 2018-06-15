@@ -166,19 +166,22 @@ class RegistrationForm extends Form
         $chain = $inputFilter->get('user')->get('person')->get('email')->getValidatorChain();
         $objectManager = $this->objectManager;
         $form = $this;
-        $validator = new Callback(
-            [
-                'callback' => function($value, $context) use ($objectManager,$form){
-                    $repo = $objectManager->getRepository(Entity\User::class);
-                    $user = $repo->findSubmitterByEmail($value);
-                    if ($user) {
-                        // maybe: this is experimental
-                        $form->setExistingUser($user);
-                        // definitely...
-                        return false;
-                    }
-                    return true;
-                },
+        $validator = new Callback([
+            'callback' => function($value, $context) use ($objectManager,$form){
+                $repo = $objectManager->getRepository(Entity\User::class);
+                $user = $repo->findSubmitterByEmail($value);
+                if ($user) {
+                    // maybe: this is experimental, with a view to getting
+                    // more information about the status of the duplicate
+                    // account, i.e., has it ever been used? is it active?
+                    // what Hat is it associated with? maybe a shitty
+                    // design approach but this is the idea.
+                    $form->setExistingUser($user);
+                    // definitely need to...
+                    return false;
+                }
+                return true;
+            },
                 'messages' => [
                     Callback::INVALID_VALUE =>
                     'There is already a user account associated with this email address.'
@@ -187,7 +190,11 @@ class RegistrationForm extends Form
         );
         $chain->prependValidator($validator,true);
     }
-
+    /**
+     * returns flattened error messages
+     *
+     * @return Array
+     */
     function getFlattenedErrorMessages()
     {
         $errors = $this->getMessages();

@@ -79,7 +79,7 @@ class AccountController extends AbstractActionController
             return new JsonModel(['valid'=>false,
                 'error'=>'malformed input data']);
         }
-        $shit = 'whatever';
+
         // it's a 3-step form. the first two are handled as partial validation
         $form_step = $this->params()->fromQuery('step');
         $form = new RegistrationForm($this->objectManager, [
@@ -89,7 +89,9 @@ class AccountController extends AbstractActionController
             'csrf',//????
             'user'=> [ 'person'=> array_keys($params['user']['person'])]
         ];
-        $shit = $validation_group;
+        if ($form_step == 'fieldset-password') {
+            array_push($validation_group['user'],'password','password-confirm');
+        }
         if ($form_step == 'fieldset-hat') {
             $shit = $form->preValidate($params['user']);
             $validation_group['user'][] = 'judges';
@@ -101,9 +103,9 @@ class AccountController extends AbstractActionController
             //$messages = $form->getMessages()['user'];
             return new JsonModel([
                 'validation_errors'=> $form->getFlattenedErrorMessages(),
-                'debug'=>$shit]);
+                'debug'=>$form->getMessages()]);
         }
-        return new JsonModel(['valid'=>true, 'debug'=>$shit]);
+        return new JsonModel(['valid'=>true, 'debug'=>$validation_group]);
     }
 
     /**

@@ -32,24 +32,7 @@ echo $this->form()->openTag($form);
             endforeach;
             ?>
         </fieldset>
-        <fieldset style="min-height:300px" id="fieldset-hat" class="carousel-item"><legend class="offset-sm-3 py-3">step 2 of 3: your job title/department</legend>
-            <div class="form-group form-row">
-                <label class="col-form-label col-sm-3"><?php echo $hat->getLabel()?></label>
-                <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>
-                </div>
-            </div>
-            <div id="judge-div" class="form-group form-row" style="display:none">
-                <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">Please select the judge(s) for whom you work and click the <strong>+</strong> button.</div>
-                <label class="col-form-label col-sm-3"><?php echo $form->get('user')->get('judge-select')->getLabel() ?></label>
-                <div class="col-sm-9">
-                    <div class="input-group">
-                        <?php echo $this->formSelect($form->get('user')->get('judge-select'))?><button class="btn btn-info fas fa-plus" title="identify the currently selected Judge as one for whom you work" type="button" id="btn-add-judge"><span class="sr-only">select</span></button>
-                    </div>
-                    <ul id="judges" class="list-group mt-1"></ul>
-                </div>
-            </div>
-        </fieldset>
-        <fieldset id="fieldset-password" class="carousel-item"><legend class="offset-sm-3 py-3">step 3 of 3: account details</legend>
+        <fieldset id="fieldset-password" class="carousel-item"><legend class="offset-sm-3 py-3">step 2 of 3: account details</legend>
             <?php $element = $person_fieldset->get('email'); $element->setOption("placeholder","shit")?>
             <div class="form-group form-row">
                 <label class="col-form-label col-sm-3" for="email">email address</label>
@@ -69,6 +52,23 @@ echo $this->form()->openTag($form);
                 </div>
             </div>
         </fieldset>
+        <fieldset style="min-height:300px" id="fieldset-hat" class="carousel-item"><legend class="offset-sm-3 py-3">step 3 of 3: your job title/department</legend>
+            <div class="form-group form-row">
+                <label class="col-form-label col-sm-3"><?php echo $hat->getLabel()?></label>
+                <div class="col-sm-9"><?php echo $this->formSelect($hat),$this->formElementErrors($hat) ?>
+                </div>
+            </div>
+            <div id="judge-div" class="form-group form-row" style="display:none">
+                <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">Please select the judge(s) for whom you work and click the <strong>+</strong> button.</div>
+                <label class="col-form-label col-sm-3"><?php echo $form->get('user')->get('judge-select')->getLabel() ?></label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <?php echo $this->formSelect($form->get('user')->get('judge-select'))?><button class="btn btn-info fas fa-plus" title="identify the currently selected Judge as one for whom you work" type="button" id="btn-add-judge"><span class="sr-only">select</span></button>
+                    </div>
+                    <ul id="judges" class="list-group mt-1"></ul>
+                </div>
+            </div>
+        </fieldset>
         <!-- /carousel-->
     </div>
 </div>
@@ -84,13 +84,12 @@ echo $this->form()->openTag($form);
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     ?>
 </div>
-<?php //echo $this->form()->openTag($form);?>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->
-<div id="modal-select-judge" class="modal" tabindex="-1" role="dialog" aria-labelledby="add-judge-label" aria-hidden="true">
+<div id="modal-add-judge" class="modal" tabindex="-1" role="dialog" aria-labelledby="add-judge-label" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
-      <div class="modal-header sr-only" id="assign-interp-label">Add judge?</div>
+      <div class="modal-header sr-only" id="add-judge-label">Add judge?</div>
       <div class="modal-body"></div>
       <div class="modal-footer justify-content-center text-center">
         <button id="btn-yes-add-judge" type="button" class="btn btn-success mr-0" data-dismiss="modal">yes</button><!--
@@ -98,4 +97,15 @@ echo $this->form()->openTag($form);
       </div>
     </div>
   </div>
+</div>
+<div class="modal" id="modal-duplicate-account" tabindex="-1" role="dialog" aria-labelledby="duplicate-account" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header" id="duplicate-account">Account already exists</div>
+        <div class="modal-body"></div>
+        <div class="modal-footer justify-content-center text-center">
+            <button id="btn-dismiss" type="button" class="btn btn-secondary ml-1" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
 </div>

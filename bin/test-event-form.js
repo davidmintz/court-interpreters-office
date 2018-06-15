@@ -1,9 +1,10 @@
 /**
- casperjs test for admin/schedule/add
+casperjs test for admin/schedule/add
+from project root, do something like:
+    node_modules/casperjs/bin/casperjs test bin/test-event-form.js
  */
-//var baseUrl = "https://office.localhost";
-//
-var casper, $; // make eslint happy
+
+var casper, $;
 var moment = require("moment");
 var now = moment();
 var day_of_the_week = now.format("ddd");
@@ -12,12 +13,12 @@ var month = now.month();
 
 /**
  * date manipulation - we want to set the event date/time and request
- * submission date/time depending on when now is, so that we can
- * set a valid submission time, i.e., not in the future.
+ * submission date/time depending on when "now" is, so that we can
+ * set a valid request-submission time (i.e., not in the future).
  * work in progress
  */
+
 var then = moment();
-//*
 if (hour >= 16) {
     var interval = 1;
     if ("Fri" === day_of_the_week) {
