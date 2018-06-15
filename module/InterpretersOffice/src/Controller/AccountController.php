@@ -138,6 +138,18 @@ class AccountController extends AbstractActionController
             $this->objectManager->persist($user);
             $this->objectManager->persist($user->getPerson());
             $this->objectManager->flush();
+            $this->flashMessenger()->addSuccessMessage(
+                sprintf(
+                    'We have sent an email to the address you provided '
+                    .'(<strong>%s</strong>) with instructions for verifying'
+                    .' your email. Please check your inbox.',
+                    $user->getPerson()->getEmail()
+                )
+            );
+            return new JsonModel(
+                ['validation_errors' => null, 'data'=>$data,
+                'status'=>'success']
+            );
         } catch (\Exception $e) {
             return new JsonModel(
                 [   'validation_errors' => null,
@@ -148,10 +160,7 @@ class AccountController extends AbstractActionController
                 ]
             );
         }
-        // else ...
-        return new JsonModel(
-            ['validation_errors' => null, 'data'=>$data, 'status'=>'success']
-        );
+
     }
 
     /**

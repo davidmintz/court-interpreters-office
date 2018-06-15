@@ -95,10 +95,16 @@ $(function(){
                             // put them back on the first fieldset with errors
                             var i = $("fieldset .validation-error").first()
                                 .closest("fieldset").index();
-                            $(".carousel").carousel(i);
-                        } else {
-                            alert("Yay!");
+                            if (i !== -1) {
+                                $(".carousel").carousel(i);
+                            }
+                            return;
                         }
+                        if (response.status == "success") {
+                            return document.location =  window.basePath
+                                + "/user/verify-email";
+                        }
+                        // else, error
                     }
                 );
             }
@@ -136,7 +142,7 @@ $(function(){
 
     //stuffIt();
 });
-/*
+///*
 var stuffIt = function()
 {
     $("#firstname").val("Wanker");
@@ -152,7 +158,7 @@ var stuffIt = function()
     $(".carousel").carousel(2);
 
 };
-*//*
+/*
 // sort of an experiment, worked on it for a while, abandoned...
 // have a good look at:
 // https://vuejs.org/v2/guide/list.html#v-for-with-a-Component
