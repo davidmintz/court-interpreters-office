@@ -4,9 +4,6 @@ $(function(){
     /** fix the minumum height for (sliding) fieldsets */
     var h = $("#fieldset-personal-data").height();
     $("fieldset").css("min-height",h+"px");
-
-    var number_of_slides = $('.carousel-item').length;
-
     $("#carousel").on("slid.bs.carousel",function(){
         /** id of the current fieldset/slide */
         var i = $("fieldset:visible").index();
@@ -19,27 +16,27 @@ $(function(){
 
     $("#btn-back").on("click",function(event){
         event.preventDefault();
-        $('.carousel').carousel("prev");
+        $(".carousel").carousel("prev");
     });
 
     /** toggle visibility of judge control depending on the hat */
-    $('#hat').on("change",function(){
+    $("#hat").on("change",function(){
         if (! $(this).val()) {
-            $('#judge-div').hide();
+            $("#judge-div").hide();
             return;
         }
 
         var hat = $(this).children(":selected");
         if (hat.data().is_judges_staff) {
-            $('#judge-div').slideDown();
+            $("#judge-div").slideDown();
         } else {
-            $('#judge-div').slideUp();
+            $("#judge-div").slideUp();
         }
     });
     /** sort of a template for the judge widget */
     var judge_tmpl = $("<li>").addClass("list-group-item py-1").append(
-        '<button type="button" title="click to remove this judge" class="btn '
-        + 'btn-warning btn-sm float-right remove-div">X</button>'
+        "<button type=\"button\" title=\"click to remove this judge\" class=\"btn "
+        + "btn-warning btn-sm float-right remove-div\">X</button>"
     );
 
     /** append a judge */
@@ -58,7 +55,7 @@ $(function(){
                 .attr({type:"hidden",name:"user[judges][]",value:id}))
             .appendTo($("#judges"));
         $("#judge-select").val("");
-        $('#judge-div .validation-error').hide();
+        $("#judge-div .validation-error").hide();
     };
     /** assign handler */
     $("#btn-add-judge").on("click",appendJudge);
@@ -69,11 +66,10 @@ $(function(){
     });
 
     /** validate each section */
-    $('#btn-next').on("click",function(event)
+    $("#btn-next").on("click",function(event)
     {
         event.preventDefault();
-        var id = $("fieldset:visible").attr('id');
-        console.log("the id is: "+id);
+        var params, id = $("fieldset:visible").attr("id");
         if (id === "fieldset-hat") { // last step
             if (hasIncompleteJudgeSelection(id)) {
                 $("#modal-add-judge .modal-body").html(
@@ -85,12 +81,12 @@ $(function(){
                 $("#btn-yes-add-judge").one("click",function(){
                     appendJudge(event);
                     $("#modal-add-judge").modal("hide");
-                    $('#btn-next').trigger("click");
+                    $("#btn-next").trigger("click");
                 });
 
             } else { // last step. submit the whole form
 
-                var params = $("#registration-form").serialize();
+                params = $("#registration-form").serialize();
                 $.post("/user/register",params).then(
                     function(response) {
                         if (response.validation_errors) {
@@ -109,17 +105,16 @@ $(function(){
         }
         // inter-fieldset validation
         if (id === "fieldset-personal-data" || id === "fieldset-password") {
-            var params = $("fieldset:visible, #csrf").serialize();
+            params = $("fieldset:visible, #csrf").serialize();
             $.post("/user/register/validate?step="+id,params)
-            .then(
-                function(response){
+                .then(function(response) {
                     if (response.validation_errors) {
                         var errors = response.validation_errors;
                         var url = window.basePath + "/user/request-password";
                         // special case: duplicate account
                         if (errors.email && errors.email.callbackValue) {
                             $("#modal-duplicate-account .modal-body").html(
-                "A user account has previously been created for this email address."
+                                "A user account has previously been created for this email address."
                 + " If you need to reset your password, please go to <a href=\""
                 + url + "\">"+ url +"</a>.");
                             $("#modal-duplicate-account").modal();
@@ -130,8 +125,8 @@ $(function(){
                         $(".carousel").carousel("next");
                     }
                 });
-            }
         }
+    }
     );
 
     var hasIncompleteJudgeSelection = function(id)
@@ -141,11 +136,12 @@ $(function(){
 
     //stuffIt();
 });
-function stuffIt()
+/*
+var stuffIt = function()
 {
-    $('#firstname').val("Wanker");
-    $('#lastname').val("Boink");
-    $('#email').val("wanker_boink@nysd.uscourts.gov");
+    $("#firstname").val("Wanker");
+    $("#lastname").val("Boink");
+    $("#email").val("wanker_boink@nysd.uscourts.gov");
     $("#hat").val(6).trigger("change");
     $("#judge-select").val(
         $("#judge-select option:contains(Engelmayer)").attr("value")
@@ -155,8 +151,8 @@ function stuffIt()
     $("#password-confirm").val("fuck you!");
     $(".carousel").carousel(2);
 
-}
-/*
+};
+*//*
 // sort of an experiment, worked on it for a while, abandoned...
 // have a good look at:
 // https://vuejs.org/v2/guide/list.html#v-for-with-a-Component
