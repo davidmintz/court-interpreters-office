@@ -68,9 +68,7 @@ class AccountControllerTest extends AbstractControllerTest
         $judges = $dom->execute('select#judge-select > option');
         foreach($judges as $judge) {
             if (strstr($judge->nodeValue,'Dinklesnort')) {
-                $judge_id = $judge->getAttribute('value');$this->reset(true);
-        $this->getRequest()->getHeaders()
-            ->addHeaderLine('X-Requested-With','XMLHttpRequest');
+                $judge_id = $judge->getAttribute('value');
                 break;
             }
         }
@@ -86,8 +84,9 @@ class AccountControllerTest extends AbstractControllerTest
         $post['user']['judges'][] = $judge_id;
         $post['user']['id']='';
         $this->dispatch('/user/register','POST',$post);
-        // to be continued
-        //$this->dumpResponse();
+        $json = $this->getResponse()->getBody();
+        $response = json_decode($json);
+        $this->assertTrue($response->status === "success");
 
     }
 
