@@ -143,7 +143,7 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setCreated($now)
             ->setCreatedBy($user)
             ->setModifiedBy($user)
-            ->addDefendantsEvent($de)
+            ->addDefendantsEvents(new ArrayCollection([$de]))
             ->addInterpreterEvents(
                 new ArrayCollection(
                     [

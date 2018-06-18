@@ -109,7 +109,7 @@ class DefendantEventLoader implements FixtureInterface
                 ->setModifiedBy($user_mintz)
                  ->setSubmissionDate($shit['submission_date'])
                  ->setSubmissionTime($shit['submission_time'])
-                 ->addDefendantsEvent($de);
+                 ->addDefendantsEvents(new ArrayCollection([$de]));
             $objectManager->persist($de);
             $objectManager->persist(${$entity});
         }
@@ -172,7 +172,7 @@ class DefendantEventLoader implements FixtureInterface
                 ->setModifiedBy($user_mintz)
                  ->setSubmissionDate($shit['submission_date'])
                  ->setSubmissionTime($shit['submission_time'])
-                 ->addDefendantsEvent($de);
+                 ->addDefendantsEvents(new ArrayCollection([$de]));
             $objectManager->persist($de);
             $objectManager->persist(${$entity});
         }
@@ -220,7 +220,7 @@ class DefendantEventLoader implements FixtureInterface
               ->setModifiedBy($user_mintz)
                ->setSubmissionDate($shit['submission_date'])
                ->setSubmissionTime($shit['submission_time'])
-               ->addDefendantsEvent($de);
+               ->addDefendantsEvents(new ArrayCollection([$de]));
           $objectManager->persist($de);
           $objectManager->persist(${$entity});
       }

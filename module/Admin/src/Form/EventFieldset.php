@@ -222,7 +222,16 @@ class EventFieldset extends Fieldset implements
                 'target_element' => $interpreterEventsFieldset,
             ],
         ]);
-        /* defendant names, not actually displayed */
+        $defendantsEventsFieldset = new DefendantsEventsFieldset($objectManager);
+        $this->add([
+            'type' => Element\Collection::class,
+            'name' => 'defendantsEvents',
+            'options' => [
+                'label' => 'defendants',
+                'target_element' => $defendantsEventsFieldset,
+            ],
+        ]);
+        /* defendant names, not actually displayed*/
         $this->add([
             'name' => 'defendantNames',
             'type' => 'Zend\Form\Element\Select',

@@ -787,50 +787,52 @@ class Event
     }
 
     /**
-     * removes DefendantNames
+     * removes DefendantsEvents
      *
      * @param Collection $defendantNames
      */
-    public function removeDefendantNames(Collection $defendantNames)
+    public function removeDefendantsEvents(Collection $defendantsEvents)
     {
-        foreach ($defendantNames as $defendantName) {
-            $this->defendantNames->removeElement($defendantName);
+        foreach ($defendantsEvents as $de) {
+            $this->defendantsEvents->removeElement($de);
         }
     }
 
-        /**
-         * Add defendantsEvent
-         *
-         * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
-         *
-         * @return Event
-         */
-        public function addDefendantsEvent(\InterpretersOffice\Entity\DefendantEvent $defendantsEvent)
-        {
-            $this->defendantsEvents[] = $defendantsEvent;
-
-            return $this;
+    /**
+     * Add defendantsEvent
+     *
+     * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
+     *
+     * @return Event
+     */
+    public function addDefendantsEvents(Collection $defendantsEvents)
+    {
+        foreach ($defendantsEvents as $de) {
+            $this->defendantsEvents->add($de);
         }
 
-        /**
-         * Remove defendantsEvent
-         *
-         * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
-         */
-        public function removeDefendantsEvent(\InterpretersOffice\Entity\DefendantEvent $defendantsEvent)
-        {
-            $this->defendantsEvents->removeElement($defendantsEvent);
-        }
+        return $this;
+    }
 
-        /**
-         * Get defendantsEvents
-         *
-         * @return \Doctrine\Common\Collections\Collection
-         */
-        public function getDefendantsEvents()
-        {
-            return $this->defendantsEvents;
-        }
+    /**
+     * Remove defendantsEvent
+     *
+     * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
+     */
+    public function removeDefendantsEvent(\InterpretersOffice\Entity\DefendantEvent $defendantsEvent)
+    {
+        $this->defendantsEvents->removeElement($defendantsEvent);
+    }
+
+    /**
+     * Get defendantsEvents
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDefendantsEvents()
+    {
+        return $this->defendantsEvents;
+    }
 
     /**
      * adds InterpreterEvents

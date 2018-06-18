@@ -33,6 +33,14 @@ class EventControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         $judge = $em->getRepository(Entity\Judge::class)
                 ->findOneBy(['lastname' => 'Dinklesnort']);
+        //['Rodríguez', 'José Luis'],
+        $deftName = $em->getRepository(Entity\DefendantName::class)->findOneBy([
+            'surnames' => 'Rodríguez','given_names' =>'José Luis'
+        ]);
+        $deft_id = $deftName->getId();
+        $data['defendantsEvents'] = [];
+        $data['defendantsEvents'][] =
+            ['defendant' => $deft_id,'event' => 0];
         $data['judge'] = $judge->getId();
         // $this->assertTrue(is_integer($data['judge']));
         $language = $em->getRepository(Entity\Language::class)
@@ -51,7 +59,7 @@ class EventControllerTest extends AbstractControllerTest
                 ->findOneBy(['name' => '500 Pearl']);
         $data['parentLocation'] = $parent_location->getId();
         $data['submission_date'] = (new \DateTime('-1 day'))->format("m/d/Y");
-        $data['submission_time'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
+        $data['submission_time'] = '9:43 am';//(new \DateTime('-5 jquery periodic updateminutes'))->format("g:i a");
         $clerk_hat = $em->getRepository(Entity\Hat::class)
                 ->findOneBy(['name' => 'Law Clerk']);
         $data['anonymousSubmitter'] = $clerk_hat->getId();
@@ -137,6 +145,10 @@ class EventControllerTest extends AbstractControllerTest
         );
         $this->assertEquals($data['submitter_hat'], 'Law Clerk');
         $entity = $em->find(Entity\Event::class, $id);
+
+        print_r($event);
+        $deft_count = $entity->getDefendantsEvents()->count();
+        printf("\nfuckin deft count is: %d\n",$deft_count);
         return $entity;
     }
 
