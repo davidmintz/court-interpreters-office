@@ -263,7 +263,7 @@ class Event
      */
     public function __construct()
     {
-        $this->defendantNames = new ArrayCollection();
+        $this->defendantsEvents = new ArrayCollection();
         $this->interpreterEvents = new ArrayCollection();
     }
 
@@ -765,7 +765,12 @@ class Event
      */
     public function getDefendantNames()
     {
-        return $this->defendantNames;
+        $names = new ArrayCollection();
+        $deftEvents = $this->getDefendantsEvents();
+        foreach ($deftEvents as $de) {
+            $names->add($de->getDefendantName());
+        }
+        return $names;
     }
 
     /**
@@ -792,6 +797,40 @@ class Event
             $this->defendantNames->removeElement($defendantName);
         }
     }
+
+        /**
+         * Add defendantsEvent
+         *
+         * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
+         *
+         * @return Event
+         */
+        public function addDefendantsEvent(\InterpretersOffice\Entity\DefendantEvent $defendantsEvent)
+        {
+            $this->defendantsEvents[] = $defendantsEvent;
+
+            return $this;
+        }
+
+        /**
+         * Remove defendantsEvent
+         *
+         * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
+         */
+        public function removeDefendantsEvent(\InterpretersOffice\Entity\DefendantEvent $defendantsEvent)
+        {
+            $this->defendantsEvents->removeElement($defendantsEvent);
+        }
+
+        /**
+         * Get defendantsEvents
+         *
+         * @return \Doctrine\Common\Collections\Collection
+         */
+        public function getDefendantsEvents()
+        {
+            return $this->defendantsEvents;
+        }
 
     /**
      * adds InterpreterEvents
