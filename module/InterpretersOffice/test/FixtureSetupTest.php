@@ -5,6 +5,7 @@ namespace ApplicationTest;
 //use PHPUnit_Framework_TestCase;
 
 use InterpretersOffice\Entity;
+use InterpretersOffice\Entity\DefendantEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class FixtureSetupTest extends AbstractControllerTest
@@ -127,8 +128,7 @@ class FixtureSetupTest extends AbstractControllerTest
                 ->findOneBy(['surnames' => 'Fulano Mengano']);
         $event = new Entity\Event();
         $now = new \DateTime();
-        //$judge = $objectManager->getRepository('InterpretersOffice\Entity\Judge')
-        //        ->findOneBy(['lastname'=>'Failla']);
+        $de = new Entity\DefendantEvent($defendant,$event);
         $event
             ->setDate($date)
             ->setTime($time)
@@ -143,7 +143,7 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setCreated($now)
             ->setCreatedBy($user)
             ->setModifiedBy($user)
-            ->addDefendant($defendant)
+            ->addDefendantsEvent($de)
             ->addInterpreterEvents(
                 new ArrayCollection(
                     [
@@ -156,6 +156,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $this->expectException(\RuntimeException::class);
         // this should suffice to throw a RuntimeException
         // and prove our lifecycle callback works
+        $objectManager->persist($de);
         $objectManager->persist($event);
     }
 

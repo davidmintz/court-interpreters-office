@@ -91,6 +91,7 @@ class DefendantEventLoader implements FixtureInterface
         foreach ($data as $i => $shit) {
             $entity = 'event'.$i;
             ${$entity} = new Entity\Event();
+            $de = new Entity\DefendantEvent($rodriguez_jose,${$entity});
             ${$entity}
                 ->setDate($shit['date'])
                 ->setTime($shit['time'])
@@ -108,7 +109,8 @@ class DefendantEventLoader implements FixtureInterface
                 ->setModifiedBy($user_mintz)
                  ->setSubmissionDate($shit['submission_date'])
                  ->setSubmissionTime($shit['submission_time'])
-                 ->addDefendant($rodriguez_jose);
+                 ->addDefendantsEvent($de);
+            $objectManager->persist($de);
             $objectManager->persist(${$entity});
         }
         $other_data = [
@@ -152,6 +154,7 @@ class DefendantEventLoader implements FixtureInterface
         foreach ($other_data as $i => $shit) {
             $entity = 'other_event'.$i;
             ${$entity} = new Entity\Event();
+            $de = new Entity\DefendantEvent($rodriguez_jose,${$entity});
             ${$entity}
                 ->setDate($shit['date'])
                 ->setTime($shit['time'])
@@ -169,7 +172,8 @@ class DefendantEventLoader implements FixtureInterface
                 ->setModifiedBy($user_mintz)
                  ->setSubmissionDate($shit['submission_date'])
                  ->setSubmissionTime($shit['submission_time'])
-                 ->addDefendant($rodriguez_jose);
+                 ->addDefendantsEvent($de);
+            $objectManager->persist($de);
             $objectManager->persist(${$entity});
         }
       $magistrate = $objectManager->getRepository(Entity\AnonymousJudge::class)->findOneBy(['name'=>'magistrate']);
@@ -198,6 +202,7 @@ class DefendantEventLoader implements FixtureInterface
       foreach ($magistrate_stuff as $i => $shit) {
           $entity = 'mag_event'.$i;
           ${$entity} = new Entity\Event();
+          $de = new Entity\DefendantEvent($eusebio,${$entity});
           ${$entity}
               ->setDate($shit['date'])
               ->setTime($shit['time'])
@@ -215,7 +220,8 @@ class DefendantEventLoader implements FixtureInterface
               ->setModifiedBy($user_mintz)
                ->setSubmissionDate($shit['submission_date'])
                ->setSubmissionTime($shit['submission_time'])
-               ->addDefendant($eusebio);
+               ->addDefendantsEvent($de);
+          $objectManager->persist($de);
           $objectManager->persist(${$entity});
       }
       $objectManager->flush();

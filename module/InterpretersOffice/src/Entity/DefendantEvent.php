@@ -36,6 +36,17 @@ class DefendantEvent
     protected $event;
 
     /**
+     * constructor
+     * @param DefendantName $deftName
+     * @param Event $event
+     */
+    public function __construct(DefendantName $deftName = null, Event $event = null)
+    {
+        $this->defendant = $deftName;
+        $this->event = $event;
+    }
+
+    /**
      * Set event.
      *
      * @param \InterpretersOffice\Entity\Event $event
