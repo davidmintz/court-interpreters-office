@@ -169,37 +169,13 @@ class Event
      */
     protected $cancellationReason;
 
-    /* FROM our Request entity in the older project....
+    /**
+     * ArrayCollection association class DefendantEvent.
      *
-<<<<<<< HEAD
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="event",cascade={"persist", "remove"},orphanRemoval=true,fetch="EAGER")
-=======
-     * @ORM\ManyToMany(targetEntity="Application\Entity\DefendantName",fetch="EAGER")
-     * @ORM\JoinTable(name="defendants_requests",
-     *      joinColumns={@ORM\JoinColumn(name="request_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="deft_id")}
-     * )
-     *  //, unique=true ?
-     * cribbed from:
-     * http://doctrine-orm.readthedocs.org/en/latest/reference/annotations-reference.html#annref-manytomany
->>>>>>> parent of 4fe611d... revise Defendant-Events entity relationship to use association class instead of M:M
      */
-
-
-    /**
-     * defendant(s) for whom an interpreter is required.
-     *
-     * @see DefendantName
-     *
-     * @ORM\ManyToMany(targetEntity="DefendantName",fetch="EAGER",cascade="remove",inversedBy="events")
-     * @ORM\JoinTable(name="defendants_events",
-     *  joinColumns={@ORM\JoinColumn(name="event_id", referencedColumnName="id")},
-     *  inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
-     *
-     * @var Collection
-     */
-    protected $defendantNames;
+    protected $defendantsEvents;
 
     /**
      * Interpreters assigned to this event.
@@ -831,6 +807,22 @@ class Event
     public function getDefendantsEvents()
     {
         return $this->defendantsEvents;
+    }
+
+    /**
+     * gets defendantName objects
+     *
+     * convenience method
+     *
+     * @return ArrayCollection
+     */
+    public function getDefendantNames()
+    {
+        $array = [];
+        foreach ($this->defendantsEvents as $de) {
+            $array[] = $de->getDefendantName();
+        }
+        return new ArrayCollection($array);
     }
 
     /**
