@@ -177,6 +177,9 @@ class EventsController extends AbstractActionController
                 'errorMessage'  =>
                  "event with id $id was not found in the database." ]);
         }
+        $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+
+
         $form = new Form\EventForm(
             $this->entityManager,
             ['action' => 'update','object' => $entity,]
@@ -186,19 +189,54 @@ class EventsController extends AbstractActionController
         $events->trigger('post.load', $this, ['entity' => $entity]);
         $request = $this->getRequest();
         $form->bind($entity);
+        $log->debug(
+            sprintf("at line %d, number of deftevents is: %d",
+                __LINE__,
+                $form->getObject()->getDefendantsEvents()->count())
+        );
         $events->trigger('pre.populate');
         $modified = $entity->getModified();
         if ($request->isPost()) {
             $data = $request->getPost();
-
+            $hydrator = new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($this->entityManager);
+            $shit = $data['event'];
+            if ($shit['submitter']) {
+                unset($shit['anonymousSubmitter']);
+            }
+            $hydrator->hydrate($shit,$entity);
+            printf("<pre>fucking data is:\n%s</pre>",print_r($shit,true));
+            /*
+            $deftEvents = $entity->getDefendantsEvents();
+            foreach($deftEvents as $i => $shit) {
+                $d = $shit->getDefendantName();
+                echo " At $i ";
+                echo $d->getId() . " is the bitch id ... ";
+            }*/
+            printf(
+                "fucking number of defendantsEvents is now %d<br>",
+                $entity->getDefendantsEvents()->count()
+            );
+            $this->entityManager->flush();
+            return $this->getViewModel(['form' => $form, 'id' => $id]);
             $events->trigger('pre.validate', $this);
             $form->setData($data);
+            $log->debug("fucking data? ".print_r($data->toArray(),true));
+            $log->debug(
+                sprintf("at line %d, number of deftevents is: %d",
+                    __LINE__,
+                    $form->getObject()->getDefendantsEvents()->count())
+            );
             //printf("shit has %s defendantsEvents<br>",$entity->getDefendantsEvents()->count());
             //printf("shit has %s interpretersEvents<br>",$entity->getInterpreterEvents()->count());
             //$input = $data->get('event'); var_dump($input);
             if ($form->isValid()) {
                 $events->trigger('post.validate', $this);
                 try {
+                    $log->debug(
+                        sprintf("at line %d, number of deftevents is: %d",
+                            __LINE__,
+                            $form->getObject()->getDefendantsEvents()->count())
+                    );
                     $this->entityManager->flush();
                     $url = $this->getEvent()->getApplication()
                         ->getServiceManager()
