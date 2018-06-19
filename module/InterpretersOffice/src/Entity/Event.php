@@ -173,7 +173,7 @@ class Event
      * ArrayCollection association class DefendantEvent.
      *
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="event")
+     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="event",cascade={"persist", "remove"},orphanRemoval=true,fetch="EAGER")
      */
     protected $defendantsEvents;
 
@@ -708,6 +708,57 @@ class Event
     }
 
 
+
+    /**
+     * Add defendant.
+     *
+     * @param DefendantName $defendant
+     *
+     * @return Event
+     */
+    public function addDefendant(DefendantName $defendant)
+    {
+        $this->defendantNames->add($defendant);
+
+        return $this;
+    }
+
+    /**
+     * Remove defendant.
+     *
+     * @param DefendantName $defendant
+     */
+    public function removeDefendant(DefendantName $defendant)
+    {
+        $this->defendants->removeElement($defendant);
+    }
+
+    /**
+     * Proxies to getDefendantNames();
+     *
+     * @return Collection
+     */
+    public function getDefendants()
+    {
+        return $this->getDefendantNames();
+    }
+
+    /**
+     * Get defendants.
+     *
+     * @return Collection
+     */
+    public function getDefendantNames()
+    {
+        $names = new ArrayCollection();
+        $deftEvents = $this->getDefendantsEvents();
+        foreach ($deftEvents as $de) {
+            $names->add($de->getDefendantName());
+        }
+        return $names;
+    }
+
+
     /**
      * removes DefendantsEvents
      *
@@ -716,6 +767,7 @@ class Event
     public function removeDefendantsEvents(Collection $defendantsEvents)
     {
         foreach ($defendantsEvents as $de) {
+            $de->setEvent(null);
             $this->defendantsEvents->removeElement($de);
         }
     }
@@ -730,6 +782,7 @@ class Event
     public function addDefendantsEvents(Collection $defendantsEvents)
     {
         foreach ($defendantsEvents as $de) {
+            $de->setEvent($this);
             $this->defendantsEvents->add($de);
         }
 
@@ -743,7 +796,7 @@ class Event
      */
     public function removeDefendantsEvent(\InterpretersOffice\Entity\DefendantEvent $defendantsEvent)
     {
-        $this->defendantsEvents->removeElement($defendantsEvent);
+        //$this->defendantsEvents->removeElement($defendantsEvent);
     }
 
     /**

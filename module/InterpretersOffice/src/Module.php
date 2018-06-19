@@ -7,7 +7,7 @@ namespace InterpretersOffice;
 
 use InterpretersOffice\Form\View\Helper;
 
-use InterpretersOffice\Form\View\Helper as ViewHelper;
+use InterpretersOffice\Admin\Form\View\Helper as ViewHelper;
 
 use Zend\ServiceManager\Factory\InvokableFactory;
 
@@ -37,12 +37,13 @@ class Module
         return [
 
             'aliases' => [
-                'defendantName' => Helper\DefendantName::class,
+                'defendantName' => ViewHelper\DefendantNameElementCollection::class,
             ],
             'factories' => [
                 ViewHelper\DefendantName::class => function ($container) {
                     $manager = $container->get('ViewHelperManager');
-                    return new Helper\DefendantName($manager->get("escapeHtml"));
+                    //$manager->get("escapeHtml")
+                    return new ViewHelper\DefendantNameElementCollection();
                 }
             ],
         ];

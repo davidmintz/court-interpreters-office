@@ -4,114 +4,71 @@
 namespace InterpretersOffice\Admin\Form\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
-use Zend\View\Helper\EscapeHtml;
+use Zend\Form\Element\Collection as ElementCollection;
 
-/**
- * helper for rendering defendant-name
- */
 class DefendantNameElementCollection extends AbstractHelper
 {
-
-     /**
+    /**
      * markup template
      *
      * @var string
      */
-    protected $__template = <<<TEMPLATE
-        <li class="list-group-item defendant py-1">
-            <input name="event[defendantNames][%d]" type="hidden" value="%s">
-            <span data-id="%d" class="align-middle">%s</span>
+    protected $template = <<<TEMPLATE
+        <li class="list-group-item py-1 defendant">
+            <input name="event[defendantsEvents][%d][defendant]" type="hidden" value="%d">
+            <input name="event[defendantsEvents][%d][event]" type="hidden" value="%d">
+            <input name="event[defendantsEvents][%d][name]" type="hidden" value="%s">
+            <span class="align-middle">%s</span>
             <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this defendant">
-                <span class="fas fa-times" aria-hidden="true"></span>
-                <span class="sr-only">remove this defendant</span>
+            <span class="fas fa-times" aria-hidden="true"></span>
+            <span class="sr-only">remove this defendant
             </button>
         </li>
 TEMPLATE;
 
-/**
- * markup template
- *
- * @var string
- */
-protected $template = <<<TEMPLATE
-    <li class="list-group-item py-1 interpreter-assigned">
-        <input name="event[defendantsEvents][%d][defendant]" type="hidden" value="%d">
-        <input name="event[defendantsEvents][%d][event]" type="hidden" value="%d">
-        <input name="event[defendantsEvents][%d][defendantName]" type="hidden" value="%s">
-        <span class="align-middle">%s</span>
-        <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this defendant">
-        <span class="fas fa-times" aria-hidden="true"></span>
-        <span class="sr-only">remove this interpreter
-        </button>
-    </li>
-TEMPLATE;
-
     /**
-     * EscapeHtml escaper
+     * invoke
      *
-     * @var EscapeHtml
-     */
-    protected $escaper;
-
-    /**
-     * renders markup
-     *
-     * @param integer $id
-     * @param string $name
+     * @param ElementCollection $collection
      * @return string
      */
-    public function __invoke($id, $name)
+    public function __invoke(ElementCollection $collection)
     {
-        $escaper = $this->escaper->getEscaper();
-        $label = $escaper->escapeHtml($name);
-
-        return sprintf($this->template, $id, $label, $id, $label);
+        return $this->render($collection);
     }
 
-    /**
-     * constructor
-     *
-     * @param EscapeHtml $escaper
-     */
-    public function __construct(EscapeHtml $escaper)
-    {
-        $this->escaper = $escaper;
-    }
-
-    /**
-     * renders markup
-     *
-     * @param Collection $collection
-     * @return string
-     */
     public function render(ElementCollection $collection)
     {
-        /** THIS IS TOO COMPLICATED. re-think and start over. */
-
         if (! $collection->count()) {
             return '';
-        } // really?
-        // to do: deal with possible undefined $form
-        $form = $this->getView()->form;
-        $entity = $form->getObject();
-        $defendantsEvents = $entity->getDefendantsEvents();
+        }
         $markup = '';
-        foreach ($defendantsEvents as $i => $de) {
-            $defendant = $de->getDefendantName();
-            $event = $de->getEvent();
-            $name = $defendant->__toString();
-            // 7 placeholders, excessive!
-            $markup .= sprintf(
-                $this->template,
-                $i,
-                $defendant->getId(),
-                $i,
-                $event->getId(),
-                $i,
-                $name,
-                $name // [sic]
+        $deftEvents = $this->getView()->form->getObject()->getDefendantsEvents();
+        foreach ($deftEvents as $i => $de) {
+            $name = $this->getView()->escapeHtml($de->getDefendantName());
+            $markup .= sprintf($this->template,
+                $i, $de->getDefendantName()->getId(),
+                $i, $de->getEvent()->getId(),
+                $i, $name,$name
             );
         }
         return $markup;
     }
+
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    public function fromArray(Array $data)
+    {
+        $i = $data['index'];
+        $name = $this->getView()->escapeHtml($data['name']);
+        return sprintf($this->template,
+            $i, $data['defendant'],
+            $i, $data['event'],
+            $i, $name,$name
+        );
+    }
+
 }
