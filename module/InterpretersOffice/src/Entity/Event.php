@@ -171,6 +171,10 @@ class Event
 
     /* FROM our Request entity in the older project....
      *
+<<<<<<< HEAD
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="event",cascade={"persist", "remove"},orphanRemoval=true,fetch="EAGER")
+=======
      * @ORM\ManyToMany(targetEntity="Application\Entity\DefendantName",fetch="EAGER")
      * @ORM\JoinTable(name="defendants_requests",
      *      joinColumns={@ORM\JoinColumn(name="request_id", referencedColumnName="id")},
@@ -179,6 +183,7 @@ class Event
      *  //, unique=true ?
      * cribbed from:
      * http://doctrine-orm.readthedocs.org/en/latest/reference/annotations-reference.html#annref-manytomany
+>>>>>>> parent of 4fe611d... revise Defendant-Events entity relationship to use association class instead of M:M
      */
 
 
