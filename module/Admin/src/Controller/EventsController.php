@@ -9,9 +9,9 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
 
 use Zend\EventManager\Event;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 use InterpretersOffice\Admin\Form;
 
@@ -190,8 +190,12 @@ class EventsController extends AbstractActionController
         $modified = $entity->getModified();
         if ($request->isPost()) {
             $data = $request->getPost();
+
             $events->trigger('pre.validate', $this);
             $form->setData($data);
+            //printf("shit has %s defendantsEvents<br>",$entity->getDefendantsEvents()->count());
+            //printf("shit has %s interpretersEvents<br>",$entity->getInterpreterEvents()->count());
+            //$input = $data->get('event'); var_dump($input);
             if ($form->isValid()) {
                 $events->trigger('post.validate', $this);
                 try {

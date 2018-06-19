@@ -106,6 +106,7 @@ $config = ['end_time' => true];
         </button>
     </div>
 </div>
+<pre><?php $shit = $form->get('event')->get('defendantsEvents'); printf("shit is a: %s",get_class($shit))?></pre>
 <h2 class="text-center mb-3"><?php echo (string)$this->navigation('admin-breadcrumbs')->breadcrumbs() ;?></h2>
 <?php
 echo $this->form()->openTag($form); ?>
@@ -192,7 +193,10 @@ echo $this->form()->openTag($form); ?>
                         <?php echo $this->formSelect($fieldset->get('defendantNames')); ?>
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
-                <?php
+                <?php //echo $this->formCollection($fieldset->get('defendantsEvents'));
+                $helper = (new DefendantNameElementCollection())->setView($this);
+                echo $helper($fieldset->get('defendantsEvents'));
+                /*
                 if ($this->defendantNames) :
                     foreach ($this->defendantNames as $id => $name) :
                         echo  $this->defendantName($id, $name);
@@ -203,7 +207,7 @@ echo $this->form()->openTag($form); ?>
                         $name = $nameObject->getSurNames() . ', ' . $nameObject->getGivenNames();
                         echo $this->defendantName($nameObject->getId(), $name);  //'<span></span>'
                     endforeach;
-                endif; ?>
+                endif; */?>
                 </ul>
             </div>
         </div>

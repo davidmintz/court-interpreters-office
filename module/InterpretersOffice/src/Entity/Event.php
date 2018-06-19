@@ -173,7 +173,7 @@ class Event
      * ArrayCollection association class DefendantEvent.
      *
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="event")
+     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="event",cascade={"persist", "remove"},orphanRemoval=true,fetch="EAGER")
      */
     protected $defendantsEvents;
 
@@ -773,18 +773,6 @@ class Event
         return $names;
     }
 
-    /**
-     * adds DefendantNames
-     *
-     * @param Collection $defendantNames
-     */
-    public function addDefendantNames(Collection $defendantNames)
-    {
-        //printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
-        foreach ($defendantNames as $defendantName) {
-            $this->defendantNames->add($defendantName);
-        }
-    }
 
     /**
      * removes DefendantsEvents
@@ -794,6 +782,7 @@ class Event
     public function removeDefendantsEvents(Collection $defendantsEvents)
     {
         foreach ($defendantsEvents as $de) {
+            $de->setEvent(null);
             $this->defendantsEvents->removeElement($de);
         }
     }
@@ -808,6 +797,7 @@ class Event
     public function addDefendantsEvents(Collection $defendantsEvents)
     {
         foreach ($defendantsEvents as $de) {
+            $de->setEvent($this);
             $this->defendantsEvents->add($de);
         }
 
@@ -821,7 +811,7 @@ class Event
      */
     public function removeDefendantsEvent(\InterpretersOffice\Entity\DefendantEvent $defendantsEvent)
     {
-        $this->defendantsEvents->removeElement($defendantsEvent);
+        //$this->defendantsEvents->removeElement($defendantsEvent);
     }
 
     /**

@@ -453,15 +453,22 @@ var eventForm = (function () {
         //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
         minLength: 2,
         select: function( event, ui ) {
-            var that = $(this);
+            //var that = $(this);
+            appendDefendantName({
+                name : ui.item.label,
+                id : ui.item.value
+            });
+            $(this).val("");
+            /*
             $.get(
                 "/defendants/template",
                 {id:ui.item.value,name:ui.item.label},
                 function(html){
                     $("#defendant-names").append(html);
-                    that.val("");
+
                 }
             );
+            */
         },
         focus: function(event,ui) {
             event.preventDefault();
@@ -479,16 +486,30 @@ var eventForm = (function () {
      * @param {object} data
      */
     var appendDefendantName = function(data){
+        var index = $('.defendant-names li').last().index();
+        if (index === -1) {
+            index = 0;
+        } else {
+            index++;
+        }
+        console.warn("fuck your ass");
         $.get("/defendants/template",
-            {   id: data.id,
-                name: data.surnames + ", "+ data.given_names
+            {
+                index : index,
+                event :  $("#event_id").val(),
+                defendant : data.id,
+                name: data.name || data.surnames + ", "+ data.given_names
             },
             function(html){
                 $("#defendant-names").append(html);
                 defendantSearchElement.val("");
-                slideout.toggle("slide",
-                    function(){$("#deftname-form-wrapper").remove();});
+                if (slideout.is(":visible")) {
+                    slideout.toggle("slide",
+                        function(){$("#deftname-form-wrapper").remove();});
+                }
+
             });
+
     };
 
     /**
