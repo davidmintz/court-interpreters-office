@@ -177,21 +177,6 @@ class Event
      */
     protected $defendantsEvents;
 
-
-    /*
-     * defendant(s) for whom an interpreter is required.
-     *
-     * @see DefendantName
-     *
-     * @ORM\ManyToMany(targetEntity="DefendantName",fetch="EAGER",cascade="remove",inversedBy="events")
-     * @ORM\JoinTable(name="defendants_events",
-     *  joinColumns={@ORM\JoinColumn(name="event_id", referencedColumnName="id")},
-     *  inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
-     *
-     * @var Collection
-     *protected $defendantNames;
-     */
-
     /**
      * Interpreters assigned to this event.
      *
@@ -723,73 +708,10 @@ class Event
     }
 
 
-
-    /**
-     * Add defendant.
-     *
-     * @param DefendantName $defendant
-     *
-     * @return Event
-     */
-    public function addDefendant(DefendantName $defendant)
-    {
-        $this->defendantNames->add($defendant);
-
-        return $this;
-    }
-
-    /**
-     * Remove defendant.
-     *
-     * @param DefendantName $defendant
-     */
-    public function removeDefendant(DefendantName $defendant)
-    {
-        $this->defendants->removeElement($defendant);
-    }
-
-    /**
-     * Proxies to getDefendantNames();
-     *
-     * @return Collection
-     */
-    public function getDefendants()
-    {
-        return $this->getDefendantNames();
-    }
-
-    /**
-     * Get defendants.
-     *
-     * @return Collection
-     */
-    public function getDefendantNames()
-    {
-        $names = new ArrayCollection();
-        $deftEvents = $this->getDefendantsEvents();
-        foreach ($deftEvents as $de) {
-            $names->add($de->getDefendantName());
-        }
-        return $names;
-    }
-
-    /**
-     * adds DefendantNames
-     *
-     * @param Collection $defendantNames
-     */
-    public function addDefendantNames(Collection $defendantNames)
-    {
-        //printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
-        foreach ($defendantNames as $defendantName) {
-            $this->defendantNames->add($defendantName);
-        }
-    }
-
     /**
      * removes DefendantsEvents
      *
-     * @param Collection $defendantNames
+     * @param Collection $defendantsEvents
      */
     public function removeDefendantsEvents(Collection $defendantsEvents)
     {
@@ -799,9 +721,9 @@ class Event
     }
 
     /**
-     * Add defendantsEvent
+     * Add defendantsEvents
      *
-     * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
+     * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvents
      *
      * @return Event
      */
@@ -832,6 +754,22 @@ class Event
     public function getDefendantsEvents()
     {
         return $this->defendantsEvents;
+    }
+
+    /**
+     * gets defendantName objects
+     *
+     * convenience method
+     *
+     * @return ArrayCollection
+     */
+    public function getDefendantNames()
+    {
+        $array = [];
+        foreach ($this->defendantsEvents as $de) {
+            $array[] = $de->getDefendantName();
+        }
+        return new ArrayCollection($array);
     }
 
     /**

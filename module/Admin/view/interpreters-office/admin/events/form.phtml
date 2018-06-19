@@ -193,17 +193,18 @@ echo $this->form()->openTag($form); ?>
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php
-                if ($this->defendantNames) :
-                    foreach ($this->defendantNames as $id => $name) :
-                        echo  $this->defendantName($id, $name);
-                    endforeach;
-                else:
-                    $names = $form->getObject()->getDefendantNames()->toArray();
-                    foreach ($names as $nameObject) :
-                        $name = $nameObject->getSurNames() . ', ' . $nameObject->getGivenNames();
-                        echo $this->defendantName($nameObject->getId(), $name);  //'<span></span>'
-                    endforeach;
-                endif; ?>
+                    /** THIS IS AwKWARD. re-think and start over? */
+                    if ($this->defendantNames) {
+                        $helper = (new DefendantNameElementCollection())->setView($this);
+                        echo $helper->fromPost($this->defendantNames);
+                    } else {
+                         $defendants = $form->getObject()->getDefendantNames();
+                        if ($defendants->count()) {
+                            $helper = (new DefendantNameElementCollection())->setView($this);
+                            echo $helper($fieldset->get('defendantsEvents'));
+                        }
+                    }
+                    ?>
                 </ul>
             </div>
         </div>

@@ -1,7 +1,7 @@
 <?php
-/** module/InterpretersOffice/src/View/Helper/DefendantName.php */
+/** module/Admin/src/Form/View/Helper/DefendantNameElementCollection.php */
 
-namespace InterpretersOffice\Form\View\Helper;
+namespace InterpretersOffice\Admin\Form\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Helper\EscapeHtml;
@@ -9,7 +9,7 @@ use Zend\View\Helper\EscapeHtml;
 /**
  * helper for rendering defendant-name
  */
-class DefendantNameCollection extends AbstractHelper
+class DefendantNameElementCollection extends AbstractHelper
 {
 
      /**
@@ -100,7 +100,7 @@ TEMPLATE;
             $defendant = $de->getDefendantName();
             $event = $de->getEvent();
             $name = $defendant->__toString();
-            // 7 placeholders, yes it is excessive!
+            // 7 placeholders, excessive!
             $markup .= sprintf(
                 $this->template,
                 $i,
