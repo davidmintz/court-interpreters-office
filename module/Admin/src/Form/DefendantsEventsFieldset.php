@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Admin\Form;
 
 use Zend\Form\Fieldset;
-//use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -14,7 +14,7 @@ use InterpretersOffice\Entity;
  * fieldset for defendant names attached to an Event
  */
 class DefendantsEventsFieldset extends Fieldset
-    //implements InputFilterProviderInterface
+    implements InputFilterProviderInterface
 {
     use ObjectManagerAwareTrait;
 
@@ -45,5 +45,17 @@ class DefendantsEventsFieldset extends Fieldset
                 'name' => 'event'
             ]
         );
+    }
+
+    /**
+     * implements InputFilterProviderInterface
+     *
+     * @todo complete it
+     * @return array
+     */
+    public function getInputFilterSpecification()
+    {
+ //echo "Hello???? from ".__METHOD__. "....<br>";
+        return [];
     }
 }

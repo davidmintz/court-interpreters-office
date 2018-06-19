@@ -25,7 +25,7 @@ class DefendantName
     /**
      * entity id.
      *
-     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
+     * @ORM\Id @ORM\GeneratedValue(strategy="AUTO")  @ORM\Column(type="integer",options={"unsigned":true})
      */
     protected $id;
 
