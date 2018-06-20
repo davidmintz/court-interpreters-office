@@ -90,7 +90,7 @@ class EventsController extends AbstractActionController
         if (! $this->viewModel) {
             $this->viewModel = new ViewModel();
             $this->viewModel
-                ->setTemplate('interpreters-office/admin/events/form');
+                ->setTemplate('interpreters-office/admin/events/form-2');
             if ($data) {
                 $this->viewModel->setVariables($data);
             }
