@@ -157,7 +157,7 @@ class DefendantNameRepository extends EntityRepository implements CacheDeletionI
             COALESCE(j.lastname, aj.name) judge, j.id judge_id,
             aj.id anon_judge_id
             FROM InterpretersOffice\Entity\Event e
-            JOIN e.defendantsEvents de JOIN de.defendant d LEFT JOIN e.judge j
+            JOIN e.defendantNames d LEFT JOIN e.judge j
             LEFT JOIN e.anonymousJudge aj
             WHERE d.id = :id GROUP BY e.docket,aj.id,j.id
             ORDER BY e.docket, judge';

@@ -43,7 +43,6 @@ class EventLoader implements FixtureInterface
         $collection = new ArrayCollection([
             (new Entity\InterpreterEvent($interpreter, $event))->setCreatedBy($user),
         ]);
-        $de = new Entity\DefendantEvent($defendant,$event);
         $event
             ->setDate($date)
             ->setTime($time)
@@ -61,11 +60,12 @@ class EventLoader implements FixtureInterface
             ->setModifiedBy($user)
              ->setSubmissionDate(new \DateTime('-1 hour'))
              ->setSubmissionTime(new \DateTime('-1 hour'))
-             ->addDefendantsEvents(new ArrayCollection([$de]))
-             ->addInterpreterEvents($collection);
+             ->addDefendant($defendant)
+             ->addInterpreterEvents(
+                 $collection
+             );
 
         $objectManager->persist($event);
-        $objectManager->persist($de);
         $objectManager->flush();
 
         //$objectManager->remove($event);

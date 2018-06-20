@@ -173,20 +173,11 @@ class EventForm extends ZendForm implements
         }
         $logger->debug(($updated ? "YES" : "NO"). " interpreters have been changed");
         $post = $controller->params()->fromPost()['event'];
-        /*
         $defendantNames = isset($post['defendantNames'])
             ? $post['defendantNames'] : [];
         if (! $defendantNames && count($entity->getDefendantNames())) {
             $logger->debug("we went from non-zero to zero deftnames!");
             $entity->getDefendantNames()->clear();
-            $updated = true;
-        }
-        */
-        $deftEvents =  isset($post['defendantsEvents'])
-            ? $post['defendantsEvents'] : [];
-        if (! $deftEvents && count($entity->getDefendantsEvents())) {
-            $logger->debug("we went from non-zero to zero deftnames!");
-            //$entity->getDefendantsEvents()->clear();
             $updated = true;
         }
         if ($updated) {
@@ -308,9 +299,9 @@ class EventForm extends ZendForm implements
         }
         // get defendantNames human-readable labels back into the view
         // @todo is this really necessary?
-        //if (isset($event['defendantNames'])) {
-        //    $event['defendantNames'] = array_keys($event['defendantNames']);
-        //}
+        if (isset($event['defendantNames'])) {
+            $event['defendantNames'] = array_keys($event['defendantNames']);
+        }
         $input->set('event', $event);
     }
 
