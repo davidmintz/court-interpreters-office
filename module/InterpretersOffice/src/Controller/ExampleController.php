@@ -165,26 +165,14 @@ class ExampleController extends AbstractActionController
         use Zend\Mime\Part as MimePart;
         */
 
-        $text = new MimePart("this is your plain text part");
+        $text = new MimePart("\nthis is your plain text part of the message\n");
         $text->type = "text/plain";
 
-        $html = new MimePart('<!DOCTYPE html>
-        <html lang="en" dir="ltr">
-            <head>
-                <meta charset="utf-8">
-                <title>HTML Part</title>
-            </head>
-            <body>
-                <h1>Hello!</h1>
-                <p>
-                This <em>should</em> look like HTML.
-                </p>
-            </body>
-        </html>');
+        $shit = file_get_contents('module/InterpretersOffice/view/interpreters-office/email/layout.tidy.phtml');
+        $html = new MimePart($shit);
         $html->type = "text/html";
-
         $body = new MimeMessage();
-        $body->setParts([$html]); //[$html,$text] results in both displaying on Fastmail
+        $body->setParts([$html,$text]); //[$html,$text] results in both displaying on Fastmail
 
         $message = new Message();
         $message->setBody($body)->setEncoding('UTF-8')
@@ -193,8 +181,9 @@ class ExampleController extends AbstractActionController
         $opts = new $config['transport_options']['class']( $config['transport_options']['options']);
         $transport = new $config['transport']($opts);
         $transport->send($message);
-        echo "transport is a ".get_class($transport);
-        return (new ViewModel)->setTemplate('interpreters-office/example/shit.phtml');
+        $debug = "FYI transport is a ".get_class($transport);
+        return (new ViewModel(['debug'=>$debug]))
+            ->setTemplate('interpreters-office/example/shit.phtml');
     }
     /**
      * temporary action for experimenting and doodling.
