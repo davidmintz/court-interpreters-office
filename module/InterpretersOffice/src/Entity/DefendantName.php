@@ -25,7 +25,7 @@ class DefendantName
     /**
      * entity id.
      *
-     * @ORM\Id @ORM\GeneratedValue(strategy="AUTO")  @ORM\Column(type="integer",options={"unsigned":true})
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
      */
     protected $id;
 
@@ -48,22 +48,14 @@ class DefendantName
     protected $surnames;
 
     /**
-     * ArrayCollection association class DefendantEvent.
-     *
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="defendant")
-     */
-    protected $defendantsEvents;
-
-    /*
      * related Event entities
      *
      * no accessors etc seem to be necessary as of yet.
      *
      * @ORM\ManyToMany(targetEntity="Event",mappedBy="defendantNames")
      * @var Collection
-     * protected $events;
      */
+    protected $events;
 
     /**
      * is this name is spelled exactly like $name?

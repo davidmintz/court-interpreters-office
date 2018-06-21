@@ -4,7 +4,6 @@
 namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller\EventsController;
 
@@ -28,7 +27,6 @@ class EventsControllerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $auth = $container->get('auth');
-        //var_dump($auth instanceof \Zend\Authentication\AuthenticationServiceInterface);exit;
         $em = $container->get('entity-manager');
         $controller = new EventsController(
             $em,

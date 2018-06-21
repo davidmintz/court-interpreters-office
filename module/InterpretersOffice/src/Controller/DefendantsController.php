@@ -11,8 +11,7 @@ use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity;
-use InterpretersOffice\Admin\Form\View\Helper\DefendantNameElementCollection
-    as DeftNameHelper;
+use InterpretersOffice\Form\View\Helper\DefendantName as DeftNameHelper;
 
 /**
  *
@@ -83,7 +82,7 @@ class DefendantsController extends AbstractActionController
     {
         $helper = $this->helper;
         $data = $this->params()->fromQuery();
-        $html = $helper->fromArray($data);
+        $html = $helper($data['id'], $data['name']);
         return $this->getResponse()->setContent($html);
     }
 

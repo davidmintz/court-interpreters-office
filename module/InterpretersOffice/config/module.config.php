@@ -12,8 +12,6 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 
 use InterpretersOffice\View\Helper as ViewHelper;
 
-use InterpretersOffice\Admin\Form\View\Helper\DefendantNameElementCollection;
-
 $environment = getenv('APP_ENV') ?: 'development';
 
 // set to 'array' to disable
@@ -317,7 +315,6 @@ return [
     'view_helpers' => [
         'invokables' => [
             'formElementErrors' => 'InterpretersOffice\Form\View\Helper\FormElementErrors',
-            //DefendantNameElementCollection::class => DefendantNameElementCollection::class,
         ],
 
         'aliases' => [
@@ -326,7 +323,6 @@ return [
         ],
         'factories' => [
             ViewHelper\DefendantNames::class => InvokableFactory::class,
-            //DefendantNameElementCollection::class => InvokableFactory::class,
             ViewHelper\InterpreterNames::class => InvokableFactory::class,
         ],
     ],
