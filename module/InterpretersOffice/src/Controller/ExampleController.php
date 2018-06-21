@@ -14,6 +14,11 @@ use InterpretersOffice\Entity;
 use InterpretersOffice\Form\CreateBlogPostForm;
 
 use SDNY\Vault\Service\Vault;
+use Zend\Mail;
+
+use Zend\Mail\Message;
+use Zend\Mime\Message as MimeMessage;
+use Zend\Mime\Part as MimePart;
 
 /**
  *  ExampleController.
@@ -134,15 +139,62 @@ class ExampleController extends AbstractActionController
      */
     public function indexAction()
     {
-        $em = $this->objectManager;
        // 3 queries
-        $entity = $em->find('InterpretersOffice\Entity\Judge', 11);
+        //$entity = $em->find('InterpretersOffice\Entity\Judge', 11);
        // 0 queries
-        $defaultLocation = $entity->getDefaultLocation();
+        //$defaultLocation = $entity->getDefaultLocation();
        // 1 queries
-        $parent_location = $defaultLocation->getParentLocation();
+        //$parent_location = $defaultLocation->getParentLocation();
        //if ($parent_location) {}
-        return false;
+        $config = $this->getEvent()->getApplication()->getServiceManager()->get('config')['mail'];
+        //printf("<pre>%s</pre>",print_r($config,true));
+    if (false) {
+
+        $msg = new Mail\Message();
+        $msg->setTo('david@davidmintz.org', 'david')->setFrom("interpreters@nysd.uscourts.gov")
+        ->setBody("here shit is")->setSubject('Hi there!');
+        $opts = new $config['transport_options']['class']( $config['transport_options']['options']);
+        $transport = new $config['transport']($opts);
+        $transport->send($msg);
+    }
+
+
+        /*
+        use Zend\Mail\Message;
+        use Zend\Mime\Message as MimeMessage;
+        use Zend\Mime\Part as MimePart;
+        */
+
+        $text = new MimePart("this is your plain text part");
+        $text->type = "text/plain";
+
+        $html = new MimePart('<!DOCTYPE html>
+        <html lang="en" dir="ltr">
+            <head>
+                <meta charset="utf-8">
+                <title>HTML Part</title>
+            </head>
+            <body>
+                <h1>Hello!</h1>
+                <p>
+                This <em>should</em> look like HTML.
+                </p>
+            </body>
+        </html>');
+        $html->type = "text/html";
+
+        $body = new MimeMessage();
+        $body->setParts([$html]); //[$html,$text] results in both displaying on Fastmail
+
+        $message = new Message();
+        $message->setBody($body)->setEncoding('UTF-8')
+            ->setSubject("Here is your multipart message")
+            ->setTo('david@davidmintz.org', 'david')->setFrom("interpreters@nysd.uscourts.gov");
+        $opts = new $config['transport_options']['class']( $config['transport_options']['options']);
+        $transport = new $config['transport']($opts);
+        $transport->send($message);
+        echo "transport is a ".get_class($transport);
+        return (new ViewModel)->setTemplate('interpreters-office/example/shit.phtml');
     }
     /**
      * temporary action for experimenting and doodling.
