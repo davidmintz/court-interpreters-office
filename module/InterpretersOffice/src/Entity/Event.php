@@ -772,79 +772,29 @@ class Event
         return $this->defendantNames;
     }
 
+    /**
+     * adds DefendantNames
+     *
+     * @param Collection $defendantNames
+     */
+    public function addDefendantNames(Collection $defendantNames)
+    {
+        //printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
+        foreach ($defendantNames as $defendantName) {
+            $this->defendantNames->add($defendantName);
+        }
+    }
 
     /**
      * removes DefendantNames
      *
-     * @param Collection $defendantsEvents
+     * @param Collection $defendantNames
      */
-<<<<<<< HEAD
-    public function removeDefendantsEvents(Collection $defendantsEvents)
-    {
-        foreach ($defendantsEvents as $de) {
-            $de->setEvent(null);
-            $this->defendantsEvents->removeElement($de);
-        }
-    }
-
-    /**
-     * Add defendantsEvents
-     *
-     * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvents
-     *
-     * @return Event
-     */
-    public function addDefendantsEvents(Collection $defendantsEvents)
-    {
-        foreach ($defendantsEvents as $de) {
-            $de->setEvent($this);
-            $this->defendantsEvents->add($de);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove defendantsEvent
-     *
-     * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
-     */
-    public function removeDefendantsEvent(\InterpretersOffice\Entity\DefendantEvent $defendantsEvent)
-    {
-        //$this->defendantsEvents->removeElement($defendantsEvent);
-    }
-
-    /**
-     * Get defendantsEvents
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getDefendantsEvents()
-    {
-        return $this->defendantsEvents;
-=======
     public function removeDefendantNames(Collection $defendantNames)
     {
         foreach ($defendantNames as $defendantName) {
             $this->defendantNames->removeElement($defendantName);
         }
->>>>>>> 3fdc78239ff222c973d67a5276eddd0c47f43bca
-    }
-
-    /**
-     * gets defendantName objects
-     *
-     * convenience method
-     *
-     * @return ArrayCollection
-     */
-    public function getDefendantNames()
-    {
-        $array = [];
-        foreach ($this->defendantsEvents as $de) {
-            $array[] = $de->getDefendantName();
-        }
-        return new ArrayCollection($array);
     }
 
     /**

@@ -14,9 +14,20 @@
  *
  * You may also create files matching the glob pattern `{,*.}{global,local}-development.php`.
  */
+use Zend\Mail;
 
 return [
     'view_manager' => [
         'display_exceptions' => true,
+    ],
+    /** configuration for Zend\Mail */
+    'mail' => [
+        'transport' => Mail\Transport\File::class,
+        'transport_options' => [
+            'class' => Mail\Transport\FileOptions::class,
+            'options' => [
+                'path'     => 'data/mail/',
+            ],
+        ],
     ],
 ];

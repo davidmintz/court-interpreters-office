@@ -6,7 +6,7 @@ namespace InterpretersOffice\Controller\Factory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Controller\DefendantsController;
-use InterpretersOffice\Admin\Form\View\Helper\DefendantNameElementCollection;
+
 /**
  * Factory for DefendantsController
  */
@@ -24,8 +24,7 @@ class DefendantsControllerFactory implements FactoryInterface
     {
         return new DefendantsController(
             $container->get(\Doctrine\ORM\EntityManager::class),
-            $container->get("ViewHelperManager")
-                ->get(DefendantNameElementCollection::class)
+            $container->get("ViewHelperManager")->get("defendantName")
         );
     }
 }

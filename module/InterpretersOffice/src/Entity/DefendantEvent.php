@@ -7,6 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Entity representing an defendant-event.
  *
+ * We are not using this as an association class related to Event, but rather
+ * for managing DefendantName entities.
+ *
  * @ORM\Entity
  * @ORM\Table(name="defendants_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_defendant_event",columns={"defendant_id","event_id"})})
  */
@@ -31,17 +34,6 @@ class DefendantEvent
      * @var Event
      */
     protected $event;
-
-    /**
-     * constructor
-     * @param DefendantName $deftName
-     * @param Event $event
-     */
-    public function __construct(DefendantName $deftName = null, Event $event = null)
-    {
-        $this->defendant = $deftName;
-        $this->event = $event;
-    }
 
     /**
      * Set event.
@@ -73,7 +65,7 @@ class DefendantEvent
      * @param DefendantName $defendant
      * @return DefendantEvent
      */
-    public function setDefendantName(DefendantName $defendant = null)
+    public function setDefendantName(DefendantName $defendant)
     {
         $this->defendant  = $defendant;
 
