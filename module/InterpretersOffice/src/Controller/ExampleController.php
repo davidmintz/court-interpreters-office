@@ -19,6 +19,7 @@ use Zend\Mail;
 use Zend\Mail\Message;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
+use Zend\Mime\Mime;
 
 /**
  *  ExampleController.
@@ -131,7 +132,41 @@ class ExampleController extends AbstractActionController
 
         return false;
     }
+    public function mailTestOne($config)
+    {
 
+        $text = new MimePart("\nthis is your plain text part of the message\n");
+        $text->type = \Zend\Mime\Mime::TYPE_TEXT;
+        $text->charset = 'utf-8';
+        $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+
+        $htmlContent =  file_get_contents('module/InterpretersOffice/view/interpreters-office/email/layout.tidy.phtml');
+        $html = new MimePart($htmlContent);
+        $html->type = Mime::TYPE_HTML;
+        $html->charset = 'utf-8';
+        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+
+        $body = new MimeMessage();
+        $body->setParts([$html,$text]);
+
+        $message = new Message();
+        $message->setBody($body);
+
+        $contentTypeHeader = $message->getHeaders()->get('Content-Type');
+        $contentTypeHeader->setType('multipart/alternative');
+
+        $message->setSubject("Here is your multipart/alternative message")
+            ->setTo('david@davidmintz.org', 'david')
+            ->setFrom("interpreters@nysd.uscourts.gov");
+
+        $opts = new $config['transport_options']['class']( $config['transport_options']['options']);
+        $transport = new $config['transport']($opts);
+        $transport->send($message);
+        $debug = "message was sent. FYI transport is a ".get_class($transport);
+
+        return (new ViewModel(['debug'=>$debug]))
+            ->setTemplate('interpreters-office/example/shit.phtml');
+    }
     /**
      * index action.
      *
@@ -147,42 +182,11 @@ class ExampleController extends AbstractActionController
         //$parent_location = $defaultLocation->getParentLocation();
        //if ($parent_location) {}
         $config = $this->getEvent()->getApplication()->getServiceManager()->get('config')['mail'];
+
+        return $this->mailTestOne($config);
         //printf("<pre>%s</pre>",print_r($config,true));
-    if (false) {
 
-        $msg = new Mail\Message();
-        $msg->setTo('david@davidmintz.org', 'david')->setFrom("interpreters@nysd.uscourts.gov")
-        ->setBody("here shit is")->setSubject('Hi there!');
-        $opts = new $config['transport_options']['class']( $config['transport_options']['options']);
-        $transport = new $config['transport']($opts);
-        $transport->send($msg);
-    }
-
-
-        /*
-        use Zend\Mail\Message;
-        use Zend\Mime\Message as MimeMessage;
-        use Zend\Mime\Part as MimePart;
-        */
-
-        $text = new MimePart("\nthis is your plain text part of the message\n");
-        $text->type = "text/plain";
-
-        $shit = file_get_contents('module/InterpretersOffice/view/interpreters-office/email/layout.tidy.phtml');
-        $html = new MimePart($shit);
-        $html->type = "text/html";
-        $body = new MimeMessage();
-        $body->setParts([$html,$text]); //[$html,$text] results in both displaying on Fastmail
-
-        $message = new Message();
-        $message->setBody($body)->setEncoding('UTF-8')
-            ->setSubject("Here is your multipart message")
-            ->setTo('david@davidmintz.org', 'david')->setFrom("interpreters@nysd.uscourts.gov");
-        $opts = new $config['transport_options']['class']( $config['transport_options']['options']);
-        $transport = new $config['transport']($opts);
-        $transport->send($message);
-        $debug = "FYI transport is a ".get_class($transport);
-        return (new ViewModel(['debug'=>$debug]))
+        return (new ViewModel(['debug'=>"this is a test"]))
             ->setTemplate('interpreters-office/example/shit.phtml');
     }
     /**
