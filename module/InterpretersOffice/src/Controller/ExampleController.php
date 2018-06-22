@@ -134,7 +134,7 @@ class ExampleController extends AbstractActionController
     }
     public function mailTestOne($config)
     {
-
+        //https://zendframework.github.io/zend-mail/message/attachments/
         $text = new MimePart("\nthis is your plain text part of the message\n");
         $text->type = \Zend\Mime\Mime::TYPE_TEXT;
         $text->charset = 'utf-8';
