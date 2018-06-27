@@ -1,31 +1,30 @@
 <?php
 
-/** module/InterpretersOffice/src/Entity/DefendantName.php */
+/** module/InterpretersOffice/src/Entity/Defendant.php */
 
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use InterpretersOffice\Entity\DefendantName;
 
 /**
  * Entity modeling a defendant for whom an interpreter is required.
  *
- * In reality, the DefendantName entity models just that: a name, as opposed
+ * In reality, the Defendant entity models a name as opposed
  * to a person. This is because we expect names to recur in the context of more than
  * one docket number, and we recycle them. We usually don't know or care about the
  * actual identity of the defendant, so don't attempt to associate directly a name
  * with a docket number.
  *
  * @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={@ORM\UniqueConstraint(name="unique_deftname",columns={"given_names", "surnames"})})
- * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\DefendantNameRepository")
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\DefendantRepository")
  */
-class DefendantName
+class Defendant
 {
     /**
      * entity id.
      *
-     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer")
+     * @ORM\Id @ORM\GeneratedValue(strategy="AUTO")  @ORM\Column(type="integer",options={"unsigned":true})
      */
     protected $id;
 
@@ -48,22 +47,21 @@ class DefendantName
     protected $surnames;
 
     /**
-     * related Event entities
+     * ArrayCollection association class DefendantEvent.
      *
-     * no accessors etc seem to be necessary as of yet.
-     *
-     * @ORM\ManyToMany(targetEntity="Event",mappedBy="defendantNames")
-     * @var Collection
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="defendant")
      */
-    protected $events;
+    protected $defendantEvents;
+
 
     /**
      * is this name is spelled exactly like $name?
      *
-     * @param  DefendantName $name
+     * @param  Defendant $name
      * @return boolean true if $name is the same in all respects except id
      */
-    public function equals(DefendantName $name)
+    public function equals(Defendant $name)
     {
         return $this->given_names == $name->getGivenNames()
         && $this->surnames == $name->getSurnames()
@@ -101,7 +99,7 @@ class DefendantName
      * @param string $surnames
      * @param string $given_names
      *
-     * @return DefendantName
+     * @return Defendant
      */
     public function setFullname($surnames, $given_names)
     {
@@ -126,7 +124,7 @@ class DefendantName
      *
      * @param string $firstname
      *
-     * @return DefendantName
+     * @return Defendant
      */
     public function setFirstname($firstname)
     {
@@ -151,7 +149,7 @@ class DefendantName
      *
      * @param string $lastname
      *
-     * @return DefendantName
+     * @return defendant
      */
     public function setLastname($lastname)
     {
@@ -184,7 +182,7 @@ class DefendantName
      *
      * @param string $surnames
      *
-     * @return DefendantName
+     * @return defendant
      */
     public function setSurnames($surnames)
     {
@@ -207,7 +205,7 @@ class DefendantName
      *
      * @param string $given_names
      *
-     * @return DefendantName
+     * @return defendant
      */
     public function setGivenNames($given_names)
     {

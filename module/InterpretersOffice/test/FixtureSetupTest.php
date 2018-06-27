@@ -5,6 +5,7 @@ namespace ApplicationTest;
 //use PHPUnit_Framework_TestCase;
 
 use InterpretersOffice\Entity;
+use InterpretersOffice\Entity\DefendantEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class FixtureSetupTest extends AbstractControllerTest
@@ -16,7 +17,7 @@ class FixtureSetupTest extends AbstractControllerTest
     {
         return $this->getApplicationServiceLocator()->get('entity-manager');
     }
-    public function testBasicEnvironmentSanity()
+    public function testSomething()
     {
         $container = $this->getApplicationServiceLocator();
         $this->assertTrue($container instanceof \Interop\Container\ContainerInterface);
@@ -28,7 +29,6 @@ class FixtureSetupTest extends AbstractControllerTest
         $this->dispatch('/');
         $this->assertResponseStatusCode(200);
     }
-
     public function loadTestEventData()
     {
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
@@ -39,7 +39,7 @@ class FixtureSetupTest extends AbstractControllerTest
             new DataFixture\HatLoader(),
             new DataFixture\EventTypeLoader(),
             new DataFixture\LocationLoader(),
-            new DataFixture\DefendantNameLoader(),
+            new DataFixture\DefendantLoader(),
             new DataFixture\JudgeLoader(),
             new DataFixture\InterpreterLoader(),
             new DataFixture\CancellationReasonLoader(),
@@ -47,28 +47,26 @@ class FixtureSetupTest extends AbstractControllerTest
             new DataFixture\EventLoader(),
          ]);
     }
-
     public function testDataFixtureSanity()
     {
         $this->assertTrue(class_exists('ApplicationTest\FixtureManager'));
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $this->assertTrue(is_object($fixtureExecutor));
         $entityManager = FixtureManager::getEntityManager();
-        $this->loadTestEventData();
-        /*
+
         $fixtureExecutor->execute([
             new DataFixture\LanguageLoader(),
             new DataFixture\HatLoader(),
             new DataFixture\EventTypeLoader(),
             new DataFixture\LocationLoader(),
-            new DataFixture\DefendantNameLoader(),
+            new DataFixture\DefendantLoader(),
             new DataFixture\JudgeLoader(),
             new DataFixture\InterpreterLoader(),
             new DataFixture\CancellationReasonLoader(),
             new DataFixture\UserLoader(),
             new DataFixture\EventLoader(),
          ]);
-         */
+
         $this->assertTrue(is_object($entityManager));
         //echo get_class($entityManager);
         $languages = $entityManager->getRepository(Entity\Language::class)->findAll();
@@ -93,7 +91,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $defendants = $event->getDefendants();
         $this->assertTrue($defendants->count() >= 1);
         $defendant = $defendants->current();
-        $this->assertInstanceOf(Entity\DefendantName::class, $defendant);
+        $this->assertInstanceOf(Entity\Defendant::class, $defendant);
     }
     /**
      * test that a RuntimeException will be thrown if we try to persist an Event
@@ -123,7 +121,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $interpreter = $objectManager->getRepository(Entity\Interpreter::class)
                 ->findOneBy(['lastname' => 'Mintz']);
 
-        $defendant = $objectManager->getRepository('InterpretersOffice\Entity\DefendantName')
+        $defendant = $objectManager->getRepository('InterpretersOffice\Entity\Defendant')
                 ->findOneBy(['surnames' => 'Fulano Mengano']);
         $event = new Entity\Event();
         $now = new \DateTime();
@@ -143,7 +141,7 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setCreated($now)
             ->setCreatedBy($user)
             ->setModifiedBy($user)
-            ->addDefendant($defendant)
+            ->addDefendantEvent(new Entity\DefendantEvent($defendant, $event))
             ->addInterpreterEvents(
                 new ArrayCollection(
                     [

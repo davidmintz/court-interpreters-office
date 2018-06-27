@@ -33,7 +33,7 @@ class DefendantEventLoader implements FixtureInterface
         $judge_repo = $objectManager->getRepository(Entity\Judge::class);
         $judge1 =  $judge_repo->findOneBy(['lastname'=>'Noobieheimer']);
         $judge2 =  $judge_repo->findOneBy(['lastname'=>'Dinklesnort']);
-        $deft_repo =  $objectManager->getRepository(Entity\DefendantName::class);
+        $deft_repo =  $objectManager->getRepository(Entity\Defendant::class);
         /*
         ['Rodríguez', 'José Luis'],
         ['Rodriguez', 'Jose'],
@@ -108,7 +108,7 @@ class DefendantEventLoader implements FixtureInterface
                 ->setModifiedBy($user_mintz)
                  ->setSubmissionDate($shit['submission_date'])
                  ->setSubmissionTime($shit['submission_time'])
-                 ->addDefendant($rodriguez_jose);
+                 ->addDefendantEvent(new Entity\DefendantEvent($rodriguez_jose,${$entity}));
             $objectManager->persist(${$entity});
         }
         $other_data = [
@@ -169,7 +169,7 @@ class DefendantEventLoader implements FixtureInterface
                 ->setModifiedBy($user_mintz)
                  ->setSubmissionDate($shit['submission_date'])
                  ->setSubmissionTime($shit['submission_time'])
-                 ->addDefendant($rodriguez_jose);
+                 ->addDefendantEvent(new Entity\DefendantEvent($rodriguez_jose,${$entity}));
             $objectManager->persist(${$entity});
         }
       $magistrate = $objectManager->getRepository(Entity\AnonymousJudge::class)->findOneBy(['name'=>'magistrate']);
@@ -215,7 +215,7 @@ class DefendantEventLoader implements FixtureInterface
               ->setModifiedBy($user_mintz)
                ->setSubmissionDate($shit['submission_date'])
                ->setSubmissionTime($shit['submission_time'])
-               ->addDefendant($eusebio);
+               ->addDefendantEvent(new Entity\DefendantEvent($eusebio,${$entity}));
           $objectManager->persist(${$entity});
       }
       $objectManager->flush();

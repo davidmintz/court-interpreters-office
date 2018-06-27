@@ -1,12 +1,12 @@
 <?php
-/** module/Admin/src/Form/View/Helper/DefendantNameElementCollection.php */
+/** module/Admin/src/Form/View/Helper/DefendantElementCollection.php */
 
 namespace InterpretersOffice\Admin\Form\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 use Zend\Form\Element\Collection as ElementCollection;
 
-class DefendantNameElementCollection extends AbstractHelper
+class DefendantElementCollection extends AbstractHelper
 {
     /**
      * markup template
@@ -15,9 +15,9 @@ class DefendantNameElementCollection extends AbstractHelper
      */
     protected $template = <<<TEMPLATE
         <li class="list-group-item py-1 defendant">
-            <input name="event[defendantsEvents][%d][defendant]" type="hidden" value="%d">
-            <input name="event[defendantsEvents][%d][event]" type="hidden" value="%d">
-            <input name="event[defendantsEvents][%d][name]" type="hidden" value="%s">
+            <input class="defendant_id" name="event[defendantEvents][%d][defendant]" type="hidden" value="%d">
+            <input class="event_id" name="event[defendantEvents][%d][event]" type="hidden" value="%d">
+            <input class="defendant_name" name="event[defendantEvents][%d][name]" type="hidden" value="%s">
             <span class="align-middle">%s</span>
             <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this defendant">
             <span class="fas fa-times" aria-hidden="true"></span>
@@ -43,11 +43,11 @@ TEMPLATE;
             return '';
         }
         $markup = '';
-        $deftEvents = $this->getView()->form->getObject()->getDefendantsEvents();
+        $deftEvents = $this->getView()->form->getObject()->getDefendantEvents();
         foreach ($deftEvents as $i => $de) {
-            $name = $this->getView()->escapeHtml($de->getDefendantName());
+            $name = $this->getView()->escapeHtml($de->getDefendant());
             $markup .= sprintf($this->template,
-                $i, $de->getDefendantName()->getId(),
+                $i, $de->getDefendant()->getId(),
                 $i, $de->getEvent()->getId(),
                 $i, $name,$name
             );

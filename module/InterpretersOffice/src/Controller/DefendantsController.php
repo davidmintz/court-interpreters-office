@@ -11,7 +11,8 @@ use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity;
-use InterpretersOffice\Form\View\Helper\DefendantName as DeftNameHelper;
+use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection
+    as DeftNameHelper;
 
 /**
  *
@@ -64,7 +65,7 @@ class DefendantsController extends AbstractActionController
      */
     public function autocompleteAction()
     {
-        $repo = $this->entityManager->getRepository(Entity\DefendantName::class);
+        $repo = $this->entityManager->getRepository(Entity\Defendant::class);
         $term = $this->params()->fromQuery('term');
         $data = $repo->autocomplete($term);
 
@@ -82,7 +83,7 @@ class DefendantsController extends AbstractActionController
     {
         $helper = $this->helper;
         $data = $this->params()->fromQuery();
-        $html = $helper($data['id'], $data['name']);
+        $html = $helper->fromArray($data);
         return $this->getResponse()->setContent($html);
     }
 
@@ -94,7 +95,7 @@ class DefendantsController extends AbstractActionController
     public function searchAction()
     {
         $search = $this->params()->fromQuery('term');
-        $repo = $this->entityManager->getRepository(Entity\DefendantName::class);
+        $repo = $this->entityManager->getRepository(Entity\Defendant::class);
         $paginator = $repo->paginate($search, $this->params()->fromQuery('page'));
         $viewModel = new ViewModel(['paginator' => $paginator,'search' => $search]);
         $request = $this->getRequest();

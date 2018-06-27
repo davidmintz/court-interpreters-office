@@ -9,7 +9,7 @@ use InterpretersOffice\Entity;
 /**
  * loads test fixture data for defendant names.
  */
-class DefendantNameLoader implements FixtureInterface
+class DefendantLoader implements FixtureInterface
 {
     public function load(ObjectManager $objectManager)
     {
@@ -29,7 +29,7 @@ class DefendantNameLoader implements FixtureInterface
 
         ];
         foreach ($names as $name) {
-            $entity = (new Entity\DefendantName())->setFullname(
+            $entity = (new Entity\Defendant())->setFullname(
                 $name[0],
                 $name[1]
             );

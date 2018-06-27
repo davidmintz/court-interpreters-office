@@ -147,6 +147,9 @@ class EventControllerTest extends AbstractControllerTest
     public function testUpdateInCourtEvent(Entity\Event $entity)
     {
         $em = FixtureManager::getEntityManager();
+        // sanity check: refresh entity and check no defendants as yet
+        //$entity = $em->find(Entity\Event::class,$entity->getId());
+        $this->assertEquals(0,$entity->getDefendantEvents()->count());
         $event = $this->getDummyData();
         $this->login('david', 'boink');
         $this->reset(true);
@@ -241,6 +244,12 @@ class EventControllerTest extends AbstractControllerTest
                 . 'WHERE e.id = :id')->setParameters(['id' => $count_after])
                 ->getSingleScalarResult();
 
+
+        //['Fulano Mengano', 'Joaquín'],
+        $deft_id = $em->getRepository(Entity\Defendant::class)->findOneBy(
+            ['surnames' =>'Fulano Mengano','given_names'=>'Joaquín' ]
+        )->getId();
+        $event['defendantEvents'][0] = ['defendant'=> $deft_id,'event'=> $entity->getId()];
         $this->reset(true);
         $this->login('david', 'boink');
         $this->reset(true);
@@ -250,6 +259,7 @@ class EventControllerTest extends AbstractControllerTest
             'POST',
             ['event' => $event, 'csrf' => $token, 'modified' => $modified]
         );
+        //$this->dumpResponse();
         $this->assertRedirect();
         $this->assertRedirectTo('/admin/schedule/view/'. $entity->getId());
 
@@ -266,6 +276,10 @@ class EventControllerTest extends AbstractControllerTest
             printf("\nwarning: can't test because we don't know what format to "
                     . "expect for event 'time' property in %s\n", __METHOD__);
         }
+        // did the defendant get added?
+        $entity = $em->find(Entity\Event::class,$id);
+        $deftEvents = $entity->getDefendantEvents();
+        $this->assertEquals(1,$deftEvents->count());
     }
 
     public function testAssigningInterpretersResultsInMetaDataUpdate()

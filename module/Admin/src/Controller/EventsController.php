@@ -9,9 +9,9 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
 
 use Zend\EventManager\Event;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 use InterpretersOffice\Admin\Form;
 
@@ -131,19 +131,18 @@ class EventsController extends AbstractActionController
             $input = $data->get('event');
             $this->getEventManager()->trigger(
                 'pre.validate',
-                $this,
-                ['input' => $data,]
+                $this,['input' => $data,]
             );
             $form->setData($data);
             if (! $form->isValid()) {
                 if ($input) {
-                    $defendantNames = isset($input['defendantNames']) ?
-                        $input['defendantNames'] : [];
+                    $defendantEvents = isset($input['defendantEvents']) ?
+                        $input['defendantEvents'] : [];
                     $interpreters = isset($input['interpreterEvents']) ?
                         $input['interpreterEvents'] : [];
                 }//print_r($form->getMessages());
                 return $viewModel
-                    ->setVariables(compact('defendantNames', 'interpreters'));
+                    ->setVariables(compact('defendantEvents', 'interpreters'));
             } else {
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
@@ -163,11 +162,143 @@ class EventsController extends AbstractActionController
     }
 
 
+    public function editAction()
+    {
+        $log = $this->getEvent()->getApplication()->getServiceManager()
+            ->get('log');
+        $id = $this->params()->fromRoute('id');
+        /** @var \InterpretersOffice\Entity\Event $entity  */
+        $entity = $this->entityManager->find(Entity\Event::class, $id);
+        $form = new Form\EventForm(
+            $this->entityManager,
+            ['action' => 'update','object' => $entity,]
+        );
+        $view = $this->getViewModel(['id'=>$id,'form'=>$form]);
+        $events = $this->getEventManager();
+        $form->attach($events);
+        $events->trigger('post.load', $this, ['entity' => $entity]);
+        $form->bind($entity);
+        $modified = $entity->getModified();
+        $events->trigger('pre.populate');
+        /*
+        $log->info(sprintf("number of defendantEvent entities on the entity: %s",
+            $entity->getdefendantEvents()->count()));
+        $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
+                $form->getObject()->getdefendantEvents()->count()
+        */
+        $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
+                $form->getObject()->getdefendantEvents()->count()));
+                $deftEvents = $entity->getDefendantEvents();
+                foreach ($deftEvents as $de) {
+                    $d = $de->getDefendant();
+                    if ($d) {
+                        $log->debug(
+                            "deftEvent has deft entity, with id: ".$d->getId(). " at ".__LINE__
+                        );
+                    } else {
+                        $log->debug("wtf? deft entity is " .gettype($d). " at ".__LINE__ );
+                    }
+                }
+
+        if (! $this->getRequest()->isPost()) {
+            return $view;
+        }
+        $post = $this->getRequest()->getPost();
+        $events->trigger('pre.validate', $this);
+        $form->setData($post);
+        if ($form->isValid()) {
+            // $log->info("we have been POSTed, validation OK");
+            // $log->info(sprintf("number of defendantEvent entities on the entity: %s",
+            //     $entity->getDefendantEvents()->count()));
+            // $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
+            //        $form->getObject()->getDefendantEvents()->count()));
+                    $deftEvents = $entity->getDefendantEvents();
+                    foreach ($deftEvents as $de) {
+                        $d = $de->getDefendant();
+                        if ($d) {
+                            $log->debug(
+                                "deftEvent has deft entity, with id: ".$d->getId(). " at ".__LINE__
+                            );
+                        } else {
+                            $log->debug("wtf? deft entity is " .gettype($d). " at ".__LINE__ );
+                        }
+                    }
+            try {
+                $this->entityManager->flush();
+                $url = $this->getEvent()->getApplication()
+                ->getServiceManager()->get('ViewHelperManager')
+                ->get('url')('events');
+                $date = $entity->getDate();
+                if ($modified != $entity->getModified() or
+                $this->params()->fromPost('deftnames_modified')) {
+                    $verbiage = 'updated';
+                } else {
+                    $verbiage = 'saved (unmodified)';
+                }
+                $this->flashMessenger()->addSuccessMessage(
+                    sprintf(
+                        "This event has been successfully $verbiage on the "
+                        .'schedule for <a href="%s">%s</a>',
+                        $url . $date->format('/Y/m/d'),
+                        $date->format('l d-M-Y')
+                        )
+                    );
+                    return $this->redirect()->toRoute(
+                        'events/view',
+                        ['id' => $entity->getId()]
+                    );
+
+            } catch (\Exception $e) {
+                $shit = print_r($post->get('event')['defendantEvents'],true);
+                $deftEvents = $entity->getDefendantEvents();
+                foreach ($deftEvents as $de) {
+                    $d = $de->getDefendant();
+                    if ($d) {
+                        $log->debug(
+                            "deftEvent has deft entity, with id: ".$d->getId()
+                        );
+                    } else {
+                        $log->debug("wtf?  deft entity is " . gettype($d)  . " at ".__LINE__);
+                    }
+                }
+                $log->info(sprintf("number of defendantEvent entities on the entity: %s",
+                    $entity->getDefendantEvents()->count()));
+                $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
+                        $form->getObject()->getdefendantEvents()->count()));
+
+                $log->debug(
+                    sprintf(
+                        "Exception %s: %s\nposted deftevents: $shit",
+                            get_class($e),
+                            $e->getMessage()
+                        )
+                );
+                //printf("<pre>%s</pre>",print_r($form->getData()->getDefendantEvents()->count(),true));
+                throw $e;
+            }
+        } else {
+            foreach (['defendants'=>'defendantEvents',
+                'interpreters'=>'interpreterEvents'] as $var => $data) {
+                $view->$var = isset($post->get('event')[$data])
+                    ? $post->get('event')[$data] : [];
+            }
+            $log->info("validation FAILED");
+            $log->info(print_r($form->getMessages(),true));
+            // $log->info("however...");
+            // $log->info(sprintf("number of defendantEvent entities on the entity: %s",
+            //     $entity->getdefendantEvents()->count()));
+            // $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
+            //         $form->getObject()->getdefendantEvents()->count()));
+
+
+        }
+        return $view;
+    }
     /**
      * edits a court interpreting event
      *
      */
-    public function editAction()
+    public function __editAction()
     {
         $id = $this->params()->fromRoute('id');
         /** @var \InterpretersOffice\Entity\Event $entity  */
@@ -177,6 +308,9 @@ class EventsController extends AbstractActionController
                 'errorMessage'  =>
                  "event with id $id was not found in the database." ]);
         }
+        $log = $this->getEvent()->getApplication()->getServiceManager()
+            ->get('log');
+
         $form = new Form\EventForm(
             $this->entityManager,
             ['action' => 'update','object' => $entity,]
@@ -186,15 +320,30 @@ class EventsController extends AbstractActionController
         $events->trigger('post.load', $this, ['entity' => $entity]);
         $request = $this->getRequest();
         $form->bind($entity);
+
         $events->trigger('pre.populate');
         $modified = $entity->getModified();
         if ($request->isPost()) {
             $data = $request->getPost();
+
             $events->trigger('pre.validate', $this);
             $form->setData($data);
+            $log->debug("fucking data? ".print_r($data->toArray(),true));
+            $log->debug(
+                sprintf("at line %d, number of deftevents is: %d", __LINE__,
+                    $form->getObject()->getDefendantEvents()->count())
+            );
+            //printf("shit has %s defendantEvent<br>",$entity->getDefendantsEvents()->count());
+            //printf("shit has %s interpretersEvents<br>",$entity->getInterpreterEvents()->count());
+            //$input = $data->get('event'); var_dump($input);
             if ($form->isValid()) {
                 $events->trigger('post.validate', $this);
                 try {
+                    $log->debug(sprintf(
+                        "at line %d, number of deftevents is: %d", __LINE__,
+                        $form->getObject()->getDefendantEvents()->count())
+                    );
+                    //$log->debug(sprintf("fucks going on at %d?<br>",__LINE__));
                     $this->entityManager->flush();
                     $url = $this->getEvent()->getApplication()
                         ->getServiceManager()
@@ -214,6 +363,7 @@ class EventsController extends AbstractActionController
                             $date->format('l d-M-Y')
                         )
                     );
+                    $log->debug(sprintf("fucks going on at %d?<br>",__LINE__));
                     return $this->redirect()->toRoute(
                         'events/view',
                         ['id' => $entity->getId()]
@@ -234,14 +384,14 @@ class EventsController extends AbstractActionController
                 return $this->redirect()->toRoute('events/edit', ['id' => $id]);
             }
             /** @todo DRY this up somehow */
-            $input = $data->get('event'); //var_dump($input['defendantNames']);
+            $input = $data->get('event'); //var_dump($input['defendantEvents']);
             if ($input) {
                 $interpreters = isset($input['interpreterEvents']) ?
                         $input['interpreterEvents'] : [];
                 $form->get('event')->get('anonymousSubmitter')
                     ->setValue($input['anonymousSubmitter']);
                 $this->getViewModel()->setVariables(
-                    compact('defendantNames', 'interpreters', 'form', 'id')
+                    compact('defendantEvents', 'interpreters', 'form', 'id')
                 );
             }
         } // not POST

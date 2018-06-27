@@ -145,7 +145,7 @@ final class FixtureManager
             new DataFixture\HatLoader(),
             new DataFixture\EventTypeLoader(),
             new DataFixture\LocationLoader(),
-            new DataFixture\DefendantNameLoader(),
+            new DataFixture\DefendantLoader(),
             new DataFixture\JudgeLoader(),
             new DataFixture\InterpreterLoader(),
             new DataFixture\CancellationReasonLoader(),

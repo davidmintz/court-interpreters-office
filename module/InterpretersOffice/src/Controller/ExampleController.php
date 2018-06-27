@@ -14,12 +14,6 @@ use InterpretersOffice\Entity;
 use InterpretersOffice\Form\CreateBlogPostForm;
 
 use SDNY\Vault\Service\Vault;
-use Zend\Mail;
-
-use Zend\Mail\Message;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Part as MimePart;
-use Zend\Mime\Mime;
 
 /**
  *  ExampleController.
@@ -132,41 +126,7 @@ class ExampleController extends AbstractActionController
 
         return false;
     }
-    public function mailTestOne($config)
-    {
-        //https://zendframework.github.io/zend-mail/message/attachments/
-        $text = new MimePart("\nthis is your plain text part of the message\n");
-        $text->type = \Zend\Mime\Mime::TYPE_TEXT;
-        $text->charset = 'utf-8';
-        $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
-        $htmlContent =  file_get_contents('module/InterpretersOffice/view/interpreters-office/email/layout.tidy.phtml');
-        $html = new MimePart($htmlContent);
-        $html->type = Mime::TYPE_HTML;
-        $html->charset = 'utf-8';
-        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-
-        $body = new MimeMessage();
-        $body->setParts([$html,$text]);
-
-        $message = new Message();
-        $message->setBody($body);
-
-        $contentTypeHeader = $message->getHeaders()->get('Content-Type');
-        $contentTypeHeader->setType('multipart/alternative');
-
-        $message->setSubject("Here is your multipart/alternative message")
-            ->setTo('david@davidmintz.org', 'david')
-            ->setFrom("interpreters@nysd.uscourts.gov");
-
-        $opts = new $config['transport_options']['class']( $config['transport_options']['options']);
-        $transport = new $config['transport']($opts);
-        $transport->send($message);
-        $debug = "message was sent. FYI transport is a ".get_class($transport);
-
-        return (new ViewModel(['debug'=>$debug]))
-            ->setTemplate('interpreters-office/example/shit.phtml');
-    }
     /**
      * index action.
      *
@@ -174,20 +134,15 @@ class ExampleController extends AbstractActionController
      */
     public function indexAction()
     {
+        $em = $this->objectManager;
        // 3 queries
-        //$entity = $em->find('InterpretersOffice\Entity\Judge', 11);
+        $entity = $em->find('InterpretersOffice\Entity\Judge', 11);
        // 0 queries
-        //$defaultLocation = $entity->getDefaultLocation();
+        $defaultLocation = $entity->getDefaultLocation();
        // 1 queries
-        //$parent_location = $defaultLocation->getParentLocation();
+        $parent_location = $defaultLocation->getParentLocation();
        //if ($parent_location) {}
-        $config = $this->getEvent()->getApplication()->getServiceManager()->get('config')['mail'];
-
-        return $this->mailTestOne($config);
-        //printf("<pre>%s</pre>",print_r($config,true));
-
-        return (new ViewModel(['debug'=>"this is a test"]))
-            ->setTemplate('interpreters-office/example/shit.phtml');
+        return false;
     }
     /**
      * temporary action for experimenting and doodling.

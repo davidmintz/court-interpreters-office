@@ -213,6 +213,8 @@ class EventFieldset extends Fieldset implements
             ->addEventTypeElement()
             ->addLocationElements($options['object']);
 
+        // the InterpreterEventsFieldset
+
         $interpreterEventsFieldset = new InterpreterEventsFieldset($objectManager);
         $this->add([
             'type' => Element\Collection::class,
@@ -222,23 +224,18 @@ class EventFieldset extends Fieldset implements
                 'target_element' => $interpreterEventsFieldset,
             ],
         ]);
-        /* defendant names, not actually displayed */
+
+        // the DefendantEvents fieldset
+
+        $defendantEventsFieldset = new DefendantEventsFieldset($objectManager);
         $this->add([
-            'name' => 'defendantNames',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => Element\Collection::class,
+            'name' => 'defendantEvents',
             'options' => [
-                //'empty_option' => '',
-                'value_options' => [],
-                'disable_inarray_validator' => true,
                 'label' => 'defendants',
-            ],
-            'attributes' => [
-                'style' => 'display:none',
-                'id' => 'deft-select',
-                'multiple' => 'multiple',
+                'target_element' => $defendantEventsFieldset,
             ],
         ]);
-
         // figure out value options for interpreter select
         $empty_option = ['value' => '','label' => ' ','attributes' => ['label' => ' ']];
         if ($options['object']) {
@@ -612,7 +609,7 @@ class EventFieldset extends Fieldset implements
             'interpreterEvents' => [
                 'required' => false, 'allow_empty' => true,
             ],
-            'defendantNames'  => [
+            'defendantEvents'  => [
                 'required' => false, 'allow_empty' => true,
             ],
             'id' => [
