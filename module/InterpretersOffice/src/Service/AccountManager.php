@@ -14,10 +14,5 @@ class AccountManager
 
     public function __construct()
     {
-
-
-
     }
-
-
 }

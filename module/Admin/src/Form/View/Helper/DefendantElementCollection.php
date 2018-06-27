@@ -55,10 +55,15 @@ TEMPLATE;
         $deftEvents = $this->getView()->form->getObject()->getDefendantEvents();
         foreach ($deftEvents as $i => $de) {
             $name = $this->getView()->escapeHtml($de->getDefendant());
-            $markup .= sprintf($this->template,
-                $i, $de->getDefendant()->getId(),
-                $i, $de->getEvent()->getId(),
-                $i, $name,$name
+            $markup .= sprintf(
+                $this->template,
+                $i,
+                $de->getDefendant()->getId(),
+                $i,
+                $de->getEvent()->getId(),
+                $i,
+                $name,
+                $name
             );
         }
         return $markup;
@@ -76,19 +81,23 @@ TEMPLATE;
 
     /**
      * renders a single DefendantEvent from array data
-     * 
+     *
      * @param  Array  $data
      * @return string
      */
-    public function fromArray(Array $data)
+    public function fromArray(array $data)
     {
         $i = $data['index'];
         $name = $this->getView()->escapeHtml($data['name']);
-        return sprintf($this->template,
-            $i, $data['defendant'],
-            $i, $data['event'],
-            $i, $name,$name
+        return sprintf(
+            $this->template,
+            $i,
+            $data['defendant'],
+            $i,
+            $data['event'],
+            $i,
+            $name,
+            $name
         );
     }
-
 }

@@ -17,7 +17,8 @@ use InterpretersOffice\Entity\Hat;
 /**
  * Fieldset for Person entity.
  */
-class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
+class PersonFieldset extends Fieldset implements
+    InputFilterProviderInterface,
     ObjectManagerAwareInterface
 {
     use ObjectManagerAwareTrait;
@@ -269,7 +270,8 @@ class PersonFieldset extends Fieldset implements InputFilterProviderInterface,
                         },
                     ],
                 ]
-            ]);
+            ]
+        );
     }
 
     /**

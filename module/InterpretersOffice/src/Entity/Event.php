@@ -760,7 +760,6 @@ class Event
     public function getdefendantEvents()
     {
         return $this->defendantEvents;
-
     }
 
     /**

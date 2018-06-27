@@ -243,7 +243,7 @@ class Hat
 
     /**
      * sets is-judge-staff flag
-     * 
+     *
      * @return Hat
      */
     public function setIsJudgeStaff($is_judges_staff)

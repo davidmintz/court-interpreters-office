@@ -12,7 +12,6 @@ use InterpretersOffice\Form\User\RegistrationForm;
 use InterpretersOffice\Admin\Form\UserFieldset;
 use InterpretersOffice\Entity;
 
-
 /**
  * user registration form
  */
@@ -35,7 +34,7 @@ class RegistrationForm extends Form
      *
      * @var Entity\User
      */
-     protected $existing_user;
+    protected $existing_user;
 
      /**
       * sets the existing user found in the database
@@ -44,38 +43,40 @@ class RegistrationForm extends Form
       *
       * @param Entity\User $user
       */
-     public function setExistingUser(Entity\User $user)
-     {
-         $this->existing_user = $user;
-     }
+    public function setExistingUser(Entity\User $user)
+    {
+        $this->existing_user = $user;
+    }
     /**
      * examines input and conditionally modifies validators
      *
      * @param Array $input
      * @return RegistrationForm
      */
-     public function preValidate(Array $input)
-     {
-         $hat_id = $input['person']['hat'];
-         $inputFilter = $this->getInputFilter();
-         $inputFilter->get('user')->get('judges')
-             ->setRequired(false)
-             ->setAllowEmpty(true);
-         if (! $hat_id) {
-             // we can't know if judges are required or not
+    public function preValidate(array $input)
+    {
+        $hat_id = $input['person']['hat'];
+        $inputFilter = $this->getInputFilter();
+        $inputFilter->get('user')->get('judges')
+            ->setRequired(false)
+            ->setAllowEmpty(true);
+        if (! $hat_id) {
+            // we can't know if judges are required or not
             return $this;
-         }
-         $hat = $this->objectManager->find(Entity\Hat::class,$hat_id);
-         // if it's a judge-staff kind of Hat, judges element is required
-         if ($hat->getIsJudgeStaff()) {
-             $inputFilter->get('user')->get('judges')
-                ->setAllowEmpty(false)
-                ->setRequired(true)
-                ->getValidatorChain()->attachByName('NotEmpty',
-                 ['messages'=>['isEmpty'=>'a Judge is required']],
-                 true);
-         }
-     }
+        }
+        $hat = $this->objectManager->find(Entity\Hat::class, $hat_id);
+        // if it's a judge-staff kind of Hat, judges element is required
+        if ($hat->getIsJudgeStaff()) {
+            $inputFilter->get('user')->get('judges')
+               ->setAllowEmpty(false)
+               ->setRequired(true)
+               ->getValidatorChain()->attachByName(
+                   'NotEmpty',
+                   ['messages' => ['isEmpty' => 'a Judge is required']],
+                   true
+               );
+        }
+    }
 
     /**
      * constructor
@@ -110,39 +111,43 @@ class RegistrationForm extends Form
         $inputFilter->get('user')->get('password')
             ->setRequired(true)
             ->setAllowEmpty(false)
-            ->getValidatorChain()->attachByName('NotEmpty',
-                ['messages'=>['isEmpty'=>'password is required']],
+            ->getValidatorChain()->attachByName(
+                'NotEmpty',
+                ['messages' => ['isEmpty' => 'password is required']],
                 true
-            )->attachByName('StringLength',
-            [
-                'min' => 8,'max'=>150, 'messages'=>
+            )->attachByName(
+                'StringLength',
                 [
-                'stringLengthTooShort'=>
+                'min' => 8,'max' => 150, 'messages' =>
+                [
+                'stringLengthTooShort' =>
                     'password is too short (minimum %min% characters)',
-                'stringLengthTooLong'=>
+                'stringLengthTooLong' =>
                     'password exceeds maximum length (%max% characters)',
                 ]
-        ]);
+                ]
+            );
         // make the email required
         $email_input = $this->getInputFilter()->get('user')
                 ->get('person')->get('email');
         $email_input->setAllowEmpty(false)->setRequired(true)
                 ->getValidatorChain()->prependByName(
                     'NotEmpty',
-                    ['messages'=>['isEmpty'=>'email is required']],
+                    ['messages' => ['isEmpty' => 'email is required']],
                     true
                 );
 
         // password
         $inputFilter->get('user')->get('password-confirm')->getValidatorChain()
-            ->attachByName('NotEmpty',
-            ['messages'=>['isEmpty'=>'password confirmation is required']],
+            ->attachByName(
+                'NotEmpty',
+                ['messages' => ['isEmpty' => 'password confirmation is required']],
                 true
             )
-            ->attachByName('Identical',[
-                'token' =>'password', // this actually works. don't fuck it up.
-                'messages'=> [
-                    'notSame'=>'password and password confirmation do not match'
+            ->attachByName('Identical', [
+                'token' => 'password', // this actually works. don't fuck it up.
+                'messages' => [
+                    'notSame' => 'password and password confirmation do not match'
                 ],
             ]);
 
@@ -157,7 +162,7 @@ class RegistrationForm extends Form
             ->getValidatorChain();
         /** @var \Zend\Validator\NotEmpty $shit */
         $shit = $chain->getValidators()[0]['instance'];
-        $shit->setOptions(['messages'=>
+        $shit->setOptions(['messages' =>
             [ 'isEmpty' => 'job title or department is required' ]
         ]);
 
@@ -167,7 +172,7 @@ class RegistrationForm extends Form
         $objectManager = $this->objectManager;
         $form = $this;
         $validator = new Callback([
-            'callback' => function($value, $context) use ($objectManager,$form){
+            'callback' => function ($value, $context) use ($objectManager, $form) {
                 $repo = $objectManager->getRepository(Entity\User::class);
                 $user = $repo->findSubmitterByEmail($value);
                 if ($user) {
@@ -186,21 +191,20 @@ class RegistrationForm extends Form
                     Callback::INVALID_VALUE =>
                     'There is already a user account associated with this email address.'
                 ]
-            ]
-        );
-        $chain->prependValidator($validator,true);
+            ]);
+        $chain->prependValidator($validator, true);
     }
     /**
      * returns flattened error messages
      *
      * @return Array
      */
-    function getFlattenedErrorMessages()
+    public function getFlattenedErrorMessages()
     {
         $errors = $this->getMessages();
         if (isset($errors['user'])) {
             if (isset($errors['user']['person'])) {
-                $errors = array_merge($errors,$errors['user']['person']);
+                $errors = array_merge($errors, $errors['user']['person']);
                 unset($errors['user']['person']);
             }
             $errors = array_merge($errors, $errors['user']);

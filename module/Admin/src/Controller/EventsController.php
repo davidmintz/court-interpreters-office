@@ -131,7 +131,8 @@ class EventsController extends AbstractActionController
             $input = $data->get('event');
             $this->getEventManager()->trigger(
                 'pre.validate',
-                $this,['input' => $data,]
+                $this,
+                ['input' => $data,]
             );
             $form->setData($data);
             if (! $form->isValid()) {
@@ -176,7 +177,7 @@ class EventsController extends AbstractActionController
             $this->entityManager,
             ['action' => 'update','object' => $entity,]
         );
-        $view = $this->getViewModel(['id'=>$id,'form'=>$form]);
+        $view = $this->getViewModel(['id' => $id,'form' => $form]);
         $events = $this->getEventManager();
         $form->attach($events);
         $events->trigger('post.load', $this, ['entity' => $entity]);
@@ -216,16 +217,16 @@ class EventsController extends AbstractActionController
             // $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
             //        $form->getObject()->getDefendantEvents()->count()));
                     $deftEvents = $entity->getDefendantEvents();
-                    foreach ($deftEvents as $de) {
-                        $d = $de->getDefendant();
-                        if ($d) {
-                            $log->debug(
-                                "deftEvent has deft entity, with id: ".$d->getId(). " at ".__LINE__
-                            );
-                        } else {
-                            $log->debug("wtf? deft entity is " .gettype($d). " at ".__LINE__ );
-                        }
-                    }
+            foreach ($deftEvents as $de) {
+                $d = $de->getDefendant();
+                if ($d) {
+                    $log->debug(
+                        "deftEvent has deft entity, with id: ".$d->getId(). " at ".__LINE__
+                    );
+                } else {
+                    $log->debug("wtf? deft entity is " .gettype($d). " at ".__LINE__);
+                }
+            }
             try {
                 $this->entityManager->flush();
                 $url = $this->getEvent()->getApplication()
@@ -244,15 +245,14 @@ class EventsController extends AbstractActionController
                         .'schedule for <a href="%s">%s</a>',
                         $url . $date->format('/Y/m/d'),
                         $date->format('l d-M-Y')
-                        )
-                    );
+                    )
+                );
                     return $this->redirect()->toRoute(
                         'events/view',
                         ['id' => $entity->getId()]
                     );
-
             } catch (\Exception $e) {
-                $shit = print_r($post->get('event')['defendantEvents'],true);
+                $shit = print_r($post->get('event')['defendantEvents'], true);
                 $deftEvents = $entity->getDefendantEvents();
                 foreach ($deftEvents as $de) {
                     $d = $de->getDefendant();
@@ -264,17 +264,21 @@ class EventsController extends AbstractActionController
                         $log->debug("wtf?  deft entity is " . gettype($d)  . " at ".__LINE__);
                     }
                 }
-                $log->info(sprintf("number of defendantEvent entities on the entity: %s",
-                    $entity->getDefendantEvents()->count()));
-                $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
-                        $form->getObject()->getdefendantEvents()->count()));
+                $log->info(sprintf(
+                    "number of defendantEvent entities on the entity: %s",
+                    $entity->getDefendantEvents()->count()
+                ));
+                $log->info(sprintf(
+                    "number of defendantEvent entities on the form's object: %s",
+                    $form->getObject()->getdefendantEvents()->count()
+                ));
 
                 $log->debug(
                     sprintf(
                         "Exception %s: %s\nposted deftevents: $shit",
-                            get_class($e),
-                            $e->getMessage()
-                        )
+                        get_class($e),
+                        $e->getMessage()
+                    )
                 );
                 //printf("<pre>%s</pre>",print_r($form->getData()->getDefendantEvents()->count(),true));
                 throw $e;

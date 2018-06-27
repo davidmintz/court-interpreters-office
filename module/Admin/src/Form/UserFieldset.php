@@ -241,12 +241,12 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
     {
 
         $this->add([
-            'type' => 'password','name'=>'password',
-            'attributes' => ['class'=>'form-control','id'=>'password']
+            'type' => 'password','name' => 'password',
+            'attributes' => ['class' => 'form-control','id' => 'password']
         ]);
         $this->add([
-            'type' => 'password','name'=>'password-confirm',
-            'attributes' => ['class'=>'form-control','id'=>'password-confirm']
+            'type' => 'password','name' => 'password-confirm',
+            'attributes' => ['class' => 'form-control','id' => 'password-confirm']
         ]);
 
         return $this;
@@ -267,21 +267,20 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'required' => true,
                 'messages' => ['isEmpty' => 'password field is required',]
                 , true])
-            ->attachByName('StringLength', ['min'=>8,'max'=>'150','messages'=>[
+            ->attachByName('StringLength', ['min' => 8,'max' => '150','messages' => [
                 'stringLengthTooLong' => 'password length exceeds maximum (150 characters)',
                 'stringLengthTooShort' => 'password length must be a minimum of 8 characters',
-        ]],true);
+            ]], true);
         $inputFilter->add($input);
         $confirmation_input = new Input('confirm-password');
         $confirmation_input->getFilterChain()->attachByName('StringTrim');
         $chain = $confirmation_input->getValidatorChain();
         //$shit = new \Zend\Validator\ZendValidatorIdentical();
         //\Zend\Validator\Identical::NOT_SAME
-        $chain->attachByName('Identical',['token'=>'password','messages'=> [
+        $chain->attachByName('Identical', ['token' => 'password','messages' => [
             'notSame' => 'password confirmation field does not match'
         ]]);
         $inputFilter->add($confirmation_input);
-
     }
 
     /**
