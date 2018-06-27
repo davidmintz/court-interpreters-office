@@ -188,6 +188,11 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         return $this;
     }
 
+    /**
+     * adds Judge elements
+     *
+     * @return UserFieldset
+     */
     public function addJudgeElement()
     {
         /* judge names */
@@ -223,6 +228,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'id' => 'judge-select',
             ],
         ]);
+
+        return $this;
     }
 
     /**

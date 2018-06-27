@@ -6,6 +6,9 @@ namespace InterpretersOffice\Admin\Form\View\Helper;
 use Zend\View\Helper\AbstractHelper;
 use Zend\Form\Element\Collection as ElementCollection;
 
+/**
+ * form helper for displaying DefendantEvent entities
+ */
 class DefendantElementCollection extends AbstractHelper
 {
     /**
@@ -37,6 +40,12 @@ TEMPLATE;
         return $this->render($collection);
     }
 
+    /**
+     * renders DefendantEvent entities
+     *
+     * @param  ElementCollection $collection
+     * @return string $markup finished HTML
+     */
     public function render(ElementCollection $collection)
     {
         if (! $collection->count()) {
@@ -55,11 +64,22 @@ TEMPLATE;
         return $markup;
     }
 
+    /**
+     * gets the HTML template
+     *
+     * @return string
+     */
     public function getTemplate()
     {
         return $this->template;
     }
 
+    /**
+     * renders a single DefendantEvent from array data
+     * 
+     * @param  Array  $data
+     * @return string
+     */
     public function fromArray(Array $data)
     {
         $i = $data['index'];
