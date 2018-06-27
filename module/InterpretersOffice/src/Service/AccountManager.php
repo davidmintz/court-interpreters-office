@@ -1,5 +1,4 @@
-<?php
-/* module/InterpretersOffice/src/Service/AccountManager.php */
+<?php /** module/InterpretersOffice/src/Service/AccountManager.php */
 
 namespace InterpretersOffice\Service;
 
@@ -11,7 +10,9 @@ use Zend\View\ViewModel;
  */
 class AccountManager
 {
-
+    /**
+     * constructor
+     */
     public function __construct()
     {
     }

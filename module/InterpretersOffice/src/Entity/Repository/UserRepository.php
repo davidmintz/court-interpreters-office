@@ -50,6 +50,12 @@ class UserRepository extends EntityRepository
         $this->cache->setNamespace('users');
     }
 
+    /**
+     * finds a submitter based on email
+     *
+     * @param  string $email
+     * @return InterpretersOffice\Entity\User|null
+     */
     public function findSubmitterByEmail($email)
     {
 

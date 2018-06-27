@@ -757,7 +757,7 @@ class Event
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getdefendantEvents()
+    public function getDefendantEvents()
     {
         return $this->defendantEvents;
     }
@@ -765,7 +765,7 @@ class Event
     /**
      * Add defendantEvent
      *
-     * @param \InterpretersOffice\Entity\DefendantEvent $defendantsEvent
+     * @param DefendantEvent $defendantEvent
      *
      * @return Event
      */
