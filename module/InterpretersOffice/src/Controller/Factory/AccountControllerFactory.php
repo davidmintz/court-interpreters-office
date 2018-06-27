@@ -30,7 +30,7 @@ class AccountControllerFactory implements FactoryInterface
             $container->get('entity-manager'),
             $container->get('auth')
         );
-        // Zend\Authentication\AuthenticationService
+        
         return $controller;
     }
 }

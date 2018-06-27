@@ -137,6 +137,7 @@ class AccountController extends AbstractActionController
             $user->setRole($this->getDefaultRole());
             $this->objectManager->persist($user);
             $this->objectManager->persist($user->getPerson());
+            //$this->getEventManager()->trigg
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
@@ -146,6 +147,7 @@ class AccountController extends AbstractActionController
                     $user->getPerson()->getEmail()
                 )
             );
+
             return new JsonModel(
                 ['validation_errors' => null, 'data' => $data,
                 'status' => 'success']

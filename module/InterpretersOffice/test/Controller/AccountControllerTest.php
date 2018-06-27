@@ -89,5 +89,4 @@ class AccountControllerTest extends AbstractControllerTest
         $this->assertTrue($response->status === "success");
 
     }
-
 }
