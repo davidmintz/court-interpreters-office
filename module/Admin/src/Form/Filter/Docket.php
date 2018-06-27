@@ -28,7 +28,7 @@ class Docket implements FilterInterface
      * @param  string $docket
      * @return string docket number formatted for the database
      */
-    function filter($docket)
+    public function filter($docket)
     {
 
         if (! $docket) {

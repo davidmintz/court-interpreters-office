@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Admin\Form;
 
 use Zend\Form\Fieldset;
-//use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -13,8 +13,7 @@ use InterpretersOffice\Entity;
 /**
  * fieldset for defendant names attached to an Event
  */
-class DefendantNamesFieldset extends Fieldset
-    //implements InputFilterProviderInterface
+class DefendantEventsFieldset extends Fieldset implements InputFilterProviderInterface
 {
     use ObjectManagerAwareTrait;
 
@@ -27,17 +26,34 @@ class DefendantNamesFieldset extends Fieldset
     public function __construct(ObjectManager $objectManager, array $options = [])
     {
 
-        parent::__construct('defendantNames', $options);
+        parent::__construct('defendantEvents', $options);
         $this->objectManager = $objectManager;
         $this->setHydrator(new DoctrineHydrator($objectManager));
-        $this->setObject(new Entity\DefendantName());
+        $this->setObject(new Entity\DefendantEvent());
         $this->options = $options;
 
         $this->add(
             [
                 'type' => 'hidden',
-                'name' => 'defendantName'
+                'name' => 'defendant' //name
             ]
         );
+        $this->add(
+            [
+                'type' => 'hidden',
+                'name' => 'event'
+            ]
+        );
+    }
+    /**
+     * implements InputFilterProviderInterface
+     *
+     * @todo complete it
+     * @return array
+     */
+    public function getInputFilterSpecification()
+    {
+ //echo "Hello???? from ".__METHOD__. "....<br>";
+        return [];
     }
 }

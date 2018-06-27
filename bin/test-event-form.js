@@ -30,6 +30,7 @@ if (hour >= 16) {
     // make it today at 4p
     then.hour(16).minute(0);
 }
+//console.log("\"then\" is set to: "+then.format("ddd DD-MM-YYYY h:mm a"));
 //*/
 
 // console.log("note: setting date to next month");
@@ -288,7 +289,7 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
                 test.assertExists("td a.ui-state-highlight","highlighted date td cell exists");
                 this.click("td a.ui-state-highlight");
                 this.waitWhileVisible("#ui-datepicker-div");
-                var submission_date = this.getFormValues("#event-form")["event[date]"];
+                var submission_date = this.getFormValues("#event-form")["event[submission_date]"];
                 var expected_date = now.format("MM/DD/YYYY");
                 test.assertEquals(submission_date,expected_date,"submission date is set and formatted: "+expected_date);
                 var time = now.format("hmm");

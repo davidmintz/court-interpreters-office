@@ -7,21 +7,19 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Entity representing an defendant-event.
  *
- * We are not using this as an association class related to Event, but rather
- * for managing DefendantName entities.
- *
  * @ORM\Entity
  * @ORM\Table(name="defendants_events", uniqueConstraints={@ORM\UniqueConstraint(name="unique_defendant_event",columns={"defendant_id","event_id"})})
  */
 class DefendantEvent
 {
     /**
-     * The defendantName.
+     * The defendant (name).
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="DefendantName")
+     * @ORM\ManyToOne(targetEntity="Defendant",inversedBy="defendantEvents") //,inversedBy="defendantEvents"
+     * @ORM\JoinColumn(name="defendant_id")
      *
-     * @var DefendantName
+     * @var Defendant
      */
     protected $defendant;
 
@@ -29,11 +27,22 @@ class DefendantEvent
      * The Event.
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Event")
+     * @ORM\ManyToOne(targetEntity="Event",inversedBy="defendantEvents",cascade="remove")
      *
      * @var Event
      */
     protected $event;
+
+    /**
+     * constructor
+     * @param Defendant $deftName
+     * @param Event $event
+     */
+    public function __construct(Defendant $deftName = null, Event $event = null)
+    {
+        $this->defendant = $deftName;
+        $this->event = $event;
+    }
 
     /**
      * Set event.
@@ -60,12 +69,12 @@ class DefendantEvent
     }
 
     /**
-     * sets DefendantName
+     * sets Defendant
      *
-     * @param DefendantName $defendant
+     * @param Defendant $defendant
      * @return DefendantEvent
      */
-    public function setDefendantName(DefendantName $defendant)
+    public function setDefendant(Defendant $defendant)
     {
         $this->defendant  = $defendant;
 
@@ -73,12 +82,22 @@ class DefendantEvent
     }
 
     /**
-     * gets DefendantName
+     * gets Defendant
      *
-     * @return DefendantName
+     * @return Defendant
      */
-    public function getDefendantName()
+    public function getDefendant()
     {
         return $this->defendant;
+    }
+
+    /**
+     * toString
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getDefendant()->getId();
     }
 }

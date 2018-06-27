@@ -34,7 +34,7 @@ class Docket extends AbstractValidator
      * @param string $docket
      * @return boolean true if valid
      */
-    function isValid($docket)
+    public function isValid($docket)
     {
 
         if (! preg_match(self::REGEX, $docket)) {

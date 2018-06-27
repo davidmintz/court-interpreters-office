@@ -36,11 +36,12 @@ class RoleRepository extends EntityRepository
      */
     public function getRoles($auth_user_role, Entity\Hat $hat = null)
     {
-        if (in_array($auth_user_role,['submitter','anonymous'])) {
+        if (in_array($auth_user_role, ['submitter','anonymous'])) {
             return $this->createQuery(
                 'SELECT r FROM InterpretersOffice\Entity\Role r
                 WHERE r.name = \'submitter\'
-                ')
+                '
+            )
             ->getResult();
         }
         if (! in_array($auth_user_role, ['administrator','manager'])) {

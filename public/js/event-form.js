@@ -454,7 +454,7 @@ var eventForm = (function () {
         minLength: 2,
         select: function( event, ui ) {
             //var that = $(this);
-            appendDefendantName({
+            appendDefendant({
                 name : ui.item.label,
                 id : ui.item.value
             });
@@ -485,7 +485,7 @@ var eventForm = (function () {
      * gets and inserts markup for defendant name
      * @param {object} data
      */
-    var appendDefendantName = function(data){
+    var appendDefendant = function(data){
         var index = $('.defendant-names li').last().index();
         if (index === -1) {
             index = 0;
@@ -783,7 +783,7 @@ var eventForm = (function () {
             elements : {
                 slideout : slideout
             },           //,callbacks : {},
-            append : appendDefendantName
+            append : appendDefendant
         },
     };
 })();
@@ -796,9 +796,9 @@ var eventForm = (function () {
  * approach for request mode.
  * @return {object}
  */
-var defendantNameForm = (function(){
+var defendantForm = (function(){
 
-    var addDeftnameCallback = function(response){
+    var addDeftCallback = function(response){
 
         if (response.validation_errors) {
             displayValidationErrors(response.validation_errors);
@@ -845,7 +845,7 @@ var defendantNameForm = (function(){
                         var url = "/admin/defendants/update-existing/"
                             +$(this).data("id");
                         var data = $("#defendant-form").serialize();
-                        $.post(url, data, updateDefendantNameCallback,"json");
+                        $.post(url, data, updateDefendantCallback,"json");
                     });
                 // forget the whole thing
                 $("#btn-cancel").on("click",function(){
@@ -866,9 +866,9 @@ var defendantNameForm = (function(){
         }
     };
 
-    var updateDefendantNameCallback = function(response){
+    var updateDefendantCallback = function(response){
         if (response.id) {
-            var selector = "input[name=\"event[defendantNames]["+
+            var selector = "input[name=\"event[defendantEvents]["+
                 response.id +"]\"]";
             var defendant_name = $("#surnames").val().trim()
                 +", "+ $("#given_names").val().trim();
@@ -889,7 +889,7 @@ var defendantNameForm = (function(){
     };
 
     var slideout = eventForm.defendants.elements.slideout;
-    /** listener for add-defendant-name button  */
+    /** listener for add-defendant button  */
     slideout.on("click","#btn-add-defendant-name",function(){
 
         if (! $("#slideout-toggle form").length) {
@@ -921,12 +921,13 @@ var defendantNameForm = (function(){
             });
     };
     var defendantFormSubmitCallback = function(response) {
-
+        console.debug("this is defendantFormSubmitCallback");
         var defendantForm = $("#defendant-form");
         if (response.validation_errors !== undefined) {
             return displayValidationErrors(response.validation_errors);
         }
         if (response.inexact_duplicate_found) {
+            //console.debug("inexact duplicate detected");
             var existing = response.existing_entity;
             defendantForm.prepend($("<input>").attr({type:"hidden",name:"duplicate_resolution_required",value:1}));
             $("#deft-existing-duplicate-name").text(existing);
@@ -942,11 +943,9 @@ var defendantNameForm = (function(){
             /** to do: check for duplicate defendant-name in the form
             before doing this
             */
-            //console.log("looking good, bitch!");
             var id = $("#deftname-editor input[name=id]").val();
-            var selector = "input[name=\"event[defendantNames][" +
-                id +"]\"]";
-            var input = $(selector);
+            var input = $("li.defendant input[value="+id+"]")
+                .siblings(".defendant_name");
             var defendant_name = $("#surnames").val().trim()
                 +", "+ $("#given_names").val().trim();
                 // update the existing thingy
@@ -964,7 +963,6 @@ var defendantNameForm = (function(){
             window.setTimeout(function(){
                 $("#defendant-form-success").hide();
                 $("#deftname-editor").modal("hide");
-
             },2000);
         }
     };
@@ -987,6 +985,7 @@ var defendantNameForm = (function(){
         } else { $("#defendant-form-error").hide(); }
         // we repeat ourself... |-:
         var id = $("#deftname-editor input[name=id]").val();
+        console.warn("fuckin id is what? "+id);
         var url = "/admin/defendants/edit/"+ id +"?context=events";
         // we may need to supply an event id
         var event_id = $("input[name=\"event[id]\"]").val() || false;
@@ -994,6 +993,7 @@ var defendantNameForm = (function(){
             url += "&event_id="+event_id;
         }
         var defendantForm = $("#defendant-form");
+        console.debug("we are in defendantUpdateSubmit, about to post");
         /*
         console.log("first one...");
         $.get('/').done(function(x){
@@ -1036,7 +1036,7 @@ var defendantNameForm = (function(){
         $("ul.defendant-names").on("click","li.defendant span",
             function(){
                 var div = $("#deftname-editor .modal-body");
-                var id = $(this).data("id");
+                var id = $(this).parent().children("input.defendant_id").val();
                 var selector = "/admin/defendants/edit/"+ id + " #defendant-form";
                 var that = this;
                 $("#deftname-editor-submit").show();
@@ -1080,5 +1080,5 @@ var defendantNameForm = (function(){
 $(document).ready(function()
 {
     eventForm.init();
-    defendantNameForm.init();
+    defendantForm.init();
 });
