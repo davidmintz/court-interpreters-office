@@ -36,7 +36,7 @@ class LanguageSelect extends ObjectSelect
      * @param string $name element name
      * @param array $options
      */
-    public function __construct($name = null, array $options)
+    public function __construct($name = null, array $options = [])
     {
         $this->getProxy()->setObjectManager($options['objectManager']);
         if (isset($options['options'])) {

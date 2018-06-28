@@ -6,8 +6,8 @@ use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 
 use InterpretersOffice\Entity;
-use InterpretersOffice\Entity\Repository\DefendantNameRepository;
-use InterpretersOffice\Entity\DefendantName;
+use InterpretersOffice\Entity\Repository\DefendantRepository;
+use InterpretersOffice\Entity\Defendant;
 use Zend\Stdlib\Parameters;
 
 use Zend\Dom;
@@ -17,7 +17,7 @@ use Doctrine\ORM\EntityManager;
 class DefendantsControllerTest extends AbstractControllerTest
 {
 
-    /** @var Entity\Repository\DefendantNameRepository $repository */
+    /** @var Entity\Repository\DefendantRepository $repository */
     protected $repository;
 
     /** @var \Doctrine\ORM\EntityManager $em */
@@ -31,7 +31,7 @@ class DefendantsControllerTest extends AbstractControllerTest
         FixtureManager::dataSetup([  new DataFixture\DefendantEventLoader(),]);
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $this->em = FixtureManager::getEntityManager();
-        $this->repository = $this->em->getRepository(Entity\DefendantName::class);
+        $this->repository = $this->em->getRepository(Entity\Defendant::class);
         //$this->repository
         //$container = $this->getApplicationServiceLocator();
         $log = new \Zend\Log\Logger();
@@ -73,7 +73,7 @@ class DefendantsControllerTest extends AbstractControllerTest
 
     public function testPartialUpdateWithoutDeftNameUpdateAndNoExistingMatch()
     {
-        /** @var Entity\DefendantName $rodriguez_jose */
+        /** @var Entity\Defendant $rodriguez_jose */
         $rodriguez_jose = $this->repository->findOneBy(['surnames'=>'Rodriguez','given_names'=>'Jose']);
         // sanity
         $this->assertTrue(is_object($rodriguez_jose));
@@ -121,7 +121,7 @@ class DefendantsControllerTest extends AbstractControllerTest
     public function testGlobalNameUpdateWithNoExistingMatch()
     {
         //['Rodríguez', 'Eusebio Morales']
-        /** @var Entity\DefendantName $eusebio */
+        /** @var Entity\Defendant $eusebio */
         $eusebio = $this->repository->findOneBy(['given_names'=>'Eusebio Morales']);
         $id = $eusebio->getId();
         $contexts = $this->repository->findDocketAndJudges($eusebio);
@@ -136,7 +136,7 @@ class DefendantsControllerTest extends AbstractControllerTest
 
         $this->repository->deleteCache();
         // NB: no events are considered to have been updated, because an element of
-        // the DefendantNames collection has changed, but not the collection itself.
+        // the Defendants collection has changed, but not the collection itself.
 
         // old version should be gone...
         $null = $this->repository->findOneBy(['given_names'=>'Eusebio Morales']);
@@ -148,14 +148,14 @@ class DefendantsControllerTest extends AbstractControllerTest
     public function testGlobalNameUpdateWithExistingMatchUsingExisting()
     {
         //$objectManager = FixtureManager::getEntityManager();
-        /** @var Entity\DefendantName $rodriguez_jose */
+        /** @var Entity\Defendant $rodriguez_jose */
         $rodriguez_jose = $this->repository->findOneBy(['surnames'=>'Rodriguez','given_names'=>'Jose']);
         //printf("\nfound: $rodriguez_jose\n");
         $contexts = $this->repository->findDocketAndJudges($rodriguez_jose);
         // WTF?
         /*
         $bullshit = $this->em->createQuery(
-            'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\DefendantName d '
+            'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\Defendant d '
             . 'WHERE d.surnames LIKE :surnames  AND d.given_names LIKE :given_names'
         )->useResultCache(false)->setParameters(['surnames'=>'rod%','given_names'=> 'Jo%'])->getResult();
         print_r($bullshit);
@@ -179,7 +179,7 @@ class DefendantsControllerTest extends AbstractControllerTest
         print_r($result);
         $this->assertTrue(is_array($result));
         $bullshit = $this->em->createQuery(
-            'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\DefendantName d '
+            'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\Defendant d '
             . 'WHERE d.surnames LIKE :surnames  AND d.given_names LIKE :given_names'
         )->useResultCache(false)->setParameters(['surnames'=>'rod%','given_names'=> 'Jo%'])->getResult();
         print_r($bullshit);

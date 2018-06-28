@@ -36,7 +36,7 @@ class EventLoader implements FixtureInterface
         $interpreter = $objectManager->getRepository('InterpretersOffice\Entity\Interpreter')
                 ->findOneBy(['lastname' => 'Mintz']);
 
-        $defendant = $objectManager->getRepository('InterpretersOffice\Entity\DefendantName')
+        $defendant = $objectManager->getRepository('InterpretersOffice\Entity\Defendant')
                 ->findOneBy(['surnames' => 'Fulano Mengano']);
         $event = new Entity\Event();
         $now = new \DateTime();
@@ -60,7 +60,7 @@ class EventLoader implements FixtureInterface
             ->setModifiedBy($user)
              ->setSubmissionDate(new \DateTime('-1 hour'))
              ->setSubmissionTime(new \DateTime('-1 hour'))
-             ->addDefendant($defendant)
+             ->addDefendantEvent(new Entity\DefendantEvent($defendant,$event))
              ->addInterpreterEvents(
                  $collection
              );

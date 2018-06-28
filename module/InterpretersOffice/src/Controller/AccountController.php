@@ -14,6 +14,8 @@ use InterpretersOffice\Form\User\RegistrationForm;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Form\FormInterface;
 
+use InterpretersOffice\Service\AccountManager;
+
 /**
  *  AccountController.
  *
@@ -76,8 +78,8 @@ class AccountController extends AbstractActionController
         $params = $this->params()->fromPost();
 
         if (! isset($params['user']) or ! isset($params['user']['person'])) {
-            return new JsonModel(['valid'=>false,
-                'error'=>'malformed input data']);
+            return new JsonModel(['valid' => false,
+                'error' => 'malformed input data']);
         }
 
         // it's a 3-step form. the first two are handled as partial validation
@@ -87,10 +89,10 @@ class AccountController extends AbstractActionController
             ]);
         $validation_group = [
             'csrf',//????
-            'user'=> [ 'person'=> array_keys($params['user']['person'])]
+            'user' => [ 'person' => array_keys($params['user']['person'])]
         ];
         if ($form_step == 'fieldset-password') {
-            array_push($validation_group['user'],'password','password-confirm');
+            array_push($validation_group['user'], 'password', 'password-confirm');
         }
         if ($form_step == 'fieldset-hat') {
             $form->preValidate($params['user']);
@@ -101,10 +103,10 @@ class AccountController extends AbstractActionController
         $form->setData($params);
         if (! $form->isValid()) {
             return new JsonModel([
-                'validation_errors'=> $form->getFlattenedErrorMessages(),
+                'validation_errors' => $form->getFlattenedErrorMessages(),
                 ]);
         }
-        return new JsonModel(['valid'=>true, 'debug'=>$validation_group]);
+        return new JsonModel(['valid' => true, 'debug' => $validation_group]);
     }
 
     /**
@@ -137,6 +139,10 @@ class AccountController extends AbstractActionController
             $user->setRole($this->getDefaultRole());
             $this->objectManager->persist($user);
             $this->objectManager->persist($user->getPerson());
+            $this->getEventManager()->trigger(
+                AccountManager::REGISTRATION_SUBMITTED, $this,
+                ['user'=>$user]
+            );
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
@@ -146,21 +152,21 @@ class AccountController extends AbstractActionController
                     $user->getPerson()->getEmail()
                 )
             );
+
             return new JsonModel(
-                ['validation_errors' => null, 'data'=>$data,
-                'status'=>'success']
+                ['validation_errors' => null, 'data' => $data,
+                'status' => 'success']
             );
         } catch (\Exception $e) {
             return new JsonModel(
                 [   'validation_errors' => null,
-                    'data'=>$data,
+                    'data' => $data,
                     'status' => 'error',
                     'exception' => get_class($e),
-                    'message'=> $e->getMessage(),
+                    'message' => $e->getMessage(),
                 ]
             );
         }
-
     }
 
     /**

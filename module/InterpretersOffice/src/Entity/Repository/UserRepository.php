@@ -50,13 +50,21 @@ class UserRepository extends EntityRepository
         $this->cache->setNamespace('users');
     }
 
-    public function findSubmitterByEmail($email) {
+    /**
+     * finds a submitter based on email
+     *
+     * @param  string $email
+     * @return InterpretersOffice\Entity\User|null
+     */
+    public function findSubmitterByEmail($email)
+    {
 
         $dql = 'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p '
         . ' JOIN u.role r '
         . ' WHERE p.email = :email AND r.name = :role';
         return $this->createQuery($dql)->setParameters(
-                ['email'=>$email,'role'=>'submitter'])
+            ['email' => $email,'role' => 'submitter']
+        )
             ->getOneOrNullResult();
     }
 }

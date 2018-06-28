@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InterpretersOffice\Admin\Form\DefendantForm;
-use InterpretersOffice\Entity\DefendantName;
+use InterpretersOffice\Entity\Defendant;
 
 /**
  * controller for admin/defendants.
@@ -27,9 +27,9 @@ class DefendantsController extends AbstractActionController
     protected $entityManager;
 
     /**
-     * defendantName repository
+     * defendant repository
      *
-     * @var Entity\Repository\DefendantNameRepository
+     * @var Entity\Repository\DefendantRepository
      */
     protected $repository;
 
@@ -43,7 +43,7 @@ class DefendantsController extends AbstractActionController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $repository = $entityManager->getRepository(Entity\DefendantName::class);
+        $repository = $entityManager->getRepository(Entity\Defendant::class);
         $this->repository = $repository;
     }
 
@@ -71,7 +71,7 @@ class DefendantsController extends AbstractActionController
         $viewModel->setVariables(['form' => $form, 'title' => 'add a defendant name']);
         /** @var Zend\Http\PhpEnvironment\Request  $request */
         $request = $this->getRequest();
-        $entity = new Entity\DefendantName();
+        $entity = new Entity\Defendant();
         $form->bind($entity);
         $xhr = false;
         if ($request->isXmlHttpRequest()) {
@@ -102,7 +102,7 @@ class DefendantsController extends AbstractActionController
                 $this->redirect()->toRoute('admin-defendants');
             } catch (UniqueConstraintViolationException $e) {
                 $existing_entity = $this->entityManager
-                        ->getRepository(Entity\DefendantName::class)
+                        ->getRepository(Entity\Defendant::class)
                         ->findOneBy([
                             'surnames' => $entity->getSurnames(),
                             'given_names' => $entity->getGivenNames()]);
@@ -153,7 +153,7 @@ class DefendantsController extends AbstractActionController
         }
         $form = new DefendantForm($this->entityManager, ['action' => 'update']);
 
-        $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
+        $entity = $this->entityManager->find(Entity\Defendant::class, $id);
         if (! $entity) {
             $message = "Defendant with id was $id not found in your database.";
             if (! $xhr) {
@@ -231,7 +231,7 @@ class DefendantsController extends AbstractActionController
     {
 
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
+        $entity = $this->entityManager->find(Entity\Defendant::class, $id);
         if (! $entity) {
              return new JsonModel(['error' => 'database record not found. ']);
         }
@@ -246,7 +246,7 @@ class DefendantsController extends AbstractActionController
             return new JsonModel(['id' => $id,'errors' => null, 'status' => 'success']);
         } catch (UniqueConstraintViolationException $e) {
             $existing_entity = $this->entityManager
-                    ->getRepository(Entity\DefendantName::class)
+                    ->getRepository(Entity\Defendant::class)
                     ->findOneBy([
                         'surnames' => $entity->getSurnames(),
                         'given_names' => $entity->getGivenNames()]);
@@ -276,7 +276,7 @@ class DefendantsController extends AbstractActionController
             $name = $this->params()->fromPost('name');
             $what = 'defendant name';
 
-            $entity = $this->entityManager->find(Entity\DefendantName::class, $id);
+            $entity = $this->entityManager->find(Entity\Defendant::class, $id);
 
             return $this->delete(compact('entity', 'id', 'name', 'what'));
         }

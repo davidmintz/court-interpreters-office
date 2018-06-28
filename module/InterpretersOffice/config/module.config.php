@@ -11,6 +11,10 @@ use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
 use InterpretersOffice\View\Helper as ViewHelper;
+use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection;
+use InterpretersOffice\Service;
+use InterpretersOffice\Service\AccountManager;
+
 
 $environment = getenv('APP_ENV') ?: 'development';
 
@@ -118,6 +122,8 @@ return [
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
             //Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
+            Service\AccountManager::class => Service\Factory\AccountManagerFactory::class,
+
         ],
         'abstract_factories' => [
             \Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
@@ -315,14 +321,16 @@ return [
     'view_helpers' => [
         'invokables' => [
             'formElementErrors' => 'InterpretersOffice\Form\View\Helper\FormElementErrors',
+            //DefendantElementCollection::class => DefendantElementCollection::class,
         ],
 
         'aliases' => [
-            'defendants' => ViewHelper\DefendantNames::class,
+            'defendants' => ViewHelper\Defendants::class,
             'interpreters' => ViewHelper\InterpreterNames::class
         ],
         'factories' => [
-            ViewHelper\DefendantNames::class => InvokableFactory::class,
+            ViewHelper\Defendants::class => InvokableFactory::class,
+            //DefendantElementCollection::class => InvokableFactory::class,
             ViewHelper\InterpreterNames::class => InvokableFactory::class,
         ],
     ],

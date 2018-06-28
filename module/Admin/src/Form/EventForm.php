@@ -92,10 +92,12 @@ class EventForm extends ZendForm implements
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
+
+        $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);
+        //return;
         $this->listeners[] = $events->attach('post.load', [$this, 'postLoad']);
         $this->listeners[] = $events->attach('pre.populate', [$this, 'prePopulate']);
         $this->listeners[] = $events->attach('post.validate', [$this, 'postValidate']);
-        $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);
     }
 
     /**
@@ -173,13 +175,7 @@ class EventForm extends ZendForm implements
         }
         $logger->debug(($updated ? "YES" : "NO"). " interpreters have been changed");
         $post = $controller->params()->fromPost()['event'];
-        $defendantNames = isset($post['defendantNames'])
-            ? $post['defendantNames'] : [];
-        if (! $defendantNames && count($entity->getDefendantNames())) {
-            $logger->debug("we went from non-zero to zero deftnames!");
-            $entity->getDefendantNames()->clear();
-            $updated = true;
-        }
+
         if ($updated) {
             // this change suffices to trigger the Event entity's preUpdate()
             $entity->setModified(new \DateTime());
@@ -209,15 +205,6 @@ class EventForm extends ZendForm implements
                 $setter = 's'.substr($getter, 1);
                 $entity->$setter($old_value);
             }
-            /*
-            if ($old_value == $new_value or
-                (in_array($prop, ['time','end_time','submission_time'])
-               && $new_value->format('g:i a') == $old_value->format('g:i a')
-            )) {
-                $setter = 's'.substr($getter, 1);
-                $entity->$setter($old_value);
-            }
-            */
         }
     }
 
@@ -297,11 +284,7 @@ class EventForm extends ZendForm implements
         } elseif (! empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
             $event['anonymousSubmitter'] = null;
         }
-        // get defendantNames human-readable labels back into the view
-        // @todo is this really necessary?
-        if (isset($event['defendantNames'])) {
-            $event['defendantNames'] = array_keys($event['defendantNames']);
-        }
+
         $input->set('event', $event);
     }
 

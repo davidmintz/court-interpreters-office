@@ -209,7 +209,8 @@ class UsersController extends AbstractActionController implements Authentication
 
         if ($request->isPost()) {
             $shit = $request->getPost();
-            printf('<pre>%s</pre>',print_r($shit->toArray(),true)); return $viewModel;
+            printf('<pre>%s</pre>', print_r($shit->toArray(), true));
+            return $viewModel;
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";

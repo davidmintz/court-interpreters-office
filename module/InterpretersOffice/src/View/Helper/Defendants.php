@@ -1,5 +1,5 @@
 <?php
-/** module/InterpretersOffice/src/View/Helper/DefendantNames.php */
+/** module/InterpretersOffice/src/View/Helper/Defendants.php */
 
 namespace InterpretersOffice\View\Helper;
 
@@ -10,7 +10,7 @@ use Zend\View\Helper\AbstractHelper;
  *
  * @author david
  */
-class DefendantNames extends AbstractHelper
+class Defendants extends AbstractHelper
 {
     /**
      * defendant names

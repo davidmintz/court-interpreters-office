@@ -169,32 +169,13 @@ class Event
      */
     protected $cancellationReason;
 
-    /* FROM our Request entity in the older project....
-     *
-     * @ORM\ManyToMany(targetEntity="Application\Entity\DefendantName",fetch="EAGER")
-     * @ORM\JoinTable(name="defendants_requests",
-     *      joinColumns={@ORM\JoinColumn(name="request_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="deft_id")}
-     * )
-     *  //, unique=true ?
-     * cribbed from:
-     * http://doctrine-orm.readthedocs.org/en/latest/reference/annotations-reference.html#annref-manytomany
-     */
-
-
     /**
-     * defendant(s) for whom an interpreter is required.
+     * ArrayCollection association class DefendantEvent.
      *
-     * @see DefendantName
-     *
-     * @ORM\ManyToMany(targetEntity="DefendantName",fetch="EAGER",cascade="remove",inversedBy="events")
-     * @ORM\JoinTable(name="defendants_events",
-     *  joinColumns={@ORM\JoinColumn(name="event_id", referencedColumnName="id")},
-     *  inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")})
-     *
-     * @var Collection
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="event",cascade={"persist","remove"},orphanRemoval=true,fetch="EAGER")
      */
-    protected $defendantNames;
+    protected $defendantEvents;
 
     /**
      * Interpreters assigned to this event.
@@ -267,7 +248,7 @@ class Event
      */
     public function __construct()
     {
-        $this->defendantNames = new ArrayCollection();
+        $this->defendantEvents = new ArrayCollection();
         $this->interpreterEvents = new ArrayCollection();
     }
 
@@ -725,76 +706,74 @@ class Event
     {
         return $this->cancellationReason;
     }
-
-
-
-    /**
-     * Add defendant.
-     *
-     * @param DefendantName $defendant
-     *
-     * @return Event
-     */
-    public function addDefendant(DefendantName $defendant)
-    {
-        $this->defendantNames->add($defendant);
-
-        return $this;
-    }
-
-    /**
-     * Remove defendant.
-     *
-     * @param DefendantName $defendant
-     */
-    public function removeDefendant(DefendantName $defendant)
-    {
-        $this->defendants->removeElement($defendant);
-    }
-
-    /**
-     * Proxies to getDefendantNames();
-     *
-     * @return Collection
-     */
-    public function getDefendants()
-    {
-        return $this->getDefendantNames();
-    }
-
     /**
      * Get defendants.
      *
      * @return Collection
      */
-    public function getDefendantNames()
+    public function getDefendants()
     {
-        return $this->defendantNames;
+        $names = new ArrayCollection();
+        $deftEvents = $this->getdefendantEvents();
+        foreach ($deftEvents as $de) {
+            $names->add($de->getDefendant());
+        }
+        return $names;
     }
 
+
     /**
-     * adds DefendantNames
+     * removes Defendants
      *
-     * @param Collection $defendantNames
+     * @param Collection $defendantEvents
      */
-    public function addDefendantNames(Collection $defendantNames)
+    public function removeDefendantEvents(Collection $defendantEvents)
     {
-        //printf("Here's Johnny in %s with %d elements<br>",__METHOD__, $defendantNames->count());
-        foreach ($defendantNames as $defendantName) {
-            $this->defendantNames->add($defendantName);
+        foreach ($defendantEvents as $de) {
+            $de->setEvent(null);
+            $this->defendantEvents->removeElement($de);
         }
     }
 
     /**
-     * removes DefendantNames
+     * Add defendantEvents
      *
-     * @param Collection $defendantNames
+     * @param \InterpretersOffice\Entity\DefendantEvent $defendantEvents
+     *
+     * @return Event
      */
-    public function removeDefendantNames(Collection $defendantNames)
+    public function addDefendantEvents(Collection $defendantEvents)
     {
-        foreach ($defendantNames as $defendantName) {
-            $this->defendantNames->removeElement($defendantName);
+        foreach ($defendantEvents as $de) {
+            $de->setEvent($this);
+            $this->defendantEvents->add($de);
         }
+
+        return $this;
+    }
+
+    /**
+     * Get defendantEvents
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDefendantEvents()
+    {
+        return $this->defendantEvents;
+    }
+
+    /**
+     * Add defendantEvent
+     *
+     * @param DefendantEvent $defendantEvent
+     *
+     * @return Event
+     */
+    public function addDefendantEvent(DefendantEvent $defendantEvent)
+    {
+        $this->defendantEvents->add($defendantEvent);
+
+        return $this;
     }
 
     /**
