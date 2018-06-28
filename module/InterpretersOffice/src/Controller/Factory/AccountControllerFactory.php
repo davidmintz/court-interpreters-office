@@ -40,6 +40,8 @@ class AccountControllerFactory implements FactoryInterface
         $sharedEvents->attach($requestedName, AccountManager::REGISTRATION_SUBMITTED,
             [$accountManager,'onRegistrationSubmitted']
         );
+        //$pluginManager = $container->get('ControllerPluginManager');
+        //$pluginManager->get('layout')->setTemplate('...');
         return $controller;
     }
 }
