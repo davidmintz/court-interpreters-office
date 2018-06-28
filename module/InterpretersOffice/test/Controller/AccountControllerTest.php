@@ -8,6 +8,8 @@ use ApplicationTest\DataFixture;
 
 use Zend\Dom\Query;
 
+use InterpretersOffice\Service\AccountManager;
+
 class AccountControllerTest extends AbstractControllerTest
 {
 
@@ -83,10 +85,20 @@ class AccountControllerTest extends AbstractControllerTest
         $post['user']['person']['hat'] = $hat_id;
         $post['user']['judges'][] = $judge_id;
         $post['user']['id']='';
+        /** @var $sharedEvents Zend\EventManager\SharedEventManagerInterface */
+        $sharedEvents = $this->getApplicationServiceLocator()->get('SharedEventManager');
+
+        $this->prophet = $accountManager = $this->prophesize(AccountManager::class);
+        $sharedEvents->attach('InterpretersOffice\Controller\AccountController',
+            AccountManager::REGISTRATION_SUBMITTED,
+            [$accountManager->reveal(),'onRegistrationSubmitted']
+        );
         $this->dispatch('/user/register','POST',$post);
         $json = $this->getResponse()->getBody();
         $response = json_decode($json);
         $this->assertTrue($response->status === "success");
-
+        $accountManager->onRegistrationSubmitted(
+            \Prophecy\Argument::type('Zend\EventManager\EventInterface'))
+            ->shouldBeCalled();
     }
 }

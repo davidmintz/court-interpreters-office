@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Service\AccountManager;
 
+
 /**
  * factory for AccountManager service
  */
@@ -19,7 +20,13 @@ class AccountManagerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $sharedEvents = $container->get('sharedEvents');
-        return new AccountManager();
+
+        $accountManager = new AccountManager(
+            $container->get('entity-manager'),
+            $container->get('config')['mail']
+        );
+        $accountManager->setLogger($container->get('log'));
+
+        return $accountManager;
     }
 }
