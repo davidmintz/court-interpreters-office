@@ -14,6 +14,8 @@ use InterpretersOffice\Form\User\RegistrationForm;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Form\FormInterface;
 
+use InterpretersOffice\Service\AccountManager;
+
 /**
  *  AccountController.
  *
@@ -137,7 +139,10 @@ class AccountController extends AbstractActionController
             $user->setRole($this->getDefaultRole());
             $this->objectManager->persist($user);
             $this->objectManager->persist($user->getPerson());
-            //$this->getEventManager()->trigg
+            $this->getEventManager()->trigger(
+                AccountManager::REGISTRATION_SUBMITTED, $this,
+                ['user'=>$user]
+            );
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
