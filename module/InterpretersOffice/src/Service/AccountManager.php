@@ -14,6 +14,9 @@ use Zend\EventManager\EventInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 
+
+//use 
+
 /**
  * manages user account service
  */
@@ -33,15 +36,21 @@ class AccountManager implements LoggerAwareInterface
      *
      * @var ObjectManager
      */
-    protected $objectManager;
+    private $objectManager;
+
+    /**
+     * configuration data
+     *
+     * @var Array
+     */
+    private $config;
 
     /**
      * constructor
      */
-    public function __construct(ObjectManager $objectManager)
+    public function __construct(ObjectManager $objectManager, Array $config)
     {
         $this->objectManager = $objectManager;
-
     }
 
     /**
@@ -55,6 +64,16 @@ class AccountManager implements LoggerAwareInterface
         /** @var Entity\User $user */
         $user = $event->getParam('user');
         $log->info("new user registration has been submitted for: ".$user->getUsername());
+        // to be continued
+    }
 
+    /**
+     * gets config
+     *
+     * @return Array
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 }
