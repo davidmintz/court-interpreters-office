@@ -24,8 +24,9 @@ before_script:
     #- echo 'CREATE DATABASE IF NOT EXISTS test_office' |mysql
     #- bin/initialize-test-db.sh
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
-    #- cp config/autoload/forms.test.php config/autoload/forms.local.php
+    - cp config/autoload/development.local.php.dist config/autoload/development.local.php
     - mkdir -p data/log
+    - mkdir data/mail
     - mkdir data/cache
     - phpenv config-rm xdebug.ini
     #- echo "Database version? " && echo 'SELECT VERSION();'|mysql
