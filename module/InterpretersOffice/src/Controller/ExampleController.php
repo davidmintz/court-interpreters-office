@@ -7,6 +7,7 @@ namespace InterpretersOffice\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
 use Zend\Http\Response;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\PersonForm;
@@ -134,6 +135,46 @@ class ExampleController extends AbstractActionController
      */
     public function indexAction()
     {
+
+        $container = $this->getEvent()->getApplication()->getServiceManager();
+        $renderer = $container->get('ViewRenderer');
+        //$renderer = new \Zend\View\Renderer\PhpRenderer();
+        $view = new ViewModel();
+        $view->setTemplate('interpreters-office/email/layout.tidy.phtml');
+        $child = new ViewModel();
+        $child->setTemplate('interpreters-office/email/user_registration.phtml');
+        $view->addChild($child,'content')->setTerminal(true);
+        //return $view;
+        //$view->content = $renderer->render($child);
+        echo $renderer->render($view); return false;
+        $response = $this->getResponse()->setContent($content);
+        return $response;
+
+        $view = new ViewModel();
+
+       // this is not needed since it matches "module/controller/action"
+       $view->setTemplate('content/article/view');
+
+       $articleView = new ViewModel(['article' => $article]);
+       $articleView->setTemplate('content/article');
+
+       $primarySidebarView = new ViewModel();
+       $primarySidebarView->setTemplate('content/main-sidebar');
+
+       $secondarySidebarView = new ViewModel();
+       $secondarySidebarView->setTemplate('content/secondary-sidebar');
+
+       $sidebarBlockView = new ViewModel();
+       $sidebarBlockView->setTemplate('content/block');
+
+       $secondarySidebarView->addChild($sidebarBlockView, 'block');
+
+       $view->addChild($articleView, 'article')
+            ->addChild($primarySidebarView, 'sidebar_primary')
+            ->addChild($secondarySidebarView, 'sidebar_secondary');
+
+
+        return false;
         $em = $this->objectManager;
        // 3 queries
         $entity = $em->find('InterpretersOffice\Entity\Judge', 11);

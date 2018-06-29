@@ -94,9 +94,10 @@ class AccountControllerTest extends AbstractControllerTest
             [$accountManager->reveal(),'onRegistrationSubmitted']
         );
         $this->dispatch('/user/register','POST',$post);
-        $json = $this->getResponse()->getBody();
-        $response = json_decode($json);
-        $this->assertTrue($response->status === "success");
+        $response = $this->getResponse()->getBody();
+        echo $response;
+        $obj = json_decode($response);
+        $this->assertTrue($obj->status === "success");
         $accountManager->onRegistrationSubmitted(
             \Prophecy\Argument::type('Zend\EventManager\EventInterface'))
             ->shouldBeCalled();

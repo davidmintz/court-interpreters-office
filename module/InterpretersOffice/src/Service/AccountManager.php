@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Service;
 
 use Zend\Mail;
-use Zend\View\ViewModel;
+use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface as ViewRendererInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerAwareInterface;
@@ -14,11 +14,15 @@ use Zend\EventManager\EventInterface;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Service\AccountManager;
 
 use Zend\Mail\Message;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
+
+use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Renderer\RendererInterface as Renderer;
 
 
 /**
@@ -50,6 +54,13 @@ class AccountManager implements LoggerAwareInterface
     private $config;
 
     /**
+     * view Renderer
+     *
+     * @var Renderer
+     */
+    private $viewRenderer;
+
+    /**
      * constructor
      */
     public function __construct(ObjectManager $objectManager, Array $config)
@@ -69,26 +80,23 @@ class AccountManager implements LoggerAwareInterface
         $log = $this->getLogger();
         /** @var Entity\User $user */
         $user = $event->getParam('user');
-        $log->info("new user registration has been submitted for: "
+        $log->info(get_class($event).": new user registration has been submitted for: "
             .$user->getUsername());
 
-        $controller = $event->getTarget();
-        $controller->layout()->setTemplate(
-            'interpreters-office/email/layout.tidy.phtml'
-        );
-        $view = new \dViewModelViewModel();
-        $view->content = "This here shit is your content";
         $opts = new $this->config['transport_options']['class'](
             $this->config['transport_options']['options']);
         $transport = new $this->config['transport']($opts);
-        /*
-        $text = new MimePart("Here is your plain text email.");
+        $view = (new ViewModel(['person'=>$user->getPerson()]))
+            ->setTemplate('interpreters-office/email/layout.tidy.phtml');
+
+        $markup = $this->viewRenderer->render($view);
+
+        $text = new MimePart("You need a client that supports HTML email.");
         $text->type = Mime::TYPE_TEXT;
         $text->charset = 'utf-8';
         $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-        $htmlMarkup =  file_get_contents(
-            'module/InterpretersOffice/view/interpreters-office/email/layout.tidy.phtml');
-        $html = new MimePart($htmlMarkup);
+
+        $html = new MimePart($markup);
         $html->type = Mime::TYPE_HTML;
         $html->charset = 'utf-8';
         $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
@@ -101,7 +109,18 @@ class AccountManager implements LoggerAwareInterface
         $contentTypeHeader->setType('multipart/alternative');
 
         $transport->send($message);
+
+        //*/
+        //$view->content = "This here shit is your text content";
+        /*
+        $child = (new ViewModel())
+            ->setTemplate('interpreters-office/email/user_registration.phtml');
+        $layout->addChild($child,'content');
         */
+        //$child->content = "This is some content in the child view.";
+        //$view = new ViewModel();
+        //$view->setTemplate('interpreters-office/email/user_registration.phtml');
+        //$layout->addChild($view);
     }
 
     /**
@@ -112,5 +131,18 @@ class AccountManager implements LoggerAwareInterface
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * sets viewRenderer
+     *
+     * @param Renderer $viewRenderer
+     * @return AccountManager
+     */
+    public function setViewRenderer(Renderer $viewRenderer)
+    {
+        $this->viewRenderer = $viewRenderer;
+
+        return $this;
     }
 }
