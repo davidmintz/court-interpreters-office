@@ -62,6 +62,13 @@ class AccountManager implements LoggerAwareInterface
     private $viewRenderer;
 
     /**
+     * a random is_string
+     *
+     * @var string
+     */
+    private $random_string;
+
+    /**
      * constructor
      */
     public function __construct(ObjectManager $objectManager, Array $config)
@@ -116,6 +123,10 @@ class AccountManager implements LoggerAwareInterface
         $transport = new $this->config['transport']($opts);
         $transport->send($message);
 
+        $log->info("hashed id is: ".$token->getId());
+        $log->info("token is: ".$this->random_string);
+        $log->info("hashed token is: ".$token->getToken());
+
         //*/
         //$view->content = "This here shit is your text content";
         /*
@@ -128,42 +139,32 @@ class AccountManager implements LoggerAwareInterface
         //$view->setTemplate('interpreters-office/email/user_registration.phtml');
         //$layout->addChild($view);
         //
-        // for argument's sake
-        //  $result = $this->verify($token->getId());
-        // printf("\nshit is a: %s\n",
-        //      gettype($result)
-        //  );
+
     }
 
-    // not working... yet
+    /**
+     * work in progress
+     *
+     * @param  string $hash
+     * @return [type]       [description]
+     */
     public function verify($hash)
     {
-        printf("\nshit says: $hash\n");
+        /** @var  Doctrine\DBAL\Connection $db */
         $db = $this->objectManager->getConnection();
-        //  $db-> ...
-        // http://doctrine-orm.readthedocs.org/projects/doctrine-orm/en/latest/reference/native-sql.html
-        $rsm = new ResultSetMappingBuilder($this->objectManager);
-        $rsm->addRootEntityFromClassMetadata(Entity\Person::class, 'people');
-        // our inheritance scheme is not yet supported?
-        //
-
-
-        //$rsm->addJoinedEntityFromClassMetadata('MyProject\Address', 'a', 'u', 'address', array('id' => 'address_id'));
-        //FROM users u INNER JOIN address a ON u.address_id = a.id";
-        //$rsm->addJoinedEntityFromClassMetadata(Entity\Person::class,'p','u','person',['id'=>'person_id']);
-        // there could be an additional, inactive, "historic" account with the same email. if so, assume
-        // the more recently created is the one we're interested in. hence "ORDER BY... LIMIT"
-        $sql = 'SELECT * FROM people WHERE md5(lower(email)) = :hash
-         ORDER BY id DESC LIMIT 1';
-        $query = $this->objectManager->createNativeQuery($sql,$rsm)->setParameters(['hash'=>$hash]);
-        return $query->getOneorNullResult();
-
-
-
-
-
+        $sql = 'SELECT u.* FROM users u JOIN people p ON u.person_id = p.id
+            WHERE MD5(LOWER(p.email)) = ? ORDER BY p.id DESC LIMIT 1';
+        $stmt = $db->executeQuery($sql,[$hash]);
+        return $stmt->fetch();
     }
 
+    public function getRandomString()
+    {
+        if (! $this->random_string) {
+            $this->random_string =  bin2hex(openssl_random_pseudo_bytes(16));
+        }
+        return $this->random_string;
+    }
     /**
      * creates a VerificationToken
      *
@@ -173,7 +174,7 @@ class AccountManager implements LoggerAwareInterface
     {
         $token = new Entity\VerificationToken();
         $id = md5(strtolower($user->getPerson()->getEmail()));
-        $random = bin2hex(openssl_random_pseudo_bytes(16));
+        $random = $this->getRandomString();
         $hash = password_hash($random,PASSWORD_DEFAULT);
         $expiration = new \DateTime('+ 30 minutes');
         $token->setId($id)->setToken($hash)->setExpiration($expiration);

@@ -101,5 +101,11 @@ class AccountControllerTest extends AbstractControllerTest
         $accountManager->onRegistrationSubmitted(
             \Prophecy\Argument::type('Zend\EventManager\EventInterface'))
             ->shouldBeCalled();
+
+        $accountManager = $this->getApplication()->getServiceManager()
+            ->get('InterpretersOffice\Service\AccountManager');
+        $result = $accountManager->verify(md5($post['user']['person']['email']));
+
+        print_r($result);
     }
 }
