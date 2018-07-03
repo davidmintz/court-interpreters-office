@@ -119,9 +119,16 @@ class AccountController extends AbstractActionController
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
+
         if (! $this->getRequest()->isPost()) {
+            // $uri = $this->getRequest()->getUri();
+            // $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+            // $log->debug("shit is what? ".(string)$uri);
+
+
             return new ViewModel(['form' => $form]);
         }
+
         // handle POST
         $user = new Entity\User();
         $request = $this->getRequest();

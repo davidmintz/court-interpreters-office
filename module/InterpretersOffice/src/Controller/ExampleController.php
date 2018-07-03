@@ -136,6 +136,7 @@ class ExampleController extends AbstractActionController
     public function indexAction()
     {
 
+        
         $container = $this->getEvent()->getApplication()->getServiceManager();
         $renderer = $container->get('ViewRenderer');
         //$renderer = new \Zend\View\Renderer\PhpRenderer();
