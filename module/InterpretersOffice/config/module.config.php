@@ -232,7 +232,7 @@ return [
                     'verify-email' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/verify-email',
+                            'route' => '/verify-email/:id/:token',
                             'defaults' => [
                                 'action' => 'verifyEmail',
                             ],

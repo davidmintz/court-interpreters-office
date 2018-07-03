@@ -24,7 +24,12 @@ use Zend\Mime\Part as MimePart;
 
 use Zend\View\Renderer\RendererInterface as Renderer;
 
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
+/*
+const USER_ACCOUNT_INACTIVE = 'user_account_inactive';
+const USER_ACCOUNT_NOT_FOUND = 'user_account_not_found';
+const ACTIVE_ACCOUNT_FOUND   = 'active_account_found';
+*/
+
 
 /**
  * manages user account service
@@ -88,28 +93,46 @@ class AccountManager implements LoggerAwareInterface
         $log = $this->getLogger();
         /** @var Entity\User $user */
         $user = $event->getParam('user');
-        $log->info(get_class($event).": new user registration has been submitted for: "
+        $log->info(__CLASS__. " triggered by " .get_class($event->getTarget())
+            .": new user registration has been submitted for: "
             .$user->getUsername());
-
         /** @var Entity\VerificationToken $token */
         $token = $this->createVerificationToken($user);
         $this->purge($token->getId());
         $this->objectManager->persist($token);
+        /** maybe the stuff we need should be passed as Event params instead? */
+        $controller = $event->getTarget();
 
-        $view = (new ViewModel(['person'=>$user->getPerson()]))
-            ->setTemplate('interpreters-office/email/layout.tidy.phtml');
+        // assemble the URL for email verification
+        $uri = $controller->getRequest()->getUri();
+        $scheme = $uri->getScheme() ?: 'https';
+        $host =  $uri->getHost() ?: 'office.localhost';
+        $log->debug("for starters:  {$scheme}://{$host}");
+        $path = $event->getTarget()->url()->fromRoute('account/verify-email',
+            ['id' => $token->getId(),'token' => $this->random_string]
+        );
+        $url = "{$scheme}://{$host}/{$path}";
+        $view = (new ViewModel([
+            'url' => $url,
+            'person'=>$user->getPerson()])
+            )
+            ->setTemplate('interpreters-office/email/user_registration');
+        $layout = $controller->layout();
+        $layout->setTemplate('interpreters-office/email/layout')
+            ->setVariable('content', $this->viewRenderer->render($view));
 
-        $markup = $this->viewRenderer->render($view);
+        $html = new MimePart($this->viewRenderer->render($layout));
+        // DEBUG:
+        file_put_contents('data/email-output.html', $this->viewRenderer->render($layout));
+        $html->type = Mime::TYPE_HTML;
+        $html->charset = 'utf-8';
+        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
         $text = new MimePart("You need a client that supports HTML email.");
         $text->type = Mime::TYPE_TEXT;
         $text->charset = 'utf-8';
         $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
-        $html = new MimePart($markup);
-        $html->type = Mime::TYPE_HTML;
-        $html->charset = 'utf-8';
-        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
         $body = new MimeMessage();
         $body->setParts([$text, $html]);
@@ -123,9 +146,7 @@ class AccountManager implements LoggerAwareInterface
         $transport = new $this->config['transport']($opts);
         $transport->send($message);
 
-        $log->info("hashed id is: ".$token->getId());
-        $log->info("token is: ".$this->random_string);
-        $log->info("hashed token is: ".$token->getToken());
+
 
         //*/
         //$view->content = "This here shit is your text content";
