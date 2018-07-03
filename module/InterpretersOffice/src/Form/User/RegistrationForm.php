@@ -138,7 +138,9 @@ class RegistrationForm extends Form
                 );
 
         // password
-        $inputFilter->get('user')->get('password-confirm')->getValidatorChain()
+        $inputFilter->get('user')->get('password-confirm')
+            ->setAllowEmpty(false)->setRequired(true)
+            ->getValidatorChain()
             ->attachByName(
                 'NotEmpty',
                 ['messages' => ['isEmpty' => 'password confirmation is required']],
