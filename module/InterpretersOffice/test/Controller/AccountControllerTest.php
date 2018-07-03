@@ -104,7 +104,7 @@ class AccountControllerTest extends AbstractControllerTest
 
         $accountManager = $this->getApplication()->getServiceManager()
             ->get('InterpretersOffice\Service\AccountManager');
-        $result = $accountManager->verify(md5($post['user']['person']['email']));
+        $result = $accountManager->verify(md5($post['user']['person']['email']),'shit');
 
         print_r($result);
     }

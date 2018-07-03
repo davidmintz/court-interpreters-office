@@ -1,8 +1,18 @@
-<?php // $this->layout()->setTemplate('interpreters-office/email/layout.tidy.phtml')?>
-
-<p>
-    This text is hard-coded in the child view <?php echo basename(__FILE__)?>
+<?php
+/** module/InterpretersOffice/view/interpreters-office/email/user_registration.phtml */
+?>
+<h3>confirm your email</h3>
+<p>We received a form submission for a new user account with this email address.
+To complete your registration, please verify your email address:
+</p>
+<p style="text-align:center">
+    <a href="<?php echo $this->url ?>">
+        <button style="font-size:125%;border-radius: 4px; cursor:pointer; border: 1px solid #dee2e6;background-color:#32a5e6;color:white;padding:1em;" type="button" name="button">
+            <strong>confirm email</strong>
+        </button>
+    </a>
 </p>
 <p>
-    The person is <?php echo $this->person->getLastName() ?>
+or by navigating to <a href="<?php echo $this->url ?>"><?php echo $this->url ?></a>
 </p>
+<p>Thank you!</p>

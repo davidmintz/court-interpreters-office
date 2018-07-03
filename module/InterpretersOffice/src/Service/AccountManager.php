@@ -67,7 +67,7 @@ class AccountManager implements LoggerAwareInterface
     private $viewRenderer;
 
     /**
-     * a random is_string
+     * a random string
      *
      * @var string
      */
@@ -111,7 +111,10 @@ class AccountManager implements LoggerAwareInterface
         $path = $event->getTarget()->url()->fromRoute('account/verify-email',
             ['id' => $token->getId(),'token' => $this->random_string]
         );
-        $url = "{$scheme}://{$host}/{$path}";
+        $url = "{$scheme}://{$host}{$path}";
+        $log->debug("token is: ".$this->random_string);
+        $log->debug("hashed token is: ".$token->getToken());
+        $log->info($url);
         $view = (new ViewModel([
             'url' => $url,
             'person'=>$user->getPerson()])
@@ -124,6 +127,7 @@ class AccountManager implements LoggerAwareInterface
         $html = new MimePart($this->viewRenderer->render($layout));
         // DEBUG:
         file_put_contents('data/email-output.html', $this->viewRenderer->render($layout));
+        // end DE
         $html->type = Mime::TYPE_HTML;
         $html->charset = 'utf-8';
         $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
@@ -149,7 +153,7 @@ class AccountManager implements LoggerAwareInterface
 
 
         //*/
-        //$view->content = "This here shit is your text content";
+        //$view->content = "This here shit is your text content";'wank_boinker@nysd.uscourts.gov'
         /*
         $child = (new ViewModel())
             ->setTemplate('interpreters-office/email/user_registration.phtml');
@@ -162,21 +166,44 @@ class AccountManager implements LoggerAwareInterface
         //
 
     }
+    function verifyToken($data,$otp)
+    {
 
+    }
     /**
      * work in progress
      *
      * @param  string $hash
      * @return [type]       [description]
      */
-    public function verify($hash)
+    public function verify($hashed_id,$otp)
     {
         /** @var  Doctrine\DBAL\Connection $db */
         $db = $this->objectManager->getConnection();
-        $sql = 'SELECT u.* FROM users u JOIN people p ON u.person_id = p.id
-            WHERE MD5(LOWER(p.email)) = ? ORDER BY p.id DESC LIMIT 1';
-        $stmt = $db->executeQuery($sql,[$hash]);
-        return $stmt->fetch();
+        // $sql = 'SELECT u.* FROM users u JOIN people p ON u.person_id = p.id
+        //     WHERE MD5(LOWER(p.email)) = ? ORDER BY p.id DESC LIMIT 1';'wank_boinker@nysd.uscourts.gov'
+        $sql = 'SELECT t.*, p.id AS person_id,
+                u.username,
+                u.last_login,
+                u.active,
+                r.name AS role
+            FROM verification_tokens t
+            JOIN people p ON MD5(LOWER(p.email)) = t.id
+            JOIN users u ON p.id = u.person_id
+            JOIN roles r ON r.id = u.role_id
+            WHERE t.id = ?';
+        $stmt = $db->executeQuery($sql,[$hashed_id]);
+        $data = $stmt->fetch();
+        echo "looking up: $hashed_id using $sql...<br>";
+        print_r($data);
+        if (! $data) {
+            return ['error'=>'user/token not found','data'=>null];
+        }
+        // $valid = password_verify($otp,$data['token']);
+        // if (! $valid) {
+        //     return ['error'=>'invalid authentication token','data'=>$data];
+        // }
+        return ['data'=>$data,'error'=>null];
     }
 
     public function getRandomString()
