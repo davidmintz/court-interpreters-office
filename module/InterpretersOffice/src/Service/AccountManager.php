@@ -45,7 +45,13 @@ class AccountManager implements LoggerAwareInterface
      */
     const EVENT_REGISTRATION_SUBMITTED = 'registrationSubmitted';
 
+    /**
+     * name for successful verification event
+     *
+     * @var string
+     */
     const EVENT_EMAIL_VERIFIED = 'email verified';
+
     /**
      * error code for failed email verification query
      *
@@ -83,6 +89,7 @@ class AccountManager implements LoggerAwareInterface
      * @var string
      */
     const ERROR_TOKEN_VALIDATION_FAILED = 'invalid url token';
+    
     /**
      * objectManager instance.
      *
@@ -239,7 +246,7 @@ class AccountManager implements LoggerAwareInterface
         if (! $data) {
             $log->info("user/token not found: query failed with hash $hashed_id "
                 ."and query: $sql");
-            return ['error'=>self::USER_TOKEN_NOT_FOUND,'data'=>null];
+            return ['error'=>self::ERROR_USER_TOKEN_NOT_FOUND,'data'=>null];
         }
         $valid = password_verify($token,$data['token']);
         if (! $valid) {
@@ -247,7 +254,7 @@ class AccountManager implements LoggerAwareInterface
                 . "for (new?) user {$data['email']}"
             );
 
-            return ['error'=>self::TOKEN_VALIDATION_FAILED,
+            return ['error'=>self::ERROR_TOKEN_VALIDATION_FAILED,
                 'data'=>$data];
         }
         /* maybe we should ensure that this never happens */
