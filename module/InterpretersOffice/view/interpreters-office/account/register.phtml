@@ -6,7 +6,9 @@ $form = $this->form;?>
 
 <div class="center-block" style="max-width:700px"><!-- wrapper -->
 <h2 class="text-center py-2">account registration</h2>
+<div id="success-message" class="alert alert-success" style="display:none"></div>
 <?php
+
 $form->prepare();
 $user_fieldset = $form->get('user');
 $person_fieldset = $user_fieldset->get('person');

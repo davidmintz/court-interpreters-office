@@ -84,29 +84,35 @@ $(function(){
                     $("#btn-next").trigger("click");
                 });
 
-            } else { // last step. submit the whole form
+            } else { // last step: submit the whole form
 
                 params = $("#registration-form").serialize();
-                $.post("/user/register",params).then(
-                    function(response) {
-                        if (response.validation_errors) {
-                            displayValidationErrors(response.validation_errors);
-                            // if they managed to beat the inter-fieldset validation,
-                            // put them back on the first fieldset with errors
-                            var i = $("fieldset .validation-error").first()
-                                .closest("fieldset").index();
-                            if (i !== -1) {
-                                $(".carousel").carousel(i);
-                            }
-                            return;
+                $.post("/user/register",params)
+                .then(function(response) {
+                    if (response.validation_errors) {
+                        displayValidationErrors(response.validation_errors);
+                        // if they managed to beat the inter-fieldset validation,
+                        // put them back on the first fieldset with errors
+                        var i = $("fieldset .validation-error").first()
+                            .closest("fieldset").index();
+                        if (i !== -1) {
+                            $(".carousel").carousel(i);
                         }
-                        if (response.status == "success") {
-                            return document.location =  window.basePath
-                                + "/user/verify-email";
-                        }
-                        // else, error
+                        return;
                     }
-                );
+                    if (response.status == "success") {
+                        var email = response.data.person.email;
+                        var html = 'We have sent an email to the address you '
+                        +' provided (<strong>'+email+'</strong>) with '
+                        +' instructions for verifying your email address. '
+                        +' Please check your inbox.';
+                        $('#registration-form').remove();
+                        $('#success-message').html(html).show();
+                    }
+                    // else, error
+                    /** @todo deal with error condition */
+
+                });
             }
         }
         // inter-fieldset validation

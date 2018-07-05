@@ -43,8 +43,9 @@ class AccountManager implements LoggerAwareInterface
      * name of event for new account submission
      * @var string
      */
-    const REGISTRATION_SUBMITTED = 'registrationSubmitted';
+    const EVENT_REGISTRATION_SUBMITTED = 'registrationSubmitted';
 
+    const EVENT_EMAIL_VERIFIED = 'email verified';
     /**
      * error code for failed email verification query
      *
@@ -57,7 +58,7 @@ class AccountManager implements LoggerAwareInterface
      *
      * @var string
      */
-    const USER_TOKEN_NOT_FOUND = 'user/token not found';
+    const ERROR_USER_TOKEN_NOT_FOUND = 'user/token not found';
 
     /**
      * Code meaning invalid role for user self-registration
@@ -69,8 +70,19 @@ class AccountManager implements LoggerAwareInterface
      *
      * @var string
      */
-    const INVALID_ROLE_FOR_SELF_REGISTRATION =
+    const ERROR_INVALID_ROLE_FOR_SELF_REGISTRATION =
         'invalid role for self-registration';
+
+    /**
+     * Error code for failed token validation.
+     *
+     * The verification token for confirming the email address is stored in the
+     * database using password_hash(). This error means the submitted token
+     * failed password_verify($token, $hashed_value).
+     *
+     * @var string
+     */
+    const ERROR_TOKEN_VALIDATION_FAILED = 'invalid url token';
     /**
      * objectManager instance.
      *
@@ -109,6 +121,27 @@ class AccountManager implements LoggerAwareInterface
     }
 
     /**
+     * assembles the URL for email verification
+     *
+     * @param  EventInterface          $event
+     * @param  Entity\VerificationToken $token
+     * @return string
+     */
+    public function assembleVerificationUrl(EventInterface $event,
+        Entity\VerificationToken $token)
+    {
+        $controller = $event->getTarget();
+        $uri = $controller->getRequest()->getUri();
+        $scheme = $uri->getScheme() ?: 'https';
+        $host =  $uri->getHost() ?: 'office.localhost';
+        $path = $event->getTarget()->url()->fromRoute('account/verify-email',
+            ['id' => $token->getId(),'token' => $this->random_string]
+        );
+
+        return "{$scheme}://{$host}{$path}";
+    }
+
+    /**
      * handles user account registration
      *
      * @param  Event  $event
@@ -130,26 +163,14 @@ class AccountManager implements LoggerAwareInterface
         $log->debug("data type returned by purge() is: ".gettype($r));
         $this->objectManager->persist($token);
         /** maybe the stuff we need should be passed as Event params instead? */
-        $controller = $event->getTarget();
 
-        // assemble the URL for email verification
-        $uri = $controller->getRequest()->getUri();
-        $scheme = $uri->getScheme() ?: 'https';
-        $host =  $uri->getHost() ?: 'office.localhost';
-        $log->debug("for starters:  {$scheme}://{$host}");
-        $path = $event->getTarget()->url()->fromRoute('account/verify-email',
-            ['id' => $token->getId(),'token' => $this->random_string]
-        );
-        $url = "{$scheme}://{$host}{$path}";
+        $url = $this->assembleVerificationUrl($event, $token);
         $log->debug("token is: ".$this->random_string);
         $log->debug("hashed token is: ".$token->getToken());
         $log->info($url);
-        $view = (new ViewModel([
-            'url' => $url,
-            'person'=>$user->getPerson()])
-            )
+        $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))
             ->setTemplate('interpreters-office/email/user_registration');
-        $layout = $controller->layout();
+        $layout = $event->getTarget()->layout();
         $layout->setTemplate('interpreters-office/email/layout')
             ->setVariable('content', $this->viewRenderer->render($view));
 
@@ -197,8 +218,9 @@ class AccountManager implements LoggerAwareInterface
         $db = $this->objectManager->getConnection();
         // $sql = 'SELECT u.* FROM users u JOIN people p ON u.person_id = p.id
         //     WHERE MD5(LOWER(p.email)) = ? ORDER BY p.id DESC LIMIT 1';'wank_boinker@nysd.uscourts.gov'
-        $sql = 'SELECT t.*, p.id AS person_id,
+        $sql = 'SELECT t.token, p.id AS person_id,
                 u.username,
+                u.id,
                 u.last_login,
                 u.active,
                 p.lastname,
@@ -213,17 +235,20 @@ class AccountManager implements LoggerAwareInterface
         $stmt = $db->executeQuery($sql,[$hashed_id]);
         $data = $stmt->fetch();
         $log = $this->getLogger();
+
         if (! $data) {
             $log->info("user/token not found: query failed with hash $hashed_id "
                 ."and query: $sql");
-            return ['error'=>'','data'=>null];
+            return ['error'=>self::USER_TOKEN_NOT_FOUND,'data'=>null];
         }
         $valid = password_verify($token,$data['token']);
         if (! $valid) {
             $log->info('email verification token failed password_verify() '
                 . "for (new?) user {$data['email']}"
             );
-            return ['error'=>self::USER_TOKEN_NOT_FOUND,'data'=>$data];
+
+            return ['error'=>self::TOKEN_VALIDATION_FAILED,
+                'data'=>$data];
         }
         /* maybe we should ensure that this never happens */
         if ($data['active']) {

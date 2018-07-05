@@ -25,7 +25,7 @@ class AccountControllerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return ExampleController
+     * @return AccountController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -37,11 +37,11 @@ class AccountControllerFactory implements FactoryInterface
         $sharedEvents = $container->get('SharedEventManager');
         $accountManager = $container->get(AccountManager::class);
         $log = $container->get('log');
-        $sharedEvents->attach($requestedName, AccountManager::REGISTRATION_SUBMITTED,
+        $sharedEvents->attach($requestedName,
+            AccountManager::EVENT_REGISTRATION_SUBMITTED,
             [$accountManager,'onRegistrationSubmitted']
         );
-        //$pluginManager = $container->get('ControllerPluginManager');
-        //$pluginManager->get('layout')->setTemplate('...');
+
         return $controller;
     }
 }

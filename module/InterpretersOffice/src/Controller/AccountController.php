@@ -119,24 +119,17 @@ class AccountController extends AbstractActionController
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
-
         if (! $this->getRequest()->isPost()) {
-            // $uri = $this->getRequest()->getUri();
-            // $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
-            // $log->debug("shit is what? ".(string)$uri);
-
-
             return new ViewModel(['form' => $form]);
         }
-
         // handle POST
         $user = new Entity\User();
         $request = $this->getRequest();
         $form->bind($user);
         $input = $request->getPost();
         $data = $input->get('user');
-
         $form->setData($input);
+        $form->preValidate($data);
         if (! $form->isValid()) {
             return new JsonModel(
                 ['validation_errors' => $form->getFlattenedErrorMessages()]
@@ -147,19 +140,10 @@ class AccountController extends AbstractActionController
             $this->objectManager->persist($user);
             $this->objectManager->persist($user->getPerson());
             $this->getEventManager()->trigger(
-                AccountManager::REGISTRATION_SUBMITTED, $this,
+                AccountManager::EVENT_REGISTRATION_SUBMITTED, $this,
                 ['user'=>$user]
             );
             $this->objectManager->flush();
-            $this->flashMessenger()->addSuccessMessage(
-                sprintf(
-                    'We have sent an email to the address you provided '
-                    .'(<strong>%s</strong>) with instructions for verifying'
-                    .' your email. Please check your inbox.',
-                    $user->getPerson()->getEmail()
-                )
-            );
-
             return new JsonModel(
                 ['validation_errors' => null, 'data' => $data,
                 'status' => 'success']
@@ -189,8 +173,22 @@ class AccountController extends AbstractActionController
         $service = $this->getEvent()->getApplication()->getServiceManager()
             ->get(AccountManager::class);
         $result = $service->verify($id,$token);
-        printf('<pre>%s</pre>',print_r($result,true));
-        return new ViewModel();
+
+        if (! $result['error']) {
+            $id = $result['data']['id'];
+            $user = $this->objectManager->find(Entity\User::class,$id);
+            $user->setActive(true);
+            $this->objectManager->flush();
+            $this->getEventManager()->trigger(
+                AccountManager::EVENT_EMAIL_VERIFIED,
+                $this, ['user'=>$user]
+            );
+            return new ViewModel(['user'=>$user]);
+        } else {
+            return new ViewModel(['error'=>$result['error']]);
+        }
+
+
     }
 
     /**

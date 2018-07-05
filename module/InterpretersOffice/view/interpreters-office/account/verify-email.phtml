@@ -1,6 +1,18 @@
+<?php /** module/InterpretersOffice/view/interpreters-office/account/verify-email.phtml */
+use InterpretersOffice\Service\AccountManager;
+?>
 <h2>email confirmation</h2>
-<?php
-$messenger = $this->flashMessenger();
-if ($messenger->hasSuccessMessages()) :
-    echo $messenger->render('success', ['alert','alert-success',], false);
-endif;
+<?php if ($this->error):?>
+    <div class="alert alert-warning">
+        Sorry, we were unable to validate your account/email address. The error
+        message we encountered is: <?php echo $this->error ?>.
+    </div>
+<?php return;  endif;  ?>
+<?php if ($this->user): $person = $this->user->getPerson();?>
+    <div class="alert alert-success">
+    Welcome, <?php echo $person->getFirstname()," ",$person->getLastName() ?>.
+    Your email has been verified and your user account has been activated. You
+    are welcome to log in.
+</div>
+
+<?php endif;
