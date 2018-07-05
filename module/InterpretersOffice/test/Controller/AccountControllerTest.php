@@ -90,7 +90,7 @@ class AccountControllerTest extends AbstractControllerTest
 
         $this->prophet = $accountManager = $this->prophesize(AccountManager::class);
         $sharedEvents->attach('InterpretersOffice\Controller\AccountController',
-            AccountManager::REGISTRATION_SUBMITTED,
+            AccountManager::EVENT_REGISTRATION_SUBMITTED,
             [$accountManager->reveal(),'onRegistrationSubmitted']
         );
         $this->dispatch('/user/register','POST',$post);
