@@ -183,11 +183,11 @@ class AccountController extends AbstractActionController
      */
     public function verifyEmailAction()
     {
-        
+
         $id = $this->params()->fromRoute('id');
         $token = $this->params()->fromRoute('token');
         $service = $this->getEvent()->getApplication()->getServiceManager()
-            ->get('InterpretersOffice\Service\AccountManager');
+            ->get(AccountManager::class);
         $result = $service->verify($id,$token);
         printf('<pre>%s</pre>',print_r($result,true));
         return new ViewModel();

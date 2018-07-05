@@ -95,7 +95,7 @@ class AccountControllerTest extends AbstractControllerTest
         );
         $this->dispatch('/user/register','POST',$post);
         $response = $this->getResponse()->getBody();
-        echo $response;
+        //echo $response;
         $obj = json_decode($response);
         $this->assertTrue($obj->status === "success");
         $accountManager->onRegistrationSubmitted(
@@ -104,8 +104,12 @@ class AccountControllerTest extends AbstractControllerTest
 
         $accountManager = $this->getApplication()->getServiceManager()
             ->get('InterpretersOffice\Service\AccountManager');
-        $result = $accountManager->verify(md5($post['user']['person']['email']),'shit');
 
-        print_r($result);
+        $result = $accountManager->verify(md5($post['user']['person']['email']),
+            $accountManager->getRandomString());
+
+        $this->assertTrue(is_array($result));
+        $this->assertNull($result['error'],"failed assertion \$result[error] is NULL");
+        $this->assertTrue(is_array($result['data']));
     }
 }

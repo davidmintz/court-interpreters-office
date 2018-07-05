@@ -46,6 +46,32 @@ class AccountManager implements LoggerAwareInterface
     const REGISTRATION_SUBMITTED = 'registrationSubmitted';
 
     /**
+     * error code for failed email verification query
+     *
+     * For user registration, we follow the common practice of emailing a link
+     * to the address the submitted by the user, which link has two url
+     * parameters: one is a hash of the email address, the other a random string
+     * that functions like a one-time password. This error means the query
+     * failed, which can happen when an expired token is purged or if the query
+     * parameters are wrong.
+     *
+     * @var string
+     */
+    const USER_TOKEN_NOT_FOUND = 'user/token not found';
+
+    /**
+     * Code meaning invalid role for user self-registration
+     *
+     * We are currently operating on the theory that only users in the role
+     * "submitter" are allowed to create their own user accounts. All the other
+     * roles are privileged and have to be created manually by a user with
+     * sufficient privileges.
+     *
+     * @var string
+     */
+    const INVALID_ROLE_FOR_SELF_REGISTRATION =
+        'invalid role for self-registration';
+    /**
      * objectManager instance.
      *
      * @var ObjectManager
@@ -98,7 +124,10 @@ class AccountManager implements LoggerAwareInterface
             .$user->getUsername());
         /** @var Entity\VerificationToken $token */
         $token = $this->createVerificationToken($user);
-        $this->purge($token->getId());
+        // get rid of any other ones that may have been created earlier
+        // for this same email address
+        $r = $this->purge($token->getId());
+        $log->debug("data type returned by purge() is: ".gettype($r));
         $this->objectManager->persist($token);
         /** maybe the stuff we need should be passed as Event params instead? */
         $controller = $event->getTarget();
@@ -125,9 +154,9 @@ class AccountManager implements LoggerAwareInterface
             ->setVariable('content', $this->viewRenderer->render($view));
 
         $html = new MimePart($this->viewRenderer->render($layout));
-        // DEBUG:
+        // for DEBUGGING
         file_put_contents('data/email-output.html', $this->viewRenderer->render($layout));
-        // end DE
+        // end DEBUG
         $html->type = Mime::TYPE_HTML;
         $html->charset = 'utf-8';
         $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
@@ -150,33 +179,19 @@ class AccountManager implements LoggerAwareInterface
         $transport = new $this->config['transport']($opts);
         $transport->send($message);
 
-
-
-        //*/
-        //$view->content = "This here shit is your text content";'wank_boinker@nysd.uscourts.gov'
-        /*
-        $child = (new ViewModel())
-            ->setTemplate('interpreters-office/email/user_registration.phtml');
-        $layout->addChild($child,'content');
-        */
-        //$child->content = "This is some content in the child view.";
-        //$view = new ViewModel();
-        //$view->setTemplate('interpreters-office/email/user_registration.phtml');
-        //$layout->addChild($view);
-        //
-
+        //return $this->random_string;
     }
-    function verifyToken($data,$otp)
-    {
 
-    }
     /**
-     * work in progress
+     * verifies a new user's email address
      *
-     * @param  string $hash
-     * @return [type]       [description]
+     *
+     *
+     * @param  string $hashed_id a hash of the user's email address
+     * @param string $token a random string
+     * @return Array  in the form ['data'=> array|null, 'error'=> string|null]
      */
-    public function verify($hashed_id,$otp)
+    public function verify($hashed_id, $token)
     {
         /** @var  Doctrine\DBAL\Connection $db */
         $db = $this->objectManager->getConnection();
@@ -186,6 +201,9 @@ class AccountManager implements LoggerAwareInterface
                 u.username,
                 u.last_login,
                 u.active,
+                p.lastname,
+                p.firstname,
+                p.email,
                 r.name AS role
             FROM verification_tokens t
             JOIN people p ON MD5(LOWER(p.email)) = t.id
@@ -194,18 +212,43 @@ class AccountManager implements LoggerAwareInterface
             WHERE t.id = ?';
         $stmt = $db->executeQuery($sql,[$hashed_id]);
         $data = $stmt->fetch();
-        echo "looking up: $hashed_id using $sql...<br>";
-        print_r($data);
+        $log = $this->getLogger();
         if (! $data) {
-            return ['error'=>'user/token not found','data'=>null];
+            $log->info("user/token not found: query failed with hash $hashed_id "
+                ."and query: $sql");
+            return ['error'=>'','data'=>null];
         }
-        // $valid = password_verify($otp,$data['token']);
-        // if (! $valid) {
-        //     return ['error'=>'invalid authentication token','data'=>$data];
-        // }
+        $valid = password_verify($token,$data['token']);
+        if (! $valid) {
+            $log->info('email verification token failed password_verify() '
+                . "for (new?) user {$data['email']}"
+            );
+            return ['error'=>self::USER_TOKEN_NOT_FOUND,'data'=>$data];
+        }
+        /* maybe we should ensure that this never happens */
+        if ($data['active']) {
+            $log->info('email verification: account has already been activated '
+            . "for user {$data['email']}, person id {$data['person_id']}"
+            );
+        }
+        /* a scenario that should never happen. maybe we should throw
+        an exception */
+        if ('submitter' !== $data['role']) {
+            return [
+                'error' => self::INVALID_ROLE_FOR_SELF_REGISTRATION,
+                'data'=>null];
+        }
+
         return ['data'=>$data,'error'=>null];
     }
 
+    /**
+     * Returns a random string.
+     *
+     * This creates the random string we use as a verification token.
+     *
+     * @return string
+     */
     public function getRandomString()
     {
         if (! $this->random_string) {
@@ -214,7 +257,7 @@ class AccountManager implements LoggerAwareInterface
         return $this->random_string;
     }
     /**
-     * creates a VerificationToken
+     * creates and returns a new VerificationToken entity
      *
      * @return Entity\VerificationToken
      */
@@ -230,13 +273,19 @@ class AccountManager implements LoggerAwareInterface
         return $token;
 
     }
-
+    /**
+     * deletes all tokens that are expired or have id $id
+     *
+     * @param  string $id token id (a hash)
+     * @return int  number of rows affected (?)
+     */
     public function purge($id)
     {
         $DQL = 'DELETE InterpretersOffice\Entity\VerificationToken t
             WHERE t.expiration > CURRENT_TIMESTAMP() OR t.id = :id';
         $query = $this->objectManager->createQuery($DQL)
         ->setParameters(['id'=>$id,]);
+
         return $query->getResult();
     }
     /**
