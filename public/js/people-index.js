@@ -1,3 +1,7 @@
+/** public/js/people-index.js
+Trying to learn Vue.js. Here we have a mix of jQuery and Vue.js, and I hope
+nobody finds it too objectionable.
+*/
 var $, Vue;
 var view = new Vue({
 
@@ -16,7 +20,7 @@ var view = new Vue({
             var li = $(event.target).closest("li");
             if (li.children(".details").length) {
                 var details = li.children(".details");
-                var what = 'slide' + (details.is(":visible") ? "Up":"Down");                
+                var what = 'slide' + (details.is(":visible") ? "Up":"Down");
                 details[what]();
                 return;
             }

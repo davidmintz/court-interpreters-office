@@ -116,6 +116,11 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
+        // $sm = $this->getEvent()->getApplication()->getServiceManager();
+        // $pluginManager = $sm->get('ControllerPluginManager');
+        // var_dump($pluginManager->has('url'));
+        //printf('<pre>%s</pre>',print_r(get_class_methods($pluginManager),true));
+        //echo get_class($pluginManager);
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
@@ -187,8 +192,6 @@ class AccountController extends AbstractActionController
         } else {
             return new ViewModel(['error'=>$result['error']]);
         }
-
-
     }
 
     /**
@@ -212,14 +215,14 @@ class AccountController extends AbstractActionController
         return new ViewModel();
     }
     /**
-     * edit account profile
+     * edit (user's own) account profile
      *
      * @return ViewModel
      */
     public function editAction()
     {
         if (! $this->auth->hasIdentity()) {
-            $this->redirect()->toRoute('auth');
+            $this->redirect()->toRoute('login');
             return;
         }
         return new ViewModel();
