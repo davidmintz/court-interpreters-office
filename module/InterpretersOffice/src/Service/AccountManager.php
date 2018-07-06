@@ -89,7 +89,7 @@ class AccountManager implements LoggerAwareInterface
      * @var string
      */
     const ERROR_TOKEN_VALIDATION_FAILED = 'invalid url token';
-    
+
     /**
      * objectManager instance.
      *
@@ -119,6 +119,12 @@ class AccountManager implements LoggerAwareInterface
     private $random_string;
 
     /**
+     * email verification ur;
+     * @var string
+     */
+    private $url;
+
+    /**
      * constructor
      */
     public function __construct(ObjectManager $objectManager, Array $config)
@@ -126,7 +132,23 @@ class AccountManager implements LoggerAwareInterface
         $this->objectManager = $objectManager;
         $this->config = $config;
     }
+    /**
+     * Gets email verification url.
+     *
+     * This is to facilitate testing.
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        if (! $this->url) {
+            throw new \RuntimeException('assembleVerificationUrl() has to be '
+            . ' called before '.__FUNCTION__. ' can be called'
+            );
+        }
 
+        return $this->url;
+    }
     /**
      * assembles the URL for email verification
      *
@@ -144,8 +166,9 @@ class AccountManager implements LoggerAwareInterface
         $path = $event->getTarget()->url()->fromRoute('account/verify-email',
             ['id' => $token->getId(),'token' => $this->random_string]
         );
+        $this->url = "{$scheme}://{$host}{$path}";
 
-        return "{$scheme}://{$host}{$path}";
+        return $this->url;
     }
 
     /**

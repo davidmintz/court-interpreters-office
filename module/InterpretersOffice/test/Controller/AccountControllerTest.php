@@ -102,14 +102,21 @@ class AccountControllerTest extends AbstractControllerTest
             \Prophecy\Argument::type('Zend\EventManager\EventInterface'))
             ->shouldBeCalled();
 
+        /** @var $accountManager \InterpretersOffice\Service\AccountManager */
         $accountManager = $this->getApplication()->getServiceManager()
             ->get('InterpretersOffice\Service\AccountManager');
 
+
         $result = $accountManager->verify(md5($post['user']['person']['email']),
             $accountManager->getRandomString());
-
         $this->assertTrue(is_array($result));
         $this->assertNull($result['error'],"failed assertion \$result[error] is NULL");
         $this->assertTrue(is_array($result['data']));
+
+        $this->reset();
+        $url = $accountManager->getUrl();
+        $this->dispatch($url,'GET');
+        $this->assertQuery('div.alert-success');
+        $this->assertQueryContentRegex('div.alert-success', '/account.+activated/');
     }
 }
