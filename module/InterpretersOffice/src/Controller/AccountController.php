@@ -139,7 +139,6 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
@@ -161,11 +160,11 @@ class AccountController extends AbstractActionController
         }
         try {
             $this->accountManager->register($user,$this->getRequest());
-            // $this->getEventManager()->trigger(
-            //     AccountManager::EVENT_REGISTRATION_SUBMITTED, $this,
-            //     ['user'=>$user]
-            // );
             $this->objectManager->flush();
+            $this->getEventManager()->trigger(
+                AccountManager::EVENT_REGISTRATION_SUBMITTED, $this,
+                ['user'=>$user]
+            );
             return new JsonModel(
                 ['validation_errors' => null, 'data' => $data,
                 'status' => 'success']
@@ -192,9 +191,7 @@ class AccountController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
         $token = $this->params()->fromRoute('token');
-        $service = $this->getEvent()->getApplication()->getServiceManager()
-            ->get(AccountManager::class);
-        $result = $service->verify($id,$token);
+        $result = $this->accountManager->verify($id,$token);
 
         if (! $result['error']) {
             $id = $result['data']['id'];
@@ -218,7 +215,10 @@ class AccountController extends AbstractActionController
      */
     public function requestPasswordAction()
     {
-
+        if ($this->getRequest()->isPost()) {
+            $email = $this->params()->fromPost('email');
+            return new JsonModel(['email'=>$email]);
+        }
         return new ViewModel();
     }
 

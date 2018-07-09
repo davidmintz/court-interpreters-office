@@ -21,14 +21,7 @@ use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
 
-
 use Zend\View\Renderer\RendererInterface as Renderer;
-
-/*
-const USER_ACCOUNT_INACTIVE = 'user_account_inactive';
-const USER_ACCOUNT_NOT_FOUND = 'user_account_not_found';
-const ACTIVE_ACCOUNT_FOUND   = 'active_account_found';
-*/
 
 
 /**
@@ -183,7 +176,7 @@ class AccountManager implements LoggerAwareInterface
 
         return $this->url;
     }
-    
+
     /**
      * gets the 'submitter' role
      * @return Entity\Role

@@ -43,8 +43,8 @@ echo $this->headStyle();?>
             </button>
           <div class="collapse navbar-collapse" id="navbar-collapse">
             <?php  echo $this->navigation('default')->menu()->setPartial('partials/navbar.phtml')?>
-            <?php if ($this->layout()->user) : // is navbar-right still a thing?  ?>
-            <div class="navbar-right" ><?php echo "current user: {$this->layout()->user->username}"?>
+            <?php if ($this->layout()->user) : $user = $this->layout()->user;?>
+            <div class="navbar-right" >current user <?php echo $user->username ?: $user->email ?>
                 <span class="px-2 py-1 border-left"><a href="<?php echo $this->url('logout')?>">log out</a></span>
             </div>
             <?php endif; ?>

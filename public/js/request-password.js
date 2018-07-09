@@ -1,0 +1,10 @@
+$(function(){
+    $('#btn-submit').on("click",function(){
+        console.log("boink");
+        $.post('/user/request-password',{
+            email:$('#email').val()
+        }).then(function(response){
+            console.log(response)
+        });
+    });
+});
