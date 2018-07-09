@@ -125,12 +125,27 @@ class AccountManager implements LoggerAwareInterface
     private $url;
 
     /**
+     * controller plugin manager
+     * @var \Zend\Mvc\Controller\PluginManager
+     */
+    private $pluginManager;
+
+    /**
      * constructor
      */
     public function __construct(ObjectManager $objectManager, Array $config)
     {
         $this->objectManager = $objectManager;
         $this->config = $config;
+    }
+    /**
+     * sets PluginManager
+     * 
+     * @param \Zend\Mvc\Controller\PluginManager  $pluginManager
+     */
+    public function setPluginManager($pluginManager)
+    {
+        $this->pluginManager = $pluginManager;
     }
     /**
      * Gets email verification url.

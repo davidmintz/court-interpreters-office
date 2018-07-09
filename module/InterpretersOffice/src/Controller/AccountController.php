@@ -116,11 +116,11 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-        // $sm = $this->getEvent()->getApplication()->getServiceManager();
-        // $pluginManager = $sm->get('ControllerPluginManager');
+        $sm = $this->getEvent()->getApplication()->getServiceManager();
+        $pluginManager = $sm->get('ControllerPluginManager');
         // var_dump($pluginManager->has('url'));
         //printf('<pre>%s</pre>',print_r(get_class_methods($pluginManager),true));
-        //echo get_class($pluginManager);
+        echo get_class($pluginManager);
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);

@@ -27,7 +27,8 @@ class AccountManagerFactory implements FactoryInterface
         );
         $accountManager
             ->setLogger($container->get('log'))
-            ->setViewRenderer($container->get('ViewRenderer'));
+            ->setViewRenderer($container->get('ViewRenderer'))
+            ->setPluginManager($container->get('ControllerPluginManager'));
         //$viewManager = $container->get('ViewManager');
         //printf("<pre>%s</pre>",print_r(get_class_methods($viewManager),true));
         return $accountManager;
