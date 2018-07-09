@@ -86,27 +86,25 @@ class AccountControllerTest extends AbstractControllerTest
         $post['user']['judges'][] = $judge_id;
         $post['user']['id']='';
         /** @var $sharedEvents Zend\EventManager\SharedEventManagerInterface */
-        $sharedEvents = $this->getApplicationServiceLocator()->get('SharedEventManager');
-
-        $this->prophet = $accountManager = $this->prophesize(AccountManager::class);
-        $sharedEvents->attach('InterpretersOffice\Controller\AccountController',
-            AccountManager::EVENT_REGISTRATION_SUBMITTED,
-            [$accountManager->reveal(),'onRegistrationSubmitted']
-        );
+        //$sharedEvents = $this->getApplicationServiceLocator()->get('SharedEventManager');
+        //$this->prophet = $accountManager = $this->prophesize(AccountManager::class);
+        // $sharedEvents->attach('InterpretersOffice\Controller\AccountController',
+        //     AccountManager::EVENT_REGISTRATION_SUBMITTED,
+        //     [$accountManager->reveal(),'register']
+        // );
         $this->dispatch('/user/register','POST',$post);
         $response = $this->getResponse()->getBody();
-        echo $response;
+        //echo $response;
         $obj = json_decode($response);
         $this->assertTrue($obj->status === "success");
-        $accountManager->onRegistrationSubmitted(
-            \Prophecy\Argument::type('Zend\EventManager\EventInterface'))
-            ->shouldBeCalled();
+        // $accountManager->register(
+        //     \Prophecy\Argument::type(\InterpretersOffice\Entity\User::class),
+        //     \Prophecy\Argument::type(\Zend\Http\PhpEnvironment\Request::class))
+        //     ->shouldBeCalled();
 
         /** @var $accountManager \InterpretersOffice\Service\AccountManager */
         $accountManager = $this->getApplication()->getServiceManager()
             ->get('InterpretersOffice\Service\AccountManager');
-
-
         $result = $accountManager->verify(md5($post['user']['person']['email']),
             $accountManager->getRandomString());
         $this->assertTrue(is_array($result));

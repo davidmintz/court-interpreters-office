@@ -5,16 +5,13 @@
 namespace InterpretersOffice\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\EventManager\SharedEventManagerInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Controller\AccountController;
 
 use InterpretersOffice\Service\AccountManager;
 
 /**
- * Factory class for instantiating IndexController.
- *
- * To be revised when we determine what its dependences are going to be.
+ * Factory class for instantiating AccountController.
  */
 class AccountControllerFactory implements FactoryInterface
 {
@@ -33,8 +30,9 @@ class AccountControllerFactory implements FactoryInterface
             $container->get('entity-manager'),
             $container->get('auth')
         );
-        $controller->setAccountManager($container->get(AccountManager::class));
-        
+        return $controller
+            ->setAccountManager($container->get(AccountManager::class));
+
         /** @var $sharedEvents Zend\EventManager\SharedEventManagerInterface */
         // $sharedEvents = $container->get('SharedEventManager');
         // $accountManager = $container->get(AccountManager::class);
@@ -44,6 +42,5 @@ class AccountControllerFactory implements FactoryInterface
         //     [$accountManager,'onRegistrationSubmitted']
         // );
 
-        return $controller;
     }
 }

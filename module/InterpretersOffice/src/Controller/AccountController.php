@@ -77,16 +77,6 @@ class AccountController extends AbstractActionController
     }
 
     /**
-     * gets the 'submitter' role
-     * @return Entity\Role
-     */
-    protected function getDefaultRole()
-    {
-        return $this->objectManager->getRepository(Entity\Role::class)
-            ->findOneBy(['name' => 'submitter']);
-    }
-
-    /**
      * index action
      * @return ViewModel
      */
@@ -149,11 +139,7 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-        // $sm = $this->getEvent()->getApplication()->getServiceManager();
-        // $pluginManager = $sm->get('ControllerPluginManager');
-        // var_dump($pluginManager->has('url'));
-        //printf('<pre>%s</pre>',print_r(get_class_methods($pluginManager),true));
-        //echo get_class($pluginManager);
+
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
@@ -174,11 +160,7 @@ class AccountController extends AbstractActionController
             );
         }
         try {
-            $user->setRole($this->getDefaultRole());
-            $this->objectManager->persist($user);
-            $this->objectManager->persist($user->getPerson());
             $this->accountManager->register($user,$this->getRequest());
-
             // $this->getEventManager()->trigger(
             //     AccountManager::EVENT_REGISTRATION_SUBMITTED, $this,
             //     ['user'=>$user]

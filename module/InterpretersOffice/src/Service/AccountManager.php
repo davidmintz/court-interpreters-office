@@ -183,37 +183,53 @@ class AccountManager implements LoggerAwareInterface
 
         return $this->url;
     }
-
+    
+    /**
+     * gets the 'submitter' role
+     * @return Entity\Role
+     */
+    protected function getDefaultRole()
+    {
+        return $this->objectManager->getRepository(Entity\Role::class)
+            ->findOneBy(['name' => 'submitter']);
+    }
+    /**
+     * registers a new user account
+     *
+     *
+     *
+     * @param  Entity\User $user
+     * @param  Zend\Http\Requst $request
+     * @return void
+     */
     public function register(Entity\User $user, $request)
     {
         $log = $this->getLogger();
+        $user->setRole($this->getDefaultRole());
+        $this->objectManager->persist($user);
+        $this->objectManager->persist($user->getPerson());
         $token = $this->createVerificationToken($user);
-        $r = $this->purge($token->getId());
-        $log->debug("data type returned by purge() is: ".gettype($r));
         $this->objectManager->persist($token);
-
         $url = $this->assembleVerificationUrl($token,$request);
-        $log->debug("token is: ".$this->random_string);
-        $log->debug("hashed token is: ".$token->getToken());
-        $log->info($url);
+        // $log->debug("token is: ".$this->random_string.", hash is "
+        //     .$token->getToken());
         $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))
             ->setTemplate('interpreters-office/email/user_registration');
-        $layout = $this->pluginManager->layout();
+        $layout = new ViewModel();
         $layout->setTemplate('interpreters-office/email/layout')
             ->setVariable('content', $this->viewRenderer->render($view));
         $html = new MimePart($this->viewRenderer->render($layout));
         // for DEBUGGING
         file_put_contents('data/email-output.html', $this->viewRenderer->render($layout));
-        // end DEBUG
+        // end DEBUGGING
         $html->type = Mime::TYPE_HTML;
         $html->charset = 'utf-8';
         $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
-        $text = new MimePart("You need a client that supports HTML email.");
+        $text = new MimePart("To read this message you need a client that supports HTML email.");
         $text->type = Mime::TYPE_TEXT;
         $text->charset = 'utf-8';
         $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-
 
         $body = new MimeMessage();
         $body->setParts([$text, $html]);
@@ -227,73 +243,10 @@ class AccountManager implements LoggerAwareInterface
         $transport = new $this->config['transport']($opts);
         $transport->send($message);
 
-    }
-    /**
-     * handles user account registration
-     *
-     * @param  Event  $event
-     * @return void
-     */
-    public function onRegistrationSubmitted(EventInterface $event)
-    {
-        $log = $this->getLogger();
-        /** @var Entity\User $user */
-        $user = $event->getParam('user');
-        $log->info(__CLASS__. " triggered by " .get_class($event->getTarget())
-            .": new user registration has been submitted for: "
-            .$user->getUsername());
-        /** @var Entity\VerificationToken $token */
-        $token = $this->createVerificationToken($user);
-        // get rid of any other ones that may have been created earlier
-        // for this same email address
-        $r = $this->purge($token->getId());
-        $log->debug("data type returned by purge() is: ".gettype($r));
-        $this->objectManager->persist($token);
-        /** maybe the stuff we need should be passed as Event params instead? */
-
-        $url = $this->assembleVerificationUrl($event, $token);
-        $log->debug("token is: ".$this->random_string);
-        $log->debug("hashed token is: ".$token->getToken());
-        $log->info($url);
-        $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))
-            ->setTemplate('interpreters-office/email/user_registration');
-        $layout = $event->getTarget()->layout();
-        $layout->setTemplate('interpreters-office/email/layout')
-            ->setVariable('content', $this->viewRenderer->render($view));
-
-        $html = new MimePart($this->viewRenderer->render($layout));
-        // for DEBUGGING
-        file_put_contents('data/email-output.html', $this->viewRenderer->render($layout));
-        // end DEBUG
-        $html->type = Mime::TYPE_HTML;
-        $html->charset = 'utf-8';
-        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-
-        $text = new MimePart("You need a client that supports HTML email.");
-        $text->type = Mime::TYPE_TEXT;
-        $text->charset = 'utf-8';
-        $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-
-
-        $body = new MimeMessage();
-        $body->setParts([$text, $html]);
-        $message = new Message();
-        $message->setBody($body);
-        $contentTypeHeader = $message->getHeaders()->get('Content-Type');
-        $contentTypeHeader->setType('multipart/alternative');
-
-        $opts = new $this->config['transport_options']['class'](
-            $this->config['transport_options']['options']);
-        $transport = new $this->config['transport']($opts);
-        $transport->send($message);
-
-        //return $this->random_string;
     }
 
     /**
      * verifies a new user's email address
-     *
-     *
      *
      * @param  string $hashed_id a hash of the user's email address
      * @param string $token a random string
