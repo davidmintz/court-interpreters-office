@@ -15,6 +15,7 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Form\FormInterface;
 
 use InterpretersOffice\Service\AccountManager;
+use InterpretersOffice\Controller\AccountController;
 
 /**
  *  AccountController.
@@ -38,6 +39,13 @@ class AccountController extends AbstractActionController
      * @var AuthenticationServiceInterface
      */
     protected $auth;
+
+    /**
+     * account manager service
+     * @var AccountManager
+     */
+    private $accountManager;
+
     /**
      * constructor.
      *
@@ -48,6 +56,24 @@ class AccountController extends AbstractActionController
     {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
+    }
+
+    /**
+     * Sets AccountManager instance.
+     *
+     * This is for our Controller factory to inject the AccountManager service.
+     * (And we're doing it that way simply because I dislike long strings of
+     * positional parameters in constructors. And passing an Options data
+     * structure  of some kind -- e.g., an array -- seems like overkill.)
+     *
+     * @param AccountManager $accountManager
+     * @return AccountController;
+     */
+    public function setAccountManager(AccountManager $accountManager)
+    {
+        $this->accountManager = $accountManager;
+
+        return $this;
     }
 
     /**
@@ -116,11 +142,11 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
-        $sm = $this->getEvent()->getApplication()->getServiceManager();
-        $pluginManager = $sm->get('ControllerPluginManager');
+        // $sm = $this->getEvent()->getApplication()->getServiceManager();
+        // $pluginManager = $sm->get('ControllerPluginManager');
         // var_dump($pluginManager->has('url'));
         //printf('<pre>%s</pre>',print_r(get_class_methods($pluginManager),true));
-        echo get_class($pluginManager);
+        //echo get_class($pluginManager);
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
@@ -144,10 +170,12 @@ class AccountController extends AbstractActionController
             $user->setRole($this->getDefaultRole());
             $this->objectManager->persist($user);
             $this->objectManager->persist($user->getPerson());
-            $this->getEventManager()->trigger(
-                AccountManager::EVENT_REGISTRATION_SUBMITTED, $this,
-                ['user'=>$user]
-            );
+            $this->accountManager->register($user,$this->getRequest());
+
+            // $this->getEventManager()->trigger(
+            //     AccountManager::EVENT_REGISTRATION_SUBMITTED, $this,
+            //     ['user'=>$user]
+            // );
             $this->objectManager->flush();
             return new JsonModel(
                 ['validation_errors' => null, 'data' => $data,

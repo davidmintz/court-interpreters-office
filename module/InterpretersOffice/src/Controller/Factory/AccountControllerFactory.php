@@ -33,14 +33,16 @@ class AccountControllerFactory implements FactoryInterface
             $container->get('entity-manager'),
             $container->get('auth')
         );
+        $controller->setAccountManager($container->get(AccountManager::class));
+        
         /** @var $sharedEvents Zend\EventManager\SharedEventManagerInterface */
-        $sharedEvents = $container->get('SharedEventManager');
-        $accountManager = $container->get(AccountManager::class);
-        $log = $container->get('log');
-        $sharedEvents->attach($requestedName,
-            AccountManager::EVENT_REGISTRATION_SUBMITTED,
-            [$accountManager,'onRegistrationSubmitted']
-        );
+        // $sharedEvents = $container->get('SharedEventManager');
+        // $accountManager = $container->get(AccountManager::class);
+        // $log = $container->get('log');
+        // $sharedEvents->attach($requestedName,
+        //     AccountManager::EVENT_REGISTRATION_SUBMITTED,
+        //     [$accountManager,'onRegistrationSubmitted']
+        // );
 
         return $controller;
     }

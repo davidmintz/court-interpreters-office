@@ -140,7 +140,7 @@ class AccountManager implements LoggerAwareInterface
     }
     /**
      * sets PluginManager
-     * 
+     *
      * @param \Zend\Mvc\Controller\PluginManager  $pluginManager
      */
     public function setPluginManager($pluginManager)
@@ -167,18 +167,16 @@ class AccountManager implements LoggerAwareInterface
     /**
      * assembles the URL for email verification
      *
-     * @param  EventInterface          $event
      * @param  Entity\VerificationToken $token
      * @return string
      */
-    public function assembleVerificationUrl(EventInterface $event,
-        Entity\VerificationToken $token)
+    public function assembleVerificationUrl(Entity\VerificationToken $token, $request)
     {
-        $controller = $event->getTarget();
-        $uri = $controller->getRequest()->getUri();
+        //$controller = $event->getTarget();
+        $uri = $request->getUri();
         $scheme = $uri->getScheme() ?: 'https';
         $host =  $uri->getHost() ?: 'office.localhost';
-        $path = $event->getTarget()->url()->fromRoute('account/verify-email',
+        $path = $this->pluginManager->get('url')->fromRoute('account/verify-email',
             ['id' => $token->getId(),'token' => $this->random_string]
         );
         $this->url = "{$scheme}://{$host}{$path}";
@@ -186,6 +184,50 @@ class AccountManager implements LoggerAwareInterface
         return $this->url;
     }
 
+    public function register(Entity\User $user, $request)
+    {
+        $log = $this->getLogger();
+        $token = $this->createVerificationToken($user);
+        $r = $this->purge($token->getId());
+        $log->debug("data type returned by purge() is: ".gettype($r));
+        $this->objectManager->persist($token);
+
+        $url = $this->assembleVerificationUrl($token,$request);
+        $log->debug("token is: ".$this->random_string);
+        $log->debug("hashed token is: ".$token->getToken());
+        $log->info($url);
+        $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))
+            ->setTemplate('interpreters-office/email/user_registration');
+        $layout = $this->pluginManager->layout();
+        $layout->setTemplate('interpreters-office/email/layout')
+            ->setVariable('content', $this->viewRenderer->render($view));
+        $html = new MimePart($this->viewRenderer->render($layout));
+        // for DEBUGGING
+        file_put_contents('data/email-output.html', $this->viewRenderer->render($layout));
+        // end DEBUG
+        $html->type = Mime::TYPE_HTML;
+        $html->charset = 'utf-8';
+        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+
+        $text = new MimePart("You need a client that supports HTML email.");
+        $text->type = Mime::TYPE_TEXT;
+        $text->charset = 'utf-8';
+        $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+
+
+        $body = new MimeMessage();
+        $body->setParts([$text, $html]);
+        $message = new Message();
+        $message->setBody($body);
+        $contentTypeHeader = $message->getHeaders()->get('Content-Type');
+        $contentTypeHeader->setType('multipart/alternative');
+
+        $opts = new $this->config['transport_options']['class'](
+            $this->config['transport_options']['options']);
+        $transport = new $this->config['transport']($opts);
+        $transport->send($message);
+
+    }
     /**
      * handles user account registration
      *
