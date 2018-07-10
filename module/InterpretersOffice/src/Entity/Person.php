@@ -389,4 +389,14 @@ class Person
             substr($digits, 6, 4)
         );
     }
+
+    /**
+     * gets full name
+     *
+     * @return string
+     */
+    public function getFullName()
+    {
+        return $this->getFirstname().' '.$this->getLastname();
+    }
 }

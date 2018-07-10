@@ -12,16 +12,22 @@ use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerAwareTrait;
 use Zend\EventManager\EventInterface;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use InterpretersOffice\Entity;
-use InterpretersOffice\Service\AccountManager;
-
 use Zend\Mail\Message;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
 
+use Zend\InputFilter\Factory;
+use Zend\InputFilter\InputFilterInterface;
+use Zend\Validator;
+
+use Zend\Http\PhpEnvironment\Request;
+
 use Zend\View\Renderer\RendererInterface as Renderer;
+
+use Doctrine\Common\Persistence\ObjectManager;
+use InterpretersOffice\Entity;
+use InterpretersOffice\Service\AccountManager;
 
 
 /**
@@ -124,6 +130,15 @@ class AccountManager implements LoggerAwareInterface
     private $pluginManager;
 
     /**
+     * email input filter
+     *
+     * for the request-password-reset form
+     *
+     * @var InputFilterInterface;
+     */
+    private $emailInputFilter;
+
+    /**
      * constructor
      */
     public function __construct(ObjectManager $objectManager, Array $config)
@@ -131,12 +146,13 @@ class AccountManager implements LoggerAwareInterface
         $this->objectManager = $objectManager;
         $this->config = $config;
     }
+
     /**
      * sets PluginManager
      *
      * @param \Zend\Mvc\Controller\PluginManager  $pluginManager
      */
-    public function setPluginManager($pluginManager)
+    public function setPluginManager(\Zend\Mvc\Controller\PluginManager $pluginManager)
     {
         $this->pluginManager = $pluginManager;
     }
@@ -178,6 +194,50 @@ class AccountManager implements LoggerAwareInterface
     }
 
     /**
+     * gets email input filter
+     *
+     * @return InputFilterInterface
+     */
+    public function getEmailInputFilter()
+    {
+        if ($this->emailInputFilter) {
+            return $this->emailInputFilter;
+        }
+        $factory = new Factory();
+        $this->emailInputFilter = $factory->createInputFilter([
+            'email' => [
+                'name' => 'email',
+                'required' => true, 'allow_empty' => false,
+                'validators' => [
+                    [
+                    'name' => 'NotEmpty',
+                       'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => 'email is required',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => Validator\EmailAddress::class,
+                        'options' => [
+                            'messages' => [
+                                Validator\EmailAddress::INVALID => 'email address is required',
+                                Validator\EmailAddress::INVALID_FORMAT => 'invalid email address',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+                'filters' => [
+                    ['name'=>'StringTrim']
+                ]
+            ]
+        ]);
+        return $this->emailInputFilter;
+
+    }
+    /**
      * gets the 'submitter' role
      * @return Entity\Role
      */
@@ -186,13 +246,48 @@ class AccountManager implements LoggerAwareInterface
         return $this->objectManager->getRepository(Entity\Role::class)
             ->findOneBy(['name' => 'submitter']);
     }
+
+    /**
+     * handles a request to reset a password
+     *
+     * @param string $email user's email address
+     * @param Request $request
+     */
+    public function requestPasswordReset($email, Request $request = null)
+    {
+        $dql = 'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p
+            WHERE p.email = :email';
+
+        $user = $this->objectManager->createQuery($dql)
+            ->setParameters(['email'=>$email])
+            ->getOneOrNullResult();
+        $log = $this->getLogger();
+        $log->info(sprintf(
+            "received password reset request for user %s, found %s, ip address %s",
+            $email, $user ? $user->getPerson()->getFullName() : 'nobody',
+            $request ? $request->getServer('REMOTE_ADDR','n/a') : 'none'
+        ));
+        if (! $user) {
+            return false;
+        }
+        if (! $user->isActive()) {
+            $log->info(
+                sprintf(
+                    'user active: no. last login: %s. returning false',
+                    $user->getLastLogin() ?: 'never'
+                ));
+            return false;
+        }
+        $log->info("(not quite) sending email for password reset");
+
+        return true;
+    }
+
     /**
      * registers a new user account
      *
-     *
-     *
      * @param  Entity\User $user
-     * @param  Zend\Http\Requst $request
+     * @param  Zend\Http\Request $request
      * @return void
      */
     public function register(Entity\User $user, $request)
@@ -211,25 +306,12 @@ class AccountManager implements LoggerAwareInterface
         $layout = new ViewModel();
         $layout->setTemplate('interpreters-office/email/layout')
             ->setVariable('content', $this->viewRenderer->render($view));
-        $html = new MimePart($this->viewRenderer->render($layout));
+        $html = $this->viewRenderer->render($layout);
         // for DEBUGGING
         file_put_contents('data/email-output.html', $this->viewRenderer->render($layout));
         // end DEBUGGING
-        $html->type = Mime::TYPE_HTML;
-        $html->charset = 'utf-8';
-        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
-        $text = new MimePart("To read this message you need a client that supports HTML email.");
-        $text->type = Mime::TYPE_TEXT;
-        $text->charset = 'utf-8';
-        $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-
-        $body = new MimeMessage();
-        $body->setParts([$text, $html]);
-        $message = new Message();
-        $message->setBody($body);
-        $contentTypeHeader = $message->getHeaders()->get('Content-Type');
-        $contentTypeHeader->setType('multipart/alternative');
+        $message = $this->createEmailMessage($html,"To read this message you need a client that supports HTML email.");
 
         $opts = new $this->config['transport_options']['class'](
             $this->config['transport_options']['options']);
@@ -354,6 +436,39 @@ class AccountManager implements LoggerAwareInterface
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * creates an email message
+     *
+     * @todo make it a trait for convenient re-use?
+     *
+     * @param  string $html HTML
+     * @param  string $text text
+     * @return Message
+     */
+    public function createEmailMessage($markup,$textContent)
+    {
+        $html = new MimePart($markup);
+        $html->type = Mime::TYPE_HTML;
+        $html->charset = 'utf-8';
+        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+
+        $text = new MimePart($textContent);
+        $text->type = Mime::TYPE_TEXT;
+        $text->charset = 'utf-8';
+        $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+
+        $body = new MimeMessage();
+        $body->setParts([$text, $html]);
+        $message = new Message();
+        $message->setBody($body);
+        $contentTypeHeader = $message->getHeaders()->get('Content-Type');
+        $contentTypeHeader->setType('multipart/alternative');
+
+        return $message;
+
+
     }
 
     /**

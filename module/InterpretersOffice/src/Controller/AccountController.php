@@ -13,9 +13,7 @@ use InterpretersOffice\Entity;
 use InterpretersOffice\Form\User\RegistrationForm;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Form\FormInterface;
-
 use InterpretersOffice\Service\AccountManager;
-use InterpretersOffice\Controller\AccountController;
 
 /**
  *  AccountController.
@@ -216,8 +214,22 @@ class AccountController extends AbstractActionController
     public function requestPasswordAction()
     {
         if ($this->getRequest()->isPost()) {
-            $email = $this->params()->fromPost('email');
-            return new JsonModel(['email'=>$email]);
+            $inputFilter = $this->accountManager->getEmailInputFilter();
+            $inputFilter->setData($this->params()->fromPost());
+            if (! $inputFilter->isValid()) {
+                return new JsonModel(['valid'=>false,
+                    'validation_errors'=>$inputFilter->getMessages()]);
+            }
+            // valid POST
+            $shit = $this->accountManager->requestPasswordReset(
+                $inputFilter->getValue('email'),
+                $this->getRequest()
+            );
+            return new JsonModel(
+                ['valid'=>true,'message'=>'good job, bitch']
+            );
+
+
         }
         return new ViewModel();
     }
