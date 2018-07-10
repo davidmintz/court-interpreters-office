@@ -177,20 +177,28 @@ class AccountManager implements LoggerAwareInterface
      * assembles the URL for email verification
      *
      * @param  Entity\VerificationToken $token
+     * @param Request $request
+     * @param string $route
      * @return string
      */
-    public function assembleVerificationUrl(Entity\VerificationToken $token, $request)
+    public function assembleVerificationUrl(Entity\VerificationToken $token,
+        Request $request, $route)
     {
-        //$controller = $event->getTarget();
         $uri = $request->getUri();
         $scheme = $uri->getScheme() ?: 'https';
         $host =  $uri->getHost() ?: 'office.localhost';
-        $path = $this->pluginManager->get('url')->fromRoute('account/verify-email',
+        $path = $this->pluginManager->get('url')->fromRoute($route,
             ['id' => $token->getId(),'token' => $this->random_string]
         );
         $this->url = "{$scheme}://{$host}{$path}";
 
         return $this->url;
+    }
+
+    public function assemblePasswordResetUrl(Entity\VerificationToken $token,
+        Request $request)
+    {
+
     }
 
     /**
@@ -280,6 +288,12 @@ class AccountManager implements LoggerAwareInterface
         }
         $log->info("(not quite) sending email for password reset");
 
+        $token = $this->createVerificationToken($user);
+        $url = $this->assembleVerificationUrl($token,$request,'account/reset-password');
+        $log->info("created url $url");
+        $this->objectManager->persist($token);
+        $this->objectManager->flush();
+
         return true;
     }
 
@@ -298,7 +312,7 @@ class AccountManager implements LoggerAwareInterface
         $this->objectManager->persist($user->getPerson());
         $token = $this->createVerificationToken($user);
         $this->objectManager->persist($token);
-        $url = $this->assembleVerificationUrl($token,$request);
+        $url = $this->assembleVerificationUrl($token,$request,'account/verify-email');
         // $log->debug("token is: ".$this->random_string.", hash is "
         //     .$token->getToken());
         $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))

@@ -250,8 +250,8 @@ return [
                     'reset-password' => [
                         'type' => Segment::class,
                         'options' => [
-                            // to do: add parameters
-                            'route' => '/reset-password',
+                            
+                            'route' => '/reset-password/:id/:token',
                             'defaults' => [
                                 'action' => 'reset-password',
                             ],
