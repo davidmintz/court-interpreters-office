@@ -238,9 +238,68 @@ class AccountManager implements LoggerAwareInterface
         $factory = new Factory();
         $this->passwordInputFilter = $factory->createInputFilter([
 
-            'password' => [],
-            'password-confirm' => [],
+            'password' => [
+                'validators' =>[
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                             'messages' => [
+                                 Validator\NotEmpty::IS_EMPTY => 'password is required',
+                             ],
+                         ],
+                         'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'min' => 8,
+                            'max' => '150',
+                            'messages' => [
+                                'stringLengthTooLong' => 'password length exceeds maximum (%max% characters)',
+                                'stringLengthTooShort' => 'password length must be a minimum of %min% characters',
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+            'password-confirm' => [
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                             'messages' => [
+                                 Validator\NotEmpty::IS_EMPTY => 'password confirmation is required',
+                             ],
+                         ],
+                         'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'Identical',
+                        'options' => [
+                            'token' => 'password',
+                            'messages' => [
+                                'notSame' => 'password confirmation field does not match'
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'token' => [
+                'name' => 'token',
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                             'messages' => [
+                                 Validator\NotEmpty::IS_EMPTY =>'missing authentication token',
+                             ],
+                         ],
+                    ],
+                ],
+            ],
         ]);
+
+        return $this->passwordInputFilter;
     }
     /**
      * gets email input filter
@@ -260,7 +319,7 @@ class AccountManager implements LoggerAwareInterface
                 'validators' => [
                     [
                         'name' => 'NotEmpty',
-                       'options' => [
+                        'options' => [
                             'messages' => [
                                 Validator\NotEmpty::IS_EMPTY => 'email is required',
                             ],

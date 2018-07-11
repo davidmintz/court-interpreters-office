@@ -250,12 +250,23 @@ class AccountController extends AbstractActionController
             if ($result['data']) {
                 $session = new Session('password_reset');
                 $session->token = $token;
-                $session->user_id = $result['id'];
+                $session->user_id = $result['data']['id'];
             }
 
             return new ViewModel(['result'=>$result,'token'=>$token]);
         } // else, POST
 
+        $filter = $this->accountManager->getPasswordInputFilter();
+        $filter->setData($this->params()->fromPost());
+        $valid = $filter->isValid();
+        // to do figure out session token check
+        if ($valid) {
+
+        }
+        return new JsonModel([
+            'validation_errors' => $filter->getMessages(),
+            'valid' => $valid,
+        ]);
 
     }
     /**
