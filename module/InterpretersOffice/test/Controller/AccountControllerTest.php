@@ -106,7 +106,7 @@ class AccountControllerTest extends AbstractControllerTest
         $accountManager = $this->getApplication()->getServiceManager()
             ->get('InterpretersOffice\Service\AccountManager');
         $result = $accountManager->verify(md5($post['user']['person']['email']),
-            $accountManager->getRandomString());
+            $accountManager->getRandomString(),AccountManager::CONFIRM_EMAIL);
         $this->assertTrue(is_array($result));
         $this->assertNull($result['error'],"failed assertion \$result[error] is NULL");
         $this->assertTrue(is_array($result['data']));

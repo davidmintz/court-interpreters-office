@@ -64,7 +64,7 @@ class AccountManager implements LoggerAwareInterface
      *
      * @var string
      */
-    const ERROR_USER_TOKEN_NOT_FOUND = 'user/token not found';
+    const ERROR_USER_TOKEN_NOT_FOUND = 'valid user verification token not found';
 
     /**
      * Code meaning invalid role for user self-registration
@@ -412,18 +412,16 @@ class AccountManager implements LoggerAwareInterface
                 'that is either "reset-password" or "confirm-email"'
             );
         }
-        $this->purge($token);
-        
+
+        $log = $this->getLogger();
+        $purged = $this->purge($token);
+        $log->info(__METHOD__. " purged $purged verification tokens");
+
         /** @var  Doctrine\DBAL\Connection $db */
         $db = $this->objectManager->getConnection();
         $sql = 'SELECT t.token, t.expiration, p.id AS person_id,
-                u.username,
-                u.id,
-                u.last_login,
-                u.active,
-                p.lastname,
-                p.firstname,
-                p.email,
+                u.username, u.id, u.last_login, u.active,
+                p.lastname, p.firstname, p.email,
                 r.name AS role
             FROM verification_tokens t
             JOIN people p ON MD5(LOWER(p.email)) = t.id
@@ -432,17 +430,15 @@ class AccountManager implements LoggerAwareInterface
             WHERE t.id = ?';
         $stmt = $db->executeQuery($sql,[$hashed_id]);
         $data = $stmt->fetch();
-        $log = $this->getLogger();
 
         if (! $data) {
-            $log->info("user/token not found: query failed with hash $hashed_id "
-                ."and query: $sql");
+            $log->info("user/token not found: query failed with hash $hashed_id");
             return ['error'=>self::ERROR_USER_TOKEN_NOT_FOUND,'data'=>null];
         }
         $valid = password_verify($token,$data['token']);
         if (! $valid) {
-            $log->info('email verification token failed password_verify() '
-                . "for (new?) user {$data['email']}"
+            $log->info('verification token failed password_verify() '
+                . "for user {$data['email']}"
             );
 
             return ['error'=>self::ERROR_TOKEN_VALIDATION_FAILED,

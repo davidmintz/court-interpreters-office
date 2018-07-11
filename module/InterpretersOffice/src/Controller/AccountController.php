@@ -189,8 +189,9 @@ class AccountController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
         $token = $this->params()->fromRoute('token');
-        $result = $this->accountManager->verify($id,$token);
 
+        $result = $this->accountManager->verify($id,$token,
+            AccountManager::CONFIRM_EMAIL);
         if (! $result['error']) {
             $id = $result['data']['id'];
             $user = $this->objectManager->find(Entity\User::class,$id);
@@ -221,16 +222,15 @@ class AccountController extends AbstractActionController
                     'validation_errors'=>$inputFilter->getMessages()]);
             }
             // valid POST
-            $shit = $this->accountManager->requestPasswordReset(
+            $this->accountManager->requestPasswordReset(
                 $inputFilter->getValue('email'),
                 $this->getRequest()
             );
             return new JsonModel(
-                ['valid'=>true,'message'=>'good job, bitch']
+                ['valid'=>true,'validation_errors'=> null,]
             );
-
-
         }
+
         return new ViewModel();
     }
 
@@ -241,7 +241,16 @@ class AccountController extends AbstractActionController
      */
     public function resetPasswordAction()
     {
-        return new ViewModel();
+        if ($this->getRequest()->isGet())
+        {
+            $hashed_id = $this->params()->fromRoute('id');
+            $token = $this->params()->fromRoute('token');
+            $result = $this->accountManager->verify($hashed_id, $token,
+                AccountManager::RESET_PASSWORD
+            );
+            return new ViewModel(['result'=>$result]);
+        }
+
     }
     /**
      * edit (user's own) account profile

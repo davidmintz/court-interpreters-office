@@ -11,6 +11,7 @@ $(function(){
                 return displayValidationErrors(response.validation_errors);
             }
             $(".validation-error").hide();
+            $(".alert-success").slideDown();
         });
     });
 });
