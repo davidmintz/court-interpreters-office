@@ -94,7 +94,7 @@ class AccountControllerTest extends AbstractControllerTest
         // );
         $this->dispatch('/user/register','POST',$post);
         $response = $this->getResponse()->getBody();
-        //echo $response;
+        echo $response;
         $obj = json_decode($response);
         $this->assertTrue($obj->status === "success");
         // $accountManager->register(
