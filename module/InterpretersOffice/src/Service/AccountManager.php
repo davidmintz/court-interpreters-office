@@ -16,6 +16,7 @@ use Zend\Mail\Message;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
+use Zend\Mail\Transport\TransportInterface;
 
 use Zend\InputFilter\Factory;
 use Zend\InputFilter\InputFilterInterface;
@@ -139,6 +140,13 @@ class AccountManager implements LoggerAwareInterface
     private $emailInputFilter;
 
     /**
+     * mail transport
+     *
+     * @var TransportInterface
+     */
+    private $transport;
+
+    /**
      * constructor
      */
     public function __construct(ObjectManager $objectManager, Array $config)
@@ -260,6 +268,7 @@ class AccountManager implements LoggerAwareInterface
      *
      * @param string $email user's email address
      * @param Request $request
+     * @return self
      */
     public function requestPasswordReset($email, Request $request = null)
     {
@@ -290,11 +299,27 @@ class AccountManager implements LoggerAwareInterface
 
         $token = $this->createVerificationToken($user);
         $url = $this->assembleVerificationUrl($token,$request,'account/reset-password');
-        $log->info("created url $url");
+        $log->debug("created url: $url");
+        $this->purge($token->getId());
         $this->objectManager->persist($token);
         $this->objectManager->flush();
+        $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))
+            ->setTemplate('interpreters-office/email/password_reset');
+        $layout = new ViewModel();
+        $layout->setTemplate('interpreters-office/email/layout')
+            ->setVariable('content', $this->viewRenderer->render($view));
+        $html = $this->viewRenderer->render($layout);
+        // for DEBUGGING
+        file_put_contents('data/email-password-reset.html', $this->viewRenderer->render($layout));
+        // end DEBUGGING
+        $message = $this->createEmailMessage($html,
+            'To read this message you need an email client that supports HTML');
+        $message->setFrom($this->config['from_address'],$this->config['from_entity'])
+            ->setTo($person->getEmail(),$person->getFullName())
+            ->setSubject('Interpreters Office: reset your password');
+        $this->getMailTransport()->send($message);
 
-        return true;
+        return $this;
     }
 
     /**
@@ -302,7 +327,7 @@ class AccountManager implements LoggerAwareInterface
      *
      * @param  Entity\User $user
      * @param  Zend\Http\Request $request
-     * @return void
+     * @return self
      */
     public function register(Entity\User $user, $request)
     {
@@ -311,6 +336,7 @@ class AccountManager implements LoggerAwareInterface
         $this->objectManager->persist($user);
         $this->objectManager->persist($user->getPerson());
         $token = $this->createVerificationToken($user);
+        $this->purge($token->getId());
         $this->objectManager->persist($token);
         $url = $this->assembleVerificationUrl($token,$request,'account/verify-email');
         // $log->debug("token is: ".$this->random_string.", hash is "
@@ -322,15 +348,17 @@ class AccountManager implements LoggerAwareInterface
             ->setVariable('content', $this->viewRenderer->render($view));
         $html = $this->viewRenderer->render($layout);
         // for DEBUGGING
-        file_put_contents('data/email-output.html', $this->viewRenderer->render($layout));
+        file_put_contents('data/email-confirm-account.html', $this->viewRenderer->render($layout));
         // end DEBUGGING
 
         $message = $this->createEmailMessage($html,"To read this message you need a client that supports HTML email.");
+        $person = $user->getPerson();
+        $message->setFrom($this->config['from_address'],$this->config['from_entity'])
+            ->setTo($person->getEmail(),$person->getFullName())
+            ->setSubject('Interpreters Office: email confirmation for new user account');
+        $this->getMailTransport()->send($message);
 
-        $opts = new $this->config['transport_options']['class'](
-            $this->config['transport_options']['options']);
-        $transport = new $this->config['transport']($opts);
-        $transport->send($message);
+        return $this;
 
     }
 
@@ -481,7 +509,23 @@ class AccountManager implements LoggerAwareInterface
         $contentTypeHeader->setType('multipart/alternative');
 
         return $message;
+    }
 
+    /**
+     * returns email transport
+     *
+     * @return TransportInterface $transport
+     */
+    function getMailTransport()
+    {
+        if ($this->transport) {
+            return $this->transport;
+        }
+        $opts = new $this->config['transport_options']['class'](
+        $this->config['transport_options']['options']);
+        $this->transport = new $this->config['transport']($opts);
+
+        return $this->transport;
 
     }
 

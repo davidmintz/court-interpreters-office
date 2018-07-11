@@ -39,7 +39,7 @@ class AccountControllerTest extends AbstractControllerTest
         ]);
     }
 
-    function testSubmitNewRegistration()
+    function testNewUserRegistration()
     {
 
         $this->dispatch('/user/register');
@@ -116,5 +116,29 @@ class AccountControllerTest extends AbstractControllerTest
         $this->dispatch($url,'GET');
         $this->assertQuery('div.alert-success');
         $this->assertQueryContentRegex('div.alert-success', '/account.+activated/');
+
+        // log in as the new user
+        $this->reset();
+        $token = $this->getCsrfToken('/login', 'login_csrf');
+
+        // sanity-check that we are not yet authenticated
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        $this->assertFalse($auth->hasIdentity());
+
+        $this->dispatch('/login','POST',[
+            'identity' => $this->data['user']['person']['email'],
+            'password' => 'fuck you',
+            'login_csrf' => $token,
+        ]);
+        // we should be redirected
+        $this->assertRedirect();
+        // and we should be authenticated
+        $this->assertTrue($auth->hasIdentity());
+
+    }
+
+    public function __testPasswordReset()
+    {
+
     }
 }
