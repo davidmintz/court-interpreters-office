@@ -153,6 +153,15 @@ class AccountManager implements LoggerAwareInterface
     private $emailInputFilter;
 
     /**
+     * password input filter
+     *
+     * for the password-reset form
+     *
+     * @var InputFilterInterface;
+     */
+    private $passwordInputFilter;
+
+    /**
      * mail transport
      *
      * @var TransportInterface
@@ -216,6 +225,23 @@ class AccountManager implements LoggerAwareInterface
         return $this->url;
     }
 
+    /**
+     * gets password input filter
+     *
+     * @return InputFilterInterface
+     */
+    public function getPasswordInputFilter()
+    {
+        if ($this->passwordInputFilter) {
+            return $this->passwordInputFilter;
+        }
+        $factory = new Factory();
+        $this->passwordInputFilter = $factory->createInputFilter([
+
+            'password' => [],
+            'password-confirm' => [],
+        ]);
+    }
     /**
      * gets email input filter
      *
@@ -285,9 +311,10 @@ class AccountManager implements LoggerAwareInterface
                 ]
             ]
         ]);
-        return $this->emailInputFilter;
 
+        return $this->emailInputFilter;
     }
+
 
     /**
      * gets the 'submitter' role

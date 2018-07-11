@@ -250,11 +250,12 @@ class AccountController extends AbstractActionController
             if ($result['data']) {
                 $session = new Session('password_reset');
                 $session->token = $token;
+                $session->user_id = $result['id'];
             }
 
             return new ViewModel(['result'=>$result,'token'=>$token]);
         } // else, POST
-        
+
 
     }
     /**

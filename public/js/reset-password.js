@@ -1,3 +1,5 @@
 $(function(){
-    console.log("boink!")
+    $("#btn-submit").on("click",function(){
+        console.log("boink");
+    });
 });
