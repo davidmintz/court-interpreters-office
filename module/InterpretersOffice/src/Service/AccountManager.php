@@ -91,6 +91,19 @@ class AccountManager implements LoggerAwareInterface
     const ERROR_TOKEN_VALIDATION_FAILED = 'invalid url token';
 
     /**
+     * one of two possible purposes for calling verify()
+     * @var string
+     */
+    const RESET_PASSWORD = 'reset-password';
+
+    /**
+     * one of two possible purposes for calling verify()
+     *
+     * @var string
+     */
+    const CONFIRM_EMAIL = 'confirm-email';
+
+    /**
      * objectManager instance.
      *
      * @var ObjectManager
@@ -203,12 +216,6 @@ class AccountManager implements LoggerAwareInterface
         return $this->url;
     }
 
-    public function assemblePasswordResetUrl(Entity\VerificationToken $token,
-        Request $request)
-    {
-
-    }
-
     /**
      * gets email input filter
      *
@@ -281,6 +288,7 @@ class AccountManager implements LoggerAwareInterface
         return $this->emailInputFilter;
 
     }
+
     /**
      * gets the 'submitter' role
      * @return Entity\Role
@@ -368,8 +376,6 @@ class AccountManager implements LoggerAwareInterface
         $this->purge($token->getId());
         $this->objectManager->persist($token);
         $url = $this->assembleVerificationUrl($token,$request,'account/verify-email');
-        // $log->debug("token is: ".$this->random_string.", hash is "
-        //     .$token->getToken());
         $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))
             ->setTemplate('interpreters-office/email/user_registration');
         $layout = new ViewModel();
@@ -398,13 +404,19 @@ class AccountManager implements LoggerAwareInterface
      * @param string $token a random string
      * @return Array  in the form ['data'=> array|null, 'error'=> string|null]
      */
-    public function verify($hashed_id, $token)
+    public function verify($hashed_id, $token, $purpose)
     {
+        if (! in_array($purpose,['reset-password','confirm-email'])) {
+            throw new \InvalidArgumentException(
+                'verify() method requires argument "purpose" to be a string ' .
+                'that is either "reset-password" or "confirm-email"'
+            );
+        }
+        $this->purge($token);
+        
         /** @var  Doctrine\DBAL\Connection $db */
         $db = $this->objectManager->getConnection();
-        // $sql = 'SELECT u.* FROM users u JOIN people p ON u.person_id = p.id
-        //     WHERE MD5(LOWER(p.email)) = ? ORDER BY p.id DESC LIMIT 1';'wank_boinker@nysd.uscourts.gov'
-        $sql = 'SELECT t.token, p.id AS person_id,
+        $sql = 'SELECT t.token, t.expiration, p.id AS person_id,
                 u.username,
                 u.id,
                 u.last_login,
@@ -437,14 +449,14 @@ class AccountManager implements LoggerAwareInterface
                 'data'=>$data];
         }
         /* maybe we should ensure that this never happens */
-        if ($data['active']) {
+        if (self::CONFIRM_EMAIL == $purpose && $data['active']) {
             $log->info('email verification: account has already been activated '
             . "for user {$data['email']}, person id {$data['person_id']}"
             );
         }
         /* a scenario that should never happen. maybe we should throw
         an exception */
-        if ('submitter' !== $data['role']) {
+        if (self::CONFIRM_EMAIL == $purpose && 'submitter' !== $data['role']) {
             return [
                 'error' => self::INVALID_ROLE_FOR_SELF_REGISTRATION,
                 'data'=>null];
@@ -467,6 +479,7 @@ class AccountManager implements LoggerAwareInterface
         }
         return $this->random_string;
     }
+
     /**
      * creates and returns a new VerificationToken entity
      *
@@ -493,12 +506,13 @@ class AccountManager implements LoggerAwareInterface
     public function purge($id)
     {
         $DQL = 'DELETE InterpretersOffice\Entity\VerificationToken t
-            WHERE t.expiration > CURRENT_TIMESTAMP() OR t.id = :id';
+            WHERE t.expiration < CURRENT_TIMESTAMP() OR t.id = :id';
         $query = $this->objectManager->createQuery($DQL)
         ->setParameters(['id'=>$id,]);
 
         return $query->getResult();
     }
+
     /**
      * gets config
      *
