@@ -226,7 +226,7 @@ class AccountManager implements LoggerAwareInterface
                 'required' => true, 'allow_empty' => false,
                 'validators' => [
                     [
-                    'name' => 'NotEmpty',
+                        'name' => 'NotEmpty',
                        'options' => [
                             'messages' => [
                                 Validator\NotEmpty::IS_EMPTY => 'email is required',
@@ -243,6 +243,34 @@ class AccountManager implements LoggerAwareInterface
                             ],
                         ],
                         'break_chain_on_failure' => true,
+                    ],
+                ],
+                'filters' => [
+                    ['name'=>'StringTrim']
+                ]
+            ],
+            'csrf' => [
+                'name' => 'Csrf',
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => 'missing security token',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'Csrf',
+                        'options' => [
+                            'messages' => [
+                                Validator\Csrf::NOT_SAME =>
+                                    'Invalid or expired security token. '
+                                    . 'Please reload the page and try again.',
+                            ],
+                        ],
+
                     ],
                 ],
                 'filters' => [
@@ -312,6 +340,7 @@ class AccountManager implements LoggerAwareInterface
         // for DEBUGGING
         file_put_contents('data/email-password-reset.html', $this->viewRenderer->render($layout));
         // end DEBUGGING
+        $person = $user->getPerson();
         $message = $this->createEmailMessage($html,
             'To read this message you need an email client that supports HTML');
         $message->setFrom($this->config['from_address'],$this->config['from_entity'])

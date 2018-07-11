@@ -34,7 +34,7 @@ class AccountControllerTest extends AbstractControllerTest
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute([
             new DataFixture\LocationLoader(),
-            new DataFixture\HatLoader(),
+            new DataFixture\MinimalUserLoader(),
             new DataFixture\JudgeLoader(),
         ]);
     }
@@ -139,6 +139,6 @@ class AccountControllerTest extends AbstractControllerTest
 
     public function __testPasswordReset()
     {
-
+        $this->dispatch('/user/request-password');
     }
 }
