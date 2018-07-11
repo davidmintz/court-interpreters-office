@@ -29,5 +29,7 @@ return [
                 'path'     => 'data/mail/',
             ],
         ],
+        'from_address' => 'interpreters@dev.interpretersoffice.org',
+        'from_entity' => 'Interpreters Office',
     ],
 ];
