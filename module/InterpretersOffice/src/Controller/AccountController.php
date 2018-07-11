@@ -14,7 +14,7 @@ use InterpretersOffice\Form\User\RegistrationForm;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Form\FormInterface;
 use InterpretersOffice\Service\AccountManager;
-
+use Zend\Session\Container as Session;
 /**
  *  AccountController.
  *
@@ -241,15 +241,20 @@ class AccountController extends AbstractActionController
      */
     public function resetPasswordAction()
     {
-        if ($this->getRequest()->isGet())
-        {
+        if ($this->getRequest()->isGet()) {
             $hashed_id = $this->params()->fromRoute('id');
             $token = $this->params()->fromRoute('token');
             $result = $this->accountManager->verify($hashed_id, $token,
                 AccountManager::RESET_PASSWORD
             );
-            return new ViewModel(['result'=>$result]);
-        }
+            if ($result['data']) {
+                $session = new Session('password_reset');
+                $session->token = $token;
+            }
+
+            return new ViewModel(['result'=>$result,'token'=>$token]);
+        } // else, POST
+        
 
     }
     /**
