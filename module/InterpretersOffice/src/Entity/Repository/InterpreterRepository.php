@@ -196,6 +196,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
 
     /**
      * Does the Interpreter entity have a data history?
+     *  @todo complete work in progress
      *
      * @param Entity\Interpreter
      * @return boolean
@@ -209,6 +210,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $count = $this->createQuery($dql)
             ->setParameters(['id'=>$interpreter->getId()])
             ->getSingleScalarResult();
+
         if ($count) {
             return true;
         }
