@@ -472,7 +472,13 @@ class AccountManager implements LoggerAwareInterface
     }
 
     /**
-     * registers a new user account
+     * Registers a new user account.
+     *
+     * First we save a validated User entity. Then we create and save a
+     * verification token that consists of the hashed email address, a random
+     * string which is encrypted before storing, and an expiration timestamp.
+     * Then we create and send to the new user an email containing the url
+     * to verify their email address.
      *
      * @param  Entity\User $user
      * @param  Zend\Http\Request $request
@@ -545,8 +551,6 @@ class AccountManager implements LoggerAwareInterface
             $log->info("user/token not found: query failed with hash $hashed_id");
             return ['error'=>self::ERROR_USER_TOKEN_NOT_FOUND,'data'=>null];
         }
-        //$purged = $this->purge($token);
-        //$log->info(__METHOD__. " purged $purged verification tokens");
         $valid = password_verify($token,$data['token']);
         if (! $valid) {
             $log->info('verification token failed password_verify() '
@@ -562,8 +566,8 @@ class AccountManager implements LoggerAwareInterface
             . "for user {$data['email']}, person id {$data['person_id']}"
             );
         }
-        /* a scenario that should never happen. maybe we should throw
-        an exception */
+        /* self-service registration is not an option for users in any but the
+        least privileged role, which is "submitter" */
         if (self::CONFIRM_EMAIL == $purpose && 'submitter' !== $data['role']) {
             return [
                 'error' => self::INVALID_ROLE_FOR_SELF_REGISTRATION,
@@ -605,6 +609,7 @@ class AccountManager implements LoggerAwareInterface
         return $token;
 
     }
+
     /**
      * deletes all tokens that are expired or have id $id
      *
@@ -616,9 +621,13 @@ class AccountManager implements LoggerAwareInterface
         $DQL = 'DELETE InterpretersOffice\Entity\VerificationToken t
             WHERE t.expiration < CURRENT_TIMESTAMP() OR t.id = :id';
         $query = $this->objectManager->createQuery($DQL)
-        ->setParameters(['id'=>$id,]);
+            ->setParameters(['id'=>$id,]);
+        $affected = $query->getResult();
+        $this->getLogger()->info(sprintf(
+            "%s: deleted $affected verification tokens",__METHOD__)
+        );
 
-        return $query->getResult();
+        return $affected;
     }
 
     /**

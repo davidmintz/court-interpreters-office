@@ -262,11 +262,8 @@ class AccountController extends AbstractActionController
         $filter = $this->accountManager->getPasswordInputFilter($session);
         $filter->setData($this->params()->fromPost());
         $valid = $filter->isValid();
-        $debug = '';
         if ($valid) {
-            $debug = 'user id is '.$session->user_id;
-            $purged = $this->accountManager->purge($hashed_id);
-            $debug .= "$purged token(s) were deleted";
+            $this->accountManager->purge($hashed_id);
             $this->accountManager->resetPassword(
                 $session->user_id,
                 $filter->get('password')->getValue()
@@ -275,7 +272,6 @@ class AccountController extends AbstractActionController
         return new JsonModel([
             'validation_errors' => $filter->getMessages(),
             'valid' => $valid,
-            'debug' => $debug ?: "whatever",
         ]);
 
     }

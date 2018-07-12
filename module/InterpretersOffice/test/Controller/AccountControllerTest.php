@@ -116,7 +116,7 @@ class AccountControllerTest extends AbstractControllerTest
         $this->dispatch($url,'GET');
         $this->assertQuery('div.alert-success');
         $this->assertQueryContentRegex('div.alert-success', '/account.+activated/');
-        
+
         // log in as the new user
         $this->reset();
         $token = $this->getCsrfToken('/login', 'login_csrf');
