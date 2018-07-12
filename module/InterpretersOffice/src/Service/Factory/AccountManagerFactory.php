@@ -6,7 +6,6 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Service\AccountManager;
 
-
 /**
  * factory for AccountManager service
  */

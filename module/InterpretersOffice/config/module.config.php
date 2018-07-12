@@ -15,7 +15,6 @@ use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection;
 use InterpretersOffice\Service;
 use InterpretersOffice\Service\AccountManager;
 
-
 $environment = getenv('APP_ENV') ?: 'development';
 
 // set to 'array' to disable
@@ -250,7 +249,7 @@ return [
                     'reset-password' => [
                         'type' => Segment::class,
                         'options' => [
-                            
+
                             'route' => '/reset-password/:id/:token',
                             'defaults' => [
                                 'action' => 'reset-password',

@@ -4,7 +4,6 @@ namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
 /**
  * storage for email verification and password reset tokens
  *

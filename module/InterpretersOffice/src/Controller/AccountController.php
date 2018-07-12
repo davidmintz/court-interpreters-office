@@ -16,6 +16,7 @@ use Zend\Form\FormInterface;
 use InterpretersOffice\Service\AccountManager;
 use Zend\Session\Container as Session;
 use Zend\InputFilter\InputFilterInterface;
+
 /**
  *  AccountController.
  *
@@ -158,11 +159,12 @@ class AccountController extends AbstractActionController
             );
         }
         try {
-            $this->accountManager->register($user,$this->getRequest());
+            $this->accountManager->register($user, $this->getRequest());
             $this->objectManager->flush();
             $this->getEventManager()->trigger(
-                AccountManager::EVENT_REGISTRATION_SUBMITTED, $this,
-                ['user'=>$user]
+                AccountManager::EVENT_REGISTRATION_SUBMITTED,
+                $this,
+                ['user' => $user]
             );
             return new JsonModel(
                 ['validation_errors' => null, 'data' => $data,
@@ -191,20 +193,24 @@ class AccountController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $token = $this->params()->fromRoute('token');
 
-        $result = $this->accountManager->verify($id,$token,
-            AccountManager::CONFIRM_EMAIL);
+        $result = $this->accountManager->verify(
+            $id,
+            $token,
+            AccountManager::CONFIRM_EMAIL
+        );
         if (! $result['error']) {
             $id = $result['data']['id'];
-            $user = $this->objectManager->find(Entity\User::class,$id);
+            $user = $this->objectManager->find(Entity\User::class, $id);
             $user->setActive(true);
             $this->objectManager->flush();
             $this->getEventManager()->trigger(
                 AccountManager::EVENT_EMAIL_VERIFIED,
-                $this, ['user'=>$user]
+                $this,
+                ['user' => $user]
             );
-            return new ViewModel(['user'=>$user]);
+            return new ViewModel(['user' => $user]);
         } else {
-            return new ViewModel(['error'=>$result['error']]);
+            return new ViewModel(['error' => $result['error']]);
         }
     }
 
@@ -219,8 +225,8 @@ class AccountController extends AbstractActionController
             $inputFilter = $this->accountManager->getEmailInputFilter();
             $inputFilter->setData($this->params()->fromPost());
             if (! $inputFilter->isValid()) {
-                return new JsonModel(['valid'=>false,
-                    'validation_errors'=>$inputFilter->getMessages()]);
+                return new JsonModel(['valid' => false,
+                    'validation_errors' => $inputFilter->getMessages()]);
             }
             // valid POST
             $this->accountManager->requestPasswordReset(
@@ -228,7 +234,7 @@ class AccountController extends AbstractActionController
                 $this->getRequest()
             );
             return new JsonModel(
-                ['valid'=>true,'validation_errors'=> null,]
+                ['valid' => true,'validation_errors' => null,]
             );
         }
 
@@ -247,7 +253,9 @@ class AccountController extends AbstractActionController
 
         if ($this->getRequest()->isGet()) {
             $token = $this->params()->fromRoute('token');
-            $result = $this->accountManager->verify($hashed_id, $token,
+            $result = $this->accountManager->verify(
+                $hashed_id,
+                $token,
                 AccountManager::RESET_PASSWORD
             );
             if ($result['data']) {
@@ -255,7 +263,7 @@ class AccountController extends AbstractActionController
                 $session->user_id = $result['data']['id'];
             }
 
-            return new ViewModel(['result'=>$result,'token'=>$token]);
+            return new ViewModel(['result' => $result,'token' => $token]);
         }
         // else, it's a POST
         /** @var Zend\InputFilter\InputFilterInterface $filter */
@@ -273,7 +281,6 @@ class AccountController extends AbstractActionController
             'validation_errors' => $filter->getMessages(),
             'valid' => $valid,
         ]);
-
     }
     /**
      * edit (user's own) account profile
