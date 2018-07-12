@@ -15,6 +15,7 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Form\FormInterface;
 use InterpretersOffice\Service\AccountManager;
 use Zend\Session\Container as Session;
+use Zend\InputFilter\InputFilterInterface;
 /**
  *  AccountController.
  *
@@ -109,7 +110,7 @@ class AccountController extends AbstractActionController
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
         $validation_group = [
-            'csrf',//????
+            'csrf',
             'user' => [ 'person' => array_keys($params['user']['person'])]
         ];
         if ($form_step == 'fieldset-password') {
@@ -241,31 +242,40 @@ class AccountController extends AbstractActionController
      */
     public function resetPasswordAction()
     {
+        $session = new Session('password_reset');
+        $hashed_id = $this->params()->fromRoute('id');
+
         if ($this->getRequest()->isGet()) {
-            $hashed_id = $this->params()->fromRoute('id');
             $token = $this->params()->fromRoute('token');
             $result = $this->accountManager->verify($hashed_id, $token,
                 AccountManager::RESET_PASSWORD
             );
             if ($result['data']) {
-                $session = new Session('password_reset');
                 $session->token = $token;
                 $session->user_id = $result['data']['id'];
             }
 
             return new ViewModel(['result'=>$result,'token'=>$token]);
-        } // else, POST
-
-        $filter = $this->accountManager->getPasswordInputFilter();
+        }
+        // else, it's a POST
+        /** @var Zend\InputFilter\InputFilterInterface $filter */
+        $filter = $this->accountManager->getPasswordInputFilter($session);
         $filter->setData($this->params()->fromPost());
         $valid = $filter->isValid();
-        // to do figure out session token check
+        $debug = '';
         if ($valid) {
-
+            $debug = 'user id is '.$session->user_id;
+            $purged = $this->accountManager->purge($hashed_id);
+            $debug .= "$purged token(s) were deleted";
+            $this->accountManager->resetPassword(
+                $session->user_id,
+                $filter->get('password')->getValue()
+            );
         }
         return new JsonModel([
             'validation_errors' => $filter->getMessages(),
             'valid' => $valid,
+            'debug' => $debug ?: "whatever",
         ]);
 
     }

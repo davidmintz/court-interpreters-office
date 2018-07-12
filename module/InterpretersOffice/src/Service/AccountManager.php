@@ -94,14 +94,14 @@ class AccountManager implements LoggerAwareInterface
      * one of two possible purposes for calling verify()
      * @var string
      */
-    const RESET_PASSWORD = 'reset-password';
+    const RESET_PASSWORD = 'reset_password';
 
     /**
      * one of two possible purposes for calling verify()
      *
      * @var string
      */
-    const CONFIRM_EMAIL = 'confirm-email';
+    const CONFIRM_EMAIL = 'confirm_email';
 
     /**
      * objectManager instance.
@@ -160,6 +160,45 @@ class AccountManager implements LoggerAwareInterface
      * @var InputFilterInterface;
      */
     private $passwordInputFilter;
+
+    /**
+     * input filter specification for CSRF
+     *
+     * @todo This is not peculiar to this class, but universal to the whole
+     * application, so it should be moved someplace sensible. There is already
+     * a Form/CsrfElementCreationTrait.php that is heavily used, but this CSRF
+     * spec has arisen from cases where we use Zend\InputFilter\InputFilter
+     * without any Zend\Form|Form
+     *
+     * @var array
+     */
+    private $csrf_spec = [
+        'name' => 'csrf',
+        'validators' => [
+            [
+                'name' => 'NotEmpty',
+                'options' => [
+                    'messages' => [
+                        Validator\NotEmpty::IS_EMPTY => 'missing security token',
+                    ],
+                ],
+                'break_chain_on_failure' => true,
+            ],
+            [
+                'name' => 'Csrf',
+                'options' => [
+                    'messages' => [
+                        Validator\Csrf::NOT_SAME =>
+                            'Invalid or expired security token. '
+                            . 'Please reload the page and try again.',
+                    ],
+                ],
+            ],
+        ],
+        'filters' => [
+            ['name'=>'StringTrim']
+        ]
+    ];
 
     /**
      * mail transport
@@ -226,11 +265,12 @@ class AccountManager implements LoggerAwareInterface
     }
 
     /**
-     * gets password input filter
+     * gets password input filter for reset
      *
+     * @param \Zend\Session\Container $session
      * @return InputFilterInterface
      */
-    public function getPasswordInputFilter()
+    public function getPasswordInputFilter(\Zend\Session\Container $session)
     {
         if ($this->passwordInputFilter) {
             return $this->passwordInputFilter;
@@ -295,8 +335,20 @@ class AccountManager implements LoggerAwareInterface
                              ],
                          ],
                     ],
+                    [
+                        'name' => Validator\Callback::class,
+                        'options' => [
+                            'callback' => function($value) use ($session){
+                                return $value == $session->token;
+                            },
+                            'messages' => [
+                                'callbackValue'=> 'sorry, invalid/expired session security token',
+                            ],
+                        ],
+                    ],
                 ],
             ],
+            $this->csrf_spec,
         ]);
 
         return $this->passwordInputFilter;
@@ -341,34 +393,8 @@ class AccountManager implements LoggerAwareInterface
                     ['name'=>'StringTrim']
                 ]
             ],
-            'csrf' => [
-                'name' => 'Csrf',
-                'validators' => [
-                    [
-                        'name' => 'NotEmpty',
-                        'options' => [
-                            'messages' => [
-                                Validator\NotEmpty::IS_EMPTY => 'missing security token',
-                            ],
-                        ],
-                        'break_chain_on_failure' => true,
-                    ],
-                    [
-                        'name' => 'Csrf',
-                        'options' => [
-                            'messages' => [
-                                Validator\Csrf::NOT_SAME =>
-                                    'Invalid or expired security token. '
-                                    . 'Please reload the page and try again.',
-                            ],
-                        ],
+            $this->csrf_spec,
 
-                    ],
-                ],
-                'filters' => [
-                    ['name'=>'StringTrim']
-                ]
-            ]
         ]);
 
         return $this->emailInputFilter;
@@ -492,16 +518,14 @@ class AccountManager implements LoggerAwareInterface
      */
     public function verify($hashed_id, $token, $purpose)
     {
-        if (! in_array($purpose,['reset-password','confirm-email'])) {
+        if (! in_array($purpose,['reset_password','confirm_email'])) {
             throw new \InvalidArgumentException(
                 'verify() method requires argument "purpose" to be a string ' .
-                'that is either "reset-password" or "confirm-email"'
+                'that is either "reset_password" or "confirm_email"'
             );
         }
 
         $log = $this->getLogger();
-        $purged = $this->purge($token);
-        $log->info(__METHOD__. " purged $purged verification tokens");
 
         /** @var  Doctrine\DBAL\Connection $db */
         $db = $this->objectManager->getConnection();
@@ -521,6 +545,8 @@ class AccountManager implements LoggerAwareInterface
             $log->info("user/token not found: query failed with hash $hashed_id");
             return ['error'=>self::ERROR_USER_TOKEN_NOT_FOUND,'data'=>null];
         }
+        //$purged = $this->purge($token);
+        //$log->info(__METHOD__. " purged $purged verification tokens");
         $valid = password_verify($token,$data['token']);
         if (! $valid) {
             $log->info('verification token failed password_verify() '
@@ -654,6 +680,21 @@ class AccountManager implements LoggerAwareInterface
 
     }
 
+    function resetPassword($user_id, $password)
+    {
+        $log = $this->getLogger();
+        /** @var Entity\User $user */
+        $user = $this->objectManager->find(Entity\User::class, $user_id);
+        if (! $user) {
+            $this->log->info(__METHOD__.": user with id $user_id not found");
+            return false;
+        }
+        $user->setPassword($password);
+        $this->objectManager->flush();
+
+        return true;
+
+    }
     /**
      * sets viewRenderer
      *

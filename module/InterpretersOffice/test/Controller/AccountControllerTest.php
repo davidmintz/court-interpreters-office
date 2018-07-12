@@ -94,7 +94,7 @@ class AccountControllerTest extends AbstractControllerTest
         // );
         $this->dispatch('/user/register','POST',$post);
         $response = $this->getResponse()->getBody();
-        echo $response;
+        //echo $response;
         $obj = json_decode($response);
         $this->assertTrue($obj->status === "success");
         // $accountManager->register(
@@ -116,7 +116,7 @@ class AccountControllerTest extends AbstractControllerTest
         $this->dispatch($url,'GET');
         $this->assertQuery('div.alert-success');
         $this->assertQueryContentRegex('div.alert-success', '/account.+activated/');
-
+        
         // log in as the new user
         $this->reset();
         $token = $this->getCsrfToken('/login', 'login_csrf');
