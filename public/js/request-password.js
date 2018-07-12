@@ -10,7 +10,7 @@ $(function(){
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors);
             }
-            $(".validation-error").hide();
+            $(".validation-error, .request-password").hide();
             $(".alert-success").slideDown();
         });
     });
