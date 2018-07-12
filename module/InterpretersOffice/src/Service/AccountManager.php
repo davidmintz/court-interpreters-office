@@ -209,6 +209,9 @@ class AccountManager implements LoggerAwareInterface
 
     /**
      * constructor
+     *
+     * @param ObjectManager $objectManager
+     * @param Array $config email configuration
      */
     public function __construct(ObjectManager $objectManager, Array $config)
     {
@@ -520,6 +523,7 @@ class AccountManager implements LoggerAwareInterface
      *
      * @param  string $hashed_id a hash of the user's email address
      * @param string $token a random string
+     * @param string $purpose one of either 'reset_password' or 'confirm_email'
      * @return Array  in the form ['data'=> array|null, 'error'=> string|null]
      */
     public function verify($hashed_id, $token, $purpose)
@@ -595,6 +599,7 @@ class AccountManager implements LoggerAwareInterface
     /**
      * creates and returns a new VerificationToken entity
      *
+     * @param Entity\User $user
      * @return Entity\VerificationToken
      */
     public function createVerificationToken(Entity\User $user)
@@ -645,8 +650,8 @@ class AccountManager implements LoggerAwareInterface
      *
      * @todo make it a trait for convenient re-use?
      *
-     * @param  string $html HTML
-     * @param  string $text text
+     * @param  string $markup HTML content for email message
+     * @param  string $textContent plain-text content for email message
      * @return Message
      */
     public function createEmailMessage($markup,$textContent)
@@ -689,6 +694,12 @@ class AccountManager implements LoggerAwareInterface
 
     }
 
+    /**
+     * resets a user password
+     *
+     * @param int $user_id id of User entity
+     * @param string $password new user password
+     */
     function resetPassword($user_id, $password)
     {
         $log = $this->getLogger();

@@ -136,7 +136,7 @@ class ExampleController extends AbstractActionController
     public function indexAction()
     {
 
-        
+
         $container = $this->getEvent()->getApplication()->getServiceManager();
         $renderer = $container->get('ViewRenderer');
         //$renderer = new \Zend\View\Renderer\PhpRenderer();
@@ -233,7 +233,13 @@ class ExampleController extends AbstractActionController
         return false;
     }
 
-    public function mailTestOne($config)
+    /**
+     * dicking around
+     *
+     * @param  Array  $config
+     * @return ViewModel
+     */
+    public function mailTestOne(Array $config)
     {
 
         $text = new MimePart("\nthis is your plain text part of the message\n");

@@ -13,6 +13,8 @@ use InterpretersOffice\Service\AccountManager;
 class AccountManagerFactory implements FactoryInterface
 {
     /**
+     * invoke
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options
