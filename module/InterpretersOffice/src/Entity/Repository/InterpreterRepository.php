@@ -11,6 +11,8 @@ use Zend\Paginator\Paginator as ZendPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 
+use InterpretersOffice\Entity;
+
 /**
  * custom repository class for EventType entity.
  */
@@ -190,6 +192,27 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         // lazy way to get rid of possibly unsafe characters in filename?
         // $cache_id = md5($cache_id);
         return compact('dql', 'params', 'cache_id');
+    }
+
+    /**
+     * Does the Interpreter entity have a data history?
+     *
+     * @param Entity\Interpreter
+     * @return boolean
+     */
+    public function hasRelatedEntities(Entity\Interpreter $interpreter)
+    {
+        $dql = 'SELECT COUNT(e.id)
+            FROM InterpretersOffice\Entity\InterpreterEvent ie
+            JOIN ie.event e JOIN ie.interpreter i
+            WHERE i.id = :id';
+        $count = $this->createQuery($dql)
+            ->setParameters(['id'=>$interpreter->getId()])
+            ->getSingleScalarResult();
+        if ($count) {
+            return true;
+        }
+
     }
 
 

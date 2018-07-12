@@ -368,7 +368,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setSecurityClearanceDate($securityClearanceDate)
+    public function setSecurityClearanceDate(\DateTime $securityClearanceDate)
     {
         $this->securityClearanceDate = $securityClearanceDate;
 
@@ -392,7 +392,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setFingerprintDate($fingerprintDate)
+    public function setFingerprintDate(\DateTime $fingerprintDate)
     {
         $this->fingerprintDate = $fingerprintDate;
 
@@ -416,7 +416,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setOathDate($oathDate)
+    public function setOathDate(\DateTime $oathDate)
     {
         $this->oathDate = $oathDate;
 
