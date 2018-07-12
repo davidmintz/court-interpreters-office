@@ -30,7 +30,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\AccountManager;
 
-
 /**
  * manages user account service
  */
@@ -196,7 +195,7 @@ class AccountManager implements LoggerAwareInterface
             ],
         ],
         'filters' => [
-            ['name'=>'StringTrim']
+            ['name' => 'StringTrim']
         ]
     ];
 
@@ -239,8 +238,7 @@ class AccountManager implements LoggerAwareInterface
     {
         if (! $this->url) {
             throw new \RuntimeException('assembleVerificationUrl() has to be '
-            . ' called before '.__FUNCTION__. ' can be called'
-            );
+            . ' called before '.__FUNCTION__. ' can be called');
         }
 
         return $this->url;
@@ -253,13 +251,16 @@ class AccountManager implements LoggerAwareInterface
      * @param string $route
      * @return string
      */
-    public function assembleVerificationUrl(Entity\VerificationToken $token,
-        Request $request, $route)
-    {
+    public function assembleVerificationUrl(
+        Entity\VerificationToken $token,
+        Request $request,
+        $route
+    ) {
         $uri = $request->getUri();
         $scheme = $uri->getScheme() ?: 'https';
-        $host =  $uri->getHost() ?: 'office.localhost';
-        $path = $this->pluginManager->get('url')->fromRoute($route,
+        $host = $uri->getHost() ?: 'office.localhost';
+        $path = $this->pluginManager->get('url')->fromRoute(
+            $route,
             ['id' => $token->getId(),'token' => $this->random_string]
         );
         $this->url = "{$scheme}://{$host}{$path}";
@@ -282,7 +283,7 @@ class AccountManager implements LoggerAwareInterface
         $this->passwordInputFilter = $factory->createInputFilter([
 
             'password' => [
-                'validators' =>[
+                'validators' => [
                     [
                         'name' => 'NotEmpty',
                         'options' => [
@@ -334,18 +335,18 @@ class AccountManager implements LoggerAwareInterface
                         'name' => 'NotEmpty',
                         'options' => [
                              'messages' => [
-                                 Validator\NotEmpty::IS_EMPTY =>'missing authentication token',
+                                 Validator\NotEmpty::IS_EMPTY => 'missing authentication token',
                              ],
                          ],
                     ],
                     [
                         'name' => Validator\Callback::class,
                         'options' => [
-                            'callback' => function($value) use ($session){
+                            'callback' => function ($value) use ($session) {
                                 return $value == $session->token;
                             },
                             'messages' => [
-                                'callbackValue'=> 'sorry, invalid/expired session security token',
+                                'callbackValue' => 'sorry, invalid/expired session security token',
                             ],
                         ],
                     ],
@@ -393,7 +394,7 @@ class AccountManager implements LoggerAwareInterface
                     ],
                 ],
                 'filters' => [
-                    ['name'=>'StringTrim']
+                    ['name' => 'StringTrim']
                 ]
             ],
             $this->csrf_spec,
@@ -427,13 +428,14 @@ class AccountManager implements LoggerAwareInterface
             WHERE p.email = :email';
 
         $user = $this->objectManager->createQuery($dql)
-            ->setParameters(['email'=>$email])
+            ->setParameters(['email' => $email])
             ->getOneOrNullResult();
         $log = $this->getLogger();
         $log->info(sprintf(
             "received password reset request for user %s, found %s, ip address %s",
-            $email, $user ? $user->getPerson()->getFullName() : 'nobody',
-            $request ? $request->getServer('REMOTE_ADDR','n/a') : 'none'
+            $email,
+            $user ? $user->getPerson()->getFullName() : 'nobody',
+            $request ? $request->getServer('REMOTE_ADDR', 'n/a') : 'none'
         ));
         if (! $user) {
             return false;
@@ -443,18 +445,19 @@ class AccountManager implements LoggerAwareInterface
                 sprintf(
                     'user active: no. last login: %s. returning false',
                     $user->getLastLogin() ?: 'never'
-                ));
+                )
+            );
             return false;
         }
         $log->info("(not quite) sending email for password reset");
 
         $token = $this->createVerificationToken($user);
-        $url = $this->assembleVerificationUrl($token,$request,'account/reset-password');
+        $url = $this->assembleVerificationUrl($token, $request, 'account/reset-password');
         $log->debug("created url: $url");
         $this->purge($token->getId());
         $this->objectManager->persist($token);
         $this->objectManager->flush();
-        $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))
+        $view = (new ViewModel(['url' => $url,'person' => $user->getPerson()]))
             ->setTemplate('interpreters-office/email/password_reset');
         $layout = new ViewModel();
         $layout->setTemplate('interpreters-office/email/layout')
@@ -464,10 +467,12 @@ class AccountManager implements LoggerAwareInterface
         file_put_contents('data/email-password-reset.html', $this->viewRenderer->render($layout));
         // end DEBUGGING
         $person = $user->getPerson();
-        $message = $this->createEmailMessage($html,
-            'To read this message you need an email client that supports HTML');
-        $message->setFrom($this->config['from_address'],$this->config['from_entity'])
-            ->setTo($person->getEmail(),$person->getFullName())
+        $message = $this->createEmailMessage(
+            $html,
+            'To read this message you need an email client that supports HTML'
+        );
+        $message->setFrom($this->config['from_address'], $this->config['from_entity'])
+            ->setTo($person->getEmail(), $person->getFullName())
             ->setSubject('Interpreters Office: reset your password');
         $this->getMailTransport()->send($message);
 
@@ -496,8 +501,8 @@ class AccountManager implements LoggerAwareInterface
         $token = $this->createVerificationToken($user);
         $this->purge($token->getId());
         $this->objectManager->persist($token);
-        $url = $this->assembleVerificationUrl($token,$request,'account/verify-email');
-        $view = (new ViewModel(['url' => $url,'person'=>$user->getPerson()]))
+        $url = $this->assembleVerificationUrl($token, $request, 'account/verify-email');
+        $view = (new ViewModel(['url' => $url,'person' => $user->getPerson()]))
             ->setTemplate('interpreters-office/email/user_registration');
         $layout = new ViewModel();
         $layout->setTemplate('interpreters-office/email/layout')
@@ -507,15 +512,14 @@ class AccountManager implements LoggerAwareInterface
         file_put_contents('data/email-confirm-account.html', $this->viewRenderer->render($layout));
         // end DEBUGGING
 
-        $message = $this->createEmailMessage($html,"To read this message you need a client that supports HTML email.");
+        $message = $this->createEmailMessage($html, "To read this message you need a client that supports HTML email.");
         $person = $user->getPerson();
-        $message->setFrom($this->config['from_address'],$this->config['from_entity'])
-            ->setTo($person->getEmail(),$person->getFullName())
+        $message->setFrom($this->config['from_address'], $this->config['from_entity'])
+            ->setTo($person->getEmail(), $person->getFullName())
             ->setSubject('Interpreters Office: email confirmation for new user account');
         $this->getMailTransport()->send($message);
 
         return $this;
-
     }
 
     /**
@@ -528,7 +532,7 @@ class AccountManager implements LoggerAwareInterface
      */
     public function verify($hashed_id, $token, $purpose)
     {
-        if (! in_array($purpose,['reset_password','confirm_email'])) {
+        if (! in_array($purpose, ['reset_password','confirm_email'])) {
             throw new \InvalidArgumentException(
                 'verify() method requires argument "purpose" to be a string ' .
                 'that is either "reset_password" or "confirm_email"'
@@ -548,37 +552,35 @@ class AccountManager implements LoggerAwareInterface
             JOIN users u ON p.id = u.person_id
             JOIN roles r ON r.id = u.role_id
             WHERE t.id = ?';
-        $stmt = $db->executeQuery($sql,[$hashed_id]);
+        $stmt = $db->executeQuery($sql, [$hashed_id]);
         $data = $stmt->fetch();
 
         if (! $data) {
             $log->info("user/token not found: query failed with hash $hashed_id");
-            return ['error'=>self::ERROR_USER_TOKEN_NOT_FOUND,'data'=>null];
+            return ['error' => self::ERROR_USER_TOKEN_NOT_FOUND,'data' => null];
         }
-        $valid = password_verify($token,$data['token']);
+        $valid = password_verify($token, $data['token']);
         if (! $valid) {
             $log->info('verification token failed password_verify() '
-                . "for user {$data['email']}"
-            );
+                . "for user {$data['email']}");
 
-            return ['error'=>self::ERROR_TOKEN_VALIDATION_FAILED,
-                'data'=>$data];
+            return ['error' => self::ERROR_TOKEN_VALIDATION_FAILED,
+                'data' => $data];
         }
         /* maybe we should ensure that this never happens */
         if (self::CONFIRM_EMAIL == $purpose && $data['active']) {
             $log->info('email verification: account has already been activated '
-            . "for user {$data['email']}, person id {$data['person_id']}"
-            );
+            . "for user {$data['email']}, person id {$data['person_id']}");
         }
         /* self-service registration is not an option for users in any but the
         least privileged role, which is "submitter" */
         if (self::CONFIRM_EMAIL == $purpose && 'submitter' !== $data['role']) {
             return [
                 'error' => self::INVALID_ROLE_FOR_SELF_REGISTRATION,
-                'data'=>null];
+                'data' => null];
         }
 
-        return ['data'=>$data,'error'=>null];
+        return ['data' => $data,'error' => null];
     }
 
     /**
@@ -591,7 +593,7 @@ class AccountManager implements LoggerAwareInterface
     public function getRandomString()
     {
         if (! $this->random_string) {
-            $this->random_string =  bin2hex(openssl_random_pseudo_bytes(16));
+            $this->random_string = bin2hex(openssl_random_pseudo_bytes(16));
         }
         return $this->random_string;
     }
@@ -607,12 +609,11 @@ class AccountManager implements LoggerAwareInterface
         $token = new Entity\VerificationToken();
         $id = md5(strtolower($user->getPerson()->getEmail()));
         $random = $this->getRandomString();
-        $hash = password_hash($random,PASSWORD_DEFAULT);
+        $hash = password_hash($random, PASSWORD_DEFAULT);
         $expiration = new \DateTime('+ 30 minutes');
         $token->setId($id)->setToken($hash)->setExpiration($expiration);
 
         return $token;
-
     }
 
     /**
@@ -626,11 +627,12 @@ class AccountManager implements LoggerAwareInterface
         $DQL = 'DELETE InterpretersOffice\Entity\VerificationToken t
             WHERE t.expiration < CURRENT_TIMESTAMP() OR t.id = :id';
         $query = $this->objectManager->createQuery($DQL)
-            ->setParameters(['id'=>$id,]);
+            ->setParameters(['id' => $id,]);
         $affected = $query->getResult();
         $this->getLogger()->info(sprintf(
-            "%s: deleted $affected verification tokens",__METHOD__)
-        );
+            "%s: deleted $affected verification tokens",
+            __METHOD__
+        ));
 
         return $affected;
     }
@@ -654,7 +656,7 @@ class AccountManager implements LoggerAwareInterface
      * @param  string $textContent plain-text content for email message
      * @return Message
      */
-    public function createEmailMessage($markup,$textContent)
+    public function createEmailMessage($markup, $textContent)
     {
         $html = new MimePart($markup);
         $html->type = Mime::TYPE_HTML;
@@ -681,7 +683,7 @@ class AccountManager implements LoggerAwareInterface
      *
      * @return TransportInterface $transport
      */
-    function getMailTransport()
+    public function getMailTransport()
     {
         if ($this->transport) {
             return $this->transport;
@@ -691,7 +693,6 @@ class AccountManager implements LoggerAwareInterface
         $this->transport = new $this->config['transport']($opts);
 
         return $this->transport;
-
     }
 
     /**
@@ -700,7 +701,7 @@ class AccountManager implements LoggerAwareInterface
      * @param int $user_id id of User entity
      * @param string $password new user password
      */
-    function resetPassword($user_id, $password)
+    public function resetPassword($user_id, $password)
     {
         $log = $this->getLogger();
         /** @var Entity\User $user */
@@ -713,7 +714,6 @@ class AccountManager implements LoggerAwareInterface
         $this->objectManager->flush();
 
         return true;
-
     }
     /**
      * sets viewRenderer
