@@ -273,8 +273,7 @@ class AccountController extends AbstractActionController
         if ($valid) {
             $this->accountManager->purge($hashed_id);
             $this->accountManager->resetPassword(
-                $session->user_id,
-                $filter->get('password')->getValue()
+                $session, $filter->get('password')->getValue()
             );
         }
         return new JsonModel([

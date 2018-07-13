@@ -30,6 +30,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\AccountManager;
 
+use Zend\Session\Container as SessionContainer;
+
 /**
  * manages user account service
  */
@@ -701,9 +703,14 @@ class AccountManager implements LoggerAwareInterface
      * @param int $user_id id of User entity
      * @param string $password new user password
      */
-    public function resetPassword($user_id, $password)
+    public function resetPassword(SessionContainer $session, $password)
     {
         $log = $this->getLogger();
+        $user_id = $session->user_id;
+        if (! $user_id) {
+            $this->log->info(__METHOD__.": no user id found in session object");
+            return false;
+        }
         /** @var Entity\User $user */
         $user = $this->objectManager->find(Entity\User::class, $user_id);
         if (! $user) {
@@ -712,7 +719,8 @@ class AccountManager implements LoggerAwareInterface
         }
         $user->setPassword($password);
         $this->objectManager->flush();
-
+        $session->getManager()->getStorage()->clear();
+        
         return true;
     }
     /**
