@@ -272,9 +272,12 @@ class AccountController extends AbstractActionController
         $valid = $filter->isValid();
         if ($valid) {
             $this->accountManager->purge($hashed_id);
-            $this->accountManager->resetPassword(
+            $result = $this->accountManager->resetPassword(
                 $session, $filter->get('password')->getValue()
             );
+            /** @todo if $result == false, deal with it -- even though it should
+            * work if they get this far
+            */
         }
         return new JsonModel([
             'validation_errors' => $filter->getMessages(),

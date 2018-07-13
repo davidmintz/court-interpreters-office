@@ -708,19 +708,23 @@ class AccountManager implements LoggerAwareInterface
         $log = $this->getLogger();
         $user_id = $session->user_id;
         if (! $user_id) {
-            $this->log->info(__METHOD__.": no user id found in session object");
+            $this->log->warn(__METHOD__.": no user id found in session object");
             return false;
         }
         /** @var Entity\User $user */
         $user = $this->objectManager->find(Entity\User::class, $user_id);
         if (! $user) {
-            $this->log->info(__METHOD__.": user with id $user_id not found");
+            $this->log->warn(__METHOD__.": user with id $user_id not found");
             return false;
         }
         $user->setPassword($password);
         $this->objectManager->flush();
         $session->getManager()->getStorage()->clear();
-        
+        $this->log->info(sprintf(
+            '%s: we have reset password for user %s',
+            __CLASS__, $user->getPerson()->getEmail()
+        ));
+
         return true;
     }
     /**
