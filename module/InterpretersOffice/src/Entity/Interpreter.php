@@ -73,7 +73,7 @@ class Interpreter extends Person
      * @ORM\Column(type="date",name="fingerprint_date",nullable=true)
      * @var \DateTime
      */
-    protected $fingerprintDate;
+     protected $fingerprintDate;
 
     /**
      * date interpreters' oath was administered
@@ -368,7 +368,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setSecurityClearanceDate(\DateTime $securityClearanceDate)
+    public function setSecurityClearanceDate(\DateTime $securityClearanceDate = null)
     {
         $this->securityClearanceDate = $securityClearanceDate;
 
@@ -392,7 +392,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setFingerprintDate(\DateTime $fingerprintDate)
+    public function setFingerprintDate(\DateTime $fingerprintDate = null)
     {
         $this->fingerprintDate = $fingerprintDate;
 
@@ -416,7 +416,7 @@ class Interpreter extends Person
      *
      * @return Interpreter
      */
-    public function setOathDate(\DateTime $oathDate)
+    public function setOathDate(\DateTime $oathDate = null)
     {
         $this->oathDate = $oathDate;
 
