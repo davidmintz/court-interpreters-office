@@ -138,12 +138,14 @@ class InterpretersWriteController extends AbstractActionController
         $viewModel = $this->viewModel
             ->setTemplate($this->form_template);
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager->find(Entity\Interpreter::class, $id);
+        $repo = $this->entityManager->getRepository(Entity\Interpreter::class);
+        $entity = $repo->find($id);
         if (! $entity) {
             return $viewModel->setVariables(
                 ['errorMessage' => "interpreter with id $id not found"]
             );
         }
+
         $values_before = [
             'dob' => $entity->getDob(),
             'ssn' => $entity->getSsn(),
@@ -154,6 +156,7 @@ class InterpretersWriteController extends AbstractActionController
         );
         $form->bind($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id,
+            'has_related_entities' => $repo->hasRelatedEntities($entity),
             // for the re-authentication dialog
             'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))
                         ->setAttribute('id', 'login_csrf')

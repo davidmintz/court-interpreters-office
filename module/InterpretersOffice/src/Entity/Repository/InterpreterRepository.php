@@ -208,13 +208,18 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             JOIN ie.event e JOIN ie.interpreter i
             WHERE i.id = :id';
         $count = $this->createQuery($dql)
-            ->setParameters(['id'=>$interpreter->getId()])
+            ->setParameters(['id'=>$interpreter->getId() ])
             ->getSingleScalarResult();
 
         if ($count) {
             return true;
         }
 
+        if ($interpreter->getSubmittedEventsCount()) {
+            return true;
+        }
+
+        return false;
     }
 
 
