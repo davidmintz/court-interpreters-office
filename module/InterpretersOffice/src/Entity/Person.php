@@ -399,4 +399,14 @@ class Person
     {
         return $this->getFirstname().' '.$this->getLastname();
     }
+
+    /**
+     * gets number of events submitted
+     *
+     * @return int
+     */
+    public function getSubmittedEventsCount()
+    {
+        return $this->events->count();
+    }
 }
