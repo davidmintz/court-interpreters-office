@@ -150,17 +150,25 @@ class InterpretersWriteController extends AbstractActionController
             'dob' => $entity->getDob(),
             'ssn' => $entity->getSsn(),
         ];
+        /** @var \Zend\Form\Form $form */
         $form = new InterpreterForm(
             $this->entityManager,
             ['action' => 'update','vault_enabled' => $this->vault_enabled]
         );
         $form->bind($entity);
+        $has_related_entities = $repo->hasRelatedEntities($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id,
             'has_related_entities' => $repo->hasRelatedEntities($entity),
             // for the re-authentication dialog
             'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))
                         ->setAttribute('id', 'login_csrf')
             ]);
+        if ($has_related_entities) {
+            $shit = $form->getInputFilter()->get('interpreter')->get('hat');
+            /** @var \Zend\InputFilter\Input $shit */
+            $shit->setRequired(false);
+
+        }
         $request = $this->getRequest();
         if ($request->isPost()) {
             $input = $request->getPost();
