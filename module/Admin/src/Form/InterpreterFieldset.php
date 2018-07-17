@@ -319,13 +319,7 @@ class InterpreterFieldset extends PersonFieldset
         // require users to provide yes|no for federal-certified language
         // which we already know from the language select > option elements'
         // 'certifiable' attribute
-
-        /** @todo
-            add a validator to enforce minumum one language
-         */
-        ///*
         $certifiable = array_column($language_options, 'attributes', 'value');
-         //*/
         $spec['interpreterLanguages'] = [
 
             'allow_empty' => false,

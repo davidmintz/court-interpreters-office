@@ -164,10 +164,8 @@ class InterpretersWriteController extends AbstractActionController
                         ->setAttribute('id', 'login_csrf')
             ]);
         if ($has_related_entities) {
-            $shit = $form->getInputFilter()->get('interpreter')->get('hat');
-            /** @var \Zend\InputFilter\Input $shit */
-            $shit->setRequired(false);
-
+            $form->getInputFilter()->get('interpreter')->get('hat')
+                ->setRequired(false);
         }
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -181,7 +179,7 @@ class InterpretersWriteController extends AbstractActionController
                 return $viewModel;
             }
             try {
-                //$this->entityManager->persist($entity);
+
                 $this->entityManager->flush();
             } catch (VaultException $e) {
                 $viewModel->vault_error = $e->getMessage();
