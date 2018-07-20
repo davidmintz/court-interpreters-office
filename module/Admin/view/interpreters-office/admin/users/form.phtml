@@ -27,7 +27,7 @@ $form->add([
 $person_fieldset = $this->form->get('user')->get('person');
 if ($this->has_related_entities) :
     $person_fieldset->get('hat')->setAttribute('disabled','disabled');
-    $form->get('user')->get('role')->setAttribute('disabled','disabled')    ;
+    $form->get('user')->get('role')->setAttribute('disabled','disabled');
 endif;
 ?>
 

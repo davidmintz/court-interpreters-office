@@ -269,8 +269,13 @@ class UsersController extends AbstractActionController implements Authentication
         $form->get('user')->get('person')->setObject($user->getPerson());
         /* -------------------------- */
         $viewModel->form = $form;
+        $has_related_entities =  $person->getSubmittedEventsCount();
         $viewModel->has_related_entities = $person->getSubmittedEventsCount();
-
+        if ($has_related_entities) {
+            $user_input = $form->getInputFilter()->get('user');
+            $user_input->get('person')->get('hat')->setRequired(false);
+            $user_input->get('role')->setRequired(false);
+        }
         $form->bind($user);
         $request = $this->getRequest();
         if ($request->isPost()) {
