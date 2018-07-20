@@ -351,7 +351,9 @@ class Person
      */
     public function setMobilePhone($mobile_phone)
     {
-        return $this->formatPhone($this->mobile_phone);
+        $this->mobile_phone = $this->formatPhone($mobile_phone);
+
+        return $this;
     }
 
     /**
