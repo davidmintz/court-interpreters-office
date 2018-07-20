@@ -24,11 +24,15 @@ $form->add([
     'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal')    ;
+$person_fieldset = $this->form->get('user')->get('person');
+if ($this->has_related_entities) :
+    $person_fieldset->get('hat')->setAttribute('disabled','disabled');
+    $form->get('user')->get('role')->setAttribute('disabled','disabled')    ;
+endif;
 ?>
-fuck?
+
 <?php
 $form->prepare();
-$person_fieldset = $this->form->get('user')->get('person');
 echo $this->form()->openTag($form);
  // text inputs
 foreach (['lastname','firstname','middlename','email','office_phone','mobile_phone'] as $elementName) :

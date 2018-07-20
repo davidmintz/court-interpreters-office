@@ -102,7 +102,7 @@ class UsersController extends AbstractActionController implements Authentication
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
         $events->attach('load-person', function (EventInterface $e)
- use ($entityManager, $role_id) {
+            use ($entityManager, $role_id) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
@@ -124,10 +124,13 @@ class UsersController extends AbstractActionController implements Authentication
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
             }
-            //$action = $e->getTarget()->params()->fromRoute('action');
-            //echo "action is $action";
-            //if ('add' == $action) {
-            // is there already a User account?
+            /**
+             * this needs work. there are rare cases where one and the same
+             * person may legitimately have to have more than one user account,
+             * only one of which can be active at any one time, and each having
+             * a different role from the other:  'submitter' vs any of the other
+             * roles.
+             */
             $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
                     ->findOneBy(['person' => $person]);
             if ($user) {
@@ -135,11 +138,11 @@ class UsersController extends AbstractActionController implements Authentication
                         ->getServiceManager();
 
                 $message = sprintf(
-                    'We can\'t create a new user account because the person '
-                    . 'whose id is %d (%s %s) already has one. ',
-                    $person->getId(),
+                    'We can\'t create a new user account because this person '
+                    . ' (%s %s, id %d) already has one. ',
                     $person->getFirstname(),
-                    $person->getLastname()
+                    $person->getLastname(),
+                    $person->getId()
                 );
                 $acl = $e->getTarget()->getEvent()->getApplication()
                                 ->getServiceManager()->get('acl');
@@ -155,6 +158,7 @@ class UsersController extends AbstractActionController implements Authentication
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
             }
+
         });
         // are they authorized to edit this user account?
         $events->attach('load-user', function (EventInterface $e) use ($role_id) {
@@ -208,9 +212,9 @@ class UsersController extends AbstractActionController implements Authentication
         $request = $this->getRequest();
 
         if ($request->isPost()) {
-            $shit = $request->getPost();
-            printf('<pre>%s</pre>', print_r($shit->toArray(), true));
-            return $viewModel;
+            //$shit = $request->getPost();
+            //printf('<pre>%s</pre>', print_r($shit->toArray(), true));
+            //return $viewModel;
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
@@ -257,11 +261,16 @@ class UsersController extends AbstractActionController implements Authentication
             'auth_user_role' => $this->auth_user_role,
             'user' => $user,
             ]);
+        /** @var $person \InterpretersOffice\Entity\Person */
         $person = $user->getPerson();
+
+
         /** @todo do this initialization somewhere else?  */
         $form->get('user')->get('person')->setObject($user->getPerson());
         /* -------------------------- */
         $viewModel->form = $form;
+        $viewModel->has_related_entities = $person->getSubmittedEventsCount();
+
         $form->bind($user);
         $request = $this->getRequest();
         if ($request->isPost()) {
