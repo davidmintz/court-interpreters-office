@@ -290,7 +290,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
      */
     public function getInputFilterSpecification()
     {
-        return [
+        $return = [
             'id' => [
                 'required' => true,
                 'allow_empty' => true,
@@ -361,5 +361,21 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 ],
             ]
         ];
+        if ($this->has('judges')) {
+            $return['judges'] = [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'judge is required',
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+        }
+        return $return;
     }
 }

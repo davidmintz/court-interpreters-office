@@ -41,12 +41,21 @@ class UserForm extends Form
     {
 
         parent::__construct($this->form_name, $options);
-        $this->add(new UserFieldset($objectManager, $options));
+        $fieldset = new UserFieldset($objectManager, $options);
+        if ($options['user']) {
+            $user = $options['user'];
+            $hat = $user->getPerson()->getHat();
+            if ($hat->isJudgesStaff()) {
+                $fieldset->addJudgeElement();
+            }
+        }
+        $this->add($fieldset);
         $this->addCsrfElement();
+
         // make the email required
         $email_input = $this->getInputFilter()->get('user')
                 ->get('person')->get('email');
-        $email_input->setAllowEmpty(false)->setRequired(true)
+        $email_input->setRequired(true)->setAllowEmpty(false)
                 ->getValidatorChain()->attach(new NotEmpty());
     }
 }
