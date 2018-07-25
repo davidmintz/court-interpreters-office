@@ -212,13 +212,10 @@ class UsersController extends AbstractActionController implements Authentication
         $request = $this->getRequest();
 
         if ($request->isPost()) {
-            //$shit = $request->getPost();
-            //printf('<pre>%s</pre>', print_r($shit->toArray(), true));
-            //return $viewModel;
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                //echo "not valid.<pre>"; print_r($form->getMessages());echo "</pre>";
-                return $viewModel;
+                return new JsonModel(['status'=>'error',
+                'validation_errors'=>$form->getMessages()]);
             }
             $user->setCreated(new \DateTime());
             $this->entityManager->persist($user);
@@ -236,7 +233,8 @@ class UsersController extends AbstractActionController implements Authentication
                     $person->getLastname()
                 )
             );
-            $this->redirect()->toRoute('users');
+            return new JsonModel(['status'=>'success','validation_errors'=>null]);
+
         }
         return $viewModel;
     }
@@ -284,7 +282,7 @@ class UsersController extends AbstractActionController implements Authentication
                 return new JsonModel(['status'=>'error',
                 'validation_errors'=>$form->getMessages()]);
             }
-            $this->entityManager->flush(); // return $viewModel;
+            $this->entityManager->flush();
             $this->flashMessenger()
                 ->addSuccessMessage(sprintf(
                     'The user account for <strong>%s %s</strong> has been updated.',

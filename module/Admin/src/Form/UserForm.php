@@ -42,7 +42,7 @@ class UserForm extends Form
 
         parent::__construct($this->form_name, $options);
         $fieldset = new UserFieldset($objectManager, $options);
-        if ($options['user']) {
+        if (key_exists('user',$options)) {
             $user = $options['user'];
             $hat = $user->getPerson()->getHat();
             if ($hat->isJudgesStaff()) {
