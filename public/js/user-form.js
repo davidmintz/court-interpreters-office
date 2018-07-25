@@ -11,7 +11,7 @@ $(document).ready(function(){
             return;
         }
         $.getJSON('/admin/users/role-options/'+hat_id,{}, function(data){
-            console.log(data);
+            //console.log(data);
             var options = data.map(function(item){
                 return $('<option>').val(item.value).text(item.label)
                     .data({type: item.type});
@@ -23,7 +23,10 @@ $(document).ready(function(){
             }
         });
     });
-    
+    var id = $("input[name='user[id]']").val();
+    if (id) {
+        hatElement.trigger("change");
+    } 
     // help enforce logical consistency between user-account "active"
     // and person "active" properties
     var userActiveElement = $('#user-active');
@@ -40,6 +43,6 @@ $(document).ready(function(){
                 personActiveElement.prop("checked",true);
                 userActiveElement.prop("checked",true);
             }
-        }      
+        }
     });
 });

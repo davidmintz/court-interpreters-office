@@ -14,6 +14,7 @@ $(function(){
             $("#judge-div").slideUp();
         }
     });
+    
     /** sort of a template for the judge widget */
     var judge_tmpl = $("<li>").addClass("list-group-item py-1").append(
         "<button type=\"button\" title=\"click to remove this judge\" class=\"btn "
