@@ -5,7 +5,9 @@
  *  view script for rendering users add|edit form
  */
 $this->headTitle($this->title);
-$this->headScript()->appendFile($this->basePath('js/user-form.js'));
+$this->headScript()
+->appendFile($this->basePath('js/user-judges.js'))
+->appendFile($this->basePath('js/user-form.js'));
 ?>
 <div class="center-block" style="max-width:800px"><!-- wrapper -->
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
@@ -29,6 +31,7 @@ if ($this->has_related_entities) :
     $person_fieldset->get('hat')->setAttribute('disabled','disabled');
     $form->get('user')->get('role')->setAttribute('disabled','disabled');
 endif;
+$has_judges = $form->getObject()->getJudges()->count();
 ?>
 
 <?php
@@ -44,13 +47,30 @@ foreach (['lastname','firstname','middlename','email','office_phone','mobile_pho
 </div>
 <?php endforeach;
 $hat = $person_fieldset->get('hat');
+$user_fieldset = $this->form->get("user");
 ?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $hat->getLabel()?></label>
     <div class="col-sm-9"><?php echo $this->formElement($hat),$this->formElementErrors($hat) ?>
     </div>
 </div>
-<?php
+<?php if ($user_fieldset->has('judge-select')):?>
+<div id="judge-div" class="form-group form-row" style="display:none">
+    <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">select the judge(s) for whom this user works, and click the <strong>+</strong> button.</div>
+    <label  for="judges" class="col-form-label col-sm-3">Judge(s)</label>
+    <div class="col-sm-9">
+        <div class="input-group">
+            <?php echo $this->formSelect($form->get('user')->get('judge-select'))?><button class="btn btn-info fas fa-plus" title="identify the currently selected Judge as one for whom you work" type="button" id="btn-add-judge"><span class="sr-only">select</span></button>
+        </div>
+        <?php $errors = $this->formElementErrors($user_fieldset->get('judges')); echo $errors;?>
+        <ul id="judges" class="list-group mt-1"><?php if ($has_judges && !$errors):
+            foreach ($form->getObject()->getJudges() as $judge):?>
+                <ul id="judges" class="list-group mt-1"><li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li></ul>
+            <?php endforeach;
+        endif;?></ul>
+    </div>
+</div>
+<?php endif;
 $person_active = $person_fieldset->get('active');?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $person_active->getLabel()?></label>
@@ -58,7 +78,6 @@ $person_active = $person_fieldset->get('active');?>
     </div>
  </div>
 <?php
-$user_fieldset = $this->form->get("user");
 $role = $user_fieldset->get('role'); ?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $role->getLabel()?></label>
