@@ -242,6 +242,16 @@ class Hat
     }
 
     /**
+     * proxies to getIsJudgeStaff()
+     *
+     * @return boolean
+     */
+    public function isJudgesStaff()
+    {
+        return $this->getIsJudgeStaff();
+    }
+
+    /**
      * sets is-judge-staff flag
      * @param boolean $is_judges_staff
      * @return Hat
