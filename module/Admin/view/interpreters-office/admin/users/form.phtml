@@ -23,7 +23,7 @@ $form = $this->form;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
+    'attributes' => ['id'=>'btn-submit','value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal')    ;
 $person_fieldset = $this->form->get('user')->get('person');
@@ -99,6 +99,7 @@ $user_active = $user_fieldset->get('active');?>
  </div>
 <div class="form-group form-row">
     <div class="offset-sm-3 col-sm-9" style="margin-top:.5em">
+        <div style="display:none" id="error_csrf" class="alert alert-warning validation-error"></div>
     <?php
     $csrf = $form->get('csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;

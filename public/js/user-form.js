@@ -1,6 +1,9 @@
 /**
  * public/js/user-form.js
  */
+
+var $, displayValidationErrors;
+
 $(document).ready(function(){
     // dynamically re-populate role element depending on hat element value
     var hatElement = $('#hat');
@@ -26,7 +29,7 @@ $(document).ready(function(){
     var id = $("input[name='user[id]']").val();
     if (id) {
         hatElement.trigger("change");
-    } 
+    }
     // help enforce logical consistency between user-account "active"
     // and person "active" properties
     var userActiveElement = $('#user-active');
@@ -44,5 +47,29 @@ $(document).ready(function(){
                 userActiveElement.prop("checked",true);
             }
         }
+    });
+    $("#btn-submit").on("click",function(event){
+        event.preventDefault();
+        var data = $("#user-form").serialize();
+        $.post(document.location.href,data)
+        .then(function(response){
+            if (response.status === "success") {
+                document.location = window.basePath + '/admin/users';
+                return;
+            }
+            if (response.validation_errors) {
+                var errors = response.validation_errors;
+                if (errors.user) {
+                    displayValidationErrors(errors.user);
+                    if (errors.user.person) {
+                        displayValidationErrors(errors.user.person);
+                    }
+                }
+                if (errors.csrf) {
+                    displayValidationErrors(errors);
+                }
+                return;
+            }
+        });
     });
 });

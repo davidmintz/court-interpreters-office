@@ -281,7 +281,8 @@ class UsersController extends AbstractActionController implements Authentication
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                return $viewModel;
+                return new JsonModel(['status'=>'error',
+                'validation_errors'=>$form->getMessages()]);
             }
             $this->entityManager->flush(); // return $viewModel;
             $this->flashMessenger()
@@ -290,7 +291,8 @@ class UsersController extends AbstractActionController implements Authentication
                     $person->getFirstname(),
                     $person->getLastname()
                 ));
-            $this->redirect()->toRoute('users');
+            //$this->redirect()->toRoute('users');
+            return new JsonModel(['status'=>'success','validation_errors'=>null]);
         }
         return $viewModel;
     }
