@@ -1,6 +1,7 @@
-<?php /** module/InterpretersOffice/view/interpreters-office/account/register.phtml */
+    <?php /** module/InterpretersOffice/view/interpreters-office/account/register.phtml */
 $this->headScript()  //->appendFile($this->basePath('js/lib/vue.js'))
-    ->appendFile($this->basePath('js/register.js'));
+    ->appendFile($this->basePath('js/register.js'))
+    ->appendFile($this->basePath('js/user-judges.js'));
 $this->headTitle("create your user account");
 $form = $this->form;?>
 
@@ -35,7 +36,7 @@ echo $this->form()->openTag($form);
             ?>
         </fieldset>
         <fieldset id="fieldset-password" class="carousel-item"><legend class="offset-sm-3 py-3">step 2 of 3: account details</legend>
-            <?php $element = $person_fieldset->get('email'); $element->setOption("placeholder","shit")?>
+            <?php $element = $person_fieldset->get('email'); //$element->setOption("placeholder","shit")?>
             <div class="form-group form-row">
                 <label class="col-form-label col-sm-3" for="email">email address</label>
                 <div class="col-sm-9"><?php  echo $this->formElement($element);?>

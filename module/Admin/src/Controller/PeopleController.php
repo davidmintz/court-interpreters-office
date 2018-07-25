@@ -150,7 +150,7 @@ class PeopleController extends AbstractActionController
             ->setRequired(false)->setAllowEmpty(true);
         }
         $viewModel->setVariables(['form' => $form,
-            'has_related_entities' => $repo->hasRelatedEntities($id)]);
+            'has_related_entities' => $has_related ]);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -175,7 +175,7 @@ class PeopleController extends AbstractActionController
      * redirects to the page with specialized form for the Person subclass.
      *
      * When they load /admin/people/edit/xxx, Doctrine will try to find a Person
-     * whose id is xxx even where if entity is subclassed -- e.g.,
+     * whose id is xxx even when the entity is subclassed -- e.g.,
      * is a Judge or Interpreter entity -- which would result in loading the wrong form.
      * Our front end should not expose this url, but if anyone should somehow stumble
      * into it or explicitly load the url, this is how we handle it. our routing
