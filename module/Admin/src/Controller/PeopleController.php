@@ -126,24 +126,29 @@ class PeopleController extends AbstractActionController
      */
     public function editAction()
     {
+        $repo = $this->entityManager->getRepository(Entity\Person::class);
+        $id = $this->params()->fromRoute('id');
+        $result = $repo->findPerson($id);
         $viewModel = (new ViewModel())
                 ->setTemplate('interpreters-office/admin/people/form.phtml')
                 ->setVariable('title', 'edit a person');
-        $id = $this->params()->fromRoute('id');
-
-        $repo = $this->entityManager->getRepository(Entity\Person::class);
-        $entity = $repo->find($id);
-        if (! $entity) {
+        if (! $result) {
             return $viewModel->setVariables(['errorMessage' => "person with id $id not found"]);
-        } else {
-            // judges and interpreters are special cases
-            if (is_subclass_of($entity, Entity\Person::class)) {
-                return $this->redirectToFormFor($entity);
-            }
-            $viewModel->id = $id;
         }
+        $person = $result[0];
+        // judges and interpreters are special cases
+        if (is_subclass_of($person, Entity\Person::class)) {
+            return $this->redirectToFormFor($person);
+        }
+        $user = $result[1];
+        if ($user) {
+            return $this->redirect()
+                ->toRoute('users/edit',['id'=>$user->getId()]);
+        }
+        
+        $viewModel->id = $id;
         $form = new PersonForm($this->entityManager, ['action' => 'update']);
-        $form->bind($entity);
+        $form->bind($person);
         $has_related = $repo->hasRelatedEntities($id);
         if ($has_related) {
             $form->getInputFilter()->get('person')->get('hat')
