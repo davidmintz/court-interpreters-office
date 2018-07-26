@@ -145,7 +145,7 @@ class PeopleController extends AbstractActionController
             return $this->redirect()
                 ->toRoute('users/edit',['id'=>$user->getId()]);
         }
-        
+
         $viewModel->id = $id;
         $form = new PersonForm($this->entityManager, ['action' => 'update']);
         $form->bind($person);
@@ -167,8 +167,8 @@ class PeopleController extends AbstractActionController
             $this->flashMessenger()
                   ->addSuccessMessage(sprintf(
                       'The person <strong>%s %s</strong> has been updated.',
-                      $entity->getFirstname(),
-                      $entity->getLastname()
+                      $person->getFirstname(),
+                      $person->getLastname()
                   ));
             $this->redirect()->toRoute('people');
         }
