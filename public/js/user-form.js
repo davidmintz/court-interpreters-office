@@ -28,7 +28,7 @@ $(document).ready(function(){
     });
     var id = $("input[name='user[id]']").val();
     if (id) {
-        hatElement.trigger("change");
+        //hatElement.trigger("change");
     }
     // help enforce logical consistency between user-account "active"
     // and person "active" properties
@@ -54,7 +54,7 @@ $(document).ready(function(){
         $.post(document.location.href,data)
         .then(function(response){
             if (response.status === "success") {
-                document.location = window.basePath + '/admin/users';
+                document.location = document.referrer || (window.basePath + '/admin/users');
                 return;
             }
             if (response.validation_errors) {

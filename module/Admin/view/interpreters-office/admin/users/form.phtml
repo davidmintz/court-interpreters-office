@@ -11,7 +11,6 @@ $this->headScript()
 ?>
 <div class="center-block" style="max-width:800px"><!-- wrapper -->
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php // echo $this->url('users/edit',['id'=> 3]);?>
 <?php if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div></div>
 <?php
@@ -21,20 +20,20 @@ $formAction = strstr($this->title, 'add') ? $this->url('users/add')
     : $this->url('users/edit', ['id' => $this->id ]);
 $form = $this->form;
 $form->add([
-    'name' => 'submit',
-    'type' => 'Zend\Form\Element\Submit',
-    'attributes' => ['id'=>'btn-submit','value' => 'save','class' => 'btn btn-success btn-lg'],
-])->setAttribute('method', 'post')->setAttribute('action', $formAction)
-   ->setAttribute('class', 'form-horizontal')    ;
+    'name' => 'submit', 'type' => 'Zend\Form\Element\Submit',
+    'attributes' =>
+     ['id'=>'btn-submit','value' => 'save','class' => 'btn btn-success btn-lg'],
+])->setAttributes(['class' => 'form-horizontal','action'=>$formAction]);
 $person_fieldset = $this->form->get('user')->get('person');
 if ($this->has_related_entities) :
     $person_fieldset->get('hat')->setAttribute('disabled','disabled');
-    $form->get('user')->get('role')->setAttribute('disabled','disabled');
+    $role_element = $form->get('user')->get('role');
+    $user = $form->get('user')->getObject();
+    if ((string)$user->getRole() == 'submitter') :
+        $role_element->setAttribute('disabled','disabled');
+    endif;
 endif;
 $has_judges = $form->getObject()->getJudges()->count();
-?>
-
-<?php
 $form->prepare();
 echo $this->form()->openTag($form);
  // text inputs
@@ -77,11 +76,9 @@ $person_active = $person_fieldset->get('active');?>
     <div class="col-sm-9 pt-2"><?php echo $this->formCheckbox($person_active),$this->formElementErrors($person_active) ?>
     </div>
  </div>
-<?php
-$role = $user_fieldset->get('role'); ?>
 <div class="form-group form-row">
-    <label class="col-form-label col-sm-3"><?php echo $role->getLabel()?></label>
-    <div class="col-sm-9"><?php echo $this->formElement($role),$this->formElementErrors($role) ?>
+    <label class="col-form-label col-sm-3"><?php echo $role_element->getLabel()?></label>
+    <div class="col-sm-9"><?php echo $this->formSelect($role_element),$this->formElementErrors($role_element) ?>
     </div>
 </div>
 <?php $username = $user_fieldset->get('username');?>
