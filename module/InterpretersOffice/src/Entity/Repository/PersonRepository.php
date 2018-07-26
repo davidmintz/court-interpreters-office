@@ -192,4 +192,14 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         $cache->setNamespace($this->cache_namespace);
         $cache->deleteAll();
     }
+
+    public function findPerson($id)
+    {
+        $dql = 'SELECT p, u FROM InterpretersOffice\Entity\Person p
+        LEFT JOIN InterpretersOffice\Entity\User u
+        WITH p = u.person WHERE p.id = :id ';
+        return $this->createQuery($dql)->setParameters([':id'=>$id])
+            ->getResult();
+
+    }
 }
