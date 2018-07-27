@@ -69,6 +69,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
     }
 
 
+
     /**
      * does this Person $id have a data history?
      *
@@ -77,12 +78,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      */
     public function hasRelatedEntities($id)
     {
-        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Person p
-            JOIN p.events e  WHERE p.id = :id';
-
-        return $this->getEntityManager()->createQuery($dql)->setParameters(
-            ['id' => $id]
-        )->getSingleScalarResult() ? true : false;
+        return $this->getSubmittedEventsCount($id) ? true : false;
     }
 
     /**
@@ -201,5 +197,21 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         return $this->createQuery($dql)->setParameters([':id'=>$id])
             ->getResult();
 
+    }
+
+    /**
+     * gets number of events submitted
+     *
+     * this is repeated in PersonRepository. bad dog!
+     *
+     * @return int
+     */
+    public function getSubmittedEventsCount($id)
+    {
+        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+            JOIN e.submitter p WHERE p.id = :id';
+
+        return $this->getEntityManager()->createQuery($dql)
+            ->setParameters(['id' => $id])->getSingleScalarResult();
     }
 }
