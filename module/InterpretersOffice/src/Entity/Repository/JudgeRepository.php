@@ -155,7 +155,12 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      * gets data for populating Judge select menu
      *
      * The judge's default courtroom/courthouse location ids are returned as
-     * data attributes location and parent_location.
+     * data attributes location and parent_location. If the optional judge_id
+     * is provided, we make a point of selecting that judge irrespective of
+     * whether that judge is currently flagged as active. In other words, we
+     * usually do not want to return inactive judges, but if they're looking a
+     * historical data involving an inactive judge, we have to be sure to fetch
+     * him or her.
      *
      * @param array $options
      * @return array
@@ -172,8 +177,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         $dql .= ' j.id, j.lastname, j.firstname, j.middlename, f.flavor '
                 . ', l.id AS location, pl.id AS parent_location'
                 . ' FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f '
-                . 'LEFT JOIN j.defaultLocation l '
-                . 'LEFT JOIN l.parentLocation pl '
+                . 'LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation pl '
                 . ' WHERE j.active = true '. $or;
         $dql .= ' ORDER BY j.lastname, j.firstname';
         $judges = $this->createQuery($dql, $this->cache_namespace)->getResult();
