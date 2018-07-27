@@ -47,13 +47,13 @@ class Judge extends Person
      */
     protected $flavor;
 
-    /**
+    /*
      * ArrayCollection related Events
-     *
+     * BAD idea
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="Event",mappedBy="judge")
+     protected $events;
      */
-    protected $events;
 
     /**
      * constructor

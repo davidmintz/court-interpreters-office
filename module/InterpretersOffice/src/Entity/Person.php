@@ -131,13 +131,13 @@ class Person
      */
     protected $active = true;
 
-    /**
-     * ArrayCollection of related Events
-     *
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="Event",mappedBy="submitter")
+    /*  BAD idea
+      ArrayCollection of related Events
+
+      @var ArrayCollection
+      @ORM\OneToMany(targetEntity="Event",mappedBy="submitter")
+       protected $events;
      */
-    protected $events;
 
 
     /**
@@ -148,7 +148,7 @@ class Person
     public function __construct(Hat $hat = null)
     {
         $this->hat = $hat;
-        $this->events = new ArrayCollection();
+        //$this->events = new ArrayCollection();
     }
 
     /**
@@ -402,13 +402,4 @@ class Person
         return $this->getFirstname().' '.$this->getLastname();
     }
 
-    /**
-     * gets number of events submitted
-     *
-     * @return int
-     */
-    public function getSubmittedEventsCount()
-    {
-        return $this->events->count();
-    }
 }

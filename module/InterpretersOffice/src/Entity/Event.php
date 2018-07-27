@@ -115,7 +115,7 @@ class Event
     /**
      * The interpreter is requested by a Person (submitter).
      *
-     * @ORM\ManyToOne(targetEntity="Person",inversedBy="events")
+     * @ORM\ManyToOne(targetEntity="Person")//,inversedBy="events"
      * @ORM\JoinColumn(nullable=true)
      *
      * @var Person

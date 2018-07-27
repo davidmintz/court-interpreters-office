@@ -203,19 +203,24 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
      */
     public function hasRelatedEntities(Entity\Interpreter $interpreter)
     {
+        // has the interpreter been assigned to any events?
         $dql = 'SELECT COUNT(e.id)
             FROM InterpretersOffice\Entity\InterpreterEvent ie
             JOIN ie.event e JOIN ie.interpreter i
             WHERE i.id = :id';
+        $params = ['id'=>$interpreter->getId()];
         $count = $this->createQuery($dql)
-            ->setParameters(['id'=>$interpreter->getId() ])
-            ->getSingleScalarResult();
-
+            ->setParameters($params)->getSingleScalarResult();
         if ($count) {
             return true;
         }
 
-        if ($interpreter->getSubmittedEventsCount()) {
+        // has the interpreter submitted events?
+        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+            JOIN e.submitter p WHERE p.id = :id';
+        $count = $this->createQuery($dql)
+            ->setParameters($params)->getSingleScalarResult();
+        if ($count) {
             return true;
         }
 
