@@ -82,7 +82,10 @@ foreach ($data as $flavor => $judge) {
             $firstname .= " $middlename";
             $middlename = '';
         }
-
+        // a special case
+        if ($lastname == 'Pauley III') {
+            $lastname = 'Pauley'; // keep it simple
+        }
         list($courtroom, $courthouse) = preg_split('/, +/',$location);
         // check the location
         if ($courthouse == '300 Quarropas') {
@@ -172,7 +175,7 @@ $judge_sql = 'SELECT lastname, firstname, middlename, flavor, IF(judges.active="
         . 'WHERE p.discr = "judge") AND firstname <> ""';
 
 $results = $old_db->query($judge_sql,PDO::FETCH_ASSOC);
-
+$map = [];
 while ($j = $results->fetch()) {
     extract($j);
     $active = $active == 'Y' ? 1 : 0 ;
