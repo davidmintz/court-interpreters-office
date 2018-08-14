@@ -47,10 +47,12 @@ $pseudo_judges = [
 ];
 while ($r = $requests_query->fetch(\PDO::FETCH_OBJ)) {
     $params = ['id'=>$r->id, 'date'=>$r->date,'time'=>$r->time,
-    'language_id' => $r->language_id,
+        'language_id' => $r->language_id,
+        'docket' => $r->docket,
+        'created'=> $r->created,
     ];
-    if (in_array($r->judge_id,$pseudo_judges)) {
-        $params['anonymous_judge_id'] = $r->id;
+    if (in_array($r->judge_id,array_keys($pseudo_judges))) {
+        $params['anonymous_judge_id'] = $pseudo_judges[$r->judge_id];
         $params['judge_id'] = null;
     } else {
         if (! key_exists($r->judge_id,$judges)) {
@@ -58,7 +60,7 @@ while ($r = $requests_query->fetch(\PDO::FETCH_OBJ)) {
             $shit++;
             continue;
         }
-        $params['judge_id'] = $r->id;
+        $params['judge_id'] = $judges[$r->judge_id];
         $params['anonymous_judge_id'] = null;
     }
 
