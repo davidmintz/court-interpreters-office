@@ -6,8 +6,8 @@ $db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_para
 ]);
 
 /* old => new */
-$event_types = json_decode(file_get_contents('./event-type-map.json'),true);
-$event_locations = json_decode(file_get_contents('./event-location-map.json'),true);
+$event_types = json_decode(file_get_contents(__DIR__.'/event-type-map.json'),true);
+$event_locations = json_decode(file_get_contents(__DIR__.'/event-location-map.json'),true);
 
 $db->exec('DELETE FROM requests');
 
@@ -112,7 +112,7 @@ while ($r = $requests_query->fetch(\PDO::FETCH_OBJ)) {
     $params['modified_by_id'] = $users[$r->last_modified_by]['user_id'];
 
     // the event type
-    if (! key_exists($r->proceeding_id,$event_types)) {json_decode(file_get_contents('./event-type-map.json'),true);
+    if (! key_exists($r->proceeding_id,$event_types)) {
         $shit++;
         echo "request id $r->id: proceeding id $r->proceeding_id not found in \$event_types array\n";
         continue;
