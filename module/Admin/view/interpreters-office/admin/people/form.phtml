@@ -4,6 +4,7 @@
  *  view script for rendering people create|update form
  */
 $this->headTitle($this->title);
+$this->headScript()->appendFile($this->basePath('/js/people-form.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
 <?php
@@ -29,7 +30,7 @@ echo $this->form()->openTag($form);?>
 <?php
 $hat = $fieldset->get('hat');
 if ($this->has_related_entities) :
-    $hat->setAttribute("disabled", "disabled");    
+    $hat->setAttribute("disabled", "disabled");
 endif;
 ?>
     <div class="form-group form-row">
@@ -61,7 +62,11 @@ $active = $fieldset->get('active');?>
     $csrf = $form->get('csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formHidden($fieldset->get('id'));
-    echo $this->formSubmit($form->get('submit'));?></div>
+    echo $this->formSubmit($form->get('submit'));
+    if ($this->has_related_entities == '0') :
+        ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning" title="delete this person from your database" value="delete" id="btn-delete"><?php
+    endif;
+?></div>
 </div>
 <?php echo $this->form()->closeTag(); ?>
 </div><!-- /wrapper -->

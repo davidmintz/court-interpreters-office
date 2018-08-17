@@ -19,6 +19,8 @@ use Zend\Session\Container as Session;
  */
 class PeopleController extends AbstractActionController
 {
+    use DeletionTrait;
+    
     /**
      * entity manager.
      *
@@ -230,5 +232,25 @@ class PeopleController extends AbstractActionController
             'count' => $paginator->getTotalItemCount(),
             'pages' => $paginator->getPages()
         ]);
+    }
+
+    /**
+     * deletes a person
+     * @todo log it
+     * @return JsonModel
+     */
+    public function deleteAction()
+    {
+
+        $request = $this->getRequest();
+
+        if ($request->isPost()) {
+            $id = $this->params()->fromRoute('id');
+            $name = $this->params()->fromPost('name');
+            $what = 'person';
+            $entity = $this->entityManager->find(Entity\Person::class,$id);
+
+            return $this->delete(compact('entity', 'id', 'name', 'what'));
+        }
     }
 }
