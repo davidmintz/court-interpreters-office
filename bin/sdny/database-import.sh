@@ -3,7 +3,7 @@
 # https://www.tutorialspoint.com/unix_commands/getopt.htm
 echo beginning at $(date);
 
-TEMP=`getopt -o '' --long whole-enchilada,everything,recent -- "$@"`
+TEMP=`getopt -o '' --long whole-enchilada,everything,recent,scrape-judges -- "$@"`
 eval set -- "$TEMP"
 
 while true ; do
@@ -14,11 +14,14 @@ while true ; do
         --recent)
         RECENT_ONLY=1
         shift ;;
+        --scrape-judges)
+        SCRAPE_JUDGES=1
+        shift ;;
+
         --) shift ; break ;;
         *) echo "Internal error!" ; exit 1 ;;
     esac
 done
-
 
 # may need $RED later
 RED='\033[0;31m'
@@ -61,11 +64,13 @@ OK;
 echo -n "inserting some locations..."
 cat bin/sdny/parent-locations.sql bin/sdny/more-locations.sql | mysql office
 OK;
-# TO DO decide whether to scrape nysd.uscourts.gov, look at age of data file, or what
 
-#echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
-#/opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
-#OK;
+if [[ ! -z $SCRAPE_JUDGES ]]; then
+    echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
+    /opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
+    OK;
+fi;
+
 
 echo -n "inserting judges and courtrooms with (newly?) downloaded data..."
 bin/sdny/import-judges-and-courtrooms.php < bin/sdny/judges-courtrooms.json
@@ -99,7 +104,8 @@ if [[ ! -z $FULL_DATABASE ]];
 	mysql office < bin/sdny/import-deft-and-interp-events.sql
 	OK;
 fi;
-
+echo  "importing request records..."
+bin/sdny/import-requests.php
 echo "success!"
 echo completed at $(date);
 exit 0;
