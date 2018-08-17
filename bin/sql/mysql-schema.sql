@@ -1,43 +1,19 @@
--- MySQL dump 10.15  Distrib 10.0.34-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	10.0.34-MariaDB-0ubuntu0.16.04.1
+-- Server version	5.7.23-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `admin_users`
---
-
-DROP TABLE IF EXISTS `admin_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `admin_users` (
-  `id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `username` varchar(24) NOT NULL DEFAULT '',
-  `firstname` varchar(40) NOT NULL,
-  `lastname` varchar(40) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `phone` varchar(10) NOT NULL,
-  `password` varchar(16) NOT NULL,
-  `created` datetime NOT NULL,
-  `last_login` int(10) unsigned NOT NULL,
-  `active` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `map_to_userid` smallint(5) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUsername` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `anonymous_judges`
@@ -131,7 +107,7 @@ DROP TABLE IF EXISTS `defendant_names`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `defendant_names` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` mediumint(8) unsigned NOT NULL,
   `given_names` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `surnames` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
@@ -148,12 +124,29 @@ DROP TABLE IF EXISTS `defendants_events`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `defendants_events` (
   `event_id` mediumint(8) unsigned NOT NULL,
-  `defendant_id` int(11) NOT NULL,
+  `defendant_id` mediumint(8) unsigned NOT NULL,
   PRIMARY KEY (`event_id`,`defendant_id`),
   KEY `IDX_DBDD360771F7E88B` (`event_id`),
   KEY `IDX_DBDD36079960FFFB` (`defendant_id`),
-  CONSTRAINT `fk_deft_event` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_deft_name` FOREIGN KEY (`defendant_id`) REFERENCES `defendant_names` (`id`)
+  CONSTRAINT `defendants_events_ibfk_1` FOREIGN KEY (`defendant_id`) REFERENCES `defendant_names` (`id`),
+  CONSTRAINT `fk_deft_event` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `defendants_requests`
+--
+
+DROP TABLE IF EXISTS `defendants_requests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `defendants_requests` (
+  `defendant_id` mediumint(8) unsigned NOT NULL,
+  `request_id` mediumint(8) unsigned NOT NULL,
+  PRIMARY KEY (`request_id`,`defendant_id`),
+  KEY `defendant_id` (`defendant_id`),
+  CONSTRAINT `defendants_requests_ibfk_1` FOREIGN KEY (`defendant_id`) REFERENCES `defendant_names` (`id`),
+  CONSTRAINT `defendants_requests_ibfk_2` FOREIGN KEY (`request_id`) REFERENCES `requests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -467,6 +460,51 @@ CREATE TABLE `people` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `requests`
+--
+
+DROP TABLE IF EXISTS `requests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `requests` (
+  `id` mediumint(8) unsigned NOT NULL,
+  `date` date NOT NULL,
+  `time` time NOT NULL,
+  `judge_id` smallint(5) unsigned DEFAULT NULL,
+  `anonymous_judge_id` smallint(5) unsigned DEFAULT NULL,
+  `event_type_id` smallint(5) unsigned NOT NULL,
+  `language_id` smallint(6) unsigned NOT NULL,
+  `docket` varchar(14) COLLATE utf8_unicode_ci NOT NULL,
+  `location_id` smallint(5) unsigned DEFAULT NULL,
+  `submitter_id` smallint(5) unsigned NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  `modified_by_id` smallint(5) unsigned NOT NULL,
+  `comments` varchar(500) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `event_id` mediumint(8) unsigned DEFAULT NULL,
+  `pending` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_event_id` (`event_id`),
+  KEY `evt_id` (`event_id`),
+  KEY `submitter_id` (`submitter_id`),
+  KEY `event_type_id` (`event_type_id`),
+  KEY `location_id` (`location_id`),
+  KEY `language_id` (`language_id`),
+  KEY `modified_by_id` (`modified_by_id`),
+  KEY `judge_id` (`judge_id`),
+  KEY `anonymous_judge_id` (`anonymous_judge_id`),
+  CONSTRAINT `requests_ibfk_1` FOREIGN KEY (`event_type_id`) REFERENCES `event_types` (`id`),
+  CONSTRAINT `requests_ibfk_2` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
+  CONSTRAINT `requests_ibfk_3` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`),
+  CONSTRAINT `requests_ibfk_4` FOREIGN KEY (`modified_by_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `requests_ibfk_5` FOREIGN KEY (`submitter_id`) REFERENCES `people` (`id`),
+  CONSTRAINT `requests_ibfk_6` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`),
+  CONSTRAINT `requests_ibfk_7` FOREIGN KEY (`anonymous_judge_id`) REFERENCES `anonymous_judges` (`id`),
+  CONSTRAINT `requests_ibfk_8` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `roles`
 --
 
@@ -529,23 +567,21 @@ DROP TABLE IF EXISTS `view_locations`;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE TABLE `view_locations` (
-  `id` tinyint NOT NULL,
-  `type_id` tinyint NOT NULL,
-  `parent_location_id` tinyint NOT NULL,
-  `name` tinyint NOT NULL,
-  `comments` tinyint NOT NULL,
-  `active` tinyint NOT NULL,
-  `parent` tinyint NOT NULL,
-  `category` tinyint NOT NULL
-) ENGINE=MyISAM */;
+/*!50001 CREATE VIEW `view_locations` AS SELECT 
+ 1 AS `id`,
+ 1 AS `type_id`,
+ 1 AS `parent_location_id`,
+ 1 AS `name`,
+ 1 AS `comments`,
+ 1 AS `active`,
+ 1 AS `parent`,
+ 1 AS `category`*/;
 SET character_set_client = @saved_cs_client;
 
 --
 -- Final view structure for view `view_locations`
 --
 
-/*!50001 DROP TABLE IF EXISTS `view_locations`*/;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -568,4 +604,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-28 18:54:46
+-- Dump completed on 2018-08-16 16:03:06
