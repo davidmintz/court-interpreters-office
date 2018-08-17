@@ -4,9 +4,6 @@ $db_params = parse_ini_file(getenv('HOME').'/.my.cnf');
 $db = new PDO('mysql:host=localhost;dbname=office', $db_params['user'], $db_params['password'],[
     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
 ]);
-$old_db = new PDO('mysql:host=interpreters;dbname=interpreters', 'interpreters', 'ga%cker99',[
-    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-]);
 
 /* old => new */
 $event_types = json_decode(file_get_contents('./event-type-map.json'),true);
@@ -20,8 +17,8 @@ $requests_query = $db->query(
     LEFT JOIN office.events e ON r.event_id = e.id
     ORDER BY id"
 );
-$total = $old_db->query(
-    'SELECT COUNT(*) FROM requests'
+$total = $db->query(
+    'SELECT COUNT(*) FROM dev_interpreters.requests'
 )->fetchColumn();
 
 $insert = $db->prepare(
@@ -144,12 +141,22 @@ while ($r = $requests_query->fetch(\PDO::FETCH_OBJ)) {
     try {
         $insert->execute($params);
         printf("inserted %d of %d\r",++$count,$total);
+
     } catch (\Exception $e) {
-        echo "fuck, ",$e->getMessage(),"\nyou have ";
-        echo count($params) . " parameters:\n";
+        echo "fuck, ",$e->getMessage(),"\nyou have ", count($params),
+            " parameters:" ;
         print_r($params);
-        exit;
+        exit();
     }
 }
 echo "\n";
+try {
+    $stmt = $db->prepare('INSERT INTO defendants_requests (defendant_id, request_id)
+    (SELECT defendant_id, request_id FROM dev_interpreters.defendants_requests)');
+    $stmt->execute();
+    printf("inserted %d rows into defendants_requests",$stmt->rowCount());
+} catch (\Exception $e) {
+    printf("shit: %s\n",$e->getMessage());
+    exit();
+}
 exit("$count request records OK, shit happens $shit times\n");
