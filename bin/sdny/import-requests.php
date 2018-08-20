@@ -154,7 +154,7 @@ try {
     $stmt = $db->prepare('INSERT INTO defendants_requests (defendant_id, request_id)
     (SELECT defendant_id, request_id FROM dev_interpreters.defendants_requests)');
     $stmt->execute();
-    printf("inserted %d rows into defendants_requests",$stmt->rowCount());
+    printf("inserted %d rows into defendants_requests\n",$stmt->rowCount());
 } catch (\Exception $e) {
     printf("shit: %s\n",$e->getMessage());
     exit();
