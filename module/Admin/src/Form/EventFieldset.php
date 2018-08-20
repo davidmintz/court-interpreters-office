@@ -23,27 +23,10 @@ use InterpretersOffice\Entity\Repository\JudgeRepository;
  * Notes to self: make a base class that adds only the elements required for
  * a 'Request' form, and create a subclass 'Events' form (for admins) add the rest.
  */
-class EventFieldset extends Fieldset implements
-    InputFilterProviderInterface,
-    ObjectManagerAwareInterface
+class EventFieldset extends AbstractEventFieldset
 {
      use ObjectManagerAwareTrait;
 
-     /**
-      * type to use for time elements
-      *
-      * for convenience, while trying to make up our mind about
-      * using the HTML5 date and time elements
-      *
-      * @var string
-      */
-     const TIME_ELEMENT_TYPE = 'Text';
-      /**
-      * type to use for date elements
-      *
-      * @var string
-      */
-     const DATE_ELEMENT_TYPE = 'Text';
 
     /**
      * name of the form.
@@ -58,94 +41,6 @@ class EventFieldset extends Fieldset implements
      */
     protected $fieldset_name = 'event';
 
-    /**
-     * current user's role
-     *
-     * @var string
-     */
-    protected $auth_user_role;
-
-    /**
-     * constructor options
-     *
-     * @var Array
-     */
-    protected $options;
-
-    /**
-     * action
-     *
-     * @var string
-     */
-    protected $action;
-
-    /**
-     * fieldset elements
-     *
-     * @var Array some of our element definitions
-     */
-    protected $elements = [
-        [
-            'name' => 'id',
-            'type' => 'Zend\Form\Element\Hidden',
-            'attributes' => ['id' => 'event_id'],
-        ],
-
-        [
-             'name' => 'date',
-            //'type' => 'text',
-            'type' => self::DATE_ELEMENT_TYPE,
-            'attributes' => [
-                'id' => 'date',
-                'class' => 'date form-control',
-                'placeholder' => '(required)',
-            ],
-             'options' => [
-                'label' => 'date',
-                //'format' => 'm/d/Y',
-                //'format' => 'Y-m-d',
-             ],
-        ],
-        [
-            'name' => 'time',
-            //'type' => 'text',
-            'type' => self::TIME_ELEMENT_TYPE,
-            'attributes' => [
-                'id' => 'time',
-                'class' => 'time form-control',
-            ],
-             'options' => [
-                'label' => 'time',
-               //    'format' => 'H:i:s',// :s
-             ],
-        ],
-        [
-            'name' => 'docket',
-            'type' => 'Zend\Form\Element\Text',
-            'attributes' => [
-                'id' => 'docket',
-                'class' => 'docket form-control',
-                 'placeholder' => '(strongly recommended)',
-            ],
-             'options' => [
-                'label' => 'docket',
-             ],
-        ],
-        [
-            'name' => 'defendant-search',
-            'type' => 'Zend\Form\Element\Text',
-            'attributes' => [
-                'id' => 'defendant-search',
-                'class' => 'form-control',
-                'placeholder' => 'last name[, first name]'
-            ],
-             'options' => [
-                'label' => 'defendants',
-             ],
-        ],
-
-    ];
-
 
     /**
      * constructor.
@@ -155,60 +50,9 @@ class EventFieldset extends Fieldset implements
      */
     public function __construct(ObjectManager $objectManager, array $options)
     {
-        if (! isset($options['action'])) {
-            throw new \RuntimeException(
-                'missing "action" option in EventFieldset constructor'
-            );
-        }
-        if (! in_array($options['action'], ['create', 'update','repeat'])) {
-            throw new \RuntimeException('invalid "action" option in '
-                . 'EventFieldset constructor: '.(string)$options['action']);
-        }
-        if (! isset($options['object'])) {
-            $options['object'] = null;
-        }
-        /** might get rid of this... */
-        if (isset($options['auth_user_role'])) {
-            /** @todo let's not hard-code these roles */
-            if (! in_array(
-                $options['auth_user_role'],
-                ['anonymous','staff','submitter','manager','administrator']
-            )) {
-                throw new \RuntimeException(
-                    'invalid "auth_user_role" option in Event fieldset constructor'
-                );
-            }
-            $this->auth_user_role = $options['auth_user_role'];
-        }
-        $this->action = $options['action'];
-        $this->options = $options;
-        //unset($options['action']);
 
-        parent::__construct($this->fieldset_name, $options);
+        parent::__construct($objectManager, $options);
 
-        $this->objectManager = $objectManager;
-        $this->setHydrator(new DoctrineHydrator($objectManager))
-                ->setUseAsBaseFieldset(true);
-
-        foreach ($this->elements as $element) {
-            $this->add($element);
-        }
-        $this->add(
-            new LanguageSelect(
-                'language',
-                [
-                    'objectManager' => $objectManager,
-                    'attributes'  => [
-                        'id' => 'language',
-                        'class' => 'custom-select text-muted'
-                    ],
-                    'options' => [
-                        'label' => 'language',
-                        'empty_item_label' => '(required)',
-                    ],
-                ]
-            )
-        );
         $this->addJudgeElements($options['object'])
             ->addEventTypeElement()
             ->addLocationElements($options['object']);
@@ -237,7 +81,8 @@ class EventFieldset extends Fieldset implements
             ],
         ]);
         // figure out value options for interpreter select
-        $empty_option = ['value' => '','label' => ' ','attributes' => ['label' => ' ']];
+        $empty_option = ['value' => '','label' => ' ',
+            'attributes' => ['label' => ' ']];
         if ($options['object']) {
             $entity = $options['object'];
             $language_id = $entity->getLanguage()->getId();
@@ -605,31 +450,12 @@ class EventFieldset extends Fieldset implements
     public function getInputFilterSpecification()
     {
 
-        $spec = [
+        $spec = array_merge($this->inputFilterspec, [
             'interpreterEvents' => [
                 'required' => false, 'allow_empty' => true,
             ],
             'defendantEvents'  => [
                 'required' => false, 'allow_empty' => true,
-            ],
-            'id' => [
-                'required' => true,
-                'allow_empty' => true,
-            ],
-            'date' => [
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => 'NotEmpty',
-                        'options' => [
-                            'messages' => [
-                                'isEmpty' => 'date is required',
-                            ],
-                        ],
-                        'break_chain_on_failure' => true,
-                    ],
-                ],
             ],
             'time' => [
                 'required' => true,
@@ -648,48 +474,6 @@ class EventFieldset extends Fieldset implements
                         ],
                         'break_chain_on_failure' => true,
                     ]
-                ],
-            ],
-            'location' => [
-                'required' => false,
-                 'allow_empty' => true,
-                 'validators' => [
-
-                 ],
-            ],
-             'parent_location' => [
-                 'required' => false,
-                 'allow_empty' => true,
-                 'validators' => [
-
-                 ],
-             ],
-            'language' => [
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => 'NotEmpty',
-                        'options' => [
-                            'messages' => [
-                                'isEmpty' => 'language is required',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'eventType' => [
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => 'NotEmpty',
-                        'options' => [
-                            'messages' => [
-                                'isEmpty' => 'event-type is required',
-                            ],
-                        ],
-                    ],
                 ],
             ],
 
@@ -717,16 +501,6 @@ class EventFieldset extends Fieldset implements
                 'required' => false,
                 'allow_empty' => true,
             ],
-            'docket' => [
-                'required' => true,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => Filter\Docket::class,],
-                ],
-                'validators' => [
-                    [ 'name' => Validator\Docket::class, ]
-                ],
-            ],
             'anonymousSubmitter' => [
                 'required' => true,
                 'allow_empty' => true,
@@ -739,29 +513,7 @@ class EventFieldset extends Fieldset implements
                 'required' => false,
                 'allow_empty' => true,
             ],
-            'comments' => [
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'min' => 5,
-                            'max' => 600,
-                            'messages' => [
-                            \Zend\Validator\StringLength::TOO_LONG =>
-                                'maximum length allowed is 600 characters',
-                             \Zend\Validator\StringLength::TOO_SHORT =>
-                                'minimum length allowed is 5 characters',
-                            ]
-                        ]
-                    ]
-                ],
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                ],
-            ],
-             'admin_comments' => [
+           'admin_comments' => [
                 'required' => false,
                 'allow_empty' => true,
                  'validators' => [
@@ -788,7 +540,8 @@ class EventFieldset extends Fieldset implements
                 'required' => true,
                 'allow_empty' => true,
             ],
-        ];
+        ]);
+
         if (true) { // enable|disable temporarily
             foreach (['submission_date', 'submission_time'] as $field) {
                 $label = str_replace('_', ' ', $field);
@@ -809,7 +562,8 @@ class EventFieldset extends Fieldset implements
                 ];
                 $spec[$field] = $shit;
             }
-            $spec['submission_time']['validators'][] = new Validator\EventSubmissionDateTime();
+            $spec['submission_time']['validators'][] =
+                new Validator\EventSubmissionDateTime();
         }
         return $spec;
     }
