@@ -14,7 +14,8 @@ use Zend\Session\Storage\SessionArrayStorage;
 use Zend\Session\Validator\RemoteAddr;
 use Zend\Session\Validator\HttpUserAgent;
 
-return [
+return //['session' => 
+[
     // courtesy of:
     //https://github.com/olegkrivtsov/using-zf3-book-samples/blob/master/userdemo/config/autoload/global.php
     'session_config' => [
@@ -28,10 +29,13 @@ return [
         'validators' => [
             RemoteAddr::class,
             HttpUserAgent::class,
+            // if we are being read, this will make it blow up
+            'FuckYourAss',
         ]
     ],
     // Session storage configuration.
     'session_storage' => [
         'type' => SessionArrayStorage::class
     ],
+//]
 ];

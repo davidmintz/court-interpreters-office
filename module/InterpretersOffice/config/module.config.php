@@ -9,6 +9,7 @@ use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 
 use Zend\ServiceManager\Factory\InvokableFactory;
+use Zend\Session\Config\SessionConfig;
 
 use InterpretersOffice\View\Helper as ViewHelper;
 use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection;
@@ -122,6 +123,16 @@ return [
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
             //Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
             Service\AccountManager::class => Service\Factory\AccountManagerFactory::class,
+            // don't quite understand this.
+            /*
+            'Zend\Session\SessionManager'=>function($container) {
+                echo "WTF?";
+                $options = $container->get('config')['session_manager'];
+                $config = new \Zend\Session\Config\SessionConfig($options);
+                return new \Zend\Session\SessionManager($config);
+            },
+            */
+            // 'Zend\Session\Config\ConfigInterface' => 'Zend\Session\Service\SessionConfigFactory',
 
         ],
         'abstract_factories' => [

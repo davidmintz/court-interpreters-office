@@ -12,8 +12,9 @@ form { max-width: 900px;}
 $user = $this->identity() ?>
 <h2>admin</h2>
 <p>hello user <?php echo $user->username ?> in role <?php echo $user->role ?></p>
+<pre><?php print_r($_SESSION['__ZF'])?></pre>
 <h3>scratch</h3>
-<div class="row">    
+<div class="row">
     <div class="col-6 border"><!-- left side -->
         <form>
             <div class="form-group form-row">

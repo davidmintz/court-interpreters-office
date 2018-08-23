@@ -10,7 +10,7 @@
  */
 $modules = [
     'Zend\Mvc\Plugin\FlashMessenger',
-    'Zend\Session',// yes necessary
+    // 'Zend\Session',// yes necessary?
     'DoctrineModule',
     'DoctrineORMModule',
     'Zend\Form',// yes necessary
