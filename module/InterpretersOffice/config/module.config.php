@@ -16,7 +16,7 @@ use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection;
 use InterpretersOffice\Service;
 use InterpretersOffice\Service\AccountManager;
 
-$environment = getenv('APP_ENV') ?: 'development';
+$environment = getenv('environment') ?: 'development';
 
 // set to 'array' to disable
 $doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
