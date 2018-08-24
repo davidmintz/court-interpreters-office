@@ -9,8 +9,8 @@
  * This should be an array of module namespaces used in the application.
  */
 $modules = [
+    'Zend\Session',
     'Zend\Mvc\Plugin\FlashMessenger',
-    // 'Zend\Session',// yes necessary?
     'DoctrineModule',
     'DoctrineORMModule',
     'Zend\Form',// yes necessary

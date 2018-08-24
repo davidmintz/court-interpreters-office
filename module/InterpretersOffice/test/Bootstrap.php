@@ -75,7 +75,7 @@ class Bootstrap
     }
 
 }
-putenv('APP_ENV=testing');
+putenv('environment=testing');
 /*
 FixtureManager::start();
 $script = __DIR__.'/data/sqlite.schema.sql';

@@ -50,11 +50,17 @@ class Module
         $navigation = $container->get('ViewHelperManager')->get("navigation");
         $navigation->setDefaultAcl($container->get('acl'));
         $navigation->findHelper('breadcrumbs')->setSeparator(' | ');
+        // workaround for phpunit and php7.2 which is less tolerant than earlier
+        // php versions and throws "ini_set(): Headers already sent. You cannot
+        // change the session module's ini settings at this time"
+        if ('testing' != getenv('environment')) {
+            $container->get(SessionManager::class);
+        }
         $user = $container->get('auth')->getIdentity();
         if ($user) {
             $navigation->setDefaultRole($user->role);
         }
-        
+
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
@@ -106,6 +112,8 @@ class Module
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
             $flashMessenger->addWarningMessage('Authentication is required.');
+            // 'session_containers' => [...] config lets you get away with this
+            //$session = $container->get('Authentication') ;
             $session = new \Zend\Session\Container('Authentication');
             $session->redirect_url = $event->getRequest()->getUriString();
             $allowed = false;
