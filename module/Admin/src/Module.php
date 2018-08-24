@@ -112,8 +112,9 @@ class Module
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
             $flashMessenger->addWarningMessage('Authentication is required.');
-            // 'session_containers' => [...] config lets you get away with this
-            //$session = $container->get('Authentication') ;
+            // 'session_containers' => [...] config lets you get away with this:
+            // $session = $container->get('Authentication') ;
+            // except that phpunit tests blow up.
             $session = new \Zend\Session\Container('Authentication');
             $session->redirect_url = $event->getRequest()->getUriString();
             $allowed = false;
