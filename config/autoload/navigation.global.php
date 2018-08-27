@@ -52,9 +52,6 @@ return [
                         'pages' => [
                             [
                                 'label' => 'add',
-
-
-
                                 'route' => 'interpreters/add'
                             ],
                             [
@@ -168,7 +165,7 @@ return [
             [
                 'label' => 'admin',
                 'route' => 'admin',
-                'resource' => Admin\AdminIndexController::class,
+                'resource' => Admin\IndexController::class,
             ],
             [
                 'label' => 'schedule',
@@ -190,7 +187,7 @@ return [
             [
                 'label' => 'other lists',
                 'route' => 'admin',
-                'resource' => Admin\AdminIndexController::class,
+                'resource' => Admin\IndexController::class,
                 //'privilege' => 'index','action' => 'index',
                 'pages' => [
 
