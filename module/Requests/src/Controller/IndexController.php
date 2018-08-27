@@ -49,4 +49,9 @@ class IndexController extends AbstractActionController
         $view->setTemplate('interpreters-office/requests/index/index.phtml');
         return $view;
     }
+
+    public function listAction()
+    {
+        
+    }
 }
