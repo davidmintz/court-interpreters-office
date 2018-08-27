@@ -120,7 +120,14 @@ class Adapter extends AbstractAdapter
         }
 
         $entity = $this->authenticationResultInfo['identity'];
+        $judges = $entity->getJudges();
         $user_object = new \stdClass();
+        $user_object->judge_ids = [];
+        if ($judges) {
+            foreach ($judges as $judge) {
+                $user_object->judge_ids[] = $judge->getId();
+            }
+        }
         $person = $entity->getPerson();
         $user_object->lastname = $person->getLastname();
         $user_object->firstname = $person->getFirstname();
@@ -129,6 +136,7 @@ class Adapter extends AbstractAdapter
         $user_object->username = $entity->getUserName();
         $user_object->role = (string)$entity->getRole();
         $user_object->id = $entity->getId();
+
 
         return new Result(
             $this->authenticationResultInfo['code'],
