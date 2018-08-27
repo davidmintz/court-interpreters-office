@@ -33,7 +33,7 @@ return [
         // the topmost controller
         Main\IndexController::class => null,
         Requests\IndexController::class => null,
-        Admin\AdminIndexController::class => null,
+        Admin\IndexController::class => null,
         'SDNY\Vault\Controller\VaultController' => null,
         Main\AuthController::class => null,
         // these refer to user resource ids. the User entity implements
@@ -55,7 +55,7 @@ return [
             Main\AuthController::class => ['logout'],
         ],
         'manager' => [
-            Admin\AdminIndexController::class => null,
+            Admin\IndexController::class => null,
             Admin\LanguagesController::class => null,
             Admin\EventsController::class => null,
             // ??
@@ -64,7 +64,7 @@ return [
             'submitter' => null,
         ],
         'staff' => [
-            Admin\AdminIndexController::class => ['index'],
+            Admin\IndexController::class => ['index'],
             Main\AuthController::class => ['logout'],
         ],
         'administrator' => null,

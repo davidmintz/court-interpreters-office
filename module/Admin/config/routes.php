@@ -14,7 +14,7 @@ return  [
                 'route' => '/admin', //[/]r
                 'defaults' => [
                     'module' => __NAMESPACE__,
-                    'controller' => Controller\AdminIndexController::class,
+                    'controller' => Controller\IndexController::class,
                     'action' => 'index',
                 ],
             ],

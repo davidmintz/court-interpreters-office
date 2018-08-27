@@ -10,7 +10,7 @@ use Zend\View\Model\ViewModel;
 /**
  * controller for admin/index.
  */
-class AdminIndexController extends AbstractActionController
+class IndexController extends AbstractActionController
 {
     /**
      * index action.

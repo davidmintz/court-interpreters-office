@@ -20,7 +20,7 @@ return [
     'controllers' => [
 
         'invokables' => [
-            Controller\AdminIndexController::class => Controller\AdminIndexController::class,
+            Controller\IndexController::class => Controller\IndexController::class,
         ],
         'factories' => [
             Controller\LanguagesController::class => Controller\Factory\BasicEntityControllerFactory::class,
