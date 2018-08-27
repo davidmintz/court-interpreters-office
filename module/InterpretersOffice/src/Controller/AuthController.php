@@ -130,7 +130,7 @@ class AuthController extends AbstractActionController
     public function logoutAction()
     {
         if ($this->auth->hasIdentity()) {
-            $user = $this->auth->getIdentity();
+            $user = $this->auth->getIdentity();            
             $this->auth->clearIdentity();
             $this->flashMessenger()
                  ->addSuccessMessage('You have logged out');

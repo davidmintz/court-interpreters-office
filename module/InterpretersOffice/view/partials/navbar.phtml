@@ -1,11 +1,13 @@
 <?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */
-
 $route = $this->layout()->routeMatch;
 $routes_labels = [
     'events/add' => 'add event',
     'events'  => 'schedule',
     'events/edit'  => 'schedule',
     'admin-defendants'  => 'defendants',
+    'requests/list' => 'list',
+    'requests/create' => 'create',
+    'requests/search' => 'search',
 ];?>
 <ul class="navbar-nav mr-auto"><?php
     /* @var $page Zend\Navigation\Page\Mvc */
@@ -15,7 +17,7 @@ $routes_labels = [
     $active = false;
     if ($label == $route
         or (isset($routes_labels[$route]) && $label == $routes_labels[$route])
-        or strpos($route, $label) === 0
+        or ('default'==$this->layout()->navigation_menu && strpos($route, $label) === 0)
         or (str_replace('admin/', '', $route) == $label)):
         $active = true;
     endif;

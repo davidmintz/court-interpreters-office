@@ -50,7 +50,7 @@ return [
     'allow' => [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
-            Requests\IndexController::class => ['create', 'view', 'index'],
+            Requests\IndexController::class => null,
             Admin\EventsController::class => ['index', 'view', 'search'],
             Main\AuthController::class => ['logout'],
         ],

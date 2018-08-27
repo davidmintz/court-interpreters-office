@@ -25,9 +25,56 @@ return [
         ],
 
     ],
+    // work in progress
+    'navigation' => [
+        'requestsBreadcrumbs' => [
+            [
+                'label' => 'requests',
+                'route' => 'requests',
+                'pages' => [
+                    [
+                        'route' => 'requests/list',
+                        'label' => 'list',
+                    ],
+                    [
+                        'route' => 'requests/create',
+                        'label' => 'create',
+                    ],
+                    [
+                        'route' => 'requests/search',
+                        'label' => 'search',
+                    ],
+                    [
+                        'route' => 'requests/update',
+                        'label' => 'update',
+                    ],
+                ],
+            ],
+        ],
+        // navigation menu
+        'requests' => [
+            [
+                'label' => 'requests',
+                'route' => 'requests',
+            ],
+            [
+                'label' => 'list',
+                'route' => 'requests/list'
+            ],
+            [
+                'route' => 'requests/create',
+                'label' => 'create',
+            ],
+            [
+                'route' => 'requests/search',
+                'label' => 'search',
+            ],
+
+            //*
+        ]
+    ],
     'router' => [
         'routes' => [
-
             'requests' => [
                 'type' => Literal::class,
                 'may_terminate' => true,
@@ -37,6 +84,51 @@ return [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\IndexController::class,
                         'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'list' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/list',
+                            'defaults' => [
+                                'controller' => Controller\IndexController::class,
+                                'action' => 'test',
+                            ],
+                        ],
+                    ],
+                    'create' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/create',
+                            'defaults' => [
+                                'controller' => Controller\IndexController::class,
+                                'action' => 'test',
+                            ],
+                        ],
+                    ],
+                    'search' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/search',
+                            'defaults' => [
+                                'controller' => Controller\IndexController::class,
+                                'action' => 'test',
+                            ],
+                        ],
+                    ],
+                    'update' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/update/:id',
+                            'defaults' => [
+                                'controller' => Controller\IndexController::class,
+                                'action' => 'test',
+                            ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
                     ],
                 ],
             ],

@@ -63,15 +63,23 @@ class Module
 
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
-        //$eventManager->attach(MvcEvent::EVENT_ROUTE, [$this,'attachEntityListener']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
                 $viewModel = $event->getApplication()->getMvcEvent()
                         ->getViewModel();
                 $viewModel->setVariables($routeMatch->getParams());
-                $viewModel->user = $user;
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
+                $viewModel->user = $user;
+                if (! $user) {
+                    return;
+                }
+                // figure out proper navigation bar
+                if (in_array($user->role,['administrator','manager','staff',])) {
+                    $viewModel->navigation_menu = 'default';
+                } elseif ('submitter' == $user->role) {
+                    $viewModel->navigation_menu = 'Zend\Navigation\Requests';
+                }
             }
         });
         // The following line instantiates the SessionManager and automatically

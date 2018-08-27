@@ -48,35 +48,7 @@ class Module
             ],
         ];
     }
-    /**
-     * module bootstrap, opportunity to attach listeners etc.
-     *
-     * @param \Zend\Mvc\MvcEvent $e The MvcEvent instance
-     */
-    public function onBootstrap(\Zend\Mvc\MvcEvent $e)
-    {
-        return;
-
-       /** @todo remove this. nice try but this is not the way to go */
-        $container = $e->getApplication()->getServiceManager();
-        $entityManager = $container->get('entity-manager');
-        $eventManager = $entityManager->getEventManager();
-        $listeners = array_values($eventManager->getListeners('postLoad'));
-        $listener = null;
-        foreach ($listeners as $object) {
-            //echo get_class($object);
-            if ($object instanceof \InterpretersOffice\Entity\Listener\UpdateListener) {
-                $listener = $object;
-                break;
-            }
-        }
-        if ($listener) {
-            $listener->setAuthenticationService($container->get('auth'));
-            $container->get('log')
-                   ->debug('auth service injected into UpdateListener in Admin Bootstrap');
-        }
-    }
-    //
+    
 
     /*
      * DOES NOT SEEM TO WORK

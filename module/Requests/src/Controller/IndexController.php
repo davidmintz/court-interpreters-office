@@ -40,6 +40,13 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel(['title' => 'schedule an interpreter']);
+        return new ViewModel(['title' => 'Interpreter Scheduling']);
+    }
+
+    public function testAction()
+    {
+        $view = new ViewModel();
+        $view->setTemplate('interpreters-office/requests/index/index.phtml');
+        return $view;
     }
 }

@@ -1,1 +1,4 @@
-<p>this is your index.phtml</p>
+<?php $this->headTitle('requests') ?>
+<p>this is your index.phtml. nav breadcrumbs: </p>
+
+<?php var_dump($this->navigation('Zend\Navigation\requestsBreadcrumbs')->breadcrumbs()->__toString()); ?>
