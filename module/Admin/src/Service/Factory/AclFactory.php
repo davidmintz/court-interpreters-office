@@ -32,7 +32,7 @@ class AclFactory implements FactoryInterface
         $acl = new Acl($config);
         $sharedEventManager = $container->get('SharedEventManager');
         $sharedEventManager->attach(
-            get_class($acl),
+            Acl::class,
             'access-denied',
             function ($e) use ($log, $auth) {
                 $identity = $auth->getIdentity() ;
