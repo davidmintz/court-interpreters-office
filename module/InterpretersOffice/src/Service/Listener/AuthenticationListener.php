@@ -87,8 +87,8 @@ class AuthenticationListener
     {
         $user = $e->getParam('user');
         $message = sprintf('user %s logged out', $user->email);
-        $session = new \Zend\Session\Container('Authentication');
-        $session->role = 'anonymous'; // do we still need this?
+        //$session = new \Zend\Session\Container('Authentication');
+        //$session->role = 'anonymous'; // do we still need this?
         $this->log->info($message);
     }
 }
