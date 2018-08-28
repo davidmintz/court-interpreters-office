@@ -7,6 +7,10 @@ namespace InterpretersOffice\Requests;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
+$environment = getenv('environment') ?: 'development';
+
+// set to 'array' to disable
+$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
 
 return [
     'controllers' => [
@@ -24,7 +28,7 @@ return [
         'factories' => [
         ],
 
-
+    ],
     // experimental
     'doctrine' => [
         'driver' => [
@@ -33,14 +37,14 @@ return [
                     __DIR__.'/../src/Entity',
                 ],
             ],
-        ],
-        'orm_default' => [
-            'drivers' => [
-                // register `my_annotation_driver` for any entity under namespace `My\Namespace`
-                __NAMESPACE__.'\Entity' => 'application_annotation_driver',
+            'orm_default' => [
+                'drivers' => [                    
+                    __NAMESPACE__.'\Entity' => 'application_annotation_driver',
+                ],
             ],
         ],
     ],
+
     // work in progress
     'navigation' => [
         'requestsBreadcrumbs' => [
@@ -148,6 +152,6 @@ return [
                     ],
                 ],
             ],
-        ],
-    ],
+        ]
+    ]
 ];

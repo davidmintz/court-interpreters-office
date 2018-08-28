@@ -53,8 +53,8 @@ class IndexController extends AbstractActionController
 
     public function listAction()
     {
-        $view = new ViewModel();
         $repo = $this->objectManager->getRepository(Entity\Request::class);
+        $view = new ViewModel(['repo'=>$repo,'em'=>$this->objectManager]);
         return $view;
     }
 }
