@@ -24,6 +24,22 @@ return [
         'factories' => [
         ],
 
+
+    // experimental
+    'doctrine' => [
+        'driver' => [
+            'application_annotation_driver' => [
+                'paths' => [
+                    __DIR__.'/../src/Entity',
+                ],
+            ],
+        ],
+        'orm_default' => [
+            'drivers' => [
+                // register `my_annotation_driver` for any entity under namespace `My\Namespace`
+                __NAMESPACE__.'\Entity' => 'application_annotation_driver',
+            ],
+        ],
     ],
     // work in progress
     'navigation' => [
@@ -93,7 +109,7 @@ return [
                             'route' => '/list',
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
-                                'action' => 'test',
+                                'action' => 'list',
                             ],
                         ],
                     ],

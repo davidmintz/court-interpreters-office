@@ -8,6 +8,7 @@ namespace InterpretersOffice\Requests\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Doctrine\Common\Persistence\ObjectManager;
+use InterpretersOffice\Requests\Entity;
 
 /**
  *  IndexController for Requests module
@@ -40,7 +41,7 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        return new ViewModel(['title' => 'Interpreter Scheduling']);
+        return new ViewModel();
     }
 
     public function testAction()
@@ -52,6 +53,8 @@ class IndexController extends AbstractActionController
 
     public function listAction()
     {
-        
+        $view = new ViewModel();
+        $repo = $this->objectManager->getRepository(Entity\Request::class);
+        return $view;
     }
 }
