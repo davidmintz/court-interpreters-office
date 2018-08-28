@@ -8,7 +8,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^5.6 || ^7.0",
+        "php": "^7.0 || ^7.2",
         "zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
         "zendframework/zend-mvc": "^3.0.1",
         "zfcampus/zf-development-mode": "^3.0",
@@ -62,7 +62,7 @@
         ],
         "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
         "test": "phpunit",
-        "toolbar-enable" : "sed -i -e 's/false/true/' config/autoload/toolbar-enabled.local.php"  ,     
+        "toolbar-enable" : "sed -i -e 's/false/true/' config/autoload/toolbar-enabled.local.php"  ,
         "toolbar-disable" : "sed -i -e 's/true/false/' config/autoload/toolbar-enabled.local.php"
     },
     "require-dev": {

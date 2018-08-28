@@ -24,7 +24,8 @@ class IndexControllerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $controller = new IndexController(
-            $container->get('entity-manager')
+            $container->get('entity-manager'),
+            $container->get('auth')
         );
 
         return $controller;

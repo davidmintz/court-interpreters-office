@@ -1,8 +1,12 @@
 
-<p>
-    repository class is <?php echo get_class($this->repo) ?>
-</p>
+<?php
+foreach ($this->paginator as $r) {
+
+    //$r[0]['type'] = $r['type'];
+    printf('<pre>%s</pre>',print_r($r,true));
+}
+?>
 
 <p>
-    <?php ?>
+
 </p>
