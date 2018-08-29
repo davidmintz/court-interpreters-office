@@ -19,7 +19,7 @@ class IndexControllerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return ExampleController
+     * @return IndexController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

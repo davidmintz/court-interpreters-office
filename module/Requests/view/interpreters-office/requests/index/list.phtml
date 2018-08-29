@@ -5,7 +5,10 @@
 ?>
 <h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
 <?php
-if ($this->paginator && $this->paginator->getTotalItemCount()):?>
+if ($this->paginator && $this->paginator->getTotalItemCount()):
+    ?><p>
+        <?php echo $this->paginationControl($this->paginator, null, 'partials/pagination_head');?>
+    </p>
 <table class="table">
     <thead></thead>
     <tbody>
@@ -18,12 +21,21 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):?>
             <td><?php echo $r['docket']?></td>
             <td><?php echo $r['judge']['lastname']?></td>
             <td><?php echo $this->defendants($r['id'])?></td>
-            <td><a href="#"><span class="sr-only">actions</span><span style="color:purple" class="fas fa-bars"></span></a></td>
+            <td class="dropleft"><a style="color:purple" id="request-dropdown-<?php echo $r['id']?>" href="javascript:void(0)" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
+              <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
+                <a class="dropdown-item" href="#">show details</a>
+                <a class="dropdown-item" href="#">repeat</a>
+                <a class="dropdown-item" href="#">something else</a>
+              </div>
+            </td>
         </tr><?php
         endforeach;
     ?>
     </tbody>
 </table>
+<?php echo $this->paginationControl(
+    $this->paginator,'sliding', 'partials/pagination_control',['route' => 'requests/list']
+);?>
 <?php else: $url =  $this->url('requests/create');?>
 <p class="alert alert-warning">You have no electronically submitted interpreter requests
 in the database. To create one please go to <a href="<?php echo $url?>"><?php echo $url?></a>.</p>

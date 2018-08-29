@@ -77,16 +77,20 @@ class RequestRepository extends EntityRepository
         return $paginator;
     }
 
+    /**
+     * gets defendant names for $request_ids
+     * @param  Array $request_ids
+     * @return Array
+     */
     public function getDefendants(Array $request_ids)
     {
         $DQL = 'SELECT r.id request_id, d.given_names, d.surnames, d.id
         FROM InterpretersOffice\Requests\Entity\Request r
-        JOIN r.defendants d WHERE r.id IN (:request_ids)';// INDEX BY r.id'
+        JOIN r.defendants d WHERE r.id IN (:request_ids)';
         $data = $this->getEntityManager()->createQuery($DQL)
             ->setParameters(['request_ids'=>$request_ids])
             ->getResult();
         $defendants = [];
-        //printf('<pre>%s</pre>',print_r($data,true));
         foreach ($data as $row) {
             $request_id = $row['request_id'];
             if (key_exists($request_id,$defendants)) {
@@ -97,5 +101,4 @@ class RequestRepository extends EntityRepository
         }
         return $defendants;
     }
-
 }
