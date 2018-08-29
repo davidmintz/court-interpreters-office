@@ -42,12 +42,11 @@ class RequestRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $parameters = [];
-        $qb->select(['r','t','j'])->from('InterpretersOffice\Requests\Entity\Request', 'r')
+        $qb->select(['r','t','j'])
+            ->from('InterpretersOffice\Requests\Entity\Request', 'r')
             ->join('r.eventType','t')
             ->join('r.judge','j')
-            //->where($qb->expr()->like('j.lastname',':judge'))
             ->orderBy('r.date', 'DESC');
-
         if ($user->role == 'submitter') {
             if ($user->judge_ids) {
                 // Law Clerk or Courtoom Deputy
@@ -59,7 +58,10 @@ class RequestRepository extends EntityRepository
                 $parameters['category'] = 'in';
             } else {
                 // USPO or Pretrial Officer
-                //$qb->join
+                // fetch only requests created by the current user
+                $qb->join(Entity\User::class, 'u','WITH','r.submitter = u.person')
+                    ->where('u.id = :user_id');
+                $parameters['user_id'] = $user->id;
             }
         }
         $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
@@ -71,8 +73,7 @@ class RequestRepository extends EntityRepository
         if (! count($paginator)) {
             return null;
         }
-        $paginator->setCurrentPageNumber($page)
-            ->setItemCountPerPage(20);
+        $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
 
         return $paginator;
     }

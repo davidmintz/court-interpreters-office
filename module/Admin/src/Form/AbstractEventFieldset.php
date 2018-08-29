@@ -240,7 +240,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
      {
          if (! isset($options['action'])) {
              throw new \RuntimeException(
-                 'missing "action" option in EventFieldset constructor'
+                 'missing "action" option in constructor'
              );
          }
          if (! in_array($options['action'], ['create', 'update','repeat'])) {
@@ -267,6 +267,11 @@ abstract class AbstractEventFieldset extends Fieldset implements
          $this->options = $options;
 
          parent::__construct($this->fieldset_name, $options);
+         
+         $this->addJudgeElements($options['object'])
+             ->addEventTypeElement()
+             ->addLocationElements($options['object']);
+
          $this->add(
              new LanguageSelect(
                  'language',
@@ -290,6 +295,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
          foreach ($this->elements as $element) {
              $this->add($element);
          }
+
      }
 
      /**

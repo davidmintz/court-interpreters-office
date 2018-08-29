@@ -11,6 +11,7 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 
+use InterpretersOffice\Requests\Form;
 
 /**
  *  IndexController for Requests module
@@ -60,7 +61,6 @@ class IndexController extends AbstractActionController
         $view = new ViewModel();
         $view->setTemplate('interpreters-office/requests/index/index.phtml');
 
-
         return $view;
     }
 
@@ -83,5 +83,17 @@ class IndexController extends AbstractActionController
             $defendants = [];
         }
         return new ViewModel(['paginator' => $paginator,'defendants'=>$defendants ]);
+    }
+
+    public function createAction()
+    {
+        $view = new ViewModel();
+        $view->setTemplate('interpreters-office/requests/index/form.phtml');
+
+        $fs = new Form\RequestFieldset($this->objectManager,['action'=>'create']);
+        echo get_class($fs);
+
+
+        return $view;
     }
 }

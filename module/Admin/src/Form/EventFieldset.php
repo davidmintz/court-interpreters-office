@@ -53,10 +53,6 @@ class EventFieldset extends AbstractEventFieldset
 
         parent::__construct($objectManager, $options);
 
-        $this->addJudgeElements($options['object'])
-            ->addEventTypeElement()
-            ->addLocationElements($options['object']);
-
         // the InterpreterEventsFieldset
 
         $interpreterEventsFieldset = new InterpreterEventsFieldset($objectManager);

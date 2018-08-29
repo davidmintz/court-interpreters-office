@@ -127,7 +127,7 @@ return [
                             'route' => '/create',
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
-                                'action' => 'test',
+                                'action' => 'create',
                             ],
                         ],
                     ],
