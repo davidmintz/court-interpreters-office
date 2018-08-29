@@ -29,7 +29,7 @@ return [
         ],
 
     ],
-    // experimental
+    // add the entity path to the doctrine config
     'doctrine' => [
         'driver' => [
             'application_annotation_driver' => [
@@ -38,7 +38,7 @@ return [
                 ],
             ],
             'orm_default' => [
-                'drivers' => [                    
+                'drivers' => [
                     __NAMESPACE__.'\Entity' => 'application_annotation_driver',
                 ],
             ],
@@ -47,7 +47,7 @@ return [
 
     // work in progress
     'navigation' => [
-        'requestsBreadcrumbs' => [
+        'RequestsBreadcrumbs' => [
             [
                 'label' => 'requests',
                 'route' => 'requests',
@@ -76,18 +76,22 @@ return [
             [
                 'label' => 'requests',
                 'route' => 'requests',
+                'title' => 'main page for interpreter scheduling'
             ],
             [
                 'label' => 'list',
-                'route' => 'requests/list'
+                'route' => 'requests/list',
+                'title' => 'display requests for interpreting services'
             ],
             [
                 'route' => 'requests/create',
                 'label' => 'create',
+                'title' => 'schedule an interpreter'
             ],
             [
                 'route' => 'requests/search',
                 'label' => 'search',
+                'title' => 'search for past interpreter requests'
             ],
 
             //*
