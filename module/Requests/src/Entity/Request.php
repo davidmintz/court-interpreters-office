@@ -175,8 +175,8 @@ class Request
      *
      * @ORM\ManyToMany(targetEntity="\InterpretersOffice\Entity\Defendant")
      * @ORM\JoinTable(name="defendants_requests",
-     *      joinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="request_id", referencedColumnName="id")}
+     *      joinColumns={@ORM\JoinColumn(name="request_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="defendant_id", referencedColumnName="id")}
      * )
      *
      * @var ArrayCollection

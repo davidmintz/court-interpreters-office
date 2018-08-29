@@ -62,20 +62,26 @@ class IndexController extends AbstractActionController
 
         return $view;
     }
+    // $qb = $this->objectManager->createQueryBuilder();
+    // $qb->select(['u'])->from('User','u')
+    //->where('u.name ')
+    //->where($qb->expr()->orX($qb->expr()->eq('u.firstName', '?1'),
+    // $qb->expr()->LIKE('u.surname', '?2')))
+    //->where($qb->expr()->orX($qb->expr()->lte('u.age', 40), 'u.numChild = 0'))
+    //;
+    //echo $qb->getDQL();
 
     public function listAction()
     {
         $repo = $this->objectManager->getRepository(Entity\Request::class);
-        // $qb = $this->objectManager->createQueryBuilder();
-        // $qb->select(['u'])->from('User','u')
-        //->where('u.name ')
-        //->where($qb->expr()->orX($qb->expr()->eq('u.firstName', '?1'),
-        // $qb->expr()->LIKE('u.surname', '?2')))
-        //->where($qb->expr()->orX($qb->expr()->lte('u.age', 40), 'u.numChild = 0'))
-        //;
-        //echo $qb->getDQL();
-
-        $view = new ViewModel(['paginator' => $repo->list($this->auth->getIdentity()) ]);
+        $paginator = $repo->list($this->auth->getIdentity());
+        if ($paginator) {
+            $ids = array_column($paginator->getCurrentItems()->getArrayCopy(),'id');            
+            $defendants = $repo->getDefendants($ids);
+        } else {
+            $defendants = [];
+        }
+        $view = new ViewModel(['paginator' => $paginator,'defendants'=>$defendants ]);
         return $view;
     }
 }

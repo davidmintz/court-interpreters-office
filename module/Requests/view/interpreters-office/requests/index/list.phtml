@@ -1,9 +1,40 @@
-
+<pre>
+    <?php
+    //echo $this->paginator->toJSON(),'<br>';
+    //print_r(get_class_methods($this->paginator));
+    //print_r($this->defendants);
+    ?>
+</pre>
 <?php
+if ($this->paginator && $this->paginator->getTotalItemCount()):?>
+<table class="table">
+    <thead>
+
+    </thead>
+    <tbody>
+    <?php
+            foreach ($this->paginator as $r):
+            ?><tr data-request_id=<?php echo $r['id']?>>
+                <td><?php echo $r['date']->format('d-M-Y')?></td>
+                <td><?php echo $r['time']->format('g:i a')?></td>
+                <td><?php echo $r['eventType']['name']?></td>
+                <td><?php echo $r['docket']?></td>
+                <td><?php echo $r['judge']['lastname']?></td>
+                <td><?php echo $this->defendants($r['id'])?></td>
+                <?php
+                //Array ( [0] => id [1] => date [2] => time [3] => docket [4] => created [5] => modified [6] => comments [7] => pending [8] => eventType [9] => judge )
+                ?>
+            </tr><?php
+            endforeach;
+    ?>
+    </tbody>
+</table>
+<?php
+endif;
 foreach ($this->paginator as $r) {
 
     //$r[0]['type'] = $r['type'];
-    printf('<pre>%s</pre>',print_r($r,true));
+    //printf('<pre>%s</pre>',print_r($r,true));
 }
 ?>
 
