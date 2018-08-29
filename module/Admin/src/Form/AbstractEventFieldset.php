@@ -265,9 +265,9 @@ abstract class AbstractEventFieldset extends Fieldset implements
          }
          $this->action = $options['action'];
          $this->options = $options;
-
+         $this->setObjectManager($objectManager);
          parent::__construct($this->fieldset_name, $options);
-         
+
          $this->addJudgeElements($options['object'])
              ->addEventTypeElement()
              ->addLocationElements($options['object']);
