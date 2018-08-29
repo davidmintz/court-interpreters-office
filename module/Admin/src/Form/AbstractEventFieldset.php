@@ -301,10 +301,10 @@ abstract class AbstractEventFieldset extends Fieldset implements
      /**
       * adds Judge element(s)
       *
-      * @param Entity\Event $event
+      * //param Entity\Event $event
       * @return AbstractEventFieldset
       */
-     abstract public function addJudgeElements(Entity\Event $event = null);
+     abstract public function addJudgeElements();
 
      /**
       * adds event-type element
@@ -318,6 +318,6 @@ abstract class AbstractEventFieldset extends Fieldset implements
       * @param Entity\Event $event
       * @return AbstractEventFieldset
       */
-     abstract public function addLocationElements(Entity\Event $event = null);
+     abstract public function addLocationElements();
 
 }

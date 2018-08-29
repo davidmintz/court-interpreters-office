@@ -3,7 +3,7 @@ namespace InterpretersOffice\Requests\Form;
 
 use InterpretersOffice\Admin\Form\AbstractEventFieldset;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
-use InterpretersOffice\Entity;
+
 
 class RequestFieldset extends AbstractEventFieldset
 {
@@ -31,15 +31,15 @@ class RequestFieldset extends AbstractEventFieldset
         return $this;
     }
 
-    public function addLocationElements($event = null)
+    public function addLocationElements()
     {
 
         return $this;
     }
 
-    public function addJudgeElements($event = null)
+    public function addJudgeElements()
     {
-        
+
         return $this;
     }
 

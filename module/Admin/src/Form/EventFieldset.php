@@ -20,8 +20,7 @@ use InterpretersOffice\Entity\Repository\JudgeRepository;
 
 /**
  * Fieldset for Event form
- * Notes to self: make a base class that adds only the elements required for
- * a 'Request' form, and create a subclass 'Events' form (for admins) add the rest.
+ * 
  */
 class EventFieldset extends AbstractEventFieldset
 {
@@ -327,7 +326,7 @@ class EventFieldset extends AbstractEventFieldset
      * @return EventFieldset
      * @todo option grouping for sub-location?
      */
-    public function addLocationElements(Entity\Event $event = null)
+    public function addLocationElements()
     {
         // the "parentLocation" element
         $this->add([
@@ -361,6 +360,7 @@ class EventFieldset extends AbstractEventFieldset
                 ],
                 'attributes' => ['class' => 'form-control custom-select text-muted', 'id' => 'location'],
         ];
+        $event = $this->options['object'];
         if (! $event or ! $event->getLocation()) {
              $this->add($element_spec);
         } else { // the event location is set
@@ -398,11 +398,12 @@ class EventFieldset extends AbstractEventFieldset
      * @param Entity\Event $event
      * @return \InterpretersOffice\Admin\Form\EventFieldset
      */
-    public function addJudgeElements(Entity\Event $event = null)
+    public function addJudgeElements()
     {
         /** @var $repository \InterpretersOffice\Entity\Repository\JudgeRepository */
         $repository = $this->getObjectManager()->getRepository(Judge::class);
         $opts = ['include_pseudo_judges' => true];
+        $event = $this->options['object'];
         if ($event && $judge = $event->getJudge()) {
             $opts['judge_id'] = $judge->getId();
         }
