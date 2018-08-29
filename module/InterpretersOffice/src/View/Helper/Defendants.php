@@ -31,7 +31,13 @@ class Defendants extends AbstractHelper
         }
         $data = $this->getView()->data;
         if (! (is_array($data) && isset($data['defendants']))) {
-            return false;
+            // try something else
+            $defendants = $this->getView()->defendants;
+            if (! $defendants) {
+                return false;
+            } else {
+                $data = ['defendants'=>$defendants];
+            }            
         }
         $this->defendants = $data['defendants'];
 
