@@ -26,10 +26,10 @@ $routes_labels = [
     endif;
     $hasChildren = $page->hasPages();
     if (!$hasChildren or false === $page->expand_children ) :
-?><li class="nav-item border-left<?php if ($active): ?> active<?php endif; ?>"><a class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
+?><li class="nav-item border-left<?php if ($active): ?> active<?php endif; ?>"><a title="<?php if ($page->title): echo $page->title; endif ?>" class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
 <?php else :
 ?><li class="nav-item dropdown border-left">
-    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
+    <a  title="<?php if ($page->title): echo $page->title; endif ?>" href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
     <div class="dropdown-menu"><?php foreach ($page->getPages() as $child) : ?>
         <?php
         if (!$child->isVisible() || !$this->navigation()->accept($child)) :
@@ -45,7 +45,7 @@ $routes_labels = [
         else:
             $active = false;
         endif;
-        ?><a class="dropdown-item<?php if ($active): ?> active<?php endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
+        ?><a  title="<?php if ($page->title): echo $page->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
     <?php endforeach; ?>
     </div>
 </li>
