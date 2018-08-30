@@ -82,12 +82,17 @@ class Request
     protected $anonymousJudge;
 
     /**
+     * Person who creates (hence submits) this request.
+     *
      * The interpreter is requested by a Person (submitter). For requests
      * submitted through this application (rather than phone, email, etc),
-     * the submitter_id identical the current user/person who creates
-     * the Request entity.
+     * the submitter_id is identical with the current user/person who creates
+     * the Request entity. One might think this should point to a User, but the
+     * Event entity's submitter property points to a Person -- which is because
+     * the submitter might not be someone with a user account -- so it makes
+     * some sense to do the same here.
      *
-     * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\Person")//,inversedBy="events"
+     * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\Person")
      * @ORM\JoinColumn(nullable=true)
      *
      * @var Entity\Person
