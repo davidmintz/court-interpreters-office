@@ -59,9 +59,13 @@ class RequestRepository extends EntityRepository
             } else {
                 // USPO or Pretrial Officer
                 // fetch only requests created by the current user
-                $qb->join(Entity\User::class, 'u','WITH','r.submitter = u.person')
-                    ->where('u.id = :user_id');
-                $parameters['user_id'] = $user->id;
+                $qb->join('r.submitter','p')->where('p.id = :person_id');
+                $parameters['person_id'] = $user->person_id;
+                // this also works but is not necessary. good to know for future
+                // reference:
+                //$qb->join(Entity\User::class, 'u','WITH','r.submitter = u.person')
+                //    ->where('u.id = :user_id');
+                //$parameters['user_id'] = $user->id;
             }
         }
         $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
