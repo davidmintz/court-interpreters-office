@@ -42,7 +42,29 @@ class CourtClosingsController extends AbstractActionController
     {
         $repo = $this->objectManager->getRepository(Entity\CourtClosing::class);
         $data = $repo->list();
-        return false;
-        //return new ViewModel();
+
+        return new ViewModel(['data'=>$data]);
+    }
+
+    /**
+     * adds a court closing
+     */
+    public function addAction()
+    {
+        $view = new ViewModel();
+        $view->setTemplate('interpreters-office/admin/court-closings/form');
+
+        return $view;
+    }
+
+    /**
+     * edits a court closing
+     */
+    public function editAction()
+    {
+        $view = new ViewModel();
+        $view->setTemplate('interpreters-office/admin/court-closings/form');
+
+        return $view;
     }
 }

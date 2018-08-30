@@ -157,6 +157,20 @@ return [
                             ],
                         ]
                     ],
+                    [
+                        'label' => 'court closings',
+                        'route' => 'court-closings',
+                        'pages' => [
+                            [
+                                'label' => 'add',
+                                'route' => 'court-closings/add'
+                            ],
+                            [
+                                'label' => 'edit',
+                                'route' => 'court-closings/edit'
+                            ],
+                        ]
+                    ]
                 ],
             ],
         ],
@@ -230,6 +244,7 @@ return [
                     [
                         'label' => 'defendants',
                         'route' => 'admin-defendants',
+                        'resource' => Admin\DefendantsController::class,
                         'expand_children' => false,
                         'pages' => [
                             [
@@ -241,6 +256,11 @@ return [
                                 'route' => 'admin-defendants/edit'
                             ],
                         ]
+                    ],
+                    [
+                        'resource' => Admin\CourtClosingsController::class,
+                        'label' => 'court closings',
+                        'route' => 'court-closings',
                     ],
                 ],
             ],

@@ -10,14 +10,24 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\CourtClosing;
+use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 
 /**
  * custom EntityRepository class for CourtClosing entity.
  */
-class CourtClosingRepository extends EntityRepository
+class CourtClosingRepository extends EntityRepository implements CacheDeletionInterface
 {
 
+    use ResultCachingQueryTrait;
+
      protected $cache_namespace = 'court-closings';
+
+     /**
+      * cache
+      *
+      * @var CacheProvider
+      */
+     protected $cache;
 
      /**
       * constructor
@@ -33,6 +43,18 @@ class CourtClosingRepository extends EntityRepository
      }
 
      /**
+      * implements CacheDeletionInterface
+      *
+      * @param string $cache_namespace
+      * @return boolean
+      */
+     public function deleteCache($cache_id = null)
+     {
+         $this->cache->setNamespace($this->cache_namespace);
+         return $this->cache->deleteAll();
+
+     }
+     /**
       * returns a list of court closings -- WORK IN PROGRESS
       * @param  int $year optional year
       * @return ZendPaginator
@@ -40,14 +62,17 @@ class CourtClosingRepository extends EntityRepository
      public function list($year = null)
      {
          if (! $year) { $year = date('Y'); }
-         $DQL = 'SELECT c FROM '.CourtClosing::class .
-         ' c WHERE c.date BETWEEN :from AND :until ORDER BY c.date ASC';
-         $query = $this->getEntityManager()->createQuery($DQL)
+         $DQL = 'SELECT c, h FROM '.CourtClosing::class . ' c
+          LEFT JOIN c.holiday h  WHERE c.date BETWEEN :from AND :until
+          ORDER BY c.date ASC';
+         $query = $this->createQuery($DQL)
             ->setParameters([
                 'from'=>new \DateTime("$year-01-01"),
                 'until'=>new \DateTime("$year-12-31")
             ]);
-        return $query->getResult();
+        return $query  //->useResultCache(false)
+            ->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY)
+            ->getResult();
 
      }
 
