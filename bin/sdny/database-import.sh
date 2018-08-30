@@ -86,6 +86,10 @@ echo "importing event-types..."
 bin/sdny/import-event-types.php
 OK;
 
+echo "importing court closings..."
+echo 'INSERT INTO court_closings (SELECT id, holiday_id, date, description_other FROM dev_interpreters.court_closings)'| mysql office
+OK;
+
 echo "importing defendant names..."
 echo 'INSERT INTO defendant_names (id, given_names, surnames) (SELECT deft_id, firstname, lastname FROM dev_interpreters.deft_names ORDER BY deft_id)'|mysql office
 OK;
