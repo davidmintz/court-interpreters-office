@@ -12,7 +12,11 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 
 use InterpretersOffice\Entity;
 
-class RequestRepository extends EntityRepository
+/**
+ * RequestRepository 
+ * @todo implement caching -- or else don't
+ */
+ class RequestRepository extends EntityRepository
 {
 
     protected $cache_namespace = 'requests';
@@ -42,11 +46,12 @@ class RequestRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $parameters = [];
-        $qb->select(['r','t','j','l',])
+        $qb->select(['r','t','j','loc','lang'])
             ->from('InterpretersOffice\Requests\Entity\Request', 'r')
             ->join('r.eventType','t')
             ->join('r.judge','j')
-            ->leftJoin('r.location','l') //->leftJoin('l.type','lt')
+            ->join('r.language','lang')
+            ->leftJoin('r.location','loc') //->leftJoin('l.type','lt')
             ->orderBy('r.date', 'DESC');
         if ($user->role == 'submitter') {
             if ($user->judge_ids) {

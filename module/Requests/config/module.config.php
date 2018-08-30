@@ -114,10 +114,13 @@ return [
                     'list' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/list',
+                            'route' => '/list',//[/page/:page]',
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
                                 'action' => 'list',
+                            ],
+                            'constraints' => [
+                                //'page' => '[1-9]\d*',
                             ],
                         ],
                     ],

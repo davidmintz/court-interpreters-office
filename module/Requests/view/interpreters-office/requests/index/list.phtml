@@ -1,5 +1,6 @@
 <?php
 /** module/Requests/view/interpreters-office/requests/index/list.phtml
+*
 *   view script for displaying user's interpreter requests
 */
 $this->headTitle('requests | list')
@@ -10,7 +11,10 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
     ?><p>
         <?php echo $this->paginationControl($this->paginator, null, 'partials/pagination_head');?>
     </p>
-    <!-- <pre><?php // print_r($this->paginator->getItem(0))?></pre> -->
+    <!--
+    <pre><?php //print_r($this->paginator->getItem(0))?></pre>
+    -->
+    
 <table class="table">
     <caption class="sr-only">list of interpreter requests</caption>
     <thead></thead>
@@ -22,6 +26,7 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
         ?><tr data-request_id=<?php echo $r['id']?>>
             <td><?php echo $r['date']->format('d-M-Y')?></td>
             <td><?php echo $r['time']->format('g:i a')?></td>
+            <td><?php echo $r['language']['name']?></td>
             <td><?php echo $r['eventType']['name']?></td>
             <td><?php echo $location ?></td>
             <td><?php echo $docket ?></td>
