@@ -108,39 +108,41 @@ class Adapter extends AbstractAdapter
     }
 
     /**
-     * Creates a InterpretersOffice\Service\Authentication\Result object from the information
-     * that has been collected during the authenticate() attempt.
+     * Creates a InterpretersOffice\Service\Authentication\Result object from
+     * the information collected by authenticate().
      *
      * @return InterpretersOffice\Service\Authentication\Result
      */
     protected function createAuthenticationResult()
     {
         if (! isset($this->authenticationResultInfo['identity'])) {
-            return new Result($this->authenticationResultInfo['code'], null, $this->authenticationResultInfo['messages']);
+            return new Result($this->authenticationResultInfo['code'], null,
+                $this->authenticationResultInfo['messages']);
         }
-
-        $entity = $this->authenticationResultInfo['identity'];
+        /** @var \InterpretersOffice\Entity\User $entity */
+        $entity = $this->authenticationResultInfo['identity'];        
+        $user = new \stdClass();
         $judges = $entity->getJudges();
-        $user_object = new \stdClass();
-        $user_object->judge_ids = [];
+        $user->judge_ids = [];
         if ($judges) {
             foreach ($judges as $judge) {
-                $user_object->judge_ids[] = $judge->getId();
+                $user->judge_ids[] = $judge->getId();
             }
         }
         $person = $entity->getPerson();
-        $user_object->lastname = $person->getLastname();
-        $user_object->firstname = $person->getFirstname();
-        $user_object->email = $person->getEmail();
-        $user_object->hat = (string)$person->getHat();
-        $user_object->username = $entity->getUserName();
-        $user_object->role = (string)$entity->getRole();
-        $user_object->id = $entity->getId();
+        $user->lastname = $person->getLastname();
+        $user->firstname = $person->getFirstname();
+        $user->person_id = $person->getId();
+        $user->email = $person->getEmail();
+        $user->hat = (string)$person->getHat();
+        $user->username = $entity->getUserName();
+        $user->role = (string)$entity->getRole();
+        $user->id = $entity->getId();
 
 
         return new Result(
             $this->authenticationResultInfo['code'],
-            $user_object,
+            $user,
             $this->authenticationResultInfo['messages']
         );
     }
