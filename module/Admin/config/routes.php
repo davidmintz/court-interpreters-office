@@ -3,6 +3,7 @@ namespace InterpretersOffice\Admin;
 
 use Zend\Router\Http\Segment;
 use Zend\Router\Http\Literal;
+use InterpretersOffice\Admin\Controller\CourtClosingsController;
 
 //$today = new \DateTime();
 
@@ -559,6 +560,21 @@ return  [
                         ],
                     ],
                 ]
+            ],
+        ],
+        'court-closings' => [
+            'type' => Segment::class,
+            'may_terminate' => true,
+            'options' => [
+                'route' => '/admin/court-closings',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\CourtClosingsController::class,
+                    'action' => 'index',
+                ],
+            ],
+            'child_routes' => [
+
             ],
         ],
         'vault-test' => [

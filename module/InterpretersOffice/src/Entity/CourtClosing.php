@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * is up to the user to keep the list of holidays up to date.
  *
  * @see InterpretersOffice\Entity\Holiday
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\CourtClosingRepository")
  * @ORM\Table(name="court_closings")
  */
 class CourtClosing

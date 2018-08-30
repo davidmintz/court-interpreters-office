@@ -44,9 +44,11 @@ class BasicEntityControllerFactory implements FactoryInterface
                 $entityManager = $container->get('entity-manager');
                 $controller = new $requestedName($entityManager, $factory, $shortName);
                 break;
-
+            case 'court-closings':
+                $controller = new $requestedName($container->get('entity-manager'));
+                break;
             default:
-                throw new \RuntimeException("controller factory cannot not instantiate $requestedName");
+                throw new \RuntimeException("controller factory cannot not instantiate $requestedName a/k/a $shortName");
         }
         return $controller;
     }
