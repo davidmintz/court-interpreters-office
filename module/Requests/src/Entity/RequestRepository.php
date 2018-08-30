@@ -42,16 +42,17 @@ class RequestRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $parameters = [];
-        $qb->select(['r','t','j'])
+        $qb->select(['r','t','j','l',])
             ->from('InterpretersOffice\Requests\Entity\Request', 'r')
             ->join('r.eventType','t')
             ->join('r.judge','j')
+            ->leftJoin('r.location','l') //->leftJoin('l.type','lt')
             ->orderBy('r.date', 'DESC');
         if ($user->role == 'submitter') {
             if ($user->judge_ids) {
-                // Law Clerk or Courtoom Deputy
+                // $user is a Law Clerk or Courtoom Deputy
+                // so constrain it to events before their judge(s)
                 $qb->where('j.id IN (:judge_ids)');
-                // constrain it to events before their judge(s)
                 $parameters['judge_ids'] = $user->judge_ids;
                 // and constrain it to in-court events
                 $qb->join('t.category','c')->andWhere('c.category = :category');
