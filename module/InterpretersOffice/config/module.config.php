@@ -86,6 +86,10 @@ return [
                     // register `my_annotation_driver` for any entity under namespace `My\Namespace`
                     __NAMESPACE__.'\Entity' => 'application_annotation_driver',
                 ],
+                // oops, does not work
+                // 'datetime_functions' => [
+                //     'YEAR' => 'DoctrineExtensions\Query\Mysql\Year',
+                // ],
             ],
         ],
         'configuration' => [

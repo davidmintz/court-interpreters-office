@@ -6,6 +6,7 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
@@ -31,6 +32,7 @@ class CourtClosingsController extends AbstractActionController
      */
     public function __construct(EntityManagerInterface $em)
     {
+
         $this->objectManager  = $em;
     }
     /**
@@ -41,9 +43,15 @@ class CourtClosingsController extends AbstractActionController
     public function indexAction()
     {
         $repo = $this->objectManager->getRepository(Entity\CourtClosing::class);
-        $data = $repo->list();
+        $year = $this->params()->fromRoute('year');
+        if (! $year) {
+            $data = $repo->index();
+            return new ViewModel(['data'=>$data]);
+        } else {
+            $data = $repo->list($year);
+            return new JsonModel($data);
+        }
 
-        return new ViewModel(['data'=>$data]);
     }
 
     /**

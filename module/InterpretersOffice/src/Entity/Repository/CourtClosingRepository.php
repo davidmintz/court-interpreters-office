@@ -38,7 +38,10 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
      public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
      {
          parent::__construct($em, $class);
-         $this->cache = $em->getConfiguration()->getResultCacheImpl();
+         $config = $em->getConfiguration();
+         $config->addCustomDatetimeFunction('YEAR',
+             'DoctrineExtensions\Query\Mysql\Year');
+         $this->cache = $config->getResultCacheImpl();
          $this->cache->setNamespace($this->cache_namespace);
      }
 
@@ -57,23 +60,35 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
      /**
       * returns a list of court closings -- WORK IN PROGRESS
       * @param  int $year optional year
-      * @return ZendPaginator
+      * @return Array
       */
      public function list($year = null)
      {
-         if (! $year) { $year = date('Y'); }
+         if (! $year) { return $this->index(); }
          $DQL = 'SELECT c, h FROM '.CourtClosing::class . ' c
-          LEFT JOIN c.holiday h  WHERE c.date BETWEEN :from AND :until
+          LEFT JOIN c.holiday h WHERE YEAR(c.date) = :year
           ORDER BY c.date ASC';
          $query = $this->createQuery($DQL)
-            ->setParameters([
-                'from'=>new \DateTime("$year-01-01"),
-                'until'=>new \DateTime("$year-12-31")
-            ]);
-        return $query  //->useResultCache(false)
-            ->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY)
-            ->getResult();
+            ->setParameters(['year'=>$year]);
 
+        return $query->getArrayResult();
+
+     }
+
+     public function index()
+     {
+
+         /* @var Doctrine\ORM\QueryBuilder $qb */
+        //$qb = $this->getEntityManager()->createQueryBuilder();
+        //$qb->select(['year'])
+        //$->from(Entity\CourtClosing::class, $qb->expr('YEAR','c.date'));
+        
+        // baffled as to how to do this with the QueryBuilder, so...
+
+        $dql = 'SELECT YEAR(c.date) year, COUNT(c.id) dates
+            FROM InterpretersOffice\Entity\CourtClosing c
+            GROUP BY year ORDER BY c.date DESC';
+         return $this->getEntityManager()->createQuery($dql)->getArrayResult();
      }
 
 }
