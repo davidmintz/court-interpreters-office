@@ -566,17 +566,27 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/court-closings[/:year]',
+                'route' => '/admin/court-closings',//[/year/:year]',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\CourtClosingsController::class,
                     'action' => 'index',
-                    'constraints' => [
-                        'year' => '[20]\d\d',
-                    ],
+                    //'constraints' => ['year' => '[20]\d\d',],
                 ],
             ],
             'child_routes' => [
+                'year' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/year/:year',
+                        'defaults' => [
+                            'action' => 'index',
+                            'constraints' => [
+                                'year' => '[20]\d\d',
+                            ],
+                        ],
+                    ],
+                ],
                 'add' => [
                     'type' => Segment::class,
                     'options' => [
