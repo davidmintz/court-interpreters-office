@@ -75,20 +75,33 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
 
      }
 
+     /**
+      * fetches distinct years and number of closings for each
+      *
+      * @return array
+      */
      public function index()
      {
-
          /* @var Doctrine\ORM\QueryBuilder $qb */
         //$qb = $this->getEntityManager()->createQueryBuilder();
         //$qb->select(['year'])
         //$->from(Entity\CourtClosing::class, $qb->expr('YEAR','c.date'));
-        
+
         // baffled as to how to do this with the QueryBuilder, so...
 
         $dql = 'SELECT YEAR(c.date) year, COUNT(c.id) dates
             FROM InterpretersOffice\Entity\CourtClosing c
             GROUP BY year ORDER BY c.date DESC';
          return $this->getEntityManager()->createQuery($dql)->getArrayResult();
+     }
+
+     public function getHolidays()
+     {
+         $dql = 'SELECT h.id AS value, h.name AS label
+         FROM InterpretersOffice\Entity\Holiday h
+         INDEX BY h.id ORDER BY h.id';
+
+         return $this->createQuery($dql)->getResult();
      }
 
 }

@@ -1,19 +1,63 @@
 <?php /** module/Admin/view/interpreters-office/admin/court-closings/index.phtml */
 $this->headTitle('admin | court closings');
+//$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headScript()->appendFile($this->basePath('js/lib/moment/moment.js'))
+    //->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
     ->appendFile($this->basePath('js/closings-index.js'))
-?><h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php
-if ($this->data):
-    ?><ul class="list-group pl-2" style="max-width:450px">
-    <?php foreach($this->data as $item): ?>
-        <li class="list-group-item font-weight-bold">
-            <a class="closing-link" href="<?php echo $this->url('court-closings',['year'=>$item['year']])?>"><?php echo $item['year'] ?></a>
-            <span class="badge badge-primary float-right"><?php echo $item['dates']?></span>
-            <ul class="list-group font-weight-normal" style="display:none">
-            </ul>
-        </li>
-    <?php endforeach;?>
-    </ul>
-<?php endif;
+    ->appendFile($this->basePath('js/lib/vue.js'))
+    ->appendFile($this->basePath('js/lib/vuejs-datepicker.min.js'));
+$this->headStyle()->captureStart();
 ?>
+.form-control[readonly] {
+    background-color : inherit;
+    opacity : inherit;
+}
+<?php
+$this->headStyle()->captureEnd();
+?><h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<div class="row">
+    <div class="col-md-6">
+        <?php
+        if ($this->data):
+            ?><ul class="list-group pl-2" style="max-width:450px">
+            <?php foreach($this->data as $item): ?>
+                <li class="list-group-item font-weight-bold">
+                    <a class="closing-link" href="<?php echo $this->url('court-closings/year',['year'=>$item['year']])?>"><?php echo $item['year'] ?></a>
+                    <span class="badge badge-primary float-right"><?php echo $item['dates']?></span>
+                    <ul class="list-group font-weight-normal" style="display:none">
+                    </ul>
+                </li>
+            <?php endforeach;?>
+            </ul>
+        <?php endif;
+        ?>
+    </div>
+    <div class="col-md-6">
+        <!-- Button trigger modal -->
+        <button id="btn-add" type="button" class="btn btn-primary btn-lg">
+        <!--  data-toggle="modal"   data-target="#form-modal" -->
+          add
+        </button>
+    </div>
+</div>
+<!-- modal -->
+<div class="modal" id="form-modal" tabindex="-1" role="dialog" aria-labelledby="form-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="form-label">{{ title }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">save</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

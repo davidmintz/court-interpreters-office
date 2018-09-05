@@ -1,4 +1,40 @@
 <?php
 /** module/Admin/view/interpreters-office/admin/court-closings/form.phtml */
+$form = $this->form;
+if ($this->layout()->action == 'add') :
+    $action = $this->url('court-closings/add',['year'=>null]);
+else:
+    $action = $this->url('court-closings/edit',['id'=>$form->getObject()->getId()]);
+    //$this->headScript()->appendFile($this->basePath('js/event-delete.js'));
+endif;
+
+$form->setAttribute('class', 'form-event mx-auto')
+->setAttribute('style', 'max-width:800px')->setAttribute('action',$action)
+->setAttribute('method', 'post');
+
+$form->prepare();
+//<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() </h2>//
 ?>
-<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<?php echo $this->form()->openTag($form); ?>
+<div class="form-group">
+    <label for="date">date</label>
+    <vuejs-datepicker v-model="date" id="date" input-class="form-control"></vuejs-datepicker>
+</div>
+<div class="form-group">
+    <label for="holiday">holiday/reason for closing</label>
+    <select v-model="holiday" class="form-control custom-select date" name="holiday">
+        <option value="0"> -- </option>
+        <?php foreach ($form->get('holiday')->getValueOptions() as $id => $option):?>
+        <option label="<?php echo $option['label']?>" value="<?php echo $id ?>"><?php echo $option['label'] ?></option>
+        <?php endforeach ?>
+        <option value="other">other...</option>
+    </select>
+</div>
+<template v-if="holiday === 'other'">
+    <div class="form-group">
+        <label for="description_other"></label>
+        <input placeholder="brief explanation of reason for closing" type="text" name="description_other" value="" v-model="description_other" class="form-control">
+    </div>
+</template>
+<input type="hidden" name="id" value="<?php ?>">
+<?php echo $this->form()->closeTag();?>
