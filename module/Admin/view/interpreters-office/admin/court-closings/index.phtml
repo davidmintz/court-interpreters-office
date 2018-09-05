@@ -1,15 +1,16 @@
 <?php /** module/Admin/view/interpreters-office/admin/court-closings/index.phtml */
 $this->headTitle('admin | court closings');
-$this->headScript()->appendFile($this->basePath('js/closings-index.js'))
+$this->headScript()->appendFile($this->basePath('js/lib/moment/moment.js'))
+    ->appendFile($this->basePath('js/closings-index.js'))
 ?><h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php
 if ($this->data):
-    ?><ul class="list-group pl-2" style="max-width:300px">
+    ?><ul class="list-group pl-2" style="max-width:450px">
     <?php foreach($this->data as $item): ?>
         <li class="list-group-item font-weight-bold">
             <a class="closing-link" href="<?php echo $this->url('court-closings',['year'=>$item['year']])?>"><?php echo $item['year'] ?></a>
             <span class="badge badge-primary float-right"><?php echo $item['dates']?></span>
-            <ul class="list-group font-weight-normal" style="display:none">                
+            <ul class="list-group font-weight-normal" style="display:none">
             </ul>
         </li>
     <?php endforeach;?>
