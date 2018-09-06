@@ -2,10 +2,10 @@
 $this->headTitle('admin | court closings');
 //$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headScript()->appendFile($this->basePath('js/lib/moment/moment.js'))
-    //->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
-    ->appendFile($this->basePath('js/closings-index.js'))
-    ->appendFile($this->basePath('js/lib/vue.js'))
-    ->appendFile($this->basePath('js/lib/vuejs-datepicker.min.js'));
+    ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
+    ->appendFile($this->basePath('js/closings-index.js'));
+    //->appendFile($this->basePath('js/lib/vue.js'))
+    //->appendFile($this->basePath('js/lib/vuejs-datepicker.min.js'));
 $this->headStyle()->captureStart();
 ?>
 .form-control[readonly] {
@@ -45,17 +45,15 @@ $this->headStyle()->captureEnd();
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="form-label">{{ title }}</h5>
+        <h5 class="modal-title" id="form-label"></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-
-
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">save</button>
+        <button id="btn-save" type="button" class="btn btn-primary">save</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
       </div>
     </div>

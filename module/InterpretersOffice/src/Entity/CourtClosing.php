@@ -31,7 +31,7 @@ class CourtClosing
     /**
      * the date on which the court is closed.
      *
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date",nullable=false)
      *
      * @var string
      */
@@ -72,7 +72,7 @@ class CourtClosing
      *
      * @return CourtClosing
      */
-    public function setDate($date)
+    public function setDate(\DateTime $date)
     {
         $this->date = $date;
 

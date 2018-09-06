@@ -73,9 +73,10 @@ class CourtClosingsController extends AbstractActionController
             $this->form = new CourtClosingForm(
                 $this->objectManager,['action'=>$action]);
         }
+
         return $this->form;
     }
-    
+
     /**
      * handles post data
      *
@@ -84,9 +85,26 @@ class CourtClosingsController extends AbstractActionController
     protected function post()
     {
         // work in progress
-        $params = $this->params()->fromPost();
+        $data = $this->getRequest()->getPost();
+        $form = $this->form;
 
-        return new JsonModel($params);
+        $form->setData($data);
+        if (! $form->isValid()) {
+            return new JsonModel(
+                ['validation_errors' => $form->getMessages() ]
+            );
+        }
+        $entity = $form->getObject();
+        // not happy about having to do this here, when the Doctrine hydrator
+        // does just fine for us elsewhere. WTF?
+        $date = new \DateTime($data->get('date'));
+        $entity->setDate($date);
+        if (! $entity->getId()) {
+            $this->objectManager->persist($entity);
+        }
+        $this->objectManager->flush();
+        return new JsonModel(['params'=>$this->params()->fromPost(),
+            'result'=>'valid','entity_id'=>$entity->getId()]);
     }
 
     /**
@@ -95,6 +113,8 @@ class CourtClosingsController extends AbstractActionController
     public function addAction()
     {
         $form = $this->getForm('create');
+        $entity = new Entity\CourtClosing();
+        $form->bind($entity);
         if ($this->getRequest()->isPost()) {
             return $this->post();
         }

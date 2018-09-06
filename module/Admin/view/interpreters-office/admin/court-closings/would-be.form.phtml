@@ -1,0 +1,50 @@
+<?php
+/** module/Admin/view/interpreters-office/admin/court-closings/form.phtml */
+$form = $this->form;
+if ($this->layout()->action == 'add') :
+    $action = $this->url('court-closings/add',['year'=>null]);
+else:
+    $action = $this->url('court-closings/edit',['id'=>$form->getObject()->getId()]);
+    //$this->headScript()->appendFile($this->basePath('js/event-delete.js'));
+endif;
+
+$form->setAttribute('class', 'form-event mx-auto')
+->setAttribute('style', 'max-width:800px')->setAttribute('action',$action)
+->setAttribute('method', 'post');
+
+$form->prepare();
+//<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() </h2>//
+?>
+<?php echo $this->form()->openTag($form); ?>
+<div class="form-group">
+    <label for="date">date</label>
+    <vuejs-datepicker v-model="date" id="date" input-class="form-control"></vuejs-datepicker>
+</div>
+<div class="form-group">
+    <label for="holiday">holiday/reason for closing</label>
+    <?php $holiday = $form->get('holiday')->getValue();
+    if (is_object($holiday)):
+        $holiday_id = $holiday->getId();
+    else :
+        $holiday_id = null;
+    endif;
+    ?>
+    <select v-model="holiday" class="form-control custom-select date" name="holiday">
+        <!-- <option value="0"> -- </option> -->
+        <?php foreach ($form->get('holiday')->getValueOptions() as $id => $option):?>
+        <option label="<?php echo $option['label']?>" value="<?php echo $id ?>" <?php if ($id == $holiday_id): echo ' selected="selected"'; endif;?>><?php echo $option['label'] ?></option>
+        <?php endforeach ?>
+        <option value="other">other...</option>
+    </select>
+    <div id="error_holiday" style="display:none" class="alert alert-warning validation-error"></div>
+</div>
+<template v-if="holiday === 'other'">
+    <div class="form-group">
+        <label for="description_other"></label>
+        <input placeholder="brief explanation of reason for closing" type="text" name="description_other" value="" v-model="description_other" class="form-control">
+        <div id="error_description_other" style="display:none" class="alert alert-warning validation-error"></div>
+    </div>
+</template>
+<?php echo $this->formElement($form->get('court_closing_csrf'));?>
+<input id="id" type="hidden" name="id" v-model="id" value="<?php echo $form->getObject()->getId() ?>">
+<?php echo $this->form()->closeTag();?>
