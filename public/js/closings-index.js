@@ -4,14 +4,6 @@ $(function(){
 
     $("a.dropdown-item:contains('court closings')").addClass("active");
 
-    $("#btn-add").on("click",function(){
-        $("#form-modal .modal-body").load('/admin/court-closings/add form',
-        function() {
-            $("#form-label").text("add a court closing");
-            $("#form-modal").modal("show");
-        });
-    });
-
     $(".closing-link").on("click",function(event){
         event.preventDefault();
         var link = $(this);
@@ -22,18 +14,28 @@ $(function(){
         }
         $.getJSON(href,function(data){
             var items  = data.map(obj => {
-            var el = $("<li>").addClass("list-group-item");
-            var str = obj.date.date.substring(0,10);
-            var date = moment(str,"YYYY-MM-DD").format("dddd MMMM D");
-            var link = $("<a>").attr({href : document.location.pathname + "/edit/"+obj.id})
-            var text = obj.holiday ? obj.holiday.name : obj.description_other;
-            link.text(date);
-            el.html(link).append(' - ' +  text);
-            return el;
+                var el = $("<li>").addClass("list-group-item");
+                var str = obj.date.date.substring(0,10);
+                var date = moment(str,"YYYY-MM-DD").format("dddd MMMM D");
+                var link = $("<a>").attr({href : document.location.pathname + "/edit/"+obj.id})
+                var text = obj.holiday ? obj.holiday.name : obj.description_other;
+                link.text(date);
+                el.html(link).append(' - ' +  text);
+                return el;
             });
             list.html(items).slideDown();
         });
     });
+
+    $("#btn-add").on("click",function(){
+        $("#form-modal .modal-body").load('/admin/court-closings/add form',
+        function() {
+            $("#form-label").text("add a court closing");
+            $("#form-modal").modal("show");
+            $("#date").datepicker({});
+        });
+    });
+
 
     $("ul").on("click","li ul li a",function(event){
         event.preventDefault();
@@ -42,6 +44,7 @@ $(function(){
             function(){
                 $("#form-label").text("edit court closing");
                 $("#form-modal").modal("show");
+                $("#date").datepicker({});
             }
         );
     });
@@ -67,8 +70,8 @@ $(function(){
                     return displayValidationErrors(response.validation_errors);
                 }
                 console.log("saved entity");
-            });
+        });
     });
 
-    
+
 });
