@@ -45,6 +45,9 @@ class CourtClosingsController extends AbstractActionController
     {
         $repo = $this->objectManager->getRepository(Entity\CourtClosing::class);
         $year = $this->params()->fromRoute('year');
+        $response = $this->getResponse();
+        //printf("<pre>%s</pre>",print_r(get_class_methods($response),true));
+        //return false;
         if (! $year) {
             $data = $repo->index();
             return new ViewModel(['data'=>$data]);
@@ -84,10 +87,8 @@ class CourtClosingsController extends AbstractActionController
      */
     protected function post()
     {
-        // work in progress
         $data = $this->getRequest()->getPost();
         $form = $this->form;
-
         $form->setData($data);
         if (! $form->isValid()) {
             return new JsonModel(
@@ -102,9 +103,18 @@ class CourtClosingsController extends AbstractActionController
         if (! $entity->getId()) {
             $this->objectManager->persist($entity);
         }
-        $this->objectManager->flush();
-        return new JsonModel(['params'=>$this->params()->fromPost(),
-            'result'=>'valid','entity_id'=>$entity->getId()]);
+        try {            
+            $this->objectManager->flush();
+        } catch (\Exception $e) {
+            $this->getResponse()->setStatusCode(500);
+            return new JsonModel([
+                'result'=>'error','message' => $e->getMessage(),
+                'entity_id'=>$entity->getId()]
+            );
+        }
+        return new JsonModel([
+            'result'=>'success','entity_id'=>$entity->getId()]
+        );
     }
 
     /**
@@ -130,19 +140,19 @@ class CourtClosingsController extends AbstractActionController
      */
     public function editAction()
     {
-        $form = $this->getForm('update');
-        if ($this->getRequest()->isPost()) {
-
-        }
-        $view = new ViewModel();
-        $view->setTemplate('interpreters-office/admin/court-closings/form');
-        $view->form = $form;
         $id = $this->params()->fromRoute('id');
         $entity = $this->objectManager->find(Entity\CourtClosing::class,$id);
         if (! $entity) {
             // to do: deal with it
         }
+        $form = $this->getForm('update');
         $form->bind($entity);
+        if ($this->getRequest()->isPost()) {
+            return $this->post();
+        }
+        $view = new ViewModel();
+        $view->setTemplate('interpreters-office/admin/court-closings/form');
+        $view->form = $form;
 
         return $view;
     }

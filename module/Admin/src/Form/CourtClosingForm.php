@@ -11,6 +11,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Entity\CourtClosing;
 
 class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
 {
@@ -26,7 +27,14 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
     /**
      * database action: update|create
      */
-     protected $action;
+    protected $action;
+
+    /**
+     * Court Closing entity
+     *
+     * @var Entity\CourtClosing;
+     */
+    protected $entity;
 
     /**
     * constructor.
@@ -113,6 +121,51 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
     */
     public function getInputFilterSpecification()
     {
+        /*
+        $uniqueness_validator = [
+            'options' => [
+                'object_repository' =>  $this->getObjectManager()
+                    ->getRepository(Entity\CourtClosing::class),
+                'fields' => ['date'],
+            ],
+        ];
+
+        if ($this->action == 'create') {
+            $error_field = 'objectFound';
+            $uniqueness_validator['name'] = 'DoctrineModule\Validator\NoObjectExists';
+
+        } else {
+            $error_field = 'objectNotUnique';
+            $validator['name'] = 'DoctrineModule\Validator\UniqueObject';
+        }
+        $uniqueness_validator['options']['messages'][$error_field] =
+            "There is already a closing for this date in your database";
+        */
+
+        $repository = $this->objectManager->getRepository(Entity\CourtClosing::class);
+        $action = $this->action;
+
+        $uniqueness_validator = [
+            'name' => Callback::class,
+            'options' => [
+                'callback' => function($value,$context) use ($repository,$action) {
+                    $entity = $repository->findOneBy(['date' => new \DateTime($value)]);
+                    if ($action == 'create' && $entity) {
+                        return false;
+                    }
+                    if ($action == 'update') {
+                        if ($entity && $entity->getId() != $context['id']) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } ,
+                'messages' => [
+                   Callback::INVALID_VALUE =>
+                     'There is already a closing for this date in your database',
+                ],
+            ],
+        ];
         return [
             'id' => [
                 'required' => true,
@@ -130,6 +183,7 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
                              ],
                         ],
                     ],
+                    $uniqueness_validator,
                 ],
             ],
             'holiday' => [
