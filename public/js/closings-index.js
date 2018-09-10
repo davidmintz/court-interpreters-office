@@ -9,19 +9,20 @@ $(function(){
         event.preventDefault();
         console.log("click event on "+$(this).attr("href"));
         var link = $(this);
+        var year = link.text();
         var href = link.attr('href');
         var list = link.parent().children("ul");
         var toggle = (params && params.toggle === false) ? false : true;
-        console.log("our toggle parameter: "+(toggle ? "true":"false"));
+        // console.log("our toggle parameter: "+(toggle ? "true":"false"));
         if (list.is(":visible") && toggle) {
-            console.log("returning slideUp b/c list is visible and tog = true");
+            //console.log("returning slideUp b/c list is visible and tog = true");
             return list.slideUp();
         }
         $.getJSON(href,function(data){
             if (! data) {
                 return $(this).remove();
             }
-            var items  = data.map(obj => {
+            var items  = data.map(obj => {$.get
                 var el = $("<li>").addClass("list-group-item");
                 var str = obj.date.date.substring(0,10);
                 var date = moment(str,"YYYY-MM-DD").format("dddd MMMM D");
@@ -32,13 +33,11 @@ $(function(){
                 return el;
             });
             list.html(items);
-            console.debug("shit is real");
+            //console.debug("shit is real, count is "+ items.length);
+            $(`#total-${year}`).text(items.length);
             if (toggle) { //&& (! list.is(":visible")
                 list.slideDown();
-                console.log(list);
-                console.log("we said slideDown()!");
-            } else {
-                console.debug("wtf? ");
+                //console.log("we said slideDown()!");
             }
         });
     });
@@ -63,7 +62,7 @@ $(function(){
     });
 
     // load the editing form when the closing label is clicked
-    $("ul").on("click","li ul li a",function(event){
+    $(".court-closings").on("click","li ul li a",function(event){
         event.preventDefault();
         var url = $(this).attr('href');
         $("#form-modal .modal-body").load(url +' form',
@@ -166,6 +165,10 @@ $(function(){
                 }
             );
         }
-
+    };
+    boink = function(){
+        $("#date").val("01/01/2020");
+        $("#holiday").val(1);
+        $("#btn-save").click();
     };
 });
