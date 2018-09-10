@@ -16,10 +16,10 @@ $this->headStyle()->captureStart();
 $this->headStyle()->captureEnd();
 ?><h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6 court-closings">
         <?php
         if ($this->data):
-            ?><ul class="list-group pl-2" style="max-width:450px">
+            ?><ul class="list-group pl-2 court-closings-year" style="max-width:450px">
             <?php foreach($this->data as $item): ?>
                 <li class="list-group-item font-weight-bold">
                     <a class="closing-link" href="<?php echo $this->url('court-closings/year',['year'=>$item['year']])?>"><?php echo $item['year'] ?></a>
@@ -29,13 +29,15 @@ $this->headStyle()->captureEnd();
                 </li>
             <?php endforeach;?>
             </ul>
+        <?php else : ?>
+            <p class="alert alert-warning">You have no court closings in your database.</p>
         <?php endif;
         ?>
     </div>
     <div class="col-md-6">
         <!-- Button trigger modal -->
         <button id="btn-add" type="button" class="btn btn-primary btn-lg">
-        <!--  data-toggle="modal"   data-target="#form-modal" -->
+        <!--  data-toggle="modal"  data-target="#form-modal" -->
           add
         </button>
     </div>
@@ -54,6 +56,7 @@ $this->headStyle()->captureEnd();
       </div>
       <div class="modal-footer">
         <button id="btn-save" type="button" class="btn btn-primary">save</button>
+        <button style="display:none" id="btn-delete" type="button" class="btn btn-warning">delete</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
       </div>
     </div>

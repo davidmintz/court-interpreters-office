@@ -4,15 +4,23 @@ $(function(){
 
     $("a.dropdown-item:contains('court closings')").addClass("active");
 
-    $(".closing-link").on("click",function(event){
+    // load closings for the year
+    $(".court-closings").on("click",".closing-link",function(event,params){
         event.preventDefault();
+        console.log("click event on "+$(this).attr("href"));
         var link = $(this);
         var href = link.attr('href');
         var list = link.parent().children("ul");
-        if (list.is(":visible")) {
+        var toggle = (params && params.toggle === false) ? false : true;
+        console.log("our toggle parameter: "+(toggle ? "true":"false"));
+        if (list.is(":visible") && toggle) {
+            console.log("returning slideUp b/c list is visible and tog = true");
             return list.slideUp();
         }
         $.getJSON(href,function(data){
+            if (! data) {
+                return $(this).remove();
+            }
             var items  = data.map(obj => {
                 var el = $("<li>").addClass("list-group-item");
                 var str = obj.date.date.substring(0,10);
@@ -23,9 +31,18 @@ $(function(){
                 el.html(link).append(' - ' +  text);
                 return el;
             });
-            list.html(items).slideDown();
+            list.html(items);
+            console.debug("shit is real");
+            if (toggle) { //&& (! list.is(":visible")
+                list.slideDown();
+                console.log(list);
+                console.log("we said slideDown()!");
+            } else {
+                console.debug("wtf? ");
+            }
         });
     });
+
     var datepickerOptions = {
         changeMonth : true,
         changeYear : true,
@@ -114,7 +131,7 @@ $(function(){
         var when = moment($("#date").datepicker( "getDate" ))
             .format("DD-MMM-YYYY");
         $("#status").html(
-            `<p>The closing for <strong>${when}</strong> has been successfully ${action}</p>`
+            `<p>The closing for <strong>${when}</strong> has been successfully ${action}.</p>`
         ).slideDown();
         $("#form-modal .validation-error").hide();
         if (action === "updated" || action === "deleted") {
@@ -122,12 +139,33 @@ $(function(){
             window.setTimeout(
                 function(){$("#form-modal").modal("hide");},3000);
         } else {
-            // make it easy to continue
-            $("#status").append(
-                `<p>To add more dates, update the form below and
-                    save again.</p>`
+            // it was an insert, so make it easy to continue
+            // inserting
+            if (! $(".insert-continue").length) {
+                $("#status").append(
+                    `<p class="insert-continue">To add more dates, update the
+                    form below and save again.</p>`
+                );
+            }
+        }
+        // refresh the display
+        var year = when.substring(7);
+        var selector = `a.closing-link:contains(${year})`;
+        var link = $(selector);
+        console.debug(`link for ${year} exists? `+(link.length ? "yes":"no"));
+        if (link.length) {
+            return link.trigger("click",{toggle:false});
+        }
+        if (! link.length || ! $(".court-closings ul").length) {
+            console.debug("no year-lists?");
+            $(".court-closings").load(
+                "/admin/court-closings .court-closings > ul",
+                function(){
+                    console.debug("all shit was reloaded, triggering a click");
+                    $(selector).trigger("click",{toggle:false});
+                }
             );
         }
-    };
 
+    };
 });

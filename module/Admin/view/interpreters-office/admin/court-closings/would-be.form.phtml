@@ -1,5 +1,9 @@
 <?php
-/** module/Admin/view/interpreters-office/admin/court-closings/form.phtml */
+/** module/Admin/view/interpreters-office/admin/court-closings/would-be.form.phtml */
+/*
+this is part of a failed, premature attempt to use vue.js without knowing
+enough about it
+*/
 $form = $this->form;
 if ($this->layout()->action == 'add') :
     $action = $this->url('court-closings/add',['year'=>null]);
@@ -30,7 +34,7 @@ $form->prepare();
     endif;
     ?>
     <select v-model="holiday" class="form-control custom-select date" name="holiday">
-        <!-- <option value="0"> -- </option> -->
+        <!-- <option value="0"> &emdash; </option> -->
         <?php foreach ($form->get('holiday')->getValueOptions() as $id => $option):?>
         <option label="<?php echo $option['label']?>" value="<?php echo $id ?>" <?php if ($id == $holiday_id): echo ' selected="selected"'; endif;?>><?php echo $option['label'] ?></option>
         <?php endforeach ?>

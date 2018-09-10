@@ -31,14 +31,17 @@ trait DeletionTrait
         $name = $options['name'];
         $verbose_name = "The $what <strong>$name</strong>";
         $id = $options['id'];
+        $xhr = $this->getRequest()->isXmlHttpRequest();
         if ($entity) {
             try {
                 $this->entityManager->remove($entity);
                 $this->entityManager->flush();
-                $this->flashMessenger()
-                      ->addSuccessMessage("$verbose_name has been deleted.");
+                if (! $xhr) {
+                    $this->flashMessenger()
+                    ->addSuccessMessage("$verbose_name has been deleted.");
+                    $redirect = true;
+                }
                 $result = 'success';
-                $redirect = true;
                 $error = [];
             } catch (ForeignKeyConstraintViolationException $e) {
                 $result = 'error';

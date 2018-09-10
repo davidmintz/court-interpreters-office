@@ -19,12 +19,14 @@ use InterpretersOffice\Admin\Form\CourtClosingForm;
 class CourtClosingsController extends AbstractActionController
 {
 
+    use DeletionTrait;
+
     /**
      * entity manager
      *
      * @var EntityManagerInterface
      */
-    protected $objectManager;
+    protected $entityManager;
 
     /**
      * Constructor
@@ -34,7 +36,7 @@ class CourtClosingsController extends AbstractActionController
     public function __construct(EntityManagerInterface $em)
     {
 
-        $this->objectManager  = $em;
+        $this->entityManager  = $em;
     }
     /**
      * index action.
@@ -43,7 +45,7 @@ class CourtClosingsController extends AbstractActionController
      */
     public function indexAction()
     {
-        $repo = $this->objectManager->getRepository(Entity\CourtClosing::class);
+        $repo = $this->entityManager->getRepository(Entity\CourtClosing::class);
         $year = $this->params()->fromRoute('year');
         $response = $this->getResponse();
         //printf("<pre>%s</pre>",print_r(get_class_methods($response),true));
@@ -74,7 +76,7 @@ class CourtClosingsController extends AbstractActionController
     {
         if (! $this->form) {
             $this->form = new CourtClosingForm(
-                $this->objectManager,['action'=>$action]);
+                $this->entityManager,['action'=>$action]);
         }
 
         return $this->form;
@@ -101,10 +103,10 @@ class CourtClosingsController extends AbstractActionController
         $date = new \DateTime($data->get('date'));
         $entity->setDate($date);
         if (! $entity->getId()) {
-            $this->objectManager->persist($entity);
+            $this->entityManager->persist($entity);
         }
-        try {            
-            $this->objectManager->flush();
+        try {
+            $this->entityManager->flush();
         } catch (\Exception $e) {
             $this->getResponse()->setStatusCode(500);
             return new JsonModel([
@@ -141,7 +143,7 @@ class CourtClosingsController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->objectManager->find(Entity\CourtClosing::class,$id);
+        $entity = $this->entityManager->find(Entity\CourtClosing::class,$id);
         if (! $entity) {
             // to do: deal with it
         }
@@ -155,5 +157,25 @@ class CourtClosingsController extends AbstractActionController
         $view->form = $form;
 
         return $view;
+    }
+
+    /**
+     * deletes a court closing
+     */
+    public function deleteAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $entity =  $this->entityManager->find(Entity\CourtClosing::class,$id);
+        if ($entity) {
+            $name = $entity->getDate()->format('D d-M-Y');
+        } else {
+            $name = '';
+        }
+        $options = [
+            'entity' => $entity,'id' => $entity ? $entity->getId() : null,
+            'what' => 'court closing on',
+            'name' => ''
+        ];
+        return $this->delete($options);
     }
 }
