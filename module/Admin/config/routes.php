@@ -609,6 +609,16 @@ return  [
                         ],
                     ],
                 ],
+                // experimental
+                'test' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/test',
+                        'defaults' => [
+                            'action' => 'test',
+                        ],
+                    ],
+                ]
             ],
         ],
         'vault-test' => [

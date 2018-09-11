@@ -47,9 +47,6 @@ class CourtClosingsController extends AbstractActionController
     {
         $repo = $this->entityManager->getRepository(Entity\CourtClosing::class);
         $year = $this->params()->fromRoute('year');
-        $response = $this->getResponse();
-        //printf("<pre>%s</pre>",print_r(get_class_methods($response),true));
-        //return false;
         if (! $year) {
             $data = $repo->index();
             return new ViewModel(['data'=>$data]);
@@ -178,4 +175,18 @@ class CourtClosingsController extends AbstractActionController
         ];
         return $this->delete($options);
     }
+
+    public function testAction()
+
+    {
+        $repo = $this->entityManager->getRepository(Entity\CourtClosing::class);
+        $year = $this->params()->fromRoute('year');
+        if (! $year) {
+            $data = $repo->index();
+            return new ViewModel(['data'=>$data]);
+        } else {
+            $data = $repo->list($year);
+            return new JsonModel($data);
+        }
+    }    
 }
