@@ -4,7 +4,7 @@ $(function(){
 
     $("a.dropdown-item:contains('court closings')").addClass("active");
 
-    // load closings for the year
+    // load closings for the year the clicked
     $(".court-closings").on("click",".closing-link",function(event,params){
         event.preventDefault();
         console.log("click event on "+$(this).attr("href"));
@@ -19,17 +19,17 @@ $(function(){
             return list.slideUp();
         }
         $.getJSON(href,function(data){
-            if (! data) {
+            if (! data.length) {
                 return $(this).remove();
             }
-            var items  = data.map(obj => {$.get
+            var items  = data.map(obj => {
                 var el = $("<li>").addClass("list-group-item");
                 var str = obj.date.date.substring(0,10);
                 var date = moment(str,"YYYY-MM-DD").format("dddd MMMM D");
                 var link = $("<a>").attr({href : document.location.pathname + "/edit/"+obj.id})
                 var text = obj.holiday ? obj.holiday.name : obj.description_other;
                 link.text(date);
-                el.html(link).append(' - ' +  text);
+                el.html(link).append(` <span class="avoidwrap">${text}</span>`);
                 return el;
             });
             list.html(items);
@@ -155,8 +155,8 @@ $(function(){
         if (link.length) {
             return link.trigger("click",{toggle:false});
         }
-        if (! link.length || ! $(".court-closings ul").length) {
-            console.debug("no year-lists?");
+        if (! link.length ) { //|| ! $(".court-closings ul").length
+            //console.debug(`no year-link for ${year}?`);
             $(".court-closings").load(
                 "/admin/court-closings .court-closings > ul",
                 function(){
