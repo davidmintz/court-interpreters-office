@@ -94,6 +94,7 @@ CREATE TABLE `court_closings` (
   `date` date NOT NULL,
   `description_other` varchar(75) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `date` (`date`),
   KEY `IDX_F21F4FD1830A3EC0` (`holiday_id`),
   CONSTRAINT `FK_F21F4FD1830A3EC0` FOREIGN KEY (`holiday_id`) REFERENCES `holidays` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -604,4 +605,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-08-16 16:03:06
+-- Dump completed on 2018-09-10 16:25:08
