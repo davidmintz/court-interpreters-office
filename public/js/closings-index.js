@@ -20,13 +20,16 @@ $(function(){
         }
         $.getJSON(href,function(data){
             if (! data.length) {
-                return $(this).remove();
+                // no data to show, remove the containing ul element
+                return link.parent().slideUp(function(){$(this).remove();});
             }
             var items  = data.map(obj => {
                 var el = $("<li>").addClass("list-group-item");
                 var str = obj.date.date.substring(0,10);
                 var date = moment(str,"YYYY-MM-DD").format("dddd MMMM D");
-                var link = $("<a>").attr({href : document.location.pathname + "/edit/"+obj.id})
+                var link = $("<a>").attr({
+                    href : `${document.location.pathname}/edit/${obj.id}`
+                });
                 var text = obj.holiday ? obj.holiday.name : obj.description_other;
                 link.text(date);
                 el.html(link).append(` <span class="avoidwrap">${text}</span>`);
