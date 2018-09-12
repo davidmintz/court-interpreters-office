@@ -4,37 +4,40 @@
 // npm install mocha and zombie
 // then:  node_modules/mocha/bin/mocha <path/to/>zombie.js
 //
-const Browser = require('zombie');
-const assert = require('assert');
+var require, before, it, describe;
 
-Browser.localhost('office.localhost', 80);
+const Browser = require("zombie");
+const assert = require("assert");
+
+
+Browser.localhost("office.localhost", 80);
 
 describe("example test",function(){
     const browser = new Browser();
 
     before(function(done) {
-        browser.visit('/', done);
+        browser.visit("/", done);
     });
-    it('should be successful', function() {
-      browser.assert.success();
-    });
-
-    it('should see welcome page', function() {
-        browser.assert.text('title', 'Court Interpreters Office');
+    it("should be successful", function() {
+        browser.assert.success();
     });
 
-    it('should have a login button', function() {
-      browser.assert.element("a:nth-child(1) > button:nth-child(1)");
-      browser.assert.text("#login","log in");
-      browser.assert.evaluate('$("#login").length', 1);
-      browser.assert.evaluate('$("#login").attr("href")', '/login');
+    it("should see welcome page", function() {
+        browser.assert.text("title", "Court Interpreters Office");
+    });
 
-
+    it("should have a login button", function() {
+        // the example on their site had these calls chained but
+        // that didn't work for us
+        browser.assert.element("a:nth-child(1) > button:nth-child(1)");
+        browser.assert.text("#login","log in");
+        browser.assert.evaluate("$(\"#login\").length", 1);
+        browser.assert.evaluate("$(\"#login\").attr(\"href\")", "/login");
     });
 
     describe("navigate to login",function(){
         before(function(done) {
-            browser.visit('/login', done);
+            browser.visit("/login", done);
         });
         it("should load login page",function(){
             browser.assert.success();
@@ -46,11 +49,11 @@ describe("example test",function(){
                 return browser.pressButton("log in");
             });
             it("should authenticate user david",function(){
-                browser.assert.success();                
+                browser.assert.success();
                 assert.ok(browser.document.title.indexOf("admin") !== -1);
-                browser.assert.evaluate('$(".navbar-right").text().indexOf("welcome david") !== -1');
+                browser.assert.evaluate("$(\".navbar-right\").text().indexOf(\"welcome david\") !== -1");
 
-            })
+            });
         });
     });
     /*
