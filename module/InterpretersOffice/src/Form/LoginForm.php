@@ -32,6 +32,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
                 'class' => 'form-control',
                 'placeholder' => 'username or email',
                 'id' => 'identity',
+                'size' => 35,
             ],
             ]
         );
@@ -47,6 +48,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
                 'class' => 'form-control',
                 'placeholder' => 'password',
                 'id' => 'password',
+                'size' => 35,
             ],
             ]
         );

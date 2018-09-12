@@ -15,7 +15,7 @@ foreach (['success','default','error','info','warning'] as $ns) {
 }
 ?>
 <div class="row">
-    <div class="offset-lg-3">
+    <div class="mx-auto">
             <!--<p style="margin:1em 0 2em 0;font-size:120%">Please log in to continue.</p>-->
             <?php if ($this->status && $this->status != \Zend\Authentication\Result::SUCCESS) :?>
             <div class="alert alert-warning alert-dismissible">authentication failed: invalid identity and/or password. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
@@ -24,7 +24,6 @@ foreach (['success','default','error','info','warning'] as $ns) {
         <?php echo $this->partial('partials/login.phtml',['form'=>$this->form]);?>
         <p class="mt-3 mb-1"><a href="<?php echo $this->url('account/register') ?>">Need to create a user account?</a></p>
         <p class="mt-0"><a href="<?php echo $this->url('account/request-password') ?>">Forgot password?</a></p>
-
     </div>
 </div>
 <!-- scratch
