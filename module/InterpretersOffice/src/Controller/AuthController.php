@@ -112,6 +112,8 @@ class AuthController extends AbstractActionController
             // managers and administrators go to /admin
             if (in_array($role, ['administrator', 'manager'])) {
                 $route = 'admin';
+            } elseif ('submitter' == $role) {
+                $route = 'requests';
             } else {
                 // everyone else goes to the main page
                 $route = 'home';
@@ -120,7 +122,8 @@ class AuthController extends AbstractActionController
             $this->events->trigger(__FUNCTION__, $this, $event_params);
             $this->redirect()->toRoute($route);
         }
-        $this->getResponse()->getHeaders()->addHeaderLine('X-Authentication-required', "true");
+        $this->getResponse()->getHeaders()
+            ->addHeaderLine('X-Authentication-required', "true");
         return new ViewModel(['form' => $form, 'title' => 'user login']);
     }
 
@@ -130,7 +133,7 @@ class AuthController extends AbstractActionController
     public function logoutAction()
     {
         if ($this->auth->hasIdentity()) {
-            $user = $this->auth->getIdentity();            
+            $user = $this->auth->getIdentity();
             $this->auth->clearIdentity();
             $this->flashMessenger()
                  ->addSuccessMessage('You have logged out');
