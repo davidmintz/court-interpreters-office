@@ -28,8 +28,6 @@ class JudgesControllerTest extends AbstractControllerTest
 
             ]
         );
-
-        ;
     }
 
     public function testIndexAction()
