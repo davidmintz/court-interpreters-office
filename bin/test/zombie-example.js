@@ -4,7 +4,11 @@
 // npm install mocha and zombie
 // then:  node_modules/mocha/bin/mocha <path/to/>zombie.js
 //
-var require, before, it, describe;
+var chai = require('chai')
+  , expect = chai.expect
+  , should = chai.should();
+
+//var require, before, it, describe;
 
 const Browser = require("zombie");
 const assert = require("assert");
