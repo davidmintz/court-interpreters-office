@@ -4,10 +4,11 @@ const chai = require('chai'), expect = chai.expect, should = chai.should();
 const assert = require("assert");
 
 const Browser = require("zombie");
+const moment = require("moment");
 
 Browser.localhost("office.localhost", 80);
 
-describe("admin test",function(){
+describe("admin schedule test",function(){
     const browser = new Browser();
     before(function() {
         return browser.visit("/login");
@@ -37,15 +38,27 @@ describe("admin test",function(){
         it("should have a right-arrow",function(){
             browser.assert.element("a.fa-arrow-right");
         });
-        it("click right arrow should cause something to happen",function(){
+        it("clicking arrows should load next|previous day's schedule",
+            function(){
+            var today = moment(new Date());
             browser.fire("a.fa-arrow-right","click")
-            .then(function(){
-                console.log(`location is now: ${browser.location.href}`);
-            })
-
-        });
-
-    })
+                .then(function(){
+                //console.log(`location is now: ${browser.location.href}`);
+                browser.assert.status(200);
+                var dayOfWeek = today.format("d");
+                var increment = dayOfWeek === "6" ? 2 : 1;
+                var str = today.add(increment,"days").format("YYYY/MM/DD") + "$";
+                browser.assert.url(new RegExp(str));
+                browser.fire("a.fa-arrow-left","click")
+                    .then(()=>{
+                        browser.assert.status(200);
+                        browser.assert.element("h2 small.text-muted");
+                        var str = moment().format("YYYY/MM/DD") + "$";
+                        browser.assert.url(new RegExp(str))
+                    });
+            });
+        })
+    });
     /*
     describe("loading event creation form",function(){
         before(function(){

@@ -4,9 +4,12 @@
 // npm install mocha and zombie
 // then:  node_modules/mocha/bin/mocha <path/to/>zombie.js
 //
-var chai = require('chai')
-  , expect = chai.expect
-  , should = chai.should();
+
+
+var chai = require('chai'), expect = chai.expect, should = chai.should();
+
+//helper = require('./login_helper.js');
+
 
 //var require, before, it, describe;
 
@@ -18,6 +21,8 @@ Browser.localhost("office.localhost", 80);
 
 describe("example test",function(){
     const browser = new Browser();
+
+    //helper.login(browser).then(console.log("and?"));
 
     before(function(done) {
         browser.visit("/", done);
