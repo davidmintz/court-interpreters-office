@@ -90,7 +90,9 @@ class IndexController extends AbstractActionController
         $view = new ViewModel();
         $view->setTemplate('interpreters-office/requests/index/form.phtml');
 
-        $form = new Form\RequestForm($this->objectManager,['action'=>'create']);
+        $form = new Form\RequestForm($this->objectManager,
+            ['action'=>'create','auth'=>$this->auth]);
+        $view->form = $form;
 
         return $view;
     }

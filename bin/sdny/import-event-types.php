@@ -33,7 +33,7 @@ $event_types_query = $old_db->query('SELECT proceeding_id, type, category, comme
 // i.e., no variations based on location
 foreach( [
     'probation PSI interview' => 'ID_PROBATION_PSI',
-    "PTS supervison interview"  => 'ID_PTS_SUPERVISION',
+    "PTS supervision interview"  => 'ID_PTS_SUPERVISION',
     'probation supervision interview' => 'ID_PROBATION_SUPERVISION',] as $type => $varname) {
     try {
      $event_type_insert->execute([

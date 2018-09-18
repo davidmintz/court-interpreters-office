@@ -61,6 +61,8 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
     /**
      * gets data for populating select elements
      *
+     * this is used with the admin EventFieldset
+     *
      * @param array $options
      * @return array
      */
@@ -77,6 +79,33 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
                 ];
         }
         return $options;
+    }
+
+    /**
+     * gets event-type data for user of $hat
+     *
+     * @param string $hat
+     * @return array
+     */
+    public function getEventTypesForHat($hat)
+    {
+        $dql = 'SELECT h.isJudgeStaff FROM InterpretersOffice\Entity\Hat h
+        WHERE h.name = :hat';
+        $is_judge_staff = $this->createQuery($dql)
+            ->setParameters(['hat'=>$hat])
+            ->getSingleScalarResult();
+        $qb = $this->createQueryBuilder('t')->select(
+            't.name AS label','t.id AS value'
+        )->join('t.category','c')->orderBy("t.name");
+        if ($is_judge_staff) {
+            $qb->where("c.category = 'in'");
+        } else {
+            $qb->where("c.category = 'out'")->andWhere(
+                "t.name LIKE '%supervision%' OR t.name LIKE '%probation%'"
+            );
+        }
+
+        return $this->createQuery($qb->getDql())->getResult();
     }
 
      /**

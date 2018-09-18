@@ -1,0 +1,20 @@
+<?php if ($this->form) :
+    $form = $this->form;
+    $form->prepare();
+
+    $fieldset = $this->form->get('request');
+
+    ?>
+    <pre><?php //print_r(get_class_methods($fieldset))
+        foreach ($fieldset->getElements() as $e) {
+            //printf("%s<br>",gettype($e));//->getName());
+            if (is_object($e)) {
+                printf("%s<br>",$e->getName());
+            } else {
+                //print_r(array_keys($e));
+                //printf("%s<br>",$e['name']);
+            }
+        }
+    ?></pre>
+    <?php
+endif;?>

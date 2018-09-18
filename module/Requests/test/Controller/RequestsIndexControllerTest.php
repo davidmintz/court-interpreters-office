@@ -45,6 +45,16 @@ class RequestsIndexControllerTest extends AbstractControllerTest
         $this->reset(true);
         $this->dispatch('/requests');
         $this->assertResponseStatusCode(200);
+    }
+
+    public function testLoadCreatePage()
+    {
+        $this->login('jane_zorkendoofer@nysd.uscourts.gov','gack!');
+        $this->reset(true);
+        $this->dispatch('/requests/create');
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery("form");
 
     }
+
 }
