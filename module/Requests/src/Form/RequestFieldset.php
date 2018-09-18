@@ -55,11 +55,25 @@ class RequestFieldset extends AbstractEventFieldset
         $repo = $this->objectManager->getRepository(Entity\EventType::class);
         $options = $repo->getEventTypesForHat($hat);
 
+        $this->add(
+            [
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'eventType',
+            'options' => [
+                'label' => 'event type',
+                'value_options' => $options,
+            ],
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
+            ]
+        );
+
         return $this;
     }
 
     public function addLocationElements()
     {
+        $hat = $this->options['auth']->getIdentity()->hat;
+        $repo = $this->objectManager->getRepository(Entity\Location::class);
 
         return $this;
     }
