@@ -20,7 +20,7 @@ use InterpretersOffice\Entity\Repository\JudgeRepository;
 
 /**
  * Fieldset for Event form
- * 
+ *
  */
 class EventFieldset extends AbstractEventFieldset
 {
@@ -145,23 +145,21 @@ class EventFieldset extends AbstractEventFieldset
             ],
              'options' => [
                 'label' => 'time',
-                'format' => 'H:i:s',// :s
+                'format' => 'H:i:s',
              ],
             ]
         );
-        /** @todo also:  sanity-check if there's an entity and one of its props
-         * is NOT in a select (e.g., a Judge marked inactive)
-         */
 
         $this->addSubmissionDateTimeElements();
-
 
         // reason for cancellation
         $repository = $objectManager->getRepository(Entity\Event::class);
         $cancellation_options = $repository->getCancellationOptions();
         $default_label = 'N/A';
-        $default_opt = ['label' => $default_label,'value' => '',
-            'attributes' => ['label' => $default_label,'class' => 'cancellation-default'],
+        $default_opt = [
+            'label' => $default_label,'value' => '',
+            'attributes' => ['label' => $default_label,
+            'class' => 'cancellation-default'],
         ];
         array_unshift($cancellation_options, $default_opt);
         $this->add([
