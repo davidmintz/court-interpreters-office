@@ -93,7 +93,9 @@ class IndexController extends AbstractActionController
         $form = new Form\RequestForm($this->objectManager,
             ['action'=>'create','auth'=>$this->auth]);
         $view->form = $form;
-
+        // debug, test...
+        $repo = $this->objectManager->getRepository(\InterpretersOffice\Entity\Location::class);
+        $view->debug_data = $repo->getLocationOptionsForHat("USPO");
         return $view;
     }
 }

@@ -5,6 +5,7 @@ use InterpretersOffice\Admin\Form\AbstractEventFieldset;
 use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\EventType;
+use InterpretersOffice\Entity\Repository\LocationRepository;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -47,14 +48,34 @@ class RequestFieldset extends AbstractEventFieldset
             throw new \Exception(
                 "constructor options to RequestFieldset must include 'auth'");
         }
+
+        // (re)set some element attributes
+        foreach (['date','time',] as $name) {
+            $this->get($name)->setAttribute('placeholder', '');
+        }
+
+        $language_element = $this->get('language');
+        $opts = $language_element->getValueOptions();
+        $opts[0] = ['label' => '','value'=> ''];
+        $language_element->setValueOptions($opts);
+
+        $event_type_element = $this->get('eventType');
+        $opts = $event_type_element->getValueOptions();
+        array_unshift($opts, ['label' => ' ','value'=> '']);
+        $event_type_element->setValueOptions($opts);
+
     }
 
+    /**
+     * adds event-type select menu
+     *
+     * @return RequestFieldset
+     */
     public function addEventTypeElement()
     {
         $hat = $this->options['auth']->getIdentity()->hat;
         $repo = $this->objectManager->getRepository(Entity\EventType::class);
         $options = $repo->getEventTypesForHat($hat);
-
         $this->add(
             [
             'type' => 'Zend\Form\Element\Select',
@@ -70,10 +91,51 @@ class RequestFieldset extends AbstractEventFieldset
         return $this;
     }
 
+    /**
+     * adds location select menu
+     *
+     * @return RequestFieldset
+     */
     public function addLocationElements()
     {
         $hat = $this->options['auth']->getIdentity()->hat;
+        /** @var \InterpretersOffice\Entity\Repository\LocationRepository  $repo*/
         $repo = $this->objectManager->getRepository(Entity\Location::class);
+
+        $options = $repo->getLocationOptionsForHat($hat);
+        $this->add(
+            [
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'location',
+            'options' => [
+                'label' => 'location',
+                'value_options' => $options,
+                /*
+                [
+                0 =>
+                  [
+                    'label' => 'European languages',
+                    'options' => [
+                       '0' => 'French',
+                       '1' => 'Italian',
+                       ['label'=>"shit",'value'=>"33"]
+                    ],
+                 ],
+                 1 =>
+                 [
+                    'label' => 'Asian languages',
+                    'options' => [
+                       '2' => 'Japanese',
+                       '3' => 'Chinese',
+                    ],
+                 ],
+             ],
+             */
+
+            ],
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
+            ]
+        );
 
         return $this;
     }

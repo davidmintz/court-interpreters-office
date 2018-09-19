@@ -232,6 +232,76 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     }
 
     /**
+     * fetches location options for request form
+     *
+     * @param  string $hat
+     * @return array
+     */
+    public function getLocationOptionsForHat($hat)
+    {
+        /** @todo DRY this out. it is repeated in EventTypeRepository */
+        $dql = 'SELECT h.isJudgeStaff FROM InterpretersOffice\Entity\Hat h
+        WHERE h.name = :hat';
+        $is_judge_staff = $this->createQuery($dql)
+        ->setParameters(['hat'=>$hat])->getSingleScalarResult();
+
+        $qb = $this->createQueryBuilder('l')->select(
+            'l.name AS label','l.id AS value, p.name AS parent'
+        )->join('l.type', 't')->where('l.active = true');
+
+        $data = [];
+
+        if ($is_judge_staff) {
+            // in-court events only, so courtrooms only
+            $qb->join('l.parentLocation', 'p')
+                ->andWhere("t.type = 'courtroom'");
+            $result = $this->createQuery($qb->getDql())->getResult();
+            // organize hierarchically by courthouse
+            $courthouses = array_unique(array_column($result,'parent'));
+            sort($courthouses);
+            foreach ($courthouses as $courthouse) {
+                $data[$courthouse] =  ['label' =>$courthouse, 'options' => []];
+            }
+            foreach($result as $location) {
+                $data[$location['parent']]['options'][] = [
+                    'value' => $location['value'],
+                    'label' => $location['label']
+                ];
+            }
+
+        } else {
+            // probation or pretrial. jails, pretrial and probation offices
+            $qb->addSelect('t.type')->leftJoin('l.parentLocation', 'p')
+            ->andWhere("t.type NOT IN ('courtroom','public area','courthouse')");
+            $result = $this->createQuery($qb->getDql())->getResult();
+
+            // organize hierarchically by type of location
+            $types = array_unique(array_column($result,'type'));
+
+            foreach ($types as $type) {
+                //$data[$type] = [];
+                $data[$type] = ['label' =>$type, 'options' => []];
+            }
+            foreach($result as $location) {
+                $data[$location['type']]['options'][] = [
+                    'value' => $location['value'],
+                    'label' => $location['parent'] ?
+                    "{$location['label']}, {$location['parent']}"
+                    : $location['label'],
+                ];
+            }
+        }
+        // sort
+        foreach (array_keys($data) as $group) {
+            usort($data[$group]['options'],function($a, $b){
+                return strnatcasecmp($a['label'],$b['label']);
+            });
+        }
+
+        return $data;
+    }
+
+    /**
      * experimental
      *
      * implements cache deletion

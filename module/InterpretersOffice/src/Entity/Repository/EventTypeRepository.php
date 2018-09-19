@@ -82,7 +82,7 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
     }
 
     /**
-     * gets event-type data for user of $hat
+     * gets event-type options for user wearing $hat.
      *
      * @param string $hat
      * @return array
@@ -90,16 +90,18 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
     public function getEventTypesForHat($hat)
     {
         $dql = 'SELECT h.isJudgeStaff FROM InterpretersOffice\Entity\Hat h
-        WHERE h.name = :hat';
+            WHERE h.name = :hat';
         $is_judge_staff = $this->createQuery($dql)
-            ->setParameters(['hat'=>$hat])
-            ->getSingleScalarResult();
+            ->setParameters(['hat'=>$hat])->getSingleScalarResult();
+
         $qb = $this->createQueryBuilder('t')->select(
             't.name AS label','t.id AS value'
         )->join('t.category','c')->orderBy("t.name");
+
         if ($is_judge_staff) {
             $qb->where("c.category = 'in'");
         } else {
+            // alas, we have to hard-code this until we think of something better
             $qb->where("c.category = 'out'")->andWhere(
                 "t.name LIKE '%supervision%' OR t.name LIKE '%probation%'"
             );
