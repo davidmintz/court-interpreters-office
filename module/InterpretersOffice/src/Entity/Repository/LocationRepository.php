@@ -232,7 +232,15 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     }
 
     /**
-     * fetches location options for request form
+     * Fetches location options for request form.
+     *
+     * This returns a data structure for Zend\Form\Element\Select with option
+     * groups. If the $hat is one that reports directly to a judge, the
+     * assumption is that the interpreter is requested for an in-court
+     * proceeding and the only types of location provided are courtrooms,
+     * organized by courthouse. Otherwise, the assumption is that the request is
+     * for a Probation or a Pretrial interview for presentence or supervision
+     * purposes, and the locations provided are of almost every other type.
      *
      * @param  string $hat
      * @return array
@@ -292,6 +300,8 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
             }
         }
         // sort
+        // to do: for Probation, stack the deck to make the more frequently used
+        // come sooner in the order
         foreach (array_keys($data) as $group) {
             usort($data[$group]['options'],function($a, $b){
                 return strnatcasecmp($a['label'],$b['label']);

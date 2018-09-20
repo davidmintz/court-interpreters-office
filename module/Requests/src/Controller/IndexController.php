@@ -7,6 +7,7 @@ namespace InterpretersOffice\Requests\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
@@ -96,6 +97,14 @@ class IndexController extends AbstractActionController
         // debug, test...
         $repo = $this->objectManager->getRepository(\InterpretersOffice\Entity\Location::class);
         $view->debug_data = $repo->getLocationOptionsForHat("USPO");
+        $entity = new Entity\Request();
+        $form->bind($entity);
+        if ($this->getRequest()->isPost()) {
+            $form->setData($this->getRequest()->getPost());
+            if (! $form->isValid()) {
+                return new JsonModel(['validation_errors' => $form->getMessages()]);
+            }
+        }
         return $view;
     }
 }

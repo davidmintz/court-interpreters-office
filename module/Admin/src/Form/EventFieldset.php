@@ -19,7 +19,7 @@ use InterpretersOffice\Entity\Event;
 use InterpretersOffice\Entity\Repository\JudgeRepository;
 
 /**
- * Fieldset for Event form
+ * Fieldset for Event form, for admin use
  *
  */
 class EventFieldset extends AbstractEventFieldset
@@ -529,7 +529,6 @@ class EventFieldset extends AbstractEventFieldset
                 'filters' => [
                     ['name' => 'StringTrim'],
                 ],
-
              ],
             'cancellationReason' => [
                 'required' => true,

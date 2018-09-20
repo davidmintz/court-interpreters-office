@@ -103,6 +103,7 @@ class RequestFieldset extends AbstractEventFieldset
         $repo = $this->objectManager->getRepository(Entity\Location::class);
 
         $options = $repo->getLocationOptionsForHat($hat);
+        array_unshift($options, ['label' => ' ','value'=> '']);
         $this->add(
             [
             'type' => 'Zend\Form\Element\Select',
@@ -110,45 +111,68 @@ class RequestFieldset extends AbstractEventFieldset
             'options' => [
                 'label' => 'location',
                 'value_options' => $options,
-                /*
-                [
-                0 =>
-                  [
-                    'label' => 'European languages',
-                    'options' => [
-                       '0' => 'French',
-                       '1' => 'Italian',
-                       ['label'=>"shit",'value'=>"33"]
-                    ],
-                 ],
-                 1 =>
-                 [
-                    'label' => 'Asian languages',
-                    'options' => [
-                       '2' => 'Japanese',
-                       '3' => 'Chinese',
-                    ],
-                 ],
-             ],
-             */
-
             ],
             'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
             ]
         );
-
+        $this->add([
+            'type' => 'textarea',
+            'name' => 'comments',
+            'attributes' => ['id'=>'comments', 'class'=>'form-control',
+                'placeholder' => 'any noteworthy details or special instructions'
+            ]
+        ]);
         return $this;
     }
 
     public function addJudgeElements()
     {
-
+        $hat = $this->options['auth']->getIdentity()->hat;
+        $repo = $this->objectManager->getRepository(Entity\Judge::class);
         return $this;
     }
 
     public function getInputFilterSpecification()
     {
-        return $this->inputFilterspec;
+        $spec = [
+            'time' => [
+                'required' => true,
+                'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'time is required'
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'comments' => [
+                'required' => true,
+                'allow_empty' => true,
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'min' => 5,
+                            'max' => 600,
+                            'messages' => [
+                            \Zend\Validator\StringLength::TOO_LONG =>
+                                'maximum length allowed is %max% characters',
+                             \Zend\Validator\StringLength::TOO_SHORT =>
+                                'minimum length allowed is %min characters',
+                            ]
+                        ]
+                    ]
+                 ],
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+            ]
+        ];
+        return array_merge($this->inputFilterspec,$spec);
     }
 
 }
