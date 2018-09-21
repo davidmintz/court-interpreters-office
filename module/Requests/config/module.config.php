@@ -150,7 +150,7 @@ return [
                             'route' => '/update/:id',
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
-                                'action' => 'test',
+                                'action' => 'update',
                             ],
                             'constraints' => [
                                 'id' => '[1-9]\d*',

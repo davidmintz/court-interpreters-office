@@ -167,6 +167,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      */
     public function getJudgeOptions($options = [])
     {
+        $params = [];
         if (isset($options['judge_id'])) {
             $dql = 'SELECT DISTINCT';
             $or  = ' OR j.id = '.$options['judge_id'];
@@ -179,8 +180,18 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
                 . ' FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f '
                 . 'LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation pl '
                 . ' WHERE j.active = true '. $or;
+
+        if (isset($options['user_judge_ids'])) {
+            $dql .= ' AND j.id IN (:user_judge_ids)';
+            $params['user_judge_ids'] = $options['user_judge_ids'];
+        }
+
         $dql .= ' ORDER BY j.lastname, j.firstname';
-        $judges = $this->createQuery($dql, $this->cache_namespace)->getResult();
+        $query =  $this->createQuery($dql, $this->cache_namespace);
+        if ($params) {
+            $query->setParameters($params);
+        }
+        $judges = $query->getResult();
         $data = [];
         foreach ($judges as $judge) {
             $value = $judge['id'];
@@ -199,7 +210,8 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
             ];
             $data[] = compact('label', 'value', 'attributes');
         }
-
+        // sort them so that generic magistrate is in the mix, but the
+        // "not applicable" and "unknown" are at the bottom
         if (isset($options['include_pseudo_judges'])
                 && $options['include_pseudo_judges']) {
             $data = array_merge($data, $this->getPseudoJudgeOptions());
@@ -271,6 +283,34 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
             $data[] = compact('label', 'value', 'attributes');
         }
         return $data;
+    }
+
+    public function getJudgeOptionsForUser($user)
+    {
+        // get the Hat entity for $user
+        /** @var InterpretersOffice\Entity\Hat $hat */
+        $hat = $this->createQuery(
+            'SELECT h FROM InterpretersOffice\Entity\Hat h WHERE h.name = :hat'
+        )->setParameters(['hat' => $user->hat])->getOneOrNullResult();
+
+        if ($hat->isJudgesStaff()) {
+            // just get their judges
+            $judges = $this
+                ->getJudgeOptions(['user_judge_ids' => $user->judge_ids]);
+        } else {
+            // e.g., a USPO. get all the judges
+            $judges = $this->getJudgeOptions();
+            // ... and the pseudo- a/k/a anonymous judge options,
+            // except Magistrate
+            $pseudo = $this->getPseudoJudgeOptions();
+            foreach ($pseudo as $pseudo_judge) {
+                if ($this->isAnonymousButNotMagistrate($pseudo_judge)) {
+                    $judges[] = $pseudo_judge;
+                }
+            }
+        }
+
+        return $judges;
     }
 
     /**

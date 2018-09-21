@@ -127,8 +127,21 @@ class RequestFieldset extends AbstractEventFieldset
 
     public function addJudgeElements()
     {
-        $hat = $this->options['auth']->getIdentity()->hat;
+        $user = $this->options['auth']->getIdentity();
         $repo = $this->objectManager->getRepository(Entity\Judge::class);
+        $options = $repo->getJudgeOptionsForUser($user);
+        array_unshift($options, ['label' => ' ','value'=> '']);
+        $this->add(
+            [
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'judge',
+            'options' => [
+                'label' => 'judge',
+                'value_options' => $options,
+            ],
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'judge'],
+        ]);
+        //exit("wtf");
         return $this;
     }
 

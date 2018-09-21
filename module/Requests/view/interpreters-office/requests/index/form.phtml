@@ -5,6 +5,7 @@
     $this->headScript()
             ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
             ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+            ->appendFile($this->basePath('js/form-utilities.js'))
             ->appendFile($this->basePath('js/requests/form.js'));
 
     $messenger = $this->flashMessenger();
@@ -19,6 +20,9 @@
     endif;
 
     $form = $this->form;
+    $action = $this->basePath('requests/'.$this->layout()->action);
+    if ($this->id) {  $action .= "/$id"; }
+    $form->setAttribute('action',$action);
     $form->prepare();
     $fieldset = $this->form->get('request');
     //<div class="d-flex justify-content-center">
@@ -37,7 +41,7 @@
     </div>
 </div>
 <?php
-    foreach (['language','eventType','location','docket'] as $name) :
+    foreach (['language','judge','eventType','location','docket'] as $name) :
         $element = $fieldset->get($name);
 ?>
 <div class="form-group form-row">
@@ -59,6 +63,7 @@
                 <span title="add name" class="input-group-text fas fa-plus pt-2 bg-primary text-white"></span>
             </div>
         </div>
+        <ul id="defendants" class="list-group mt-2"></ul>
     </div>
 </div>
 <div class="form-group form-row">
