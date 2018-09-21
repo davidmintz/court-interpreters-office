@@ -28,85 +28,83 @@
     $form->setAttribute('action',$action);
     $form->prepare();
     $fieldset = $this->form->get('request');
-    //<div class="d-flex justify-content-center">
+    // try to set default judge and courtroom, if applicable
+    $user = $this->layout()->user;
+    if ($user->judge_ids && 1 == count($user->judge_ids)) :
+        $judge = $user->judge_ids[0];
+        $fieldset->get('judge')->setValue($judge);
+        $opts = $fieldset->get('judge')->getValueOptions();
+        foreach ($opts as $opt) :
+            if ($opt['value'] == $judge) :
+                $fieldset->get('location')
+                    ->setValue($opt['attributes']['data-default_location']);
+                break;
+            endif;
+        endforeach;
+        ?>
+        <?php
+    endif;
     ?>
-    <div class="center-block mx-auto" style="max-width:800px">
+<div class="center-block mx-auto" style="max-width:800px">
     <h2 class="navigation mb-3"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
-<?php  echo  $this->form()->openTag($form);  ?>
-<div class="form-group form-row">
-    <label for="date" class="col-form-label col-sm-3 pr-1">date</label>
-    <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('date')),
-        $this->formElementErrors($fieldset->get('date'));?>
-    </div>
-    <label for="time" class="col-form-label col-sm-1">time</label>
-    <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('time')),
-        $this->formElementErrors($fieldset->get('time'));?>
-    </div>
-</div>
-<?php
-    foreach (['language','judge','eventType','location','docket'] as $name) :
-        $element = $fieldset->get($name);
-?>
-<div class="form-group form-row">
-    <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-3 col-form-label pr-1">
-        <?php echo $element->getLabel()?></label>
-    <div class="col-sm-7"><?php echo $this->formElement($element),
-        $this->formElementErrors($element);?></div>
-</div>
-<?php endforeach ?>
-<div class="form-group form-row">
-    <label for="defendant-search" class="col-form-label col-sm-3 pr-1">defendant(s)</label>
-    <div class="col-sm-7">
-        <div class="input-group">
-            <?php echo $this->formElement($fieldset->get('defendant-search'))?>
-            <div class="input-group-append">
-                <span title="search database" class="input-group-text fas fa-search pt-2 bg-primary text-white"></span>
-                <span id="btn-help-deft-search" title="get help" class="input-group-text fas fa-question pt-2 text-muted border"></span>
-            </div>
-        </div><!--  help -->
-        <div id="help-defendant-search" class="alert alert-info alert-dismissible fade show" style="display:none">
-            <button type="button" class="close" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            Type two or more letters of the last name, optionally followed by a comma and one or more letters of the
-            first name. Any matching names will be displayed automatically. Use more letters to narrow your search
-            results. If you see the name you're looking for, select it (with your mouse or keyboard). If not, click
-            the search icon (to the right of the above text field) for further assistance.
+    <div class="alert alert-warning" id="error-message" style="display:none"></div>
+    <?php  echo  $this->form()->openTag($form);  ?>
+    <div class="form-group form-row">
+        <label for="date" class="col-form-label col-sm-3 pr-1">date</label>
+        <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('date')),
+            $this->formElementErrors($fieldset->get('date'));?>
         </div>
-        <ul id="defendants" class="list-group mt-2"></ul>
+        <label for="time" class="col-form-label col-sm-1">time</label>
+        <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('time')),
+            $this->formElementErrors($fieldset->get('time'));?>
+        </div>
     </div>
-</div>
-<div class="form-group form-row">
-    <label for="comments" class="col-form-label col-sm-3 pr-1">notes</label>
-    <div class="col-sm-7"><?php echo $this->formElement($fieldset->get('comments')),
-        $this->formElementErrors($fieldset->get('comments'));?>
+    <?php
+        foreach (['language','judge','eventType','location','docket'] as $name) :
+            $element = $fieldset->get($name);
+    ?>
+    <div class="form-group form-row">
+        <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-3 col-form-label pr-1">
+            <?php echo $element->getLabel()?></label>
+        <div class="col-sm-7"><?php echo $this->formElement($element),
+            $this->formElementErrors($element);?></div>
     </div>
-</div>
-<div class="form-group form-row">
-    <div class="col-sm-7 offset-sm-3">
-        <?php echo $this->formElement($fieldset->get('id')),
-         $this->formElement($form->get('csrf')),
-          $this->formElementErrors($form->get('csrf'))?>
-        <button type="submit" class="btn btn-success">save</button>
+    <?php endforeach ?>
+    <div class="form-group form-row">
+        <label for="defendant-search" class="col-form-label col-sm-3 pr-1">defendant(s)</label>
+        <div class="col-sm-7">
+            <div class="input-group">
+                <?php echo $this->formElement($fieldset->get('defendant-search'))?>
+                <div class="input-group-append">
+                    <span title="search database" class="input-group-text fas fa-search pt-2 bg-primary text-white"></span>
+                    <span id="btn-help-deft-search" title="get help" class="input-group-text fas fa-question pt-2 text-muted border"></span>
+                </div>
+            </div>
+            <div id="help-defendant-search" class="alert alert-info alert-dismissible fade show" style="display:none">
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                Type two or more letters of the last name, optionally followed by a comma and one or more letters of the
+                first name. Any matching names will be displayed automatically. Use more letters to narrow your search
+                results. If you see the name you're looking for, select it (with your mouse or keyboard). If not, click
+                the search icon (to the right of the above text field) for further assistance.
+            </div>
+            <ul id="defendants" class="list-group mt-2"></ul>
+        </div>
     </div>
-</div>
+    <div class="form-group form-row">
+        <label for="comments" class="col-form-label col-sm-3 pr-1">notes</label>
+        <div class="col-sm-7"><?php echo $this->formElement($fieldset->get('comments')),
+            $this->formElementErrors($fieldset->get('comments'));?>
+        </div>
+    </div>
+    <div class="form-group form-row">
+        <div class="col-sm-7 offset-sm-3">
+            <?php echo $this->formElement($fieldset->get('id')),
+             $this->formElement($form->get('csrf')),
+             $this->formElementErrors($form->get('csrf'))?>
+            <button id="btn-save" type="submit" class="btn btn-success">save</button>
+        </div>
+    </div>
     </form>
-
-        <pre class=border><?php //var_dump($this->debug_data)?></pre>
-
-</div>
-<!--
-    <pre><?php //print_r(get_class_methods($fieldset))
-        foreach ($fieldset->getElements() as $e) {
-            //printf("%s<br>",gettype($e));//->getName());
-            if (is_object($e)) {
-                printf("%s<br>",$e->getName());
-            } else {
-                //print_r(array_keys($e));
-                //printf("%s<br>",$e['name']);
-            }
-        }
-
-        //echo $_SERVER['REQUEST_URI']
-    ?></pre>
--->
+</div><!-- /wrapper -->

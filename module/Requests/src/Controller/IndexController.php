@@ -105,9 +105,17 @@ class IndexController extends AbstractActionController
         $entity = new Entity\Request();
         $form->bind($entity);
         if ($this->getRequest()->isPost()) {
-            $form->setData($this->getRequest()->getPost());
-            if (! $form->isValid()) {
-                return new JsonModel(['validation_errors' => $form->getMessages()]);
+            try {
+                $form->setData($this->getRequest()->getPost());
+                if (! $form->isValid()) {
+                    return new JsonModel(['validation_errors' =>
+                        $form->getMessages()]);
+                }
+                return  new JsonModel(['status'=> "valid. to be continued..."]);
+
+            } catch (\Exception $e) {
+                $this->getResponse()->setStatusCode(500);
+                return new JsonModel(['message'=>$e->getMessage()]);
             }
         }
         // $repo = $this->objectManager->getRepository(\InterpretersOffice\Entity\Judge::class);

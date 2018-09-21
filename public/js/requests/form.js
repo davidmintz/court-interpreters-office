@@ -1,5 +1,9 @@
-var $, displayValidationErrors, formatDocketElement, parseTime, toggleSelectClass, moment;
+var $, displayValidationErrors, formatDocketElement, parseTime,
+    toggleSelectClass, moment;
 
+/**
+ * when they select a name from autocompletion, add it to the form
+ */
 var appendDefendant = function(data)
 {
     var html =
@@ -14,6 +18,9 @@ var appendDefendant = function(data)
     $("#defendants").append(html);
 };
 
+/**
+ * datepicker: disable dates less than two week days from current date
+ */
 var minDate;
 switch (moment().day()) {
     case 0:
@@ -36,29 +43,41 @@ const datepicker_options = {
     minDate : minDate
 };
 
+/** autocompletion options for defendant name search */
+const deftname_autocomplete_options = {
+    source: "/defendants/autocomplete",
+    minLength: 2,
+    select: (event, ui) => {
+        event.preventDefault();
+        appendDefendant(ui.item);
+        $("#defendant-search").val("");
+    },
+    focus: function(event,ui) {
+        event.preventDefault();
+        $(this).val(ui.item.label);
+    },
+    open : function() {
+        // if (slideout.is(":visible")) {
+        //     slideout.hide();
+        // }
+    }
+};
+
+/** error handler */
+const fail = function(response){
+    var html = `<p>Sorry, we've encountered an unexpected error.`;
+    if (response.responseJSON && response.responseJSON.message) {
+        html += ` The message was: ${response.responseJSON.message}`;
+    }
+    html += `</p><p>Please consult your site administrator for help</p>`;
+    $("#error-message").html(html).show();
+};
+
 $(function(){
 
     const form = $("#request-form");
     const is_update = form.attr("action").indexOf("create") === -1;
 
-    const deftname_autocomplete_options = {
-        source: "/defendants/autocomplete",
-        minLength: 2,
-        select: (event, ui) => {
-            event.preventDefault();
-            appendDefendant(ui.item);
-            $("#defendant-search").val("");
-        },
-        focus: function(event,ui) {
-            event.preventDefault();
-            $(this).val(ui.item.label);
-        },
-        open : function() {
-            // if (slideout.is(":visible")) {
-            //     slideout.hide();
-            // }
-        }
-    };
     $("#defendant-search").autocomplete(deftname_autocomplete_options);
     $("#time").on("change",parseTime);
     $("#date").datepicker(datepicker_options);
@@ -77,4 +96,13 @@ $(function(){
     help_button.on("click",() => help_text.slideToggle());
     help_text.children("button.close")
         .on("click",()=>help_button.trigger("click"));
+
+    $("#btn-save").on("click",function(event){
+        event.preventDefault();
+        var post = form.serialize();
+        $.post(form.attr("action"),post)
+            .done(function(response){
+                console.log("yay!");
+            }).fail(fail);
+    });
 });

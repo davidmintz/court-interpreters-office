@@ -134,4 +134,3 @@ var toggleSelectClass = function(event) {
         element.addClass("text-muted");
     }
 }
-$("select").on("change",toggleSelectClass).trigger("change");

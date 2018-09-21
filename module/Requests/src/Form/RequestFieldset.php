@@ -112,7 +112,7 @@ class RequestFieldset extends AbstractEventFieldset
                 'label' => 'location',
                 'value_options' => $options,
             ],
-            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'location'],
             ]
         );
         $this->add([
