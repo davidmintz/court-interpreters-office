@@ -122,6 +122,16 @@ var formatDocketElement = function(event)
     element.val(year + "-"  + flavor + "-" + number)
         .data("valid",1);
     errorDiv.empty().hide();
-    
+
     return element;
 };
+
+var toggleSelectClass = function(event) {
+    var element = $(this);
+    if (element.val()) {
+        element.removeClass("text-muted");
+    } else {
+        element.addClass("text-muted");
+    }
+}
+$("select").on("change",toggleSelectClass).trigger("change");

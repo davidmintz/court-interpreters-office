@@ -8,6 +8,9 @@
             ->appendFile($this->basePath('js/form-utilities.js'))
             ->appendFile($this->basePath('js/requests/form.js'));
 
+    $this->headStyle()->captureStart()?>
+        span.fas:hover { cursor : pointer; }
+    <?php $this->headStyle()->captureEnd();
     $messenger = $this->flashMessenger();
     if ($messenger->hasErrorMessages()) :
         echo $messenger->render('error', ['alert','alert-warning',], false);
@@ -55,13 +58,20 @@
     <label for="defendant-search" class="col-form-label col-sm-3 pr-1">defendant(s)</label>
     <div class="col-sm-7">
         <div class="input-group">
-            <div class="input-group-prepend">
-                <span title="get help" class="input-group-text fas fa-question pt-2 text-warning bg-info"></span>
-            </div>
             <?php echo $this->formElement($fieldset->get('defendant-search'))?>
             <div class="input-group-append">
-                <span title="add name" class="input-group-text fas fa-plus pt-2 bg-primary text-white"></span>
+                <span title="search database" class="input-group-text fas fa-search pt-2 bg-primary text-white"></span>
+                <span id="btn-help-deft-search" title="get help" class="input-group-text fas fa-question pt-2 text-muted border"></span>
             </div>
+        </div><!--  help -->
+        <div id="help-defendant-search" class="alert alert-info alert-dismissible fade show" style="display:none">
+            <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            Type two or more letters of the last name, optionally followed by a comma and one or more letters of the
+            first name. Any matching names will be displayed automatically. Use more letters to narrow your search
+            results. If you see the name you're looking for, select it (with your mouse or keyboard). If not, click
+            the search icon (to the right of the above text field) for further assistance.
         </div>
         <ul id="defendants" class="list-group mt-2"></ul>
     </div>

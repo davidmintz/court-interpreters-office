@@ -162,6 +162,21 @@ class RequestFieldset extends AbstractEventFieldset
                     ],
                 ],
             ],
+            'judge' => [
+                'required' => true,
+                'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'judge is required'
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
             'comments' => [
                 'required' => true,
                 'allow_empty' => true,
