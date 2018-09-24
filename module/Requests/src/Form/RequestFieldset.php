@@ -64,6 +64,25 @@ class RequestFieldset extends AbstractEventFieldset
         array_unshift($opts, ['label' => ' ','value'=> '']);
         $event_type_element->setValueOptions($opts);
 
+        $this->addDefendantsElement();
+    }
+
+    public function addDefendantsElement()
+    {
+        $this->add([
+            'name' => 'defendants',
+            'type' => 'Zend\Form\Element\Select',
+            'options' => [
+                'value_options' => [],
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
+                'style' => 'display:none',
+                'id' => 'defendants',
+                'multiple' => 'multiple',
+            ],
+        ]);
+
     }
 
     /**
@@ -177,6 +196,11 @@ class RequestFieldset extends AbstractEventFieldset
                 ],
             ],
 
+            'defendants' => [
+                'required' => false,
+                'allow_empty' => true,
+            ],
+
             'comments' => [
                 'required' => true,
                 'allow_empty' => true,
@@ -198,7 +222,7 @@ class RequestFieldset extends AbstractEventFieldset
                 'filters' => [
                     ['name' => 'StringTrim'],
                 ],
-            ]
+            ],
         ];
         return array_merge($this->inputFilterspec,$spec);
     }

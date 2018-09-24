@@ -106,3 +106,16 @@ $(function(){
             }).fail(fail);
     });
 });
+
+var stuff = function()
+{
+    $("#date").val("09/27/2018");
+    $("#time").val("10:00 am");
+    $("#event-type").val("16");
+    $("#docket").val("2018 CR 123");
+    $("#language").val(62);
+    appendDefendant({
+        label : "Rodriguez, Nelson", value: 9082
+    });
+
+}

@@ -106,11 +106,18 @@ class IndexController extends AbstractActionController
         $form->bind($entity);
         if ($this->getRequest()->isPost()) {
             try {
+                // see if this works.
+                //$person_id = $this->auth->getIdentity()->person_id;
+                // $form->get('request')
+                //     ->add(['type'=>'hidden','name'=> 'submitter'])
+                //     ->setValue($person_id);
                 $form->setData($this->getRequest()->getPost());
                 if (! $form->isValid()) {
                     return new JsonModel(['validation_errors' =>
                         $form->getMessages()]);
                 }
+                $this->objectManager->persist($entity);
+                $this->objectManager->flush();
                 return  new JsonModel(['status'=> "valid. to be continued..."]);
 
             } catch (\Exception $e) {

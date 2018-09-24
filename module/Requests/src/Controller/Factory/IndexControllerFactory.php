@@ -6,6 +6,7 @@ namespace InterpretersOffice\Requests\Controller\Factory;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Requests\Controller\IndexController;
+use InterpretersOffice\Entity\Listener;
 
 /**
  * Factory class for instantiating Requests\IndexController.
@@ -23,10 +24,13 @@ class IndexControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $controller = new IndexController(
-            $container->get('entity-manager'),
-            $container->get('auth')
-        );
+        $entityManager = $container->get('entity-manager');
+        $auth = $container->get('auth');
+        $controller = new IndexController($entityManager, $auth);
+
+        $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
+        $resolver->register($container->get(Listener\UpdateListener::class)
+            ->setAuth($auth));
 
         return $controller;
     }
