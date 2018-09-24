@@ -102,7 +102,9 @@ $(function(){
         var post = form.serialize();
         $.post(form.attr("action"),post)
             .done(function(response){
-                console.log("yay!");
+                if (response.validation_errors) {
+                    displayValidationErrors(response.validation_errors.request);
+                }
             }).fail(fail);
     });
 });
@@ -111,7 +113,7 @@ var stuff = function()
 {
     $("#date").val("09/27/2018");
     $("#time").val("10:00 am");
-    $("#event-type").val("16");
+    $("#eventType").val("16");
     $("#docket").val("2018 CR 123");
     $("#language").val(62);
     appendDefendant({

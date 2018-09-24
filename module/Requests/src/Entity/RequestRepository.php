@@ -13,7 +13,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use InterpretersOffice\Entity;
 
 /**
- * RequestRepository 
+ * RequestRepository
  * @todo implement caching -- or else don't
  */
  class RequestRepository extends EntityRepository
@@ -32,6 +32,61 @@ use InterpretersOffice\Entity;
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace($this->cache_namespace);
+    }
+
+    /**
+     * look for near-exact duplicate records
+     *
+     * this has to be called after succesful validation to avoid possible
+     * method calls on null
+     *
+     * @param  Request $entity
+     * @return boolean true if $entity is a duplicate
+     */
+    public function findDuplicate(Request $entity)
+    {
+        $params = [
+            ':date' => $entity->getDate(),
+            ':time' => $entity->getTime(),
+            ':language_id' => $entity->getLanguage()->getId(),
+            ':event_type_id' =>  $entity->getEventType()->getId(),
+            ':docket' => $entity->getDocket(),
+        ];
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.anonymousJudge','aj' )
+            ->leftJoin('r.judge','j' )
+            ->join('r.eventType','e' )
+            ->join('r.language','l' )
+             ->where('r.time = :time AND r.date = :date AND r.docket = :docket')
+             ->andWhere('l.id = :language_id')
+             ->andWhere('e.id = :event_type_id');
+             $judge = $entity->getJudge();
+             if ($judge) {
+                 $qb->andWhere('j.id = :judge_id');
+                 $params[':judge_id'] = $judge->getId();
+             } else {
+                  $qb->andWhere('aj.id = :anonymous_judge_id');
+                  $params[':anonymous_judge_id'] = $entity->getAnonymousJudge()->getId();
+             }
+            $id = $entity->getId();
+            if ($id) {
+                $qb->andWhere('r.id <> :id');
+                $params[':id'] = $id;
+            }
+            $result = $qb->getQuery()->setParameters($params)->getResult();
+            if (count($result)) {
+                $duplicate = $result[0];
+                // compare defendants
+                $ours = $duplicate->getDefendants()->toArray();
+                $theirs = $entity->getDefendants()->toArray();
+                if ($ours == $theirs) {
+                    return true;
+                }
+            }
+
+            return false;
+
+
     }
 
     /**

@@ -103,7 +103,7 @@ class RequestFieldset extends AbstractEventFieldset
                 'label' => 'event type',
                 'value_options' => $options,
             ],
-            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'eventType'],
             ]
         );
 
@@ -181,6 +181,7 @@ class RequestFieldset extends AbstractEventFieldset
                     ],
                 ],
             ],
+
             'judge' => [
                 'required' => true,
                 'allow_empty' => false,
@@ -190,6 +191,26 @@ class RequestFieldset extends AbstractEventFieldset
                         'options' => [
                             'messages' => [
                                 'isEmpty' => 'judge is required'
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
+            'anonymousJudge' => [
+                'required' => false,
+                'allow_empty' => true,                
+            ],
+
+            'eventType' => [
+                'required' => true,
+                'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'type of event is required'
                             ],
                         ],
                     ],
