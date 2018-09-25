@@ -554,7 +554,7 @@ var eventForm = (function () {
         slideout.on("click",".defendant-names li",function(){
             var element = $(this);
             $.get("/defendants/template",
-                {id:element.data("id"),name:element.text()},
+                {id:element.data("id"),name:element.text().trim()},
                 function(html){
                     $("#defendant-names").append(html);
                     defendantSearchElement.val("");
