@@ -99,11 +99,11 @@ class IndexController extends AbstractActionController
         $form = new Form\RequestForm($this->objectManager,
             ['action'=>'create','auth'=>$this->auth]);
         $view->form = $form;
-        // debug, test...
-        // $repo = $this->objectManager->getRepository(\InterpretersOffice\Entity\Location::class);
-        // $view->debug_data = $repo->getLocationOptionsForHat("USPO");
         $entity = new Entity\Request();
         $form->bind($entity);
+        $repo = $this->objectManager->getRepository(\InterpretersOffice\Requests\Entity\Request::class);
+        //$shit = $repo->find(20104);
+        //$repo->findDuplicate($entity);
         if ($this->getRequest()->isPost()) {
             try {
                 $form->setData($this->getRequest()->getPost());
@@ -111,11 +111,19 @@ class IndexController extends AbstractActionController
                     return new JsonModel(['validation_errors' =>
                         $form->getMessages()]);
                 }
-                return  new JsonModel(['status'=> "valid. to be continued..."]);
+                if ($repo->findDuplicate($entity)) {
+                    return  new JsonModel(['validation_errors'=> ['duplicate'=>
+                        'there is already a request with same date, time,
+                        judge, type of event, defendant(s), docket, and language.'
+                    ]]);
+                } 
+                $this->objectManager->persist($entity);
+                $this->objectManager->flush();
+                return  new JsonModel(['shit'=>$shit,   'status'=> "valid. to be continued..."]);
 
-            } catch (\Exception $e) {
+            } catch (\Exception $e) { //throw $e;
                 $this->getResponse()->setStatusCode(500);
-                return new JsonModel(['message'=>$e->getMessage()]);
+                return new JsonModel(['message'=>$e->getMessage(),'shit'=>$shit,]);
             }
         }
         // $repo = $this->objectManager->getRepository(\InterpretersOffice\Entity\Judge::class);

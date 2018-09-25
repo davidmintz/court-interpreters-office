@@ -64,6 +64,25 @@ class RequestFieldset extends AbstractEventFieldset
         array_unshift($opts, ['label' => ' ','value'=> '']);
         $event_type_element->setValueOptions($opts);
 
+        $this->addDefendantsElement();
+    }
+
+    public function addDefendantsElement()
+    {
+        $this->add([
+            'name' => 'defendants',
+            'type' => 'Zend\Form\Element\Select',
+            'options' => [
+                'value_options' => [],
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
+                'style' => 'display:none',
+                'id' => 'defendants',
+                'multiple' => 'multiple',
+            ],
+        ]);
+
     }
 
     /**
@@ -84,7 +103,7 @@ class RequestFieldset extends AbstractEventFieldset
                 'label' => 'event type',
                 'value_options' => $options,
             ],
-            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'eventType'],
             ]
         );
 
@@ -162,6 +181,7 @@ class RequestFieldset extends AbstractEventFieldset
                     ],
                 ],
             ],
+
             'judge' => [
                 'required' => true,
                 'allow_empty' => false,
@@ -175,6 +195,31 @@ class RequestFieldset extends AbstractEventFieldset
                         ],
                     ],
                 ],
+            ],
+
+            'anonymousJudge' => [
+                'required' => false,
+                'allow_empty' => true,                
+            ],
+
+            'eventType' => [
+                'required' => true,
+                'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'type of event is required'
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
+            'defendants' => [
+                'required' => false,
+                'allow_empty' => true,
             ],
 
             'comments' => [
@@ -198,7 +243,7 @@ class RequestFieldset extends AbstractEventFieldset
                 'filters' => [
                     ['name' => 'StringTrim'],
                 ],
-            ]
+            ],
         ];
         return array_merge($this->inputFilterspec,$spec);
     }

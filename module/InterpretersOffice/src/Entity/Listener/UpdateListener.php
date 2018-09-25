@@ -11,6 +11,7 @@ use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Entity\DefendantEvent;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Requests\Entity\Request;
 use InterpretersOffice\Module;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Log;
@@ -134,6 +135,14 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
             $this->logger->debug("we set createdBy on InterpreterEvent here in ".__METHOD__);
+        } elseif ($entity instanceof Request) {
+            $now = $this->getTimeStamp();
+            $user = $this->getAuthenticatedUser($args);
+            $person = $this->getCurrentUserPerson($args);
+            $entity->setCreated($now)
+                ->setModified($now)
+                ->setSubmitter($person)
+                ->setModifiedBy($user);
         }
     }
 

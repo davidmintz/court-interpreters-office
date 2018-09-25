@@ -102,19 +102,22 @@ $(function(){
         var post = form.serialize();
         $.post(form.attr("action"),post)
             .done(function(response){
-                console.log("yay!");
+                if (response.validation_errors) {
+                    displayValidationErrors(response.validation_errors.request);
+                }
             }).fail(fail);
     });
 });
 
-var stuff = () => {
-
+var stuff = function()
+{
     $("#date").val("09/27/2018");
     $("#time").val("10:00 am");
+    $("#eventType").val("16");
+    $("#docket").val("2018 CR 123");
     $("#language").val(62);
-    $('#docket').val("18 CR 2345");
-    $("#eventType").val(16);
-    appendDefendant(
-        {label: "Rodriguez, Eusebio", value: "3227"}
-    );
+    appendDefendant({
+        label : "Rodriguez, Nelson", value: 9082
+    });
+
 }

@@ -37,4 +37,28 @@ trait CurrentUserTrait
 
         return $this->user;
     }
+
+    /**
+     * gets the Person belong to the current User
+     * 
+     * @param  LifecycleEventArgs $args [description]
+     * @return Entity\Person
+     */
+    public function getCurrentUserPerson(LifecycleEventArgs $args)
+    {
+
+        if ($this->user) {
+            return $this->user->getPerson();
+        }
+        $em = $args->getObjectManager();
+        $person_id = $this->auth->getIdentity()->person_id;
+        $dql = 'SELECT p FROM InterpretersOffice\Entity\Person p WHERE p.id = :person_id';
+        $person = $em->createQuery($dql)->setParameters([':person_id'=>$person_id])
+            ->useResultCache(true)->getOneOrNullResult();
+
+        return $person;
+
+
+
+    }
 }

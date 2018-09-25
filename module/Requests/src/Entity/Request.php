@@ -3,6 +3,8 @@
 namespace InterpretersOffice\Requests\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use InterpretersOffice\Entity\Person;
 
 //use InterpretersOffice\Entity;
@@ -230,7 +232,7 @@ class Request
      */
     public function __construct()
     {
-        $this->defendants = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->defendants = new ArrayCollection();
     }
 
     /**
@@ -644,7 +646,7 @@ class Request
      *
      * @param Collection $judges
      */
-    public function addDefendants(Collection $defendants)
+    public function addDefendants(ArrayCollection $defendants)
     {
         foreach ($defendants as $defendant) {
             $this->defendants->add($defendant);
@@ -656,7 +658,7 @@ class Request
      *
      * @param Collection $defendants
      */
-    public function removeDefendants(Collection $defendants)
+    public function removeDefendants(ArrayCollection $defendants)
     {
         foreach ($defendants as $defendant) {
             $this->defendants->removeElement($defendant);
