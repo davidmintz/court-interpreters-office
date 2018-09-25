@@ -7,10 +7,8 @@
             ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
             ->appendFile($this->basePath('js/form-utilities.js'))
             ->appendFile($this->basePath('js/requests/form.js'));
-
     $this->headStyle()->captureStart()?>
-        span.fas:hover { cursor : pointer; }$this->login('jane_zorkendoofer@nysd.uscourts.gov','gack!');
-        $this->reset(true);
+        span.fas:hover { cursor : pointer; }
     <?php $this->headStyle()->captureEnd();
     $messenger = $this->flashMessenger();
     if ($messenger->hasErrorMessages()) :
@@ -49,6 +47,7 @@
 <div class="center-block mx-auto" style="max-width:800px">
     <h2 class="navigation mb-3"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
     <div class="alert alert-warning" id="error-message" style="display:none"></div>
+    <div id="deft-results-slideout" style="display:none">content</div>
     <?php  echo  $this->form()->openTag($form);  ?>
     <div class="form-group form-row">
         <div id="error_duplicate" class="col-sm-7 offset-sm-3 alert alert-warning validation-error" style="display:none">
@@ -81,7 +80,7 @@
             <div class="input-group">
                 <?php echo $this->formElement($fieldset->get('defendant-search'))?>
                 <div class="input-group-append">
-                    <span title="search database" class="input-group-text fas fa-search pt-2 bg-primary text-white"></span>
+                    <span id="btn-deft-search" title="search database" class="input-group-text fas fa-search pt-2 bg-primary text-white"></span>
                     <span id="btn-help-deft-search" title="get help" class="input-group-text fas fa-question pt-2 text-muted border"></span>
                 </div>
             </div>

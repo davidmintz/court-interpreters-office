@@ -68,6 +68,10 @@ return [
                         'route' => 'requests/update',
                         'label' => 'update',
                     ],
+                    [
+                        'route' => 'requests/view',
+                        'label' => 'view details',
+                    ]
                 ],
             ],
         ],
@@ -134,13 +138,26 @@ return [
                             ],
                         ],
                     ],
+                    'view' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/view/:id',
+                            'defaults' => [
+                                'controller' => Controller\IndexController::class,
+                                'action' => 'view',
+                            ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
                     'search' => [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/search',
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
-                                'action' => 'test',
+                                'action' => 'search',
                             ],
                         ],
                     ],

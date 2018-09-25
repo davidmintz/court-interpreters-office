@@ -46,7 +46,14 @@ class IndexController extends AbstractActionController
         $this->auth = $auth;
     }
 
+    public function viewAction()
+    {
+        
+    }
+    public function searchAction()
+    {
 
+    }
     /**
      * index action.
      *
@@ -112,7 +119,7 @@ class IndexController extends AbstractActionController
                 if ($repo->findDuplicate($entity)) {
                     return  new JsonModel(
                     ['validation_errors'=> ['request' =>  ['duplicate'=>
-                        [ 
+                        [
                         'there is already a request with this date, time,
                         judge, type of event, defendant(s), docket, and language'
                     ]]]]);
