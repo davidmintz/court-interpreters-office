@@ -55,17 +55,10 @@ var displayValidationErrors = function(validationErrors,options) {
                     $("#error_"+field).html(message).show();
                 } else {
                     if (debug) {
-                        console.log(typeof message +
-                            " is data type of 'message'");
+                        console.log(`'message' is of type ${typeof message}`);
                         console.warn("no element with id "+field
                             + ", and nowhere to put message: "+message);
                     }
-                    /*
-                    if ("object" === typeof message) {
-                        console.warn("recursing");
-                        displayValidationErrors(message);
-                    }
-                    */
                 }
             } else {
                 errorDiv = errorDiv || element.next(".validation-error");

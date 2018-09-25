@@ -132,7 +132,10 @@ td.interpreters-assigned div:not(:last-child) {
 /*
 note to self: gray #515457
 */
-span.avoidwrap { display:inline-block !important;}
+span.avoidwrap {
+    display:inline-block !important;
+    white-space:nowrap;
+}
 
 tr.inactive { /*e.g., for judges/index */
     display: none;

@@ -7,6 +7,11 @@ $this->headTitle('requests | list')
 ?>
 <h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
 <?php
+$messenger = $this->flashMessenger();
+if ($messenger->hasSuccessMessages()) :
+    echo $messenger->render('success', ['alert','alert-success',], false);
+endif;
+
 if ($this->paginator && $this->paginator->getTotalItemCount()):
     ?><p>
         <?php echo $this->paginationControl($this->paginator, null, 'partials/pagination_head');?>
@@ -14,7 +19,7 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
     <!--
     <pre><?php //print_r($this->paginator->getItem(0))?></pre>
     -->
-    
+
 <table class="table">
     <caption class="sr-only">list of interpreter requests</caption>
     <thead></thead>
@@ -24,12 +29,12 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
             $docket = $r['docket'] ? substr($r['docket'],2) : '';
             $location = $r['location'] ? $r['location']['name']  : '';
         ?><tr data-request_id=<?php echo $r['id']?>>
-            <td><?php echo $r['date']->format('d-M-Y')?></td>
-            <td><?php echo $r['time']->format('g:i a')?></td>
+            <td><span class="avoidwrap"><?php echo $r['date']->format('d-M-Y')?></span></td>
+            <td class="d-md-none d-lg-table-cell"><?php echo $r['time']->format('g:i a')?></td>
             <td><?php echo $r['language']['name']?></td>
             <td><?php echo $r['eventType']['name']?></td>
             <td><?php echo $location ?></td>
-            <td><?php echo $docket ?></td>
+            <td class="d-md-none d-lg-table-cell"><?php echo $docket ?></td>
             <td><?php echo $r['judge']['lastname']?></td>
             <td><?php echo $this->defendants($r['id'])?></td>
             <td class="dropleft"><a style="color:purple" id="request-dropdown-<?php echo $r['id']?>" href="javascript:void(0)" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>

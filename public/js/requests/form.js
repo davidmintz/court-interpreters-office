@@ -103,8 +103,19 @@ $(function(){
         $.post(form.attr("action"),post)
             .done(function(response){
                 if (response.validation_errors) {
-                    displayValidationErrors(response.validation_errors.request);
+                    // we can do better than this
+                    if (response.validation_errors.request) {
+                        displayValidationErrors(response.validation_errors.request);
+                        delete response.validation_errors.request;
+                    }
+                    // some might be outside the  '.request' property
+                    if (Object.keys(response.validation_errors).length) {
+                        displayValidationErrors(response.validation_errors);
+                    }
+                    return;
                 }
+                document.location = `${window.basePath}/requests/list`;
+
             }).fail(fail);
     });
 });
