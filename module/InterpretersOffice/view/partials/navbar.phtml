@@ -1,32 +1,32 @@
 <?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */
 $route = $this->layout()->routeMatch;
-$routes_labels = [
+$labels = [
     'events/add' => 'add event',
     'events'  => 'schedule',
     'events/edit'  => 'schedule',
     'admin-defendants'  => 'defendants',
+    'requests' => 'requests',
     'requests/list' => 'list',
     'requests/create' => 'create',
     'requests/search' => 'search',
-];?>
+    'interpreters/find_by_language'=>'interpreters',
+    'interpreters/find_by_name'=>'interpreters',
+];
+?>
 <ul class="navbar-nav mr-auto"><?php
-    /* @var $page Zend\Navigation\Page\Mvc */
-    foreach ($this->container as $page) :
-    // when using partials we need to manually check for ACL conditions
+/* @var $page Zend\Navigation\Page\Mvc */
+foreach ($this->container as $page) :
     $label = $page->getLabel();
     $active = false;
-    if ($label == $route
-        // this is insane. got to rewrite this whole thing.
-        or (isset($routes_labels[$route]) && $label == $routes_labels[$route])
-        or ('default'==$this->layout()->navigation_menu && strpos($route, $label) === 0)
-        or (str_replace('admin/', '', $route) == $label)):
+    if ( $label == $route
+         or isset($labels[$route]) && $label == $labels[$route] ):
         $active = true;
     endif;
+    // when using partials we need to manually check for ACL conditions
     if (false === $page->display || !$page->isVisible() || !$this->navigation()->accept($page)) :
         continue;
     endif;
-    $hasChildren = $page->hasPages();
-    if (!$hasChildren or false === $page->expand_children ) :
+    if (! $page->hasPages() or false === $page->expand_children ) :
 ?><li class="nav-item border-left<?php if ($active): ?> active<?php endif; ?>"><a title="<?php if ($page->title): echo $page->title; endif ?>" class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
 <?php else :
 ?><li class="nav-item dropdown border-left">
@@ -36,20 +36,16 @@ $routes_labels = [
         if (!$child->isVisible() || !$this->navigation()->accept($child)) :
             continue;
         endif;
-        // if (in_array($child->getLabel(),['edit',])) :
-        //     // keep it from blowing up for lack of an id parameter
-        //     continue;
-        // endif;
         $label = $child->getLabel();
-        if ($label == $route or ( isset($routes_labels[$route]) && $label == $routes_labels[$route] )) :
-            $active = true;
-        else:
-            $active = false;
-        endif;
+        if ($label == $route or ( isset($labels[$route]) && $label == $labels[$route] )) :
+             $active = true;
+         else:
+             $active = false;
+         endif;
         ?><a  title="<?php if ($page->title): echo $page->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
     <?php endforeach; ?>
     </div>
 </li>
 <?php endif; ?>
-<?php endforeach; ?>
+<?php endforeach;?>
 </ul>

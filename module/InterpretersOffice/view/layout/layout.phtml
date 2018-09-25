@@ -1,7 +1,7 @@
 <?php /** bootstrap 4 layout view script */
 echo $this->doctype();
 ?><html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
         <?php echo $this->headMeta()
          ->appendName('viewport', 'width=device-width, initial-scale=1.0, shrink-to-fit=no');?>
@@ -15,36 +15,20 @@ echo $this->doctype();
         ->appendStylesheet($this->basePath('css/style.css'))
         ->appendStylesheet($this->basePath('css/font-awesome/css/fontawesome-all.min.css'));
 echo $this->headStyle();?>
-<style>
-/**/
-.navbar-custom {
-    background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%) ;
-    background-repeat: repeat-x;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
-    border: 1px solid #e7e7e7 ;
-    padding : .25rem 1rem ;
-    background-color: #f8f8f8;
-}
-.navbar-custom a.navbar-brand { color : #777 ; } /*  letter-spacing: .1rem;*/
-.navbar-custom li > a { color : #555 !important; }
-.navbar li.active{ background-color: #fff !important; border-radius: 4px; border: 1px solid #9fcdff !important;  }
-.navbar a.active {}
-.navbar li:hover { }
-</style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container" style="min-height:400px">
-        <nav class="navbar navbar-expand-lg navbar-light rounded mb-3 navbar-custom py-0">
+        <nav class="navbar navbar-expand-lg  navbar-light bg-light rounded mb-3 py-1">
                 <a class="navbar-brand" href="<?php echo $this->url('home')?>">InterpretersOffice</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
           <div class="collapse navbar-collapse" id="navbar-collapse">
-            <?php if ($this->layout()->navigation_menu): echo $this->navigation($this->layout()->navigation_menu)->menu()->setPartial('partials/navbar.phtml'); endif;?>
+            <?php if ($this->layout()->navigation_menu):
+                echo $this->navigation($this->layout()->navigation_menu)
+                    ->menu()->setPartial('partials/navbar.phtml'); endif;?>
             <?php if ($this->layout()->user) : $user = $this->layout()->user;?>
-            <div class="navbar-right" >welcome <?php echo $user->username != $user->email ? $user->username : "$user->firstname $user->lastname"?>
+            <div>welcome <?php echo $user->username != $user->email ? $user->username : "$user->firstname $user->lastname"?>
                 <span class="px-2 py-1 border-left"><a href="<?php echo $this->url('logout')?>">log out</a></span>
             </div>
             <?php endif; ?>

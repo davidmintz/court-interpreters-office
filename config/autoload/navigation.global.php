@@ -179,10 +179,12 @@ return [
             [
                 'label' => 'admin',
                 'route' => 'admin',
+                'title' => 'main admin page',
                 'resource' => Admin\IndexController::class,
             ],
             [
                 'label' => 'schedule',
+                'title' => 'view the interpreters\' schedule',
                 'route' => 'events',
                 'resource' => Admin\EventsController::class,
 
@@ -190,17 +192,20 @@ return [
             [
                 'label' => 'add event',
                 'route' => 'events/add',
+                'title' => 'create a new event on the schedule',
                 'resource' => Admin\EventsController::class,
                 'privilege' => 'add',
             ],
             [
                 'label' => 'interpreters',
                 'route' => 'interpreters',
+                'title' => 'manage the roster of interpreters',
                 'resource' => Admin\InterpretersController::class,
             ],
             [
-                'label' => 'other lists',
+                'label' => 'other data',
                 'route' => 'admin',
+                'title' => 'manage other data entities',
                 'resource' => Admin\IndexController::class,
                 //'privilege' => 'index','action' => 'index',
                 'pages' => [
