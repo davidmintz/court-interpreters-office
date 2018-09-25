@@ -77,8 +77,8 @@ $(function(){
 
     const form = $("#request-form");
     const is_update = form.attr("action").indexOf("create") === -1;
-
-    $("#defendant-search").autocomplete(deftname_autocomplete_options);
+    const defendant_search = $("#defendant-search");
+    defendant_search.autocomplete(deftname_autocomplete_options);
     $("#time").on("change",parseTime);
     $("#date").datepicker(datepicker_options);
     $("#docket").on("change",formatDocketElement);
@@ -118,7 +118,19 @@ $(function(){
 
             }).fail(fail);
     });
+
+    $("#btn-deft-search").on("click",function(){
+        var term = defendant_search.val();
+        if (term.length < 2) {
+            return window.alert("please type at least two letters of the surname");
+        }
+        $.get('/defendants/search',{term:term})
+            .done((response)=>{console.log("got a response");})
+            .fail(fail);
+    });
 });
+
+
 
 var stuff = function()
 {
