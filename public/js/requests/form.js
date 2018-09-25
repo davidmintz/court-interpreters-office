@@ -106,3 +106,15 @@ $(function(){
             }).fail(fail);
     });
 });
+
+var stuff = () => {
+
+    $("#date").val("09/27/2018");
+    $("#time").val("10:00 am");
+    $("#language").val(62);
+    $('#docket').val("18 CR 2345");
+    $("#eventType").val(16);
+    appendDefendant(
+        {label: "Rodriguez, Eusebio", value: "3227"}
+    );
+}
