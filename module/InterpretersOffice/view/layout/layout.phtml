@@ -44,7 +44,7 @@ echo $this->headStyle();?>
           <div class="collapse navbar-collapse" id="navbar-collapse">
             <?php if ($this->layout()->navigation_menu): echo $this->navigation($this->layout()->navigation_menu)->menu()->setPartial('partials/navbar.phtml'); endif;?>
             <?php if ($this->layout()->user) : $user = $this->layout()->user;?>
-            <div class="navbar-right" >welcome <?php echo $user->username ?: $user->email ?>
+            <div class="navbar-right" >welcome <?php echo $user->username != $user->email ? $user->username : "$user->firstname $user->lastname"?>
                 <span class="px-2 py-1 border-left"><a href="<?php echo $this->url('logout')?>">log out</a></span>
             </div>
             <?php endif; ?>
