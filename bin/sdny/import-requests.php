@@ -10,6 +10,8 @@ $event_types = json_decode(file_get_contents(__DIR__.'/event-type-map.json'),tru
 $event_locations = json_decode(file_get_contents(__DIR__.'/event-location-map.json'),true);
 
 $db->exec('DELETE FROM requests');
+$db->exec("SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'");
+//update requests set date = '2013-06-13', modified = created where id = 10861;
 
 $requests_query = $db->query(
     "SELECT r.*, e.id new_event_id, e.location_id

@@ -33,12 +33,14 @@ UPDATE people SET hat_id = 3 WHERE hat_id = 1 AND id NOT IN
     WHERE lastname IN ('Garcia','Rich','de los Rios','Anderson','Fox','Hess','Gold','Festinger','Mintz','Olivero')
     AND freelance = 'N');
 /* followed by interpreters table */
+SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
 INSERT INTO interpreters (
 id, security_clearance_date, contract_expiration_date,fingerprint_date, oath_date,
 comments, address1, address2, city, state, zip, home_phone, country
 )
 (SELECT interp_id,
-    IF (security_clearance = "0000-00-00",NULL,security_clearance),
+    IF (security_clearance <> "0000-00-00",security_clearance,NULL),
     IF (contract_expiration = "0000-00-00",NULL,contract_expiration),
     IF (fingerprinted = "0000-00-00",NULL,fingerprinted),
     IF (oath = "0000-00-00",NULL,oath),
