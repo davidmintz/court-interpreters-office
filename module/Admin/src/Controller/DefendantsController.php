@@ -137,6 +137,7 @@ class DefendantsController extends AbstractActionController
         }
         return $this->redirect()->toRoute('admin-defendants');
     }
+
     /**
      * updates a defendant entity.
      */
@@ -259,6 +260,8 @@ class DefendantsController extends AbstractActionController
                     'id' => $existing_entity->getId(),
                 ]
              ]);
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 

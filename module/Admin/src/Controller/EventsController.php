@@ -226,6 +226,7 @@ class EventsController extends AbstractActionController
             );
 
         } catch (\Exception $e) {
+            // this definitely needs work
             $shit = print_r($post->get('event')['defendantEvents'], true);
             $deftEvents = $entity->getDefendantEvents();
             foreach ($deftEvents as $de) {
@@ -246,12 +247,8 @@ class EventsController extends AbstractActionController
                 "number of defendantEvent entities on the form's object: %s",
                 $form->getObject()->getdefendantEvents()->count()
             ));
-            $log->debug(
-                sprintf(
-                    "Exception %s: %s\nposted deftevents: $shit",
-                    get_class($e),
-                    $e->getMessage()
-                )
+            $log->debug(sprintf("Exception %s: %s\nposted deftevents: $shit",
+                    get_class($e), $e->getMessage())
             );
             throw $e;
         }

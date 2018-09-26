@@ -196,6 +196,7 @@ echo $this->form()->openTag($form); ?>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php
                 if ($this->defendants) {
+                    // as above
                     $helper = (new DefendantElementCollection())->setView($this);
                     foreach ($this->defendants as $i=>$deft) {
                         $deft['index'] = $i;
