@@ -461,7 +461,8 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
     public function hasRelatedEntities($id)
     {
         $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Defendant
-            d  JOIN d.events e  WHERE d.id = :id';
+             d  JOIN d.events e  WHERE d.id = :id';
+        //$dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\DefendantEvent '
         return $this->getEntityManager()->createQuery($dql)->setParameters([
             'id' => $id
         ])->getSingleScalarResult() ? true : false;
