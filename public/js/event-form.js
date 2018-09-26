@@ -553,8 +553,13 @@ var eventForm = (function () {
         /** listener for deft name search result items */
         slideout.on("click",".defendant-names li",function(){
             var element = $(this);
+            //alert(element.data("id")); return;
             $.get("/defendants/template",
-                {id:element.data("id"),name:element.text().trim()},
+                { defendant:element.data("id"),
+                  name : element.text().trim(),
+                  index : $("#defendant-names li").length,
+                  event : $("input[name='event[id]']").val()
+              },
                 function(html){
                     $("#defendant-names").append(html);
                     defendantSearchElement.val("");

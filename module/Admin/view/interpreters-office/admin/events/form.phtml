@@ -170,10 +170,13 @@ echo $this->form()->openTag($form); ?>
                     <?php
                     /** THIS IS AwKWARD. re-think and start over? */
                     if ($this->interpreters) {
+                        // $this->interpreters was set by controller following
+                        // failed validation
                         $helper = (new InterpreterElementCollection())->setView($this);
                         echo $helper->fromPost($this->interpreters);
                     } else {
-                         $interpreters = $form->getObject()->getInterpreterEvents();
+                        // interpreter-event data comes from the entity
+                        $interpreters = $form->getObject()->getInterpreterEvents();
                         if ($interpreters->count()) {
                             $helper = (new InterpreterElementCollection())->setView($this);
                             echo $helper($fieldset->get('interpreterEvents'));
@@ -181,7 +184,6 @@ echo $this->form()->openTag($form); ?>
                     }
                     ?>
                 </ul>
-
             </div>
         </div>
         <div class="form-group form-row my-2">
@@ -194,15 +196,12 @@ echo $this->form()->openTag($form); ?>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php
                 if ($this->defendants) {
-
                     $helper = (new DefendantElementCollection())->setView($this);
                     foreach ($this->defendants as $i=>$deft) {
                         $deft['index'] = $i;
                         echo $helper->fromArray($deft);
                     }
-
                 } else {
-
                     $defendants = $form->getObject()->getDefendantEvents();
                     if ($defendants->count()) {
                         $helper = (new DefendantElementCollection())->setView($this);

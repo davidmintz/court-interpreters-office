@@ -87,6 +87,7 @@ TEMPLATE;
      */
     public function fromArray(array $data)
     {
+        //return sprintf("<li><pre>%s</pre></li>",print_r($data,true));
         $i = $data['index'];
         $name = $this->getView()->escapeHtml($data['name']);
         return sprintf(

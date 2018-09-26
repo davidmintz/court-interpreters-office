@@ -137,13 +137,13 @@ class EventsController extends AbstractActionController
             $form->setData($data);
             if (! $form->isValid()) {
                 if ($input) {
-                    $defendantEvents = isset($input['defendantEvents']) ?
+                    $defendants = isset($input['defendantEvents']) ?
                         $input['defendantEvents'] : [];
                     $interpreters = isset($input['interpreterEvents']) ?
                         $input['interpreterEvents'] : [];
                 }//print_r($form->getMessages());
                 return $viewModel
-                    ->setVariables(compact('defendantEvents', 'interpreters'));
+                    ->setVariables(compact('defendants', 'interpreters'));
             } else {
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
@@ -184,107 +184,78 @@ class EventsController extends AbstractActionController
         $form->bind($entity);
         $modified = $entity->getModified();
         $events->trigger('pre.populate');
-        /*
-        $log->info(sprintf("number of defendantEvent entities on the entity: %s",
-            $entity->getdefendantEvents()->count()));
-        $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
-                $form->getObject()->getdefendantEvents()->count()
-        $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
-                $form->getObject()->getdefendantEvents()->count()));
-                $deftEvents = $entity->getDefendantEvents();
-                foreach ($deftEvents as $de) {
-                    $d = $de->getDefendant();
-                    if ($d) {
-                        $log->debug(
-                            "deftEvent has deft entity, with id: ".$d->getId(). " at ".__LINE__
-                        );
-                    } else {
-                        $log->debug("wtf? deft entity is " .gettype($d). " at ".__LINE__ );
-                    }
-                }
 
-        */
         if (! $this->getRequest()->isPost()) {
             return $view;
         }
         $post = $this->getRequest()->getPost();
         $events->trigger('pre.validate', $this);
         $form->setData($post);
-        if ($form->isValid()) {
-            // $log->info("we have been POSTed, validation OK");
-            // $log->info(sprintf("number of defendantEvent entities on the entity: %s",
-            //     $entity->getDefendantEvents()->count()));
-            // $log->info(sprintf("number of defendantEvent entities on the form's object: %s",
-            //        $form->getObject()->getDefendantEvents()->count()));
-                    $deftEvents = $entity->getDefendantEvents();
+        if (! $form->isValid()) {
+            $input = $post->get('event');
+            if ($input) {
+                $defendants = isset($input['defendantEvents']) ?
+                    $input['defendantEvents'] : [];
+                $interpreters = isset($input['interpreterEvents']) ?
+                    $input['interpreterEvents'] : [];
+            }
+            return $view->setVariables(compact('defendants', 'interpreters'));
+        }
+        try {
+            $this->entityManager->flush();
+            $url = $this->getEvent()->getApplication()
+                ->getServiceManager()->get('ViewHelperManager')
+                ->get('url')('events');
+            $date = $entity->getDate();
+            if ($modified != $entity->getModified() or
+            $this->params()->fromPost('deftnames_modified')) {
+                $verbiage = 'updated';
+            } else {
+                $verbiage = 'saved (unmodified)';
+            }
+            $this->flashMessenger()->addSuccessMessage(
+                sprintf(
+                    "This event has been successfully $verbiage on the "
+                    .'schedule for <a href="%s">%s</a>',
+                    $url . $date->format('/Y/m/d'),
+                    $date->format('l d-M-Y')
+                )
+            );
+            return $this->redirect()->toRoute(
+                'events/view', ['id' => $entity->getId()]
+            );
+
+        } catch (\Exception $e) {
+            $shit = print_r($post->get('event')['defendantEvents'], true);
+            $deftEvents = $entity->getDefendantEvents();
             foreach ($deftEvents as $de) {
                 $d = $de->getDefendant();
                 if ($d) {
                     $log->debug(
-                        "deftEvent has deft entity, with id: ".$d->getId(). " at ".__LINE__
+                        "deftEvent has deft entity, with id: ".$d->getId()
                     );
                 } else {
-                    $log->debug("wtf? deft entity is " .gettype($d). " at ".__LINE__);
+                    $log->debug("wtf?  deft entity is " . gettype($d)  . " at ".__LINE__);
                 }
             }
-            try {
-                $this->entityManager->flush();
-                $url = $this->getEvent()->getApplication()
-                ->getServiceManager()->get('ViewHelperManager')
-                ->get('url')('events');
-                $date = $entity->getDate();
-                if ($modified != $entity->getModified() or
-                $this->params()->fromPost('deftnames_modified')) {
-                    $verbiage = 'updated';
-                } else {
-                    $verbiage = 'saved (unmodified)';
-                }
-                $this->flashMessenger()->addSuccessMessage(
-                    sprintf(
-                        "This event has been successfully $verbiage on the "
-                        .'schedule for <a href="%s">%s</a>',
-                        $url . $date->format('/Y/m/d'),
-                        $date->format('l d-M-Y')
-                    )
-                );
-                    return $this->redirect()->toRoute(
-                        'events/view',
-                        ['id' => $entity->getId()]
-                    );
-            } catch (\Exception $e) {
-                $shit = print_r($post->get('event')['defendantEvents'], true);
-                $deftEvents = $entity->getDefendantEvents();
-                foreach ($deftEvents as $de) {
-                    $d = $de->getDefendant();
-                    if ($d) {
-                        $log->debug(
-                            "deftEvent has deft entity, with id: ".$d->getId()
-                        );
-                    } else {
-                        $log->debug("wtf?  deft entity is " . gettype($d)  . " at ".__LINE__);
-                    }
-                }
-                $log->info(sprintf(
-                    "number of defendantEvent entities on the entity: %s",
-                    $entity->getDefendantEvents()->count()
-                ));
-                $log->info(sprintf(
-                    "number of defendantEvent entities on the form's object: %s",
-                    $form->getObject()->getdefendantEvents()->count()
-                ));
-
-                $log->debug(
-                    sprintf(
-                        "Exception %s: %s\nposted deftevents: $shit",
-                        get_class($e),
-                        $e->getMessage()
-                    )
-                );
-                //printf("<pre>%s</pre>",print_r($form->getData()->getDefendantEvents()->count(),true));
-                throw $e;
-            }
+            $log->info(sprintf(
+                "number of defendantEvent entities on the entity: %s",
+                $entity->getDefendantEvents()->count()
+            ));
+            $log->info(sprintf(
+                "number of defendantEvent entities on the form's object: %s",
+                $form->getObject()->getdefendantEvents()->count()
+            ));
+            $log->debug(
+                sprintf(
+                    "Exception %s: %s\nposted deftevents: $shit",
+                    get_class($e),
+                    $e->getMessage()
+                )
+            );
+            throw $e;
         }
-        return $view;
+
     }
 
     /**
