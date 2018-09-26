@@ -57,9 +57,10 @@ const deftname_autocomplete_options = {
         $(this).val(ui.item.label);
     },
     open : function() {
-        // if (slideout.is(":visible")) {
-        //     slideout.hide();
-        // }
+        var slideout =  $("#deft-results-slideout");
+        if (slideout.is(":visible")) {
+            slideout.hide();
+        }
     }
 };
 
@@ -78,6 +79,8 @@ $(function(){
     const form = $("#request-form");
     const is_update = form.attr("action").indexOf("create") === -1;
     const defendant_search = $("#defendant-search");
+    const slideout = $("#deft-results-slideout");
+
     defendant_search.autocomplete(deftname_autocomplete_options);
     $("#time").on("change",parseTime);
     $("#date").datepicker(datepicker_options);
@@ -119,15 +122,45 @@ $(function(){
             }).fail(fail);
     });
 
+    /**
+     * if they can't or don't want to find the name through autocompletion,
+     * clicking the search icon fetches results, if any, otherwise display
+     * a form for adding arbitrary names     
+     */
     $("#btn-deft-search").on("click",function(){
+
         var term = defendant_search.val();
         if (term.length < 2) {
             return window.alert("please type at least two letters of the surname");
         }
         $.get('/defendants/search',{term:term})
-            .done((response)=>{console.log("got a response");})
+            .done((response)=>{
+                $("#deft-results").html(response);
+                if (0 === $("#deft-results ul.defendant-names").length) {
+                    $("#form-add-deft").show();
+                } else {
+                    $("#form-add-deft").hide();
+                }
+                slideout.toggle("slide");
+            })
             .fail(fail);
     });
+
+    /**
+     * when they click a name in the search results, add it to the form
+     */
+    slideout.on("click","li.list-group-item a",(event)=>{
+        event.preventDefault();
+        var element = $(event.target);
+        var value = element.parent().data("id");
+        var label = element.text().trim();
+        appendDefendant({value, label});
+        slideout.toggle("slide");
+    });
+
+    $("#deft-results-slideout button.close").on("click",
+        () => slideout.toggle("slide")
+    );
 });
 
 

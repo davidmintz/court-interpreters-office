@@ -9,6 +9,15 @@
             ->appendFile($this->basePath('js/requests/form.js'));
     $this->headStyle()->captureStart()?>
         span.fas:hover { cursor : pointer; }
+        #deft-results-slideout {
+            position : absolute;
+            z-index: 100;
+            display : none;
+            left : 100px;
+            top : 120px;
+            min-height : 200px;
+
+        }
     <?php $this->headStyle()->captureEnd();
     $messenger = $this->flashMessenger();
     if ($messenger->hasErrorMessages()) :
@@ -27,6 +36,7 @@
     $form->setAttribute('action',$action);
     $form->prepare();
     $fieldset = $this->form->get('request');
+
     // try to set default judge and courtroom, if applicable
     $user = $this->layout()->user;
     if ($user->judge_ids && 1 == count($user->judge_ids)) :
@@ -47,7 +57,30 @@
 <div class="center-block mx-auto" style="max-width:800px">
     <h2 class="navigation mb-3"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
     <div class="alert alert-warning" id="error-message" style="display:none"></div>
-    <div id="deft-results-slideout" style="display:none">content</div>
+    <div id="deft-results-slideout" class="bg-light border border-info shadow rounded p-3" >
+        <h4>search results <button type="button" class="float-right close" aria-label="close"><span aria-hidden="true">&times;</span></button></h4>
+        <div id="deft-results">
+
+        </div>
+        <form style="display:none" id="form-add-deft" action="javascript:void()" method="post">
+            <h4 class="border border-top p-2 mt-2">add a name</h4>
+            <div class="form-group">
+                <label class="" for="surname">surname(s)</label>
+                <div class="">
+                    <input type="text" class="form-control" name="surnames" value="" id="surnames">
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="" for="given_names">given name(s)</label>
+                <div class="">
+                    <input type="text" class="form-control" name="given name(s)" value="" id="given_names">
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="button" id="btn-add-new" class="btn btn-success">add</button>
+            </div>
+        </form>
+    </div>
     <?php  echo  $this->form()->openTag($form);  ?>
     <div class="form-group form-row">
         <div id="error_duplicate" class="col-sm-7 offset-sm-3 alert alert-warning validation-error" style="display:none">

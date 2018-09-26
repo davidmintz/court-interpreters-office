@@ -7,15 +7,15 @@ if (! $this->paginator->count()) :
     echo "no names found matching <strong>$search</strong>";
     return;
 endif;
+//<!--<span title="add this defendant" class="float-right bg-info text-light rounded p-1 fas fa-plus"></span>-->
 ?><ul class="list-group defendant-names" style="font-size:90%"><?php
 foreach ($paginator as $deft) :
     ?><li data-id="<?php echo $deft->getId()?>" class="list-group-item align-middle py-1 ">
     <a href="javascript:void(0)">
     <?php
-    echo $this->escapeHtml(sprintf('%s, %s', $deft->getLastname(), $deft->getFirstname()));
-    ?><!--
-    <span title="add this defendant" class="float-right bg-info text-light rounded p-1 fas fa-plus"></span>
-      -->
+    echo $this->escapeHtml(sprintf('%s, %s', $deft->getLastname(),
+        $deft->getFirstname()));
+    ?>
     </a></li>
     <?php
 endforeach;
