@@ -125,10 +125,11 @@ $(function(){
     /**
      * if they can't or don't want to find the name through autocompletion,
      * clicking the search icon fetches results, if any, otherwise display
-     * a form for adding arbitrary names     
+     * a form for adding arbitrary names
      */
-    $("#btn-deft-search").on("click",function(){
-
+    $("#btn-deft-search").on("click",function(event)
+    {
+        event.preventDefault();
         var term = defendant_search.val();
         if (term.length < 2) {
             return window.alert("please type at least two letters of the surname");
@@ -156,11 +157,19 @@ $(function(){
         var label = element.text().trim();
         appendDefendant({value, label});
         slideout.toggle("slide");
+        defendant_search.val("");
     });
 
     $("#deft-results-slideout button.close").on("click",
         () => slideout.toggle("slide")
     );
+
+    /** defendant search result: pagination links ========================*/
+    slideout.on("click",".pagination a",function(event){
+        event.preventDefault();
+        $("#deft-results").load(this.href);
+    });
+
 });
 
 
