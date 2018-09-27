@@ -1,13 +1,13 @@
--- MySQL dump 10.15  Distrib 10.0.34-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	10.0.34-MariaDB-0ubuntu0.16.04.1
+-- Server version	5.7.23-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -108,7 +108,7 @@ DROP TABLE IF EXISTS `defendant_names`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `defendant_names` (
-  `id` mediumint(8) unsigned NOT NULL,
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `given_names` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `surnames` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
@@ -484,6 +484,7 @@ CREATE TABLE `requests` (
   `comments` varchar(500) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `event_id` mediumint(8) unsigned DEFAULT NULL,
   `pending` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `extra_json_data` varchar(500) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_event_id` (`event_id`),
   KEY `evt_id` (`event_id`),
@@ -568,23 +569,21 @@ DROP TABLE IF EXISTS `view_locations`;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE TABLE `view_locations` (
-  `id` tinyint NOT NULL,
-  `type_id` tinyint NOT NULL,
-  `parent_location_id` tinyint NOT NULL,
-  `name` tinyint NOT NULL,
-  `comments` tinyint NOT NULL,
-  `active` tinyint NOT NULL,
-  `parent` tinyint NOT NULL,
-  `category` tinyint NOT NULL
-) ENGINE=MyISAM */;
+/*!50001 CREATE VIEW `view_locations` AS SELECT 
+ 1 AS `id`,
+ 1 AS `type_id`,
+ 1 AS `parent_location_id`,
+ 1 AS `name`,
+ 1 AS `comments`,
+ 1 AS `active`,
+ 1 AS `parent`,
+ 1 AS `category`*/;
 SET character_set_client = @saved_cs_client;
 
 --
 -- Final view structure for view `view_locations`
 --
 
-/*!50001 DROP TABLE IF EXISTS `view_locations`*/;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -607,4 +606,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-09-24 18:50:31
+-- Dump completed on 2018-09-27 13:11:51
