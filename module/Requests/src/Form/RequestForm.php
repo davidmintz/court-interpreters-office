@@ -56,7 +56,7 @@ class RequestForm extends ZendForm
         parent::__construct($this->formName, $options);
         $fieldset = new $this->fieldsetClass($objectManager, $options);
         $this->add($fieldset);
-        
+
         if ("update" == $this->options['action']) {
             $this->add([
                 'type' => 'Hidden',
@@ -65,6 +65,17 @@ class RequestForm extends ZendForm
             ]);
         }
         $this->addCsrfElement();
+    }
+
+    public function postValidate()
+    {
+        // subject to reconsideration, the least ugly way to store the
+        // names they could|would not find in the database
+        if ($this->get('request')->has('extra_defendants')) {
+            $names = $this->get('request')
+                ->get('extra_defendants')->getValue();
+            $this->getObject()->setExtraData(['defendants'=>$names]);
+        }
     }
 
 
