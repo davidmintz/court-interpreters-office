@@ -79,6 +79,7 @@ $(function(){
     const form = $("#request-form");
     const is_update = form.attr("action").indexOf("create") === -1;
     const defendant_search = $("#defendant-search");
+    const defendant_name_form = $("#form-add-deft");
     const slideout = $("#deft-results-slideout");
 
     defendant_search.autocomplete(deftname_autocomplete_options);
@@ -138,9 +139,9 @@ $(function(){
             .done((response)=>{
                 $("#deft-results").html(response);
                 if (0 === $("#deft-results ul.defendant-names").length) {
-                    $("#form-add-deft").show();
+                    defendant_name_form.show();
                 } else {
-                    $("#form-add-deft").hide();
+                    defendant_name_form.hide();
                 }
                 slideout.toggle("slide");
             })
@@ -160,9 +161,17 @@ $(function(){
         defendant_search.val("");
     });
 
+    /** close button for dismissing deft-results */
     $("#deft-results-slideout button.close").on("click",
         () => slideout.toggle("slide")
     );
+
+    /** button to display the form for arbitrary names */
+    $("#btn-show-deft-form").on("click",function(event){
+        event.preventDefault();
+        $("#deft-results, #btn-show-deft-form").slideUp();
+        defendant_name_form.show();
+    });
 
     /** defendant search result: pagination links ========================*/
     slideout.on("click",".pagination a",function(event){
@@ -170,6 +179,20 @@ $(function(){
         $("#deft-results").load(this.href);
     });
 
+    /** add a new(ish) name to the request form */
+    $("#btn-add-new").on("click",function(event)
+    {
+        event.preventDefault();
+        // validate
+        $.post("/defendants/validate",defendant_name_form.serialize())
+            .done((response)=>{
+                if (! response.valid) {
+                    return displayValidationErrors(response.validation_errors);
+                }
+                // otherwise, add it as a "special" thing
+
+            });
+    });
 });
 
 

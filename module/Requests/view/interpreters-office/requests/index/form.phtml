@@ -58,23 +58,21 @@
     <h2 class="navigation mb-3"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
     <div class="alert alert-warning" id="error-message" style="display:none"></div>
     <div id="deft-results-slideout" class="bg-light border border-info shadow rounded p-3" >
-        <h4>search results <button type="button" class="float-right close" aria-label="close"><span aria-hidden="true">&times;</span></button></h4>
+        <h4 class="text-muted">search results <button type="button" class="float-right close" aria-label="close"><span aria-hidden="true">&times;</span></button></h4>
         <div id="deft-results">
-
+        </div>
+        <div class="text-center">
+            <button id="btn-show-deft-form" title="display a form for entering a name that is not found in the database" class="btn btn-sm btn-primary mt-2 text-center border rounded">name not found?</button>
         </div>
         <form style="display:none" id="form-add-deft" action="javascript:void()" method="post">
             <h4 class="border border-top p-2 mt-2">add a name</h4>
             <div class="form-group">
                 <label class="" for="surname">surname(s)</label>
-                <div class="">
-                    <input type="text" class="form-control" name="surnames" value="" id="surnames">
-                </div>
+                <input type="text" class="form-control" name="surnames" value="" id="surnames" required>
             </div>
             <div class="form-group">
-                <label  class="" for="given_names">given name(s)</label>
-                <div class="">
-                    <input type="text" class="form-control" name="given name(s)" value="" id="given_names">
-                </div>
+                <label for="given_names">given name(s)</label>
+                <input type="text" class="form-control" name="given_names" value="" id="given_names" required>
             </div>
             <div class="form-group">
                 <button type="button" id="btn-add-new" class="btn btn-success">add</button>

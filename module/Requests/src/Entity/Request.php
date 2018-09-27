@@ -190,6 +190,20 @@ class Request
      */
     protected $defendants;
 
+
+    /**
+     * Extra data in JSON format
+     *
+     * This is for stuffing extra stuff into the record that doesn't belong
+     * anywhere else, e.g., defendant names that they could not or would not
+     * locate in the database but which we do not want them to try to insert
+     *
+     * @ORM\Column(type="string",name="extra_json_data",length=500,nullable=false,options={"default":""})
+     *
+     * @var string
+     */
+    protected $extraData = '';
+
     /*CREATE TABLE `requests` (
   `id` mediumint(8) unsigned NOT NULL,
   `date` date NOT NULL,
@@ -663,5 +677,18 @@ class Request
         foreach ($defendants as $defendant) {
             $this->defendants->removeElement($defendant);
         }
+    }
+
+    public function setExtraData(Array $data)
+    {
+        $json = json_encode($data);
+        $this->extraData = $json;
+
+        return $this;
+    }
+
+    public function getExtraData()
+    {
+        return $this->extraData ? json_decode($this->extraData) : null;
     }
 }

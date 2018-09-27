@@ -14,6 +14,8 @@ use InterpretersOffice\Entity;
 use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection
     as DeftNameHelper;
 
+use InterpretersOffice\Form\Validator\ProperName;
+
 /**
  *
  * for fetching defendant data for autocompletion, etc
@@ -104,5 +106,91 @@ class DefendantsController extends AbstractActionController
         }
 
         return $viewModel;
+    }
+
+    /**
+     * validates given name(s) and surname(s)
+     *
+     * @return JsonModel
+     */
+    public function validateAction()
+    {
+        $data = $this->params()->fromPost();
+        $filter = $this->getInputFilter();
+        $filter->setData($data);
+        if (! $filter->isValid()) {
+            return new JsonModel([
+                'valid' => false,
+                'validation_errors' => $filter->getMessages(),
+            ]);
+        }
+
+        return new JsonModel(['valid'=>true]);
+    }
+
+    /**
+     * creates and returns an InputFilter for a proper name
+     *
+     * @return \Zend\InputFilter\InputFilter input filter for defendant name
+     */
+    protected function getInputFilter()
+    {
+        $filter = new \Zend\InputFilter\InputFilter();
+        $filter->add([
+            'name' => 'given_names',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => ['messages' => ['isEmpty' => 'given (first) name is required']],
+                    'break_chain_on_failure'=> true,
+                ],
+                [
+                    'name' => 'StringLength',
+                    'options'=> [
+                        'min'=> 2,
+                        'max'=> 60,
+                        'messages' => [
+                            'stringLengthTooShort' => 'minimum length is %min% characters',
+                            'stringLengthTooLong' => 'maximum length is %max% characters',
+                        ],
+                    ],
+                    'break_chain_on_failure'=> true,
+                ],
+                [
+                    'name' => ProperName::class,
+                    'options' =>['type' => 'first']
+                ]
+            ],
+        ]);
+        $filter->add([
+            'name' => 'surnames',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => ['messages' => ['isEmpty' => 'surname (last name) is required']],
+                    'break_chain_on_failure'=> true,
+                ],
+                [
+                    'name' => 'StringLength',
+                    'options'=> [
+                        'min'=> 2,
+                        'max'=> 60,
+                        'messages' => [
+                            'stringLengthTooShort' => 'minimum length is %min% characters',
+                            'stringLengthTooLong' => 'maximum length is %max% characters',
+                        ],
+                    ],
+                    'break_chain_on_failure'=> true,
+                ],
+                [
+                    'name' => ProperName::class,
+                    'options' =>['type' => 'last']
+                ]
+            ],
+        ]);
+
+        return $filter;
     }
 }
