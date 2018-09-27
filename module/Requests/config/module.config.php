@@ -7,10 +7,10 @@ namespace InterpretersOffice\Requests;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
-$environment = getenv('environment') ?: 'development';
+//$environment = getenv('environment') ?: 'development';
 
 // set to 'array' to disable
-$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
+//$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
 
 return [
     'controllers' => [
@@ -103,6 +103,18 @@ return [
     ],
     'router' => [
         'routes' => [
+            'defendants' => [
+                'type' => Literal::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/defendants/validate',
+                    'defaults' => [
+                        'module' => 'InterpretersOffice',
+                        'controller' => 'InterpretersOffice\Controller\DefendantsController',
+                        'action' => 'validate',
+                    ],
+                ]
+            ],
             'requests' => [
                 'type' => Literal::class,
                 'may_terminate' => true,
