@@ -6,10 +6,17 @@ var $, displayValidationErrors, formatDocketElement, parseTime,
  */
 var appendDefendant = function(data)
 {
+    var element_name = "request[defendants][]";
+    var id = "deft-"+data.value;
+    if (data.extra_deftname === true)
+    {
+        element_name = "request[extra_defendants][]";
+        id = "deft-"+moment().valueOf();
+    }
     var html =
-            `<li id="deft-${data.value}" class="list-group-item pr-0 py-0">
+            `<li id="${id}" class="list-group-item pr-0 py-0">
             <span class="float-left pt-2">${data.label}</span>
-            <input type="hidden" name="request[defendants][]" value="${data.value}">
+            <input type="hidden" name="${element_name}" value="${data.value}">
             <button class="btn btn-warning btn-remove-item float-right border" title="remove this defendant">
             <span class="fas fa-times" aria-hidden="true"></span>
             <span class="sr-only">remove this defendant
@@ -143,6 +150,8 @@ $(function(){
                 } else {
                     defendant_name_form.hide();
                 }
+                // these might have gotten hidden
+                $("#deft-results, #btn-show-deft-form").show();
                 slideout.toggle("slide");
             })
             .fail(fail);
@@ -190,8 +199,14 @@ $(function(){
                     return displayValidationErrors(response.validation_errors);
                 }
                 // otherwise, add it as a "special" thing
-
-            });
+                var label = $("#surnames").val().trim()+ ", "
+                    + $("#given_names").val().trim();
+                //var data = { label, value : label };
+                appendDefendant({ label, value : label, extra_deftname : true});
+                defendant_search.val("");
+                $("#form-add-deft")[0].reset();
+                slideout.toggle("slide");
+            }).fail(fail);
     });
 });
 

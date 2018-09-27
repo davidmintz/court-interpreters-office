@@ -691,4 +691,10 @@ class Request
     {
         return $this->extraData ? json_decode($this->extraData) : null;
     }
+
+    public function getExtraDefendantNames()
+    {
+        $data = $this->getExtraData();
+        // etc
+    }
 }

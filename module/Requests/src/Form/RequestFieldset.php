@@ -65,6 +65,18 @@ class RequestFieldset extends AbstractEventFieldset
         $event_type_element->setValueOptions($opts);
 
         $this->addDefendantsElement();
+
+        $this->add([
+            'name' => 'extra_defendants',
+            'type' => 'Zend\Form\Element\Select',
+            'options' => [
+                'value_options' => [],
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
+                'multiple' => 'multiple',
+            ],
+        ]);
     }
 
     public function addDefendantsElement()
@@ -141,6 +153,7 @@ class RequestFieldset extends AbstractEventFieldset
                 'placeholder' => 'any noteworthy details or special instructions'
             ]
         ]);
+
         return $this;
     }
 
@@ -199,7 +212,7 @@ class RequestFieldset extends AbstractEventFieldset
 
             'anonymousJudge' => [
                 'required' => false,
-                'allow_empty' => true,                
+                'allow_empty' => true,
             ],
 
             'eventType' => [
@@ -244,6 +257,10 @@ class RequestFieldset extends AbstractEventFieldset
                     ['name' => 'StringTrim'],
                 ],
             ],
+            'extra_defendants' => [
+                'required' => false,
+                'allow_empty' => true,
+            ]
         ];
         return array_merge($this->inputFilterspec,$spec);
     }

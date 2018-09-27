@@ -48,7 +48,7 @@ class IndexController extends AbstractActionController
 
     public function viewAction()
     {
-        
+
     }
     public function searchAction()
     {
@@ -123,6 +123,13 @@ class IndexController extends AbstractActionController
                         'there is already a request with this date, time,
                         judge, type of event, defendant(s), docket, and language'
                     ]]]]);
+                }
+                // subject to reconsideration, the least ugly way to store the
+                // names they could|would not find in the database
+                if ($form->get('request')->has('extra_defendants')) {
+                    $names = $form->get('request')
+                        ->get('extra_defendants')->getValue();
+                    $entity->setExtraData(['defendants'=>$names]);
                 }
                 $this->objectManager->persist($entity);
                 $this->objectManager->flush();
