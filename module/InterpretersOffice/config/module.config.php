@@ -31,7 +31,6 @@ return [
     ],
     'controllers' => [
         'factories' => [
-           Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
            Controller\AccountController::class => Controller\Factory\AccountControllerFactory::class,
            Controller\ExampleController::class => Controller\Factory\ExampleControllerFactory::class,
@@ -39,6 +38,7 @@ return [
            Controller\DefendantsController::class => Controller\Factory\DefendantsControllerFactory::class,
         ],
         'invokables' => [
+            Controller\IndexController::class => Controller\IndexController::class,
             //Controller\ExampleController::class => Controller\ExampleController::class,
         ],
     ],
