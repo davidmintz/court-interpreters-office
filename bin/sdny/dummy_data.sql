@@ -237,7 +237,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
  ('Codouni','Marwan','',@interpreter_hat,'interpreter',1,'arabic_interpreter_1@example.org',
      '321 321-4321');
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
-          VALUES (last_insert_id(),'','','','','','','');
+      VALUES (last_insert_id(),'','','','','','','');
 
 INSERT INTO interpreters_languages (interpreter_id, language_id)
       VALUES (last_insert_id(), (SELECT id FROM languages WHERE name = 'Arabic')
