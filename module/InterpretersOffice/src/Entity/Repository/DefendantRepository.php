@@ -95,7 +95,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         } else {
              $non_hypthenated = str_replace('-', ' ', $name['last']);
              $dql .= '(d.surnames LIKE :surnames OR d.surnames LIKE :non_hyphenated) ';
-             $parameters['non_hyphenated'] = $non_hypthenated;
+             $parameters['non_hyphenated'] = "$non_hypthenated%";
         }
 
         if ($name['first']) {
