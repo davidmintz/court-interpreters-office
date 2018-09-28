@@ -40,7 +40,8 @@ $insert = $db->prepare(
         :modified_by_id,
         :comments,
         :event_id,
-        :pending
+        :pending,
+        :extra_json_data
     )'
 );
 $judges = $db->query(
@@ -71,7 +72,7 @@ while ($row = $res->fetch(\PDO::FETCH_ASSOC)) {
 $count = 0;
 
 while ($r = $requests_query->fetch(\PDO::FETCH_OBJ)) {
-    // these can be copied directly, no translation required
+    // these are predictable
     $params = [
         'id'=>$r->id,
         'date'=>$r->date,
@@ -81,6 +82,7 @@ while ($r = $requests_query->fetch(\PDO::FETCH_OBJ)) {
         'created'=> $r->created,
         'comments' => $r->comments,
         'modified' => $r->modified,
+        'extra_json_data' => '',
     ];
     // the judge
     if (key_exists($r->judge_id,$pseudo_judges)) {
