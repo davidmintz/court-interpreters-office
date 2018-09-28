@@ -13,14 +13,25 @@ var appendDefendant = function(data)
         element_name = "request[extra_defendants][]";
         id = "deft-"+moment().valueOf();
     }
+    // make sure the guy is not already there
+    var duplicate = false;
+    $("#defendants li span.deft-name").each(function(){
+        console.log($(this).text());
+        if ($(this).text().toLowerCase() === data.label.toLowerCase()) {
+            duplicate = true;
+            return false;
+        }
+    });
+    if (duplicate) {
+        return alert("this name has already been added to the form");
+    }
     var html =
             `<li id="${id}" class="list-group-item pr-0 py-0">
-            <span class="float-left pt-2">${data.label}</span>
+            <span class="float-left pt-2 deft-name">${data.label}</span>
             <input type="hidden" name="${element_name}" value="${data.value}">
             <button class="btn btn-warning btn-remove-item float-right border" title="remove this defendant">
             <span class="fas fa-times" aria-hidden="true"></span>
-            <span class="sr-only">remove this defendant
-            </span></button>
+            <span class="sr-only">remove this defendant</span></button>
             </li>`;
     $("#defendants").append(html);
 };
@@ -201,7 +212,6 @@ $(function(){
                 // otherwise, add it as a "special" thing
                 var label = $("#surnames").val().trim()+ ", "
                     + $("#given_names").val().trim();
-                //var data = { label, value : label };
                 appendDefendant({ label, value : label, extra_deftname : true});
                 defendant_search.val("");
                 $("#form-add-deft")[0].reset();
