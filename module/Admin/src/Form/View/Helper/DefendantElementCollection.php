@@ -57,13 +57,9 @@ TEMPLATE;
             $name = $this->getView()->escapeHtml($de->getDefendant());
             $markup .= sprintf(
                 $this->template,
-                $i,
-                $de->getDefendant()->getId(),
-                $i,
-                $de->getEvent()->getId(),
-                $i,
-                $name,
-                $name
+                $i, $de->getDefendant()->getId(),
+                $i, $de->getEvent()->getId(),
+                $i, $name, $name
             );
         }
         return $markup;
@@ -92,13 +88,9 @@ TEMPLATE;
         $name = $this->getView()->escapeHtml($data['name']);
         return sprintf(
             $this->template,
-            $i,
-            $data['defendant'],
-            $i,
-            $data['event'],
-            $i,
-            $name,
-            $name
+            $i, $data['defendant'],
+            $i, $data['event'],
+            $i, $name,  $name
         );
     }
 }
