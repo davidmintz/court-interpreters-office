@@ -10,24 +10,16 @@ use Zend\View\Model\ViewModel;
 
 /**
  *  IndexController.
- *
- *  Currently, just for making sure the application runs, basic routing is
- *  happening, service container is working, views are rendered, etc.
  */
 class IndexController extends AbstractActionController
 {
 
-
     /**
-     * constructor arguments are temporary, for informal testing/experimenting.
+     * constructor
      *
-     * @param \InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory $formFactory
-     * @param EntityManagerInterface                                      $em
      */
-    public function __construct() //$formFactory, $em
+    public function __construct()
     {
-        //$this->formFactory = $formFactory;
-        //$this->em = $em;
     }
 
     /**
@@ -37,9 +29,6 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        //$connection = $this->em->getConnection();
-        //$driver = $connection->getDriver()->getName();
-
         return new ViewModel();
     }
 
