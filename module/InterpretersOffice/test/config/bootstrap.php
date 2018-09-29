@@ -21,7 +21,7 @@ $dbParams = $config['doctrine']['connection']['orm_default']['params'];
 $dbParams['driver'] = 'pdo_sqlite';
 
 $entitiesPath = [
-    //__DIR__ .'/../../../../module/Requests/src/Requests/Entity/',
+    __DIR__ .'/../../../../module/Requests/src/Entity/',
     __DIR__.'/../../../../module/InterpretersOffice/src/Entity/',
 
 ];
