@@ -275,3 +275,81 @@ class ExampleController extends AbstractActionController
             ->setTemplate('interpreters-office/example/shit.phtml');
     }
 }
+
+/*
+ *
+ * this demonstrates that we can build a form from annotations
+ * and bind the form to a Doctrine entity, then add more elements
+
+public function testAction()
+{
+    $em = $this->em;
+    // http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
+    $builder = new  \Zend\Form\Annotation\AnnotationBuilder($em);
+
+    //http://stackoverflow.com/questions/29335878/zend-framework-2-form-issues-using-doctrine-as-a-hydrator
+    //  you should invoke setHydrator() on form itself after adding the base fieldset.
+
+    $form = $builder->createForm(\InterpretersOffice\Entity\Person::class);
+    $form->setHydrator(new \DoctrineModule\Stdlib\Hydrator\DoctrineObject($em));
+    // the firstname, middlename and lastname elements have already been
+    // added and configured.
+    // this demonstrates that we can add more after the fact
+    $element = new \DoctrineModule\Form\Element\ObjectSelect(
+        'hat',
+        [
+        'object_manager' => $em,
+        'target_class' => 'InterpretersOffice\Entity\Hat',
+        'property' => 'name',
+        'label' => 'hat',
+        'display_empty_item' => true,
+        ]
+    );
+    $filter = $form->getInputFilter();
+    //\Zend\Debug\Debug::dump(get_class_methods($filter));
+    $filter->add([
+        'name' => 'hat',
+        'validators' => [
+            [
+                'name' => 'Zend\Validator\NotEmpty',
+                'options' => [
+                    'messages' => [
+                        'isEmpty' => 'the shit is empty, yo!',
+                    ],
+                ],
+            ],
+        ],
+    ]);
+    //https://docs.zendframework.com/zend-inputfilter/intro/
+    $form->add($element);
+
+    $viewModel = new ViewModel(['form' => $form]);
+    $request = $this->getRequest();
+    if ($request->isPost()) {
+        $data = $request->getPost();
+        $person = new \InterpretersOffice\Entity\Person();
+        $form->bind($person);
+        $form->setData($data);
+        if (! $form->isValid()) {
+            return $viewModel;
+        }
+        $em->persist($person);
+        $em->flush();
+        $this->flashMessenger()->addMessage('congratulations! you inserted an entity.');
+
+        return $this->redirect()->toRoute('home');
+    }
+
+    return new ViewModel(['form' => $form]);
+}
+
+
+ * temporary; for doodling and experimenting.
+ *
+ * @return ViewModel
+
+public function otherTestAction()
+{
+    return $viewModel;
+}
+ */
