@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.23-0ubuntu0.18.04.1
+-- Server version	5.7.23-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -453,8 +453,7 @@ CREATE TABLE `people` (
   `active` tinyint(1) NOT NULL,
   `discr` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `hat_email_idx` (`email`,`hat_id`),
-  UNIQUE KEY `active_email_idx` (`email`,`active`),
+  UNIQUE KEY `hat_active_email_idx` (`email`,`hat_id`,`active`),
   KEY `IDX_28166A268C6A5980` (`hat_id`),
   CONSTRAINT `FK_28166A268C6A5980` FOREIGN KEY (`hat_id`) REFERENCES `hats` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -606,4 +605,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-09-27 13:11:51
+-- Dump completed on 2018-10-02 17:04:20
