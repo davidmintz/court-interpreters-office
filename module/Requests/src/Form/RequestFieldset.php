@@ -179,6 +179,7 @@ class RequestFieldset extends AbstractEventFieldset
 
     public function getInputFilterSpecification()
     {
+
         $spec = [
             'time' => [
                 'required' => true,
@@ -261,6 +262,11 @@ class RequestFieldset extends AbstractEventFieldset
                 'required' => false,
                 'allow_empty' => true,
             ]
+        ];
+        $spec['date']['validators'][] = [
+            'name' => '\InterpretersOffice\Requests\Form\Validator\RequestDateTime',
+            'options' => ['repository' => $this->objectManager
+                ->getRepository(Entity\CourtClosing::class)]
         ];
         return array_merge($this->inputFilterspec,$spec);
     }

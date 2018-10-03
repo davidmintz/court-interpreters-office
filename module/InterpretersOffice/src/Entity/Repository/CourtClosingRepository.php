@@ -20,7 +20,7 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
 
     use ResultCachingQueryTrait;
 
-     protected $cache_namespace = 'court-closings';
+    protected $cache_namespace = 'court-closings';
 
      /**
       * cache
@@ -43,6 +43,7 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
              'DoctrineExtensions\Query\Mysql\Year');
          $this->cache = $config->getResultCacheImpl();
          $this->cache->setNamespace($this->cache_namespace);
+
      }
 
      /**
@@ -57,6 +58,7 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
          return $this->cache->deleteAll();
 
      }
+
      /**
       * returns a list of court closings -- WORK IN PROGRESS
       * @param  int $year optional year
@@ -104,4 +106,161 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
          return $this->createQuery($dql)->getResult();
      }
 
+     /**
+      * returns array of dates as of strings YYYY-mm-dd
+      * @param string $until date in format YYYY-mm-dd
+      * @param string $from date in format YYYY-mm-dd, default is today
+      */
+     function getHolidaysForPeriod($until, $from = null)
+     {
+
+         if (!$from) {
+             $from = date('Y-m-d');
+         }
+         //$cache = $this->getCacheAdapter();
+         $cache = $this->cache;
+         $key = "holidays-$from-$until";
+         if ($cache && $cache->contains($key)) {
+            return $cache->fetch($key);
+         }
+         $connection = $this->getEntityManager()->getConnection();
+         $sql = 'SELECT date FROM court_closings WHERE date BETWEEN :from AND :until and holiday_id IS NOT NULL ORDER BY date';
+         $result = $connection->executeQuery($sql, ['from' => $from, 'until' => $until]);
+         $data = $result->fetchAll(\PDO::FETCH_COLUMN);
+         $cache->save($key,$data);
+
+         return $data;
+     }
+
+     /**
+      * @param $until \DateTime|string
+      * @param $from \DateTime|string
+      * @throws \Exception on failure to parse date string
+      * @return \DateInterval difference between $from and $until
+      */
+     function getDateDiff($until, $from = null) {
+
+         // convert parameters to DateTime if necessary
+         /** @var \DateTime $until */
+         if (is_string($until)) {
+             $until = new \DateTime($until);
+         }
+         /** @var \DateTime $from */
+         if (!$from) {
+             $from = new \DateTime();
+         } elseif (is_string($from)) {
+             $from = new \DateTime($from);
+         }
+
+         // if $until precedes $from...
+         if ($from > $until) {
+             $tmp = $from;
+             $from = $until;
+             $until = $tmp;
+             $invert = 1;
+         } else {
+             $invert = 0;
+         }
+         // if the start date/time is a weekend or holiday, push the date forward until it isn't
+         // and set the time to midnight. unusual, but people might work on a weekend
+
+         $day_of_week = $from->format('w'); // 0 = sunday, 6 = saturday
+         $this->debug(sprintf("parameters are from %s and until %s", $from->format('r'), $until->format('r')));
+         if ($day_of_week == 0) {
+             $from->add(new \DateInterval("P1D"))->setTime(0, 0);
+         } else if ($day_of_week == 6) {
+             $from->add(new \DateInterval("P2D"))->setTime(0, 0);
+             //print_r($from);
+         }
+         $from_ymd = $from->format('Y-m-d');
+
+         // if $from is a holiday (also unusual), likewise advance $from until it isn't
+
+         /** @todo  consider fetching ALL closings, ad hoc non-holiday included.
+          * if we are closed ~today~ for any reason, then today is not a business day */
+         $holidays = $this->getHolidaysForPeriod($until->format('Y-m-d'), $from_ymd);
+         $holidays_to_deduct = count($holidays);
+         $this->debug(sprintf("%d holidays between submitted dates", count($holidays)));
+         while (in_array($from_ymd, $holidays)) {
+             $from->add(new \DateInterval("P1D"));
+             $from_ymd = $from->format('Y-m-d');
+             $holidays_to_deduct--; // already accounted for
+         }
+
+         // figure out how many weekend days to deduct
+         $diff = $from->diff($until);
+         $weeks = floor($diff->days / 7);
+         $this->debug("# of weeks is $weeks");
+
+         $days_to_deduct = 2 * $weeks;
+         $this->debug("$days_to_deduct days to deduct...");
+         $until_day_of_week = $until->format('w');
+         if ($until_day_of_week < $day_of_week) {
+             $days_to_deduct += 2;
+             $this->debug('incrementing $days_to_deduct += 2 ...');
+         } elseif ($until_day_of_week == $day_of_week) {
+             // then it depends on the time of day
+             $t1 = $from->format('H:i');
+             $t2 = $until->format('H:i');
+             $this->debug("comparing from-time $t1 and until-time $t2");
+             if ($t1 >= $t2) {
+                 $days_to_deduct += 2;
+                 $this->debug('incrementing $days_to_deduct += 2 ...');
+             }
+         }
+         $this->debug("deducting $holidays_to_deduct holidays");
+         $days_to_deduct += $holidays_to_deduct;
+         $this->debug("days to deduct is now:  $days_to_deduct at " . __LINE__);
+         // figure out how many holidays to deduct
+         if ($days_to_deduct) {
+             $from->add(new \DateInterval("P{$days_to_deduct}D"));
+         }
+
+         $diff = $from->diff($until);
+         $this->debug(sprintf("diff: %s\n", $diff->format('%d days, %h hours')));
+         $diff->invert = $invert;
+         return $diff;
+     }
+
+     function debug($message) {
+
+     }
+
+     /**
+      * returns a DateTime that is two SDNY business days from $when
+      * @param \DateTime $when
+      * @return \DateTime
+      */
+     public function getTwoBusinessDaysFromDate(\DateTime $when = null) {
+         if (!$when) {
+             $when = new \DateTime();
+         } else {
+             // i.e., clone
+             $when = new \DateTime($when->format('Y-m-d H:i:s'));
+         }
+         $holidays = $this->getHolidaysForPeriod(date('Y-m-d', strtotime('+2 weeks')));
+         $count = 0;
+         $is_a_nonbusiness_day = false;
+         while ($count < 2) {
+             if ($holidays && in_array($when->format('Y-m-d'), $holidays)) {
+                 $when->add(new \DateInterval("P1D"));
+                 $is_a_nonbusiness_day = true;
+                 continue;
+             }
+             if (in_array((int) $when->format('N'), [6, 7])) {
+                 $when->add(new \DateInterval("P1D"));
+                 $is_a_nonbusiness_day = true;
+                 continue;
+             }
+             $when->add(new \DateInterval("P1D"));
+
+             $count++;
+         }
+         if ($is_a_nonbusiness_day) {
+               // set $when's time to midnight
+               $when->setTime(0,0);
+         }
+         //printf("returning from %s in %s at %d\n",__FUNCTION__,basename(__FILE__),__LINE__);
+         return $when;
+     }
 }

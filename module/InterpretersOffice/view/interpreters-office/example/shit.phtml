@@ -1,0 +1,16 @@
+<p>
+
+<?php
+if ($this->interval) :
+    printf("From %s to %s: ",
+        $this->unmutated->format("D Y-m-d h:i a"),
+        $this->until->format("D Y-m-d h:i a")
+    );
+    echo $this->interval->format('%d full business days?');
+    printf(
+        "<pre>%s</pre>",
+        print_r($this->interval,true)
+    );
+endif;
+
+?></p>

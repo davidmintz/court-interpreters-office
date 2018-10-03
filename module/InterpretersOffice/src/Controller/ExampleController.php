@@ -13,6 +13,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\PersonForm;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Form\CreateBlogPostForm;
+use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 
 use SDNY\Vault\Service\Vault;
 
@@ -194,16 +195,26 @@ class ExampleController extends AbstractActionController
      */
     public function testAction()
     {
-        echo 'testAction works; ';
-        echo '<br>note: i am '.self::class.'<br>';
+        //echo 'testAction works; ';
+        //echo '<br>note: i am '.self::class.'<br>';
        //$this->events->trigger("doShit",$this,["message" => "this is the message parameter"]) ;
         $this->events->trigger(
             __FUNCTION__,
             $this,
             ['message' => 'this is the message parameter']
         );
+        /** @var InterpretersOffice\Entity\Repository\CourtClosingRepository $repo */
+        $repo = $this->objectManager->getRepository('InterpretersOffice\Entity\CourtClosing');
+        $until = new \DateTime("2018-10-09 11:00:00");
+        $from = new \DateTime("2018-10-5 10:00:00");
+        $unmutated = new \DateTime("2018-10-5 10:00:00");
+        $interval = $repo->getDateDiff($until, $from);
 
-        return false;
+        $view = (new ViewModel(compact(
+            'unmutated',
+            'from','until','interval')))->setTemplate('interpreters-office/example/shit.phtml');
+
+        return $view;
     }
 
     /**
