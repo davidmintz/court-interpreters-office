@@ -192,7 +192,15 @@ class RequestFieldset extends AbstractEventFieldset
                                 'isEmpty' => 'time is required'
                             ],
                         ],
+                        'break_chain_on_failure'=>true,
                     ],
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callback' => function($value){ return false;},
+                            'messages' => [\Zend\Validator\Callback::INVALID_VALUE => "not good"]
+                        ],
+                    ]
                 ],
             ],
 
