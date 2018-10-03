@@ -263,8 +263,8 @@ class RequestFieldset extends AbstractEventFieldset
                 'allow_empty' => true,
             ]
         ];
-        $spec['date']['validators'][] = [
-            'name' => '\InterpretersOffice\Requests\Form\Validator\RequestDateTime',
+        $this->inputFilterspec['date']['validators'][] = [
+            'name' => 'InterpretersOffice\Requests\Form\Validator\RequestDateTime',
             'options' => ['repository' => $this->objectManager
                 ->getRepository(Entity\CourtClosing::class)]
         ];

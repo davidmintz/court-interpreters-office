@@ -30,7 +30,7 @@ const DATE_IS_NOT_A_BUSINESS_DAY = 'dateIsNotABusinessDay';
 			throw new \Exception(sprintf('%s constructor requires "repository" option',__CLASS__));
 		}
 		if (! $options['repository'] instanceof CourtClosingRepository) {
-			throw new \Exception('option "repository" must be instance of Application\Entity\CourtClosingRepository');
+			throw new \Exception('option "repository" must be instance of InterpretersOffice\Entity\CourtClosingRepository');
 		}
 
 		$this->repository = $options['repository'];
