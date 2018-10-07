@@ -16,7 +16,6 @@
             left : 100px;
             top : 120px;
             min-height : 200px;
-
         }
     <?php $this->headStyle()->captureEnd();
     $messenger = $this->flashMessenger();
@@ -85,6 +84,8 @@
         </div>
     </div>
     <div class="form-group form-row">
+        <div id="error_insufficient_notice" class="col-sm-7 offset-sm-3 alert alert-warning validation-error" style="display:none">
+        </div>
         <label for="date" class="col-form-label col-sm-3 pr-1">date</label>
         <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('date')),
             $this->formElementErrors($fieldset->get('date'));?>

@@ -25,6 +25,19 @@ jQuery.ajaxSetup({
     }
 });
 
+var __displayValidationErrors = function(validationErrors, options)
+{
+
+    var debug = (options && options.debug) || false;
+    for (var name in validationErrors) {
+
+
+
+    }
+
+
+    return { foo: { bar: "doink"}, baz : "gack"};
+}
 /**
  * displays validation errors on a form
  *
@@ -60,7 +73,7 @@ var displayValidationErrors = function(validationErrors,options) {
                             + ", and nowhere to put message: "+message);
                     }
                 }
-            } else {
+            } else { // yes, there is an element for inserting error
                 errorDiv = errorDiv || element.next(".validation-error");
                 if (! errorDiv.length) {
                     errorDiv = $("<div/>")

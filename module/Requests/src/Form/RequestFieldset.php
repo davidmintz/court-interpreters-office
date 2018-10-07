@@ -197,8 +197,15 @@ class RequestFieldset extends AbstractEventFieldset
                     [
                         'name' => 'Callback',
                         'options' => [
-                            'callback' => function($value){ return false;},
-                            'messages' => [\Zend\Validator\Callback::INVALID_VALUE => "not good"]
+                            'callback' => function($value){
+                                try {
+                                    new \DateTime("today $value");
+                                    return true;
+                                } catch (\Exception $e) {
+                                    return false;
+                                }
+                            },
+                            'messages' => [\Zend\Validator\Callback::INVALID_VALUE => "invalid time"]
                         ],
                     ]
                 ],
