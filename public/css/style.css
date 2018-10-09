@@ -159,7 +159,7 @@ ul.ui-autocomplete .ui-state-active
 	color: rgb(0, 123, 255) !important;
 }
 
-td.defendants, div.defendants {
+td.defendants { /*  div.defendants */
     line-height: 1.25rem;
 }
 
