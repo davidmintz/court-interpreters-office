@@ -446,6 +446,7 @@ var eventForm = (function () {
             }
         );
     };
+
     /**
      * defendant name auto-complete options
      * @type {Object}
@@ -488,18 +489,21 @@ var eventForm = (function () {
      * @param {object} data
      */
     var appendDefendant = function(data){
+        /*
         var index = $(".defendant-names li").last().index();
         if (index === -1) {
             index = 0;
         } else {
             index++;
         }
+        */
         console.warn("fuck your ass");
-        $.get("/defendants/template",
+        $.get("/defendants/render",
             {
-                index : index,
-                event :  $("#event_id").val(),
+                //index : index,
+                //event :  $("#event_id").val(),
                 defendant : data.id,
+                namespace : 'event',
                 name: data.name || data.surnames + ", "+ data.given_names
             },
             function(html){
@@ -509,9 +513,8 @@ var eventForm = (function () {
                     slideout.toggle("slide",
                         function(){$("#deftname-form-wrapper").remove();});
                 }
-
-            });
-
+            }
+        );
     };
 
     /**

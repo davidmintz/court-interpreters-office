@@ -195,20 +195,15 @@ echo $this->form()->openTag($form); ?>
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php
-                if ($this->defendants) {
-                    // as above
-                    $helper = (new DefendantElementCollection())->setView($this);
-                    foreach ($this->defendants as $i=>$deft) {
-                        $deft['index'] = $i;
-                        echo $helper->fromArray($deft);
-                    }
-                } else {
-                    $defendants = $form->getObject()->getDefendantEvents();
-                    if ($defendants->count()) {
-                        $helper = (new DefendantElementCollection())->setView($this);
-                        echo $helper($fieldset->get('defendantEvents'));
-                    }
-                }
+                $defendants = $form->getObject()->getDefendants();
+                if ($defendants->count()) :
+                    foreach ($defendants as $deft):
+                        echo $this->partial('partials/defendant',[
+                            'namespace' => 'event', 'id' => $deft->getId(), 'name' => (string)$deft
+                        ]);
+                    endforeach;
+                endif;
+
                 ?>
                 </ul>
             </div>

@@ -299,6 +299,31 @@ abstract class AbstractEventFieldset extends Fieldset implements
      }
 
      /**
+      * adds defendants elements
+      *
+      * @return AbstractEventFieldset
+      */
+     public function addDefendantsElement()
+     {
+         $this->add([
+             'name' => 'defendants',
+             'type' => 'Zend\Form\Element\Select',
+             'options' => [
+                 'value_options' => [],
+                 'disable_inarray_validator' => true,
+             ],
+             'attributes' => [
+                 'style' => 'display:none',
+                 'id' => 'defendants',
+                 'multiple' => 'multiple',
+             ],
+         ]);
+
+         return $this;
+     }
+
+
+     /**
       * adds Judge element(s)
       *
       * //param Entity\Event $event

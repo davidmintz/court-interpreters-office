@@ -37,7 +37,7 @@ var appendDefendant = function(data)
 };
 
 /**
- * datepicker: disable dates less than two week days from current date
+ * datepicker: disable dates less than two weekdays from current date
  */
 var minDate;
 switch (moment().day()) {

@@ -295,10 +295,10 @@ return [
                     ],
                 ],
             ],
-            'defendant-template' => [
+            'defendant-render' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/defendants/template',
+                    'route' => '/defendants/render',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\DefendantsController::class,

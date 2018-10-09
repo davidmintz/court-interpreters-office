@@ -75,18 +75,19 @@ class DefendantsController extends AbstractActionController
     }
 
     /**
-     * returns response containing defendant-name markup
+     * renders a LI element for defendant form
      *
      * this is for invoking via javascript/xhr
      *
-     * @return \Zend\Http\PhpEnvironment\Response
+     * @return ViewModel
      */
-    public function templateAction()
+    public function renderAction()
     {
-        $helper = $this->helper;
         $data = $this->params()->fromQuery();
-        $html = $helper->fromArray($data);
-        return $this->getResponse()->setContent($html);
+        $view = new ViewModel($data);
+
+        return $view->setTerminal(true)->setTemplate('partials/defendant');
+
     }
 
     /**

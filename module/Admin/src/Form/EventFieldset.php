@@ -64,17 +64,6 @@ class EventFieldset extends AbstractEventFieldset
             ],
         ]);
 
-        // the DefendantEvents fieldset
-
-        $defendantEventsFieldset = new DefendantEventsFieldset($objectManager);
-        $this->add([
-            'type' => Element\Collection::class,
-            'name' => 'defendantEvents',
-            'options' => [
-                'label' => 'defendants',
-                'target_element' => $defendantEventsFieldset,
-            ],
-        ]);
         // figure out value options for interpreter select
         $empty_option = ['value' => '','label' => ' ',
             'attributes' => ['label' => ' ']];
@@ -103,6 +92,8 @@ class EventFieldset extends AbstractEventFieldset
 
         ]);
 
+        $this->addDefendantsElement();
+        
         $this->addSubmitterElements($options['object']);
 
         $this->add([

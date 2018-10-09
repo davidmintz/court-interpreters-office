@@ -658,7 +658,7 @@ class Request
     /**
      * adds Defendants.
      *
-     * @param Collection $judges
+     * @param Collection $defendants
      */
     public function addDefendants(ArrayCollection $defendants)
     {

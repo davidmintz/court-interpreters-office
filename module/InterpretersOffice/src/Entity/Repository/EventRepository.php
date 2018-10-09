@@ -125,9 +125,8 @@ DQL;
             return null;
         }
         $deft_dql = 'SELECT d.surnames, d.given_names
-            FROM InterpretersOffice\Entity\Defendant d
-            JOIN d.defendantEvents de JOIN de.event e
-            WHERE e.id = :id';
+            FROM InterpretersOffice\Entity\Event e
+            JOIN e.defendants d WHERE e.id = :id';
         $event['defendants'] = $entityManager->createQuery($deft_dql)
             ->setParameters(['id' => $id])
             ->useResultCache($this->cache_enabled)->getResult();
@@ -247,11 +246,11 @@ DQL;
      */
     public function getDefendantsForEvents(array $ids)
     {
-        $query = $this->getEntityManager()->createQuery(
-            'SELECT e.id event_id, d.id, d.surnames, d.given_names FROM '
-            . 'InterpretersOffice\Entity\Defendant d JOIN d.defendantEvents '
-            . ' de JOIN de.event e WHERE e.id IN (:ids)'
-        );
+
+        $DQL = 'SELECT e.id event_id, d.given_names, d.surnames, d.id
+        FROM InterpretersOffice\Entity\Event e
+        JOIN e.defendants d WHERE e.id IN (:ids)';
+        $query = $this->getEntityManager()->createQuery($DQL);
         $return = [];
 
         $data = $query->setParameters(['ids' => $ids])

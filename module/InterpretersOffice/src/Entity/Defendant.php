@@ -47,15 +47,6 @@ class Defendant
     protected $surnames;
 
     /**
-     * ArrayCollection association class DefendantEvent.
-     *
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="DefendantEvent",mappedBy="defendant")
-     */
-    protected $defendantEvents;
-
-
-    /**
      * is this name is spelled exactly like $name?
      *
      * @param  Defendant $name
