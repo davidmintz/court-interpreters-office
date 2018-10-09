@@ -16,7 +16,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use InterpretersOffice\Admin\Form\DefendantForm;
 use InterpretersOffice\Entity\Defendant;
-use InterpretersOffice\Entity\DefendantEvent;
+
 
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerAwareTrait;
@@ -157,7 +157,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
             COALESCE(j.lastname, aj.name) judge, j.id judge_id,
             aj.id anon_judge_id
             FROM InterpretersOffice\Entity\Event e
-            JOIN e.defendantEvents de JOIN de.defendant d LEFT JOIN e.judge j
+            JOIN d.defendants d LEFT JOIN e.judge j
             LEFT JOIN e.anonymousJudge aj
             WHERE d.id = :id GROUP BY e.docket,aj.id,j.id
             ORDER BY e.docket, judge';
@@ -194,7 +194,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
      * @param  int $exclude_event_id event to exclude from query
      * @return Array
      */
-    public function getDefendantEventsForDefendant(
+    public function __getDefendantEventsForDefendant(
         Entity\Defendant $defendant,
         $exclude_event_id = null
     ) {
@@ -234,13 +234,14 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         $event_id = null
     ) {
         $logger = $this->getLogger(); // temporary, perhaps
+        /** @var Doctrine\ORM\EntityManagerInterface $em */
         $em = $this->getEntityManager();
 
         /** is it a global update, or an update of only a subset? */
         $logger->debug("event id is: " . ($event_id ?: "null"));
 
         foreach ($occurrences as $i => $occurrence) {
-            // unpack submitted JSON strings schedule
+            // unpack submitted JSON strings
             $occurrences[$i] = json_decode($occurrence, JSON_OBJECT_AS_ARRAY);
         }
         // get all the contexts (occurences) from database
@@ -309,13 +310,15 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                         $logger->debug("we updated the existing name");
                         $result['updated_deftname'] = $existing_name->getId();
                     }
-                // swap out $deftName for existing, and detach
-                    $deft_events = $this->getDefendantEventsForDefendant($defendant, $event_id);
-                    $result['count_deft_events_updated'] = count($deft_events);
-                    foreach ($deft_events as $de) {
-                        $de->setDefendant($existing_name);
-                        $result['events_affected'][] = $de->getEvent()->getId();
-                    }
+
+
+                    $db = $this->getEntityManager()->getConnection();
+
+                    $result['events_affected'] = $db->executeQuery(
+                        'UPDATE defendants_events SET defendant_id = :new WHERE defendant_id = :old',
+                        [':new' => $existing_name->getId(), ':old' => $defendant->getId()]
+                    );
+
                     $logger->debug(sprintf("is there a childless name to remove? (at %d)", __LINE__));
                     if (! $this->hasRelatedEntities($defendant->getId())) {
                         $logger->debug("we think so");
@@ -334,7 +337,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 $return  = array_merge($result, [
                     'status' => 'success',
                     'debug' => "match was $MATCH",
-                    'deft_events_updated' => count($deft_events),
+                    //'deft_events_updated' => count($deft_events),
                 ]);
             } catch (\Exception $e) {
                 return array_merge($result, [
@@ -344,8 +347,8 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 ]);
             }
         } else { // PARTIAL update.
-            $deft_events = $this
-                ->getDeftEventsForOccurrences($occurrences, $defendant);
+            $event_ids = $this
+                ->getEventIdsForOccurrences($occurrences, $defendant);
             $logger->debug(sprintf(
                 'at line %d: existing is %s, submitted is now %s; '
                 .'%d occurrences, %d deft events found; ',
@@ -357,7 +360,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
             ));
             switch ($MATCH) {
                 case 'identical':
-                    $logger->debug('submitted entity is identical with entity found at '.__LINE__);
+                    $logger->debug('submitted entity is idengetDeftEventsForOcctical with entity found at '.__LINE__);
                     break; // simple flush() should do it
                 case false:
                 // a new name has to be inserted; this one has to be detached
@@ -418,18 +421,19 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
     }
 
     /**
-     * gets all DefendantEvent entities for given set of docket/judge contexts
+     * gets array of event_ids for given set of docket/judge contexts
      *
      * @param  Array $occurrences
      * @param  Entity\Defendant $defendant
-     * @return Entity\Defendant[]
+     * @return array
      */
     private function getDeftEventsForOccurrences(
         array $occurrences,
         Entity\Defendant $defendant
     ) {
-        $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent de
-        JOIN de.defendant d JOIN de.event e
+        $dql = 'SELECT DISTINCT e.id
+        FROM InterpretersOffice\Entity\Event e
+        JOIN e.defendants d
         LEFT JOIN e.anonymousJudge aj LEFT JOIN e.judge j
         WHERE d.id = :id AND ';
         $where = [];
@@ -460,8 +464,8 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
      */
     public function hasRelatedEntities($id)
     {
-        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\DefendantEvent
-            de JOIN de.event e JOIN de.defendant d  WHERE d.id = :id';
+        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event
+            e  JOIN d.defendants d  WHERE d.id = :id';
         return $this->getEntityManager()->createQuery($dql)->setParameters([
             'id' => $id
         ])->getSingleScalarResult() ? true : false;
