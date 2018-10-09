@@ -161,6 +161,11 @@ abstract class AbstractEventFieldset extends Fieldset implements
                ],
            ],
 
+           'defendants' => [
+               'required' => false,
+               'allow_empty' => true,
+           ]
+
       ];
 
      /**

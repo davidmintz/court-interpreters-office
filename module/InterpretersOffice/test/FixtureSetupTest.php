@@ -5,7 +5,6 @@ namespace ApplicationTest;
 //use PHPUnit_Framework_TestCase;
 
 use InterpretersOffice\Entity;
-use InterpretersOffice\Entity\DefendantEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class FixtureSetupTest extends AbstractControllerTest
@@ -141,7 +140,7 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setCreated($now)
             ->setCreatedBy($user)
             ->setModifiedBy($user)
-            ->addDefendantEvent(new Entity\DefendantEvent($defendant, $event))
+            ->addDefendant($defendant)
             ->addInterpreterEvents(
                 new ArrayCollection(
                     [

@@ -27,7 +27,15 @@ jQuery.ajaxSetup({
 
 var __displayValidationErrors = function(validationErrors, options)
 {
-
+    // Object.keys(errors).forEach(function(key){
+    //     console.log(typeof errors[key]);
+    //     if ("object" === typeof errors[key]) {
+    //         console.log("huh?");
+    //         Object.keys(errors[key]).forEach(function(key){
+    //             console.log("key is now: "+key)
+    //         })
+    //     }
+    // })
     var debug = (options && options.debug) || false;
     for (var name in validationErrors) {
 

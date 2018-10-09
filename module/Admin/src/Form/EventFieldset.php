@@ -93,7 +93,7 @@ class EventFieldset extends AbstractEventFieldset
         ]);
 
         $this->addDefendantsElement();
-        
+
         $this->addSubmitterElements($options['object']);
 
         $this->add([
@@ -438,9 +438,6 @@ class EventFieldset extends AbstractEventFieldset
 
         $spec = array_merge($this->inputFilterspec, [
             'interpreterEvents' => [
-                'required' => false, 'allow_empty' => true,
-            ],
-            'defendantEvents'  => [
                 'required' => false, 'allow_empty' => true,
             ],
             'time' => [

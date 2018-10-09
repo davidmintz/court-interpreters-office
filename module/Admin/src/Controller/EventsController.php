@@ -125,41 +125,30 @@ class EventsController extends AbstractActionController
         $event = new Entity\Event();
         $form->bind($event);
         $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
+        if (! $request->isPost()) { return $viewModel; }
 
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            $input = $data->get('event');
-            $this->getEventManager()->trigger(
-                'pre.validate',
-                $this,
-                ['input' => $data,]
-            );
-            $form->setData($data);
-            if (! $form->isValid()) {
-                if ($input) {
-                    $defendants = isset($input['defendantEvents']) ?
-                        $input['defendantEvents'] : [];
-                    $interpreters = isset($input['interpreterEvents']) ?
-                        $input['interpreterEvents'] : [];
-                }//print_r($form->getMessages());
-                return $viewModel
-                    ->setVariables(compact('defendants', 'interpreters'));
-            } else {
-                $this->entityManager->persist($event);
-                $this->entityManager->flush();
-                $url = $this->getEvent()->getApplication()->getServiceManager()
-                ->get('ViewHelperManager')->get('url')('events');
-                $date = $event->getDate();
-                $this->flashMessenger()->addSuccessMessage(sprintf(
-                    'This event has been added to the schedule for <a href="%s">%s</a>',
-                    $url . $date->format('/Y/m/d'),
-                    $date->format('l d-M-Y')
-                ));
-                return $this->redirect()->toRoute('events/view', ['id' => $event->getId()]);
-            }
+        $data = $request->getPost();
+        $input = $data->get('event');
+        $this->getEventManager()->trigger(
+            'pre.validate', $this, ['input' => $data,]
+        );
+        $form->setData($data);
+        if (! $form->isValid()) {
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+        } else {
+            $this->entityManager->persist($event);
+            $this->entityManager->flush();
+            $url = $this->getEvent()->getApplication()->getServiceManager()
+            ->get('ViewHelperManager')->get('url')('events');
+            $date = $event->getDate();
+            $this->flashMessenger()->addSuccessMessage(sprintf(
+                'This event has been added to the schedule for <a href="%s">%s</a>',
+                $url . $date->format('/Y/m/d'),
+                $date->format('l d-M-Y')
+            ));
+
+            return new JsonModel(['status'=>'success','id'=> $event->getId()]);
         }
-
-        return $viewModel;
     }
 
     /**
@@ -168,8 +157,8 @@ class EventsController extends AbstractActionController
      */
     public function editAction()
     {
-        $log = $this->getEvent()->getApplication()->getServiceManager()
-            ->get('log');
+        // $log = $this->getEvent()->getApplication()->getServiceManager()
+        //     ->get('log');
         $id = $this->params()->fromRoute('id');
         /** @var \InterpretersOffice\Entity\Event $entity  */
         $entity = $this->entityManager->find(Entity\Event::class, $id);
@@ -184,7 +173,6 @@ class EventsController extends AbstractActionController
         $form->bind($entity);
         $modified = $entity->getModified();
         $events->trigger('pre.populate');
-
         if (! $this->getRequest()->isPost()) {
             return $view;
         }
@@ -192,66 +180,29 @@ class EventsController extends AbstractActionController
         $events->trigger('pre.validate', $this);
         $form->setData($post);
         if (! $form->isValid()) {
-            $input = $post->get('event');
-            if ($input) {
-                $defendants = isset($input['defendantEvents']) ?
-                    $input['defendantEvents'] : [];
-                $interpreters = isset($input['interpreterEvents']) ?
-                    $input['interpreterEvents'] : [];
-            }
-            return $view->setVariables(compact('defendants', 'interpreters'));
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
-        try {
-            $this->entityManager->flush();
-            $url = $this->getEvent()->getApplication()
-                ->getServiceManager()->get('ViewHelperManager')
-                ->get('url')('events');
-            $date = $entity->getDate();
-            if ($modified != $entity->getModified() or
-            $this->params()->fromPost('deftnames_modified')) {
-                $verbiage = 'updated';
-            } else {
-                $verbiage = 'saved (unmodified)';
-            }
-            $this->flashMessenger()->addSuccessMessage(
-                sprintf(
-                    "This event has been successfully $verbiage on the "
-                    .'schedule for <a href="%s">%s</a>',
-                    $url . $date->format('/Y/m/d'),
-                    $date->format('l d-M-Y')
-                )
-            );
-            return $this->redirect()->toRoute(
-                'events/view', ['id' => $entity->getId()]
-            );
 
-        } catch (\Exception $e) {
-            // this definitely needs work
-            $shit = print_r($post->get('event')['defendantEvents'], true);
-            $deftEvents = $entity->getDefendantEvents();
-            foreach ($deftEvents as $de) {
-                $d = $de->getDefendant();
-                if ($d) {
-                    $log->debug(
-                        "deftEvent has deft entity, with id: ".$d->getId()
-                    );
-                } else {
-                    $log->debug("wtf?  deft entity is " . gettype($d)  . " at ".__LINE__);
-                }
-            }
-            $log->info(sprintf(
-                "number of defendantEvent entities on the entity: %s",
-                $entity->getDefendantEvents()->count()
-            ));
-            $log->info(sprintf(
-                "number of defendantEvent entities on the form's object: %s",
-                $form->getObject()->getdefendantEvents()->count()
-            ));
-            $log->debug(sprintf("Exception %s: %s\nposted deftevents: $shit",
-                    get_class($e), $e->getMessage())
-            );
-            throw $e;
+        $this->entityManager->flush();
+        $url = $this->getEvent()->getApplication()
+            ->getServiceManager()->get('ViewHelperManager')
+            ->get('url')('events');
+        $date = $entity->getDate();
+        if ($modified != $entity->getModified() or
+        $this->params()->fromPost('deftnames_modified')) {
+            $verbiage = 'updated';
+        } else {
+            $verbiage = 'saved (unmodified)';
         }
+        $this->flashMessenger()->addSuccessMessage(
+            sprintf("This event has been successfully $verbiage on the "
+                .'schedule for <a href="%s">%s</a>',
+                $url . $date->format('/Y/m/d'),
+                $date->format('l d-M-Y')
+            )
+        );
+        return new JsonModel(['status'=>'success','id'=> $entity->getId()]);
+        //$this->redirect()->toRoute('events/view', ['id' => $entity->getId()]);
 
     }
 

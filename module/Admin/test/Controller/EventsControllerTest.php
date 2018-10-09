@@ -115,7 +115,7 @@ class EventControllerTest extends AbstractControllerTest
         $count_after = $em
           ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
           ->getSingleScalarResult();
-        $this->assertRedirect();
+        //$this->assertRedirect();
         $this->assertEquals(
             1,
             $count_after - $count_before,
@@ -149,7 +149,7 @@ class EventControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         // sanity check: refresh entity and check no defendants as yet
         //$entity = $em->find(Entity\Event::class,$entity->getId());
-        $this->assertEquals(0,$entity->getDefendantEvents()->count());
+        $this->assertEquals(0,$entity->getDefendants()->count());
         $event = $this->getDummyData();
         $this->login('david', 'boink');
         $this->reset(true);
@@ -249,7 +249,7 @@ class EventControllerTest extends AbstractControllerTest
         $deft_id = $em->getRepository(Entity\Defendant::class)->findOneBy(
             ['surnames' =>'Fulano Mengano','given_names'=>'Joaquín' ]
         )->getId();
-        $event['defendantEvents'][0] = ['defendant'=> $deft_id,'event'=> $entity->getId()];
+        $event['defendants'][] = $deft_id;
         $this->reset(true);
         $this->login('david', 'boink');
         $this->reset(true);
@@ -260,8 +260,10 @@ class EventControllerTest extends AbstractControllerTest
             ['event' => $event, 'csrf' => $token, 'modified' => $modified]
         );
         //$this->dumpResponse();
-        $this->assertRedirect();
-        $this->assertRedirectTo('/admin/schedule/view/'. $entity->getId());
+        $content = $this->getResponse()->getContent();
+        $this->assertJson($content);
+        $response = json_decode($content);
+        $this->assertEquals("success",$response->status);
 
         $type_before = $type_expected;
         $time_before = $time_expected;
@@ -278,8 +280,8 @@ class EventControllerTest extends AbstractControllerTest
         }
         // did the defendant get added?
         $entity = $em->find(Entity\Event::class,$id);
-        $deftEvents = $entity->getDefendantEvents();
-        $this->assertEquals(1,$deftEvents->count());
+        $defts = $entity->getDefendants();
+        $this->assertEquals(1,$defts->count());
     }
 
     public function testAssigningInterpretersResultsInMetaDataUpdate()

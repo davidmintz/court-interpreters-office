@@ -375,7 +375,9 @@ var eventForm = (function () {
      * @param  {object} event
      * @return {void}
      */
-    var formSubmit = function(){
+    var formSubmit = function(event){
+
+        event.preventDefault();
 
         if (! locationElement.val()) {
             // no specific location was selected, so the general location
@@ -405,6 +407,28 @@ var eventForm = (function () {
             anon_judge.val(0);
             $("#anonymousJudge").val(judgeElement.val());
         }
+
+        // and now...
+        var data = form.serialize();
+        var url = form.attr("action");
+        $.post(url,data).done(function(response) {
+            if (response.validation_errors) {
+                var errors = response.validation_errors;
+                if (errors.event) {
+                    displayValidationErrors(errors.event);
+                    delete errors.event;
+                }
+                if (Object.keys(errors).length) {
+                    displayValidationErrors(errors);
+                }
+                return;
+            }
+            document.location = document.referrer
+                || `${window.basePath}/admin/schedule/view/${response.id}`;
+        })
+        .fail(function(response){
+            console.warn("shit happened")
+        });
     };
 
     /**
@@ -456,22 +480,14 @@ var eventForm = (function () {
         //source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
         minLength: 2,
         select: function( event, ui ) {
-            //var that = $(this);
+            event.preventDefault();
             appendDefendant({
                 name : ui.item.label,
-                id : ui.item.value
+                id : ui.item.value,
+                namespace : 'event'
             });
             $(this).val("");
-            /*
-            $.get(
-                "/defendants/template",
-                {id:ui.item.value,name:ui.item.label},
-                function(html){
-                    $("#defendant-names").append(html);
 
-                }
-            );
-            */
         },
         focus: function(event,ui) {
             event.preventDefault();
@@ -489,20 +505,10 @@ var eventForm = (function () {
      * @param {object} data
      */
     var appendDefendant = function(data){
-        /*
-        var index = $(".defendant-names li").last().index();
-        if (index === -1) {
-            index = 0;
-        } else {
-            index++;
-        }
-        */
-        console.warn("fuck your ass");
+
         $.get("/defendants/render",
             {
-                //index : index,
-                //event :  $("#event_id").val(),
-                defendant : data.id,
+                id : data.id,
                 namespace : 'event',
                 name: data.name || data.surnames + ", "+ data.given_names
             },
