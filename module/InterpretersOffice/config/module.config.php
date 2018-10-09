@@ -302,7 +302,7 @@ return [
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\DefendantsController::class,
-                        'action' => 'template',
+                        'action' => 'render',
                     ],
                 ],
             ],
