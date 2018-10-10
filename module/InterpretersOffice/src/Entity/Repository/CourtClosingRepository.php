@@ -39,8 +39,8 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
      {
          parent::__construct($em, $class);
          $config = $em->getConfiguration();
-         $config->addCustomDatetimeFunction('YEAR',
-             'DoctrineExtensions\Query\Mysql\Year');
+         // $config->addCustomDatetimeFunction('YEAR',
+         //     'DoctrineExtensions\Query\Mysql\Year');
          $this->cache = $config->getResultCacheImpl();
          $this->cache->setNamespace($this->cache_namespace);
 
@@ -60,7 +60,8 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
      }
 
      /**
-      * returns a list of court closings -- WORK IN PROGRESS
+      * returns a list of court closings
+      * 
       * @param  int $year optional year
       * @return Array
       */
@@ -68,7 +69,7 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
      {
          if (! $year) { return $this->index(); }
          $DQL = 'SELECT c, h FROM '.CourtClosing::class . ' c
-          LEFT JOIN c.holiday h WHERE YEAR(c.date) = :year
+          LEFT JOIN c.holiday h WHERE SUBSTRING(c.date,1,4) = :year
           ORDER BY c.date ASC';
          $query = $this->createQuery($DQL)
             ->setParameters(['year'=>$year]);
@@ -84,14 +85,8 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
       */
      public function index()
      {
-         /* @var Doctrine\ORM\QueryBuilder $qb */
-        //$qb = $this->getEntityManager()->createQueryBuilder();
-        //$qb->select(['year'])
-        //$->from(Entity\CourtClosing::class, $qb->expr('YEAR','c.date'));
-
-        // baffled as to how to do this with the QueryBuilder, so...
-
-        $dql = 'SELECT YEAR(c.date) year, COUNT(c.id) dates
+        // not sure how to do this with the QueryBuilder, so...
+        $dql = 'SELECT DISTINCT SUBSTRING(c.date,1,4) year, COUNT(c.id) dates
             FROM InterpretersOffice\Entity\CourtClosing c
             GROUP BY year ORDER BY c.date DESC';
          return $this->getEntityManager()->createQuery($dql)->getArrayResult();
