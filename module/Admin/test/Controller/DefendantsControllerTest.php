@@ -92,15 +92,15 @@ class DefendantsControllerTest extends AbstractControllerTest
         /* (
             [match] =>
             [update_type] => partial
-            [events_affected] => Array [....]
+            [events_affected] => int
             [status] => success
             [deft_events_updated] => 5
             [insert_id] => 13
         )
         */
         // five events should have been events_affected
-        $this->assertTrue(is_array($result['events_affected']));
-        $this->assertEquals(5,count($result['events_affected']));
+        $this->assertTrue(is_int($result['events_affected']));
+        $this->assertEquals(5,$result['events_affected']);
 
         // a new name should have been inserted
         $this->assertTrue(key_exists('insert_id', $result));
@@ -176,13 +176,13 @@ class DefendantsControllerTest extends AbstractControllerTest
             $match,
             'use_existing'
         );
-        print_r($result);
+        //print_r($result);
         $this->assertTrue(is_array($result));
-        $bullshit = $this->em->createQuery(
-            'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\Defendant d '
-            . 'WHERE d.surnames LIKE :surnames  AND d.given_names LIKE :given_names'
-        )->useResultCache(false)->setParameters(['surnames'=>'rod%','given_names'=> 'Jo%'])->getResult();
-        print_r($bullshit);
-        printf("fuckin database? %s\n",$this->em->getConnection()->getDriver()->getName());
+        // $bullshit = $this->em->createQuery(
+        //     'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\Defendant d '
+        //     . 'WHERE d.surnames LIKE :surnames  AND d.given_names LIKE :given_names'
+        // )->useResultCache(false)->setParameters(['surnames'=>'rod%','given_names'=> 'Jo%'])->getResult();
+        // print_r($bullshit);
+        // printf("fuckin database? %s\n",$this->em->getConnection()->getDriver()->getName());
     }
 }

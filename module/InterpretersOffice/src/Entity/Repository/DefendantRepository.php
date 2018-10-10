@@ -157,7 +157,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
             COALESCE(j.lastname, aj.name) judge, j.id judge_id,
             aj.id anon_judge_id
             FROM InterpretersOffice\Entity\Event e
-            JOIN d.defendants d LEFT JOIN e.judge j
+            JOIN e.defendants d LEFT JOIN e.judge j
             LEFT JOIN e.anonymousJudge aj
             WHERE d.id = :id GROUP BY e.docket,aj.id,j.id
             ORDER BY e.docket, judge';
@@ -351,28 +351,45 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 ->getEventIdsForOccurrences($occurrences, $defendant);
             $logger->debug(sprintf(
                 'at line %d: existing is %s, submitted is now %s; '
-                .'%d occurrences, %d deft events found; ',
+                .'%d occurrences, %d deft-events found; ',
                 __LINE__,
                 $existing_name,
                 $defendant,
                 count($occurrences),
-                count($deft_events)
+                count($event_ids)
             ));
             switch ($MATCH) {
                 case 'identical':
-                    $logger->debug('submitted entity is idengetDeftEventsForOcctical with entity found at '.__LINE__);
+                    $logger->debug('submitted entity is identical with entity found at '.__LINE__);
                     break; // simple flush() should do it
                 case false:
                 // a new name has to be inserted; this one has to be detached
-                    $new = (new Entity\Defendant)
-                    ->setGivenNames($defendant->getGivenNames())
-                    ->setSurnames($defendant->getSurnames());
-                    $em->persist($new);
+                    // $new = (new Entity\Defendant)
+                    // ->setGivenNames($defendant->getGivenNames())
+                    // ->setSurnames($defendant->getSurnames());
+                    // $em->persist($new);
                     $em->detach($defendant);
-                    foreach ($deft_events as $de) {
-                        $de->setDefendant($new);
-                        $result['events_affected'][] = $de->getEvent()->getId();
-                    }
+                    // foreach ($deft_events as $de) {
+                    //     $de->setDefendant($new);
+                    //     $result['events_affected'][] = $de->getEvent()->getId();
+                    // }
+
+
+                    /** @var Doctrine\DBAL\Connection $db */
+                    $db = $em->getConnection();
+                    $db->executeUpdate(
+                        'INSERT INTO defendant_names (given_names,surnames)
+                        VALUES (?,?)',[$defendant->getGivenNames(),$defendant->getSurNames()]);
+
+                    $result['insert_id'] = $db->lastInsertId();
+                    $sql = 'UPDATE defendants_events SET defendant_id = ?
+                        WHERE defendant_id = ? AND event_id IN (?)';
+                    $result['events_affected'] = $db->executeUpdate($sql,
+                        [$result['insert_id'], $defendant->getId(),
+                        array_column($event_ids,'id')],
+                        [
+                            null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY
+                        ]);
                     $logger->debug('no existing match, we created new defendant name at line '.__LINE__);
                     break;
 
@@ -402,11 +419,9 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 $em->flush();
                 $return = array_merge($result, [
                     'status' => 'success',
-                    'deft_events_updated' => count($deft_events),
+                    'deft_events_updated' => $result['events_affected'],
                 ]);
-                if (isset($new)) {
-                    $return['insert_id'] = $new->getId();
-                }
+
             } catch (\Exception $e) {
                 return array_merge($result, [
                     'status' => 'error',
@@ -427,7 +442,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
      * @param  Entity\Defendant $defendant
      * @return array
      */
-    private function getDeftEventsForOccurrences(
+    private function getEventIdsForOccurrences(
         array $occurrences,
         Entity\Defendant $defendant
     ) {
