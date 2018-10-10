@@ -11,8 +11,6 @@ use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity;
-use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection
-    as DeftNameHelper;
 
 use InterpretersOffice\Form\Validator\ProperName;
 
@@ -31,23 +29,15 @@ class DefendantsController extends AbstractActionController
     protected $entityManager;
 
     /**
-     * view helper
-     *
-     * @var DeftNameHelper
-     */
-    protected $helper;
-
-    /**
      * constructor
      *
      * @param EntityManager $em
      * @param DeftNameHelper $helper
      */
-    public function __construct(EntityManager $em, DeftNameHelper $helper)
+    public function __construct(EntityManager $em)
     {
 
         $this->entityManager = $em;
-        $this->helper = $helper;
     }
 
     /**

@@ -168,20 +168,11 @@ echo $this->form()->openTag($form); ?>
                  </div>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                     <?php
-                    /** THIS IS AwKWARD. re-think and start over? */
-                    if ($this->interpreters) {
-                        // $this->interpreters was set by controller following
-                        // failed validation
-                        $helper = (new InterpreterElementCollection())->setView($this);
-                        echo $helper->fromPost($this->interpreters);
-                    } else {
-                        // interpreter-event data comes from the entity
                         $interpreters = $form->getObject()->getInterpreterEvents();
-                        if ($interpreters->count()) {
+                        if ($interpreters->count()) :
                             $helper = (new InterpreterElementCollection())->setView($this);
                             echo $helper($fieldset->get('interpreterEvents'));
-                        }
-                    }
+                        endif;
                     ?>
                 </ul>
             </div>
@@ -203,7 +194,6 @@ echo $this->form()->openTag($form); ?>
                         ]);
                     endforeach;
                 endif;
-
                 ?>
                 </ul>
             </div>
