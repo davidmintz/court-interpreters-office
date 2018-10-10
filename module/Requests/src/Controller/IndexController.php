@@ -11,6 +11,7 @@ use Zend\View\Model\JsonModel;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
+use InterpretersOffice\Entity\CourtClosing;
 
 use InterpretersOffice\Requests\Form;
 
@@ -90,7 +91,28 @@ class IndexController extends AbstractActionController
         } else {
             $defendants = [];
         }
-        return new ViewModel(['paginator' => $paginator,'defendants'=>$defendants ]);
+        $deadline = $this->getTwoBusinessDaysFromDate();
+        return new ViewModel(compact('paginator','defendants','deadline'));
+    }
+    
+    /* under consideration
+    public function deadlineAction()
+    {
+        return new JsonModel(['deadline'=>$this->getTwoBusinessDaysFromDate()]);
+    }
+    */
+
+    /**
+     * gets datetime two business days from $date
+     *
+     * @param  \DateTime $date
+     * @return string
+     */
+    protected function getTwoBusinessDaysFromDate(\DateTime $date = null)
+    {
+        return $this->objectManager
+            ->getRepository(CourtClosing::class)
+            ->getTwoBusinessDaysFromDate($date)->format('Y-m-d H:i:s');
     }
 
     /**

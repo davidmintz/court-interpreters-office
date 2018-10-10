@@ -3,9 +3,13 @@
 *
 *   view script for displaying user's interpreter requests
 */
-$this->headTitle('requests | list')
-?>
+$this->headScript()
+    ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+    ->appendFile($this->basePath('js/requests/list.js'))
+    ;
+$this->headTitle('requests | list') ?>
 <h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
+
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
@@ -20,7 +24,7 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
     <pre><?php //print_r($this->paginator->getItem(0))?></pre>
     -->
 
-<table class="table">
+<table id="requests-table" data-deadline="<?php echo $this->deadline ?>" class="table">
     <caption class="sr-only">list of interpreter requests</caption>
     <thead></thead>
     <tbody>
