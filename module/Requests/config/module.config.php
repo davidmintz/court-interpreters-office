@@ -26,6 +26,8 @@ return [
 
     'service_manager' => [
         'factories' => [
+            Entity\Listener\RequestEntityListener::class =>
+                Entity\Listener\Factory\RequestEntityListenerFactory::class,
         ],
 
     ],

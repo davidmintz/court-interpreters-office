@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 echo "eat shit?\n";
 
-$em = require __DIR__.'/../config/doctrine-bootstrap.php';
+$em = require __DIR__.'/../../config/doctrine-bootstrap.php';
         $person = new Person();
         $person->setFirstname('John')
                 ->setLastname('Somebody')
@@ -21,7 +21,23 @@ $em = require __DIR__.'/../config/doctrine-bootstrap.php';
                 );
         $em->persist($person);
 
-        $em->flush();
+        //$em->flush();
+        //$
+$db = $em->getConnection();
+$ids = [23987,
+23986,
+23985,
+23983,
+23982,
+23981,
+23980,
+23979,
+23978,
+23976];
+$sql = 'SELECT * FROM defendant_names WHERE id IN (?)';
+$shit = $db->executeQuery($sql,[$ids],[\Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
+echo get_class($shit),"\n";
+
 exit("\nall good\n");
 
 /*

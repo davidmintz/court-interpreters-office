@@ -29,8 +29,7 @@
         "zendframework/zend-http": "^2.6",
         "zendframework/zend-navigation": "^2.8",
         "zendframework/zend-mail": "^2.10",
-        "zendframework/zend-mime": "^2.7",
-        "beberlei/DoctrineExtensions": "^1.1"
+        "zendframework/zend-mime": "^2.7"
 
     },
     "autoload": {

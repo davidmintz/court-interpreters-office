@@ -175,7 +175,10 @@ class IndexController extends AbstractActionController
                 );
                 return  new JsonModel(['status'=> 'success','id'=>$entity->getId()]);
 
-            } catch (\Exception $e) { //throw $e;
+            } catch (\Exception $e) {
+                $this->getResponse()->setStatusCode(500);
+                $this->events->trigger('error',$this,['exception'=>$e,
+                    'details'=>'doing create in Requests module']);
                 $this->getResponse()->setStatusCode(500);
                 return new JsonModel(['message'=>$e->getMessage(),]);
             }
@@ -203,8 +206,8 @@ class IndexController extends AbstractActionController
         $form->bind($entity);
         if (! $this->getRequest()->isPost()) {
             $view = new ViewModel();
-            $view->setTemplate('interpreters-office/requests/index/form.phtml');
-            $view->setVariables(['form' => $form, 'id' => $id]);
+            $view->setTemplate('interpreters-office/requests/index/form.phtml')
+                ->setVariables(['form' => $form, 'id' => $id]);
             return $view;
         }
         $form->setData($this->getRequest()->getPost());
@@ -216,12 +219,13 @@ class IndexController extends AbstractActionController
             $this->flashMessenger()->addSuccessMessage(
             'This request for interpreting services has been updated successfully. Thank you.'
             );
-            return new JsonModel(['status'=>'success']);
+            //return new JsonModel(['status'=>'success']);
+            return (new ViewModel(['form' => $form, 'id' => $id]))->setTemplate('interpreters-office/requests/index/form.phtml');
         } catch (\Exception $e) {
             $this->getResponse()->setStatusCode(500);
             $this->events->trigger('error',$this,['exception'=>$e,
-                'details'=>'running update in Requests module']);    
-            return new JsonModel(['message'=>$e->getMessage(),]);
+                'details'=>'doing update in Requests module']);
+            //return new JsonModel(['message'=>$e->getMessage(),]);
         }
     }
 }

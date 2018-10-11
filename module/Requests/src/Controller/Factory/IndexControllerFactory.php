@@ -8,6 +8,8 @@ use Interop\Container\ContainerInterface;
 use InterpretersOffice\Requests\Controller\IndexController;
 use InterpretersOffice\Entity\Listener;
 
+use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
+
 /**
  * Factory class for instantiating Requests\IndexController.
  */
@@ -32,6 +34,8 @@ class IndexControllerFactory implements FactoryInterface
         $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
         $resolver->register($container->get(Listener\UpdateListener::class)
             ->setAuth($auth));
+
+        $resolver->register($container->get(RequestEntityListener::class));
 
         return $controller;
     }
