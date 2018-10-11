@@ -82,10 +82,30 @@ class Module
                 }
             }
         });
-        // The following line instantiates the SessionManager and automatically
-        // makes the SessionManager the 'default' one:
-        // https://olegkrivtsov.github.io/using-zend-framework-3-book/html/en/Working_with_Sessions/Session_Manager.html
-        //$container->get(SessionManager::class);// yes. just the getting is enough
+
+        $sharedEvents = $container->get('SharedEventManager');
+        $log = $container->get('log');
+        $sharedEvents->attach(
+            '*','error',function($event) use ($log){
+                if ($event->getParam('exception')) {
+                    $exception = $event->getParam('exception');
+                    $message = "system error was triggered!\n";
+                    if ($event->getParam('details')) {
+                        $message .= sprintf("details: %s\n",
+                        $event->getParam('details'));
+                    }
+                    $trace = $exception->getTraceAsString();
+                    do {
+                        $message .= sprintf("%s:%d %s (%d) [%s]\n",
+                            $exception->getFile(),$exception->getLine(),
+                            $exception->getMessage(),$exception->getCode(),
+                            get_class($exception));
+                    } while ($exception = $exception->getPrevious());
+                    $message .= sprintf("stack trace:\n%s",$trace);
+                    $log->err($message);
+                }
+            }
+        );
     }
 
 
