@@ -91,15 +91,12 @@ class IndexController extends AbstractActionController
         } else {
             $page = $this->session->list_page ?: 1;
         }
-        $paginator = $repo->list(
-            $this->auth->getIdentity(),$page
-        );
+        $defendants = [];
+        $paginator = $repo->list($this->auth->getIdentity(),$page);
         if ($paginator) {
             $ids = array_column($paginator->getCurrentItems()->getArrayCopy(),'id');
             $defendants = $repo->getDefendants($ids);
-        } else {
-            $defendants = [];
-        }
+        } 
         $deadline = $this->getTwoBusinessDaysFromDate();
         $view = new ViewModel(compact('paginator','defendants','deadline'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());

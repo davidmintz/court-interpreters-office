@@ -143,10 +143,13 @@ return [
                     'create' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/create',
+                            'route' => '/create[/repeat/:id]',
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
                                 'action' => 'create',
+                                'constraints' => [
+                                    'id' => '[1-9]\d*',
+                                ],
                             ],
                         ],
                     ],

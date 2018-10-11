@@ -10,21 +10,23 @@ $this->headScript()
 $this->headTitle('requests | list') ?>
 <div id="content">
 <h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
-
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
 endif;
-
+?>
+<div class="alert alert-warning alert-dismissible" id="error-div" style="display:none; max-width:600px">
+    <div id="error-message"></div>
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<?php
 if ($this->paginator && $this->paginator->getTotalItemCount()):
     ?><p>
         <?php echo $this->paginationControl($this->paginator, null, 'partials/pagination_head');?>
     </p>
-    <!--
-    <pre><?php //print_r($this->paginator->getItem(0))?></pre>
-    -->
-
 <table id="requests-table" data-deadline="<?php echo $this->deadline ?>" class="table table-sm">
     <caption class="sr-only">list of interpreter requests</caption>
     <thead></thead>
@@ -44,9 +46,11 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
             <td><?php echo $this->defendants($r['id'])?></td>
             <td class="dropleft"><a style="color:purple" id="request-dropdown-<?php echo $r['id']?>" href="javascript:void(0)" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
               <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
-                <a class="dropdown-item" href="#">show details</a>
-                <a class="dropdown-item" href="#">repeat</a>
-                <a class="dropdown-item" href="#">something else</a>
+                <a title="display detailed view of this request" class="dropdown-item request-details text-primary" href="<?php echo $this->url('requests/view',['id'=>$r['id']])?>">show details</a>
+                <div class="dropdown-divider"></div>
+                <a title="modify or withdraw this request" class="dropdown-item request-update disabled" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>">edit</a>
+                <div class="dropdown-divider"></div>
+                <a title="schedule an interpreter for another event in this same case" class="dropdown-item request-repeat text-primary" href="<?php echo $this->url('requests/create',['id'=>$r['id']])?>">repeat</a>
               </div>
             </td>
         </tr><?php
