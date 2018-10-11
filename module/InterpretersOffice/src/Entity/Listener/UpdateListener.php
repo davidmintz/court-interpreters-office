@@ -116,6 +116,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         $entity = $args->getObject();
         $this->entity = $entity;
+        /** @todo this is bullshit. get rid of it */
         $this->caches_to_clear[] =
             ['class' => get_class($entity),'trigger' => __FUNCTION__];
     }
@@ -187,7 +188,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
             switch ($event['class']) {
                 case Entity\Event::class:
                 case 'DoctrineORMModule\Proxy\__CG__\InterpretersOffice\Entity\Event':
-                case Entity\DefendantEvent::class:
                     // flush everything, because there are so many related entities
                     $success = $cache->flushAll();
                     $this->logger->debug(

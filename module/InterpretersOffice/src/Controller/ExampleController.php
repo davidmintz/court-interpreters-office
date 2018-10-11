@@ -198,11 +198,16 @@ class ExampleController extends AbstractActionController
         //echo 'testAction works; ';
         //echo '<br>note: i am '.self::class.'<br>';
        //$this->events->trigger("doShit",$this,["message" => "this is the message parameter"]) ;
-        $this->events->trigger(
-            __FUNCTION__,
-            $this,
-            ['message' => 'this is the message parameter']
-        );
+       try {
+           throw new \Exception("shit is real");
+       } catch (\Exception $e)
+       {
+           $this->events->trigger(
+               'error',
+               $this,
+               ['exception' => $e,'details'=>"shit happened"]
+           );
+       }
         /** @var InterpretersOffice\Entity\Repository\CourtClosingRepository $repo */
         $repo = $this->objectManager->getRepository('InterpretersOffice\Entity\CourtClosing');
         $until = new \DateTime("2018-10-09 11:00:00");
