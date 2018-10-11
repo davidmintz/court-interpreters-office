@@ -8,6 +8,7 @@ $this->headScript()
     ->appendFile($this->basePath('js/requests/list.js'))
     ;
 $this->headTitle('requests | list') ?>
+<div id="content">
 <h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
 
 <?php
@@ -24,7 +25,7 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
     <pre><?php //print_r($this->paginator->getItem(0))?></pre>
     -->
 
-<table id="requests-table" data-deadline="<?php echo $this->deadline ?>" class="table">
+<table id="requests-table" data-deadline="<?php echo $this->deadline ?>" class="table table-sm">
     <caption class="sr-only">list of interpreter requests</caption>
     <thead></thead>
     <tbody>
@@ -32,7 +33,7 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
         foreach ($this->paginator as $r):
             $docket = $r['docket'] ? substr($r['docket'],2) : '';
             $location = $r['location'] ? $r['location']['name']  : '';
-        ?><tr data-request_id=<?php echo $r['id']?>>
+        ?><tr data-request_id="<?php echo $r['id']?>">
             <td><span class="avoidwrap"><?php echo $r['date']->format('d-M-Y')?></span></td>
             <td class="d-md-none d-lg-table-cell"><?php echo $r['time']->format('g:i a')?></td>
             <td><?php echo $r['language']['name']?></td>
@@ -59,4 +60,5 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
 <?php else: $url =  $this->url('requests/create');?>
 <p class="alert alert-warning">You have no electronically submitted interpreter requests
 in the database. To create one please go to <a href="<?php echo $url?>"><?php echo $url?></a>.</p>
-<?php endif;
+<?php endif;?>
+</div>

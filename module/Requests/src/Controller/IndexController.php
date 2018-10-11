@@ -35,6 +35,9 @@ class IndexController extends AbstractActionController
      */
     protected $auth;
 
+    /** \Zend\Session\Container */
+    protected $session;
+
     /**
      * constructor.
      *
@@ -45,6 +48,7 @@ class IndexController extends AbstractActionController
     {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
+        $this->session = new \Zend\Session\Container("requests");
     }
 
     public function viewAction()
@@ -81,9 +85,14 @@ class IndexController extends AbstractActionController
     public function listAction()
     {
         $repo = $this->objectManager->getRepository(Entity\Request::class);
+        $page = $this->params()->fromQuery('page');
+        if ($page) {
+            $this->session->list_page = $page;
+        } else {
+            $page = $this->session->list_page ?: 1;
+        }
         $paginator = $repo->list(
-            $this->auth->getIdentity(),
-            $this->params()->fromQuery('page',1)
+            $this->auth->getIdentity(),$page
         );
         if ($paginator) {
             $ids = array_column($paginator->getCurrentItems()->getArrayCopy(),'id');
@@ -92,9 +101,12 @@ class IndexController extends AbstractActionController
             $defendants = [];
         }
         $deadline = $this->getTwoBusinessDaysFromDate();
-        return new ViewModel(compact('paginator','defendants','deadline'));
+        $view = new ViewModel(compact('paginator','defendants','deadline'));
+        $view->setTerminal($this->getRequest()->isXmlHttpRequest());
+
+        return $view;
     }
-    
+
     /* under consideration
     public function deadlineAction()
     {
