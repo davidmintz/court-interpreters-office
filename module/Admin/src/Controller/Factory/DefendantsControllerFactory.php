@@ -25,9 +25,11 @@ class DefendantsControllerFactory implements FactoryInterface
         $em = $container->get('entity-manager');
         //attach the entity listeners
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
+        /** @todo see if we really need this */
         $resolver->register($container->get(Listener\EventEntityListener::class));
         $auth = $container->get('auth');
         $resolver->register($container->get(Listener\UpdateListener::class)->setAuth($auth));
+        
         return new DefendantsController($em);
     }
 }

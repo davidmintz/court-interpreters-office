@@ -168,13 +168,13 @@ class DefendantsController extends AbstractActionController
         }
         $form->bind($entity);
         // at least for now...
-        $container = $this->getEvent()->getApplication()->getServiceManager();
-        $logger = $container->get('log');
-        $this->repository->setLogger($logger);
-        $listener = $container->get(Entity\Listener\EventEntityListener::class);
-        if (! $listener->getLogger()) {
-            $listener->setLogger($logger);
-        }
+        // $container = $this->getEvent()->getApplication()->getServiceManager();
+        // $logger = $container->get('log');
+        // $this->repository->setLogger($logger);
+        // $listener = $container->get(Entity\Listener\EventEntityListener::class);
+        // if (! $listener->getLogger()) {
+        //     $listener->setLogger($logger);
+        // }
         /////////
         $occurrences = $this->repository->findDocketAndJudges($id);
         if (count($occurrences) > 0) {
@@ -201,6 +201,7 @@ class DefendantsController extends AbstractActionController
                     $this->params()->fromQuery('event_id')
                 );
             } catch (\Exception $e) {
+                $this->events->trigger('error',$this,['exception'=> $e]);
                 $result = ['message' => $e->getMessage(), 'status' => 'error'];
             }
             $context = $this->params()->fromQuery('context', 'defendants');
