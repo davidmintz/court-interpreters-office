@@ -3,5 +3,10 @@
 <h2>
     requests
 </h2>
-
+<?php
+$messenger = $this->flashMessenger();
+if ($messenger->hasErrorMessages()) :
+    echo $messenger->render('error', ['alert','alert-warning',], false);
+endif;
+?>
 <p>to be continued</p>

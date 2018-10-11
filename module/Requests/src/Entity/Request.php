@@ -7,13 +7,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use InterpretersOffice\Entity\Person;
 
+use Zend\Permissions\Acl\Resource\ResourceInterface;
+
 //use InterpretersOffice\Entity;
 
 /**
  * @ORM\Entity(repositoryClass="InterpretersOffice\Requests\Entity\RequestRepository");
  * @ORM\Table(name="requests")
  */
-class Request
+class Request implements ResourceInterface
 {
 
     /**
@@ -247,6 +249,11 @@ class Request
     public function __construct()
     {
         $this->defendants = new ArrayCollection();
+    }
+
+    public function getResourceId()
+    {
+        return $this->id;
     }
 
     /**

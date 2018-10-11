@@ -26,7 +26,8 @@ class IndexControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
-        $controller = new IndexController($entityManager, $auth);
+        $acl = $container->get('acl');
+        $controller = new IndexController($entityManager, $auth, $acl);
 
         $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
         $resolver->register($container->get(Listener\UpdateListener::class)

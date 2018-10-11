@@ -12,6 +12,9 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
+use InterpretersOffice\Requests\Acl as Assertion;
+
+use InterpretersOffice\Admin\Service\Acl;
 
 use InterpretersOffice\Requests\Form;
 
@@ -35,6 +38,13 @@ class IndexController extends AbstractActionController
      */
     protected $auth;
 
+    /**
+     * Acl - access control list
+     *
+     * @var Acl
+     */
+    protected $acl;
+
     /** \Zend\Session\Container */
     protected $session;
 
@@ -44,10 +54,12 @@ class IndexController extends AbstractActionController
      * @param ObjectManager $objectManager
      * @param AuthenticationServiceInterface $auth
      */
-    public function __construct(ObjectManager $objectManager, AuthenticationServiceInterface $auth)
+    public function __construct(ObjectManager $objectManager,
+        AuthenticationServiceInterface $auth, Acl $acl )
     {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
+        $this->acl = $acl;
         $this->session = new \Zend\Session\Container("requests");
     }
 
@@ -96,7 +108,7 @@ class IndexController extends AbstractActionController
         if ($paginator) {
             $ids = array_column($paginator->getCurrentItems()->getArrayCopy(),'id');
             $defendants = $repo->getDefendants($ids);
-        } 
+        }
         $deadline = $this->getTwoBusinessDaysFromDate();
         $view = new ViewModel(compact('paginator','defendants','deadline'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());
@@ -179,14 +191,37 @@ class IndexController extends AbstractActionController
      */
     public function updateAction()
     {
-        $view = new ViewModel();
-        $view->setTemplate('interpreters-office/requests/index/form.phtml');
         $id = $this->params()->fromRoute('id');
+        $entity = $this->objectManager->find(Entity\Request::class,$id);
+        if (! $entity) {
+            $this->flashMessenger()->addErrorMessage(
+                "The request with id $id was not found in the database");
+            return $this->redirect()->toRoute('requests');
+        }
         $form = new Form\RequestForm($this->objectManager,
             ['action'=>'update','auth'=>$this->auth]);
-
-        $view->setVariables(['form' => $form, 'id' => $id]);
-
-        return $view;
+        $form->bind($entity);
+        if (! $this->getRequest()->isPost()) {
+            $view = new ViewModel();
+            $view->setTemplate('interpreters-office/requests/index/form.phtml');
+            $view->setVariables(['form' => $form, 'id' => $id]);
+            return $view;
+        }
+        $form->setData($this->getRequest()->getPost());
+        if (! $form->isValid()) {
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+        }
+        try {
+            $this->objectManager->flush();
+            $this->flashMessenger()->addSuccessMessage(
+            'This request for interpreting services has been updated successfully. Thank you.'
+            );
+            return new JsonModel(['status'=>'success']);
+        } catch (\Exception $e) {
+            $this->getResponse()->setStatusCode(500);
+            $this->events->trigger('error',$this,['exception'=>$e,
+                'details'=>'running update in Requests module']);    
+            return new JsonModel(['message'=>$e->getMessage(),]);
+        }
     }
 }
