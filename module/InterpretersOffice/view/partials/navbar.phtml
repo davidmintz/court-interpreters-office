@@ -1,8 +1,11 @@
 <?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */
 $route = $this->layout()->routeMatch;
+// map routes to navigation labels because
+// there isn't necessarily one-to-one correspondence
 $labels = [
     'events/add' => 'add event',
     'events'  => 'schedule',
+    'events/display'=>'schedule',
     'events/edit'  => 'schedule',
     'admin-defendants'  => 'defendants',
     'requests' => 'requests',
