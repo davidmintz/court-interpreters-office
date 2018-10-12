@@ -3,23 +3,23 @@
 $(function() {
     //$.widget.bridge('uitooltip', $.ui.tooltip);
     $('[data-toggle="tooltip"]').tooltip();
-    // strip route parameters /yyyy/mm/dd
-    var url = document.location.pathname.replace(/\/\d+/g,'');
     var date_input = $('#date-input');
     var schedule_table = $('#schedule-table');
     // refresh table when they change language filter
     $('#language-select').on("change",function(event){
-        $('#schedule-table tbody').load(
-            url + '?language=' + $(this).val() + ' #schedule-table tbody tr',
-            function(){
-                // if there's no data in the table, remove "hover" effect
-                if ($('.no-events').length) {
-                    schedule_table.removeClass("table-hover");
-                } else {
-                    schedule_table.addClass("table-hover");
-                }
+        // strip route parameters /yyyy/mm/dd
+        var url = document.location.pathname.replace(/\/\d+/g,'');
+        url += '?language=' + $(this).val();
+        $.get(url, function(html){
+            var table = $('#schedule-table'); // yes, another local variable
+             table.replaceWith(html);
+            // if there's no data in the table, remove "hover" effect
+            if ($('.no-events').length) {
+                table.removeClass("table-hover");
+            } else {
+                table.addClass("table-hover");
             }
-        );
+        });
     });
     // go to the selected date when they choose from the datepicker
     date_input.datepicker({
@@ -30,6 +30,7 @@ $(function() {
         onSelect : function(dateText, datepicker) {
             var dateObj = date_input.datepicker("getDate");
             var date = $.datepicker.formatDate( "/yy/mm/dd", dateObj);
+            var url = document.location.pathname.replace(/\/\d+/g,'');
             document.location = url + date;
         }
     });
