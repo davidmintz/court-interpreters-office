@@ -35,6 +35,15 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
         foreach ($this->paginator as $r):
             $docket = $r['docket'] ? substr($r['docket'],2) : '';
             $location = $r['location'] ? $r['location']['name']  : '';
+            $xtra = $r['extraData'];
+            $xtra_defts = false;
+            if ($xtra) :
+                $data = json_decode($xtra,\JSON_OBJECT_AS_ARRAY);
+                if (isset($data['defendants'])):
+                    
+                endif;
+            else:
+            endif;
         ?><tr data-request_id="<?php echo $r['id']?>">
             <td><span class="avoidwrap"><?php echo $r['date']->format('d-M-Y')?></span></td>
             <td class="d-md-none d-lg-table-cell"><?php echo $r['time']->format('g:i a')?></td>
