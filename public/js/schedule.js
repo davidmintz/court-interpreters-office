@@ -1,10 +1,15 @@
 /**  public/js/schedule.js */
 
 $(function() {
-    //$.widget.bridge('uitooltip', $.ui.tooltip);
+
     $('[data-toggle="tooltip"]').tooltip();
     var date_input = $('#date-input');
     var schedule_table = $('#schedule-table');
+    /** @todo refactor for DRYness' sake. trigger custom event? */
+    if ($('.no-events').length) {
+        schedule_table.removeClass("table-hover");
+    }
+
     // refresh table when they change language filter
     $('#language-select').on("change",function(event){
         // strip route parameters /yyyy/mm/dd
@@ -21,7 +26,7 @@ $(function() {
             }
         });
     });
-    // go to the selected date when they choose from the datepicker
+    // go to selected date when they choose from the datepicker
     date_input.datepicker({
         changeMonth: true,
         changeYear: true,
@@ -34,9 +39,28 @@ $(function() {
             document.location = url + date;
         }
     });
-    /** @todo refactor for DRYness' sake. trigger custom event */
-    if ($('.no-events').length) {
-        schedule_table.removeClass("table-hover");
-    }
+
+    // reload every so often
+    var interval = 3 * 1000;
+    var timer;
+    var previousData = document.querySelector("#schedule-table").outerHTML;
+    (function run(){
+        //console.log("starting... ");
+        timer = window.setTimeout(function(){
+            $.get(document.location.href).done((data)=>{
+                //data = data.trim();
+                if (data !== previousData) {
+                    console.log("shit CHANGED!");
+                    //console.log(data);console.log(previousData);
+                    previousData = data;
+                    $("#schedule-table").replaceWith(data);
+                } else {
+                    console.log("shit has not changed");
+                }
+                //run();
+            }).fail(()=> console.warn("shit happened!")
+            );
+        },interval);
+    })()
 
 });
