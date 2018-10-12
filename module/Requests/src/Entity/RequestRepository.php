@@ -85,8 +85,6 @@ use InterpretersOffice\Entity;
             }
 
             return false;
-
-
     }
 
     /**
