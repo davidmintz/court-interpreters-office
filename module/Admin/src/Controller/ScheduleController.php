@@ -60,10 +60,14 @@ class ScheduleController extends AbstractActionController
         $date = new \DateTime($filters['date']);
         $repo = $this->entityManager->getRepository(Entity\Event::class);
         $data = $repo->getSchedule($filters);
-
         $viewModel = new ViewModel(['data' => $data, 'date' => $date]);
-        $this->setPreviousAndNext($viewModel, $date)->setVariable('language', $filters['language']);
-
+        $this->setPreviousAndNext($viewModel, $date)
+            ->setVariable('language', $filters['language']);
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $viewModel
+                ->setTemplate('interpreters-office/admin/schedule/partials/table')
+                ->setTerminal(true);
+        }
         return $viewModel;
     }
     /**
