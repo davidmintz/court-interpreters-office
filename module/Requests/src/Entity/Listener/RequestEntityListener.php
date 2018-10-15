@@ -41,4 +41,24 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
 
         return $this;
     }
+
+    public function __construct()
+    {
+        //echo "WTF?";
+    }
+
+    /**
+     * postLoad callback
+     *
+     * @param Entity\Event $request
+     * @param LifecycleEventArgs $args
+     */
+    public function postLoad(
+        Entity\Request $request,
+        LifecycleEventArgs $args
+    ) {
+
+        $log = $this->getLogger();
+        $log->debug("postload callback running in Request entity listener");
+    }
 }

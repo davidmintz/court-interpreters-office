@@ -14,6 +14,8 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
 /**
  * @ORM\Entity(repositoryClass="InterpretersOffice\Requests\Entity\RequestRepository");
  * @ORM\Table(name="requests")
+ *
+ * * @ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
  */
 class Request implements ResourceInterface
 {
