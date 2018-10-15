@@ -1,14 +1,19 @@
 /**  public/js/schedule.js */
 
 
-$(function() {
 
+$(function() {
+    $("body").on("io.reload",'#schedule-table',function(event){
+        console.log("io.reload custom event hander");
+        $('table [data-toggle="tooltip"]').tooltip();
+        if ($('.no-events').length) {
+            schedule_table.removeClass("table-hover");
+        } else {
+            schedule_table.addClass("table-hover");
+        }
+    });
     var date_input = $('#date-input');
     var schedule_table = $('#schedule-table');
-    /** @todo refactor for DRYness' sake. trigger custom event? */
-    if ($('.no-events').length) {
-        schedule_table.removeClass("table-hover");
-    }
 
     // refresh table when they change language filter
     $('#language-select').on("change",function(event){
@@ -17,15 +22,10 @@ $(function() {
         url += '?language=' + $(this).val();
         $.get(url, function(html){
             var table = $('#schedule-table'); // yes, another local variable
-             table.replaceWith(html);
-            // if there's no data in the table, remove "hover" effect
-            if ($('.no-events').length) {
-                table.removeClass("table-hover");
-            } else {
-                table.addClass("table-hover");
-            }
+            table.replaceWith(html).trigger("io.reload");
         });
     });
+
     // go to selected date when they choose from the datepicker
     date_input.datepicker({
         changeMonth: true,
@@ -48,19 +48,15 @@ $(function() {
     (function run(){
 
         window.timer = window.setTimeout(function(){
-            $.get(document.location.href).done((data, textSatus, jqXHR)=>{
-
-                //var existing = $("#schedule-table");
+            $.get(document.location.href).done((data)=>{
                 var new_data = $(data).html();
-                var changed = previous != new_data;//.html();
+                var changed = previous != new_data;
                 console.log("changed? "+changed);
                 if (changed) {
                     previous = new_data;
-                    $("#schedule-table").html(new_data);
-                    $('table [data-toggle="tooltip"]').tooltip();
-                } else {
-                    console.log("no change");
+                    $("#schedule-table").html(new_data).trigger("io.reload");
                 }
+
                 run();
             }).fail(()=> console.warn("shit happened!")
             );
