@@ -94,7 +94,7 @@ class ScheduleListener
             case 'postRemove':
                 $repo = $e->getParam('args')->getEntityManager()
                 ->getRepository(Entity\Event::class);
-                $entity = $e->getParam('eventEntity');
+                $entity = $e->getParam('entity');
                 $data = $repo->getView($entity->getId());
                 $info = [
                 'user' => $user,
@@ -106,7 +106,7 @@ class ScheduleListener
 
             case 'postLoad':
                 $this->logger->info("$user has loaded event id "
-                . $e->getParam('eventEntity')->getId());
+                . $e->getParam('entity')->getId());
                 break;
 
             default:
@@ -114,7 +114,7 @@ class ScheduleListener
                     'user %s is doing %s with event id %d',
                     $user,
                     $e->getName(),
-                    $e->getParam('eventEntity')->getId()
+                    $e->getParam('entity')->getId()
                 ));
         }
     }

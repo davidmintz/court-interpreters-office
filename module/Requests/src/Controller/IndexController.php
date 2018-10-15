@@ -194,6 +194,9 @@ class IndexController extends AbstractActionController
      */
     public function updateAction()
     {
+        // DEBUG
+        $log = $this->getEvent()->getApplication()
+            ->getServiceManager()->get('log');
         $id = $this->params()->fromRoute('id');
         $entity = $this->objectManager->find(Entity\Request::class,$id);
         if (! $entity) {
@@ -204,6 +207,11 @@ class IndexController extends AbstractActionController
         $form = new Form\RequestForm($this->objectManager,
             ['action'=>'update','auth'=>$this->auth]);
         $form->bind($entity);
+        $previous_datetime = [
+            'date'=>$entity->getDate()->format("YYYY-MM-DD"),
+            'time' => $entity->getTime()->format("H:i"),
+        ];
+
         if (! $this->getRequest()->isPost()) {
             $view = new ViewModel();
             $view->setTemplate('interpreters-office/requests/index/form.phtml')
@@ -215,12 +223,22 @@ class IndexController extends AbstractActionController
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
         try {
+            $new_datetime = [
+                'date'=>$entity->getDate()->format("YYYY-MM-DD"),
+                'time' => $entity->getTime()->format("H:i"),
+            ];
+            foreach (['date','time'] as $field) {
+                $log->debug("looks like same $field");
+                if ($previous_datetime[$field] == $new_datetime[$field]) {
+                    //$form->get('request')->remove($field);
+                }
+            }
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
             'This request for interpreting services has been updated successfully. Thank you.'
             );
-            //return new JsonModel(['status'=>'success']);
-            return (new ViewModel(['form' => $form, 'id' => $id]))->setTemplate('interpreters-office/requests/index/form.phtml');
+            return new JsonModel(['status'=>'success']);
+            //return (new ViewModel(['form' => $form, 'id' => $id]))->setTemplate('interpreters-office/requests/index/form.phtml');
         } catch (\Exception $e) {
             $this->getResponse()->setStatusCode(500);
             $this->events->trigger('error',$this,['exception'=>$e,

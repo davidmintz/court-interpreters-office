@@ -43,6 +43,10 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->now = new \DateTime();
     }
 
+    protected $before = [
+
+    ];
+
     /**
      * sets authentication service
      *
@@ -58,18 +62,24 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     /**
      * postLoad callback
      *
-     * @param Entity\Event $eventEntity
+     * @param Entity\Event $entity
      * @param LifecycleEventArgs $args
      */
     public function postLoad(
-        Entity\Event $eventEntity,
+        Entity\Event $entity,
         LifecycleEventArgs $args
     ) {
+        $this->before = [
+            'date'=>$entity->getDate(),
+            'time' =>$entity->getTime(),
+            'submission_date' => $entity->getSubmissionDate(),
+            'submission_time' => $entity->getSubmissionTime(),
+        ];
         // just a temporary/debugging thing
         $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
-            compact('args', 'eventEntity')
+            compact('args', 'entity')
         );
     }
     /**
@@ -92,29 +102,50 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     /**
      * preUpdate callback
      *
-     * @param Entity\Event $eventEntity
+     * @param Entity\Event $entity
      * @param PreUpdateEventArgs $args
      */
     public function preUpdate(
-        Entity\Event $eventEntity,
+        Entity\Event $entity,
         PreUpdateEventArgs $args
     ) {
-        $this->logger->debug(sprintf(
-            'event modification detected, listener setting modified and modifiedBy on '
-            . ' event entity id %s in %s line %d',
-            $eventEntity->getId(),
-            __FUNCTION__,
-            __LINE__
-        ));
-        if (! $args->hasChangedField('modified')) {
-            $eventEntity->setModified($this->now);
+
+        $truly_modified = false;
+        $changeset = $args->getEntityChangeSet();
+        $after = [
+            'date'=>$entity->getDate(),
+            'time' =>$entity->getTime(),
+            'submission_date' => $entity->getSubmissionDate(),
+            'submission_time' => $entity->getSubmissionTime(),
+        ];
+
+        foreach ($after as $field => $object) {
+            if (strstr($field,'time')) {
+                // compare only the time part of the objects
+                $previous = $object->format("H:i");
+                $current  = $this->before[$field]->format("H:i");
+                if ($previous == $current) {
+                    unset($changeset[$field]);
+                }
+            } else {
+                //compare objects, as in equivalence
+                if ($this->before[$field] == $object) {
+                    unset($changeset[$field]);
+                }
+            }
         }
-        $eventEntity->setModifiedBy($this->getAuthenticatedUser($args));
-        //$this->timestamp_was_updated = true;
+        if (count($changeset)) {
+            $truly_modified = true;
+        }
+        if ($truly_modified && ! $args->hasChangedField('modified')) {
+            $entity->setModified($this->now);
+            $entity->setModifiedBy($this->getAuthenticatedUser($args));
+        }
+
         $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
-            compact('args', 'eventEntity')
+            compact('args', 'entity')
         );
     }
 

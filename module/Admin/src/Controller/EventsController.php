@@ -201,6 +201,7 @@ class EventsController extends AbstractActionController
                 $date->format('l d-M-Y')
             )
         );
+        //return $view;
         return new JsonModel(['status'=>'success','id'=> $entity->getId()]);
         //$this->redirect()->toRoute('events/view', ['id' => $entity->getId()]);
 
