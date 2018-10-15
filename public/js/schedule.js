@@ -41,7 +41,7 @@ $(function() {
     });
 
     // reload every so often
-    var interval = 30 * 1000;
+    var interval = 3 * 1000;
     var previous =  $("#schedule-table").html();
     $('[data-toggle="tooltip"]').tooltip();
 
