@@ -1,6 +1,7 @@
 <?php /* module/Admin/view/interpreters-office/admin/schedule/index.phtml */
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+    ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
     ->appendFile($this->basePath('js/schedule.js'));
 $this->headTitle($this->date->format('D d M Y'));
 $messenger = $this->flashMessenger();
@@ -16,7 +17,7 @@ endif;?>
     ?>"><span class="sr-only">previous</span></a>
     </div>
     <div class="col-8 text-center border rounded">
-        <h2 class="navigation pt-1"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?> <small class="text-muted"><?php echo $this->date->format('D d M Y')?></small>
+        <h2 class="navigation pt-1"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?> <small class="text-muted display-date"><?php echo $this->date->format('D d M Y')?></small>
         </h2>
     </div>
     <div class="col-2 align-self-center text-right">
