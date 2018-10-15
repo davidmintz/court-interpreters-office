@@ -40,23 +40,33 @@ $(function() {
         }
     });
 
-    // reload every so often
-    var interval = 3 * 1000;
-    var previous =  $("#schedule-table").html();
+    // reload every 20 seconds if we're looking at today or later,
+    // else once per 3 minutes
+    var schedule_date = new moment($(".display-date").text(),"DD MMM YYYY");
+    var now = new moment();
+    var is_current = schedule_date.format("YYYYMMDD") >= now.format("YYYYMMDD");
+    var interval;
+    if (is_current) {
+        interval = 20 * 1000;
+    } else {
+        interval = 180 * 1000;
+    }
+    console.log(`refresh interval set to ${interval/1000} seconds`);
+
+    // for later comparison
+    var previous =  schedule_table.html();
     $('[data-toggle="tooltip"]').tooltip();
 
     (function run(){
-
         window.timer = window.setTimeout(function(){
             $.get(document.location.href).done((data)=>{
                 var new_data = $(data).html();
-                var changed = previous != new_data;
-                console.log("changed? "+changed);
-                if (changed) {
+                //var changed = previous != new_data;
+                //console.log("changed? "+changed);
+                if (previous != new_data) {
                     previous = new_data;
                     $("#schedule-table").html(new_data).trigger("io.reload");
                 }
-
                 run();
             }).fail(()=> console.warn("shit happened!")
             );
