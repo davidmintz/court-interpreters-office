@@ -179,31 +179,38 @@ class EventsController extends AbstractActionController
         $post = $this->getRequest()->getPost();
         $events->trigger('pre.validate', $this);
         $form->setData($post);
-        if (! $form->isValid()) {
-            return new JsonModel(['validation_errors'=>$form->getMessages()]);
-        }
-
-        $this->entityManager->flush();
-        $url = $this->getEvent()->getApplication()
+        try  {
+            if (! $form->isValid()) {
+                return new JsonModel(['validation_errors'=>$form->getMessages()]);
+            }
+            $this->entityManager->flush();
+            $url = $this->getEvent()->getApplication()
             ->getServiceManager()->get('ViewHelperManager')
             ->get('url')('events');
-        $date = $entity->getDate();
-        if ($modified != $entity->getModified() or
-        $this->params()->fromPost('deftnames_modified')) {
-            $verbiage = 'updated';
-        } else {
-            $verbiage = 'saved (unmodified)';
-        }
-        $this->flashMessenger()->addSuccessMessage(
-            sprintf("This event has been successfully $verbiage on the "
+            $date = $entity->getDate();
+            if ($modified != $entity->getModified() or
+            $this->params()->fromPost('deftnames_modified')) {
+                $verbiage = 'updated';
+            } else {
+                $verbiage = 'saved (unmodified)';
+            }
+            $this->flashMessenger()->addSuccessMessage(
+                sprintf("This event has been successfully $verbiage on the "
                 .'schedule for <a href="%s">%s</a>',
-                $url . $date->format('/Y/m/d'),
-                $date->format('l d-M-Y')
-            )
-        );
-        //return $view;
-        return new JsonModel(['status'=>'success','id'=> $entity->getId()]);
-        //$this->redirect()->toRoute('events/view', ['id' => $entity->getId()]);
+                $url . $date->format('/Y/m/d'), $date->format('l d-M-Y'))
+            );
+            //return $view;
+            return new JsonModel(['status'=>'success','id'=> $entity->getId()]);
+            //$this->redirect()->toRoute('events/view', ['id' => $entity->getId()]);
+        } catch (\Exception $e) {
+            $this->events->trigger('error',$this,['exception'=>$e]);
+            $this->getResponse()->setStatusCode(500);
+            return new JsonModel([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
 
     }
 
