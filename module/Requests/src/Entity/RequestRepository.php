@@ -11,6 +11,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 
 use InterpretersOffice\Entity;
+use InterpretersOffice\Requests\Entity\Request;
 
 /**
  * RequestRepository
@@ -141,6 +142,23 @@ use InterpretersOffice\Entity;
         return $paginator;
     }
 
+
+    /**
+    * get human-friendly view of a Request
+    * @param  int $id
+    * @return array
+    */
+    public function view($id)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+        ->select(['r.id','r.time','r.date','r.docket','e.name type'])
+        ->from(Request::class,'r')
+        ->join('r.eventType', 'e')
+        ->where('r.id = :id')
+        ->setParameters(['id'=>$id]);
+        return $qb->getQuery()->getOneorNullResult();
+        //echo $this->getEntityManager()->createQuery()->setDql($qb->getDql())->getDql();
+    }
     /**
      * gets defendant names for $request_ids
      * @param  Array $request_ids

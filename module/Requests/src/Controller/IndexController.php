@@ -65,6 +65,9 @@ class IndexController extends AbstractActionController
 
     public function viewAction()
     {
+        $id = $this->params()->fromRoute('id');
+        $repository = $this->objectManager->getRepository(Entity\Request::class);
+        return ['data'=>$repository->view($id)];
 
     }
     public function searchAction()
