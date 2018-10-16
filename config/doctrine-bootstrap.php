@@ -17,17 +17,17 @@ use InterpretersOffice\Entity\Listener\EventEntityListener;
 //$reader = new AnnotationReader();
 
 // does not work:
-AnnotationRegistry::registerAutoloadNamespace(
-    'Zend\Form\Annotation',
-    __DIR__.'/../vendor/zendframework/zend-form/src/Annotation'
-);
-/* does work:
+// AnnotationRegistry::registerAutoloadNamespace(
+//     'Zend\Form\Annotation',
+//     __DIR__.'/../vendor/zendframework/zend-form/src/Annotation'
+// );
+///* does work:
 $path = __DIR__.'/../vendor/zendframework/zend-form/src/Annotation/';
 $files = glob("$path/*php");
 foreach ($files as $file) {
     AnnotationRegistry::registerFile($file);
 }
-*/
+//*/
 
 $params = require 'autoload/doctrine.local.php';
 $dbParams = $params['doctrine']['connection']['orm_default']['params'];
