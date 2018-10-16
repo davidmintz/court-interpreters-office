@@ -1,18 +1,14 @@
 
 
 # this is .travis.yml
-# comments also gives us something to edit and thus contrive
-# a reason to `git push` and trigger a build to see if it's working
 
 language: php
 
 php:
-# somehow we broke 5.6 compatibility, so disable this at least for the time being
+
 # - 5.6
-  - 7.0
+# - 7.0
   - 7.1
-#  we were getting  "Headers already sent. You cannot change the session module's ini settings at this time"
-#  from the AuthenticationTest. project for another day.
   - 7.2
 
 install:  composer install
@@ -35,7 +31,7 @@ before_script:
     #- echo "Database version? " && echo 'SELECT VERSION();'|mysql
 
 script:
-    # - vendor/bin/phpunit module/Admin/test/Controller/EventsControllerTest.php
+
     - vendor/bin/phpunit
 
 # thank you, https://gist.github.com/Pierstoval/5d3101055e9d6a5fc19e
