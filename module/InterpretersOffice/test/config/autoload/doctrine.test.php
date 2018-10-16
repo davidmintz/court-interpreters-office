@@ -18,11 +18,11 @@ return [
                       'path' => $path,
                        // we can do this if we need it:
                       'driverOptions' => [
-                        'userDefinedFunctions' => [
-                            'md5' => ['callback' => function ($string) {
-                                return md5($string);
-                            }, 'numArgs' => 1],
-                        ],
+                        // 'userDefinedFunctions' => [
+                        //     'md5' => ['callback' => function ($string) {
+                        //         return md5($string);
+                        //     }, 'numArgs' => 1],
+                        // ],
                       ],
                  ];
 
