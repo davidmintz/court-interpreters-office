@@ -157,18 +157,18 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @param \InterpretersOffice\Entity\Event $eventEntity
      * @param LifecycleEventArgs $args
      */
-    public function prePersist(Entity\Event $eventEntity, LifecycleEventArgs $args)
+    public function prePersist(Entity\Event $entity, LifecycleEventArgs $args)
     {
-        if (! $eventEntity->getCreatedBy()) {
+        if (! $entity->getCreatedBy()) {
             // because in test environment, this might already have been done
             // for us
             $user = $this->getAuthenticatedUser($args);
-            $eventEntity->setCreatedBy($user);
+            $entity->setCreatedBy($user);
         } else {
             // so we don't blow up in the test environment
-            $user = $eventEntity->getCreatedBy();
+            $user = $entity->getCreatedBy();
         }
-        $eventEntity->setCreated($this->now)
+        $entity->setCreated($this->now)
                 ->setModifiedBy($user)
                 ->setModified($this->now);
         $this->logger->debug(__FUNCTION__
@@ -176,7 +176,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
-            compact('args', 'eventEntity')
+            compact('args', 'entity')
         );
     }
 }
