@@ -257,8 +257,12 @@ class EventForm extends ZendForm implements
         $e->getTarget()->getViewModel()->hat_id = $hat_id;
         $key = array_search($hat_id, array_column($hat_options, 'value'));
         // find out if this "hat" can be anonymous without hitting the database
+
         $can_be_anonymous = (! $key) ? false :
                 $hat_options[$key]['attributes']['data-anonymity'] <> "0";
+
+        $submitter_input = $this->getInputFilter()->get('event')
+                ->get('submitter');
 
         if ((empty($event['submitter']) && empty($event['anonymousSubmitter']))
                 or
@@ -270,19 +274,21 @@ class EventForm extends ZendForm implements
                         "identity or description of submitter is required"],
                 'break_chain_on_failure' => true,
             ]);
-            $submitter_input = $this->getInputFilter()->get('event')
-                ->get('submitter');
             $submitter_input->setAllowEmpty(false);
             $submitter_input->getValidatorChain()->attach($validator);
         }
-
-        // if NO submitter but YES anonymous submitter, submitter = NULL
+        // if NO submitter but YES anonymous submitter, unset submitter
         if (empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
-            $event['submitter'] = null;
+            unset($event['submitter']);
+            $submitter_input->setRequired(false)->setAllowEmpty(true);
+        // if YES submitter and YES anonymous submitter, unset anon submitter
+        } elseif (! empty($event['submitter'])
+            && ! empty($event['anonymousSubmitter'])) {
 
-        // if YES submitter and YES anonymous submitter, anon submitter = NULL
-        } elseif (! empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
-            $event['anonymousSubmitter'] = null;
+            unset($event['anonymousSubmitter']);
+            $anon_submitter_input = $this->getInputFilter()->get('event')
+                ->get('anonymousSubmitter');
+            $anon_submitter_input->setRequired(false)->setAllowEmpty(true);
         }
 
         $input->set('event', $event);
