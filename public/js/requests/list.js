@@ -34,13 +34,12 @@ $(function(){
 
     $("#content").on("click", ".pagination a",function(e){
         e.preventDefault();
-        var page = $(this).text().trim();
-        $.get(document.location.href+`?page=${page}`)
-        .fail(fail)
+        $.get(this.href)
         .done(function(html){
             $("#content").html(html);
             init_rows();
-        });
+        })
+        .fail(fail);
     });
     $("#content").on("click","td.dropleft > a",function(){
         var editable = $(this).closest("tr").data().editable
@@ -53,5 +52,4 @@ $(function(){
             );
         }
     });
-
 });
