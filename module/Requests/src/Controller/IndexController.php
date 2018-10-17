@@ -109,7 +109,9 @@ class IndexController extends AbstractActionController
         $defendants = [];
         $paginator = $repo->list($this->auth->getIdentity(),$page);
         if ($paginator) {
-            $ids = array_column($paginator->getCurrentItems()->getArrayCopy(),'id');
+            $data = $paginator->getCurrentItems()->getArrayCopy();
+            // wish we were kidding, but...
+            $ids = array_column(array_column($data,0),'id');
             $defendants = $repo->getDefendants($ids);
         }
         $deadline = $this->getTwoBusinessDaysFromDate();

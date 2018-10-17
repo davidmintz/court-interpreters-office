@@ -103,7 +103,7 @@ use InterpretersOffice\Requests\Entity\Request;
         $qb->select(['partial r.{id,date,time,docket, extraData}',
             't.name type','j.lastname judge','loc.name location',
             'lang.name language'])
-            ->from('InterpretersOffice\Requests\Entity\Request', 'r')
+            ->from(Request::class, 'r')
             ->join('r.eventType','t')
             ->join('r.judge','j')
             ->join('r.language','lang')
@@ -145,20 +145,54 @@ use InterpretersOffice\Requests\Entity\Request;
 
 
     /**
-    * get human-friendly view of a Request
+    * gets human-friendly view of a Request
+    *
     * @param  int $id
     * @return array
     */
     public function view($id)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
-        ->select(['r.id','r.time','r.date','r.docket','e.name type'])
+        ->select(['r.id','r.time','r.date','r.docket','e.name type',
+            'lang.name language','r.comments',
+            'r.modified','modified_by.lastname modified_by_lastname',
+            'modified_by.firstname modified_by_firstname',
+            'modified_by_h.name modified_by_hat',
+            'r.created','submitter.lastname submitter_lastname',
+            'submitter.firstname submitter_firstname',
+            'submitter_h.name submitter_hat',
+            'loc.name location','parent_loc.name parent_location',
+            'event.id event_id','r.pending',
+            'event.date event_date', 'event.time event_time',
+            'j.lastname judge_lastname','j.firstname judge_firstname',
+            'j.middlename judge_middlename','j_flavor.flavor judge_flavor'
+        ])
         ->from(Request::class,'r')
         ->join('r.eventType', 'e')
+        ->join('r.submitter', 'submitter')// a Person
+        ->join('submitter.hat', 'submitter_h')
+        ->join('r.modifiedBy','modified_by_user')
+        ->join('r.language','lang')
+        ->join('modified_by_user.person','modified_by')
+        ->join ('modified_by.hat','modified_by_h')
+        ->leftJoin('r.location','loc')
+        ->leftJoin('r.judge','j')
+        ->leftJoin('j.flavor','j_flavor')
+        ->leftJoin('loc.parentLocation','parent_loc')
+        ->leftJoin('r.event','event')
         ->where('r.id = :id')
         ->setParameters(['id'=>$id]);
-        return $qb->getQuery()->getOneorNullResult();
+
+        $request = $qb->getQuery()->getOneorNullResult();
+        if ($request) {
+            $dql = 'SELECT d.surnames, d.given_names FROM '.Request::class.' r
+                JOIN r.defendants d WHERE r.id = :id';
+            $request['defendants'] = $this->getEntityManager()
+                ->createQuery($dql)->setParameters(['id'=>$id])->getResult();
+        }
+        // if ($request['event_id'])... maybe fetch interpreters
         //echo $this->getEntityManager()->createQuery()->setDql($qb->getDql())->getDql();
+        return $request;
     }
     /**
      * gets defendant names for $request_ids
