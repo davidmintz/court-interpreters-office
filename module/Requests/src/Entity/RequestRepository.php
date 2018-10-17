@@ -100,7 +100,9 @@ use InterpretersOffice\Requests\Entity\Request;
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $parameters = [];
-        $qb->select(['r','t','j','loc','lang'])
+        $qb->select(['partial r.{id,date,time,docket, extraData}',
+            't.name type','j.lastname judge','loc.name location',
+            'lang.name language'])
             ->from('InterpretersOffice\Requests\Entity\Request', 'r')
             ->join('r.eventType','t')
             ->join('r.judge','j')
@@ -109,20 +111,19 @@ use InterpretersOffice\Requests\Entity\Request;
             ->orderBy('r.date', 'DESC');
         if ($user->role == 'submitter') {
             if ($user->judge_ids) {
-                // $user is a Law Clerk or Courtoom Deputy
-                // so constrain it to events before their judge(s)
+                // $user is a Law Clerk or Courtoom Deputy, so constrain it
+                // to events before their judge(s)
                 $qb->where('j.id IN (:judge_ids)');
                 $parameters['judge_ids'] = $user->judge_ids;
-                // and constrain it to in-court events
+                // and in-court events
                 $qb->join('t.category','c')->andWhere('c.category = :category');
                 $parameters['category'] = 'in';
             } else {
-                // USPO or Pretrial Officer
-                // fetch only requests created by the current user
+                // for USPO or Pretrial Officer,fetch only requests created by
+                // the current user
                 $qb->join('r.submitter','p')->where('p.id = :person_id');
                 $parameters['person_id'] = $user->person_id;
-                // this also works but is not necessary. good to know for future
-                // reference:
+                // this also works but is not necessary. for future reference:
                 //$qb->join(Entity\User::class, 'u','WITH','r.submitter = u.person')
                 //    ->where('u.id = :user_id');
                 //$parameters['user_id'] = $user->id;

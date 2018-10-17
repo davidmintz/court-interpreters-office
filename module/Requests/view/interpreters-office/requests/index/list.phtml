@@ -33,25 +33,26 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
     <tbody>
     <?php
         foreach ($this->paginator as $r):
+            $r = array_merge($r,$r[0]); unset($r[0]);
+            //printf("<pre>%s</pre>",print_r($r,true)); break;
             $docket = $r['docket'] ? substr($r['docket'],2) : '';
-            $location = $r['location'] ? $r['location']['name']  : '';
             $xtra = $r['extraData'];
             $xtra_defts = false;
             if ($xtra) :
                 $data = json_decode($xtra,\JSON_OBJECT_AS_ARRAY);
                 if (isset($data['defendants'])):
-                    
+
                 endif;
             else:
             endif;
         ?><tr data-request_id="<?php echo $r['id']?>">
             <td><span class="avoidwrap"><?php echo $r['date']->format('d-M-Y')?></span></td>
             <td class="d-md-none d-lg-table-cell"><?php echo $r['time']->format('g:i a')?></td>
-            <td><?php echo $r['language']['name']?></td>
-            <td><?php echo $r['eventType']['name']?></td>
-            <td><?php echo $location ?></td>
+            <td><?php echo $r['language']?></td>
+            <td><?php echo $r['type']?></td>
+            <td><?php echo $r['location'] ?></td>
             <td class="d-md-none d-lg-table-cell"><?php echo $docket ?></td>
-            <td><?php echo $r['judge']['lastname']?></td>
+            <td><?php echo $r['judge']?></td>
             <td><?php echo $this->defendants($r['id'])?></td>
             <td class="dropleft"><a style="color:purple" id="request-dropdown-<?php echo $r['id']?>" href="javascript:void(0)" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
               <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
