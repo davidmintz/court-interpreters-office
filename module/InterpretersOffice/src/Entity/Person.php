@@ -5,16 +5,12 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Zend\Form\Annotation;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Entity representing a person in the court interpreters office management
  * system.
  *
- * We tried this with Annotations and Annotation/Type("Fieldset"), and could not
- * get validators to run.
- * http://stackoverflow.com/questions/12002722/using-annotation-builder-in-extended-zend-form-class/18427685#18427685
  *
  * @see InterpretersOffice\Entity\Hat
  * @see InterpretersOffice\Entity\Judge
@@ -401,5 +397,5 @@ class Person
     {
         return $this->getFirstname().' '.$this->getLastname();
     }
-    
+
 }
