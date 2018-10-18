@@ -245,7 +245,7 @@ class Request implements ResourceInterface
   CONSTRAINT `requests_ibfk_8` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE SET NULL
 )*/
 
-/**
+     /**
      * Constructor
      */
     public function __construct()
@@ -255,7 +255,7 @@ class Request implements ResourceInterface
 
     public function getResourceId()
     {
-        return $this->id;
+        return self::class;
     }
 
     /**

@@ -7,6 +7,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Requests\Controller\IndexController;
 use InterpretersOffice\Entity\Listener;
+use InterpretersOffice\Requests\Acl\OwnershipAssertion;
 
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
@@ -28,6 +29,7 @@ class IndexControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
+
         $acl = $container->get('acl');
         $controller = new IndexController($entityManager, $auth, $acl);
 
@@ -36,6 +38,11 @@ class IndexControllerFactory implements FactoryInterface
             ->setAuth($auth));
 
         $resolver->register($container->get(RequestEntityListener::class));
+
+        $acl->allow($auth->getIdentity()->role, $controller,
+            ['update','cancel'],new OwnershipAssertion(
+                $entityManager,$controller
+        ));
 
         return $controller;
     }

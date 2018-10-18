@@ -36,13 +36,14 @@ class AclFactory implements FactoryInterface
             'access-denied',
             function ($e) use ($log, $auth) {
                 $identity = $auth->getIdentity() ;
-                $message = sprintf(
-                    "access DENIED to user %s in role %s: resource %s, action %s",
-                    $identity ? $identity->email : 'anonymous',
-                    $e->getParam('role', 'none'),
-                    $e->getParam('resource'),
-                    $e->getParam('privilege', 'N/A')
-                );
+                $message = 'access denied bla bla';
+                // $message = sprintf(
+                //     "access DENIED to user %s in role %s: resource %s, action %s",
+                //     $identity ? $identity->email : 'anonymous',
+                //     $e->getParam('role', 'none'),
+                //     $e->getParam('resource'),
+                //     $e->getParam('privilege', 'N/A')
+                //);
                  $log->warn($message);
             }
         );

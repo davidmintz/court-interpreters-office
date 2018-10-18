@@ -4,6 +4,12 @@ var $, moment;
 const timestamp_format = "YYYY-MM-DD HH:mm:ss";
 const seconds = 30;
 
+/**
+ * sets each tr element's "editable" attribute according to
+ * the date-time of each.
+ *
+ * @return void
+ */
 var init_rows = function(){
     // on page load, deadline is set to 2 business days from now
     var deadline = new moment($("#requests-table").data("deadline"),timestamp_format);
@@ -25,6 +31,8 @@ var fail = function(){
 
 $(function(){
     init_rows();
+
+    // periodically update the table's "deadline" attribute
     window.setInterval(()=> {
             var table = $("#requests-table");
             var deadline = new moment(table.data("deadline"),timestamp_format);
@@ -42,6 +50,8 @@ $(function(){
         })
         .fail(fail);
     });
+
+    // on dropdown menu click, conditionally enable disabled items
     $("#content").on("click","td.dropleft > a",function(){
         var editable = $(this).closest("tr").data().editable
         var disabled_items = $(`#${$(this).attr('id')}`).next(".dropdown-menu").children("a.disabled");

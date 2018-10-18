@@ -9,12 +9,18 @@ $(function(){
     var scheduled_datetime = new moment(str,"ddd DD-MMM-YYYY h:mm a");
     var deadline = new moment(request_div.data("deadline"),timestamp_format);
     var editable = scheduled_datetime.isAfter(deadline);
-    console.warn("can edit? "+editable);
+    console.warn("on page load, can edit? "+editable);
     if (editable) {
         window.setInterval(()=> {
             var str = deadline.add(seconds,"seconds").format(timestamp_format);
             request_div.data({deadline: str});
-            console.warn("editable? "+editable);
-        }, seconds * 1000);
+            if (! scheduled_datetime.isAfter(deadline)) {
+                editable = false;
+                console.log("time's up for editing");
+            } else {
+                console.log("still editable");
+            }
+
+        }, seconds * 100);
     }
 });

@@ -6,6 +6,7 @@
 use InterpretersOffice\Admin\Controller as Admin;
 use InterpretersOffice\Controller as Main;
 use InterpretersOffice\Requests\Controller as Requests;
+use InterpretersOffice\Requests\Entity\Request;
 
 return [
     'roles' => [
@@ -51,7 +52,7 @@ return [
     'allow' => [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
-            Requests\IndexController::class => null,
+            Requests\IndexController::class => ['index','list','view','create','update'],            
             Admin\EventsController::class => ['index', 'view', 'search'],
             Main\AuthController::class => ['logout'],
         ],
