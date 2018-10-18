@@ -1,4 +1,5 @@
 /** public/js/requests/list.js */
+
 var $, moment;
 const timestamp_format = "YYYY-MM-DD HH:mm:ss";
 const seconds = 30;

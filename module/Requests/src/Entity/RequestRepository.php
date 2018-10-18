@@ -164,6 +164,7 @@ use InterpretersOffice\Requests\Entity\Request;
             'loc.name location','parent_loc.name parent_location',
             'event.id event_id','r.pending',
             'event.date event_date', 'event.time event_time',
+            'cr.reason cancellation',
             'j.lastname judge_lastname','j.firstname judge_firstname',
             'j.middlename judge_middlename','j_flavor.flavor judge_flavor'
         ])
@@ -180,6 +181,7 @@ use InterpretersOffice\Requests\Entity\Request;
         ->leftJoin('j.flavor','j_flavor')
         ->leftJoin('loc.parentLocation','parent_loc')
         ->leftJoin('r.event','event')
+        ->leftJoin('event.cancellationReason','cr')
         ->where('r.id = :id')
         ->setParameters(['id'=>$id]);
 

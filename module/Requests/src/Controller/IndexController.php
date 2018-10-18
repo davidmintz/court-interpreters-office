@@ -67,7 +67,10 @@ class IndexController extends AbstractActionController
     {
         $id = $this->params()->fromRoute('id');
         $repository = $this->objectManager->getRepository(Entity\Request::class);
-        return ['data'=>$repository->view($id)];
+        return [
+            'data'=>$repository->view($id),
+            'deadline'=>  $this->getTwoBusinessDaysFromDate()
+        ];
 
     }
     public function searchAction()
@@ -138,7 +141,7 @@ class IndexController extends AbstractActionController
     {
         return $this->objectManager
             ->getRepository(CourtClosing::class)
-            ->getTwoBusinessDaysFromDate($date)->format('Y-m-d H:i:s');
+            ->getTwoBusinessDaysFromDate($date);
     }
 
     /**
