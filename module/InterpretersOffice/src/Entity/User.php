@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Zend\Permissions\Acl\Role\RoleInterface;
 
 /**
  * Entity representing a user of the application.
@@ -27,7 +28,7 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
  * @ORM\HasLifecycleCallbacks
  */
 
-class User implements ResourceInterface
+class User implements ResourceInterface, RoleInterface
 {
     /**
      * user id.
@@ -137,11 +138,19 @@ class User implements ResourceInterface
      *
      * @return string
      */
-
     public function getResourceId()
     {
         return $this->getRole()->getName();
     }
+
+    /**
+     * implements RoleInterface
+     */
+    public function getRoleId()
+    {
+        return $this->getRole()->getName();
+    }
+
     /**
      * verifies password.
      *

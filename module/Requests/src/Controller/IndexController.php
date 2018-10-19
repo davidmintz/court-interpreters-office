@@ -12,12 +12,11 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
-use InterpretersOffice\Requests\Acl as Assertion;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
-
 use InterpretersOffice\Admin\Service\Acl;
-
 use InterpretersOffice\Requests\Form;
+
+use Zend\Mvc\MvcEvent;
 
 /**
  *  IndexController for Requests module
@@ -40,7 +39,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
     protected $auth;
 
     /**
-     * Acl - access control list
+     * Acl - access control service
      *
      * @var Acl
      */
@@ -68,39 +67,81 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $this->session = new \Zend\Session\Container("requests");
     }
 
-     public function getResourceId()
+    /**
+     * implements ResourceInterface
+     *
+     * @return string
+     */
+    public function getResourceId()
     {
          return self::class;
     }
 
+    /**
+     * Request entity.
+     *
+     * @var Entity\Request
+     */
     protected $entity;
 
+    /**
+     * gets the Request entity we're working with
+     *
+     * @return Entity\Request
+     */
     public function getEntity()
     {
         return $this->entity;
     }
 
-    public function onDispatch($e)
+    public function getIdentity()
     {
+        return $this->auth->getIdentity();
+    }
+    /**
+     * onDispatch event Listener
+     *
+     * @param  MvcEvent $e
+     * @return mixed
+     */
+    public function onDispatch($e)
+    { 
         $params = $this->params()->fromRoute();
 
         if (in_array($params['action'],['update','cancel'])) {
-            $entity = $this->objectManager->find(Entity\Request::class,$params['id']);
-            if (!$entity) {
+            $entity = $this->objectManager->find(Entity\Request::class,
+                $params['id']);
+            if (! $entity) {
                 return parent::onDispatch($e);
             }
             $this->entity = $entity;
             $user = $this->objectManager->find('InterpretersOffice\Entity\User',
-            $this->auth->getIdentity()->id);
+                $this->auth->getIdentity()->id);
             $allowed = $this->acl->isAllowed(
-                 $user,
-                 $this,
-                 $params['action']
+                 $user, $this, $params['action']
             );
-            var_dump($allowed);
+            if (! $allowed) {
+                $viewRenderer = $e->getApplication()->getServiceManager()
+                ->get('ViewRenderer');
+                $url  = $this->getPluginManager()->get('url')
+                ->fromRoute('requests/view',['id'=>$entity->getId()]);
+                $viewModel = $e->getViewModel();
+                $viewModel->setVariables(
+                    ['content'=>$viewRenderer->render(
+                    (new ViewModel())
+                    ->setTemplate('interpreters-office/requests/denied')
+                    ->setVariables([
+                        'message' =>
+                        "Sorry, you are not authorized to {$params['action']}
+                        this <a href=\"$url\">request</a>."])
+                    )]
+                );
 
-
+                return $this->getResponse()
+                    ->setContent($viewRenderer->render($viewModel));
+            }
         }
+
         return parent::onDispatch($e);
     }
 
@@ -159,6 +200,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
             $defendants = $repo->getDefendants($ids);
         }
         $deadline = $this->getTwoBusinessDaysFromDate();
+        //echo $deadline->format("Y-m-d");
         $view = new ViewModel(compact('paginator','defendants','deadline'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());
 
@@ -178,7 +220,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
      * @param  \DateTime $date
      * @return string
      */
-    protected function getTwoBusinessDaysFromDate(\DateTime $date = null)
+    public function getTwoBusinessDaysFromDate(\DateTime $date = null)
     {
         return $this->objectManager
             ->getRepository(CourtClosing::class)

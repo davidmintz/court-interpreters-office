@@ -32,18 +32,18 @@ class AclFactory implements FactoryInterface
         $acl = new Acl($config);
         $sharedEventManager = $container->get('SharedEventManager');
         $sharedEventManager->attach(
-            Acl::class,
-            'access-denied',
+            Acl::class,  'access-denied',
             function ($e) use ($log, $auth) {
                 $identity = $auth->getIdentity() ;
-                $message = 'access denied bla bla';
-                // $message = sprintf(
-                //     "access DENIED to user %s in role %s: resource %s, action %s",
-                //     $identity ? $identity->email : 'anonymous',
-                //     $e->getParam('role', 'none'),
-                //     $e->getParam('resource'),
-                //     $e->getParam('privilege', 'N/A')
-                //);
+                $role = $e->getParam('role');
+                $resource = $e->getParam('resource');
+                $message = sprintf(
+                    "access DENIED to user %s in role %s: resource %s, action %s",
+                    $identity ? $identity->email : 'anonymous',
+                    is_object($role) ? $role->getRoleId() : 'none',
+                    is_object($resource) ? $resource->getResourceId() : 'none',
+                    $e->getParam('privilege', 'N/A')
+                );
                  $log->warn($message);
             }
         );
