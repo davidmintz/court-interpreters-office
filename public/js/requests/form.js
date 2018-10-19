@@ -100,6 +100,13 @@ $(function(){
     const defendant_name_form = $("#form-add-deft");
     const slideout = $("#deft-results-slideout");
 
+    const location = $("#location");
+
+    // set default location. TO DO: do this server-side?
+    if (! location.val()) {
+        location.val(($("#judge :selected").data().default_location));
+    }
+
     defendant_search.autocomplete(deftname_autocomplete_options);
     $("#time").on("change",parseTime);
     $("#date").datepicker(datepicker_options);
