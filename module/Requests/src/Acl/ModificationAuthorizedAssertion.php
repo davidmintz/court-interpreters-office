@@ -102,7 +102,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
         $request_date = new \DateTime(
             "{$request->getDate()->format('Y-m-d')} {$request->getTime()->format('H:i')}"
         );
-        echo __FUNCTION__ , " returning ...";
+        
         return $request_date > $deadline;
     }
 
