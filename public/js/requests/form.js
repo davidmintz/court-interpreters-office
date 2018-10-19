@@ -102,8 +102,8 @@ $(function(){
 
     const location = $("#location");
 
-    // set default location. TO DO: do this server-side?
-    if (! location.val()) {
+    // set default location if possible. TO DO: do this server-side?
+    if (! location.val() && $("#judge").val()) {
         location.val(($("#judge :selected").data().default_location));
     }
 
