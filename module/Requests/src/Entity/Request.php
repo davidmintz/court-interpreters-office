@@ -669,7 +669,7 @@ class Request implements ResourceInterface
      *
      * @param Collection $defendants
      */
-    public function addDefendants(ArrayCollection $defendants)
+    public function addDefendants(Collection $defendants)
     {
         foreach ($defendants as $defendant) {
             $this->defendants->add($defendant);

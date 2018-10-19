@@ -32,6 +32,13 @@ class IndexController extends AbstractActionController implements ResourceInterf
     protected $objectManager;
 
     /**
+    * Request entity.
+    *
+    * @var Entity\Request
+    */
+    protected $entity;
+
+    /**
      * authentication service
      *
      * @var AuthenticationServiceInterface;
@@ -77,12 +84,6 @@ class IndexController extends AbstractActionController implements ResourceInterf
          return self::class;
     }
 
-    /**
-     * Request entity.
-     *
-     * @var Entity\Request
-     */
-    protected $entity;
 
     /**
      * gets the Request entity we're working with
@@ -105,7 +106,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
      * @return mixed
      */
     public function onDispatch($e)
-    { 
+    {
         $params = $this->params()->fromRoute();
 
         if (in_array($params['action'],['update','cancel'])) {
@@ -122,9 +123,9 @@ class IndexController extends AbstractActionController implements ResourceInterf
             );
             if (! $allowed) {
                 $viewRenderer = $e->getApplication()->getServiceManager()
-                ->get('ViewRenderer');
+                    ->get('ViewRenderer');
                 $url  = $this->getPluginManager()->get('url')
-                ->fromRoute('requests/view',['id'=>$entity->getId()]);
+                    ->fromRoute('requests/view',['id'=>$entity->getId()]);
                 $viewModel = $e->getViewModel();
                 $viewModel->setVariables(
                     ['content'=>$viewRenderer->render(
@@ -240,7 +241,16 @@ class IndexController extends AbstractActionController implements ResourceInterf
             ['action'=>'create','auth'=>$this->auth]);
         $view->form = $form;
         $entity = new Entity\Request();
+        if (! $this->getRequest()->isPost()) {
+            $repeat_id = $this->params()->fromRoute('id');
+            if ($repeat_id) {
+                $repo = $this->objectManager
+                    ->getRepository(Entity\Request::class)
+                    ->populate($entity,$repeat_id);
+            }
+        }
         $form->bind($entity);
+        
         if ($this->getRequest()->isPost()) {
             try {
                 $form->setData($this->getRequest()->getPost());

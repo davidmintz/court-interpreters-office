@@ -89,6 +89,28 @@ use InterpretersOffice\Requests\Entity\Request;
     }
 
     /**
+     * pre-populates a new Request from an existing Request
+     *
+     * @param  Request $entity
+     * @param  int  $from_id
+     * @return Request|false if not found
+     */
+     public function populate(Request $entity, $from_id)
+
+     {
+         $existing = $this->find($from_id);
+         if (! $existing) {
+             return false;
+         }
+         return $entity
+            ->setDocket($existing->getDocket())
+            ->setJudge($existing->getJudge())
+            ->setLocation($existing->getLocation())
+            ->setLanguage($existing->getLanguage())
+            ->addDefendants($existing->getDefendants());
+     }
+     
+    /**
      * returns paginated Requests data for current user
      *
      * @param stdClass $user
