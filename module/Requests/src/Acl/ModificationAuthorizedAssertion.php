@@ -56,7 +56,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
     }
 
     /**
-     * asserts user is authorized to modify request
+     * asserts that user is authorized to modify request
      *
      * @param  Acl    $acl
      * @param  RoleInterface $user
@@ -73,9 +73,16 @@ class ModificationAuthorizedAssertion implements AssertionInterface
         if ($hat->isJudgesStaff()) {
             // the Judge property of this Request entity
             // has to be among the User's judges
-            $judge_ids = $identity->judge_ids;
             $request_judge_id = $request->getJudge()->getId();
-            return in_array($request_judge_id,$judge_ids);
+            if (! in_array($request_judge_id,$identity->judge_ids)) {
+                return false;
+            }
+            // it has to be an in-court event
+            $category = $request->getEventType()->getCategory();
+            if ('in' != $category) {
+                return false;
+            }
+            return true;
         } else {
             // the current User has to be the User who created the entity
             $created_by = $request->getSubmitter();
@@ -84,7 +91,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
     }
 
     /**
-     * implements AssertionInterface
+     * asserts that Request datetime is at least two business days from now
      *
      * @param  Acl    $acl
      * @param  RoleInterface $user
@@ -102,7 +109,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
         $request_date = new \DateTime(
             "{$request->getDate()->format('Y-m-d')} {$request->getTime()->format('H:i')}"
         );
-        
+
         return $request_date > $deadline;
     }
 
