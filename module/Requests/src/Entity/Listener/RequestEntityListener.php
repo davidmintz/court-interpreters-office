@@ -90,7 +90,8 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
                 $really_modified = true;
             }
         }
-        if ($really_modified) {
+
+        if ($really_modified or $this->defendantsWereModified($request)) {
             $this->getLogger()->debug("YES, updating request meta in preUpdate listener");
             $request->setModified( new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
