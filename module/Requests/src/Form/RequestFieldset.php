@@ -138,6 +138,11 @@ class RequestFieldset extends AbstractEventFieldset
         return $this;
     }
 
+    /**
+     * adds judge element
+     *
+     * @return RequestFieldset
+     */
     public function addJudgeElements()
     {
         $user = $this->options['auth']->getIdentity();
