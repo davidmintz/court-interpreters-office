@@ -15,7 +15,6 @@ class RequestFieldset extends AbstractEventFieldset
 
     use ObjectManagerAwareTrait;
 
-
     /**
      * name of the form.
      *
@@ -79,7 +78,6 @@ class RequestFieldset extends AbstractEventFieldset
         ]);
     }
 
-    
     /**
      * adds event-type select menu
      *
@@ -160,6 +158,11 @@ class RequestFieldset extends AbstractEventFieldset
         return $this;
     }
 
+    /**
+     * gets input filter specification
+     *
+     * @return array
+     */
     public function getInputFilterSpecification()
     {
 
@@ -268,5 +271,4 @@ class RequestFieldset extends AbstractEventFieldset
         ];
         return array_merge($this->inputFilterspec,$spec);
     }
-
 }
