@@ -59,6 +59,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
 
         return $this;
     }
+
     /**
      * postLoad callback
      *
@@ -75,6 +76,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             'submission_date' => $entity->getSubmissionDate(),
             'submission_time' => $entity->getSubmissionTime(),
         ];
+        //$this->previous_defendants = $request->getDefendants()->toArray();
         // just a temporary/debugging thing
         $this->getEventManager()->trigger(
             __FUNCTION__,
