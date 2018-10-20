@@ -35,6 +35,13 @@
             $fieldset->get($field)->setValue($value->format($format));
         endif;
     endforeach;
+    foreach (['judge','eventType','location'] as $field) {
+      $value = $fieldset->get($field)->getValue();
+      if (is_object($value)):
+          $fieldset->get($field)->setValue($value->getId());
+      endif;
+
+    }
     // try to set default judge and courtroom, if applicable
     $user = $this->layout()->user;
     if ($user->judge_ids && 1 == count($user->judge_ids)) :
@@ -53,6 +60,9 @@
         ?>
         <?php
     endif;
+    printf("judge %s, type %s<br>",
+ $fieldset->get('judge')->getValue(),
+     $fieldset->get('eventType')->getValue());
     ?>
 <div class="center-block mx-auto" style="max-width:800px">
     <h2 class="navigation mb-3"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
