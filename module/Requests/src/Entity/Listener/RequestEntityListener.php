@@ -71,7 +71,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      *
      * updates the modified and modifiedBy fields if data was actually changed.
      *
-     * @param  EntityRequest      $request
+     * @param  Entity\Request $request
      * @param  PreUpdateEventArgs $args
      */
     public function preUpdate(Entity\Request $request,PreUpdateEventArgs $args)
@@ -96,6 +96,10 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
             $request->setModified( new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
         }
+
+        // $this->getEventManager()->trigger( __FUNCTION__, $this,
+        //     compact('args', 'entity')
+        // );
     }
 
     /**
@@ -108,6 +112,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
 
         $now = $request->getDefendants()->toArray();
         $then = $this->previous_defendants;
+
         return $now != $then;
 
     }
