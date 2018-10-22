@@ -40,7 +40,7 @@ trait CurrentUserTrait
 
     /**
      * gets the Person belong to the current User
-     * 
+     *
      * @param  LifecycleEventArgs $args [description]
      * @return Entity\Person
      */
@@ -57,8 +57,5 @@ trait CurrentUserTrait
             ->useResultCache(true)->getOneOrNullResult();
 
         return $person;
-
-
-
     }
 }
