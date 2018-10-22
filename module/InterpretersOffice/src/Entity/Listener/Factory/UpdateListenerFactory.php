@@ -26,11 +26,11 @@ class UpdateListenerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        //$container->get('auth');
         $listener = new UpdateListener();
         $listener->setLogger($container->get('log'));
+
         // echo "Not daring to pull auth from container<br>";
-        // because it causes a fatal error -- functions nested > 256 levels.
+        // because it causes a infinite loop/fatal error -- functions nested > 256 levels.
         // sounds like bullshit to me!
         // $auth = $container->get(\Zend\Authentication\AuthenticationService::class);
 

@@ -179,9 +179,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        if ($entity instanceof Entity\InterpreterEvent) {
-            $this->logger->debug(__METHOD__.':  interp_event is being created, updating event');
-            $entity->getEvent()->setModified($this->getTimeStamp());
+        if ($entity instanceof Entity\InterpreterEvent) {            
             $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
             $this->logger->debug("set createdBy and timestamp on InterpreterEvent here in ".__METHOD__);
