@@ -12,7 +12,7 @@ return  [
         'admin' => [
             'type' => Segment::class,
             'options' => [
-                'route' => '/admin', //[/]r
+                'route' => '/admin',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\IndexController::class,
@@ -70,10 +70,13 @@ return  [
                 'add' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/add',
+                        'route' => '/add[/repeat/:id]',
                         'defaults' => [
                             'controller' => Controller\EventsController::class,
                             'action' => 'add',
+                        ],
+                        'constraints' => [
+                            'id' => '[1-9]\d*',
                         ],
                     ],
                 ],
