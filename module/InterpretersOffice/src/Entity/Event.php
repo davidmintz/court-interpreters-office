@@ -756,12 +756,16 @@ class Event
      * adds Defendants.
      *
      * @param Collection $defendants
+     *
+     * @return Event
      */
-    public function addDefendants(ArrayCollection $defendants)
+    public function addDefendants(Collection $defendants)
     {
         foreach ($defendants as $defendant) {
             $this->defendants->add($defendant);
         }
+
+        return $this;
     }
 
     /**
@@ -769,7 +773,7 @@ class Event
      *
      * @param Collection $defendants
      */
-    public function removeDefendants(ArrayCollection $defendants)
+    public function removeDefendants(Collection $defendants)
     {
         foreach ($defendants as $defendant) {
             $this->defendants->removeElement($defendant);
