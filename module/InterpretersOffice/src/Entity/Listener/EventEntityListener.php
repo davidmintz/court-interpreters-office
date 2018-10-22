@@ -130,13 +130,13 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             return true;
         }
         $fields_updated = array_keys($args->getEntityChangeSet());
-        $datetimes = ['date','time','submission_date','submission_time'];
+        $datetimes = ['date','time','submission_date','submission_time','end_time'];
         if (array_diff($fields_updated,$datetimes)) {
             $this->logger
                 ->debug("fields other than dates and times were modified");
             return true;
         }
-        foreach (['time','submission_time'] as $time) {
+        foreach (['time','submission_time','end_time'] as $time) {
             $before = $args->getOldValue($time)->format('H:i');
             $after = $args->getNewValue($time)->format('H:i');
             if ($before != $after) {
