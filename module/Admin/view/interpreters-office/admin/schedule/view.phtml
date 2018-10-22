@@ -161,7 +161,7 @@ endif;?></span>
     <div class="col-12 d-flex">
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
           <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
-          <a href="" role="button" class="btn btn-success">repeat</a>
+          <a href="<?php echo $this->url('events/add',['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
           <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action'=>'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
         </div>
     </div>

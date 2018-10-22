@@ -115,7 +115,6 @@ class EventControllerTest extends AbstractControllerTest
         $count_after = $em
           ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
           ->getSingleScalarResult();
-        //$this->assertRedirect();
         $this->assertEquals(
             1,
             $count_after - $count_before,
@@ -299,6 +298,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertQueryCount('ul.interpreters-assigned li', 1);
         // to be continued...
     }
+
     public function testEventInputValidation()
     {
         $em = FixtureManager::getEntityManager();

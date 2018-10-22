@@ -9,6 +9,7 @@ use InterpretersOffice\Admin\Controller;
 use InterpretersOffice\Admin\Controller\PeopleController;
 
 use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
+use InterpretersOffice\Entity\Listener;
 
 /**
  * Factory for instantiating Controllers that manage Person, its subclasses, or
@@ -36,7 +37,10 @@ class PeopleControllerFactory implements FactoryInterface
             // attach InterpreterEntity listener
             $listener = $container->get('interpreter-listener');
             $resolver = $em->getConfiguration()->getEntityListenerResolver();
+            //attach the entity listeners
             $resolver->register($listener);
+            // ensure UpdateListener knows who current use is
+            $container->get(Listener\UpdateListener::class)->setAuth($container->get('auth'));
         } else {
             $controller = new $requestedName($em);
         }

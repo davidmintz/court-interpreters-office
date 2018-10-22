@@ -48,11 +48,10 @@ foreach (['date','time','end_time','submission_time', 'submission_date'] as $tim
     $element = $fieldset->get($time);
     $value = $element->getValue();
     //renderer can't deal with DateTime objects
-    if ($value instanceof \DateTime) {
+    if ($value instanceof \DateTime) :
         $format = strstr($time, 'time') ? 'g:i a' : 'm/d/Y' ;
-        $element->setValue($value->format($format));
-        continue;
-    }
+        $element->setValue($value->format($format));        
+    endif;
 endforeach;
 
 $hatElement = $fieldset->get('anonymousSubmitter');
@@ -84,6 +83,14 @@ $entity = $form->getObject();
 if ($entity->getLocation() && ! $entity->getLocation()->getParentLocation()) {
     $fieldset->get('parent_location')->setValue($entity->getLocation()->getId());
 }
+
+foreach (['judge','anonymousJudge','location','parent_location'] as $field) :
+    $element = $fieldset->get($field);
+    if (is_object($element->getValue())) :
+        $id = $element->getValue()->getId();
+        $element->setValue($id);
+    endif;
+endforeach;
 /** ============================================================ ! */
 // temporarily, let's just set this here
 $config = ['end_time' => true];

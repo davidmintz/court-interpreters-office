@@ -123,15 +123,36 @@ class EventsController extends AbstractActionController
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
         $event = new Entity\Event();
+        $id = $this->params()->fromRoute('id');
+        if ($id) {
+            $other = $this->entityManager->find(Entity\Event::class,$id);
+            if ($other) {
+                $event
+                    ->setDocket($other->getDocket())
+                    ->setLanguage($other->getLanguage())
+                    ->addDefendants($other->getDefendants())
+                    ->setJudge($other->getJudge())
+                    ->setAnonymousJudge($other->getAnonymousJudge())
+                    //->addInterpreterEvents($other->)
+                    //->setLocation($other->getLocation())
+
+                    ;
+            }
+            //echo $other->getLanguage();
+
+        }
         $form->bind($event);
+        //$this->events->trigger('pre.populate');
         $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
-        if (! $request->isPost()) { return $viewModel; }
+        if (! $request->isPost()) {
+
+
+            return $viewModel;
+        }
 
         $data = $request->getPost();
         $input = $data->get('event');
-        $this->getEventManager()->trigger(
-            'pre.validate', $this, ['input' => $data,]
-        );
+        $this->getEventManager()->trigger('pre.validate', $this, ['input' => $data,]);
         $form->setData($data);
         if (! $form->isValid()) {
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
@@ -169,10 +190,10 @@ class EventsController extends AbstractActionController
         $view = $this->getViewModel(['id' => $id,'form' => $form]);
         $events = $this->getEventManager();
         $form->attach($events);
-        $events->trigger('post.load', $this, ['entity' => $entity]);
+        //$events->trigger('post.load', $this, ['entity' => $entity]);
         $form->bind($entity);
         $modified = $entity->getModified();
-        $events->trigger('pre.populate');
+        $events->trigger('pre.populate',$this,['entity'=>$entity]);
         if (! $this->getRequest()->isPost()) {
             return $view;
         }
