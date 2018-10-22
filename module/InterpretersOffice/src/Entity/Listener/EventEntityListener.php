@@ -51,6 +51,13 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     protected $previous_defendants;
 
     /**
+     * array of InterpreterEvent for later comparison
+     *
+     * @var Array
+     */
+    protected $previous_interpreters;
+
+    /**
      * sets authentication service
      *
      * @param AuthenticationServiceInterface $auth
@@ -76,8 +83,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $log = $this->getLogger();
         $log->debug("postload callback running in Event entity listener");
         $this->previous_defendants = $entity->getDefendants()->toArray();
-        //$this->previous_defendants = $request->getDefendants()->toArray();
-        // just a temporary/debugging thing
+        $this->previous_interpreters = $entity->getInterpreterEvents()->toArray();
+        //  temporary/debugging
         $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
@@ -92,13 +99,13 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @param LifecycleEventArgs $args
      */
     public function preRemove(
-        Entity\Event $eventEntity,
+        Entity\Event $entity,
         LifecycleEventArgs $args
     ) {
         $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
-            compact('args', 'eventEntity')
+            compact('args', 'entity')
         );
     }
     /**
@@ -116,6 +123,12 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     private function reallyModified(Entity\Event $entity,
         PreUpdateEventArgs $args)
     {
+
+        $interpreterEvents = $entity->getInterpreterEvents()->toArray();
+        if ($interpreterEvents != $this->previous_interpreters) {
+            $this->logger->debug("interpreters were updated");
+            return true;
+        }
         $fields_updated = array_keys($args->getEntityChangeSet());
         $datetimes = ['date','time','submission_date','submission_time'];
         if (array_diff($fields_updated,$datetimes)) {
@@ -159,8 +172,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         PreUpdateEventArgs $args
     ) {
 
-        if (! $args->hasChangedField('modified')
-            && $this->reallyModified($entity,$args)) {
+        if ($this->reallyModified($entity,$args)) {
             $entity->setModified($this->now);
             $entity->setModifiedBy($this->getAuthenticatedUser($args));
         }
@@ -176,7 +188,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      *
      * sets Event metadata, e.g., who created the Event and when
      *
-     * @param \InterpretersOffice\Entity\Event $eventEntity
+     * @param \InterpretersOffice\Entity\Event $entity
      * @param LifecycleEventArgs $args
      */
     public function prePersist(Entity\Event $entity, LifecycleEventArgs $args)

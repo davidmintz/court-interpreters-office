@@ -30,14 +30,6 @@ class EventEntityListenerFactory implements FactoryInterface
         $listener->setAuth($container->get('auth'));
 
         $sharedEvents = $container->get('SharedEventManager');
-        /*
-        $shit = function($e) use ($log,$user){
-            $message = sprintf('event was %s; triggered by %s; current user is %s',
-            $e->getName(),get_class($e->getTarget()),print_r($user,true)
-           );
-            $log->info($message);
-        };
-        */
         $sharedEvents->attach(
             EventEntityListener::class,
             '*',

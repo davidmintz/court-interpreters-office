@@ -89,6 +89,10 @@ class ScheduleListener
     public function eventUpdateHandler(Event $e)
     {
         $user = $this->auth->getIdentity()->username;
+        $this->logger->debug(
+            sprintf('ScheduleListener is running %s with %s',
+                __FUNCTION__,$e->getName())
+        );
         switch ($e->getName()) {
             case 'preRemove':
             case 'postRemove':

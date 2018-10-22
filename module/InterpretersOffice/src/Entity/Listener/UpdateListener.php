@@ -180,11 +180,11 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     {
         $entity = $args->getObject();
         if ($entity instanceof Entity\InterpreterEvent) {
-            $this->logger->debug("interp_event is being created, updating event");
+            $this->logger->debug(__METHOD__.':  interp_event is being created, updating event');
             $entity->getEvent()->setModified($this->getTimeStamp());
             $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
-            $this->logger->debug("we set createdBy on InterpreterEvent here in ".__METHOD__);
+            $this->logger->debug("set createdBy and timestamp on InterpreterEvent here in ".__METHOD__);
         } elseif ($entity instanceof Request) {
             $now = $this->getTimeStamp();
             $user = $this->getAuthenticatedUser($args);
