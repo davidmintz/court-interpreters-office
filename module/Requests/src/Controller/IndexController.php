@@ -172,10 +172,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
 
     public function testAction()
     {
-        $view = new ViewModel();
-        $view->setTemplate('interpreters-office/requests/index/index.phtml');
-
-        return $view;
+        return  new ViewModel();
     }
 
     /**
@@ -236,7 +233,6 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function createAction()
     {
         $view = new ViewModel();
-        $view->setTemplate('interpreters-office/requests/index/form.phtml');
         $form = new Form\RequestForm($this->objectManager,
             ['action'=>'create','auth'=>$this->auth]);
         $view->form = $form;
@@ -250,7 +246,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
             }
         }
         $form->bind($entity);
-        
+
         if ($this->getRequest()->isPost()) {
             try {
                 $form->setData($this->getRequest()->getPost());
@@ -308,10 +304,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $form->bind($entity);
 
         if (! $this->getRequest()->isPost()) {
-            $view = new ViewModel();
-            $view->setTemplate('interpreters-office/requests/index/form.phtml')
-                ->setVariables(['form' => $form, 'id' => $id]);
-            return $view;
+            return  new ViewModel(['form' => $form, 'id' => $id]);
         }
         $form->setData($this->getRequest()->getPost());
         if (! $form->isValid()) {
