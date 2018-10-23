@@ -20,7 +20,7 @@ use Zend\Session\Container as Session;
 class PeopleController extends AbstractActionController
 {
     use DeletionTrait;
-    
+
     /**
      * entity manager.
      *
@@ -66,11 +66,11 @@ class PeopleController extends AbstractActionController
         $repo = $this->entityManager->getRepository(Entity\Hat::class);
         $opts = $repo->getHatOptions([Entity\Hat::ANONYMITY_NEVER,
             Entity\Hat::ANONYMITY_OPTIONAL]);
-        return (new ViewModel(
+        return new ViewModel(
             ['title' => 'people','defaults' => $session->defaults,'options' => $opts]
-        ))
+        );
             // for a vue.js learning exercise
-            ->setTemplate('interpreters-office/admin/people/vue.phtml');
+            //->setTemplate('interpreters-office/admin/people/vue.phtml');
     }
 
     /**
@@ -92,8 +92,7 @@ class PeopleController extends AbstractActionController
      */
     public function addAction()
     {
-        $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/people/form.phtml');
+        $viewModel = new ViewModel();
         $form = new PersonForm(
             $this->entityManager,
             ['action' => 'create',
@@ -131,9 +130,7 @@ class PeopleController extends AbstractActionController
         $repo = $this->entityManager->getRepository(Entity\Person::class);
         $id = $this->params()->fromRoute('id');
         $result = $repo->findPerson($id);
-        $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/people/form.phtml')
-                ->setVariable('title', 'edit a person');
+        $viewModel = new ViewModel(['title'=>'edit a person']);
         if (! $result) {
             return $viewModel->setVariables(['errorMessage' => "person with id $id not found"]);
         }

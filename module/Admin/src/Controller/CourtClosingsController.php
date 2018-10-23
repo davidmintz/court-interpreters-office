@@ -128,7 +128,6 @@ class CourtClosingsController extends AbstractActionController
             return $this->post();
         }
         $view = new ViewModel();
-        $view->setTemplate('interpreters-office/admin/court-closings/form');
         $view->form = $form;
 
         return $view;
@@ -149,11 +148,8 @@ class CourtClosingsController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             return $this->post();
         }
-        $view = new ViewModel();
-        $view->setTemplate('interpreters-office/admin/court-closings/form');
-        $view->form = $form;
-
-        return $view;
+        
+        return  new ViewModel(['form'=>$form]);
     }
 
     /**
@@ -188,5 +184,5 @@ class CourtClosingsController extends AbstractActionController
             $data = $repo->list($year);
             return new JsonModel($data);
         }
-    }    
+    }
 }

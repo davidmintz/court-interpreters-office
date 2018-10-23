@@ -102,11 +102,11 @@ class LocationsController extends AbstractActionController
             ]
         )->bind($entity);
 
-        $viewModel = (new ViewModel([
+        $viewModel = new ViewModel([
             'form' => $form,
             'title' => 'add a location',
-            ]))
-            ->setTemplate('interpreters-office/admin/locations/form.phtml');
+        ]);
+
         $viewModel->type_id = $this->params()->fromRoute('type_id');
 
         $request = $this->getRequest();
@@ -158,10 +158,7 @@ class LocationsController extends AbstractActionController
      */
     public function editAction()
     {
-        $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/locations/form.phtml')
-            ->setVariables(['title' => 'edit a location']);
-
+        $viewModel = new ViewModel(['title' => 'edit a location']);
         $id = $this->params()->fromRoute('id');
         $repo = $this->entityManager->getRepository(Location::class);
         $entity = $repo->find($id);

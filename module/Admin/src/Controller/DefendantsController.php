@@ -65,8 +65,7 @@ class DefendantsController extends AbstractActionController
      */
     public function addAction()
     {
-        $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/defendants/form.phtml');
+        $viewModel = new ViewModel();
         $form = new DefendantForm($this->entityManager, ['action' => 'create']);
         $viewModel->setVariables(['form' => $form, 'title' => 'add a defendant name']);
         /** @var Zend\Http\PhpEnvironment\Request  $request */
@@ -144,8 +143,7 @@ class DefendantsController extends AbstractActionController
     public function editAction()
     {
         $request = $this->getRequest();
-        $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/defendants/form.phtml');
+        $viewModel = new ViewModel();
         $id = $this->params()->fromRoute('id');
         $xhr = false;
         if ($request->isXmlHttpRequest()) {
