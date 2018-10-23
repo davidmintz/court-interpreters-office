@@ -95,15 +95,21 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         $document = new Document($html, Document::DOC_HTML);
         $query = new Document\Query();
         $selector = sprintf('input[name="%s"]', $name);
-        $results = $query->execute($selector, $document, Document\Query::TYPE_CSS);
-        if (! count($results)) {
+        try {
+            $results = $query->execute($selector, $document, Document\Query::TYPE_CSS);
+        } catch (\Exception $e) {
+            echo "\nWARNING! ".$e->getMessage(),"\n";
+        }
+
+        if (!isset($results) or ! count($results)) {
             throw new \Exception("selector was $selector -- could not parse "
                     . "CSRF token! does the element exist? Is the HTML too deformed by error output?\nDEBUG: $DEBUG\n");
         }
         $node = $results->current();
         $token = $node->attributes->getNamedItem('value')->nodeValue;
-        //echo "\n".__FUNCTION__." returning:   $token ....\n";
+
         $this->reset(true);
+
         return $token;
     }
 
