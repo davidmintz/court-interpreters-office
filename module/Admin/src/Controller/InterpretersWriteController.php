@@ -14,6 +14,7 @@ use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection as
     LanguageCollectionHelper;
 use Zend\Stdlib\Parameters;
 use SDNY\Vault\Service\VaultException;
+use SDNY\Vault\Service\Vault;
 
 /**
  * controller for admin/interpreters create|update|delete
@@ -66,19 +67,35 @@ class InterpretersWriteController extends AbstractActionController
     /**
      * on dispatch event handler
      *
-     * to be continued...
-     *
      * @param  MvcEvent $e
      * @return mixed
      */
     public function onDispatch(MvcEvent $e)
     {
         if ($this->vault_enabled) {
-            // ping the vault to make sure it's reachable
+            // ping Vault to make sure it's reachable
             // and if not, set an error message in the view
+            $vault = $e->getApplication()->getServiceManager()
+                ->get(Vault::class);
+            $response = $vault->health();
+            if (key_exists('errors',$response)) {
+                $vault_error = 'Vault health check returned an error.';
+            } else {
+                if ($response['sealed']) {
+                    $vault_error = 'Vault is sealed';
+                }
+                if (! $response['initialized']) {
+                    $vault_error = 'Vault installation is not initialized.';
+                }
+            }
+            if (isset($vault_error)) {
+                $this->viewModel->vault_error = $vault_error;
+            }
+
         }
         return parent::onDispatch($e);
     }
+
     /**
      * adds an Interpreter entity to the database.
      */

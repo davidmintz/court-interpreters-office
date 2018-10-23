@@ -101,11 +101,18 @@ $form->add([
         <!-- admin panel ------------->
         <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">
         <?php if ($this->vault_error) :?>
-            <div class="validation-error alert alert-warning">shit happened. <?php echo $this->vault_error ?></div>
-        <?php endif;
+            <div class="alert alert-warning py-2 px-3">
+                Your application configuration has the Vault module enabled for securing sensitive interpreter data,
+                but this service's health check responded with the message <strong><?php echo $this->vault_error ?></strong>
+                This data therefore cannot be read or written. Please contact your site administrator for assistance.
+            </div>
+        <?php
+            $fieldset->get('dob')->setAttribute('disabled','disabled');
+            $fieldset->get('ssn')->setAttribute('disabled','disabled');
+        endif;
         if ($this->has_related_entities):
             $fieldset->get('hat')->setAttribute('disabled','disabled');
-            
+
         endif;?>
         <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName) :
                     $element = $fieldset->get($elementName);

@@ -10,6 +10,7 @@ use InterpretersOffice\Admin\Controller\PeopleController;
 
 use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
 use InterpretersOffice\Entity\Listener;
+use SDNY\Vault\Service\Vault;
 
 /**
  * Factory for instantiating Controllers that manage Person, its subclasses, or
@@ -32,14 +33,14 @@ class PeopleControllerFactory implements FactoryInterface
         $em = $container->get('entity-manager');
         if ($requestedName == Controller\InterpretersWriteController::class) {
             // is the Vault thing enabled?
-            $vault_enabled = key_exists('vault', $container->get('config'));
+            $vault_enabled = $container->has(Vault::class);            
             $controller = new $requestedName($em, $vault_enabled);
             // attach InterpreterEntity listener
             $listener = $container->get('interpreter-listener');
             $resolver = $em->getConfiguration()->getEntityListenerResolver();
             //attach the entity listeners
             $resolver->register($listener);
-            // ensure UpdateListener knows who current use is
+            // ensure UpdateListener knows who current user is
             $container->get(Listener\UpdateListener::class)->setAuth($container->get('auth'));
         } else {
             $controller = new $requestedName($em);

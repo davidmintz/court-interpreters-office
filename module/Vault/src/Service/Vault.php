@@ -119,6 +119,21 @@ class Vault extends Client implements EventManagerAwareInterface
     }
 
     /**
+     * gets Vault /sys/health response
+     *
+     * @return Array
+     */
+    public function health()
+    {
+        $this->setMethod('GET')
+            ->setUri($this->vault_address .'/sys/health')
+            ->send();
+        $response = $this->responseToArray($this->getResponse()->getBody());
+
+        return $response;
+    }
+
+    /**
      * sets path to secret
      *
      * @param string
@@ -420,4 +435,6 @@ class Vault extends Client implements EventManagerAwareInterface
 
         return $this->responseToArray($this->getResponse()->getBody());
     }
+
+
 }
