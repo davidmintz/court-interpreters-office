@@ -50,6 +50,9 @@ class BasicEntityControllerFactory implements FactoryInterface
             default:
                 throw new \RuntimeException("controller factory cannot not instantiate $requestedName a/k/a $shortName");
         }
+        // ensure UpdateListener knows who current user is
+        $container->get(Listener\UpdateListener::class)->setAuth($container->get('auth'));
+        
         return $controller;
     }
 }
