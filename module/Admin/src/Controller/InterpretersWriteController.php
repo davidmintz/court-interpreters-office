@@ -101,8 +101,7 @@ class InterpretersWriteController extends AbstractActionController
      */
     public function addAction()
     {
-        $viewModel = $this->viewModel
-            ->setTemplate($this->form_template);
+        $viewModel = $this->viewModel;
         $form = new InterpreterForm(
             $this->entityManager,
             [ 'action' => 'create',
@@ -152,8 +151,8 @@ class InterpretersWriteController extends AbstractActionController
         ]);*/
         //var_dump($validator->isValid($value));
 
-        $viewModel = $this->viewModel
-            ->setTemplate($this->form_template);
+        $viewModel = $this->viewModel;
+
         $id = $this->params()->fromRoute('id');
         $repo = $this->entityManager->getRepository(Entity\Interpreter::class);
         $entity = $repo->find($id);

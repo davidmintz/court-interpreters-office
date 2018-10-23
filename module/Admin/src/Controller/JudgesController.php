@@ -52,8 +52,7 @@ class JudgesController extends AbstractActionController
      */
     public function addAction()
     {
-        $viewModel = (new ViewModel())
-            ->setTemplate('interpreters-office/admin/judges/form.phtml');
+        $viewModel = new ViewModel();
         $form = new JudgeForm($this->entityManager, ['action' => 'create']);
         $viewModel->setVariables(
             ['title' => 'add a judge', 'form' => $form]
@@ -91,9 +90,7 @@ class JudgesController extends AbstractActionController
      */
     public function editAction()
     {
-        $viewModel = (new ViewModel())
-                ->setTemplate('interpreters-office/admin/judges/form.phtml')
-                ->setVariables(['title' => 'edit a judge']);
+        $viewModel = new ViewModel(['title' => 'edit a judge']);
         $id = $this->params()->fromRoute('id');
         $repo = $this->entityManager->getRepository(Entity\Judge::class);
         $entity = $repo->find($id);

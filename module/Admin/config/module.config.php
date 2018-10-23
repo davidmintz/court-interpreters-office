@@ -27,7 +27,7 @@ return [
             Controller\LocationsController::class => Controller\Factory\BasicEntityControllerFactory::class,
             Controller\EventTypesController::class => Controller\Factory\BasicEntityControllerFactory::class,
             Controller\CourtClosingsController::class => Controller\Factory\BasicEntityControllerFactory::class,
-            
+
             Controller\PeopleController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\JudgesController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\InterpretersController::class => Controller\Factory\PeopleControllerFactory::class,
@@ -39,13 +39,7 @@ return [
         ],
     ],
     'view_manager' => [
-        'template_map' => [
-            'interpreters-office/admin/admin-index/index' =>
-                __DIR__.'/../view/interpreters-office/admin/index/index.phtml',
-        ],
-        'template_path_stack' => [
-            'interpreters-office/admin' => __DIR__.'/../view',
-        ],
+        'template_map' =>   include(__DIR__.'/template_map.php'),        
     ],
 
     'acl' => include __DIR__.'/acl.php',
