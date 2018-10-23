@@ -53,7 +53,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     /**
      * postLoad callback
      *
-     * @param Entity\Event $request
+     * @param Entity\Request $request
      * @param LifecycleEventArgs $args
      */
     public function postLoad(
@@ -64,6 +64,18 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         $log = $this->getLogger();
         $log->debug("postload callback running in Request entity listener");
         $this->previous_defendants = $request->getDefendants()->toArray();
+    }
+
+    public function prePersist(Entity\Request $request,LifecycleEventArgs $args)
+    {
+        $now = new \DateTime();
+        $user = $this->getAuthenticatedUser($args);
+        $person = $this->getCurrentUserPerson($args);
+        $request->setCreated($now)->setModified($now)
+                ->setSubmitter($person)
+                ->setModifiedBy($user);
+        $this->getLogger()->debug("YES, we have set Request metadata in prePersist listener");
+
     }
 
     /**
