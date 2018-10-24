@@ -13,6 +13,8 @@ use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use Zend\Stdlib\Parameters;
 
+use InterpretersOffice\Requests\Entity\Request;
+
 /**
  * unit test for InterpretersOffice\Requests module's main controller
  */
@@ -34,12 +36,13 @@ class RequestsIndexControllerTest extends AbstractControllerTest
                 new DataFixture\UserLoader(),
             ]
         );
-        // $container = $this->getApplicationServiceLocator();
-        // $em = $container->get("entity-manager");
+        $container = $this->getApplicationServiceLocator();
+        $em = $container->get("entity-manager");
         // $listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
-        // $resolver = $em->getConfiguration()->getEntityListenerResolver();
-        // $resolver->register($listener);
-        // $resolver->register($container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener'));
+        $resolver = $em->getConfiguration()->getEntityListenerResolver();
+        $entityListener = $container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener');
+        $entityListener->setLogger($container->get('log'));
+        $resolver->register($entityListener);
 
 
     }
@@ -77,6 +80,9 @@ class RequestsIndexControllerTest extends AbstractControllerTest
             )->getSingleScalarResult();
         $location = $em->find('InterpretersOffice\Entity\Judge',$judge)
             ->getDefaultLocation()->getId();
+        $defendant_id = $em->createQuery('SELECT d.id FROM  InterpretersOffice\Entity\Defendant d WHERE d.surnames = :surnames')
+            ->setParameters(['surnames'=>'Fulano Mengano'])
+            ->getSingleScalarResult();
 
         return [
                 'judge' => $judge,
@@ -87,6 +93,7 @@ class RequestsIndexControllerTest extends AbstractControllerTest
                 'date' => (new \DateTime('next Tuesday +1 week'))->format('m/d/Y'),
                 'time' => (new \DateTime("today 10:00 am"))->format('g:i a'),
                 'comments' => 'boink gack babble babble',
+                'defendants' =>  [ $defendant_id ],
                 'id' => '',
             ];
     }
@@ -100,6 +107,9 @@ class RequestsIndexControllerTest extends AbstractControllerTest
         $this->assertQuery("form");
         $this->assertQuery("#date");
         $this->assertQuery("#time");
+        $this->assertQuery("#defendants");
+        //this->dumpResponse();
+        //$this->assertQuery("ul#defendants > li");
 
 
     }
@@ -107,7 +117,9 @@ class RequestsIndexControllerTest extends AbstractControllerTest
     public function testCreate()
     {
 
-        $em = FixtureManager::getEntityManager();
+        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $log = $this->getApplicationServiceLocator()->get('log');
+
         $before = $em->createQuery('SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r')
             ->getSingleScalarResult();
         $data = $this->getDummyRequest();
@@ -126,6 +138,45 @@ class RequestsIndexControllerTest extends AbstractControllerTest
            ->getSingleScalarResult();
 
         $this->assertTrue($after == $before + 1);
+
+        $entity = $em->createQuery('SELECT r FROM InterpretersOffice\Requests\Entity\Request r ORDER BY r.id DESC')
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+
+        $this->assertTrue(is_object($entity));
+        $this->assertTrue($entity instanceof Request);
+
+        return $entity;
+    }
+
+    /**
+     * @depends testCreate
+     * @param  Request $entity
+     * @return Request
+     */
+    public function testUpdate(Request $entity)
+    {
+        $this->assertTrue($entity instanceof Request);
+        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $this->login('jane_zorkendoofer@nysd.uscourts.gov','gack!');
+        $this->reset(true);
+        $url = "/requests/update/{$entity->getId()}";
+        $token = $this->getCsrfToken($url);
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertActionName('update');
+        $this->assertQuery("form");
+        $this->assertQuery("#date");
+        $this->assertQuery("#time");
+        $this->assertQuery("#judge");
+        $this->assertQuery("#docket");
+        $this->assertQuery("#language");
+        $this->assertQuery("#defendants");
+        $this->assertQuery("ul#defendants > li");
+        $this->assertQueryCount("ul#defendants > li",1);
+        $this->assertQueryContentRegex("ul#defendants > li", '/Fulano Mengano/');
+
+        return $entity;
 
     }
 }
