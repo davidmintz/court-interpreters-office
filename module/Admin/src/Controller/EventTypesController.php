@@ -83,8 +83,7 @@ class EventTypesController extends AbstractActionController
      */
     public function addAction()
     {
-        $view = (new ViewModel(['title' => 'add an event-type']))
-                ->setTemplate("interpreters-office/admin/{$this->name}/form");
+        $view = (new ViewModel(['title' => 'add an event-type']));
         $entity = new EventType();
         $form = $this->getForm(EventType::class, ['object' => $entity, 'action' => 'create'])
                 ->bind($entity);
@@ -112,9 +111,7 @@ class EventTypesController extends AbstractActionController
      */
     public function editAction()
     {
-        $view = (new ViewModel(['title' => 'edit an event-type']))
-                ->setTemplate("interpreters-office/admin/{$this->name}/form.phtml")
-                ->setVariables(['title' => 'edit an event-type']);
+        $view = (new ViewModel(['title' => 'edit an event-type']));
         $id = $this->params()->fromRoute('id');
 
         $repo = $this->entityManager->getRepository(EventType::class);

@@ -88,12 +88,7 @@ class EventsController extends AbstractActionController
     public function getViewModel(array $data = [])
     {
         if (! $this->viewModel) {
-            $this->viewModel = new ViewModel();
-            $this->viewModel
-                ->setTemplate('interpreters-office/admin/events/form');
-            if ($data) {
-                $this->viewModel->setVariables($data);
-            }
+            $this->viewModel = new ViewModel($data);
         }
 
         return $this->viewModel;
@@ -123,36 +118,33 @@ class EventsController extends AbstractActionController
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
         $event = new Entity\Event();
-        $id = $this->params()->fromRoute('id');
-        if ($id) {
-            $other = $this->entityManager->find(Entity\Event::class,$id);
-            if ($other) {
-                $event
+
+        $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
+        if (! $request->isPost()) {
+            $id = $this->params()->fromRoute('id');
+            if ($id) {
+                $other = $this->entityManager->find(Entity\Event::class,$id);
+                if ($other) {
+                    $event
                     ->setDocket($other->getDocket())
                     ->setLanguage($other->getLanguage())
                     ->addDefendants($other->getDefendants())
                     ->setJudge($other->getJudge())
-                    ->setAnonymousJudge($other->getAnonymousJudge())
-                    //->addInterpreterEvents($other->)
-                    //->setLocation($other->getLocation())
-
-                    ;
+                    ->setAnonymousJudge($other->getAnonymousJudge());
+                } else {
+                    $viewModel->warning_message =
+                    "The event with id $id was not found, so we can use it
+                    to create a repeat event";
+                }
             }
-            //echo $other->getLanguage();
-
-        }
-        $form->bind($event);
-        //$this->events->trigger('pre.populate');
-        $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
-        if (! $request->isPost()) {
-
-
+            $form->bind($event);
             return $viewModel;
         }
 
         $data = $request->getPost();
         $input = $data->get('event');
-        $this->getEventManager()->trigger('pre.validate', $this, ['input' => $data,]);
+        $this->getEventManager()->trigger('pre.validate',$this,['input' => $data,]);
+        $form->bind($event);
         $form->setData($data);
         if (! $form->isValid()) {
             return new JsonModel(['validation_errors'=>$form->getMessages()]);

@@ -36,21 +36,22 @@ trait DeletionTrait
             try {
                 $this->entityManager->remove($entity);
                 $this->entityManager->flush();
-                if (! $xhr) {
-                    $this->flashMessenger()
+                //if (! $xhr) {
+                $this->flashMessenger()
                     ->addSuccessMessage("$verbose_name has been deleted.");
-                    $redirect = true;
-                }
+                $redirect = true;
+                //}
                 $result = 'success';
                 $error = [];
             } catch (ForeignKeyConstraintViolationException $e) {
                 $result = 'error';
                 $redirect = false;
                 $error = [ 'message' =>
-                    "This $what database record cannot be deleted because there are other records that refer to it.",
+                    "Sorry &mdash; this $what cannot be deleted because there are other database records that refer to it.",
                     'code' => $e->getCode(),
                     'exception' => 'foreign_key_constraint',
                 ];
+                $this->getResponse()->setStatusCode(403);
             } catch (\Exception $e) {
                 $result = 'error';
                 $redirect = false;
@@ -59,6 +60,7 @@ trait DeletionTrait
                     'code' => $e->getCode(),
                     'exception' => get_class($e)
                 ];
+                $this->getResponse()->setStatusCode(500);
             }
         } else {
             $result = 'error';
