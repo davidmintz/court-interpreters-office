@@ -175,8 +175,20 @@ class RequestsIndexControllerTest extends AbstractControllerTest
         $this->assertQuery("ul#defendants > li");
         $this->assertQueryCount("ul#defendants > li",1);
         $this->assertQueryContentRegex("ul#defendants > li", '/Fulano Mengano/');
-
+        // to be continued
         return $entity;
+
+    }
+
+    /**
+     * testClerkCannotUpdateRequestBelongingToAnotherJudge
+     * @depends testClerkCannotUpdateRequestBelongingToAnotherJudge
+     * @incomplete
+     * @param  Request $entity
+     * @return void
+     */
+    public function testClerkCannotUpdateRequestBelongingToAnotherJudge(Request $entity)
+    {
 
     }
 }
