@@ -16,7 +16,7 @@ $(function(){
             request_div.data({deadline: str});
             if (! scheduled_datetime.isAfter(deadline)) {
                 editable = false;
-                console.log("time's up for editing");
+                console.warn("time's up for editing");
             } else {
                 console.log("still editable");
             }

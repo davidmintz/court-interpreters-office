@@ -20,9 +20,6 @@ return [
     ],
     'view_manager' => [
         'template_map' => include(__DIR__.'/template_map.php')
-        // 'template_path_stack' => [
-        //     __DIR__.'/../view',
-        // ],
     ],
 
     'service_manager' => [
@@ -133,13 +130,10 @@ return [
                     'list' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/list',//[/page/:page]',
+                            'route' => '/list',
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
                                 'action' => 'list',
-                            ],
-                            'constraints' => [
-                                //'page' => '[1-9]\d*',
                             ],
                         ],
                     ],
@@ -176,6 +170,19 @@ return [
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
                                 'action' => 'search',
+                            ],
+                        ],
+                    ],
+                    'cancel' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/cancel/:id',
+                            'defaults' => [
+                                'controller' => Controller\IndexController::class,
+                                'action' => 'cancel',
+                            ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
                             ],
                         ],
                     ],

@@ -35,8 +35,8 @@ class IndexControllerFactory implements FactoryInterface
         $resolver->register($container->get(Listener\UpdateListener::class)
             ->setAuth($auth));
         $resolver->register($container->get(RequestEntityListener::class));
-        // this is costing 3 more queries even when they are only reading
-        // rather than updating, so we need to optimize        
+        // HELLO! this is us costing 3 queries even when they are only reading
+        // rather than updating, so we need to optimize
         $user = $entityManager->find('InterpretersOffice\Entity\User',
             $auth->getIdentity()->id);
         $acl->allow($user, $controller, ['update','cancel'],

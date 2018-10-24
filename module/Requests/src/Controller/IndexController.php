@@ -109,6 +109,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function onDispatch($e)
     {
         $params = $this->params()->fromRoute();
+        return parent::onDispatch($e);
 
         if (in_array($params['action'],['update','cancel'])) {
             $entity = $this->objectManager->find(Entity\Request::class,
@@ -137,7 +138,8 @@ class IndexController extends AbstractActionController implements ResourceInterf
                     ->setVariables(['content'=>$content]);
 
                 return $this->getResponse()
-                    ->setContent($viewRenderer->render($viewModel));
+                    ->setContent($viewRenderer->render($viewModel))
+                    ->setStatusCode(403);
             }
         }
 
@@ -147,6 +149,8 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function viewAction()
     {
         $id = $this->params()->fromRoute('id');
+
+
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         return [
             'data'=>$repository->view($id),
@@ -323,6 +327,20 @@ class IndexController extends AbstractActionController implements ResourceInterf
                 'details'=>'doing update in Requests module']);
             return new JsonModel(['message'=>$e->getMessage(),]);
         }
+    }
+
+    public function cancelAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $entity = $this->objectManager->find(Entity\Request::class,$id);
+        if ($entity) {
+            $this->objectManager->remove($entity);
+            $this->objectManager->flush();
+            return new JsonModel([
+                'status' => 'success','id'=>$id,
+            ]);
+        }
+
     }
 }
 

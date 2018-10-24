@@ -52,7 +52,7 @@ return [
     'allow' => [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
-            Requests\IndexController::class => ['index','list','view','create','update','search'],            
+            Requests\IndexController::class => ['index','list','view','create','update','search','cancel'],
             Admin\EventsController::class => ['index', 'view', 'search'],
             Main\AuthController::class => ['logout'],
         ],

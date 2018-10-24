@@ -33,7 +33,9 @@ return [
 'interpreters-office/admin/defendants/edit' => __DIR__ . '/../view/defendants/form.phtml',
 'interpreters-office/admin/defendants/add' => __DIR__ . '/../view/defendants/form.phtml',
 'interpreters-office/admin/events/index' => __DIR__ . '/../view/events/index.phtml',
-'interpreters-office/admin/events/form' => __DIR__ . '/../view/events/form.phtml',
+'interpreters-office/admin/events/edit' => __DIR__ . '/../view/events/form.phtml',
+'interpreters-office/admin/events/add' => __DIR__ . '/../view/events/form.phtml',
 'interpreters-office/admin/event-types/index' => __DIR__ . '/../view/event-types/index.phtml',
-'interpreters-office/admin/event-types/form' => __DIR__ . '/../view/event-types/form.phtml',
+'interpreters-office/admin/event-types/add' => __DIR__ . '/../view/event-types/form.phtml',
+'interpreters-office/admin/event-types/edit' => __DIR__ . '/../view/event-types/form.phtml',
 ];

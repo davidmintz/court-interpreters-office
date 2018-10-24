@@ -113,7 +113,11 @@ class RequestsIndexControllerTest extends AbstractControllerTest
 
 
     }
-
+    /**
+     * tests create action
+     *
+     * @return Request
+     */
     public function testCreate()
     {
 
@@ -145,6 +149,9 @@ class RequestsIndexControllerTest extends AbstractControllerTest
 
         $this->assertTrue(is_object($entity));
         $this->assertTrue($entity instanceof Request);
+
+        $person = $entity->getSubmitter();
+        $this->assertEquals($person->getEmail(),'jane_zorkendoofer@nysd.uscourts.gov');
 
         return $entity;
     }
@@ -185,7 +192,7 @@ class RequestsIndexControllerTest extends AbstractControllerTest
      * @depends testUpdate
      *
      * @param  Request $entity
-     * @return void
+     * @return Request $entity
      */
     public function testClerkCannotUpdateRequestBelongingToAnotherJudge(Request $entity)
     {
@@ -198,6 +205,26 @@ class RequestsIndexControllerTest extends AbstractControllerTest
         $this->assertQuery("div.alert");
         $this->assertQueryContentRegex("div.alert",'/not authorized/');
 
+        return $entity;
+    }
 
+    /**
+     * tests users can update each others' requests if the requests have a common judge
+     * @todo and are in-court
+     * @depends testClerkCannotUpdateRequestBelongingToAnotherJudge
+     *
+     * @param  Request $entity
+     * @return Request $entity
+     */
+    public function testClerkCanUpdateOthersRequestBelongingToACommonJudge(Request $entity)
+    {
+        $this->login('bill_dooflicker@nysd.uscourts.gov','gack!');
+        $this->reset(true);
+        $url = "/requests/update/{$entity->getId()}";
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery("form");
+
+        return $entity;
     }
 }

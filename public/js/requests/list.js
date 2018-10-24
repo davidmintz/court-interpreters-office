@@ -29,6 +29,8 @@ var fail = function(){
     $("#error-message").html(msg).parent().show();
 };
 
+var cancel = function(){};
+
 $(function(){
     init_rows();
 
@@ -63,4 +65,24 @@ $(function(){
             );
         }
     });
+    $("#content").on("click","a.request-cancel",function(event){
+        event.preventDefault();
+        var tr = $(this).closest("tr");
+        var date = tr.children(".date").text();
+        var time = tr.children(".time").text();
+        var language = tr.children(".language").text();
+        var type =  tr.children(".event-type").text();
+        var id = tr.data().request_id;
+        $("#btn-confirm-cancellation").data({id});
+        $(".modal-body a.reschedule").attr({href: `${window.basePath || ""}/requests/update/${id}`});
+        var verbiage = `Are you sure you want to cancel this request
+            &mdash; ${language} for a ${type} on ${date} at ${time} &mdash;
+            and delete it from the database?`;
+        $("#modal-confirm-cancel .modal-body").prepend(`<p>${verbiage}</p>`);
+        $("#modal-confirm-cancel").modal();
+    });
+    //$(".modal-body a.reschedule").on("click",function(event){});
+    $("#btn-confirm-cancellation").on("click",function(){
+        console.warn("cancel shit! "+$(this).data().id);
+    })
 });

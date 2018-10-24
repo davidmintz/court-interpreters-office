@@ -46,19 +46,21 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
             else:
             endif;
         ?><tr data-request_id="<?php echo $r['id']?>">
-            <td><span class="avoidwrap"><?php echo $r['date']->format('d-M-Y')?></span></td>
-            <td class="d-md-none d-lg-table-cell"><?php echo $r['time']->format('g:i a')?></td>
-            <td><?php echo $r['language']?></td>
-            <td><?php echo $r['type']?></td>
+            <td class="date"><span class="avoidwrap"><?php echo $r['date']->format('d-M-Y')?></span></td>
+            <td class="d-md-none d-lg-table-cell time"><?php echo $r['time']->format('g:i a')?></td>
+            <td class="language"><?php echo $r['language']?></td>
+            <td class="event-type"><?php echo $r['type']?></td>
             <td><?php echo $r['location'] ?></td>
             <td class="d-md-none d-lg-table-cell"><?php echo $docket ?></td>
             <td><?php echo $r['judge']?></td>
             <td><?php echo $this->defendants($r['id'])?></td>
             <td class="dropleft"><a style="color:purple" id="request-dropdown-<?php echo $r['id']?>" href="javascript:void(0)" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
               <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
-                <a title="display detailed view of this request" class="dropdown-item request-details text-primary" href="<?php echo $this->url('requests/view',['id'=>$r['id']])?>">show details</a>
+                <a title="display detailed view of this request" class="dropdown-item request-details text-primary" href="<?php echo $this->url('requests/view',['id'=>$r['id']])?>">view details</a>
                 <div class="dropdown-divider"></div>
-                <a title="modify or withdraw this request" class="dropdown-item request-update disabled" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>">edit</a>
+                <a title="modify this request" class="dropdown-item request-update disabled" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>">edit</a>
+                <div class="dropdown-divider"></div>
+                <a title="cancel this request" class="dropdown-item request-cancel disabled" href="<?php echo $this->url('requests/cancel',['id'=>$r['id']])?>">cancel</a>
                 <div class="dropdown-divider"></div>
                 <a title="schedule an interpreter for another event in this same case" class="dropdown-item request-repeat text-primary" href="<?php echo $this->url('requests/create',['id'=>$r['id']])?>">repeat</a>
               </div>
@@ -75,4 +77,23 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
 <p class="alert alert-warning">You have no electronically submitted interpreter requests
 in the database. To create one please go to <a href="<?php echo $url?>"><?php echo $url?></a>.</p>
 <?php endif;?>
+</div>
+<div class="modal" id="modal-confirm-cancel" tabindex="-1" role="dialog" aria-labelledby="modal-confirmation-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-confirmation-label">please confirm cancellation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>(Note that if you have another date and time you can <a class="reschedule" href="#">update</a> instead.)</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">no</button>
+        <button type="button" id="btn-confirm-cancellation" class="btn btn-primary">yes</button>
+      </div>
+    </div>
+  </div>
 </div>
