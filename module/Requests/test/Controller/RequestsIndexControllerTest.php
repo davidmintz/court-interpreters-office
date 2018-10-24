@@ -52,7 +52,7 @@ class RequestsIndexControllerTest extends AbstractControllerTest
         $this->assertRedirect();
     }
 
-    public function __testLoginSanity()
+    public function testLoginSanity()
     {
         $this->login('jane_zorkendoofer@nysd.uscourts.gov','gack!');
         $this->reset(true);
@@ -182,13 +182,22 @@ class RequestsIndexControllerTest extends AbstractControllerTest
 
     /**
      * testClerkCannotUpdateRequestBelongingToAnotherJudge
-     * @depends testClerkCannotUpdateRequestBelongingToAnotherJudge
-     * @incomplete
+     * @depends testUpdate
+     *
      * @param  Request $entity
      * @return void
      */
     public function testClerkCannotUpdateRequestBelongingToAnotherJudge(Request $entity)
     {
+        $this->login('john_somebody@nysd.uscourts.gov','gack!');
+        $this->reset(true);
+        $url = "/requests/update/{$entity->getId()}";
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(403);
+        $this->assertNotQuery("form");
+        $this->assertQuery("div.alert");
+        $this->assertQueryContentRegex("div.alert",'/not authorized/');
+
 
     }
 }
