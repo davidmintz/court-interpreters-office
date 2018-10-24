@@ -12,6 +12,7 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
+use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Requests\Form;
@@ -126,17 +127,14 @@ class IndexController extends AbstractActionController implements ResourceInterf
                     ->get('ViewRenderer');
                 $url  = $this->getPluginManager()->get('url')
                     ->fromRoute('requests/view',['id'=>$entity->getId()]);
-                $viewModel = $e->getViewModel();
-                $viewModel->setVariables(
-                    ['content'=>$viewRenderer->render(
-                    (new ViewModel())
-                    ->setTemplate('interpreters-office/requests/denied')
-                    ->setVariables([
-                        'message' =>
-                        "Sorry, you are not authorized to {$params['action']}
-                        this <a href=\"$url\">request</a>."])
-                    )]
+                $content = $viewRenderer->render(
+                (new ViewModel())->setTemplate('denied')->setVariables([
+                    'message' =>
+                    "Sorry, you are not authorized to {$params['action']}
+                    this <a href=\"$url\">request</a>."])
                 );
+                $viewModel = $e->getViewModel()
+                    ->setVariables(['content'=>$content]);
 
                 return $this->getResponse()
                     ->setContent($viewRenderer->render($viewModel));
@@ -213,7 +211,9 @@ class IndexController extends AbstractActionController implements ResourceInterf
     */
 
     /**
-     * gets datetime two business days from $date
+     * gets datetime two business days from $date.
+     *
+     * proxies to CourtClosingRepository::getTwoBusinessDaysFromDate()
      *
      * @param  \DateTime $date
      * @return string
@@ -291,7 +291,6 @@ class IndexController extends AbstractActionController implements ResourceInterf
      */
     public function updateAction()
     {
-
         $id = $this->params()->fromRoute('id');
         $entity = $this->objectManager->find(Entity\Request::class,$id);
         if (! $entity) {

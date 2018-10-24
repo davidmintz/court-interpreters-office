@@ -1,0 +1,15 @@
+<?php /** module/Requests/view/interpreters-office/requests/denied.phtml */?>
+
+<div class="alert alert-danger border shadow-sm" style="max-width:600px">
+    <h3>Access denied</h3>
+    <?php if ($this->message):
+        echo $this->message;
+    else:
+        ?>
+        The current user <?php echo $this->identity()->username ?> is not allowed to
+        execute the requested action (<?php echo $this->layout()->action ?>) on the
+        requested resource.
+        <?php
+    endif;
+    ?>
+</div>

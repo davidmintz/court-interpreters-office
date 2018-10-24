@@ -6,4 +6,5 @@ return [
     'interpreters-office/requests/index/update' => __DIR__ . '/../view/index/form.phtml',
     'interpreters-office/requests/index/search' => __DIR__ . '/../view/index/search.phtml',
     'interpreters-office/requests/index/view' => __DIR__ . '/../view/index/view.phtml',
+    'denied' =>  __DIR__ . '/../view/index/denied.phtml',
 ];
