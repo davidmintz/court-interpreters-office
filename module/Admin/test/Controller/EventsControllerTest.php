@@ -330,5 +330,4 @@ class EventControllerTest extends AbstractControllerTest
             'Event count was incremented where insertion should have failed'
         );
     }
-
 }
