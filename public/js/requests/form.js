@@ -136,7 +136,7 @@ $(function(){
                     /** @todo revise displayValidationErrors helper */
                     var untimely = false;
                     if (response.validation_errors.request) {
-                        // look for key lessThanTwoBusinessDaysNotice
+                        // look for key lessThanTwoBusinessDaysNotice,
                         // which has no corresponding form element or div
                         var errors = response.validation_errors.request;
                         if (errors.date && errors.date.lessThanTwoBusinessDaysNotice) {
@@ -180,11 +180,14 @@ $(function(){
                 $("#deft-results").html(response);
                 if (0 === $("#deft-results ul.defendant-names").length) {
                     defendant_name_form.show();
+                    $("#btn-show-deft-form").hide();
                 } else {
+                    $("#form-add-deft .validation-error").hide();
                     defendant_name_form.hide();
+                    $("#btn-show-deft-form").show();
                 }
                 // these might have gotten hidden
-                $("#deft-results, #btn-show-deft-form").show();
+                $("#deft-results").show();
                 slideout.toggle("slide");
             })
             .fail(fail);
