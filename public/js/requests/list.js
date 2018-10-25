@@ -83,6 +83,10 @@ $(function(){
     });
     //$(".modal-body a.reschedule").on("click",function(event){});
     $("#btn-confirm-cancellation").on("click",function(){
-        console.warn("cancel shit! "+$(this).data().id);
+        console.warn("cancel shit! ");
+        var id = $(this).data().id;
+        $.post( `${window.basePath || ""}/requests/cancel/${id}`)
+            .done(function(response){console.log(response)})
+            .fail(fail);
     })
 });

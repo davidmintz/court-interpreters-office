@@ -4,6 +4,7 @@
         <testsuite name="CourtInterpretersOffice Test Suite">
             <directory>./module/InterpretersOffice/test</directory>
             <directory>./module/Admin/test</directory>
+            <directory>./module/Requests/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
             <exclude>./module/InterpretersOffice/test/Controller/AccountControllerTest.php</exclude>
             <exclude>./module/Admin/test/WebDriver/</exclude>

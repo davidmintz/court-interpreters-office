@@ -29,6 +29,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
     public function __construct(AbstractActionController $controller)
     {
         $this->controller = $controller;
+
     }
 
     /**
@@ -43,6 +44,9 @@ class ModificationAuthorizedAssertion implements AssertionInterface
     public function assert(Acl $acl, RoleInterface $user = null,
         ResourceInterface $controller = null, $privilege = null)
     {
+
+        $log = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
+        $log->debug(__METHOD__. " is running");
         // test ownership
         if (! $this->AssertOwnership($acl, $user, $controller, $privilege)) {
             return false;
@@ -64,7 +68,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
      * @param  string $privilege
      * @return boolean
      */
-    public function AssertOwnership(Acl $acl, RoleInterface $user = null,
+    public function assertOwnership(Acl $acl, RoleInterface $user = null,
         ResourceInterface $controller = null, $privilege = null)
     {
         $hat = $user->getPerson()->getHat();
@@ -106,10 +110,14 @@ class ModificationAuthorizedAssertion implements AssertionInterface
         $now = new \DateTime();
         $deadline = $controller->getTwoBusinessDaysFromDate($now);
         $request = $controller->getEntity();
+        $log = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
         $request_date = new \DateTime(
             "{$request->getDate()->format('Y-m-d')} {$request->getTime()->format('H:i')}"
         );
-
+        $log->debug(sprintf("excuse me? action is $privilege, request %d date is %, deadline is %s",
+            $request->getId(),
+            $request_date->format("Y-m-d H:i"),$deadline->format("Y-m-d H:i")
+        ));
         return $request_date > $deadline;
     }
 
