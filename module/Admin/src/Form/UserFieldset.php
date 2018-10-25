@@ -376,7 +376,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 ],
             ];
         }
-        
+
         return $return;
     }
 }

@@ -4,8 +4,8 @@ $this->headTitle($this->title);
 $this->headScript()->appendFile($this->basePath('/js/event-types-form.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-<?php
-return;
+    <?php
+    return;
 endif;
 $form = $this->form;
 $action = $this->layout()->action;

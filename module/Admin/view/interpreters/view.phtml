@@ -50,7 +50,7 @@ $i = $this->interpreter;
                 if ($country && 'United States' != $country) :
                     echo "<br>$country";
                 endif;
-                    ?>
+                ?>
                 </address>
             </div>
             <div class="col-2 text-md-right">active</div><div class="col-4"><?php echo $i->getActive() ? "yes" : "no"?></div>
@@ -63,7 +63,7 @@ $i = $this->interpreter;
                 ?>
             <div class="col-2 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180 text-info"></span></div>
             <div class="col-4"><?php echo $number ?: '<span class="text-muted">&mdash;</span>' ?></div>
-            <?php
+                <?php
             endforeach;
             ?>
             <div class="col-2 text-md-right">fingerprinted on </div>
@@ -72,7 +72,7 @@ $i = $this->interpreter;
                 if ($fingerprinted) :
                     echo $fingerprinted->format('m/d/Y');
                 else :
-?><span class="text-muted">&mdash;</span><?php
+                    ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
             <div class="col-2 text-md-right">security cleared on</div>
@@ -81,7 +81,7 @@ $i = $this->interpreter;
                 if ($clearance) :
                     echo $clearance->format('m/d/Y');
                 else :
-?><span class="text-muted">&mdash;</span><?php
+                    ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
             <div class="col-2 text-md-right">oath taken on</div>
@@ -90,7 +90,7 @@ $i = $this->interpreter;
                 if ($oath) :
                     echo $oath->format('m/d/Y');
                 else :
-?><span class="text-muted">&mdash;</span><?php
+                    ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
             <div class="col-2 text-md-right">contract expiration</div>
@@ -99,7 +99,7 @@ $i = $this->interpreter;
                 if ($contract_exp) :
                     echo $contract_exp->format('m/d/Y');
                 else :
-?><span class="text-muted">&mdash;</span><?php
+                    ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
             <div class="col-2 text-md-right">date of birth
@@ -115,7 +115,7 @@ $i = $this->interpreter;
                             ->setAttributes(['id' => 'encrypted_dob'])
                             ->setValue($encrypted_dob));
 
-                ?><span style="color:gray">**********</span><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and/or social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
+                    ?><span style="color:gray">**********</span><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and/or social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
                     <?php
                 endif;
                 ?>
@@ -134,7 +134,7 @@ $i = $this->interpreter;
                             ->setAttributes(['id' => 'encrypted_ssn'])
                             ->setValue($encrypted_ssn));
 
-                ?><span style="color:gray">**********</span><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and/or social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
+                    ?><span style="color:gray">**********</span><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to display dob and/or social security number" class="btn btn-info btn-sm float-right mr-3" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
                     <?php
                 endif;
                 ?>

@@ -52,7 +52,7 @@ class BasicEntityControllerFactory implements FactoryInterface
         }
         // ensure UpdateListener knows who current user is
         $container->get(Listener\UpdateListener::class)->setAuth($container->get('auth'));
-        
+
         return $controller;
     }
 }

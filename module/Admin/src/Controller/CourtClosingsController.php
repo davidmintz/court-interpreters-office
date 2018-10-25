@@ -49,7 +49,7 @@ class CourtClosingsController extends AbstractActionController
         $year = $this->params()->fromRoute('year');
         if (! $year) {
             $data = $repo->index();
-            return new ViewModel(['data'=>$data]);
+            return new ViewModel(['data' => $data]);
         } else {
             $data = $repo->list($year);
             return new JsonModel($data);
@@ -73,7 +73,9 @@ class CourtClosingsController extends AbstractActionController
     {
         if (! $this->form) {
             $this->form = new CourtClosingForm(
-                $this->entityManager,['action'=>$action]);
+                $this->entityManager,
+                ['action' => $action]
+            );
         }
 
         return $this->form;
@@ -107,13 +109,11 @@ class CourtClosingsController extends AbstractActionController
         } catch (\Exception $e) {
             $this->getResponse()->setStatusCode(500);
             return new JsonModel([
-                'result'=>'error','message' => $e->getMessage(),
-                'entity_id'=>$entity->getId()]
-            );
+                'result' => 'error','message' => $e->getMessage(),
+                'entity_id' => $entity->getId()]);
         }
         return new JsonModel([
-            'result'=>'success','entity_id'=>$entity->getId()]
-        );
+            'result' => 'success','entity_id' => $entity->getId()]);
     }
 
     /**
@@ -139,7 +139,7 @@ class CourtClosingsController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager->find(Entity\CourtClosing::class,$id);
+        $entity = $this->entityManager->find(Entity\CourtClosing::class, $id);
         if (! $entity) {
             // to do: deal with it
         }
@@ -149,7 +149,7 @@ class CourtClosingsController extends AbstractActionController
             return $this->post();
         }
 
-        return  new ViewModel(['form'=>$form]);
+        return  new ViewModel(['form' => $form]);
     }
 
     /**
@@ -158,7 +158,7 @@ class CourtClosingsController extends AbstractActionController
     public function deleteAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity =  $this->entityManager->find(Entity\CourtClosing::class,$id);
+        $entity = $this->entityManager->find(Entity\CourtClosing::class, $id);
         if ($entity) {
             $name = $entity->getDate()->format('D d-M-Y');
         } else {
@@ -170,5 +170,5 @@ class CourtClosingsController extends AbstractActionController
             'name' => ''
         ];
         return $this->delete($options);
-    }    
+    }
 }

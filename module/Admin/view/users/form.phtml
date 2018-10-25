@@ -13,8 +13,8 @@ $this->headScript()
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div></div>
-<?php
-return;
+    <?php
+    return;
 endif;
 $formAction = strstr($this->title, 'add') ? $this->url('users/add')
     : $this->url('users/edit', ['id' => $this->id ]);
@@ -22,15 +22,15 @@ $form = $this->form;
 $form->add([
     'name' => 'submit', 'type' => 'Zend\Form\Element\Submit',
     'attributes' =>
-     ['id'=>'btn-submit','value' => 'save','class' => 'btn btn-success btn-lg'],
-])->setAttributes(['class' => 'form-horizontal','action'=>$formAction]);
+     ['id' => 'btn-submit','value' => 'save','class' => 'btn btn-success btn-lg'],
+])->setAttributes(['class' => 'form-horizontal','action' => $formAction]);
 $person_fieldset = $this->form->get('user')->get('person');
 if ($this->has_related_entities) :
-    $person_fieldset->get('hat')->setAttribute('disabled','disabled');
+    $person_fieldset->get('hat')->setAttribute('disabled', 'disabled');
     $role_element = $form->get('user')->get('role');
     $user = $form->get('user')->getObject();
     if ((string)$user->getRole() == 'submitter') :
-        $role_element->setAttribute('disabled','disabled');
+        $role_element->setAttribute('disabled', 'disabled');
     endif;
 endif;
 $has_judges = $form->getObject()->getJudges()->count();
@@ -53,7 +53,7 @@ $user_fieldset = $this->form->get("user");
     <div class="col-sm-9"><?php echo $this->formElement($hat),$this->formElementErrors($hat) ?>
     </div>
 </div>
-<?php if ($user_fieldset->has('judge-select')):?>
+<?php if ($user_fieldset->has('judge-select')) :?>
 <div id="judge-div" class="form-group form-row" style="display:none">
     <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">select the judge(s) for whom this user works, and click the <strong>+</strong> button.</div>
     <label  for="judges" class="col-form-label col-sm-3">Judge(s)</label>
@@ -61,12 +61,13 @@ $user_fieldset = $this->form->get("user");
         <div class="input-group">
             <?php echo $this->formSelect($form->get('user')->get('judge-select'))?><button class="btn btn-info fas fa-plus" title="identify the currently selected Judge as one for whom you work" type="button" id="btn-add-judge"><span class="sr-only">select</span></button>
         </div>
-        <?php $errors = $this->formElementErrors($user_fieldset->get('judges')); echo $errors;?>
-        <ul id="judges" class="list-group mt-1"><?php if ($has_judges && !$errors):
-            foreach ($form->getObject()->getJudges() as $judge):?>
+        <?php $errors = $this->formElementErrors($user_fieldset->get('judges'));
+        echo $errors;?>
+        <ul id="judges" class="list-group mt-1"><?php if ($has_judges && ! $errors) :
+            foreach ($form->getObject()->getJudges() as $judge) :?>
                 <ul id="judges" class="list-group mt-1"><li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li></ul>
             <?php endforeach;
-        endif;?></ul>
+                                                endif;?></ul>
     </div>
 </div>
 <?php endif;
@@ -103,7 +104,7 @@ $user_active = $user_fieldset->get('active');?>
     echo $this->formHidden($person_fieldset->get('id'));
     echo $this->formHidden($user_fieldset->get('id'));
     echo $this->formSubmit($form->get('submit'));
-?></div>
+    ?></div>
 </div>
 <?php
 echo $this->form()->closeTag(); ?>

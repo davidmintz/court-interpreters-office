@@ -45,21 +45,21 @@ abstract class AbstractEventFieldset extends Fieldset implements
       *
       * @var string
       */
-     protected $auth_user_role;
+    protected $auth_user_role;
 
      /**
       * constructor options
       *
       * @var Array
       */
-     protected $options;
+    protected $options;
 
      /**
       * action
       *
       * @var string
       */
-     protected $action;
+    protected $action;
 
 
      /**
@@ -69,7 +69,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
       *  submitter form elements
       *  @var array
       */
-      protected $inputFilterspec = [
+    protected $inputFilterspec = [
           'id' => [
               'required' => true,
               'allow_empty' => true,
@@ -176,7 +176,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
       *
       * @var Array some of our element definitions
       */
-     protected $elements = [
+    protected $elements = [
          [
              'name' => 'id',
              'type' => 'Zend\Form\Element\Hidden',
@@ -244,92 +244,91 @@ abstract class AbstractEventFieldset extends Fieldset implements
       * @param ObjectManager $objectManager
       * @param array         $options
       */
-     public function __construct(ObjectManager $objectManager, array $options)
-     {
-         if (! isset($options['action'])) {
-             throw new \RuntimeException(
-                 'missing "action" option in constructor'
-             );
-         }
-         if (! in_array($options['action'], ['create', 'update','repeat'])) {
-             throw new \RuntimeException('invalid "action" option in '
-                 . 'EventFieldset constructor: '.(string)$options['action']);
-         }
-         if (! isset($options['object'])) {
-             $options['object'] = null;
-         }
-         /** might get rid of this... */
-         if (isset($options['auth_user_role'])) {
-             /** @todo let's not hard-code these roles */
-             if (! in_array(
-                 $options['auth_user_role'],
-                 ['anonymous','staff','submitter','manager','administrator']
-             )) {
-                 throw new \RuntimeException(
-                     'invalid "auth_user_role" option in Event fieldset constructor'
-                 );
-             }
-             $this->auth_user_role = $options['auth_user_role'];
-         }
-         $this->action = $options['action'];
-         $this->options = $options;
-         $this->setObjectManager($objectManager);
-         
-         parent::__construct($this->fieldset_name, $options);
+    public function __construct(ObjectManager $objectManager, array $options)
+    {
+        if (! isset($options['action'])) {
+            throw new \RuntimeException(
+                'missing "action" option in constructor'
+            );
+        }
+        if (! in_array($options['action'], ['create', 'update','repeat'])) {
+            throw new \RuntimeException('invalid "action" option in '
+                . 'EventFieldset constructor: '.(string)$options['action']);
+        }
+        if (! isset($options['object'])) {
+            $options['object'] = null;
+        }
+        /** might get rid of this... */
+        if (isset($options['auth_user_role'])) {
+            /** @todo let's not hard-code these roles */
+            if (! in_array(
+                $options['auth_user_role'],
+                ['anonymous','staff','submitter','manager','administrator']
+            )) {
+                throw new \RuntimeException(
+                    'invalid "auth_user_role" option in Event fieldset constructor'
+                );
+            }
+            $this->auth_user_role = $options['auth_user_role'];
+        }
+        $this->action = $options['action'];
+        $this->options = $options;
+        $this->setObjectManager($objectManager);
 
-         $this->addJudgeElements($options['object'])
-             ->addEventTypeElement()
-             ->addLocationElements($options['object']);
+        parent::__construct($this->fieldset_name, $options);
 
-         $this->add(
-             new LanguageSelect(
-                 'language',
-                 [
-                     'objectManager' => $objectManager,
-                     'attributes'  => [
-                         'id' => 'language',
-                         'class' => 'custom-select text-muted'
-                     ],
-                     'options' => [
-                         'label' => 'language',
-                         'empty_item_label' => '(required)',
-                     ],
-                 ]
-             )
-         );
-         $this->objectManager = $objectManager;
-         $this->setHydrator(new DoctrineHydrator($objectManager))
-                 ->setUseAsBaseFieldset(true);
+        $this->addJudgeElements($options['object'])
+            ->addEventTypeElement()
+            ->addLocationElements($options['object']);
 
-         foreach ($this->elements as $element) {
-             $this->add($element);
-         }
+        $this->add(
+            new LanguageSelect(
+                'language',
+                [
+                    'objectManager' => $objectManager,
+                    'attributes'  => [
+                        'id' => 'language',
+                        'class' => 'custom-select text-muted'
+                    ],
+                    'options' => [
+                        'label' => 'language',
+                        'empty_item_label' => '(required)',
+                    ],
+                ]
+            )
+        );
+        $this->objectManager = $objectManager;
+        $this->setHydrator(new DoctrineHydrator($objectManager))
+                ->setUseAsBaseFieldset(true);
 
-     }
+        foreach ($this->elements as $element) {
+            $this->add($element);
+        }
+    }
 
      /**
       * adds defendants elements
       *
       * @return AbstractEventFieldset
       */
-     public function addDefendantsElement()
-     {
-         $this->add([
-             'name' => 'defendants',
-             'type' => 'Zend\Form\Element\Select',
-             'options' => [
-                 'value_options' => [],
-                 'disable_inarray_validator' => true,
-             ],
-             'attributes' => [
-                 'style' => 'display:none',
-                 'id' => 'defendants',
-                 'multiple' => 'multiple',
-             ],
-         ]);
+    public function addDefendantsElement()
+    {
+        $this->add([
+            'name' => 'defendants',
+            'type' => 'Zend\Form\Element\Select',
+            'options' => [
+                'value_options' => [],
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
+                'style' => 'display:none',
+                'id' => 'defendants',
+                'multiple' => 'multiple',
+            ],
+        ]);
 
-         return $this;
-     }
+        return $this;
+    }
 
 
      /**
@@ -337,14 +336,14 @@ abstract class AbstractEventFieldset extends Fieldset implements
       *
       * @return AbstractEventFieldset
       */
-     abstract public function addJudgeElements();
+    abstract public function addJudgeElements();
 
      /**
       * adds event-type element
       *
       * @return AbstractEventFieldset
       */
-     abstract function addEventTypeElement();
+    abstract public function addEventTypeElement();
 
      /**
       * adds Location element(s)
@@ -352,6 +351,5 @@ abstract class AbstractEventFieldset extends Fieldset implements
       * @param Entity\Event $event
       * @return AbstractEventFieldset
       */
-     abstract public function addLocationElements();
-
+    abstract public function addLocationElements();
 }

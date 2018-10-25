@@ -314,7 +314,5 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->assertQueryCount('#btn-delete', 1);
 
         // to be continued
-
     }
-
 }

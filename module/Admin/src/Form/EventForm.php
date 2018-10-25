@@ -78,7 +78,7 @@ class EventForm extends ZendForm implements
     public function attach(EventManagerInterface $events, $priority = 1)
     {
 
-        $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);        
+        $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);
         $this->listeners[] = $events->attach('post.load', [$this, 'postLoad']);
         $this->listeners[] = $events->attach('pre.populate', [$this, 'prePopulate']);
         //$this->listeners[] = $events->attach('post.validate', [$this, 'postValidate']);
@@ -193,7 +193,6 @@ class EventForm extends ZendForm implements
         // if YES submitter and YES anonymous submitter, unset anon submitter
         } elseif (! empty($event['submitter'])
             && ! empty($event['anonymousSubmitter'])) {
-
             unset($event['anonymousSubmitter']);
             $anon_submitter_input = $this->getInputFilter()->get('event')
                 ->get('anonymousSubmitter');
@@ -250,7 +249,7 @@ class EventForm extends ZendForm implements
      *
      * @return array
      */
-    function getInputFilterSpecification()
+    public function getInputFilterSpecification()
     {
         $spec = [];
         if (! $this->has('modified')) {
@@ -314,7 +313,7 @@ class EventForm extends ZendForm implements
      *
      * @return boolean
      */
-    function hasTimestampMismatchError()
+    public function hasTimestampMismatchError()
     {
         $errors = $this->getMessages('modified');
         return $errors &&
@@ -331,66 +330,66 @@ class EventForm extends ZendForm implements
          * @param EventInterface $e
          * @return void
          */
-        public function __postValidate(EventInterface $e)
-        {
-            // $entity = $this->getObject();
-            // $controller = $e->getTarget();
-            // $logger = $controller->getEvent()->getApplication()
-            //     ->getServiceManager()->get('log');
-            // $updated = false;
-            // /** @var  Doctrine\ORM\PersistentCollection $collection */
-            // $collection = $entity->getInterpreterEvents();
-            // if ($collection->count() != count($this->state_before['interpreterEvents'])) {
-            //     $updated = true;
-            // } else {
-            //     $after = [];
-            //     foreach ($collection as $ie) {
-            //         $after[] = (string)$ie;
-            //     }
-            //     $logger->debug(sprintf('postValidate: interpreterEvents state is now: %s', print_r($after, true)));
-            //     $before = $this->state_before['interpreterEvents'];
-            //     if (count($after) > 1) {
-            //         sort($before);
-            //         sort($after);
-            //     }
-            //     if ($before != $after) {
-            //         $updated = true;
-            //     }
-            // }
-            // $logger->debug(($updated ? "YES" : "NO"). " interpreters have been changed");
-            // $post = $controller->params()->fromPost()['event'];
-            //
-            // if ($updated) {
-            //     // this change suffices to trigger the Event entity's preUpdate()
-            //     $entity->setModified(new \DateTime());
-            // }
-            // foreach ($this->datetime_props as $prop) {
-            //     if (strstr($prop, '_')) {
-            //         $getter = 'get'.ucfirst(str_replace('_', '', $prop));
-            //     } else {
-            //         $getter = 'get'.ucfirst($prop);
-            //     }
-            //     $new_value = $entity->$getter();
-            //     $old_value = $this->state_before[$prop];
-            //     $really_modified = true; // presumptively
-            //     if ($old_value == $new_value) {
-            //         $really_modified = false;
-            //     } elseif (in_array($prop, ['time','end_time','submission_time'])) {
-            //         // a time field, not a date
-            //         // brace against possible NULL
-            //         $new_string = $new_value instanceof \DateTime ?
-            //              $new_value->format('g:i a') : '';
-            //         $old_string = $old_value instanceof \DateTime ?
-            //             $old_value->format('g:i a') : '';
-            //         $really_modified = $new_string != $old_string;
-            //     }
-            //     if (! $really_modified) {
-            //         // set it back to the previous object instance
-            //         $setter = 's'.substr($getter, 1);
-            //         $entity->$setter($old_value);
-            //     }
-            // }
-        }
+    public function __postValidate(EventInterface $e)
+    {
+        // $entity = $this->getObject();
+        // $controller = $e->getTarget();
+        // $logger = $controller->getEvent()->getApplication()
+        //     ->getServiceManager()->get('log');
+        // $updated = false;
+        // /** @var  Doctrine\ORM\PersistentCollection $collection */
+        // $collection = $entity->getInterpreterEvents();
+        // if ($collection->count() != count($this->state_before['interpreterEvents'])) {
+        //     $updated = true;
+        // } else {
+        //     $after = [];
+        //     foreach ($collection as $ie) {
+        //         $after[] = (string)$ie;
+        //     }
+        //     $logger->debug(sprintf('postValidate: interpreterEvents state is now: %s', print_r($after, true)));
+        //     $before = $this->state_before['interpreterEvents'];
+        //     if (count($after) > 1) {
+        //         sort($before);
+        //         sort($after);
+        //     }
+        //     if ($before != $after) {
+        //         $updated = true;
+        //     }
+        // }
+        // $logger->debug(($updated ? "YES" : "NO"). " interpreters have been changed");
+        // $post = $controller->params()->fromPost()['event'];
+        //
+        // if ($updated) {
+        //     // this change suffices to trigger the Event entity's preUpdate()
+        //     $entity->setModified(new \DateTime());
+        // }
+        // foreach ($this->datetime_props as $prop) {
+        //     if (strstr($prop, '_')) {
+        //         $getter = 'get'.ucfirst(str_replace('_', '', $prop));
+        //     } else {
+        //         $getter = 'get'.ucfirst($prop);
+        //     }
+        //     $new_value = $entity->$getter();
+        //     $old_value = $this->state_before[$prop];
+        //     $really_modified = true; // presumptively
+        //     if ($old_value == $new_value) {
+        //         $really_modified = false;
+        //     } elseif (in_array($prop, ['time','end_time','submission_time'])) {
+        //         // a time field, not a date
+        //         // brace against possible NULL
+        //         $new_string = $new_value instanceof \DateTime ?
+        //              $new_value->format('g:i a') : '';
+        //         $old_string = $old_value instanceof \DateTime ?
+        //             $old_value->format('g:i a') : '';
+        //         $really_modified = $new_string != $old_string;
+        //     }
+        //     if (! $really_modified) {
+        //         // set it back to the previous object instance
+        //         $setter = 's'.substr($getter, 1);
+        //         $entity->$setter($old_value);
+        //     }
+        // }
+    }
 
         /*
          * date/time properties
@@ -399,7 +398,4 @@ class EventForm extends ZendForm implements
          protected $datetime_props =
          ['date','time','end_time','submission_date', 'submission_time'];
          */
-
-
-
 }

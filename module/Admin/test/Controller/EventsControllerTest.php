@@ -148,7 +148,7 @@ class EventControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         // sanity check: refresh entity and check no defendants as yet
         //$entity = $em->find(Entity\Event::class,$entity->getId());
-        $this->assertEquals(0,$entity->getDefendants()->count());
+        $this->assertEquals(0, $entity->getDefendants()->count());
         $event = $this->getDummyData();
         $this->login('david', 'boink');
         $this->reset(true);
@@ -246,7 +246,7 @@ class EventControllerTest extends AbstractControllerTest
 
         //['Fulano Mengano', 'Joaquín'],
         $deft_id = $em->getRepository(Entity\Defendant::class)->findOneBy(
-            ['surnames' =>'Fulano Mengano','given_names'=>'Joaquín' ]
+            ['surnames' => 'Fulano Mengano','given_names' => 'Joaquín' ]
         )->getId();
         $event['defendants'][] = $deft_id;
         $this->reset(true);
@@ -262,7 +262,7 @@ class EventControllerTest extends AbstractControllerTest
         $content = $this->getResponse()->getContent();
         $this->assertJson($content);
         $response = json_decode($content);
-        $this->assertEquals("success",$response->status);
+        $this->assertEquals("success", $response->status);
 
         $type_before = $type_expected;
         $time_before = $time_expected;
@@ -278,9 +278,9 @@ class EventControllerTest extends AbstractControllerTest
                     . "expect for event 'time' property in %s\n", __METHOD__);
         }
         // did the defendant get added?
-        $entity = $em->find(Entity\Event::class,$id);
+        $entity = $em->find(Entity\Event::class, $id);
         $defts = $entity->getDefendants();
-        $this->assertEquals(1,$defts->count());
+        $this->assertEquals(1, $defts->count());
     }
 
     public function testAssigningInterpretersResultsInMetaDataUpdate()
@@ -331,7 +331,4 @@ class EventControllerTest extends AbstractControllerTest
         );
     }
 
-    public function _testGetView()
-    {
-    }
 }

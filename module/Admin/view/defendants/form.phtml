@@ -8,7 +8,7 @@ if ($this->error) :?>
         <?php echo $this->error ?>
     </div>
 </div>
-<?php return;
+    <?php return;
 endif;
 if ($action == 'add') :
     $url = $this->url('admin-defendants/add');
@@ -35,7 +35,7 @@ if ($this->error) :?>
     </div>
     <?php return;
 endif;
-    ?>
+?>
     <div id="defendant-form-success" class="alert alert-success" style="display:none"></div>
 <?php if ($form->has('duplicate_resolution')) :?>
     <p class="duplicate-name duplicate-name-instructions" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
@@ -74,7 +74,7 @@ endif;
             ?>
             <input class="form-check-input" type="checkbox" name="occurrences[]" value="<?php echo $this->escapeHtml($value)?>" <?php
             if (1 == $count or in_array($value, $this->checked)) :
-?> checked="checked"<?php
+                ?> checked="checked"<?php
             endif;
             ?> id="checkbox-<?php echo $i?>">
             <label class="form-check-label" for="checkbox-<?php echo $i?>"><?php
@@ -86,7 +86,7 @@ endif;
         --><button id="btn-invert-selection" class="btn btn-sm btn-default border border-info">invert selection</button>
         <?php endif;?>
     </div>
-<?php endif; //occurrences ?>
+    <?php endif; //occurrences ?>
     <div id="defendant-form-error" class="alert alert-warning" style="display:none"></div><?php
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
@@ -94,7 +94,7 @@ endif;
     if (! $this->xhr) :
         echo $this->formSubmit($form->get('submit'));if (! $this->occurrences
         && $action == 'edit') :
-?><input id="btn-delete" type="button" class="btn btn-lg btn-warning mt-2" title="delete this defendant name from your database" value="delete" id="btn-delete"><?php
+            ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning mt-2" title="delete this defendant name from your database" value="delete" id="btn-delete"><?php
         endif;
     endif;
     echo $this->form()->closeTag() ?>

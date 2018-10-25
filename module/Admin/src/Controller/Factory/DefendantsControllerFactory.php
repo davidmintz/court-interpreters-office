@@ -29,7 +29,7 @@ class DefendantsControllerFactory implements FactoryInterface
         $resolver->register($container->get(Listener\EventEntityListener::class));
         $auth = $container->get('auth');
         $resolver->register($container->get(Listener\UpdateListener::class)->setAuth($auth));
-        
+
         return new DefendantsController($em);
     }
 }

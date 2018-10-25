@@ -26,15 +26,15 @@ endif;
 if (! $this->judges) : ?>
     <div class="alert alert-warning">There are no judges in your database. Go to <a href="/admin/judges/add">add</a> to start adding them.</div>
 </div><!-- /wrapper -->
-<?php
-return;
+    <?php
+    return;
 endif;
 ?>
 <div id="accordion">
 <?php
 $flavors = array_keys($this->judges);
 foreach ($flavors as $flavor) :
-?>
+    ?>
     <div class="card">
         <div class="card-header" id="heading-<?php echo $flavor ?>">
             <a role="button" class="btn btn-link" data-toggle="collapse" data-target="#<?php echo $flavor ?>" aria-expanded="<?php echo $flavor == $flavors[0] ? "true" : "false"?>" aria-controls="<?php echo $flavor ?>">
@@ -44,7 +44,7 @@ foreach ($flavors as $flavor) :
             </a>
         </div>
         <div id="<?php echo $flavor ?>" class="collapse<?php if ($flavor == $flavors[0]) :
-?> show<?php
+            ?> show<?php
                  endif;?>" aria-labelledby="heading-<?php echo $flavor ?>" data-parent="#accordion">
             <div class="card-body px-auto">
             <table class="table mx-auto" style="max-width:500px">
@@ -59,7 +59,7 @@ foreach ($flavors as $flavor) :
                         endif;
                     endif; ?>
                 <tr <?php if (! $judge['active']) :
-?> class="inactive"<?php
+                    ?> class="inactive"<?php
                     endif;?>>
                     <td><?php
                     $name = sprintf("%s, %s %s", $judge['lastname'], $judge['firstname'], $judge['middlename']);
@@ -77,7 +77,7 @@ foreach ($flavors as $flavor) :
         </div>
         </div>
     </div>
-<?php
+    <?php
 endforeach;
 ?>
 </div><!-- /accordion -->

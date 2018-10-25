@@ -18,11 +18,11 @@ $this->headStyle()->captureEnd();
 <div class="row">
     <div class="col-md-6 court-closings">
         <?php
-        if ($this->data):
+        if ($this->data) :
             ?><ul class="list-group pl-2 court-closings-year" style="max-width:450px">
-            <?php foreach($this->data as $item): ?>
+            <?php foreach ($this->data as $item) : ?>
                 <li class="list-group-item font-weight-bold">
-                    <a class="closing-link" href="<?php echo $this->url('court-closings/year',['year'=>$item['year']])?>"><?php echo $item['year'] ?></a>
+                    <a class="closing-link" href="<?php echo $this->url('court-closings/year', ['year' => $item['year']])?>"><?php echo $item['year'] ?></a>
                     <span id="total-<?php echo $item['year']?>" class="badge badge-primary float-right"><?php echo $item['dates']?></span>
                     <ul class="list-group font-weight-normal" style="display:none">
                     </ul>
@@ -32,7 +32,7 @@ $this->headStyle()->captureEnd();
         <?php else : ?>
             <p class="alert alert-warning">You have no court closings in your database.</p>
         <?php endif;
-        ?>
+?>
     </div>
     <div class="col-md-6">
         <!-- Button trigger modal -->

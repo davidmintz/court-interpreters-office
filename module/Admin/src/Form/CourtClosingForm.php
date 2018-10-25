@@ -45,41 +45,43 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
     * @param ObjectManager $objectManager
     * @param array         $options
     */
-   public function __construct(ObjectManager $objectManager, $options = null)
-   {
-       parent::__construct($this->formName, $options);
-       if (! is_array($options)) {
-           throw new \RuntimeException(
-               'options required for CourtClosingForm constructor');
-       }
-       if (! isset($options['action']) ||
-            ! in_array($options['action'],['update','create'])) {
+    public function __construct(ObjectManager $objectManager, $options = null)
+    {
+        parent::__construct($this->formName, $options);
+        if (! is_array($options)) {
             throw new \RuntimeException(
-            '"action" constructor option must be either "update" or "create"');
-       }
-       $this->action = $options['action'];
-       $this->setObjectManager($objectManager);
-       $this->setHydrator(new DoctrineHydrator($objectManager));
-       $this->addHolidayElement();
-       $this->add(
-           [
+                'options required for CourtClosingForm constructor'
+            );
+        }
+        if (! isset($options['action']) ||
+            ! in_array($options['action'], ['update','create'])) {
+            throw new \RuntimeException(
+                '"action" constructor option must be either "update" or "create"'
+            );
+        }
+        $this->action = $options['action'];
+        $this->setObjectManager($objectManager);
+        $this->setHydrator(new DoctrineHydrator($objectManager));
+        $this->addHolidayElement();
+        $this->add(
+            [
                'type' => 'hidden',
                'name' => 'id',
                'attributes' => [
                    'id' => 'id'
                ],
-           ]
-       );
-       $this->add([
+            ]
+        );
+        $this->add([
            'type' => 'text',
            'name' => 'date',
            'attributes' => [
                'id' => 'date',
                'class' => 'form-control',
            ],
-       ]);
-       $this->add(
-           [
+        ]);
+        $this->add(
+            [
                'type' => 'text',
                'name' => 'description_other',
                'attributes' => [
@@ -87,21 +89,21 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
                    'class' => 'form-control',
                    'placeholder' => 'brief explanation of reason for closing'
                ],
-           ]
-       );
-       $this->addCsrfElement('court_closing_csrf');
-   }
+            ]
+        );
+        $this->addCsrfElement('court_closing_csrf');
+    }
    /**
     * adds the select element for standard holidays
     */
-   protected function addHolidayElement()
-   {
-       $value_options = $this->objectManager
+    protected function addHolidayElement()
+    {
+        $value_options = $this->objectManager
         ->getRepository(Entity\CourtClosing::class)
         ->getHolidays();
-        array_push($value_options,['label'=> 'other...','value'=>'other']);
-        array_unshift($value_options,['label'=> ' ','value' => '']);
-       $this->add([
+        array_push($value_options, ['label' => 'other...','value' => 'other']);
+        array_unshift($value_options, ['label' => ' ','value' => '']);
+        $this->add([
            'type' => 'Select',
            'name' => 'holiday',
            'options' => [
@@ -113,8 +115,8 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
                'class' => 'form-control custom-select',
                'id' => 'holiday',
            ],
-       ]);
-   }
+        ]);
+    }
 
    /**
     * implements InputFilterProviderInterface
@@ -130,7 +132,7 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
         $uniqueness_validator = [
             'name' => Callback::class,
             'options' => [
-                'callback' => function($value,$context) use ($repository,$action) {
+                'callback' => function ($value, $context) use ($repository, $action) {
                     $entity = $repository->findOneBy(['date' => new \DateTime($value)]);
                     if ($action == 'create' && $entity) {
                         return false;
@@ -184,7 +186,7 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
                     [
                         'name' => Callback::class,
                         'options' => [
-                            'callback' => function ($value,$context) {
+                            'callback' => function ($value, $context) {
                                 // one of these has to be truthy
                                 return (int)$value
                                  or $context['description_other'];
@@ -218,11 +220,11 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
                        ],
                    ],
                 ],
-               'filters' => [
+                'filters' => [
                    ['name' => 'StringTrim'],
                    ['name' => 'ToNull'],
-               ],
-           ],
+                ],
+            ],
         ];
     }
 }

@@ -33,12 +33,14 @@ endif;?>
             <select class="form-control form-control-sm custom-select" id="language-select" name="language">
                 <option label="all" value="all">all</option>
                 <option label="Spanish" <?php if ($this->language == 'spanish') :
-                    ?>selected="selected" <?php endif;?>value="spanish">Spanish</option>
+                    ?>selected="selected" <?php
+                                        endif;?>value="spanish">Spanish</option>
                 <option label="not Spanish" <?php if ($this->language == 'not-spanish') :
-                    ?>selected="selected" <?php endif;?>value="not-spanish">not Spanish</option>
+                    ?>selected="selected" <?php
+                                            endif;?>value="not-spanish">not Spanish</option>
             </select>
             <label for="date-input" class="text-md-right pl-2 pr-1">date</label>
             <input type="text" name="date" id="date-input" class="form-control  form-control-sm" style="max-width:125px">
         </div>
     </div>
-<?php echo $this->partial('interpreters-office/admin/schedule/partials/table',['data'=>$data]);
+<?php echo $this->partial('interpreters-office/admin/schedule/partials/table', ['data' => $data]);

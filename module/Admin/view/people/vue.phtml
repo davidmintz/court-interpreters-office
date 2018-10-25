@@ -3,16 +3,19 @@
  *  viewscript for main people-administration page
  */
 use Zend\Form\Element;
-$defaults = array_merge(['hat'=>'','active'=>1,'name'=>'','page'=> 1,'id'=>null], $this->defaults ?: []);
+
+$defaults = array_merge(['hat' => '','active' => 1,'name' => '','page' => 1,'id' => null], $this->defaults ?: []);
 $hat_element = (new Element\Select(
-    'hat', ['value_options'=> $this->options,
+    'hat',
+    ['value_options' => $this->options,
             'empty_option' => ' -- select hat --',]
-))->setAttributes(['class'=>'custom-select','id'=>'hat'])
+))->setAttributes(['class' => 'custom-select','id' => 'hat'])
     ->setValue($defaults['hat']);
 $status_element = (new Element\Select(
-    'active', ['value_options'=> [1 => 'active',0 => 'inactive',],
+    'active',
+    ['value_options' => [1 => 'active',0 => 'inactive',],
     'empty_option' => ' any status ',]
-))->setAttributes(['class'=>'custom-select','id'=>'active'])
+))->setAttributes(['class' => 'custom-select','id' => 'active'])
 ->setValue($defaults['active']);
 $this->headScript()
     ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
@@ -32,7 +35,9 @@ endif;
 <!--
 <pre><?php // print_r($this->defaults)?></pre>
 -->
-<form <?php if ($this->defaults): ?>data-session_defaults="1" <?php endif ?>id="search-form" class="form-inline shadow-sm border rounded pl-3 py-3 mx-auto mt-4" style="max-width:850px">
+<form <?php if ($this->defaults) :
+    ?>data-session_defaults="1" <?php
+      endif ?>id="search-form" class="form-inline shadow-sm border rounded pl-3 py-3 mx-auto mt-4" style="max-width:850px">
     <label class="my-1 mr-2" for="hat">hat</label>
     <?php echo $this->formElement($hat_element); ?>
     <label class="my-1 mx-2" for="status">status</label>

@@ -102,7 +102,7 @@ class UsersController extends AbstractActionController implements Authentication
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
         $events->attach('load-person', function (EventInterface $e)
-            use ($entityManager, $role_id) {
+ use ($entityManager, $role_id) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
@@ -158,7 +158,6 @@ class UsersController extends AbstractActionController implements Authentication
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
             }
-
         });
         // are they authorized to edit this user account?
         $events->attach('load-user', function (EventInterface $e) use ($role_id) {
@@ -214,8 +213,8 @@ class UsersController extends AbstractActionController implements Authentication
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                return new JsonModel(['status'=>'error',
-                'validation_errors'=>$form->getMessages()]);
+                return new JsonModel(['status' => 'error',
+                'validation_errors' => $form->getMessages()]);
             }
             $user->setCreated(new \DateTime());
             $this->entityManager->persist($user);
@@ -233,8 +232,7 @@ class UsersController extends AbstractActionController implements Authentication
                     $person->getLastname()
                 )
             );
-            return new JsonModel(['status'=>'success','validation_errors'=>null]);
-
+            return new JsonModel(['status' => 'success','validation_errors' => null]);
         }
         return $viewModel;
     }
@@ -267,11 +265,11 @@ class UsersController extends AbstractActionController implements Authentication
         $form->get('user')->get('person')->setObject($user->getPerson());
         /* -------------------------- */
         $viewModel->form = $form;
-        $has_related_entities =  $this->entityManager
+        $has_related_entities = $this->entityManager
             ->getRepository(Entity\Person::class)
             ->hasRelatedEntities($person->getId());
         $viewModel->has_related_entities = $has_related_entities;
-        
+
         if ($has_related_entities) {
             $user_input = $form->getInputFilter()->get('user');
             $user_input->get('person')->get('hat')->setRequired(false);
@@ -282,8 +280,8 @@ class UsersController extends AbstractActionController implements Authentication
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                return new JsonModel(['status'=>'error',
-                'validation_errors'=>$form->getMessages()]);
+                return new JsonModel(['status' => 'error',
+                'validation_errors' => $form->getMessages()]);
             }
             $this->entityManager->flush();
             $this->flashMessenger()
@@ -293,7 +291,7 @@ class UsersController extends AbstractActionController implements Authentication
                     $person->getLastname()
                 ));
             //$this->redirect()->toRoute('users');
-            return new JsonModel(['status'=>'success','validation_errors'=>null]);
+            return new JsonModel(['status' => 'success','validation_errors' => null]);
         }
         return $viewModel;
     }

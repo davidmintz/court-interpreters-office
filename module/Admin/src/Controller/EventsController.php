@@ -123,7 +123,7 @@ class EventsController extends AbstractActionController
         if (! $request->isPost()) {
             $id = $this->params()->fromRoute('id');
             if ($id) {
-                $other = $this->entityManager->find(Entity\Event::class,$id);
+                $other = $this->entityManager->find(Entity\Event::class, $id);
                 if ($other) {
                     $event
                     ->setDocket($other->getDocket())
@@ -143,11 +143,11 @@ class EventsController extends AbstractActionController
 
         $data = $request->getPost();
         $input = $data->get('event');
-        $this->getEventManager()->trigger('pre.validate',$this,['input' => $data,]);
+        $this->getEventManager()->trigger('pre.validate', $this, ['input' => $data,]);
         $form->bind($event);
         $form->setData($data);
         if (! $form->isValid()) {
-            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+            return new JsonModel(['validation_errors' => $form->getMessages()]);
         } else {
             $this->entityManager->persist($event);
             $this->entityManager->flush();
@@ -160,7 +160,7 @@ class EventsController extends AbstractActionController
                 $date->format('l d-M-Y')
             ));
 
-            return new JsonModel(['status'=>'success','id'=> $event->getId()]);
+            return new JsonModel(['status' => 'success','id' => $event->getId()]);
         }
     }
 
@@ -185,16 +185,16 @@ class EventsController extends AbstractActionController
         //$events->trigger('post.load', $this, ['entity' => $entity]);
         $form->bind($entity);
         $modified = $entity->getModified();
-        $events->trigger('pre.populate',$this,['entity'=>$entity]);
+        $events->trigger('pre.populate', $this, ['entity' => $entity]);
         if (! $this->getRequest()->isPost()) {
             return $view;
         }
         $post = $this->getRequest()->getPost();
         $events->trigger('pre.validate', $this);
         $form->setData($post);
-        try  {
+        try {
             if (! $form->isValid()) {
-                return new JsonModel(['validation_errors'=>$form->getMessages()]);
+                return new JsonModel(['validation_errors' => $form->getMessages()]);
             }
             $this->entityManager->flush();
             $url = $this->getEvent()->getApplication()
@@ -208,15 +208,18 @@ class EventsController extends AbstractActionController
                 $verbiage = 'saved (unmodified)';
             }
             $this->flashMessenger()->addSuccessMessage(
-                sprintf("This event has been successfully $verbiage on the "
-                .'schedule for <a href="%s">%s</a>',
-                $url . $date->format('/Y/m/d'), $date->format('l d-M-Y'))
+                sprintf(
+                    "This event has been successfully $verbiage on the "
+                    .'schedule for <a href="%s">%s</a>',
+                    $url . $date->format('/Y/m/d'),
+                    $date->format('l d-M-Y')
+                )
             );
             //return $view;
-            return new JsonModel(['status'=>'success','id'=> $entity->getId()]);
+            return new JsonModel(['status' => 'success','id' => $entity->getId()]);
             //$this->redirect()->toRoute('events/view', ['id' => $entity->getId()]);
         } catch (\Exception $e) {
-            $this->events->trigger('error',$this,['exception'=>$e]);
+            $this->events->trigger('error', $this, ['exception' => $e]);
             $this->getResponse()->setStatusCode(500);
             return new JsonModel([
                 'status' => 'error',
@@ -224,7 +227,6 @@ class EventsController extends AbstractActionController
                 'trace' => $e->getTraceAsString(),
             ]);
         }
-
     }
 
     /**

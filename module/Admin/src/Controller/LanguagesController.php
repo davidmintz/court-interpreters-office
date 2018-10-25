@@ -183,6 +183,6 @@ class LanguagesController extends AbstractActionController
      */
     protected function getFormViewModel(array $data)
     {
-        return new ViewModel($data);                
+        return new ViewModel($data);
     }
 }

@@ -199,7 +199,7 @@ class DefendantsController extends AbstractActionController
                     $this->params()->fromQuery('event_id')
                 );
             } catch (\Exception $e) {
-                $this->events->trigger('error',$this,['exception'=> $e]);
+                $this->events->trigger('error', $this, ['exception' => $e]);
                 $result = ['message' => $e->getMessage(), 'status' => 'error'];
             }
             $context = $this->params()->fromQuery('context', 'defendants');

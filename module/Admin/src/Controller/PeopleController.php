@@ -130,7 +130,7 @@ class PeopleController extends AbstractActionController
         $repo = $this->entityManager->getRepository(Entity\Person::class);
         $id = $this->params()->fromRoute('id');
         $result = $repo->findPerson($id);
-        $viewModel = new ViewModel(['title'=>'edit a person']);
+        $viewModel = new ViewModel(['title' => 'edit a person']);
         if (! $result) {
             return $viewModel->setVariables(['errorMessage' => "person with id $id not found"]);
         }
@@ -142,7 +142,7 @@ class PeopleController extends AbstractActionController
         $user = $result[1];
         if ($user) {
             return $this->redirect()
-                ->toRoute('users/edit',['id'=>$user->getId()]);
+                ->toRoute('users/edit', ['id' => $user->getId()]);
         }
 
         $viewModel->id = $id;
@@ -245,7 +245,7 @@ class PeopleController extends AbstractActionController
             $id = $this->params()->fromRoute('id');
             $name = $this->params()->fromPost('name');
             $what = 'person';
-            $entity = $this->entityManager->find(Entity\Person::class,$id);
+            $entity = $this->entityManager->find(Entity\Person::class, $id);
 
             return $this->delete(compact('entity', 'id', 'name', 'what'));
         }

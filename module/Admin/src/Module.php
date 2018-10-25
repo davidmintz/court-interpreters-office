@@ -75,7 +75,7 @@ class Module
                     return;
                 }
                 // figure out proper navigation bar
-                if (in_array($user->role,['administrator','manager','staff',])) {
+                if (in_array($user->role, ['administrator','manager','staff',])) {
                     $viewModel->navigation_menu = 'default';
                 } elseif ('submitter' == $user->role) {
                     $viewModel->navigation_menu = 'Zend\Navigation\Requests';
@@ -86,22 +86,30 @@ class Module
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
         $sharedEvents->attach(
-            '*','error',function($event) use ($log){
+            '*',
+            'error',
+            function ($event) use ($log) {
                 if ($event->getParam('exception')) {
                     $exception = $event->getParam('exception');
                     $message = "system error was triggered!\n";
                     if ($event->getParam('details')) {
-                        $message .= sprintf("details: %s\n",
-                        $event->getParam('details'));
+                        $message .= sprintf(
+                            "details: %s\n",
+                            $event->getParam('details')
+                        );
                     }
                     $trace = $exception->getTraceAsString();
                     do {
-                        $message .= sprintf("%s:%d %s (%d) [%s]\n",
-                            $exception->getFile(),$exception->getLine(),
-                            $exception->getMessage(),$exception->getCode(),
-                            get_class($exception));
+                        $message .= sprintf(
+                            "%s:%d %s (%d) [%s]\n",
+                            $exception->getFile(),
+                            $exception->getLine(),
+                            $exception->getMessage(),
+                            $exception->getCode(),
+                            get_class($exception)
+                        );
                     } while ($exception = $exception->getPrevious());
-                    $message .= sprintf("stack trace:\n%s",$trace);
+                    $message .= sprintf("stack trace:\n%s", $trace);
                     $log->err($message);
                 }
             }

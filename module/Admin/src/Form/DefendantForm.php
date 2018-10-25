@@ -117,7 +117,7 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
      *
      * @todo uniqueness validator. see PersonFieldset for an example
      */
-    function getInputFilterSpecification()
+    public function getInputFilterSpecification()
     {
         $spec = [
             'surnames' => [

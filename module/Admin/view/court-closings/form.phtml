@@ -3,14 +3,14 @@
 $form = $this->form;
 if ($this->layout()->action == 'add') :
     $action = $this->url('court-closings/add');
-else:
-    $action = $this->url('court-closings/edit',['id'=>$form->getObject()->getId()]);
+else :
+    $action = $this->url('court-closings/edit', ['id' => $form->getObject()->getId()]);
     //$this->headScript()->appendFile($this->basePath('js/event-delete.js'));
 endif;
 
 $form->setAttribute('class', 'form-event mx-auto')
     ->setAttribute('style', 'max-width:800px')
-    ->setAttribute('action',$action)
+    ->setAttribute('action', $action)
     ->setAttribute('method', 'post');
 
 $form->prepare();
@@ -18,15 +18,15 @@ $form->prepare();
 ?>
 <?php echo $this->form()->openTag($form);
     $date = $form->get('date')->getValue();
-    if ($date instanceof \DateTime) {
-        $form->get('date')->setValue($date->format('m/d/Y'));
-    }
-    if ($form->get('description_other')->getValue()) {
-        $form->get('holiday')->setValue("other");
-        $description_display = "block";
-    } else {
-        $description_display = "none";
-    }
+if ($date instanceof \DateTime) {
+    $form->get('date')->setValue($date->format('m/d/Y'));
+}
+if ($form->get('description_other')->getValue()) {
+    $form->get('holiday')->setValue("other");
+    $description_display = "block";
+} else {
+    $description_display = "none";
+}
 ?>
 <div class="alert alert-success" style="display:none" id="status">
 </div>

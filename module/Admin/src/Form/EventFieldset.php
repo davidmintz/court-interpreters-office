@@ -496,7 +496,7 @@ class EventFieldset extends AbstractEventFieldset
                 'required' => false,
                 'allow_empty' => true,
             ],
-           'admin_comments' => [
+            'admin_comments' => [
                 'required' => false,
                 'allow_empty' => true,
                  'validators' => [

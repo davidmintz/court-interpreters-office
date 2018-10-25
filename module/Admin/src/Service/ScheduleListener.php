@@ -90,8 +90,11 @@ class ScheduleListener
     {
         $user = $this->auth->getIdentity()->username;
         $this->logger->debug(
-            sprintf('ScheduleListener is running %s with %s',
-                __FUNCTION__,$e->getName())
+            sprintf(
+                'ScheduleListener is running %s with %s',
+                __FUNCTION__,
+                $e->getName()
+            )
         );
         switch ($e->getName()) {
             case 'preRemove':

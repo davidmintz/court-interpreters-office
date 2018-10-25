@@ -7,10 +7,10 @@ $this->headTitle($this->title);
 $this->headScript()->appendFile($this->basePath('/js/locations-form.js'));
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-<?php
+    <?php
 
-return;
-$form = $this->form;
+    return;
+    $form = $this->form;
 endif;
 $action = $this->layout()->action;
 if ($action == 'add') :
@@ -20,7 +20,6 @@ else :
     $entity = $form->getObject();
     $actionAttrib = $this->url('locations/edit', ['id' => $entity->getId()]);
     $form->setAttribute('data-location_name', $entity->getName());
-
 endif;
 $form->setAttribute('action', $actionAttrib);
 $form->add([
@@ -58,10 +57,10 @@ $isActive = $active->getValue();
  echo $this->formLabel($active); ?>
     <br>
     <input type="radio" id="active" name="active" value="1"<?php if ($isActive) :
-?> checked="checked"<?php
+        ?> checked="checked"<?php
                                                            endif;?>> yes&nbsp;&nbsp;&nbsp;
     <input id="active_0" type="radio" name="active" value="0"<?php if (! $isActive) :
-?> checked="checked"<?php
+        ?> checked="checked"<?php
                                                              endif;?>> no
 <?php
  echo $this->formElementErrors($active);

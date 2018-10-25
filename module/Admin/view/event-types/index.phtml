@@ -17,11 +17,11 @@ if (! $this->eventTypes) :?>
         to starting adding some.
     </div>
 </div>
-<?php return;
+    <?php return;
 endif; ?>
 <ul id="event-types-list" class="list-group" style="max-width:400px">
 <?php
-    foreach ($this->eventTypes as $entity) : ?>
+foreach ($this->eventTypes as $entity) : ?>
     <li class="list-group-item py-2">
         <a href="<?php echo $this->url('event-types/edit', ['id' => $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
     </li>

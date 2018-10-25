@@ -20,7 +20,7 @@ endif;
 <?php foreach ($this->locationTypes as $t) : ?>
 <li class="list-group-item"><span class="badge badge-info"><?php echo $t['total']?></span> <?php
     $url = $this->url('locations/type', ['id' => $t['id']]);
-    ?><a href="<?php echo $url?>"><?php echo $this->escapeHtml($t['type']) ?></a>
+?><a href="<?php echo $url?>"><?php echo $this->escapeHtml($t['type']) ?></a>
   </li>
 <?php endforeach ?>
 </ul>

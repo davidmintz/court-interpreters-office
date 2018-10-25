@@ -3,15 +3,18 @@
  *  viewscript for main people-administration page
  */
 use Zend\Form\Element;
+
 $hat_element = (new Element\Select(
-    'hat', ['value_options'=> $this->options,
+    'hat',
+    ['value_options' => $this->options,
             'empty_option' => ' -- select hat --',]
-))->setAttributes(['class'=>'custom-select','id'=>'hat'])
+))->setAttributes(['class' => 'custom-select','id' => 'hat'])
     ->setValue($this->hat ?: '');
 $status_element = (new Element\Select(
-    'active', ['value_options'=> [1 => 'active',0 => 'inactive',],
+    'active',
+    ['value_options' => [1 => 'active',0 => 'inactive',],
     'empty_option' => ' any status ',]
-))->setAttributes(['class'=>'custom-select','id'=>'active'])
+))->setAttributes(['class' => 'custom-select','id' => 'active'])
 ->setValue($this->status ?: 1);
 $this->headScript()
     ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))

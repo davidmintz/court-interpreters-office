@@ -78,7 +78,7 @@ class InterpretersWriteController extends AbstractActionController
             $vault = $e->getApplication()->getServiceManager()
                 ->get(Vault::class);
             $response = $vault->health();
-            if (key_exists('errors',$response)) {
+            if (key_exists('errors', $response)) {
                 $vault_error = 'Vault health check returned an error.';
             } else {
                 if ($response['sealed']) {
@@ -91,7 +91,6 @@ class InterpretersWriteController extends AbstractActionController
             if (isset($vault_error)) {
                 $this->viewModel->vault_error = $vault_error;
             }
-
         }
         return parent::onDispatch($e);
     }
@@ -195,7 +194,6 @@ class InterpretersWriteController extends AbstractActionController
                 return $viewModel;
             }
             try {
-
                 $this->entityManager->flush();
             } catch (VaultException $e) {
                 $viewModel->vault_error = $e->getMessage();

@@ -17,8 +17,8 @@ $this->headScript()
 
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-<?php
-return;
+    <?php
+    return;
 endif;
 $formAction = $this->layout()->action == 'add' ? $this->url('interpreters/add')
     : $this->url('interpreters/edit', ['id' => $this->id ]);
@@ -62,7 +62,7 @@ $form->add([
             <?php foreach (['lastname','firstname','middlename','email','office_phone','mobile_phone','home_phone',
                         'address1','address2','city','state', 'zip'  ] as $elementName) :
                             $element = $fieldset->get($elementName);
-                    ?><div class="form-group form-row">
+    ?><div class="form-group form-row">
                         <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
                         <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>
                         </div>
@@ -74,11 +74,11 @@ $form->add([
                 <div class="col-sm-10 col-sm-offset-2 form-inline"><?php
                         $languageSelect = $fieldset->get('language-select');
                         echo $this->formSelect($languageSelect),$this->formElementErrors($languageSelect) ;
-                        ?><button id="btn-add-language" class="btn btn-info" title="add this language">
+                ?><button id="btn-add-language" class="btn btn-info" title="add this language">
                             <span class="fas fa-plus" aria-hidden="true"></span>
                             <span class="sr-only">add language</span></button><?php
                          /** @todo display fieldset validation errors ? */
-                ?></div>
+                            ?></div>
             </div>
             <div class="form-group form-row" id="languages-div">
             <!--languages-div -->
@@ -106,14 +106,13 @@ $form->add([
                 but this service's health check responded with the message <strong><?php echo $this->vault_error ?></strong>
                 This data therefore cannot be read or written. Please contact your site administrator for assistance.
             </div>
-        <?php
-            $fieldset->get('dob')->setAttribute('disabled','disabled');
-            $fieldset->get('ssn')->setAttribute('disabled','disabled');
+            <?php
+            $fieldset->get('dob')->setAttribute('disabled', 'disabled');
+            $fieldset->get('ssn')->setAttribute('disabled', 'disabled');
         endif;
-        if ($this->has_related_entities):
-            $fieldset->get('hat')->setAttribute('disabled','disabled');
-
-        endif;?>
+if ($this->has_related_entities) :
+    $fieldset->get('hat')->setAttribute('disabled', 'disabled');
+endif;?>
         <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName) :
                     $element = $fieldset->get($elementName);
                     $value = $element->getValue();
@@ -138,7 +137,7 @@ $form->add([
                             continue;
                         }
                         $element = $fieldset->get($elementName);
-                ?>
+                        ?>
                 <div class="form-group form-row">
                     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
                     <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
@@ -152,27 +151,27 @@ $form->add([
                         $element = $fieldset->get($elementName);?>
                 <div class="form-group form-row">
                     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
-                    <?php $encrypted = $element->getValue();
-                    if (! $encrypted) : // nothing to obscure
-                        ?><div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div><?php
-                    else :  // display text inputs as encrypted/disabled
-                        $element->setAttribute('disabled', 'disabled');?>
+                        <?php $encrypted = $element->getValue();
+                        if (! $encrypted) : // nothing to obscure
+                            ?><div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div><?php
+                        else :  // display text inputs as encrypted/disabled
+                            $element->setAttribute('disabled', 'disabled');?>
                     <div class="col-sm-9 encrypted">
-                        <?php
+                            <?php
                             $element->setValue('**************');
-                        ?><div class="input-group"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-info" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
-                        <?php
+                            ?><div class="input-group"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-info" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
+                            <?php
                             echo $this->formElementErrors($element);
                             $hidden = (new \Zend\Form\Element\Hidden('encrypted.'.$elementName))->setValue($encrypted);
                             echo $this->formHidden($hidden);
-                        ?>
+                            ?>
                         </div>
                     </div>
-                    <?php endif;?>
+                        <?php endif;?>
                 </div>
-            <?php
-                endforeach;
-            endif; ?>
+                        <?php
+                    endforeach;
+                endif; ?>
         </div>
     </div>
     <div style="margin-top:1em" class="pt-2 row border border-right-0 border-left-0 border-bottom-0" >

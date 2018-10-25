@@ -18,7 +18,7 @@
                 if (stristr($e['judge'], 'magistrate') !== false && ! $e['location']) :
                     $magistrate_default = $e['aj_default_location'];
                 endif;
-        ?>
+                ?>
         <tr data-id="<?php echo $e['id']?>" class="event-category-<?php echo str_replace(' ', '-', $e['category']) ?><?php
         if ($e['cancellation']) :
             echo " event-cancelled" ;
@@ -37,7 +37,7 @@
             </td>
             <td class="text-nowrap"><?php echo $e['judge'];
             if (($e['category'] == "in" or 'magistrate' == $e['judge'])) :
-            ?><br><span class="text-muted"><?php echo $e['location'] ?: $e['aj_default_location'];?></span><?php
+                ?><br><span class="text-muted"><?php echo $e['location'] ?: $e['aj_default_location'];?></span><?php
             endif;
             ?></td>
             <td><?php echo $e['language']?></td>
@@ -48,7 +48,7 @@
         </tr>
             <?php endforeach;
         else :
-    ?><tr><td colspan="8" class="text-center py-4 px-4 no-events">
+            ?><tr><td colspan="8" class="text-center py-4 px-4 no-events">
         <div class="alert alert-info mx-auto">no events scheduled for this date and language.</div>
     </td></tr><?php
         endif;?>

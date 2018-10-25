@@ -18,19 +18,19 @@ endif;
 
 if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-<?php
-return;
+    <?php
+    return;
 endif;
 $form = $this->form;
 if ($this->layout()->action == 'add') :
     $action = $this->url('events/add');
-else:
-    $action = $this->url('events/edit',['id'=>$this->id]);
+else :
+    $action = $this->url('events/edit', ['id' => $this->id]);
     $this->headScript()->appendFile($this->basePath('js/event-delete.js'));
 endif;
 
 $form->setAttribute('class', 'form-event mx-auto')
-    ->setAttribute('style', 'max-width:950px')->setAttribute('action',$action);
+    ->setAttribute('style', 'max-width:950px')->setAttribute('action', $action);
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
@@ -50,7 +50,7 @@ foreach (['date','time','end_time','submission_time', 'submission_date'] as $tim
     //renderer can't deal with DateTime objects
     if ($value instanceof \DateTime) :
         $format = strstr($time, 'time') ? 'g:i a' : 'm/d/Y' ;
-        $element->setValue($value->format($format));        
+        $element->setValue($value->format($format));
     endif;
 endforeach;
 
@@ -176,10 +176,10 @@ echo $this->form()->openTag($form); ?>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                     <?php
                         $interpreters = $form->getObject()->getInterpreterEvents();
-                        if ($interpreters->count()) :
-                            $helper = (new InterpreterElementCollection())->setView($this);
-                            echo $helper($fieldset->get('interpreterEvents'));
-                        endif;
+                    if ($interpreters->count()) :
+                        $helper = (new InterpreterElementCollection())->setView($this);
+                        echo $helper($fieldset->get('interpreterEvents'));
+                    endif;
                     ?>
                 </ul>
             </div>
@@ -195,8 +195,8 @@ echo $this->form()->openTag($form); ?>
                 <?php
                 $defendants = $form->getObject()->getDefendants();
                 if ($defendants->count()) :
-                    foreach ($defendants as $deft):
-                        echo $this->partial('partials/defendant',[
+                    foreach ($defendants as $deft) :
+                        echo $this->partial('partials/defendant', [
                             'namespace' => 'event', 'id' => $deft->getId(), 'name' => (string)$deft
                         ]);
                     endforeach;
@@ -250,8 +250,8 @@ echo $this->form()->openTag($form); ?>
             }
             echo $this->formHidden($element);
         }
-            echo $this->formSubmit($form->get('submit')); if ($this->id):
-            ?><a id="btn-delete" role="button" href="<?php echo $this->url('events/edit',['action'=>'delete','id'=>$this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
+            echo $this->formSubmit($form->get('submit')); if ($this->id) :
+            ?><a id="btn-delete" role="button" href="<?php echo $this->url('events/edit', ['action' => 'delete','id' => $this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
             endif;?>
     </div>
 </div>

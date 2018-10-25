@@ -73,8 +73,8 @@ if ($this->results) : ?>
                 <a   data-toggle="tooltip" title="view interpreter details" href="<?php echo $view_url?>">
                 <?php echo $this->escapeHtml(sprintf('%s, %s', $interpreter->getLastname(), $interpreter->getFirstname())) ?></a>
                 <?php if ($row['hat'] == 'staff court interpreter') :
-?> <span class="text-muted">staff interpreter</span><?php
-endif; ?>
+                    ?> <span class="text-muted">staff interpreter</span><?php
+                endif; ?>
             </td>
             <td class="align-middle text-center border-left-0 border-right-0 col-2 text-md-right">
                 <span style="opacity:.7" data-toggle="tooltip" title="this interpreter is currently flagged as <?php
@@ -87,22 +87,22 @@ endif; ?>
     </tbody>
 </table>
 
-<?php echo $this->paginationControl(
-    $this->results,
-    'sliding',
-    'partials/pagination_control',
-    ['route' => $this->routeName,'params' => $this->params]
-);?>
-<?php
+    <?php echo $this->paginationControl(
+        $this->results,
+        'sliding',
+        'partials/pagination_control',
+        ['route' => $this->routeName,'params' => $this->params]
+    );?>
+    <?php
 else :
     if ($this->isQuery and ! $this->interpreter) :
-    ?><p>No matching records found.</p><br>
-<?php
+        ?><p>No matching records found.</p><br>
+        <?php
     endif;
 endif;
 // make them work for it
-if ($this->isQuery):
-?>
+if ($this->isQuery) :
+    ?>
 <br>
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-primary">
 <span aria-hidden="true" class="icon fa fa-plus"></span> new interpreter

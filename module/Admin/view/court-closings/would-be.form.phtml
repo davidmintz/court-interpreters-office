@@ -6,14 +6,14 @@ enough about it
 */
 $form = $this->form;
 if ($this->layout()->action == 'add') :
-    $action = $this->url('court-closings/add',['year'=>null]);
-else:
-    $action = $this->url('court-closings/edit',['id'=>$form->getObject()->getId()]);
+    $action = $this->url('court-closings/add', ['year' => null]);
+else :
+    $action = $this->url('court-closings/edit', ['id' => $form->getObject()->getId()]);
     //$this->headScript()->appendFile($this->basePath('js/event-delete.js'));
 endif;
 
 $form->setAttribute('class', 'form-event mx-auto')
-->setAttribute('style', 'max-width:800px')->setAttribute('action',$action)
+->setAttribute('style', 'max-width:800px')->setAttribute('action', $action)
 ->setAttribute('method', 'post');
 
 $form->prepare();
@@ -27,7 +27,7 @@ $form->prepare();
 <div class="form-group">
     <label for="holiday">holiday/reason for closing</label>
     <?php $holiday = $form->get('holiday')->getValue();
-    if (is_object($holiday)):
+    if (is_object($holiday)) :
         $holiday_id = $holiday->getId();
     else :
         $holiday_id = null;
@@ -35,8 +35,10 @@ $form->prepare();
     ?>
     <select v-model="holiday" class="form-control custom-select date" name="holiday">
         <!-- <option value="0"> &emdash; </option> -->
-        <?php foreach ($form->get('holiday')->getValueOptions() as $id => $option):?>
-        <option label="<?php echo $option['label']?>" value="<?php echo $id ?>" <?php if ($id == $holiday_id): echo ' selected="selected"'; endif;?>><?php echo $option['label'] ?></option>
+        <?php foreach ($form->get('holiday')->getValueOptions() as $id => $option) :?>
+        <option label="<?php echo $option['label']?>" value="<?php echo $id ?>" <?php if ($id == $holiday_id) :
+            echo ' selected="selected"';
+                       endif;?>><?php echo $option['label'] ?></option>
         <?php endforeach ?>
         <option value="other">other...</option>
     </select>
