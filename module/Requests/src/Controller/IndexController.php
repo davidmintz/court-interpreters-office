@@ -109,7 +109,6 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function onDispatch($e)
     {
         $params = $this->params()->fromRoute();
-        return parent::onDispatch($e);
 
         if (in_array($params['action'],['update','cancel'])) {
             $entity = $this->objectManager->find(Entity\Request::class,
