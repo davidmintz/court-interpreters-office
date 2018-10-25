@@ -148,6 +148,16 @@
                         ]);
                     endforeach;
                 endif;
+                if ($form->getObject()->getExtraDefendantNames()):
+                    $pseudo_id = time();
+                    foreach($form->getObject()->getExtraDefendantNames() as $name):
+                        echo $this->partial('partials/defendant',
+                            [
+                                'namespace' => 'request', 'id'=> ++$pseudo_id,
+                                'name'=>$name,'xtra_defendants' => true,
+                            ]);
+                    endforeach;
+                endif;
             ?></ul>
         </div>
     </div>

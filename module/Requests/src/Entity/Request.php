@@ -713,7 +713,8 @@ class Request implements ResourceInterface
      */
     public function getExtraData()
     {
-        return $this->extraData ? json_decode($this->extraData) : null;
+        return $this->extraData ?
+            json_decode($this->extraData,\JSON_OBJECT_AS_ARRAY) : null;
     }
 
     /**
