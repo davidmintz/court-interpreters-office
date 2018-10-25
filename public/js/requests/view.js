@@ -17,7 +17,6 @@ $(function(){
     var deadline = new moment(request_div.data("deadline"),timestamp_format);
     var scheduled_datetime = new moment(str,"ddd DD-MMM-YYYY h:mm a");
     //var scheduled_datetime = new moment(deadline).add(10,'s');
-
     var editable = scheduled_datetime.isAfter(deadline);
     console.log("on page load, can edit? "+editable);
     if (editable) {
@@ -33,4 +32,14 @@ $(function(){
             }
         }, seconds * 1000);
     }
+
+    $("#btn-cancel").on("click",function(event){
+        event.preventDefault();
+        if (window.confirm("Are you sure?")) {
+
+        } else {
+            
+        }
+
+    });
 });
