@@ -305,7 +305,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
                 $this->events->trigger('error',$this,['exception'=>$e,
                     'details'=>'doing create in Requests module']);
                 $this->getResponse()->setStatusCode(500);
-                return new JsonModel(['message'=>$e->getMessage(),]);
+                return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
             }
         }
 
@@ -343,13 +343,11 @@ class IndexController extends AbstractActionController implements ResourceInterf
             'This request for interpreting services has been updated successfully. Thank you.'
             );
             return new JsonModel(['status'=>'success']);
-            //return (new ViewModel(['form' => $form, 'id' => $id]))
-            //->setTemplate('interpreters-office/requests/index/form.phtml');
         } catch (\Exception $e) {
             $this->getResponse()->setStatusCode(500);
             $this->events->trigger('error',$this,['exception'=>$e,
                 'details'=>'doing update in Requests module']);
-            return new JsonModel(['message'=>$e->getMessage(),]);
+            return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
         }
     }
 
@@ -363,11 +361,27 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $id = $this->params()->fromRoute('id');
         $entity = $this->objectManager->find(Entity\Request::class,$id);
         if ($entity) {
-            $this->objectManager->remove($entity);
-            $this->objectManager->flush();
-            return new JsonModel([
-                'status' => 'success','id'=>$id,
-            ]);
+            try {
+                $this->objectManager->remove($entity);
+                //throw new \Exception("shit happened");
+                $this->objectManager->flush();
+                $description = $this->params()->fromPost('description');
+                $message = 'This request for interpreting services ';
+                if ($description) {
+                    $message .= "($description) ";
+                }
+                $message .= 'has now been cancelled. Thank you.';
+                $this->flashMessenger()->addSuccessMessage($message);
+                return new JsonModel([
+                    'status' => 'success',
+                    'id'=>$id,
+                ]);
+            } catch (\Exception $e) {
+                $this->getResponse()->setStatusCode(500);
+                $this->events->trigger('error',$this,['exception'=>$e,
+                    'details'=>'doing delete (cancel) in Requests module']);
+                return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
+            }
         }
     }
 }

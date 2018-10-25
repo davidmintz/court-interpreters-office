@@ -10,9 +10,18 @@ var disable_buttons = function(){
         .attr({title:"this action is no longer available"})
         .on("click",(event)=>event.preventDefault());
 };
+/**
+* @todo DRY this up. it's an exact copy from requests/list.js
+*/
+var fail = function(){
+    var msg = `<p>We encountered an unexpected system error while processing
+    your last request. If the problem recurs, please notify your site
+    administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
+    $("#error-message").html(msg).parent().show();
+};
 
 $(function(){
-
+    /** periodically checks request date and time against the deadline */
     var str = `${$("#date").text().trim()} ${$("#time").text().trim()}`;
     var deadline = new moment(request_div.data("deadline"),timestamp_format);
     var scheduled_datetime = new moment(str,"ddd DD-MMM-YYYY h:mm a");
@@ -28,18 +37,32 @@ $(function(){
                 console.warn("time has expired");
                 disable_buttons();
                 window.clearInterval(timer);
-
             }
         }, seconds * 1000);
     }
 
+    /**
+     * shows a dialog to confirm cancellation
+     */
     $("#btn-cancel").on("click",function(event){
         event.preventDefault();
-        if (window.confirm("Are you sure?")) {
-
-        } else {
-            
-        }
-
+        $("#confirmation-message").html(`<p>Are you sure you want to cancel this request
+            for ${$("#language").text()} interpreting and delete this database record?</p>`);
+        $("#modal-confirm-cancel").modal();
     });
+
+    /**
+     * deletes the request for interpreting services
+     */
+    $("#btn-confirm-cancellation").on("click",function(){
+        var id = $("#request-details").data().id;
+        var description = `${$("#language").text()} for a ${$("#event-type").text()} on `
+            + `${$("#date").text()} at ${$("#time").text()}`
+        $.post( `${window.basePath || ""}/requests/cancel/${id}`,{description})
+            .done(function(response){
+                window.document.location = `${window.basePath || ""}/requests/list`;
+            })
+            .fail(fail)
+            .complete(()=>{$("#modal-confirm-cancel").modal("hide")});
+    })
 });

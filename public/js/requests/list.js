@@ -29,8 +29,6 @@ var fail = function(){
     $("#error-message").html(msg).parent().show();
 };
 
-var cancel = function(){};
-
 $(function(){
     init_rows();
 
@@ -76,17 +74,23 @@ $(function(){
         $("#btn-confirm-cancellation").data({id});
         $(".modal-body a.reschedule").attr({href: `${window.basePath || ""}/requests/update/${id}`});
         var verbiage = `Are you sure you want to cancel this request
-            &mdash; ${language} for a ${type} on ${date} at ${time} &mdash;
+            &mdash; <span class="request-description">${language} for a ${type} on ${date} at ${time}</span> &mdash;
             and delete it from the database?`;
-        $("#modal-confirm-cancel .modal-body").prepend(`<p>${verbiage}</p>`);
+        $("#confirmation-message").html(`<p>${verbiage}</p>`);
         $("#modal-confirm-cancel").modal();
     });
-    //$(".modal-body a.reschedule").on("click",function(event){});
+
     $("#btn-confirm-cancellation").on("click",function(){
         console.warn("cancel shit! ");
         var id = $(this).data().id;
-        $.post( `${window.basePath || ""}/requests/cancel/${id}`)
-            .done(function(response){console.log(response)})
-            .fail(fail);
+        var description = $("#modal-confirm-cancel .modal-body p span.request-description").text();
+        $.post( `${window.basePath || ""}/requests/cancel/${id}`,{description})
+            .done(function(response){
+                console.log(response);
+                window.location.reload();
+            })
+            .fail(fail)
+            .complete(()=>{$("#modal-confirm-cancel").modal("hide")});
+
     })
 });

@@ -7,4 +7,5 @@ return [
     'interpreters-office/requests/index/search' => __DIR__ . '/../view/index/search.phtml',
     'interpreters-office/requests/index/view' => __DIR__ . '/../view/index/view.phtml',
     'denied' =>  __DIR__ . '/../view/index/denied.phtml',
+    'confirm-cancel' =>  __DIR__ . '/../view/index/confirm-cancel.phtml',
 ];

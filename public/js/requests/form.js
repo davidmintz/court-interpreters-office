@@ -85,8 +85,8 @@ const deftname_autocomplete_options = {
 /** error handler */
 const fail = function(response){
     var html = `<p>Sorry, we've encountered an unexpected error.`;
-    if (response.responseJSON && response.responseJSON.message) {
-        html += ` The message was: ${response.responseJSON.message}`;
+    if (response.responseJSON && response.responseJSON.error) {
+        html += ` The message was: ${response.responseJSON.error.message}`;
     }
     html += `</p><p>Please consult your site administrator for help</p>`;
     $("#error-message").html(html).show();
