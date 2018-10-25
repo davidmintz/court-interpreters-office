@@ -204,6 +204,8 @@ class RequestsIndexControllerTest extends AbstractControllerTest
         $this->assertNotQuery("form");
         $this->assertQuery("div.alert");
         $this->assertQueryContentRegex("div.alert",'/not authorized/');
+        
+        echo "\nno shit?\n";
 
         return $entity;
     }
