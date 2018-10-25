@@ -1,4 +1,14 @@
-<?php     $this->headTitle('requests | '.$this->layout()->action);
+<?php     $this->headTitle('requests | '.$this->layout()->action);?>
+<h2 class="text-center py-2 navigation"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
+<?php
+if (! $this->data):
+?>
+<div class="alert alert-warning shadow-sm border">
+    The request was not found in the database. It may have been deleted, or you
+    may have a wrong record id number in the url.
+</div>
+<?php
+return; endif;
 $this->headScript()
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
     ->appendFile($this->basePath('js/requests/view.js'));
@@ -7,10 +17,6 @@ $r = $this->data;
 $scheduled_datetime = new \DateTime(sprintf('%s %s',$r['date']->format("Y-m-d"), $r['time']->format('H:i')));
 $editable = $scheduled_datetime > $this->deadline;
 ?>
-<h2 class="text-center py-2 navigation"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
-
-
-
     <div id="request-details" class="row mx-auto border p-3 shadow-sm" data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s')?>" style="max-width:825px">
     <div class="col-md-2 text-muted text-md-right pr-1">date</div><div id="date" class="col-md-4"><?php echo $r['date']->format('D d-M-Y') ?></div>
     <div class="col-md-2 text-muted text-md-right pr-1">time</div><div id="time" class="col-md-4"><?php echo $r['time']->format('g:i a') ?></div>
@@ -61,13 +67,12 @@ $editable = $scheduled_datetime > $this->deadline;
     <div class="col-md-12 text-center"><?php
         if ($editable):
             ?>
-            <a role="button" title="modify this request" class="btn btn-success" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>">edit</a>
-            <a role="button" title="withdraw this request" class="btn btn-success" href="<?php echo $this->url('requests/cancel',['id'=>$r['id']])?>">remove</a>
-
+            <a role="button" title="modify this request" class="btn btn-success request-update" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>">update</a>
+            <a role="button" title="withdraw this request" class="btn btn-success request-update" href="<?php echo $this->url('requests/cancel',['id'=>$r['id']])?>">cancel request</a>
             <?php
         endif;?> <a role="button" class="btn btn-success" href="<?php echo $this->url('requests/create',['id'=>$r['id']])?>">repeat</a>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-12" style="display:none"><!-- experiment/learning exercise -->
         <div style="position:relative; font-size:200%;">
             <span style="width:250px;display:inline-block; border:1px dotted gray" class="text-center text-muted">overlay example</span>
             <span style="width:250px;display:inline-block;position:absolute; top:0; left: 0; color:red;" class="text-center fa fa-ban pt-2"></span>
