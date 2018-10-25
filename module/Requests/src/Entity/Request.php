@@ -1,4 +1,4 @@
-<?php /* module/Requests/src/Entity/Request.php */
+<?php /** module/Requests/src/Entity/Request.php */
 
 namespace InterpretersOffice\Requests\Entity;
 
@@ -9,13 +9,14 @@ use InterpretersOffice\Entity\Person;
 
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
-//use InterpretersOffice\Entity;
 
 /**
+ * Request -- entity representing a request for interpreting services
+ *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Requests\Entity\RequestRepository");
  * @ORM\Table(name="requests")
  *
- * * @ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
+ * @ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
  */
 class Request implements ResourceInterface
 {
@@ -104,8 +105,6 @@ class Request implements ResourceInterface
      * @var Entity\Person
      */
     protected $submitter;
-
-
 
     /**
      * the docket number.
@@ -253,6 +252,11 @@ class Request implements ResourceInterface
         $this->defendants = new ArrayCollection();
     }
 
+    /**
+     * implements ResourceInterface
+     *
+     * @return string
+     */
     public function getResourceId()
     {
         return self::class;
@@ -688,6 +692,12 @@ class Request implements ResourceInterface
         }
     }
 
+    /**
+     * sets "extra" data
+     *
+     * @param Array $data [description]
+     * @return Request
+     */
     public function setExtraData(Array $data)
     {
         $json = json_encode($data);
@@ -696,14 +706,25 @@ class Request implements ResourceInterface
         return $this;
     }
 
+    /**
+     * gets extra data
+     *
+     * @return Array|null
+     */
     public function getExtraData()
     {
         return $this->extraData ? json_decode($this->extraData) : null;
     }
 
+    /**
+     * gets extra defendant names
+     *
+     * @return Array|null
+     */
     public function getExtraDefendantNames()
     {
         $data = $this->getExtraData();
-        // etc
+
+        return isset($data['defendants']) ? $data['defendants'] : [];
     }
 }

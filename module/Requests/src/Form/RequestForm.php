@@ -67,6 +67,11 @@ class RequestForm extends ZendForm
         $this->addCsrfElement();
     }
 
+    /**
+     * moves data around following successful validation
+     * 
+     * @return RequestForm
+     */
     public function postValidate()
     {
         // subject to reconsideration, the least ugly way to store the
@@ -76,6 +81,8 @@ class RequestForm extends ZendForm
                 ->get('extra_defendants')->getValue();
             $this->getObject()->setExtraData(['defendants'=>$names]);
         }
+
+        return $this;
     }
 
 

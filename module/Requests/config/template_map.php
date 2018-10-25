@@ -1,4 +1,4 @@
-<?php
+<?php /** module/Requests/config/template_map.php */
 return [
     'interpreters-office/requests/index/index' => __DIR__ . '/../view/index/index.phtml',
     'interpreters-office/requests/index/list' => __DIR__ . '/../view/index/list.phtml',

@@ -1,9 +1,14 @@
 <?php
+/** module/Requests/src/Form/Validator/RequestDateTime.php */
+
 namespace InterpretersOffice\Requests\Form\Validator;
 
 use Zend\Validator\AbstractValidator;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 
+/**
+ * validator to enforce two-business-day deadline
+ */
 class RequestDateTime extends AbstractValidator
 {
 
@@ -11,9 +16,19 @@ const LESS_THAN_TWO_BUSINESS_DAYS_NOTICE = 'lessThanTwoBusinessDaysNotice';
 const DATE_IS_IN_THE_PAST = 'dateIsInThePast';
 const DATE_IS_NOT_A_BUSINESS_DAY = 'dateIsNotABusinessDay';
 
-	/** @var CourtClosingRepository */
+
+	/**
+	 * CourtClosing repository.
+	 *
+	 * @var CourtClosingRepository
+	 */
 	protected $repository;
 
+	/**
+	 * message templates.
+	 *
+	 * @var array
+	 */
 	protected $messageTemplates = [
             self::LESS_THAN_TWO_BUSINESS_DAYS_NOTICE =>
 		'A minimum two full business days\' notice is required. For assistance in emergent matters please contact the Interpreters by phone.',
@@ -23,6 +38,11 @@ const DATE_IS_NOT_A_BUSINESS_DAY = 'dateIsNotABusinessDay';
             self::DATE_IS_NOT_A_BUSINESS_DAY => 'Date is not a business day',
 	];
 
+	/**
+	 * constructor.
+	 *
+	 * @param Array $options
+	 */
 	public function __construct(Array $options)
 	{
 
@@ -38,6 +58,14 @@ const DATE_IS_NOT_A_BUSINESS_DAY = 'dateIsNotABusinessDay';
 
 	}
 
+	/**
+	 * is it valid?
+	 *
+	 * @param  string  $date
+	 * @param  array  $context
+	 * @todo reconsider returning true when it's not really valid
+	 * @return boolean
+	 */
 	public function isValid($date,$context=null) {
 
 		if (! isset($context['time']) or !$context['time']) {
@@ -46,11 +74,11 @@ const DATE_IS_NOT_A_BUSINESS_DAY = 'dateIsNotABusinessDay';
 		try {
 			$request_datetime = new \DateTime("$date $context[time]");
 		} catch (\Exception $e) {
-			// time is malformed; let another validator handle it
+			// means time is malformed; let another validator handle it
 			return true;
 		}
 
-        // make sure it is not a weekend or holiday
+        // make sure it is not a weekend or holiday?
         /* something like...
          *
            $q = $em->createQuery('SELECT date FROM Application\Entity\CourtClosing date WHERE date.date = :date');
@@ -70,5 +98,4 @@ const DATE_IS_NOT_A_BUSINESS_DAY = 'dateIsNotABusinessDay';
 
 		return true;
 	}
-
 }

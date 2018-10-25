@@ -25,6 +25,8 @@ class ModificationAuthorizedAssertion implements AssertionInterface
     /**
      * Constructor
      *
+     * @param AbstractActionController $controller
+     *
      */
     public function __construct(AbstractActionController $controller)
     {
@@ -114,7 +116,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
         $request_date = new \DateTime(
             "{$request->getDate()->format('Y-m-d')} {$request->getTime()->format('H:i')}"
         );
-        $log->debug(sprintf("excuse me? action is $privilege, request %d date is %, deadline is %s",
+        $log->debug(sprintf("excuse me? action is $privilege, request %d date is %s, deadline is %s",
             $request->getId(),
             $request_date->format("Y-m-d H:i"),$deadline->format("Y-m-d H:i")
         ));

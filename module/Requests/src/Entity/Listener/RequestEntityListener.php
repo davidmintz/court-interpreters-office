@@ -66,6 +66,13 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         $this->previous_defendants = $request->getDefendants()->toArray();
     }
 
+    /**
+     * prePersist callback
+     *
+     * @param  Entity\Request      $request
+     * @param  LifecycleEventArgs $args
+     * @return void
+     */
     public function prePersist(Entity\Request $request,LifecycleEventArgs $args)
     {
         $now = new \DateTime();
@@ -76,11 +83,19 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
                 ->setModifiedBy($user);
         $this->getLogger()->debug("YES, we have set Request metadata in prePersist listener");
     }
-
+    /**
+     * postRemove callback
+     *
+     * @param  Entity\Request      $request
+     * @param  LifecycleEventArgs $args
+     * @return void
+     * @todo do something
+     */
     public function postRemove(Entity\Request $request,LifecycleEventArgs $args)
     {
         $user = $this->getAuthenticatedUser($args)->getUsername();
         $this->getLogger()->info("user $user is deleting a Request");
+        // to be continued!!
     }
 
     /**
@@ -113,7 +128,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
             $request->setModified( new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
             $user = $this->getAuthenticatedUser($args)->getUsername();
-            $this->getLogger()->info("user $user is updateing a Request");
+            $this->getLogger()->info("user $user is updating a Request");
         }
 
         // $this->getEventManager()->trigger( __FUNCTION__, $this,

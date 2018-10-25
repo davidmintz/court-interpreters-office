@@ -32,7 +32,6 @@ class DefendantsController extends AbstractActionController
      * constructor
      *
      * @param EntityManager $em
-     * @param DeftNameHelper $helper
      */
     public function __construct(EntityManager $em)
     {

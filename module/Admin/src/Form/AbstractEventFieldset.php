@@ -17,6 +17,9 @@ use InterpretersOffice\Entity\Judge;
 use InterpretersOffice\Entity\Event;
 use InterpretersOffice\Entity\Repository\JudgeRepository;
 
+/**
+ * base class for admin and interpreter-request event forms
+ */
 abstract class AbstractEventFieldset extends Fieldset implements
     InputFilterProviderInterface,
     ObjectManagerAwareInterface
@@ -271,6 +274,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
          $this->action = $options['action'];
          $this->options = $options;
          $this->setObjectManager($objectManager);
+         
          parent::__construct($this->fieldset_name, $options);
 
          $this->addJudgeElements($options['object'])
@@ -331,13 +335,13 @@ abstract class AbstractEventFieldset extends Fieldset implements
      /**
       * adds Judge element(s)
       *
-      * //param Entity\Event $event
       * @return AbstractEventFieldset
       */
      abstract public function addJudgeElements();
 
      /**
       * adds event-type element
+      *
       * @return AbstractEventFieldset
       */
      abstract function addEventTypeElement();

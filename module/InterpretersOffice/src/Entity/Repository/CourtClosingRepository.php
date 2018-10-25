@@ -1,5 +1,4 @@
 <?php
-
 /** module/InterpretersOffice/src/Entity/CourtClosingRepository.php */
 
 namespace InterpretersOffice\Entity\Repository;
@@ -241,7 +240,7 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
          $holidays = $this->getHolidaysForPeriod($plus_two_weeks,$when->format('Y-m-d'));
          // print_r($holidays);
          if (in_array($formatted_when_date,$holidays) or in_array($when->format('N'),[6,7]))
-         {             
+         {
              //echo "adding 1 day and setting to midnight for non-business day...<br>";
              $when->add(new \DateInterval("P1D"));
              $when->setTime(0,0);

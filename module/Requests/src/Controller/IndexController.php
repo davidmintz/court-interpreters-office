@@ -18,6 +18,7 @@ use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Requests\Form;
 
 use Zend\Mvc\MvcEvent;
+use Zend\Http\Request;
 
 /**
  *  IndexController for Requests module
@@ -65,6 +66,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
      *
      * @param ObjectManager $objectManager
      * @param AuthenticationServiceInterface $auth
+     * @param Acl $acl
      */
     public function __construct(ObjectManager $objectManager,
         AuthenticationServiceInterface $auth, Acl $acl )
@@ -96,6 +98,11 @@ class IndexController extends AbstractActionController implements ResourceInterf
         return $this->entity;
     }
 
+    /**
+     * gets current user
+     *
+     * @return stdClass
+     */
     public function getIdentity()
     {
         return $this->auth->getIdentity();
@@ -145,6 +152,11 @@ class IndexController extends AbstractActionController implements ResourceInterf
         return parent::onDispatch($e);
     }
 
+    /**
+     * view Request details
+     *
+     * @return Array
+     */
     public function viewAction()
     {
         $id = $this->params()->fromRoute('id');
@@ -157,9 +169,16 @@ class IndexController extends AbstractActionController implements ResourceInterf
         ];
 
     }
+
+    /**
+     * search action
+     *
+     * @return ViewModel
+     * @todo implement
+     */
     public function searchAction()
     {
-
+        return new ViewModel();
     }
     /**
      * index action.
@@ -169,11 +188,6 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function indexAction()
     {
         return new ViewModel();
-    }
-
-    public function testAction()
-    {
-        return  new ViewModel();
     }
 
     /**
@@ -328,6 +342,11 @@ class IndexController extends AbstractActionController implements ResourceInterf
         }
     }
 
+    /**
+     * cancels a Request
+     *
+     * @return JsonModel
+     */
     public function cancelAction()
     {
         $id = $this->params()->fromRoute('id');
@@ -339,28 +358,5 @@ class IndexController extends AbstractActionController implements ResourceInterf
                 'status' => 'success','id'=>$id,
             ]);
         }
-
     }
 }
-
-/*
-
-// DEBUG
-$log = $this->getEvent()->getApplication()
-    ->getServiceManager()->get('log');
-$previous_datetime = [
-
-    'date'=>$entity->getDate()->format("YYYY-MM-DD"),
-    'time' => $entity->getTime()->format("H:i"),
-];
-
-$new_datetime = [
-    'date'=>$entity->getDate()->format("YYYY-MM-DD"),
-    'time' => $entity->getTime()->format("H:i"),
-];
-foreach (['date','time'] as $field) {
-    if ($previous_datetime[$field] == $new_datetime[$field]) {
-        $log->debug("looks like unchanged $field");
-    }
-}
-*/

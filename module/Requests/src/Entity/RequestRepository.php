@@ -15,6 +15,7 @@ use InterpretersOffice\Requests\Entity\Request;
 
 /**
  * RequestRepository
+ *
  * @todo implement caching -- or else don't
  */
  class RequestRepository extends EntityRepository
@@ -109,7 +110,7 @@ use InterpretersOffice\Requests\Entity\Request;
             ->setLanguage($existing->getLanguage())
             ->addDefendants($existing->getDefendants());
      }
-     
+
     /**
      * returns paginated Requests data for current user
      *

@@ -285,6 +285,12 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         return $data;
     }
 
+    /**
+     * gets data for judge options
+     * 
+     * @param  stdClass $user
+     * @return array
+     */
     public function getJudgeOptionsForUser($user)
     {
         // get the Hat entity for $user

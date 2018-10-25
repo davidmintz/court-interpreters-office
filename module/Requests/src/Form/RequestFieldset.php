@@ -1,4 +1,5 @@
-<?php
+<?php /** module/Requests/src/Form/RequestFieldset.php*/
+
 namespace InterpretersOffice\Requests\Form;
 
 use InterpretersOffice\Admin\Form\AbstractEventFieldset;
@@ -9,7 +10,9 @@ use InterpretersOffice\Entity\Repository\LocationRepository;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-
+/**
+ * RequestFieldset
+ */
 class RequestFieldset extends AbstractEventFieldset
 {
 
@@ -37,6 +40,9 @@ class RequestFieldset extends AbstractEventFieldset
 
     /**
      * constructor
+     *
+     * @param ObjectManager $objectManager
+     * @param array $options
      */
     public function __construct(ObjectManager $objectManager, Array $options)
     {

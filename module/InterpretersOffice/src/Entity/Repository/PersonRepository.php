@@ -189,21 +189,28 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         $cache->deleteAll();
     }
 
+    /**
+     * finds Person whose id is $id
+     *
+     * @param  int $id
+     * @return array
+     */
     public function findPerson($id)
     {
         $dql = 'SELECT p, u FROM InterpretersOffice\Entity\Person p
         LEFT JOIN InterpretersOffice\Entity\User u
         WITH p = u.person WHERE p.id = :id ';
+
         return $this->createQuery($dql)->setParameters([':id'=>$id])
             ->getResult();
-
     }
 
     /**
-     * gets number of events submitted
+     * gets number of events submitted by a Person
      *
      * this is repeated in PersonRepository. bad dog!
      *
+     * @param int $id the Person id
      * @return int
      */
     public function getSubmittedEventsCount($id)

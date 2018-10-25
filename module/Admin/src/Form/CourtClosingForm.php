@@ -1,5 +1,4 @@
-<?php
-/** module/Admin/src/Form/CourtClosingForm.php  */
+<?php /** module/Admin/src/Form/CourtClosingForm.php  */
 namespace InterpretersOffice\Admin\Form;
 
 use Zend\Form\Form as ZendForm;
@@ -13,6 +12,9 @@ use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\CourtClosing;
 
+/**
+ * CourtClosingForm
+ */
 class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
 {
     use CsrfElementCreationTrait;
@@ -26,6 +28,7 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
 
     /**
      * database action: update|create
+     * @var string
      */
     protected $action;
 
@@ -111,7 +114,6 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
                'id' => 'holiday',
            ],
        ]);
-
    }
 
    /**
@@ -121,26 +123,6 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
     */
     public function getInputFilterSpecification()
     {
-        /*
-        $uniqueness_validator = [
-            'options' => [
-                'object_repository' =>  $this->getObjectManager()
-                    ->getRepository(Entity\CourtClosing::class),
-                'fields' => ['date'],
-            ],
-        ];
-
-        if ($this->action == 'create') {
-            $error_field = 'objectFound';
-            $uniqueness_validator['name'] = 'DoctrineModule\Validator\NoObjectExists';
-
-        } else {
-            $error_field = 'objectNotUnique';
-            $validator['name'] = 'DoctrineModule\Validator\UniqueObject';
-        }
-        $uniqueness_validator['options']['messages'][$error_field] =
-            "There is already a closing for this date in your database";
-        */
 
         $repository = $this->objectManager->getRepository(Entity\CourtClosing::class);
         $action = $this->action;

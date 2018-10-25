@@ -700,7 +700,7 @@ class AccountManager implements LoggerAwareInterface
     /**
      * resets a user password
      *
-     * @param int $user_id id of User entity
+     * @param SessionContainer user session
      * @param string $password new user password
      */
     public function resetPassword(SessionContainer $session, $password)
@@ -727,6 +727,7 @@ class AccountManager implements LoggerAwareInterface
 
         return true;
     }
+    
     /**
      * sets viewRenderer
      *

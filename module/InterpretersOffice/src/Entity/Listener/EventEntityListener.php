@@ -95,7 +95,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     /**
      * preRemove callback
      *
-     * @param Entity\Event $eventEntity
+     * @param Entity\Event $entity
      * @param LifecycleEventArgs $args
      */
     public function preRemove(
@@ -116,7 +116,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * for equivalence. We also check the defendant-names collection for
      * modification.
      *
-     * @param  Entity\Event] $entity
+     * @param  Entity\Event $entity
      * @param  PreUpdateEventArgs $args
      * @return boolean
      */
@@ -158,6 +158,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             return true;
         }
         $this->logger->debug("NOTHING really modified in Event entity");
+        
         return false;
     }
 
