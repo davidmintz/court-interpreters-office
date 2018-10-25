@@ -107,6 +107,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
     {
         return $this->auth->getIdentity();
     }
+
     /**
      * onDispatch event Listener
      *
@@ -130,22 +131,34 @@ class IndexController extends AbstractActionController implements ResourceInterf
                  $user, $this, $params['action']
             );
             if (! $allowed) {
+                $this->getResponse()->setStatusCode(403);
+                $message = "Sorry, you are not authorized to {$params['action']}";
+                if ($this->getRequest()->isXmlHttpRequest()) {
+                    $data = [ 'error' => [
+                                'code' => 403,
+                                'message' => "$message this request.",
+                            ]
+                        ];
+                    $response = $this->getResponse()
+                        ->setContent(json_encode($data));
+                    $response->getHeaders()
+                            ->addHeaderline('Content-type: application/json');
+                    return $response;
+                }
                 $viewRenderer = $e->getApplication()->getServiceManager()
-                    ->get('ViewRenderer');
+                ->get('ViewRenderer');
                 $url  = $this->getPluginManager()->get('url')
-                    ->fromRoute('requests/view',['id'=>$entity->getId()]);
+                ->fromRoute('requests/view',['id'=>$entity->getId()]);
                 $content = $viewRenderer->render(
-                (new ViewModel())->setTemplate('denied')->setVariables([
-                    'message' =>
-                    "Sorry, you are not authorized to {$params['action']}
-                    this <a href=\"$url\">request</a>."])
-                );
-                $viewModel = $e->getViewModel()
+                    (new ViewModel())->setTemplate('denied')->setVariables([
+                        'message' =>
+                        "$message this <a href=\"$url\">request</a>."])
+                    );
+                    $viewModel = $e->getViewModel()
                     ->setVariables(['content'=>$content]);
 
                 return $this->getResponse()
-                    ->setContent($viewRenderer->render($viewModel))
-                    ->setStatusCode(403);
+                    ->setContent($viewRenderer->render($viewModel));
             }
         }
 
@@ -160,12 +173,10 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function viewAction()
     {
         $id = $this->params()->fromRoute('id');
-
-
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         return [
-            'data'=>$repository->view($id),
-            'deadline'=>  $this->getTwoBusinessDaysFromDate()
+            'data'=> $repository->view($id),
+            'deadline'=>  $this->getTwoBusinessDaysFromDate(),
         ];
 
     }
