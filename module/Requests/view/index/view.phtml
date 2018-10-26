@@ -1,12 +1,8 @@
 <?php     $this->headTitle('requests | '.$this->layout()->action);?>
 <h2 class="text-center py-2 navigation"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
-<div class="alert alert-danger alert-dismissible border shadow-sm mx-auto" id="error-div" style="display:none; max-width:600px">
-    <h4>system error</h4>
-    <div id="error-message"></div>
-    <button type="button" class="close" data-dismiss="alert" aria-label="close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
+<?php echo $this->errorMessage($this->errorMessage);
+    if ($this->errorMessage): return; endif;
+?>
 <?php
 if (! $this->data):
 ?>

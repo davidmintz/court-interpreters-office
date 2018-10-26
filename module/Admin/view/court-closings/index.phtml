@@ -15,6 +15,9 @@ $this->headStyle()->captureStart();
 <?php
 $this->headStyle()->captureEnd();
 ?><h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<?php echo $this->errorMessage($this->errorMessage);
+if ($this->errorMessage): return; endif;?>
+
 <div class="row">
     <div class="col-md-6 court-closings">
         <?php

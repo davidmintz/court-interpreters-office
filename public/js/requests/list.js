@@ -22,16 +22,10 @@ var init_rows = function(){
         $(this).data({editable});
     });
 }
-var fail = function(){
-    var msg = `<p>We encountered an unexpected system error while processing
-    your last request. If the problem recurs, please notify your site
-    administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
-    $("#error-message").html(msg).parent().show();
-};
+
 
 $(function(){
     init_rows();
-
     // periodically update the table's "deadline" attribute
     window.setInterval(()=> {
             var table = $("#requests-table");
@@ -91,6 +85,5 @@ $(function(){
             })
             .fail(fail)
             .complete(()=>{$("#modal-confirm-cancel").modal("hide")});
-
     })
 });

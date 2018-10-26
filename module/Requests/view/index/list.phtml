@@ -16,13 +16,7 @@ if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
 endif;
 ?>
-<div class="alert alert-danger alert-dismissible border shadow-sm mx-auto" id="error-div" style="display:none; max-width:600px">
-    <h4>system error</h4>
-    <div id="error-message"></div>
-    <button type="button" class="close" data-dismiss="alert" aria-label="close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
+<?php echo $this->errorMessage($this->errorMessage);  ?>
 <div class="alert alert-success alert-dismissible border shadow-sm" id="success-div" style="display:none; max-width:600px">
     <div id="success-message"></div>
     <button type="button" class="close" data-dismiss="alert" aria-label="close">

@@ -340,11 +340,12 @@ return [
 
         'aliases' => [
             'defendants' => ViewHelper\Defendants::class,
-            'interpreters' => ViewHelper\InterpreterNames::class
+            'interpreters' => ViewHelper\InterpreterNames::class,
+            'errorMessage' => ViewHelper\ErrorMessage::class,
         ],
         'factories' => [
             ViewHelper\Defendants::class => InvokableFactory::class,
-            //DefendantElementCollection::class => InvokableFactory::class,
+            ViewHelper\ErrorMessage::class => InvokableFactory::class,
             ViewHelper\InterpreterNames::class => InvokableFactory::class,
         ],
     ],

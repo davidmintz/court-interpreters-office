@@ -83,6 +83,7 @@ const deftname_autocomplete_options = {
 };
 
 /** error handler */
+/*
 const fail = function(response){
     var html = `<p>Sorry, we've encountered an unexpected error.`;
     if (response.responseJSON && response.responseJSON.error) {
@@ -91,7 +92,7 @@ const fail = function(response){
     html += `</p><p>Please consult your site administrator for help</p>`;
     $("#error-message").html(html).show();
 };
-
+*/
 $(function(){
 
     const form = $("#request-form");

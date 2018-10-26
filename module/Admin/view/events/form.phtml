@@ -11,16 +11,9 @@ $this->headScript()
         ->appendFile($this->basePath('js/form-utilities.js'))
         ->appendFile($this->basePath('js/event-form.js'));
 
-$messenger = $this->flashMessenger();
-if ($messenger->hasErrorMessages()) :
-    echo $messenger->render('error', ['alert','alert-warning',], false);
-endif;
+echo $this->errorMessage($this->errorMessage);  ?><?php
+if ($this->errorMessage) :   return;  endif;
 
-if ($this->errorMessage) : ?>
-<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-    <?php
-    return;
-endif;
 $form = $this->form;
 if ($this->layout()->action == 'add') :
     $action = $this->url('events/add');

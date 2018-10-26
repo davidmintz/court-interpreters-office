@@ -2,11 +2,7 @@
 /** module/Admin/view/interpreters-office/admin/languages/form.phtml */
 $this->headTitle($this->title);
 $this->headScript()->appendFile($this->basePath('/js/language-form.js'));
-if ($this->errorMessage) : ?>
-<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-    <?php
-    return;
-endif;
+
 $form = $this->form;
 if ($this->layout()->action == 'add') :
     $action = 'add' ;
@@ -19,7 +15,10 @@ endif;
 ?>
 <div class="center-block mx-auto" style="max-width:750px"><!-- wrapper -->
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php if ($action == 'add') : ?>
+    <?php echo $this->errorMessage($this->errorMessage);
+    if ($this->errorMessage): ?></div><?php return; endif;
+
+    if ($action == 'add') : ?>
     <p class="warning">When adding a new language, please be careful
       to avoid inserting a language that is an inexact duplicate, alternate name
     or spelling, or a superset of another that already exists in your database.</p>

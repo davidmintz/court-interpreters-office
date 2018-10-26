@@ -8,11 +8,11 @@ var $, jQuery;
 var basePath;
 /**
  * redirect to login page if, e.g., session has timed out
+ * note that this does NOT work well with xhr
  */
 $( document ).ajaxComplete(function(event, xhr) {
     if (xhr.getResponseHeader("X-Authentication-required")) {
         document.location = (basePath || "/") + "login";
-        //var doc = $(xhr.responseText);
     }
 });
 
@@ -25,27 +25,6 @@ jQuery.ajaxSetup({
     }
 });
 
-var __displayValidationErrors = function(validationErrors, options)
-{
-    // Object.keys(errors).forEach(function(key){
-    //     console.log(typeof errors[key]);
-    //     if ("object" === typeof errors[key]) {
-    //         console.log("huh?");
-    //         Object.keys(errors[key]).forEach(function(key){
-    //             console.log("key is now: "+key)
-    //         })
-    //     }
-    // })
-    var debug = (options && options.debug) || false;
-    for (var name in validationErrors) {
-
-
-
-    }
-
-
-    return { foo: { bar: "doink"}, baz : "gack"};
-}
 /**
  * displays validation errors on a form
  *
@@ -95,3 +74,33 @@ var displayValidationErrors = function(validationErrors,options) {
         }
     }
 };
+
+/**
+ * on xhr failure
+ *
+ */
+const fail = function(response) {
+    var msg = `<p>Sorry &mdash; we encountered an unexpected system error while
+    processing your last request. If the problem recurs, please notify your site
+    administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
+    $("#error-message").html(msg).parent().show();
+};
+
+
+// bullshit...
+var __displayValidationErrors = function(validationErrors, options)
+{
+    // Object.keys(errors).forEach(function(key){
+    //     console.log(typeof errors[key]);
+    //     if ("object" === typeof errors[key]) {
+    //         console.log("huh?");
+    //         Object.keys(errors[key]).forEach(function(key){
+    //             console.log("key is now: "+key)
+    //         })
+    //     }
+    // })
+    var debug = (options && options.debug) || false;
+    for (var name in validationErrors) {
+    }
+    return { foo: { bar: "doink"}, baz : "gack"};
+}

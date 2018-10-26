@@ -63,7 +63,9 @@
 ?>
 <div class="center-block mx-auto" style="max-width:800px">
     <h2 class="navigation mb-3"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
-    <div class="alert alert-warning" id="error-message" style="display:none"></div>
+    <?php echo $this->errorMessage($this->errorMessage);  ?><?php
+    if ($this->errorMessage) : ?></div><?php  return;  endif; ?>
+
     <div id="deft-results-slideout" class="bg-light border border-info shadow rounded p-3" >
         <h4 class="text-muted">search results <button type="button" class="float-right close" aria-label="close"><span aria-hidden="true">&times;</span></button></h4>
         <div id="deft-results">

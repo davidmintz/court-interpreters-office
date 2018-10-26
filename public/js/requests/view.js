@@ -10,15 +10,6 @@ var disable_buttons = function(){
         .attr({title:"this action is no longer available"})
         .on("click",(event)=>event.preventDefault());
 };
-/**
-* @todo DRY this up. it's an exact copy from requests/list.js
-*/
-var fail = function(){
-    var msg = `<p>We encountered an unexpected system error while processing
-    your last request. If the problem recurs, please notify your site
-    administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
-    $("#error-message").html(msg).parent().show();
-};
 
 $(function(){
     /** periodically checks request date and time against the deadline */

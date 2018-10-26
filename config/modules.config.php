@@ -21,6 +21,6 @@ $modules = [
     'InterpretersOffice\Requests',
 ];
 if (! getenv('TRAVIS')) {
-    //$modules[] = 'SDNY\Vault';
+    $modules[] = 'SDNY\Vault';
 }
 return $modules;
