@@ -145,12 +145,19 @@ class EventForm extends ZendForm implements
             $judge_input = $this->getInputFilter()->get('event')->get('judge');
             $judge_input->setAllowEmpty(false)->setRequired(true);
             $judge_input->getValidatorChain()->attach($validator);
-        } elseif ($event['is_anonymous_judge']) {
-            $event['anonymousJudge'] = $event['judge'];
-            unset($event['judge']);
+        } else {
             $entity = $this->getObject();
-            if ($entity->getJudge()) {
-                $entity->setJudge(null);
+            if ($event['is_anonymous_judge']) {
+                $event['anonymousJudge'] = $event['judge'];
+                $event['judge'] = '';
+                if ($entity->getJudge()) {
+                    $entity->setJudge(null);
+                }
+            } else {
+                if ($entity->getAnonymousJudge()) {
+                    $entity->setAnonymousJudge(null);
+                }
+                $event['anonymousJudge'] = '';
             }
         }
         if (! empty($event['end_time'])) {

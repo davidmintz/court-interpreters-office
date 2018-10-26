@@ -118,8 +118,8 @@ class EventsController extends AbstractActionController
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
         $event = new Entity\Event();
-
         $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
+
         if (! $request->isPost()) {
             $id = $this->params()->fromRoute('id');
             if ($id) {
@@ -138,17 +138,19 @@ class EventsController extends AbstractActionController
                 }
             }
             $form->bind($event);
+
             return $viewModel;
         }
-
-        $data = $request->getPost();
-        $input = $data->get('event');
-        $this->getEventManager()->trigger('pre.validate', $this, ['input' => $data,]);
-        $form->bind($event);
-        $form->setData($data);
-        if (! $form->isValid()) {
-            return new JsonModel(['validation_errors' => $form->getMessages()]);
-        } else {
+        try {
+            $data = $request->getPost();
+            $input = $data->get('event');
+            $form->bind($event);
+            $this->getEventManager()->trigger('pre.validate', $this,
+            ['input' => $data,]);
+            $form->setData($data);
+            if (! $form->isValid()) {
+                return new JsonModel(['validation_errors' => $form->getMessages()]);
+            }
             $this->entityManager->persist($event);
             $this->entityManager->flush();
             $url = $this->getEvent()->getApplication()->getServiceManager()
@@ -161,7 +163,17 @@ class EventsController extends AbstractActionController
             ));
 
             return new JsonModel(['status' => 'success','id' => $event->getId()]);
+
+        } catch (\Exception $e) {
+            
+            $this->getResponse()->setStatusCode(500);
+            $this->events->trigger('error',$this,['exception'=>$e,
+                'details'=>'doing add event in Admin events controller']);
+            $this->getResponse()->setStatusCode(500);
+
+            return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
         }
+
     }
 
     /**
