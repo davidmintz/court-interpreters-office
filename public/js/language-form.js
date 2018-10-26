@@ -11,7 +11,7 @@ var fail = function(response){
         $('<div/>')
             .addClass("alert alert-warning shadow-sm border")
             .attr({id:"error-message"}).html(message)
-            .insertBefore($("form").first();
+            .insertBefore($("form").first());
     } else {
         $('#error-message').html(message);
     }
