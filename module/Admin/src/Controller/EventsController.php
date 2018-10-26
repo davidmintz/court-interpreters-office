@@ -16,6 +16,7 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Form;
 
 use InterpretersOffice\Entity;
+use InterpretersOffice\Controller\ExceptionHandlerTrait;
 
 /**
  *  EventsController
@@ -43,6 +44,9 @@ use InterpretersOffice\Entity;
  */
 class EventsController extends AbstractActionController
 {
+
+
+    use ExceptionHandlerTrait;
 
     /**
      * entity manager
@@ -91,7 +95,7 @@ class EventsController extends AbstractActionController
             $this->viewModel = new ViewModel($data);
         }
 
-        return $this->viewModel;
+        return $this->viewModel->setVariables($data);
     }
 
     /**
@@ -118,7 +122,7 @@ class EventsController extends AbstractActionController
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
         $event = new Entity\Event();
-        $viewModel = $this->getViewModel()->setVariables(['form'  => $form,]);
+        $viewModel = $this->getViewModel(['form'  => $form,]);
 
         if (! $request->isPost()) {
             $id = $this->params()->fromRoute('id');
@@ -133,12 +137,11 @@ class EventsController extends AbstractActionController
                     ->setAnonymousJudge($other->getAnonymousJudge());
                 } else {
                     $viewModel->warning_message =
-                    "The event with id $id was not found, so we can use it
+                    "The event with id $id was not found, so we can't use it
                     to create a repeat event";
                 }
             }
             $form->bind($event);
-
             return $viewModel;
         }
         try {
@@ -146,10 +149,11 @@ class EventsController extends AbstractActionController
             $input = $data->get('event');
             $form->bind($event);
             $this->getEventManager()->trigger('pre.validate', $this,
-            ['input' => $data,]);
+                ['input' => $data,]);
             $form->setData($data);
             if (! $form->isValid()) {
-                return new JsonModel(['validation_errors' => $form->getMessages()]);
+                return new JsonModel(
+                    ['validation_errors' => $form->getMessages()]);
             }
             $this->entityManager->persist($event);
             $this->entityManager->flush();
@@ -157,21 +161,16 @@ class EventsController extends AbstractActionController
             ->get('ViewHelperManager')->get('url')('events');
             $date = $event->getDate();
             $this->flashMessenger()->addSuccessMessage(sprintf(
-                'This event has been added to the schedule for <a href="%s">%s</a>',
-                $url . $date->format('/Y/m/d'),
-                $date->format('l d-M-Y')
+            'This event has been added to the schedule for <a href="%s">%s</a>',
+                $url . $date->format('/Y/m/d'), $date->format('l d-M-Y')
             ));
 
-            return new JsonModel(['status' => 'success','id' => $event->getId()]);
+            return new JsonModel(
+                ['status' => 'success','id' => $event->getId()]);
 
         } catch (\Exception $e) {
-            
-            $this->getResponse()->setStatusCode(500);
-            $this->events->trigger('error',$this,['exception'=>$e,
-                'details'=>'doing add event in Admin events controller']);
-            $this->getResponse()->setStatusCode(500);
 
-            return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
+            return $this->catch($e);
         }
 
     }
@@ -206,7 +205,8 @@ class EventsController extends AbstractActionController
         $form->setData($post);
         try {
             if (! $form->isValid()) {
-                return new JsonModel(['validation_errors' => $form->getMessages()]);
+                return new JsonModel(
+                    ['validation_errors' => $form->getMessages()]);
             }
             $this->entityManager->flush();
             $url = $this->getEvent()->getApplication()
@@ -227,17 +227,10 @@ class EventsController extends AbstractActionController
                     $date->format('l d-M-Y')
                 )
             );
-            //return $view;
-            return new JsonModel(['status' => 'success','id' => $entity->getId()]);
-            //$this->redirect()->toRoute('events/view', ['id' => $entity->getId()]);
+            return new JsonModel(['status' => 'success',
+                'id' => $entity->getId()]);
         } catch (\Exception $e) {
-            $this->events->trigger('error', $this, ['exception' => $e]);
-            $this->getResponse()->setStatusCode(500);
-            return new JsonModel([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            return $this->catch($e);
         }
     }
 
