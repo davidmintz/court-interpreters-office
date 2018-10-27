@@ -86,6 +86,9 @@ const fail = function(response) {
     $("#error-message").html(msg).parent().show();
 };
 
+$("button[data-hide]").on("click",function(e){
+    $(this).parent().slideUp();
+});
 
 // bullshit...
 var __displayValidationErrors = function(validationErrors, options)

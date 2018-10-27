@@ -15,7 +15,7 @@ class ErrorMessage extends AbstractHelper
     <div class="alert alert-warning alert-dismissible border shadow-sm mx-auto" id="error-div" style="max-width:600px;%s">
         <h3>system error</h3>
         <div id="error-message">%s</div>
-        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+        <button type="button" class="close" data-hide="alert" aria-label="close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
