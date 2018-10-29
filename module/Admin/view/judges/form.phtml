@@ -4,17 +4,14 @@
  *  view script for rendering people create|update form
  */
 $this->headTitle($this->title);
-$this->headScript()
-        ->appendFile($this->basePath('js/common.js'))
-        ->appendFile($this->basePath('js/judge-form.js'));
+$this->headScript()->appendFile($this->basePath('js/judge-form.js'));
 ?>
 <div class="center-block mx-auto" style="max-width:700px"><!-- wrapper -->
     <h2 class="my-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php  if ($this->errorMessage) : ?>
-        <div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-</div>
-    <?php return;
-endif;
+<?php
+echo $this->errorMessage($this->errorMessage);
+if ($this->errorMessage): ?></div><?php return; endif;
+
 $action = $this->layout()->action;
 if ($action == 'add') :
     $actionAttrib = $this->url('judges/add');
@@ -44,7 +41,7 @@ $flavor = $fieldset->get('flavor');?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $flavor->getLabel()?></label>
     <div class="col-sm-9"><?php
-    if (false !== $this->has_related_entities) :
+    if ($this->has_related_entities) :
         $flavor->setAttribute('disabled', 'disabled');
         ?><input type="hidden" name="judge[flavor]" value="<?php echo $flavor->getValue()?>"><?php
     endif;

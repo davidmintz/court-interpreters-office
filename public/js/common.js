@@ -78,6 +78,9 @@ var displayValidationErrors = function(validationErrors,options) {
 /**
  * on xhr failure
  *
+ * used in conjunction with view helper
+ * module/InterpretersOffice/src/View/Helper/ErrorMessage.php
+ *
  */
 const fail = function(response) {
     var msg;
@@ -88,7 +91,6 @@ const fail = function(response) {
         processing your last request. If the problem recurs, please notify your site
         administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
     }
-    console.warn("FUCK?");
     $("#error-message").html(msg).parent().show();
 };
 

@@ -2,11 +2,6 @@
 /** module/Admin/view/interpreters-office/admin/event-types/form.phtml */
 $this->headTitle($this->title);
 $this->headScript()->appendFile($this->basePath('/js/event-types-form.js'));
-if ($this->errorMessage) : ?>
-<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-    <?php
-    return;
-endif;
 $form = $this->form;
 $action = $this->layout()->action;
 if ($action == 'add') :
@@ -21,7 +16,12 @@ $form->setAttribute('action', $actionAttrib)
 ?>
 <div class="center-block mx-auto" style="max-width:600px"><!-- wrapper -->
     <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php if ($action == 'add') : ?>
+
+<?php
+echo $this->errorMessage($this->errorMessage);
+if ($this->errorMessage): ?></div><?php return; endif;
+
+if ($action == 'add') : ?>
     <p>Use this form to add a new event type. Please be careful
       to avoid adding a type that is a subtype of, or partially redundant with,
       one that already exists.</p>
