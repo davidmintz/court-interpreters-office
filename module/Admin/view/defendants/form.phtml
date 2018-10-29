@@ -2,14 +2,7 @@
 $this->headScript()->appendFile($this->basePath('/js/defendant-form.js'));
 $form = $this->form;
 $action = $this->layout()->action;
-if ($this->error) :?>
-<div data-status="<?php echo $this->status ?>" id="defendant-form">
-    <div class="alert alert-danger">
-        <?php echo $this->error ?>
-    </div>
-</div>
-    <?php return;
-endif;
+
 if ($action == 'add') :
     $url = $this->url('admin-defendants/add');
 else :
@@ -29,6 +22,8 @@ $form->prepare();
 <div class="center-block mx-auto" style="max-width:500px"><!-- wrapper -->
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php
+echo $this->errorMessage($this->errorMessage);
+if ($this->errorMessage): ?></div><?php return; endif;
     echo $this->form()->openTag($form);
 if ($this->error) :?>
     <?php echo $this->form()->closeTag() ?>
