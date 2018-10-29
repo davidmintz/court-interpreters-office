@@ -16,12 +16,16 @@ use Zend\Stdlib\Parameters;
 use SDNY\Vault\Service\VaultException;
 use SDNY\Vault\Service\Vault;
 
+use InterpretersOffice\Admin\Controller\DeletionTrait;
+
 /**
  * controller for admin/interpreters create|update|delete
  *
  */
 class InterpretersWriteController extends AbstractActionController
 {
+
+    use DeletionTrait;
 
     /**
      * whether our Vault module is enabled
@@ -160,7 +164,6 @@ class InterpretersWriteController extends AbstractActionController
                 ['errorMessage' => "interpreter with id $id not found"]
             );
         }
-
         $values_before = [
             'dob' => $entity->getDob(),
             'ssn' => $entity->getSsn(),
@@ -286,6 +289,16 @@ class InterpretersWriteController extends AbstractActionController
         $helper->setView($renderer);
 
         return $helper;
+    }
+
+    public function deleteAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $what = "interpreter";
+        $name = $this->params()->fromPost('name');
+        $entity = $this->entityManager->find(Entity\Interpreter::class,$id);
+        
+        return $this->delete(compact('entity','what','name','id'));
     }
 
      /**

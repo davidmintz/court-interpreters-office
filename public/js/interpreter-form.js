@@ -5,12 +5,12 @@
  */
 //*/
 $(function(){
-   // if (! window.Modernizr.inputtypes.date){
-        $('input.date').each(function(i,element){
-            if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
-                element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
-            }
-        });
+    
+    $('input.date').each(function(i,element){
+        if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
+            element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
+        }
+    });
    // }
     // in order for server-side partial validation to know the context
     var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
@@ -88,7 +88,7 @@ $(function(){
         } else {
             index = 0;
         }
-        url = /*window.basePath +*/ "/admin/interpreters/language-fieldset";
+        url = "/admin/interpreters/language-fieldset";
         $.get(url,{index : index, id : language_id },function(data){
             $('#languages-div').append(data);
             languageSelect.val("");
@@ -150,10 +150,8 @@ $(function(){
         $.post('/admin/interpreters/validate-partial?action='+action,
             data,
             function(response){
-
                 if (response.validation_errors) {
                     if (response.validation_errors.interpreterLanguages) {
-
                         $.each(response.validation_errors.interpreterLanguages,
                             function(i,error){
                                 $('div.language-certification select').not(":disabled")
@@ -248,7 +246,6 @@ $(function(){
     /**
     @todo run partial validation here?
     */
-   ///*
     $('#interpreter-form').on("submit",function(event){
         //event.preventDefault();
         if ($(".validation-error:visible").length) {
@@ -258,7 +255,21 @@ $(function(){
         //$('a[data-toggle="tab"]').trigger("click",{submit:true});
         return true;
     });
-    //*/
+
+    $("#btn-delete").on("click",function(event){
+        event.preventDefault();
+        if (! window.confirm("Are you sure you want to delete this interpreter?"))
+        {
+            return false;
+        }
+        var id = $("input[name='interpreter[id]']").val();
+        var url = `/admin/interpreters/delete/${id}`;
+        var name = `${$("#firstname").val()} ${$("#lastname").val()}`;
+        $.post(url,{name})
+        .done(()=>
+            window.document.location = `${window.basePath||""}/admin/interpreters`)
+        .fail(fail);
+    });
 });
 test = function(){
     $('#languages-pane').tab("show");

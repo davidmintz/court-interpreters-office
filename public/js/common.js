@@ -80,9 +80,15 @@ var displayValidationErrors = function(validationErrors,options) {
  *
  */
 const fail = function(response) {
-    var msg = `<p>Sorry &mdash; we encountered an unexpected system error while
-    processing your last request. If the problem recurs, please notify your site
-    administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
+    var msg;
+    if (response.status === 403 && response.responseJSON) {
+        msg = response.responseJSON.error.message;
+    } else {
+        msg = `<p>Sorry &mdash; we encountered an unexpected system error while
+        processing your last request. If the problem recurs, please notify your site
+        administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
+    }
+    console.warn("FUCK?");
     $("#error-message").html(msg).parent().show();
 };
 

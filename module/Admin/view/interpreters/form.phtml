@@ -9,15 +9,11 @@ $this->headTitle('admin | interpreters | '.$this->layout()->action);
 $this->headLink()
         ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headScript()
-        ->appendFile($this->basePath('js/lib/modernizr-custom.js'))
         ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
-        ->appendFile($this->basePath('js/common.js'))
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
         ->appendFile($this->basePath('js/interpreter-form.js'));
-
-if ($this->errorMessage) : ?>
-<div class="alert alert-danger"><?php echo $this->errorMessage ?></div>
-    <?php
+echo $this->errorMessage($this->errorMessage);
+if ($this->errorMessage) :
     return;
 endif;
 $formAction = $this->layout()->action == 'add' ? $this->url('interpreters/add')
@@ -180,7 +176,11 @@ endif;?>
             $csrf = $form->get('csrf');
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
             echo $this->formHidden($fieldset->get('id'));
-            echo $this->formSubmit($form->get('submit'));?>
+            echo $this->formSubmit($form->get('submit'));
+            if (! $this->has_related_entities) :
+            ?> <button id="btn-delete" type="button" class="btn btn-warning btn-lg" title="delete this interpreter" name="delete">delete</button><?php
+            endif;
+            ?>
         </div>
     </div>
 
