@@ -9,10 +9,11 @@ trait ExceptionHandlerTrait
 {
     public function catch(\Throwable $e, $options = [])
     {
-        $this->getResponse()->setStatusCode(500);
+
+        $details = isset($options['details']) ? $options['details'] :'[none]';
         $this->events->trigger('error',$this,['exception'=>$e,
-            //'details'=>'doing add event in Admin events controller'
-            ]);
+            'details'=>$details
+        ]);
         $this->getResponse()->setStatusCode(500);
 
         return new JsonModel(['error'=>['message' => $e->getMessage(),]]);

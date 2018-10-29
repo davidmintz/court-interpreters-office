@@ -11,11 +11,12 @@ $(function(){
             } else {
                 $('.validation-error').hide();
             }
-            if (response.inexact_duplicate_found) {
+            if (response.duplicate_entry_error) {
                 var existing = response.existing_entity;
                 form.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
                 $('#deft-existing-duplicate-name').text(existing);
                 var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
+                console.warn("daFUQ?");
                 return $(shit).show();
             }
             if (response.status == 'error') {
@@ -40,16 +41,17 @@ $(function(){
     });
     $('#btn-delete').on("click",function(event){
         event.preventDefault();
-        if (! window.confirm("Are you sure you want to delete this defendant name?")) {
+        if (! window.confirm(
+            "Are you sure you want to delete this defendant name?")) {
             return;
         }
         var name = form.data('defendant_name');
-        var url = form.data('redirect_url');
+        var url = form.data('redirect_url')
+            ||`${window.basePath || ""}/admin/defendants`;
         var id = $('input[name="id"]').val();
         $.post('/admin/defendants/delete/'+id,{name})
-        .done(
-            ()=> window.document.location = `${window.basePath || ""}/admin/defendants`
-        ).fail(fail);
+        .done( ()=>window.document.location = url)
+        .fail(fail);
 
     });
 });

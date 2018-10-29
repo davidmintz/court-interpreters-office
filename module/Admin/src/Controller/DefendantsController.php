@@ -14,6 +14,8 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InterpretersOffice\Admin\Form\DefendantForm;
 use InterpretersOffice\Entity\Defendant;
 
+use InterpretersOffice\Controller\ExceptionHandlerTrait;
+
 /**
  * controller for admin/defendants.
  */
@@ -34,6 +36,7 @@ class DefendantsController extends AbstractActionController
     protected $repository;
 
     use DeletionTrait;
+    use ExceptionHandlerTrait;
 
     /**
      * constructor.
@@ -61,7 +64,7 @@ class DefendantsController extends AbstractActionController
     }
 
     /**
-     * adds a Person entity to the database.
+     * adds a defendant-name entity to the database.
      */
     public function addAction()
     {
@@ -96,7 +99,7 @@ class DefendantsController extends AbstractActionController
                 );
                 if ($xhr) {
                     return new JsonModel(['id' => $entity->getId(),
-                        'errors' => null]);
+                        'error' => null]);
                 }
                 $this->redirect()->toRoute('admin-defendants');
             } catch (UniqueConstraintViolationException $e) {
@@ -108,6 +111,7 @@ class DefendantsController extends AbstractActionController
 
                  return $xhr ?
                     new JsonModel([
+                        //'status' => 'error',
                         'duplicate_entry_error' => true,
                         'existing_entity' => [
                             'surnames' => $existing_entity->getSurnames(),
@@ -117,6 +121,9 @@ class DefendantsController extends AbstractActionController
                     :
                     $viewModel->setVariables(['duplicate_entry_error' => true,
                             'existing_entity' => $existing_entity]);
+            } catch (\Exception $e) {
+                return $this->catch($e,
+                ['details'=>'running defendant name update']);
             }
         }
 
@@ -243,7 +250,7 @@ class DefendantsController extends AbstractActionController
         try {
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
-            return new JsonModel(['id' => $id,'errors' => null, 'status' => 'success']);
+            return new JsonModel(['id' => $id,'error' => null, 'status' => 'success']);
         } catch (UniqueConstraintViolationException $e) {
             $existing_entity = $this->entityManager
                     ->getRepository(Entity\Defendant::class)
@@ -260,7 +267,7 @@ class DefendantsController extends AbstractActionController
                 ]
              ]);
         } catch (\Exception $e) {
-            throw $e;
+            $this->catch($e,['details'=>'attempting defendant name update']);
         }
     }
 
