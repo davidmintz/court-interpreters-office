@@ -37,7 +37,7 @@ INSERT INTO languages (name) VALUES ('Spanish'),('Foochow'),('Mandarin'),('Russi
 INSERT INTO locations (type_id, parent_location_id,name) VALUES
 (7, NULL, 'Some Courthouse'),(7, NULL, 'Other Courthouse'),(2,NULL,'Some Detention Center');
 
-SET @courthouse1 = (SELECT id FROM locations WHERE name = 'Big Courthouse');
+SET @courthouse1 = (SELECT id FROM locations WHERE name = 'Some Courthouse');
 SET @courthouse2 = (SELECT id FROM locations WHERE name = 'Other Courthouse');
 SET @jail = (SELECT id FROM locations WHERE name = 'Some Detention Center');
 
