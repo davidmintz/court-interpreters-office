@@ -29,6 +29,8 @@ trait DeletionTrait
         $entity = $options['entity'];
         $what = $options['what'];
         $name = $options['name'];
+        $set_flash_message = isset($options['flash_message']) ?
+            $options['flash_message'] : true;
         $verbose_name = "The $what <strong>$name</strong>";
         $id = $options['id'];
         $xhr = $this->getRequest()->isXmlHttpRequest();
@@ -36,18 +38,19 @@ trait DeletionTrait
             try {
                 $this->entityManager->remove($entity);
                 $this->entityManager->flush();
-                //if (! $xhr) {
-                $this->flashMessenger()
-                    ->addSuccessMessage("$verbose_name has been deleted.");
-                $redirect = true;
-                //}
+                if ($set_flash_message) {
+                    $this->flashMessenger()
+                        ->addSuccessMessage("$verbose_name has been deleted.");
+                    $redirect = true;
+                }
                 $result = 'success';
                 $error = [];
             } catch (ForeignKeyConstraintViolationException $e) {
                 $result = 'error';
                 $redirect = false;
                 $error = [ 'message' =>
-                    "Sorry &mdash; this $what cannot be deleted because there are other database records that refer to it.",
+                    "Sorry &mdash; this $what cannot be deleted because there "
+                    . 'are other database records that refer to it.',
                     'code' => $e->getCode(),
                     'exception' => 'foreign_key_constraint',
                 ];
@@ -55,7 +58,9 @@ trait DeletionTrait
             } catch (\Exception $e) {
                 $result = 'error';
                 $redirect = false;
-                $error = [ 'message' =>
+                $this->events->trigger('error',
+                    ['details'=>"trying to delete $what"]);
+                $error = ['message' =>
                     "Sorry, we hit an unexpected system error.",
                     'code' => $e->getCode(),
                     'exception' => get_class($e)

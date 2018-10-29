@@ -77,7 +77,7 @@ class LanguagesController extends AbstractActionController
                 ->findBy([],['name'=>'ASC']);
         */
         $page = $this->params()->fromQuery('page', 1);
-        $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Language');
+        $repository = $this->entityManager->getRepository(Language::class);
         $languages = $repository->findAllWithPagination($page);
 
         return new ViewModel(['languages' => $languages, 'title' => 'languages']);
@@ -116,7 +116,8 @@ class LanguagesController extends AbstractActionController
             }
             $this->entityManager->flush();
             $this->flashMessenger()
-                  ->addSuccessMessage("The language <strong>$entity</strong> has been updated.");
+                  ->addSuccessMessage(
+                    "The language <strong>$entity</strong> has been updated.");
             $this->redirect()->toRoute('languages');
         }
 
