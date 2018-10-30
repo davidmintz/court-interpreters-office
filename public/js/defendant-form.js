@@ -6,45 +6,58 @@ const is_literal_duplicate = (entity) => {
 };
 $(function(){
     var form = $('#defendant-form');
+
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
         var data = form.serialize();
         var action = $("input[name=id]").val() ? "update":"insert";
-        $.post(form.attr('action'),data,function(response){
-            if (response.validation_errors) {
-                return displayValidationErrors(response.validation_errors);
-            } else {
-                $('.validation-error').hide();
-            }
-            if (response.duplicate_entry_error) {
-                var existing = response.existing_entity;
-                if (is_literal_duplicate(existing)) {
-                    if (action === "insert") {
-                        $("#error-div h3").text("error: duplicate entry");
-                        $("#error-message").text(
-                            "This name is already in your database"
-                        ).parent().show();
-                    } else {
-                        // inexact. they should edit, not insert
-                        msg = "";
-                    }
-
+        $.post(form.attr('action'),data)
+        .done(
+            function(response)
+            {
+                if (response.validation_errors) {
+                    return displayValidationErrors(response.validation_errors);
                 } else {
-
+                    $('.validation-error').hide();
                 }
+                if (response.existing_entity) {                    
+                    var existing = response.existing_entity;
+                    var name = `${existing.surnames}, ${existing.given_names}`;
+                }
+                if (response.duplicate_entry_error) {
+                    var msg;
+                    $("#error-div h3").text("error: duplicate entry");
+                    if (action === "insert") {
+                        if (is_literal_duplicate(existing)) {
+                            msg = "This name is already in your database."
+                        } else {
+                            // inexact duplicate. they should update, not insert
+                            var url = `${window.basePath||""}/admin/defendants/edit/${existing.id}`;
+                            msg = `This name cannot be inserted because there is
+                            already an inexact duplicate of it in your database:
+                            <strong>${name}</strong>.
+                            You can <a href="${url}">update it</a> instead.`;
+                        }
+                        return $("#error-message").html(msg).parent().show();
+                    } //else { // we are the update form} }
+                } else if (response.inexact_duplicate_found) {
 
-                form.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
-                $('#deft-existing-duplicate-name').text(existing);
-                var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
-                console.warn("daFUQ?");
-                return $(shit).show();
-            }
-            // if (response.status == 'error') {
-            //     fail(fail)
-            // }
-            document.location = form.data('redirect_url');
-
-        },'json').fail(fail);
+                    form.prepend($('<input>').attr({type:'hidden',
+                    name:'duplicate_resolution_required',value:1}));
+                    $('#deft-existing-duplicate-name').text(name);
+                    var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
+                    console.warn("daFUQ?");
+                    return $(shit).show();
+                } else {
+                    console.warn("all good?");
+                    var url = form.data().redirect_url || "/admin/defendants";
+                    window.document.location = `${window.basePath||""}${url}`;
+                }
+            })
+        .fail((response)=> {
+            $("#error-div h3").text("system error");
+            fail(response);
+        });
     });
 
     form.on("click",'#btn-select-all, #btn-invert-selection',function(event){

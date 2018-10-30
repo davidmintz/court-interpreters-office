@@ -237,13 +237,14 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         /** @var Doctrine\ORM\EntityManagerInterface $em */
         $em = $this->getEntityManager();
 
-        /** is it a global update, or an update of only a subset? */
         $logger->debug("event id is: " . ($event_id ?: "null"));
 
         foreach ($occurrences as $i => $occurrence) {
             // unpack submitted JSON strings
             $occurrences[$i] = json_decode($occurrence, JSON_OBJECT_AS_ARRAY);
         }
+        /** is it a global update, or an update of only a subset? */
+
         // get all the contexts (occurences) from database
         $all_occurrences = $this->findDocketAndJudges($defendant);
         // if what's in the database == what was submitted, it's a global update
@@ -256,6 +257,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         if (! $existing_name) {
             $MATCH = false;
         } elseif ($defendant->getId() == $existing_name->getId()) {
+            // identical means same entity, same id
             $MATCH = 'identical';
         } else {
             // if there's a match, is it literal or inexact?
@@ -269,18 +271,20 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 'inexact_duplicate_found' => 1,
                 'status' => 'aborted',
                 'debug' => 'required duplicate resolution not provided',
-                'existing_entity' => (string)$existing_name,
+                //'existing_entity' => (string)$existing_name,
+                'existing_entity' => [
+                    'given_names' => $existing_name->getGivenNames(),
+                    'surnames'   =>  $existing_name->getSurnames(),
+                ],
                 'update_type' => $GLOBAL_OR_PARTIAL
             ];
         }
         $logger->debug(sprintf(
             'in %s at %d match is %s, update is %s',
-            __CLASS__,
-            __LINE__,
-            $MATCH ?: 'false',
-            $GLOBAL_OR_PARTIAL
+            __CLASS__,  __LINE__, $MATCH ?: 'false', $GLOBAL_OR_PARTIAL
         ));
-        $result = [ 'match' => $MATCH,'update_type' => $GLOBAL_OR_PARTIAL, 'events_affected' => [] ];
+        $result = [ 'match' => $MATCH,'update_type' => $GLOBAL_OR_PARTIAL,
+            'events_affected' => 0 ];
         if ($GLOBAL_UPDATE) {
             switch ($MATCH) {
                 case false:
@@ -310,10 +314,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                         $logger->debug("we updated the existing name");
                         $result['updated_deftname'] = $existing_name->getId();
                     }
-
-
                     $db = $this->getEntityManager()->getConnection();
-
                     $result['events_affected'] = $db->executeQuery(
                         'UPDATE defendants_events SET defendant_id = :new WHERE defendant_id = :old',
                         [':new' => $existing_name->getId(), ':old' => $defendant->getId()]
@@ -346,7 +347,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                     'message' => $e->getMessage(),
                 ]);
             }
-        } else { // PARTIAL update.
+        } else { // it's a PARTIAL update.
             $event_ids = $this
                 ->getEventIdsForOccurrences($occurrences, $defendant);
             $logger->debug(sprintf(
@@ -363,24 +364,12 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                     $logger->debug('submitted entity is identical with entity found at '.__LINE__);
                     break; // simple flush() should do it
                 case false:
-                // a new name has to be inserted; this one has to be detached
-                    // $new = (new Entity\Defendant)
-                    // ->setGivenNames($defendant->getGivenNames())
-                    // ->setSurnames($defendant->getSurnames());
-                    // $em->persist($new);
                     $em->detach($defendant);
-                    // foreach ($deft_events as $de) {
-                    //     $de->setDefendant($new);
-                    //     $result['events_affected'][] = $de->getEvent()->getId();
-                    // }
-
-
                     /** @var Doctrine\DBAL\Connection $db */
                     $db = $em->getConnection();
                     $db->executeUpdate(
                         'INSERT INTO defendant_names (given_names,surnames)
                         VALUES (?,?)',[$defendant->getGivenNames(),$defendant->getSurNames()]);
-
                     $result['insert_id'] = $db->lastInsertId();
                     $sql = 'UPDATE defendants_events SET defendant_id = ?
                         WHERE defendant_id = ? AND event_id IN (?)';
@@ -399,11 +388,17 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                         ->setGivenNames($defendant->getGivenNames())
                         ->setSurnames($defendant->getSurnames());
                     }
-                // don't break
+                // no break
                 case 'literal':
-                    foreach ($deft_events as $de) {
-                        $de->setDefendant($existing_name);
-                    }
+                $sql = 'UPDATE defendants_events SET defendant_id = ?
+                    WHERE defendant_id = ? AND event_id IN (?)';
+                $result['events_affected'] = $db->executeUpdate($sql,
+                    [$existing_name->getId(), $defendant->getId(),
+                    array_column($event_ids,'id')],
+                    [
+                        null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY
+                    ]);
+                    $logger->debug("running partial update with literal match");
                     if (! $defendant->hasRelatedEntities()) {
                         $logger->debug("no related entities for $defendant at ".__LINE__);
                         $em->remove($defendant);
@@ -480,7 +475,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
     public function hasRelatedEntities($id)
     {
         $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event
-            e  JOIN d.defendants d  WHERE d.id = :id';
+            e  JOIN e.defendants d  WHERE d.id = :id';
         return $this->getEntityManager()->createQuery($dql)->setParameters([
             'id' => $id
         ])->getSingleScalarResult() ? true : false;

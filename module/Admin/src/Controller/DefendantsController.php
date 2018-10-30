@@ -163,7 +163,7 @@ class DefendantsController extends AbstractActionController
         if (! $entity) {
             $message = "Defendant with id was $id not found in your database.";
             if (! $xhr) {
-                $this->flashMessenger()->addErrorMessage($message);
+                $this->flashMessenger()->addWarningMessage($message);
                 return $this->redirect()->toRoute('admin-defendants');
             } else {
                 return $viewModel->setVariables(
@@ -173,13 +173,13 @@ class DefendantsController extends AbstractActionController
         }
         $form->bind($entity);
         // at least for now...
-        // $container = $this->getEvent()->getApplication()->getServiceManager();
-        // $logger = $container->get('log');
-        // $this->repository->setLogger($logger);
-        // $listener = $container->get(Entity\Listener\EventEntityListener::class);
-        // if (! $listener->getLogger()) {
-        //     $listener->setLogger($logger);
-        // }
+        $container = $this->getEvent()->getApplication()->getServiceManager();
+        $logger = $container->get('log');
+        $this->repository->setLogger($logger);
+        $listener = $container->get(Entity\Listener\EventEntityListener::class);
+        if (! $listener->getLogger()) {
+            $listener->setLogger($logger);
+        }
         /////////
         $occurrences = $this->repository->findDocketAndJudges($id);
         if (count($occurrences) > 0) {
