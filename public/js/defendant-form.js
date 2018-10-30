@@ -20,7 +20,12 @@ $(function(){
                 } else {
                     $('.validation-error').hide();
                 }
-                if (response.existing_entity) {                    
+                if (response.status === "success") {
+                    var url = form.data().redirect_url || "/admin/defendants";
+                    return  window.document.location =
+                        `${window.basePath||""}${url}`;
+                }
+                if (response.existing_entity) {
                     var existing = response.existing_entity;
                     var name = `${existing.surnames}, ${existing.given_names}`;
                 }
@@ -39,7 +44,10 @@ $(function(){
                             You can <a href="${url}">update it</a> instead.`;
                         }
                         return $("#error-message").html(msg).parent().show();
-                    } //else { // we are the update form} }
+                    } else { /* we are the update form */
+                        console.warn(
+                        "update returned duplicated entry error, deal with it");
+                    }
                 } else if (response.inexact_duplicate_found) {
 
                     form.prepend($('<input>').attr({type:'hidden',

@@ -20,6 +20,6 @@ $(function(){
                 } else {
                     // deal with it
                 }
-            });
+            }).fail(fail);
     });
 });

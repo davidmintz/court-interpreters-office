@@ -403,7 +403,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                         $logger->debug("no related entities for $defendant at ".__LINE__);
                         $em->remove($defendant);
                     } else {
-                        $logger->debug("yes related entities for $defendant, gonna detach() at ".__LINE__);
+                        $logger->debug("yes, related entities for $defendant, gonna detach() at ".__LINE__);
                         $em->detach($defendant);
                     }
                     $result['deftname_replaced_by'] = $existing_name->getId();

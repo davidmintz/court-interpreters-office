@@ -426,9 +426,7 @@ var eventForm = (function () {
             document.location = document.referrer
                 || `${window.basePath}/admin/schedule/view/${response.id}`;
         })
-        .fail(function(response){
-            console.warn("shit happened")
-        });
+        .fail(fail);
     };
 
     /**
@@ -577,6 +575,8 @@ var eventForm = (function () {
             );
         });
 
+
+
         /* ==================== */
         $("#slideout-toggle .close").on("click",
             function(){slideout.toggle("slide");}
@@ -627,6 +627,11 @@ var eventForm = (function () {
                 $("#anonymousJudge").val(judgeElement.val());
             }
         }
+        /** @todo fetch the form, display in a modal */
+        $("#event-form").on("click","span.deft-name",function(){
+            console.warn("boink!");
+        });
+
         /** these next are for admin mode */
         hatElement.on("change",hatElementChange);
 
@@ -916,10 +921,11 @@ var defendantForm = (function(){
                     });
                 }
             });
-        $("ul.defendant-names").on("click","li.defendant span",
+            //$("ul.defendant-names li span.deft-name")
+        $("ul.defendant-names").on("click","li span.deft-name",
             function(){
                 var div = $("#deftname-editor .modal-body");
-                var id = $(this).parent().children("input.defendant_id").val();
+                var id = $(this).next("input").val();
                 var selector = "/admin/defendants/edit/"+ id + " #defendant-form";
                 var that = this;
                 $("#deftname-editor-submit").show();
@@ -928,7 +934,8 @@ var defendantForm = (function(){
                     $("#deftname-editor").modal("show");
                     if ($("#defendant-form").data("status")=="NOT FOUND") {
                         $("#defendant-form div.alert").append(
-                            " The underlying record might have been deleted out from under you. Please try again.");
+                            ` The underlying record might have been deleted out from under you.
+                            Please try again.`);
                         submitButton.hide();
                         cancelButton.text("OK").one("click",function(){
                             // we have said this very snippet before, but...
