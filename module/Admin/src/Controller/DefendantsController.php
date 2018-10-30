@@ -111,7 +111,7 @@ class DefendantsController extends AbstractActionController
 
                  return $xhr ?
                     new JsonModel([
-                        //'status' => 'error',
+                        'status' => 'error',
                         'duplicate_entry_error' => true,
                         'existing_entity' => [
                             'surnames' => $existing_entity->getSurnames(),

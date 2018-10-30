@@ -1,10 +1,15 @@
 /** public/js/defendant-form.js */
 
+const is_literal_duplicate = (entity) => {
+    return entity.surnames === $("#surnames").val().trim() &&
+    entity.given_names === $("#given_names").val().trim();
+};
 $(function(){
     var form = $('#defendant-form');
     $('#btn-submit').on("click",function(event){
         event.preventDefault();
         var data = form.serialize();
+        var action = $("input[name=id]").val() ? "update":"insert";
         $.post(form.attr('action'),data,function(response){
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors);
@@ -13,19 +18,35 @@ $(function(){
             }
             if (response.duplicate_entry_error) {
                 var existing = response.existing_entity;
+                if (is_literal_duplicate(existing)) {
+                    if (action === "insert") {
+                        $("#error-div h3").text("error: duplicate entry");
+                        $("#error-message").text(
+                            "This name is already in your database"
+                        ).parent().show();
+                    } else {
+                        // inexact. they should edit, not insert
+                        msg = "";
+                    }
+
+                } else {
+
+                }
+
                 form.prepend($('<input>').attr({type:'hidden',name:'duplicate_resolution_required',value:1}));
                 $('#deft-existing-duplicate-name').text(existing);
                 var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
                 console.warn("daFUQ?");
                 return $(shit).show();
             }
-            if (response.status == 'error') {
-                return alert('ah, shit. there was an error: '+response.status.message);
-            }
+            // if (response.status == 'error') {
+            //     fail(fail)
+            // }
             document.location = form.data('redirect_url');
 
-        },'json');
+        },'json').fail(fail);
     });
+
     form.on("click",'#btn-select-all, #btn-invert-selection',function(event){
         event.preventDefault();
         var checkboxes = $('form input[type=checkbox]');
