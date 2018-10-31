@@ -3,12 +3,7 @@ $this->headScript()->appendFile($this->basePath('/js/defendant-form.js'));
 $form = $this->form;
 $action = $this->layout()->action;
 
-if ($action == 'add') :
-    $url = $this->url('admin-defendants/add');
-else :
-    $url = $this->url('admin-defendants/edit', ['id' => $form->getObject()->getId()]);
-    $form->setAttribute('data-defendant_name', (string)$form->getObject());
-endif;
+;
 $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
@@ -23,13 +18,25 @@ $form->prepare();
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php
 echo $this->errorMessage($this->errorMessage);
-if ($this->errorMessage): ?></div><?php return; endif;
+if ($this->errorMessage): ?></div><?php
+    return;
+endif;
+if ($this->error_not_found) :
+    $form->setAttribute('data-error_not_found',1);
     echo $this->form()->openTag($form);
-if ($this->error) :?>
-    <?php echo $this->form()->closeTag() ?>
+    echo $this->errorMessage($this->error_not_found);
+    echo $this->form()->closeTag() ?>
     </div>
     <?php return;
 endif;
+if ($action == 'add') :
+        $url = $this->url('admin-defendants/add');
+else :
+    $url = $this->url('admin-defendants/edit', ['id' => $form->getObject()->getId()]);
+    $form->setAttribute('data-defendant_name', (string)$form->getObject());
+endif;
+$form->prepare();
+echo $this->form()->openTag($form);
 ?>
     <div id="defendant-form-success" class="alert alert-success" style="display:none"></div>
 <?php if ($form->has('duplicate_resolution')) :?>

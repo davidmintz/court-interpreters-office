@@ -161,13 +161,13 @@ class DefendantsController extends AbstractActionController
 
         $entity = $this->entityManager->find(Entity\Defendant::class, $id);
         if (! $entity) {
-            $message = "Defendant with id was $id not found in your database.";
+            $message = "A defendant name with id $id was not found in the database.";
             if (! $xhr) {
                 $this->flashMessenger()->addWarningMessage($message);
                 return $this->redirect()->toRoute('admin-defendants');
             } else {
                 return $viewModel->setVariables(
-                    ['error' => $message,'status' => 'NOT FOUND','form' => $form]
+                    ['error_not_found' => $message,'form' => $form]
                 );
             }
         }

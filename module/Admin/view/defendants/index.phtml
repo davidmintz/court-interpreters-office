@@ -6,7 +6,8 @@ $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
 endif;
-echo $messenger->render('error', ['alert', 'alert-dismissible', 'alert-danger']);
+//echo $messenger->render('error', ['alert', 'alert-dismissible', 'alert-danger']);
+echo $this->errorMessage("not really, only a test");
 ?>
 <h3>to do</h3>
 <p>more</p>

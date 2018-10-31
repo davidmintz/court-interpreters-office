@@ -200,16 +200,17 @@ var eventForm = (function () {
         $.get("/admin/schedule/interpreter-template",
             {
                 interpreter_id : id, index : index,
-                name : name, event_id : $("#event_id").val()},
-            function(html)
+                name : name, event_id : $("#event_id").val()
+            })
+            .done((html)=>
             {
                 $("#interpreters-assigned").append(html);
                 if (params && params.submit) {
                     $("#event-form input[value=save]")
                         .trigger("click");
                 }
-            }
-        );
+            })
+            .fail(fail);
     };
 
     /**
@@ -826,17 +827,20 @@ var defendantForm = (function(){
         if (response.inexact_duplicate_found) {
             //console.debug("inexact duplicate detected");
             var existing = response.existing_entity;
-            defendantForm.prepend($("<input>").attr({type:"hidden",name:"duplicate_resolution_required",value:1}));
+            defendantForm.prepend($("<input>").attr(
+                { type:"hidden",
+                  name:"duplicate_resolution_required",value:1})
+            );
             $("#deft-existing-duplicate-name").text(existing);
             var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
             return $(shit).show();
         }
-        if (response.status !== "success") {
-            $("#defendant-form-error").html(
-                "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
-            ).show();
+        // if (response.status !== "success") {
+        //     $("#defendant-form-error").html(
+        //         "Oops. We got an error message saying:<br><em>"+response.message+"</em>"
+        //     ).show();
 
-        } else {
+        //} else {
             /** to do: check for duplicate defendant-name in the form
             before doing this
             */
@@ -861,11 +865,37 @@ var defendantForm = (function(){
             window.setTimeout(function(){
                 $("#defendant-form-success").hide();
                 $("#deftname-editor").modal("hide");
-                //defendantForm.remove();
             },2000);
-        }
+        //}
     };
 
+    var loadDefendantNameForm = function()
+    {
+        $("#deftname-editor").modal("show");
+        if ($("#deftname-editor .alert-warning").is(":visible")) {
+            if ($("#defendant-form").data("error_not_found")) {
+                $("#defendant-form div.alert #error-message").append(
+                ` The underlying record might have been deleted.`);
+            }
+            $("#deftname-editor #deftname-editor-submit, .alert button[data-hide]").hide();
+            //$("#deftname-editor .modal-footer button[data-dismiss]").text("OK");
+            var id = $("#deftname-editor .modal-body").data().id;
+            $(`#defendant-names input[value="${id}"]`).next(".btn-remove-item")
+                .trigger("click");
+            return;
+        }
+        var docket = $("#docket").val();
+        if (docket) {
+            $("#occurrences .form-check-input").each(function(){
+                if (-1 !== $(this).val().indexOf(docket)) {
+                    $(this).attr({checked:"checked"});
+                }
+            });
+        }
+        // save the initial state so we can tell if it changed
+        $("#given_names").data({was : $("#given_names").val()});
+        $("#surnames").data({was : $("#surnames").val()});
+    }
     /**
      * submit handler for editing a defendant name within the
      * event edit|update context
@@ -945,40 +975,11 @@ var defendantForm = (function(){
         // load deft-name editing form
         $("ul.defendant-names").on("click","li span.deft-name",
             function(){
-                var div = $("#deftname-editor .modal-body");
                 var id = $(this).next("input").val();
-                var selector = "/admin/defendants/edit/"+ id + " #defendant-form";
-                var that = this;
+                var div = $("#deftname-editor .modal-body").data({id});
+                var selector = `/admin/defendants/edit/${id} #defendant-form`;
                 $("#deftname-editor-submit").show();
-                div.load(selector,function()
-                {
-                    $("#deftname-editor").modal("show");
-                    if ($("#defendant-form").data("status")=="NOT FOUND") {
-                        $("#defendant-form div.alert").append(
-                            ` The underlying record might have been deleted out from under you.
-                            Please try again.`);
-                        submitButton.hide();
-                        cancelButton.text("OK").one("click",function(){
-                            // we have said this very snippet before, but...
-                            $(that).closest(".list-group-item").slideUp(
-                                function(){$(this).remove();}
-                            );
-                        });
-                        return;
-                    }
-                    var docket = $("#docket").val();
-                    if (docket) {
-                        $("#occurrences .form-check-input").each(function(){
-                            if (-1 !== $(this).val().indexOf(docket)) {
-                                $(this).attr({checked:"checked"});
-                            }
-                        });
-                    }
-                    // save the initial state so we can tell if it changed
-                    $("#given_names").data({was : $("#given_names").val()});
-                    $("#surnames").data({was : $("#surnames").val()});
-                }
-                );
+                div.load(selector,loadDefendantNameForm);
             }
         );
 
