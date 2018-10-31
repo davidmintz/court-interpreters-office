@@ -25,7 +25,7 @@ describe("admin schedule test",function(){
         it("should authenticate user david",function(){
             browser.assert.success();
             assert.ok(browser.document.title.indexOf("admin") !== -1);
-            browser.assert.evaluate("$(\".navbar-right\").text().indexOf(\"welcome david\") !== -1");
+            browser.assert.evaluate("$(\"nav div div:contains('welcome david')\").length");
         });
     });
     describe("loading current schedule",function(){
