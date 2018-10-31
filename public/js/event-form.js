@@ -504,6 +504,14 @@ var eventForm = (function () {
      */
     var appendDefendant = function(data){
 
+        var existing = $(`#defendant-names input[value=${data.id}]`);
+        if (existing.length) {
+            var span = existing.siblings(".deft-name");
+            span.css({backgroundColor:"yellow"});
+            window.setTimeout(()=>span.css({backgroundColor:"inherit"}),
+                1500);
+            return;
+        }
         $.get("/defendants/render",
             {
                 id : data.id,
@@ -627,10 +635,7 @@ var eventForm = (function () {
                 $("#anonymousJudge").val(judgeElement.val());
             }
         }
-        /** @todo fetch the form, display in a modal */
-        $("#event-form").on("click","span.deft-name",function(){
-            console.warn("boink!");
-        });
+
 
         /** these next are for admin mode */
         hatElement.on("change",hatElementChange);
@@ -808,9 +813,13 @@ var defendantForm = (function(){
                 }
             });
     };
+
     var defendantFormSubmitCallback = function(response) {
         console.debug("this is defendantFormSubmitCallback");
         var defendantForm = $("#defendant-form");
+        if (defendantForm.length > 1) {
+            console.warn("Oops! More than one #defendant-form in existence.");
+        }
         if (response.validation_errors !== undefined) {
             return displayValidationErrors(response.validation_errors);
         }
@@ -832,25 +841,27 @@ var defendantForm = (function(){
             before doing this
             */
             var id = $("#deftname-editor input[name=id]").val();
-            var input = $("li.defendant input[value="+id+"]")
-                .siblings(".defendant_name");
+            var input = $("li input[value="+id+"]");
+            var span =  input.siblings(".deft-name");
+            // sanity check?
+            console.warn(`${input.length} input found`);
             var defendant_name = $("#surnames").val().trim()
                 +", "+ $("#given_names").val().trim();
-                // update the existing thingy
-            input.val(defendant_name)
-                .next().text(defendant_name);
-            var new_deft_id = response.insert_id || response.deftname_replaced_by;
+            // update the existing thingy
+            span.text(defendant_name);
+            console.log("updated deft name");
+            var new_deft_id = response.insert_id
+                || response.deftname_replaced_by;
             if (new_deft_id) {
-                var name = input.attr("name").replace(id, new_deft_id);
-                input.attr({name : name });
-                //console.log("id was " + id + "; input name attrib is now: "
-                //    +input.attr("name"));
+                input.val(new_deft_id);
+                console.log("swapped out deft id with "+new_deft_id);
             }
             $("#defendant-form-success").text("This name has been updated.").show();
             $("#event-form").data({deftnames_modified : 1});
             window.setTimeout(function(){
                 $("#defendant-form-success").hide();
                 $("#deftname-editor").modal("hide");
+                //defendantForm.remove();
             },2000);
         }
     };
@@ -862,10 +873,17 @@ var defendantForm = (function(){
      */
     var defendantUpdateSubmit = function()
     {
+        var defendantForm = $("#defendant-form");
         // did they really change anything?
         var modified = $("#surnames").val() != $("#surnames").data("was")
             ||  $("#given_names").val() != $("#given_names").data("was");
         if (! modified) {
+            var error_div = $("#defendant-form-error");
+            if (! error_div.length) {
+                error_div = $("<div/>").addClass("alert alert-warning")
+                .attr({id:"defendant-form-error"})
+                defendantForm.prepend(error_div)
+            }
             $("#defendant-form-error").text(
                 "This name has not been modified. Please press cancel "
                 +"if you don't need to make any changes.").show();
@@ -880,7 +898,6 @@ var defendantForm = (function(){
         if (event_id) {
             url += "&event_id="+event_id;
         }
-        var defendantForm = $("#defendant-form");
         console.debug("we are in defendantUpdateSubmit, about to post");
         /*
         console.log("first one...");
@@ -905,7 +922,11 @@ var defendantForm = (function(){
 
         var submitButton = $("#deftname-editor-submit");
         var cancelButton = submitButton.next("button");
-
+        // modal closes, remove deft-name form from DOM
+        // so that no more than one exists at the same time
+        $("#deftname-editor").on("hidden.bs.modal",(event)=>{
+            $(`#${event.target.id} .modal-body form`).remove();
+        });
         $("#deftname-editor").on("click","#btn-select-all, #btn-invert-selection",
         // if this look familiar, it's because it's found in defendant-form.js
             function(event){
@@ -921,7 +942,7 @@ var defendantForm = (function(){
                     });
                 }
             });
-            //$("ul.defendant-names li span.deft-name")
+        // load deft-name editing form
         $("ul.defendant-names").on("click","li span.deft-name",
             function(){
                 var div = $("#deftname-editor .modal-body");
