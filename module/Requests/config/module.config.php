@@ -80,7 +80,7 @@ return [
             [
                 'label' => 'requests',
                 'route' => 'requests',
-                'title' => 'main page for interpreter scheduling'
+                'title' => 'main page for scheduling interp'
             ],
             [
                 'label' => 'list',
@@ -99,7 +99,17 @@ return [
             ],
 
             //*
-        ]
+        ],
+        // a/k/a admin
+        'default' => [
+            [
+                'label' => 'requests',
+                'route' => 'admin-requests',
+                'title' =>  'shit is real',
+                'order' => 500,
+                'expand' => false,
+            ]
+        ],
     ],
     'router' => [
         'routes' => [
@@ -114,6 +124,18 @@ return [
                         'action' => 'validate',
                     ],
                 ]
+            ],
+            // work in progress -- expect it to blow up at first
+            'admin-requests' => [
+                'type' => Literal::class,
+                'options'=>[
+                    'route' => '/admin/requests',
+                    'defaults' => [
+                        'module' => 'InterpretersOffice\Admin',
+                        'controller' => 'InterpretersOffice\Requests\Admin\Controller\IndexController',
+                        'action' => 'index',
+                    ],
+                ],
             ],
             'requests' => [
                 'type' => Literal::class,
@@ -202,5 +224,12 @@ return [
                 ],
             ],
         ]
-    ]
+    ],
+    'acl' => [
+        'resources' => [
+            'InterpretersOffice\Requests\Admin\Controller\IndexController' =>
+            'InterpretersOffice\Admin\Controller\EventsController',
+
+        ],
+    ],
 ];

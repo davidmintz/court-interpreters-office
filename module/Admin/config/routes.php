@@ -11,6 +11,7 @@ return  [
     'routes' => [
         'admin' => [
             'type' => Segment::class,
+            'may_terminate' => true,
             'options' => [
                 'route' => '/admin',
                 'defaults' => [
@@ -18,6 +19,9 @@ return  [
                     'controller' => Controller\IndexController::class,
                     'action' => 'index',
                 ],
+            ],
+            'child_routes' => [
+
             ],
         ],
         'events' => [
