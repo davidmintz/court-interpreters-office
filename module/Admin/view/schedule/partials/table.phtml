@@ -25,15 +25,15 @@
         endif;?>">
             <td class="text-right text-nowrap"><?php echo $e['time'] ? $e['time']->format('g:i a') : ''?></td>
             <td style="line-height:1.2em" class="py-2 clearfix">
+                <a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>">
+                    <span data-toggle="tooltip" title="edit this event" class="ml-1 float-right align-self-top fas fa-edit text-primary mr-2"> </span>
+                    <span class="sr-only">edit this event</span>
+                </a>
                 <a data-toggle="tooltip" title="view event details" href="<?php echo $this->url('events/view', ['id' => $e['id']]);?>"><?php echo $e['type']; ?><?php
                 if ($e['location_type'] == 'jail') :
                     ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
                 endif;
                 ?></a>
-                <a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>">
-                    <span data-toggle="tooltip" title="edit this event" class="ml-1 float-right align-self-top fas fa-edit text-primary mr-2"> </span>
-                    <span class="sr-only">edit this event</span>
-                </a>
             </td>
             <td class="text-nowrap"><?php echo $e['judge'];
             if (($e['category'] == "in" or 'magistrate' == $e['judge'])) :
