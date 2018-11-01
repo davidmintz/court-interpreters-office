@@ -99,8 +99,8 @@ class EventForm extends ZendForm implements
     {
 
         $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);
-        $this->listeners[] = $events->attach('post.load', [$this, 'postLoad']);
         $this->listeners[] = $events->attach('pre.populate', [$this, 'prePopulate']);
+        //$this->listeners[] = $events->attach('post.load', [$this, 'postLoad']);
         //$this->listeners[] = $events->attach('post.validate', [$this, 'postValidate']);
     }
 
@@ -115,7 +115,7 @@ class EventForm extends ZendForm implements
      * @param EventInterface $e
      * @return void
      */
-    public function postLoad(EventInterface $e)
+    public function __postLoad(EventInterface $e)
     {
         // not sure any of this is necessary
 
@@ -151,6 +151,12 @@ class EventForm extends ZendForm implements
     {
         $input = $e->getTarget()->getRequest()->getPost();
         $event = $input->get('event');
+        // if ($this->isElectronic()) {
+        //     exit("interesting");
+        // } else {
+        //     exit("FUCK US");
+        // }
+
         /* there is one form control for the judge, but its value may
          * correspond to either the 'judge' or the 'anonymousJudge' property,
          * and we have to make sure one is null and the other is not-null. Some
@@ -246,16 +252,6 @@ class EventForm extends ZendForm implements
         if ($location && $parentLocation = $location->getParentLocation()) {
             $fieldset->get('parent_location')->setValue($parentLocation->getId());
         }
-        // seems like BULLSHIT to have to do quite so much work here.
-        // what am I doing wrong that makes this necessary?
-        // if submitter !== NULL, set anonymousSubmitter element = hat_id of submitter
-        if (null !== $event->getSubmitter()) {
-            $hat = $event->getSubmitter()->getHat();
-            $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
-            // the form element value needs to be an integer, not an object.
-            $fieldset->get('submitter')
-                  ->setValue($event->getSubmitter()->getId());
-        }
         $judge_element = $fieldset->get('judge');
         $anonymous_judge = $event->getAnonymousJudge();
         if (is_object($anonymous_judge)) {
@@ -268,6 +264,16 @@ class EventForm extends ZendForm implements
             if ($date_obj) {
                 $this->get('modified')->setValue($date_obj->format('Y-m-d H:i:s'));
             }
+        }
+        // seems like BULLSHIT to have to do quite so much work here.
+        // what am I doing wrong that makes this necessary?
+        // if submitter !== NULL, set anonymousSubmitter element = hat_id of submitter
+        if (null !== $event->getSubmitter()) {
+            $hat = $event->getSubmitter()->getHat();
+            $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
+            // the form element value needs to be an integer, not an object.
+            $fieldset->get('submitter')
+                  ->setValue($event->getSubmitter()->getId());
         }
     }
 
@@ -344,85 +350,8 @@ class EventForm extends ZendForm implements
     {
         $errors = $this->getMessages('modified');
         return $errors &&
-                key_exists(\Zend\Validator\Callback::INVALID_VALUE, $errors);
+            key_exists(\Zend\Validator\Callback::INVALID_VALUE, $errors);
     }
 
 
-        /**
-         * checks for updates datetime fields, interpreters
-         *
-         * but it was not really working so it's not in use, at least for time
-         * being. @todo either make it work or eliminate
-         *
-         * @param EventInterface $e
-         * @return void
-         */
-    public function __postValidate(EventInterface $e)
-    {
-        // $entity = $this->getObject();
-        // $controller = $e->getTarget();
-        // $logger = $controller->getEvent()->getApplication()
-        //     ->getServiceManager()->get('log');
-        // $updated = false;
-        // /** @var  Doctrine\ORM\PersistentCollection $collection */
-        // $collection = $entity->getInterpreterEvents();
-        // if ($collection->count() != count($this->state_before['interpreterEvents'])) {
-        //     $updated = true;
-        // } else {
-        //     $after = [];
-        //     foreach ($collection as $ie) {
-        //         $after[] = (string)$ie;
-        //     }
-        //     $logger->debug(sprintf('postValidate: interpreterEvents state is now: %s', print_r($after, true)));
-        //     $before = $this->state_before['interpreterEvents'];
-        //     if (count($after) > 1) {
-        //         sort($before);
-        //         sort($after);
-        //     }
-        //     if ($before != $after) {
-        //         $updated = true;
-        //     }
-        // }
-        // $logger->debug(($updated ? "YES" : "NO"). " interpreters have been changed");
-        // $post = $controller->params()->fromPost()['event'];
-        //
-        // if ($updated) {
-        //     // this change suffices to trigger the Event entity's preUpdate()
-        //     $entity->setModified(new \DateTime());
-        // }
-        // foreach ($this->datetime_props as $prop) {
-        //     if (strstr($prop, '_')) {
-        //         $getter = 'get'.ucfirst(str_replace('_', '', $prop));
-        //     } else {
-        //         $getter = 'get'.ucfirst($prop);
-        //     }
-        //     $new_value = $entity->$getter();
-        //     $old_value = $this->state_before[$prop];
-        //     $really_modified = true; // presumptively
-        //     if ($old_value == $new_value) {
-        //         $really_modified = false;
-        //     } elseif (in_array($prop, ['time','end_time','submission_time'])) {
-        //         // a time field, not a date
-        //         // brace against possible NULL
-        //         $new_string = $new_value instanceof \DateTime ?
-        //              $new_value->format('g:i a') : '';
-        //         $old_string = $old_value instanceof \DateTime ?
-        //             $old_value->format('g:i a') : '';
-        //         $really_modified = $new_string != $old_string;
-        //     }
-        //     if (! $really_modified) {
-        //         // set it back to the previous object instance
-        //         $setter = 's'.substr($getter, 1);
-        //         $entity->$setter($old_value);
-        //     }
-        // }
-    }
-
-        /*
-         * date/time properties
-         *
-         * @var array
-         protected $datetime_props =
-         ['date','time','end_time','submission_date', 'submission_time'];
-         */
 }

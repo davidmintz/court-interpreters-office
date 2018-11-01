@@ -362,7 +362,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $entity = $this->objectManager->find(Entity\Request::class,$id);
         if ($entity) {
             try {
-                $this->objectManager->remove($entity);
+                $entity->setCancelled(true);
                 //throw new \Exception("shit happened");
                 $this->objectManager->flush();
                 $description = $this->params()->fromPost('description');
