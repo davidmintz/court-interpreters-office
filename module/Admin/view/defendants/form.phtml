@@ -8,8 +8,7 @@ $form->add([
     'name' => 'submit',
     'type' => 'Zend\Form\Element\Submit',
     'attributes' => ['value' => 'save','id' => 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
-])->setAttribute('method', 'post')->setAttribute('action', $url)
-->setAttribute('data-redirect_url', $this->url("admin-defendants"));
+])->setAttribute('method', 'post')->setAttribute('data-redirect_url', $this->url("admin-defendants"));
 
 $this->headTitle('admin | defendants |'.$action);
 $form->prepare();
@@ -29,10 +28,7 @@ if ($this->error_not_found) :
     </div>
     <?php return;
 endif;
-if ($action == 'add') :
-        $url = $this->url('admin-defendants/add');
-else :
-    $url = $this->url('admin-defendants/edit', ['id' => $form->getObject()->getId()]);
+if ($action != 'add') :    
     $form->setAttribute('data-defendant_name', (string)$form->getObject());
 endif;
 $form->prepare();
