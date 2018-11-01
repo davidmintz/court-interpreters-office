@@ -79,6 +79,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         $user = $this->getAuthenticatedUser($args);
         $person = $this->getCurrentUserPerson($args);
         $request->setCreated($now)->setModified($now)
+                ->setCancelled(false)
                 ->setSubmitter($person)
                 ->setModifiedBy($user);
         $this->getLogger()->debug("YES, we have set Request metadata in prePersist listener");
@@ -112,7 +113,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         $fields_updated = array_keys($args->getEntityChangeSet());
         if (array_diff($fields_updated,['date','time'])) {
             $really_modified = true;
-            $this->getLogger()->debug("fields OTHER THAN date|time were changed");
+            //$this->getLogger()->debug("fields OTHER THAN date|time were changed");
         } else {
             $time_before = $args->getOldValue('time')->format('H:i');
             $time_after = $args->getNewValue('time')->format('H:i');
@@ -124,16 +125,17 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         }
 
         if ($really_modified or $this->defendantsWereModified($request)) {
-            $this->getLogger()->debug("YES, updating request meta in preUpdate listener");
+            //$this->getLogger()->debug("YES, updating request meta in preUpdate listener");
             $request->setModified( new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
             $user = $this->getAuthenticatedUser($args)->getUsername();
-            $this->getLogger()->info("user $user is updating a Request");
+            $this->getLogger()->info("user $user (really) is updating a Request");
         }
-
-        // $this->getEventManager()->trigger( __FUNCTION__, $this,
-        //     compact('args', 'entity')
-        // );
+        //  trigger event for the ScheduleListener, which was attached when we
+        //  were instantiated
+        $this->getEventManager()->trigger( __FUNCTION__, $this,
+            ['args'=>$args,'entity'=>$request]
+        );
     }
 
     /**
