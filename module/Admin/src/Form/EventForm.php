@@ -104,43 +104,6 @@ class EventForm extends ZendForm implements
         //$this->listeners[] = $events->attach('post.validate', [$this, 'postValidate']);
     }
 
-    /**
-     * Entity load event listener DOES NOT WORK FOR SHIT.
-     *
-     * Runs after entity is fetched, but before form data is set. We save the
-     * original DateTime instances for later comparison so we can avoid wasting
-     * a needless update query. Also, save a snapshot of the interpreterEvents
-     * so as to detect changes later.
-     *
-     * @param EventInterface $e
-     * @return void
-     */
-    public function __postLoad(EventInterface $e)
-    {
-        // not sure any of this is necessary
-
-        // $controller = $e->getTarget();
-        // $logger = $controller->getEvent()->getApplication()
-        //     ->getServiceManager()->get('log');
-        // $entity = $e->getParam('entity');
-        // foreach ($this->datetime_props as $prop) {
-        //     if (strstr($prop, '_')) {
-        //         $getter = 'get'.ucfirst(str_replace('_', '', $prop));
-        //     } else {
-        //         $getter = 'get'.ucfirst($prop);
-        //     }
-        //     $this->state_before[$prop] = $entity->$getter();
-        // }
-        // foreach ($entity->getInterpreterEvents() as $ie) {
-        //     $this->state_before['interpreterEvents'][] = (string)$ie;
-        // }
-        //
-        // $logger->debug(sprintf(
-        //     'postLoad: interpreterEvents state before is now: %s',
-        //     print_r($this->state_before['interpreterEvents'], true)
-        // ));
-    }
-
    /**
     * preprocesses input and conditionally modifies validators
     *
@@ -149,13 +112,16 @@ class EventForm extends ZendForm implements
     */
     public function preValidate(EventInterface $e)
     {
+        // $container = $e->getTarget()->getEvent()->getApplication()
+        //     ->getServiceManager();
+        // $log = $container->get('log');
+        // $log->debug(
+        //     "no shit. are we from a Request? ".($this->isElectronic()?"YES":"NO?")
+        // );
+
         $input = $e->getTarget()->getRequest()->getPost();
         $event = $input->get('event');
-        // if ($this->isElectronic()) {
-        //     exit("interesting");
-        // } else {
-        //     exit("FUCK US");
-        // }
+
 
         /* there is one form control for the judge, but its value may
          * correspond to either the 'judge' or the 'anonymousJudge' property,
@@ -191,6 +157,11 @@ class EventForm extends ZendForm implements
                     ->get('end_time');
             $end_time_input->getValidatorChain()
                 ->attach(new Validator\EndTimeValidator());
+        }
+
+        if ($this->isElectronic()) {
+            $input->set('event', $event);
+            return;
         }
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null
@@ -263,6 +234,18 @@ class EventForm extends ZendForm implements
             $date_obj = $event->getModified();
             if ($date_obj) {
                 $this->get('modified')->setValue($date_obj->format('Y-m-d H:i:s'));
+            }
+        }
+        // if this is an update of an Event that came from a Request entity,
+        // some of the metadata should be immutable
+        if ($this->isElectronic()) {
+            $inputFilter = $this->getInputFilter()->get('event');
+            foreach (['submitter','submission_date','submission_time',
+                    'anonymousSubmitter'] as $element_name)
+            {
+                $inputFilter->remove($element_name);
+                $element = $fieldset->get($element_name);
+                $element->setAttribute('disabled','disabled');
             }
         }
         // seems like BULLSHIT to have to do quite so much work here.
@@ -355,3 +338,40 @@ class EventForm extends ZendForm implements
 
 
 }
+
+    /*
+     * Entity load event listener DOES NOT WORK FOR SHIT.
+     *
+     * Runs after entity is fetched, but before form data is set. We save the
+     * original DateTime instances for later comparison so we can avoid wasting
+     * a needless update query. Also, save a snapshot of the interpreterEvents
+     * so as to detect changes later.
+     *
+     * @param EventInterface $e
+     * @return void
+     public function __postLoad(EventInterface $e)
+     {
+     // not sure any of this is necessary
+
+     // $controller = $e->getTarget();
+     // $logger = $controller->getEvent()->getApplication()
+     //     ->getServiceManager()->get('log');
+     // $entity = $e->getParam('entity');
+     // foreach ($this->datetime_props as $prop) {
+     //     if (strstr($prop, '_')) {
+     //         $getter = 'get'.ucfirst(str_replace('_', '', $prop));
+     //     } else {
+     //         $getter = 'get'.ucfirst($prop);
+     //     }
+     //     $this->state_before[$prop] = $entity->$getter();
+     // }
+     // foreach ($entity->getInterpreterEvents() as $ie) {
+     //     $this->state_before['interpreterEvents'][] = (string)$ie;
+     // }
+     //
+     // $logger->debug(sprintf(
+     //     'postLoad: interpreterEvents state before is now: %s',
+     //     print_r($this->state_before['interpreterEvents'], true)
+     // ));
+ }
+     */

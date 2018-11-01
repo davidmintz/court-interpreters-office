@@ -1,6 +1,6 @@
 <?php
 use InterpretersOffice\Admin\Form\View\Helper\InterpreterElementCollection;
-use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection;
+
 
 $this->headTitle('admin | schedule | '.$this->layout()->action);
 $this->headLink()
@@ -168,7 +168,7 @@ echo $this->form()->openTag($form); ?>
                  </div>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                     <?php
-                        $interpreters = $form->getObject()->getInterpreterEvents();
+                    $interpreters = $form->getObject()->getInterpreterEvents();
                     if ($interpreters->count()) :
                         $helper = (new InterpreterElementCollection())->setView($this);
                         echo $helper($fieldset->get('interpreterEvents'));
