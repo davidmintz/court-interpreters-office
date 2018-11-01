@@ -570,13 +570,11 @@ var eventForm = (function () {
         slideout.on("click",".defendant-names li",function(){
             var element = $(this);
             //alert(element.data("id")); return;
-            $.get("/defendants/template",
-                { defendant:element.data("id"),
+            $.get("/defendants/render",
+            {
                   name : element.text().trim(),
-                  index : $("#defendant-names li").length,
-                  event : $("input[name='event[id]']").val()
-              },
-                function(html){
+                  id : element.data("id")
+            },  function(html){
                     $("#defendant-names").append(html);
                     defendantSearchElement.val("");
                     slideout.toggle("slide");
