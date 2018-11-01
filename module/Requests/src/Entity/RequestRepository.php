@@ -61,6 +61,7 @@ use InterpretersOffice\Requests\Entity\Request;
             ->join('r.language','l' )
              ->where('r.time = :time AND r.date = :date AND r.docket = :docket')
              ->andWhere('l.id = :language_id')
+             ->andWhere('r.cancelled = false')
              ->andWhere('e.id = :event_type_id');
              $judge = $entity->getJudge();
              if ($judge) {
@@ -136,7 +137,8 @@ use InterpretersOffice\Requests\Entity\Request;
             if ($user->judge_ids) {
                 // $user is a Law Clerk or Courtoom Deputy, so constrain it
                 // to events before their judge(s)
-                $qb->where('j.id IN (:judge_ids)');
+                $qb->where('j.id IN (:judge_ids)')
+                ->andWhere('r.cancelled = false');
                 $parameters['judge_ids'] = $user->judge_ids;
                 // and in-court events
                 $qb->join('t.category','c')->andWhere('c.category = :category');

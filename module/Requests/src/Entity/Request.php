@@ -180,6 +180,16 @@ class Request implements ResourceInterface
      */
     protected $pending = true;
 
+
+    /**
+     * cancelled
+     *
+     * true if a user cancels the Request
+     * @ORM\Column(type="boolean",options={"nullable":false,"default":false})
+     * @var boolean
+     */
+    protected $cancelled;
+
     /**
      * Defendant names.
      *
@@ -207,42 +217,6 @@ class Request implements ResourceInterface
      */
     protected $extraData = '';
 
-    /*CREATE TABLE `requests` (
-  `id` mediumint(8) unsigned NOT NULL,
-  `date` date NOT NULL,
-  `time` time NOT NULL,
-  `judge_id` smallint(5) unsigned DEFAULT NULL,
-  `anonymous_judge_id` smallint(5) unsigned DEFAULT NULL,
-  `event_type_id` smallint(5) unsigned NOT NULL,
-  `language_id` smallint(6) unsigned NOT NULL,
-  `docket` varchar(14) COLLATE utf8_unicode_ci NOT NULL,
-  `location_id` smallint(5) unsigned DEFAULT NULL,
-  `submitter_id` smallint(5) unsigned NOT NULL,
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  `modified_by_id` smallint(5) unsigned NOT NULL,
-  `comments` varchar(500) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `event_id` mediumint(8) unsigned DEFAULT NULL,
-  `pending` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_event_id` (`event_id`),
-  KEY `evt_id` (`event_id`),
-  KEY `submitter_id` (`submitter_id`),
-  KEY `event_type_id` (`event_type_id`),
-  KEY `location_id` (`location_id`),
-  KEY `language_id` (`language_id`),
-  KEY `modified_by_id` (`modified_by_id`),
-  KEY `judge_id` (`judge_id`),
-  KEY `anonymous_judge_id` (`anonymous_judge_id`),
-  CONSTRAINT `requests_ibfk_1` FOREIGN KEY (`event_type_id`) REFERENCES `event_types` (`id`),
-  CONSTRAINT `requests_ibfk_2` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
-  CONSTRAINT `requests_ibfk_3` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`),
-  CONSTRAINT `requests_ibfk_4` FOREIGN KEY (`modified_by_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `requests_ibfk_5` FOREIGN KEY (`submitter_id`) REFERENCES `people` (`id`),
-  CONSTRAINT `requests_ibfk_6` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`),
-  CONSTRAINT `requests_ibfk_7` FOREIGN KEY (`anonymous_judge_id`) REFERENCES `anonymous_judges` (`id`),
-  CONSTRAINT `requests_ibfk_8` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE SET NULL
-)*/
 
      /**
      * Constructor
@@ -691,6 +665,28 @@ class Request implements ResourceInterface
             $this->defendants->removeElement($defendant);
         }
     }
+
+    /**
+     * gets the cancelled property
+     * @return boolean
+     */
+    public function getCancelled()
+    {
+        return $this->cancelled;
+    }
+
+    /**
+     * sets $cancelled
+     * 
+     * @param Request
+     */
+    public function setCancelled($flag)
+    {
+        $this->cancelled = $flag;
+
+        return $this;
+    }
+
 
     /**
      * sets "extra" data
