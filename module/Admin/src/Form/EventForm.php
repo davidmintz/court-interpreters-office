@@ -70,6 +70,26 @@ class EventForm extends ZendForm implements
     }
 
     /**
+     * whether Event entity was submitted through the Request module
+     * @var boolean
+     */
+    private $is_electronic = false;
+
+    /**
+     * sets is_electronic flag
+     * @param boolean $bool
+     */
+    public function setElectronic($bool)
+    {
+        $this->is_electronic = $bool;
+    }
+
+    public function isElectronic()
+    {
+        return $this->is_electronic;
+    }
+
+    /**
      * implements ListenerAggregateInterface
      *
      * @param EventManagerInterface $events
@@ -85,7 +105,7 @@ class EventForm extends ZendForm implements
     }
 
     /**
-     * Entity load event listener
+     * Entity load event listener DOES NOT WORK FOR SHIT.
      *
      * Runs after entity is fetched, but before form data is set. We save the
      * original DateTime instances for later comparison so we can avoid wasting

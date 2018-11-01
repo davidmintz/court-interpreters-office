@@ -248,7 +248,11 @@ echo $this->form()->openTag($form); ?>
             endif;?>
     </div>
 </div>
-<?php echo $this->form()->closeTag();?>
+<?php echo $this->form()->closeTag();
+if ($form->isElectronic()):
+?> <p class="text-muted">this was submitted electronically</p> <?php
+endif;
+?>
 <?php /** move this into a partial ? **/?>
 <div id="deftname-editor" class="modal" role="dialog" aria-labelledby="deft-editor-header" aria-hidden="true">
     <div class="modal-dialog" role="document">
