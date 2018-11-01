@@ -193,10 +193,10 @@ class EventsController extends AbstractActionController
         $view = $this->getViewModel(['id' => $id,'form' => $form]);
         $events = $this->getEventManager();
         $form->attach($events);
-        //$events->trigger('post.load', $this, ['entity' => $entity]);
         $form->bind($entity);
         $modified = $entity->getModified();
-        $events->trigger('pre.populate', $this, ['entity' => $entity]);
+        $events->trigger('pre.populate', $this,
+            ['entity' => $entity, 'form'=> $form]);
         if (! $this->getRequest()->isPost()) {
             return $view;
         }
