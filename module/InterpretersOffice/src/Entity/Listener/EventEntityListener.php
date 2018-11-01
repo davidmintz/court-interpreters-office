@@ -137,6 +137,9 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             return true;
         }
         foreach (['time','submission_time','end_time'] as $time) {
+            if (! in_array($time, $fields_updated)) {
+                continue;
+            }
             $before = $args->getOldValue($time)->format('H:i');
             $after = $args->getNewValue($time)->format('H:i');
             if ($before != $after) {
@@ -158,7 +161,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             return true;
         }
         $this->logger->debug("NOTHING really modified in Event entity");
-        
+
         return false;
     }
 
