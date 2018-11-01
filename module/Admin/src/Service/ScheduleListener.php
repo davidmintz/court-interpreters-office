@@ -8,6 +8,7 @@ use Zend\Log\LoggerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Admin\Service\ScheduleListener;
+use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
 /**
  * listener for schedule changes
@@ -70,6 +71,23 @@ class ScheduleListener
             . " on target $target");
         if (Entity\Listener\EventEntityListener::class == $target) {
             return $this->eventUpdateHandler($e);
+        }
+        if (class_exists(RequestEntityListener::class)
+            && RequestEntityListener::class == $target) {
+            $this->logger->debug("ScheduleListener triggered by RequestEntityListener: ".$e->getName());
+            $params = $e->getParams();
+            /** @var  Doctrine\ORM\Event\PreUpdateEventArgs $args */
+            $args = $params['args'];
+            /** @var  InterpretersOffice\Requests\Entity\Request $request */
+            $request = $params['entity'];
+
+            if ($args->hasChangedField('cancelled') && $args->getNewValue('cancelled'))
+            {
+                $this->logger->info(sprintf('ScheduleListener: ¡user %s has CANCELLED request %d!',
+                    $this->auth->getIdentity()->username, $request->getId()));
+            }
+
+
         }
         $this->logger->info(sprintf(
             'ScheduleListener not doing anything with %s:%s',
