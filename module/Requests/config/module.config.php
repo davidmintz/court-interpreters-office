@@ -16,6 +16,7 @@ return [
     'controllers' => [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+           Controller\Admin\IndexController::class => Controller\Factory\IndexControllerFactory::class,
         ],
     ],
     'view_manager' => [
@@ -47,6 +48,18 @@ return [
 
     // work in progress
     'navigation' => [
+        'admin_breadcrumbs' =>  [
+            [
+                'label' => 'admin',
+                'route' => 'admin',
+                'pages' => [
+                    [
+                        'label' => 'requests',
+                        'route' => 'admin-requests',
+                    ],
+                ],
+            ],
+        ],
         'RequestsBreadcrumbs' => [
             [
                 'label' => 'requests',
@@ -105,8 +118,8 @@ return [
             [
                 'label' => 'requests',
                 'route' => 'admin-requests',
-                'title' =>  'shit is real',
-                'order' => 500,
+                'title' =>  'manage incoming requests',
+                'order' => 200,
                 'expand' => false,
             ]
         ],
@@ -132,7 +145,7 @@ return [
                     'route' => '/admin/requests',
                     'defaults' => [
                         'module' => 'InterpretersOffice\Admin',
-                        'controller' => 'InterpretersOffice\Requests\Admin\Controller\IndexController',
+                        'controller' => 'InterpretersOffice\Requests\Controller\Admin\IndexController',
                         'action' => 'index',
                     ],
                 ],
@@ -227,7 +240,7 @@ return [
     ],
     'acl' => [
         'resources' => [
-            'InterpretersOffice\Requests\Admin\Controller\IndexController' =>
+            'InterpretersOffice\Requests\Controller\Admin\IndexController' =>
             'InterpretersOffice\Admin\Controller\EventsController',
 
         ],

@@ -8,4 +8,7 @@ return [
     'interpreters-office/requests/index/view' => __DIR__ . '/../view/index/view.phtml',
     'denied' =>  __DIR__ . '/../view/index/denied.phtml',
     'confirm-cancel' =>  __DIR__ . '/../view/index/confirm-cancel.phtml',
+
+    // admin 
+    'interpreters-office/requests/admin/index/index' => __DIR__ . '/../view/admin/index.phtml',
 ];
