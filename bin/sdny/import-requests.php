@@ -41,6 +41,7 @@ $insert = $db->prepare(
         :comments,
         :event_id,
         :pending,
+        :cancelled,
         :extra_json_data
     )'
 );
@@ -82,6 +83,7 @@ while ($r = $requests_query->fetch(\PDO::FETCH_OBJ)) {
         'created'=> $r->created,
         'comments' => $r->comments,
         'modified' => $r->modified,
+        'cancelled' => 0,
         'extra_json_data' => '',
     ];
     // the judge
