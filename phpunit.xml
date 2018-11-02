@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true" stopOnFailure="true" bootstrap="module/InterpretersOffice/test/Bootstrap.php">
     <testsuites>
-        <testsuite name="CourtInterpretersOffice Test Suite">
+        <testsuite name="Required modules">
             <directory>./module/InterpretersOffice/test</directory>
             <directory>./module/Admin/test</directory>
-            <directory>./module/Requests/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
             <exclude>./module/InterpretersOffice/test/Controller/AccountControllerTest.php</exclude>
             <exclude>./module/Admin/test/WebDriver/</exclude>
 			<exclude>./module/InterpretersOffice/test/codecept/</exclude>
+        </testsuite>
+        <testsuite name="Requests module">
+            <directory>./module/Requests/test</directory>
         </testsuite>
     </testsuites>
 	<php>
