@@ -13,23 +13,16 @@
     <?php endif; ?>
 </div>
 <?php echo $this->flashMessenger()->render();?>
+
 <p>
 This is a development version of InterpretersOffice. For more information please see
 <a href="https://interpretersoffice.org">the official website</a>. Our source code
 is available at <a href="https://github.com/davidmintz/court-interpreters-office">github</a>.
 </p>
-<p>
-</p>
-
-
-<h3 class="text-center">To do</h3>
-<ul class="list-group center-block" style="max-width:500px">
-    <li class="list-group-item">interpreter edit form:error handling when vault returns error</li>
-    <li class="list-group-item">Event fieldset: validation for cancellation?</li>
-    <li class="list-group-item">events/form information thingies and popovers for help?</li>
-    <li class="list-group-item">tests for Event metadata</li>
-    <li class="list-group-item">tests for InterpreterEvent metadata</li>
-    <li class="list-group-item">rewrite logging stuff. Monolog? a listener that wraps a logger?</li>
-    <li class="list-group-item">date calculation logic for Requests module, reporting</li>
-    <li class="list-group-item">installation: simplify, scripting</li>
-</ul>
+<?php
+if (file_exists(
+    './module/InterpretersOffice/view/interpreters-office/custom/index/index.phtml'
+)) :
+    echo $this->render('interpreters-office/custom/index/index');
+endif;
+?>

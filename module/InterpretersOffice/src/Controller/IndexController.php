@@ -29,6 +29,7 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
+        $router = $this->getEvent()->getRouter();        
         return new ViewModel();
     }
 
