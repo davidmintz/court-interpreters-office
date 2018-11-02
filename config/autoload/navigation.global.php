@@ -207,7 +207,7 @@ return [
                 'route' => 'admin',
                 'title' => 'manage other data entities',
                 'resource' => Admin\IndexController::class,
-                //'privilege' => 'index','action' => 'index',
+                'order' => 600,
                 'pages' => [
 
                     [
@@ -269,14 +269,40 @@ return [
                     ],
                 ],
             ],
-            /*
+
             [
-                'label' => 'log out',
-                'route' => 'logout',
-                'resource' => Main\AuthController::class,
-                'privilege' => 'logout',
+                'label' => 'tools',
+                'title' => 'yadda',
+                //'route' => 'events',
+                'order' => 700,
+                'uri' => '/',
+                //'resource' => Admin\EventsController::class,
+                'pages' => [
+                    [
+                        'label' => 'search',
+                        'uri' => '#'
+                    ],
+                    [
+                        'label' => 'reports',
+                        'uri' => '#'
+                    ],
+                    [
+                        'label' => 'help',
+                        'uri' => '#'
+                    ],
+                ]
+
             ],
-            */
+            // [
+            //     'label' => 'help',
+            //     'title' => 'get help',
+            //     //'route' => 'events',
+            //     'order' => 700,
+            //     'uri' => '/',
+            //     //'resource' => Admin\EventsController::class,
+            //
+            // ],
+
         ],
     ],
     'service_manager' => [

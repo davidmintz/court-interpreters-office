@@ -28,8 +28,12 @@ echo $this->headStyle();?>
                 echo $this->navigation($this->layout()->navigation_menu)
                     ->menu()->setPartial('partials/navbar.phtml'); endif;?>
             <?php if ($this->layout()->user) : $user = $this->layout()->user;?>
-            <div>welcome <?php echo $user->username != $user->email ? $user->username : "$user->firstname $user->lastname"?>
-                <span class="px-2 py-1 border-left"><a href="<?php echo $this->url('logout')?>">log out</a></span>
+            <div>
+                <?php /* this is bullshit. needs more work. */?>
+                <span class="d-none d-xl-inline">
+                    welcome <?php echo $user->username != $user->email ? $user->username : "$user->firstname $user->lastname"?>
+                </span>
+                <span class="px-2 py-1"><a href="<?php echo $this->url('logout')?>">log out</a></span>
             </div>
             <?php endif; ?>
           </div>
