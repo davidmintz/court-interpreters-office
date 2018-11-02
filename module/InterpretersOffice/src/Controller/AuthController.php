@@ -87,8 +87,6 @@ class AuthController extends AbstractActionController
                         ['form' => $form, 'status' => $result->getCode()]
                     );
             }
-            // TMP DEBUG
-            // echo (spl_object_hash($this->auth). " is the hash of our auth object in the Controller loginAction\n");
             $user = $this->auth->getIdentity();
             $role = $user->role;
 
@@ -113,7 +111,11 @@ class AuthController extends AbstractActionController
             if (in_array($role, ['administrator', 'manager'])) {
                 $route = 'admin';
             } elseif ('submitter' == $role) {
-                $route = 'requests';
+                if ($this->getEvent()->getRouter()->hasRoute('requests')) {
+                    $route = 'requests';
+                } else {
+                    $route = 'home';
+                }
             } else {
                 // everyone else goes to the main page
                 $route = 'home';
