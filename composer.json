@@ -47,7 +47,8 @@
                 "module/Admin/test/",
                 "module/Requests/test/"
             ],
-            "SDNY\\Vault\\Test\\" : "module/Vault/test/"
+            "SDNY\\Vault\\Test\\" : "module/Vault/test/",
+            "Sandbox\\"  : "module/Sandbox/src"
         }
     },
     "authors": [

@@ -19,6 +19,7 @@ $modules = [
     'InterpretersOffice',
     'InterpretersOffice\Admin',
     'InterpretersOffice\Requests',
+    'Sandbox'
 ];
 if (! getenv('TRAVIS')) {
     $modules[] = 'SDNY\Vault';
