@@ -28,9 +28,14 @@ trait CurrentUserTrait
      */
     public function getAuthenticatedUser(LifecycleEventArgs $args)
     {
+        if (! $this->auth) { return null; }
         if (! $this->user) {
             $em = $args->getObjectManager();
-            $id = $this->auth->getIdentity()->id;
+            $id = $this->auth->hasIdentity() ? $this->auth->getIdentity()->id :
+                null;
+            if (! $id) {
+                return null;
+            }
             $this->user = $em->createQuery(
             'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id')
                 ->setParameters(['id' => $id])

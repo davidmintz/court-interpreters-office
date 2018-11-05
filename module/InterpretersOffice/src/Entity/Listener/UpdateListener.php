@@ -9,6 +9,7 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
+use InterpretersOffice\Entity\VerificationToken;
 use InterpretersOffice\Entity\DefendantEvent;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
@@ -100,10 +101,12 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     */
     public function postPersist(LifecycleEventArgs $args)
     {
+        $user = $this->getAuthenticatedUser($args);
+
         $this->logger->debug(
             sprintf(
-                'user %s inserting entity %s',
-                $this->getAuthenticatedUser($args)->getUsername(),
+                'user %s has inserted entity %s',
+                $user ? $user->getUsername() : 'nobody',
                 get_class($args->getObject())
             )
         );
@@ -160,11 +163,12 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
+
         $user = $this->getAuthenticatedUser($args);
         $this->logger->debug(
             sprintf(
                 'user %s updated entity %s',
-                $user->getUsername(),
+                $user ? $user->getUsername() : 'nobody',
                 get_class($args->getObject())
             )
         );
@@ -180,17 +184,18 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
+        $user = $this->getAuthenticatedUser($args);
         if ($entity instanceof Entity\InterpreterEvent) {
-            $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
             $this->logger->debug(
             "set createdBy and timestamp on InterpreterEvent in ".__METHOD__);
         }
+
         $this->logger->debug(
             sprintf(
-                '%s:  user %s creating %s',
+                '%s:  user %s is creating a new %s',
                 __METHOD__,
-                $this->getAuthenticatedUser($args)->getUsername(),
+                $user ? $user->getUsername() : 'nobody',
                 get_class($args->getObject())
             )
         );
