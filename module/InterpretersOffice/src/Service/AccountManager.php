@@ -529,14 +529,14 @@ class AccountManager implements LoggerAwareInterface
      *
      * @param  string $hashed_id a hash of the user's email address
      * @param string $token a random string
-     * @param string $purpose one of either 'reset_password' or 'confirm_email'
+     * @param string $action one of either 'reset_password' or 'confirm_email'
      * @return Array  in the form ['data'=> array|null, 'error'=> string|null]
      */
-    public function verify($hashed_id, $token, $purpose)
+    public function verify($hashed_id, $token, $action)
     {
-        if (! in_array($purpose, ['reset_password','confirm_email'])) {
+        if (! in_array($action, ['reset_password','confirm_email'])) {
             throw new \InvalidArgumentException(
-                'verify() method requires argument "purpose" to be a string ' .
+                'verify() method requires argument "action" to be a string ' .
                 'that is either "reset_password" or "confirm_email"'
             );
         }
@@ -564,19 +564,19 @@ class AccountManager implements LoggerAwareInterface
         $valid = password_verify($token, $data['token']);
         if (! $valid) {
             $log->info('verification token failed password_verify() '
-                . "for user {$data['email']}");
+                . "for user {$data['email']} with token $token and data[token] = $data[token]");
 
             return ['error' => self::ERROR_TOKEN_VALIDATION_FAILED,
                 'data' => $data];
         }
         /* maybe we should ensure that this never happens */
-        if (self::CONFIRM_EMAIL == $purpose && $data['active']) {
+        if (self::CONFIRM_EMAIL == $action && $data['active']) {
             $log->info('email verification: account has already been activated '
             . "for user {$data['email']}, person id {$data['person_id']}");
         }
         /* self-service registration is not an option for users in any but the
         least privileged role, which is "submitter" */
-        if (self::CONFIRM_EMAIL == $purpose && 'submitter' !== $data['role']) {
+        if (self::CONFIRM_EMAIL == $action && 'submitter' !== $data['role']) {
             return [
                 'error' => self::INVALID_ROLE_FOR_SELF_REGISTRATION,
                 'data' => null];
@@ -727,7 +727,7 @@ class AccountManager implements LoggerAwareInterface
 
         return true;
     }
-    
+
     /**
      * sets viewRenderer
      *
