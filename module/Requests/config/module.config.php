@@ -15,9 +15,9 @@ use Zend\Router\Http\Segment;
 return [
     'controllers' => [
         'factories' => [
-           Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
-           Controller\UpdateController::class => Controller\Factory\IndexControllerFactory::class,
-           Controller\Admin\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+           Controller\IndexController::class => Controller\Factory\RequestsControllerFactory::class,
+           Controller\WriteController::class => Controller\Factory\RequestsControllerFactory::class,
+           Controller\Admin\IndexController::class => Controller\Factory\RequestsControllerFactory::class,
         ],
     ],
     'view_manager' => [
@@ -178,7 +178,7 @@ return [
                         'options' => [
                             'route' => '/create[/repeat/:id]',
                             'defaults' => [
-                                'controller' => Controller\UpdateController::class,
+                                'controller' => Controller\WriteController::class,
                                 'action' => 'create',
                                 'constraints' => [
                                     'id' => '[1-9]\d*',
@@ -214,7 +214,7 @@ return [
                         'options' => [
                             'route' => '/cancel/:id',
                             'defaults' => [
-                                'controller' => Controller\UpdateController::class,
+                                'controller' => Controller\WriteController::class,
                                 'action' => 'cancel',
                             ],
                             'constraints' => [
@@ -227,7 +227,7 @@ return [
                         'options' => [
                             'route' => '/update/:id',
                             'defaults' => [
-                                'controller' => Controller\UpdateController::class,
+                                'controller' => Controller\WriteController::class,
                                 'action' => 'update',
                             ],
                             'constraints' => [

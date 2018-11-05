@@ -1,6 +1,6 @@
 <?php
 /**
- * module/Requests/src/Controller/UpdateController.php
+ * module/Requests/src/Controller/WriteController.php
  */
 
 namespace InterpretersOffice\Requests\Controller;
@@ -21,10 +21,12 @@ use Zend\Mvc\MvcEvent;
 use Zend\Http\Request;
 
 /**
- *  Controller update|create Requests
+ *  update|create|cancel Requests
+ *
+ * this is for users in role "submitter"
  *
  */
-class UpdateController extends AbstractActionController implements ResourceInterface
+class WriteController extends AbstractActionController implements ResourceInterface
 {
     /**
      * objectManager instance.
