@@ -16,6 +16,7 @@ return [
     'controllers' => [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+           Controller\UpdateController::class => Controller\Factory\IndexControllerFactory::class,
            Controller\Admin\IndexController::class => Controller\Factory\IndexControllerFactory::class,
         ],
     ],
@@ -177,7 +178,7 @@ return [
                         'options' => [
                             'route' => '/create[/repeat/:id]',
                             'defaults' => [
-                                'controller' => Controller\IndexController::class,
+                                'controller' => Controller\UpdateController::class,
                                 'action' => 'create',
                                 'constraints' => [
                                     'id' => '[1-9]\d*',
@@ -213,7 +214,7 @@ return [
                         'options' => [
                             'route' => '/cancel/:id',
                             'defaults' => [
-                                'controller' => Controller\IndexController::class,
+                                'controller' => Controller\UpdateController::class,
                                 'action' => 'cancel',
                             ],
                             'constraints' => [
@@ -226,7 +227,7 @@ return [
                         'options' => [
                             'route' => '/update/:id',
                             'defaults' => [
-                                'controller' => Controller\IndexController::class,
+                                'controller' => Controller\UpdateController::class,
                                 'action' => 'update',
                             ],
                             'constraints' => [

@@ -2,13 +2,15 @@
 return [
     'interpreters-office/requests/index/index' => __DIR__ . '/../view/index/index.phtml',
     'interpreters-office/requests/index/list' => __DIR__ . '/../view/index/list.phtml',
-    'interpreters-office/requests/index/create' => __DIR__ . '/../view/index/form.phtml',
-    'interpreters-office/requests/index/update' => __DIR__ . '/../view/index/form.phtml',
+    //'interpreters-office/requests/index/create' => __DIR__ . '/../view/index/form.phtml',
+    // 'interpreters-office/requests/index/update' => __DIR__ . '/../view/index/form.phtml',
+    'interpreters-office/requests/update/create' => __DIR__ . '/../view/index/form.phtml',
+    'interpreters-office/requests/update/update' => __DIR__ . '/../view/index/form.phtml',
     'interpreters-office/requests/index/search' => __DIR__ . '/../view/index/search.phtml',
     'interpreters-office/requests/index/view' => __DIR__ . '/../view/index/view.phtml',
     'denied' =>  __DIR__ . '/../view/index/denied.phtml',
     'confirm-cancel' =>  __DIR__ . '/../view/index/confirm-cancel.phtml',
 
-    // admin 
+    // admin
     'interpreters-office/requests/admin/index/index' => __DIR__ . '/../view/admin/index.phtml',
 ];

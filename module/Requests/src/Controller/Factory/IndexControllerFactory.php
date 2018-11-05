@@ -6,6 +6,7 @@ namespace InterpretersOffice\Requests\Controller\Factory;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Requests\Controller\IndexController;
+use InterpretersOffice\Requests\Controller\UpdateController;
 use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Requests\Acl\ModificationAuthorizedAssertion;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
@@ -39,17 +40,19 @@ class IndexControllerFactory implements FactoryInterface
         }
         // submitters' controller
         $acl = $container->get('acl');
-        $controller = new IndexController($entityManager, $auth, $acl);
+        $controller = new $requestedName($entityManager, $auth, $acl);
 
 
         $resolver->register($container->get(RequestEntityListener::class));
         // HELLO! this is us costing 3 queries even when they are only reading
         // rather than updating, so we need to optimize: split off into two
         // controllers
-        $user = $entityManager->find('InterpretersOffice\Entity\User',
+        if ($requestedName == UpdateController::class) {
+            $user = $entityManager->find('InterpretersOffice\Entity\User',
             $auth->getIdentity()->id);
-        $acl->allow($user, $controller, ['update','cancel'],
+            $acl->allow($user, $controller, ['update','cancel'],
             new ModificationAuthorizedAssertion($controller));
+        }
 
         return $controller;
     }

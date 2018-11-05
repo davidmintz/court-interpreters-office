@@ -35,6 +35,7 @@ return [
         // the topmost controller
         Main\IndexController::class => null,
         Requests\IndexController::class => null,
+        Requests\UpdateController::class => null,
         Admin\IndexController::class => null,
         'SDNY\Vault\Controller\VaultController' => null,
         Main\AuthController::class => null,
@@ -53,6 +54,7 @@ return [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
             Requests\IndexController::class => ['index','list','view','create','update','search','cancel'],
+            Requests\UpdateController::class => ['create','update','cancel'],
             Admin\EventsController::class => ['index', 'view', 'search'],
             Main\AuthController::class => ['logout'],
         ],
