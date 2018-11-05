@@ -1,4 +1,4 @@
-var $, displayValidationErrors;
+var $, displayValidationErrors, appendJudge;
 
 $(function(){
     /** fix the minumum height for (sliding) fieldsets */
@@ -117,32 +117,3 @@ var stuffIt = function()
     $(".carousel").carousel(2);
 
 };
-/*
-// sort of an experiment, worked on it for a while, abandoned...
-// have a good look at:
-// https://vuejs.org/v2/guide/list.html#v-for-with-a-Component
-var vm = new Vue({
-    el : "#registration-form",
-    data: {
-        user : {
-            person : {},
-            judges : []
-        },
-    },
-    methods : {
-        addJudge : function() {
-            var id = $("#judge-select").val();
-            if (id && this.user.judges.indexOf(id) === -1) {
-                this.user.judges.push(id);
-            }'password-confirm' => 'fuck you','confirm-password' => 'fuck you',
-        },
-        removeJudge : function(id) {
-            var index = this.user.judges.indexOf(id);
-            if (index > -1) {
-              this.user.judges.splice(index, 1);
-            }
-            console.log( this.user.judges);
-        }
-    },
-});
-*/
