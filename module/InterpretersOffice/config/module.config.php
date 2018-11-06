@@ -33,13 +33,11 @@ return [
         'factories' => [
            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
            Controller\AccountController::class => Controller\Factory\AccountControllerFactory::class,
-           Controller\ExampleController::class => Controller\Factory\ExampleControllerFactory::class,
            Controller\LocationsController::class => Controller\Factory\LocationsControllerFactory::class,
            Controller\DefendantsController::class => Controller\Factory\DefendantsControllerFactory::class,
         ],
         'invokables' => [
             Controller\IndexController::class => Controller\IndexController::class,
-            //Controller\ExampleController::class => Controller\ExampleController::class,
         ],
     ],
     'view_manager' => [
