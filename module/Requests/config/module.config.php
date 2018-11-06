@@ -7,6 +7,9 @@ namespace InterpretersOffice\Requests;
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
+
+use InterpretersOffice\Requests\Controller\Admin;
+
 //$environment = getenv('environment') ?: 'development';
 
 // set to 'array' to disable
@@ -142,12 +145,25 @@ return [
             // work in progress -- expect it to blow up at first
             'admin-requests' => [
                 'type' => Literal::class,
+                'may_terminate' => true,
                 'options'=>[
                     'route' => '/admin/requests',
                     'defaults' => [
                         'module' => 'InterpretersOffice\Admin',
-                        'controller' => 'InterpretersOffice\Requests\Controller\Admin\IndexController',
+                        'controller' => Admin\IndexController::class,
                         'action' => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'config' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/config',
+                            'defaults' => [
+                                'controller' => Admin\IndexController::class,
+                                'action'   => 'config',
+                            ],
+                        ],
                     ],
                 ],
             ],

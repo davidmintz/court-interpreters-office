@@ -37,4 +37,9 @@ class IndexController extends AbstractActionController
         $this->objectManager = $objectManager;
         $this->auth = $auth;
     }
+
+    public function configAction()
+    {
+        
+    }
 }

@@ -13,4 +13,5 @@ return [
 
     // admin
     'interpreters-office/requests/admin/index/index' => __DIR__ . '/../view/admin/index.phtml',
+    'interpreters-office/requests/admin/index/config' => __DIR__ . '/../view/admin/config.phtml',
 ];
