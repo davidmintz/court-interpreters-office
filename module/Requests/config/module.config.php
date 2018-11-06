@@ -269,4 +269,11 @@ return [
 
         ],
     ],
+
+    'view_helpers' => [
+        'invokables' => [
+            'configCheckbox' => 'InterpretersOffice\Requests\View\Helper\ConfigCheckbox',
+        ],
+    ],
+
 ];

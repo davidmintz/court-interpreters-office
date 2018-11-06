@@ -3,12 +3,17 @@
     <h3>
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
     </h3>
-    <p>Use this page to configure how user events in the Requests module are handled automatically.</p>
-
+    <p class="pr-3 my-3">The Requests module is based on the idea that users who submit requests
+        should not have the unfettered ability to change the Interpreters' schedule directly. But
+        when users change their requests for interpreting services, the Interpreters' schedule virtually
+        always has to be updated accordingly. To obviate the need to do these repetitive tasks
+        manually, you can use this page to see and configure how user events are handled automatically.
+    </p>
+<form action="<?php echo $this->url('admin-requests/config') ?>" method="post">
     <table class="table mb-3 border">
         <thead>
             <tr>
-                <th>event<br><span class="text-muted font-weight-light">(what the user did with the request)</span></th>
+                <th>user event<br><span class="text-muted font-weight-light">(what the user did with the request)</span></th>
                 <th>interpreters assigned
                     <br><span class="text-muted font-weight-light">(types of interpreters assigned, if any)</span>
                 </th>
@@ -17,91 +22,135 @@
         </thead>
         <tbody>
             <tr>
-                <td rowspan="3">change date</td>
+                <td rowspan="3">cancel</td>
                 <td>none</td>
                 <td>
-                    <div class="form-row form-check">
-                        <input checked id="date-change-no-interp-auto-update" type="checkbox" name="change_date[no_interpreter][auto_update_schedule]" value="1" class="form-check-input">
-                        <label for="date-change-no-interp-auto-update" class="form-check-label" >update scheduled event</label>
-                    </div>
-                    <div class="form-row form-check">
-                        <input data-depends="date-change-no-interp-auto-update" id="date-change-no-interp-fyi-email" type="checkbox" name="change_date[no_interpreter][fyi_email]" value="1" class="form-check-input">
-                        <label for="date-change-no-interp-fyi-email" class="form-check-label"> email FYI to Interpreters</label>
-                    </div>
+                    <?php echo $this->configCheckbox('cancel','none','auto-delete',true,'delete scheduled event') ?>
+                    <?php echo $this->configCheckbox('cancel','none','fyi-to-interpreters',false,'email FYI to Interpreters') ?>
                 </td>
             </tr>
             <tr>
                 <td>contractor</td>
                 <td>
-                    <div class="form-row form-check">
-                        <input checked id="date-change-contract-interp-auto-update" type="checkbox" name="change_date[contract_interpreter][auto_update_schedule]" value="1" class="form-check-input">
-                        <label for="date-change-contract-interp-remove-interpreter" class="form-check-label" >update scheduled event</label>
-                    </div>
-                    <div class="form-row form-check">
-                        <input checked id="date-change-contract-interp-remove-interpreter" type="checkbox" name="change_date[contract_interpreter][remove_interpreter]" value="1" class="form-check-input">
-                        <label for="date-change-contract-interp-remove-interpreter" class="form-check-label" >remove interpreter</label>
-                    </div>
-                    <div class="form-row form-check">
-                        <input checked id="date-change-contract-interp-notify-interpreter" type="checkbox" name="change_date[contract_interpreter][notify_interpreter]" value="1" class="form-check-input">
-                        <label for="date-change-contract-interp-remove-interpreter" class="form-check-label" >notify interpreter</label>
-                    </div>
+                    <?php echo $this->configCheckbox('cancel','contractor','auto-delete',true,'delete scheduled event') ?>
+                    <?php //echo $this->configCheckbox('cancel','contractor','remove-interpreter') ?>
+                    <?php echo $this->configCheckbox('cancel','contractor','notify-interpreter') ?>
                 </td>
             </tr>
             <tr>
                 <td>staff</td>
                 <td>
-                    <div class="form-row form-check">
-                        <input checked id="date-change-staff-interp-auto-update" type="checkbox" name="change_date[staff_interpreter][auto_update_schedule]" value="1" class="form-check-input">
-                        <label for="date-change-staff-interp-auto-update" class="form-check-label" >update scheduled event</label>
-                    </div>
-                    <div class="form-row form-check">
-                        <input checked id="date-change-staff-interp-remove-interpreter" type="checkbox" name="change_date[staff_interpreter][remove_interpreter]" value="1" class="form-check-input">
-                        <label for="date-change-staff-interp-remove-interpreter" class="form-check-label" >remove interpreter</label>
-                    </div>
-                    <div class="form-row form-check">
-                        <input checked id="date-change-staff-interp-notify-interpreter" type="checkbox" name="change_date[staff_interpreter][notify_interpreter]" value="1" class="form-check-input">
-                        <label for="date-change-staff-interp-remove-interpreter" class="form-check-label" >notify interpreter</label>
-                    </div>
+                    <?php echo $this->configCheckbox('cancel','staff','auto-delete',true,'delete scheduled event') ?>
+                    <?php //echo $this->configCheckbox('cancel','staff','remove-interpreter') ?>
+                    <?php echo $this->configCheckbox('cancel','staff','notify-interpreter') ?>
+
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">change date</td>
+                <td>none</td>
+                <td>
+                    <?php echo $this->configCheckbox('change-date','none','auto-update',true,'update scheduled event') ?>
+                    <?php echo $this->configCheckbox('change-date','none','fyi-to-interpreters',false,'email FYI to Interpreters') ?>
+                </td>
+            </tr>
+            <tr>
+                <td>contractor</td>
+                <td>
+                    <?php echo $this->configCheckbox('change-date','contractor','auto-update',true,'update scheduled event') ?>
+                    <?php echo $this->configCheckbox('change-date','contractor','remove-interpreter') ?>
+                    <?php echo $this->configCheckbox('change-date','contractor','notify-interpreter') ?>
+                </td>
+            </tr>
+            <tr>
+                <td>staff</td>
+                <td>
+                    <?php echo $this->configCheckbox('change-date','staff','auto-update',true,'update scheduled event') ?>
+                    <?php echo $this->configCheckbox('change-date','staff','remove-interpreter') ?>
+                    <?php echo $this->configCheckbox('change-date','staff','notify-interpreter') ?>
+
                 </td>
             </tr>
         <tr>
             <td rowspan="3">change time <em>across</em> am-pm boundary</td>
             <td>none</td>
-            <td>gack</td>
+            <td><?php
+                echo $this->configCheckbox('time-change-x-pm','none','auto-update',true,'update scheduled event');
+                echo $this->configCheckbox('time-change-x-pm','none','fyi-to-interpreters',true,'email FYI to Interpreters')?>
+            </td>
         </tr>
         <tr>
             <td>contractor</td>
-            <td>gack</td>
+            <td>
+                <?php foreach (['update-schedule','remove-interpreter','notify-interpreter'] as $action) :
+                    echo $this->configCheckbox('time-change-x-pm','contractor',$action);
+                endforeach;?>
+            </td>
         </tr>
         <tr>
             <td>staff</td>
-            <td>gack</td>
+            <td>    <?php foreach (['update-schedule','remove-interpreter','notify-interpreter'] as $action) :
+                    echo $this->configCheckbox('time-change-x-pm','staff',$action);
+                endforeach;?>
+            </td>
         </tr>
         <tr>
             <td rowspan="3">change time <em>within</em> am-pm boundary</td>
             <td>none</td>
-            <td>gack</td>
+            <td><?php
+                echo $this->configCheckbox('time-change-without-x-pm','none','auto-update',true,'update scheduled event');
+                echo $this->configCheckbox('time-change-without-x-pm','none','fyi-to-interpreters',true,'email FYI to Interpreters')?></td>
         </tr>
         <tr>
             <td>contractor</td>
-            <td>gack</td>
+            <td><?php foreach (['update-schedule','remove-interpreter','notify-interpreter'] as $action) :
+                echo $this->configCheckbox('time-change-without-x-pm','contractor',$action);
+            endforeach;?></td>
         </tr>
         <tr>
             <td>staff</td>
-            <td>gack</td>
+            <td><?php foreach (['update-schedule','remove-interpreter','notify-interpreter'] as $action) :
+                echo $this->configCheckbox('time-change-without-x-pm','staff',$action);
+            endforeach;?></td>
         </tr>
         </tbody>
     </table>
-    <h4 class="mt-4">actions defined and explained</h4>
+    </form>
+    <h4 class="my-4">actions explained</h4>
     <dl class="row">
-        <dt class="col-sm-3">update scheduled event</dt>
-        <dd class="col-sm-9">If the request has been added to the schedule,
+        <dt class="col-sm-4 text-monospace">delete scheduled event</dt>
+        <dd class="col-sm-6">If the request has been added to the schedule,
+            remove the corresponding event from the schedule. This implies <code>remove interpreter</code> </dd>
+        <dt class="col-sm-4 text-monospace">update scheduled event</dt>
+        <dd class="col-sm-6">If the request has been added to the schedule,
             update the corresponding scheduled event to match the changes the user just made to the request.</dd>
-        <dt class="col-sm-3">remove interpreter</dt>
-        <dd class="col-sm-9">Remove the interpreter from the corresponding scheduled event.</dd>
-        <dt class="col-sm-3">notify interpreter</dt>
-        <dd class="col-sm-9">Send a template-based email to the interpreter informing her or him of the actions taken.
-            <em>All such emails are always copied to the Interpreters Office.</em>
+        <dt class="col-sm-4 text-monospace">remove interpreter</dt>
+        <dd class="col-sm-6">Remove the interpreter from the corresponding scheduled event.</dd>
+        <dt class="col-sm-4 text-monospace">notify interpreter</dt>
+        <dd class="col-sm-6">Send a template-based email to the interpreter informing her or him of the actions taken.
+            If you enable automatic removal of the interpreter, enabling notification is <strong>strongly recommended</strong>.
+            <em>All such emails are copied to the Interpreters Office.</em>
         </dd>
     </dl>
+
+    <h4 class="my-4">user events explained</h4>
+    <dl class="row">
+        <dt class="col-sm-3">cancel</dt>
+        <dd class="col-sm-9">Self-explanatory &mdash; the user has withdrawn the request.</dd>
+        <dt class="col-sm-3">change date</dt>
+        <dd class="col-sm-9">Self-explanatory &mdash; the user changed the date. When this happens, a <code>change time</code> is implied.</dd>
+        <dt class="col-sm-3">change time within or across am-pm</dt>
+        <dd class="col-sm-9">The user left the date intact, but changed the time. Since contract court interpreters are frequently hired for
+            half-day periods, you may wish to differentiate the handling of the two scenarios: a change of date from morning to afternoon
+            or vice-versa, as opposed to a change of time <em>within</em> the same morning or afternoon. Any time
+            before 1:00 pm is considered morning; 1:00 pm or later is considered afternoon.
+        </dd>
+    </dl>
+    <h4 class="mt-4 mb-3">interpreters assigned</h4>
+    <p>When the Requests module reacts to a change in a request, it considers whether the request has actually been
+        added to the schedule, and if so, whether the interpreters assigned to the event (if any) are staff or
+        contract interpreters. This is because you may wish to handle each case differently. However, these are not
+        mutually exclusive scenarios. If there are both staff and contract interpreters assigned to the event in question,
+        the Requests module will act on each according to these settings.
+    </p>
 </main>

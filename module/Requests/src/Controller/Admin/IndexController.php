@@ -4,6 +4,7 @@ namespace InterpretersOffice\Requests\Controller\Admin;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\AuthenticationServiceInterface;
@@ -40,6 +41,10 @@ class IndexController extends AbstractActionController
 
     public function configAction()
     {
-        
+        if ($this->getRequest()->isPost())
+        {
+            $data = $this->getRequest()->getPost();
+            return new JsonModel($data);
+        }
     }
 }
