@@ -60,6 +60,13 @@ return [
                     [
                         'label' => 'requests',
                         'route' => 'admin-requests',
+                        'expand' => false,
+                        'pages' => [
+                            [
+                                'label'=>'configuration',
+                                'route'=>'admin-requests/config',
+                            ],
+                        ],
                     ],
                 ],
             ],

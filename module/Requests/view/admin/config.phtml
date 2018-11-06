@@ -1,0 +1,107 @@
+
+<main style="max-width:900px"  class="mx-auto">
+    <h3>
+        <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
+    </h3>
+    <p>Use this page to configure how user events in the Requests module are handled automatically.</p>
+
+    <table class="table mb-3 border">
+        <thead>
+            <tr>
+                <th>event<br><span class="text-muted font-weight-light">(what the user did with the request)</span></th>
+                <th>interpreters assigned
+                    <br><span class="text-muted font-weight-light">(types of interpreters assigned, if any)</span>
+                </th>
+                <th>actions<br><span class="text-muted font-weight-light">(what to do automatically)</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">change date</td>
+                <td>none</td>
+                <td>
+                    <div class="form-row form-check">
+                        <input checked id="date-change-no-interp-auto-update" type="checkbox" name="change_date[no_interpreter][auto_update_schedule]" value="1" class="form-check-input">
+                        <label for="date-change-no-interp-auto-update" class="form-check-label" >update scheduled event</label>
+                    </div>
+                    <div class="form-row form-check">
+                        <input data-depends="date-change-no-interp-auto-update" id="date-change-no-interp-fyi-email" type="checkbox" name="change_date[no_interpreter][fyi_email]" value="1" class="form-check-input">
+                        <label for="date-change-no-interp-fyi-email" class="form-check-label"> email FYI to Interpreters</label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>contractor</td>
+                <td>
+                    <div class="form-row form-check">
+                        <input checked id="date-change-contract-interp-auto-update" type="checkbox" name="change_date[contract_interpreter][auto_update_schedule]" value="1" class="form-check-input">
+                        <label for="date-change-contract-interp-remove-interpreter" class="form-check-label" >update scheduled event</label>
+                    </div>
+                    <div class="form-row form-check">
+                        <input checked id="date-change-contract-interp-remove-interpreter" type="checkbox" name="change_date[contract_interpreter][remove_interpreter]" value="1" class="form-check-input">
+                        <label for="date-change-contract-interp-remove-interpreter" class="form-check-label" >remove interpreter</label>
+                    </div>
+                    <div class="form-row form-check">
+                        <input checked id="date-change-contract-interp-notify-interpreter" type="checkbox" name="change_date[contract_interpreter][notify_interpreter]" value="1" class="form-check-input">
+                        <label for="date-change-contract-interp-remove-interpreter" class="form-check-label" >notify interpreter</label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>staff</td>
+                <td>
+                    <div class="form-row form-check">
+                        <input checked id="date-change-staff-interp-auto-update" type="checkbox" name="change_date[staff_interpreter][auto_update_schedule]" value="1" class="form-check-input">
+                        <label for="date-change-staff-interp-auto-update" class="form-check-label" >update scheduled event</label>
+                    </div>
+                    <div class="form-row form-check">
+                        <input checked id="date-change-staff-interp-remove-interpreter" type="checkbox" name="change_date[staff_interpreter][remove_interpreter]" value="1" class="form-check-input">
+                        <label for="date-change-staff-interp-remove-interpreter" class="form-check-label" >remove interpreter</label>
+                    </div>
+                    <div class="form-row form-check">
+                        <input checked id="date-change-staff-interp-notify-interpreter" type="checkbox" name="change_date[staff_interpreter][notify_interpreter]" value="1" class="form-check-input">
+                        <label for="date-change-staff-interp-remove-interpreter" class="form-check-label" >notify interpreter</label>
+                    </div>
+                </td>
+            </tr>
+        <tr>
+            <td rowspan="3">change time <em>across</em> am-pm boundary</td>
+            <td>none</td>
+            <td>gack</td>
+        </tr>
+        <tr>
+            <td>contractor</td>
+            <td>gack</td>
+        </tr>
+        <tr>
+            <td>staff</td>
+            <td>gack</td>
+        </tr>
+        <tr>
+            <td rowspan="3">change time <em>within</em> am-pm boundary</td>
+            <td>none</td>
+            <td>gack</td>
+        </tr>
+        <tr>
+            <td>contractor</td>
+            <td>gack</td>
+        </tr>
+        <tr>
+            <td>staff</td>
+            <td>gack</td>
+        </tr>
+        </tbody>
+    </table>
+    <h4 class="mt-4">actions defined and explained</h4>
+    <dl class="row">
+        <dt class="col-sm-3">update scheduled event</dt>
+        <dd class="col-sm-9">If the request has been added to the schedule,
+            update the corresponding scheduled event to match the changes the user just made to the request.</dd>
+        <dt class="col-sm-3">remove interpreter</dt>
+        <dd class="col-sm-9">Remove the interpreter from the corresponding scheduled event.</dd>
+        <dt class="col-sm-3">notify interpreter</dt>
+        <dd class="col-sm-9">Send a template-based email to the interpreter informing her or him of the actions taken.
+            <em>All such emails are always copied to the Interpreters Office.</em>
+        </dd>
+    </dl>
+</main>
