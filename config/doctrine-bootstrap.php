@@ -5,16 +5,12 @@
 /** @var Composer\Autoload\ClassLoader $loader */
 $loader = require __DIR__.'/../vendor/autoload.php';
 
-//use Doctrine\Common\Annotations\FileCacheReader;
-//use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
-//$reader = new FileCacheReader( new AnnotationReader(), __DIR__.'/../data/cache',$debug = true);
-//$reader = new AnnotationReader();
 
 // does not work:
 // AnnotationRegistry::registerAutoloadNamespace(
@@ -22,9 +18,11 @@ use InterpretersOffice\Entity\Listener\EventEntityListener;
 //     __DIR__.'/../vendor/zendframework/zend-form/src/Annotation'
 // );
 ///* does work:
-$path = __DIR__.'/../vendor/zendframework/zend-form/src/Annotation/';
+$path = __DIR__.'/../vendor/zendframework/zend-form/src/Annotation';
 $files = glob("$path/*php");
+
 foreach ($files as $file) {
+    if (basename($file) == 'Object.php') { continue; }
     AnnotationRegistry::registerFile($file);
 }
 //*/
