@@ -1,6 +1,7 @@
 <?php $this->headTitle('requests | configuration');
 $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
 ?>
+<pre><?php print_r($this->data)?></pre>
 <main style="max-width:900px"  class="mx-auto">
     <h3>
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>

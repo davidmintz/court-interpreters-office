@@ -8,6 +8,7 @@ use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\AuthenticationServiceInterface;
+use InterpretersOffice\Requests\Form\ConfigForm;
 
 /**
  * admin controller for Requests module
@@ -37,14 +38,22 @@ class IndexController extends AbstractActionController
     {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
+
     }
 
     public function configAction()
     {
+        $form = new ConfigForm();
         if ($this->getRequest()->isPost())
         {
             $data = $this->getRequest()->getPost();
+            //$string = json_encode($data);
+            //file_put_contents('data/settings.json',$string);
             return new JsonModel($data);
         }
+        $json = file_get_contents('module/Requests/config/default-event-handlers.config.json');
+        $data  = json_decode($json,true);
+        return new ViewModel(['data'=>$data]);
+
     }
 }
