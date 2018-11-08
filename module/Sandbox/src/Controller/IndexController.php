@@ -9,6 +9,8 @@ class IndexController extends AbstractActionController
 {
     public function indexAction()
     {
+        $em = $this->getEvent()->getApplication()->getServiceManager()->get('entity-manager');
+        $em->find('InterpretersOffice\Entity\Event',115656);
         return new ViewModel();
     }
 

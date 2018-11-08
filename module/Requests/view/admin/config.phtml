@@ -1,4 +1,6 @@
-<?php $this->headTitle('requests | configuration');?>
+<?php $this->headTitle('requests | configuration');
+$this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
+?>
 <main style="max-width:900px"  class="mx-auto">
     <h3>
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
@@ -51,9 +53,9 @@
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                echo $this->configCheckbox('change-date','any','any','update-scheduled-event'),
-                $this->configCheckbox('change-date','any','any','notify-assigned-interpreters'),
-                 $this->configCheckbox('change-date','any','any','remove-interpreters')
+                echo $this->configCheckbox('change-date','all-languages','all-events','update-scheduled-event'),
+                $this->configCheckbox('change-date','all-languages','all-events','notify-assigned-interpreters'),
+                 $this->configCheckbox('change-date','all-languages','all-events','remove-interpreters')
                  ?></td>
             </tr>
             <tr>
@@ -61,9 +63,9 @@
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                echo $this->configCheckbox('change-x-am-pm','any','any','update-scheduled-event'),
-                $this->configCheckbox('change-x-am-pm','any','any','notify-assigned-interpreters'),
-                 $this->configCheckbox('change-x-am-pm','any','any','remove-interpreters')
+                echo $this->configCheckbox('change-x-am-pm','all-languages','all-events','update-scheduled-event'),
+                $this->configCheckbox('change-x-am-pm','all-languages','all-events','notify-assigned-interpreters'),
+                 $this->configCheckbox('change-x-am-pm','all-languages','all-events','remove-interpreters')
                  ?></td>
             </tr>
             <tr>
@@ -106,9 +108,9 @@
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                echo $this->configCheckbox('change-language','any','any','update-scheduled-event'),
-                $this->configCheckbox('change-language','any','any','notify-assigned-interpreters'),
-                 $this->configCheckbox('change-language','any','any','remove-interpreters')
+                echo $this->configCheckbox('change-language','all-languages','all-events','update-scheduled-event'),
+                $this->configCheckbox('change-language','all-languages','all-events','notify-assigned-interpreters'),
+                 $this->configCheckbox('change-language','all-languages','all-events','remove-interpreters')
                  ?></td>
             </tr>
         </tbody>
@@ -118,19 +120,19 @@
     </div>
     </form>
     <hr class="my-4">
-    <h3>a guide to understanding these settings</h3>
+    <h3 class="text-primary">A guide to Request event-handling configuration</h3>
     <h4 class="my-4 p-2 border text-center">actions</h4>
     <dl class="row">
         <dt class="col-sm-4 text-monospace">delete scheduled event</dt>
-        <dd class="col-sm-6">If the request has been added to the schedule,
+        <dd class="col-sm-8">If the request has been added to the schedule,
             remove the corresponding event from the schedule. This implies the <code>remove interpreter</code> action.</dd>
         <dt class="col-sm-4 text-monospace">update scheduled event</dt>
-        <dd class="col-sm-6">If the request has been added to the schedule,
+        <dd class="col-sm-8">If the request has been added to the schedule,
             update the corresponding scheduled event to match the changes the user just made to the request.</dd>
         <dt class="col-sm-4 text-monospace">remove interpreter</dt>
-        <dd class="col-sm-6">Remove the interpreter from the corresponding scheduled event.</dd>
+        <dd class="col-sm-8">Remove the interpreter from the corresponding scheduled event.</dd>
         <dt class="col-sm-4 text-monospace">notify assigned interpreter(s)</dt>
-        <dd class="col-sm-6">Send a template-based email to the interpreter informing her or him of the actions taken.
+        <dd class="col-sm-8">Send a template-based email to the interpreter informing her or him of the actions taken.
             If you enable automatic removal of the interpreter, enabling notification in most cases is <em>strongly</em> encouraged.
             <em>All such emails are copied to the Interpreters Office.</em>
         </dd>
@@ -139,11 +141,11 @@
     <h4 class="my-4 p-2 border text-center">user events</h4>
     <dl class="row">
         <dt class="col-sm-4 text-monospace">cancel</dt>
-        <dd class="col-sm-6">The user has withdrawn the request.</dd>
+        <dd class="col-sm-8">The user has withdrawn the request.</dd>
         <dt class="col-sm-4 text-monospace">change date</dt>
-        <dd class="col-sm-6">The user changed the date. This implies but does not trigger a <code>change time</code> in addition.</dd>
+        <dd class="col-sm-8">The user changed the date. This implies but does not trigger a <code>change time</code> in addition.</dd>
         <dt class="col-sm-4 text-monospace">change time within/across am-pm</dt>
-        <dd class="col-sm-6">The user left the date intact, but changed the time. Since contract court interpreters are frequently hired for
+        <dd class="col-sm-8">The user left the date intact, but changed the time. Since contract court interpreters are frequently hired for
             half-day periods, you may wish to differentiate the handling of the two scenarios: a change of date from morning to afternoon
             (or vice-versa), as opposed to a change of time <em>within</em> the same morning or afternoon. Any time
             before 1:00 pm is considered morning; 1:00 pm or later is considered afternoon.
@@ -156,4 +158,10 @@
     <p>In some cases the Requests module's event handlers distinguish between events that take place in-court and those
         that take place elsewhere, typically in an off-site location such as a jail. This feature allows you to avoid sending
         needless emails to interpreters in regard to updates that are not remarkable.</p>
+    <h4 class="my-4 p-2 border text-center">general considerations</h4>
+
+    <p>The design goals of the Request module are to alleviate the burden of repetitive and error-prone tasks and ensure
+        that people receive timely notification of events thety need to know about. On the other hand, overuse of email
+        creates its own problems. We suggest ...
+    </p
 </main>
