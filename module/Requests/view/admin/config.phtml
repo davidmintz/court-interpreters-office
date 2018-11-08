@@ -5,11 +5,12 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
     <h3>
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
     </h3>
-    <p class="pr-3 my-3">The Requests module assumes that users who submit requests
-        for interpreters should not change the Interpreters' schedule themselves.
+    <p class="pr-3 my-3">The Requests module does not allow users who submit requests
+        to change the Interpreters' schedule themselves.
         When users modify their requests, however, the Interpreters' schedule virtually
         always has to be updated accordingly. To avoid having to do these repetitive tasks
         manually, you can use this page to see and configure how user events are handled automatically.
+        For further explanation please <a href="#user-guide-requests-config">see below</a>.
     </p>
 <form action="<?php echo $this->url('admin-requests/config') ?>" method="post">
     <table class="table mb-3 table-bordered">
@@ -120,7 +121,7 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
     </div>
     </form>
     <hr class="my-4">
-    <h3 class="text-primary">A guide to Request event-handling configuration</h3>
+    <h3 id="user-guide-requests-config" class="text-primary">A guide to the Requests module's configuration</h3>
     <h4 class="my-4 p-2 border text-center">actions</h4>
     <dl class="row">
         <dt class="col-sm-4 text-monospace">delete scheduled event</dt>
@@ -160,8 +161,9 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         needless emails to interpreters in regard to updates that are not remarkable.</p>
     <h4 class="my-4 p-2 border text-center">general considerations</h4>
 
-    <p>The design goals of the Request module are to alleviate the burden of repetitive and error-prone tasks and ensure
-        that people receive timely notification of events thety need to know about. On the other hand, overuse of email
-        creates its own problems. We suggest ...
-    </p
+    <p>The design goals of the Requests module are to alleviate the burden of repetitive and error-prone tasks and to ensure
+        that people receive timely notification of events they need to know about. On the other hand, overuse of email
+        notification creates its own problems. By configuring these behaviors yourself, you can experiment and try to strike
+        the best balance for your situation.
+    </p>
 </main>
