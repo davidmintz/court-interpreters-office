@@ -1,7 +1,14 @@
 <?php $this->headTitle('requests | configuration');
 $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
 ?>
-<pre><?php print_r($this->data)?></pre>
+<pre>
+<?php
+foreach ($this->form as $e) {
+    //echo $e->getName(),"\n";
+}
+var_dump($form->has('cancel[in-court][spanish][delete-scheduled-event]'));
+?>
+</pre>
 <main style="max-width:900px"  class="mx-auto">
     <h3>
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
@@ -31,8 +38,17 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td rowspan="2">Spanish</td>
                 <td>in-court</td>
                 <td><?php
+                $element = $this->form->get('cancel[in-court][spanish][delete-scheduled-event]');
+                ?>
+                <div class="form-row form-check">
+                    <?php   echo $this->formElement($element->setChecked(true));
+                    printf('<label for="%s" class="form-check-label text-left" >%s</label>',
+                    $element->getAttribute('id'), $element->getLabel());
+                    ?>
+                </div>
+                <?php
                 //$user_event,$language_type,$event_type,$action, $checked = true, $label = null
-                echo $this->configCheckbox('cancel','spanish','in-court','delete-scheduled-event');
+                //echo $this->configCheckbox('cancel','spanish','in-court','delete-scheduled-event');
                 echo $this->configCheckbox('cancel','spanish','in-court','notify-assigned-interpreters',null,false); ?>
                 </td>
             </tr>

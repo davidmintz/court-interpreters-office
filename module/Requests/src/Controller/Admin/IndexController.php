@@ -51,9 +51,8 @@ class IndexController extends AbstractActionController
             //file_put_contents('data/settings.json',$string);
             return new JsonModel($data);
         }
-        $json = file_get_contents('module/Requests/config/default-event-handlers.config.json');
-        $data  = json_decode($json,true);
-        return new ViewModel(['data'=>$data]);
+
+        return new ViewModel(['form'=>$form]);
 
     }
 }
