@@ -8,6 +8,8 @@ use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Stdlib\Glob;
+use Zend\Stdlib\ArrayObject;
 use InterpretersOffice\Requests\Form\ConfigForm;
 
 /**
@@ -44,8 +46,15 @@ class IndexController extends AbstractActionController
     public function configAction()
     {
         $form = new ConfigForm();
-        $data = $form->defaults;
-        $form->bind($data);
+        $form->setUseAsBaseFieldset(true);
+        $data = $form->default_values;
+        $object = new \Zend\Stdlib\ArrayObject($data);
+        $form->bind($object);
+        $form->setObject($object);
+        //$form->setData($object);
+        //$form->setIn
+        // echo 'valid: '.($form->isValid()?'yes':'no');
+        // echo "<br>foo? ",$data['foo'];
         if ($this->getRequest()->isPost())
         {
             $data = $this->getRequest()->getPost();

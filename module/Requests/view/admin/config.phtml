@@ -1,14 +1,7 @@
 <?php $this->headTitle('requests | configuration');
 $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
 ?>
-<pre>
-<?php
-foreach ($this->form as $e) {
-    //echo $e->getName(),"\n";
-}
-var_dump($form->has('cancel[in-court][spanish][delete-scheduled-event]'));
-?>
-</pre>
+<!-- <pre></pre> -->
 <main style="max-width:900px"  class="mx-auto">
     <h3>
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
@@ -20,6 +13,7 @@ var_dump($form->has('cancel[in-court][spanish][delete-scheduled-event]'));
         manually, you can use this page to see and configure how user events are handled automatically.
         For further explanation please <a href="#user-guide-requests-config">see below</a>.
     </p>
+<?php $this->form->prepare()?>
 <form action="<?php echo $this->url('admin-requests/config') ?>" method="post">
     <table class="table mb-3 table-bordered">
         <thead>
@@ -74,9 +68,11 @@ var_dump($form->has('cancel[in-court][spanish][delete-scheduled-event]'));
                 <td>any</td>
                 <td><?php
                 $base = 'change-date[all-events][all-languages]';
-                $element = $element = $this->form->get($base.'[update-scheduled-event]');
+                $element = $this->form->get($base.'[update-scheduled-event]');
                 echo $this->configCheckbox($element);
                 $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                echo $this->configCheckbox($element);
+                $element = $this->form->get($base.'[remove-interpreters]');
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
@@ -85,9 +81,13 @@ var_dump($form->has('cancel[in-court][spanish][delete-scheduled-event]'));
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                // echo // $this->configCheckbox('change-x-am-pm','all-languages','all-events','update-scheduled-event'),
-                // $this->configCheckbox('change-x-am-pm','all-languages','all-events','notify-assigned-interpreters'),
-                 // $this->configCheckbox('change-x-am-pm','all-languages','all-events','remove-interpreters')
+                $base = 'change-x-am-pm[all-events][all-languages]';
+                $element = $this->form->get($base.'[update-scheduled-event]');
+                echo $this->configCheckbox($element);
+                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                echo $this->configCheckbox($element);
+                $element = $this->form->get($base.'[remove-interpreters]');
+                echo $this->configCheckbox($element);
                  ?></td>
             </tr>
             <tr>
@@ -95,34 +95,50 @@ var_dump($form->has('cancel[in-court][spanish][delete-scheduled-event]'));
                 <td rowspan="2">Spanish</td>
                 <td>in-court</td>
                 <td><?php
-                // echo // $this->configCheckbox('change-within-am-pm','spanish','in-court','update-scheduled-event'),
-                // $this->configCheckbox('change-within-am-pm','spanish','in-court','notify-assigned-interpreters'),
-                 // $this->configCheckbox('change-within-am-pm','spanish','in-court','remove-interpreters',null,false)
+                $base = 'change-within-am-pm[in-court][spanish]';
+                $element = $this->form->get($base.'[update-scheduled-event]');
+                echo $this->configCheckbox($element);
+                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                echo $this->configCheckbox($element);
+                $element = $this->form->get($base.'[remove-interpreters]');
+                echo $this->configCheckbox($element);
                  ?></td>
             </tr>
             <tr>
                 <td>out-of-court</td>
                 <td><?php
-                // echo // $this->configCheckbox('change-within-am-pm','spanish','out-of-court','update-scheduled-event'),
-                // $this->configCheckbox('change-within-am-pm','spanish','out-of-court','notify-assigned-interpreters'),
-                 // $this->configCheckbox('change-within-am-pm','spanish','out-of-court','remove-interpreters',null,false)
+                $base = 'change-within-am-pm[out-of-court][spanish]';
+                $element = $this->form->get($base.'[update-scheduled-event]');
+                echo $this->configCheckbox($element);
+                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                echo $this->configCheckbox($element);
+                $element = $this->form->get($base.'[remove-interpreters]');
+                echo $this->configCheckbox($element);
                  ?></td>
             </tr>
             <tr>
                 <td rowspan="2">non-Spanish</td>
                 <td>in-court</td>
                 <td><?php
-                // echo // $this->configCheckbox('change-within-am-pm','non-spanish','in-court','update-scheduled-event'),
-                // $this->configCheckbox('change-within-am-pm','non-spanish','in-court','notify-assigned-interpreters'),
-                 // $this->configCheckbox('change-within-am-pm','non-spanish','in-court','remove-interpreters',null,false)
+                $base = 'change-within-am-pm[in-court][non-spanish]';
+                $element = $this->form->get($base.'[update-scheduled-event]');
+                echo $this->configCheckbox($element);
+                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                echo $this->configCheckbox($element);
+                $element = $this->form->get($base.'[remove-interpreters]');
+                echo $this->configCheckbox($element);
                  ?></td>
             </tr>
             <tr>
                 <td>out-of-court</td>
                 <td><?php
-                // echo // $this->configCheckbox('change-within-am-pm','non-spanish','out-of-court','update-scheduled-event'),
-                // $this->configCheckbox('change-within-am-pm','non-spanish','out-of-court','notify-assigned-interpreters'),
-                 // $this->configCheckbox('change-within-am-pm','non-spanish','out-of-court','remove-interpreters',null,false)
+                $base = 'change-within-am-pm[out-of-court][non-spanish]';
+                $element = $this->form->get($base.'[update-scheduled-event]');
+                echo $this->configCheckbox($element);
+                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                echo $this->configCheckbox($element);
+                $element = $this->form->get($base.'[remove-interpreters]');
+                echo $this->configCheckbox($element);
                  ?></td>
             </tr>
             <tr>
@@ -130,9 +146,13 @@ var_dump($form->has('cancel[in-court][spanish][delete-scheduled-event]'));
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                // echo // $this->configCheckbox('change-language','all-languages','all-events','update-scheduled-event'),
-                // $this->configCheckbox('change-language','all-languages','all-events','notify-assigned-interpreters'),
-                 // $this->configCheckbox('change-language','all-languages','all-events','remove-interpreters')
+                $base = 'change-language[all-events][all-languages]';
+                $element = $this->form->get($base.'[update-scheduled-event]');
+                echo $this->configCheckbox($element);
+                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                echo $this->configCheckbox($element);
+                $element = $this->form->get($base.'[remove-interpreters]');
+                echo $this->configCheckbox($element);
                  ?></td>
             </tr>
         </tbody>
