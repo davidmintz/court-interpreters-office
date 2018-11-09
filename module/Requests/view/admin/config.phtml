@@ -73,9 +73,11 @@ var_dump($form->has('cancel[in-court][spanish][delete-scheduled-event]'));
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                // echo // $this->configCheckbox('change-date','all-languages','all-events','update-scheduled-event'),
-                //// $this->configCheckbox('change-date','all-languages','all-events','notify-assigned-interpreters'),
-                //// // $this->configCheckbox('change-date','all-languages','all-events','remove-interpreters')
+                $base = 'change-date[all-events][all-languages]';
+                $element = $element = $this->form->get($base.'[update-scheduled-event]');
+                echo $this->configCheckbox($element);
+                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                echo $this->configCheckbox($element);
                  ?></td>
             </tr>
             <tr>
