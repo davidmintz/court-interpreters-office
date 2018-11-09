@@ -15,15 +15,17 @@ class ConfigForm extends Form
     public function __construct()
     {
         $this->setHydrator(new ArraySerializable());
-        $this->setObject(new ArrayObject([]));
         parent::__construct('config-form');
         $this->init();
     }
+
+    public $defaults;
 
     public function init()
     {
         $json = file_get_contents('module/Requests/config/default-event-handlers.config.json');
         $data  = json_decode($json,true);
+
         foreach ($data as $event_name => $event_array) {
             foreach ($event_array as $event_type => $event_type_array) {
                 foreach ($event_type_array as $language => $action_array) {
@@ -33,7 +35,6 @@ class ConfigForm extends Form
                         $this->add([
                             'type' => 'checkbox',
                             'name' => $element_name,
-                            //'value' => $flag,
                             'attributes' => [
                                 'class'=> 'form-check-input',
                                 'id'   => "$event_name.$event_type.$language.$action",
@@ -49,7 +50,9 @@ class ConfigForm extends Form
                     }
                 }
             }
+
         }
+        $this->defaults = new ArrayObject($data);
     }
 }
 /*

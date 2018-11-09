@@ -44,6 +44,8 @@ class IndexController extends AbstractActionController
     public function configAction()
     {
         $form = new ConfigForm();
+        $data = $form->defaults;
+        $form->bind($data);
         if ($this->getRequest()->isPost())
         {
             $data = $this->getRequest()->getPost();
