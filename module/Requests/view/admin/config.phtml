@@ -32,10 +32,11 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td rowspan="2">Spanish</td>
                 <td>in-court</td>
                 <td><?php
-                $base = 'cancel[in-court][spanish]';
-                $element = $this->form->get($base.'[delete-scheduled-event]');
+                $fs = $this->form->get('cancel');
+                $base = 'in-court.spanish.';
+                $element = $fs->get($base.'delete-scheduled-event');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $fs->get($base.'notify-assigned-interpreters');
                 echo $this->configCheckbox($element);
                 ?>
                 </td>
@@ -43,10 +44,10 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
             <tr>
                 <td>out-of-court</td>
                 <td><?php
-                $base = 'cancel[out-of-court][spanish]';
-                $element = $this->form->get($base.'[delete-scheduled-event]');
+                $base = 'out-of-court.spanish.';
+                $element = $fs->get($base.'delete-scheduled-event');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $fs->get($base.'notify-assigned-interpreters');
                 echo $this->configCheckbox($element);
                 ?>
                 </td>
@@ -55,24 +56,25 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td>non-Spanish</td>
                 <td>any</td>
                 <td><?php
-                $base = 'cancel[out-of-court][non-spanish]';
-                $element = $this->form->get($base.'[delete-scheduled-event]');
+                $base = 'out-of-court.non-spanish.';
+                $element = $fs->get($base.'delete-scheduled-event');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $fs->get($base.'notify-assigned-interpreters');
                 echo $this->configCheckbox($element);
                 ?></td>
             </tr>
+        </tbody></table></form><?php return ; // for now?>
             <tr>
                 <td class="text-monospace">change date</td>
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                $base = 'change-date[all-events][all-languages]';
-                $element = $this->form->get($base.'[update-scheduled-event]');
+                $base = 'change-date[all-events.all-languages.';
+                $element = $this->form->get($base.'update-scheduled-event]');
                 echo $this->configCheckbox($element);
-                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $element = $this->form->get($base.'notify-assigned-interpreters]');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[remove-interpreters]');
+                $element = $this->form->get($base.'remove-interpreters]');
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
@@ -81,12 +83,12 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                $base = 'change-x-am-pm[all-events][all-languages]';
-                $element = $this->form->get($base.'[update-scheduled-event]');
+                $base = 'change-x-am-pm[all-events.all-languages.';
+                $element = $this->form->get($base.'update-scheduled-event]');
                 echo $this->configCheckbox($element);
-                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $element = $this->form->get($base.'notify-assigned-interpreters]');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[remove-interpreters]');
+                $element = $this->form->get($base.'remove-interpreters]');
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
@@ -95,24 +97,24 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td rowspan="2">Spanish</td>
                 <td>in-court</td>
                 <td><?php
-                $base = 'change-within-am-pm[in-court][spanish]';
-                $element = $this->form->get($base.'[update-scheduled-event]');
+                $base = 'change-within-am-pm[in-court.spanish.';
+                $element = $this->form->get($base.'update-scheduled-event]');
                 echo $this->configCheckbox($element);
-                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $element = $this->form->get($base.'notify-assigned-interpreters]');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[remove-interpreters]');
+                $element = $this->form->get($base.'remove-interpreters]');
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
             <tr>
                 <td>out-of-court</td>
                 <td><?php
-                $base = 'change-within-am-pm[out-of-court][spanish]';
-                $element = $this->form->get($base.'[update-scheduled-event]');
+                $base = 'change-within-am-pm[out-of-court.spanish.';
+                $element = $this->form->get($base.'update-scheduled-event]');
                 echo $this->configCheckbox($element);
-                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $element = $this->form->get($base.'notify-assigned-interpreters]');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[remove-interpreters]');
+                $element = $this->form->get($base.'remove-interpreters]');
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
@@ -120,24 +122,24 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td rowspan="2">non-Spanish</td>
                 <td>in-court</td>
                 <td><?php
-                $base = 'change-within-am-pm[in-court][non-spanish]';
-                $element = $this->form->get($base.'[update-scheduled-event]');
+                $base = 'change-within-am-pm[in-court.non-spanish.';
+                $element = $this->form->get($base.'update-scheduled-event]');
                 echo $this->configCheckbox($element);
-                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $element = $this->form->get($base.'notify-assigned-interpreters]');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[remove-interpreters]');
+                $element = $this->form->get($base.'remove-interpreters]');
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
             <tr>
                 <td>out-of-court</td>
                 <td><?php
-                $base = 'change-within-am-pm[out-of-court][non-spanish]';
-                $element = $this->form->get($base.'[update-scheduled-event]');
+                $base = 'change-within-am-pm[out-of-court.non-spanish.';
+                $element = $this->form->get($base.'update-scheduled-event]');
                 echo $this->configCheckbox($element);
-                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $element = $this->form->get($base.'notify-assigned-interpreters]');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[remove-interpreters]');
+                $element = $this->form->get($base.'remove-interpreters]');
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
@@ -146,12 +148,12 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td>any</td>
                 <td>any</td>
                 <td><?php
-                $base = 'change-language[all-events][all-languages]';
-                $element = $this->form->get($base.'[update-scheduled-event]');
+                $base = 'change-language[all-events.all-languages.';
+                $element = $this->form->get($base.'update-scheduled-event]');
                 echo $this->configCheckbox($element);
-                $element = $element = $this->form->get($base.'[notify-assigned-interpreters]');
+                $element = $element = $this->form->get($base.'notify-assigned-interpreters]');
                 echo $this->configCheckbox($element);
-                $element = $this->form->get($base.'[remove-interpreters]');
+                $element = $this->form->get($base.'remove-interpreters]');
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
