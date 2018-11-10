@@ -1,0 +1,39 @@
+{
+    "cancel": {
+        "in-court.spanish.delete-scheduled-event": "1",
+        "in-court.spanish.notify-assigned-interpreters": "0",
+        "out-of-court.spanish.delete-scheduled-event": "1",
+        "out-of-court.spanish.notify-assigned-interpreters": "1",
+        "out-of-court.non-spanish.delete-scheduled-event": "1",
+        "out-of-court.non-spanish.notify-assigned-interpreters": "1"
+    },
+    "change-date": {
+        "all-events.all-languages.update-scheduled-event": "1",
+        "all-events.all-languages.notify-assigned-interpreters": "1",
+        "all-events.all-languages.remove-interpreters": "1"
+    },
+    "change-x-am-pm": {
+        "all-events.all-languages.update-scheduled-event": "1",
+        "all-events.all-languages.notify-assigned-interpreters": "1",
+        "all-events.all-languages.remove-interpreters": "1"
+    },
+    "change-within-am-pm": {
+        "in-court.spanish.update-scheduled-event": "1",
+        "in-court.spanish.notify-assigned-interpreters": "1",
+        "in-court.spanish.remove-interpreters": "0",
+        "in-court.non-spanish.update-scheduled-event": "1",
+        "in-court.non-spanish.notify-assigned-interpreters": "1",
+        "in-court.non-spanish.remove-interpreters": "0",
+        "out-of-court.spanish.update-scheduled-event": "1",
+        "out-of-court.spanish.notify-assigned-interpreters": "1",
+        "out-of-court.spanish.remove-interpreters": "0",
+        "out-of-court.non-spanish.update-scheduled-event": "1",
+        "out-of-court.non-spanish.notify-assigned-interpreters": "1",
+        "out-of-court.non-spanish.remove-interpreters": "0"
+    },
+    "change-language": {
+        "all-events.all-languages.update-scheduled-event": "1",
+        "all-events.all-languages.notify-assigned-interpreters": "1",
+        "all-events.all-languages.remove-interpreters": "1"
+    }
+}

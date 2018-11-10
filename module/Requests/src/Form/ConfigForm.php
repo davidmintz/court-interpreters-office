@@ -57,7 +57,7 @@ class ConfigForm extends Form implements InputFilterProviderInterface
 
     public function init()
     {
-        $json = file_get_contents('data/settings.json');
+        $json = file_get_contents('module/Requests/config/default.event-listeners.json');
         $data  = json_decode($json,true);
         $this->default_values = $data;
         $this->setHydrator(new ArraySerializable());
