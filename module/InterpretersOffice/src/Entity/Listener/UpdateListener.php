@@ -199,6 +199,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
                 get_class($args->getObject())
             )
         );
-        $this->clear_cache($args);
+        //$this->clear_cache($args);
     }
 }
