@@ -48,13 +48,14 @@ class ModificationAuthorizedAssertion implements AssertionInterface
     {
 
         $log = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
-        $log->debug(__METHOD__. " is running");
         // test ownership
         if (! $this->AssertOwnership($acl, $user, $controller, $privilege)) {
+            $log->debug('"ownership" acl assertion returned false!');
             return false;
         }
         // test timeliness
         if (! $this->assertTimeliness($acl, $user, $controller, $privilege)) {
+            $log->debug('"timeliness" acl assertion returned false!');
             return false;
         }
 
@@ -116,10 +117,10 @@ class ModificationAuthorizedAssertion implements AssertionInterface
         $request_date = new \DateTime(
             "{$request->getDate()->format('Y-m-d')} {$request->getTime()->format('H:i')}"
         );
-        $log->debug(sprintf("excuse me? action is $privilege, request %d date is %s, deadline is %s",
-            $request->getId(),
-            $request_date->format("Y-m-d H:i"),$deadline->format("Y-m-d H:i")
-        ));
+        // $log->debug(sprintf("excuse me? action is $privilege, request %d date is %s, deadline is %s",
+        //     $request->getId(),
+        //     $request_date->format("Y-m-d H:i"),$deadline->format("Y-m-d H:i")
+        // ));
         return $request_date > $deadline;
     }
 
