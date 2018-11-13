@@ -7,7 +7,7 @@ $person_insert = $db->prepare(
     'INSERT INTO people (lastname, firstname, email, hat_id, active, discr)'
         . ' VALUES (:lastname, :firstname, :email, :hat_id, :active, :discr)'
 );
-$user_insert = $db->prepare( 
+$user_insert = $db->prepare(
          'INSERT INTO users (person_id, role_id, username, password, created, active) '
         . ' VALUES (:person_id, :role_id, :username, :password, NOW(), :active)'
 );
@@ -52,7 +52,7 @@ $staff = [
         'email' => 'pierre_neptune@nysd.uscourts.gov',
         'active' => 0,
         'role_id'   => 2,
-        
+
     ],
     'tatiana' => [
         'lastname' => 'Kaliakina',
@@ -65,6 +65,13 @@ $staff = [
         'lastname' => 'Perry',
         'firstname' =>'Katelynn',
         'email' => 'katelynn_perry@nysd.uscourts.gov',
+        'active' => 1,
+        'role_id'   => 2,
+    ],
+    'amanda' => [
+        'lastname' => 'Gonzalez',
+        'firstname' =>'Amanda',
+        'email' => 'amanda_gonzalez@nysd.uscourts.gov',
         'active' => 1,
         'role_id'   => 2,
     ],
@@ -100,7 +107,7 @@ foreach ($users as $user) {
         $params = [
             ':person_id' =>  $user['interpreter_id'],
             ':username' => $user['name'],
-            ':active' =>  $user['active'], 
+            ':active' =>  $user['active'],
             ':role_id' =>  ($user['name'] == 'david' ? 3 : 2),
             ':password'  => password_hash('boink',PASSWORD_DEFAULT),
          ];
@@ -118,16 +125,16 @@ foreach ($users as $user) {
         }
     } else {
         if ($user['person_id']) {
-            
+
             // then the user should already exist in people
             // BUT should ALSO exist as an separate, extinct person-user (inactive)
-            // with an 'interpreter staff' hat|office staff role 
-            
+            // with an 'interpreter staff' hat|office staff role
+
             //... or not ???????
             //SELECT p.lastname, p.firstname, h.name hat,r.name role FROM people p JOIN users u ON p.id = u.person_id JOIN hats h ON p.hat_id = h.id JOIN roles r ON r.id = u.role_id WHERE r.name <> "submitter";
 
             try {
-                printf("creating INACTIVE user for: %s ...",$user['name']);                
+                printf("creating INACTIVE user for: %s ...",$user['name']);
                 // we can get the data from the people table
                 //$data = $db->query('select * from people where id = '.$user['person_id'])->fetch();
                 /*
@@ -148,7 +155,7 @@ foreach ($users as $user) {
                     ':role_id' => 4,
                     ':username' => $user['name'],
                     ':password' => password_hash('boink',PASSWORD_DEFAULT),
-                    ':active' => 0,                    
+                    ':active' => 0,
                 ];
                 $user_insert->execute($params);
                 echo "OK\n";
@@ -161,7 +168,7 @@ foreach ($users as $user) {
                     exit(1);
                 }
             }
-            
+
         } else {
 
            printf("creating NEW %s person-user for %s...", $user['active'] ? "ACTIVE":"INACTIVE", $user['name'] );
@@ -178,7 +185,7 @@ foreach ($users as $user) {
                      ':lastname' => $data['lastname'],
                      ':firstname' => $data['firstname'],
                      ':hat_id'   => HAT_OFFICE_STAFF];
-                
+
                 $person_insert->execute($params);
                 $id = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn();
                 $params = [
@@ -187,16 +194,16 @@ foreach ($users as $user) {
                     ':role_id' => $data['role_id'],
                     ':username' => $user['name'],
                     ':password' => password_hash('boink',PASSWORD_DEFAULT),
-                    ':active' => 0,                    
+                    ':active' => 0,
                 ];
                 $user_insert->execute($params);
                 echo "OK\n";
            } catch (Exception $e) {
                 printf("while doing person query followed by person|user insert, caught exception %s at %d with params %s\n",$e->getMessage(),__LINE__,print_r($params,true));
                 exit(1);
-           }           
+           }
         }
-    }        
+    }
 }
 
 
