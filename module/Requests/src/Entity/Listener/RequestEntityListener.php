@@ -61,8 +61,8 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         LifecycleEventArgs $args
     ) {
 
-        $log = $this->getLogger();
-        $log->debug("postload callback running in Request entity listener");
+        // $log = $this->getLogger();
+        // $log->debug("postload callback running in Request entity listener");
         $this->previous_defendants = $request->getDefendants()->toArray();
     }
 
@@ -82,8 +82,22 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
                 ->setCancelled(false)
                 ->setSubmitter($person)
                 ->setModifiedBy($user);
-        $this->getLogger()->debug("YES, we have set Request metadata in prePersist listener");
+        $this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
     }
+
+    /**
+     * postPersist callback
+     *
+     * @param  EntityRequest      $request
+     * @param  LifecycleEventArgs $args
+     * @return void
+     */
+    public function postPersist(Entity\Request $request,LifecycleEventArgs $args)
+    {
+        $this->getEventManager()->trigger('create',$this,
+            ['args'=>$args,'entity'=>$request]);
+    }
+
     /**
      * postRemove callback
      *
@@ -131,9 +145,15 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
             $user = $this->getAuthenticatedUser($args)->getUsername();
             $this->getLogger()->info("user $user (really) is updating a Request");
         }
+        // request cancellation
+        if ($args->hasChangedField('cancelled') && $request->isCancelled()) {
+            $event_name = 'cancel';
+        } else {
+            $event_name = 'update';
+        }
         //  trigger event for the ScheduleListener, which was attached when we
         //  were instantiated
-        $this->getEventManager()->trigger( __FUNCTION__, $this,
+        $this->getEventManager()->trigger( $event_name, $this,
             ['args'=>$args,'entity'=>$request]
         );
     }

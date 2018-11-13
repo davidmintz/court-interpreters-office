@@ -677,7 +677,7 @@ class Request implements ResourceInterface
 
     /**
      * sets $cancelled
-     * 
+     *
      * @param Request
      */
     public function setCancelled($flag)
@@ -687,7 +687,15 @@ class Request implements ResourceInterface
         return $this;
     }
 
-
+    /**
+     * proxies to getCancelled
+     *
+     * @return boolean
+     */
+    public function isCancelled()
+    {
+        return $this->getCancelled();
+    }
     /**
      * sets "extra" data
      *

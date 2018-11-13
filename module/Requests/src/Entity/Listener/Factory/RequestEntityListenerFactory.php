@@ -26,10 +26,8 @@ class RequestEntityListenerFactory implements FactoryInterface
     {
 
         $listener = new RequestEntityListener();
-        $listener->setLogger($container->get('log'));
-        /** @todo see what happens if we make this a constructor dependency */
+        $listener->setLogger($container->get('log'));        
         $listener->setAuth($container->get('auth'));
-        $sharedEvents = $container->get('SharedEventManager');
         $sharedEvents = $container->get('SharedEventManager');
         $sharedEvents->attach(
             RequestEntityListener::class,
