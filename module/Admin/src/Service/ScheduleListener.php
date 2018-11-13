@@ -30,15 +30,25 @@ class ScheduleListener
     private $auth;
 
     /**
+     * configuration
+     *
+     * @var Array
+     */
+    protected $config;
+
+    /**
      * constructor
      *
      * @param LoggerInterface                $log
      * @param AuthenticationServiceInterface $auth
+     * @param Array                          $config
      */
-    public function __construct(LoggerInterface $log, AuthenticationServiceInterface $auth)
+    public function __construct(AuthenticationServiceInterface $auth,
+        LoggerInterface $log, Array $config)
     {
         $this->logger = $log;
         $this->auth = $auth;
+        $this->config = $config;
     }
 
 
@@ -72,28 +82,54 @@ class ScheduleListener
         if (Entity\Listener\EventEntityListener::class == $target) {
             return $this->eventUpdateHandler($e);
         }
-        if (class_exists(RequestEntityListener::class)
-            && RequestEntityListener::class == $target) {
-            $this->logger->debug("ScheduleListener triggered by RequestEntityListener: ".$e->getName());
-            $params = $e->getParams();
-            /** @var  Doctrine\ORM\Event\PreUpdateEventArgs $args */
-            $args = $params['args'];
-            /** @var  InterpretersOffice\Requests\Entity\Request $request */
-            $request = $params['entity'];
+        if (RequestEntityListener::class == $target) {
+            $this->logger->debug(
+                "ScheduleListener triggered by RequestEntityListener: "
+                .$e->getName());
 
-            if ($args->hasChangedField('cancelled') && $args->getNewValue('cancelled'))
-            {
-                $this->logger->info(sprintf('ScheduleListener: ¡user %s has CANCELLED request %d!',
-                    $this->auth->getIdentity()->username, $request->getId()));
+            $handler = 'on' . ucfirst($e->getName()) . 'Request';
+            if (! method_exists($this, $handler)) {
+                $this->logger->warn(sprintf(
+                '%s has no handler for event %s in %s',
+                __CLASS__,$e->getName(),__FUNCTION__
+                ));
+                return;
             }
-
-
+            return $this->$handler($e);
         }
         $this->logger->info(sprintf(
-            'ScheduleListener not doing anything with %s:%s',
+            'ScheduleListener not doing anything with %s: %s',
             $target,
             $e->getName()
         ));
+    }
+    protected function onUpdateRequest(Event $e)
+    {
+        $this->logger->debug(
+            sprintf('handling request update in %s at %d',__METHOD__,__LINE__)
+        );
+        $listener_config = $this->config['event_listeners'];
+        $request = $e->getParam('entity');
+        // is it on the schedule?
+        $scheduled_event = $request->getEvent();
+        $this->logger->debug(
+            __METHOD__.':  is it on the schedule? '.($scheduled_event ? 'yes':'no')
+        );
+
+
+    }
+    protected function onCreateRequest(Event $e)
+    {
+        $this->logger->debug(
+            sprintf('handling request create in %s at %d',__METHOD__,__LINE__)
+        );
+        $listener_config = $this->config['event_listeners'];
+    }
+    protected function onCancelRequest(Event $e)
+    {
+        $this->logger->debug(
+            sprintf('handling request cancel in %s at %d',__METHOD__,__LINE__)
+        );
     }
 
     /**
