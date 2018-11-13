@@ -14,6 +14,13 @@ use InterpretersOffice\Requests\Controller\Admin;
 
 // set to 'array' to disable
 //$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
+//$
+
+$event_configuration_file = file_exists(
+    __DIR__.'/custom.event-listeners.json') ?
+    __DIR__.'/custom.event-listeners.json' :
+    __DIR__.'/default.event-listeners.json';
+
 
 return [
     'controllers' => [
@@ -275,5 +282,8 @@ return [
             'configCheckbox' => 'InterpretersOffice\Requests\View\Helper\ConfigCheckbox',
         ],
     ],
+    'event_listeners' => [
+        json_decode(file_get_contents($event_configuration_file))
+    ]
 
 ];
