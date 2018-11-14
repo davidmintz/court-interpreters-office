@@ -12,7 +12,7 @@ use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use Zend\Stdlib\Parameters;
-
+use Zend\Dom\Document\Query;
 use InterpretersOffice\Requests\Entity\Request;
 
 /**
@@ -161,7 +161,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
      * @param  Request $entity
      * @return Request
      */
-    public function testUpdate(Request $entity)
+    public function testLoadUpdateForm(Request $entity)
     {
         $this->assertTrue($entity instanceof Request);
         $em = $this->getApplicationServiceLocator()->get('entity-manager');
@@ -182,14 +182,56 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $this->assertQuery("ul#defendants > li");
         $this->assertQueryCount("ul#defendants > li",1);
         $this->assertQueryContentRegex("ul#defendants > li", '/Fulano Mengano/');
-        // to be continued
+        $date = $entity->getDate()->format('m/d/Y');
+        $this->assertQuery("input#date[value='$date']");
+
         return $entity;
+
+    }
+    /**
+     * [testPostUpdate description]
+     * @depends testCreate
+     * @param  Request $entity [description]
+     * @return [type]          [description]
+     */
+    public function testPostUpdate(Request $entity)
+    {
+        $date_before = $entity->getDate()->format('m/d/Y');
+        // add a week to the date
+        $new_date = (new \DateTime("$date_before +1 week"))->format('m/d/Y');
+
+        $data = $this->getDummyRequest();
+        $data['date'] = $new_date;
+        $data['id']   = $entity->getId();
+        $this->login('jane_zorkendoofer@nysd.uscourts.gov','gack!');
+        $this->reset(true);
+        $url = "/requests/update/{$entity->getId()}";
+        $token = $this->getCsrfToken($url);
+        $post = ['csrf' => $token,'request'=> $data];
+        $this->getRequest()->getHeaders()
+            ->addHeaderLine('X-Requested-With','XMLHttpRequest');
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($post)
+        );
+        $this->dispatch($url);
+
+        $this->assertResponseStatusCode(200);
+
+        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+
+        $reloaded_entity = $em->find(Request::class,$data['id']);
+
+        $dateObj = $reloaded_entity->getDate();
+
+        // date should be $new_date
+        $this->assertEquals($new_date, $dateObj->format('m/d/Y'));
+
 
     }
 
     /**
      * testClerkCannotUpdateRequestBelongingToAnotherJudge
-     * @depends testUpdate
+     * @depends testCreate
      *
      * @param  Request $entity
      * @return Request $entity

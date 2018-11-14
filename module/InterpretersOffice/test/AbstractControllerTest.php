@@ -82,7 +82,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
     {
 
         $this->dispatch($url, 'GET');
-        $html = $this->getResponse()->getBody();//echo($html);
+        $html = $this->getResponse()->getBody();
         $DEBUG = "\nGET: $url in getCsrfToken\n";
         $DEBUG .= "...parsing $name in getCsrfToken\n";
         $auth = $this->getApplicationServiceLocator()->get('auth');
@@ -102,6 +102,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         }
 
         if (!isset($results) or ! count($results)) {
+            //echo($html);
             throw new \Exception("selector was $selector -- could not parse "
                     . "CSRF token! does the element exist? Is the HTML too deformed by error output?\nDEBUG: $DEBUG\n");
         }

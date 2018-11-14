@@ -90,19 +90,25 @@ class ScheduleListener
             $handler = 'on' . ucfirst($e->getName()) . 'Request';
             if (! method_exists($this, $handler)) {
                 $this->logger->warn(sprintf(
-                '%s has no handler for event %s in %s',
-                __CLASS__,$e->getName(),__FUNCTION__
-                ));
+                    '%s has no handler for event %s in %s',
+                __CLASS__,$e->getName(),__FUNCTION__));
+
                 return;
             }
             return $this->$handler($e);
         }
         $this->logger->info(sprintf(
-            'ScheduleListener not doing anything with %s: %s',
-            $target,
-            $e->getName()
+            'hello, ScheduleListener not doing anything with %s: %s',
+            $target, $e->getName()
         ));
     }
+
+    /**
+     * event listener for Request update
+     *
+     * @param  Event  $e
+     * @return void
+     */
     protected function onUpdateRequest(Event $e)
     {
         $this->logger->debug(
@@ -115,9 +121,16 @@ class ScheduleListener
         $this->logger->debug(
             __METHOD__.':  is it on the schedule? '.($scheduled_event ? 'yes':'no')
         );
-
-
+        $config = $this->config['event_listeners'];
+        $args = $e->getParam('args');
     }
+
+    /**
+     * event listener for Request creation
+     *
+     * @param  Event  $e
+     * @return void
+     */
     protected function onCreateRequest(Event $e)
     {
         $this->logger->debug(
