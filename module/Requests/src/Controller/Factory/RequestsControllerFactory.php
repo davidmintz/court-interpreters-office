@@ -12,6 +12,14 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
 /**
  * Factory class for instantiating Requests\IndexController.
+ *
+ * This factory produces the read-only IndexController as well as the
+ * WriteController for the Request module. If the $requestedName (controller)
+ * we're creating is the WriteController, we update the ACL (which is mostly
+ * configured by now) on the fly, so that we can add an ACL assertion that
+ * depends on conditions we can't know until this controller is initialized, and
+ * which is also expensive enough to warrant delaying until we know we
+ * need it.
  */
 class RequestsControllerFactory implements FactoryInterface
 {
@@ -28,13 +36,12 @@ class RequestsControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
+        // add Doctine entity listeners
         $resolver = $entityManager->getConfiguration()
             ->getEntityListenerResolver();
         $resolver->register($container->get(Listener\UpdateListener::class)
             ->setAuth($auth));
-
         $resolver->register($container->get(RequestEntityListener::class));
-
         if ($requestedName == Controller\WriteController::class) {
             $acl = $container->get('acl');
             $controller = new $requestedName($entityManager, $auth, $acl);
