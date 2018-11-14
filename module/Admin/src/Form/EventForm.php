@@ -112,12 +112,6 @@ class EventForm extends ZendForm implements
     */
     public function preValidate(EventInterface $e)
     {
-        // $container = $e->getTarget()->getEvent()->getApplication()
-        //     ->getServiceManager();
-        // $log = $container->get('log');
-        // $log->debug(
-        //     "no shit. are we from a Request? ".($this->isElectronic()?"YES":"NO?")
-        // );
 
         $input = $e->getTarget()->getRequest()->getPost();
         $event = $input->get('event');
@@ -158,7 +152,8 @@ class EventForm extends ZendForm implements
             $end_time_input->getValidatorChain()
                 ->attach(new Validator\EndTimeValidator());
         }
-
+        // if the source of this Event was a Request, the metadata -- who
+        // submitted it and when -- is immutable, so we're done.
         if ($this->isElectronic()) {
             $input->set('event', $event);
             return;
