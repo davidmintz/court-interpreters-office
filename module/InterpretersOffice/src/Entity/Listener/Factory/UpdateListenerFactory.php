@@ -30,8 +30,9 @@ class UpdateListenerFactory implements FactoryInterface
         $listener->setLogger($container->get('log'));
 
         // echo "Not daring to pull auth from container<br>";
-        // because it causes a infinite loop/fatal error -- functions nested > 256 levels.
-        // sounds like bullshit to me!
+        // because it causes a infinite loop/fatal error --
+        // functions nested > 256 levels. sounds like bullshit to me!
+        // or a cyclic dependency thing.
         // $auth = $container->get(\Zend\Authentication\AuthenticationService::class);
 
         return $listener;

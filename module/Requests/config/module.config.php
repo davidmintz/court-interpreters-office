@@ -282,8 +282,7 @@ return [
             'configCheckbox' => 'InterpretersOffice\Requests\View\Helper\ConfigCheckbox',
         ],
     ],
-    'event_listeners' => [
-        json_decode(file_get_contents($event_configuration_file))
-    ]
+    'event_listeners' => json_decode(file_get_contents($event_configuration_file),true),
+
 
 ];

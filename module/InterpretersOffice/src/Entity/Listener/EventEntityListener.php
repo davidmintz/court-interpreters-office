@@ -80,16 +80,15 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $entity,
         LifecycleEventArgs $args
     ) {
-        $log = $this->getLogger();
-        $log->debug("postload callback running in Event entity listener");
+        //$log = $this->getLogger();
+        //$log->debug("postload callback running in Event entity listener");
         $this->previous_defendants = $entity->getDefendants()->toArray();
         $this->previous_interpreters = $entity->getInterpreterEvents()->toArray();
         //  temporary/debugging
-        $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            compact('args', 'entity')
-        );
+        // $this->getEventManager()->trigger(
+        //     __FUNCTION__,
+        //     $this, compact('args', 'entity')
+        // );
     }
 
     /**
@@ -103,9 +102,21 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         LifecycleEventArgs $args
     ) {
         $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            compact('args', 'entity')
+            __FUNCTION__, $this, compact('args', 'entity')
+        );
+    }
+    
+    /**
+     * postRemove callback
+     *
+     * @param Entity\Event $entity
+     * @param LifecycleEventArgs $args
+     */
+    public function postRemove(Entity\Event $entity,
+        LifecycleEventArgs $args)
+    {
+        $this->getEventManager()->trigger(
+            __FUNCTION__, $this, compact('args', 'entity')
         );
     }
     /**
@@ -150,7 +161,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         foreach (['date','submission_date'] as $date) {
             if ($args->getOldValue($date) !=
                 $args->getNewValue($date)) {
-                $this->logger->debug("event $date was modified");
+                //$this->logger->debug("event $date was modified");
                 return true;
             }
         }

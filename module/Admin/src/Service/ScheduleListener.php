@@ -10,11 +10,20 @@ use InterpretersOffice\Entity;
 use InterpretersOffice\Admin\Service\ScheduleListener;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+
+use Zend\Filter\Word\DashToCamelCase;
+
 /**
  * listener for schedule changes
  */
 class ScheduleListener
 {
+
+    const CHANGE_DATE = 'change-date';
+
+    const CHANGE_TIME_X_PM = '';
 
     /**
      * LoggerInterface
@@ -114,15 +123,60 @@ class ScheduleListener
         $this->logger->debug(
             sprintf('handling request update in %s at %d',__METHOD__,__LINE__)
         );
-        $listener_config = $this->config['event_listeners'];
+        /**
+         * @var \InterpretersOffice\Requests\Entity\Request $request
+         */
         $request = $e->getParam('entity');
         // is it on the schedule?
+        /**
+         * @var Entity\Event $scheduled_event
+         */
         $scheduled_event = $request->getEvent();
+
         $this->logger->debug(
-            __METHOD__.':  is it on the schedule? '.($scheduled_event ? 'yes':'no')
+            __METHOD__.':  on the schedule? '.($scheduled_event ? 'yes':'no')
         );
-        $config = $this->config['event_listeners'];
+        if (! $scheduled_event) {
+            return;
+        }
+        $listener_config = $this->config['event_listeners'];
+        /**
+        * @var PreUpdateEventArgs $args
+        */
         $args = $e->getParam('args');
+
+        $user_action = $this->getUserActionName($args);
+        $this->logger->debug("the FUCK??????");
+        $em = $args->getEntityManager();
+        $this->logger->debug("change of date? ".($args->hasChangedField('date')?"YES":"NO"));
+        if ($args->hasChangedField('date')) {
+            //$this->logger->debug("NOT dealing with date change");
+            $type = (string)$request->getEventType()->getCategory()
+              == 'in' ? 'in-court':'out-of-court';
+            $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?
+                 'spanish':'non-spanish';
+
+            $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
+
+            // figure out what actions are configured
+            $actions = preg_grep($pattern,array_keys($listener_config['change-date']));
+            $filter = new DashToCamelCase();
+            // and whether they are enabled
+            foreach ($actions as $string) {
+                $i = strrpos($string,'.') + 1;
+                $action = substr($string,$i);
+                // $this->logger->debug("do $action?  ".
+                //     ($listener_config['change-date'][$string] ? "YES":"NO"));
+                if ($listener_config['change-date'][$string]) {
+                    $method = lcfirst($filter->filter($action));
+                    $this->logger->debug("need to call: $method()");
+                }
+            }
+
+        } else {
+            $this->logger->debug("NOT dealing with date change");
+        }
+
     }
 
     /**
@@ -164,7 +218,8 @@ class ScheduleListener
             )
         );
         switch ($e->getName()) {
-            case 'preRemove':
+            // case 'preRemove':
+            //     break;
             case 'postRemove':
                 $repo = $e->getParam('args')->getEntityManager()
                 ->getRepository(Entity\Event::class);
@@ -179,17 +234,33 @@ class ScheduleListener
                 break;
 
             case 'postLoad':
-                $this->logger->info("$user has loaded event id "
+                $this->logger->info("ScheduleListener: $user has loaded event id "
                 . $e->getParam('entity')->getId());
                 break;
 
             default:
                 $this->logger->info(sprintf(
-                    'user %s is doing %s with event id %d',
+                    'ScheduleListener: user %s is doing %s with event id %d',
                     $user,
                     $e->getName(),
                     $e->getParam('entity')->getId()
                 ));
+        }
+    }
+
+    private function getUserActionName(PreUpdateEventArgs $args)
+    {
+
+        if ($args->hasChangedField('date')) {
+            return 'change-date';
+        }
+        if ($args->hasChangedField('time')) {
+            $old_value = $args->getOldValue('time')->format('H');
+            $new_value = $args->getNewValue('time')->format('H');
+            if ($old_value < 13 && $new_value >= 13) {
+
+            }
+
         }
     }
 }

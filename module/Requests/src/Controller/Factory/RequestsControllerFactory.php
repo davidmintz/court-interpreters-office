@@ -7,6 +7,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Requests\Controller;
 use InterpretersOffice\Entity\Listener;
+use InterpretersOffice\Entity\Listener\EventEntityListener;
 use InterpretersOffice\Requests\Acl\ModificationAuthorizedAssertion;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
@@ -17,7 +18,7 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
  * WriteController for the Request module. If the $requestedName (controller)
  * we're creating is the WriteController, we update the ACL (which is mostly
  * configured by now) on the fly, so that we can add an ACL assertion that
- * depends on conditions we can't know until this controller is initialized, and
+ * depends on conditions we can't know until this controller is created, and
  * which is also expensive enough to warrant delaying until we know we
  * need it.
  */
@@ -36,13 +37,21 @@ class RequestsControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
-        // add Doctine entity listeners
-        $resolver = $entityManager->getConfiguration()
-            ->getEntityListenerResolver();
-        $resolver->register($container->get(Listener\UpdateListener::class)
-            ->setAuth($auth));
-        $resolver->register($container->get(RequestEntityListener::class));
+
         if ($requestedName == Controller\WriteController::class) {
+            // add Doctine entity listeners
+            $resolver = $entityManager->getConfiguration()
+                ->getEntityListenerResolver();
+            $resolver->register($container->get(Listener\UpdateListener::class)
+                ->setAuth($auth));
+            $resolver->register($container->get(RequestEntityListener::class));
+            $resolver->register($container->get(EventEntityListener::class));
+            $log = $container->get('log');
+            //$resolver->register($container->get(RequestEntityListener::class));
+            //$resolver->register($container->get(EventEntityListener::class));
+            $log->warn("SHIT WAS REGISTERED!");
+
+            // add another ACL rule
             $acl = $container->get('acl');
             $controller = new $requestedName($entityManager, $auth, $acl);
             $user = $entityManager->find('InterpretersOffice\Entity\User',
