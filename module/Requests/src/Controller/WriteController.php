@@ -256,6 +256,10 @@ class WriteController extends AbstractActionController implements ResourceInterf
     public function updateAction()
     {
         $id = $this->params()->fromRoute('id');
+        /*
+        SELECT e FROM InterpretersOfficeEntityEvent e JOIN InterpretersOfficeRequestsEntityRequest r
+        JOIN r.event re WITH e.id = re.id WHERE r.id = :id
+         */
         $entity = $this->objectManager->find(Entity\Request::class,$id);
         if (! $entity) {
             $this->flashMessenger()->addErrorMessage(
