@@ -21,9 +21,25 @@ use Zend\Filter\Word\DashToCamelCase;
 class ScheduleListener
 {
 
+    /**
+     * @var string
+     */
     const CHANGE_DATE = 'change-date';
 
-    const CHANGE_TIME_X_PM = '';
+    /**
+     * @var string
+     */
+    const CHANGE_TIME_X_PM = 'change-x-am-pm';
+
+    /**
+     * @var string
+     */
+    const CHANGE_TIME_WITHIN_AM_PM = 'change-within-am-pm';
+
+    /**
+     * @var string
+     */
+    const CHANGE_LANGUAGE = 'change-language';
 
     /**
      * LoggerInterface
@@ -146,37 +162,28 @@ class ScheduleListener
         $args = $e->getParam('args');
 
         $user_action = $this->getUserActionName($args);
-        $this->logger->debug("the FUCK??????");
-        $em = $args->getEntityManager();
-        $this->logger->debug("change of date? ".($args->hasChangedField('date')?"YES":"NO"));
-        if ($args->hasChangedField('date')) {
-            //$this->logger->debug("NOT dealing with date change");
-            $type = (string)$request->getEventType()->getCategory()
-              == 'in' ? 'in-court':'out-of-court';
-            $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?
-                 'spanish':'non-spanish';
+        $this->logger->debug("user action:  $user_action");
 
-            $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
+        $type = (string)$request->getEventType()->getCategory()
+            == 'in' ? 'in-court':'out-of-court';
+        $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?
+             'spanish':'non-spanish';
+        $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
 
-            // figure out what actions are configured
-            $actions = preg_grep($pattern,array_keys($listener_config['change-date']));
-            $filter = new DashToCamelCase();
-            // and whether they are enabled
-            foreach ($actions as $string) {
-                $i = strrpos($string,'.') + 1;
-                $action = substr($string,$i);
-                // $this->logger->debug("do $action?  ".
-                //     ($listener_config['change-date'][$string] ? "YES":"NO"));
-                if ($listener_config['change-date'][$string]) {
-                    $method = lcfirst($filter->filter($action));
-                    $this->logger->debug("need to call: $method()");
-                }
+        // figure out what admin actions are configured for $user_action
+        $actions = preg_grep($pattern,array_keys($listener_config[$user_action]));
+        $filter = new DashToCamelCase();
+        // and whether they are enabled
+        foreach ($actions as $string) {
+            $i = strrpos($string,'.') + 1;
+            $action = substr($string,$i);
+            $method = lcfirst($filter->filter($action));
+            if ($listener_config[$user_action][$string]) {
+                $this->logger->debug("need to call: $method()");
+            } else {
+                $this->logger->debug("not running disabled $method()");
             }
-
-        } else {
-            $this->logger->debug("NOT dealing with date change");
         }
-
     }
 
     /**
@@ -250,15 +257,26 @@ class ScheduleListener
 
     private function getUserActionName(PreUpdateEventArgs $args)
     {
-
+        if ($args->hasChangedField('language')) {
+            return self::CHANGE_LANGUAGE;
+        }
         if ($args->hasChangedField('date')) {
-            return 'change-date';
+            $old_value = $args->getOldValue('date')->format('Y-m-d');
+            $new_value = $args->getNewValue('date')->format('Y-m-d');
+            if ($old_value != $new_value) {
+                return self::CHANGE_DATE;
+            }
         }
         if ($args->hasChangedField('time')) {
             $old_value = $args->getOldValue('time')->format('H');
             $new_value = $args->getNewValue('time')->format('H');
-            if ($old_value < 13 && $new_value >= 13) {
-
+            if ($old_value < 13 && $new_value >= 13
+                or
+                $old_value >= 13 && $new_value < 13
+            ) {
+                return self::CHANGE_TIME_X_PM;
+            } else {
+                return self::CHANGE_TIME_WITHIN_AM_PM;
             }
 
         }
