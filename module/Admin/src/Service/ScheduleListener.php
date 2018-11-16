@@ -163,6 +163,7 @@ class ScheduleListener
         $args = $e->getParam('args');
 
         $user_action = $this->getUserActionName($args);
+        //if (! $user_action) { return; }
         $this->logger->debug("user action:  $user_action");
 
         $type = (string)$request->getEventType()->getCategory()
@@ -200,7 +201,11 @@ class ScheduleListener
      */
     public function updateScheduledEvent(Event $e, $user_action)
     {
-        $changed_fields = $e->getParam('args')->getEntityChangeSet();
+        /**
+         * @var PreUpdateEventArgs $eventArgs
+         */
+        $eventArgs = $e->getParam('args');
+        $changed_fields = $eventArgs->getEntityChangeSet();
         $request = $e->getParam('entity');
         $event = $request->getEvent();
         $defendants_were_modified = $e->getParam('defendants_were_modified');
@@ -211,6 +216,32 @@ class ScheduleListener
         }
         $this->logger->debug("we are in ".__FUNCTION__. " to update Event from Request");
         $this->logger->debug("defts modified? ".($defendants_were_modified ? "YES":"NO"));
+        $this->logger->debug("triggered by: $user_action, request id is {$request->getId()}; event id is {$event->getId()}");
+
+        $em = $eventArgs->getEntityManager();
+        $uow = $em->getUnitOfWork();
+        $event = $request->getEvent();
+        $event->setComments('FUCKIN shit REALLY WAS modified by us at '.time());
+        $event->setTime($request->getTime());
+        // $uow->computeChangeSet(
+        //     $em->getClassMetadata(get_class($event)),$event
+        // );
+        //$em->flush();
+        $this->logger->debug("and we fucking tried.");
+        //https://stackoverflow.com/questions/31743845/update-a-entity-in-preupdate-event-using-doctrine2
+        /*
+        public function preUpdate($eventArgs) {
+    $order = $eventArgs->getEntity();
+    if ($eventArgs->hasChangedField('contactId')) {
+        $em = $eventArgs->getEntityManager();
+        $uow = $em->getUnitOfWork();
+        $website = $order->getWebsite();
+        $website->setContactId($order->getContactId());
+        $uow->computeChangeSet(
+                $em->getClassMetadata(get_class($website)), $website);
+    }
+}
+         */
 
         return $this;
     }

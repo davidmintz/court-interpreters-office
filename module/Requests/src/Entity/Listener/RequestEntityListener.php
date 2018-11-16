@@ -161,10 +161,23 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         );
     }
 
+    public function postUpdate(Entity\Request $request, LifecycleEventArgs $args)
+    {
+        $this->logger->debug('HELLO!! running '.__METHOD__);
+        $event = $request->getEvent();
+        $event->setComments("really, fuck you at ".date('r'));
+        $event->setTime($request->getTime());
+        // $uow->computeChangeSet(
+        //     $em->getClassMetadata(get_class($event)),$event
+        // );
+        $em = $args->getEntityManager();
+        $em->flush();
+    }
+
     /**
      * was the Defendants collection actually updated?
      *
-     * @param  EntityRequest $request
+     * @param  Entity\Request $request
      * @return boolean
      */
     private function defendantsWereModified(Entity\Request $request) {
