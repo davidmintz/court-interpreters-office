@@ -69,7 +69,7 @@ class RequestForm extends ZendForm
 
     /**
      * moves data around following successful validation
-     * 
+     *
      * @return RequestForm
      */
     public function postValidate()
@@ -77,8 +77,7 @@ class RequestForm extends ZendForm
         // subject to reconsideration, the least ugly way to store the
         // names they could|would not find in the database
         if ($this->get('request')->has('extra_defendants')) {
-            $names = $this->get('request')
-                ->get('extra_defendants')->getValue();
+            $names = $this->get('request')->get('extra_defendants')->getValue();
             $this->getObject()->setExtraData(['defendants'=>$names]);
         }
 

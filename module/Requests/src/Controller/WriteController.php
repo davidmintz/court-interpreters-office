@@ -278,6 +278,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
         try {
+            $form->postValidate();
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
             'This request for interpreting services has been updated successfully. Thank you.'
