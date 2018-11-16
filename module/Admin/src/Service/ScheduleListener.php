@@ -210,6 +210,7 @@ class ScheduleListener
                 __METHOD__));
         }
         $this->logger->debug("we are in ".__FUNCTION__. " to update Event from Request");
+        $this->logger->debug("defts modified? ".($defendants_were_modified ? "YES":"NO"));
 
         return $this;
     }
