@@ -137,24 +137,27 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
                 $really_modified = true;
             }
         }
-
-        if ($really_modified or $this->defendantsWereModified($request)) {
+        $defendants_were_modified = $this->defendantsWereModified($request);
+        if ($really_modified or $defendants_were_modified) {
             //$this->getLogger()->debug("YES, updating request meta in preUpdate listener");
             $request->setModified( new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
             $user = $this->getAuthenticatedUser($args)->getUsername();
             $this->getLogger()->info("user $user (really) is updating a Request");
         }
-        // request cancellation
+        // Request cancellation. Cancellation is in fact an update: the entity's
+        // boolean $cancelled is set to true. But it is treated as its own
+        // special case.
         if ($args->hasChangedField('cancelled') && $request->isCancelled()) {
             $event_name = 'cancel';
         } else {
             $event_name = 'update';
         }
-        //  trigger event for the ScheduleListener, which was attached when we
-        //  were instantiated
+        //  trigger event for the ScheduleListener, which was attached when
+        //  $this was instantiated
         $this->getEventManager()->trigger( $event_name, $this,
-            ['args'=>$args,'entity'=>$request]
+            ['args'=>$args,'entity'=>$request,
+                'defendants_were_modified'=> $defendants_were_modified,]
         );
     }
 

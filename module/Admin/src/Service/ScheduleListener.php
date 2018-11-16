@@ -7,6 +7,7 @@ use Zend\EventManager\Event;
 use Zend\Log\LoggerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Requests\Entity\Request;
 use InterpretersOffice\Admin\Service\ScheduleListener;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
@@ -180,10 +181,37 @@ class ScheduleListener
             $method = lcfirst($filter->filter($action));
             if ($listener_config[$user_action][$string]) {
                 $this->logger->debug("need to call: $method()");
+                if (method_exists($this, $method)) {
+                    $this->$method($e,$action);
+                } else {
+                    $this->logger->warn("not running not-implemented $method");
+                }
             } else {
                 $this->logger->debug("not running disabled $method()");
             }
         }
+    }
+    /**
+     * updates a scheduled Event to keep consistent with Request
+     *
+     * @param  Zend\EventManager\Event $event
+     * @param string $user_action
+     * @return ScheduleListener
+     */
+    public function updateScheduledEvent(Event $e, $user_action)
+    {
+        $changed_fields = $e->getParam('args')->getEntityChangeSet();
+        $request = $e->getParam('entity');
+        $event = $request->getEvent();
+        $defendants_were_modified = $e->getParam('defendants_were_modified');
+        if (! is_bool($defendants_were_modified)) {
+            throw new \RuntimeException(sprintf(
+                '%s is missing required "defendants_were_modified" Event parameter',
+                __METHOD__));
+        }
+        $this->logger->debug("we are in ".__FUNCTION__. " to update Event from Request");
+
+        return $this;
     }
 
     /**
@@ -206,6 +234,7 @@ class ScheduleListener
         );
     }
 
+
     /**
      * eventUpdateHandler
      *
@@ -219,9 +248,8 @@ class ScheduleListener
         $user = $this->auth->getIdentity()->username;
         $this->logger->debug(
             sprintf(
-                'ScheduleListener is running %s with %s',
-                __FUNCTION__,
-                $e->getName()
+                'ScheduleListener: running %s with %s',
+                __FUNCTION__,  $e->getName()
             )
         );
         switch ($e->getName()) {
@@ -255,12 +283,24 @@ class ScheduleListener
         }
     }
 
+    /**
+     * Determines which user-action on a Request is to be handled.
+     *
+     * When users update a request, user-configured event listeners are
+     * triggered. They may update more than one field. We look at the changeSet
+     * to determine which update is the most signicant, and return the
+     * corresponding action name, which is mapped to a method.
+     *
+     * @param  PreUpdateEventArgs $args
+     * @return string name of the user action
+     */
     private function getUserActionName(PreUpdateEventArgs $args)
     {
         if ($args->hasChangedField('language')) {
             return self::CHANGE_LANGUAGE;
         }
         if ($args->hasChangedField('date')) {
+            // really?
             $old_value = $args->getOldValue('date')->format('Y-m-d');
             $new_value = $args->getNewValue('date')->format('Y-m-d');
             if ($old_value != $new_value) {
