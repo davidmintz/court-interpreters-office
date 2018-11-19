@@ -10,6 +10,7 @@ use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
 use InterpretersOffice\Requests\Acl\ModificationAuthorizedAssertion;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
+use InterpretersOffice\Service\SqlLogger;
 
 /**
  * Factory class for instantiating Requests\IndexController.
@@ -35,10 +36,13 @@ class RequestsControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        /** */
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
 
         if ($requestedName == Controller\WriteController::class) {
+            $sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
+            $entityManager->getConfiguration()->setSQLLogger($sql_logger);
             // add Doctine entity listeners
             $resolver = $entityManager->getConfiguration()
                 ->getEntityListenerResolver();
@@ -46,16 +50,12 @@ class RequestsControllerFactory implements FactoryInterface
                 ->setAuth($auth));
             $resolver->register($container->get(RequestEntityListener::class));
             $resolver->register($container->get(EventEntityListener::class));
-            $log = $container->get('log');
-            //$resolver->register($container->get(RequestEntityListener::class));
-            //$resolver->register($container->get(EventEntityListener::class));
-            $log->warn("SHIT WAS REGISTERED!");
 
             // add another ACL rule
             $acl = $container->get('acl');
             $controller = new $requestedName($entityManager, $auth, $acl);
             $user = $entityManager->find('InterpretersOffice\Entity\User',
-            $auth->getIdentity()->id);
+                $auth->getIdentity()->id);
             $acl->allow($user, $controller, ['update','cancel'],
                 new ModificationAuthorizedAssertion($controller));
 
