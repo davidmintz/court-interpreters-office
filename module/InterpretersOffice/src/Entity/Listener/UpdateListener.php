@@ -104,12 +104,15 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         //$shit = print_r(get_class_methods($uow),true);
         //$this->logger->debug($shit);
         $entities = $uow->getScheduledEntityUpdates();
-        foreach ($entities as $request) {
-            if (!$request instanceof Request) {
-                return;
+        $request = null;
+        foreach ($entities as $entity) {
+            if ($entity instanceof Request) {
+                $request = $entity;
+                break;
             }
-            $event = $request->getEvent();
-            if (! $event) { return; }
+        }
+        if (!$request or ! $request->getEvent()) {
+            return;
         }
         // $request is a Request entity
         $changeset = $uow->getEntityChangeSet($request);
