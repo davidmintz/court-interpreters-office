@@ -3,6 +3,7 @@ namespace InterpretersOffice\Requests\Entity\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -161,17 +162,22 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         );
     }
 
+    public function onFlush(OnFlushEventArgs  $args)
+    {
+
+    }
+
     public function postUpdate(Entity\Request $request, LifecycleEventArgs $args)
     {
         $this->logger->debug('HELLO!! running '.__METHOD__);
-        $event = $request->getEvent();
-        $event->setComments("really, fuck you at ".date('r'));
-        $event->setTime($request->getTime());
-        // $uow->computeChangeSet(
-        //     $em->getClassMetadata(get_class($event)),$event
-        // );
-        $em = $args->getEntityManager();
-        $em->flush();
+        // $event = $request->getEvent();
+        // $event->setComments("really, fuck you at ".date('r'));
+        // $event->setTime($request->getTime());
+        // // $uow->computeChangeSet(
+        // //     $em->getClassMetadata(get_class($event)),$event
+        // // );
+        // $em = $args->getEntityManager();
+        // $em->flush();
     }
 
     /**
