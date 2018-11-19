@@ -163,7 +163,11 @@ class ScheduleListener
         $args = $e->getParam('args');
 
         $user_action = $this->getUserActionName($args);
-        //if (! $user_action) { return; }
+        if (! $user_action) {
+            $this->logger->debug("could not discern so-called \$user_action,
+                returning from ".__METHOD__);
+            return;
+        }
         $this->logger->debug("user action:  $user_action");
 
         $type = (string)$request->getEventType()->getCategory()
@@ -192,59 +196,61 @@ class ScheduleListener
             }
         }
     }
-    /**
+
+    /*
+     *
+     * WRONG. not gonna work.
+     *
      * updates a scheduled Event to keep consistent with Request
      *
      * @param  Zend\EventManager\Event $event
      * @param string $user_action
      * @return ScheduleListener
      */
-    public function updateScheduledEvent(Event $e, $user_action)
-    {
-        /**
-         * @var PreUpdateEventArgs $eventArgs
-         */
-        $eventArgs = $e->getParam('args');
-        $changed_fields = $eventArgs->getEntityChangeSet();
-        $request = $e->getParam('entity');
-        $event = $request->getEvent();
-        $defendants_were_modified = $e->getParam('defendants_were_modified');
-        if (! is_bool($defendants_were_modified)) {
-            throw new \RuntimeException(sprintf(
-                '%s is missing required "defendants_were_modified" Event parameter',
-                __METHOD__));
-        }
-        $this->logger->debug("we are in ".__FUNCTION__. " to update Event from Request");
-        $this->logger->debug("defts modified? ".($defendants_were_modified ? "YES":"NO"));
-        $this->logger->debug("triggered by: $user_action, request id is {$request->getId()}; event id is {$event->getId()}");
+    // public function updateScheduledEvent(Event $e, $user_action)
+    // {
 
-        $em = $eventArgs->getEntityManager();
-        $uow = $em->getUnitOfWork();
-        $event = $request->getEvent();
-        $event->setComments('FUCKIN shit REALLY WAS modified by us at '.time());
-        $event->setTime($request->getTime());
+        // $eventArgs = $e->getParam('args');
+        // $changed_fields = $eventArgs->getEntityChangeSet();
+        // $request = $e->getParam('entity');
+        // $event = $request->getEvent();
+        // $defendants_were_modified = $e->getParam('defendants_were_modified');
+        // if (! is_bool($defendants_were_modified)) {
+        //     throw new \RuntimeException(sprintf(
+        //         '%s is missing required "defendants_were_modified" Event parameter',
+        //         __METHOD__));
+        // }
+        // $this->logger->debug("we are in ".__FUNCTION__. " to update Event from Request");
+        // $this->logger->debug("defts modified? ".($defendants_were_modified ? "YES":"NO"));
+        // $this->logger->debug("triggered by: $user_action, request id is {$request->getId()}; event id is {$event->getId()}");
+        //
+        // $em = $eventArgs->getEntityManager();
+        // $uow = $em->getUnitOfWork();
+        // $event = $request->getEvent();
+        // $event->setComments('FUCKIN shit REALLY WAS modified by us at '.time());
+        // $event->setTime($request->getTime());
         // $uow->computeChangeSet(
         //     $em->getClassMetadata(get_class($event)),$event
         // );
         //$em->flush();
-        $this->logger->debug("and we fucking tried.");
+        //$this->logger->debug("and we fucking tried.");
         //https://stackoverflow.com/questions/31743845/update-a-entity-in-preupdate-event-using-doctrine2
         /*
         public function preUpdate($eventArgs) {
-    $order = $eventArgs->getEntity();
-    if ($eventArgs->hasChangedField('contactId')) {
-        $em = $eventArgs->getEntityManager();
-        $uow = $em->getUnitOfWork();
-        $website = $order->getWebsite();
-        $website->setContactId($order->getContactId());
-        $uow->computeChangeSet(
-                $em->getClassMetadata(get_class($website)), $website);
-    }
-}
+        $order = $eventArgs->getEntity();
+        if ($eventArgs->hasChangedField('contactId')) {
+            $em = $eventArgs->getEntityManager();
+            $uow = $em->getUnitOfWork();
+            $website = $order->getWebsite();
+            $website->setContactId($order->getContactId());
+            $uow->computeChangeSet(
+                    $em->getClassMetadata(get_class($website)), $website);
+            }
+        }
          */
 
-        return $this;
-    }
+        //return $this;
+    //}
 
     /**
      * event listener for Request creation
