@@ -273,6 +273,29 @@ class WriteController extends AbstractActionController implements ResourceInterf
         if (! $this->getRequest()->isPost()) {
             return  new ViewModel(['form' => $form, 'id' => $id]);
         }
+        $data = $this->getRequest()->getPost()->get('request');
+        // temporary mutilation ----------------------------------------
+        // try to stop Doctrine from needless updates. remove DateTime inputs
+        // that have not really changed.
+        /** @todo move this some place sensible */
+        $before = [
+            'date'=> $entity->getDate()->format('m/d/Y'),
+            'time' => $entity->getTime()->format('g:i a')
+        ];
+        $after = [
+            'date'=> $data['date'],
+            'time' => $data['time'],
+        ];
+        $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+        foreach (['date','time'] as $prop) {
+            if ($before[$prop] == $after[$prop]) {
+                $log->debug("$prop did not change?");
+                unset($data[$prop]);
+                $form->getInputFilter()->get('request')->remove($prop);
+            } else { $log->debug("$prop HAS changed");}
+        }
+        $log->debug(sprintf("BEFORE: %s\nAFTER:%s",print_r($before,true),print_r($after,true)));
+        ////// ----------------------------------------------------------
         $form->setData($this->getRequest()->getPost());
         if (! $form->isValid()) {
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
