@@ -7,6 +7,8 @@ namespace InterpretersOffice\Entity\Listener;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Entity\VerificationToken;
@@ -49,6 +51,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
     protected $auth;
 
 
+
+
     /**
      * the entity on which we are operating
      *
@@ -89,9 +93,52 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postRemove','postPersist','prePersist',];
+        return ['postUpdate','postRemove','postPersist','prePersist','onFlush'];
     }
 
+    public function onFlush (OnFlushEventArgs $args ) {
+        //return;
+        $this->logger->debug(__METHOD__);
+        /** @var Doctrine\ORM\UnitOfWork $uow */
+        $uow = $args->getEntityManager()->getUnitOfWork();
+        //$shit = print_r(get_class_methods($uow),true);
+        //$this->logger->debug($shit);
+        $entities = $uow->getScheduledEntityUpdates();
+        $request = null;
+        foreach ($entities as $entity) {
+            if ($entity instanceof Request) {
+                $request = $entity;
+                break;
+            }
+        }
+        if (!$request or ! $request->getEvent()) {
+            return;
+        }
+        // $request is a Request entity
+        $changeset = $uow->getEntityChangeSet($request);
+        // $shit = print_r($changeset,true);
+        // $this->logger->debug($shit);
+        $updated_event = false;
+        foreach ($changeset as $field => $values) {
+            if ($field == 'time') {
+                if ($values[0]->format('H:i')  != $values[1]->format('H:i')) {
+                    $this->logger->debug("real time change noted in ".__METHOD__);
+                    $event = $request->getEvent();
+                    $event->setTime($request->getTime());
+                    $this->logger->debug("reset time to: ".$event->getTime()->format('H:i'));
+                    $updated_event = true;
+                }
+            }
+        }
+        $em = $args->getEntityManager();
+        if ($updated_event) {
+            $this->logger->debug("trying to update event id: ".$event->getId());
+            $event->setTime($request->getTime());
+            $uow->recomputeSingleEntityChangeSet(
+                $em->getClassMetadata(get_class($event)),$event
+            );
+        }
+    }
 
     /**
     * postPersist event handler

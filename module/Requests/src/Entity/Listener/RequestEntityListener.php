@@ -3,7 +3,7 @@ namespace InterpretersOffice\Requests\Entity\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\Event\OnFlushEventArgs;
+// use Doctrine\ORM\Event\OnFlushEventArgs;
 
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -14,15 +14,17 @@ use Zend\Log;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 use Doctrine\ORM\EntityManager;
-
+//use Doctrine\Common\EventSubscriber;
 /**
  * Request entity listener.
  */
 class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareInterface
+//EventSubscriber
 {
     use Log\LoggerAwareTrait;
     use EventManagerAwareTrait;
     use CurrentUserTrait;
+
 
     /**
      * authentication service
@@ -50,17 +52,18 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         return $this;
     }
 
-
+    // public function getSubscribedEvents()
+    // {
+    //     return [ 'onFlush', 'postLoad','prePersist','postPersist','preUpdate'];
+    // }
     /**
      * postLoad callback
      *
      * @param Entity\Request $request
      * @param LifecycleEventArgs $args
      */
-    public function postLoad(
-        Entity\Request $request,
-        LifecycleEventArgs $args
-    ) {
+    public function postLoad(Entity\Request $request,LifecycleEventArgs $args)
+    {
 
         // $log = $this->getLogger();
         // $log->debug("postload callback running in Request entity listener");
@@ -83,7 +86,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
                 ->setCancelled(false)
                 ->setSubmitter($person)
                 ->setModifiedBy($user);
-        $this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
+        //$this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
     }
 
     /**
@@ -99,20 +102,6 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
             ['args'=>$args,'entity'=>$request]);
     }
 
-    /**
-     * postRemove callback
-     *
-     * @param  Entity\Request      $request
-     * @param  LifecycleEventArgs $args
-     * @return void
-     * @todo do something
-     */
-    public function postRemove(Entity\Request $request,LifecycleEventArgs $args)
-    {
-        $user = $this->getAuthenticatedUser($args)->getUsername();
-        $this->getLogger()->info("user $user is deleting a Request");
-        // to be continued!!
-    }
 
     /**
      * preUpdate callback.
@@ -126,25 +115,25 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
         $really_modified = false;
         $fields_updated = array_keys($args->getEntityChangeSet());
-        if (array_diff($fields_updated,['date','time'])) {
-            $really_modified = true;
-            //$this->getLogger()->debug("fields OTHER THAN date|time were changed");
-        } else {
-            $time_before = $args->getOldValue('time')->format('H:i');
-            $time_after = $args->getNewValue('time')->format('H:i');
-            if ($time_before != $time_after) {
-                $really_modified = true;
-            } elseif ($args->getOldValue('date') != $args->getNewValue('date')) {
-                $really_modified = true;
-            }
-        }
+        // if (array_diff($fields_updated,['date','time'])) {
+        //     $really_modified = true;
+        //     //$this->getLogger()->debug("fields OTHER THAN date|time were changed");
+        // } else {
+        //     $time_before = $args->getOldValue('time')->format('H:i');
+        //     $time_after = $args->getNewValue('time')->format('H:i');
+        //     if ($time_before != $time_after) {
+        //         $really_modified = true;
+        //     } elseif ($args->getOldValue('date') != $args->getNewValue('date')) {
+        //         $really_modified = true;
+        //     }
+        // }
         $defendants_were_modified = $this->defendantsWereModified($request);
-        if ($really_modified or $defendants_were_modified) {
+        if ($defendants_were_modified) { //$really_modified or
             //$this->getLogger()->debug("YES, updating request meta in preUpdate listener");
             $request->setModified( new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
             $user = $this->getAuthenticatedUser($args)->getUsername();
-            $this->getLogger()->info("user $user (really) is updating a Request");
+            $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
         }
         // Request cancellation. Cancellation is in fact an update: the entity's
         // boolean $cancelled is set to true. But it is treated as its own
@@ -162,23 +151,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         );
     }
 
-    public function onFlush(OnFlushEventArgs  $args)
-    {
 
-    }
-
-    public function postUpdate(Entity\Request $request, LifecycleEventArgs $args)
-    {
-        $this->logger->debug('HELLO!! running '.__METHOD__);
-        // $event = $request->getEvent();
-        // $event->setComments("really, fuck you at ".date('r'));
-        // $event->setTime($request->getTime());
-        // // $uow->computeChangeSet(
-        // //     $em->getClassMetadata(get_class($event)),$event
-        // // );
-        // $em = $args->getEntityManager();
-        // $em->flush();
-    }
 
     /**
      * was the Defendants collection actually updated?
