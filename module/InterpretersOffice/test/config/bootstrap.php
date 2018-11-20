@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManager;
 $path = __DIR__.'/../../../../vendor/zendframework/zend-form/src/Annotation/';
 $files = glob("$path/*php");
 foreach ($files as $file) {
+    if (basename($file) == 'Object.php') { continue; }
     AnnotationRegistry::registerFile($file);
 }
 
