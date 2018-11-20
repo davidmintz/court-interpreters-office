@@ -101,13 +101,9 @@ final class FixtureManager
         $auth = new FakeAuth();
         $container->get('InterpretersOffice\Admin\Service\ScheduleListener')
             ->setAuth($auth);
-        $shit = $container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener')
-             ->setLogger($container->get('log'))
-             ->setAuth($auth);
-        //echo "\nHELLO???\n";
         $resolver->register($container->get(Listener\EventEntityListener::class));
         $resolver->register($container->get(Listener\UpdateListener::class));
-        $resolver->register($shit);
+
         return $entityManager;
     }
 

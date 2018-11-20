@@ -7,10 +7,6 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use InterpretersOffice\Entity;
 
-/**
- * this depends on: Judges, Languages, EventTypes, Users, Interpreters,
- * Defendants having been loaded
- */
 class EventLoader implements FixtureInterface
 {
     public function load(ObjectManager $objectManager)
@@ -36,8 +32,7 @@ class EventLoader implements FixtureInterface
                 ."WHERE p.email = 'john_somebody@nysd.uscourts.gov'";
         $query = $objectManager->createQuery($dql);
         $user = $query->getSingleResult();
-        $david = $objectManager->getRepository('InterpretersOffice\Entity\User')
-            ->findOneBy(['username'=>'david']);
+
         $interpreter = $objectManager->getRepository('InterpretersOffice\Entity\Interpreter')
                 ->findOneBy(['lastname' => 'Mintz']);
 
@@ -60,9 +55,9 @@ class EventLoader implements FixtureInterface
             ->setSubmitter($user->getPerson())
             ->setModified($now)
             ->setCreated($now)
-            ->setCreatedBy($david)
+            ->setCreatedBy($user)
             ->setLocation($location)
-            ->setModifiedBy($david)
+            ->setModifiedBy($user)
              ->setSubmissionDate(new \DateTime('-1 hour'))
              ->setSubmissionTime(new \DateTime('-1 hour'))
              ->addDefendant($defendant)
@@ -73,5 +68,7 @@ class EventLoader implements FixtureInterface
         $objectManager->persist($event);
         $objectManager->flush();
 
+        //$objectManager->remove($event);
+        //$objectManager->flush();
     }
 }
