@@ -80,12 +80,16 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     public function prePersist(Entity\Request $request,LifecycleEventArgs $args)
     {
         $now = new \DateTime();
-        $user = $this->getAuthenticatedUser($args);
-        $person = $this->getCurrentUserPerson($args);
         $request->setCreated($now)->setModified($now)
-                ->setCancelled(false)
+                ->setCancelled(false);
+        // so it won't blow up in test environment:
+        if (! $request->getSubmitter()) {
+            $user = $this->getAuthenticatedUser($args);
+            $person = $this->getCurrentUserPerson($args);
+            $request
                 ->setSubmitter($person)
                 ->setModifiedBy($user);
+        }
         //$this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
     }
 
@@ -98,8 +102,8 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      */
     public function postPersist(Entity\Request $request,LifecycleEventArgs $args)
     {
-        $this->getEventManager()->trigger('create',$this,
-            ['args'=>$args,'entity'=>$request]);
+         $this->getEventManager()->trigger('create',$this,
+             ['args'=>$args,'entity'=>$request]);
     }
 
 
@@ -128,12 +132,12 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         //     }
         // }
         $defendants_were_modified = $this->defendantsWereModified($request);
-        if ($defendants_were_modified) { //$really_modified or 
+        if ($defendants_were_modified) { //$really_modified or
             //$this->getLogger()->debug("YES, updating request meta in preUpdate listener");
             $request->setModified( new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
-            $user = $this->getAuthenticatedUser($args)->getUsername();
-            $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
+            //$user = $this->getAuthenticatedUser($args)->getUsername();
+            $this->getLogger()->info(__METHOD__." :user is (really) is updating a Request ");
         }
         // Request cancellation. Cancellation is in fact an update: the entity's
         // boolean $cancelled is set to true. But it is treated as its own
