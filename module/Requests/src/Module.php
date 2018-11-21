@@ -32,7 +32,12 @@ class Module
          * edit action, after the entity is fetched and bound to the
          * form but before $form->setData($post). We inform the Event form
          * as to whether the Event was originally set from a
-         * Request entity.
+         * Request entity. That it turn tells us whether the Event metadata
+         * (submitted by whom and when) should be immutable.
+         *
+         * The logic is that the Requests module might not be enabled, in which
+         * case we don't care... but this is actually kind of foolish so we
+         * may need to rethink this whole thing.1
          *
         */
         $sharedEvents->attach(
