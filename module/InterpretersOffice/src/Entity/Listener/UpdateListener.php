@@ -96,6 +96,14 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
         return ['postUpdate','postRemove','postPersist','prePersist','onFlush'];
     }
 
+    /**
+     * synchronizes Event with Request
+     *
+     * a work in progress.
+     *
+     * @param  OnFlushEventArgs $args
+     * @return void
+     */
     public function onFlush (OnFlushEventArgs $args ) {
 
         /** @var Doctrine\ORM\UnitOfWork $uow */

@@ -28,7 +28,6 @@ class EventsControllerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $auth = $container->get('auth');
-        //var_dump($auth instanceof \Zend\Authentication\AuthenticationServiceInterface);exit;
         $em = $container->get('entity-manager');
         $controller = new EventsController(
             $em,
