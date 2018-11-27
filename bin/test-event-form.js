@@ -66,6 +66,7 @@ casper.test.begin("Authenticate and Add Event", function suite(test)
             test.assertExists("#event-form", "element #event-form exists");
             test.assertExists("#time","a time field exists");
             var time = then.format("hmm");
+            
             this.sendKeys("#time",time);
             this.waitFor(function check(){
                 return this.evaluate(function(time){return $("#time").val() != time;},time);

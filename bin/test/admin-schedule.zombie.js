@@ -42,7 +42,7 @@ describe("admin schedule test",function(){
             function(){
             var today = moment(new Date());
             browser.fire("a.fa-arrow-right","click")
-                .then(function(){
+                .then(function(done){
                 //console.log(`location is now: ${browser.location.href}`);
                 browser.assert.status(200);
                 var dayOfWeek = today.format("d");
@@ -50,14 +50,24 @@ describe("admin schedule test",function(){
                 var str = today.add(increment,"days").format("YYYY/MM/DD") + "$";
                 browser.assert.url(new RegExp(str));
                 browser.fire("a.fa-arrow-left","click")
-                    .then(()=>{
+                    .then((done)=>{
                         browser.assert.status(200);
                         browser.assert.element("h2 small.text-muted");
                         var str = moment().format("YYYY/MM/DD") + "$";
                         browser.assert.url(new RegExp(str))
                     });
             });
-        })
+        });
+    /*
+    these things don't work because the previous callbacks have yet to finish.
+     */
+       //  it("should be able to continue",()=>{
+       //      browser.visit("/admin/schedule/add")
+       //      .then(()=>{
+       //          browser.assert.status(200);
+       //          browser.assert.url("/admin/schedule/add");
+       //      }).catch((err)=>{console.log(err);});
+       // });
     });
     /*
     describe("loading event creation form",function(){
@@ -67,5 +77,25 @@ describe("admin schedule test",function(){
         it("should display event form",function(){
             browser.assert.success();
         });
-    })*/
+    })
+    */
 });
+
+/*
+describe("loading event creation form",function(){
+    const browser = new Browser();
+    browser.debug();
+    before(function(){
+        return browser.visit("/login");
+    });
+    describe("shit",()=>{
+        before(function(){
+            browser.fill("#identity","david");
+            browser.fill("#password","boink");
+            return browser.pressButton("log in");
+        });
+    });
+
+
+});
+*/
