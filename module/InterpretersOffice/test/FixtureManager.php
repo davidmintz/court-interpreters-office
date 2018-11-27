@@ -96,10 +96,10 @@ final class FixtureManager
         $resolver->register($listener);
 
         // looks like we need to be authenticated before EventListenerFactory
-        // injects auth in ScheduleListener, hence...
+        // injects auth in ScheduleUpdateManager, hence...
 
         $auth = new FakeAuth();
-        $container->get('InterpretersOffice\Admin\Service\ScheduleListener')
+        $container->get('InterpretersOffice\Admin\Service\ScheduleUpdateManager')
             ->setAuth($auth);
         $resolver->register($container->get(Listener\EventEntityListener::class));
         $resolver->register($container->get(Listener\UpdateListener::class));

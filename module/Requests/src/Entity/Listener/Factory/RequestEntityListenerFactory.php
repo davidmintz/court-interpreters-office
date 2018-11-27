@@ -7,8 +7,6 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
-use InterpretersOffice\Admin\Service\ScheduleListener;
-
 /**
  * factory class for the Request entity listener
  */
@@ -26,14 +24,10 @@ class RequestEntityListenerFactory implements FactoryInterface
     {
 
         $listener = new RequestEntityListener();
-        $listener->setLogger($container->get('log'));        
+        $listener->setLogger($container->get('log'));
         $listener->setAuth($container->get('auth'));
-        $sharedEvents = $container->get('SharedEventManager');
-        $sharedEvents->attach(
-            RequestEntityListener::class,
-            '*',
-            [$container->get(ScheduleListener::class),'scheduleChange']
-        );
+        //$sharedEvents = $container->get('SharedEventManager');
+        //$sharedEvents->attach(/*... */);
 
         return $listener;
     }

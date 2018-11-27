@@ -1,5 +1,5 @@
 <?php
-/** module/Admin/src/Service/ScheduleListener.php  */
+/** module/Admin/src/Service/ScheduleUpdateManager.php  */
 
 namespace InterpretersOffice\Admin\Service;
 
@@ -8,7 +8,6 @@ use Zend\Log\LoggerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
-use InterpretersOffice\Admin\Service\ScheduleListener;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -17,9 +16,12 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Zend\Filter\Word\DashToCamelCase;
 
 /**
- * listener for schedule changes
+ * Reacts to changes in Request entities.
+ *
+ * May also eventually be pressed into service for doing things in response to
+ * changes in Event entities.
  */
-class ScheduleListener
+class ScheduleUpdateManager
 {
 
     /**
@@ -84,7 +86,7 @@ class ScheduleListener
      * primarily for rigging tests
      *
      * @param AuthenticationServiceInterface $auth
-     * @return ScheduleListener;
+     * @return ScheduleUpdateManager;
      */
     public function setAuth(AuthenticationServiceInterface $auth)
     {
@@ -93,44 +95,11 @@ class ScheduleListener
         return $this;
     }
 
-    /**
-     * scheduleChange observer
-     *
-     * @param  Event  $e
-     * @return void
-     */
-    public function scheduleChange(Event $e)
-    {
-        $target = is_object($e->getTarget()) ? get_class($e->getTarget())
-            : $e->getTarget();
-        $this->logger->debug("ScheduleListener observing ".$e->getName()
-            . " on target $target");
-        if (Entity\Listener\EventEntityListener::class == $target) {
-            return $this->eventUpdateHandler($e);
-        }
-        if (RequestEntityListener::class == $target) {
-            $this->logger->debug(
-                "ScheduleListener triggered by RequestEntityListener: "
-                .$e->getName());
-
-            $handler = 'on' . ucfirst($e->getName()) . 'Request';
-            if (! method_exists($this, $handler)) {
-                $this->logger->warn(sprintf(
-                    '%s has no handler for event %s in %s',
-                __CLASS__,$e->getName(),__FUNCTION__));
-
-                return;
-            }
-            return $this->$handler($e);
-        }
-        $this->logger->info(sprintf(
-            'hello, ScheduleListener not doing anything with %s: %s',
-            $target, $e->getName()
-        ));
-    }
+    
 
     /**
      * event listener for Request update
+     * @todo rewrite/rename this whole thing
      *
      * @param  Event  $e
      * @return void
@@ -138,7 +107,7 @@ class ScheduleListener
     protected function onUpdateRequest(Event $e)
     {
         $this->logger->debug(
-            sprintf('handling request update in %s at %d',__METHOD__,__LINE__)
+            sprintf(__METHOD__.': handling request update in %s at %d',__METHOD__,__LINE__)
         );
         /**
          * @var \InterpretersOffice\Requests\Entity\Request $request
@@ -197,60 +166,6 @@ class ScheduleListener
         }
     }
 
-    /*
-     *
-     * WRONG. not gonna work.
-     *
-     * updates a scheduled Event to keep consistent with Request
-     *
-     * @param  Zend\EventManager\Event $event
-     * @param string $user_action
-     * @return ScheduleListener
-     */
-    // public function updateScheduledEvent(Event $e, $user_action)
-    // {
-
-        // $eventArgs = $e->getParam('args');
-        // $changed_fields = $eventArgs->getEntityChangeSet();
-        // $request = $e->getParam('entity');
-        // $event = $request->getEvent();
-        // $defendants_were_modified = $e->getParam('defendants_were_modified');
-        // if (! is_bool($defendants_were_modified)) {
-        //     throw new \RuntimeException(sprintf(
-        //         '%s is missing required "defendants_were_modified" Event parameter',
-        //         __METHOD__));
-        // }
-        // $this->logger->debug("we are in ".__FUNCTION__. " to update Event from Request");
-        // $this->logger->debug("defts modified? ".($defendants_were_modified ? "YES":"NO"));
-        // $this->logger->debug("triggered by: $user_action, request id is {$request->getId()}; event id is {$event->getId()}");
-        //
-        // $em = $eventArgs->getEntityManager();
-        // $uow = $em->getUnitOfWork();
-        // $event = $request->getEvent();
-        // $event->setComments('FUCKIN shit REALLY WAS modified by us at '.time());
-        // $event->setTime($request->getTime());
-        // $uow->computeChangeSet(
-        //     $em->getClassMetadata(get_class($event)),$event
-        // );
-        //$em->flush();
-        //$this->logger->debug("and we fucking tried.");
-        //https://stackoverflow.com/questions/31743845/update-a-entity-in-preupdate-event-using-doctrine2
-        /*
-        public function preUpdate($eventArgs) {
-        $order = $eventArgs->getEntity();
-        if ($eventArgs->hasChangedField('contactId')) {
-            $em = $eventArgs->getEntityManager();
-            $uow = $em->getUnitOfWork();
-            $website = $order->getWebsite();
-            $website->setContactId($order->getContactId());
-            $uow->computeChangeSet(
-                    $em->getClassMetadata(get_class($website)), $website);
-            }
-        }
-         */
-
-        //return $this;
-    //}
 
     /**
      * event listener for Request creation
@@ -286,7 +201,7 @@ class ScheduleListener
         $user = $this->auth->getIdentity()->username;
         $this->logger->debug(
             sprintf(
-                'ScheduleListener: running %s with %s',
+                __CLASS__ .': running %s with %s',
                 __FUNCTION__,  $e->getName()
             )
         );
@@ -307,13 +222,13 @@ class ScheduleListener
                 break;
 
             case 'postLoad':
-                $this->logger->info("ScheduleListener: $user has loaded event id "
+                $this->logger->info(__METHOD__.": $user has loaded event id "
                 . $e->getParam('entity')->getId());
                 break;
 
             default:
                 $this->logger->info(sprintf(
-                    'ScheduleListener: user %s is doing %s with event id %d',
+                    __METHOD__.': user %s is doing %s with event id %d',
                     $user,
                     $e->getName(),
                     $e->getParam('entity')->getId()

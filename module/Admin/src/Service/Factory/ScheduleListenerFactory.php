@@ -1,16 +1,16 @@
 <?php
-/**  module/Admin/src/Service/Factory/ScheduleListenerFactory.php */
+/**  module/Admin/src/Service/Factory/ScheduleUpdateManagerFactory.php */
 
 namespace InterpretersOffice\Admin\Service\Factory;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use InterpretersOffice\Admin\Service\ScheduleListener;
+use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 
 /**
- * ScheduleListenerFactory
+ * ScheduleUpdateManagerFactory
  */
-class ScheduleListenerFactory implements FactoryInterface
+class ScheduleUpdateManagerFactory implements FactoryInterface
 {
     /**
      * implements FactoryInterface.
@@ -18,11 +18,11 @@ class ScheduleListenerFactory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options
-     * @return ScheduleListener
+     * @return ScheduleUpdateManager
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ScheduleListener(
+        return new ScheduleUpdateManager(
             $container->get('auth'),
             $container->get('log'),
             $container->get('config'));

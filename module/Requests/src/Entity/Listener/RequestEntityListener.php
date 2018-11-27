@@ -115,21 +115,8 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
         $really_modified = false;
         $fields_updated = array_keys($args->getEntityChangeSet());
-        // if (array_diff($fields_updated,['date','time'])) {
-        //     $really_modified = true;
-        //     //$this->getLogger()->debug("fields OTHER THAN date|time were changed");
-        // } else {
-        //     $time_before = $args->getOldValue('time')->format('H:i');
-        //     $time_after = $args->getNewValue('time')->format('H:i');
-        //     if ($time_before != $time_after) {
-        //         $really_modified = true;
-        //     } elseif ($args->getOldValue('date') != $args->getNewValue('date')) {
-        //         $really_modified = true;
-        //     }
-        // }
         $defendants_were_modified = $this->defendantsWereModified($request);
-        if ($defendants_were_modified) { //$really_modified or 
-            //$this->getLogger()->debug("YES, updating request meta in preUpdate listener");
+        if ($defendants_were_modified) {
             $request->setModified( new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
             $user = $this->getAuthenticatedUser($args)->getUsername();
@@ -138,17 +125,13 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         // Request cancellation. Cancellation is in fact an update: the entity's
         // boolean $cancelled is set to true. But it is treated as its own
         // special case.
+        /*
         if ($args->hasChangedField('cancelled') && $request->isCancelled()) {
             $event_name = 'cancel';
         } else {
             $event_name = 'update';
         }
-        //  trigger event for the ScheduleListener, which was attached when
-        //  $this was instantiated
-        $this->getEventManager()->trigger( $event_name, $this,
-            ['args'=>$args,'entity'=>$request,
-                'defendants_were_modified'=> $defendants_were_modified,]
-        );
+        */
     }
 
 
