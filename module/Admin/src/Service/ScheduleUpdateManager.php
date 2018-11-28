@@ -45,6 +45,11 @@ class ScheduleUpdateManager
     const CHANGE_LANGUAGE = 'change-language';
 
     /**
+     * @var string
+     */
+    const CANCEL = 'cancel';
+
+    /**
      * LoggerInterface
      *
      * @var LoggerInterface
@@ -108,8 +113,8 @@ class ScheduleUpdateManager
     {
         $this->logger->debug(
             sprintf(__METHOD__.': handling request update in %s at %d',__METHOD__,__LINE__)
-
         );
+        /** */
         $args = $e->getParam('onFlushEventArgs');
         /** @var Doctrine\ORM\UnitOfWork $uow */
         $uow = $args->getEntityManager()->getUnitOfWork();
@@ -122,13 +127,54 @@ class ScheduleUpdateManager
                 break;
             }
         }
-        if (!$request or ! $request->getEvent()) {
+        // this is a little agressive because $request could be null
+        $scheduled_event = $request->getEvent();
+        if (! $scheduled_event) {
+            $this->logger->debug(
+                __METHOD__.": request has no corresponding event, returning");
             return;
         }
-        $event = $request->getEvent();
         // $request is a Request entity
         $changeset = $uow->getEntityChangeSet($request);
+
+        $user_action = $this->getUserActionName($changeset);
+        $this->logger->debug(
+            sprintf(__METHOD__.': user action is "%s"  at %d',$user_action,__LINE__)
+        );
+
         $event_was_updated = false;
+        $type = (string)$request->getEventType()->getCategory()
+            == 'in' ? 'in-court':'out-of-court';
+        $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?
+             'spanish':'non-spanish';
+        $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
+        $listener_config = $this->config['event_listeners'];
+        // $this->logger->debug("pattern: $pattern; language $language; type $type");
+        // $this->logger->debug(print_r($listener_config,true));
+
+        // figure out what admin actions are configured for $user_action
+        $actions = preg_grep($pattern,array_keys($listener_config[$user_action]));
+
+        $filter = new DashToCamelCase();
+        // and whether they are enabled
+        foreach ($actions as $string) {
+            $i = strrpos($string,'.') + 1;
+            $action = substr($string,$i);
+            $method = lcfirst($filter->filter($action));
+            if ($listener_config[$user_action][$string]) {
+                $this->logger->debug("need to call: $method()");
+                if (method_exists($this, $method)) {
+                    $this->$method($e,$action);
+                } else {
+                    $this->logger->warn("not running not-implemented $method");
+                }
+            } else {
+                $this->logger->debug("not running disabled $method()");
+            }
+        }
+        // to be continued
+        return;
+
         foreach ($changeset as $field => $values) {
             if ($field == 'time' or $field == 'date') {
                 $this->logger->debug("change of $field noted in ".__METHOD__);
@@ -148,62 +194,7 @@ class ScheduleUpdateManager
                 $em->getClassMetadata(get_class($event)),$event
             );
         }
-        return;
-        /**
-         * @var \InterpretersOffice\Requests\Entity\Request $request
-         */
-        $request = $e->getParam('entity');
-        // is it on the schedule?
-        /**
-         * @var Entity\Event $scheduled_event
-         */
-        $scheduled_event = $request->getEvent();
 
-        $this->logger->debug(
-            __METHOD__.':  on the schedule? '.($scheduled_event ? 'yes':'no')
-        );
-        if (! $scheduled_event) {
-            return;
-        }
-        $listener_config = $this->config['event_listeners'];
-        /**
-        * @var PreUpdateEventArgs $args
-        */
-        $args = $e->getParam('args');
-
-        $user_action = $this->getUserActionName($args);
-        if (! $user_action) {
-            $this->logger->debug("could not discern so-called \$user_action,
-                returning from ".__METHOD__);
-            return;
-        }
-        $this->logger->debug("user action:  $user_action");
-
-        $type = (string)$request->getEventType()->getCategory()
-            == 'in' ? 'in-court':'out-of-court';
-        $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?
-             'spanish':'non-spanish';
-        $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
-
-        // figure out what admin actions are configured for $user_action
-        $actions = preg_grep($pattern,array_keys($listener_config[$user_action]));
-        $filter = new DashToCamelCase();
-        // and whether they are enabled
-        foreach ($actions as $string) {
-            $i = strrpos($string,'.') + 1;
-            $action = substr($string,$i);
-            $method = lcfirst($filter->filter($action));
-            if ($listener_config[$user_action][$string]) {
-                $this->logger->debug("need to call: $method()");
-                if (method_exists($this, $method)) {
-                    $this->$method($e,$action);
-                } else {
-                    $this->logger->warn("not running not-implemented $method");
-                }
-            } else {
-                $this->logger->debug("not running disabled $method()");
-            }
-        }
     }
 
 
@@ -284,34 +275,38 @@ class ScheduleUpdateManager
      * to determine which update is the most signicant, and return the
      * corresponding action name, which is mapped to a method.
      *
-     * @param  PreUpdateEventArgs $args
+     * @param  Array $changeset
      * @return string name of the user action
      */
-    private function getUserActionName(PreUpdateEventArgs $args)
+    private function getUserActionName(Array $changeset)
     {
-        if ($args->hasChangedField('language')) {
+        $fields = array_keys($changeset);
+        if (in_array('language',$fields)) {
             return self::CHANGE_LANGUAGE;
         }
-        if ($args->hasChangedField('date')) {
-            // really?
-            $old_value = $args->getOldValue('date')->format('Y-m-d');
-            $new_value = $args->getNewValue('date')->format('Y-m-d');
+        if (in_array('cancelled',$fields)) {
+            return self::CANCEL;
+        }
+        if (in_array('date',$fields)) {
+            $old_value = $changeset['date'][0]->format('Y-m-d');
+            $new_value = $changeset['date'][1]->format('Y-m-d');
             if ($old_value != $new_value) {
                 return self::CHANGE_DATE;
             }
         }
-        if ($args->hasChangedField('time')) {
-            $old_value = $args->getOldValue('time')->format('H');
-            $new_value = $args->getNewValue('time')->format('H');
-            if ($old_value < 13 && $new_value >= 13
+        if (in_array('time',$fields)) {
+
+            $old_value = $changeset['time'][0]->format('H');
+            $new_value = $changeset['time'][1]->format('H');
+            if (($old_value < 13 && $new_value >= 13)
                 or
-                $old_value >= 13 && $new_value < 13
-            ) {
+            ($old_value >= 13 && $new_value < 13))
+            {
                 return self::CHANGE_TIME_X_PM;
             } else {
                 return self::CHANGE_TIME_WITHIN_AM_PM;
             }
-
         }
+        return 'other';
     }
 }

@@ -109,10 +109,9 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
      * @return void
      */
     public function onFlush (OnFlushEventArgs $args ) {
-        //$this->logger->debug("triggering shit in ".__METHOD__);
-        $this->getEventManager()->trigger( __FUNCTION__, $this, ['onFlushEventArgs' => $args]);
-        return;
         
+        $this->getEventManager()->trigger( __FUNCTION__, $this, ['onFlushEventArgs' => $args]);
+
     }
 
     /**
