@@ -1,12 +1,12 @@
 
 
-const chai = require('chai'), expect = chai.expect, should = chai.should();
+//const chai = require('chai'), expect = chai.expect, should = chai.should();
+//const moment = require("moment");
 const assert = require("assert");
-
 const Browser = require("zombie");
-const moment = require("moment");
 
 var id;
+
 Browser.localhost("office.localhost");
 
 describe("Request update",function(){
@@ -31,7 +31,7 @@ describe("Request update",function(){
         before(function(){
             return browser.visit("/requests/list");
         });
-        it("should display shit",()=>{
+        it("should display shit",function() {
             browser.assert.elements("tr",{atLeast: 5});
             var element = browser.querySelector("tbody > tr");
             var attribute = element.attributes.getNamedItem("data-request_id");
@@ -39,15 +39,28 @@ describe("Request update",function(){
         });
     });
 
-    describe("load event form",()=>{
+    describe("load event form and modify time",function() {
         before(function(){
             return browser.visit(`/requests/update/${id}`);
         });
-        it("should load an event form",()=>{
+        it("should load the event form",function() {
+            browser.assert.success();
+            browser.assert.url({ pathname: `/requests/update/${id}` });
+        });
+        it("should let us update time",function() {
             //console.log(browser.document.location.href);
             browser.assert.element("#time");
             var time = browser.querySelector("#time").attributes.getNamedItem("value").value;
-            console.log(`time is currently: ${time}`); // something like "4:00 pm"
+            //console.log(`time is currently: ${time}`);
+            var new_time = time === "4:00 pm" ? "11:00 am" : "4:00 pm";
+            browser.fill("#time",new_time);
+            browser.pressButton("#btn-save")
+            .then(function(){
+                browser.assert.success();
+                browser.assert.url({ pathname: '/requests/list' });
+                browser.assert.element(".alert-success p");
+                process.exit(0);
+            });//.catch((err)=>{});
         });
     });
 });
