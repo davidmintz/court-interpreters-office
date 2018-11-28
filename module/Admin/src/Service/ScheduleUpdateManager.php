@@ -95,7 +95,7 @@ class ScheduleUpdateManager
         return $this;
     }
 
-    
+
 
     /**
      * event listener for Request update
@@ -104,11 +104,51 @@ class ScheduleUpdateManager
      * @param  Event  $e
      * @return void
      */
-    protected function onUpdateRequest(Event $e)
+    public function onUpdateRequest(Event $e)
     {
         $this->logger->debug(
             sprintf(__METHOD__.': handling request update in %s at %d',__METHOD__,__LINE__)
+
         );
+        $args = $e->getParam('onFlushEventArgs');
+        /** @var Doctrine\ORM\UnitOfWork $uow */
+        $uow = $args->getEntityManager()->getUnitOfWork();
+        $entities = $uow->getScheduledEntityUpdates();
+        $request = null;
+        $event = null;
+        foreach ($entities as $entity) {
+            if ($entity instanceof Request) {
+                $request = $entity;
+                break;
+            }
+        }
+        if (!$request or ! $request->getEvent()) {
+            return;
+        }
+        $event = $request->getEvent();
+        // $request is a Request entity
+        $changeset = $uow->getEntityChangeSet($request);
+        $event_was_updated = false;
+        foreach ($changeset as $field => $values) {
+            if ($field == 'time' or $field == 'date') {
+                $this->logger->debug("change of $field noted in ".__METHOD__);
+                //$event = $request->getEvent();
+                $event->{'set'.ucfirst($field)}($request->{'get'.ucfirst($field)}());
+                $event->setComments(
+                    'woo hoo fuck yes it worked at '.date('H:i:s')
+                );
+                $this->logger->debug("reset time to: ".$event->getTime()->format('H:i'));
+                $event_was_updated = true;
+            }
+        }
+        $em = $args->getEntityManager();
+        if ($event_was_updated) {
+            $this->logger->debug("trying to update event id: ".$event->getId());
+            $uow->recomputeSingleEntityChangeSet(
+                $em->getClassMetadata(get_class($event)),$event
+            );
+        }
+        return;
         /**
          * @var \InterpretersOffice\Requests\Entity\Request $request
          */

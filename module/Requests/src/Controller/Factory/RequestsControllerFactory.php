@@ -12,6 +12,8 @@ use InterpretersOffice\Requests\Acl\ModificationAuthorizedAssertion;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 use InterpretersOffice\Service\SqlLogger;
 
+use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
+
 /**
  * Factory class for instantiating Requests\IndexController.
  *
@@ -44,6 +46,7 @@ class RequestsControllerFactory implements FactoryInterface
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
             // add Doctine entity listeners
+
             $resolver = $entityManager->getConfiguration()
                 ->getEntityListenerResolver();
             $resolver->register($container->get(Listener\UpdateListener::class)
@@ -59,12 +62,17 @@ class RequestsControllerFactory implements FactoryInterface
             $acl->allow($user, $controller, ['update','cancel'],
                 new ModificationAuthorizedAssertion($controller));
 
-            // experimental thing
+            // experimental. let the UpdateListener trigger an event
             $eventManager = $container->get('SharedEventManager');
+
             $eventManager->attach(Listener\UpdateListener::class,'*',function($e) use ($container) {
                 $container->get('log')->debug(
-                    sprintf('fuckin guess what: %s',$e->getName())
+                    "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
                 );
+                /** @var ScheduleUpdateManager $updateManager */
+                $updateManager = $container->get(ScheduleUpdateManager::class);
+                $updateManager->onUpdateRequest($e);
+
             });
 
             return $controller;

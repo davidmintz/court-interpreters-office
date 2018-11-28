@@ -32,7 +32,8 @@ use Zend\EventManager\EventManagerAwareTrait;
  * triggered -- but neither prePersist nor postRemove events are triggered
  *
  */
-class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
+class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
+    EventManagerAwareInterface
 {
 
     use Log\LoggerAwareTrait;
@@ -108,46 +109,10 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      * @return void
      */
     public function onFlush (OnFlushEventArgs $args ) {
-
-        $this->getEventManager()->trigger(  __FUNCTION__, $this);
-
-        /** @var Doctrine\ORM\UnitOfWork $uow */
-        $uow = $args->getEntityManager()->getUnitOfWork();
-        $entities = $uow->getScheduledEntityUpdates();
-        $request = null;
-        $event = null;
-        foreach ($entities as $entity) {
-            if ($entity instanceof Request) {
-                $request = $entity;
-                break;
-            }
-        }
-        if (!$request or ! $request->getEvent()) {
-            return;
-        }
-        $event = $request->getEvent();
-        // $request is a Request entity
-        $changeset = $uow->getEntityChangeSet($request);
-        $event_was_updated = false;
-        foreach ($changeset as $field => $values) {
-            if ($field == 'time' or $field == 'date') {
-                $this->logger->debug("change of $field noted in ".__METHOD__);
-                //$event = $request->getEvent();
-                $event->{'set'.ucfirst($field)}($request->{'get'.ucfirst($field)}());
-                $event->setComments(
-                    'woo hoo fuck yes it worked at '.date('H:i:s')
-                );
-                $this->logger->debug("reset time to: ".$event->getTime()->format('H:i'));
-                $event_was_updated = true;
-            }
-        }
-        $em = $args->getEntityManager();
-        if ($event_was_updated) {
-            $this->logger->debug("trying to update event id: ".$event->getId());
-            $uow->recomputeSingleEntityChangeSet(
-                $em->getClassMetadata(get_class($event)),$event
-            );
-        }
+        //$this->logger->debug("triggering shit in ".__METHOD__);
+        $this->getEventManager()->trigger( __FUNCTION__, $this, ['onFlushEventArgs' => $args]);
+        return;
+        
     }
 
     /**
