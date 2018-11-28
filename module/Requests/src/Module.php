@@ -37,7 +37,7 @@ class Module
          *
          * The logic is that the Requests module might not be enabled, in which
          * case we don't care... but this is actually kind of foolish so we
-         * may need to rethink this whole thing.1
+         * may need to rethink this whole thing.
          *
         */
         $sharedEvents->attach(

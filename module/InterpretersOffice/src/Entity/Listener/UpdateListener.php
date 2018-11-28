@@ -11,14 +11,16 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
-use InterpretersOffice\Entity\VerificationToken;
-use InterpretersOffice\Entity\DefendantEvent;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
-use InterpretersOffice\Module;
+//use InterpretersOffice\Module;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Log;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
+
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerAwareTrait;
+
 
 /**
  * entity listener for clearing caches
@@ -35,6 +37,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
 
     use Log\LoggerAwareTrait;
     use CurrentUserTrait;
+    use EventManagerAwareTrait;
 
     /**
      * current datetime
@@ -105,6 +108,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface
      * @return void
      */
     public function onFlush (OnFlushEventArgs $args ) {
+
+        $this->getEventManager()->trigger(  __FUNCTION__, $this);
 
         /** @var Doctrine\ORM\UnitOfWork $uow */
         $uow = $args->getEntityManager()->getUnitOfWork();
