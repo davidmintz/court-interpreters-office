@@ -9,9 +9,11 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
+use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 
 use Zend\Filter\Word\DashToCamelCase;
 
@@ -50,6 +52,11 @@ class ScheduleUpdateManager
     const CANCEL = 'cancel';
 
     /**
+     * @var string
+     */
+    const OTHER = 'other';
+
+    /**
      * LoggerInterface
      *
      * @var LoggerInterface
@@ -78,6 +85,12 @@ class ScheduleUpdateManager
      * @var boolean
      */
     private $event_was_updated;
+
+    /**
+     * the (most significant) user action
+     * @var string
+     */
+    private $user_action;
 
     /**
      * constructor
@@ -129,9 +142,10 @@ class ScheduleUpdateManager
         $args = $e->getParam('onFlushEventArgs');
         /** @var Doctrine\ORM\UnitOfWork $uow */
         $uow = $args->getEntityManager()->getUnitOfWork();
+
         $entities = $uow->getScheduledEntityUpdates();
         $request = null;
-        $event = null;
+
         foreach ($entities as $entity) {
             if ($entity instanceof Request) {
                 $request = $entity;
@@ -148,27 +162,27 @@ class ScheduleUpdateManager
         }
 
         $changeset = $uow->getEntityChangeSet($request);
-
         $user_action = $this->getUserAction($changeset);
+        $this->user_action = $user_action;
         $this->logger->debug(
-            sprintf(__METHOD__.': user action is "%s"  at %d',$user_action,__LINE__)
+            sprintf(__METHOD__.":\nuser action is '%s'  at %d",$user_action,__LINE__)
         );
 
-        //$event_was_updated = false;
         $type = (string)$request->getEventType()->getCategory()
             == 'in' ? 'in-court':'out-of-court';
         $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?
              'spanish':'non-spanish';
         $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
-        $listener_config = $this->config['event_listeners'];
+        $config = $this->config['event_listeners'];
+
         // $this->logger->debug("pattern: $pattern; language $language; type $type");
-        // $this->logger->debug(print_r($listener_config,true));
+        // $this->logger->debug(print_r($config,true));
 
         // figure out what admin actions are configured for $user_action
-        $actions = preg_grep($pattern,array_keys($listener_config[$user_action]));
+        $actions = preg_grep($pattern,array_keys($config[$user_action]));
         if (! $actions) {
             $this->logger->debug(__METHOD__.
-            ": no configuration found for user action $user_action (pattern $pattern)");
+            ":\nno configuration found for user action $user_action (pattern $pattern)");
         }
 
         $filter = new DashToCamelCase();
@@ -177,10 +191,11 @@ class ScheduleUpdateManager
             $i = strrpos($string,'.') + 1;
             $action = substr($string,$i);
             $method = lcfirst($filter->filter($action));
-            if ($listener_config[$user_action][$string]) {
+            if ($config[$user_action][$string]) {
                 if (method_exists($this, $method)) {
                     $this->logger->debug("need to call: $method()");
-                    $this->$method($request,$changeset);
+                    //$this->$method($request,$changeset);
+                    $this->$method($request, $args);
                 } else {
                     $this->logger->warn("not running not-implemented $method");
                 }
@@ -189,9 +204,13 @@ class ScheduleUpdateManager
                 $this->logger->debug("not running disabled $method()");
             }
         }
-        $em = $args->getEntityManager();
+         if ($user_action == self::OTHER) {
+             $this->logger->debug("TO DO: handle updates of \"other\" fields");
+         }
         if ($this->event_was_updated) {
-            $this->logger->debug("trying to update event id: ".$scheduled_event->getId());
+            $em = $args->getEntityManager();
+            $this->logger->debug("recomputing entity changeset for event id: "
+                .$scheduled_event->getId());
             $uow->recomputeSingleEntityChangeSet(
                 $em->getClassMetadata(get_class($scheduled_event)),$scheduled_event
             );
@@ -272,17 +291,22 @@ class ScheduleUpdateManager
     /**
      * updates an Event entity to synchronize with Request
      *
-     * @param  Request $request   Request entity
-     * @param  array   $changeset Request fields that were modified
+     * @param  Request $request
+     * @param  OnFlushEventArgs  $args
      * @return ScheduleUpdateManager
+     *
      */
-    public function updateScheduledEvent(Request $request, array $changeset)
+    public function updateScheduledEvent(Request $request, $args)
     {
         /** @todo figure out defendants, including xtra data */
         /** @todo figure out how to handle updated comments */
+
+        $uow = $args->getEntityManager()->getUnitOfWork();
+        $changeset = $uow->getEntityChangeSet($request);
         $event = $request->getEvent();
         if (! $event) {
             $this->logger->debug(__METHOD__.": no scheduled event, nothing to do");
+            return; // important! from here on we might just assume...
         }
         $props = [
             'date','time','judge','language','eventType','docket','location'
@@ -302,6 +326,53 @@ class ScheduleUpdateManager
         }
 
         return $this;
+    }
+
+    /**
+     * un-assigns all interpreters from Request's corresponding Event
+     *
+     * @param  Request $request
+     * @param  OnFlushEventArgs  $args
+     * @return ScheduleUpdateManager
+     */
+    public function removeInterpreters(Request $request, OnFlushEventArgs $args)
+    {
+        $event = $request->getEvent();
+        $interpreterEvents = $event->getInterpreterEvents();
+        if ($n = $interpreterEvents->count()) {
+            /** @var Doctrine\ORM\UnitOfWork $uow */
+            $uow = $args->getEntityManager()->getUnitOfWork();
+            foreach ($interpreterEvents as $shit) {
+                $uow->scheduleForDelete($shit);
+            }
+            $this->logger->debug(__METHOD__.": we removed $n interpreters");
+        } else { $this->logger->debug(__METHOD__.": NO interpreters to remove ");}
+
+        return this;
+    }
+
+    /**
+     * notifies interpreters about a change/cancellation
+     *
+     * note: as of now there is no guarantee which will be invoked first:
+     * this method or removeInterpreters()
+     *
+     * @param  Request $request
+     * @param  OnFlushEventArgs  $args
+     * @return ScheduleUpdateManager
+     */
+    public function notifyAssignedInterpreters(Request $request, OnFlushEventArgs $args)
+    {
+        $this->logger->info("notifying interpreters about $this->user_action");
+        $event = $request->getEvent();
+        $interpreterEvents = $event->getInterpreterEvents();
+        $this->logger->debug("there are/were ".$interpreterEvents->count());
+        foreach ($interpreterEvents as $ie) {
+            $email = $ie->getInterpreter()->getEmail();
+            $this->logger->debug("need to email: $email");
+        }
+
+        return this;
     }
 
     /**
@@ -344,6 +415,7 @@ class ScheduleUpdateManager
                 return self::CHANGE_TIME_WITHIN_AM_PM;
             }
         }
-        return 'other';
+
+        return SELF::OTHER;
     }
 }

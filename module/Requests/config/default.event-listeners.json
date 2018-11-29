@@ -9,8 +9,8 @@
     },
     "change-date": {
         "all-events.all-languages.update-scheduled-event": "1",
-        "all-events.all-languages.notify-assigned-interpreters": "1",
         "all-events.all-languages.remove-interpreters": "1"
+        "all-events.all-languages.notify-assigned-interpreters": "1",
     },
     "change-x-am-pm": {
         "all-events.all-languages.update-scheduled-event": "1",

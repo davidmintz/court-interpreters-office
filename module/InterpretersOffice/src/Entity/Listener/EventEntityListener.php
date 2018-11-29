@@ -105,7 +105,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             __FUNCTION__, $this, compact('args', 'entity')
         );
     }
-    
+
     /**
      * postRemove callback
      *
@@ -137,7 +137,9 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
 
         $interpreterEvents = $entity->getInterpreterEvents()->toArray();
         if ($interpreterEvents != $this->previous_interpreters) {
-            $this->logger->debug("interpreters were updated");
+            $this->logger->debug(__METHOD__.":  interpreters were updated "
+            . "; (there are now {count($interpreterEvents)})"
+            );
             return true;
         }
         $fields_updated = array_keys($args->getEntityChangeSet());
