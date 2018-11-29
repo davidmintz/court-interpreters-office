@@ -17,6 +17,8 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 
 use Zend\Filter\Word\DashToCamelCase;
 
+use InterpretersOffice\Service\EmailTrait;
+
 /**
  * Reacts to changes in Request entities.
  *
@@ -25,6 +27,7 @@ use Zend\Filter\Word\DashToCamelCase;
  */
 class ScheduleUpdateManager
 {
+    use EmailTrait;
 
     /**
      * @var string
@@ -371,6 +374,9 @@ class ScheduleUpdateManager
             $email = $ie->getInterpreter()->getEmail();
             $this->logger->debug("need to email: $email");
         }
+
+        $message = $this->createEmailMessage('<p>hi there</p>','hi there');
+        $this->logger->debug(get_class($message));
 
         return this;
     }
