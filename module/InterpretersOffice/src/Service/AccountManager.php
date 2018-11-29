@@ -29,7 +29,7 @@ use Zend\View\Renderer\RendererInterface as Renderer;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\AccountManager;
-
+use InterpretersOffice\Service\EmailTrait;
 use Zend\Session\Container as SessionContainer;
 
 /**
@@ -39,6 +39,7 @@ class AccountManager implements LoggerAwareInterface
 {
 
     use EventManagerAwareTrait, LoggerAwareTrait;
+    use EmailTrait;
 
     /**
      * name of event for new account submission
@@ -201,12 +202,12 @@ class AccountManager implements LoggerAwareInterface
         ]
     ];
 
-    /**
+    /*
      * mail transport
      *
      * @var TransportInterface
+     private $transport;
      */
-    private $transport;
 
     /**
      * constructor
@@ -513,10 +514,10 @@ class AccountManager implements LoggerAwareInterface
         // for DEBUGGING
         file_put_contents('data/email-confirm-account.html', $this->viewRenderer->render($layout));
         // end DEBUGGING
-
+        $config = $this->config['mail'];
         $message = $this->createEmailMessage($html, "To read this message you need a client that supports HTML email.");
         $person = $user->getPerson();
-        $message->setFrom($this->config['from_address'], $this->config['from_entity'])
+        $message->setFrom($config['from_address'], $config['from_entity'])
             ->setTo($person->getEmail(), $person->getFullName())
             ->setSubject('Interpreters Office: email confirmation for new user account');
         $this->getMailTransport()->send($message);
@@ -647,54 +648,6 @@ class AccountManager implements LoggerAwareInterface
     public function getConfig()
     {
         return $this->config;
-    }
-
-    /**
-     * creates an email message
-     *
-     * @todo make it a trait for convenient re-use?
-     *
-     * @param  string $markup HTML content for email message
-     * @param  string $textContent plain-text content for email message
-     * @return Message
-     */
-    public function createEmailMessage($markup, $textContent)
-    {
-        $html = new MimePart($markup);
-        $html->type = Mime::TYPE_HTML;
-        $html->charset = 'utf-8';
-        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-
-        $text = new MimePart($textContent);
-        $text->type = Mime::TYPE_TEXT;
-        $text->charset = 'utf-8';
-        $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-
-        $body = new MimeMessage();
-        $body->setParts([$text, $html]);
-        $message = new Message();
-        $message->setBody($body);
-        $contentTypeHeader = $message->getHeaders()->get('Content-Type');
-        $contentTypeHeader->setType('multipart/alternative');
-
-        return $message;
-    }
-
-    /**
-     * returns email transport
-     *
-     * @return TransportInterface $transport
-     */
-    public function getMailTransport()
-    {
-        if ($this->transport) {
-            return $this->transport;
-        }
-        $opts = new $this->config['transport_options']['class'](
-        $this->config['transport_options']['options']);
-        $this->transport = new $this->config['transport']($opts);
-
-        return $this->transport;
     }
 
     /**

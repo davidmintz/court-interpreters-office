@@ -24,7 +24,7 @@ class AccountManagerFactory implements FactoryInterface
 
         $accountManager = new AccountManager(
             $container->get('entity-manager'),
-            $container->get('config')['mail']
+            $container->get('config')
         );
         $accountManager
             ->setLogger($container->get('log'))
