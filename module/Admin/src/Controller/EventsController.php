@@ -181,8 +181,6 @@ class EventsController extends AbstractActionController
      */
     public function editAction()
     {
-        // $log = $this->getEvent()->getApplication()->getServiceManager()
-        //     ->get('log');
         $id = $this->params()->fromRoute('id');
         /** @var \InterpretersOffice\Entity\Event $entity  */
         $entity = $this->entityManager->find(Entity\Event::class, $id);
@@ -193,16 +191,16 @@ class EventsController extends AbstractActionController
         $view = $this->getViewModel(['id' => $id,'form' => $form]);
         $events = $this->getEventManager();
         $form->attach($events);
+        $modified_before = $entity->getModified()->format('Y-m-d h:i:s');
         $form->bind($entity);
-        $modified = $entity->getModified();
+        $date = $entity->getDate();
         $events->trigger('pre.populate', $this,
             ['entity' => $entity, 'form'=> $form]);
         if ( $this->getRequest()->isGet()) {
             return $view;
         }
-        $post = $this->getRequest()->getPost();
         $events->trigger('pre.validate', $this);
-        $form->setData($post);
+        $form->setData($this->getRequest()->getPost());
         try {
             if (! $form->isValid()) {
                 return new JsonModel(
@@ -210,28 +208,23 @@ class EventsController extends AbstractActionController
             }
             $this->entityManager->flush();
             $url = $this->getEvent()->getApplication()
-            ->getServiceManager()->get('ViewHelperManager')
-            ->get('url')('events');
-            $date = $entity->getDate();
-            if ($modified != $entity->getModified() or
-            $this->params()->fromPost('deftnames_modified')) {
+                ->getServiceManager()->get('ViewHelperManager')
+                ->get('url')('events');
+            if ($modified_before != $entity->getModified()->format('Y-m-d h:i:s')
+                or $this->params()->fromPost('deftnames_modified')) {
                 $verbiage = 'updated';
             } else {
                 $verbiage = 'saved (unmodified)';
             }
-            $this->flashMessenger()->addSuccessMessage(
-                sprintf(
-                    "This event has been successfully $verbiage on the "
-                    .'schedule for <a href="%s">%s</a>',
-                    $url . $date->format('/Y/m/d'),
-                    $date->format('l d-M-Y')
-                )
+            $this->flashMessenger()->addSuccessMessage(sprintf(
+                "This event has been successfully $verbiage on the "
+                .'schedule for <a href="%s">%s</a>',
+                $url . $date->format('/Y/m/d'), $date->format('l d-M-Y'))
             );
-            return new JsonModel(['status' => 'success',
-                'id' => $entity->getId()]);
-        } catch (\Exception $e) {
-            return $this->catch($e);
-        }
+
+            return new JsonModel(['status' => 'success', 'id' => $id]);
+
+        } catch (\Exception $e) { return $this->catch($e); }
     }
 
     /**
