@@ -13,20 +13,23 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventInterface;
 
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\Filter\Word\DashToCamelCase;
 
 use InterpretersOffice\Entity;
+
+use InterpretersOffice\Form\DateTimeElementFilterTrait;
 
 /**
  * form for Event entity
  *
  */
 class EventForm extends ZendForm implements
-    ListenerAggregateInterface,
-    InputFilterProviderInterface
+    ListenerAggregateInterface, InputFilterProviderInterface
 {
 
      use CsrfElementCreationTrait;
      use ListenerAggregateTrait;
+     use DateTimeElementFilterTrait;
 
      /**
      * name of Fieldset class to instantiate and add to the form.
@@ -100,8 +103,6 @@ class EventForm extends ZendForm implements
 
         $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);
         $this->listeners[] = $events->attach('pre.populate', [$this, 'prePopulate']);
-        //$this->listeners[] = $events->attach('post.load', [$this, 'postLoad']);
-        //$this->listeners[] = $events->attach('post.validate', [$this, 'postValidate']);
     }
 
    /**
@@ -152,6 +153,18 @@ class EventForm extends ZendForm implements
             $end_time_input->getValidatorChain()
                 ->attach(new Validator\EndTimeValidator());
         }
+        // take out datetime elements that they have not changes, to
+        // prevent Doctrine from wasting an update
+        $this->filterDateTimeFields(
+            ['date','time','end_time','submission_date','submission_time'],
+            $event,'event'
+        );
+        // $date_before = $this->getObject()->getDate()->format('m/d/Y');
+        // if ($event['date'] == $date_before) {
+        //
+        // }
+
+
         // if the source of this Event was a Request, the metadata -- who
         // submitted it and when -- is immutable, so we're done.
         if ($this->isElectronic()) {
