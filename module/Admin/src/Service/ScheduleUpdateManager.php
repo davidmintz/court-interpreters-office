@@ -155,8 +155,13 @@ class ScheduleUpdateManager
                 break;
             }
         }
-        // this is a little aggressive because $request could be null, though
-        // if everything is wired correctly, it should not be
+
+        if (! $request) { // they submitted the form without changing data
+            $this->logger->debug(
+                __METHOD__.": looks like nothing updated, returning");
+            return;
+        }
+
         $scheduled_event = $request->getEvent();
         if (! $scheduled_event) {
             $this->logger->debug(
@@ -177,15 +182,18 @@ class ScheduleUpdateManager
              'spanish':'non-spanish';
         $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
         $config = $this->config['event_listeners'];
-
+        if (! isset($config[$user_action])) {
+            $this->logger->warn(__METHOD__.
+            ":\nno configuration found for user action $user_action (pattern: $pattern)\nNEED IMPLEMENTATION");
+            return;
+        }
         // $this->logger->debug("pattern: $pattern; language $language; type $type");
         // $this->logger->debug(print_r($config,true));
 
         // figure out what admin actions are configured for $user_action
         $actions = preg_grep($pattern,array_keys($config[$user_action]));
         if (! $actions) {
-            $this->logger->debug(__METHOD__.
-            ":\nno configuration found for user action $user_action (pattern $pattern)");
+
         }
 
         $filter = new DashToCamelCase();
@@ -197,7 +205,6 @@ class ScheduleUpdateManager
             if ($config[$user_action][$string]) {
                 if (method_exists($this, $method)) {
                     $this->logger->debug("need to call: $method()");
-                    //$this->$method($request,$changeset);
                     $this->$method($request, $args);
                 } else {
                     $this->logger->warn("not running not-implemented $method");
@@ -207,9 +214,10 @@ class ScheduleUpdateManager
                 $this->logger->debug("not running disabled $method()");
             }
         }
-         if ($user_action == self::OTHER) {
-             $this->logger->debug("TO DO: handle updates of \"other\" fields");
-         }
+        if ($user_action == self::OTHER) {
+            $this->logger->debug("it's the default user-action: other");
+            $this->updateScheduledEvent($request, $args);
+        }
         if ($this->event_was_updated) {
             $em = $args->getEntityManager();
             $this->logger->debug("recomputing entity changeset for event id: "
@@ -299,7 +307,7 @@ class ScheduleUpdateManager
      * @return ScheduleUpdateManager
      *
      */
-    public function updateScheduledEvent(Request $request, $args)
+    public function updateScheduledEvent(Request $request, OnFlushEventArgs $args)
     {
         /** @todo figure out defendants, including xtra data */
         /** @todo figure out how to handle updated comments */
@@ -408,8 +416,9 @@ class ScheduleUpdateManager
                 return self::CHANGE_DATE;
             }
         }
-        if (in_array('time',$fields)) {
 
+        if (in_array('time',$fields)) {
+            // figure out if the change of time crosses am/pm boundary
             $old_value = $changeset['time'][0]->format('H');
             $new_value = $changeset['time'][1]->format('H');
             if (($old_value < 13 && $new_value >= 13)
