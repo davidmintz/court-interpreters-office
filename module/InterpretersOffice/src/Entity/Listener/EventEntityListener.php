@@ -135,6 +135,13 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         PreUpdateEventArgs $args)
     {
 
+        $fields_updated = array_keys($args->getEntityChangeSet());
+        $this->logger->debug(__METHOD__.": looks like updates to:\n"
+            . implode('; ',$fields_updated)
+        );
+        if ($fields_updated) {
+            return true;
+        }
         $interpreterEvents = $entity->getInterpreterEvents()->toArray();
         if ($interpreterEvents != $this->previous_interpreters) {
             $this->logger->debug(__METHOD__.":  interpreters were updated "
@@ -142,38 +149,14 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             );
             return true;
         }
-        $fields_updated = array_keys($args->getEntityChangeSet());
-        $datetimes = ['date','time','submission_date','submission_time','end_time'];
-        if (array_diff($fields_updated,$datetimes)) {
-            $this->logger
-                ->debug("fields other than dates and times were modified");
-            return true;
-        }
-        foreach (['time','submission_time','end_time'] as $time) {
-            if (! in_array($time, $fields_updated)) {
-                continue;
-            }
-            $before = $args->getOldValue($time)->format('H:i');
-            $after = $args->getNewValue($time)->format('H:i');
-            if ($before != $after) {
-                $this->logger->debug("event $time was modified");
-                return true;
-            }
-        }
-        foreach (['date','submission_date'] as $date) {
-            if ($args->getOldValue($date) !=
-                $args->getNewValue($date)) {
-                //$this->logger->debug("event $date was modified");
-                return true;
-            }
-        }
+
         $defendants = $entity->getDefendants()->toArray();
 
         if ($defendants != $this->previous_defendants) {
             $this->logger->debug("defendants were modified");
             return true;
         }
-        $this->logger->debug("NOTHING really modified in Event entity");
+        //$this->logger->debug("NOTHING really modified in Event entity?");
 
         return false;
     }
