@@ -42,7 +42,7 @@ describe("admin schedule test",function(){
             function(){
             var today = moment(new Date());
             browser.fire("a.fa-arrow-right","click")
-                .then(function(done){
+                .then(function(){
                 //console.log(`location is now: ${browser.location.href}`);
                 browser.assert.status(200);
                 var dayOfWeek = today.format("d");
