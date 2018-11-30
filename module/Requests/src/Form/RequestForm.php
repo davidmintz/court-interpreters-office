@@ -10,6 +10,7 @@ use InterpretersOffice\Form\ObjectManagerAwareTrait;
 use Zend\Form\Form as ZendForm;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
+use InterpretersOffice\Form\DateTimeElementFilterTrait;
 
 /**
  * form for Request entity
@@ -18,7 +19,7 @@ use InterpretersOffice\Form\CsrfElementCreationTrait;
 class RequestForm extends ZendForm
 {
 
-     use CsrfElementCreationTrait;
+     use CsrfElementCreationTrait, DateTimeElementFilterTrait;
 
 
      /**
