@@ -46,7 +46,8 @@ $(function(){
     });
 
     // on dropdown menu click, conditionally enable disabled items
-    $("#content").on("click","td.dropleft > a",function(){
+    $("#content").on("click","td.dropleft > a",function(event){
+        event.preventDefault();
         var editable = $(this).closest("tr").data().editable
         var disabled_items = $(`#${$(this).attr('id')}`).next(".dropdown-menu").children("a.disabled");
         if (editable) {
