@@ -126,8 +126,6 @@ class ScheduleUpdateManager
         return $this;
     }
 
-
-
     /**
      * event listener for Request update
      * @todo rewrite/rename this whole thing
@@ -137,10 +135,7 @@ class ScheduleUpdateManager
      */
     public function onUpdateRequest(EventInterface $e)
     {
-        $this->logger->debug(
-            sprintf(__METHOD__.': handling request update in %s at %d',
-            __METHOD__,__LINE__)
-        );
+
         /** @var Doctrine\ORM\Event\OnFlushEventArgs $args */
         $args = $e->getParam('onFlushEventArgs');
         /** @var Doctrine\ORM\UnitOfWork $uow */
@@ -155,13 +150,30 @@ class ScheduleUpdateManager
                 break;
             }
         }
-
-        if (! $request) { // they submitted the form without changing data
+        ///*
+        if (! $request) { // they submitted the form without changing entity props
+            // or maybe it's an insert? a deletion?
             $this->logger->debug(
-                __METHOD__.": looks like nothing updated, returning");
+                __METHOD__.": looks like NOT a request entity update, returning");
             return;
         }
-
+            // not so fast!
+        //     $collection_updates = $uow->getScheduledCollectionUpdates();
+        //     $collection_deletions = $uow->getScheduledCollectionDeletions();
+        //     if ($collection_updates or $collection_deletions) {
+        //         foreach ([$collection_updates, $collection_deletions] as $collection) {
+        //             if ($collection) {
+        //                 $request = $collection[0]->getOwner();
+        //                 $this->logger->debug("FOUND IT.");
+        //                 break;
+        //             } else {$this->logger->debug("no shit happening at ".__LINE__);}
+        //         }
+        //     } else {
+        //         $this->logger->debug("looks like nothing was updated AT ALL?");
+        //         return;
+        //     }
+        // }
+        //*/
         $scheduled_event = $request->getEvent();
         if (! $scheduled_event) {
             $this->logger->debug(
@@ -172,21 +184,34 @@ class ScheduleUpdateManager
         $changeset = $uow->getEntityChangeSet($request);
         $user_action = $this->getUserAction($changeset);
         $this->user_action = $user_action;
+        $fields_modified = implode(', ',array_keys($changeset));
+        $this->logger->debug(
+            "fields modified? ".($fields_modified ?: 'shit')
+        );
+
         $this->logger->debug(
             sprintf(__METHOD__.":\nuser action is '%s'  at %d",$user_action,__LINE__)
         );
+        $num_collection_updates = count($uow->getScheduledCollectionUpdates());
+        $num_collection_deletions = count($uow->getScheduledCollectionDeletions());
+        $this->logger->debug(
+            "collection updates: $num_collection_updates; deletions: $num_collection_deletions"
+        );
 
+        $config = $this->config['event_listeners'];
+
+        if (! isset($config[$user_action])) {
+            $this->logger->warn(__METHOD__.
+            ":\nno configuration found for user action '$user_action'
+                TO DO: IMPLEMENT");
+            return $this->updateScheduledEvent($request, $args);
+        }//(pattern: $pattern
         $type = (string)$request->getEventType()->getCategory()
             == 'in' ? 'in-court':'out-of-court';
         $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?
              'spanish':'non-spanish';
         $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
-        $config = $this->config['event_listeners'];
-        if (! isset($config[$user_action])) {
-            $this->logger->warn(__METHOD__.
-            ":\nno configuration found for user action $user_action (pattern: $pattern)\nNEED IMPLEMENTATION");
-            return;
-        }
+
         // $this->logger->debug("pattern: $pattern; language $language; type $type");
         // $this->logger->debug(print_r($config,true));
 
@@ -323,6 +348,8 @@ class ScheduleUpdateManager
             'date','time','judge','language','eventType','docket','location'
         ];
         $updatable = array_intersect($props, array_keys($changeset));
+        $shit = print_r(array_keys($changeset),true);
+        $this->logger->warn("what changed:\n$shit");
         if ($updatable) {
             foreach($updatable as $prop) {
                 $this->logger->debug(__METHOD__.": setting $prop on event entity");
@@ -334,6 +361,8 @@ class ScheduleUpdateManager
                 $event->$setter($request->$getter());
             }
             $this->event_was_updated = true;
+        } else {
+            $this->logger->debug("time to look at deftname collections for changes??");
         }
 
         return $this;
