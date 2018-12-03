@@ -1,7 +1,6 @@
 <?php
 use InterpretersOffice\Admin\Form\View\Helper\InterpreterElementCollection;
 
-
 $this->headTitle('admin | schedule | '.$this->layout()->action);
 $this->headLink()
         ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
@@ -183,6 +182,8 @@ echo $this->form()->openTag($form); ?>
                 <div class="input-group">
                     <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                      <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
+                     <?php /* empty element so, they can delete the whole collection */
+                     ?><input type="hidden" name="event[defendants][]" value="">
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
                 <?php
