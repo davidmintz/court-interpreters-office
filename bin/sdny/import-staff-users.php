@@ -79,7 +79,10 @@ $staff = [
 
 
 $sql=
-'SELECT DISTINCT user_id, u.name, p.email person_email, u.email user_email, interpreter_id, p.id person_id, u.active FROM users u LEFT JOIN events ON (events.lastmod_by = user_id OR events.created_by = user_id) LEFT JOIN office.people p ON p.email = u.email;';
+'SELECT DISTINCT user_id, u.name, p.email person_email, u.email user_email,
+    interpreter_id, p.id person_id, u.active FROM users u LEFT JOIN events
+    ON (events.lastmod_by = user_id OR events.created_by = user_id)
+    LEFT JOIN office.people p ON p.email = u.email;';
 
 $users = $db->query($sql)->fetchAll();
 /*
@@ -134,7 +137,7 @@ foreach ($users as $user) {
             //SELECT p.lastname, p.firstname, h.name hat,r.name role FROM people p JOIN users u ON p.id = u.person_id JOIN hats h ON p.hat_id = h.id JOIN roles r ON r.id = u.role_id WHERE r.name <> "submitter";
 
             try {
-                printf("creating INACTIVE user for: %s ...",$user['name']);
+                printf("creating user for: %s ...",$user['name']);
                 // we can get the data from the people table
                 //$data = $db->query('select * from people where id = '.$user['person_id'])->fetch();
                 /*
@@ -153,7 +156,7 @@ foreach ($users as $user) {
                     //VALUES (:person_id, :role_id, :username, :password, NOW(), :active')
                     ':person_id' => $user['person_id'],
                     ':role_id' => 4,
-                    ':username' => $user['name'],
+                    ':username' => in_array($user['name'],['amanda','katelynn']) ? 1 : 0,
                     ':password' => password_hash('boink',PASSWORD_DEFAULT),
                     ':active' => 0,
                 ];
