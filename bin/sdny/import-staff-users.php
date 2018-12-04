@@ -156,9 +156,9 @@ foreach ($users as $user) {
                     //VALUES (:person_id, :role_id, :username, :password, NOW(), :active')
                     ':person_id' => $user['person_id'],
                     ':role_id' => 4,
-                    ':username' => in_array($user['name'],['amanda','katelynn']) ? 1 : 0,
+                    ':username' => $user['name'],
                     ':password' => password_hash('boink',PASSWORD_DEFAULT),
-                    ':active' => 0,
+                    ':active' =>  in_array($user['name'],['amanda','katelynn']) ? 1 : 0,
                 ];
                 $user_insert->execute($params);
                 echo "OK\n";
