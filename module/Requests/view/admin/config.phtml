@@ -160,6 +160,16 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 echo $this->configCheckbox($element);
                  ?></td>
             </tr>
+            <tr>
+                <td class="text-monospace">change other attributes</td>
+                <td>any</td>
+                <td>any</td>
+                <td><?php $fs = $this->form->get('update-other-attributes');
+                $base = 'all-events.all-languages.';
+                $element = $fs->get($base.'update-scheduled-event');
+                echo $this->configCheckbox($element);
+                ?></td>
+            </tr>
         </tbody>
     </table>
     <div class="text-center">
@@ -180,11 +190,11 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         <dd class="col-sm-8">Remove the interpreter from the corresponding scheduled event.</dd>
         <dt class="col-sm-4 text-monospace">notify assigned interpreter(s)</dt>
         <dd class="col-sm-8">Send a template-based email to the interpreter informing her or him of the actions taken.
-            If you enable automatic removal of the interpreter, enabling notification in most cases is <em>strongly</em> encouraged.
+            If you enable automatic removal of the interpreter, enabling notification in most cases is <em>strongly</em>
+            encouraged.
             <em>All such emails are copied to the Interpreters Office.</em>
         </dd>
     </dl>
-
     <h4 class="my-4 p-2 border text-center">user events</h4>
     <dl class="row">
         <dt class="col-sm-4 text-monospace">cancel</dt>
@@ -197,12 +207,14 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
             (or vice-versa), as opposed to a change of time <em>within</em> the same morning or afternoon. Any time
             before 1:00 pm is considered morning; 1:00 pm or later is considered afternoon.
         </dd>
+        <dt class="col-sm-4 text-monospace">change other attributes</dt>
+        <dd class="col-sm-8">The user updated other attributes such as the event type, docket number, names and/or numbers of defendants.</dd>
     </dl>
     <h4 class="my-4 p-2 border text-center">language</h4>
     <p>In practice, Spanish is much more frequently used than any other language, and Spanish interpreters are generally busier.
-        Therefore, for some events you may wish to differentiate between Spanish-language events and everything else.</p>
+        Therefore, for some types of events you may wish to differentiate between Spanish and everything else.</p>
     <h4 class="my-4 p-2 border text-center">type of event</h4>
-    <p>In some cases the Requests module's event handlers distinguish between events that take place in-court and those
+    <p>In some cases the Requests module allows you to distinguish between interpreter-events that take place in-court and those
         that take place elsewhere, typically in an off-site location such as a jail. This feature allows you to avoid sending
         needless emails to interpreters in regard to updates that are not remarkable.</p>
     <h4 class="my-4 p-2 border text-center">general considerations</h4>
@@ -211,5 +223,8 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         that people receive timely notification of events they need to know about. On the other hand, overuse of email
         notification creates its own problems. By configuring these behaviors yourself, you can experiment and try to strike
         the best balance for your situation.
+    </p>
+    <p>Enabling automatic updating of scheduled events &mdash; to keep them consistent with the users' requests &mdash; is strongly
+        recommended; we know of no good reason to do otherwise. The configuration option is provided nevertheless.
     </p>
 </main>
