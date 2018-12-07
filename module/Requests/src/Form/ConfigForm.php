@@ -1,5 +1,5 @@
 <?php
-/**  module/Requests/src/Form/ConfigFieldset.php */
+/**  module/Requests/src/Form/ConfigForm.php */
 
 namespace InterpretersOffice\Requests\Form;
 
@@ -11,7 +11,7 @@ use Zend\Form\Form;
 
 
 /**
- * configure Requests module
+ * configure Requests module -- work in progress
  */
 class ConfigForm extends Form implements InputFilterProviderInterface
 {

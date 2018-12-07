@@ -43,20 +43,18 @@ class IndexController extends AbstractActionController
 
     }
 
+    /**
+     * controller action for configuring Request listeners
+     * 
+     * @return mixed
+     */
     public function configAction()
     {
         $form = new ConfigForm();
-        //$form->setUseAsBaseFieldset(true);
-        //$form->get('change-date');
-        //return false;
         $data = $form->default_values;
         $object = new \Zend\Stdlib\ArrayObject($data);
         $form->bind($object);
         $form->setObject($object);
-        //$form->setData($object);
-        //$form->setIn
-        // echo 'valid: '.($form->isValid()?'yes':'no');
-        // echo "<br>foo? ",$data['foo'];
         if ($this->getRequest()->isPost())
         {
             $data = $this->getRequest()->getPost();
