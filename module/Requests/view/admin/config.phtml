@@ -7,11 +7,11 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
     </h3>
     <p class="pr-3 my-3">The Requests module does not allow users who submit requests
-        to change the Interpreters' schedule themselves.
-        When users modify their requests, however, the Interpreters' schedule virtually
-        always has to be updated accordingly. To avoid having to do these repetitive tasks
-        manually, you can use this page to see and configure how user events are handled automatically.
-        For further explanation please <a href="#user-guide-requests-config">see below</a>.
+        to change the Interpreters' schedule themselves. When users modify their requests, however, you very
+        often need to take action &mdash; update the schedule, contact interpreters.
+        To avoid having to do these repetitive tasks manually, and to ensure that necessary action is taken
+        promptly, the Requests module observes certain events and handles them for you automatically.
+        With this page you can enable or disable these behaviors. For further explanation please <a href="#user-guide-requests-config">see below</a>.
     </p>
 <?php $this->form->prepare()?>
 <form action="<?php echo $this->url('admin-requests/config') ?>" method="post">
@@ -178,7 +178,31 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
     </form>
     <hr class="my-4">
     <h3 id="user-guide-requests-config" class="text-primary">A guide to the Requests module's configuration</h3>
+    <h4 class="my-4 p-2 border text-center">user events</h4>
+    <p>This describes some things that users who submit requests will sometimes do with their requests for interpreting services.</p>
+    <dl class="row">
+        <dt class="col-sm-4 text-monospace">cancel</dt>
+        <dd class="col-sm-8">The user has withdrawn the request.</dd>
+        <dt class="col-sm-4 text-monospace">change date</dt>
+        <dd class="col-sm-8">The user changed the date. This implies but does not trigger a <code>change time</code> in addition.</dd>
+        <dt class="col-sm-4 text-monospace">change time within/across am-pm</dt>
+        <dd class="col-sm-8">The user left the date intact, but changed the time. Since contract court interpreters are frequently hired for
+            half-day periods, you may wish to differentiate the handling of the two scenarios: a change of date from morning to afternoon
+            (or vice-versa), as opposed to a change of time <em>within</em> the same morning or afternoon. Any time
+            before 1:00 pm is considered morning; 1:00 pm or later is considered afternoon.
+        </dd>
+        <dt class="col-sm-4 text-monospace">change language</dt>
+        <dd class="col-sm-8">The user changed the language requested. This is a rare occurence, but when it happens to a scheduled event to which
+        interpreters have been assigned, action may well be required.
+        </dd>
+        <dt class="col-sm-4 text-monospace">change other attributes</dt>
+        <dd class="col-sm-8">The user updated other attributes such as the event type, docket number, names and/or
+            numbers of defendants.</dd>
+    </dl>
+
     <h4 class="my-4 p-2 border text-center">actions</h4>
+    <p>These are the actions which, if enabled, the Requests module will execute automatically in response to
+    certain <em>user events</em>, i.e, things that submitters of requests can do with their requests.</p>
     <dl class="row">
         <dt class="col-sm-4 text-monospace">delete scheduled event</dt>
         <dd class="col-sm-8">If the request has been added to the schedule,
@@ -195,36 +219,28 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
             <em>All such emails are copied to the Interpreters Office.</em>
         </dd>
     </dl>
-    <h4 class="my-4 p-2 border text-center">user events</h4>
-    <dl class="row">
-        <dt class="col-sm-4 text-monospace">cancel</dt>
-        <dd class="col-sm-8">The user has withdrawn the request.</dd>
-        <dt class="col-sm-4 text-monospace">change date</dt>
-        <dd class="col-sm-8">The user changed the date. This implies but does not trigger a <code>change time</code> in addition.</dd>
-        <dt class="col-sm-4 text-monospace">change time within/across am-pm</dt>
-        <dd class="col-sm-8">The user left the date intact, but changed the time. Since contract court interpreters are frequently hired for
-            half-day periods, you may wish to differentiate the handling of the two scenarios: a change of date from morning to afternoon
-            (or vice-versa), as opposed to a change of time <em>within</em> the same morning or afternoon. Any time
-            before 1:00 pm is considered morning; 1:00 pm or later is considered afternoon.
-        </dd>
-        <dt class="col-sm-4 text-monospace">change other attributes</dt>
-        <dd class="col-sm-8">The user updated other attributes such as the event type, docket number, names and/or numbers of defendants.</dd>
-    </dl>
     <h4 class="my-4 p-2 border text-center">language</h4>
-    <p>In practice, Spanish is much more frequently used than any other language, and Spanish interpreters are generally busier.
+    <p>In practice, Spanish is much more frequently used than other languages, and Spanish interpreters are generally busier.
         Therefore, for some types of events you may wish to differentiate between Spanish and everything else.</p>
     <h4 class="my-4 p-2 border text-center">type of event</h4>
     <p>In some cases the Requests module allows you to distinguish between interpreter-events that take place in-court and those
         that take place elsewhere, typically in an off-site location such as a jail. This feature allows you to avoid sending
-        needless emails to interpreters in regard to updates that are not remarkable.</p>
+        needless emails to interpreters in regard to updates that are not remarkable. For example, if a Spanish interpreter is assigned to an in-court proceeding whose time
+        is changed from 10:00 a.m to 10:30 a.m., you may see no need to fire off an email. But if an interpreter is scheduled
+        to show up to a remote location such as a jail, and the time is changed, you will probably want the interpreter to be notified
+        immediately via email.</p>
     <h4 class="my-4 p-2 border text-center">general considerations</h4>
 
-    <p>The design goals of the Requests module are to alleviate the burden of repetitive and error-prone tasks and to ensure
-        that people receive timely notification of events they need to know about. On the other hand, overuse of email
-        notification creates its own problems. By configuring these behaviors yourself, you can experiment and try to strike
-        the best balance for your situation.
+    <p>The design goals of the Requests module are (1) to alleviate the burden of error-prone, repetitive tasks, and (2)
+        to ensure that people receive timely email notification of events they need to know about. The overuse of email, however,
+        notification creates its own problems. By configuring these behaviors yourself, you can, if you wish, experiment to find
+        the best balance for your situation. But we recommend you start with the defaults and give them a try before tweaking.
     </p>
-    <p>Enabling automatic updating of scheduled events &mdash; to keep them consistent with the users' requests &mdash; is strongly
-        recommended; we know of no good reason to do otherwise. The configuration option is provided nevertheless.
+    <p>We also provide this interface to your configuration so you can <em>see</em> what the system is doing; you may never
+    feel any need to <em>change</em> it.</p>
+    <p>Enabling automatic updating of scheduled events &mdash; to keep them consistent with the users' requests &mdash; is <em>strongly
+        recommended</em>; we know of no good reason to do otherwise. The configuration option is nevertheless provided for those who
+        want a maximum degree of hands-on control.
+
     </p>
 </main>
