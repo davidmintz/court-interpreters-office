@@ -36,12 +36,25 @@ class FakeAuth implements \Zend\Authentication\AuthenticationServiceInterface
         {
             return true;
         }
+
+        public $data;
+
+        public function __construct(Array $data = [])
+        {
+            $this->data = $data;
+        }
+
         public function getIdentity()
         {
-            return (object)[
-                'username'=> 'david',
-                'id' => 117,
-            ];
+            if ($this->data) {
+                return (object)$this->data;
+            } else {
+                return (object)[
+                    'username'=> 'david',
+                    'id' => 117,
+
+                ];
+            }
         }
         public function authenticate()
         {
