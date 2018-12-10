@@ -13,6 +13,7 @@ use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use Zend\Stdlib\Parameters;
 use Zend\Dom\Document\Query;
+use Zend\Dom\Document;
 use InterpretersOffice\Requests\Entity\Request;
 
 /**
@@ -23,6 +24,27 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     public function setUp()
     {
         parent::setUp();
+        $container = $this->getApplicationServiceLocator();
+        $eventManager = $container->get('SharedEventManager');
+
+        $eventManager->attach(Listener\UpdateListener::class,'*',function($e) use ($container) {
+            $container->get('log')->debug(
+                "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
+            );
+            /** @var ScheduleUpdateManager $updateManager */
+            $updateManager = $container->get(ScheduleUpdateManager::class);
+            $updateManager->onUpdateRequest($e);
+
+        });
+        // $container = $this->getApplicationServiceLocator();
+        $em = FixtureManager::getEntityManager();//$container->get("entity-manager");
+        // $listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
+        $resolver = $em->getConfiguration()->getEntityListenerResolver();
+        $entityListener = $container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener');
+        $entityListener->setLogger($container->get('log'));
+        $resolver->register($entityListener);
+        $update_listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
+        $resolver->register($update_listener);
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute(
             [
@@ -38,13 +60,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
             ]
         );
 
-        $container = $this->getApplicationServiceLocator();
-        $em = $container->get("entity-manager");
-        // $listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
-        $resolver = $em->getConfiguration()->getEntityListenerResolver();
-        $entityListener = $container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener');
-        $entityListener->setLogger($container->get('log'));
-        $resolver->register($entityListener);
+
 
     }
 
@@ -62,7 +78,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
             }
             $em->flush();
         }
-        
+
     }
 
     public function testIndexCannotBeAccessedWithoutLogin()
@@ -208,7 +224,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
 
     }
     /**
-     * [testPostUpdate description]
+     * tests post method to update
      * @depends testCreate
      * @param  Request $entity [description]
      * @return [type]          [description]
@@ -226,6 +242,8 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $this->reset(true);
         $url = "/requests/update/{$entity->getId()}";
         $token = $this->getCsrfToken($url);
+        $this->assertTrue(is_object($entity));
+        //return;
         $post = ['csrf' => $token,'request'=> $data];
         $this->getRequest()->getHeaders()
             ->addHeaderLine('X-Requested-With','XMLHttpRequest');
@@ -233,19 +251,12 @@ class RequestsWriteControllerTest extends AbstractControllerTest
             new Parameters($post)
         );
         $this->dispatch($url);
-
         $this->assertResponseStatusCode(200);
-
         $em = $this->getApplicationServiceLocator()->get('entity-manager');
-
         $reloaded_entity = $em->find(Request::class,$data['id']);
-
         $dateObj = $reloaded_entity->getDate();
-
         // date should be $new_date
         $this->assertEquals($new_date, $dateObj->format('m/d/Y'));
-
-
     }
 
     /**
@@ -304,5 +315,138 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
         $this->assertQuery("form");
+
+        $this->assertQueryContentRegex("ul#defendants > li", '/Fulano Mengano/');
+        $date = $request->getDate()->format('m/d/Y');
+        $this->assertQuery("input#date[value='$date']");
+        $time = $request->getTime()->format('H:i a');
+        $this->assertQuery("input#time[value='$time']");
+
+        $this->assertQuery("select#eventType option");
+        $q = new \Zend\Dom\Query($this->getResponse()->getBody());
+        $options = $q->execute("select#eventType option");
+        $this->assertTrue(count($options) > 5);
+        $selected = null;
+        foreach($options as $opt) {
+            /** @var \DOMElement $opt */
+            if ($opt->getAttribute('selected')) {
+                $selected = $opt;
+                break;
+            }
+        }
+        $this->assertNotNull($selected);
+        $this->assertEquals($selected->textContent, (string)$request->getEventType());
+
+        $courtroom = $request->getJudge()->getDefaultLocation()->getName();
+
+        $options = $q->execute('#location option');
+        $selected = null;
+        foreach($options as $opt) {
+            /** @var \DOMElement $opt */
+            if ($opt->getAttribute('selected')) {
+                $selected = $opt;
+                break;
+            }
+        }
+        $this->assertNotNull($selected);
+        $this->assertEquals($selected->textContent, $courtroom);
+
+        $this->assertQuery("input#csrf");
+
+        return $request;
+
     }
+
+    /**
+     * @depends testLoadRequestThatIsAlreadyScheduled
+     * @return [type] [description]
+     */
+    public function testPostUpdateToScheduledRequest(Request $request)
+    {
+        $this->assertTrue(is_object($request));
+        $this->login('john_somebody@nysd.uscourts.gov','gack!');
+        $this->reset(true);
+        $url = "/requests/update/{$request->getId()}";
+        $token = $this->getCsrfToken($url);
+        $deft_ids = [];
+        foreach ($request->getDefendants() as $d) {
+            $deft_ids[] = $d->getId();
+        }
+        //$time = $request->getTime()->format('H:i a');
+        //echo "\ntime is $time";
+        $post = [
+            'request' => [
+                'id' => $request->getId(),
+                'date' => $request->getDate()->format('m/d/Y'),
+                'time' =>'3:00 pm', // later in the date
+                'docket' => $request->getDocket(),
+                'language' => $request->getLanguage()->getId(),
+                'judge' => $request->getJudge()->getId(),
+                'location' => $request->getLocation()->getId(),
+                'defendants' => $deft_ids,
+                'comments' => 'fuck you',
+                'eventType' => $request->getEventType()->getId(),
+            ],
+            'csrf' => $token,
+        ];
+
+        $this->getRequest()->getHeaders()
+            ->addHeaderLine('X-Requested-With','XMLHttpRequest');
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters($post)
+        );
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        echo "\n";
+        $this->dumpResponse();
+    }
+    /*        //$csrf = $q->execute("input#csrf")->current();
+
+            //echo "\n date and time are $date and $time, csrf {$csrf->getAttribute('value')}\n";
+            $deft_ids = [];
+            foreach ($request->getDefendants() as $d) {
+                $deft_ids[] = $d->getId();
+            }
+            $post = [
+                'request' => [
+                    'id' => $request->getId(),
+                    'date' => $date,
+                    'time' => $time,
+                    'docket' => $request->getDocket(),
+                    'language' => $request->getLanguage()->getId(),
+                    'judge' => $request->getJudge()->getId(),
+                    'location' => $request->getLocation()->getId(),
+                    'defendants' => $deft_ids,
+                    'comments' => $request->getComments(),
+                ],
+                //'csrf' => $csrf->textContent
+            ];
+
+            $this->login('john_somebody@nysd.uscourts.gov','gack!');
+            $this->reset(true);
+            $url = "/requests/update/{$request->getId()}";
+            $token = $this->getCsrfToken($url);
+            $post['csrf'] = $token;
+            $this->getRequest()->getHeaders()
+                ->addHeaderLine('X-Requested-With','XMLHttpRequest');
+            $this->getRequest()->setMethod('POST')->setPost(
+                new Parameters($post)
+            );
+            $this->dispatch($url);
+
+            $this->assertResponseStatusCode(200);
+
+            // $this->getRequest()->getHeaders()
+            //     ->addHeaderLine('X-Requested-With','XMLHttpRequest');
+            // $this->getRequest()->setMethod('POST')->setPost(
+            //     new Parameters($post)
+            // );
+            // $this->dispatch($url);
+            // $this->assertResponseStatusCode(200);
+            //
+            // $this->dumpResponse();
+
+            return $request;
+                */
+
 }

@@ -43,10 +43,11 @@ class RequestsControllerFactory implements FactoryInterface
         $auth = $container->get('auth');
 
         if ($requestedName == Controller\WriteController::class) {
+
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
             // add Doctine entity listeners
-
+            $container->get('log')->debug("HELLO? Factory is creating $requestedName");
             $resolver = $entityManager->getConfiguration()
                 ->getEntityListenerResolver();
             $resolver->register($container->get(Listener\UpdateListener::class)
