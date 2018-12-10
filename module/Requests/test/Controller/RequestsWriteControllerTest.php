@@ -34,8 +34,10 @@ class RequestsWriteControllerTest extends AbstractControllerTest
                 new DataFixture\EventTypeLoader(),
                 new DataFixture\InterpreterLoader(),
                 new DataFixture\UserLoader(),
+                new DataFixture\RequestLoader(),
             ]
         );
+
         $container = $this->getApplicationServiceLocator();
         $em = $container->get("entity-manager");
         // $listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
@@ -44,8 +46,25 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $entityListener->setLogger($container->get('log'));
         $resolver->register($entityListener);
 
-
     }
+
+    public function tearDown()
+    {
+        $em = FixtureManager::getEntityManager();
+        $result = $em->createQuery(
+            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL'
+        )->getResult();
+        if (count($result)) {
+            foreach ($result as $object) {
+                $event = $object->getEvent();
+                $em->remove($event);
+                $em->remove($object);
+            }
+            $em->flush();
+        }
+        
+    }
+
     public function testIndexCannotBeAccessedWithoutLogin()
     {
         $this->dispatch('/requests');
@@ -247,8 +266,6 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $this->assertQuery("div.alert");
         $this->assertQueryContentRegex("div.alert",'/not authorized/');
 
-        echo "\nno shit?\n";
-
         return $entity;
     }
 
@@ -270,5 +287,22 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $this->assertQuery("form");
 
         return $entity;
+    }
+
+    public function testLoadRequestThatIsAlreadyScheduled()
+    {
+        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $request = $em->createQuery(
+            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
+            ->getOneOrNullResult();
+        $this->assertTrue(is_object($request));
+        $this->login('john_somebody@nysd.uscourts.gov','gack!');
+        $this->reset(true);
+        //echo "\nRequest is for Judge: ",$request->getJudge()->getLastName(),"\n";
+        //$shit = $em->createQuery('')
+        $url = "/requests/update/{$request->getId()}";
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertQuery("form");
     }
 }

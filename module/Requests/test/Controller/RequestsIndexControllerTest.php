@@ -36,13 +36,13 @@ class RequestsIndexControllerTest extends AbstractControllerTest
                 new DataFixture\UserLoader(),
             ]
         );
-        $container = $this->getApplicationServiceLocator();
-        $em = $container->get("entity-manager");
+        // $container = $this->getApplicationServiceLocator();
+        // $em = $container->get("entity-manager");
         // $listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
-        $resolver = $em->getConfiguration()->getEntityListenerResolver();
-        $entityListener = $container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener');
-        $entityListener->setLogger($container->get('log'));
-        $resolver->register($entityListener);
+        // $resolver = $em->getConfiguration()->getEntityListenerResolver();
+        // $entityListener = $container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener');
+        // $entityListener->setLogger($container->get('log'));
+        // $resolver->register($entityListener);
 
 
     }

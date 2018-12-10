@@ -48,7 +48,6 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     public function setAuth(AuthenticationServiceInterface $auth)
     {
         $this->auth = $auth;
-
         return $this;
     }
 
@@ -81,11 +80,14 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
         $now = new \DateTime();
         $user = $this->getAuthenticatedUser($args);
-        $person = $this->getCurrentUserPerson($args);
+        //$person = $this->getCurrentUserPerson($args);
         $request->setCreated($now)->setModified($now)
                 ->setCancelled(false)
-                ->setSubmitter($person)
+                //->setSubmitter($person)
                 ->setModifiedBy($user);
+        if (! $request->getSubmitter()) {
+            $request->setSubmitter($this->getCurrentUserPerson($args));
+        }
         //$this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
     }
 
