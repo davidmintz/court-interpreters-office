@@ -6,6 +6,7 @@
 
 //DOES work from module/Application/test
 $path = realpath( __DIR__.'/../../data/office.sqlite');
+use InterpretersOffice\Entity;
 
 return [
 
@@ -56,6 +57,14 @@ return [
                    'hydration_cache' => 'array',
                 ],
              ],
+        ],
+
+        'eventmanager' => [
+            'orm_default' => [
+                'subscribers' => [
+                    Entity\Listener\UpdateListener::class,
+                ],
+            ],
         ],
         // this is used to inject dependencies into repository classes
         // and requires us to use a FactoryFactory [sic]
