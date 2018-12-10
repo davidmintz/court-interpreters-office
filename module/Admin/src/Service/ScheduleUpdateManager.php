@@ -388,7 +388,7 @@ class ScheduleUpdateManager
             $this->logger->debug(__METHOD__.": we removed $n interpreters");
         } else { $this->logger->debug(__METHOD__.": NO interpreters to remove ");}
 
-        return this;
+        return $this;
     }
 
     /**
@@ -415,7 +415,7 @@ class ScheduleUpdateManager
         $message = $this->createEmailMessage('<p>hi there</p>','hi there');
         $this->logger->debug(get_class($message));
 
-        return this;
+        return $this;
     }
 
     /**
