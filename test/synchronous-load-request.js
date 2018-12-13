@@ -14,13 +14,15 @@ let db = mysql.createConnection({
     database : "office",
     multipleStatements: true
 });
-var date = moment().startOf("week" ).add(37,"days").format("YYYY-MM-DD");
+var dateObj = moment().startOf("week" ).add(37,"days");
+var date = dateObj.format("YYYY-MM-DD");
 var req_created = moment().startOf("week" ).subtract(4,"days").hour(15).minutes(23);
 var event_created = req_created.add(40,"minutes").format("YYYY-MM-DD HH:mm:ss");
 var req_created_str = req_created.format("YYYY-MM-DD HH:mm:ss");
 var request_insert =
-`INSERT INTO requests VALUES (null,'${date}','11:00:00',2593,NULL,16,62,'2018-CR-0611',62,1047,'${req_created_str}','${req_created_str}',31,'dummy request for automated testing',null,0,0,'');
-INSERT INTO defendants_requests VALUES (23805,LAST_INSERT_ID())`
+    `INSERT INTO requests VALUES (null,'${date}','11:00:00',2593,NULL,16,62,'2018-CR-0611',62,1047,'${req_created_str}',
+    '${req_created_str}',31,'dummy request for automated testing purposes',null,0,0,'');
+    INSERT INTO defendants_requests VALUES (23805,LAST_INSERT_ID())`
 var event_insert = `INSERT INTO events VALUES (NULL,62,2593,1047,NULL,'${date}','11:00:00',NULL,'2018-CR-0611','dummy event for automated test','','${event_created}',
     '${event_created}',41,524,NULL,NULL,NULL,31,'${req_created_str.substring(0,10)}','${req_created_str.substring(11)}');
     INSERT INTO defendants_events VALUES (LAST_INSERT_ID(),23805)`;
@@ -35,7 +37,7 @@ const unload = function(){
 
 };
 
-module.exports  = { db, sql, unload };
+module.exports  = { db, sql, unload, request_date : dateObj };
 
 
 
