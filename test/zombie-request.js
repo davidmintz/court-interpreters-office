@@ -54,13 +54,22 @@ describe("Request update",function(){
             //console.log(`time is currently: ${time}`);
             var new_time = time === "4:00 pm" ? "11:00 am" : "4:00 pm";
             browser.fill("#time",new_time);
-            browser.pressButton("#btn-save")
-            .then(function(){
-                browser.assert.success();
-                browser.assert.url({ pathname: '/requests/list' });
-                browser.assert.element(".alert-success p");
-                process.exit(0);
-            });//.catch((err)=>{});
+            return browser.pressButton("#btn-save");
+            // .then(function(){
+            //     browser.assert.success();
+            //     browser.assert.url({ pathname: '/requests/list' });
+            //     browser.assert.element(".alert-success p");
+            //     process.exit(0);
+            // });//.catch((err)=>{});
         });
+        it("should result in successful form submission",function(){
+            browser.assert.success();
+            browser.assert.url({ pathname: '/requests/list' });
+            browser.assert.element(".alert-success p");
+        });
+    });
+    after(function(){
+        console.log("this is after()");
+        process.exit(0);
     });
 });
