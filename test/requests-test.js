@@ -3,56 +3,71 @@
 // var chai = require('chai'), expect = chai.expect, should = chai.should();
 const Browser = require("zombie");
 const moment = require("moment");
-// const assert = require("assert");
+const assert = require("assert");
 Browser.localhost("office.localhost");
 const browser = new Browser();
-
 const loader = require('./synchronous-load-request.js');
-const myFunction = () => new Promise(
+
+let request_id;
+
+// note to self: this implicitly means "return new Promise(...)"
+const load_data = () => new Promise(
     resolve => {
         //console.log(`we are running: ${loader.sql}`);
         loader.db.query(loader.sql,function(err){
             if (err) { throw err; }
         });
-
         loader.db.query("SELECT MAX(id) AS max FROM requests",function(err, results){
-            resolve(results[0].max);
+            request_id = results[0].max;
+            resolve();
         })
 
     },
     reject => {console.log("oops")}
 );
-let request_id;
+
 
 describe("here shit goes",function(){
     before(function(){
-        console.log("step 1:  this is the before() function");
-        var promise = myFunction();
-        promise.then((value)=>{
-            // seems to make request_id accessible to it(...)
-            request_id = value;
-        });
-
-        return promise;
+        //console.log("step 1:  this is the before() function");
+        return load_data();
     });
-    it("should work",function(){
-        console.log("step 2: this is an actual test, our request id is "+request_id);
+    it("scheduled event should automatically get updated when user updates corresponding request",
+    function(){
         browser.visit("/login")
         .then(function(){
-                console.log("now we are at "+browser.window.document.location.href);
+            browser.assert.url({ pathname: "/login" });
             browser.fill("#identity","anthony_daniels@nysd.uscourts.gov");
             browser.fill("#password","boink");
             return browser.pressButton("log in");
         })
         .then(function(){
-            //console.log("here comes an assertion");
             browser.assert.success();
             return browser.visit(`/requests/view/${request_id}`);
         })
         .then(function(){
+            // get event data for sanity check
+            return new Promise(
+                resolve => {
+                    var sql = `SELECT e.date, e.modified, e.id FROM events e JOIN requests r ON r.event_id = e.id WHERE r.id = ${request_id}`;
+                    loader.db.query(sql,function(err, result){
+                        if (err) { console.log(err); throw err; }
+                        resolve(result[0]);
+                    });
+                },
+                reject  => { console.log("fuck.");}
+            );
+        })
+        .then(function(result){
+            assert.ok(result);
+            var event_date = moment(result.date).format("YYYY-MM-DD");
+            var request_date = loader.request_date.format("YYYY-MM-DD");
+            assert.strictEqual(request_date, event_date);
+        })
+        .then(function(){
             browser.assert.success();
-                console.log("now we are at "+browser.location.href);
-            //console.log(browser.source);
+            //console.log("now we are at "+browser.location.href);
+            browser.assert.url({ pathname: `/requests/view/${request_id}` });
             browser.assert.element("#date");
             var request_date = loader.request_date.format("ddd DD-MMM-YYYY");
             //console.log("expecting: "+request_date);
@@ -62,42 +77,54 @@ describe("here shit goes",function(){
             return browser.fire("a.btn:nth-child(1)","click");
         })
         .then(function(){
-            // test something else
-            console.log("now we are at "+browser.location.href);
+            browser.assert.url({ pathname: `/requests/update/${request_id}` });
             browser.assert.element("#btn-save");
             browser.assert.element("#date");
             // change the date to one week later
             // clone the moment (implicitly)
             var new_date = moment(loader.request_date).add(7,"days");
-            console.log("Setting date to: "+new_date.format("MM/DD/YYYY"));
-            browser.fill("#date",new_date.format("MM/DD/YYYY"));
-            console.log(`browser.pressButton is a fucking ${typeof browser.pressButton}`);
-            // //return browser.evaluate('$("#btn-save").trigger("click")');
-            // //var form = browser.document.getElementById("request-form");
+            var date_str = new_date.format("MM/DD/YYYY");
+            // this crashes jQuery ui datepicker:
+            // browser.fill("#date",new_date.format("MM/DD/YYYY"));
+            // ...so we use this workaround:
+            browser.evaluate(`$("#request-form").append($("<input>").attr({name:"request[date]",value:"${date_str}"}));`);
+        })
+        .then(function(){
             return browser.pressButton("save");
-
-            //return browser.document.getElementById("request-form").submit();
-            //return browser.fire("#btn-save","click");
+        })
+        .then(function(){
+            browser.assert.url({ pathname: "/requests/list" });
+            // did the event get updated automatically?
+            return new Promise(
+                resolve => {
+                    var sql = `SELECT e.date, e.modified, e.id FROM events e JOIN requests r ON r.event_id = e.id WHERE r.id = ${request_id}`;
+                    loader.db.query(sql,function(err, result){
+                        if (err) { console.log(err); throw err; }
+                        resolve(result[0]);
+                    });
+                },
+                reject  => { console.log("fuck.");}
+            );
+        })
+        .then(function(result){
+            assert.ok(result);
+            var event_date = moment(result.date).format("YYYY-MM-DD");
+            var request_date =  moment(loader.request_date).add(7,"days").format("YYYY-MM-DD");
+            assert.strictEqual(request_date,event_date);
         })
         .catch(function(error){
             console.log(error);
             throw error;
         }).finally(function(){
+            //console.log("finally() is cleaning up dummy data");
             loader.unload();
             loader.db.end();
         });
-
-
-
-
     });
-    // it("should work some more",function(){
-    //     // we are still back at /login because of the asynchronicity
-    //     console.log(browser.window.document.location.href);
-    // });
+
     after(function(){
         //loader.unload();
-        console.log("this cleanup is in after() and should appear last");
+        //console.log("this cleanup is in after() and should appear last");
 
     });
 
