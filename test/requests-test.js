@@ -6,7 +6,7 @@ const moment = require("moment");
 const assert = require("assert");
 Browser.localhost("office.localhost");
 const browser = new Browser();
-const loader = require('./synchronous-load-request.js');
+const loader = require('./fixture/synchronous-load-request.js');
 
 let request_id;
 
