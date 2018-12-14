@@ -2,6 +2,7 @@
 
 // var chai = require('chai'), expect = chai.expect, should = chai.should();
 const Browser = require("zombie");
+const moment = require("moment");
 // const assert = require("assert");
 Browser.localhost("office.localhost");
 const browser = new Browser();
@@ -38,6 +39,7 @@ describe("here shit goes",function(){
         console.log("step 2: this is an actual test, our request id is "+request_id);
         browser.visit("/login")
         .then(function(){
+                console.log("now we are at "+browser.window.document.location.href);
             browser.fill("#identity","anthony_daniels@nysd.uscourts.gov");
             browser.fill("#password","boink");
             return browser.pressButton("log in");
@@ -49,30 +51,55 @@ describe("here shit goes",function(){
         })
         .then(function(){
             browser.assert.success();
+                console.log("now we are at "+browser.location.href);
             //console.log(browser.source);
             browser.assert.element("#date");
             var request_date = loader.request_date.format("ddd DD-MMM-YYYY");
             //console.log("expecting: "+request_date);
             browser.assert.text("#date",request_date);
-            browser.assert.element("#request-details")
+            browser.assert.element("#request-details");
+            browser.assert.elements("a.request-update",{atLeast : 1});
+            return browser.fire("a.btn:nth-child(1)","click");
         })
         .then(function(){
             // test something else
+            console.log("now we are at "+browser.location.href);
+            browser.assert.element("#btn-save");
+            browser.assert.element("#date");
+            // change the date to one week later
+            // clone the moment (implicitly)
+            var new_date = moment(loader.request_date).add(7,"days");
+            console.log("Setting date to: "+new_date.format("MM/DD/YYYY"));
+            browser.fill("#date",new_date.format("MM/DD/YYYY"));
+            console.log(`browser.pressButton is a fucking ${typeof browser.pressButton}`);
+            // //return browser.evaluate('$("#btn-save").trigger("click")');
+            // //var form = browser.document.getElementById("request-form");
+            return browser.pressButton("save");
+
+            //return browser.document.getElementById("request-form").submit();
+            //return browser.fire("#btn-save","click");
         })
-        .then(function(){
-            // test something else
-        }).catch(function(error){
-            console.log("shit did not work: "+error);
+        .catch(function(error){
+            console.log(error);
+            throw error;
         }).finally(function(){
             loader.unload();
             loader.db.end();
         });
 
+
+
+
     });
+    // it("should work some more",function(){
+    //     // we are still back at /login because of the asynchronicity
+    //     console.log(browser.window.document.location.href);
+    // });
     after(function(){
         //loader.unload();
         console.log("this cleanup is in after() and should appear last");
 
     });
+
 
 });

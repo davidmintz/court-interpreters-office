@@ -132,6 +132,7 @@ $(function(){
         var post = form.serialize();
         $.post(form.attr("action"),post)
             .done(function(response){
+                console.log("shit is running");
                 if (response.validation_errors) {
                     // we can do better than this.
                     /** @todo revise displayValidationErrors helper */
@@ -157,9 +158,10 @@ $(function(){
                         // this sucks: undo the .hide() in displayValidationErrors
                         $("#error_insufficient_notice").show();
                     }
+                    console.log("shit failed validation");
                     return;
                 }
-                document.location = `${window.basePath}/requests/list`;
+                return document.location = `${window.basePath}/requests/list`;
 
             }).fail(fail);
     });
