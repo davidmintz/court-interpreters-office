@@ -34,31 +34,34 @@ describe("admin schedule test",function(){
         });
         it("should display schedule page",function(){
             browser.assert.success();
+            browser.assert.element("h2.navigation");
         });
         it("should have a right-arrow",function(){
             browser.assert.element("a.fa-arrow-right");
+            console.log(`location is now: ${browser.location.href}`);
+            return browser.fire("a.fa-arrow-right","click");
         });
-        it("clicking arrows should load next|previous day's schedule",
-            function(){
-            var today = moment(new Date());
-            browser.fire("a.fa-arrow-right","click")
-                .then(function(){
-                //console.log(`location is now: ${browser.location.href}`);
-                browser.assert.status(200);
-                var dayOfWeek = today.format("d");
-                var increment = dayOfWeek === "6" ? 2 : 1;
-                //console.log("increment by: "+increment);
-                var str = today.add(increment,"days").format("YYYY/MM/DD") + "$";
-                browser.fire("a.fa-arrow-left","click")
-                    .then(()=>{
-                        browser.assert.status(200);
-                        browser.assert.element("h2 small.text-muted");
-                        var str = moment().format("YYYY/MM/DD") + "$";
-                        browser.assert.url(new RegExp(str));
-                        //done();
-                    });
-            });
+        it("clicking right arrow should advance schedule by a day",function(){
+            browser.assert.status(200);
+            var date = moment(new Date());
+            var increment, dayOfWeek = date.format("d");
+            switch (dayOfWeek) {
+                case "5":
+                    increment = 3;
+                    break;
+                case "6":
+                    increment = 2;
+                    break;
+                default:
+                    increment = 1;
+            }
+            var str = date.add(increment,"days").format("YYYY/MM/DD");
+            assert.strictEqual(`/admin/schedule/${str}`,browser.location.pathname);
+            browser.assert.element("h2 small.text-muted");
+            var expected = date.format("ddd DD MMM YYYY");
+            browser.assert.text("h2 small.text-muted",expected);
         });
+
     /*
     these things don't work because the previous callbacks have yet to finish.
      */
