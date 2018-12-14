@@ -23,16 +23,16 @@ const load_data = () => new Promise(
         })
 
     },
-    reject => {console.log("oops")}
+    reject => console.log("oops")
 );
 
 
-describe("here shit goes",function(){
+describe("updating a request that is scheduled",function(){
     before(function(){
         //console.log("step 1:  this is the before() function");
         return load_data();
     });
-    it("scheduled event should automatically get updated when user updates corresponding request",
+    it("schedule is automatically updated when user updates corresponding request",
     function(){
         browser.visit("/login")
         .then(function(){
@@ -119,6 +119,7 @@ describe("here shit goes",function(){
             //console.log("finally() is cleaning up dummy data");
             loader.unload();
             loader.db.end();
+            return browser.visit("/");
         });
     });
 
