@@ -131,8 +131,7 @@ $(function(){
         event.preventDefault();
         var post = form.serialize();
         $.post(form.attr("action"),post)
-            .done(function(response){
-                console.log("shit is running");
+            .done(function(response){                
                 if (response.validation_errors) {
                     // we can do better than this.
                     /** @todo revise displayValidationErrors helper */
