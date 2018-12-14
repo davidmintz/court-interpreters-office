@@ -23,8 +23,7 @@ describe("Request update",function(){
         });
         it("should authenticate user anthony",function(){
             browser.assert.success();
-            assert.ok(browser.document.title.indexOf("requests") !== -1);
-            //console.log(browser.document.location.href);
+            assert.ok(browser.document.title.indexOf("requests") !== -1);            
         });
     });
     describe("display requests",function(){
@@ -46,6 +45,7 @@ describe("Request update",function(){
         it("should load the event form",function() {
             browser.assert.success();
             browser.assert.url({ pathname: `/requests/update/${id}` });
+
         });
         it("should let us update time",function() {
             //console.log(browser.document.location.href);
@@ -55,21 +55,20 @@ describe("Request update",function(){
             var new_time = time === "4:00 pm" ? "11:00 am" : "4:00 pm";
             browser.fill("#time",new_time);
             return browser.pressButton("#btn-save");
-            // .then(function(){
-            //     browser.assert.success();
-            //     browser.assert.url({ pathname: '/requests/list' });
-            //     browser.assert.element(".alert-success p");
-            //     process.exit(0);
-            // });//.catch((err)=>{});
+
         });
-        it("should result in successful form submission",function(){
+        it("should result in successful form submission",function(done){
             browser.assert.success();
             browser.assert.url({ pathname: '/requests/list' });
             browser.assert.element(".alert-success p");
+            done();
         });
+
     });
-    after(function(){
-        console.log("this is after()");
-        process.exit(0);
+    // apparently, if you have javascript running and running in the browser,
+    // as with setTimeout(), it will hang
+    after(function(){ // make it stop hanging!
+        return browser.visit("/");
+
     });
 });
