@@ -75,7 +75,7 @@ class RequestLoader implements FixtureInterface
         $event->setCreated($recently)->setCreatedBy($admin)
             ->setModified($recently)->setModifiedBy($admin)
             ->setSubmissionDate($request->getCreated());
-        $request->setEvent($event);
+        $request->setEvent($event)->setPending(false);
         $objectManager->persist($event);
         $objectManager->persist($request);
         //try {
