@@ -44,17 +44,9 @@ describe("admin schedule test",function(){
         it("clicking right arrow should advance schedule by a day",function(){
             browser.assert.status(200);
             var date = moment(new Date());
-            var increment, dayOfWeek = date.format("d");
-            switch (dayOfWeek) {
-                case "5":
-                    increment = 3;
-                    break;
-                case "6":
-                    increment = 2;
-                    break;
-                default:
-                    increment = 1;
-            }
+            dayOfWeek = date.format("d");
+            increment = dayOfWeek === "5" ? 3 : 1;
+
             var str = date.add(increment,"days").format("YYYY/MM/DD");
             assert.strictEqual(`/admin/schedule/${str}`,browser.location.pathname);
             browser.assert.element("h2 small.text-muted");
@@ -83,5 +75,5 @@ describe("admin schedule test",function(){
         });
     })
     */
-   after(function(){process.exit(0);});
+   after(function(){ return browser.visit("/");});
 });

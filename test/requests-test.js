@@ -118,7 +118,7 @@ describe("updating a request that is scheduled",function(){
         }).finally(function(){
             //console.log("finally() is cleaning up dummy data");
             loader.unload();
-            loader.db.end();
+            //loader.db.end();
             return browser.visit("/");
         });
     });
