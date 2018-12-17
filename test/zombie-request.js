@@ -23,7 +23,7 @@ describe("Request update",function(){
         });
         it("should authenticate user anthony",function(){
             browser.assert.success();
-            assert.ok(browser.document.title.indexOf("requests") !== -1);            
+            assert.ok(browser.document.title.indexOf("requests") !== -1);
         });
     });
     describe("display requests",function(){

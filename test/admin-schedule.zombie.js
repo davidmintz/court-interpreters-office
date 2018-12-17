@@ -32,26 +32,36 @@ describe("admin schedule test",function(){
         before(function(){
             return browser.visit("/admin/schedule");
         });
-        it("should display schedule page",function(){
+        it("should display schedule page",function(done){
             browser.assert.success();
             browser.assert.element("h2.navigation");
+            done();
         });
         it("should have a right-arrow",function(){
             browser.assert.element("a.fa-arrow-right");
-            console.log(`location is now: ${browser.location.href}`);
+            //console.log(`location is now: ${browser.location.href}`);
             return browser.fire("a.fa-arrow-right","click");
         });
-        it("clicking right arrow should advance schedule by a day",function(){
+        it("clicking right arrow should advance schedule by a day",function(done){
             browser.assert.status(200);
             var date = moment(new Date());
-            dayOfWeek = date.format("d");
-            increment = dayOfWeek === "5" ? 3 : 1;
-
+            var increment, dayOfWeek = date.format("d");
+            switch (dayOfWeek) {
+                case "5":
+                    increment = 3;
+                    break;
+                case "6":
+                    increment = 2;
+                    break;
+                default:
+                    increment = 1;
+            }
             var str = date.add(increment,"days").format("YYYY/MM/DD");
             assert.strictEqual(`/admin/schedule/${str}`,browser.location.pathname);
             browser.assert.element("h2 small.text-muted");
             var expected = date.format("ddd DD MMM YYYY");
             browser.assert.text("h2 small.text-muted",expected);
+            done();
         });
 
     /*
@@ -75,5 +85,5 @@ describe("admin schedule test",function(){
         });
     })
     */
-   after(function(){ return browser.visit("/");});
+   after(function(){ return browser.visit("/")});
 });

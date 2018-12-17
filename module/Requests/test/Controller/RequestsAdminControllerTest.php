@@ -20,7 +20,12 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
  {
      public function tearDown()
      {
-         // $em = FixtureManager::getEntityManager();
+         $em = FixtureManager::getEntityManager();
+         $db = $em->getConnection();
+         $db->exec('DELETE FROM requests');
+         $db->exec('DELETE FROM events');
+         $db->exec('DELETE FROM defendants_requests');
+         $db->exec('DELETE FROM defendants_events');
          // $result = $em->createQuery(
          //     'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
          //        WHERE r.event IS NOT NULL'
@@ -39,6 +44,8 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
      {
          parent::setUp();
          FixtureManager::dataSetup();
+         $fixtureExecutor = FixtureManager::getFixtureExecutor();
+         $fixtureExecutor->execute([new DataFixture\RequestLoader],true);
          $this->login('david', 'boink');
          $this->reset(true);
      }
@@ -46,6 +53,7 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
      public function testRequestAdminPageIsAccessible()
      {
          $this->dispatch('/admin/requests');
+         $this->assertActionName('index');
          $this->assertResponseStatusCode(200);
      }
 
