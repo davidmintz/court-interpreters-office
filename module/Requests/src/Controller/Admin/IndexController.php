@@ -49,7 +49,16 @@ class IndexController extends AbstractActionController
     {
 
         $repo = $this->objectManager->getRepository(Request::class);
-        //$pending = $repo->findAll([])
+        $pending = $repo->getPendingRequests();
+
+        if ($pending) {
+            $data = $pending->getCurrentItems()->getArrayCopy();
+            // wish we were kidding, but...
+            $ids = array_column(array_column($data,0),'id');
+            $defendants = $repo->getDefendants($ids);
+        }
+
+        return compact('pending','defendants');
     }
     /**
      * controller action for configuring Request listeners

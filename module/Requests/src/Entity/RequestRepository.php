@@ -112,6 +112,43 @@ use InterpretersOffice\Requests\Entity\Request;
             ->addDefendants($existing->getDefendants());
      }
 
+     public function getPendingRequests($page = 1)
+     {
+         $qb = $this->getBaseQuery();
+         $qb->where('r.pending = true');
+
+         $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+         $adapter = new DoctrineAdapter(new ORMPaginator($query));
+         $paginator = new ZendPaginator($adapter);
+         if (! count($paginator)) {
+             return null;
+         }
+         $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
+
+         return $paginator;
+
+     }
+
+     public function getBaseQuery()
+     {
+         $qb = $this->getEntityManager()->createQueryBuilder();
+         $parameters = [];
+         $qb->select(['partial r.{id,date,time,docket, extraData}',
+             't.name type','j.lastname judge','loc.name location',
+             'lang.name language'])
+             ->from(Request::class, 'r')
+             ->join('r.eventType','t')
+             ->join('r.judge','j')
+             ->join('r.language','lang')
+             ->leftJoin('r.location','loc') //->leftJoin('l.type','lt')
+             ->orderBy('r.date', 'DESC');
+
+        return $qb;
+     }
+
+
+
     /**
      * returns paginated Requests data for current user
      *
@@ -122,17 +159,9 @@ use InterpretersOffice\Requests\Entity\Request;
      */
     public function list($user,$page = 1)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
         $parameters = [];
-        $qb->select(['partial r.{id,date,time,docket, extraData}',
-            't.name type','j.lastname judge','loc.name location',
-            'lang.name language'])
-            ->from(Request::class, 'r')
-            ->join('r.eventType','t')
-            ->join('r.judge','j')
-            ->join('r.language','lang')
-            ->leftJoin('r.location','loc') //->leftJoin('l.type','lt')
-            ->orderBy('r.date', 'DESC');
+        $qb = $this->getBaseQuery();
+
         if ($user->role == 'submitter') {
             if ($user->judge_ids) {
                 // $user is a Law Clerk or Courtoom Deputy, so constrain it

@@ -4,5 +4,19 @@
 <p>
     This is the <code>admin/requests</code> page.
 </p>
-<p>
-</p>
+<?php if ($this->pending):
+    printf("%d requests pending",$this->pending->getTotalItemCount());
+    ?>
+    <table>
+        <thead>
+
+        </thead>
+        <tbody>
+<?php foreach ($this->pending as $r) : ?>
+
+<?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php
+
+endif; ?>
