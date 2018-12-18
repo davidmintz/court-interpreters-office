@@ -9,6 +9,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Zend\Paginator\Paginator as ZendPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Doctrine\ORM\QueryBuilder;
 
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
@@ -130,6 +131,11 @@ use InterpretersOffice\Requests\Entity\Request;
 
      }
 
+     /**
+      * creates a QueryBuilder object for fetching Request entity data
+      *
+      * @return \Doctrine\ORM\QueryBuilder
+      */
      public function getBaseQuery()
      {
          $qb = $this->getEntityManager()->createQueryBuilder();
@@ -141,7 +147,7 @@ use InterpretersOffice\Requests\Entity\Request;
              ->join('r.eventType','t')
              ->join('r.judge','j')
              ->join('r.language','lang')
-             ->leftJoin('r.location','loc') //->leftJoin('l.type','lt')
+             ->leftJoin('r.location','loc')
              ->orderBy('r.date', 'DESC');
 
         return $qb;

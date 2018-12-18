@@ -12,7 +12,7 @@
 
         </thead>
         <tbody>
-<?php foreach ($this->pending as $r) : ?>
+<?php $shit =  null; foreach ($this->pending as $r) : $shit = array_merge($r,$r[0]); unset($shit[0])?>
     <tr class="request">
     </tr>
 <?php endforeach; ?>
@@ -21,3 +21,6 @@
     <?php
 
 endif; ?>
+<pre>
+<?php print_r($shit) ?>
+</pre>

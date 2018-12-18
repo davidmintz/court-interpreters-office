@@ -53,9 +53,11 @@ class IndexController extends AbstractActionController
 
         if ($pending) {
             $data = $pending->getCurrentItems()->getArrayCopy();
-            // wish we were kidding, but...
+            // remind me to refactor this
             $ids = array_column(array_column($data,0),'id');
             $defendants = $repo->getDefendants($ids);
+        } else {
+            $defendants = [];
         }
 
         return compact('pending','defendants');

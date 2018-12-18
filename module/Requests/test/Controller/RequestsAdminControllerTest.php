@@ -1,15 +1,14 @@
 <?php /** module/Requests/test/Controller/RequestsAdminControllerTest.php */
- namespace ApplicationTest\Controller;
+namespace ApplicationTest\Controller;
 
- use InterpretersOffice\Requests\Controller\RequestsIndexController;
- use ApplicationTest\AbstractControllerTest;
+use InterpretersOffice\Requests\Controller\RequestsIndexController;
+use ApplicationTest\AbstractControllerTest;
+use ApplicationTest\FixtureManager;
+//use ApplicationTest\FakeAuth;
+use ApplicationTest\DataFixture;
+use Zend\Stdlib\Parameters;
 
- use ApplicationTest\FixtureManager;
-use ApplicationTest\FakeAuth;
- use ApplicationTest\DataFixture;
- use Zend\Stdlib\Parameters;
-
- use InterpretersOffice\Requests\Entity\Request;
+use InterpretersOffice\Requests\Entity\Request;
 
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
@@ -39,14 +38,11 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
          $this->reset(true);
      }
 
-     public function testRequestAdminPageIsAccessible()
+     public function testRequestAdminPageDisplaysPendingRequest()
      {
          $this->dispatch('/admin/requests');
          $this->assertActionName('index');
          $this->assertResponseStatusCode(200);
          $this->assertQuery("tbody > tr.request");
      }
-
-
-
  }

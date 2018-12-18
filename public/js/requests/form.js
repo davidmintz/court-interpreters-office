@@ -82,17 +82,6 @@ const deftname_autocomplete_options = {
     }
 };
 
-/** error handler */
-/*
-const fail = function(response){
-    var html = `<p>Sorry, we've encountered an unexpected error.`;
-    if (response.responseJSON && response.responseJSON.error) {
-        html += ` The message was: ${response.responseJSON.error.message}`;
-    }
-    html += `</p><p>Please consult your site administrator for help</p>`;
-    $("#error-message").html(html).show();
-};
-*/
 $(function(){
 
     const form = $("#request-form");
@@ -131,7 +120,7 @@ $(function(){
         event.preventDefault();
         var post = form.serialize();
         $.post(form.attr("action"),post)
-            .done(function(response){                
+            .done(function(response){
                 if (response.validation_errors) {
                     // we can do better than this.
                     /** @todo revise displayValidationErrors helper */
