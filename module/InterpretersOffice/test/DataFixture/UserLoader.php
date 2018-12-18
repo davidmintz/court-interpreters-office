@@ -88,18 +88,23 @@ class UserLoader implements FixtureInterface
         $objectManager->persist($other_user_account);
 
         // create a USPO
-        // $uspo_user = new Entity\User();
-        // $uspo_person = new Entity\Person();
-        // $uspo_person->setFirstname('John')
-        //         ->setLastname('Somebody Else')
-        //         ->setEmail('john_probation@nysd.uscourts.gov')
-        //         ->setActive(true)
-        //         ->setHat(
-        //             $objectManager->getRepository('InterpretersOffice\Entity\Hat')
-        //                 ->findOneBy(['name' => 'USPO'])
-        //         );
+        $uspo_user = new Entity\User();
+        $uspo_person = new Entity\Person();
+        $uspo_person->setFirstname('John')
+                ->setLastname('Somebody Else')
+                ->setEmail('john_probation@nysp.uscourts.gov')
+                ->setActive(true)
+                ->setHat(
+                    $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+                        ->findOneBy(['name' => 'USPO'])
+                );
 
-
+        $uspo_user->setRole($submitter_role)
+            ->setActive(true)->setLastLogin(new \DateTime("-24 hours"))
+            ->setPerson($uspo_person)
+            ->setPassword('gack!')->setCreated(new \DateTime('-3 months'));
+        $objectManager->persist($uspo_person);
+        $objectManager->persist($uspo_user);
         $objectManager->flush();
 
         //$another_user->setPassword("something else");

@@ -22,22 +22,11 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
      {
          $em = FixtureManager::getEntityManager();
          $db = $em->getConnection();
-         $db->exec('DELETE FROM requests');
-         $db->exec('DELETE FROM events');
          $db->exec('DELETE FROM defendants_requests');
          $db->exec('DELETE FROM defendants_events');
-         // $result = $em->createQuery(
-         //     'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
-         //        WHERE r.event IS NOT NULL'
-         // )->getResult();
-         // if (count($result)) {
-         //     foreach ($result as $object) {
-         //         $event = $object->getEvent();
-         //         $em->remove($event);
-         //         $em->remove($object);
-         //     }
-         //     $em->flush();
-         // }
+         $db->exec('DELETE FROM requests');
+         $db->exec('DELETE FROM events');
+
      }
 
      public function setUp()
@@ -55,8 +44,7 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
          $this->dispatch('/admin/requests');
          $this->assertActionName('index');
          $this->assertResponseStatusCode(200);
-         // $this->dumpResponse();
-         // $this->assertQuery("tbody > tr");
+         $this->assertQuery("tbody > tr.request");
      }
 
 
