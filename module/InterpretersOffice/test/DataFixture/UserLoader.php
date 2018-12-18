@@ -84,8 +84,22 @@ class UserLoader implements FixtureInterface
             ->setPassword('gack!')->setCreated(new \DateTime())
              ->addJudge($objectManager->getRepository('InterpretersOffice\Entity\Judge')
              ->findOneBy(['lastname' => 'Dinklesnort']));
-             
+
         $objectManager->persist($other_user_account);
+
+        // create a USPO
+        // $uspo_user = new Entity\User();
+        // $uspo_person = new Entity\Person();
+        // $uspo_person->setFirstname('John')
+        //         ->setLastname('Somebody Else')
+        //         ->setEmail('john_probation@nysd.uscourts.gov')
+        //         ->setActive(true)
+        //         ->setHat(
+        //             $objectManager->getRepository('InterpretersOffice\Entity\Hat')
+        //                 ->findOneBy(['name' => 'USPO'])
+        //         );
+
+
         $objectManager->flush();
 
         //$another_user->setPassword("something else");
