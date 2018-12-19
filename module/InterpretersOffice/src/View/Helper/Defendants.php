@@ -37,7 +37,7 @@ class Defendants extends AbstractHelper
                 return false;
             } else {
                 $data = ['defendants'=>$defendants];
-            }            
+            }
         }
         $this->defendants = $data['defendants'];
 
@@ -69,10 +69,24 @@ class Defendants extends AbstractHelper
         if (! $this->getDefendants() or ! isset($this->defendants[$id])) {
             return $return;
         }
-        foreach ($this->defendants[$id] as $n) {
-            $return .= $this->getView()->escapeHtml($n['surnames']).'<br>';
+        $count = count($this->defendants[$id]);
+        if ($count <= 3) {
+            foreach ($this->defendants[$id] as $n) {
+                $return .= '<div class="defendant-name">' . $this->getView()->escapeHtml($n['surnames']).'</div>';
+            }
+             return $return;
         }
+        $return .= '<div class="defendant-name">' . $this->getView()->escapeHtml($this->defendants[$id][0]['surnames']).'</div>';
+        $x = $count - 1;
 
-         return $return;
+        $return .= '<a class="expand-deftnames" href="#">'. "$x more"  .'</a>';
+
+        for ($i = 1; $i < $count; $i++) {
+            $return .= '<div class="defendant-name" style="display:none">'
+                . $this->getView()->escapeHtml($this->defendants[$id][0]['surnames']).'</div>';
+        }
+        $return .= '<a class="collapse-deftnames" style="display:none" href="#">'. "$x more"  .'</a>';
+
+        return $return;
     }
 }

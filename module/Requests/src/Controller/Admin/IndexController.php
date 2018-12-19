@@ -8,9 +8,11 @@ use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Stdlib\Glob;
+//use Zend\Stdlib\Glob;
 use Zend\Stdlib\ArrayObject;
 use InterpretersOffice\Requests\Form\ConfigForm;
+use InterpretersOffice\Requests\Entity\Request;
+
 
 /**
  * admin controller for Requests module
@@ -43,9 +45,26 @@ class IndexController extends AbstractActionController
 
     }
 
+    public function indexAction()
+    {
+
+        $repo = $this->objectManager->getRepository(Request::class);
+        $pending = $repo->getPendingRequests();
+
+        if ($pending) {
+            $data = $pending->getCurrentItems()->getArrayCopy();
+            // remind me to refactor this
+            $ids = array_column(array_column($data,0),'id');
+            $defendants = $repo->getDefendants($ids);
+        } else {
+            $defendants = [];
+        }
+
+        return compact('pending','defendants');
+    }
     /**
      * controller action for configuring Request listeners
-     * 
+     *
      * @return mixed
      */
     public function configAction()

@@ -75,21 +75,38 @@ class RequestLoader implements FixtureInterface
         $event->setCreated($recently)->setCreatedBy($admin)
             ->setModified($recently)->setModifiedBy($admin)
             ->setSubmissionDate($request->getCreated());
-        $request->setEvent($event);
+        $request->setEvent($event)->setPending(false);
         $objectManager->persist($event);
         $objectManager->persist($request);
-        //try {
-        $objectManager->flush();
-        // } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-        //     echo "\noops. ",$e->getMessage(),"\n";
-        // } catch (\Exception $e) {
-        //     throw $e;
-        // }
 
-        //$request->setEvent($event);
-        //$objectManager->flush();
-        // $request_id = $request->getId();
-        // printf("\nrequest id is %s\n",$request_id);
-        // printf("\nevent id is? %s\n",$request->getEvent()->getId());
+        $psi_request =  new Entity\Request();
+
+        $uspo_user = $objectManager->createQuery(
+            'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p WHERE p.email = :email'
+        )->setParameters(['email'=>'john_probation@nysp.uscourts.gov'])->getOneorNullResult();
+
+        $place = $objectManager->getRepository('InterpretersOffice\Entity\Location')->findOneByName('MDC');
+        $defendant = $objectManager->getRepository('InterpretersOffice\Entity\Defendant')->findOneBySurnames('Franco');
+        $judge =  $objectManager->getRepository('InterpretersOffice\Entity\Judge')->findOneByLastname('Noobieheimer');
+        $type =  $objectManager->getRepository('InterpretersOffice\Entity\EventType')->findOneByName('probation PSI interview');
+        $psi_request->setDate($date)
+            ->setTime($time)
+            ->setJudge($judge)
+            ->setLanguage($language)
+            ->setEventType($type)
+            ->setDocket('2017-CR-1230')
+            ->setComments('shit is real')
+            ->setSubmitter($uspo_user->getPerson())
+            ->setModified($then)
+            ->setCreated($then)
+            //->setSubmitter($user->getPerson())
+            ->setLocation($place)
+            ->setModifiedBy($uspo_user)
+            ->setCreated(new \DateTime('-90 minutes'))
+            //->setSubmissionTime(new \DateTime('-1 hour'))
+             ->addDefendant($defendant);
+        $objectManager->persist($psi_request);
+        $objectManager->flush();
+
     }
 }

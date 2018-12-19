@@ -77,9 +77,17 @@ class RequestForm extends ZendForm
     {
         // subject to reconsideration, the least ugly way to store the
         // names they could|would not find in the database
+        $entity = $this->getObject();
         if ($this->get('request')->has('extra_defendants')) {
             $names = $this->get('request')->get('extra_defendants')->getValue();
-            $this->getObject()->setExtraData(['defendants'=>$names]);
+            if ($names) {
+                $entity->setExtraData(['defendants'=>$names]);
+            } else {
+                // if there's anything there, remove it
+                if ($entity->getExtraData()) {
+                    $entity->setExtraData([]);
+                }
+            }
         }
 
         return $this;

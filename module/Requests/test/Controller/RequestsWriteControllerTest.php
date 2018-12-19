@@ -400,6 +400,32 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         echo "\n";
         $this->dumpResponse();
     }
+
+    public function testViewRequestThatIsScheduled()
+    {
+
+        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $request = $em->createQuery(
+            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
+            ->getOneOrNullResult();
+        $this->assertTrue(is_object($request));
+        $this->login('john_somebody@nysd.uscourts.gov','gack!');
+        $this->reset(true);
+        //echo "\nRequest is for Judge: ",$request->getJudge()->getLastName(),"\n";
+        //$shit = $em->createQuery('')
+        $url = "/requests/view/{$request->getId()}";
+        /** @var \Doctrine\DBAL\Connection $db */
+        $db = $em->getConnection();
+        $shit = $db->executeQuery('SELECT * FROM requests WHERE id = '.$request->getId());
+        echo get_class($shit);;
+        $data = $shit->fetch();
+        print_r($data);
+        $this->dispatch($url);
+         echo "\n$url\n";
+        $this->assertResponseStatusCode(200);
+
+        $this->dumpResponse();
+    }
     /*        //$csrf = $q->execute("input#csrf")->current();
 
             //echo "\n date and time are $date and $time, csrf {$csrf->getAttribute('value')}\n";

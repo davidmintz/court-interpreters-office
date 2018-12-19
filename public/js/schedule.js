@@ -71,8 +71,12 @@ $(function() {
             }).fail(()=> console.warn("shit happened!")
             );
         },interval);
-    })()
+    })();
+
+    $("#schedule-table").on("a.expand-deftnames", "click",function(){
+        console.log("shit?");
+    });
 
 });
 
-var stop = function(){ window.clearTimeout(timer)};
+const stop = function(){ window.clearTimeout(timer)};

@@ -28,6 +28,19 @@ class FixtureSetupTest extends AbstractControllerTest
         $this->dispatch('/');
         $this->assertResponseStatusCode(200);
     }
+
+    public function tearDown()
+    {
+        $objectManager = $this->getEntityManager();
+        //$dql = 'DELETE InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL';
+        //$objectManager->createQuery($dql)->getResult();
+        /** @var Doctrine\DBAL\Connection $db */
+        $db = $objectManager->getConnection();
+        $db->exec('DELETE FROM requests');
+        $db->exec('DELETE FROM events');
+        $db->exec('DELETE FROM defendants_requests');
+        $db->exec('DELETE FROM defendants_events');
+    }
     public function loadTestEventData()
     {
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
@@ -44,6 +57,7 @@ class FixtureSetupTest extends AbstractControllerTest
             new DataFixture\CancellationReasonLoader(),
             new DataFixture\UserLoader(),
             new DataFixture\EventLoader(),
+            new DataFixture\RequestLoader(),
          ]);
     }
     public function testDataFixtureSanity()
