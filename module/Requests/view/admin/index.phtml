@@ -1,4 +1,6 @@
-<?php  /**  module/Requests/view/admin/index.phtml  */?>
+<?php  /**  module/Requests/view/admin/index.phtml  */
+$this->headTitle("requests for court interpreting services")
+?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php if ($this->pending):
     printf("%d requests pending",$this->pending->getTotalItemCount());
@@ -20,7 +22,7 @@
         <td class="dropdown dropleft"><a style="color:gray" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
           <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
             <a title="add this request to the schedule" class="dropdown-item request-add text-primary" href="<?php echo "#"?>">add to schedule</a>
-            <div class="dropdown-divider"></div>
+            <!-- <div class="dropdown-divider"></div>  -->
             <a title="view detailed information about this request" class="dropdown-item text-primary" href="<?php echo "#" ?>">view details</a>
           </div>
         </td>

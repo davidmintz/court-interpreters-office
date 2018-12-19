@@ -73,6 +73,11 @@ return [
                                 'label'=>'configuration',
                                 'route'=>'admin-requests/config',
                             ],
+                            [
+                                'label' => 'view details',
+                                'route' => 'admin-requests/view',
+                                'expand' => false,
+                            ],
                         ],
                     ],
                 ],
@@ -176,6 +181,19 @@ return [
                             'defaults' => [
                                 'controller' => Admin\IndexController::class,
                                 'action'   => 'config',
+                            ],
+                        ],
+                    ],
+                    'view' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/view/:id',
+                            'defaults' => [
+                                'controller' => Admin\IndexController::class,
+                                'action'   => 'view',
+                                'constraints' => [
+                                    'id' => '[1-9]\d*',
+                                ],
                             ],
                         ],
                     ],

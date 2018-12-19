@@ -85,4 +85,18 @@ class IndexController extends AbstractActionController
         return new ViewModel(['form'=>$form]);
 
     }
+
+    /**
+     * view request details
+     *
+     * @return mixed
+     */
+    public function viewAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $entity =  $this->objectManager->getRepository(Request::class)->view($id);
+        //echo gettype($entity);
+        return ['request'=>$entity];
+    }
+
 }
