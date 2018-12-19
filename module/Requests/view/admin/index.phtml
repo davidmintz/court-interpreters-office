@@ -2,35 +2,60 @@
 $this->headTitle("requests for court interpreting services")
 ?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php if ($this->pending):
-    printf("%d requests pending",$this->pending->getTotalItemCount());
-?>
-<table class="table table-bordered">
-    <thead>
-    </thead>
-    <tbody>
-<?php foreach ($this->pending as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
-    <tr class="request" data-id="<?php echo $r['id']?>">
-        <td><?php echo $r['date']->format('d-M-Y')?></td>
-        <td><?php echo $r['time']->format('g:i a')?></td>
-        <td><?php echo $r['language']?></td>
-        <td><?php echo $r['type']?></td>
-        <td><?php echo $r['location']?></td>
-        <td><?php echo $r['judge']?></td>
-        <td><?php echo substr($r['docket'],2)?></td>
-        <td><?php echo $this->defendants($r['id'])?></td>
-        <td class="dropdown dropleft"><a style="color:gray" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
-          <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
-            <a title="add this request to the schedule" class="dropdown-item request-add text-primary" href="<?php echo "#"?>">add to schedule</a>
-            <!-- <div class="dropdown-divider"></div>  -->
-            <a title="view detailed information about this request" class="dropdown-item text-primary" href="<?php echo "#" ?>">view details</a>
-          </div>
-        </td>
-    </tr>
-<?php endforeach; ?>
-    </tbody>
-</table>
-<?php endif;?>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="pending-requests-tab" data-toggle="tab" href="#pending-requests" role="tab" aria-controls="pending-requests" aria-selected="true">pending</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="more-stuff-tab" data-toggle="tab" href="#more-stuff" role="tab" aria-controls="more-stuff" aria-selected="false">more stuff</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="other-stuff-tab" data-toggle="tab" href="#other-stuff" role="tab" aria-controls="other-stuff" aria-selected="false">other stuff</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active pt-2" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
+        <?php if ($this->pending):
+            ?><p>
+                <?php printf("%d requests pending",$this->pending->getTotalItemCount());?>
+            </p>
+        <table class="table table-bordered">
+            <thead>
+            </thead>
+            <tbody>
+        <?php foreach ($this->pending as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
+            <tr class="request" data-id="<?php echo $r['id']?>">
+                <td><?php echo $r['date']->format('d-M-Y')?></td>
+                <td><?php echo $r['time']->format('g:i a')?></td>
+                <td><?php echo $r['language']?></td>
+                <td><?php echo $r['type']?></td>
+                <td><?php echo $r['location']?></td>
+                <td><?php echo $r['judge']?></td>
+                <td><?php echo substr($r['docket'],2)?></td>
+                <td><?php echo $this->defendants($r['id'])?></td>
+                <td class="dropdown dropleft"><a style="color:gray" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
+                  <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
+                    <a title="add this request to the schedule" class="dropdown-item request-add text-primary" href="<?php echo "#"?>">add to schedule</a>
+                    <!-- <div class="dropdown-divider"></div>  -->
+                    <a title="view detailed information about this request" class="dropdown-item text-primary" href="<?php echo "#" ?>">view details</a>
+                  </div>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php endif;?>
+
+    </div>
+  <div class="tab-pane fade py-3" id="more-stuff" role="tabpanel" aria-labelledby="profile-tab">
+      <p>
+          Consequat occaecat ullamco amet non eiusmod nostrud dolore irure incididunt est duis anim sunt officia. Fugiat velit proident aliquip nisi incididunt nostrud exercitation proident est nisi. Irure magna elit commodo anim ex veniam culpa eiusmod id nostrud sit cupidatat in veniam ad. Eiusmod consequat eu adipisicing minim anim aliquip cupidatat culpa excepteur quis. Occaecat sit eu exercitation irure Lorem incididunt nostrud.</div>
+      </p>
+  <div class="tab-pane fade" id="other-stuff" role="tabpanel" aria-labelledby="other-stuff-tab">other shit</div>
+</div>
+
+<p></p>
 <?php // print_r($r) //
 /*
 Array
