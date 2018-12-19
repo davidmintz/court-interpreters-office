@@ -358,11 +358,15 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @depends testLoadRequestThatIsAlreadyScheduled
      * @return [type] [description]
      */
-    public function testPostUpdateToScheduledRequest(Request $request)
+    public function testPostUpdateToScheduledRequest()
     {
+        //$this->assertTrue(is_object($request));
+        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $request = $em->createQuery(
+            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
+            ->getOneOrNullResult();
         $this->assertTrue(is_object($request));
         $this->login('john_somebody@nysd.uscourts.gov','gack!');
         $this->reset(true);
