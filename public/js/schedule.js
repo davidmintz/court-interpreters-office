@@ -4,7 +4,7 @@
 
 $(function() {
     $("body").on("io.reload",'#schedule-table',function(event){
-        console.log("io.reload custom event hander");
+        console.log("io.reload custom event handler");
         $('table [data-toggle="tooltip"]').tooltip();
         if ($('.no-events').length) {
             schedule_table.removeClass("table-hover");
@@ -12,8 +12,23 @@ $(function() {
             schedule_table.addClass("table-hover");
         }
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
+
     var date_input = $('#date-input');
     var schedule_table = $('#schedule-table');
+
+    /* expand/collapse lists of deft names */
+    schedule_table.on("click", "a.expand-deftnames", function(e){
+        e.preventDefault();
+        $(this).hide().siblings().slideDown();
+    })
+    .on("click","a.collapse-deftnames", function(e){
+        e.preventDefault();
+        var self = $(this);
+        self.hide().siblings().not(":first-of-type").hide();
+        self.siblings("a.expand-deftnames").show();
+    });
 
     // refresh table when they change language filter
     $('#language-select').on("change",function(event){
@@ -26,12 +41,13 @@ $(function() {
         });
     });
 
-    // go to selected date when they choose from the datepicker
+    // initialize jquery-ui datepicker
     date_input.datepicker({
         changeMonth: true,
         changeYear: true,
         selectOtherMonths : true,
         showOtherMonths : true,
+        // go to selected date when they choose from the datepicker
         onSelect : function(dateText, datepicker) {
             var dateObj = date_input.datepicker("getDate");
             var date = $.datepicker.formatDate( "/yy/mm/dd", dateObj);
@@ -55,9 +71,7 @@ $(function() {
 
     // for later comparison
     var previous =  schedule_table.html();
-    $('[data-toggle="tooltip"]').tooltip();
-
-    // reload periodically. if the data has not changed since last fetched, don't 
+    // reload periodically. if the data has not changed since last fetched, don't
     // update the DOM.
     (function run(){
         window.timer = window.setTimeout(function(){
@@ -75,16 +89,7 @@ $(function() {
         },interval);
     })();
 
-    $("#schedule-table").on("click", "a.expand-deftnames",  function(e){
-        e.preventDefault();
-        $(this).hide().siblings().slideDown();
-    })
-    .on("click","a.collapse-deftnames",function(e){
-        e.preventDefault();
-        var self = $(this);
-        self.hide().siblings().not(":first-of-type").hide();
-        self.siblings("a.expand-deftnames").show();
-    });
+
 });
 
 const stop = function(){ window.clearTimeout(timer)};
