@@ -1,12 +1,8 @@
 <?php  /**  module/Requests/view/admin/index.phtml  */?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-
-<p>
-    This is the <code>admin/requests</code> page.
-</p>
 <?php if ($this->pending):
     printf("%d requests pending",$this->pending->getTotalItemCount());
-    ?>
+?>
 <table class="table table-bordered">
     <thead>
     </thead>
@@ -19,13 +15,20 @@
         <td><?php echo $r['type']?></td>
         <td><?php echo $r['location']?></td>
         <td><?php echo $r['judge']?></td>
-        <td><?php echo $r['docket']?></td>
+        <td><?php echo substr($r['docket'],2)?></td>
         <td><?php echo $this->defendants($r['id'])?></td>
+        <td class="dropdown dropleft"><a style="color:gray" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
+          <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
+            <a title="add this request to the schedule" class="dropdown-item request-add text-primary" href="<?php echo "#"?>">add to schedule</a>
+            <div class="dropdown-divider"></div>
+            <a title="view detailed information about this request" class="dropdown-item text-primary" href="<?php echo "#" ?>">view details</a>
+          </div>
+        </td>
     </tr>
 <?php endforeach; ?>
     </tbody>
 </table>
-<?php endif; ?>
+<?php endif;?>
 <?php // print_r($r) //
 /*
 Array
