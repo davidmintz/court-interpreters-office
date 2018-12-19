@@ -57,6 +57,8 @@ $(function() {
     var previous =  schedule_table.html();
     $('[data-toggle="tooltip"]').tooltip();
 
+    // reload periodically. if the data has not changed since last fetched, don't 
+    // update the DOM.
     (function run(){
         window.timer = window.setTimeout(function(){
             $.get(document.location.href).done((data)=>{
@@ -73,10 +75,16 @@ $(function() {
         },interval);
     })();
 
-    $("#schedule-table").on("a.expand-deftnames", "click",function(){
-        console.log("shit?");
+    $("#schedule-table").on("click", "a.expand-deftnames",  function(e){
+        e.preventDefault();
+        $(this).hide().siblings().slideDown();
+    })
+    .on("click","a.collapse-deftnames",function(e){
+        e.preventDefault();
+        var self = $(this);
+        self.hide().siblings().not(":first-of-type").hide();
+        self.siblings("a.expand-deftnames").show();
     });
-
 });
 
 const stop = function(){ window.clearTimeout(timer)};

@@ -79,13 +79,16 @@ class Defendants extends AbstractHelper
         $return .= '<div class="defendant-name">' . $this->getView()->escapeHtml($this->defendants[$id][0]['surnames']).'</div>';
         $x = $count - 1;
 
-        $return .= '<a class="expand-deftnames" href="#">'. "$x more"  .'</a>';
+        $return .= '<a class="expand-deftnames" href="#">'. "[$x more]"  .'</a>';
 
-        for ($i = 1; $i < $count; $i++) {
+        for ($i = 1; $i < $count - 1; $i++) {
             $return .= '<div class="defendant-name" style="display:none">'
-                . $this->getView()->escapeHtml($this->defendants[$id][0]['surnames']).'</div>';
+                . $this->getView()->escapeHtml($this->defendants[$id][$i]['surnames'])
+                // if we change our mind...
+                //.  ', '.$this->getView()->escapeHtml($this->defendants[$id][$i]['given_names'])
+                .'</div>';
         }
-        $return .= '<a class="collapse-deftnames" style="display:none" href="#">'. "$x more"  .'</a>';
+        $return .= '<a class="collapse-deftnames" style="display:none" href="#">'. "[less]"  .'</a>';
 
         return $return;
     }
