@@ -49,7 +49,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          e.modified AS last_updated,
          e.comments,
          e.admin_comments,
-         r.reason AS reason_for_cancellation
+         r.reason AS reason_for_cancellation, rq.id request_id, rq.comments AS submitter_comments
          FROM InterpretersOffice\Entity\Event e
          JOIN e.eventType t
          JOIN t.category c
@@ -69,7 +69,10 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          LEFT JOIN e.anonymousSubmitter anon_submitter
          JOIN e.createdBy user1
          LEFT JOIN e.modifiedBy user2
+         LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
+
 DQL;
+        //LEFT JOIN InterpretersOffice\Requests\Entity\Request rq JOIN rq.event rqe WITH rqe.id = e.id
 
     /**
      * constructor

@@ -28,7 +28,7 @@ elseif ($event['category'] == 'in' && $event['default_courtroom']) :
     if ($event['default_courthouse']) :
         $location .= ', '.$event['default_courthouse'];
     endif;
-    $location .= ' <span class="text-muted text-md-right">*</span>';
+    $location .= ' <span class="text-muted text-md-right">**</span>';
 else :
     $location = '';
 endif;
@@ -41,79 +41,79 @@ if ($messenger->hasSuccessMessages()) :
 elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;?>
-<div data-event_id="<?php echo $event['id']?>" class="row border event-details mx-auto" style="max-width:825px">
-    <div class="col-sm-2 text-muted text-md-right">
+<div data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto" style="max-width:900px">
+    <div class="col-sm-3 text-muted text-md-right">
         date
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['date']->format('D d-M-Y'); ?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         time
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['time'] ? $event['time']->format('g:i a') : '<em>?</em>' ?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         type
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['type'] ?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         language
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['language']?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         judge
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['judge'];
         if ($event['aj_default_location']) :
             ?> <span class="text-muted"><?php echo $event['aj_default_location']?></span><?php
         endif; ?>
     </div>
-    <div class="col-sm-2  text-muted text-md-right">
+    <div class="col-sm-3  text-muted text-md-right">
         location
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $location ?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         defendants
     </div>
-    <div class="col-sm-4  defendants"><?php
+    <div class="col-sm-3  defendants pl-0"><?php
     foreach ($event['defendants'] as $d) :
         echo "$d[surnames], $d[given_names]<br>";
     endforeach;?>
     </div>
-    <div class="col-sm-2  text-muted text-md-right">
+    <div class="col-sm-3  text-muted text-md-right">
         docket
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['docket']?>
     </div>
-    <div class="col-sm-2  text-muted text-md-right">
+    <div class="col-sm-3  text-muted text-md-right">
         interpreters
     </div>
-    <div class="col-sm-4"><?php
+    <div class="col-sm-3 pl-0"><?php
     foreach ($event['interpreters'] as $i) :
         echo "$i[lastname], $i[firstname]<br>";
     endforeach;
     ?>
     </div>
-    <div class="col-sm-2  text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         cancellation
     </div>
-    <div class="col-sm-4 pl-2">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['reason_for_cancellation'] ?: '<span class="text-muted">n/a</span>'?>
     </div>
-        <div class="col-sm-2  text-muted text-md-right">
-        submitted by
+        <div class="col-sm-3  text-muted text-md-right">
+        <?php if ($event['request_id']):?>* <?php endif ?>request by
     </div>
-    <div class="col-sm-4"><span class="avoidwrap">
+    <div class="col-sm-3 pl-0"><span class="avoidwrap">
         <?php echo $event['submitter'] ;
         ?><?php
 if ($event['submitter_hat']) :
@@ -121,43 +121,56 @@ if ($event['submitter_hat']) :
     echo "{$event['submitter_hat']}";
 endif;?></span>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
-        submitted on
+    <div class="col-sm-3 text-muted text-md-right">
+        requested on
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
     <?php echo $event['submission_date']->format('d-M-Y');
     if ($event['submission_time']) :
         echo $event['submission_time']->format(' g:i a');
     endif;
     ?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         created
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['created']->format('d-M-Y g:i a'), " ({$event['created_by']})"; ?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         last updated
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3 pl-0">
         <?php echo $event['created'] != $event['last_updated'] ?
         $event['last_updated']->format('d-M-Y g:i a'). " ({$event['last_updated_by']})"
         : '<span class="text-muted">n/a</span>';
         ?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+<?php if ($event['submitter_comments']): ?>
+    <div class="col-sm-3 text-muted text-md-right">
+        submitter comments
+    </div>
+    <div class="col-sm-9 pl-0">
+        <?php echo nl2br($this->escapeHtml($event['submitter_comments'])) ?>
+    </div>
+<?php endif; ?>
+    <div class="col-sm-3 text-muted text-md-right">
         comments (public)
     </div>
-    <div class="col-sm-10 pl-2">
+    <div class="col-sm-9 pl-0">
         <?php echo nl2br($this->escapeHtml($event['comments'])) ?>
     </div>
-    <div class="col-sm-2 text-muted text-md-right">
+    <div class="col-sm-3 text-muted text-md-right">
         comments (internal)
     </div>
-    <div class="col-sm-10 pl-2">
+    <div class="col-sm-9 pl-0">
         <?php echo nl2br($this->escapeHtml($event['admin_comments'])) ?>
     </div>
+    <?php if ($event['request_id']): ?>
+        <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0">
+            * submitted online
+        </div>
+    <?php endif ?>
     <div class="col-12 d-flex">
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
           <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
