@@ -21,14 +21,16 @@ class ConfigForm extends Form implements InputFilterProviderInterface
         $this->init();
     }
 
-    public $default_values;
+    public $data;
 
     public function init()
     {
-        $json = file_get_contents('module/Requests/config/default.event-listeners.json');
-
+        $basedir = 'module/Requests/config';
+        $prefix = file_exists("$basedir/custom.event-listeners.json") ?
+            'custom' : 'default';
+        $json = file_get_contents("$basedir/${prefix}.event-listeners.json");
         $data  = json_decode($json,true);
-        $this->default_values = $data;
+        $this->data = $data;
         $this->setHydrator(new ArraySerializable());
         $this->setAllowedObjectBindingClass(ArrayObject::class);
         foreach ($data as $event_name => $event_array) {

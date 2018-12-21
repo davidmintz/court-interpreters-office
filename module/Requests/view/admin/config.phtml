@@ -3,7 +3,7 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
 ?>
 <!-- <pre></pre> -->
 <main style="max-width:900px"  class="mx-auto">
-    <h3>
+    <h3 id="top">
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
     </h3>
     <p class="pr-3 my-3">The Requests module does not allow users who submit requests
@@ -11,10 +11,11 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         often need to take action &mdash; update the schedule, contact interpreters.
         To avoid having to do these repetitive tasks manually, and to ensure that necessary action is taken
         promptly, the Requests module observes certain events and handles them for you automatically.
-        With this page you can enable or disable these behaviors. For further explanation please <a href="#user-guide-requests-config">see below</a>.
+        This form allows a user with sufficient privileges to enable or disable these behaviors. For further
+        explanation please <a href="#user-guide-requests-config">see below</a>.
     </p>
 <?php $this->form->prepare()?>
-<form action="<?php echo $this->url('admin-requests/config') ?>" method="post">
+<form action="<?php echo $this->url('admin-requests/update-config') ?>" method="post">
     <table class="table mb-3 table-bordered">
         <thead>
             <tr>
@@ -173,7 +174,7 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         </tbody>
     </table>
     <div class="text-center">
-        <button type="button" name="button" class="btn btn-success btn-lg border">save configuration</button>
+        <button <?php if (! $this->update_allowed): ?> disabled title="current user is not authorized to modify these settings" style="cursor:not-allowed"<?php endif ?> type="button" name="button" class="btn btn-success btn-lg border">save configuration</button>
     </div>
     </form>
     <hr class="my-4">
@@ -184,8 +185,11 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         <dt class="col-sm-4 text-monospace">cancel</dt>
         <dd class="col-sm-8">The user has withdrawn the request.</dd>
         <dt class="col-sm-4 text-monospace">change date</dt>
-        <dd class="col-sm-8">The user changed the date. This implies but does not trigger a <code>change time</code> in addition.</dd>
-        <dt class="col-sm-4 text-monospace">change time within/across am-pm</dt>
+        <dd class="col-sm-8">The user changed the date. This implies a <code>change time</code> event but does not trigger any additional actions.</dd>
+        <dt class="col-sm-4 text-monospace">
+            change time within am-pm<br>
+            change time across am-pm<br>
+        </dt>
         <dd class="col-sm-8">The user left the date intact, but changed the time. Since contract court interpreters are frequently hired for
             half-day periods, you may wish to differentiate the handling of the two scenarios: a change of date from morning to afternoon
             (or vice-versa), as opposed to a change of time <em>within</em> the same morning or afternoon. Any time
@@ -221,7 +225,9 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
     </dl>
     <h4 class="my-4 p-2 border text-center">language</h4>
     <p>In practice, Spanish is much more frequently used than other languages, and Spanish interpreters are generally busier.
-        Therefore, for some types of events you may wish to differentiate between Spanish and everything else.</p>
+        The Requests module classifies the requested language as either Spanish or not-Spanish, so that you have the ability to handle
+        the two cases differently.
+    </p>
     <h4 class="my-4 p-2 border text-center">type of event</h4>
     <p>In some cases the Requests module allows you to distinguish between interpreter-events that take place in-court and those
         that take place elsewhere, typically in an off-site location such as a jail. This feature allows you to avoid sending
@@ -231,16 +237,17 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         immediately via email.</p>
     <h4 class="my-4 p-2 border text-center">general considerations</h4>
 
-    <p>The design goals of the Requests module are (1) to alleviate the burden of error-prone, repetitive tasks; (2) to encourage
-        users to submit (or cancel) their requests in timely fashion; and (3) to ensure that people receive timely email
+    <p>Requests module is designed to (1) alleviate the burden of error-prone, repetitive tasks; (2) encourage
+        users to submit (or cancel) their requests in timely fashion; and (3) ensure that people receive timely email
         notification of events they need to know about. The overuse of email notification, however, creates its own problems. By configuring these behaviors yourself, you can, if you wish, experiment to find
         the best balance for your situation. But we recommend you start with the defaults and give them a try before tweaking.
     </p>
+
     <p>We also provide this interface to your configuration so you can <em>see</em> what the system is doing; you may never
     feel any need to <em>change</em> it.</p>
     <p>Enabling automatic updating of scheduled events &mdash; to keep them consistent with the users' requests &mdash; is <em>strongly
         recommended</em>; we know of no good reason to do otherwise. The configuration option is nevertheless provided for those who
         want a maximum degree of hands-on control.
-
     </p>
+    <p><a href="#top">top</a></p>
 </main>

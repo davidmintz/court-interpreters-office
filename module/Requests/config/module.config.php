@@ -161,7 +161,7 @@ return [
                     ],
                 ]
             ],
-            // work in progress -- expect it to blow up at first
+
             'admin-requests' => [
                 'type' => Literal::class,
                 'may_terminate' => true,
@@ -174,6 +174,7 @@ return [
                     ],
                 ],
                 'child_routes' => [
+                    // read-only, in effect
                     'config' => [
                         'type' => Segment::class,
                         'options' => [
@@ -181,6 +182,16 @@ return [
                             'defaults' => [
                                 'controller' => Admin\IndexController::class,
                                 'action'   => 'config',
+                            ],
+                        ],
+                    ],
+                    'update-config' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/update-config',
+                            'defaults' => [
+                                'controller' => Admin\IndexController::class,
+                                'action'   => 'updateConfig',
                             ],
                         ],
                     ],
@@ -285,14 +296,19 @@ return [
                     ],
                 ],
             ],
-        ]
+        ],
     ],
     'acl' => [
         'resources' => [
             'InterpretersOffice\Requests\Controller\Admin\IndexController' =>
             'InterpretersOffice\Admin\Controller\EventsController',
-
         ],
+        'deny' => [
+            'manager' => [
+                'InterpretersOffice\Requests\Controller\Admin\IndexController'
+                    => ['updateConfig'],
+                ]
+        ]
     ],
 
     'view_helpers' => [
