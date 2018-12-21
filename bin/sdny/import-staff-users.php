@@ -130,14 +130,13 @@ foreach ($users as $user) {
         if ($user['person_id']) {
 
             // then the user should already exist in people
-            // BUT should ALSO exist as an separate, extinct person-user (inactive)
+            // BUT should ALSO exist as an separate, extinct person-user (inactive?)
             // with an 'interpreter staff' hat|office staff role
 
             //... or not ???????
             //SELECT p.lastname, p.firstname, h.name hat,r.name role FROM people p JOIN users u ON p.id = u.person_id JOIN hats h ON p.hat_id = h.id JOIN roles r ON r.id = u.role_id WHERE r.name <> "submitter";
 
             try {
-                printf("creating user for: %s ...",$user['name']);
                 // we can get the data from the people table
                 //$data = $db->query('select * from people where id = '.$user['person_id'])->fetch();
                 /*
@@ -160,6 +159,7 @@ foreach ($users as $user) {
                     ':password' => password_hash('boink',PASSWORD_DEFAULT),
                     ':active' =>  in_array($user['name'],['amanda','katelynn']) ? 1 : 0,
                 ];
+                printf("creating user for: %s, active? %s ...",$user['name'],$params[':active'] ? "YES":"NO");
                 $user_insert->execute($params);
                 echo "OK\n";
             } catch (Exception $e) {
@@ -197,7 +197,7 @@ foreach ($users as $user) {
                     ':role_id' => $data['role_id'],
                     ':username' => $user['name'],
                     ':password' => password_hash('boink',PASSWORD_DEFAULT),
-                    ':active' => 0,
+                    ':active' =>  in_array($user['name'],['amanda','katelynn']) ? 1 : 0,
                 ];
                 $user_insert->execute($params);
                 echo "OK\n";
