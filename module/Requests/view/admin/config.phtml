@@ -2,20 +2,24 @@
 $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
 ?>
 <!-- <pre></pre> -->
+<?php    echo $this->errorMessage($this->errorMessage);  ?><?php
+    if ($this->errorMessage) :   return;  endif;
+?>
 <main style="max-width:900px"  class="mx-auto">
     <h3 id="top">
         <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
     </h3>
     <p class="pr-3 my-3">The Requests module does not allow users who submit requests
-        to change the Interpreters' schedule themselves. When users modify their requests, however, you very
-        often need to take action &mdash; update the schedule, contact interpreters.
+        to change the Interpreters' schedule themselves. When users modify their requests, however, you usually
+        have to take action &mdash; update the schedule, contact interpreters.
         To avoid having to do these repetitive tasks manually, and to ensure that necessary action is taken
         promptly, the Requests module observes certain events and handles them for you automatically.
         This form allows a user with sufficient privileges to enable or disable these behaviors. For further
         explanation please <a href="#user-guide-requests-config">see below</a>.
     </p>
+
 <?php $this->form->prepare()?>
-<form action="<?php echo $this->url('admin-requests/update-config') ?>" method="post">
+<form action="<?php echo $this->url('admin-requests/update-config') ?>" method="post" id="config-form">
     <table class="table mb-3 table-bordered">
         <thead>
             <tr>
@@ -174,7 +178,16 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         </tbody>
     </table>
     <div class="text-center">
-        <button <?php if (! $this->update_allowed): ?> disabled title="current user is not authorized to modify these settings" style="cursor:not-allowed"<?php endif ?> type="button" name="button" class="btn btn-success btn-lg border">save configuration</button>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="display:none">
+          <p id="status"></p>
+          <button type="button" class="close" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+        <button <?php if (! $this->update_allowed): ?> disabled title="current user is not authorized to modify these settings" style="cursor:not-allowed"<?php endif ?> type="button" id="save" name="button" class="btn btn-success btn-lg border">save configuration</button>
+        <?php $display = $this->customized_settings && $this->update_allowed ? 'inline':'none' ?>
+        <button type="button" id="restore-defaults" class="btn btn-success btn-lg border" style="display:<?php echo $display?>;">restore defaults</button>
+
     </div>
     </form>
     <hr class="my-4">
@@ -196,7 +209,7 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
             before 1:00 pm is considered morning; 1:00 pm or later is considered afternoon.
         </dd>
         <dt class="col-sm-4 text-monospace">change language</dt>
-        <dd class="col-sm-8">The user changed the language requested. This is a rare occurence, but when it happens to a scheduled event to which
+        <dd class="col-sm-8">The user changed the language requested. This is unusual, but when it happens to a scheduled event to which
         interpreters have been assigned, action on your part will likely be required.
         </dd>
         <dt class="col-sm-4 text-monospace">change other attributes</dt>
