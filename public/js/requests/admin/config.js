@@ -1,4 +1,4 @@
-var $;
+var $, fail;
 
 $(function(){
     var form = $("#config-form");
