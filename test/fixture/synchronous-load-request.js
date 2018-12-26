@@ -25,7 +25,11 @@ var request_insert =
     INSERT INTO defendants_requests VALUES (23805,LAST_INSERT_ID())`
 var event_insert = `INSERT INTO events VALUES (NULL,62,2593,1047,NULL,'${date}','11:00:00',NULL,'2018-CR-0611','dummy event for automated test','','${event_created}',
     '${event_created}',41,524,NULL,NULL,NULL,31,'${req_created_str.substring(0,10)}','${req_created_str.substring(11)}');
-    INSERT INTO defendants_events VALUES (LAST_INSERT_ID(),23805)`;
+    INSERT INTO defendants_events VALUES (LAST_INSERT_ID(),23805);
+    INSERT INTO interpreters_events (event_id, interpreter_id, created, created_by_id)
+    VALUES (LAST_INSERT_ID(),(SELECT id FROM people WHERE lastname = "Adler" AND firstname = "Nancy"),NOW(),
+    (SELECT u.id FROM users u JOIN people p ON u.person_id = p.id JOIN hats h ON p.hat_id = h.id
+    WHERE p.lastname = "Olivero" AND h.name = "staff court interpreter"))`;
 var request_update = `SET @id = (SELECT max(id) FROM requests); UPDATE requests SET event_id = LAST_INSERT_ID() WHERE id = @id`
 
 const sql = `${request_insert}; ${event_insert}; ${request_update};`;

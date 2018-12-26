@@ -49,7 +49,11 @@ describe("updating a request that is scheduled",function(){
             // get event data for sanity check
             return new Promise(
                 resolve => {
-                    var sql = `SELECT e.date, e.modified, e.id FROM events e JOIN requests r ON r.event_id = e.id WHERE r.id = ${request_id}`;
+                    var sql = `SELECT e.date, e.modified, e.id,
+                    ie.interpreter_id
+                    FROM events e JOIN requests r ON r.event_id = e.id
+                    JOIN interpreters_events ie ON ie.event_id = e.id
+                    WHERE r.id = ${request_id}`;
                     loader.db.query(sql,function(err, result){
                         if (err) { console.log(err); throw err; }
                         resolve(result[0]);
@@ -60,6 +64,7 @@ describe("updating a request that is scheduled",function(){
         })
         .then(function(result){
             assert.ok(result);
+            assert.ok(result.interpreter_id);
             var event_date = moment(result.date).format("YYYY-MM-DD");
             var request_date = loader.request_date.format("YYYY-MM-DD");
             assert.strictEqual(request_date, event_date);
@@ -107,10 +112,26 @@ describe("updating a request that is scheduled",function(){
             );
         })
         .then(function(result){
-            assert.ok(result);
+            assert.ok(result.id);
             var event_date = moment(result.date).format("YYYY-MM-DD");
             var request_date =  moment(loader.request_date).add(7,"days").format("YYYY-MM-DD");
             assert.strictEqual(request_date,event_date);
+        }).then(function(){
+            // did the interpreter get deleted automatically?
+            var sql = `SELECT COUNT(*) AS interps_assigned FROM interpreters_events ie
+                JOIN events e ON ie.event_id = e.id JOIN requests r ON e.id = r.event_id
+                WHERE r.id = ${request_id}`;
+            return new Promise(
+                resolve => {
+                    loader.db.query(sql,function(err, result){
+                        if (err) { console.log(err); throw err; }
+                        resolve(result[0].interps_assigned);
+                    });
+                },
+                reject  => { console.log("fuck.");}
+            );
+        }).then(function(result){
+            assert.strictEqual(result,0);
         })
         .catch(function(error){
             console.log(error);

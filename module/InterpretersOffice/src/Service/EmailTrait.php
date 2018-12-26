@@ -29,9 +29,9 @@ trait EmailTrait
         if ($this->transport) {
             return $this->transport;
         }
-        $opts = new $this->config['mail']['transport_options']['class'](
-        $this->config['mail']['transport_options']['options']);
-        $this->transport = new $this->config['mail']['transport']($opts);
+        $opts = new $this->config['transport_options']['class'](
+        $this->config['transport_options']['options']);
+        $this->transport = new $this->config['transport']($opts);
 
         return $this->transport;
     }

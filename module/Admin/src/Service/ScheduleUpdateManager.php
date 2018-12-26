@@ -413,7 +413,7 @@ class ScheduleUpdateManager
         }
 
         $message = $this->createEmailMessage('<p>hi there</p>','hi there');
-        $this->logger->debug(get_class($message));
+        $this->logger->debug("we have created a ",get_class($message));
 
         return $this;
     }

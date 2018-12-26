@@ -34,6 +34,13 @@ class IndexController extends AbstractActionController
     protected $auth;
 
     /**
+     * relative path to configuration dir
+     *
+     * @var string
+     */
+    protected $config_dir = 'module/Requests/config';
+
+    /**
      * constructor.
      *
      * @param ObjectManager $objectManager
@@ -73,7 +80,7 @@ class IndexController extends AbstractActionController
         $data = $form->data;
         $object = new \Zend\Stdlib\ArrayObject($data);
         $form->bind($object);
-        $form->setObject($object);
+        //$form->setObject($object);
         if ($this->getRequest()->isPost())
         {
             $data = $this->getRequest()->getPost();
@@ -83,8 +90,11 @@ class IndexController extends AbstractActionController
             ->get('acl');
         $role = $this->auth->getIdentity()->role;
         $allowed = $acl->isAllowed($role,self::class,'updateConfig');
-        return new ViewModel(['form'=>$form,'update_allowed'=>$allowed]);
 
+        return new ViewModel(['form'=>$form,'update_allowed'=>$allowed,
+            'customized_settings'=>
+                file_exists($this->config_dir.'/custom.event-listeners.json')
+        ]);
     }
     /**
      * updates the Request event-listener configuration
@@ -94,12 +104,14 @@ class IndexController extends AbstractActionController
     public function updateConfigAction()
     {
         $data = $this->getRequest()->getPost()->toArray();
-
+        if (isset($data['restore-defaults']) && $data['restore-defaults']) {
+                return $this->restoreDefaults();
+        }
         $defaults = json_decode(file_get_contents(
-            'module/Requests/config/default.event-listeners.json'),true);
-        $custom_settings_path = 'module/Requests/config/custom.event-listeners.json';
+            "{$this->config_dir}/default.event-listeners.json"),true);
+        $custom_settings_path = "{$this->config_dir}/custom.event-listeners.json";
         $customized = file_exists($custom_settings_path);
-        $response = ['customized_settings_were_found' => $customized];
+        $response = ['custom_settings_were_found' => $customized];
 
         if ($defaults == $data) {
             // remove the custom settings if they exist
@@ -117,6 +129,14 @@ class IndexController extends AbstractActionController
 
         return new JsonModel($response);
     }
+
+    public function restoreDefaults()
+    {
+        unlink("{$this->config_dir}/custom.event-listeners.json");
+
+        return new JsonModel(['deleted_custom_settings'=>true]);
+    }
+
     /**
      * view request details
      *

@@ -202,23 +202,16 @@ class AccountManager implements LoggerAwareInterface
         ]
     ];
 
-    /*
-     * mail transport
-     *
-     * @var TransportInterface
-     private $transport;
-     */
-
     /**
      * constructor
      *
      * @param ObjectManager $objectManager
-     * @param Array $config email configuration
+     * @param Array $config configuration data
      */
     public function __construct(ObjectManager $objectManager, Array $config)
     {
         $this->objectManager = $objectManager;
-        $this->config = $config;
+        $this->config = $config['mail'];
     }
 
     /**
@@ -673,7 +666,7 @@ class AccountManager implements LoggerAwareInterface
         $user->setPassword($password);
         $this->objectManager->flush();
         $session->getManager()->getStorage()->clear();
-        $this->log->info(sprintf(
+        $log->info(sprintf(
             '%s: we have reset password for user %s',
             __CLASS__, $user->getPerson()->getEmail()
         ));
