@@ -81,6 +81,7 @@ return [
             Requests\IndexController::class => null,
             //['add','edit','update','delete','cancel','index'],
         ],
+        
         'anonymous' => [
             Main\AuthController::class => 'logout'
         ],

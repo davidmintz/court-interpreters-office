@@ -70,22 +70,53 @@ class IndexController extends AbstractActionController
     public function configAction()
     {
         $form = new ConfigForm();
-        $data = $form->default_values;
+        $data = $form->data;
         $object = new \Zend\Stdlib\ArrayObject($data);
         $form->bind($object);
         $form->setObject($object);
         if ($this->getRequest()->isPost())
         {
             $data = $this->getRequest()->getPost();
-            //$string = json_encode($data);
-            //file_put_contents('data/settings.json',$string);
             return new JsonModel($data);
         }
-
-        return new ViewModel(['form'=>$form]);
+        $acl = $this->getEvent()->getApplication()->getServiceManager()
+            ->get('acl');
+        $role = $this->auth->getIdentity()->role;
+        $allowed = $acl->isAllowed($role,self::class,'updateConfig');
+        return new ViewModel(['form'=>$form,'update_allowed'=>$allowed]);
 
     }
+    /**
+     * updates the Request event-listener configuration
+     *
+     * @return JsonModel
+     */
+    public function updateConfigAction()
+    {
+        $data = $this->getRequest()->getPost()->toArray();
 
+        $defaults = json_decode(file_get_contents(
+            'module/Requests/config/default.event-listeners.json'),true);
+        $custom_settings_path = 'module/Requests/config/custom.event-listeners.json';
+        $customized = file_exists($custom_settings_path);
+        $response = ['customized_settings_were_found' => $customized];
+
+        if ($defaults == $data) {
+            // remove the custom settings if they exist
+            if ($customized){
+                unlink($custom_settings_path);
+                $response['deleted_custom_settings'] = true;
+            } else {
+                $response['deleted_custom_settings'] = false;
+            }
+        } else {
+            file_put_contents($custom_settings_path, json_encode($data));
+            $what = $customized ? 'updated':'created';
+            $response["{$what}_custom_settings"] = true;
+        }
+
+        return new JsonModel($response);
+    }
     /**
      * view request details
      *
