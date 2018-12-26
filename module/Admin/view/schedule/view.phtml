@@ -166,18 +166,21 @@ endif;?></span>
     <div class="col-sm-9 pl-0">
         <?php echo nl2br($this->escapeHtml($event['admin_comments'])) ?>
     </div>
-    <?php if ($event['request_id']): ?>
-        <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0">
-            * submitted online
-        </div>
-    <?php endif ?>
+
     <div class="col-12 d-flex">
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
           <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
           <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
           <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
         </div>
+
     </div>
+    <?php if ($event['request_id'] or $IS_DEFAULT_LOCATION): ?>
+        <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0" style=font-size:90%;>
+            <?php if ($event['request_id']):?>* this was submitted online<br><?php endif; ?>
+            <?php if ($IS_DEFAULT_LOCATION):?>** default location, not specified by the user<?php endif; ?>
+        </div>
+    <?php endif ?>
 </div>
 <!-- -->
 <!-- -->
