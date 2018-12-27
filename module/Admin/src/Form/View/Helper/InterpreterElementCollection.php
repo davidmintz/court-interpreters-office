@@ -16,11 +16,11 @@ class InterpreterElementCollection extends AbstractHelper
      * @var string
      */
     protected $template = <<<TEMPLATE
-        <li class="list-group-item py-1 interpreter-assigned">
+        <li class="list-group-item py-1 interpreter-assigned pr-1">
             <input name="event[interpreterEvents][%d][interpreter]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][event]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][name]" type="hidden" value="%s">
-            <span class="align-middle">%s</span>
+            <span class="align-middle pt-1">%s</span>
             <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this interpreter">
             <span class="fas fa-times" aria-hidden="true"></span>
             <span class="sr-only">remove this interpreter
