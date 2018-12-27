@@ -1,15 +1,20 @@
 /**  public/js/schedule.js */
 
+const renderInterpreterEditor = function(){
 
+    var html = $(".interpreter-editor-wrapper").children();
+    var assigned = $(this).parent().prev().children();
+    console.warn(`assigned: ${assigned.length}`);
+    return html.prop("outerHTML");
+
+}
 
 $(function() {
     var popover_opts = {
         html: true,
         placement: "left",
-        title : "update interpreters",
-        content : function() {
-            console.log(this);
-            return "eat shit"},
+        title : `update interpreters <a href="#" class="close" title="cancel" data-dismiss="alert">&times;</a>`,
+        content : renderInterpreterEditor,
         container : "body"
     };
     $("body").on("io.reload",'#schedule-table',function(event){
@@ -102,8 +107,6 @@ $(function() {
             );
         },interval);
     })();
-
-
 });
 
 const stop = function(){ window.clearTimeout(timer)};

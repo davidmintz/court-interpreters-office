@@ -10,6 +10,19 @@ if ($messenger->hasSuccessMessages()) :
 elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;?>
+<div class="interpreter-editor-wrapper d-none">
+<div style="min-width:250px">
+    <div class="input-group">
+        <select name="interpreter" class="form-control custom-select custom-select-sm" id="interpreter-select">
+            <option value="" label=" "></option>
+        </select><button class="btn btn-info fas fa-plus btn-sm" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
+    </div>
+    <div class="text-center">
+        <button type="button" name="button" class="btn btn-sm btn-success">save</button><!--
+        --><button type="button" name="button" class="btn btn-sm btn-warning">cancel</button>
+    </div>
+</div>
+</div>
 <div class="row mb-0 mt-3 py-2">
     <div class="col-2 align-self-center text-left">
     <a role="button" title="go back one day" data-toggle="tooltip" class="btn btn-lg btn-primary py-1 fas fa-arrow-left" style="font-size:1.2rem;background-color:#74b4fb" href="<?php
@@ -34,13 +47,14 @@ endif;?>
                 <option label="all" value="all">all</option>
                 <option label="Spanish" <?php if ($this->language == 'spanish') :
                     ?>selected="selected" <?php
-                                        endif;?>value="spanish">Spanish</option>
+                    endif;?>value="spanish">Spanish</option>
                 <option label="not Spanish" <?php if ($this->language == 'not-spanish') :
                     ?>selected="selected" <?php
-                                            endif;?>value="not-spanish">not Spanish</option>
+                    endif;?>value="not-spanish">not Spanish</option>
             </select>
             <label for="date-input" class="text-md-right pl-2 pr-1">date</label>
             <input type="text" name="date" id="date-input" class="form-control  form-control-sm" style="max-width:125px">
         </div>
     </div>
 <?php echo $this->partial('interpreters-office/admin/schedule/partials/table', ['data' => $data]);
+?>

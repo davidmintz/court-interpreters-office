@@ -31,6 +31,7 @@ elseif ($event['category'] == 'in' && $event['default_courtroom']) :
     $location .= ' <span class="text-muted text-md-right">**</span>';
 else :
     $location = '';
+    $IS_DEFAULT_LOCATION = null;
 endif;
 ?>
 <h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="/admin">admin</a> | <a href="/admin/schedule">schedule</a> <small class="text-muted text-md-right">event details</small></h2>
@@ -175,10 +176,10 @@ endif;?></span>
         </div>
 
     </div>
-    <?php if ($event['request_id'] or $IS_DEFAULT_LOCATION): ?>
+    <?php if ($event['request_id'] or true === $IS_DEFAULT_LOCATION): ?>
         <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0" style=font-size:90%;>
             <?php if ($event['request_id']):?>* this was submitted online<br><?php endif; ?>
-            <?php if ($IS_DEFAULT_LOCATION):?>** default location, not specified by the user<?php endif; ?>
+            <?php if (true === $IS_DEFAULT_LOCATION):?>** default location, not specified by the user<?php endif; ?>
         </div>
     <?php endif ?>
 </div>
