@@ -54,7 +54,7 @@ class InterpreterNames extends AbstractHelper
         }
         foreach ($this->interpreters[$id] as $n) {
             $return .= //$n['lastname'].'<br>';
-                    sprintf('<div>%s</div>', $n['lastname']);
+                    sprintf('<div>%s<span class="d-none d-lg-inline">, %s</span></div>', $n['lastname'],$n['firstname']);
         }
 
          return $return;
