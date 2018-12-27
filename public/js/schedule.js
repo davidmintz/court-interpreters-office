@@ -3,9 +3,19 @@
 
 
 $(function() {
+    var popover_opts = {
+        html: true,
+        placement: "left",
+        title : "update interpreters",
+        content : function() {
+            console.log(this);
+            return "eat shit"},
+        container : "body"
+    };
     $("body").on("io.reload",'#schedule-table',function(event){
         console.log("io.reload custom event handler");
         $('table [data-toggle="tooltip"]').tooltip();
+        $(".edit-interpreters").popover(popover_opts);
         if ($('.no-events').length) {
             schedule_table.removeClass("table-hover");
         } else {
@@ -14,6 +24,7 @@ $(function() {
     });
 
     $('[data-toggle="tooltip"]').tooltip();
+    $(".edit-interpreters").popover(popover_opts);
 
     var date_input = $('#date-input');
     var schedule_table = $('#schedule-table');
@@ -22,6 +33,9 @@ $(function() {
     schedule_table.on("click", "a.expand-deftnames", function(e){
         e.preventDefault();
         $(this).hide().siblings().slideDown();
+    })
+    .on("click",".interpreters-assigned",function(){
+        $(this).next("td").children("a").trigger("click");
     })
     .on("click","a.collapse-deftnames", function(e){
         e.preventDefault();
