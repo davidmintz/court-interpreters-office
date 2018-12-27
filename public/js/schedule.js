@@ -2,10 +2,25 @@
 
 const renderInterpreterEditor = function(){
 
-    var html = $(".interpreter-editor-wrapper").children();
     var assigned = $(this).parent().prev().children();
-    console.warn(`assigned: ${assigned.length}`);
-    return html.prop("outerHTML");
+    //console.warn(`assigned: ${assigned.length}`);
+    var html = $(".interpreter-editor-wrapper").html();
+    if (assigned.length) {
+        var interpreters = `<ul class="list-group">`;
+        assigned.each(function(){
+            var name = $(this).text();
+            interpreters +=
+                `<li class="list-group-item pr-1 py-1">
+                    <span class="float-left interpreter-name align-middle pt-1">${name}</span>
+                    <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this interpreter">
+                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove this interpreter</span></button>
+                </li>`;
+
+        })
+        interpreters += `</ul>`;
+        html = interpreters + html;
+    }
+    return html;
 
 }
 
@@ -13,10 +28,11 @@ $(function() {
     var popover_opts = {
         html: true,
         placement: "left",
-        title : `update interpreters <a href="#" class="close" title="cancel" data-dismiss="alert">&times;</a>`,
+        title : `update interpreters <a href="#" class="close btn-cancel" title="cancel" data-dismiss="alert">&times;</a>`,
         content : renderInterpreterEditor,
         container : "body"
     };
+
     $("body").on("io.reload",'#schedule-table',function(event){
         console.log("io.reload custom event handler");
         $('table [data-toggle="tooltip"]').tooltip();
@@ -26,7 +42,19 @@ $(function() {
         } else {
             schedule_table.addClass("table-hover");
         }
-    });
+    })
+    .on("click",".btn-cancel",function(){
+        console.log("close the popover");
+        $(this).parents(".popover").popover('hide');
+    })
+    .on("click",".popover-body .btn-remove-item",function(){
+        /** to be continued */
+        console.log("interpreter to be deleted: "+$(this).prev().text());
+    })
+    .on("click",".popover-body .btn-add-interpreter",function(){
+        /** to be continued */
+        console.log("interpreter to be added: "+$(this).prev().children("option:selected").text());
+    });;
 
     $('[data-toggle="tooltip"]').tooltip();
     $(".edit-interpreters").popover(popover_opts);

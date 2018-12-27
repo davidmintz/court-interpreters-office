@@ -11,15 +11,16 @@ elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;?>
 <div class="interpreter-editor-wrapper d-none">
-<div style="min-width:250px">
+<div style="min-width:250px" class="py-2">
     <div class="input-group">
-        <select name="interpreter" class="form-control custom-select custom-select-sm" id="interpreter-select">
+        <select name="interpreter" class="form-control custom-select" id="interpreter-select">
             <option value="" label=" "></option>
-        </select><button class="btn btn-info fas fa-plus btn-sm" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
+            <option value="Somebody" label="Somebody, John">Somebody, John</option>
+        </select><button class="btn btn-info fas fa-plus btn-sm btn-add-interpreter" title="assign the selected interpreter to this event" type="button"><span class="sr-only">add</span></button>
     </div>
     <div class="text-center">
         <button type="button" name="button" class="btn btn-sm btn-success">save</button><!--
-        --><button type="button" name="button" class="btn btn-sm btn-warning">cancel</button>
+        --><button type="button" name="button" class="btn btn-sm btn-warning btn-cancel">cancel</button>
     </div>
 </div>
 </div>
