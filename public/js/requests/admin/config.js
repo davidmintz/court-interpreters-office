@@ -1,4 +1,4 @@
-var $, fail;
+var $;
 
 $(function(){
     var form = $("#config-form");
@@ -13,6 +13,8 @@ $(function(){
             if (response.created_custom_settings || response.updated_custom_settings) {
                 // show the restore-defaults button
                 btn_restore_defaults.show();
+            } else {
+                status.parent().hide();
             }
         })
         .fail(fail);

@@ -10,6 +10,7 @@
             <th>defendants</th>
             <th>notes</th>
             <th>interpreters</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -44,7 +45,8 @@
             <td class="text-nowrap"><?php echo substr($e['docket'], 2)?></td>
             <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
             <td style="line-height: 1.2em; font-size: 95%"><?php echo $e['comments']?></td>
-            <td class="interpreters-assigned text-nowrap"><span class="float-right fas fa-edit"><a href="#"></a></span><?php echo $this->interpreters($e['id'])?></td>
+            <td class="interpreters-assigned text-nowrap"><?php echo $this->interpreters($e['id'])?></td>
+            <td><span class="float-right fas fa-edit"><a href="#"></a></span></td>
         </tr>
             <?php endforeach;
         else :
