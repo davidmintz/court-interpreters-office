@@ -19,7 +19,6 @@ class InterpreterElementCollection extends AbstractHelper
         <li class="list-group-item py-1 interpreter-assigned pr-1">
             <input name="event[interpreterEvents][%d][interpreter]" type="hidden" value="%d">
             <input name="event[interpreterEvents][%d][event]" type="hidden" value="%d">
-            <input name="event[interpreterEvents][%d][name]" type="hidden" value="%s">
             <span class="align-middle pt-1">%s</span>
             <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this interpreter">
             <span class="fas fa-times" aria-hidden="true"></span>
@@ -29,6 +28,7 @@ class InterpreterElementCollection extends AbstractHelper
 TEMPLATE;
 
 // we removed <!-- <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="%d"> -->
+// <input name="event[interpreterEvents][%d][name]" type="hidden" value="%s">
 
     /**
      * invoke
@@ -49,11 +49,9 @@ TEMPLATE;
      */
     public function render(ElementCollection $collection)
     {
-        /** THIS IS TOO COMPLICATED. re-think and start over. */
-
         if (! $collection->count()) {
             return '';
-        } // really?
+        }
         // to do: deal with possible undefined $form
         $form = $this->getView()->form;
         $entity = $form->getObject();
@@ -63,16 +61,12 @@ TEMPLATE;
             $interpreter = $interpEvent->getInterpreter();
             $event = $interpEvent->getEvent();
             $name = $interpreter->getLastname().', '.$interpreter->getFirstName();
-            // 7 placeholders, yes it is excessive!
+            // 5 placeholders, yes somewhat excessive
             $markup .= sprintf(
                 $this->template,
-                $i,
-                $interpreter->getId(),
-                $i,
-                $event->getId(),
-                $i,
-                $name,
-                $name // [sic]
+                $i, $interpreter->getId(),
+                $i, $event->getId(),
+                $name
             );
         }
         return $markup;
@@ -105,8 +99,8 @@ TEMPLATE;
             $data['interpreter_id'],
             $data['index'],
             $data['event_id'],
-            $data['index'],
-            $data['name'],
+            //$data['index'],
+            //$data['name'],
             $data['name']
         );
         return $markup;
