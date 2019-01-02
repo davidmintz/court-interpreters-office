@@ -3,25 +3,30 @@
 const renderInterpreterEditor = function(){
 
     var assigned = $(this).parent().prev().children();
-    //console.warn(`assigned: ${assigned.length}`);
     var html = $(".interpreter-editor-wrapper").html();
+    var event_id = $(this).closest("tr").data().id;
+    var interpreters = `<ul class="list-group">`;
     if (assigned.length) {
-        var interpreters = `<ul class="list-group">`;
-        assigned.each(function(){
+        assigned.each(function(i){
             var name = $(this).text();
-            interpreters +=
-                `<li class="list-group-item pr-1 py-1">
-                    <span class="float-left interpreter-name align-middle pt-1">${name}</span>
-                    <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this interpreter">
-                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove this interpreter</span></button>
-                </li>`;
-
+            var interpreter_id = $(this).data().interpreter_id;
+            interpreters += renderInterpreter(i,name,interpreter_id,event_id);
         })
-        interpreters += `</ul>`;
-        html = interpreters + html;
     }
-    return html;
+    interpreters += `</ul>`;
+    html = interpreters + html;
 
+    return html;
+};
+
+const renderInterpreter = function(index,name,interpreter_id,event_id) {
+    return `<li class="list-group-item pr-1 py-1">
+        <input name="event[interpreterEvents][${index}][interpreter]" type="hidden" value="${interpreter_id}">
+        <input name="event[interpreterEvents][${index}][event]" type="hidden" value="${event_id}">
+        <span class="float-left interpreter-name align-middle pt-1">${name}</span>
+        <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this interpreter">
+        <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove this interpreter</span></button>
+    </li>`;
 }
 
 $(function() {
@@ -48,13 +53,50 @@ $(function() {
         $(this).parents(".popover").popover('hide');
     })
     .on("click",".popover-body .btn-remove-item",function(){
-        /** to be continued */
         console.log("interpreter to be deleted: "+$(this).prev().text());
+        $(this).prev(".interpreter-name").css({textDecoration:"line-through"});
+        $(this).closest("li").slideUp(500,()=>$(this).remove());
     })
     .on("click",".popover-body .btn-add-interpreter",function(){
-        /** to be continued */
-        console.log("interpreter to be added: "+$(this).prev().children("option:selected").text());
-    });;
+        var btn = $(this);
+        var option = btn.prev().children("option:selected");
+        var interpreter_id = option.val();
+        var list = btn.closest(".popover-body").children("ul.list-group");
+        var existing = list.find(`input[value="${interpreter_id}"][name*="interpreter"]`);
+        if (existing.length) {
+            return;
+        }
+        var name = option.text();
+        var event_id = btn.closest(".popover").data().event_id;
+        var index;
+        if (! list.children().length) {
+            index = 0;
+        } else {
+            var last = list.find("li > input").last();
+            var m = last.attr("name").match(/\[(\d+)\]/);
+            if (m.length) {
+                index = parseInt(m.pop()) + 1;
+            } // else { something is very wrong. }
+        }
+        list.append(renderInterpreter(index,name,interpreter_id,event_id));
+        btn.prev("select").val("");
+    })
+    .on("shown.bs.popover",".edit-interpreters",(e)=>{
+        var language_id = $(e.target).parent().prev().data().language_id;
+        var event_id = $(e.target).closest("tr").data().id;
+        var popover = $(".popover").last();
+        popover.data({event_id});
+        var interpreter_select = popover.find("select");
+        $.getJSON("/admin/schedule/interpreter-options?language_id="+language_id)
+        .success((data)=>{
+            var options = data.map(function(item){
+                return $("<option>").val(item.value).text(item.label);
+            });
+            interpreter_select.append(options)
+        });
+
+
+    });
 
     $('[data-toggle="tooltip"]').tooltip();
     $(".edit-interpreters").popover(popover_opts);

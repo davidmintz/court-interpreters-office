@@ -244,9 +244,12 @@ echo $this->form()->openTag($form); ?>
             }
             echo $this->formHidden($element);
         }
-            echo $this->formSubmit($form->get('submit')); if ($this->id) :
-            ?><a id="btn-delete" role="button" href="<?php echo $this->url('events/edit', ['action' => 'delete','id' => $this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
-            endif;?>
+        ?>
+        <div class="alert alert-warning validation-error px-2" id="error_modified" style="text-align:left;display:none"></div>
+        <?php
+        echo $this->formSubmit($form->get('submit')); if ($this->id) :
+        ?><a id="btn-delete" role="button" href="<?php echo $this->url('events/edit', ['action' => 'delete','id' => $this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
+        endif;?>
     </div>
 </div>
 <?php echo $this->form()->closeTag();

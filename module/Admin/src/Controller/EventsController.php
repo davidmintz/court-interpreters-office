@@ -334,11 +334,26 @@ class EventsController extends AbstractActionController
         }
     }
 
+    /**
+     * handles updating interpreters within schedule page
+     * @return JsonModel
+     */
     public function updateInterpretersAction()
     {
+
         $id = $this->params()->fromRoute('id');
-        /** @var \InterpretersOffice\Entity\Event $entity  */
         $entity = $this->entityManager->find(Entity\Event::class, $id);
+        if (! $entity) {
+            return new JsonModel([
+                'status' => 'error',
+                'message' => "The event with id $id was not found in the database.",
+            ]);
+        }
+        if ($this->getRequest()->isGet()) {
+            // send them a CSRF token, and interpreter options for the language
+            
+        }
+        /** @var \InterpretersOffice\Entity\Event $entity  */
         $form = new Form\EventForm(
             $this->entityManager,
             ['action' => 'update','object' => $entity,]
