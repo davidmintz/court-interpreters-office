@@ -206,6 +206,7 @@ class EventsController extends AbstractActionController
                 return new JsonModel(
                     ['validation_errors' => $form->getMessages()]);
             }
+            $events->trigger('post.validate', $this);
             $this->entityManager->flush();
             $url = $this->getEvent()->getApplication()
                 ->getServiceManager()->get('ViewHelperManager')
@@ -312,6 +313,7 @@ class EventsController extends AbstractActionController
         } else {
             $result = $repository->getInterpreterOptionsForLanguage($language_id);
         }
+
         return new JsonModel($result);
     }
 

@@ -78,6 +78,8 @@ class EventForm extends ZendForm implements
      */
     private $is_electronic = false;
 
+    private $interpreters_before;
+
     /**
      * sets is_electronic flag
      * @param boolean $bool
@@ -101,8 +103,9 @@ class EventForm extends ZendForm implements
     public function attach(EventManagerInterface $events, $priority = 1)
     {
 
-        $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);
         $this->listeners[] = $events->attach('pre.populate', [$this, 'prePopulate']);
+        $this->listeners[] = $events->attach('pre.validate', [$this, 'preValidate']);
+        $this->listeners[] = $events->attach('post.validate', [$this, 'postValidate']);
     }
 
    /**
@@ -116,7 +119,8 @@ class EventForm extends ZendForm implements
 
         $input = $e->getTarget()->getRequest()->getPost();
         $event = $input->get('event');
-
+        $this->interpreters_before = $this->getObject()->getInterpreterEvents()
+            ->toArray();
 
         /* there is one form control for the judge, but its value may
          * correspond to either the 'judge' or the 'anonymousJudge' property,
@@ -159,11 +163,6 @@ class EventForm extends ZendForm implements
             ['date','time','end_time','submission_date','submission_time'],
             $event,'event'
         );
-        // $date_before = $this->getObject()->getDate()->format('m/d/Y');
-        // if ($event['date'] == $date_before) {
-        //
-        // }
-
 
         // if the source of this Event was a Request, the metadata -- who
         // submitted it and when -- is immutable, so we're done.
@@ -344,7 +343,20 @@ class EventForm extends ZendForm implements
             key_exists(\Zend\Validator\Callback::INVALID_VALUE, $errors);
     }
 
-
+    /**
+     * conditionally updates event modification timestamp
+     *
+     * @param EventInterface $e
+     * @return void
+     */
+    public function postValidate(EventInterface $e)
+    {
+        $entity = $this->getObject();
+        $interpreters_posted = $entity->getInterpreterEvents()->toArray();
+        if ($interpreters_posted != $this->interpreters_before) {
+            $entity->setModified(new \DateTime());
+        }
+    }
 }
 
     /*
