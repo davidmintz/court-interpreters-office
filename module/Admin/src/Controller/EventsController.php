@@ -331,4 +331,20 @@ class EventsController extends AbstractActionController
             return new JsonModel($modified);
         }
     }
+
+    public function updateInterpretersAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        /** @var \InterpretersOffice\Entity\Event $entity  */
+        $entity = $this->entityManager->find(Entity\Event::class, $id);
+        $form = new Form\EventForm(
+            $this->entityManager,
+            ['action' => 'update','object' => $entity,]
+        );
+        $form->setValidationGroup([
+            'csrf',
+            'event' => ['interpreterEvents'],
+        ]);
+
+    }
 }

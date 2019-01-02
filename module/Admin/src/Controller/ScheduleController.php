@@ -60,7 +60,8 @@ class ScheduleController extends AbstractActionController
         $date = new \DateTime($filters['date']);
         $repo = $this->entityManager->getRepository(Entity\Event::class);
         $data = $repo->getSchedule($filters);
-        $viewModel = new ViewModel(['data' => $data, 'date' => $date]);
+        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+        $viewModel = new ViewModel(compact('data', 'date','csrf'));
         $this->setPreviousAndNext($viewModel, $date)
             ->setVariable('language', $filters['language']);
         if ($this->getRequest()->isXmlHttpRequest()) {
