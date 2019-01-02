@@ -193,6 +193,7 @@ DQL;
          COALESCE(aj_parent_location.name, aj_location.name) AS aj_default_location,
          t.name AS type,
          lang.name AS language,
+         lang.id AS language_id,
          e.docket,
          e.comments,
          loc.name AS location,
