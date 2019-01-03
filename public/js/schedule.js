@@ -14,9 +14,8 @@ const renderInterpreterEditor = function(){
         })
     }
     interpreters += `</ul>`;
-    html = interpreters + html;
 
-    return html;
+    return  interpreters + html;
 };
 
 const renderInterpreter = function(index,name,interpreter_id,event_id) {
