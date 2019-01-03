@@ -313,7 +313,13 @@ class EventsController extends AbstractActionController
         } else {
             $result = $repository->getInterpreterOptionsForLanguage($language_id);
         }
-
+        if ($this->params()->fromQuery('csrf')) {
+            $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+            $result = [
+                'options' => $result,
+                'csrf' => $csrf,
+            ];
+        }
         return new JsonModel($result);
     }
 
@@ -351,7 +357,7 @@ class EventsController extends AbstractActionController
         }
         if ($this->getRequest()->isGet()) {
             // send them a CSRF token, and interpreter options for the language
-            
+
         }
         /** @var \InterpretersOffice\Entity\Event $entity  */
         $form = new Form\EventForm(

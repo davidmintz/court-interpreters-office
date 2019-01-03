@@ -5,7 +5,7 @@ const renderInterpreterEditor = function(){
     var assigned = $(this).parent().prev().children();
     var html = $(".interpreter-editor-wrapper").html();
     var event_id = $(this).closest("tr").data().id;
-    var interpreters = `<ul class="list-group">`;
+    var interpreters = `<form><ul class="list-group">`;
     if (assigned.length) {
         assigned.each(function(i){
             var name = $(this).text();
@@ -13,7 +13,7 @@ const renderInterpreterEditor = function(){
             interpreters += renderInterpreter(i,name,interpreter_id,event_id);
         })
     }
-    interpreters += `</ul>`;
+    interpreters += `</ul></form>`;
 
     return  interpreters + html;
 };
@@ -56,15 +56,18 @@ $(function() {
         $(this).prev(".interpreter-name").css({textDecoration:"line-through"});
         $(this).closest("li").slideUp(500,()=>$(this).remove());
     })
+    .on("click",".popover-body .btn-success",function(){
+        var csrf = schedule_table.data("csrf");
+        var post = $(this).closest(".popover-body").children("form").serialize();
+        console.warn(post);
+    })
     .on("click",".popover-body .btn-add-interpreter",function(){
         var btn = $(this);
         var option = btn.prev().children("option:selected");
         var interpreter_id = option.val();
         var list = btn.closest(".popover-body").children("ul.list-group");
         var existing = list.find(`input[value="${interpreter_id}"][name*="interpreter"]`);
-        if (existing.length) {
-            return;
-        }
+        if (existing.length) { return; }
         var name = option.text();
         var event_id = btn.closest(".popover").data().event_id;
         var index;
@@ -86,12 +89,15 @@ $(function() {
         var popover = $(".popover").last();
         popover.data({event_id});
         var interpreter_select = popover.find("select");
-        $.getJSON("/admin/schedule/interpreter-options?language_id="+language_id)
-        .success((data)=>{
-            var options = data.map(function(item){
+        $.getJSON("/admin/schedule/interpreter-options?language_id="
+            + language_id + "&csrf=1" )
+        .success((response)=>{
+            var options = response.options.map(function(item){
                 return $("<option>").val(item.value).text(item.label);
             });
-            interpreter_select.append(options)
+            interpreter_select.append(options);
+            //popover.append($("<input/>").attr({type:"hidden",value:response.csrf,name:"csrf"}));
+            schedule_table.data({csrf:response.csrf});
         });
 
 
