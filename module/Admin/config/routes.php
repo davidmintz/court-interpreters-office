@@ -93,7 +93,7 @@ return  [
                             'action' => 'edit',
                         ],
                         'constraints' => [
-                            'action' => 'edit|delete|repeat',
+                            'action' => 'edit|delete|repeat|update-interpreters',
                             'id' => '[1-9]\d*',
                         ],
                     ],
@@ -109,13 +109,23 @@ return  [
                         ],
                     ],
                 ],
-                'interpreter-options' => [
+                // 'interpreter-options' => [
+                //     'type' => Segment::class,
+                //     'options' => [
+                //         'route' => '/interpreter-options',
+                //         'defaults' => [
+                //             'controller' => Controller\EventsController::class,
+                //             'action' => 'interpreter-options',
+                //         ],
+                //     ],
+                // ],
+                'update-interpreters' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/interpreter-options',
+                        'route' => '/update-interpreters/:id',
                         'defaults' => [
                             'controller' => Controller\EventsController::class,
-                            'action' => 'interpreter-options',
+                            'action' => 'update-interpreters',
                         ],
                     ],
                 ],

@@ -355,19 +355,23 @@ class EventsController extends AbstractActionController
                 'message' => "The event with id $id was not found in the database.",
             ]);
         }
-        if ($this->getRequest()->isGet()) {
-            // send them a CSRF token, and interpreter options for the language
+        if ($this->getRequest()->isPost()) {
 
+            /** @var \InterpretersOffice\Entity\Event $entity  */
+            $form = new Form\EventForm(
+                $this->entityManager,
+                ['action' => 'update','object' => $entity,]
+            );
+            $form->setValidationGroup([
+                'csrf',
+                'event' => ['interpreterEvents'],
+            ]);
+            return new JsonModel([
+                'status' => 'testing',
+                'message' => "boink",
+                'input'=>$this->params()->fromPost(),
+            ]);
         }
-        /** @var \InterpretersOffice\Entity\Event $entity  */
-        $form = new Form\EventForm(
-            $this->entityManager,
-            ['action' => 'update','object' => $entity,]
-        );
-        $form->setValidationGroup([
-            'csrf',
-            'event' => ['interpreterEvents'],
-        ]);
 
     }
 }

@@ -47,25 +47,34 @@ $(function() {
             schedule_table.addClass("table-hover");
         }
     })
-    .on("click",".btn-cancel",function(){
+    .on("click",".btn-cancel",function(event){
+        event.preventDefault();
         console.log("close the popover");
         $(this).parents(".popover").popover('hide');
     })
-    .on("click",".popover-body .btn-remove-item",function(){
+    .on("click",".popover-body .btn-remove-item",function(event){
+        event.preventDefault();
         console.log("interpreter to be deleted: "+$(this).prev().text());
         $(this).prev(".interpreter-name").css({textDecoration:"line-through"});
-        $(this).closest("li").slideUp(500,()=>$(this).remove());
+        $(this).closest("li").slideUp(500,function(){$(this).remove();});
     })
-    .on("click",".popover-body .btn-success",function(){
+    .on("click",".popover-body .btn-success",function(event){
+        event.preventDefault();
+        var btn = $(this);
         var csrf = schedule_table.data("csrf");
-        var post = $(this).closest(".popover-body").children("form").serialize();
-        console.warn(post);
+        var event_id = btn.closest(".popover").data().event_id;
+        var post = btn.closest(".popover-body").children("form").serialize();
+        post += `&csrf=${csrf}`;
+        $.post("/admin/schedule/update-interpreters/"+event_id,post,(response)=>{
+            console.log(response);
+        });
     })
-    .on("click",".popover-body .btn-add-interpreter",function(){
+    .on("click",".popover-body .btn-add-interpreter",function(event){
+        event.preventDefault();
         var btn = $(this);
         var option = btn.prev().children("option:selected");
         var interpreter_id = option.val();
-        var list = btn.closest(".popover-body").children("ul.list-group");
+        var list = btn.closest(".popover-body").find("ul.list-group");
         var existing = list.find(`input[value="${interpreter_id}"][name*="interpreter"]`);
         if (existing.length) { return; }
         var name = option.text();
