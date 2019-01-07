@@ -22,6 +22,13 @@ class InterpreterNames extends AbstractHelper
     protected $interpreters;
 
     /**
+     * html template
+     *
+     * @var string
+     */
+    public $template = '<div data-interpreter_id="%d">%s<span class="d-none d-lg-inline">, %s</span></div>';
+
+    /**
      * get the interpreters indexed by event id
      *
      * @return array
@@ -54,8 +61,7 @@ class InterpreterNames extends AbstractHelper
         }
         foreach ($this->interpreters[$id] as $n) {
             $return .=
-            sprintf('<div data-interpreter_id="%d">%s<span class="d-none d-lg-inline">, %s</span></div>',
-                $n['id'],$n['lastname'],$n['firstname']);
+            sprintf($this->template,$n['id'],$n['lastname'],$n['firstname']);
         }
 
          return $return;
