@@ -284,7 +284,7 @@ DQL;
         $query = $this->getEntityManager()->createQuery(
             'SELECT e.id event_id, i.id, i.lastname, i.firstname FROM '
             . 'InterpretersOffice\Entity\InterpreterEvent ie JOIN ie.interpreter i '
-            . 'JOIN ie.event e WHERE e.id IN (:ids) ORDER BY ie.created'
+            . 'JOIN ie.event e WHERE e.id IN (:ids) ORDER BY ie.created, i.lastname'
         );
 
 
