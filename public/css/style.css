@@ -28,7 +28,7 @@ div.remove-language {
     padding-top:.4em;
 }
 
-#event-form span.deft-name:hover {
+#event-form span.deft-name:hover, td.interpreters-assigned:hover {
     text-decoration : underline;
     cursor: pointer;
     color : #007bff;
@@ -38,6 +38,7 @@ tr.event-cancelled {
     text-decoration: line-through;
     text-decoration-color: red; /*515457*/
 }
+
 /*
 experimental, borrowed from http://stackoverflow.com/questions/40259391/bootstrap-form-inline-for-viewports-that-are-less-than-768px-wide\
 so that interpreter-languages won't stack and look crappy on a small viewport
