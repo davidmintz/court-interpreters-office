@@ -34,6 +34,7 @@ $(function() {
         placement: "left",
         title : `update interpreters <a href="#" class="close btn-cancel" title="cancel" data-dismiss="alert">&times;</a>`,
         content : renderInterpreterEditor,
+        // maybe try to set this dynamically to the td's parent tr?
         container : "body"
     };
 
@@ -58,14 +59,17 @@ $(function() {
         $(this).prev(".interpreter-name").css({textDecoration:"line-through"});
         $(this).closest("li").slideUp(500,function(){$(this).remove();});
     })
+    /**
+     * submits interpreter data
+     */
     .on("click",".popover-body .btn-success",function(event){
         event.preventDefault();
         var csrf = schedule_table.data("csrf");
         var popover_body = $(this).closest(".popover-body");
         var popover = popover_body.parent();
         var event_id = popover.data().event_id;
-        var data = popover_body.children("form").serialize();
-        data += `&csrf=${csrf}`;
+        var data = popover_body.children("form").serialize() + `&csrf=${csrf}`;
+        stop_timer();
         $.post("/admin/schedule/update-interpreters/"+event_id,data)
         .success((response)=>{
             if (response.status === "success") {
@@ -85,7 +89,8 @@ $(function() {
                 }
             }
         })
-        .fail(fail);
+        .fail(fail)
+        .done(()=>start_timer());
     })
     .on("click",".popover-body .btn-add-interpreter",function(event){
         event.preventDefault();
@@ -129,7 +134,15 @@ $(function() {
     });
 
     $('[data-toggle="tooltip"]').tooltip();
-    $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
+    $(".edit-interpreters").on("click",(e)=>{
+        // try to make the parent row the container
+        e.preventDefault();
+        console.log("trying to set shit...?");
+        var element = $(e.target);
+        var container = element.closest("tr").get(0);
+        element.data({container});
+    }
+    ).popover(popover_opts);
 
     var date_input = $('#date-input');
     var schedule_table = $('#schedule-table');
@@ -192,7 +205,8 @@ $(function() {
     var previous =  schedule_table.html();
     // reload periodically. if the data has not changed since last fetched, don't
     // update the DOM.
-    (function run(){
+    start_timer = function run(){
+        console.log("starting timer");
         window.timer = window.setTimeout(function(){
             $.get(document.location.href).done((data)=>{
                 var new_data = $(data).html();
@@ -206,7 +220,8 @@ $(function() {
             }).fail(()=> console.warn("shit happened!")
             );
         },interval);
-    })();
+    };
+    start_timer();
 });
 
-const stop = function(){ window.clearTimeout(timer)};
+const stop_timer = function(){ console.log("pausing timer"); window.clearTimeout(timer)};
