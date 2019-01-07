@@ -13,7 +13,7 @@ const renderInterpreterEditor = function(){
             interpreters += renderInterpreter(i,name,interpreter_id,event_id);
         })
     }
-    interpreters += `</ul></form>`;
+    interpreters += `</ul><input type="hidden" name="event[id]" value="${event_id}"></form>`;
 
     return  interpreters + html;
 };
@@ -49,8 +49,8 @@ $(function() {
     })
     .on("click",".btn-cancel",function(event){
         event.preventDefault();
-        console.log("close the popover");
-        $(this).parents(".popover").popover('hide');
+        console.log("closing the popover");
+        $(this).parents(".popover").popover("hide");
     })
     .on("click",".popover-body .btn-remove-item",function(event){
         event.preventDefault();
@@ -60,14 +60,32 @@ $(function() {
     })
     .on("click",".popover-body .btn-success",function(event){
         event.preventDefault();
-        var btn = $(this);
         var csrf = schedule_table.data("csrf");
-        var event_id = btn.closest(".popover").data().event_id;
-        var post = btn.closest(".popover-body").children("form").serialize();
-        post += `&csrf=${csrf}`;
-        $.post("/admin/schedule/update-interpreters/"+event_id,post,(response)=>{
-            console.log(response);
-        });
+        var popover_body = $(this).closest(".popover-body");
+        var popover = popover_body.parent();
+        var event_id = popover.data().event_id;
+        var data = popover_body.children("form").serialize();
+        data += `&csrf=${csrf}`;
+        $.post("/admin/schedule/update-interpreters/"+event_id,data)
+        .success((response)=>{
+            if (response.status === "success") {
+                var element = popover.data("bs.popover").element;
+                var td = $(element).parent().prev("td");
+                td.html(response.html);
+                popover.popover("hide");
+                return console.warn("praise the lord!!");
+
+            }
+            if (response.validation_errors) {
+                if (response.validation_errors.csrf) {
+                    var message = `Sorry &mdash; it appears your security token has timed out. Please refresh this page and try again`;
+                    popover.addClass("alert alert-warning").html(message);
+                } else {
+                    fail(response);
+                }
+            }
+        })
+        .fail(fail);
     })
     .on("click",".popover-body .btn-add-interpreter",function(event){
         event.preventDefault();
@@ -108,12 +126,10 @@ $(function() {
             //popover.append($("<input/>").attr({type:"hidden",value:response.csrf,name:"csrf"}));
             schedule_table.data({csrf:response.csrf});
         });
-
-
     });
 
     $('[data-toggle="tooltip"]').tooltip();
-    $(".edit-interpreters").popover(popover_opts);
+    $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
 
     var date_input = $('#date-input');
     var schedule_table = $('#schedule-table');
