@@ -59,7 +59,7 @@ class ScheduleController extends AbstractActionController
         $filters = $this->getFilters();
         $date = new \DateTime($filters['date']);
         $repo = $this->entityManager->getRepository(Entity\Event::class);
-        $data = $repo->getSchedule($filters);        
+        $data = $repo->getSchedule($filters);
         $viewModel = new ViewModel(compact('data', 'date'));
         $this->setPreviousAndNext($viewModel, $date)
             ->setVariable('language', $filters['language']);
@@ -112,7 +112,6 @@ class ScheduleController extends AbstractActionController
 
     /**
      * displays event details
-     *
      */
     public function viewAction()
     {
@@ -123,6 +122,7 @@ class ScheduleController extends AbstractActionController
 
         return compact('event', 'id', 'csrf');
     }
+
     /**
      * computes and sets the "next" and "previous" dates
      *
@@ -130,7 +130,6 @@ class ScheduleController extends AbstractActionController
      * @param \DateTime  $date
      * @return ViewModel
      */
-
     public function setPreviousAndNext(ViewModel $view, \DateTime $date)
     {
         $string = $date->format('Y-m-d');
