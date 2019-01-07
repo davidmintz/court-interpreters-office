@@ -7,9 +7,12 @@ $this->headTitle($this->date->format('D d M Y'));
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
-elseif ($messenger->hasErrorMessages()) :
-    echo $messenger->render('danger', ['alert','alert-danger',], false);
-endif;?>
+// elseif ($messenger->hasErrorMessages()) :
+//     echo $messenger->render('danger', ['alert','alert-danger',], false);
+endif;
+echo $this->errorMessage($this->errorMessage);  ?><?php
+if ($this->errorMessage) :   return;  endif;
+?>
 <div class="interpreter-editor-wrapper d-none">
     <div style="min-width:250px" class="py-2">
         <div class="input-group">
