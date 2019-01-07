@@ -109,16 +109,16 @@ return  [
                         ],
                     ],
                 ],
-                // 'interpreter-options' => [
-                //     'type' => Segment::class,
-                //     'options' => [
-                //         'route' => '/interpreter-options',
-                //         'defaults' => [
-                //             'controller' => Controller\EventsController::class,
-                //             'action' => 'interpreter-options',
-                //         ],
-                //     ],
-                // ],
+                'interpreter-options' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/interpreter-options',
+                        'defaults' => [
+                            'controller' => Controller\EventsController::class,
+                            'action' => 'interpreter-options',
+                        ],
+                    ],
+                ],
                 'update-interpreters' => [
                     'type' => Segment::class,
                     'options' => [
