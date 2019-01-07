@@ -362,16 +362,34 @@ class EventsController extends AbstractActionController
                 $this->entityManager,
                 ['action' => 'update','object' => $entity,]
             );
-            $form->setValidationGroup([
-                'csrf',
-                'event' => ['interpreterEvents'],
+            $form->bind($entity)
+                ->setValidationGroup([
+                'csrf', 'event' => [
+                    'interpreterEvents' => [
+                        'interpreter',
+                        'event',
+                    ]
+                ],
             ]);
+            $form->setData($this->getRequest()->getPost());
+            if (! $form->isValid()) {
+                return new JsonModel(
+                    ['validation_errors' => $form->getMessages()]);
+            }
+            $this->entityManager->flush();
+            $collection = $entity->getInterpreterEvents();
+            $html = '';
+            $template = (new \InterpretersOffice\View\Helper\InterpreterNames())
+                ->template;
+            foreach ($collection as $ie) {
+                $i = $ie->getInterpreter();
+                $html .= sprintf($template,$i->getId(), $i->getLastname(),
+                    $i->getFirstname());
+            }
             return new JsonModel([
-                'status' => 'testing',
-                'message' => "boink",
-                'input'=>$this->params()->fromPost(),
+                'status' => 'success',
+                'html' => $html,                
             ]);
         }
-
     }
 }
