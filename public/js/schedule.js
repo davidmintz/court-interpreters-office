@@ -52,7 +52,7 @@ const timer_start = function(){
     console.debug(`timer_resume() set timer: ${window.schedule_timer}`);
 };
 const timer_stop = function(){
-    console.debug("timer_stop() pausing timer id: "+window.schedule_timer);
+    console.debug("timer_stop() clearing timer id: "+window.schedule_timer);
     window.clearTimeout(window.schedule_timer)
     window.schedule_timer = null;
 };
@@ -68,9 +68,9 @@ $(function() {
         html: true,
         placement: "left",
         title : `update interpreters <a href="#" class="close btn-cancel" title="cancel" data-dismiss="alert">&times;</a>`,
-        content : renderInterpreterEditor,
+        content : renderInterpreterEditor//,
         // maybe try to set this dynamically to the td's parent tr?
-        container : "body"
+        //container : "body"
     };
 
     $("body").on("io.reload",'#schedule-table',function(event){
@@ -149,6 +149,8 @@ $(function() {
         list.append(renderInterpreter(index,name,interpreter_id,event_id));
         btn.prev("select").val("");
     })
+    // when the popover is shown, set some data attributes and populate
+    // the interpreter dropdown. TO DO: cache interpreter-dropdown data
     .on("shown.bs.popover",".edit-interpreters",(e)=>{
         var language_id = $(e.target).parent().prev().data().language_id;
         var event_id = $(e.target).closest("tr").data().id;
