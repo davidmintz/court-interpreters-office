@@ -29,6 +29,10 @@ const renderInterpreter = function(index,name,interpreter_id,event_id) {
 }
 
 $(function() {
+    var schedule_table = $('#schedule-table');
+    // for later comparison
+    var previous =  schedule_table.html();
+
     var popover_opts = {
         html: true,
         placement: "left",
@@ -69,7 +73,7 @@ $(function() {
         var popover = popover_body.parent();
         var event_id = popover.data().event_id;
         var data = popover_body.children("form").serialize() + `&csrf=${csrf}`;
-        stop_timer();
+        //stop_timer();
         $.post("/admin/schedule/update-interpreters/"+event_id,data)
         .success((response)=>{
             if (response.status === "success") {
@@ -89,8 +93,8 @@ $(function() {
                 }
             }
         })
-        .fail(fail)
-        .done(()=>start_timer());
+        .fail(fail);
+        //.done(()=>start_timer());
     })
     .on("click",".popover-body .btn-add-interpreter",function(event){
         event.preventDefault();
@@ -135,17 +139,17 @@ $(function() {
 
     $('[data-toggle="tooltip"]').tooltip();
     $(".edit-interpreters").on("click",(e)=>{
-        // try to make the parent row the container
         e.preventDefault();
-        console.log("trying to set shit...?");
-        var element = $(e.target);
-        var container = element.closest("tr").get(0);
-        element.data({container});
+        //try to make the parent row the container?
+        // console.log("trying to set shit...?");
+        // var element = $(e.target);
+        // var container = element.closest("tr").get(0);
+        // element.data({container});
     }
     ).popover(popover_opts);
 
     var date_input = $('#date-input');
-    var schedule_table = $('#schedule-table');
+
 
     /* expand/collapse lists of deft names */
     schedule_table.on("click", "a.expand-deftnames", function(e){
@@ -201,17 +205,16 @@ $(function() {
     }
     console.log(`refresh interval set to ${interval/1000} seconds`);
 
-    // for later comparison
-    var previous =  schedule_table.html();
+
     // reload periodically. if the data has not changed since last fetched, don't
     // update the DOM.
-    start_timer = function run(){
+    (function run(){
         console.log("starting timer");
         window.timer = window.setTimeout(function(){
             $.get(document.location.href).done((data)=>{
                 var new_data = $(data).html();
-                //var changed = previous != new_data;
-                //console.log("changed? "+changed);
+                var changed = previous != new_data;
+                console.log("shit changed? "+changed);
                 if (previous != new_data) {
                     previous = new_data;
                     $("#schedule-table").html(new_data).trigger("io.reload");
@@ -220,8 +223,8 @@ $(function() {
             }).fail(()=> console.warn("shit happened!")
             );
         },interval);
-    };
-    start_timer();
+    })();
+    //start_timer();
 });
 
 const stop_timer = function(){ console.log("pausing timer"); window.clearTimeout(timer)};
