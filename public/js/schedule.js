@@ -40,8 +40,8 @@ const reload_schedule = function(){
     });
 };
 
-const timer_resume = function(){
-    console.debug(`timer_resume(): timer id was: ${window.schedule_timer}`);
+const timer_start = function(){
+    console.debug(`timer_start(): timer id was: ${window.schedule_timer}`);
     if (window.schedule_timer) {
         console.debug("timer already exists. returning");
         return;
