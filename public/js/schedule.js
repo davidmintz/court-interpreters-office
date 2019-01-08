@@ -74,7 +74,7 @@ $(function() {
     };
 
     $("body").on("io.reload",'#schedule-table',function(event){
-        console.log("io.reload custom event handler");
+        console.log("running io.reload custom event handler");
         $('table [data-toggle="tooltip"]').tooltip();
         $(".edit-interpreters").popover(popover_opts);
         if ($('.no-events').length) {
@@ -82,8 +82,8 @@ $(function() {
         } else {
             schedule_table.addClass("table-hover");
         }
-    })
-    .on("click",".btn-cancel",function(event){
+    });
+    schedule_table.on("click",".btn-cancel",function(event){
         event.preventDefault();
         console.log("closing the popover");
         $(this).parents(".popover").popover("hide");
@@ -126,6 +126,10 @@ $(function() {
         .fail(fail);
         //.done(()=>start_timer());
     })
+    // .on("click",".edit-interpreters",(e)=>{
+    //     e.preventDefault();
+    //     $(e.target).popover(popover_opts);
+    // })
     .on("click",".popover-body .btn-add-interpreter",function(event){
         event.preventDefault();
         var btn = $(this);
@@ -203,10 +207,21 @@ $(function() {
         // strip route parameters /yyyy/mm/dd
         var url = document.location.pathname.replace(/\/\d+/g,'');
         url += '?language=' + $(this).val();
-        $.get(url, function(html){
-            var table = $('#schedule-table'); // yes, another local variable
-            table.replaceWith(html).trigger("io.reload");
+        return $.get(url)
+        .done((data)=>{
+            var new_data = $(data).html();
+            console.log("has shit changed? "+(previous_data != new_data));
+            if (previous_data != new_data) {
+                previous_data = new_data;
+                $("#schedule-table").html(new_data).trigger("io.reload");
+            }
         });
+        // $.get(url, function(html){
+        //     var table = $('#schedule-table'); // yes, another local variable
+        //     table.replaceWith(html);
+        //     console.log("trigger reload event?");
+        //     table.trigger("io.reload");
+        // });
     });
 
     // initialize jquery-ui datepicker
