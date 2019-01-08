@@ -15,7 +15,7 @@ const renderInterpreterEditor = function(){
     }
     interpreters += `</ul><input type="hidden" name="event[id]" value="${event_id}"></form>`;
 
-    return  interpreters + html;
+    return interpreters + html;
 };
 
 const renderInterpreter = function(index,name,interpreter_id,event_id) {
@@ -28,10 +28,41 @@ const renderInterpreter = function(index,name,interpreter_id,event_id) {
     </li>`;
 }
 
+const reload_schedule = function(){
+    return $.get(document.location.href)
+    .done((data)=>{
+        var new_data = $(data).html();
+        console.log("has shit changed? "+(previous_data != new_data));
+        if (previous_data != new_data) {
+            previous_data = new_data;
+            $("#schedule-table").html(new_data).trigger("io.reload");
+        }
+    });
+};
+
+const timer_resume = function(){
+    console.debug(`timer_resume(): timer id was: ${window.schedule_timer}`);
+    if (window.schedule_timer) {
+        console.debug("timer already exists. returning");
+        return;
+    }
+    window.schedule_timer = window.setTimeout(
+        reload_schedule, interval
+    );
+    console.debug(`timer_resume() set timer: ${window.schedule_timer}`);
+};
+const timer_stop = function(){
+    console.debug("timer_stop() pausing timer id: "+window.schedule_timer);
+    window.clearTimeout(window.schedule_timer)
+    window.schedule_timer = null;
+};
+
+var previous_data, interval;
+
 $(function() {
     var schedule_table = $('#schedule-table');
     // for later comparison
-    var previous =  schedule_table.html();
+    previous_data =  schedule_table.html();
 
     var popover_opts = {
         html: true,
@@ -73,7 +104,6 @@ $(function() {
         var popover = popover_body.parent();
         var event_id = popover.data().event_id;
         var data = popover_body.children("form").serialize() + `&csrf=${csrf}`;
-        //stop_timer();
         $.post("/admin/schedule/update-interpreters/"+event_id,data)
         .success((response)=>{
             if (response.status === "success") {
@@ -197,7 +227,7 @@ $(function() {
     var schedule_date = new moment($(".display-date").text(),"DD MMM YYYY");
     var now = new moment();
     var is_current = schedule_date.format("YYYYMMDD") >= now.format("YYYYMMDD");
-    var interval;
+
     if (is_current) {
         interval = 20 * 1000;
     } else {
@@ -205,18 +235,17 @@ $(function() {
     }
     console.log(`refresh interval set to ${interval/1000} seconds`);
 
-
     // reload periodically. if the data has not changed since last fetched, don't
-    // update the DOM.
+    // update the DOM. We use an IIFE because we change shit as soon as it's
+    // rendered, so otherwise it would replace the data unnecessarily
     (function run(){
         console.log("starting timer");
-        window.timer = window.setTimeout(function(){
+        window.schedule_timer = window.setTimeout(function(){
             $.get(document.location.href).done((data)=>{
                 var new_data = $(data).html();
-                var changed = previous != new_data;
-                console.log("shit changed? "+changed);
-                if (previous != new_data) {
-                    previous = new_data;
+                console.log("has shit changed? "+(previous_data != new_data));
+                if (previous_data != new_data) {
+                    previous_data = new_data;
                     $("#schedule-table").html(new_data).trigger("io.reload");
                 }
                 run();
@@ -224,7 +253,5 @@ $(function() {
             );
         },interval);
     })();
-    //start_timer();
-});
 
-const stop_timer = function(){ console.log("pausing timer"); window.clearTimeout(timer)};
+});
