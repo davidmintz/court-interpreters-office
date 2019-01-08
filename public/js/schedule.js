@@ -28,8 +28,9 @@ const renderInterpreter = function(index,name,interpreter_id,event_id) {
     </li>`;
 }
 
-const reload_schedule = function(){
-    return $.get(document.location.href)
+const reload_schedule = function(url){
+    var url = url || document.location.href;
+    return $.get(url)
     .done((data)=>{
         var new_data = $(data).html();
         console.log("has shit changed? "+(previous_data != new_data));
@@ -49,7 +50,7 @@ const timer_start = function(){
     window.schedule_timer = window.setTimeout(
         reload_schedule, interval
     );
-    console.debug(`timer_resume() set timer: ${window.schedule_timer}`);
+    console.debug(`timer_start() set timer: ${window.schedule_timer}`);
 };
 const timer_stop = function(){
     console.debug("timer_stop() clearing timer id: "+window.schedule_timer);
@@ -75,8 +76,12 @@ $(function() {
 
     $("body").on("io.reload",'#schedule-table',function(event){
         console.log("running io.reload custom event handler");
-        $('table [data-toggle="tooltip"]').tooltip();
         $(".edit-interpreters").popover(popover_opts);
+        if (! window.schedule_timer) {
+            console.debug("restart timer?");
+            timer_start();
+        }
+        $('table [data-toggle="tooltip"]').tooltip();
         if ($('.no-events').length) {
             schedule_table.removeClass("table-hover");
         } else {
@@ -124,12 +129,17 @@ $(function() {
             }
         })
         .fail(fail);
-        //.done(()=>start_timer());
     })
-    // .on("click",".edit-interpreters",(e)=>{
-    //     e.preventDefault();
-    //     $(e.target).popover(popover_opts);
-    // })
+    .on("show.bs.popover",".edit-interpreters",(e)=>{
+        console.debug("bs show event");
+        timer_stop();
+    })
+    .on("hidden.bs.popover",".edit-interpreters",(e)=>{
+        console.debug("bs hidden event");
+        if ($(".popover").length === 0) {
+            timer_start();
+        }
+    })
     .on("click",".popover-body .btn-add-interpreter",function(event){
         event.preventDefault();
         var btn = $(this);
@@ -173,20 +183,10 @@ $(function() {
         });
     });
 
+    $(".edit-interpreters").popover(popover_opts);
     $('[data-toggle="tooltip"]').tooltip();
-    $(".edit-interpreters").on("click",(e)=>{
-        e.preventDefault();
-        //try to make the parent row the container?
-        // console.log("trying to set shit...?");
-        // var element = $(e.target);
-        // var container = element.closest("tr").get(0);
-        // element.data({container});
-    }
-    ).popover(popover_opts);
-
-    var date_input = $('#date-input');
-
-
+    //$(".edit-interpreters").on("click",(e)=>{/e.preventDefault();});
+    //$(".
     /* expand/collapse lists of deft names */
     schedule_table.on("click", "a.expand-deftnames", function(e){
         e.preventDefault();
@@ -207,23 +207,9 @@ $(function() {
         // strip route parameters /yyyy/mm/dd
         var url = document.location.pathname.replace(/\/\d+/g,'');
         url += '?language=' + $(this).val();
-        return $.get(url)
-        .done((data)=>{
-            var new_data = $(data).html();
-            console.log("has shit changed? "+(previous_data != new_data));
-            if (previous_data != new_data) {
-                previous_data = new_data;
-                $("#schedule-table").html(new_data).trigger("io.reload");
-            }
-        });
-        // $.get(url, function(html){
-        //     var table = $('#schedule-table'); // yes, another local variable
-        //     table.replaceWith(html);
-        //     console.log("trigger reload event?");
-        //     table.trigger("io.reload");
-        // });
+        return reload_schedule(url);
     });
-
+var date_input = $('#date-input');
     // initialize jquery-ui datepicker
     date_input.datepicker({
         changeMonth: true,

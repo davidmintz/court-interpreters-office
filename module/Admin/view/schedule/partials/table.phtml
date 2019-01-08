@@ -46,7 +46,7 @@
             <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
             <td class="d-none d-lg-table-cell"style="line-height: 1.2em; font-size: 95%"><?php echo $e['comments']?></td>
             <td data-language_id="<?php echo $e['language_id']?>" class="interpreters-assigned text-nowrap border-right-0"><?php echo $this->interpreters($e['id'])?></td>
-            <td class="border-left-0"><a class="edit-interpreters"  data-toggle="popover" data-container="tr[data-id=<?php echo $e['id'] ?>]" role="button" href="#"><span title="add or remove interpreters for this event" class="fas fa-edit"></span></a></td>
+            <td class="border-left-0"><a class="edit-interpreters"  data-toggle="tooltip" data-container="tr[data-id=<?php echo $e['id'] ?>]" role="button" href="#"><span title="add or remove interpreters for this event" class="fas fa-edit"></span></a></td>
         </tr>
             <?php endforeach;
         else :
