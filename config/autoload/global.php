@@ -14,7 +14,7 @@ use Zend\Session\Storage\SessionArrayStorage;
 use Zend\Session\Validator\RemoteAddr;
 use Zend\Session\Validator\HttpUserAgent;
 
-return //['session' =>
+return
 [
     // courtesy of:
     //https://github.com/olegkrivtsov/using-zf3-book-samples/blob/master/userdemo/config/autoload/global.php
@@ -37,5 +37,4 @@ return //['session' =>
         'type' => SessionArrayStorage::class
     ],
     'session_containers' => ['Authentication'],
-//]
 ];
