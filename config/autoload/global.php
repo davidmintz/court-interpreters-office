@@ -22,6 +22,7 @@ return //['session' =>
         // maybe change these values
         'cookie_lifetime'     => 60 * 60 * 1, // Session cookie will expire in 1 hour.
         'gc_maxlifetime'      => 60 * 60 * 24 * 30, // How long to store session data on server (for 1 month).
+        'save_path'           => 'data/session',
     ],
     // Session manager configuration.
     'session_manager' => [
