@@ -102,4 +102,5 @@ casper.thenOpen(baseUrl + '/admin/languages',
 //console.log("phantom.page is a:" + typeof phantom.page);
 //console.log("phantom.page.cookies is a:" + typeof phantom.page.cookies);
 //console.log(utils.dump(phantom.page.cookies));
+
 casper.run();
