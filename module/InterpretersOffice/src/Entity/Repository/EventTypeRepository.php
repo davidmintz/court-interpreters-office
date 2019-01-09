@@ -92,11 +92,12 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
         $dql = 'SELECT h.isJudgeStaff FROM InterpretersOffice\Entity\Hat h
             WHERE h.name = :hat';
         $is_judge_staff = $this->createQuery($dql)
-            ->setParameters(['hat'=>$hat])->getSingleScalarResult();
+            ->setParameters(['hat' => $hat])->getSingleScalarResult();
 
         $qb = $this->createQueryBuilder('t')->select(
-            't.name AS label','t.id AS value'
-        )->join('t.category','c')->orderBy("t.name");
+            't.name AS label',
+            't.id AS value'
+        )->join('t.category', 'c')->orderBy("t.name");
 
         if ($is_judge_staff) {
             $qb->where("c.category = 'in'");

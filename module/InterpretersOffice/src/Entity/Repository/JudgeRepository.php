@@ -187,7 +187,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         }
 
         $dql .= ' ORDER BY j.lastname, j.firstname';
-        $query =  $this->createQuery($dql, $this->cache_namespace);
+        $query = $this->createQuery($dql, $this->cache_namespace);
         if ($params) {
             $query->setParameters($params);
         }
@@ -287,7 +287,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
     /**
      * gets data for judge options
-     * 
+     *
      * @param  stdClass $user
      * @return array
      */

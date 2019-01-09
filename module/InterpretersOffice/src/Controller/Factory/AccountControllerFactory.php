@@ -29,24 +29,29 @@ class AccountControllerFactory implements FactoryInterface
     {
         $controller = (new AccountController(
             $container->get('entity-manager'),
-            $container->get('auth'))
+            $container->get('auth')
+        )
         )->setAccountManager($container->get(AccountManager::class));
         /** @var $sharedEvents Zend\EventManager\SharedEventManagerInterface */
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
-        $sharedEvents->attach($requestedName,
-        AccountManager::EVENT_REGISTRATION_SUBMITTED,
-            function(EventInterface $event) use ($log){
+        $sharedEvents->attach(
+            $requestedName,
+            AccountManager::EVENT_REGISTRATION_SUBMITTED,
+            function (EventInterface $event) use ($log) {
                 $user = $event->getParam('user');
                 $person = $user->getPerson();
                 $log->info(
-                    sprintf("new user registration submitted by %s %s, %s",
-                    $person->getFirstname(), $person->getLastname(),
-                    $person->getEmail()
-            ));
+                    sprintf(
+                        "new user registration submitted by %s %s, %s",
+                        $person->getFirstname(),
+                        $person->getLastname(),
+                        $person->getEmail()
+                    )
+                );
             }
         );
-        
+
         return $controller;
     }
 }

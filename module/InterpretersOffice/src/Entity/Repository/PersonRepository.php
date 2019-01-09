@@ -201,7 +201,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         LEFT JOIN InterpretersOffice\Entity\User u
         WITH p = u.person WHERE p.id = :id ';
 
-        return $this->createQuery($dql)->setParameters([':id'=>$id])
+        return $this->createQuery($dql)->setParameters([':id' => $id])
             ->getResult();
     }
 

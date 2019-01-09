@@ -26,9 +26,11 @@ class BasicEntityControllerFactory implements FactoryInterface
      *
      * @return Zend\Mvc\Controller\AbstractActionController
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
-        array $options = null)
-    {
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
+        array $options = null
+    ) {
         $basename = substr($requestedName, strrpos($requestedName, '\\') + 1);
         $shortName = strtolower((new Filter)
             ->filter(substr($basename, 0, -10)));
@@ -42,17 +44,22 @@ class BasicEntityControllerFactory implements FactoryInterface
             case 'event-types':
                 $factory = $container->get('annotated-form-factory');
                 $entityManager = $container->get('entity-manager');
-                $controller = new $requestedName($entityManager, $factory,
-                    $shortName);
+                $controller = new $requestedName(
+                    $entityManager,
+                    $factory,
+                    $shortName
+                );
                 break;
             case 'court-closings':
                 $controller = new $requestedName(
-                        $container->get('entity-manager'));
+                    $container->get('entity-manager')
+                );
                 break;
             default:
                 throw new \RuntimeException(
                     'controller factory cannot not instantiate ' .
-                    "$requestedName a/k/a $shortName");
+                    "$requestedName a/k/a $shortName"
+                );
         }
         // ensure UpdateListener knows who current user is
         $container->get(Listener\UpdateListener::class)

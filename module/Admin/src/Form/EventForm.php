@@ -24,7 +24,8 @@ use InterpretersOffice\Form\DateTimeElementFilterTrait;
  *
  */
 class EventForm extends ZendForm implements
-    ListenerAggregateInterface, InputFilterProviderInterface
+    ListenerAggregateInterface,
+    InputFilterProviderInterface
 {
 
      use CsrfElementCreationTrait;
@@ -78,6 +79,11 @@ class EventForm extends ZendForm implements
      */
     private $is_electronic = false;
 
+    /**
+     * interpreters existing when entity was loaded
+     *
+     * @var array
+     */
     private $interpreters_before;
 
     /**
@@ -89,6 +95,11 @@ class EventForm extends ZendForm implements
         $this->is_electronic = $bool;
     }
 
+    /**
+     * whether event was submitted online
+     *
+     * @return boolean
+     */
     public function isElectronic()
     {
         return $this->is_electronic;
@@ -161,7 +172,8 @@ class EventForm extends ZendForm implements
         // prevent Doctrine from wasting an update
         $this->filterDateTimeFields(
             ['date','time','end_time','submission_date','submission_time'],
-            $event,'event'
+            $event,
+            'event'
         );
 
         // if the source of this Event was a Request, the metadata -- who
@@ -248,11 +260,10 @@ class EventForm extends ZendForm implements
         if ($this->isElectronic()) {
             $inputFilter = $this->getInputFilter()->get('event');
             foreach (['submitter','submission_date','submission_time',
-                    'anonymousSubmitter'] as $element_name)
-            {
+                    'anonymousSubmitter'] as $element_name) {
                 $inputFilter->remove($element_name);
                 $element = $fieldset->get($element_name);
-                $element->setAttribute('disabled','disabled');
+                $element->setAttribute('disabled', 'disabled');
             }
         }
         // seems like BULLSHIT to have to do quite so much work here.

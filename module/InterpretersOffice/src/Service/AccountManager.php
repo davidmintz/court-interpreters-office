@@ -668,7 +668,8 @@ class AccountManager implements LoggerAwareInterface
         $session->getManager()->getStorage()->clear();
         $log->info(sprintf(
             '%s: we have reset password for user %s',
-            __CLASS__, $user->getPerson()->getEmail()
+            __CLASS__,
+            $user->getPerson()->getEmail()
         ));
 
         return true;

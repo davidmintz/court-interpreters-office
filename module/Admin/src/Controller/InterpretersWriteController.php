@@ -291,14 +291,19 @@ class InterpretersWriteController extends AbstractActionController
         return $helper;
     }
 
+    /**
+     * deletes an interpreter entity
+     *
+     * @return JsonModel
+     */
     public function deleteAction()
     {
         $id = $this->params()->fromRoute('id');
         $what = "interpreter";
         $name = $this->params()->fromPost('name');
-        $entity = $this->entityManager->find(Entity\Interpreter::class,$id);
-        
-        return $this->delete(compact('entity','what','name','id'));
+        $entity = $this->entityManager->find(Entity\Interpreter::class, $id);
+
+        return $this->delete(compact('entity', 'what', 'name', 'id'));
     }
 
      /**

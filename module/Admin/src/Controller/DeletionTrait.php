@@ -58,8 +58,10 @@ trait DeletionTrait
             } catch (\Exception $e) {
                 $result = 'error';
                 $redirect = false;
-                $this->events->trigger('error',
-                    ['details'=>"trying to delete $what"]);
+                $this->events->trigger(
+                    'error',
+                    ['details' => "trying to delete $what"]
+                );
                 $error = ['message' =>
                     "Sorry, we hit an unexpected system error.",
                     'code' => $e->getCode(),

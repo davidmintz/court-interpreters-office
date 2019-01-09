@@ -43,7 +43,6 @@ class RequestsControllerFactory implements FactoryInterface
         $auth = $container->get('auth');
 
         if ($requestedName == Controller\WriteController::class) {
-
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
             // add Doctine entity listeners
@@ -58,22 +57,27 @@ class RequestsControllerFactory implements FactoryInterface
             // add another ACL rule
             $acl = $container->get('acl');
             $controller = new $requestedName($entityManager, $auth, $acl);
-            $user = $entityManager->find('InterpretersOffice\Entity\User',
-                $auth->getIdentity()->id);
-            $acl->allow($user, $controller, ['update','cancel'],
-                new ModificationAuthorizedAssertion($controller));
+            $user = $entityManager->find(
+                'InterpretersOffice\Entity\User',
+                $auth->getIdentity()->id
+            );
+            $acl->allow(
+                $user,
+                $controller,
+                ['update','cancel'],
+                new ModificationAuthorizedAssertion($controller)
+            );
 
             // experimental. let the UpdateListener trigger an event
             $eventManager = $container->get('SharedEventManager');
 
-            $eventManager->attach(Listener\UpdateListener::class,'*',function($e) use ($container) {
+            $eventManager->attach(Listener\UpdateListener::class, '*', function ($e) use ($container) {
                 $container->get('log')->debug(
                     "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
                 );
                 /** @var ScheduleUpdateManager $updateManager */
                 $updateManager = $container->get(ScheduleUpdateManager::class);
                 $updateManager->onUpdateRequest($e);
-
             });
 
             return $controller;

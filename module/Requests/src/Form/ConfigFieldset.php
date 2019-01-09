@@ -28,17 +28,17 @@ class ConfigFieldset extends Fieldset implements InputFilterProviderInterface
         parent::__construct($name, $options);
         $config = $options['config'];
         foreach ($config as $name => $value) {
-            $label = explode('.',$name)[2];
+            $label = explode('.', $name)[2];
             $this->add(
                 [
                     'type' => 'checkbox',
                     'name' => $name,
                     'attributes' => [
-                        'class'=> 'form-check-input',
+                        'class' => 'form-check-input',
                         'id'   => $name,
                     ],
                     'options' => [
-                        'label' => str_replace('-',' ',$label),
+                        'label' => str_replace('-', ' ', $label),
                         'use_hidden_element' => true,
                         'checked_value' => 1,
                         'unchecked_value' => 0,

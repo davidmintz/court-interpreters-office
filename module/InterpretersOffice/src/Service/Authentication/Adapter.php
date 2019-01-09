@@ -116,11 +116,14 @@ class Adapter extends AbstractAdapter
     protected function createAuthenticationResult()
     {
         if (! isset($this->authenticationResultInfo['identity'])) {
-            return new Result($this->authenticationResultInfo['code'], null,
-                $this->authenticationResultInfo['messages']);
+            return new Result(
+                $this->authenticationResultInfo['code'],
+                null,
+                $this->authenticationResultInfo['messages']
+            );
         }
         /** @var \InterpretersOffice\Entity\User $entity */
-        $entity = $this->authenticationResultInfo['identity'];        
+        $entity = $this->authenticationResultInfo['identity'];
         $user = new \stdClass();
         $judges = $entity->getJudges();
         $user->judge_ids = [];

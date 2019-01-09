@@ -117,7 +117,8 @@ class LanguagesController extends AbstractActionController
             $this->entityManager->flush();
             $this->flashMessenger()
                   ->addSuccessMessage(
-                    "The language <strong>$entity</strong> has been updated.");
+                      "The language <strong>$entity</strong> has been updated."
+                  );
             $this->redirect()->toRoute('languages');
         }
 

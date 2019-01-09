@@ -122,8 +122,10 @@ class DefendantsController extends AbstractActionController
                     $viewModel->setVariables(['duplicate_entry_error' => true,
                             'existing_entity' => $existing_entity]);
             } catch (\Exception $e) {
-                return $this->catch($e,
-                ['details'=>'running defendant name update']);
+                return $this->catch(
+                    $e,
+                    ['details' => 'running defendant name update']
+                );
             }
         }
 
@@ -158,7 +160,7 @@ class DefendantsController extends AbstractActionController
             $viewModel->setTerminal(true)->setVariables(['xhr' => true]);
         }
         $form = new DefendantForm($this->entityManager, ['action' => 'update']);
-        $form->setAttribute('action',$this->getRequest()->getUriString());
+        $form->setAttribute('action', $this->getRequest()->getUriString());
         $entity = $this->entityManager->find(Entity\Defendant::class, $id);
         if (! $entity) {
             $message = "A defendant name with id $id was not found in the database.";
@@ -243,7 +245,7 @@ class DefendantsController extends AbstractActionController
              return new JsonModel(['error' => 'database record not found. ']);
         }
         $form = new DefendantForm($this->entityManager, ['action' => 'update']);
-        $form->setAttribute('action',$this->getRequest()->getUriString());
+        $form->setAttribute('action', $this->getRequest()->getUriString());
         $form->bind($entity)->setData($request->getPost());
         if (! $form->isValid()) {
             return new JsonModel(['validation_errors' => $form->getMessages()]);
@@ -268,7 +270,7 @@ class DefendantsController extends AbstractActionController
                 ]
              ]);
         } catch (\Exception $e) {
-            $this->catch($e,['details'=>'attempting defendant name update']);
+            $this->catch($e, ['details' => 'attempting defendant name update']);
         }
     }
 

@@ -9,7 +9,6 @@ use InterpretersOffice\Entity\Person;
 
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
-
 /**
  * Request -- entity representing a request for interpreting services
  *
@@ -718,7 +717,7 @@ class Request implements ResourceInterface
     public function getExtraData()
     {
         return $this->extraData ?
-            json_decode($this->extraData,\JSON_OBJECT_AS_ARRAY) : null;
+            json_decode($this->extraData, \JSON_OBJECT_AS_ARRAY) : null;
     }
 
     /**

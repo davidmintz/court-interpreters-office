@@ -4,18 +4,27 @@ namespace InterpretersOffice\Controller;
 
 use Zend\View\Model\JsonModel;
 
-/**  handle controller action exceptions */
+/**
+ * trait for exception-handling in controllers
+ */
 trait ExceptionHandlerTrait
 {
+    /**
+     * exception handler for xhr requests
+     *
+     * @param  Throwable $e
+     * @param  array     $options
+     * @return JsonModel
+     */
     public function catch(\Throwable $e, $options = [])
     {
 
-        $details = isset($options['details']) ? $options['details'] :'[none]';
-        $this->events->trigger('error',$this,['exception'=>$e,
-            'details'=>$details
+        $details = isset($options['details']) ? $options['details'] : '[none]';
+        $this->events->trigger('error', $this, ['exception' => $e,
+            'details' => $details
         ]);
         $this->getResponse()->setStatusCode(500);
 
-        return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
+        return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
     }
 }

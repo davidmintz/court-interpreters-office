@@ -73,7 +73,7 @@ class Interpreter extends Person
      * @ORM\Column(type="date",name="fingerprint_date",nullable=true)
      * @var \DateTime
      */
-     protected $fingerprintDate;
+    protected $fingerprintDate;
 
     /**
      * date interpreters' oath was administered

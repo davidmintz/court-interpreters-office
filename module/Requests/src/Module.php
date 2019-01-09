@@ -21,6 +21,12 @@ class Module
         return include __DIR__.'/../config/module.config.php';
     }
 
+    /**
+     * onBootstrap event listener
+     *
+     * @param  ZendEventManagerEventInterface $event
+     * @return void
+     */
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
@@ -43,22 +49,25 @@ class Module
         $sharedEvents->attach(
             'InterpretersOffice\Admin\Controller\EventsController',
             'pre.populate',
-            function($e) use ($log, $em){
+            function ($e) use ($log, $em) {
 
                 $entity_id = $e->getParams()['entity']->getId();
                 $request = $em->createQuery(
                     'SELECT r.id FROM '. Entity\Request::class
-                    . ' r JOIN r.event e WHERE e.id = :event_id')
-                    ->setParameters([':event_id'=>$entity_id])
+                    . ' r JOIN r.event e WHERE e.id = :event_id'
+                )
+                    ->setParameters([':event_id' => $entity_id])
                     ->getOneOrNullResult();
                 if ($request) {
                     $form = $e->getParams()['form'];
                     $form->setElectronic(true);
                     $log->debug(sprintf(
-                        'set shit = TRUE in "pre.populate" event listener in %s',__CLASS__
+                        'set shit = TRUE in "pre.populate" event listener in %s',
+                        __CLASS__
                     ));
                 }
-            },200
+            },
+            200
         );
     }
 }

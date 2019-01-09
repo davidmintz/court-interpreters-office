@@ -102,7 +102,9 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         LifecycleEventArgs $args
     ) {
         $this->getEventManager()->trigger(
-            __FUNCTION__, $this, compact('args', 'entity')
+            __FUNCTION__,
+            $this,
+            compact('args', 'entity')
         );
     }
 
@@ -112,11 +114,14 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @param Entity\Event $entity
      * @param LifecycleEventArgs $args
      */
-    public function postRemove(Entity\Event $entity,
-        LifecycleEventArgs $args)
-    {
+    public function postRemove(
+        Entity\Event $entity,
+        LifecycleEventArgs $args
+    ) {
         $this->getEventManager()->trigger(
-            __FUNCTION__, $this, compact('args', 'entity')
+            __FUNCTION__,
+            $this,
+            compact('args', 'entity')
         );
     }
     /**
@@ -131,22 +136,21 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @param  PreUpdateEventArgs $args
      * @return boolean
      */
-    private function reallyModified(Entity\Event $entity,
-        PreUpdateEventArgs $args)
-    {
+    private function reallyModified(
+        Entity\Event $entity,
+        PreUpdateEventArgs $args
+    ) {
 
         $fields_updated = array_keys($args->getEntityChangeSet());
         $this->logger->debug(__METHOD__.": looks like updates to:\n"
-            . implode('; ',$fields_updated)
-        );
+            . implode('; ', $fields_updated));
         if ($fields_updated) {
             return true;
         }
         $interpreterEvents = $entity->getInterpreterEvents()->toArray();
         if ($interpreterEvents != $this->previous_interpreters) {
             $this->logger->debug(__METHOD__.":  interpreters were updated "
-            . "; (there are now {count($interpreterEvents)})"
-            );
+            . "; (there are now {count($interpreterEvents)})");
             return true;
         }
 
@@ -172,7 +176,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         PreUpdateEventArgs $args
     ) {
 
-        if ($this->reallyModified($entity,$args)) {
+        if ($this->reallyModified($entity, $args)) {
             $entity->setModified($this->now);
             $entity->setModifiedBy($this->getAuthenticatedUser($args));
         }

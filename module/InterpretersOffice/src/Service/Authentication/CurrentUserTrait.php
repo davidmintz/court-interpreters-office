@@ -28,7 +28,9 @@ trait CurrentUserTrait
      */
     public function getAuthenticatedUser(LifecycleEventArgs $args)
     {
-        if (! $this->auth) { return null; }
+        if (! $this->auth) {
+            return null;
+        }
         if (! $this->user) {
             $em = $args->getObjectManager();
             $id = $this->auth->hasIdentity() ? $this->auth->getIdentity()->id :
@@ -37,7 +39,8 @@ trait CurrentUserTrait
                 return null;
             }
             $this->user = $em->createQuery(
-            'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id')
+                'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id'
+            )
                 ->setParameters(['id' => $id])
                 ->useResultCache(true)->getOneOrNullResult();
         }
@@ -60,7 +63,7 @@ trait CurrentUserTrait
         $em = $args->getObjectManager();
         $person_id = $this->auth->getIdentity()->person_id;
         $dql = 'SELECT p FROM InterpretersOffice\Entity\Person p WHERE p.id = :person_id';
-        $person = $em->createQuery($dql)->setParameters([':person_id'=>$person_id])
+        $person = $em->createQuery($dql)->setParameters([':person_id' => $person_id])
             ->useResultCache(true)->getOneOrNullResult();
 
         return $person;

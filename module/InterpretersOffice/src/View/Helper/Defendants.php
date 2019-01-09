@@ -36,7 +36,7 @@ class Defendants extends AbstractHelper
             if (! $defendants) {
                 return false;
             } else {
-                $data = ['defendants'=>$defendants];
+                $data = ['defendants' => $defendants];
             }
         }
         $this->defendants = $data['defendants'];

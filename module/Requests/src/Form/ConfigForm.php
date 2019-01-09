@@ -8,76 +8,60 @@ use Zend\Hydrator\ArraySerializable;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Form\Form;
 
-
-
 /**
  * configure Requests module -- work in progress
  */
 class ConfigForm extends Form implements InputFilterProviderInterface
 {
+    /**
+     * constructor
+     */
     public function __construct()
     {
         parent::__construct('config-form');
         $this->init();
     }
 
+    /**
+     * config data for Request module event listeners
+     *
+     * @var array
+     */
     public $data;
 
+    /**
+     * initialization
+     *
+     * If they set a custom configuration, a custom.event-listeners.json is
+     * created. If they restore the defaults, it is deleted. Therefore, the
+     * existence of a custom.event-listeners.json means they are using it, hence
+     * it's the one to load.
+     *
+     * @return void
+     */
     public function init()
     {
         $basedir = 'module/Requests/config';
-        $prefix = file_exists("$basedir/custom.event-listeners.json") ?
+        $prefix = file_exists("$basedir/custom.event-listeners.json is") ?
             'custom' : 'default';
         $json = file_get_contents("$basedir/${prefix}.event-listeners.json");
-        $data  = json_decode($json,true);
+        $data  = json_decode($json, true);
         $this->data = $data;
         $this->setHydrator(new ArraySerializable());
         $this->setAllowedObjectBindingClass(ArrayObject::class);
         foreach ($data as $event_name => $event_array) {
-            $fieldset = new ConfigFieldset($event_name,['config'=>$event_array]);
+            $fieldset = new ConfigFieldset($event_name, ['config' => $event_array]);
             $this->add($fieldset);
         }
-
     }
 
+    /**
+     * gets  inputfilter specification
+     *
+     * @return Array
+     */
     public function getInputFilterSpecification()
     {
-
         return [];
-
     }
 }
-/*
-// garbage dump to be cleaned up later
-
-foreach ($data as $event_name => $event_array) {
-    foreach ($event_array as $event_type => $event_type_array) {
-        foreach ($event_type_array as $language => $action_array) {
-            foreach ($action_array as $action => $flag) {
-                $id = "$event_name.$event_type.$language.$action";
-                $element_name = "{$event_name}[{$event_type}.{$language}.{$action}]";
-                $attributes = [
-                    'class'=> 'form-check-input',
-                    'id'   => "$event_name.$event_type.$language.$action",
-                    //'checked' => 'checked',
-                ];
-                if ($flag) {
-                    $attributes['checked'] = 'checked';
-                }
-                $this->add([
-                    'type' => 'checkbox',
-                    'name' => $element_name,
-                    'attributes' => $attributes,
-                    'options' => [
-                        'label' => str_replace('-',' ',$action),
-                        'value' => $flag,
-                        'use_hidden_element' => true,
-                        'checked_value' => 1,
-                        'unchecked_value' => 0,
-                    ],
-                ]);
-            }
-        }
-    }
-}
-*/

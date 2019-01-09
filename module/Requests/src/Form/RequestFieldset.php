@@ -48,10 +48,11 @@ class RequestFieldset extends AbstractEventFieldset
     {
         parent::__construct($objectManager, $options);
         // sanity check
-        if (! key_exists('auth',$options) or ! $options['auth']
+        if (! key_exists('auth', $options) or ! $options['auth']
         instanceof \Zend\Authentication\AuthenticationServiceInterface ) {
             throw new \Exception(
-                "constructor options to RequestFieldset must include 'auth'");
+                "constructor options to RequestFieldset must include 'auth'"
+            );
         }
 
         // (re)set some element attributes
@@ -61,12 +62,12 @@ class RequestFieldset extends AbstractEventFieldset
 
         $language_element = $this->get('language');
         $opts = $language_element->getValueOptions();
-        $opts[0] = ['label' => '','value'=> ''];
+        $opts[0] = ['label' => '','value' => ''];
         $language_element->setValueOptions($opts);
 
         $event_type_element = $this->get('eventType');
         $opts = $event_type_element->getValueOptions();
-        array_unshift($opts, ['label' => ' ','value'=> '']);
+        array_unshift($opts, ['label' => ' ','value' => '']);
         $event_type_element->setValueOptions($opts);
 
         $this->addDefendantsElement();
@@ -121,7 +122,7 @@ class RequestFieldset extends AbstractEventFieldset
         $repo = $this->objectManager->getRepository(Entity\Location::class);
 
         $options = $repo->getLocationOptionsForHat($hat);
-        array_unshift($options, ['label' => ' ','value'=> '']);
+        array_unshift($options, ['label' => ' ','value' => '']);
         $this->add(
             [
             'type' => 'Zend\Form\Element\Select',
@@ -136,7 +137,7 @@ class RequestFieldset extends AbstractEventFieldset
         $this->add([
             'type' => 'textarea',
             'name' => 'comments',
-            'attributes' => ['id'=>'comments', 'class'=>'form-control',
+            'attributes' => ['id' => 'comments', 'class' => 'form-control',
                 'placeholder' => 'any noteworthy details or special instructions'
             ]
         ]);
@@ -154,7 +155,7 @@ class RequestFieldset extends AbstractEventFieldset
         $user = $this->options['auth']->getIdentity();
         $repo = $this->objectManager->getRepository(Entity\Judge::class);
         $options = $repo->getJudgeOptionsForUser($user);
-        array_unshift($options, ['label' => ' ','value'=> '']);
+        array_unshift($options, ['label' => ' ','value' => '']);
         $this->add(
             [
             'type' => 'Zend\Form\Element\Select',
@@ -164,7 +165,8 @@ class RequestFieldset extends AbstractEventFieldset
                 'value_options' => $options,
             ],
             'attributes' => ['class' => 'custom-select text-muted', 'id' => 'judge'],
-        ]);
+            ]
+        );
         //exit("wtf");
         return $this;
     }
@@ -189,12 +191,12 @@ class RequestFieldset extends AbstractEventFieldset
                                 'isEmpty' => 'time is required'
                             ],
                         ],
-                        'break_chain_on_failure'=>true,
+                        'break_chain_on_failure' => true,
                     ],
                     [
                         'name' => 'Callback',
                         'options' => [
-                            'callback' => function($value){
+                            'callback' => function ($value) {
                                 try {
                                     new \DateTime("today $value");
                                     return true;
@@ -280,6 +282,6 @@ class RequestFieldset extends AbstractEventFieldset
             'options' => ['repository' => $this->objectManager
                 ->getRepository(Entity\CourtClosing::class)]
         ];
-        return array_merge($this->inputFilterspec,$spec);
+        return array_merge($this->inputFilterspec, $spec);
     }
 }

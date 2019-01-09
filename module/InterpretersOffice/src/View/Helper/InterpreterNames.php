@@ -61,7 +61,7 @@ class InterpreterNames extends AbstractHelper
         }
         foreach ($this->interpreters[$id] as $n) {
             $return .=
-            sprintf($this->template,$n['id'],$n['lastname'],$n['firstname']);
+            sprintf($this->template, $n['id'], $n['lastname'], $n['firstname']);
         }
 
          return $return;

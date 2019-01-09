@@ -21,7 +21,6 @@ use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 
-
 /**
  * entity listener for clearing caches
  *
@@ -32,7 +31,9 @@ use Zend\EventManager\EventManagerAwareTrait;
  * triggered -- but neither prePersist nor postRemove events are triggered
  *
  */
-class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
+class UpdateListener implements
+    EventSubscriber,
+    Log\LoggerAwareInterface,
     EventManagerAwareInterface
 {
 
@@ -108,10 +109,10 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
      * @param  OnFlushEventArgs $args
      * @return void
      */
-    public function onFlush (OnFlushEventArgs $args ) {
-        
-        $this->getEventManager()->trigger( __FUNCTION__, $this, ['onFlushEventArgs' => $args]);
+    public function onFlush(OnFlushEventArgs $args)
+    {
 
+        $this->getEventManager()->trigger(__FUNCTION__, $this, ['onFlushEventArgs' => $args]);
     }
 
     /**
@@ -131,7 +132,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
                 get_class($args->getObject())
             )
         );
-        $this->clear_cache($args);
+        $this->clearCache($args);
     }
 
 
@@ -150,7 +151,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
                 get_class($args->getObject())
             )
         );
-        $this->clear_cache($args);
+        $this->clearCache($args);
     }
 
     /**
@@ -159,15 +160,17 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
      * @param LifecycleEventArgs $args
      * @return void
      */
-    private function clear_cache(LifecycleEventArgs $args)
+    private function clearCache(LifecycleEventArgs $args)
     {
         $class = get_class($args->getObject());
         $repository = $args->getEntityManager()->getRepository($class);
         if ($repository instanceof CacheDeletionInterface) {
             $repository->deleteCache();
             $this->logger->debug(
-                sprintf('cleared cache on CacheDeletionInterface instance %s',
-                    $class)
+                sprintf(
+                    'cleared cache on CacheDeletionInterface instance %s',
+                    $class
+                )
             );
         } else {
             $this->logger->debug(
@@ -193,7 +196,7 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
                 get_class($args->getObject())
             )
         );
-        $this->clear_cache($args);
+        $this->clearCache($args);
     }
 
     /**
@@ -209,7 +212,8 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
         if ($entity instanceof Entity\InterpreterEvent) {
             $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
             $this->logger->debug(
-            "set createdBy and timestamp on InterpreterEvent in ".__METHOD__);
+                "set createdBy and timestamp on InterpreterEvent in ".__METHOD__
+            );
         }
 
         $this->logger->debug(
@@ -220,6 +224,6 @@ class UpdateListener implements EventSubscriber, Log\LoggerAwareInterface,
                 get_class($args->getObject())
             )
         );
-        //$this->clear_cache($args);
+        //$this->clearCache($args);
     }
 }

@@ -51,22 +51,21 @@ class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
      * makes an element not required
      *
      * the witty name is a little joke. get it?
-     * 
+     *
      * @param  string $element_name  name of the element
      * @param  string $fieldset_name name of the fieldset
      * @return self
      */
-    public function deregulate($element_name = 'hat',$fieldset_name = null)
+    public function deregulate($element_name = 'hat', $fieldset_name = null)
     {
         if ($fieldset_name) {
             $input = $this->getInputFilter()->get($fieldset_name)
                 ->get($element_name);
         } else {
-            $input =  $this->getInputFilter()->get($element_name);
+            $input = $this->getInputFilter()->get($element_name);
         }
         $input->setRequired(false);
 
         return $this;
-
     }
 }

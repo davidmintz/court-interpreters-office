@@ -76,7 +76,6 @@ class DefendantsController extends AbstractActionController
         $view = new ViewModel($data);
 
         return $view->setTerminal(true)->setTemplate('partials/defendant');
-
     }
 
     /**
@@ -115,7 +114,7 @@ class DefendantsController extends AbstractActionController
             ]);
         }
 
-        return new JsonModel(['valid'=>true]);
+        return new JsonModel(['valid' => true]);
     }
 
     /**
@@ -133,23 +132,23 @@ class DefendantsController extends AbstractActionController
                 [
                     'name' => 'NotEmpty',
                     'options' => ['messages' => ['isEmpty' => 'given (first) name is required']],
-                    'break_chain_on_failure'=> true,
+                    'break_chain_on_failure' => true,
                 ],
                 [
                     'name' => 'StringLength',
-                    'options'=> [
-                        'min'=> 2,
-                        'max'=> 60,
+                    'options' => [
+                        'min' => 2,
+                        'max' => 60,
                         'messages' => [
                             'stringLengthTooShort' => 'minimum length is %min% characters',
                             'stringLengthTooLong' => 'maximum length is %max% characters',
                         ],
                     ],
-                    'break_chain_on_failure'=> true,
+                    'break_chain_on_failure' => true,
                 ],
                 [
                     'name' => ProperName::class,
-                    'options' =>['type' => 'first']
+                    'options' => ['type' => 'first']
                 ]
             ],
         ]);
@@ -160,23 +159,23 @@ class DefendantsController extends AbstractActionController
                 [
                     'name' => 'NotEmpty',
                     'options' => ['messages' => ['isEmpty' => 'surname (last name) is required']],
-                    'break_chain_on_failure'=> true,
+                    'break_chain_on_failure' => true,
                 ],
                 [
                     'name' => 'StringLength',
-                    'options'=> [
-                        'min'=> 2,
-                        'max'=> 60,
+                    'options' => [
+                        'min' => 2,
+                        'max' => 60,
                         'messages' => [
                             'stringLengthTooShort' => 'minimum length is %min% characters',
                             'stringLengthTooLong' => 'maximum length is %max% characters',
                         ],
                     ],
-                    'break_chain_on_failure'=> true,
+                    'break_chain_on_failure' => true,
                 ],
                 [
                     'name' => ProperName::class,
-                    'options' =>['type' => 'last']
+                    'options' => ['type' => 'last']
                 ]
             ],
         ]);

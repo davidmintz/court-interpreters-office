@@ -64,8 +64,10 @@ TEMPLATE;
             // 5 placeholders, yes somewhat excessive
             $markup .= sprintf(
                 $this->template,
-                $i, $interpreter->getId(),
-                $i, $event->getId(),
+                $i,
+                $interpreter->getId(),
+                $i,
+                $event->getId(),
                 $name
             );
         }

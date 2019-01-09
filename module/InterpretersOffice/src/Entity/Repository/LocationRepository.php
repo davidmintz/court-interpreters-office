@@ -251,10 +251,11 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         $dql = 'SELECT h.isJudgeStaff FROM InterpretersOffice\Entity\Hat h
         WHERE h.name = :hat';
         $is_judge_staff = $this->createQuery($dql)
-        ->setParameters(['hat'=>$hat])->getSingleScalarResult();
+        ->setParameters(['hat' => $hat])->getSingleScalarResult();
 
         $qb = $this->createQueryBuilder('l')->select(
-            'l.name AS label','l.id AS value, p.name AS parent'
+            'l.name AS label',
+            'l.id AS value, p.name AS parent'
         )->join('l.type', 't')->where('l.active = true');
 
         $data = [];
@@ -265,18 +266,17 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
                 ->andWhere("t.type = 'courtroom'");
             $result = $this->createQuery($qb->getDql())->getResult();
             // organize hierarchically by courthouse
-            $courthouses = array_unique(array_column($result,'parent'));
+            $courthouses = array_unique(array_column($result, 'parent'));
             sort($courthouses);
             foreach ($courthouses as $courthouse) {
-                $data[$courthouse] =  ['label' =>$courthouse, 'options' => []];
+                $data[$courthouse] = ['label' => $courthouse, 'options' => []];
             }
-            foreach($result as $location) {
+            foreach ($result as $location) {
                 $data[$location['parent']]['options'][] = [
                     'value' => $location['value'],
                     'label' => $location['label']
                 ];
             }
-
         } else {
             // probation or pretrial. jails, pretrial and probation offices
             $qb->addSelect('t.type')->leftJoin('l.parentLocation', 'p')
@@ -284,13 +284,13 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
             $result = $this->createQuery($qb->getDql())->getResult();
 
             // organize hierarchically by type of location
-            $types = array_unique(array_column($result,'type'));
+            $types = array_unique(array_column($result, 'type'));
 
             foreach ($types as $type) {
                 //$data[$type] = [];
-                $data[$type] = ['label' =>$type, 'options' => []];
+                $data[$type] = ['label' => $type, 'options' => []];
             }
-            foreach($result as $location) {
+            foreach ($result as $location) {
                 $data[$location['type']]['options'][] = [
                     'value' => $location['value'],
                     'label' => $location['parent'] ?
@@ -303,8 +303,8 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
         // to do: for Probation, stack the deck to make the more frequently used
         // come sooner in the order
         foreach (array_keys($data) as $group) {
-            usort($data[$group]['options'],function($a, $b){
-                return strnatcasecmp($a['label'],$b['label']);
+            usort($data[$group]['options'], function ($a, $b) {
+                return strnatcasecmp($a['label'], $b['label']);
             });
         }
 

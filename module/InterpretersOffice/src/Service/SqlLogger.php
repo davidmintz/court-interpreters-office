@@ -16,13 +16,13 @@ class SqlLogger implements SqlLoggerInterface
     {
         $this->log = $log;
     }
-    
+
     public function startQuery($sql, array $params = null, array $types = null)
     {
         $entry = $sql . PHP_EOL;
 
         if ($params) {
-            $entry .= print_r($params,true);
+            $entry .= print_r($params, true);
         }
 
         if ($types) {
@@ -38,5 +38,4 @@ class SqlLogger implements SqlLoggerInterface
     public function stopQuery()
     {
     }
-
 }

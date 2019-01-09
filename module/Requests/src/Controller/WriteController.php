@@ -70,9 +70,11 @@ class WriteController extends AbstractActionController implements ResourceInterf
      * @param AuthenticationServiceInterface $auth
      * @param Acl $acl
      */
-    public function __construct(ObjectManager $objectManager,
-        AuthenticationServiceInterface $auth, Acl $acl )
-    {
+    public function __construct(
+        ObjectManager $objectManager,
+        AuthenticationServiceInterface $auth,
+        Acl $acl
+    ) {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
         $this->acl = $acl;
@@ -120,17 +122,23 @@ class WriteController extends AbstractActionController implements ResourceInterf
     {
         $params = $this->params()->fromRoute();
 
-        if (in_array($params['action'],['update','cancel'])) {
-            $entity = $this->objectManager->find(Entity\Request::class,
-                $params['id']);
+        if (in_array($params['action'], ['update','cancel'])) {
+            $entity = $this->objectManager->find(
+                Entity\Request::class,
+                $params['id']
+            );
             if (! $entity) {
                 return parent::onDispatch($e);
             }
             $this->entity = $entity;
-            $user = $this->objectManager->find('InterpretersOffice\Entity\User',
-                $this->auth->getIdentity()->id);
+            $user = $this->objectManager->find(
+                'InterpretersOffice\Entity\User',
+                $this->auth->getIdentity()->id
+            );
             $allowed = $this->acl->isAllowed(
-                 $user, $this, $params['action']
+                $user,
+                $this,
+                $params['action']
             );
             if (! $allowed) {
                 $this->getResponse()->setStatusCode(403);
@@ -150,14 +158,14 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 $viewRenderer = $e->getApplication()->getServiceManager()
                 ->get('ViewRenderer');
                 $url  = $this->getPluginManager()->get('url')
-                ->fromRoute('requests/view',['id'=>$entity->getId()]);
+                ->fromRoute('requests/view', ['id' => $entity->getId()]);
                 $content = $viewRenderer->render(
                     (new ViewModel())->setTemplate('denied')->setVariables([
                         'message' =>
                         "$message this <a href=\"$url\">request</a>."])
-                    );
+                );
                     $viewModel = $e->getViewModel()
-                    ->setVariables(['content'=>$content]);
+                    ->setVariables(['content' => $content]);
 
                 return $this->getResponse()
                     ->setContent($viewRenderer->render($viewModel));
@@ -197,8 +205,10 @@ class WriteController extends AbstractActionController implements ResourceInterf
     public function createAction()
     {
         $view = new ViewModel();
-        $form = new Form\RequestForm($this->objectManager,
-            ['action'=>'create','auth'=>$this->auth]);
+        $form = new Form\RequestForm(
+            $this->objectManager,
+            ['action' => 'create','auth' => $this->auth]
+        );
         $view->form = $form;
         $entity = new Entity\Request();
         if (! $this->getRequest()->isPost()) {
@@ -206,7 +216,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
             if ($repeat_id) {
                 $repo = $this->objectManager
                     ->getRepository(Entity\Request::class)
-                    ->populate($entity,$repeat_id);
+                    ->populate($entity, $repeat_id);
             }
         }
         $form->bind($entity);
@@ -222,26 +232,26 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 $repo = $this->objectManager->getRepository(Entity\Request::class);
                 if ($repo->findDuplicate($entity)) {
                     return  new JsonModel(
-                    ['validation_errors'=> ['request' =>  ['duplicate'=>
+                        ['validation_errors' => ['request' => ['duplicate' =>
                         [
                         'there is already a request with this date, time,
                         judge, type of event, defendant(s), docket, and language'
-                    ]]]]);
+                        ]]]]
+                    );
                 }
                 $form->postValidate();
                 $this->objectManager->persist($entity);
                 $this->objectManager->flush();
                 $this->flashMessenger()->addSuccessMessage(
-                'Your request for interpreting services has been submitted. Thank you.'
+                    'Your request for interpreting services has been submitted. Thank you.'
                 );
-                return  new JsonModel(['status'=> 'success','id'=>$entity->getId()]);
-
+                return  new JsonModel(['status' => 'success','id' => $entity->getId()]);
             } catch (\Exception $e) {
                 $this->getResponse()->setStatusCode(500);
-                $this->events->trigger('error',$this,['exception'=>$e,
-                    'details'=>'doing create in Requests module']);
+                $this->events->trigger('error', $this, ['exception' => $e,
+                    'details' => 'doing create in Requests module']);
                 $this->getResponse()->setStatusCode(500);
-                return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
+                return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
             }
         }
 
@@ -260,14 +270,17 @@ class WriteController extends AbstractActionController implements ResourceInterf
         SELECT e FROM InterpretersOfficeEntityEvent e JOIN InterpretersOfficeRequestsEntityRequest r
         JOIN r.event re WITH e.id = re.id WHERE r.id = :id
          */
-        $entity = $this->objectManager->find(Entity\Request::class,$id);
+        $entity = $this->objectManager->find(Entity\Request::class, $id);
         if (! $entity) {
             $this->flashMessenger()->addErrorMessage(
-                "The request with id $id was not found in the database");
+                "The request with id $id was not found in the database"
+            );
             return $this->redirect()->toRoute('requests');
         }
-        $form = new Form\RequestForm($this->objectManager,
-            ['action'=>'update','auth'=>$this->auth]);
+        $form = new Form\RequestForm(
+            $this->objectManager,
+            ['action' => 'update','auth' => $this->auth]
+        );
         $form->bind($entity);
 
         if (! $this->getRequest()->isPost()) {
@@ -275,24 +288,26 @@ class WriteController extends AbstractActionController implements ResourceInterf
         }
         $data = $this->getRequest()->getPost()->get('request');
         $form->filterDateTimeFields(
-            ['date','time'],$data,'request'
+            ['date','time'],
+            $data,
+            'request'
         );
         $form->setData($this->getRequest()->getPost());
         if (! $form->isValid()) {
-            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+            return new JsonModel(['validation_errors' => $form->getMessages()]);
         }
         try {
             $form->postValidate();
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
-            'This request for interpreting services has been updated successfully. Thank you.'
+                'This request for interpreting services has been updated successfully. Thank you.'
             );
-            return new JsonModel(['status'=>'success']);
+            return new JsonModel(['status' => 'success']);
         } catch (\Exception $e) {
             $this->getResponse()->setStatusCode(500);
-            $this->events->trigger('error',$this,['exception'=>$e,
-                'details'=>'doing update in Requests module']);
-            return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
+            $this->events->trigger('error', $this, ['exception' => $e,
+                'details' => 'doing update in Requests module']);
+            return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
         }
     }
 
@@ -304,7 +319,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
     public function cancelAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->objectManager->find(Entity\Request::class,$id);
+        $entity = $this->objectManager->find(Entity\Request::class, $id);
         if ($entity) {
             try {
                 $entity->setCancelled(true);
@@ -319,13 +334,13 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 $this->flashMessenger()->addSuccessMessage($message);
                 return new JsonModel([
                     'status' => 'success',
-                    'id'=>$id,
+                    'id' => $id,
                 ]);
             } catch (\Exception $e) {
                 $this->getResponse()->setStatusCode(500);
-                $this->events->trigger('error',$this,['exception'=>$e,
-                    'details'=>'doing delete (cancel) in Requests module']);
-                return new JsonModel(['error'=>['message' => $e->getMessage(),]]);
+                $this->events->trigger('error', $this, ['exception' => $e,
+                    'details' => 'doing delete (cancel) in Requests module']);
+                return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
             }
         }
     }

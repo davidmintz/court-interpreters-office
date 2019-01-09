@@ -98,13 +98,15 @@ class ScheduleUpdateManager
     /**
      * constructor
      *
-     * @param LoggerInterface                $log
      * @param AuthenticationServiceInterface $auth
+     * @param LoggerInterface                $log
      * @param Array                          $config
      */
-    public function __construct(AuthenticationServiceInterface $auth,
-        LoggerInterface $log, Array $config)
-    {
+    public function __construct(
+        AuthenticationServiceInterface $auth,
+        LoggerInterface $log,
+        Array $config
+    ) {
         $this->logger = $log;
         $this->auth = $auth;
         $this->config = $config;
@@ -154,7 +156,8 @@ class ScheduleUpdateManager
         if (! $request) { // they submitted the form without changing entity props
             // or maybe it's an insert? a deletion?
             $this->logger->debug(
-                __METHOD__.": looks like NOT a request entity update, returning");
+                __METHOD__.": looks like NOT a request entity update, returning"
+            );
             return;
         }
             // not so fast!
@@ -177,20 +180,21 @@ class ScheduleUpdateManager
         $scheduled_event = $request->getEvent();
         if (! $scheduled_event) {
             $this->logger->debug(
-                __METHOD__.": request has no corresponding event, returning");
+                __METHOD__.": request has no corresponding event, returning"
+            );
             return;
         }
 
         $changeset = $uow->getEntityChangeSet($request);
         $user_action = $this->getUserAction($changeset);
         $this->user_action = $user_action;
-        $fields_modified = implode(', ',array_keys($changeset));
+        $fields_modified = implode(', ', array_keys($changeset));
         $this->logger->debug(
             "fields modified? ".($fields_modified ?: 'shit')
         );
 
         $this->logger->debug(
-            sprintf(__METHOD__.":\nuser action is '%s'  at %d",$user_action,__LINE__)
+            sprintf(__METHOD__.":\nuser action is '%s'  at %d", $user_action, __LINE__)
         );
         $num_collection_updates = count($uow->getScheduledCollectionUpdates());
         $num_collection_deletions = count($uow->getScheduledCollectionDeletions());
@@ -207,25 +211,24 @@ class ScheduleUpdateManager
             return $this->updateScheduledEvent($request, $args);
         }//(pattern: $pattern
         $type = (string)$request->getEventType()->getCategory()
-            == 'in' ? 'in-court':'out-of-court';
+            == 'in' ? 'in-court' : 'out-of-court';
         $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?
-             'spanish':'non-spanish';
+             'spanish' : 'non-spanish';
         $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
 
         // $this->logger->debug("pattern: $pattern; language $language; type $type");
         // $this->logger->debug(print_r($config,true));
 
         // figure out what admin actions are configured for $user_action
-        $actions = preg_grep($pattern,array_keys($config[$user_action]));
+        $actions = preg_grep($pattern, array_keys($config[$user_action]));
         if (! $actions) {
-
         }
 
         $filter = new DashToCamelCase();
         // and whether they are enabled
         foreach ($actions as $string) {
-            $i = strrpos($string,'.') + 1;
-            $action = substr($string,$i);
+            $i = strrpos($string, '.') + 1;
+            $action = substr($string, $i);
             $method = lcfirst($filter->filter($action));
             if ($config[$user_action][$string]) {
                 if (method_exists($this, $method)) {
@@ -248,7 +251,8 @@ class ScheduleUpdateManager
             $this->logger->debug("recomputing entity changeset for event id: "
                 .$scheduled_event->getId());
             $uow->recomputeSingleEntityChangeSet(
-                $em->getClassMetadata(get_class($scheduled_event)),$scheduled_event
+                $em->getClassMetadata(get_class($scheduled_event)),
+                $scheduled_event
             );
         }
 
@@ -265,14 +269,21 @@ class ScheduleUpdateManager
     protected function onCreateRequest(EventInterface $e)
     {
         $this->logger->debug(
-            sprintf('handling request create in %s at %d',__METHOD__,__LINE__)
+            sprintf('handling request create in %s at %d', __METHOD__, __LINE__)
         );
         $listener_config = $this->config['event_listeners'];
     }
+
+    /**
+     * listener for request-cancellation event
+     *
+     * @param  EventInterface $e
+     * @return void
+     */
     protected function onCancelRequest(EventInterface $e)
     {
         $this->logger->debug(
-            sprintf('handling request cancel in %s at %d',__METHOD__,__LINE__)
+            sprintf('handling request cancel in %s at %d', __METHOD__, __LINE__)
         );
     }
 
@@ -291,7 +302,8 @@ class ScheduleUpdateManager
         $this->logger->debug(
             sprintf(
                 __CLASS__ .': running %s with %s',
-                __FUNCTION__,  $e->getName()
+                __FUNCTION__,
+                $e->getName()
             )
         );
         switch ($e->getName()) {
@@ -348,10 +360,10 @@ class ScheduleUpdateManager
             'date','time','judge','language','eventType','docket','location'
         ];
         $updatable = array_intersect($props, array_keys($changeset));
-        $shit = print_r(array_keys($changeset),true);
+        $shit = print_r(array_keys($changeset), true);
         $this->logger->warn("what changed:\n$shit");
         if ($updatable) {
-            foreach($updatable as $prop) {
+            foreach ($updatable as $prop) {
                 $this->logger->debug(__METHOD__.": setting $prop on event entity");
                 // PHP methods and functions may be case-insensitive, but
                 // the gods will appreciate our workmanship and attention to
@@ -386,7 +398,9 @@ class ScheduleUpdateManager
                 $uow->scheduleForDelete($shit);
             }
             $this->logger->debug(__METHOD__.": we removed $n interpreters");
-        } else { $this->logger->debug(__METHOD__.": NO interpreters to remove ");}
+        } else {
+            $this->logger->debug(__METHOD__.": NO interpreters to remove ");
+        }
 
         return $this;
     }
@@ -412,8 +426,8 @@ class ScheduleUpdateManager
             $this->logger->debug("need to email: $email");
         }
 
-        $message = $this->createEmailMessage('<p>hi there</p>','hi there');
-        $this->logger->debug("we have created a ",get_class($message));
+        $message = $this->createEmailMessage('<p>hi there</p>', 'hi there');
+        $this->logger->debug("we have created a ", get_class($message));
 
         return $this;
     }
@@ -432,13 +446,13 @@ class ScheduleUpdateManager
     private function getUserAction(Array $changeset)
     {
         $fields = array_keys($changeset);
-        if (in_array('language',$fields)) {
+        if (in_array('language', $fields)) {
             return self::CHANGE_LANGUAGE;
         }
-        if (in_array('cancelled',$fields)) {
+        if (in_array('cancelled', $fields)) {
             return self::CANCEL;
         }
-        if (in_array('date',$fields)) {
+        if (in_array('date', $fields)) {
             $old_value = $changeset['date'][0]->format('Y-m-d');
             $new_value = $changeset['date'][1]->format('Y-m-d');
             if ($old_value != $new_value) {
@@ -446,20 +460,19 @@ class ScheduleUpdateManager
             }
         }
 
-        if (in_array('time',$fields)) {
+        if (in_array('time', $fields)) {
             // figure out if the change of time crosses am/pm boundary
             $old_value = $changeset['time'][0]->format('H');
             $new_value = $changeset['time'][1]->format('H');
             if (($old_value < 13 && $new_value >= 13)
                 or
-            ($old_value >= 13 && $new_value < 13))
-            {
+            ($old_value >= 13 && $new_value < 13)) {
                 return self::CHANGE_TIME_X_PM;
             } else {
                 return self::CHANGE_TIME_WITHIN_AM_PM;
             }
         }
 
-        return SELF::OTHER;
+        return self::OTHER;
     }
 }

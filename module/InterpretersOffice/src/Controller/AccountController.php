@@ -273,7 +273,8 @@ class AccountController extends AbstractActionController
         if ($valid) {
             $this->accountManager->purge($hashed_id);
             $result = $this->accountManager->resetPassword(
-                $session, $filter->get('password')->getValue()
+                $session,
+                $filter->get('password')->getValue()
             );
             /** @todo if $result == false, deal with it -- even though it should
             * work if they get this far

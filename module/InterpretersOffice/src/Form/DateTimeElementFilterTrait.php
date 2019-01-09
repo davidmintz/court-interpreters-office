@@ -5,6 +5,11 @@ namespace InterpretersOffice\Form;
 
 use Zend\Filter\Word\UnderscoreToCamelCase;
 
+/**
+ * Trait for removing date/time input elements whose values have
+ * not changed
+ *
+ */
 trait DateTimeElementFilterTrait
 {
     /**
@@ -22,7 +27,7 @@ trait DateTimeElementFilterTrait
      * @todo maybe make date/time formats settable, whether as an additional
      * option to pass in, or as a member variable. currently they are hard-coded.
      */
-    public function filterDateTimeFields(array $fieldNames,$input,$fieldsetName)
+    public function filterDateTimeFields(array $fieldNames, $input, $fieldsetName)
     {
         $filter = new UnderscoreToCamelCase();
         foreach ($fieldNames as $prop) {
@@ -47,8 +52,4 @@ trait DateTimeElementFilterTrait
 
         return $this;
     }
-
-
-
-
 }

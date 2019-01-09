@@ -25,6 +25,7 @@ class ScheduleUpdateManagerFactory implements FactoryInterface
         return new ScheduleUpdateManager(
             $container->get('auth'),
             $container->get('log'),
-            $container->get('config'));
+            $container->get('config')
+        );
     }
 }

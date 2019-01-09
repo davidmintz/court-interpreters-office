@@ -81,7 +81,7 @@ class RequestForm extends ZendForm
         if ($this->get('request')->has('extra_defendants')) {
             $names = $this->get('request')->get('extra_defendants')->getValue();
             if ($names) {
-                $entity->setExtraData(['defendants'=>$names]);
+                $entity->setExtraData(['defendants' => $names]);
             } else {
                 // if there's anything there, remove it
                 if ($entity->getExtraData()) {
@@ -92,6 +92,4 @@ class RequestForm extends ZendForm
 
         return $this;
     }
-
-
 }

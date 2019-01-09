@@ -59,11 +59,11 @@ class IndexController extends AbstractActionController //implements ResourceInte
      *
      * @param ObjectManager $objectManager
      * @param AuthenticationServiceInterface $auth
-     * @param Acl $acl
      */
-    public function __construct(ObjectManager $objectManager,
-        AuthenticationServiceInterface $auth)
-    {
+    public function __construct(
+        ObjectManager $objectManager,
+        AuthenticationServiceInterface $auth
+    ) {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
         $this->session = new \Zend\Session\Container("requests");
@@ -112,10 +112,9 @@ class IndexController extends AbstractActionController //implements ResourceInte
         $id = $this->params()->fromRoute('id');
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         return [
-            'data'=> $repository->view($id),
-            'deadline'=>  $this->getTwoBusinessDaysFromDate(),
+            'data' => $repository->view($id),
+            'deadline' => $this->getTwoBusinessDaysFromDate(),
         ];
-
     }
 
     /**
@@ -153,16 +152,16 @@ class IndexController extends AbstractActionController //implements ResourceInte
             $page = $this->session->list_page ?: 1;
         }
         $defendants = [];
-        $paginator = $repo->list($this->auth->getIdentity(),$page);
+        $paginator = $repo->list($this->auth->getIdentity(), $page);
         if ($paginator) {
             $data = $paginator->getCurrentItems()->getArrayCopy();
             // wish we were kidding, but...
-            $ids = array_column(array_column($data,0),'id');
+            $ids = array_column(array_column($data, 0), 'id');
             $defendants = $repo->getDefendants($ids);
         }
         $deadline = $this->getTwoBusinessDaysFromDate();
         //echo $deadline->format("Y-m-d");
-        $view = new ViewModel(compact('paginator','defendants','deadline'));
+        $view = new ViewModel(compact('paginator', 'defendants', 'deadline'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());
 
         return $view;

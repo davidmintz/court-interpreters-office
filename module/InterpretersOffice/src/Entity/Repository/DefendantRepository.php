@@ -274,14 +274,17 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 //'existing_entity' => (string)$existing_name,
                 'existing_entity' => [
                     'given_names' => $existing_name->getGivenNames(),
-                    'surnames'   =>  $existing_name->getSurnames(),
+                    'surnames'   => $existing_name->getSurnames(),
                 ],
                 'update_type' => $GLOBAL_OR_PARTIAL
             ];
         }
         $logger->debug(sprintf(
             'in %s at %d match is %s, update is %s',
-            __CLASS__,  __LINE__, $MATCH ?: 'false', $GLOBAL_OR_PARTIAL
+            __CLASS__,
+            __LINE__,
+            $MATCH ?: 'false',
+            $GLOBAL_OR_PARTIAL
         ));
         $result = [ 'match' => $MATCH,'update_type' => $GLOBAL_OR_PARTIAL,
             'events_affected' => 0 ];
@@ -369,16 +372,20 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                     $db = $em->getConnection();
                     $db->executeUpdate(
                         'INSERT INTO defendant_names (given_names,surnames)
-                        VALUES (?,?)',[$defendant->getGivenNames(),$defendant->getSurNames()]);
+                        VALUES (?,?)',
+                        [$defendant->getGivenNames(),$defendant->getSurNames()]
+                    );
                     $result['insert_id'] = $db->lastInsertId();
                     $sql = 'UPDATE defendants_events SET defendant_id = ?
                         WHERE defendant_id = ? AND event_id IN (?)';
-                    $result['events_affected'] = $db->executeUpdate($sql,
+                    $result['events_affected'] = $db->executeUpdate(
+                        $sql,
                         [$result['insert_id'], $defendant->getId(),
-                        array_column($event_ids,'id')],
+                        array_column($event_ids, 'id')],
                         [
                             null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY
-                        ]);
+                        ]
+                    );
                     $logger->debug('no existing match, we created new defendant name at line '.__LINE__);
                     break;
 
@@ -390,14 +397,16 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                     }
                 // no break
                 case 'literal':
-                $sql = 'UPDATE defendants_events SET defendant_id = ?
+                    $sql = 'UPDATE defendants_events SET defendant_id = ?
                     WHERE defendant_id = ? AND event_id IN (?)';
-                $result['events_affected'] = $db->executeUpdate($sql,
-                    [$existing_name->getId(), $defendant->getId(),
-                    array_column($event_ids,'id')],
-                    [
+                    $result['events_affected'] = $db->executeUpdate(
+                        $sql,
+                        [$existing_name->getId(), $defendant->getId(),
+                        array_column($event_ids, 'id')],
+                        [
                         null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY
-                    ]);
+                        ]
+                    );
                     $logger->debug("running partial update with literal match");
                     if (! $defendant->hasRelatedEntities()) {
                         $logger->debug("no related entities for $defendant at ".__LINE__);
@@ -416,7 +425,6 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                     'status' => 'success',
                     'deft_events_updated' => $result['events_affected'],
                 ]);
-
             } catch (\Exception $e) {
                 return array_merge($result, [
                     'status' => 'error',

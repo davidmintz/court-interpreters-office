@@ -11,6 +11,10 @@ use Zend\View\Helper\AbstractHelper;
 class ErrorMessage extends AbstractHelper
 {
 
+    /**
+     * html template
+     * @var string
+     */
     protected $template = <<<EOT
     <div class="alert alert-warning alert-dismissible border shadow-sm mx-auto" id="error-div" style="max-width:600px;%s">
         <h3>system error</h3>
@@ -28,9 +32,11 @@ EOT;
      */
     public function __invoke($message = null)
     {
-        $html = sprintf($this->template,
+        $html = sprintf(
+            $this->template,
             $message ? '' : 'display:none',
-            $message ?: '');
+            $message ?: ''
+        );
 
         return $html;
     }

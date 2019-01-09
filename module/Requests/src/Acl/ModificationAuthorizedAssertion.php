@@ -31,7 +31,6 @@ class ModificationAuthorizedAssertion implements AssertionInterface
     public function __construct(AbstractActionController $controller)
     {
         $this->controller = $controller;
-
     }
 
     /**
@@ -43,9 +42,12 @@ class ModificationAuthorizedAssertion implements AssertionInterface
      * @param  string $privilege
      * @return boolean
      */
-    public function assert(Acl $acl, RoleInterface $user = null,
-        ResourceInterface $controller = null, $privilege = null)
-    {
+    public function assert(
+        Acl $acl,
+        RoleInterface $user = null,
+        ResourceInterface $controller = null,
+        $privilege = null
+    ) {
 
         $log = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
         // test ownership
@@ -71,9 +73,12 @@ class ModificationAuthorizedAssertion implements AssertionInterface
      * @param  string $privilege
      * @return boolean
      */
-    public function assertOwnership(Acl $acl, RoleInterface $user = null,
-        ResourceInterface $controller = null, $privilege = null)
-    {
+    public function assertOwnership(
+        Acl $acl,
+        RoleInterface $user = null,
+        ResourceInterface $controller = null,
+        $privilege = null
+    ) {
         $hat = $user->getPerson()->getHat();
         $request  = $controller->getEntity();
         $identity = $controller->getIdentity();
@@ -81,7 +86,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
             // the Judge property of this Request entity
             // has to be among the User's judges
             $request_judge_id = $request->getJudge()->getId();
-            if (! in_array($request_judge_id,$identity->judge_ids)) {
+            if (! in_array($request_judge_id, $identity->judge_ids)) {
                 return false;
             }
             // it has to be an in-court event
@@ -106,9 +111,12 @@ class ModificationAuthorizedAssertion implements AssertionInterface
      * @param  string $privilege
      * @return boolean
      */
-    public function assertTimeliness(Acl $acl, RoleInterface $user = null,
-        ResourceInterface $controller = null, $privilege = null)
-    {
+    public function assertTimeliness(
+        Acl $acl,
+        RoleInterface $user = null,
+        ResourceInterface $controller = null,
+        $privilege = null
+    ) {
 
         $now = new \DateTime();
         $deadline = $controller->getTwoBusinessDaysFromDate($now);
@@ -123,5 +131,4 @@ class ModificationAuthorizedAssertion implements AssertionInterface
         // ));
         return $request_date > $deadline;
     }
-
 }

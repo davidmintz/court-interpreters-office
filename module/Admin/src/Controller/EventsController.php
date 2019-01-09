@@ -148,12 +148,16 @@ class EventsController extends AbstractActionController
             $data = $request->getPost();
             $input = $data->get('event');
             $form->bind($event);
-            $this->getEventManager()->trigger('pre.validate', $this,
-                ['input' => $data,]);
+            $this->getEventManager()->trigger(
+                'pre.validate',
+                $this,
+                ['input' => $data,]
+            );
             $form->setData($data);
             if (! $form->isValid()) {
                 return new JsonModel(
-                    ['validation_errors' => $form->getMessages()]);
+                    ['validation_errors' => $form->getMessages()]
+                );
             }
             $this->entityManager->persist($event);
             $this->entityManager->flush();
@@ -161,18 +165,17 @@ class EventsController extends AbstractActionController
             ->get('ViewHelperManager')->get('url')('events');
             $date = $event->getDate();
             $this->flashMessenger()->addSuccessMessage(sprintf(
-            'This event has been added to the schedule for <a href="%s">%s</a>',
-                $url . $date->format('/Y/m/d'), $date->format('l d-M-Y')
+                'This event has been added to the schedule for <a href="%s">%s</a>',
+                $url . $date->format('/Y/m/d'),
+                $date->format('l d-M-Y')
             ));
 
             return new JsonModel(
-                ['status' => 'success','id' => $event->getId()]);
-
+                ['status' => 'success','id' => $event->getId()]
+            );
         } catch (\Exception $e) {
-
             return $this->catch($e);
         }
-
     }
 
     /**
@@ -194,9 +197,12 @@ class EventsController extends AbstractActionController
         $modified_before = $entity->getModified()->format('Y-m-d h:i:s');
         $form->bind($entity);
         $date = $entity->getDate();
-        $events->trigger('pre.populate', $this,
-            ['entity' => $entity, 'form'=> $form]);
-        if ( $this->getRequest()->isGet()) {
+        $events->trigger(
+            'pre.populate',
+            $this,
+            ['entity' => $entity, 'form' => $form]
+        );
+        if ($this->getRequest()->isGet()) {
             return $view;
         }
         $events->trigger('pre.validate', $this);
@@ -204,7 +210,8 @@ class EventsController extends AbstractActionController
         try {
             if (! $form->isValid()) {
                 return new JsonModel(
-                    ['validation_errors' => $form->getMessages()]);
+                    ['validation_errors' => $form->getMessages()]
+                );
             }
             $events->trigger('post.validate', $this);
             $this->entityManager->flush();
@@ -220,12 +227,14 @@ class EventsController extends AbstractActionController
             $this->flashMessenger()->addSuccessMessage(sprintf(
                 "This event has been successfully $verbiage on the "
                 .'schedule for <a href="%s">%s</a>',
-                $url . $date->format('/Y/m/d'), $date->format('l d-M-Y'))
-            );
+                $url . $date->format('/Y/m/d'),
+                $date->format('l d-M-Y')
+            ));
 
             return new JsonModel(['status' => 'success', 'id' => $id]);
-
-        } catch (\Exception $e) { return $this->catch($e); }
+        } catch (\Exception $e) {
+            return $this->catch($e);
+        }
     }
 
     /**
@@ -370,11 +379,12 @@ class EventsController extends AbstractActionController
                         'event',
                     ]
                 ],
-            ]);
+                ]);
             $form->setData($this->getRequest()->getPost());
             if (! $form->isValid()) {
                 return new JsonModel(
-                    ['validation_errors' => $form->getMessages()]);
+                    ['validation_errors' => $form->getMessages()]
+                );
             }
             $this->entityManager->flush();
             $collection = $entity->getInterpreterEvents();
@@ -383,12 +393,16 @@ class EventsController extends AbstractActionController
                 ->template;
             foreach ($collection as $ie) {
                 $i = $ie->getInterpreter();
-                $html .= sprintf($template,$i->getId(), $i->getLastname(),
-                    $i->getFirstname());
+                $html .= sprintf(
+                    $template,
+                    $i->getId(),
+                    $i->getLastname(),
+                    $i->getFirstname()
+                );
             }
             return new JsonModel([
                 'status' => 'success',
-                'html' => $html,                
+                'html' => $html,
             ]);
         }
     }

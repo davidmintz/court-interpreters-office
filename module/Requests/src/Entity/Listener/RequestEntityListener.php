@@ -14,6 +14,7 @@ use Zend\Log;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 use Doctrine\ORM\EntityManager;
+
 //use Doctrine\Common\EventSubscriber;
 /**
  * Request entity listener.
@@ -61,7 +62,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      * @param Entity\Request $request
      * @param LifecycleEventArgs $args
      */
-    public function postLoad(Entity\Request $request,LifecycleEventArgs $args)
+    public function postLoad(Entity\Request $request, LifecycleEventArgs $args)
     {
 
         // $log = $this->getLogger();
@@ -76,7 +77,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      * @param  LifecycleEventArgs $args
      * @return void
      */
-    public function prePersist(Entity\Request $request,LifecycleEventArgs $args)
+    public function prePersist(Entity\Request $request, LifecycleEventArgs $args)
     {
         $now = new \DateTime();
         $user = $this->getAuthenticatedUser($args);
@@ -98,10 +99,13 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      * @param  LifecycleEventArgs $args
      * @return void
      */
-    public function postPersist(Entity\Request $request,LifecycleEventArgs $args)
+    public function postPersist(Entity\Request $request, LifecycleEventArgs $args)
     {
-        $this->getEventManager()->trigger('create',$this,
-            ['args'=>$args,'entity'=>$request]);
+        $this->getEventManager()->trigger(
+            'create',
+            $this,
+            ['args' => $args,'entity' => $request]
+        );
     }
 
 
@@ -113,13 +117,13 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      * @param  Entity\Request $request
      * @param  PreUpdateEventArgs $args
      */
-    public function preUpdate(Entity\Request $request,PreUpdateEventArgs $args)
+    public function preUpdate(Entity\Request $request, PreUpdateEventArgs $args)
     {
         $really_modified = false;
         $fields_updated = array_keys($args->getEntityChangeSet());
         $defendants_were_modified = $this->defendantsWereModified($request);
         if ($defendants_were_modified) {
-            $request->setModified( new \DateTime())
+            $request->setModified(new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
             $user = $this->getAuthenticatedUser($args)->getUsername();
             $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
@@ -144,12 +148,12 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      * @param  Entity\Request $request
      * @return boolean
      */
-    private function defendantsWereModified(Entity\Request $request) {
+    private function defendantsWereModified(Entity\Request $request)
+    {
 
         $now = $request->getDefendants()->toArray();
         $then = $this->previous_defendants;
 
         return $now != $then;
-
     }
 }

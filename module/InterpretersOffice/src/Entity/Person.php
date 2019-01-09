@@ -397,5 +397,4 @@ class Person
     {
         return $this->getFirstname().' '.$this->getLastname();
     }
-
 }
