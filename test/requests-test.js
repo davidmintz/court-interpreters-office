@@ -1,4 +1,4 @@
-/**  very rough draft of a test using mocha */
+/**  rough draft of a test using mocha. still learning how to do this. */
 
 // var chai = require('chai'), expect = chai.expect, should = chai.should();
 const Browser = require("zombie");
