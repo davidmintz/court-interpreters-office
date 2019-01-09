@@ -76,7 +76,7 @@ $(function() {
 
     $("body").on("io.reload",'#schedule-table',function(event){
         console.log("running io.reload custom event handler");
-        $(".edit-interpreters").popover(popover_opts);
+        $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
         if (! window.schedule_timer) {
             console.debug("restart timer?");
             timer_start();
@@ -183,7 +183,7 @@ $(function() {
         });
     });
 
-    $(".edit-interpreters").popover(popover_opts);
+    $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
     $('[data-toggle="tooltip"]').tooltip();
     //$(".edit-interpreters").on("click",(e)=>{/e.preventDefault();});
     //$(".
@@ -209,7 +209,7 @@ $(function() {
         url += '?language=' + $(this).val();
         return reload_schedule(url);
     });
-var date_input = $('#date-input');
+    var date_input = $('#date-input');
     // initialize jquery-ui datepicker
     date_input.datepicker({
         changeMonth: true,
