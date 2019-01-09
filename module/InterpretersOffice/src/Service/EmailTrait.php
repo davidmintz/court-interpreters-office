@@ -16,7 +16,7 @@ use Zend\Mail\Transport\TransportInterface;
 trait EmailTrait
 {
 
-    /** @var TransportInterface */
+    /** @var TransportInterface transport */
     protected $transport;
 
     /**

@@ -1,9 +1,12 @@
-<?php
+<?php /** module/InterpretersOffice/src/Service/SqlLogger.php */
 
 namespace InterpretersOffice\Service;
 
 use Doctrine\DBAL\Logging\SQLLogger as SqlLoggerInterface;
 
+/**
+ * SqlLogger
+ */
 class SqlLogger implements SqlLoggerInterface
 {
 
@@ -13,6 +16,7 @@ class SqlLogger implements SqlLoggerInterface
     {
         $this->log = $log;
     }
+    
     public function startQuery($sql, array $params = null, array $types = null)
     {
         $entry = $sql . PHP_EOL;

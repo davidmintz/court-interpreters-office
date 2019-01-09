@@ -1,5 +1,4 @@
-<?php
-/** module/InterpretersOffice/src/Entity/CourtClosingRepository.php */
+<?php /** module/InterpretersOffice/src/Entity/CourtClosingRepository.php*/
 
 namespace InterpretersOffice\Entity\Repository;
 
