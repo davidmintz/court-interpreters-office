@@ -112,8 +112,8 @@ var stuffIt = function()
         $("#judge-select option:contains(Engelmayer)").attr("value")
     );
     $("#btn-add-judge").trigger("click");
-    $("#password").val("fuck you!");
-    $("#password-confirm").val("fuck you!");
+    $("#password").val("dinkleDorf^B23");
+    $("#password-confirm").val("dinkleDorf^B23");
     $(".carousel").carousel(2);
 
 };

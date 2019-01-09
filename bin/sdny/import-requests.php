@@ -149,7 +149,7 @@ while ($r = $requests_query->fetch(\PDO::FETCH_OBJ)) {
         printf("inserted %d of %d\r",++$count,$total);
 
     } catch (\Exception $e) {
-        echo "fuck, ",$e->getMessage(),"\nyou have ", count($params),
+        echo "shit. ",$e->getMessage(),"\nyou have ", count($params),
             " parameters:" ;
         print_r($params);
         exit();
@@ -162,7 +162,7 @@ try {
     $stmt->execute();
     printf("inserted %d rows into defendants_requests\n",$stmt->rowCount());
 } catch (\Exception $e) {
-    printf("shit: %s\n",$e->getMessage());
+    printf("oh, despair! %s\n",$e->getMessage());
     exit();
 }
 exit("$count request records OK, shit happens $shit times\n");

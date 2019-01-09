@@ -147,7 +147,7 @@ class RegistrationForm extends Form
                 true
             )
             ->attachByName('Identical', [
-                'token' => 'password', // this actually works. don't fuck it up.
+                'token' => 'password', // actually works. let's not fuck it up.
                 'messages' => [
                     'notSame' => 'password and password confirmation do not match'
                 ],

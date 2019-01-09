@@ -131,7 +131,7 @@ var eventForm = (function () {
      *
      * @param  {object} event
      * @param  {object} params
-     * tofuckingdo: cache
+     * @todo: cache
      * @return {void}
      */
     var parentLocationChange = function (event, params) {
@@ -919,29 +919,19 @@ var defendantForm = (function(){
         } else { $("#defendant-form-error").hide(); }
         // we repeat ourself... |-:
         var id = $("#deftname-editor input[name=id]").val();
-        console.warn("fuckin id is what? "+id);
+        //console.debug("id is what? "+id);
         var url = "/admin/defendants/edit/"+ id +"?context=events";
         // we may need to supply an event id
         var event_id = $("input[name=\"event[id]\"]").val() || false;
         if (event_id) {
             url += "&event_id="+event_id;
         }
-        console.debug("we are in defendantUpdateSubmit, about to post");
-        /*
-        console.log("first one...");
-        $.get('/').done(function(x){
-          console.log("first one done, second...");
-          $.get('/login');
-        }).done(function(x){
-          console.log("second done");
-        });
-        */
+        //console.debug("we are in defendantUpdateSubmit, about to post");
         $.post(url,defendantForm.serialize(),
-            defendantFormSubmitCallback,
-            "json")
-            .success(function(){
-                getEventModificationTime(event_id);
-            });
+            defendantFormSubmitCallback,"json")
+        .success(function(){
+            getEventModificationTime(event_id);
+        });
     };
 
     var init = function() {

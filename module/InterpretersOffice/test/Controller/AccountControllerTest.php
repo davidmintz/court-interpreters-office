@@ -22,8 +22,8 @@ class AccountControllerTest extends AbstractControllerTest
                 'email' => 'wank_boinker@nysd.uscourts.gov',
             ],
             'judges' => [],// also a placeholder
-            'password' => 'fuck you',
-            'password-confirm' => 'fuck you',
+            'password' => 'yaddayadda-321',
+            'password-confirm' => 'yaddayadda-321',
             'username' => 'boinker',
         ],
 
@@ -127,7 +127,7 @@ class AccountControllerTest extends AbstractControllerTest
 
         $this->dispatch('/login','POST',[
             'identity' => $this->data['user']['person']['email'],
-            'password' => 'fuck you',
+            'password' => 'yaddayadda-321',
             'login_csrf' => $token,
         ]);
         // we should be redirected

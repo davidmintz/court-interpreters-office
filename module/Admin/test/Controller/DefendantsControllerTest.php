@@ -168,7 +168,6 @@ class DefendantsControllerTest extends AbstractControllerTest
         // issue: SQLite3 does not enforce duplicate entry constraints or
         // compare strings the same way MySQL does, or at least not by default
         printf("\nmatch: %s\n", gettype($match));
-
         //$shit = $this->getApplicationServiceLocator()->get('entity-manager');
         //$db = $this->em->getConnection()->getDatabase();
         //printf("\nour shit is: %s\n)",$db);
@@ -185,6 +184,6 @@ class DefendantsControllerTest extends AbstractControllerTest
         //     . 'WHERE d.surnames LIKE :surnames  AND d.given_names LIKE :given_names'
         // )->useResultCache(false)->setParameters(['surnames'=>'rod%','given_names'=> 'Jo%'])->getResult();
         // print_r($bullshit);
-        // printf("fuckin database? %s\n",$this->em->getConnection()->getDriver()->getName());
+        // printf("database? %s\n",$this->em->getConnection()->getDriver()->getName());
     }
 }

@@ -73,9 +73,9 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                 'required' => true,
                 'allow_empty' => true,
                 /*'filters' => [
-                    [   // this fucks us up. don't know why. callback runs twice
-                        // per validator unless it returns null, in which case
-                        // validator callback runs NEVER
+                    [   // this callback runs twice per validator unless it
+                        // returns null, in which case validator callback
+                        // runs NEVER. not helpful.
                         'name' => 'Zend\Filter\Callback',
                         'options' => [
                             'callback' => function ($value) {

@@ -12,7 +12,7 @@ class RegistrationCest
     }
 
     // tests
-    public function fuckYouTest(AcceptanceTester $I)
+    public function someTest(AcceptanceTester $I)
     {
         $I->amOnPage('/');
         $I->see('InterpretersOffice');

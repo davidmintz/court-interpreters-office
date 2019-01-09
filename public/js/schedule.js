@@ -52,6 +52,7 @@ const timer_start = function(){
     );
     console.debug(`timer_start() set timer: ${window.schedule_timer}`);
 };
+
 const timer_stop = function(){
     console.debug("timer_stop() clearing timer id: "+window.schedule_timer);
     window.clearTimeout(window.schedule_timer)
@@ -74,6 +75,11 @@ $(function() {
         //container : "body"
     };
 
+    /**
+     * handles custom "io.reload" event.
+     *
+     * "io" as in Interpreters Office.
+     */
     $("body").on("io.reload",'#schedule-table',function(event){
         console.log("running io.reload custom event handler");
         $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
@@ -88,11 +94,17 @@ $(function() {
             schedule_table.addClass("table-hover");
         }
     });
+
+    // --- (delegated) event handlers for table containing schedule new_data
+
     schedule_table.on("click",".btn-cancel",function(event){
         event.preventDefault();
         console.log("closing the popover");
         $(this).parents(".popover").popover("hide");
     })
+    /**
+     * removes an interpreter from the popover
+     */
     .on("click",".popover-body .btn-remove-item",function(event){
         event.preventDefault();
         console.log("interpreter to be deleted: "+$(this).prev().text());
@@ -117,7 +129,6 @@ $(function() {
                 td.html(response.html);
                 popover.popover("hide");
                 return console.warn("praise the lord!!");
-
             }
             if (response.validation_errors) {
                 if (response.validation_errors.csrf) {
@@ -130,16 +141,25 @@ $(function() {
         })
         .fail(fail);
     })
+    /**
+     * stops the schedule-reload timer on popover "show" event
+     */
     .on("show.bs.popover",".edit-interpreters",(e)=>{
         console.debug("bs show event");
         timer_stop();
     })
+    /**
+     * (re)starts schedule-reload timer when popovers are gone
+     */
     .on("hidden.bs.popover",".edit-interpreters",(e)=>{
         console.debug("bs hidden event");
         if ($(".popover").length === 0) {
             timer_start();
         }
     })
+    /**
+     * adds to the popover the interpreter to be assigned
+     */
     .on("click",".popover-body .btn-add-interpreter",function(event){
         event.preventDefault();
         var btn = $(this);
@@ -163,8 +183,10 @@ $(function() {
         list.append(renderInterpreter(index,name,interpreter_id,event_id));
         btn.prev("select").val("");
     })
-    // when the popover is shown, set some data attributes and populate
-    // the interpreter dropdown. TO DO: cache interpreter-dropdown data
+    /**
+     * when popover is shown, sets data attributes and populates
+     * interpreter select element
+     */
     .on("shown.bs.popover",".edit-interpreters",(e)=>{
         var language_id = $(e.target).parent().prev().data().language_id;
         var event_id = $(e.target).closest("tr").data().id;
@@ -178,29 +200,36 @@ $(function() {
                 return $("<option>").val(item.value).text(item.label);
             });
             interpreter_select.append(options);
-            //popover.append($("<input/>").attr({type:"hidden",value:response.csrf,name:"csrf"}));
             schedule_table.data({csrf:response.csrf});
         });
-    });
-
-    $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
-    $('[data-toggle="tooltip"]').tooltip();
-    //$(".edit-interpreters").on("click",(e)=>{/e.preventDefault();});
-    //$(".
-    /* expand/collapse lists of deft names */
-    schedule_table.on("click", "a.expand-deftnames", function(e){
+    })
+    /**
+     * toggles display of additional defendant-names
+     */
+    .on("click", "a.expand-deftnames", function(e){
         e.preventDefault();
         $(this).hide().siblings().slideDown();
-    })
-    .on("click",".interpreters-assigned",function(){
-        $(this).next("td").children("a").trigger("click");
     })
     .on("click","a.collapse-deftnames", function(e){
         e.preventDefault();
         var self = $(this);
         self.hide().siblings().not(":first-of-type").hide();
         self.siblings("a.expand-deftnames").show();
+    })
+    /**
+     * triggers click on interpreter-edit button when they click adjacent
+     * TD element containing interpreter names
+     */
+    .on("click",".interpreters-assigned",function(){
+        $(this).next("td").children("a").trigger("click");
     });
+
+    //-------- end #schedule_table event handlers --------------
+
+    // initialize Bootstrap popover for editing interpreters
+    $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
+    $('[data-toggle="tooltip"]').tooltip();
+
 
     // refresh table when they change language filter
     $('#language-select').on("change",function(event){
@@ -209,8 +238,9 @@ $(function() {
         url += '?language=' + $(this).val();
         return reload_schedule(url);
     });
-    var date_input = $('#date-input');
+
     // initialize jquery-ui datepicker
+    var date_input = $('#date-input');
     date_input.datepicker({
         changeMonth: true,
         changeYear: true,
@@ -225,8 +255,10 @@ $(function() {
         }
     });
 
-    // reload every 20 seconds if we're looking at today or later,
-    // else once per 3 minutes
+    /*
+    compute interval for reloading the schedule data: 20 seconds if we are
+    looking a date >= today; otherwise, 180 seconds for historical data
+     */
     var schedule_date = new moment($(".display-date").text(),"DD MMM YYYY");
     var now = new moment();
     var is_current = schedule_date.format("YYYYMMDD") >= now.format("YYYYMMDD");
@@ -236,17 +268,22 @@ $(function() {
     } else {
         interval = 180 * 1000;
     }
-    console.log(`refresh interval set to ${interval/1000} seconds`);
+    console.debug(`refresh interval set to ${interval/1000} seconds`);
 
-    // reload periodically. if the data has not changed since last fetched, don't
-    // update the DOM. We use an IIFE because we change shit as soon as it's
-    // rendered, so otherwise it would replace the data unnecessarily
+    /**
+     * periodically reloads schedule data.
+     *
+     * If the data has not changed since last fetched, don't update
+     * the DOM. We use an IIFE because we change shit as soon as it's
+     * rendered -- otherwise it would replace the data unnecessarily. We
+     * are named rather than anonymous so we can call ourself recursively.
+     */
     (function run(){
-        console.log("starting timer");
+        console.debug("starting timer");
         window.schedule_timer = window.setTimeout(function(){
             $.get(document.location.href).done((data)=>{
                 var new_data = $(data).html();
-                console.log("has shit changed? "+(previous_data != new_data));
+                console.debug("shit changed? "+(previous_data != new_data));
                 if (previous_data != new_data) {
                     previous_data = new_data;
                     $("#schedule-table").html(new_data).trigger("io.reload");
@@ -256,5 +293,4 @@ $(function() {
             );
         },interval);
     })();
-
 });

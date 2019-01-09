@@ -158,7 +158,7 @@ ul.ui-autocomplete {
     font-size: 100% ;
 }
 
-/*  does NOT fucking work w/o "important" even though our style.css
+/*  does NOT work w/o "important" even though our style.css
    is loaded ~after~ jquery-ui.css. why???
 */
 ul.ui-autocomplete .ui-state-active

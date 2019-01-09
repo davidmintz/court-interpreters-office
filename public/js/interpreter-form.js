@@ -5,7 +5,7 @@
  */
 //*/
 $(function(){
-    
+
     $('input.date').each(function(i,element){
         if (element.value.match(/^\d{4}-\d\d-\d\d$/)) {
             element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
@@ -106,16 +106,15 @@ $(function(){
     // try to prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
     $('#login-modal').on("show.bs.modal",function(){
-         $('.thing1, .thing2').val("");  // doesn't work, either. fuck.
-         // nor does this. fuck.
+         $('.thing1, .thing2').val("");  // doesn't work, either.
+         // nor does this. shit.
          // maybe some carousel thing where you show them one form control
          // followed by the other
          $(".thing2").css({color:"white"}).on("focus",function(){$(this).css({color:"black"})});
-         //console.log($('.thing1, .thing2').length + " fucking elements");
          $(".thing1").on("focus",function(){
             console.log("am i imagining this?");
                $('.thing2').val("");
-               console.warn("WHAT THE FUCK!");
+               console.warn("WTF?!");
         }).on("blur",function(){ $('.thing2').val("")});
     });
 

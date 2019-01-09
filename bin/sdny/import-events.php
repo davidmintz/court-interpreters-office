@@ -120,7 +120,7 @@ $judges = $db->query($judge_sql)->fetchAll(PDO::FETCH_KEY_PAIR);
         +----+------------------+--------------+
  */
 
-// this is very brittle and will fuck up if we so much as look at it wrong
+// this is very brittle and will break if we so much as look at it wrong
 // theirs => ours
 //
 $shit = 'SELECT l.name location ,aj.id magistrate_id from anonymous_judges aj LEFT JOIN locations l ON aj.default_location_id = l.id WHERE l.name IS NOT NULL';
@@ -234,7 +234,6 @@ $stmt = $db->prepare($query);
 $stmt->execute();
 $db->exec('use office');
 $event_insert = $db->prepare($insert_sql);
-//$fucked = 0;
 $count = 0;
 $submitter_cache = [];
 
@@ -282,7 +281,6 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     // figure out the submitter !!! ///////////////////////////////////////////
     /** this is so twisted, it's really embarassing. */
     if ($e['submitter']===NULL) {
-        //$fucked++;
         $meta_notes .= 'original request submitter unknown/unidentified. ';
         //printf("cannot determine submitter for event id %d\n",$e['id']);
         // try to use creator as submitter
@@ -332,7 +330,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     } else { // submitter is non-anonymous, and not NULL
 
         if (! key_exists($e['submitter_hat_id'],$hats)) {
-            echo "FUCK? no hat equivalent to {$e['submitter_hat_id']}\n";
+            echo "damn. no hat equivalent to {$e['submitter_hat_id']}\n";
             exit(1);
         }
 
@@ -418,7 +416,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         //lastname: Chan; firstname: Andrew
                         preg_match('/lastname: (.+); firstname: (.*)$/',$e['submitter'],$n);
                         if (!$n) {
-                            echo "FUCK????\n"; echo $e['submitter'],"\n";
+                            echo "WTF????\n"; echo $e['submitter'],"\n";
                             print_r($e);
                             exit(1);
                         }
@@ -432,7 +430,6 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             __LINE__,
                             $e['id'],print_r($e,true));
                             exit(1);
-                            //$fucked++; continue;
                         } elseif (!$size) {
                             printf("%d: no identity found for submitter, event id %d: %s\n",
                                 __LINE__,

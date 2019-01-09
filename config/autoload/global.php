@@ -26,12 +26,10 @@ return //['session' =>
     ],
     // Session manager configuration.
     'session_manager' => [
-        // Session validators (used for security).
+        // Session validators for security.
         'validators' => [
             RemoteAddr::class,
             HttpUserAgent::class,
-            // if we are being read, this will make it blow up
-            //  'FuckYourAss',
         ]
     ],
     // Session storage configuration.

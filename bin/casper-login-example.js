@@ -1,17 +1,17 @@
-/** 
+/**
  *  example demonstrating how to log in and then navigate to somewhere
  *  requiring authentication using CasperJs
  *  step one is install node.js, phantomjs, and casper
  *  http://docs.casperjs.org/en/latest/installation.html
- *  
+ *
  *  invoke as:  casperjs script_name
- *  
+ *
  *  possibly including --ignore-ssl-errors=true
- * 
+ *
  */
 
 
-// these callbacks do not seem to be necessary just to 
+// these callbacks do not seem to be necessary just to
 // persist the authentication between requests, but we were
 // having trouble with that, or so we thought
 
@@ -35,10 +35,10 @@ var resourceRequested = function(casper, resource) {
             for (var i = 0; i < cookies.length; i++) {
                 if (! phantom.addCookie(cookies[i])) {
                    console.log("[us] shit? failed to add cookie "+cookies[i].name);
-                } 
+                }
             }
         }
-    }   
+    }
 };
 
 var cookieJar = 'cookies.json';
@@ -75,7 +75,7 @@ var casper = require('casper').create({
 
 casper.start(baseUrl + '/',function(status){
     this.log("loaded /");
-    
+
 });
 // assumes we have a dummy user with username 'somebody' and password 'boink'
 casper.thenOpen(baseUrl + '/login',function(){
@@ -83,11 +83,11 @@ casper.thenOpen(baseUrl + '/login',function(){
     this.fillSelectors('form', {
         '#identity':    'david',
         '#password':    'boink'
-    }, true);   
+    }, true);
 });
 
 casper.then(function(){
-    this.log("here we FUCKING are!!",'warning');
+    this.log("here's Johnny!",'warning');
 });
 
 casper.thenOpen(baseUrl + '/admin/languages',
@@ -103,5 +103,3 @@ casper.thenOpen(baseUrl + '/admin/languages',
 //console.log("phantom.page.cookies is a:" + typeof phantom.page.cookies);
 //console.log(utils.dump(phantom.page.cookies));
 casper.run();
-
-

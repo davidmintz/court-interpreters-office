@@ -318,7 +318,7 @@ class UsersController extends AbstractActionController implements Authentication
      */
     public function getRoleOptionsForHatAction()
     {
-        $hat_id = $this->params()->fromRoute('hat_id', "fuck!");
+        $hat_id = $this->params()->fromRoute('hat_id');
         $repository = $this->entityManager
                 ->getRepository('InterpretersOffice\Entity\Role');
         $data = $repository->getRoleOptionsForHatId(

@@ -20,7 +20,7 @@ $update_name = $db->prepare("UPDATE deft_names SET lastname = :lastname, firstna
 
 $stmt->execute();
 $count = $stmt->rowCount();
-printf("found %d fucked up names\n",$count);
+printf("found %d malformed names\n",$count);
 
 $totals = [
     'edits'=>0,
@@ -53,7 +53,7 @@ while ($fucked = $stmt->fetch()) {
             $totals['replacements'] += ($deft_requests_affected + $deft_events_affected);
 
         } catch (\Exception $e) {
-            printf("\nshit. caught exception %s: %s\n",get_class($e),$e->getMessage());
+            printf("\ncaught exception %s: %s\n",get_class($e),$e->getMessage());
             continue;
         }
     } else {
@@ -66,7 +66,7 @@ while ($fucked = $stmt->fetch()) {
             $totals['edits']++;
             echo "OK\n";
         } catch (\Exception $e) {
-            printf("\nshit. caught exception %s: %s\n",get_class($e),$e->getMessage());
+            printf("\ncaught exception %s: %s\n",get_class($e),$e->getMessage());
             continue;
         }
     }

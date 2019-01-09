@@ -388,7 +388,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
                 'judge' => $request->getJudge()->getId(),
                 'location' => $request->getLocation()->getId(),
                 'defendants' => $deft_ids,
-                'comments' => 'fuck you',
+                'comments' => 'Time and the bell have buried the day.',
                 'eventType' => $request->getEventType()->getId(),
             ],
             'csrf' => $token,

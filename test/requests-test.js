@@ -59,7 +59,7 @@ describe("updating a request that is scheduled",function(){
                         resolve(result[0]);
                     });
                 },
-                reject  => { console.log("fuck.");}
+                reject  => { console.log("oops.");}
             );
         })
         .then(function(result){
@@ -108,7 +108,7 @@ describe("updating a request that is scheduled",function(){
                         resolve(result[0]);
                     });
                 },
-                reject  => { console.log("fuck.");}
+                reject  => { console.log("oops.");}
             );
         })
         .then(function(result){
@@ -128,7 +128,7 @@ describe("updating a request that is scheduled",function(){
                         resolve(result[0].interps_assigned);
                     });
                 },
-                reject  => { console.log("fuck.");}
+                reject  => { console.log("shit happened.");}
             );
         }).then(function(result){
             assert.strictEqual(result,0);

@@ -27,13 +27,13 @@ casper.test.begin("User Registration", function suite(test)
 
 
         casper.then(function(){
-            this.sendKeys("#email","boinker_fuckwanker@nysd.uscourts.gov");
-            this.sendKeys("#password","fuckyou!");
-            this.sendKeys("#password-confirm","fuckyou!");
+            this.sendKeys("#email","boinker_wanker@nysd.uscourts.gov");
+            this.sendKeys("#password","boink!Gack666");
+            this.sendKeys("#password-confirm","boink!Gack666");
 
             this.clickLabel("next");
             this.evaluate(function(){
-                $(".carousel").carousel("next");                
+                $(".carousel").carousel("next");
             })
             //this.echo(shit);
             this.wait(1000,function(){
