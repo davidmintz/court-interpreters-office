@@ -27,29 +27,6 @@ class Module
         return include __DIR__.'/../config/module.config.php';
     }
 
-    /**
-     * gets viewhelper config
-     *
-     * @return array
-     */
-    public function getViewHelperConfig()
-    {
-        return [
-
-            'aliases' => [
-                'defendant' => ViewHelper\DefendantElementCollection::class,
-            ],
-            'factories' => [
-                ViewHelper\Defendant::class => function ($container) {
-                    $manager = $container->get('ViewHelperManager');
-                    //$manager->get("escapeHtml")
-                    return new ViewHelper\DefendantElementCollection();
-                }
-            ],
-        ];
-    }
-    
-
     /*
      * DOES NOT SEEM TO WORK
      * https://docs.zendframework.com/zend-view/quick-start/#creating-and-registering-alternate-rendering-and-response-strategies.
