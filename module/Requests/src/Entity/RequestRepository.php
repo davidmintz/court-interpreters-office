@@ -118,7 +118,7 @@ class RequestRepository extends EntityRepository
     public function getPendingRequests($page = 1)
     {
         $qb = $this->getBaseQuery();
-        $qb->where('r.pending = true');
+        $qb->where('r.pending = true')->andWhere('r.cancelled = false');
 
         $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
