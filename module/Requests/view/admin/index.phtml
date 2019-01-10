@@ -47,7 +47,7 @@ $this->headTitle("requests for court interpreting services")
                   <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
                     <a title="add this request to the schedule" class="dropdown-item request-add text-primary" href="<?php echo "#"?>">add to schedule</a>
                     <!-- <div class="dropdown-divider"></div>  -->
-                    <a title="view detailed information about this request" class="dropdown-item text-primary" href="<?php echo "#" ?>">view details</a>
+                    <a title="view detailed information about this request" class="dropdown-item text-primary" href="/admin/requests/view/<?php echo $r['id']?>">view details</a>
                   </div>
                 </td>
             </tr>

@@ -42,7 +42,7 @@ if ($messenger->hasSuccessMessages()) :
 elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;?>
-<div data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto" style="max-width:900px">
+<div data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
     <div class="col-sm-3 text-muted text-md-right">
         date
     </div>

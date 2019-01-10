@@ -117,7 +117,7 @@ td.interpreters-assigned div:not(:last-child) {
 }
 /* event details view ---------------------------- */
 .event-details div {
-    border-bottom: 1px solid #dee2e6;
+    /*border-bottom: 1px solid #dee2e6;*/
     /*#515457*/
     /*padding : .2rem;*/
     padding-top: .2rem;
