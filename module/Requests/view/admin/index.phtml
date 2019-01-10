@@ -16,14 +16,23 @@ $this->headTitle("requests for court interpreting services")
 </ul>
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active pt-2" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
-        <?php if ($this->pending):
+<?php if ($this->pending):
+        $count = $this->pending->getTotalItemCount();
+        $what = 'request';
+        if ($count > 1) :
+            $what .= 's'; // pluralize
+        endif;
+    else:
+        $count = "no";
+        $what = 'requests';
+    endif;
             ?><p>
-                <?php printf("%d requests pending",$this->pending->getTotalItemCount());?>
+                <?php printf("You have %s %s pending",$count,$what);?>
             </p>
         <table class="table table-bordered">
-            <thead>
-            </thead>
+            <thead></thead>
             <tbody>
+        <?php if ($this->pending):?>
         <?php foreach ($this->pending as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
             <tr class="request" data-id="<?php echo $r['id']?>">
                 <td><?php echo $r['date']->format('d-M-Y')?></td>
@@ -42,11 +51,9 @@ $this->headTitle("requests for court interpreting services")
                   </div>
                 </td>
             </tr>
-        <?php endforeach; ?>
+        <?php endforeach; endif;?>
             </tbody>
         </table>
-        <?php endif;?>
-
     </div>
   <div class="tab-pane fade py-3" id="more-stuff" role="tabpanel" aria-labelledby="profile-tab">
       <p>
