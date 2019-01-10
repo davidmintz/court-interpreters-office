@@ -217,6 +217,15 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
         return $diff;
     }
 
+    /**
+     * a no-op
+     * 
+     * @param  string $message
+     * @return void
+     */
+    private function debug($message) {
+
+    }
      /**
       * returns a DateTime that is two SDNY business days from $when
       * @param \DateTime $when
