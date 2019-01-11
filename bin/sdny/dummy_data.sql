@@ -291,7 +291,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 ('Thau','Roland','',@atty,'person',1,'roland@defenselawfirm.com', '234 234-2345');
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
-('Bricker','Carrie','',@atty,'person',1,'bricker@herdlawpractice.com', '234 666-2345');
+('Bricker','Carrie','',@atty,'person',1,'bricker@herlawpractice.com', '234 666-2345');
 
 SET @submitter = (SELECT id FROM roles WHERE name = "submitter");
 SET @uspo = (SELECT id FROM hats WHERE name = "USPO");
@@ -304,7 +304,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 
 /**/
 INSERT INTO users (person_id, role_id, password, username, active, last_login, created)
-VALUES ((SELECT MAX(id) FROM people), @submitter, 'boink','ĺyvia',1,NULL,NOW());
+VALUES ((SELECT MAX(id) FROM people), @submitter, 'boink','lyvia',1,NULL,NOW());
 /**/
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
