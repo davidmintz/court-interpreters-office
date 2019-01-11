@@ -36,30 +36,12 @@ const reload_schedule = function(url){
     return $.get(url)
         .done((data)=>{
             var new_data = $(data).html();
-            console.log("has shit changed? "+(previous_data != new_data));
+            console.log("shit changed? "+(previous_data != new_data));
             if (previous_data != new_data) {
                 previous_data = new_data;
                 $("#schedule-table").html(new_data).trigger("io.reload");
             }
         });
-};
-
-const timer_start = function(){
-    console.debug(`timer_start(): timer id was: ${window.schedule_timer}`);
-    if (window.schedule_timer) {
-        console.debug("timer already exists. returning");
-        return;
-    }
-    window.schedule_timer = window.setTimeout(
-        reload_schedule, interval
-    );
-    console.debug(`timer_start() set timer: ${window.schedule_timer}`);
-};
-
-const timer_stop = function(){
-    console.debug("timer_stop() clearing timer id: "+window.schedule_timer);
-    window.clearTimeout(window.schedule_timer);
-    window.schedule_timer = null;
 };
 
 var previous_data, interval;
@@ -86,10 +68,12 @@ $(function() {
     $("body").on("io.reload","#schedule-table",function(){
         console.log("running io.reload custom event handler");
         $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
-        if (! window.schedule_timer) {
-            console.debug("restart timer?");
-            timer_start();
-        }
+        //if (! window.schedule_timer) {
+        // timer_start();
+        // console.debug("restarted timer in io.reload event listener");
+        // } else {
+        //     console.debug("no need to start timer??");
+        // }
         $("table [data-toggle=\"tooltip\"]").tooltip();
         if ($(".no-events").length) {
             schedule_table.removeClass("table-hover");
@@ -148,7 +132,7 @@ $(function() {
      * stops the schedule-reload timer on popover "show" event
      */
         .on("show.bs.popover",".edit-interpreters",()=>{
-            timer_stop();
+            //timer_stop();
         })
     /**
      * (re)starts schedule-reload timer when popovers are gone
@@ -156,7 +140,7 @@ $(function() {
         .on("hidden.bs.popover",".edit-interpreters",()=>{
             console.debug("bs hidden event");
             if ($(".popover").length === 0) {
-                timer_start();
+                //timer_start();
             }
         })
     /**
@@ -266,7 +250,7 @@ $(function() {
     var is_current = schedule_date.format("YYYYMMDD") >= now.format("YYYYMMDD");
 
     if (is_current) {
-        interval = 20 * 1000;
+        interval = 15 * 1000;
     } else {
         interval = 180 * 1000;
     }
@@ -281,8 +265,12 @@ $(function() {
      * are named rather than anonymous so we can call ourself recursively.
      */
     (function run(){
-        console.debug("starting timer");
+        console.debug("starting timer in run()");
         window.schedule_timer = window.setTimeout(function(){
+            if ($(".popover").length !== 0) {
+                console.debug("popovers up? run() is starting over");
+                return run();
+            }
             $.get(document.location.href).done((data)=>{
                 var new_data = $(data).html();
                 console.debug("shit changed? "+(previous_data != new_data));
@@ -290,6 +278,7 @@ $(function() {
                     previous_data = new_data;
                     $("#schedule-table").html(new_data).trigger("io.reload");
                 }
+                console.log("recursively calling run()");
                 run();
             }).fail(()=> console.warn("shit happened!")
             );
