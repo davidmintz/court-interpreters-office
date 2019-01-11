@@ -116,7 +116,10 @@ INSERT INTO defendant_names (surnames, given_names) VALUES
 ('Albéniz','Isaac'),('Turina','Joaquín'),('Villalobos','Heitor'),('Ravel','Maurice'),
 ('Boulanger','Nadia'), ('Barrios','Agustín'), ('de los Santos','Alguien'),('Daza','Esteban'),
 ('de Narváez','Luis'),('de los Santos','Nadie'),('de los Zetas', 'Alguno'),
-('Berio','Luciano'), ('Nono','Luigi');
+("Rodríguez Núñez","José Luis"),("Rodríguez Castro","Juan Felipe"),
+("Rodríguez Peña","Carmen"),("Rodríguez Hernández","Heriberto"),
+("Rodríguez Medina","Carlos"),("López Fuentes","Luis Manuel"),
+('Berio','Luciano'), ('Nono','Luigi'),("Ponce","Manuel"),("Mintzovski","David");
 
 /* some interpreters */
 SET @interpreter_hat = (SELECT id FROM hats WHERE name = 'contract court interpreter');
