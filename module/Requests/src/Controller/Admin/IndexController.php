@@ -157,4 +157,20 @@ class IndexController extends AbstractActionController
         //echo gettype($entity);
         return ['request' => $entity];
     }
+
+    /**
+     * adds a request to the schedule
+     *
+     * internally, this means create an Event entity with data from a Request
+     * entity.
+     * @return JsonModel
+     */
+    public function scheduleAction()
+    {
+        $request_id = $this->params()->fromRoute('id');
+        $repository = $this->objectManager->getRepository(Request::class);
+        $result = $repository->createEventFromRequest($request_id);
+        //exit(self::class);
+        return new JsonModel($result);
+    }
 }

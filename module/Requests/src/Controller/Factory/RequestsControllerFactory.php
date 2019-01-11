@@ -12,6 +12,8 @@ use InterpretersOffice\Requests\Acl\ModificationAuthorizedAssertion;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 use InterpretersOffice\Service\SqlLogger;
 
+use InterpretersOffice\Requests\Controller\Admin\IndexController as AdminController;
+
 use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 
 /**
@@ -41,14 +43,14 @@ class RequestsControllerFactory implements FactoryInterface
         /** */
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
+        $resolver = $entityManager->getConfiguration()
+        ->getEntityListenerResolver();
 
         if ($requestedName == Controller\WriteController::class) {
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
             // add Doctine entity listeners
             $container->get('log')->debug("HELLO? Factory is creating $requestedName");
-            $resolver = $entityManager->getConfiguration()
-                ->getEntityListenerResolver();
             $resolver->register($container->get(Listener\UpdateListener::class)
                 ->setAuth($auth));
             $resolver->register($container->get(RequestEntityListener::class));
@@ -82,7 +84,14 @@ class RequestsControllerFactory implements FactoryInterface
 
             return $controller;
         }
-
+        if ($requestedName == AdminController::class) {
+            $container->get('log')->debug(
+                "SHIT HAS BEEN ATTACHED in the controller factory..."
+            );
+            $listener = $container->get(EventEntityListener::class);
+            $listener->setAuth($container->get('auth'));
+            $resolver->register($container->get(EventEntityListener::class));            
+        }
         return new $requestedName($entityManager, $auth);
     }
 }

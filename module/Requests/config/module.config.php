@@ -198,11 +198,12 @@ return [
                     'view' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/view/:id',
+                            'route' => '/:action/:id',
                             'defaults' => [
                                 'controller' => Admin\IndexController::class,
                                 'action'   => 'view',
                                 'constraints' => [
+                                    'action' => 'view|schedule',
                                     'id' => '[1-9]\d*',
                                 ],
                             ],

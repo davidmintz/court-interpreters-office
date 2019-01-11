@@ -281,4 +281,43 @@ class RequestRepository extends EntityRepository
         }
         return $defendants;
     }
+
+    /**
+     * creates a new Event from a Request
+     * @param int $request_id
+     * @return array
+     */
+    public function createEventFromRequest($request_id)
+    {
+        $em = $this->getEntityManager();
+        $request = $em->find(Request::class,$request_id);
+        if (! $request) {
+            return ['status'=>'error','message'=>"request entity with id $id not found"];
+        }
+        $event = new Entity\Event();
+        foreach(['Date','Time','Judge','Docket','Language','EventType','Comments'] as $prop) {
+            $event->{'set'.$prop}($request->{'get'.$prop}());
+        }
+        $event->addDefendants($request->getDefendants());
+        $created = $request->getCreated();
+        $event->setSubmitter($request->getSubmitter())
+            ->setSubmissionTime($created)
+            ->setSubmissionDate($created);
+        try {
+            $em->persist($event);
+            $request->setPending(false)->setEvent($event);
+            $em->flush();
+        } catch (\Throwable $e) {
+            return [
+                'message' => $e->getMessage(),
+                'status'  => 'error',
+            ];
+        }
+        return [
+            'status' => "success",
+            'message' => "the new event has been added to the schedule",
+            'event_id' => $event->getId(),
+        ];
+
+    }
 }

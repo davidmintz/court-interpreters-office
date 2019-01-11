@@ -202,6 +202,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             // for us
             $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user);
+            $this->logger->debug(__FUNCTION__
+            . " am I running or WHAT???");
         } else {
             // so we don't blow up in the test environment
             $user = $entity->getCreatedBy();

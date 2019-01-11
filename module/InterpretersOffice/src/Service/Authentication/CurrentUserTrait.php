@@ -28,7 +28,7 @@ trait CurrentUserTrait
      */
     public function getAuthenticatedUser(LifecycleEventArgs $args)
     {
-        if (! $this->auth) {
+        if (! $this->auth) {            
             return null;
         }
         if (! $this->user) {
