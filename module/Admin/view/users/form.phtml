@@ -25,9 +25,9 @@ $form->add([
      ['id' => 'btn-submit','value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttributes(['class' => 'form-horizontal','action' => $formAction]);
 $person_fieldset = $this->form->get('user')->get('person');
+$role_element = $form->get('user')->get('role');
 if ($this->has_related_entities) :
     $person_fieldset->get('hat')->setAttribute('disabled', 'disabled');
-    $role_element = $form->get('user')->get('role');
     $user = $form->get('user')->getObject();
     if ((string)$user->getRole() == 'submitter') :
         $role_element->setAttribute('disabled', 'disabled');
