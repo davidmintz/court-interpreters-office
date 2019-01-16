@@ -124,6 +124,7 @@ class UsersController extends AbstractActionController implements Authentication
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
             }
+
             /**
              * this needs work. there are rare cases where one and the same
              * person may legitimately have to have more than one user account,
@@ -180,15 +181,12 @@ class UsersController extends AbstractActionController implements Authentication
     public function addAction()
     {
         $viewModel = new ViewModel(['title' => 'add a user']);
-        $viewModel->setTemplate('interpreters-office/admin/users/form');
-        $form = new UserForm($this->entityManager, [
-            'action' => 'create',
-            'auth_user_role' => $this->auth_user_role,
-            ]);
-        $user = new Entity\User();
-
         // if they are trying to add a user account for an existing person...
         $person_id = $this->params()->fromRoute('id');
+        $options =  [
+            'action' => 'create',
+            'auth_user_role' => $this->auth_user_role,
+        ];
         if ($person_id) {
             $person = $this->entityManager
                     ->find('InterpretersOffice\Entity\Person', $person_id);
@@ -197,6 +195,14 @@ class UsersController extends AbstractActionController implements Authentication
                     ['errorMessage' => "person with id $person_id not found"]
                 );
             }
+            $options['existing_person'] = $person;
+        } else {
+            $person = null;
+        }
+
+        $form = new UserForm($this->entityManager,$options);
+        $user = new Entity\User();
+        if ($person) {
             $this->events->trigger(
                 'load-person',
                 $this,

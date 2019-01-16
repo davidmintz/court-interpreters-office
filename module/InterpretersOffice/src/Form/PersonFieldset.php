@@ -150,6 +150,13 @@ class PersonFieldset extends Fieldset implements
     protected $auth_user_role = 'anonymous';
 
     /**
+     * Person entity
+     *
+     * @var InterpretersOffice\Entity\Person
+     */
+    protected $person;
+
+    /**
      * standard phone validation spec
      *
      * @var array
@@ -202,6 +209,9 @@ class PersonFieldset extends Fieldset implements
         }
         $this->action = $options['action'];
         unset($options['action']);
+        if (isset($options['existing_person'])) {
+            $this->person = $options['existing_person'];
+        }
         //printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
         $use_as_base_fieldset = isset($options['use_as_base_fieldset']) ? $options['use_as_base_fieldset'] : true;
         parent::__construct($this->fieldset_name, $options);
@@ -447,7 +457,7 @@ class PersonFieldset extends Fieldset implements
             'use_context' => true,
         ];
 
-        if ('create' == $this->action) {
+        if ('create' == $this->action && !$this->person) {
             // use the NoObjectExists validator
             $validatorClass = NoObjectExistsValidator::class;
             $validatorOptions['messages'] = [

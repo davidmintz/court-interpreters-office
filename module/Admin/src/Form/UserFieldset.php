@@ -60,6 +60,16 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
     protected $user;
 
     /**
+     * Person entity
+     *
+     * might already exist when User is created, so we need PersonFieldset to
+     * know about this when it does getInputFilterSpecification()
+     *
+     * @var \InterpretersOffice\Entity\Person
+     */
+    protected $person;
+
+    /**
      * constructor
      *
      * @param ObjectManager $objectManager
@@ -68,6 +78,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
      */
     public function __construct(ObjectManager $objectManager, array $options)
     {
+
         if (! isset($options['action'])) {
             throw new \RuntimeException('missing "action" option in UserFieldset constructor');
         }
@@ -86,6 +97,9 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         if (! empty($options['user'])) {
             $this->user = $options['user'];
             unset($options['user']);
+        }
+        if (isset($options['existing_person'])) {
+            $this->person = $options['existing_person'];            
         }
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
@@ -180,6 +194,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'action' => $this->action,
                 'use_as_base_fieldset' => false,
                 'auth_user_role' => $this->auth_user_role,
+                'existing_person' => $this->person,
             ]
         );
 
