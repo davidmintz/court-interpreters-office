@@ -23,6 +23,8 @@ return [
     'interpreters-office/admin/court-closings/edit' => __DIR__ . '/../view/court-closings/form.phtml',
     'interpreters-office/admin/users/index' => __DIR__ . '/../view/users/index.phtml',
     'interpreters-office/admin/users/form' => __DIR__ . '/../view/users/form.phtml',
+    'interpreters-office/admin/users/add' => __DIR__ . '/../view/users/form.phtml',
+    'interpreters-office/admin/users/edit' => __DIR__ . '/../view/users/form.phtml',
     'interpreters-office/admin/locations/index' => __DIR__ . '/../view/locations/index.phtml',
     'interpreters-office/admin/locations/add' => __DIR__ . '/../view/locations/form.phtml',
     'interpreters-office/admin/locations/edit' => __DIR__ . '/../view/locations/form.phtml',
