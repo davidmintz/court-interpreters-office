@@ -176,6 +176,25 @@ class UsersController extends AbstractActionController implements Authentication
     }
 
     /**
+     * runs a pre-validation when inserting.
+     *
+     * If they are adding a user who is a staff interpreter, we would like them
+     * to have created the Interpreter entity first. So we examine the post data,
+     * and if the "Hat" is "staff court interpreter", we will check the email to
+     * see if the interpreter/person exists. if so, good (logic to be
+     * continued); otherwise, return an error message saying please create
+     * the Interpreter first, then come back and do this.
+     *
+     * @return array
+     */
+    public function prevalidate()
+    {
+        $data = $this->params->fromPost()->get('person');
+        // etc to be continued
+
+    }
+
+    /**
      * add a new user
      */
     public function addAction()
@@ -187,6 +206,7 @@ class UsersController extends AbstractActionController implements Authentication
             'action' => 'create',
             'auth_user_role' => $this->auth_user_role,
         ];
+
         if ($person_id) {
             $person = $this->entityManager
                     ->find('InterpretersOffice\Entity\Person', $person_id);
@@ -217,6 +237,7 @@ class UsersController extends AbstractActionController implements Authentication
         $request = $this->getRequest();
 
         if ($request->isPost()) {
+
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 return new JsonModel(['status' => 'error',
@@ -227,6 +248,7 @@ class UsersController extends AbstractActionController implements Authentication
             if (! $person_id) {
                 $this->entityManager->persist($user->getPerson());
             }
+            // we could do this in the model instead, with lifecycle callback (?)
             $user->setPassword(bin2hex(openssl_random_pseudo_bytes(8)));
             $this->entityManager->flush();
             $person = $user->getPerson();
@@ -240,6 +262,7 @@ class UsersController extends AbstractActionController implements Authentication
             );
             return new JsonModel(['status' => 'success','validation_errors' => null]);
         }
+
         return $viewModel;
     }
 
