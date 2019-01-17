@@ -19,6 +19,7 @@ use InterpretersOffice\Entity;
 use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Service\Acl;
+use InterpretersOffice\Entity\Hat;
 
 use Zend\View\Model\JsonModel;
 
@@ -102,7 +103,7 @@ class UsersController extends AbstractActionController implements Authentication
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
         $events->attach('load-person', function (EventInterface $e)
- use ($entityManager, $role_id) {
+            use ($entityManager, $role_id) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
@@ -189,9 +190,33 @@ class UsersController extends AbstractActionController implements Authentication
      */
     public function prevalidate()
     {
-        $data = $this->params->fromPost()->get('person');
-        // etc to be continued
-
+        $params = $this->getRequest()->getPost();
+        $data = $params->get('user');
+        if (! $data or ! isset($data['person'])) {
+            return [];
+        }
+        $person = $data['person'];
+        $email = isset($person['email']) ? $person['email'] : null;
+        if (! $email) {
+            return [];
+        }
+        $hat_id   = isset($person['hat']) ? $person['hat'] : null;
+        $hat_entity = $this->entityManager
+            ->getRepository('InterpretersOffice\Entity\Hat')->find($hat_id);
+        $name = $hat_entity->getName();
+        if (preg_match('/staff.+interpreter/i', $hat_entity->getName())) {
+            // try to find an existing person
+            $person =  $this->entityManager
+                ->getRepository('InterpretersOffice\Entity\Interpreter')
+                ->findOneBy(['email'=>$email]);
+            if ($person) {
+                return ['interpreter' => $person,'status'=>'OK'];
+            } else {
+                return ['interpreter'=>null,'status'=>'error'];
+            }
+        } else {
+            return [];
+        }
     }
 
     /**
@@ -219,7 +244,13 @@ class UsersController extends AbstractActionController implements Authentication
         } else {
             $person = null;
         }
-
+        $prevalidation = $this->prevalidate();
+        /**
+         * TO BE CONTINUED!
+         */
+        return new JsonModel([
+            'shit' => gettype($prevalidation['interpreter'])
+        ]);
         $form = new UserForm($this->entityManager,$options);
         $user = new Entity\User();
         if ($person) {
