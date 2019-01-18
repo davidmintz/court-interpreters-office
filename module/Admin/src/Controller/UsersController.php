@@ -248,9 +248,9 @@ class UsersController extends AbstractActionController implements Authentication
         /**
          * TO BE CONTINUED!
          */
-        return new JsonModel([
-            'shit' => gettype($prevalidation['interpreter'])
-        ]);
+        // return new JsonModel([
+        //     'shit' => gettype($prevalidation)
+        // ]);
         $form = new UserForm($this->entityManager,$options);
         $user = new Entity\User();
         if ($person) {
