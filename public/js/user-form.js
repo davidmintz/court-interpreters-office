@@ -4,6 +4,11 @@
 
 var $, displayValidationErrors;
 
+/**
+ * @todo
+ * add event listener to look via xhr for existing person (interpreter) when email field is set
+ */
+
 $(document).ready(function(){
     // dynamically re-populate role element depending on hat element value
     var hatElement = $('#hat');

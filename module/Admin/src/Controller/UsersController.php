@@ -227,6 +227,15 @@ class UsersController extends AbstractActionController implements Authentication
         $viewModel = new ViewModel(['title' => 'add a user']);
         // if they are trying to add a user account for an existing person...
         $person_id = $this->params()->fromRoute('id');
+        if (! $person_id) {
+            // try post parameters
+            $post = $this->params()->fromPost();
+            //user[person][id]
+            if (isset($post['user']) && isset($post['user']['person']) && !empty($post['user']['person']['id']))
+            {
+                $person_id = $post['user']['person']['id'];
+            }
+        }
         $options =  [
             'action' => 'create',
             'auth_user_role' => $this->auth_user_role,
