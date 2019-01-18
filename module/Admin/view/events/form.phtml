@@ -9,8 +9,7 @@ $this->headScript()
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
         ->appendFile($this->basePath('js/form-utilities.js'))
         ->appendFile($this->basePath('js/event-form.js'));
-
-echo $this->errorMessage($this->errorMessage);  ?><?php
+echo $this->errorMessage($this->errorMessage,$this->header);  ?><?php
 if ($this->errorMessage) :   return;  endif;
 
 $form = $this->form;
@@ -63,10 +62,12 @@ endif;
 $parent = $fieldset->get('parent_location')->getValue();
 $location_element = $fieldset->get('location');
 $location_options = $location_element->getValueOptions();
+echo "fuckin WHAT?";
 if ($parent && sizeof($location_options) <= 1) :
     $repo = $fieldset->getObjectManager()
         ->getRepository('InterpretersOffice\Entity\Location');
     $data = $repo->getChildLocationValueOptions($parent);
+
     $location_options = $location_element->getValueOptions();
     array_unshift($location_options, $data);
     $location_element->setValueOptions($location_options[0]);
