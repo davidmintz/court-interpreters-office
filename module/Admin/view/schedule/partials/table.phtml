@@ -30,15 +30,18 @@
                     <span data-toggle="tooltip" title="edit this event" class="ml-1 float-right align-self-top fas fa-edit text-primary mr-2"> </span>
                     <span class="sr-only">edit this event</span>
                 </a>
-                <a data-toggle="tooltip" title="view event details" href="<?php echo $this->url('events/view', ['id' => $e['id']]);?>"><?php echo $e['type']; ?><?php
-                if ($e['location_type'] == 'jail') :
+                <a data-toggle="tooltip" title="view event details" href="<?php echo $this->url('events/view', ['id' => $e['id']]);?>"><?php
+                    echo $e['type']; ?><?php
+                if ($e['location_type'] == 'jail' or ($e['location'] && $e['category'] == "not applicable")) :
                     ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
                 endif;
                 ?></a>
             </td>
             <td class="text-nowrap"><?php echo $e['judge'];
             if (($e['category'] == "in" or 'magistrate' == $e['judge'])) :
-                ?><br><span class="text-muted"><?php echo $e['location'] ?: $e['aj_default_location'];?></span><?php
+                 $location = $e['location'] ?: $e['aj_default_location'];
+                 if ($location && $e['parent_location']): $location .= ", {$e['parent_location']}"; endif;
+                ?><br><span class="text-muted"><?php echo $location ;?></span><?php
             endif;
             ?></td>
             <td><?php echo $e['language']?></td>
