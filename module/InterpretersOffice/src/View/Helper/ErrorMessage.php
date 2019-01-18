@@ -16,8 +16,8 @@ class ErrorMessage extends AbstractHelper
      * @var string
      */
     protected $template = <<<EOT
-    <div class="alert alert-warning alert-dismissible border shadow-sm mx-auto" id="error-div" style="max-width:600px;%s">
-        <h3>system error</h3>
+    <div class="alert alert-warning alert-dismissible border shadow-sm mx-auto mt-4" id="error-div" style="max-width:600px;%s">
+        <h3>%s</h3>
         <div id="error-message">%s</div>
         <button type="button" class="close" data-hide="alert" aria-label="close">
         <span aria-hidden="true">&times;</span>
@@ -30,11 +30,12 @@ EOT;
      * @param  string $message
      * @return string
      */
-    public function __invoke($message = null)
+    public function __invoke($message = null,$header='system error')
     {
         $html = sprintf(
             $this->template,
             $message ? '' : 'display:none',
+            $header,
             $message ?: ''
         );
 
