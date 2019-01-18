@@ -59,11 +59,12 @@ if ($this->hat_id) :
         $submitterElement->setValueOptions($data);
     endif;
 endif;
-$parent = $fieldset->get('parent_location')->getValue();
+$parent = $fieldset->get('parent_location')->getValue()
+    ?: $fieldset->get('location')->getValue();
 $location_element = $fieldset->get('location');
 $location_options = $location_element->getValueOptions();
-echo "fuckin WHAT?";
 if ($parent && sizeof($location_options) <= 1) :
+
     $repo = $fieldset->getObjectManager()
         ->getRepository('InterpretersOffice\Entity\Location');
     $data = $repo->getChildLocationValueOptions($parent);
