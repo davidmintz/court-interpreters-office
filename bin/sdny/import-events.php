@@ -52,13 +52,13 @@ $now = date("M-d-y H:i:s");
 
 /* map old event-types to locations */
 $old_event_types = $db->query("SELECT proceeding_id as id, type as name FROM dev_interpreters.proceedings
-  WHERE type REGEXP 'supervision|probation'")->fetchAll(PDO::FETCH_KEY_PAIR);
+  WHERE type REGEXP '^TIP|supervision|probation'")->fetchAll(PDO::FETCH_KEY_PAIR);
 
 // because we can't know for sure the ids (unless we decide to delete all the locations
 // and re-insert them with known ids -- maybe we should), use unique strings as keys
 // and ids as values
 $locations = $db->query("SELECT CONCAT(name,IF(parent IS NOT NULL,CONCAT(' - ',parent),'')) AS
-name, id FROM  view_locations WHERE category NOT IN ('courtroom', 'courthouse') ORDER BY name")
+name, id FROM  view_locations WHERE category <> 'courtroom' ORDER BY name")
         ->fetchAll(PDO::FETCH_KEY_PAIR);
 
 $locations[''] = null;
@@ -643,12 +643,18 @@ function create_event_location_map(Array $old_event_types) {
         case 67:
             $key = '4th floor cellblock - 500 Pearl';
             break;
+        case 81: // TIP "classic"
+            $key = 'White Plains';
+            break;
         case 84:
             $key = 'Orange County CF';
             break;
         case 95:
         case 97:
             $key = 'Pretrial - 500 Pearl';
+            break;
+        case 102: // TIP 500 Pearl (blaugh!)
+            $key = '500 Pearl';
             break;
         default:
             printf("ERROR: could not find a mapping for proceeding '$type',id $id at %d\n",__LINE__);

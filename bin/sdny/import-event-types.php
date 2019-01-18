@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * imports the old event-types into the new database, and creates a JSON data file 
+ * imports the old event-types into the new database, and creates a JSON data file
  * mapping old_id => new_id for later reference
  */
 
@@ -40,16 +40,16 @@ foreach( [
         'name' => $type,'category_id' => $event_categories['out'],
          'comments' => '',
      ]);
-     ${$varname} = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn(); 
+     ${$varname} = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn();
     } catch (PDOException $e) {
          if ($e->getCode() == 23000) {
              echo("'$type' already exists\n");
-             ${$varname} = $db->query("SELECT id FROM event_types WHERE name = '$type'")->fetchColumn();             
+             ${$varname} = $db->query("SELECT id FROM event_types WHERE name = '$type'")->fetchColumn();
              continue;
          } else {
              throw $e;
-         }     
-    }    
+         }
+    }
 }
 $sql="select CONCAT(name, IF(parent IS NOT NULL,CONCAT('-',parent),'')) AS name, id FROM view_locations WHERE category REGEXP 'jail|probation|pretrial|cell|courthouse' ORDER BY name;";
 $locations = $db->query($sql)->fetchAll(\PDO::FETCH_KEY_PAIR);
@@ -63,7 +63,7 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
     $is_probation_or_pts = false;
     if (stristr($type['type'],'probation')) {
         $this_id = stristr($type['type'],'supervision') ? $ID_PROBATION_SUPERVISION :  $ID_PROBATION_PSI;
-        $event_type_map[$type['proceeding_id']] = $this_id;        
+        $event_type_map[$type['proceeding_id']] = $this_id;
         printf("not inserting event type: %s\n",$type['type']);
         $do_insert = false;
         $is_probation_or_pts = true;
@@ -96,7 +96,7 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
             break;
         case 'Rikers probation':
             $location_id = $locations['Rikers'];
-            break;        
+            break;
         case 'White Plains probation':
             $locations['Probation-White Plains'];
             break;
@@ -115,7 +115,7 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
         case 'Otisville probation':
             $location_id = $locations['FCI Otisville'];
             break;
-        case 'probation field interview':            
+        case 'probation field interview':
             // by definition we have no clue
             break;
         case 'Queens PCF probation':
@@ -123,7 +123,7 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
             break;
         case '4th flr cellblock probation':
             $location_id = $locations['4th floor cellblock-500 Pearl'];
-            break;        
+            break;
         case 'Goshen County probation':
             $location_id = $locations['Orange County CF'];
             break;
@@ -143,7 +143,16 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
             $event_location_map[$type['proceeding_id']] = $location_id;
         }
     }
-    
+    if (0 === strpos($type['type'],'TIP')) { // it is TIP
+        if (stristr($type['type'],'500 Pearl')) {
+            $location_id = $locations['500 Pearl'];
+            $type['type'] = 'TIP';
+        } else {
+            $location_id = $locations['White Plains'];
+        }
+        $event_location_map[$type['proceeding_id']] = $location_id;
+    }
+
     if (! $do_insert) {
         continue;
     }
@@ -157,7 +166,7 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
     if ('n/a' == $type['category']) {
         $type['category'] = 'not applicable';
     }
-    
+
     try {
         //printf("inserting '%s' ... ",$type['type']);
         $event_type_insert->execute([
@@ -166,16 +175,16 @@ while ($type = $event_types_query->fetch(PDO::FETCH_ASSOC)) {
             'comments' => $type['comments']
         ]);
         $event_type_map[$type['proceeding_id']] =$db->query('SELECT LAST_INSERT_ID()')->fetchColumn();
-        
+
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
             // to do: prepare, parameterize!
-            $event_type_map[$type['proceeding_id']] = $db->query("SELECT id FROM event_types WHERE name = '{$type['type']}'")->fetchColumn(); 
+            $event_type_map[$type['proceeding_id']] = $db->query("SELECT id FROM event_types WHERE name = '{$type['type']}'")->fetchColumn();
             printf("'%s' is a duplicate, moving on\n",$type['type']);
         } else {
             printf("insertion of '%s' FAILED: %s\n",$type['type'], $e->getMessage());
-        }        
-    }    
+        }
+    }
 }
 $map = json_encode($event_type_map);
 $path = __DIR__ . '/event-type-map.json';
@@ -198,7 +207,3 @@ if (false === $result) {
     exit(1);
 }
 exit(0);
-
-
-
-
