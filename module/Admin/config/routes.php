@@ -576,7 +576,17 @@ return  [
                             'hat_id' => '[1-9]\d*',
                         ],
                     ],
-                ]
+                ],
+                'find-person' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/find-person',
+                        'defaults' => [
+                            'action' => 'find-person',
+
+                        ],
+                    ],
+                ],
             ],
         ],
         'court-closings' => [

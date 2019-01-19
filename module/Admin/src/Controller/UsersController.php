@@ -177,46 +177,23 @@ class UsersController extends AbstractActionController implements Authentication
     }
 
     /**
-     * runs a pre-validation when inserting.
+     * finds an existing by email address
      *
-     * If they are adding a user who is a staff interpreter, we would like them
-     * to have created the Interpreter entity first. So we examine the post data,
-     * and if the "Hat" is "staff court interpreter", we will check the email to
-     * see if the interpreter/person exists. if so, good (logic to be
-     * continued); otherwise, return an error message saying please create
-     * the Interpreter first, then come back and do this.
-     *
-     * @return array
+     * @return JsonModel
      */
-    public function prevalidate()
+    public function findPersonAction()
     {
-        $params = $this->getRequest()->getPost();
-        $data = $params->get('user');
-        if (! $data or ! isset($data['person'])) {
-            return [];
+        $email = $this->params()->fromQuery('email');
+        if (!$email) {
+            return new JsonModel([
+                'status' => 'error',
+                'message' => 'missing email parameter',
+            ]);
         }
-        $person = $data['person'];
-        $email = isset($person['email']) ? $person['email'] : null;
-        if (! $email) {
-            return [];
-        }
-        $hat_id   = isset($person['hat']) ? $person['hat'] : null;
-        $hat_entity = $this->entityManager
-            ->getRepository('InterpretersOffice\Entity\Hat')->find($hat_id);
-        $name = $hat_entity->getName();
-        if (preg_match('/staff.+interpreter/i', $hat_entity->getName())) {
-            // try to find an existing person
-            $person =  $this->entityManager
-                ->getRepository('InterpretersOffice\Entity\Interpreter')
-                ->findOneBy(['email'=>$email]);
-            if ($person) {
-                return ['interpreter' => $person,'status'=>'OK'];
-            } else {
-                return ['interpreter'=>null,'status'=>'error'];
-            }
-        } else {
-            return [];
-        }
+        // to do: validate the shit
+        $validator = new \Zend\Validator\EmailAddress();
+        $valid = $validator->isValid($email);
+        return new JsonModel(['boink'=>'shit','valid'=>$valid]);
     }
 
     /**
@@ -253,13 +230,6 @@ class UsersController extends AbstractActionController implements Authentication
         } else {
             $person = null;
         }
-        $prevalidation = $this->prevalidate();
-        /**
-         * TO BE CONTINUED!
-         */
-        // return new JsonModel([
-        //     'shit' => gettype($prevalidation)
-        // ]);
         $form = new UserForm($this->entityManager,$options);
         $user = new Entity\User();
         if ($person) {
