@@ -227,7 +227,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      * @param  string $email
      * @return array
      */
-    public function findByEmail($email)
+    public function findPersonByEmail($email)
     {
         $dql = 'SELECT p.id, p.active, h.name AS hat, p.firstname, p.lastname
             FROM InterpretersOffice\Entity\Person p

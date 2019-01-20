@@ -205,7 +205,7 @@ class UsersController extends AbstractActionController implements Authentication
         // try to locate the person by email address
         $repo = $this->entityManager
             ->getRepository('InterpretersOffice\Entity\Person');
-        $people = $repo->findByEmail($email);
+        $people = $repo->findPersonByEmail($email);
         return new JsonModel([
             'valid' => true,
             'status' => 'success',
