@@ -177,40 +177,57 @@ class UsersController extends AbstractActionController implements Authentication
     }
 
     /**
-     * finds an existing by email address
+     * finds an existing person by email address
      *
      * @return JsonModel
      */
     public function findPersonAction()
     {
         $email = $this->params()->fromQuery('email');
-        if (!$email) {
+        $hat = $this->params()->fromQuery('hat');
+        if (!$email or !$hat) {
             return new JsonModel([
                 'status' => 'error',
-                'message' => 'missing email parameter',
+                'valid'  => false,
+                'message' => 'missing parameters',
             ]);
         }
-        // to do: validate the shit
+
         $validator = new \Zend\Validator\EmailAddress();
         $valid = $validator->isValid($email);
-        return new JsonModel(['boink'=>'shit','valid'=>$valid]);
+        if (! $valid) {
+            return new JsonModel([
+                'status' => 'error',
+                'valid' => false,
+                'message' => 'invalid email address',
+            ]);
+        }
+        // try to locate the person by email address
+        $repo = $this->entityManager
+            ->getRepository('InterpretersOffice\Entity\Person');
+        $people = $repo->findByEmail($email);
+        return new JsonModel([
+            'valid' => true,
+            'status' => 'success',
+            'result' => $people,
+        ]);
     }
 
     /**
-     * add a new user
+     * adds a new user
      */
     public function addAction()
     {
         $viewModel = new ViewModel(['title' => 'add a user']);
         // if they are trying to add a user account for an existing person...
         $person_id = $this->params()->fromRoute('id');
-        if (! $person_id) {
+        // or if there's no person_id route parameter...
+        if (! $person_id && isset($this->params()->fromPost()['user'])) {
             // try post parameters
-            $post = $this->params()->fromPost();
-            //user[person][id]
-            if (isset($post['user']) && isset($post['user']['person']) && !empty($post['user']['person']['id']))
+            $user = $this->params()->fromPost()['user'];
+            if (isset($user['person']) && !empty($user['person']['id']))
             {
-                $person_id = $post['user']['person']['id'];
+                $person_id = $user['person']['id'];
             }
         }
         $options =  [

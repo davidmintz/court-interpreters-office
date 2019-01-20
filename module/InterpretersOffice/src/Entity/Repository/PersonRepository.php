@@ -208,7 +208,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
     /**
      * gets number of events submitted by a Person
      *
-     * this is repeated in PersonRepository. bad dog!
+     * this is repeated elsewhere... bad dog!
      *
      * @param int $id the Person id
      * @return int
@@ -220,5 +220,20 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
 
         return $this->getEntityManager()->createQuery($dql)
             ->setParameters(['id' => $id])->getSingleScalarResult();
+    }
+
+    /**
+     * look for person by email and return as array
+     * @param  string $email
+     * @return array
+     */
+    public function findByEmail($email)
+    {
+        $dql = 'SELECT p.id, p.active, h.name AS hat, p.firstname, p.lastname
+            FROM InterpretersOffice\Entity\Person p
+            JOIN p.hat h
+            WHERE p.email = :email';
+        return $this->createQuery($dql)->setParameters([':email' => $email])
+                ->getResult();
     }
 }
