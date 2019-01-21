@@ -46,9 +46,3 @@ endif; ?></div>
         ?>deleted<?php
     endif;
 ?></div>
-<div class="col-md-12 pt-2 text-center"><?php if ($r['pending']):
-?><button type="button" class="btn  btn-success">add to schedule</button> <?php endif; ?>
-<?php list($year,$month,$date) = explode('-',$r['date']->format('Y-m-d'));?>
-<a role="button" class="btn  btn-secondary" href="<?php echo $this->url('events/display',compact('year','month','date'))?>">view schedule</a>
-<button type="button" class="btn  btn-secondary">send email</button>
-</div>
