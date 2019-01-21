@@ -68,7 +68,7 @@ $user_fieldset = $this->form->get("user");
             foreach ($form->getObject()->getJudges() as $judge) :?>
                 <ul id="judges" class="list-group mt-1"><li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li></ul>
             <?php endforeach;
-                                                endif;?></ul>
+        endif;?></ul>
     </div>
 </div>
 <?php endif;
