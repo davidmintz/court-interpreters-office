@@ -60,8 +60,8 @@ $(document).ready(function(){
     var person_id_element =  $("input[name='user[person][id]']");
     var hat_element = $("#hat");
     $("#btn-submit").on("click", function(event){
-        // make sure we find the existing person entity, if any
         event.preventDefault();
+        // make sure we find the existing person entity, if any
         var person_id =  person_id_element.val();
         var hat = hat_element.children(":selected").text();
         var is_interpreter = hat_element.children(":selected").text()
@@ -80,7 +80,7 @@ $(document).ready(function(){
         var email = $("#email").val();
         $.getJSON("/admin/users/find-person",{email,hat})
         .then(function(response){
-            console.log("hello? response from find-person");
+            console.console.log();("hello? response from find-person");
             if (response.result && response.result.length) {
                 /*
                 we need to have received in the query result a person-object
@@ -129,7 +129,7 @@ $(document).ready(function(){
 });
 
 var postcallback = function(response) {
-    console.warn("postcallback running ");
+    console.log("postcallback running ");
     if (response.status === "success") {
         document.location = "/admin/users";
         return;
@@ -147,7 +147,6 @@ var postcallback = function(response) {
         if (errors.csrf) {
             displayValidationErrors(errors);
         }
-        return;
     }
 };
 
