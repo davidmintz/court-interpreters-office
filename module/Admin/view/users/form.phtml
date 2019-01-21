@@ -36,6 +36,7 @@ endif;
 $has_judges = $form->getObject()->getJudges()->count();
 $form->prepare();
 echo $this->form()->openTag($form);
+?><div id="error_existing_entity_required" class="offset-sm-3 col-sm-9 alert alert-warning validation-error" style="display:none"></div><?php
  // text inputs
 foreach (['lastname','firstname','middlename','email','office_phone','mobile_phone'] as $elementName) :
     $element = $person_fieldset->get($elementName);?>

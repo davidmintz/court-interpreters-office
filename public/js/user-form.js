@@ -59,7 +59,6 @@ $(document).ready(function(){
     });
     var person_id_element =  $("input[name='user[person][id]']");
     var hat_element = $("#hat");
-    /** this is insane, a/k/a work-in-progress */
     $("#btn-submit").on("click", function(event){
         // make sure we find the existing person entity, if any
         event.preventDefault();
@@ -68,24 +67,20 @@ $(document).ready(function(){
         var is_interpreter = hat_element.children(":selected").text()
             .match(/staff.+interpreter/i);
         if (person_id || ! is_interpreter) { // then don't bother searching
-            console.log("either we have a person id, or a non-interpreter");
+            console.log("maybe we have a person id, or a non-interpreter");
             var data = $("#user-form").serialize();
-            return $.post(document.location.href,data);
+            return $.post(document.location.href,data, postcallback);
         }
         /*
         else...
         they are creating a user account for a staff court interpreter,
         but have not provided the id for an existing person (by loading the
-        form with the person id as route parameter)
+        form with the person id as route parameter), so we'll try to find one
         */
         var email = $("#email").val();
         $.getJSON("/admin/users/find-person",{email,hat})
         .then(function(response){
-            console.warn("hello? response from find-person");
-            if (response.person_id) {
-                var data = $("#user-form").serialize();
-                return $.post(document.location.href,data)
-            }
+            console.log("hello? response from find-person");
             if (response.result && response.result.length) {
                 /*
                 we need to have received in the query result a person-object
@@ -96,7 +91,7 @@ $(document).ready(function(){
                 for (let i = 0; i < people.length; i++) {
                     let p = people[i];
                     if (p.hat === hat && p.active) {
-                        console.warn(`found active person with hat ${p.hat}`)
+                        console.log(`found active person with hat ${p.hat}`)
                         person_id = p.id;
                         break;
                     }
@@ -107,26 +102,27 @@ $(document).ready(function(){
                     return $.post(document.location.href,data)
                 }
                 // else, there is an issue
-                console.warn("the fuck?");
+            } else {
                 return postcallback(
                 { validation_errors :
                     { user :
                         { person :
-                            { no_existing_entity :
-                                "you need to deal with shit first"
+                            { existing_entity_required : { shit:
+                                `To create a user account for a staff interpreter, there must first
+                                be an active staff interpreter in existence. Please
+                                <a href="${window.basePath}/admin/interpreters/add">add the interpreter</a>
+                                to your database first, then return here to set up the user account.`
+                                }
                             }
                         }
                     }
                 });
-            } //else {
-            //     var data = $("#user-form").serialize();
-            //     console.log("posting...");
-            //     return $.post(document.location.href,data)
-            // }
+            }
         })
         .then((response)=>{
             if (response) {
-                return postcallback(response);
+                console.log("hello! another then(response)");
+                postcallback(response);
             }
         });
     });
