@@ -71,7 +71,6 @@ describe("updating a request that is scheduled",function(){
         })
         .then(function(){
             browser.assert.success();
-            //console.log("now we are at "+browser.location.href);
             browser.assert.url({ pathname: `/requests/view/${request_id}` });
             browser.assert.element("#date");
             var request_date = loader.request_date.format("ddd DD-MMM-YYYY");
@@ -98,6 +97,7 @@ describe("updating a request that is scheduled",function(){
             return browser.pressButton("save");
         })
         .then(function(){
+            //console.log(browser.html());
             browser.assert.url({ pathname: "/requests/list" });
             // did the event get updated automatically?
             return new Promise(
@@ -136,7 +136,8 @@ describe("updating a request that is scheduled",function(){
         .catch(function(error){
             console.log(error);
             throw error;
-        }).finally(function(){
+        })
+        .finally(function(){
             //console.log("finally() is cleaning up dummy data");
             loader.unload();
             //loader.db.end();
