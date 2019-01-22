@@ -54,11 +54,13 @@ $(document).ready(function(){
             }
         }
     });
-    $("#email").on("change",function(){
-
-    });
-    var person_id_element =  $("input[name='user[person][id]']");
     var hat_element = $("#hat");
+    // $("#role").on("change",function(){
+    //     if ($(this).val() === "submitter") {
+    //         console.log(hat_element.childrem(":selected").data());
+    //     }
+    // });
+    var person_id_element =  $("input[name='user[person][id]']");
     $("#btn-submit").on("click", function(event){
         event.preventDefault();
         // make sure we find the existing person entity, if any
@@ -80,7 +82,7 @@ $(document).ready(function(){
         var email = $("#email").val();
         $.getJSON("/admin/users/find-person",{email,hat})
         .then(function(response){
-            console.console.log();("hello? response from find-person");
+            console.log("hello? response from find-person");
             if (response.result && response.result.length) {
                 /*
                 we need to have received in the query result a person-object
@@ -123,6 +125,8 @@ $(document).ready(function(){
             if (response) {
                 console.log("hello! another then(response)");
                 postcallback(response);
+            } else {
+                console.debug("hmmm. last then(), response is "+typeof response);
             }
         });
     });

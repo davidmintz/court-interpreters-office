@@ -99,7 +99,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             unset($options['user']);
         }
         if (isset($options['existing_person'])) {
-            $this->person = $options['existing_person'];            
+            $this->person = $options['existing_person'];
         }
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
@@ -197,7 +197,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'existing_person' => $this->person,
             ]
         );
-
+        $this->addJudgeElement();
         $this->add($fieldset);
 
         return $this;
@@ -377,6 +377,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ]
         ];
         if ($this->has('judges')) {
+            //echo "fucking WHAT???";
             $return['judges'] = [
                 'required' => true,
                 'validators' => [
@@ -390,6 +391,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                     ],
                 ],
             ];
+        } else {  //echo "WTF?";
         }
 
         return $return;
