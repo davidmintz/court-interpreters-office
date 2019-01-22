@@ -3,7 +3,7 @@
     <thead>
         <tr>
             <th>time</th>
-            <th>type</th>
+            <th colspan="2">type</th>
             <th>judge</th>
             <th>language</th>
             <th class="d-none d-lg-table-cell">docket</th>
@@ -25,11 +25,7 @@
             echo " event-cancelled" ;
         endif;?>">
             <td class="text-right text-nowrap"><?php echo $e['time'] ? $e['time']->format('g:i a') : ''?></td>
-            <td style="line-height:1.2em" class="py-2 clearfix"><?php /** this isn't really working that well... */?>
-                <a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>">
-                    <span data-toggle="tooltip" title="edit this event" class="ml-1 float-right align-self-top fas fa-edit text-primary mr-2"> </span>
-                    <span class="sr-only">edit this event</span>
-                </a>
+            <td class="border-right-0"><!--  style="line-height:1.2em" class="py-2 clearfix" -->
                 <a data-toggle="tooltip" title="view event details" href="<?php echo $this->url('events/view', ['id' => $e['id']]);?>"><?php
                     echo $e['type']; ?><?php
                 if ($e['location_type'] == 'jail' or ($e['location'] && $e['category'] == "not applicable")) :
@@ -37,6 +33,10 @@
                 endif;
                 ?></a>
             </td>
+            <td class="border-left-0"><a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>">
+                <span data-toggle="tooltip" title="edit this event" class="ml-1 float-right fas fa-edit text-primary mr-2"> </span>
+                <span class="sr-only">edit this event</span>
+            </a></td>
             <td class="text-nowrap"><?php echo $e['judge'];
             if (($e['category'] == "in" or 'magistrate' == $e['judge'])) :
                  $location = $e['location'] ?: $e['aj_default_location'];
@@ -49,7 +49,7 @@
             <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
             <td class="d-none d-lg-table-cell"style="line-height: 1.2em; font-size: 95%"><?php echo $e['comments']?></td>
             <td data-language_id="<?php echo $e['language_id']?>" class="interpreters-assigned text-nowrap border-right-0"><?php echo $this->interpreters($e['id'])?></td>
-            <td class="border-left-0"><a class="edit-interpreters"  data-toggle="tooltip" data-container="tr[data-id=<?php echo $e['id'] ?>]" role="button" href="#"><span title="add or remove interpreters for this event" class="fas fa-edit"></span></a></td>
+            <td class="border-left-0"><a class="edit-interpreters" data-toggle="tooltip" data-container="tr[data-id=<?php echo $e['id'] ?>]" role="button" href="#"><span title="add or remove interpreters for this event" class="fas fa-edit"></span></a></td>
         </tr>
             <?php endforeach;
         else :
