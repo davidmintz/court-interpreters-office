@@ -1,4 +1,6 @@
 <?php  /**  module/Requests/view/admin/index.phtml  */
+$this->headScript()
+    ->appendFile($this->basePath('js/requests/admin/index.js'));
 $this->headTitle("requests for court interpreting services")
 ?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
@@ -14,7 +16,7 @@ $this->headTitle("requests for court interpreting services")
     <a class="nav-link" id="other-stuff-tab" data-toggle="tab" href="#other-stuff" role="tab" aria-controls="other-stuff" aria-selected="false">other stuff</a>
   </li>
 </ul>
-<div class="tab-content" id="myTabContent">
+<div class="tab-content" id="tab-content">
     <div class="tab-pane fade show active pt-2" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
 <?php if ($this->pending):
         $count = $this->pending->getTotalItemCount();
