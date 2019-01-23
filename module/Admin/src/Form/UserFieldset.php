@@ -360,7 +360,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                                 $person_active = $context['person']['active'];
                                 $user_active = $value;
                                 if ($user_active && ! $person_active) {
-                                    return false;//
+                                    return false;
                                 }
                                 if (! $person_active && $user_active) {
                                     return false;
@@ -377,7 +377,6 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ]
         ];
         if ($this->has('judges')) {
-            //echo "fucking WHAT???";
             $return['judges'] = [
                 'required' => true,
                 'validators' => [
@@ -391,7 +390,6 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                     ],
                 ],
             ];
-        } else {  //echo "WTF?";
         }
 
         return $return;
