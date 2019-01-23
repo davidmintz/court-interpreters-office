@@ -284,7 +284,9 @@ class RequestRepository extends EntityRepository
 
     /**
      * creates a new Event from a Request
+     *
      * @param int $request_id
+     * @throws \Throwable
      * @return array
      */
     public function createEventFromRequest($request_id)
@@ -303,19 +305,20 @@ class RequestRepository extends EntityRepository
         $event->setSubmitter($request->getSubmitter())
             ->setSubmissionTime($created)
             ->setSubmissionDate($created);
-        try {
-            $em->persist($event);
-            $request->setPending(false)->setEvent($event);
-            $em->flush();
-        } catch (\Throwable $e) {
-            return [
-                'message' => $e->getMessage(),
-                'status'  => 'error',
-            ];
-        }
+        //try {
+        $em->persist($event);
+        $request->setPending(false)->setEvent($event);
+        $em->flush();
+        // } catch (\Throwable $e) {
+        //     return [
+        //         'message' => $e->getMessage(),
+        //         'status'  => 'error',
+        //     ];
+        // }
         return [
-            'status' => "success",
-            'message' => "the new event has been added to the schedule",
+            'status' => 'success',
+            'message' => 'new event has been added to the schedule',
+            'event_date' => $event->getDate()->format('Y-m-d'),
             'event_id' => $event->getId(),
         ];
 

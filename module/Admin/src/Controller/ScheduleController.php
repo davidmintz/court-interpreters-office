@@ -47,7 +47,6 @@ class ScheduleController extends AbstractActionController
         $this->session = new Session('schedule');
     }
 
-
     /**
      * index action
      *

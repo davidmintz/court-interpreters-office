@@ -1,10 +1,12 @@
 <?php  /**  module/Requests/view/admin/index.phtml  */
 $this->headScript()
+    ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
     ->appendFile($this->basePath('js/requests/admin/index.js'));
 $this->headTitle("requests for court interpreting services")
 ?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-
+<div id="message-success" class="alert alert-success alert-dismissible" role="alert" style="display:none">
+</div>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="pending-requests-tab" data-toggle="tab" href="#pending-requests" role="tab" aria-controls="pending-requests" aria-selected="true">pending</a>
@@ -29,7 +31,7 @@ $this->headTitle("requests for court interpreting services")
         $what = 'requests';
     endif;
             ?><p>
-                <?php printf("You have %s %s pending",$count,$what);?>
+                <?php printf('You have <span id="requests-pending">%s %s</span> pending',$count,$what);?>
             </p>
         <table class="table table-bordered">
             <thead></thead>
@@ -39,7 +41,7 @@ $this->headTitle("requests for court interpreting services")
             <tr class="request" data-id="<?php echo $r['id']?>">
                 <td><?php echo $r['date']->format('d-M-Y')?></td>
                 <td><?php echo $r['time']->format('g:i a')?></td>
-                <td><?php echo $r['language']?></td>
+                <td class="language"><?php echo $r['language']?></td>
                 <td><?php echo $r['type']?></td>
                 <td><?php echo $r['location']?></td>
                 <td><?php echo $r['judge']?></td>

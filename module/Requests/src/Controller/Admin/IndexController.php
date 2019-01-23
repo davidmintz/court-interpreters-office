@@ -8,16 +8,18 @@ use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\AuthenticationServiceInterface;
-//use Zend\Stdlib\Glob;
 use Zend\Stdlib\ArrayObject;
 use InterpretersOffice\Requests\Form\ConfigForm;
 use InterpretersOffice\Requests\Entity\Request;
+use InterpretersOffice\Controller\ExceptionHandlerTrait;
 
 /**
  * admin controller for Requests module
  */
 class IndexController extends AbstractActionController
 {
+
+    use ExceptionHandlerTrait;
     /**
      * objectManager instance.
      *
@@ -168,9 +170,12 @@ class IndexController extends AbstractActionController
     public function scheduleAction()
     {
         $request_id = $this->params()->fromRoute('id');
-        $repository = $this->objectManager->getRepository(Request::class);
-        $result = $repository->createEventFromRequest($request_id);
-        //exit(self::class);
-        return new JsonModel($result);
+        try {
+            $repository = $this->objectManager->getRepository(Request::class);
+            $result = $repository->createEventFromRequest($request_id);
+            return new JsonModel($result);
+        } catch (\Throwable $e){
+            return $this->catch($e);
+        }
     }
 }

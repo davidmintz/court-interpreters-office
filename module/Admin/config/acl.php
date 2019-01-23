@@ -55,7 +55,8 @@ return [
         'submitter' => [
             Requests\IndexController::class => ['index','list','view','create','update','search','cancel'],
             Requests\WriteController::class => ['create','update','cancel'],
-            Admin\EventsController::class => ['index', 'view', 'search'],
+            // not sure what we were thinking when this was allowed...
+            //Admin\EventsController::class => ['index', 'view', 'search'],
             Main\AuthController::class => ['logout'],
         ],
         'manager' => [
@@ -81,7 +82,7 @@ return [
             Requests\IndexController::class => null,
             //['add','edit','update','delete','cancel','index'],
         ],
-        
+
         'anonymous' => [
             Main\AuthController::class => 'logout'
         ],

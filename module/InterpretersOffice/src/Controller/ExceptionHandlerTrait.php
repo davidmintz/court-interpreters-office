@@ -24,7 +24,9 @@ trait ExceptionHandlerTrait
             'details' => $details
         ]);
         $this->getResponse()->setStatusCode(500);
-
-        return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
+        return new JsonModel([
+            'status' => 'error',
+            'error' => ['message' => $e->getMessage(),]
+        ]);
     }
 }
