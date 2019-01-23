@@ -103,15 +103,15 @@ $(document).ready(function(){
                     var data = $("#user-form").serialize();
                     return $.post(document.location.href,data)
                 }
-                // else, there is an issue
-            } else {
+            } else { // else, there is an issue
+
                 return postcallback(
                 { validation_errors :
                     { user :
                         { person :
                             { existing_entity_required : { shit:
-                                `To create a user account for a staff interpreter, there must first
-                                be an active staff interpreter in existence. Please
+                                `To create a user account for a staff interpreter,
+                                there must first be an active staff interpreter in existence. Please
                                 <a href="${window.basePath}/admin/interpreters/add">add the interpreter</a>
                                 to your database first, then return here to set up the user account.`
                                 }
