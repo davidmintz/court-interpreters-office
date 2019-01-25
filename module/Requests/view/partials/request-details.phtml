@@ -27,7 +27,7 @@ endif; ?></div>
     else: ?>(n/a)<?php
     endif;
 ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">status</div><div class="col-md-10"><?php
+<div class="col-md-2 text-muted text-md-right pr-1">status</div><div id="request-status" class="col-md-10"><?php
     if ($r['pending']):
         ?>pending<?php
     elseif ($r['event_id']) :

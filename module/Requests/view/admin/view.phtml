@@ -4,11 +4,17 @@ $this->headScript()->appendFile($this->basePath('js/lib/moment/min/moment.min.js
 ->appendFile($this->basePath('js/requests/admin/view.js'));
 ?>
 <h2 class="text-center py-2 navigation"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?></h2>
+<div id="message-success" class="alert alert-success alert-dismissible" role="alert" style="display:none">
+    <p class="mb-0"></p>
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 <?php
 if ($this->request):
     echo $this->partial('partials/request-details',['request'=>$this->request]);?>
     <div class="col-md-12 pt-2 text-center"><?php if ($this->request['pending']):
-    ?><button id="btn-schedule-request" data-request_id="<?php echo $this->request['id']" type="button" class="btn  btn-success">add to schedule</button> <?php endif; ?>
+    ?><button id="btn-schedule-request" data-request_id="<?php echo $this->request['id']?>" type="button" class="btn  btn-success">add to schedule</button> <?php endif; ?>
     <?php list($year,$month,$date) = explode('-',$this->request['date']->format('Y-m-d'));?>
     <a role="button" class="btn  btn-secondary" href="<?php echo $this->url('events/display',compact('year','month','date'))?>">view schedule</a>
     <button type="button" class="btn  btn-secondary">send email</button>

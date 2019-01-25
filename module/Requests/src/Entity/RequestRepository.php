@@ -296,6 +296,15 @@ class RequestRepository extends EntityRepository
         if (! $request) {
             return ['status'=>'error','message'=>"request entity with id $id not found"];
         }
+        $existing = $request->getEvent();
+        if ($existing) {
+            // it's already been scheduled
+            return [
+                'status' => 'error',
+                'message' => 'This request has already been scheduled',
+                'event_id' => $existing->getId(),
+            ];
+        }
         $event = new Entity\Event();
         foreach(['Date','Time','Judge','Docket','Language','EventType','Comments'] as $prop) {
             $event->{'set'.$prop}($request->{'get'.$prop}());

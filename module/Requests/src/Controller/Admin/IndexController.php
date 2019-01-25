@@ -71,8 +71,11 @@ class IndexController extends AbstractActionController
         } else {
             $defendants = [];
         }
-
-        return compact('pending', 'defendants');
+        $data = compact('pending', 'defendants');
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            return (new ViewModel($data))->setTerminal(true);
+        }
+        return $data;
     }
     /**
      * controller action for configuring Request listeners
