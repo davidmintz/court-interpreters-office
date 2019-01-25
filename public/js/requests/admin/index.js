@@ -19,8 +19,6 @@ $(function(){
                 }
                 $("#requests-pending").text(verbiage);
             }
-
-
         }).fail(fail);
     });
 });
