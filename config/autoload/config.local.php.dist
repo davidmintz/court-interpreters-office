@@ -1,0 +1,26 @@
+<?php /** local site configuration. edit appropriately and save without the .dist */
+use Zend\Mail;
+
+return [
+
+    /** configuration for Zend\Mail */
+    'mail' => [
+        'transport' => Mail\Transport\File::class,
+        'transport_options' => [
+            'class' => Mail\Transport\FileOptions::class,
+            'options' => [
+                'path'     => 'data/mail/',
+            ],
+        ],
+        'from_address' => 'interpreters@dev.interpretersoffice.org',
+        'from_entity' => 'Interpreters Office, SDNY',
+    ],
+    'site' => [
+        'contact' => [
+            'organization_name' => 'US District Court, SDNY',
+            'organization_locality' => 'New York, NY',
+            'telephone' => '212 805-0084',
+            'email' => 'interpreters@nysd.uscourts.gov',
+        ],
+    ]
+];
