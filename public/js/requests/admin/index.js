@@ -1,3 +1,9 @@
+/**
+ * public/js/requests/admin/index.js
+ *
+ * for /admin/requests main page
+ */
+
 var moment, schedule_request_callback;
 
 var update_verbiage = function(count) {
@@ -11,9 +17,17 @@ var update_verbiage = function(count) {
     $("#requests-pending").text(verbiage);
 }
 
-$(function(){
+/**
+ * how often to reload the requests data (via xhr)
+ * @type {Number}
+ */
+const requests_refresh_interval = 60000;
 
-    $("#tab-content").on("click","a.request-add",function(e){
+$(function(){
+    // event listeners for dropdowns in each table row
+    $("#tab-content").on("click","a.request-add", function(e) {
+        // add request to the schedule, then remove the TR
+        // from the DOM
         e.preventDefault();
         var row = $(this).closest("tr");
         var id = row.data().id;
@@ -36,16 +50,16 @@ $(function(){
                 }
             }
         }).fail(fail);
-    // to keep track of whatever dropdown is being shown
+    // keep track of whatever dropdown is being shown
     }).on("show.bs.dropdown","td.dropdown",function(event){
-            var id = $(event.target).parent().data().id;
-            $("table").data({dropdown_displayed : id});
+            $("table").data({dropdown_id : event.relatedTarget.id});
         }
-    ).on("hide.bs.dropdown","td.dropdown",function(event){
-            var id = $(event.target).parent().data().id;
-            $("table").data({dropdown_displayed :null});
+    // or not
+    ).on("hide.bs.dropdown","td.dropdown",function(){
+            $("table").data({dropdown_id :null});
         }
     );
+    // periodically refresh interpreter-request data
     var html = $("tbody").html();
     var refresh = function refresh(){
         $.get(document.location.href)
@@ -58,18 +72,17 @@ $(function(){
             if (updated) {
                 html = this_html;
                 $("tbody").html(this_html)
-                // ...and restore any previously-showing dropdown
-                var dropdown_id = $("table").data("dropdown_displayed");
+                // restore any previously-showing dropdown
+                var dropdown_id = $("table").data("dropdown_id");
                 if (dropdown_id) {
                     console.log("we're a class act, restoring your dropdown");
                     // could not get .dropdown("show") to work \-:
-                    $(`#request-dropdown-${dropdown_id}`).trigger("click");
+                    $(`#${dropdown_id}`).trigger("click");
                 }
                 update_verbiage();
             }
-            setTimeout(refresh,5000);
+            setTimeout(refresh,requests_refresh_interval);
         });
     };
-    setTimeout(refresh,5000);
-
+    setTimeout(refresh,requests_refresh_interval);
 });
