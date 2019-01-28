@@ -30,6 +30,13 @@ return [
             ],
         ],
         'from_address' => 'interpreters@dev.interpretersoffice.org',
-        'from_entity' => 'Interpreters Office',
+        'from_entity' => 'Interpreters Office, SDNY',
     ],
+    'site' => [
+        'contact' => [
+            'organization_name' => 'US District Court, SDNY',
+            'telephone' => '212 805-0084',
+            'email' => 'interpreters@nysd.uscourts.gov',
+        ],
+    ]
 ];

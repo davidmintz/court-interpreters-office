@@ -63,12 +63,16 @@ class Module
 
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user) {
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user,$container) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
                 $viewModel = $event->getApplication()->getMvcEvent()
                         ->getViewModel();
                 $viewModel->setVariables($routeMatch->getParams());
+                $config = $container->get('config');
+                if (isset($config['site'])) {                
+                    $viewModel->setVariables($config['site']['contact']);
+                }
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
                 $viewModel->user = $user;
                 if (! $user) {

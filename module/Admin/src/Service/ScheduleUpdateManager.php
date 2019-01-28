@@ -420,14 +420,19 @@ class ScheduleUpdateManager
         $this->logger->info("notifying interpreters about $this->user_action");
         $event = $request->getEvent();
         $interpreterEvents = $event->getInterpreterEvents();
-        $this->logger->debug("there are/were ".$interpreterEvents->count());
+        $count = $interpreterEvents->count();
+        if (! $count) {
+            return $this;
+        }
+        //$this->logger->debug("there are/were ".$interpreterEvents->count());
         foreach ($interpreterEvents as $ie) {
             $email = $ie->getInterpreter()->getEmail();
             $this->logger->debug("need to email: $email");
+            $message = $this->createEmailMessage('<p>hi there</p>', 'hi there');
+            $this->logger->debug("we have created a ". get_class($message) . " for $email");
         }
 
-        $message = $this->createEmailMessage('<p>hi there</p>', 'hi there');
-        $this->logger->debug("we have created a ". get_class($message));
+
 
         return $this;
     }

@@ -41,7 +41,12 @@ echo $this->headStyle();?>
     <?php  echo $this->content; ?>
     </div>
     <div class="container">
-        <footer class="border-top border-bottom mt-3">[layout: footer]</footer>
+        <footer class="border-top border-bottom mt-4 text-center text-muted"><?php
+            echo
+                $this->layout()->organization_name," &bull; ",
+                $this->layout()->organization_locality," &bull; ",
+                $this->layout()->telephone," &bull; ", $this->layout()->email;
+        ?></footer>
     </div>
         <script src="/js/lib/jquery.min.js"></script>
         <script src="/js/lib/bootstrap/bootstrap.bundle.js"></script>

@@ -265,7 +265,7 @@ $(function() {
      * are named rather than anonymous so we can call ourself recursively.
      */
     (function run(){
-        console.debug("starting timer in run()");
+        //console.debug("starting timer in run()");
         window.schedule_timer = window.setTimeout(function(){
             if ($(".popover").length !== 0) {
                 console.debug("popovers up? run() is starting over");
@@ -273,12 +273,11 @@ $(function() {
             }
             $.get(document.location.href).done((data)=>{
                 var new_data = $(data).html();
-                console.debug("shit changed? "+(previous_data != new_data));
                 if (previous_data != new_data) {
+                    console.debug("shit changed");
                     previous_data = new_data;
                     $("#schedule-table").html(new_data).trigger("io.reload");
                 }
-                console.log("recursively calling run()");
                 run();
             }).fail(()=> console.warn("shit happened!")
             );

@@ -507,7 +507,7 @@ class AccountManager implements LoggerAwareInterface
         // for DEBUGGING
         file_put_contents('data/email-confirm-account.html', $this->viewRenderer->render($layout));
         // end DEBUGGING
-        $config = $this->config['mail'];
+        $config = $this->config;
         $message = $this->createEmailMessage($html, "To read this message you need a client that supports HTML email.");
         $person = $user->getPerson();
         $message->setFrom($config['from_address'], $config['from_entity'])
