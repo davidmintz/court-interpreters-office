@@ -252,9 +252,24 @@ class RequestRepository extends EntityRepository
                 JOIN r.defendants d WHERE r.id = :id';
             $request['defendants'] = $this->getEntityManager()
                 ->createQuery($dql)->setParameters(['id' => $id])->getResult();
+            if ($request['event_id']) {
+                $dql = 'SELECT i.lastname, i.firstname
+                FROM InterpretersOffice\Entity\Interpreter i
+                JOIN InterpretersOffice\Entity\InterpreterEvent ie
+                WITH i = ie.interpreter JOIN ie.event e
+                JOIN InterpretersOffice\Requests\Entity\Request r
+                WITH e = r.event WHERE r.id = :id';
+                $request['interpreters'] = $this->getEntityManager()
+                    ->createQuery($dql)->setParameters(['id' => $id])
+                    ->getResult();
+            }
         }
-        // if ($request['event_id'])... maybe fetch interpreters
-        //echo $this->getEntityManager()->createQuery()->setDql($qb->getDql())->getDql();
+        /*
+        SELECT i.lastname,i.id FROM InterpretersOffice\Entity\Interpreter i
+        JOIN InterpretersOffice\Entity\InterpreterEvent ie WITH i = ie.interpreter
+        JOIN ie.event e JOIN InterpretersOffice\Requests\Entity\Request r
+        WITH e = r.event WHERE r.id = :id
+        */
         return $request;
     }
     /**

@@ -1,4 +1,4 @@
-<?php $r = $this->request ?>
+<?php $r = $this->request;?>
 <div id="request-details" data-id="<?php echo $r['id'] ?>" class="row mx-auto border p-3 shadow-sm" <?php if ($this->deadline) : ?>data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s')?>"<?php endif ?> style="max-width:825px">
 <div class="col-md-2 text-muted text-md-right pr-1">date</div><div id="date" class="col-md-4"><?php echo $r['date']->format('D d-M-Y') ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">time</div><div id="time" class="col-md-4"><?php echo $r['time']->format('g:i a') ?></div>
@@ -17,6 +17,11 @@ endif; ?></div>
     endif;
 ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">docket</div><div class="col-md-4"><?php echo $r['docket'] ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">interpreters</div><div class="col-md-10"><?php
+if ($r['interpreters']):
+    foreach($r['interpreters'] as $i): echo $this->escapeHtml("$i[lastname], $i[firstname]"),"<br>";endforeach;
+else: ?> <em>none assigned</em> <?php endif;
+ ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">comments</div><div class="col-md-10"><?php echo $r['comments'] ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">submitted</div><div class="col-md-10"><?php
     echo "{$r['created']->format('d-M-Y g:i a')}  by {$r['submitter_firstname']} {$r['submitter_lastname']}, {$r['submitter_hat']}";
