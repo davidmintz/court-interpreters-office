@@ -9,8 +9,7 @@
             <th class="d-none d-lg-table-cell">docket</th>
             <th>defendants</th>
             <th class="d-sm-none d-lg-table-cell">notes</th>
-            <th class="border-right-0">interpreters</th>
-            <th class="border-left-0"></th>
+            <th colspan="2" class="border-right-0">interpreters</th>            
         </tr>
     </thead>
     <tbody>
@@ -34,8 +33,7 @@
                 ?></a>
             </td>
             <td class="border-left-0"><a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>">
-                <span data-toggle="tooltip" title="edit this event" class="ml-1 float-right fas fa-edit text-primary mr-2"> </span>
-                <span class="sr-only">edit this event</span>
+                <span data-toggle="tooltip" title="edit this event" class="fas fa-edit"></span><span class="sr-only">edit this event</span>
             </a></td>
             <td class="text-nowrap"><?php echo $e['judge'];
             if (($e['category'] == "in" or 'magistrate' == $e['judge'])) :
@@ -49,7 +47,8 @@
             <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
             <td class="d-none d-lg-table-cell"style="line-height: 1.2em; font-size: 95%"><?php echo $e['comments']?></td>
             <td data-language_id="<?php echo $e['language_id']?>" class="interpreters-assigned text-nowrap border-right-0"><?php echo $this->interpreters($e['id'])?></td>
-            <td class="border-left-0"><a class="edit-interpreters" data-toggle="tooltip" data-container="tr[data-id=<?php echo $e['id'] ?>]" role="button" href="#"><span title="add or remove interpreters for this event" class="fas fa-edit"></span></a></td>
+            <td class="border-left-0">
+                <a class="edit-interpreters" data-toggle="tooltip" data-container="tr[data-id=<?php echo $e['id'] ?>]" role="button" href="#"><span title="add or remove interpreters for this event" class="fas fa-edit"></span></a></td>
         </tr>
             <?php endforeach;
         else :
