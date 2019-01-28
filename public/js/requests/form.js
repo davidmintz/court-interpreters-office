@@ -26,10 +26,10 @@ var appendDefendant = function(data)
         return alert("this name has already been added to the form");
     }
     var html =
-            `<li id="${id}" class="list-group-item pr-0 py-0">
-            <span class="float-left pt-2 deft-name">${data.label}</span>
+            `<li id="${id}" class="list-group-item pr-1 py-1">
+            <span class="float-left pt-1 deft-name align-middle">${data.label}</span>
             <input type="hidden" name="${element_name}" value="${data.value}">
-            <button class="btn btn-warning btn-remove-item float-right border" title="remove this defendant">
+            <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this defendant">
             <span class="fas fa-times" aria-hidden="true"></span>
             <span class="sr-only">remove this defendant</span></button>
             </li>`;

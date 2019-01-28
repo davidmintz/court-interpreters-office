@@ -68,12 +68,24 @@ $(function(){
         var id = tr.data().request_id;
         $("#btn-confirm-cancellation").data({id});
         $(".modal-body a.reschedule").attr({href: `${window.basePath || ""}/requests/update/${id}`});
-        var verbiage = `Are you sure you want to cancel this request
-            &mdash; <span class="request-description">${language} for a ${type} on ${date} at ${time}</span> &mdash;
-            and delete it from the database?`;
+        var verbiage = `Are you sure you want to cancel this request for
+            <span class="request-description">${language} for a ${type} on ${date} at ${time}</span>?`;
         $("#confirmation-message").html(`<p>${verbiage}</p>`);
         $("#modal-confirm-cancel").modal();
-    });
+    })/**
+     * toggles display of additional defendant-names
+     */
+    .on("click", "a.expand-deftnames", function(e){
+        e.preventDefault();
+        $(this).hide().siblings().slideDown();
+    })
+    .on("click","a.collapse-deftnames", function(e){
+        e.preventDefault();
+        var self = $(this);
+        self.hide().siblings().not(":first-of-type").slideUp(
+            function(){self.siblings("a.expand-deftnames").show();}
+        );
+        });
 
     $("#btn-confirm-cancellation").on("click",function(){
         console.warn("cancel shit! ");
