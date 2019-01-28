@@ -373,7 +373,7 @@ WHERE discr = "judge" AND lastname = "Wiseburger"));
 /* prosecutors */
 SET @ausa = (SELECT id FROM hats WHERE name = "AUSA");
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
-('Jackson','Jane','',@ausa,'person',1,'john.prosecutor@some.usdoj.gov', '212 666-6637');
+('Jackson','Jane','',@ausa,'person',1,'jane.prosecutor@some.usdoj.gov', '212 666-6637');
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
 ('Fillmore','Millard','',@ausa,'person',1,'millard.fillmore@some.usdoj.gov', '212 666-6600');
