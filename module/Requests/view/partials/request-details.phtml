@@ -20,7 +20,7 @@ endif; ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">interpreters</div><div class="col-md-10"><?php
 if (isset($r['interpreters'])):
     foreach($r['interpreters'] as $i): echo $this->escapeHtml("$i[lastname], $i[firstname]"),"<br>";endforeach;
-else: ?> <em>none assigned</em> <?php endif;
+else: ?> <em>not assigned</em> <?php endif;
  ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">comments</div><div class="col-md-10"><?php echo $r['comments'] ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">submitted</div><div class="col-md-10"><?php

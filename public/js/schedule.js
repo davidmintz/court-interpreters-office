@@ -32,7 +32,7 @@ const renderInterpreter = function(index,name,interpreter_id,event_id) {
 };
 
 const reload_schedule = function(url){
-    url = url || document.location.href;
+    url = url || document.location.pathname;
     return $.get(url)
         .done((data)=>{
             var new_data = $(data).html();
