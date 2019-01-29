@@ -134,7 +134,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      *
      * @param  Entity\Event $entity
      * @param  PreUpdateEventArgs $args
-     * @return boolean
+     * @return array
      */
     private function reallyModified(
         Entity\Event $entity,
@@ -144,25 +144,30 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $fields_updated = array_keys($args->getEntityChangeSet());
         $this->logger->debug(__METHOD__.": looks like updates to:\n"
             . implode('; ', $fields_updated));
-        if ($fields_updated) {
-            return true;
-        }
+        //$changeset = $args->getEntityChangeSet();
+        //$this->logger->debug(gettype($changeset['judge'][0]));
+        // if ($fields_updated) {
+        //     return true;
+        // }
         $interpreterEvents = $entity->getInterpreterEvents()->toArray();
         if ($interpreterEvents != $this->previous_interpreters) {
             $this->logger->debug(__METHOD__.":  interpreters were updated "
             . "; (there are now {count($interpreterEvents)})");
-            return true;
+            $fields_updated[] = 'interpreters';
+            //return true;
         }
 
         $defendants = $entity->getDefendants()->toArray();
 
         if ($defendants != $this->previous_defendants) {
             $this->logger->debug("defendants were modified");
+            $fields_updated[] = 'defendants';
             return true;
         }
         //$this->logger->debug("NOTHING really modified in Event entity?");
 
-        return false;
+        // return false;
+        return $fields_updated;
     }
 
     /**
@@ -176,15 +181,19 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         PreUpdateEventArgs $args
     ) {
 
-        if ($this->reallyModified($entity, $args)) {
+        $fields_updated = $this->reallyModified($entity, $args);
+        if ($fields_updated) {
+            //$changeset = $args->getEntityChangeSet();
+            //
             $entity->setModified($this->now);
             $entity->setModifiedBy($this->getAuthenticatedUser($args));
+            $this->getEventManager()->trigger(
+                __FUNCTION__,
+                //$this,
+                'ENTITY_UPDATE',
+                compact('args', 'entity','fields_updated')
+            );
         }
-        $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            compact('args', 'entity')
-        );
     }
 
     /**

@@ -347,4 +347,16 @@ class RequestRepository extends EntityRepository
         ];
 
     }
+    
+    /**
+    * alias for view()
+    *
+    * @param  int $id
+    * @return array
+    */
+    public function getView($id)
+    {
+        return $this->view($id);
+    }
+
 }

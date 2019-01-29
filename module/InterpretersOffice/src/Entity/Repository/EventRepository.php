@@ -26,7 +26,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
      */
     protected $view_dql = <<<DQL
 
-         SELECT e.id, e.date, e.time,
+         SELECT e.id, e.date, e.time,e.end_time,
          COALESCE(
              CONCAT(j.firstname, ' ',j.middlename,' ',j.lastname,', ',f.flavor),
          aj.name) AS judge,
@@ -75,19 +75,6 @@ DQL;
         //LEFT JOIN InterpretersOffice\Requests\Entity\Request rq JOIN rq.event rqe WITH rqe.id = e.id
 
     /**
-     * constructor
-     *
-     * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
-     * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
-     */
-    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
-    {
-        parent::__construct($em, $class);
-        $this->cache = $em->getConfiguration()->getResultCacheImpl();
-        $this->cache->setNamespace($this->cache_namespace);
-    }
-
-    /**
      * query result cache
      *
      * @var \Doctrine\Common\Cache\Cache
@@ -110,6 +97,40 @@ DQL;
      */
     protected $cache_enabled = false;
 
+    /**
+     * constructor
+     *
+     * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class The class descriptor.
+     */
+    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+        $this->cache = $em->getConfiguration()->getResultCacheImpl();
+        $this->cache->setNamespace($this->cache_namespace);
+    }
+
+    /**
+     * experimental. trying to avoid wasting SELECT queries
+     */
+    public function load($id)
+    {
+        $dql = 'SELECT e FROM '.Entity\Event::class. ' e
+            LEFT JOIN e.judge j
+            JOIN e.eventType t
+            JOIN e.language l
+            LEFT JOIN e.cancellationReason cr
+            LEFT JOIN e.anonymousJudge anon_j
+            LEFT JOIN e.anonymousSubmitter anon_submitter
+            LEFT JOIN e.location loc
+            LEFT JOIN loc.parentLocation ploc
+            JOIN e.submitter submitter
+            WHERE e.id = :id';
+
+        return $this->getEntityManager()->createQuery($dql)
+            ->setParameters([':id' => $id])
+            ->getOneOrNullResult();
+    }
 
     /**
      * returns human-readable representation of event

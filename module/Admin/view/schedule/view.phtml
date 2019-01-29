@@ -42,6 +42,12 @@ if ($messenger->hasSuccessMessages()) :
 elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;?>
+<!-- experimental -->
+<pre><?php $session = new \Zend\Session\Container('event_updates');
+print_r($session->{$event['id']});
+unset($session->{$event['id']});
+?></pre>
+<!-- -->
 <div data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
     <div class="col-sm-3 text-muted text-md-right">
         date

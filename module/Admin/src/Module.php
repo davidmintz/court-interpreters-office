@@ -70,7 +70,7 @@ class Module
                         ->getViewModel();
                 $viewModel->setVariables($routeMatch->getParams());
                 $config = $container->get('config');
-                if (isset($config['site'])) {                
+                if (isset($config['site'])) {
                     $viewModel->setVariables($config['site']['contact']);
                 }
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
@@ -116,6 +116,29 @@ class Module
                     $message .= sprintf("stack trace:\n%s", $trace);
                     $log->err($message);
                 }
+            }
+        );
+
+        // experimental
+        $sharedEvents->attach(
+            'ENTITY_UPDATE',
+            //'InterpretersOffice\Entity\Listener\EventEntityListener',
+            'preUpdate',
+            function($e) use ($container) {
+                $log = $container->get('log');
+                $params = $e->getParams();
+                $args = $params['args'];
+                $entity = $params['entity'];
+                $id = $entity->getId();
+                $em = $args->getObjectManager();
+                $class = get_class($entity);
+                $view_before = $em->getRepository(get_class($entity))
+                    ->getView($entity->getId());
+                $shit = strstr($class, 'Event') ? 'event' : 'request';
+                $session = new \Zend\Session\Container("{$shit}_updates");
+                $session->$id = $view_before;
+                //$changeset = $args->getEntityChangeSet();
+                $log->info("eat SHIT!");
             }
         );
     }

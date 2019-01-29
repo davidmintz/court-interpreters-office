@@ -121,8 +121,8 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
         $really_modified = false;
         $fields_updated = array_keys($args->getEntityChangeSet());
-        $defendants_were_modified = $this->defendantsWereModified($request);
-        if ($defendants_were_modified) {
+        
+        if (count($fields_updated) or $this->defendantsWereModified($request)) {
             $request->setModified(new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
             $user = $this->getAuthenticatedUser($args)->getUsername();
