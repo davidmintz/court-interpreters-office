@@ -821,8 +821,9 @@ var defendantForm = (function(){
             return displayValidationErrors(response.validation_errors);
         }
         if (response.inexact_duplicate_found) {
-            //console.debug("inexact duplicate detected");
-            var existing = response.existing_entity;
+            console.debug(response.existing_entity);
+            var name = response.existing_entity;
+            var existing = `${name.surnames}, ${name.given_names}`;
             defendantForm.prepend($("<input>").attr(
                 { type:"hidden",
                     name:"duplicate_resolution_required",value:1})
@@ -920,7 +921,7 @@ var defendantForm = (function(){
         //console.debug("id is what? "+id);
         var url = "/admin/defendants/edit/"+ id +"?context=events";
         // we may need to supply an event id
-        var event_id = $("input[name=\"event[id]\"]").val() || false;
+        var event_id = $(`input[name="event[id]"]`).val() || false;
         if (event_id) {
             url += "&event_id="+event_id;
         }
