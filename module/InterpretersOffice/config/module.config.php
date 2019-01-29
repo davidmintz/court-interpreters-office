@@ -98,16 +98,16 @@ return [
                 'hydration_cache' => $doctrine_cache,
              ],
         ],
-
-         'authentication' => [
-            'orm_default' => [
-                'object_manager' => 'Doctrine\ORM\EntityManager',
-                'identity_class' => 'InterpretersOffice\Entity\User',
-                //'identity_property' => 'email',
-                'credential_property' => 'password',
-                'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword'//[ new Entity\User, 'passwordCallback'],
-            ],
-         ],
+        /**  WTF? comment this out and it still works fine? */
+         // 'authentication' => [
+         //    'orm_default' => [
+         //        'object_manager' => 'Doctrine\ORM\EntityManager',
+         //        'identity_class' => 'InterpretersOffice\Entity\User',
+         //        //'identity_property' => 'email',
+         //        'credential_property' => 'password',
+         //        'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword'//[ new Entity\User, 'passwordCallback'],
+         //    ],
+         // ],
     ],
 
     'service_manager' => [
