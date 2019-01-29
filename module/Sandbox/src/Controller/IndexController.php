@@ -10,8 +10,10 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         $em = $this->getEvent()->getApplication()->getServiceManager()->get('entity-manager');
-        $em->find('InterpretersOffice\Entity\Event',115656);
-        return new ViewModel();
+        $event = $em->find('InterpretersOffice\Entity\Event',115656);
+        //$event = $em->getRepository('InterpretersOffice\Entity\Event')->load(115656);
+        //$event->getJudge()->getLastname();
+        return new ViewModel(['event'=>$event]);
     }
 
     public function oneAction()
