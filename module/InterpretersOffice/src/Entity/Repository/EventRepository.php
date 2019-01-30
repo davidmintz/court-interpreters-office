@@ -49,7 +49,8 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          e.modified AS last_updated,
          e.comments,
          e.admin_comments,
-         r.reason AS reason_for_cancellation, rq.id request_id, rq.comments AS submitter_comments
+         COALESCE(r.reason,'n/a') AS reason_for_cancellation, 
+         rq.id request_id, rq.comments AS submitter_comments
          FROM InterpretersOffice\Entity\Event e
          JOIN e.eventType t
          JOIN t.category c

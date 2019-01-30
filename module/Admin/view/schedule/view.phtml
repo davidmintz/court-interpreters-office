@@ -60,31 +60,31 @@ echo $this->diff('defendants'),"\n";
         date
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $event['date']->format('D d-M-Y'); ?>
+        <?php echo $this->diff('date')?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         time
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $event['time'] ? $event['time']->format('g:i a') : '<em>?</em>' ?>
+        <?php echo $this->diff('time') ?: '<em>?</em>' ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         type
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $event['type'] ?>
+        <?php echo $this->diff('type') ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         language
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $event['language']?>
+        <?php echo $this->diff('language')?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         judge
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $event['judge'];
+        <?php echo $this->diff('judge');
         if ($event['aj_default_location']) :
             ?> <span class="text-muted"><?php echo $event['aj_default_location']?></span><?php
         endif; ?>
@@ -93,36 +93,33 @@ echo $this->diff('defendants'),"\n";
         location
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $location ?>
+        <?php echo $this->diff('location') ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         defendants
     </div>
     <div class="col-sm-3  defendants pl-0"><?php
-    foreach ($event['defendants'] as $d) :
-        echo "$d[surnames], $d[given_names]<br>";
-    endforeach;?>
+        echo $this->diff('defendants');
+    ?>
     </div>
     <div class="col-sm-3  text-muted text-md-right">
         docket
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $event['docket']?>
+        <?php echo $this->diff('docket') ?>
     </div>
     <div class="col-sm-3  text-muted text-md-right">
         interpreters
     </div>
     <div class="col-sm-3 pl-0"><?php
-    foreach ($event['interpreters'] as $i) :
-        echo "$i[lastname], $i[firstname]<br>";
-    endforeach;
+        echo $this->diff('interpreters')
     ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         cancellation
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $event['reason_for_cancellation'] ?: '<span class="text-muted">n/a</span>'?>
+        <?php echo $this->diff('reason_for_cancellation') ;//?: '<span class="text-muted">n/a</span>'?>
     </div>
         <div class="col-sm-3  text-muted text-md-right">
         <?php if ($event['request_id']):?>* <?php endif ?>request by
@@ -172,7 +169,9 @@ endif;?></span>
         comments (public)
     </div>
     <div class="col-sm-9 pl-0">
-        <?php echo nl2br($this->escapeHtml($event['comments'])) ?>
+        <?php //echo nl2br($this->escapeHtml($event['comments']))
+        echo nl2br($this->diff('comments'))
+        ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         comments (internal)
