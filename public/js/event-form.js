@@ -422,8 +422,7 @@ var eventForm = (function () {
                 }
                 return;
             }
-            document.location = document.referrer
-                || `${window.basePath}/admin/schedule/view/${response.id}`;
+            document.location = `${window.basePath}/admin/schedule/view/${response.id}`;
         })
             .fail(fail);
     };
