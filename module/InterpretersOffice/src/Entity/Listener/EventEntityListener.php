@@ -187,10 +187,11 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             //
             $entity->setModified($this->now);
             $entity->setModifiedBy($this->getAuthenticatedUser($args));
+            $this->logger->debug("triggering shit in event entity listener preUpdate");
             $this->getEventManager()->trigger(
                 __FUNCTION__,
-                //$this,
-                'ENTITY_UPDATE',
+                $this,
+                //'ENTITY_UPDATE',
                 compact('args', 'entity','fields_updated')
             );
         }

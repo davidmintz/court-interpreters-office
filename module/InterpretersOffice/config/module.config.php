@@ -333,18 +333,20 @@ return [
     'view_helpers' => [
         'invokables' => [
             'formElementErrors' => 'InterpretersOffice\Form\View\Helper\FormElementErrors',
-            //DefendantElementCollection::class => DefendantElementCollection::class,
+
         ],
 
         'aliases' => [
             'defendants' => ViewHelper\Defendants::class,
             'interpreters' => ViewHelper\InterpreterNames::class,
             'errorMessage' => ViewHelper\ErrorMessage::class,
+            'diff' => ViewHelper\Diff::class,
         ],
         'factories' => [
             ViewHelper\Defendants::class => InvokableFactory::class,
             ViewHelper\ErrorMessage::class => InvokableFactory::class,
             ViewHelper\InterpreterNames::class => InvokableFactory::class,
+            ViewHelper\Diff::class => InvokableFactory::class,
         ],
     ],
 

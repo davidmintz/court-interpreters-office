@@ -8,6 +8,7 @@ $this->headScript()->appendFile($this->basePath('js/event-delete.js'));
  * @var \InterpretersOffice\Entity\Event $event
  */
 $event = $this->event;
+$this->entity = $event; // hint the Diff helper
 if (! $event) :  ?>
     <p class="alert alert-warning">event not found!</p>
     <?php
@@ -44,8 +45,14 @@ elseif ($messenger->hasErrorMessages()) :
 endif;?>
 <!-- experimental -->
 <pre><?php $session = new \Zend\Session\Container('event_updates');
-print_r($session->{$event['id']});
-unset($session->{$event['id']});
+if ($session->{$event['id']}) {
+    echo "we have session data re previous state\n";
+    $this->before = $session->{$event['id']};
+    //unset($session->{$event['id']});
+} else { echo "wtf?\n";}
+echo $this->diff('docket'),"\n";
+echo $this->diff('time'),"\n";
+echo $this->diff('defendants'),"\n";
 ?></pre>
 <!-- -->
 <div data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">

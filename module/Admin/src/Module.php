@@ -121,11 +121,12 @@ class Module
 
         // experimental
         $sharedEvents->attach(
-            'ENTITY_UPDATE',
+            //'ENTITY_UPDATE',
             //'InterpretersOffice\Entity\Listener\EventEntityListener',
+            '*',
             'preUpdate',
-            function($e) use ($container) {
-                $log = $container->get('log');
+            function($e) use ($log) {
+
                 $params = $e->getParams();
                 $args = $params['args'];
                 $entity = $params['entity'];
@@ -138,7 +139,8 @@ class Module
                 $session = new \Zend\Session\Container("{$shit}_updates");
                 $session->$id = $view_before;
                 //$changeset = $args->getEntityChangeSet();
-                $log->info("eat SHIT!");
+                $log->debug("stored entity state in session {$session->getName()}"
+                     ." (id $id) for later reference");
             }
         );
     }
