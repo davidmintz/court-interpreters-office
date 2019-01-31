@@ -1,68 +1,108 @@
 <?php
-/** module/InterpretersOffice/src/View/Helper/ErrorMessage.php */
+/** module/InterpretersOffice/src/View/Helper/Diff.php */
 
 namespace InterpretersOffice\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 
 /**
- * view helper for error-message div
+ * View helper for detailed, human-friendly view of Event and Request entities,
+ * highlighting what was updated by the user.
+ *
+ * Both the state before and after have to be assigned to the ViewModel.
+ *
  */
 class Diff extends AbstractHelper
 {
 
+    /**
+     * current state of the entity
+     *
+     * @var array
+     */
     protected $data;
+
+    /**
+     * state of the entity before last update
+     *
+     * @var array
+     */
     protected $before;
 
-
+    /**
+     * gets our entity data
+     *
+     * @return array
+     */
     public function getData()
     {
         if ($this->data) {
             return $this->data;
         }
         $this->data = $this->getView()->entity;
+
         return $this->data;
     }
 
+    /**
+     * gets our entity's previous state
+     *
+     * @return array
+     */
     public function getPrevious()
     {
         if ($this->before) {
             return $this->before;
         }
         $this->before = $this->getView()->before;
+
         return $this->before;
     }
-    public function __invoke($key)
+
+    /**
+     * Highlights the difference between before and after update.
+     *
+     * In a viewscript, this is invoked as <code>$this->diff('field_name')</code>
+     *
+     * @param  string $field  the field whose value we're displaying
+     * @return string the value(s), decorated with <INS> and <DEL> tags to
+     * show what has changed.
+     */
+    public function __invoke($field)
     {
         $before = $this->getPrevious();
-        $data = $this->getData()[$key];
-        if (! $before or $before[$key] == $data) {
-            // render as per normal
+        $data = $this->getData()[$field];
+        // if there's no update, render as per normal, getting it done
+        // as soon as possible
+        if (! $before or $before[$field] == $data) {
             if (is_string($data)) {
                 return $data;
-            } else {
-                if (is_array($data)) {
-                    return $key == 'interpreters' ? $this->renderInterpreters($data)
+            } elseif (is_array($data)) {
+                return $field == 'interpreters' ? $this->renderInterpreters($data)
                         : $this->renderDefendants($data);
-                } else {
-                    if ($data instanceof \DateTime) {
-                        return $this->renderDateTime($key,$data);
-                    }
-                }
+            } elseif ($data instanceof \DateTime) {
+                return $this->renderDateTime($field,$data);
             }
         }
-        if (false !== strstr($key,'comments')) {
-            return $this->htmlDiff($before[$key],$data);
+        // yes, there is a diff to show them
+        if (false !== strstr($field,'comments')) {
+            return $this->htmlDiff($before[$field],$data);
         }
-        // there is a diff
-        if (is_string($data) || is_string($before[$key]) ) {//
-            return sprintf('<del>%s</del> <ins>%s</ins>',$before[$key],$data);
+
+        if (is_string($data) || is_string($before[$field]) ) {
+            if (! $data or ! $before[$field]) {
+                $sep = '';
+            } else {
+                $sep = ' ';
+            }
+            return sprintf('<del>%s</del>%s<ins>%s</ins>',$before[$field],$data,$sep);
         }
+
         if ($data instanceof \DateTime) {
 
-            return sprintf('<del>%s</del> <ins>%s</ins>',
-                $this->renderDateTime($key,$before[$key]),
-                $this->renderDateTime($key,$data)
+            return sprintf('<del class="avoidwrap">%s</del> <ins class="avoidwrap">%s</ins>',
+                $this->renderDateTime($field,$before[$field]),
+                $this->renderDateTime($field,$data)
             );
         }
         if (is_array($data)) {
@@ -71,8 +111,9 @@ class Diff extends AbstractHelper
                     "$n[surnames], $n[given_names]":
                     "$n[lastname], $n[firstname]";
             };
+
             $names_now = array_map($flatten,$data);
-            $names_before =  array_map($flatten,$before[$key]);
+            $names_before =  array_map($flatten,$before[$field]);
             $new = array_diff($names_now, $names_before);
             $deleted = array_diff($names_before,$names_now);
             $all = array_unique(array_merge($names_now,$names_before));
@@ -86,34 +127,49 @@ class Diff extends AbstractHelper
                     $return .= "$n<br>";
                 }
             }
+
             return $return;
         }
-
     }
 
+    /**
+     * renders defendant names
+     *
+     * @param  Array  $data
+     * @return string
+     */
     public function renderDefendants(Array $data){
-        $return = '';
-        foreach ($data as $d) {
-            $return .= "$d[surnames], $d[given_names]<br>";
-        };
 
-        return $return;
+        return implode('<br>',array_map(function($d){
+            return  "$d[surnames], $d[given_names]";
+        },$data));
     }
 
+    /**
+     * renders interpreter names
+     *
+     * @param  Array  $data
+     * @return string
+     */
     public function renderInterpreters(Array $data){
-        $return = '';
-        foreach ($data as $n) {
-            $return .= "$n[lastname], $n[firstname]<br>";
-        };
 
-        return $return;
+        return implode('<br>',array_map(function($i){
+            return  "$i[lastname], $i[firstname]";
+        },$data));
     }
 
-    public function renderDateTime($key,\DateTime $obj) {
-        switch ($key) {
+    /**
+     * renders PHP DateTime objects
+     *
+     * @param  string   $field name of field (property) holding the DateTime
+     * @param  \DateTime $obj
+     * @return string
+     */
+    public function renderDateTime($field,\DateTime $obj) {
+
+        switch ($field) {
             case 'time':
             case 'end_time':
-            case 'submission_date':
             case 'submission_time':
                 $format = 'g:i a';
                 break;
@@ -125,12 +181,16 @@ class Diff extends AbstractHelper
             case 'last_updated':
             case 'created':
                 $format = 'd-M-Y g:i a';
+                break;
             default:
                 $format = 'r';
         }
         return $obj->format($format);
     }
-    /*
+
+
+    /*  lifted from from https://github.com/paulgb/simplediff:
+
         Paul's Simple Diff Algorithm v 0.1
         (C) Paul Butler 2007 <http://www.paulbutler.org/>
         May be used and distributed under the zlib/libpng license.
@@ -147,10 +207,18 @@ class Diff extends AbstractHelper
         returns the differences in HTML. The tags used are <ins> and <del>,
         which can easily be styled with CSS.
 
-        https://github.com/paulgb/simplediff
+        ----
+        thanks, Paul!
     */
-
-    public function diff($old, $new){
+    /**
+     * computes difference between strings
+     *
+     * @param  string $old
+     * @param  string $new
+     * @return string
+     */
+    public function diff($old, $new)
+    {
         $matrix = array();
         $maxlen = 0;
         foreach($old as $oindex => $ovalue){
@@ -158,28 +226,37 @@ class Diff extends AbstractHelper
             foreach($nkeys as $nindex){
                 $matrix[$oindex][$nindex] = isset($matrix[$oindex - 1][$nindex - 1]) ?
                     $matrix[$oindex - 1][$nindex - 1] + 1 : 1;
-                if($matrix[$oindex][$nindex] > $maxlen){
+                if ($matrix[$oindex][$nindex] > $maxlen) {
                     $maxlen = $matrix[$oindex][$nindex];
                     $omax = $oindex + 1 - $maxlen;
                     $nmax = $nindex + 1 - $maxlen;
                 }
             }
         }
-        if($maxlen == 0) return array(array('d'=>$old, 'i'=>$new));
+        if ($maxlen == 0) return array(array('d'=>$old, 'i'=>$new));
         return array_merge(
             $this->diff(array_slice($old, 0, $omax), array_slice($new, 0, $nmax)),
             array_slice($new, $nmax, $maxlen),
             $this->diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen)));
     }
 
-    public function htmlDiff($old, $new){
+    /**
+     * renders difference between strings as HTML
+     *
+     * @param  string $old
+     * @param  string $new
+     * @return string
+     */
+    public function htmlDiff($old, $new)
+    {
         $ret = '';
+        $view = $this->getView();
         $diff = $this->diff(preg_split("/[\s]+/", $old), preg_split("/[\s]+/", $new));
         foreach($diff as $k){
             if(is_array($k))
-                $ret .= (!empty($k['d'])?"<del>".implode(' ',$k['d'])."</del> ":'').
-                    (!empty($k['i'])?"<ins>".implode(' ',$k['i'])."</ins> ":'');
-            else $ret .= $k . ' ';
+                $ret .= (!empty($k['d'])?"<del>".$view->escapeHtml(implode(' ',$k['d']))."</del> ":'').
+                    (!empty($k['i'])?"<ins>".$view->escapeHtml(implode(' ',$k['i']))."</ins> ":'');
+            else $ret .= $view->escapeHtml($k) . ' ';
         }
         return $ret;
     }

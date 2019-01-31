@@ -43,16 +43,13 @@ if ($messenger->hasSuccessMessages()) :
 elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;?>
-<!-- experimental -->
-<pre><?php $session = new \Zend\Session\Container('event_updates');
+<!-- experimental debug zone -->
+<pre><?php
+$session = new \Zend\Session\Container('event_updates');
 if ($session->{$event['id']}) {
-    echo "we have session data re previous state\n";
     $this->before = $session->{$event['id']};
-    //unset($session->{$event['id']});
-} else { echo "wtf?\n";}
-echo $this->diff('docket'),"\n";
-echo $this->diff('time'),"\n";
-echo $this->diff('defendants'),"\n";
+    unset($session->{$event['id']});
+}
 ?></pre>
 <!-- -->
 <div data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
@@ -112,7 +109,7 @@ echo $this->diff('defendants'),"\n";
         interpreters
     </div>
     <div class="col-sm-3 pl-0"><?php
-        echo $this->diff('interpreters')
+        echo $this->diff('interpreters');
     ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
@@ -129,17 +126,26 @@ echo $this->diff('defendants'),"\n";
         ?><?php
 if ($event['submitter_hat']) :
     ?>,</span> <span class="avoidwrap"><?php
-    echo "{$event['submitter_hat']}";
+    echo $this->diff('submitter_hat');
 endif;?></span>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         requested on
     </div>
     <div class="col-sm-3 pl-0">
-    <?php echo $event['submission_date']->format('d-M-Y');
-    if ($event['submission_time']) :
-        echo $event['submission_time']->format(' g:i a');
+    <?php
+    if ($event['request_id']):
+        printf('%s %s',
+        $event['submission_date']->format('d-M-Y'),
+        $event['submission_time']->format('g:i a')
+        );
+    else:
+        printf('%s %s',
+            $this->diff('submission_date'),
+            $this->diff('submission_time')
+        );
     endif;
+
     ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
@@ -153,7 +159,7 @@ endif;?></span>
     </div>
     <div class="col-sm-3 pl-0">
         <?php echo $event['created'] != $event['last_updated'] ?
-        $event['last_updated']->format('d-M-Y g:i a'). " ({$event['last_updated_by']})"
+        "{$this->diff('last_updated')} ({$this->diff('last_updated_by')})"
         : '<span class="text-muted">n/a</span>';
         ?>
     </div>
@@ -177,7 +183,7 @@ endif;?></span>
         comments (internal)
     </div>
     <div class="col-sm-9 pl-0">
-        <?php echo nl2br($this->escapeHtml($event['admin_comments'])) ?>
+        <?php echo nl2br($this->diff('admin_comments'))/*$this->escapeHtml($event['admin_comments']*/ ?>
     </div>
 
     <div class="col-12 d-flex">

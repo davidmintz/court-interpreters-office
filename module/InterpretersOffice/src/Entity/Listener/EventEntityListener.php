@@ -84,11 +84,15 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         //$log->debug("postload callback running in Event entity listener");
         $this->previous_defendants = $entity->getDefendants()->toArray();
         $this->previous_interpreters = $entity->getInterpreterEvents()->toArray();
-        //  temporary/debugging
-        // $this->getEventManager()->trigger(
-        //     __FUNCTION__,
-        //     $this, compact('args', 'entity')
-        // );
+        $this->logger->debug("triggering shit in event entity listener postLoad");
+        $this->getEventManager()->trigger(
+            __FUNCTION__,
+            $this,
+            [   'entity'=>$entity,'args'=>$args,
+                'defendants'=>$this->previous_defendants,
+                'interpreters'=> $this->previous_interpreters,
+            ]
+        );
     }
 
     /**
@@ -152,7 +156,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $interpreterEvents = $entity->getInterpreterEvents()->toArray();
         if ($interpreterEvents != $this->previous_interpreters) {
             $this->logger->debug(__METHOD__.":  interpreters were updated "
-            . "; (there are now {count($interpreterEvents)})");
+            . "; there are now ".count($interpreterEvents));
             $fields_updated[] = 'interpreters';
             //return true;
         }
@@ -187,13 +191,13 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             //
             $entity->setModified($this->now);
             $entity->setModifiedBy($this->getAuthenticatedUser($args));
-            $this->logger->debug("triggering shit in event entity listener preUpdate");
-            $this->getEventManager()->trigger(
-                __FUNCTION__,
-                $this,
-                //'ENTITY_UPDATE',
-                compact('args', 'entity','fields_updated')
-            );
+            //$this->logger->debug("triggering shit in event entity listener preUpdate");
+            // $this->getEventManager()->trigger(
+            //     __FUNCTION__,
+            //     $this,
+            //     //'ENTITY_UPDATE',
+            //     compact('args', 'entity')//'fields_updated'
+            // );
         }
     }
 

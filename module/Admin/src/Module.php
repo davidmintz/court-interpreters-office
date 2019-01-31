@@ -124,7 +124,7 @@ class Module
             //'ENTITY_UPDATE',
             //'InterpretersOffice\Entity\Listener\EventEntityListener',
             '*',
-            'preUpdate',
+            'postLoad',
             function($e) use ($log) {
 
                 $params = $e->getParams();
