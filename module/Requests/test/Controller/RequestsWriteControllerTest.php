@@ -401,8 +401,8 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         );
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
-        echo "\n";
-        $this->dumpResponse();
+        // echo "\n";
+        // $this->dumpResponse();
     }
 
     public function testViewRequestThatIsScheduled()
@@ -428,7 +428,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
          echo "\n$url\n";
         $this->assertResponseStatusCode(200);
 
-        $this->dumpResponse();
+        //$this->dumpResponse();
     }
     /*        //$csrf = $q->execute("input#csrf")->current();
 

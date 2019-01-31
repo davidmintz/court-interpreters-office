@@ -70,14 +70,14 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
      * callback
      *
      * doesn't really do anything at the moment.
-     *
-     *
      * @param Interpreter $interpreter
      * @param LifecycleEventArgs $event
      */
     public function postLoad(Interpreter $interpreter, LifecycleEventArgs $event)
     {
-        $this->getEventManager()->trigger(__FUNCTION__, $this);
+        // disabled it because another wildcards listener is expecting
+        // certain params
+        //$$this->getEventManager()->trigger(__FUNCTION__, $this);
     }
 
     /**
