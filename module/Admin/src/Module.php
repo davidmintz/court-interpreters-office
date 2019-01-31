@@ -119,7 +119,11 @@ class Module
             }
         );
 
-        // experimental
+        // experimental. not the most efficient. we could
+        // save a couple db selects by writing/using a repository method
+        // that does not fetch the 'interpEvents' (in the case of the Entity\Event)
+        // and 'defendants' collections because the entity listener that
+        // triggers us already has that data
         $sharedEvents->attach(
             //'ENTITY_UPDATE',
             //'InterpretersOffice\Entity\Listener\EventEntityListener',

@@ -130,7 +130,6 @@ class ScheduleUpdateManager
 
     /**
      * event listener for Request update
-     * @todo rewrite/rename this whole thing
      *
      * @param  Event  $e
      * @return void
@@ -160,23 +159,7 @@ class ScheduleUpdateManager
             );
             return;
         }
-            // not so fast!
-        //     $collection_updates = $uow->getScheduledCollectionUpdates();
-        //     $collection_deletions = $uow->getScheduledCollectionDeletions();
-        //     if ($collection_updates or $collection_deletions) {
-        //         foreach ([$collection_updates, $collection_deletions] as $collection) {
-        //             if ($collection) {
-        //                 $request = $collection[0]->getOwner();
-        //                 $this->logger->debug("FOUND IT.");
-        //                 break;
-        //             } else {$this->logger->debug("no shit happening at ".__LINE__);}
-        //         }
-        //     } else {
-        //         $this->logger->debug("looks like nothing was updated AT ALL?");
-        //         return;
-        //     }
-        // }
-        //*/
+
         $scheduled_event = $request->getEvent();
         if (! $scheduled_event) {
             $this->logger->debug(
@@ -190,7 +173,7 @@ class ScheduleUpdateManager
         $this->user_action = $user_action;
         $fields_modified = implode(', ', array_keys($changeset));
         $this->logger->debug(
-            "fields modified? ".($fields_modified ?: 'shit')
+            "fields modified? ".($fields_modified ?: 'not shit')
         );
 
         $this->logger->debug(
@@ -201,6 +184,21 @@ class ScheduleUpdateManager
         $this->logger->debug(
             "collection updates: $num_collection_updates; deletions: $num_collection_deletions"
         );
+        foreach($uow->getScheduledCollectionUpdates() as $collection) {
+            $entity_class = get_class($collection->getOwner());
+            $this->logger->info("a collection to be updated is owned by a $entity_class");
+
+        }
+        foreach($uow->getScheduledCollectionDeletions() as $k => $v) {
+            $this->logger->debug(
+                sprintf('deletions: key %s, val is of type %s',$k,get_class($v))
+            );
+            foreach($v as $i => $o)  {
+                $this->logger->debug(
+                    sprintf('deletions: key %s, val is of type %s',$i,get_class($o))
+                );
+            }
+        }
 
         $config = $this->config['event_listeners'];
 
@@ -243,7 +241,7 @@ class ScheduleUpdateManager
             }
         }
         if ($user_action == self::OTHER) {
-            $this->logger->debug("it's the default user-action: other");
+            $this->logger->debug(__METHOD__.":  it's the default user-action: other");
             $this->updateScheduledEvent($request, $args);
         }
         if ($this->event_was_updated) {
@@ -378,6 +376,22 @@ class ScheduleUpdateManager
         }
 
         return $this;
+    }
+
+    /**
+     * updates an Event entity to synchronize with Request
+     *
+     * @param  Request $request
+     * @param  OnFlushEventArgs  $args
+     * @return ScheduleUpdateManager
+     *
+     */
+    public function deleteScheduledEvent($request, $args)
+    {
+        $em = $args->getEntityManager();
+        $event = $request->getEvent();
+        $em->remove($event);
+        $this->logger->debug(__METHOD__.": we have REMOVED scheduled event id ".$event->getId());
     }
 
     /**

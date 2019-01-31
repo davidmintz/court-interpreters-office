@@ -146,7 +146,7 @@ class UpdateListener implements
     {
         $this->logger->debug(
             sprintf(
-                'user %s deleting entity %s',
+                'user %s appears to be deleting entity %s',
                 $this->getAuthenticatedUser($args)->getUsername(),
                 get_class($args->getObject())
             )

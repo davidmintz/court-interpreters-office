@@ -141,7 +141,7 @@ td.interpreters-assigned div:not(:last-child) {
 /*
 note to self: gray #515457
 */
-span.avoidwrap {
+.avoidwrap {
     display:inline-block !important;
     white-space:nowrap;
 }

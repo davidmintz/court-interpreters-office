@@ -44,7 +44,7 @@ class RequestsControllerFactory implements FactoryInterface
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
         $resolver = $entityManager->getConfiguration()
-        ->getEntityListenerResolver();
+            ->getEntityListenerResolver();
 
         if ($requestedName == Controller\WriteController::class) {
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
@@ -90,7 +90,8 @@ class RequestsControllerFactory implements FactoryInterface
             );
             $listener = $container->get(EventEntityListener::class);
             $listener->setAuth($container->get('auth'));
-            $resolver->register($container->get(EventEntityListener::class));            
+            $resolver->register($container->get(EventEntityListener::class));
+            $resolver->register($container->get(RequestEntityListener::class));
         }
         return new $requestedName($entityManager, $auth);
     }

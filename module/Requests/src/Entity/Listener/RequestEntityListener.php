@@ -121,12 +121,14 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
         $really_modified = false;
         $fields_updated = array_keys($args->getEntityChangeSet());
-        
+
         if (count($fields_updated) or $this->defendantsWereModified($request)) {
-            $request->setModified(new \DateTime())
-                ->setModifiedBy($this->getAuthenticatedUser($args));
-            $user = $this->getAuthenticatedUser($args)->getUsername();
-            $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
+            $shit = print_r($fields_updated,true);
+            $this->getLogger()->info(__METHOD__."updating: $shit") ;
+            // $request->setModified(new \DateTime())
+            //     ->setModifiedBy($this->getAuthenticatedUser($args));
+            // $user = $this->getAuthenticatedUser($args)->getUsername();
+            // $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
         }
         // Request cancellation. Cancellation is in fact an update: the entity's
         // boolean $cancelled is set to true. But it is treated as its own
