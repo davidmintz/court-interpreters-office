@@ -84,7 +84,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         //$log->debug("postload callback running in Event entity listener");
         $this->previous_defendants = $entity->getDefendants()->toArray();
         $this->previous_interpreters = $entity->getInterpreterEvents()->toArray();
-        $this->logger->debug("triggering shit in event entity listener postLoad");
+        //$this->logger->debug("triggering shit in event entity listener postLoad");
         // we need to hang onto a snapshot of how it was BEFORE they update
         // so we can render the diff, etc
         $this->getEventManager()->trigger(
