@@ -107,6 +107,12 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
     public function getHolidaysForPeriod($until, $from = null)
     {
 
+        if ($from && $from > $until) {
+            // swap;
+            $tmp = $until;
+            $until = $from;
+            $from = $tmp;
+        }
         if (! $from) {
             $from = date('Y-m-d');
         }
@@ -219,7 +225,7 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
 
     /**
      * a no-op
-     * 
+     *
      * @param  string $message
      * @return void
      */
@@ -231,7 +237,7 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
       * @param \DateTime $when
       * @return \DateTime
       */
-    public function getTwoBusinessDaysFromDate(\DateTime $when = null)
+    public function getTwoBusinessDaysFromDate(\DateTime $when = null, $op = 'add')
     {
 
         if (! $when) {
@@ -242,56 +248,32 @@ class CourtClosingRepository extends EntityRepository implements CacheDeletionIn
         }
 
         $formatted_when_date = $when->format('Y-m-d');
-        $plus_two_weeks = (new \DateTime($when->format('Y-m-d') . " +2 weeks"))->format('Y-m-d');
-        $holidays = $this->getHolidaysForPeriod($plus_two_weeks, $when->format('Y-m-d'));
-        // print_r($holidays);
+        $sign = ($op == 'add' ? '+':'-');
+        $plus_or_minus_two_weeks = (new \DateTime($when->format('Y-m-d') . " {$sign}2 weeks"))->format('Y-m-d');
+        $holidays = $this->getHolidaysForPeriod($plus_or_minus_two_weeks, $when->format('Y-m-d'));
         if (in_array($formatted_when_date, $holidays) or in_array($when->format('N'), [6,7])) {
             //echo "adding 1 day and setting to midnight for non-business day...<br>";
-            $when->add(new \DateInterval("P1D"));
+            $when->$op(new \DateInterval("P1D"));
             $when->setTime(0, 0);
         }
-        $business_days_added = 0;
+        $business_days_added_or_subtracted = 0;
+        //echo "<br>\$when is {$when->format('D Y-m-d')}, day of week {$when->format('N')}";
         do {
-            $when->add(new \DateInterval("P1D"));
             $day_of_week = $when->format('N');
             if (in_array($day_of_week, [6,7])) {
-                // echo "adding 1 day for weekend...";
-                $when->add(new \DateInterval("P1D"));
+                //echo "<br>adjusting 1 day for weekend because dow =  $day_of_week...";
+                $when->$op(new \DateInterval("P1D"));
                 continue;
             }
             if (in_array($when->format('Y-m-d'), $holidays)) {
-                //echo "adding 1 day for holiday...";
-                $when->add(new \DateInterval("P1D"));
+                //echo "<br>adjusting 1 day for holiday...";
+                $when->$op(new \DateInterval("P1D"));
                 continue;
             }
-            $business_days_added++;
-        } while ($business_days_added < 2);
+            $when->$op(new \DateInterval("P1D"));
+            $business_days_added_or_subtracted++;
+        } while ($business_days_added_or_subtracted < 2);
 
         return $when;
     }
 }
-/*
-while ($count < 2) {
-    if ($holidays && in_array($when->format('Y-m-d'), $holidays)) {
-        $when->add(new \DateInterval("P1D"));
-        $is_a_nonbusiness_day = true;
-        echo "WTF? ...";
-        continue;
-    }
-    if (in_array((int) $when->format('N'), [6, 7])) {
-        $when->add(new \DateInterval("P1D"));
-        $is_a_nonbusiness_day = true;
-        echo "still at it... ";
-        continue;
-    }
-    echo "adding 1 day... ";
-    $when->add(new \DateInterval("P1D"));
-
-    $count++;
-}
-if ($is_a_nonbusiness_day) {
-      // set $when's time to midnight
-      $when->setTime(0,0);
-}
-*/
-//printf("returning from %s in %s at %d, value %s\n",__FUNCTION__,basename(__FILE__),__LINE__,$when->format("Y-m-d H:i l"));
