@@ -152,8 +152,9 @@ class ScheduleUpdateManager
             }
         }
         ///*
-        if (! $request) { // they submitted the form without changing entity props
-            // or maybe it's an insert? a deletion?
+        if (! $request) {
+            // they may have submitted the form without changing entity props,
+            // or it may be an insert
             $this->logger->debug(
                 __METHOD__.": looks like NOT a request entity update, returning"
             );
@@ -334,6 +335,7 @@ class ScheduleUpdateManager
                 ));
         }
     }
+
     /**
      * updates an Event entity to synchronize with Request
      *
