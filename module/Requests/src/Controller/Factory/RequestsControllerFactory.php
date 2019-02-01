@@ -70,7 +70,8 @@ class RequestsControllerFactory implements FactoryInterface
                 new ModificationAuthorizedAssertion($controller)
             );
 
-            // experimental. let the UpdateListener trigger an event
+            // experimental. let the general entity UpdateListener trigger events
+            // and this listener will call the ScheduleUpdateManager
             $eventManager = $container->get('SharedEventManager');
 
             $eventManager->attach(Listener\UpdateListener::class, '*', function ($e) use ($container) {
@@ -84,9 +85,10 @@ class RequestsControllerFactory implements FactoryInterface
 
             return $controller;
         }
+
         if ($requestedName == AdminController::class) {
             $container->get('log')->debug(
-                "SHIT HAS BEEN ATTACHED in the controller factory..."
+                "attaching entity listeners in RequestsControllerFactory (AdminController)..."
             );
             $listener = $container->get(EventEntityListener::class);
             $listener->setAuth($container->get('auth'));
