@@ -1,4 +1,4 @@
-<?php
+<?php /** module/Requests/test/DateCalculationTest.php */
 namespace ApplicationTest;
 use PHPUnit\Framework\TestCase;
 
@@ -33,6 +33,7 @@ class DateCalculationTest extends TestCase
              ['date'=> 'Wed 2019-02-06','expected'=> 'Fri 2019-02-08'],
              ['date'=> 'Thu 2019-02-07','expected'=> 'Mon 2019-02-11'],
              ['date'=> 'Fri 2019-02-08','expected'=> 'Tue 2019-02-12'],
+             ['date'=> 'Fri 2019-02-15','expected'=> 'Wed 2019-02-20'],
         ];
 
         $this->assertTrue($this->calculator instanceof DateCalculator);
