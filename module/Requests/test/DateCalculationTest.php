@@ -1,55 +1,45 @@
 <?php /** module/Requests/test/DateCalculationTest.php */
 namespace ApplicationTest;
 use PHPUnit\Framework\TestCase;
-
 use InterpretersOffice\Service\DateCalculator;
-use InterpretersOffice\Service\Holidays;
 
 class DateCalculationTest extends TestCase
+
 {
     protected $calculator;
 
     public function setUp()
     {
-        $this->calculator = new DateCalculator(new Holidays);
+        $this->calculator = new DateCalculator(new DummyHolidayProvider());
     }
     public function testTwoBusinessDaysAfter()
     {
-        // $monday = new \DateTime('Mon 2019-02-04 10:00 am');
-        // $expected = 'Wed 2019-02-06 10:00 am';
-        // $this->assertEquals(
-        //     $expected,
-        //     getTwoBusinessDaysAfter($monday)->format('D Y-m-d g:i a')
-        // );
-        // $tuesday = new \DateTime('Tue 2019-02-05 10:00 am');
-        // $expected = 'Thu 2019-02-07 10:00 am';
-        // $this->assertEquals(
-        //     $expected,
-        //     getTwoBusinessDaysAfter($tuesday)->format('D Y-m-d g:i a')
-        // );
         $shits = [
-             ['date'=> 'Mon 2019-02-04','expected'=> 'Wed 2019-02-06'],
-             ['date'=> 'Tue 2019-02-05','expected'=> 'Thu 2019-02-07'],
-             ['date'=> 'Wed 2019-02-06','expected'=> 'Fri 2019-02-08'],
-             ['date'=> 'Thu 2019-02-07','expected'=> 'Mon 2019-02-11'],
-             ['date'=> 'Fri 2019-02-08','expected'=> 'Tue 2019-02-12'],
-             ['date'=> 'Fri 2019-02-15','expected'=> 'Wed 2019-02-20'],
+
+             ['date'=> 'Mon 2019-07-01 9:47 am','expected'=> 'Wed 2019-07-03 9:47 am'],
+             ['date'=> 'Tue 2019-07-02 2:10 pm','expected'=> 'Mon 2019-07-08 2:10 pm'],
+             ['date'=> 'Wed 2019-07-03 10:30 am','expected'=> 'Tue 2019-07-09 10:30 am'],
+             ['date'=> 'Mon 2019-02-04 11:40 am','expected'=> 'Wed 2019-02-06 11:40 am'],
+             ['date'=> 'Tue 2019-02-05 6:12 pm','expected'=> 'Thu 2019-02-07 6:12 pm'],
+             ['date'=> 'Wed 2019-02-06 3:57 pm','expected'=> 'Fri 2019-02-08 3:57 pm'],
+             ['date'=> 'Thu 2019-02-07 8:17 am','expected'=> 'Mon 2019-02-11 8:17 am'],
+             ['date'=> 'Fri 2019-02-08 12:33 pm','expected'=> 'Tue 2019-02-12 12:33 pm'],
+             ['date'=> 'Sat 2019-02-09 10:22 am','expected'=> 'Wed 2019-02-13 12:00 am'],
+             ['date'=> 'Sun 2019-02-10 2:34 pm','expected'=> 'Wed 2019-02-13 12:00 am'],
+             ['date'=> 'Fri 2019-02-15 4:42 pm','expected'=> 'Wed 2019-02-20 4:42 pm'],
         ];
 
-        $this->assertTrue($this->calculator instanceof DateCalculator);
-
-
         foreach ($shits as $shit) {
+
+            $result = $this->calculator
+                ->getTwoBusinessDaysAfter(new \DateTime($shit['date']));
             $this->assertEquals(
                 $shit['expected'],
-
-                $this->calculator->getTwoBusinessDaysAfter(new \DateTime($shit['date']))->format('D Y-m-d'),
+                $result->format('D Y-m-d g:i a'),
                 'failed getting two days after '.$shit['date']
             );
         }
     }
-
-
 }
 /*
 February 2019
@@ -61,47 +51,3 @@ Su Mo Tu We Th Fr Sa
 24 25 26 27 28
 
  */
-
-function doSomething()
-{
-    return true;
-}
-
-function getTwoBusinessDaysAfter(\DateTime $date = null)
-{
-    if (!$date) {
-        $date = new \DateTime();
-    }
-    $holidays = getHolidaysForPeriod($date->format("Y-m-d"));
-    $days_incremented = 0;
-    while ($days_incremented < 2) {
-        $date->add(new \DateInterval('P1D'));
-        if (isAWeekend($date)) {
-            $date->add(new \DateInterval('P1D'));
-            continue;
-        }
-        if (isAHoliday($date->format("Y-m-d"))) {
-            $date->add(new \DateInterval('P1D'));
-            continue;
-        }
-        $days_incremented++;
-    }
-    return $date;
-}
-
-function isAWeekend(\DateTime $date)
-{
-    return in_array($date->format('N'),[6,7]);
-}
-
-function isAHoliday($date)
-{
-    return in_array($date,getHolidaysForPeriod(
-        new \DateTime("$date +2 weeks")
-    ));
-}
-
-function getHolidaysForPeriod($until, $from = null)
-{
-    return ['2019-02-18'];
-}

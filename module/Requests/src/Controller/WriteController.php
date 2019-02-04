@@ -12,9 +12,9 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
-use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use InterpretersOffice\Admin\Service\Acl;
+use InterpretersOffice\Service\DateCalculator;
 use InterpretersOffice\Requests\Form;
 
 use Zend\Mvc\MvcEvent;
@@ -185,16 +185,13 @@ class WriteController extends AbstractActionController implements ResourceInterf
     /**
      * gets datetime two business days from $date.
      *
-     * proxies to CourtClosingRepository::getTwoBusinessDaysFromDate()
-     *
      * @param  \DateTime $date
      * @return string
      */
-    public function getTwoBusinessDaysFromDate(\DateTime $date = null)
+    public function getTwoBusinessDaysFromDate(\DateTime $date)
     {
-        return $this->objectManager
-            ->getRepository(CourtClosing::class)
-            ->getTwoBusinessDaysFromDate($date);
+        $repo = $this->objectManager->getRepository(CourtClosing::class);
+        return (new DateCalculator($repo))->getTwoBusinessDaysAfter($date);
     }
 
     /**

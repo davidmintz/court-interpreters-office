@@ -15,6 +15,8 @@ use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 use InterpretersOffice\Requests\Form;
 
+use InterpretersOffice\Service\DateCalculator;
+
 use Zend\Mvc\MvcEvent;
 use Zend\Http\Request;
 
@@ -111,9 +113,11 @@ class IndexController extends AbstractActionController //implements ResourceInte
     {
         $id = $this->params()->fromRoute('id');
         $repository = $this->objectManager->getRepository(Entity\Request::class);
+        $holidays =  $this->objectManager->getRepository('InterpretersOffice\Entity\CourtClosing');
+        $calc = new DateCalculator($holidays);
         return [
             'data' => $repository->view($id),
-            'deadline' => $this->getTwoBusinessDaysFromDate(),
+            'deadline' => $calc->getTwoBusinessDaysAfter(new \DateTime),
         ];
     }
 
@@ -159,8 +163,8 @@ class IndexController extends AbstractActionController //implements ResourceInte
             $ids = array_column(array_column($data, 0), 'id');
             $defendants = $repo->getDefendants($ids);
         }
-        $deadline = $this->getTwoBusinessDaysFromDate();
-        //echo $deadline->format("Y-m-d");
+
+        $deadline = $this->getTwoBusinessDaysFromDate(new \DateTime);
         $view = new ViewModel(compact('paginator', 'defendants', 'deadline'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());
 
@@ -171,15 +175,12 @@ class IndexController extends AbstractActionController //implements ResourceInte
     /**
      * gets datetime two business days from $date.
      *
-     * proxies to CourtClosingRepository::getTwoBusinessDaysFromDate()
-     *
      * @param  \DateTime $date
      * @return string
      */
-    public function getTwoBusinessDaysFromDate(\DateTime $date = null)
+    public function getTwoBusinessDaysFromDate(\DateTime $date)
     {
-        return $this->objectManager
-            ->getRepository(CourtClosing::class)
-            ->getTwoBusinessDaysFromDate($date);
+        $repo = $this->objectManager->getRepository(CourtClosing::class);
+        return (new DateCalculator($repo))->getTwoBusinessDaysAfter($date);
     }
 }

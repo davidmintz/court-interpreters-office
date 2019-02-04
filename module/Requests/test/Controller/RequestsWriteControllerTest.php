@@ -421,11 +421,11 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         /** @var \Doctrine\DBAL\Connection $db */
         $db = $em->getConnection();
         $shit = $db->executeQuery('SELECT * FROM requests WHERE id = '.$request->getId());
-        echo get_class($shit);;
+        //echo get_class($shit);
         $data = $shit->fetch();
-        print_r($data);
+        //print_r($data);
         $this->dispatch($url);
-         echo "\n$url\n";
+        // echo "\n$url\n";
         $this->assertResponseStatusCode(200);
 
         //$this->dumpResponse();
