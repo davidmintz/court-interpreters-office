@@ -1,11 +1,18 @@
 <?php
 namespace ApplicationTest;
-
 use PHPUnit\Framework\TestCase;
+
+use InterpretersOffice\Service\DateCalculator;
+use InterpretersOffice\Service\Holidays;
 
 class DateCalculationTest extends TestCase
 {
+    protected $calculator;
 
+    public function setUp()
+    {
+        $this->calculator = new DateCalculator(new Holidays);
+    }
     public function testTwoBusinessDaysAfter()
     {
         // $monday = new \DateTime('Mon 2019-02-04 10:00 am');
@@ -28,10 +35,15 @@ class DateCalculationTest extends TestCase
              ['date'=> 'Fri 2019-02-08','expected'=> 'Tue 2019-02-12'],
         ];
 
+        $this->assertTrue($this->calculator instanceof DateCalculator);
+
+
         foreach ($shits as $shit) {
             $this->assertEquals(
                 $shit['expected'],
-                getTwoBusinessDaysAfter(new \DateTime($shit['date']))->format('D Y-m-d')
+
+                $this->calculator->getTwoBusinessDaysAfter(new \DateTime($shit['date']))->format('D Y-m-d'),
+                'failed getting two days after '.$shit['date']
             );
         }
     }
