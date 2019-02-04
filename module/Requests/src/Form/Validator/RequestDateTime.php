@@ -5,6 +5,7 @@ namespace InterpretersOffice\Requests\Form\Validator;
 
 use Zend\Validator\AbstractValidator;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
+use InterpretersOffice\Service\DateCalculator;
 
 /**
  * validator to enforce two-business-day deadline
@@ -34,7 +35,7 @@ class RequestDateTime extends AbstractValidator
         'A minimum two full business days\' notice is required. For assistance in emergent matters please contact the Interpreters by phone.',
 
             self::DATE_IS_IN_THE_PAST => 'Invalid date. Request date has to be in the future.',
-
+            // not yet in use
             self::DATE_IS_NOT_A_BUSINESS_DAY => 'Date is not a business day',
     ];
 
@@ -77,7 +78,17 @@ class RequestDateTime extends AbstractValidator
             // means time is malformed; let another validator handle it
             return true;
         }
-
+        $now = new \DateTime();
+        if ($request_datetime < $now) {
+            $this->error(self::DATE_IS_IN_THE_PAST);
+            return false;
+        }
+        $calc = new \InterpretersOffice\Service\DateCalculator($this->repository);
+        $deadline = $calc->getTwoBusinessDaysAfter($now);
+        if ($request_datetime < $deadline) {
+            $this->error(self::LESS_THAN_TWO_BUSINESS_DAYS_NOTICE);
+            return false;
+        }
         // make sure it is not a weekend or holiday?
         /* something like...
          *
@@ -86,15 +97,15 @@ class RequestDateTime extends AbstractValidator
            if (count($result)) { } // it's a holiday
          */
 
-        $diff = $this->repository->getDateDiff($request_datetime);
-        if ($diff->invert) {
-            $this->error(self::DATE_IS_IN_THE_PAST);
-            return false;
-        }
-        if ($diff->days < 2) {
-            $this->error(self::LESS_THAN_TWO_BUSINESS_DAYS_NOTICE);
-            return false;
-        }
+        // $diff = $this->repository->getDateDiff($request_datetime);
+        // if ($diff->invert) {
+        //     $this->error(self::DATE_IS_IN_THE_PAST);
+        //     return false;
+        // }
+        // if ($diff->days < 2) {
+        //     $this->error(self::LESS_THAN_TWO_BUSINESS_DAYS_NOTICE);
+        //     return false;
+        // }
 
         return true;
     }
