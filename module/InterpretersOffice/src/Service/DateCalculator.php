@@ -41,7 +41,10 @@ class DateCalculator
         return $date;
     }
 
-
+    // public function getTwoBusinessDaysFrom(\DateTime $date)
+    // {
+    //
+    // }
     public function getTwoBusinessDaysBefore(\Datetime $date)
     {
         $from = $date->format('Y-m-d');
@@ -49,6 +52,21 @@ class DateCalculator
         $this->current_holidays = $this->holidays->getHolidaysForPeriod(
             $to, $from
         );
+        if (! $this->isABusinessDay($date)) {
+            $date->setTime(0,0);
+            while (! $this->isABusinessDay($date)) {
+                $date->sub(new \DateInterval('P1D'));
+            }
+        }
+        $n = 0;
+        while ($n < 2) {
+            $date->sub(new \DateInterval('P1D'));
+            while(! $this->isABusinessDay($date)) {
+                $date->sub(new \DateInterval('P1D'));
+                continue;
+            }
+            $n++;
+        }
 
         return $date;
     }
@@ -63,12 +81,7 @@ class DateCalculator
             //printf("\n{$date->format('Y-m-d D')} is a holiday, returning false\n");
             return false;
         }
-        if (! $this->isABusinessDay($date)) {
-            $date->setTime(0,0);
-            while (! $this->isABusinessDay($date)) {
-                $date->sub(new \DateInterval('P1D'));
-            }
-        }
+
         //printf("\n{$date->format('Y-m-d D')} not a weekend or holiday, returning true");
         return true;
 

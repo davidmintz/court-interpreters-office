@@ -23,9 +23,9 @@ class DateCalculationTest extends TestCase
          ['date'=> 'Wed 2019-02-06 3:57 pm','expected'=> 'Fri 2019-02-08 3:57 pm'],
          ['date'=> 'Thu 2019-02-07 8:17 am','expected'=> 'Mon 2019-02-11 8:17 am'],
          ['date'=> 'Fri 2019-02-08 12:33 pm','expected'=> 'Tue 2019-02-12 12:33 pm'],
+         ['date'=> 'Fri 2019-02-15 4:42 pm','expected'=> 'Wed 2019-02-20 4:42 pm'],
          ['date'=> 'Sat 2019-02-09 10:22 am','expected'=> 'Wed 2019-02-13 12:00 am'],
          ['date'=> 'Sun 2019-02-10 2:34 pm','expected'=> 'Wed 2019-02-13 12:00 am'],
-         ['date'=> 'Fri 2019-02-15 4:42 pm','expected'=> 'Wed 2019-02-20 4:42 pm'],
     ];
 
     public function testTwoBusinessDaysAfter()
@@ -48,7 +48,8 @@ class DateCalculationTest extends TestCase
     {
 
         $reverse = [];
-        foreach ($this->shits as $shit) {
+        $shits = array_slice($this->shits,0,8);
+        foreach ($shits as $shit) {
             $reverse[] = [
                 'expected' => $shit['date'],
                 'date'     => $shit['expected']
@@ -62,6 +63,7 @@ class DateCalculationTest extends TestCase
                 $result->format('D Y-m-d g:i a'),
                 'failed getting two days before '.$shit['date']
             );
+            
         }
     }
 }
