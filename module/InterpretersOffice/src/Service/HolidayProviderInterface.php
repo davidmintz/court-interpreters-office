@@ -5,6 +5,13 @@ namespace InterpretersOffice\Service;
 interface HolidayProviderInterface
 {
 
-    public function getHolidaysForPeriod($from, $to);
+    /**
+     * gets holidays between $from and $to inclusive
+     *
+     * @param  string YYYY-MM-DD
+     * @param  string YYYY-MM-DD
+     * @return Array of date/strings formatted YYYY-MM-DD
+     */
+    public function getHolidaysForPeriod($to, $from);
 
 }
