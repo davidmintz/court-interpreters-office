@@ -2,22 +2,54 @@
 
 namespace InterpretersOffice\Service;
 
+/**
+ * rudimentary business date arithmetic
+ */
 class DateCalculator
 {
+
+    /**
+     * data source for holidays
+     *
+     * @var HolidayProviderInterface
+     */
     protected $holidays;
 
+    /**
+    * array of date-strings
+    *
+    * @var array
+    */
+    protected $current_holidays;
+
+    /**
+     * constructor
+     *
+     * @param HolidayProviderInterface $holidays [description]
+     */
     public function __construct(HolidayProviderInterface $holidays)
     {
         $this->holidays = $holidays;
     }
 
-    protected $current_holidays;
-
+    /**
+     * gets datetime two business days after $date
+     *
+     * @param  \Datetime $date
+     * @return \Datetime
+     */
     public function getTwoBusinessDaysAfter(\Datetime $date)
     {
-        return $this->getTwoBusinessDaysFrom($date,'add');        
+        return $this->getTwoBusinessDaysFrom($date,'add');
     }
 
+    /**
+     * computes datetime two days before or after $date
+     *
+     * @param  DateTime $date
+     * @param  string   $op   'add' or 'sub'
+     * @return \DateTime
+     */
     public function getTwoBusinessDaysFrom(\DateTime $date, $op)
     {
         $from = $date->format('Y-m-d');
@@ -45,11 +77,24 @@ class DateCalculator
         return $date;
 
     }
+
+    /**
+     * gets datetime two business days before $date
+     *
+     * @param  \Datetime $date
+     * @return \Datetime
+     */
     public function getTwoBusinessDaysBefore(\Datetime $date)
     {
         return $this->getTwoBusinessDaysFrom($date,'sub');
     }
 
+    /**
+     * is $date ia business day?
+     *
+     * @param  DateTime $date
+     * @return boolean
+     */
     public function isABusinessDay(\DateTime $date)
     {
         $dow = $date->format('N');
@@ -68,11 +113,11 @@ class DateCalculator
     }
 
     /**
-     * @param $until \DateTime|string
-     * @param $from \DateTime|string
-     * @throws \Exception on failure to parse date string
-     * @return \DateInterval difference between $from and $until
-     */
+    * @param $until \DateTime|string
+    * @param $from \DateTime|string
+    * @throws \Exception on failure to parse date string
+    * @return \DateInterval difference between $from and $until
+    */
    public function getDateDiff($until, $from = null)
    {
 
@@ -160,7 +205,7 @@ class DateCalculator
    }
 
    /**
-    * noop
+    * a noop
     * @param  string $msg
     */
    protected function debug($msg){}
