@@ -15,61 +15,41 @@ class DateCalculator
 
     public function getTwoBusinessDaysAfter(\Datetime $date)
     {
-        $from = $date->format('Y-m-d');
-        $to   = (new \DateTime("$from +2 weeks"));
-        $this->current_holidays = $this->holidays->getHolidaysForPeriod(
-            $to, $from
-        );
-        // if $date is not a business day, bump it
-        // up until it is, and zero out the time of day
-        if (! $this->isABusinessDay($date)) {
-            $date->setTime(0,0);
-            while (! $this->isABusinessDay($date)) {
-                $date->add(new \DateInterval('P1D'));
-            }
-        }
-        $n = 0;
-        while ($n < 2) {
-            $date->add(new \DateInterval('P1D'));
-            while(! $this->isABusinessDay($date)) {
-                $date->add(new \DateInterval('P1D'));
-                continue;
-            }
-            $n++;
-        }
-
-        return $date;
+        return $this->getTwoBusinessDaysFrom($date,'add');        
     }
 
-    // public function getTwoBusinessDaysFrom(\DateTime $date)
-    // {
-    //
-    // }
-    public function getTwoBusinessDaysBefore(\Datetime $date)
+    public function getTwoBusinessDaysFrom(\DateTime $date, $op)
     {
         $from = $date->format('Y-m-d');
-        $to   = (new \DateTime("$from -2 weeks"));
+        $sign = $op == 'add' ? '+' : '-';
+        $to   = (new \DateTime("$from {$sign}2 weeks"));
         $this->current_holidays = $this->holidays->getHolidaysForPeriod(
             $to, $from
         );
         if (! $this->isABusinessDay($date)) {
             $date->setTime(0,0);
             while (! $this->isABusinessDay($date)) {
-                $date->sub(new \DateInterval('P1D'));
+                $date->$op(new \DateInterval('P1D'));
             }
         }
         $n = 0;
         while ($n < 2) {
-            $date->sub(new \DateInterval('P1D'));
+            $date->$op(new \DateInterval('P1D'));
             while(! $this->isABusinessDay($date)) {
-                $date->sub(new \DateInterval('P1D'));
+                $date->$op(new \DateInterval('P1D'));
                 continue;
             }
             $n++;
         }
 
         return $date;
+
     }
+    public function getTwoBusinessDaysBefore(\Datetime $date)
+    {
+        return $this->getTwoBusinessDaysFrom($date,'sub');
+    }
+
     public function isABusinessDay(\DateTime $date)
     {
         $dow = $date->format('N');
