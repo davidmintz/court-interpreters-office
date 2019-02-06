@@ -113,11 +113,9 @@ class IndexController extends AbstractActionController //implements ResourceInte
     {
         $id = $this->params()->fromRoute('id');
         $repository = $this->objectManager->getRepository(Entity\Request::class);
-        $holidays =  $this->objectManager->getRepository('InterpretersOffice\Entity\CourtClosing');
-        $calc = new DateCalculator($holidays);
         return [
             'data' => $repository->view($id),
-            'deadline' => $calc->getTwoBusinessDaysAfter(new \DateTime),
+            'deadline' => $this->getTwoBusinessDaysAfterDate(new \DateTime),
         ];
     }
 
@@ -164,7 +162,7 @@ class IndexController extends AbstractActionController //implements ResourceInte
             $defendants = $repo->getDefendants($ids);
         }
 
-        $deadline = $this->getTwoBusinessDaysFromDate(new \DateTime);
+        $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
         $view = new ViewModel(compact('paginator', 'defendants', 'deadline'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());
 

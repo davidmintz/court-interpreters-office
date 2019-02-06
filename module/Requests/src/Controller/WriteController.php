@@ -181,7 +181,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
     /* under consideration
     public function deadlineAction()
     {
-        return new JsonModel(['deadline'=>$this->getTwoBusinessDaysFromDate()]);
+        return new JsonModel(['deadline'=>$this->getTwoBusinessDaysAfterDate()]);
     }
     */
 

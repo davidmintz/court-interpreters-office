@@ -119,7 +119,7 @@ class ModificationAuthorizedAssertion implements AssertionInterface
     ) {
 
         $now = new \DateTime();
-        $deadline = $controller->getTwoBusinessDaysFromDate($now);
+        $deadline = $controller->getTwoBusinessDaysAfterDate($now);
         $request = $controller->getEntity();
 
         $request_date = new \DateTime(
