@@ -121,10 +121,12 @@ class ModificationAuthorizedAssertion implements AssertionInterface
         $now = new \DateTime();
         $deadline = $controller->getTwoBusinessDaysFromDate($now);
         $request = $controller->getEntity();
-        $log = $controller->getEvent()->getApplication()->getServiceManager()->get('log');
+
         $request_date = new \DateTime(
             "{$request->getDate()->format('Y-m-d')} {$request->getTime()->format('H:i')}"
         );
+        // $log = $controller->getEvent()->getApplication()
+        //     ->getServiceManager()->get('log');
         // $log->debug(sprintf("excuse me? action is $privilege, request %d date is %s, deadline is %s",
         //     $request->getId(),
         //     $request_date->format("Y-m-d H:i"),$deadline->format("Y-m-d H:i")

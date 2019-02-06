@@ -14,7 +14,7 @@ use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use InterpretersOffice\Admin\Service\Acl;
-use InterpretersOffice\Service\DateCalculator;
+use InterpretersOffice\Service\DateCalculatorTrait;
 use InterpretersOffice\Requests\Form;
 
 use Zend\Mvc\MvcEvent;
@@ -28,6 +28,9 @@ use Zend\Http\Request;
  */
 class WriteController extends AbstractActionController implements ResourceInterface
 {
+
+    use DateCalculatorTrait;
+
     /**
      * objectManager instance.
      *
@@ -181,18 +184,6 @@ class WriteController extends AbstractActionController implements ResourceInterf
         return new JsonModel(['deadline'=>$this->getTwoBusinessDaysFromDate()]);
     }
     */
-
-    /**
-     * gets datetime two business days from $date.
-     *
-     * @param  \DateTime $date
-     * @return string
-     */
-    public function getTwoBusinessDaysFromDate(\DateTime $date)
-    {
-        $repo = $this->objectManager->getRepository(CourtClosing::class);
-        return (new DateCalculator($repo))->getTwoBusinessDaysAfter($date);
-    }
 
     /**
      * creates a new Request

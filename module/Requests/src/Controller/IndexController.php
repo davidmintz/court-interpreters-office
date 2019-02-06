@@ -15,7 +15,7 @@ use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 use InterpretersOffice\Requests\Form;
 
-use InterpretersOffice\Service\DateCalculator;
+use InterpretersOffice\Service\DateCalculatorTrait;
 
 use Zend\Mvc\MvcEvent;
 use Zend\Http\Request;
@@ -26,6 +26,7 @@ use Zend\Http\Request;
  */
 class IndexController extends AbstractActionController //implements ResourceInterface
 {
+    use DateCalculatorTrait;
     /**
      * objectManager instance.
      *
@@ -103,7 +104,6 @@ class IndexController extends AbstractActionController //implements ResourceInte
     }
 
 
-
     /**
      * view Request details
      *
@@ -172,15 +172,4 @@ class IndexController extends AbstractActionController //implements ResourceInte
     }
 
 
-    /**
-     * gets datetime two business days from $date.
-     *
-     * @param  \DateTime $date
-     * @return string
-     */
-    public function getTwoBusinessDaysFromDate(\DateTime $date)
-    {
-        $repo = $this->objectManager->getRepository(CourtClosing::class);
-        return (new DateCalculator($repo))->getTwoBusinessDaysAfter($date);
-    }
 }
