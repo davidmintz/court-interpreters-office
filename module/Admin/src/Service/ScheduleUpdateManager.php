@@ -144,12 +144,16 @@ class ScheduleUpdateManager
 
         $entities = $uow->getScheduledEntityUpdates();
         $request = null;
-
+        $scheduled_event = null;
         foreach ($entities as $entity) {
             if ($entity instanceof Request) {
                 $request = $entity;
                 break;
             }
+            // if ($entity instanceof Entity\Event) {
+            //     $scheduled_event = $entity;
+            //     //break;
+            // }
         }
         ///*
         if (! $request) {
@@ -167,6 +171,8 @@ class ScheduleUpdateManager
                 __METHOD__.": request has no corresponding event, returning"
             );
             return;
+        } else {
+            $this->logger->debug(__METHOD__.": \$scheduled_event is a ".get_class($scheduled_event));
         }
 
         $changeset = $uow->getEntityChangeSet($request);
@@ -229,13 +235,9 @@ class ScheduleUpdateManager
              'spanish' : 'non-spanish';
         $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
 
-        // $this->logger->debug("pattern: $pattern; language $language; type $type");
-        // $this->logger->debug(print_r($config,true));
-
         // figure out what admin actions are configured for $user_action
         $actions = preg_grep($pattern, array_keys($config[$user_action]));
-        if (! $actions) {
-        }
+        //if (! $actions) {}
 
         $filter = new DashToCamelCase();
         // and whether they are enabled
@@ -410,6 +412,8 @@ class ScheduleUpdateManager
 
     /**
      * un-assigns all interpreters from Request's corresponding Event
+     *
+     * @todo see if this can be less complicated
      *
      * @param  Request $request
      * @param  OnFlushEventArgs  $args

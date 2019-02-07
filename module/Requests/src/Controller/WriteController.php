@@ -123,13 +123,13 @@ class WriteController extends AbstractActionController implements ResourceInterf
      */
     public function onDispatch($e)
     {
+
         $params = $this->params()->fromRoute();
 
         if (in_array($params['action'], ['update','cancel'])) {
-            $entity = $this->objectManager->find(
-                Entity\Request::class,
-                $params['id']
-            );
+            $entity = $this->objectManager->getRepository(Entity\Request::class)
+                ->getRequestWithEvent($params['id']);
+
             if (! $entity) {
                 return parent::onDispatch($e);
             }
@@ -253,12 +253,8 @@ class WriteController extends AbstractActionController implements ResourceInterf
      */
     public function updateAction()
     {
-        $id = $this->params()->fromRoute('id');
-        /*
-        SELECT e FROM InterpretersOfficeEntityEvent e JOIN InterpretersOfficeRequestsEntityRequest r
-        JOIN r.event re WITH e.id = re.id WHERE r.id = :id
-         */
-        $entity = $this->objectManager->find(Entity\Request::class, $id);
+
+        $entity = $this->entity;
         if (! $entity) {
             $this->flashMessenger()->addErrorMessage(
                 "The request with id $id was not found in the database"
@@ -272,7 +268,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         $form->bind($entity);
 
         if (! $this->getRequest()->isPost()) {
-            return  new ViewModel(['form' => $form, 'id' => $id]);
+            return  new ViewModel(['form' => $form, 'id' => $this->params()->fromRoute('id')]);
         }
         $data = $this->getRequest()->getPost()->get('request');
         $form->filterDateTimeFields(
@@ -287,6 +283,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         try {
             $form->postValidate();
             $this->objectManager->flush();
+            $this->getEventManager()->trigger('updateRequest',$this,['request'=>$entity]);
             $this->flashMessenger()->addSuccessMessage(
                 'This request for interpreting services has been updated successfully. Thank you.'
             );

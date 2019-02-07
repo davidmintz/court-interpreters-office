@@ -131,7 +131,8 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
 
         if (count($fields_updated) or $this->defendantsWereModified($request)) {
             $shit = print_r($fields_updated,true);
-            $this->getLogger()->info(__METHOD__."updating: $shit") ;
+            $this->getLogger()->info(__METHOD__." is updating: $shit") ;
+
             // $request->setModified(new \DateTime())
             //     ->setModifiedBy($this->getAuthenticatedUser($args));
             // $user = $this->getAuthenticatedUser($args)->getUsername();
@@ -142,6 +143,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
 
                 $this->getLogger()->info(__METHOD__.":  defts where modified") ;
                 $event = $request->getEvent();
+                $this->getLogger()->info(__METHOD__."event is an instance of ".get_class($event));
                 if ($event) {
                     $ours = $event->getDefendants()->toArray();
 
@@ -149,7 +151,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
                     //$this->getLogger()->info(__METHOD__.": was our defts collection same as theirs before update? $match");
                     if ($ours == $this->previous_defendants) {
                         $this->getLogger()->info(__METHOD__.": updating event-defendants!!");
-                        foreach($event->getDefendants as $n){
+                        foreach($event->getDefendants() as $n){
                             $event->removeDefendant($n);
                         }
                         //$event->removeDefendants($event->getDefendants());
@@ -158,7 +160,6 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
                             $event->addDefendant($n);
                         }
                     }
-
                 }
 
         }

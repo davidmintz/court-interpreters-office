@@ -147,6 +147,17 @@ class Module
                      ." (id $id) for later reference");
             }
         );
+        // $sharedEvents->attach(
+        //     '*',
+        //     'updateRequest',
+        //     function($e) use ($container) {
+        //
+        //         $params = $e->getParams();
+        //         $log = $container->get('log');
+        //         $log->warn("GUESS WHAT: shit is an instance of: "
+        //         .get_class($params['request']->getEvent()));
+        //     }
+        // );
     }
 
 
