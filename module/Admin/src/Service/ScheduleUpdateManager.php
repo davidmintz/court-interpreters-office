@@ -180,28 +180,42 @@ class ScheduleUpdateManager
         $this->logger->debug(
             sprintf(__METHOD__.":\nuser action is '%s'  at %d", $user_action, __LINE__)
         );
-        $num_collection_updates = count($uow->getScheduledCollectionUpdates());
-        $num_collection_deletions = count($uow->getScheduledCollectionDeletions());
-        $this->logger->debug(
-            "collection updates: $num_collection_updates; deletions: $num_collection_deletions"
-        );
-        foreach($uow->getScheduledCollectionUpdates() as $collection) {
-            $entity_class = get_class($collection->getOwner());
-            $this->logger->info("a collection to be updated is owned by a $entity_class");
-
-        }
-        foreach($uow->getScheduledCollectionDeletions() as $k => $v) {
-            $this->logger->debug(
-                sprintf('deletions: key %s, val is of type %s',$k,get_class($v))
-            );
-            foreach($v as $i => $o)  {
-                $this->logger->debug(
-                    sprintf('deletions: key %s, val is of type %s',$i,get_class($o))
-                );
-            }
-        }
-
-        $config = $this->config['event_listeners'];
+        // $num_collection_updates = count($uow->getScheduledCollectionUpdates());
+        // $num_collection_deletions = count($uow->getScheduledCollectionDeletions());
+        // $this->logger->debug(
+        //     "collection updates: $num_collection_updates; deletions: $num_collection_deletions"
+        // );
+        // foreach($uow->getScheduledCollectionUpdates() as $collection) {
+        //     //$entity_class = get_class($collection->getOwner());
+        //      if ($request === $collection->getOwner()) {
+        //         // we have a winner
+        //         $session = new \Zend\Session\Container('request_updates');
+        //         $before = $session->{$request->getId()};
+        //         if (is_array($before)) {
+        //             $defts_before = $before['defendants'];
+        //             $event_defts = $scheduled_event->getDefendants()->toArray();
+        //             // if they ~used~ to match, update the event
+        //             //$shit = print_r($defts_before,true);
+        //             //$this->logger->debug("before, defts were: $shit");
+        //             $ours = array_map(function($obj){
+        //                 return [
+        //                     'surnames' =>$obj->getSurnames(),
+        //                     'given_names' =>$obj->getGivenNames(),
+        //                 ];
+        //             },$event_defts);
+        //             if ($ours == $defts_before) {
+        //                 $this->logger->debug("detected UPDATE to defts where ours previously == theirs,replacing ! in ".__METHOD__);
+        //                 $event->removeDefendants($event->getDefendants());
+        //                 $event->addDefendants($request->getDefendants());
+        //                 $event->setComments("I was here.");
+        //                 $uow->recompute
+        //             }
+        //             //$this->logger->debug("our defts were: ".print_r($ours,true));
+        //             unset($session->{$request->getId()});
+        //         }
+        //         break;
+        //      }
+                $config = $this->config['event_listeners'];
 
         if (! isset($config[$user_action])) {
             $this->logger->warn(__METHOD__.
@@ -373,8 +387,6 @@ class ScheduleUpdateManager
                 $event->$setter($request->$getter());
             }
             $this->event_was_updated = true;
-        } else {
-            $this->logger->debug("time to look at deftname collections for changes??");
         }
 
         return $this;

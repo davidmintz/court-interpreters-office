@@ -68,6 +68,13 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         // $log = $this->getLogger();
         // $log->debug("postload callback running in Request entity listener");
         $this->previous_defendants = $request->getDefendants()->toArray();
+        $this->getEventManager()->trigger(
+            __FUNCTION__,
+            $this,
+            [   'entity'=>$request,'args'=>$args,
+                'defendants'=>$this->previous_defendants,
+            ]
+        );
     }
 
     /**
@@ -129,6 +136,31 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
             //     ->setModifiedBy($this->getAuthenticatedUser($args));
             // $user = $this->getAuthenticatedUser($args)->getUsername();
             // $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
+        }
+        // this SHIT DOES NOT WORK either
+        if ($this->defendantsWereModified($request)) {
+
+                $this->getLogger()->info(__METHOD__.":  defts where modified") ;
+                $event = $request->getEvent();
+                if ($event) {
+                    $ours = $event->getDefendants()->toArray();
+
+                    //$match = ($ours == $this->previous_defendants) ? 'true':'false';
+                    //$this->getLogger()->info(__METHOD__.": was our defts collection same as theirs before update? $match");
+                    if ($ours == $this->previous_defendants) {
+                        $this->getLogger()->info(__METHOD__.": updating event-defendants!!");
+                        foreach($event->getDefendants as $n){
+                            $event->removeDefendant($n);
+                        }
+                        //$event->removeDefendants($event->getDefendants());
+                        //$event->addDefendants($request->getDefendants());
+                        foreach ($request->getDefendants() as $n) {
+                            $event->addDefendant($n);
+                        }
+                    }
+
+                }
+
         }
         // Request cancellation. Cancellation is in fact an update: the entity's
         // boolean $cancelled is set to true. But it is treated as its own
