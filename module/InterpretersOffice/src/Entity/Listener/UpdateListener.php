@@ -104,15 +104,17 @@ class UpdateListener implements
     /**
      * synchronizes Event with Request
      *
-     * a work in progress.
+     * a work in progress. might get rid of it in favor of something
+     * better and less complicated and heavey-handed
      *
      * @param  OnFlushEventArgs $args
      * @return void
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-
-        $this->getEventManager()->trigger(__FUNCTION__, $this, ['onFlushEventArgs' => $args]);
+        //$this->logger->debug(__METHOD__.": disabled, I'm a noop");
+        $this->getEventManager()
+            ->trigger(__FUNCTION__, $this, ['onFlushEventArgs' => $args]);
     }
 
     /**
