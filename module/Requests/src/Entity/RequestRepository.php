@@ -41,6 +41,21 @@ class RequestRepository extends EntityRepository
     }
 
     /**
+     * gets Request entity with associated Event entity, not proxy
+     *
+     * @param int $id
+     * @return Request
+     */
+    public function getRequestWithEvent($id)
+    {
+        $dql = 'SELECT r, e FROM InterpretersOffice\Requests\Entity\Request r
+            LEFT JOIN r.event e WHERE r.id = :id';
+        return $this->getEntityManager()->createQuery($dql)
+            ->setParameters([':id'=>$id])
+            ->getOneOrNullResult();
+    }
+
+    /**
      * look for near-exact duplicate records
      *
      * this has to be called after succesful validation to avoid possible
@@ -347,7 +362,7 @@ class RequestRepository extends EntityRepository
         ];
 
     }
-    
+
     /**
     * alias for view()
     *
