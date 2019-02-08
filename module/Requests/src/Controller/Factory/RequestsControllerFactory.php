@@ -72,17 +72,17 @@ class RequestsControllerFactory implements FactoryInterface
 
             // experimental. let the general entity UpdateListener trigger events,
             // and this listener will call the ScheduleUpdateManager
-            $eventManager = $container->get('SharedEventManager');
-
-            $eventManager->attach(Listener\UpdateListener::class, '*',
-            function ($e) use ($container) {
-                $container->get('log')->debug(
-                    "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
-                );
-                /** @var ScheduleUpdateManager $updateManager */
-                $updateManager = $container->get(ScheduleUpdateManager::class);
-                $updateManager->onUpdateRequest($e);
-            });
+            // $eventManager = $container->get('SharedEventManager');
+            //
+            // $eventManager->attach(Listener\UpdateListener::class, '*',
+            // function ($e) use ($container) {
+            //     $container->get('log')->debug(
+            //         "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
+            //     );
+            //     /** @var ScheduleUpdateManager $updateManager */
+            //     $updateManager = $container->get(ScheduleUpdateManager::class);
+            //     $updateManager->onUpdateRequest($e);
+            // });
 
             return $controller;
         }
