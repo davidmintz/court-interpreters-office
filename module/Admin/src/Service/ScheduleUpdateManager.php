@@ -188,66 +188,13 @@ class ScheduleUpdateManager
         $this->logger->debug(
             sprintf(__METHOD__.":\nuser action is '%s'  at %d", $user_action, __LINE__)
         );
-        // $num_collection_updates = count($uow->getScheduledCollectionUpdates());
-        // $num_collection_deletions = count($uow->getScheduledCollectionDeletions());
-        // $this->logger->debug(
-        //     "collection updates: $num_collection_updates; deletions: $num_collection_deletions"
-        // );
-        // foreach($uow->getScheduledCollectionUpdates() as $collection) {
-        //     //$entity_class = get_class($collection->getOwner());
-        //      if ($request === $collection->getOwner()) {
-        //         // we have a winner
-        //         $session = new \Zend\Session\Container('request_updates');
-        //         $before = $session->{$request->getId()};
-        //         if (is_array($before)) {
-        //             $defts_before = $before['defendants'];
-        //             $event_defts = $scheduled_event->getDefendants()->toArray();
-        //             // if they ~used~ to match, update the event
-        //             $shit = print_r($defts_before,true);
-        //             $this->logger->debug("before, defts were: $shit");
-        //             $ours = array_map(function($obj){
-        //                 return [
-        //                     'surnames' =>$obj->getSurnames(),
-        //                     'given_names' =>$obj->getGivenNames(),
-        //                 ];
-        //             },$event_defts);
-        //             if ($ours == $defts_before) {
-        //                 $event = $request->getEvent();
-        //                 $this->logger->debug("detected UPDATE to defts where ours previously == theirs,replacing ! in ".__METHOD__);
-        //                 $theirs = $request->getDefendants()->toArray();
-        //                 $ours = $event->getDefendants()->toArray();
-        //                 $remove = array_diff($ours, $theirs);
-        //                 $this->logger->debug(__METHOD__." need to remove ".count($remove));
-        //                 foreach($remove as $obj) {
-        //                     $event->removeDefendant($obj);
-        //                 }
-        //                 $add = array_diff($theirs,$ours);
-        //                 foreach($add as $obj) {
-        //                     $event->addDefendant($obj);
-        //                 }
-        //                 $event->setComments("I was here: ".date('r'));
-        //                 $this->event_was_updated = true;
-        //                 $this->logger->debug(__METHOD__." manipulated event defts, set event_was_updated = true");
-        //                 $em = $args->getEntityManager();
-        //                 $uow->recomputeSingleEntityChangeSet(
-        //                     $em->getClassMetadata(get_class($event)),
-        //                     $event
-        //                 );
-        //             }
-        //             $this->logger->debug("our defts were: ".print_r($ours,true));
-                    //unset($session->{$request->getId()});
-             //    }
-             //    break;
-             //}
-        //}
         $config = $this->config['event_listeners'];
-
         if (! isset($config[$user_action])) {
             $this->logger->warn(__METHOD__.
             ":\nno configuration found for user action '$user_action'
                 TO DO: IMPLEMENT");
             return $this->updateScheduledEvent($request, $args);
-        }//(pattern: $pattern
+        }
         $type = (string)$request->getEventType()->getCategory()
             == 'in' ? 'in-court' : 'out-of-court';
         $language = (string) $scheduled_event->getLanguage() == 'Spanish' ?

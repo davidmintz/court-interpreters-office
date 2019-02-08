@@ -105,7 +105,7 @@ class UpdateListener implements
      * synchronizes Event with Request
      *
      * a work in progress. might get rid of it in favor of something
-     * better and less complicated and heavey-handed
+     * better and less complicated and heavy-handed
      *
      * @param  OnFlushEventArgs $args
      * @return void
@@ -113,7 +113,7 @@ class UpdateListener implements
     public function onFlush(OnFlushEventArgs $args)
     {
         //$this->logger->debug(__METHOD__.": disabled, I'm a noop");
-        $this->logger->debug(__METHOD__.": we have been triggered ");
+        $this->logger->debug(__METHOD__.": we have been triggered, now triggering onFlush to whomever");
          $this->getEventManager()
              ->trigger(__FUNCTION__, $this, ['onFlushEventArgs' => $args]);
     }
