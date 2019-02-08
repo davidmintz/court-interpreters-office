@@ -88,6 +88,7 @@ describe("updating a request that is scheduled",function(){
             // clone the moment (implicitly)
             var new_date = moment(loader.request_date).add(7,"days");
             var date_str = new_date.format("MM/DD/YYYY");
+            console.log("our date string is "+date_str);
             // this crashes jQuery ui datepicker:
             // browser.fill("#date",new_date.format("MM/DD/YYYY"));
             // ...so we use this workaround:
@@ -102,7 +103,7 @@ describe("updating a request that is scheduled",function(){
             // did the event get updated automatically?
             return new Promise(
                 resolve => {
-                    var sql = `SELECT e.date, e.modified, e.id FROM events e JOIN requests r ON r.event_id = e.id WHERE r.id = ${request_id}`;
+                    var sql = `SELECT e.date, e.modified, e.id, r.date request_date FROM events e JOIN requests r ON r.event_id = e.id WHERE r.id = ${request_id}`;
                     loader.db.query(sql,function(err, result){
                         if (err) { console.log(err); throw err; }
                         resolve(result[0]);
@@ -114,7 +115,7 @@ describe("updating a request that is scheduled",function(){
         .then(function(result){
             assert.ok(result.id);
             var event_date = moment(result.date).format("YYYY-MM-DD");
-            var request_date =  moment(loader.request_date).add(7,"days").format("YYYY-MM-DD");
+            var request_date =  moment(result.request_date).format("YYYY-MM-DD");
             assert.strictEqual(request_date,event_date);
         }).then(function(){
             // did the interpreter get deleted automatically?
