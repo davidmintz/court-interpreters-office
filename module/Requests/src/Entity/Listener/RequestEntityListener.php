@@ -136,7 +136,10 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
              $request->setModified(new \DateTime())
                  ->setModifiedBy($this->getAuthenticatedUser($args));
              $user = $this->getAuthenticatedUser($args)->getUsername();
-             $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
+             $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request, triggering shit");
+             $this->getEventManager()->trigger(
+                 __FUNCTION__,$this,['PreUpdateEventArgs'=>$args]
+             );
         }
         // this SHIT DOES NOT WORK either.
         // may be that preUpdate is not called in time for this to work?

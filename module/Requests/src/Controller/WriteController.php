@@ -299,10 +299,10 @@ class WriteController extends AbstractActionController implements ResourceInterf
                      foreach ($to_be_removed as $d) {
                           $log->info("need to remove? ".$d->getSurnames());
                           $event->removeDefendant($d);
-                     }                
+                     }
                  }
             }
-
+            $log->info("NOW TRIGGERING updateRequest");
             $this->getEventManager()->trigger('updateRequest',$this,['request'=>$entity]);
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
