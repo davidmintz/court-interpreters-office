@@ -282,12 +282,27 @@ class WriteController extends AbstractActionController implements ResourceInterf
         }
         try {
             $form->postValidate();
-            // $e = $entity->getEvent();
-            // $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
-            // if ($e) {
-            //     $e->setComments("WTF?????????????? ".date('r'));
-            //     $log->info("we set shit on event ".$e->getId());
-            // }
+            $event = $entity->getEvent();
+            $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+            if ($event) {
+                 $ours = $event->getDefendants()->toArray();
+                 $theirs = $entity->getDefendants()->toArray();
+
+                 if ($ours != $theirs) {
+                     $log->info("trying to update event defts");
+                     $to_be_added = array_diff($theirs,$ours);
+                     foreach ($to_be_added as $d) {
+                          $log->info("need to add? ".$d->getSurnames());
+                          $event->addDefendant($d);
+                     }
+                     $to_be_removed = array_diff($ours,$theirs);
+                     foreach ($to_be_removed as $d) {
+                          $log->info("need to remove? ".$d->getSurnames());
+                          $event->removeDefendant($d);
+                     }                
+                 }
+            }
+
             $this->getEventManager()->trigger('updateRequest',$this,['request'=>$entity]);
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(

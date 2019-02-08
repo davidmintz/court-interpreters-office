@@ -112,9 +112,10 @@ class UpdateListener implements
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $this->logger->debug(__METHOD__.": disabled, I'm a noop");
-        // $this->getEventManager()
-        //     ->trigger(__FUNCTION__, $this, ['onFlushEventArgs' => $args]);
+        //$this->logger->debug(__METHOD__.": disabled, I'm a noop");
+        $this->logger->debug(__METHOD__.": we have been triggered ");
+         $this->getEventManager()
+             ->trigger(__FUNCTION__, $this, ['onFlushEventArgs' => $args]);
     }
 
     /**

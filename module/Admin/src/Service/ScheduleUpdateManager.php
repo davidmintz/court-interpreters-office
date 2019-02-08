@@ -136,7 +136,9 @@ class ScheduleUpdateManager
      */
     public function onUpdateRequest(EventInterface $e)
     {
-
+        $this->logger->debug(
+            __METHOD__.": entering"
+        );
         /** @var Doctrine\ORM\Event\OnFlushEventArgs $args */
         $args = $e->getParam('onFlushEventArgs');
         /** @var Doctrine\ORM\UnitOfWork $uow */
@@ -201,8 +203,8 @@ class ScheduleUpdateManager
         //             $defts_before = $before['defendants'];
         //             $event_defts = $scheduled_event->getDefendants()->toArray();
         //             // if they ~used~ to match, update the event
-        //             //$shit = print_r($defts_before,true);
-        //             //$this->logger->debug("before, defts were: $shit");
+        //             $shit = print_r($defts_before,true);
+        //             $this->logger->debug("before, defts were: $shit");
         //             $ours = array_map(function($obj){
         //                 return [
         //                     'surnames' =>$obj->getSurnames(),
@@ -210,18 +212,35 @@ class ScheduleUpdateManager
         //                 ];
         //             },$event_defts);
         //             if ($ours == $defts_before) {
+        //                 $event = $request->getEvent();
         //                 $this->logger->debug("detected UPDATE to defts where ours previously == theirs,replacing ! in ".__METHOD__);
-        //                 $event->removeDefendants($event->getDefendants());
-        //                 $event->addDefendants($request->getDefendants());
-        //                 $event->setComments("I was here.");
-        //                 $uow->recompute
+        //                 $theirs = $request->getDefendants()->toArray();
+        //                 $ours = $event->getDefendants()->toArray();
+        //                 $remove = array_diff($ours, $theirs);
+        //                 $this->logger->debug(__METHOD__." need to remove ".count($remove));
+        //                 foreach($remove as $obj) {
+        //                     $event->removeDefendant($obj);
+        //                 }
+        //                 $add = array_diff($theirs,$ours);
+        //                 foreach($add as $obj) {
+        //                     $event->addDefendant($obj);
+        //                 }
+        //                 $event->setComments("I was here: ".date('r'));
+        //                 $this->event_was_updated = true;
+        //                 $this->logger->debug(__METHOD__." manipulated event defts, set event_was_updated = true");
+        //                 $em = $args->getEntityManager();
+        //                 $uow->recomputeSingleEntityChangeSet(
+        //                     $em->getClassMetadata(get_class($event)),
+        //                     $event
+        //                 );
         //             }
-        //             //$this->logger->debug("our defts were: ".print_r($ours,true));
-        //             unset($session->{$request->getId()});
-        //         }
-        //         break;
-        //      }
-                $config = $this->config['event_listeners'];
+        //             $this->logger->debug("our defts were: ".print_r($ours,true));
+                    //unset($session->{$request->getId()});
+             //    }
+             //    break;
+             //}
+        //}
+        $config = $this->config['event_listeners'];
 
         if (! isset($config[$user_action])) {
             $this->logger->warn(__METHOD__.
@@ -250,7 +269,7 @@ class ScheduleUpdateManager
                     $this->logger->debug("need to call: $method()");
                     $this->$method($request, $args);
                 } else {
-                    $this->logger->warn("not running not-implemented $method");
+                    $this->logger->warn("not running not-implemented $method !");
                 }
             } else {
                 // explicity disabled in configuration
@@ -395,7 +414,7 @@ class ScheduleUpdateManager
     }
 
     /**
-     * updates an Event entity to synchronize with Request
+     * deletes an Event entity to synchronize Requests with scheduled Events
      *
      * @param  Request $request
      * @param  OnFlushEventArgs  $args
@@ -428,6 +447,7 @@ class ScheduleUpdateManager
             $uow = $args->getEntityManager()->getUnitOfWork();
             foreach ($interpreterEvents as $shit) {
                 $uow->scheduleForDelete($shit);
+
             }
             $this->logger->debug(__METHOD__.": we removed $n interpreters");
         } else {
