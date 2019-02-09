@@ -272,9 +272,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         }
         $data = $this->getRequest()->getPost()->get('request');
         $form->filterDateTimeFields(
-            ['date','time'],
-            $data,
-            'request'
+            ['date','time'], $data,  'request'
         );
         $form->setData($this->getRequest()->getPost());
         if (! $form->isValid()) {
@@ -302,8 +300,9 @@ class WriteController extends AbstractActionController implements ResourceInterf
                      }
                  }
             }
-            $log->info("NOW TRIGGERING updateRequest");
-            $this->getEventManager()->trigger('updateRequest',$this,['request'=>$entity]);
+            $log->info("controller NOW TRIGGERING updateRequest");
+            $this->getEventManager()->trigger('updateRequest',$this,
+                ['request'=>$entity,'entity_manager'=>$this->objectManager]);
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
                 'This request for interpreting services has been updated successfully. Thank you.'

@@ -230,6 +230,8 @@ class RequestRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
         ->select(['r.id','r.time','r.date','r.docket','e.name type',
+            'lang.id language_id',
+            'e.id event_type_id',
             'lang.name language','r.comments',
             'r.modified','modified_by.lastname modified_by_lastname',
             'modified_by.firstname modified_by_firstname',
@@ -241,6 +243,7 @@ class RequestRepository extends EntityRepository
             'event.id event_id','r.pending',
             'event.date event_date', 'event.time event_time',
             'cr.reason cancellation',
+            'j.id judge_id',
             'j.lastname judge_lastname','j.firstname judge_firstname',
             'j.middlename judge_middlename','j_flavor.flavor judge_flavor'
         ])

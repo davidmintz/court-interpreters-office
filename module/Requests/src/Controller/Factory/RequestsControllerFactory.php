@@ -70,15 +70,14 @@ class RequestsControllerFactory implements FactoryInterface
                 new ModificationAuthorizedAssertion($controller)
             );
 
-            // experimental. let the general entity UpdateListener trigger events,
-            // and this listener will call the ScheduleUpdateManager
+            // experimental. 
             $eventManager = $container->get('SharedEventManager');
             $scheduleManager = $container->get(ScheduleUpdateManager::class);
             $eventManager->attach(//Listener\UpdateListener::class,
                 $requestedName,
                 'updateRequest',
                 [$scheduleManager,'onUpdateRequest']);
-            
+
             return $controller;
         }
 

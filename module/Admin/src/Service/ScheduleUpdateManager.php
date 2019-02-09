@@ -155,6 +155,107 @@ class ScheduleUpdateManager
             );
             return;
         }
+        $em =  $e->getParam('entity_manager');
+        // DOES NOT WORK
+        // $uow = $em->getUnitOfWork();
+        // $changeset = $uow->getEntityChangeSet($request);
+        // $this->logger->debug(
+        //      'changed:  '.print_r(array_keys($changeset),true)
+        //  );
+
+        // IS TOO LABORIOUS
+        // $session = new \Zend\Session\Container('request_updates');
+        // $previous = $session->{$request->getId()};
+        // $this->logger->debug(
+        //     print_r($previous,true)
+        // );
+        // $changed_fields = [];
+        // // date and time
+        // if ($request->getTime()->format('g:i a')) != $previous['time']) {
+        //     $changed_fields[] = 'time';
+        // }
+        /*
+        (
+    [id] => 20568
+    [time] => DateTime Object
+        (
+            [date] => 1970-01-01 14:00:00.000000
+            [timezone_type] => 3
+            [timezone] => America/New_York
+        )
+
+    [date] => DateTime Object
+        (
+            [date] => 2019-03-01 00:00:00.000000
+            [timezone_type] => 3
+            [timezone] => America/New_York
+        )
+
+    [docket] => 2014-CR-0133
+    [type] => sentence
+    [language] => Spanish
+    [comments] => some shit here bla bla woof boink say shit
+    [modified] => DateTime Object
+        (
+            [date] => 2019-02-08 18:50:47.000000
+            [timezone_type] => 3
+            [timezone] => America/New_York
+        )
+
+    [modified_by_lastname] => Daniels
+    [modified_by_firstname] => Anthony
+    [modified_by_hat] => Courtroom Deputy
+    [created] => DateTime Object
+        (
+            [date] => 2019-01-09 10:51:55.000000
+            [timezone_type] => 3
+            [timezone] => America/New_York
+        )
+
+    [submitter_lastname] => Daniels
+    [submitter_firstname] => Anthony
+    [submitter_hat] => Courtroom Deputy
+    [location] => 12C
+    [parent_location] => 500 Pearl
+    [event_id] => 116445
+    [pending] =>
+    [event_date] => DateTime Object
+        (
+            [date] => 2019-03-01 00:00:00.000000
+            [timezone_type] => 3
+            [timezone] => America/New_York
+        )
+
+    [event_time] => DateTime Object
+        (
+            [date] => 1970-01-01 13:00:00.000000
+            [timezone_type] => 3
+            [timezone] => America/New_York
+        )
+
+    [cancellation] =>
+    [judge_lastname] => Woods
+    [judge_firstname] => Gregory
+    [judge_middlename] => H.
+    [judge_flavor] => USDJ
+    [defendants] => Array
+        (
+            [0] => Array
+                (
+                    [surnames] => Ontiveros Mesa
+                    [given_names] => Jose Ramon
+                )
+
+        )
+
+    [interpreters] => Array
+        (
+        )
+
+)
+
+
+        */
 
         // $changed_fields = array_keys($this->preUpdateEventArgs->getEntityChangeSet());
         // $shit = print_r($changed_fields,true);

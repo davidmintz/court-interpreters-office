@@ -147,20 +147,20 @@ class Module
                      ." (id $id) for later reference");
             }
         );
-        $sharedEvents->attach(
-            '*',
-            'updateRequest',
-            function($e) use ($container) {
-
-                $params = $e->getParams();
-                $log = $container->get('log');
-                if (isset($params['request'])  && $params['request']->getEvent())
-                {                    
-                    $log->warn("GUESS WHAT: shit is an instance of: "
-                    .get_class($params['request']->getEvent()));
-                }
-            }
-        );
+        // $sharedEvents->attach(
+        //     '*',
+        //     'updateRequest',
+        //     function($e) use ($container) {
+        //
+        //         $params = $e->getParams();
+        //         $log = $container->get('log');
+        //         if (isset($params['request'])  && $params['request']->getEvent())
+        //         {
+        //             $log->warn("GUESS WHAT: shit is an instance of: "
+        //             .get_class($params['request']->getEvent()));
+        //         }
+        //     }
+        // );
     }
 
 
