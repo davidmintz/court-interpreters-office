@@ -174,13 +174,9 @@ class ScheduleUpdateManager
             __METHOD__.": here we GO !!!!!!!"
         );
         $request = $e->getParam('request');
-        $this->logger->debug(
-            __METHOD__.": request is a ".get_class($request)
-        );
+
         $event = $request->getEvent();
-        $this->logger->debug(
-            __METHOD__.": event is a ".(is_object($event) ? get_class($event):gettype($event))
-        );
+
         if (! $event) {
             $this->logger->debug(
                 __FUNCTION__.": request apparently NOT scheduled, no corresponding event"
@@ -205,28 +201,27 @@ class ScheduleUpdateManager
             'what was modified: '.implode(', ',array_keys($updates))
         );
         $user_action = $this->getUserAction($updates);
-        $this->user_action = $user_action;
 
+        $this->user_action = $user_action;
         $this->logger->debug(
              sprintf(__METHOD__.":\nuser action is '%s'  at %d", $user_action, __LINE__)
          );
-        $config = $this->config['event_listeners'];
-        if (! isset($config[$user_action])) {
+        //$config = $this->config['event_listeners'];
+        if (! isset($this->config['event_listeners'][$user_action])) {
             $this->logger->warn(__METHOD__.
             ":\nno configuration found for user action '$user_action'
                 TO DO: IMPLEMENT");
             return $this->updateScheduledEvent($request,$updates);
         }
-        $type = (string)$request->getEventType()->getCategory()
-            == 'in' ? 'in-court' : 'out-of-court';
-        $language = (string) $event->getLanguage() == 'Spanish' ?
-             'spanish' : 'non-spanish';
-        $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
-
         // figure out what admin actions are configured for $user_action
-        $actions = preg_grep($pattern, array_keys($config[$user_action]));
-        //if (! $actions) {}
-
+        $actions = $this->getUserActions($request);//preg_grep($pattern, array_keys($config[$user_action]));
+/*
+XHRPOSThttps://office.localhost/requests/update/20572[HTTP/1.1 200 OK 51ms]
+HeadersCookiesParamsResponseTimingsStack TraceSecurityPreviewResponse payload 1<br />2<b>
+Recoverable fatal error</b>:  Object of class InterpretersOffice\Admin\Service\ScheduleUpdateManager
+could not be converted to string in <b>/opt/www/court-interpreters-office/module/Admin/src/Service/ScheduleUpdateManager.php</b>
+on line <b>214</b><br />3​
+ */
         $filter = new DashToCamelCase();
         // and whether they are enabled
         foreach ($actions as $string) {
@@ -235,31 +230,36 @@ class ScheduleUpdateManager
             $method = lcfirst($filter->filter($action));
             if ($config[$user_action][$string]) {
                 if (method_exists($this, $method)) {
-                    $this->logger->debug("need to call: $method()");
+                    $this->logger->debug("we now need to call: $method()");
                     $this->$method($request, $updates);
                 } else {
-                    $this->logger->warn("not running not-implemented $method !");
+                    $this->logger->warn("!! not running not-implemented $method !");
                 }
             } else {
                 // explicity disabled in configuration
-                $this->logger->debug("not running disabled $method()");
+                $this->logger->debug("not running disabled action/method $method()");
             }
         }
         if ($user_action == self::OTHER) {
             $this->logger->debug(__METHOD__.":  it's the default user-action: other");
             $this->updateScheduledEvent($request,$updates);
         }
-        // if ($this->event_was_updated) {
-        //     $em = $args->getEntityManager();
-        //     $this->logger->debug("recomputing entity changeset for event id: "
-        //         .$scheduled_event->getId());
-        //     $uow->recomputeSingleEntityChangeSet(
-        //         $em->getClassMetadata(get_class($scheduled_event)),
-        //         $scheduled_event
-        //     );
-        // }
 
         return $this;
+    }
+
+    protected function getUserActions(Request $request)
+    {
+        $config = $this->config['event_listeners'];
+
+        $type = (string)$request->getEventType()->getCategory()
+            == 'in' ? 'in-court' : 'out-of-court';
+        $language = (string) $request->getEvent()->getLanguage() == 'Spanish' ?
+             'spanish' : 'non-spanish';
+        $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
+
+        // figure out what admin actions are configured for $user_action
+        return preg_grep($pattern, array_keys($config[$user_action]));
     }
 
 
