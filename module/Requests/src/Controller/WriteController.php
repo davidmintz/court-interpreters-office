@@ -133,7 +133,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
             if (! $entity) {
                 return parent::onDispatch($e);
             }
+            //return parent::onDispatch($e);
             $this->entity = $entity;
+            /**
+             * @todo
+             * some optimization. this is bullshit.
+             */
             $user = $this->objectManager->find(
                 'InterpretersOffice\Entity\User',
                 $this->auth->getIdentity()->id
@@ -270,6 +275,8 @@ class WriteController extends AbstractActionController implements ResourceInterf
         if (! $this->getRequest()->isPost()) {
             return  new ViewModel(['form' => $form, 'id' => $this->params()->fromRoute('id')]);
         }
+        $this->getEventManager()->trigger('loadRequest',$this,
+            ['entity'=>$entity,'entity_manager'=>$this->objectManager]);
         $data = $this->getRequest()->getPost()->get('request');
         $form->filterDateTimeFields(
             ['date','time'], $data,  'request'
