@@ -46,10 +46,19 @@ class RequestRepository extends EntityRepository
      * @param int $id
      * @return Request
      */
-    public function getRequestWithEvent($id)
+    public function getRequestWithEvent($id)//, e, s, h, ie, i, dr, de
     {
-        $dql = 'SELECT r, e FROM InterpretersOffice\Requests\Entity\Request r
-            LEFT JOIN r.event e WHERE r.id = :id';
+        $dql = 'SELECT r, e, s, h, ie, de, dr, i
+            FROM InterpretersOffice\Requests\Entity\Request r
+            JOIN r.submitter s
+            JOIN s.hat h
+            
+            LEFT JOIN r.defendants dr
+            LEFT JOIN r.event e
+            LEFT JOIN e.interpreterEvents ie
+            LEFT JOIN e.defendants de
+            LEFT JOIN ie.interpreter i
+            WHERE r.id = :id';
         return $this->getEntityManager()->createQuery($dql)
             ->setParameters([':id'=>$id])
             ->getOneOrNullResult();
