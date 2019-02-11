@@ -154,8 +154,11 @@ class Module
         //
         //         $params = $e->getParams();
         //         $log = $container->get('log');
-        //         $log->warn("GUESS WHAT: shit is an instance of: "
-        //         .get_class($params['request']->getEvent()));
+        //         if (isset($params['request'])  && $params['request']->getEvent())
+        //         {
+        //             $log->warn("GUESS WHAT: shit is an instance of: "
+        //             .get_class($params['request']->getEvent()));
+        //         }
         //     }
         // );
     }

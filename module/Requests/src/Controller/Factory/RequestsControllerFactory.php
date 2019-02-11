@@ -70,18 +70,13 @@ class RequestsControllerFactory implements FactoryInterface
                 new ModificationAuthorizedAssertion($controller)
             );
 
-            // experimental. let the general entity UpdateListener trigger events
-            // and this listener will call the ScheduleUpdateManager
+            // experimental. 
             $eventManager = $container->get('SharedEventManager');
-
-            $eventManager->attach(Listener\UpdateListener::class, '*', function ($e) use ($container) {
-                $container->get('log')->debug(
-                    "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
-                );
-                /** @var ScheduleUpdateManager $updateManager */
-                $updateManager = $container->get(ScheduleUpdateManager::class);
-                $updateManager->onUpdateRequest($e);
-            });
+            $scheduleManager = $container->get(ScheduleUpdateManager::class);
+            $eventManager->attach(//Listener\UpdateListener::class,
+                $requestedName,
+                'updateRequest',
+                [$scheduleManager,'onUpdateRequest']);
 
             return $controller;
         }
@@ -90,10 +85,12 @@ class RequestsControllerFactory implements FactoryInterface
             $container->get('log')->debug(
                 "attaching entity listeners in RequestsControllerFactory (AdminController)..."
             );
+            $resolver->register($container->get(RequestEntityListener::class));
+
             $listener = $container->get(EventEntityListener::class);
             $listener->setAuth($container->get('auth'));
-            $resolver->register($container->get(EventEntityListener::class));
-            $resolver->register($container->get(RequestEntityListener::class));
+            $resolver->register($listener);
+
         }
         return new $requestedName($entityManager, $auth);
     }

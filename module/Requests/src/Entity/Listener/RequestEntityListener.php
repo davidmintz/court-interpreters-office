@@ -133,36 +133,40 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
             $shit = print_r($fields_updated,true);
             $this->getLogger()->info(__METHOD__." is updating: $shit") ;
 
-            // $request->setModified(new \DateTime())
-            //     ->setModifiedBy($this->getAuthenticatedUser($args));
-            // $user = $this->getAuthenticatedUser($args)->getUsername();
-            // $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
+             $request->setModified(new \DateTime())
+                 ->setModifiedBy($this->getAuthenticatedUser($args));
+             $user = $this->getAuthenticatedUser($args)->getUsername();
+             $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request, triggering shit");
+             $this->getEventManager()->trigger(
+                 __FUNCTION__,$this,['PreUpdateEventArgs'=>$args]
+             );
         }
-        // this SHIT DOES NOT WORK either
-        if ($this->defendantsWereModified($request)) {
-
-                $this->getLogger()->info(__METHOD__.":  defts where modified") ;
-                $event = $request->getEvent();
-                $this->getLogger()->info(__METHOD__."event is an instance of ".get_class($event));
-                if ($event) {
-                    $ours = $event->getDefendants()->toArray();
-
-                    //$match = ($ours == $this->previous_defendants) ? 'true':'false';
-                    //$this->getLogger()->info(__METHOD__.": was our defts collection same as theirs before update? $match");
-                    if ($ours == $this->previous_defendants) {
-                        $this->getLogger()->info(__METHOD__.": updating event-defendants!!");
-                        foreach($event->getDefendants() as $n){
-                            $event->removeDefendant($n);
-                        }
-                        //$event->removeDefendants($event->getDefendants());
-                        //$event->addDefendants($request->getDefendants());
-                        foreach ($request->getDefendants() as $n) {
-                            $event->addDefendant($n);
-                        }
-                    }
-                }
-
-        }
+        // this SHIT DOES NOT WORK either.
+        // may be that preUpdate is not called in time for this to work?
+        // if ($this->defendantsWereModified($request)) {
+        //
+        //         $this->getLogger()->info(__METHOD__.":  defts where modified") ;
+        //         $event = $request->getEvent();
+        //         $this->getLogger()->info(__METHOD__.": event is an instance of ".get_class($event));
+        //         if ($event) {
+        //             $ours = $event->getDefendants()->toArray();
+        //             $event->setComments(__METHOD__." did shit with this, ",date('r'));
+        //             $match = ($ours == $this->previous_defendants) ? 'true':'false';
+        //             $this->getLogger()->info(__METHOD__.": was our defts collection same as theirs before update? $match");
+        //             if ($ours == $this->previous_defendants) {
+        //                 $this->getLogger()->info(__METHOD__.": updating event-defendants!!");
+        //                 foreach($event->getDefendants() as $n){
+        //                     $event->removeDefendant($n);
+        //                 }
+        //                 //$event->removeDefendants($event->getDefendants());
+        //                 //$event->addDefendants($request->getDefendants());
+        //                 foreach ($request->getDefendants() as $n) {
+        //                     $event->addDefendant($n);
+        //                 }
+        //             }
+        //         }
+        //
+        // }
         // Request cancellation. Cancellation is in fact an update: the entity's
         // boolean $cancelled is set to true. But it is treated as its own
         // special case.
