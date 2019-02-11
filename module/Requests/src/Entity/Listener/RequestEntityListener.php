@@ -15,12 +15,12 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 use Doctrine\ORM\EntityManager;
 
-//use Doctrine\Common\EventSubscriber;
+
 /**
  * Request entity listener.
  */
 class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareInterface
-//EventSubscriber
+
 {
     use Log\LoggerAwareTrait;
     use EventManagerAwareTrait;
@@ -52,12 +52,10 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         return $this;
     }
 
-    // public function getSubscribedEvents()
-    // {
-    //     return [ 'onFlush', 'postLoad','prePersist','postPersist','preUpdate'];
-    // }
+
     /**
      * postLoad callback
+     * @todo get rid of this?
      *
      * @param Entity\Request $request
      * @param LifecycleEventArgs $args
@@ -66,15 +64,15 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
 
         // $log = $this->getLogger();
-        // $log->debug("postload callback running in Request entity listener");
+        $log->debug("postload callback running in Request entity listener");
         $this->previous_defendants = $request->getDefendants()->toArray();
-        $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            [   'entity'=>$request,'args'=>$args,
-                'defendants'=>$this->previous_defendants,
-            ]
-        );
+        // $this->getEventManager()->trigger(
+        //     __FUNCTION__,
+        //     $this,
+        //     [   'entity'=>$request,'args'=>$args,
+        //         'defendants'=>$this->previous_defendants,
+        //     ]
+        // );
     }
 
     /**
@@ -131,15 +129,11 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
 
         if (count($fields_updated) or $this->defendantsWereModified($request)) {
             $shit = print_r($fields_updated,true);
-            $this->getLogger()->info(__METHOD__." is updating: $shit") ;
-
+            $this->getLogger()->info(__METHOD__." is updating: $shit, setting metadata") ;
              $request->setModified(new \DateTime())
                  ->setModifiedBy($this->getAuthenticatedUser($args));
              $user = $this->getAuthenticatedUser($args)->getUsername();
-             $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request, triggering shit");
-             $this->getEventManager()->trigger(
-                 __FUNCTION__,$this,['PreUpdateEventArgs'=>$args]
-             );
+
         }
         // this SHIT DOES NOT WORK either.
         // may be that preUpdate is not called in time for this to work?

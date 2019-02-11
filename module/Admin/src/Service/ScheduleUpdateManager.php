@@ -104,10 +104,10 @@ class ScheduleUpdateManager
     private $event_was_updated;
 
     /**
-     * the (most significant) user action
+     * the (most significant) user event/action
      * @var string
      */
-    private $user_action;
+    private $user_event;
 
     /**
      * constructor
@@ -174,9 +174,7 @@ class ScheduleUpdateManager
             __METHOD__.": here we GO !!!!!!!"
         );
         $request = $e->getParam('request');
-
         $event = $request->getEvent();
-
         if (! $event) {
             $this->logger->debug(
                 __FUNCTION__.": request apparently NOT scheduled, no corresponding event"
@@ -188,7 +186,6 @@ class ScheduleUpdateManager
         $previous = $this->previous_state;
         $updates = [];
         foreach ($previous as $field => $value) {
-
             $after = $request->{'get'.ucfirst($field)}();
             if ($field == 'defendants') {
                 $after = $after->toArray();
@@ -200,66 +197,66 @@ class ScheduleUpdateManager
         $this->logger->debug(
             'what was modified: '.implode(', ',array_keys($updates))
         );
-        $user_action = $this->getUserAction($updates);
-
-        $this->user_action = $user_action;
+        $user_event = $this->getUserEvent($updates);
+        $this->user_event = $user_event;
         $this->logger->debug(
-             sprintf(__METHOD__.":\nuser action is '%s'  at %d", $user_action, __LINE__)
+             sprintf(__METHOD__.":\nuser-event is '%s'  at %d", $user_event, __LINE__)
          );
-        //$config = $this->config['event_listeners'];
-        if (! isset($this->config['event_listeners'][$user_action])) {
+        if (! isset($this->config['event_listeners'][$user_event])) {
             $this->logger->warn(__METHOD__.
-            ":\nno configuration found for user action '$user_action'
+            ":\nno configuration found for user-event '$user_event'
                 TO DO: IMPLEMENT");
+
             return $this->updateScheduledEvent($request,$updates);
         }
-        // figure out what admin actions are configured for $user_action
-        $actions = $this->getUserActions($request);//preg_grep($pattern, array_keys($config[$user_action]));
-/*
-XHRPOSThttps://office.localhost/requests/update/20572[HTTP/1.1 200 OK 51ms]
-HeadersCookiesParamsResponseTimingsStack TraceSecurityPreviewResponse payload 1<br />2<b>
-Recoverable fatal error</b>:  Object of class InterpretersOffice\Admin\Service\ScheduleUpdateManager
-could not be converted to string in <b>/opt/www/court-interpreters-office/module/Admin/src/Service/ScheduleUpdateManager.php</b>
-on line <b>214</b><br />3​
- */
+
+        // figure out what admin actions are configured for $user_event
+        $actions = $this->getUserActions($request,$user_event);
         $filter = new DashToCamelCase();
+        $config = $this->config['event_listeners'];
         // and whether they are enabled
         foreach ($actions as $string) {
             $i = strrpos($string, '.') + 1;
             $action = substr($string, $i);
             $method = lcfirst($filter->filter($action));
-            if ($config[$user_action][$string]) {
+            if ($config[$user_event][$string]) {
                 if (method_exists($this, $method)) {
                     $this->logger->debug("we now need to call: $method()");
                     $this->$method($request, $updates);
                 } else {
-                    $this->logger->warn("!! not running not-implemented $method !");
+                    $this->logger->warn("!! not running not-implemented method: $method !");
                 }
             } else {
                 // explicity disabled in configuration
-                $this->logger->debug("not running disabled action/method $method()");
+                $this->logger->debug("not running explicitly disabled action/method: $method()");
             }
         }
-        if ($user_action == self::OTHER) {
-            $this->logger->debug(__METHOD__.":  it's the default user-action: other");
+        if ($user_event == self::OTHER) {
+            $this->logger->debug(__METHOD__.
+                ":  it's the default user-action: other");
             $this->updateScheduledEvent($request,$updates);
         }
 
         return $this;
     }
 
-    protected function getUserActions(Request $request)
+    /**
+     * figures out what admin actions (methods) to run based on $user_event
+     *
+     * @param  Request $request
+     * @param  string  $user_event
+     * @return Array of strings/methods to be run
+     */
+    protected function getUserActions(Request $request, $user_event)
     {
         $config = $this->config['event_listeners'];
-
         $type = (string)$request->getEventType()->getCategory()
             == 'in' ? 'in-court' : 'out-of-court';
         $language = (string) $request->getEvent()->getLanguage() == 'Spanish' ?
              'spanish' : 'non-spanish';
         $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
 
-        // figure out what admin actions are configured for $user_action
-        return preg_grep($pattern, array_keys($config[$user_action]));
+        return preg_grep($pattern, array_keys($config[$user_event]));
     }
 
 
@@ -325,6 +322,28 @@ on line <b>214</b><br />3​
             }
             $this->event_was_updated = true;
         }
+        if (isset($updates['defendants'])) {
+            $this->logger->debug("they updated the defendants. need to get busy");
+            // were they the same before the Request update?
+            $ours = $event->getDefendants()->toArray();
+            $was_the_same = $ours = $updates['defendants'][0];
+            $this->logger->debug("were they the same before? ".($was_the_same?"YES":"NO"));
+
+            if ($was_the_same) {
+                 $theirs = $request->getDefendants()->toArray();
+                 //$log->info("trying to update event defts");
+                 $to_be_added = array_diff($theirs,$ours);
+                 foreach ($to_be_added as $d) {
+                      $this->logger->info("need to add? ".$d->getSurnames());
+                      $event->addDefendant($d);
+                 }
+                 $to_be_removed = array_diff($ours,$theirs);
+                 foreach ($to_be_removed as $d) {
+                      $this->logger->info("need to remove? ".$d->getSurnames());
+                      $event->removeDefendant($d);
+                 }
+            }
+        }
 
         return $this;
     }
@@ -348,7 +367,8 @@ on line <b>214</b><br />3​
     /**
      * un-assigns all interpreters from Request's corresponding Event
      *
-     * @todo see if this can be less complicated
+     * second parameter is not used, but is there to keep our signature
+     * consistent with that of other methods
      *
      * @param  Request $request
      * @param array $updates
@@ -359,11 +379,7 @@ on line <b>214</b><br />3​
         $event = $request->getEvent();
         $interpreterEvents = $event->getInterpreterEvents();
         if ($n = $interpreterEvents->count()) {
-            /** @var Doctrine\ORM\UnitOfWork $uow */
-            $uow = $this->objectManager->getUnitOfWork();
-            foreach ($interpreterEvents as $shit) {
-                $uow->scheduleForDelete($shit);
-            }
+            $event->removeInterpreterEvents($interpreterEvents);
             $this->logger->debug(__METHOD__.": we removed $n interpreters");
         } else {
             $this->logger->debug(__METHOD__.": NO interpreters to remove ");
@@ -384,7 +400,7 @@ on line <b>214</b><br />3​
      */
     public function notifyAssignedInterpreters(Request $request, array $updates)
     {
-        $this->logger->info("notifying interpreters about $this->user_action");
+        $this->logger->info("notifying interpreters about $this->user_event");
         $event = $request->getEvent();
         $interpreterEvents = $event->getInterpreterEvents();
         $count = $interpreterEvents->count();
@@ -415,7 +431,7 @@ on line <b>214</b><br />3​
      * @param  Array $changeset
      * @return string name of the user action
      */
-    private function getUserAction(Array $changeset)
+    private function getUserEvent(Array $changeset)
     {
         $fields = array_keys($changeset);
         if (in_array('language', $fields)) {

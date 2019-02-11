@@ -70,7 +70,7 @@ class RequestsControllerFactory implements FactoryInterface
                 new ModificationAuthorizedAssertion($controller)
             );
 
-            // experimental. 
+            // experimental.
             $eventManager = $container->get('SharedEventManager');
             $scheduleManager = $container->get(ScheduleUpdateManager::class);
             $eventManager->attach(//Listener\UpdateListener::class,
