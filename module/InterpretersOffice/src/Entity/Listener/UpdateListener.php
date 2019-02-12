@@ -98,25 +98,9 @@ class UpdateListener implements
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postRemove','postPersist','prePersist','onFlush'];
+        return ['postUpdate','postRemove','postPersist','prePersist',];
     }
 
-    /**
-     * synchronizes Event with Request
-     *
-     * a work in progress. might get rid of it in favor of something
-     * better and less complicated and heavy-handed
-     *
-     * @param  OnFlushEventArgs $args
-     * @return void
-     */
-    public function onFlush(OnFlushEventArgs $args)
-    {
-        //$this->logger->debug(__METHOD__.": disabled, I'm a noop");
-        $this->logger->debug(__METHOD__.": we have been triggered, now triggering onFlush to whomever");
-         $this->getEventManager()
-             ->trigger(__FUNCTION__, $this, ['onFlushEventArgs' => $args]);
-    }
 
     /**
     * postPersist event handler
@@ -218,7 +202,6 @@ class UpdateListener implements
                 "set createdBy and timestamp on InterpreterEvent in ".__METHOD__
             );
         }
-
         $this->logger->debug(
             sprintf(
                 '%s:  user %s is creating a new %s',
@@ -227,6 +210,6 @@ class UpdateListener implements
                 get_class($args->getObject())
             )
         );
-        //$this->clearCache($args);
+
     }
 }
