@@ -50,7 +50,6 @@ class RequestsControllerFactory implements FactoryInterface
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
             // add Doctine entity listeners
-            $container->get('log')->debug("HELLO? Factory is creating $requestedName");
             $resolver->register($container->get(Listener\UpdateListener::class)
                 ->setAuth($auth));
             $resolver->register($container->get(RequestEntityListener::class));
@@ -59,8 +58,8 @@ class RequestsControllerFactory implements FactoryInterface
             // add another ACL rule
             $acl = $container->get('acl');
             $controller = new $requestedName($entityManager, $auth, $acl);
-            $user = $entityManager->find(
-                'InterpretersOffice\Entity\User',
+            // @todo optimize this...
+            $user = $entityManager->find('InterpretersOffice\Entity\User',
                 $auth->getIdentity()->id
             );
             $acl->allow(
@@ -73,10 +72,12 @@ class RequestsControllerFactory implements FactoryInterface
             // experimental.
             $eventManager = $container->get('SharedEventManager');
             $scheduleManager = $container->get(ScheduleUpdateManager::class);
-            $eventManager->attach(//Listener\UpdateListener::class,
-                $requestedName,
-                'updateRequest',
+            $eventManager->attach($requestedName,'updateRequest',
                 [$scheduleManager,'onUpdateRequest']);
+            $eventManager->attach($requestedName,'cancel',
+                [$scheduleManager,'onCancelRequest']);
+            $eventManager->attach(RequestEntityListener::class, 'create',
+                [$scheduleManager,'onCreateRequest']);
 
             return $controller;
         }

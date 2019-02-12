@@ -183,12 +183,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         return parent::onDispatch($e);
     }
 
-    /* under consideration
-    public function deadlineAction()
-    {
-        return new JsonModel(['deadline'=>$this->getTwoBusinessDaysAfterDate()]);
-    }
-    */
+
 
     /**
      * creates a new Request
@@ -288,7 +283,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         try {
             $form->postValidate();
             $event = $entity->getEvent();
-            $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');            
+            $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
             $log->info("controller NOW TRIGGERING updateRequest");
             $this->getEventManager()->trigger('updateRequest',$this,
                 ['request'=>$entity,'entity_manager'=>$this->objectManager]);
@@ -313,11 +308,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
     public function cancelAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->objectManager->find(Entity\Request::class, $id);
+        $entity = $this->entity;
         if ($entity) {
             try {
                 $entity->setCancelled(true);
-                //throw new \Exception("shit happened");
+                $this->getEventManager()->trigger('cancel',$this,
+                    ['request'=>$entity,'entity_manager'=>$this->objectManager]);
                 $this->objectManager->flush();
                 $description = $this->params()->fromPost('description');
                 $message = 'This request for interpreting services ';

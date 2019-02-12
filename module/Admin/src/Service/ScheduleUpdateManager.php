@@ -91,8 +91,6 @@ class ScheduleUpdateManager
      */
     private $objectManager;
 
-
-
     /**
      * whether Request's related Event was modified.
      *
@@ -117,6 +115,7 @@ class ScheduleUpdateManager
      * @param Array                          $config
      */
     public function __construct(
+
         AuthenticationServiceInterface $auth,
         LoggerInterface $log,
         Array $config
@@ -143,6 +142,8 @@ class ScheduleUpdateManager
             'extraData' => $request->getExtraData(),
             'defendants' => $request->getDefendants()->toArray(),
         ];
+
+        return $this;
     }
 
 
@@ -266,12 +267,13 @@ class ScheduleUpdateManager
      * @param  Event  $e
      * @return void
      */
-    protected function onCreateRequest(EventInterface $e)
+    public function onCreateRequest(EventInterface $e)
     {
         $this->logger->debug(
             sprintf('handling request create in %s at %d', __METHOD__, __LINE__)
         );
         $listener_config = $this->config['event_listeners'];
+        // to be continued?
     }
 
     /**
@@ -280,7 +282,7 @@ class ScheduleUpdateManager
      * @param  EventInterface $e
      * @return void
      */
-    protected function onCancelRequest(EventInterface $e)
+    public function onCancelRequest(EventInterface $e)
     {
         $this->logger->debug(
             sprintf('handling request cancel in %s at %d', __METHOD__, __LINE__)
@@ -400,22 +402,24 @@ class ScheduleUpdateManager
      */
     public function notifyAssignedInterpreters(Request $request, array $updates)
     {
-        $this->logger->info("notifying interpreters about $this->user_event");
         $event = $request->getEvent();
         $interpreterEvents = $event->getInterpreterEvents();
         $count = $interpreterEvents->count();
+        $message = sprintf(
+            'ScheduleUpdateManager: notifying %d interpreters about user action %s with request id %s',
+            $count, $this->user_event, $request->getId()
+        );
+        $this->logger->info($message);
         if (! $count) {
             return $this;
         }
-        //$this->logger->debug("there are/were ".$interpreterEvents->count());
+
         foreach ($interpreterEvents as $ie) {
             $email = $ie->getInterpreter()->getEmail();
-            $this->logger->debug("need to email: $email");
+            $this->logger->info("need to email: $email");
             $message = $this->createEmailMessage('<p>hi there</p>', 'hi there');
             $this->logger->debug("we have created a ". get_class($message) . " for $email");
         }
-
-
 
         return $this;
     }

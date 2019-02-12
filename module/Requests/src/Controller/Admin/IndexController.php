@@ -72,6 +72,7 @@ class IndexController extends AbstractActionController
             $defendants = [];
         }
         $data = compact('pending', 'defendants');
+        $data['csrf'] = (new \Zend\Validator\Csrf('csrf'))->getHash();
         if ($this->getRequest()->isXmlHttpRequest()) {
             return (new ViewModel($data))->setTerminal(true);
         }

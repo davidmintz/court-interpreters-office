@@ -40,7 +40,7 @@ $this->headTitle("requests for court interpreting services")
             </p>
         <table class="table table-bordered">
             <thead></thead>
-            <tbody>
+            <tbody data-csrf="<?php echo $this->csrf?>">
         <?php if ($this->pending):?>
         <?php foreach ($this->pending as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
             <tr class="request" data-id="<?php echo $r['id']?>">
