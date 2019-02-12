@@ -59,16 +59,18 @@ class RequestsWriteControllerTest extends AbstractControllerTest
                 new DataFixture\RequestLoader(),
             ]
         );
-
+        $this->em = $em;
 
 
     }
+    private $em;
 
     public function tearDown()
     {
-        $em = FixtureManager::getEntityManager();
+        $em = $this->em;//FixtureManager::getEntityManager();
         $result = $em->createQuery(
-            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL'
+            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+            WHERE r.event IS NOT NULL'
         )->getResult();
         if (count($result)) {
             foreach ($result as $object) {
@@ -98,7 +100,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     public function getDummyRequest()
     {
 
-        $em = FixtureManager::getEntityManager();
+        $em = $this->em;//FixtureManager::getEntityManager();
 
 
         $dql = "SELECT j.id FROM InterpretersOffice\Entity\User u JOIN u.judges j JOIN u.person p
@@ -156,7 +158,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     public function testCreate()
     {
 
-        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
         $log = $this->getApplicationServiceLocator()->get('log');
 
         $before = $em->createQuery('SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r')
@@ -302,7 +304,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
 
     public function testLoadRequestThatIsAlreadyScheduled()
     {
-        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
         $request = $em->createQuery(
             'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
             ->getOneOrNullResult();
@@ -363,7 +365,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     public function testPostUpdateToScheduledRequest()
     {
         //$this->assertTrue(is_object($request));
-        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
         $request = $em->createQuery(
             'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
             ->getOneOrNullResult();
@@ -408,7 +410,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     public function testViewRequestThatIsScheduled()
     {
 
-        $em = $this->getApplicationServiceLocator()->get('entity-manager');
+        $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
         $request = $em->createQuery(
             'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
             ->getOneOrNullResult();
