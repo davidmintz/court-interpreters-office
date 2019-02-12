@@ -176,4 +176,4 @@ div.event-details .col-sm-4 {
     padding-left: 5px;
 }
 
-.alert-success p { margin-bottom : 0; text-align: center;}
+.alert-success p { margin-bottom : 0; padding-left: 2em; }

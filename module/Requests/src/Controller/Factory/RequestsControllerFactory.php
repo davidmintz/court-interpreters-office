@@ -50,7 +50,6 @@ class RequestsControllerFactory implements FactoryInterface
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
             // add Doctine entity listeners
-            $container->get('log')->debug("HELLO? Factory is creating $requestedName");
             $resolver->register($container->get(Listener\UpdateListener::class)
                 ->setAuth($auth));
             $resolver->register($container->get(RequestEntityListener::class));
@@ -59,8 +58,8 @@ class RequestsControllerFactory implements FactoryInterface
             // add another ACL rule
             $acl = $container->get('acl');
             $controller = new $requestedName($entityManager, $auth, $acl);
-            $user = $entityManager->find(
-                'InterpretersOffice\Entity\User',
+            // @todo optimize this...
+            $user = $entityManager->find('InterpretersOffice\Entity\User',
                 $auth->getIdentity()->id
             );
             $acl->allow(
@@ -70,18 +69,15 @@ class RequestsControllerFactory implements FactoryInterface
                 new ModificationAuthorizedAssertion($controller)
             );
 
-            // experimental. let the general entity UpdateListener trigger events
-            // and this listener will call the ScheduleUpdateManager
+            // experimental.
             $eventManager = $container->get('SharedEventManager');
-
-            $eventManager->attach(Listener\UpdateListener::class, '*', function ($e) use ($container) {
-                $container->get('log')->debug(
-                    "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
-                );
-                /** @var ScheduleUpdateManager $updateManager */
-                $updateManager = $container->get(ScheduleUpdateManager::class);
-                $updateManager->onUpdateRequest($e);
-            });
+            $scheduleManager = $container->get(ScheduleUpdateManager::class);
+            $eventManager->attach($requestedName,'updateRequest',
+                [$scheduleManager,'onUpdateRequest']);
+            $eventManager->attach($requestedName,'cancel',
+                [$scheduleManager,'onCancelRequest']);
+            $eventManager->attach(RequestEntityListener::class, 'create',
+                [$scheduleManager,'onCreateRequest']);
 
             return $controller;
         }
@@ -90,10 +86,12 @@ class RequestsControllerFactory implements FactoryInterface
             $container->get('log')->debug(
                 "attaching entity listeners in RequestsControllerFactory (AdminController)..."
             );
+            $resolver->register($container->get(RequestEntityListener::class));
+
             $listener = $container->get(EventEntityListener::class);
             $listener->setAuth($container->get('auth'));
-            $resolver->register($container->get(EventEntityListener::class));
-            $resolver->register($container->get(RequestEntityListener::class));
+            $resolver->register($listener);
+
         }
         return new $requestedName($entityManager, $auth);
     }

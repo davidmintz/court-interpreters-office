@@ -133,7 +133,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
             if (! $entity) {
                 return parent::onDispatch($e);
             }
+            //return parent::onDispatch($e);
             $this->entity = $entity;
+            /**
+             * @todo
+             * some optimization. this is bullshit.
+             */
             $user = $this->objectManager->find(
                 'InterpretersOffice\Entity\User',
                 $this->auth->getIdentity()->id
@@ -178,12 +183,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         return parent::onDispatch($e);
     }
 
-    /* under consideration
-    public function deadlineAction()
-    {
-        return new JsonModel(['deadline'=>$this->getTwoBusinessDaysAfterDate()]);
-    }
-    */
+
 
     /**
      * creates a new Request
@@ -270,11 +270,11 @@ class WriteController extends AbstractActionController implements ResourceInterf
         if (! $this->getRequest()->isPost()) {
             return  new ViewModel(['form' => $form, 'id' => $this->params()->fromRoute('id')]);
         }
+        $this->getEventManager()->trigger('loadRequest',$this,
+            ['entity'=>$entity,'entity_manager'=>$this->objectManager]);
         $data = $this->getRequest()->getPost()->get('request');
         $form->filterDateTimeFields(
-            ['date','time'],
-            $data,
-            'request'
+            ['date','time'], $data,  'request'
         );
         $form->setData($this->getRequest()->getPost());
         if (! $form->isValid()) {
@@ -282,8 +282,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
         }
         try {
             $form->postValidate();
+            $event = $entity->getEvent();
+            $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+            $log->info("controller NOW TRIGGERING updateRequest");
+            $this->getEventManager()->trigger('updateRequest',$this,
+                ['request'=>$entity,'entity_manager'=>$this->objectManager]);
             $this->objectManager->flush();
-            $this->getEventManager()->trigger('updateRequest',$this,['request'=>$entity]);
             $this->flashMessenger()->addSuccessMessage(
                 'This request for interpreting services has been updated successfully. Thank you.'
             );
@@ -304,11 +308,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
     public function cancelAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->objectManager->find(Entity\Request::class, $id);
+        $entity = $this->entity;
         if ($entity) {
             try {
                 $entity->setCancelled(true);
-                //throw new \Exception("shit happened");
+                $this->getEventManager()->trigger('cancel',$this,
+                    ['request'=>$entity,'entity_manager'=>$this->objectManager]);
                 $this->objectManager->flush();
                 $description = $this->params()->fromPost('description');
                 $message = 'This request for interpreting services ';

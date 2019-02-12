@@ -13,6 +13,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 
 use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
+use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 use Zend\Authentication\Result;
 use Zend\Authentication\AuthenticationServiceInterface;
 use ApplicationTest\FakeAuth;
@@ -107,7 +108,8 @@ final class FixtureManager
         $event_entity_listener->setAuth(new FakeAuth());
         $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
         $resolver->register($listener);
-
+        $requestEntityListener = $container->get(RequestEntityListener::class);
+        $resolver->register($requestEntityListener);
         // looks like we need to be authenticated before EventListenerFactory
         // injects auth in ScheduleUpdateManager, hence...
 

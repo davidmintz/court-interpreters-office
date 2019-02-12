@@ -43,7 +43,27 @@ class Module
      */
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
+
+
         $container = $event->getApplication()->getServiceManager();
+
+        /**
+         * TEMPORARY debug
+         *
+         */
+
+         // $path = 'data/log/sql.log';
+         // $fp = fopen($path,'w');
+         // ftruncate($fp,0);
+         // fclose($fp);
+         // $log = new \Zend\Log\Logger();
+         // $log->addWriter(new \Zend\Log\Writer\Stream($path,'a'));
+         // $sql_logger = new \InterpretersOffice\Service\SqlLogger($log);
+         // $em = $container->get('entity-manager');
+         // $em->getConfiguration()->setSQLLogger($sql_logger);
+         //==============
+
+
         // $view = $container->get('ViewRenderer'); var_dump(get_class($view));
         // set the "breadcrumbs" navigation view-helper separator
         // unless there's a better way to make sure this gets done globally...
@@ -119,32 +139,23 @@ class Module
             }
         );
 
-        // experimental. not the most efficient. we could
-        // save a couple db selects by writing/using a repository method
-        // that does not fetch the 'interpEvents' (in the case of the Entity\Event)
-        // and 'defendants' collections because the entity listener that
-        // triggers us already has that data
+        // experimental.
+        /** @var  InterpretersOffice\Service\ScheduleUpdateManager $scheduleManager */
+        $scheduleManager = $container->get('InterpretersOffice\Admin\Service\ScheduleUpdateManager');
         $sharedEvents->attach(
             //'ENTITY_UPDATE',
             //'InterpretersOffice\Entity\Listener\EventEntityListener',
             '*',
-            'postLoad',
-            function($e) use ($log) {
+            'loadRequest',
+            function($e) use ($log,$scheduleManager) {
 
                 $params = $e->getParams();
-                $args = $params['args'];
+                // $args = $params['args'];
                 $entity = $params['entity'];
-                $id = $entity->getId();
-                $em = $args->getObjectManager();
-                $class = get_class($entity);
-                $view_before = $em->getRepository(get_class($entity))
-                    ->getView($entity->getId());
-                $shit = strstr($class, 'Event') ? 'event' : 'request';
-                $session = new \Zend\Session\Container("{$shit}_updates");
-                $session->$id = $view_before;
-                //$changeset = $args->getEntityChangeSet();
-                $log->debug("stored entity state in session {$session->getName()}"
-                     ." (id $id) for later reference");
+                $log->debug("we are doing shit here and now, in event listener, ".gettype($entity) . " is type of our entity");
+                $scheduleManager->setPreviousState($entity);
+
+                
             }
         );
         // $sharedEvents->attach(
@@ -154,8 +165,11 @@ class Module
         //
         //         $params = $e->getParams();
         //         $log = $container->get('log');
-        //         $log->warn("GUESS WHAT: shit is an instance of: "
-        //         .get_class($params['request']->getEvent()));
+        //         if (isset($params['request'])  && $params['request']->getEvent())
+        //         {
+        //             $log->warn("GUESS WHAT: shit is an instance of: "
+        //             .get_class($params['request']->getEvent()));
+        //         }
         //     }
         // );
     }

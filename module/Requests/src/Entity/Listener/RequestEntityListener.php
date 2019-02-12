@@ -15,12 +15,12 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 use Doctrine\ORM\EntityManager;
 
-//use Doctrine\Common\EventSubscriber;
+
 /**
  * Request entity listener.
  */
 class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareInterface
-//EventSubscriber
+
 {
     use Log\LoggerAwareTrait;
     use EventManagerAwareTrait;
@@ -52,12 +52,12 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         return $this;
     }
 
-    // public function getSubscribedEvents()
-    // {
-    //     return [ 'onFlush', 'postLoad','prePersist','postPersist','preUpdate'];
-    // }
+
     /**
      * postLoad callback
+     *
+     * Yet to come up with a better way to detect whether Request.defendants
+     * have been modified so we can update metadata.
      *
      * @param Entity\Request $request
      * @param LifecycleEventArgs $args
@@ -65,16 +65,10 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     public function postLoad(Entity\Request $request, LifecycleEventArgs $args)
     {
 
-        // $log = $this->getLogger();
-        // $log->debug("postload callback running in Request entity listener");
+        $log = $this->getLogger();
+        $log->debug("postload in RequestEntityListener: saving deft state");
         $this->previous_defendants = $request->getDefendants()->toArray();
-        $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            [   'entity'=>$request,'args'=>$args,
-                'defendants'=>$this->previous_defendants,
-            ]
-        );
+
     }
 
     /**
@@ -88,15 +82,13 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
         $now = new \DateTime();
         $user = $this->getAuthenticatedUser($args);
-        //$person = $this->getCurrentUserPerson($args);
         $request->setCreated($now)->setModified($now)
                 ->setCancelled(false)
-                //->setSubmitter($person)
                 ->setModifiedBy($user);
         if (! $request->getSubmitter()) {
             $request->setSubmitter($this->getCurrentUserPerson($args));
         }
-        //$this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
+        $this->getLogger()->debug("YES, set Request metadata in prePersist listener");
     }
 
     /**
@@ -131,38 +123,13 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
 
         if (count($fields_updated) or $this->defendantsWereModified($request)) {
             $shit = print_r($fields_updated,true);
-            $this->getLogger()->info(__METHOD__." is updating: $shit") ;
-
-            // $request->setModified(new \DateTime())
-            //     ->setModifiedBy($this->getAuthenticatedUser($args));
-            // $user = $this->getAuthenticatedUser($args)->getUsername();
-            // $this->getLogger()->info(__METHOD__." :user $user (really) is updating a Request ");
-        }
-        // this SHIT DOES NOT WORK either
-        if ($this->defendantsWereModified($request)) {
-
-                $this->getLogger()->info(__METHOD__.":  defts where modified") ;
-                $event = $request->getEvent();
-                $this->getLogger()->info(__METHOD__."event is an instance of ".get_class($event));
-                if ($event) {
-                    $ours = $event->getDefendants()->toArray();
-
-                    //$match = ($ours == $this->previous_defendants) ? 'true':'false';
-                    //$this->getLogger()->info(__METHOD__.": was our defts collection same as theirs before update? $match");
-                    if ($ours == $this->previous_defendants) {
-                        $this->getLogger()->info(__METHOD__.": updating event-defendants!!");
-                        foreach($event->getDefendants() as $n){
-                            $event->removeDefendant($n);
-                        }
-                        //$event->removeDefendants($event->getDefendants());
-                        //$event->addDefendants($request->getDefendants());
-                        foreach ($request->getDefendants() as $n) {
-                            $event->addDefendant($n);
-                        }
-                    }
-                }
+            $this->getLogger()->info(__METHOD__." is updating: $shit, setting metadata") ;
+             $request->setModified(new \DateTime())
+                 ->setModifiedBy($this->getAuthenticatedUser($args));
+             $user = $this->getAuthenticatedUser($args)->getUsername();
 
         }
+
         // Request cancellation. Cancellation is in fact an update: the entity's
         // boolean $cancelled is set to true. But it is treated as its own
         // special case.
@@ -185,10 +152,6 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      */
     private function defendantsWereModified(Entity\Request $request)
     {
-
-        $now = $request->getDefendants()->toArray();
-        $then = $this->previous_defendants;
-
-        return $now != $then;
+        return $request->getDefendants()->toArray() != $this->previous_defendants;
     }
 }

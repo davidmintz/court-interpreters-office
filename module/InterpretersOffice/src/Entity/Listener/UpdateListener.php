@@ -98,22 +98,9 @@ class UpdateListener implements
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postRemove','postPersist','prePersist','onFlush'];
+        return ['postUpdate','postRemove','postPersist','prePersist',];
     }
 
-    /**
-     * synchronizes Event with Request
-     *
-     * a work in progress.
-     *
-     * @param  OnFlushEventArgs $args
-     * @return void
-     */
-    public function onFlush(OnFlushEventArgs $args)
-    {
-
-        $this->getEventManager()->trigger(__FUNCTION__, $this, ['onFlushEventArgs' => $args]);
-    }
 
     /**
     * postPersist event handler
@@ -124,10 +111,8 @@ class UpdateListener implements
     public function postPersist(LifecycleEventArgs $args)
     {
         $user = $this->getAuthenticatedUser($args);
-
         $this->logger->debug(
-            sprintf(
-                'user %s has inserted entity %s',
+            sprintf('user %s has inserted entity %s',
                 $user ? $user->getUsername() : 'nobody',
                 get_class($args->getObject())
             )
@@ -208,22 +193,19 @@ class UpdateListener implements
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        $user = $this->getAuthenticatedUser($args);
         if ($entity instanceof Entity\InterpreterEvent) {
+            $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
             $this->logger->debug(
                 "set createdBy and timestamp on InterpreterEvent in ".__METHOD__
             );
         }
+        // $this->logger->debug(sprintf(
+        //         '%s:  user %s is creating a new %s',
+        //         __METHOD__, $user ? $user->getUsername() : 'nobody',
+        //         get_class($args->getObject())
+        //     )
+        // );
 
-        $this->logger->debug(
-            sprintf(
-                '%s:  user %s is creating a new %s',
-                __METHOD__,
-                $user ? $user->getUsername() : 'nobody',
-                get_class($args->getObject())
-            )
-        );
-        //$this->clearCache($args);
     }
 }

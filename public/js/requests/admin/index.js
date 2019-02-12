@@ -31,7 +31,8 @@ $(function(){
         e.preventDefault();
         var row = $(this).closest("tr");
         var id = row.data().id;
-        $.post(`/admin/requests/schedule/${id}`)
+        var csrf = row.parent().data("csrf");
+        $.post(`/admin/requests/schedule/${id}`,{csrf})
         .then((response)=>{
             console.log(response);
             if (response.status === "success") {
@@ -64,8 +65,10 @@ $(function(){
     var refresh = function refresh(){
         $.get(document.location.href)
         .then((response)=>{
-            var doc = $(response);
-            var this_html = doc.find("tbody").html();
+            //var doc = $(response);
+            var element = $(response).find("tbody");
+            var this_html = element.html();
+            var csrf = element.data('csrf');
             if (! this_html) { console.warn("error? no TBODY html");  }
             var updated = html !== this_html;
             console.warn("updated? "+ (updated ? "yes" : "no"));

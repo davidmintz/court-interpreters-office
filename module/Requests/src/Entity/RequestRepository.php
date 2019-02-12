@@ -46,10 +46,19 @@ class RequestRepository extends EntityRepository
      * @param int $id
      * @return Request
      */
-    public function getRequestWithEvent($id)
+    public function getRequestWithEvent($id)//, e, s, h, ie, i, dr, de
     {
-        $dql = 'SELECT r, e FROM InterpretersOffice\Requests\Entity\Request r
-            LEFT JOIN r.event e WHERE r.id = :id';
+        $dql = 'SELECT r, e, s, h, ie, de, dr, i
+            FROM InterpretersOffice\Requests\Entity\Request r
+            JOIN r.submitter s
+            JOIN s.hat h
+
+            LEFT JOIN r.defendants dr
+            LEFT JOIN r.event e
+            LEFT JOIN e.interpreterEvents ie
+            LEFT JOIN e.defendants de
+            LEFT JOIN ie.interpreter i
+            WHERE r.id = :id';
         return $this->getEntityManager()->createQuery($dql)
             ->setParameters([':id'=>$id])
             ->getOneOrNullResult();
@@ -230,6 +239,8 @@ class RequestRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
         ->select(['r.id','r.time','r.date','r.docket','e.name type',
+            'lang.id language_id',
+            'e.id event_type_id',
             'lang.name language','r.comments',
             'r.modified','modified_by.lastname modified_by_lastname',
             'modified_by.firstname modified_by_firstname',
@@ -241,6 +252,7 @@ class RequestRepository extends EntityRepository
             'event.id event_id','r.pending',
             'event.date event_date', 'event.time event_time',
             'cr.reason cancellation',
+            'j.id judge_id',
             'j.lastname judge_lastname','j.firstname judge_firstname',
             'j.middlename judge_middlename','j_flavor.flavor judge_flavor'
         ])
@@ -324,7 +336,7 @@ class RequestRepository extends EntityRepository
         $em = $this->getEntityManager();
         $request = $em->find(Request::class,$request_id);
         if (! $request) {
-            return ['status'=>'error','message'=>"request entity with id $id not found"];
+            return ['status'=>'error','message'=>"request entity with id $request_id not found"];
         }
         $existing = $request->getEvent();
         if ($existing) {
