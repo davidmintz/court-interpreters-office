@@ -52,7 +52,7 @@ class RequestRepository extends EntityRepository
             FROM InterpretersOffice\Requests\Entity\Request r
             JOIN r.submitter s
             JOIN s.hat h
-            
+
             LEFT JOIN r.defendants dr
             LEFT JOIN r.event e
             LEFT JOIN e.interpreterEvents ie
@@ -336,7 +336,7 @@ class RequestRepository extends EntityRepository
         $em = $this->getEntityManager();
         $request = $em->find(Request::class,$request_id);
         if (! $request) {
-            return ['status'=>'error','message'=>"request entity with id $id not found"];
+            return ['status'=>'error','message'=>"request entity with id $request_id not found"];
         }
         $existing = $request->getEvent();
         if ($existing) {

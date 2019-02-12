@@ -88,7 +88,6 @@ class IndexController extends AbstractActionController
         $data = $form->data;
         $object = new \Zend\Stdlib\ArrayObject($data);
         $form->bind($object);
-        //$form->setObject($object);
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
             return new JsonModel($data);
@@ -159,8 +158,9 @@ class IndexController extends AbstractActionController
     {
         $id = $this->params()->fromRoute('id');
         $entity = $this->objectManager->getRepository(Request::class)->view($id);
-        //echo gettype($entity);
-        return ['request' => $entity];
+        $validator = new \Zend\Validator\Csrf('csrf');
+        $token = $validator->getHash();
+        return ['request' => $entity,'csrf'=>$token];
     }
 
     /**
@@ -173,6 +173,13 @@ class IndexController extends AbstractActionController
     public function scheduleAction()
     {
         $request_id = $this->params()->fromRoute('id');
+        $validator = new \Zend\Validator\Csrf('csrf');
+        $token = $this->params()->fromPost('csrf');
+        if (! $validator->isValid($token)) {
+            return new JsonModel(['status' => 'error','message' =>
+                'Invalid or missing security token. '
+                .'You may need to refresh this page and try again.']);
+        }
         try {
             $repository = $this->objectManager->getRepository(Request::class);
             $result = $repository->createEventFromRequest($request_id);

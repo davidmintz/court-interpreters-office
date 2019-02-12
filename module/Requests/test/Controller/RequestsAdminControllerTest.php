@@ -45,4 +45,26 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
          $this->assertResponseStatusCode(200);
          $this->assertQuery("tbody > tr.request");
      }
+
+     public function testAddRequestToSchedule()
+     {
+         // find a pending request
+          $em = FixtureManager::getEntityManager();
+          $id = $em->createQuery('SELECT r.id FROM InterpretersOffice\Requests\Entity\Request r WHERE r.pending = true')
+            ->getSingleScalarResult();
+          $url = "/admin/requests/schedule/$id";
+          $this->login('david', 'boink');
+          $this->reset(true);
+          $this->getRequest()->setMethod('POST')
+            ->setPost(
+             new Parameters(['csrf'=>(new \Zend\Validator\Csrf('csrf'))->getHash()])
+            );
+          $this->dispatch($url);
+          $response = $this->getResponse()->getBody();
+          $this->assertResponseStatusCode(200);
+          $this->assertJson($response);
+          $data = json_decode($response);
+          $this->assertEquals('success',$data->status,'expected "success", response status was: '.$data->status);
+
+     }
  }
