@@ -88,7 +88,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         if (! $request->getSubmitter()) {
             $request->setSubmitter($this->getCurrentUserPerson($args));
         }
-        //$this->getLogger()->debug("YES, set Request metadata in prePersist listener");
+        $this->getLogger()->debug("YES, set Request metadata in prePersist listener");
     }
 
     /**
