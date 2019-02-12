@@ -55,7 +55,9 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
 
     /**
      * postLoad callback
-     * @todo get rid of this?
+     *
+     * Yet to come up with a better way to detect whether Request.defendants
+     * have been modified so we can update metadata.
      *
      * @param Entity\Request $request
      * @param LifecycleEventArgs $args
@@ -66,13 +68,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         $log = $this->getLogger();
         $log->debug("postload in RequestEntityListener: saving deft state");
         $this->previous_defendants = $request->getDefendants()->toArray();
-        // $this->getEventManager()->trigger(
-        //     __FUNCTION__,
-        //     $this,
-        //     [   'entity'=>$request,'args'=>$args,
-        //         'defendants'=>$this->previous_defendants,
-        //     ]
-        // );
+
     }
 
     /**
@@ -86,15 +82,13 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
         $now = new \DateTime();
         $user = $this->getAuthenticatedUser($args);
-        //$person = $this->getCurrentUserPerson($args);
         $request->setCreated($now)->setModified($now)
                 ->setCancelled(false)
-                //->setSubmitter($person)
                 ->setModifiedBy($user);
         if (! $request->getSubmitter()) {
             $request->setSubmitter($this->getCurrentUserPerson($args));
         }
-        //$this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
+        //$this->getLogger()->debug("YES, set Request metadata in prePersist listener");
     }
 
     /**

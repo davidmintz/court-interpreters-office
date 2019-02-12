@@ -421,16 +421,14 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         //$shit = $em->createQuery('')
         $url = "/requests/view/{$request->getId()}";
         /** @var \Doctrine\DBAL\Connection $db */
-        $db = $em->getConnection();
-        $shit = $db->executeQuery('SELECT * FROM requests WHERE id = '.$request->getId());
-        //echo get_class($shit);
-        $data = $shit->fetch();
-        //print_r($data);
+        // $db = $em->getConnection();
+        // $shit = $db->executeQuery('SELECT * FROM requests WHERE id = '.$request->getId());
+        // //echo get_class($shit);
+        // $data = $shit->fetch();  //print_r($data);
         $this->dispatch($url);
         // echo "\n$url\n";
         $this->assertResponseStatusCode(200);
 
-        //$this->dumpResponse();
     }
     /*        //$csrf = $q->execute("input#csrf")->current();
 
