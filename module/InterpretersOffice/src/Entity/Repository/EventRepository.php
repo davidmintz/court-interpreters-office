@@ -49,7 +49,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          e.modified AS last_updated,
          e.comments,
          e.admin_comments,
-         COALESCE(r.reason,'n/a') AS reason_for_cancellation, 
+         COALESCE(r.reason,'n/a') AS reason_for_cancellation,
          rq.id request_id, rq.comments AS submitter_comments
          FROM InterpretersOffice\Entity\Event e
          JOIN e.eventType t
@@ -73,7 +73,6 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
 
 DQL;
-        //LEFT JOIN InterpretersOffice\Requests\Entity\Request rq JOIN rq.event rqe WITH rqe.id = e.id
 
     /**
      * query result cache
@@ -112,20 +111,30 @@ DQL;
     }
 
     /**
-     * experimental. trying to avoid wasting SELECT queries
+     * experimental effort to avoid wasting several SELECT queries
+     *
+     * @param int $id of event
+     * @return Entity\Event|null
      */
     public function load($id)
     {
-        $dql = 'SELECT e FROM '.Entity\Event::class. ' e
+        //LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
+        $dql = 'SELECT e, j, f, t, c, anon_j, anon_submitter, submitter, sh, loc,
+            ploc, cr, submitter, ie,i, d FROM '.Entity\Event::class. ' e
             LEFT JOIN e.judge j
+            LEFT JOIN j.flavor f
             JOIN e.eventType t
-            JOIN e.language l
+            JOIN t.category c
             LEFT JOIN e.cancellationReason cr
             LEFT JOIN e.anonymousJudge anon_j
             LEFT JOIN e.anonymousSubmitter anon_submitter
             LEFT JOIN e.location loc
             LEFT JOIN loc.parentLocation ploc
-            JOIN e.submitter submitter
+            LEFT JOIN e.submitter submitter
+            LEFT JOIN submitter.hat sh
+            LEFT JOIN e.interpreterEvents ie
+            LEFT JOIN ie.interpreter i
+            LEFT JOIN e.defendants d
             WHERE e.id = :id';
 
         return $this->getEntityManager()->createQuery($dql)
@@ -136,7 +145,7 @@ DQL;
     /**
      * returns human-readable representation of event
      *
-     * @param type $id
+     * @param int $id
      * @return array|null if not found
      */
     public function getView($id)
