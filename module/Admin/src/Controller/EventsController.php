@@ -186,7 +186,8 @@ class EventsController extends AbstractActionController
     {
         $id = $this->params()->fromRoute('id');
         /** @var \InterpretersOffice\Entity\Event $entity  */
-        $entity = $this->entityManager->find(Entity\Event::class, $id);
+        $entity = $this->entityManager->getRepository(Entity\Event::class)
+            ->load($id);
 
         if (! $entity) {
             return ['errorMessage' => "No event with id $id was found in the database.",'header'=>'error: event not found'];
