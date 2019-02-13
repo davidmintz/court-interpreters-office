@@ -80,8 +80,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $entity,
         LifecycleEventArgs $args
     ) {
-        //$log = $this->getLogger();
-        //$log->debug("postload callback running in Event entity listener");
+        $log = $this->getLogger();
+        $log->debug("postload callback running in Event entity listener, triggering SHIT!");
         $this->previous_defendants = $entity->getDefendants()->toArray();
         $this->previous_interpreters = $entity->getInterpreterEvents()->toArray();
         //$this->logger->debug("triggering shit in event entity listener postLoad");
@@ -90,7 +90,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
-            [   'entity'=>$entity,'args'=>$args,
+            [   'entity'=>$entity,
+                'args'=>$args,
                 'defendants'=>$this->previous_defendants,
                 'interpreters'=> $this->previous_interpreters,
             ]
@@ -189,17 +190,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
 
         $fields_updated = $this->reallyModified($entity, $args);
         if ($fields_updated) {
-            //$changeset = $args->getEntityChangeSet();
-            //
             $entity->setModified($this->now);
             $entity->setModifiedBy($this->getAuthenticatedUser($args));
-            //$this->logger->debug("triggering shit in event entity listener preUpdate");
-            // $this->getEventManager()->trigger(
-            //     __FUNCTION__,
-            //     $this,
-            //     //'ENTITY_UPDATE',
-            //     compact('args', 'entity')//'fields_updated'
-            // );
         }
     }
 

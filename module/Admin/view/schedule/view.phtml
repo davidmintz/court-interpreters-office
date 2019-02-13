@@ -48,6 +48,7 @@ endif;?>
 $session = new \Zend\Session\Container('event_updates');
 if ($session->{$event['id']}) {
     $this->before = $session->{$event['id']};
+    //print_r(array_keys($this->before));
     unset($session->{$event['id']});
 }
 ?></pre>
