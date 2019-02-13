@@ -90,7 +90,7 @@ class DateCalculator
     }
 
     /**
-     * is $date ia business day?
+     * is $date a business day?
      *
      * @param  DateTime $date
      * @return boolean
@@ -113,6 +113,8 @@ class DateCalculator
     }
 
     /**
+    * gets difference between two dates
+    *
     * @param $until \DateTime|string
     * @param $from \DateTime|string
     * @throws \Exception on failure to parse date string

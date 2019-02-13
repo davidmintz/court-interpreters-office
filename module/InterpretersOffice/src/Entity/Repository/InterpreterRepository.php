@@ -14,7 +14,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use InterpretersOffice\Entity;
 
 /**
- * custom repository class for EventType entity.
+ * custom repository class for Interpreter entity.
  */
 class InterpreterRepository extends EntityRepository implements CacheDeletionInterface
 {

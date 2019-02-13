@@ -1,8 +1,4 @@
-<?php
-/**
- * module/Requests/src/Entity/RequestRepository.php
- *
- */
+<?php /** module/Requests/src/Entity/RequestRepository.php */
 
 namespace InterpretersOffice\Requests\Entity;
 

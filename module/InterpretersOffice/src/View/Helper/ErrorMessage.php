@@ -27,10 +27,12 @@ EOT;
 
     /**
      * renders div element for an error message
+     *
      * @param  string $message
+     * @param string $header
      * @return string
      */
-    public function __invoke($message = null,$header='system error')
+    public function __invoke($message = null,$header = 'system error')
     {
         $html = sprintf(
             $this->template,

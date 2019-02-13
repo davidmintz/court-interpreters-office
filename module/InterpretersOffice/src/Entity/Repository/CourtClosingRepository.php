@@ -1,7 +1,9 @@
 <?php
-/** module/InterpretersOffice/src/Entity/CourtClosingRepository.php */
+
+/** module/InterpretersOffice/src/Entity/Repository/CourtClosingRepository.php */
 
 namespace InterpretersOffice\Entity\Repository;
+
 
 use Doctrine\ORM\EntityRepository;
 use Zend\Paginator\Paginator as ZendPaginator;
@@ -12,9 +14,13 @@ use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Service\HolidayProviderInterface;
 
+
 /**
+ * bla bla
+ *
  * custom EntityRepository class for CourtClosing entity.
  */
+
 class CourtClosingRepository extends EntityRepository implements
     CacheDeletionInterface,
     HolidayProviderInterface

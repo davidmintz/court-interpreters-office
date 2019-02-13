@@ -125,6 +125,12 @@ class ScheduleUpdateManager
         $this->config = $config;
     }
 
+    /**
+     * saves copy of Request for comparison after update
+     *
+     * @param Request $request
+     * @return ScheduleUpdateManager
+     */
     public function setPreviousState(Request $request)
     {
         // we are interested in: date, time, event-type, language, docket,
@@ -294,7 +300,7 @@ class ScheduleUpdateManager
      * updates an Event entity to synchronize with Request
      *
      * @param  Request $request
-     * @param Array updates
+     * @param Array $updates
      * @return ScheduleUpdateManager
      *
      */

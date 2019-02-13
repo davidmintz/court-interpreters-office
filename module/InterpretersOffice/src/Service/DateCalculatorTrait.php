@@ -39,13 +39,19 @@ trait DateCalculatorTrait
      * gets datetime two business days from $date.
      *
      * @param  \DateTime $date
-     * @return string
+     * @return \DateTime
      */
     public function getTwoBusinessDaysAfterDate(\DateTime $date)
     {
         return $this->getDateCalc()->getTwoBusinessDaysAfter($date);
     }
 
+    /**
+     * gets datetime two business days before $date.
+     *
+     * @param  \DateTime $date
+     * @return \DateTime
+     */
     public function getTwoBusinessDaysBefore(\Datetime $date)
     {
         return $this->getDateCalc()->getTwoBusinessDaysBefore($date);
