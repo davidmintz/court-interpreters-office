@@ -207,7 +207,8 @@ class ScheduleUpdateManager
         $user_event = $this->getUserEvent($updates);
         $this->user_event = $user_event;
         $this->logger->debug(
-             sprintf(__METHOD__.":\nuser-event is '%s'  at %d", $user_event, __LINE__)
+             sprintf(__METHOD__.":\nuser-event is '%s'  at %d",
+             $user_event, __LINE__)
          );
         if (! isset($this->config['event_listeners'][$user_event])) {
             $this->logger->warn(__METHOD__.
