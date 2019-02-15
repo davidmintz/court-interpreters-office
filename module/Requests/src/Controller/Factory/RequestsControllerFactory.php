@@ -83,16 +83,15 @@ class RequestsControllerFactory implements FactoryInterface
         }
 
         if ($requestedName == AdminController::class) {
-            $container->get('log')->debug(
-                "attaching entity listeners in RequestsControllerFactory (AdminController)..."
-            );
+            // $container->get('log')->debug(
+            //     "attaching entity listeners in RequestsControllerFactory (AdminController)..."
+            // );
             $resolver->register($container->get(RequestEntityListener::class));
-
             $listener = $container->get(EventEntityListener::class);
             $listener->setAuth($container->get('auth'));
             $resolver->register($listener);
-
         }
+
         return new $requestedName($entityManager, $auth);
     }
 }
