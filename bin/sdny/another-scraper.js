@@ -2,26 +2,8 @@
 const axios = require("axios");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
+
 var data = {USMJ: {}, USDJ: {}};
-// var resolveAfter2Seconds = function() {
-//   console.log("starting slow promise");
-//   return new Promise(resolve => {
-//     setTimeout(function() {
-//       resolve(20);
-//       console.log("slow promise is done");
-//     }, 2000);
-//   });
-// };
-//
-// var resolveAfter1Second = function() {
-//   console.log("starting fast promise");
-//   return new Promise(resolve => {
-//     setTimeout(function() {
-//       resolve(10);
-//       console.log("fast promise is done");
-//     }, 1000);
-//   });
-// };
 
 const get_judge_links = function(flavor){
     return new Promise(
@@ -38,43 +20,45 @@ const get_judge_links = function(flavor){
     );
 };
 const parse_judge_info = function(url){
-
     return new Promise(
         resolve => {
             axios.get(url).then((response)=>{
                 var dom = new JSDOM(response.data);
                 var elements = dom.window.document
                     .querySelectorAll(".mainblock table tr.whiteback td table tr td p");
-                
-            })
+                var courthouse, courtroom, match;
+                elements.forEach(function(el){
+                    var text = el.textContent.trim();
+                    match = text.match(/courtroom:? *(\S+)\s+/i);
+                    if (match) {
+                        courtroom = match[1];
+                    }
+                    match = text.match(/(500 Pearl|40 Foley|White Plains)/);
+                    if (match) {
+                        courthouse = match[1];
+                    }
+                });
+                resolve({courthouse,courtroom});
+            });
         }
     );
 };
-const parseJudgeData = function(elements){
-    var courthouse, courtroom, match;
-    elements.forEach(function(el){
-        var text = el.textContent.trim();
-        match = text.match(/courtroom:? *(\S+)\s+/i);
-        if (match) {
-            courtroom = match[1];
-        }
-        match = text.match(/(500 Pearl|40 Foley|White Plains)/);
-        if (match) {
-            courthouse = match[1];
-        }
-    });
-    return { courthouse, courtroom };
-};
 
-async function scrape() {
+(async function() {
 
     var usdj_links = await get_judge_links("District");
+    for (var i = 0; i < usdj_links.length; i++) {
+        var name = usdj_links[i].textContent.trim();
+        var url = usdj_links[i].href;
+        console.log(`fetching ${url} for: ${name}, USDJ`);
+        data.USDJ[name] = await parse_judge_info(url);
+    }
     var usmj_links = await get_judge_links("Magistrate");
-
-    console.log([usdj_links,usmj_links]);
-
-
-};
-
-
-scrape();
+    for (var i = 0; i < usmj_links.length; i++) {
+        var name = usmj_links[i].textContent.trim();
+        var url = usmj_links[i].href;
+        console.log(`fetching ${url} for: ${name}, USMJ`);
+        data.USMJ[name] = await parse_judge_info(url);
+    }
+    console.log(JSON.stringify(data));
+})();
