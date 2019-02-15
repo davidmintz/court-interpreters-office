@@ -8,6 +8,22 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 var data = {USMJ: {}, USDJ: {}};
 
+const parseJudgeData = function(elements){
+    var courthouse, courtroom, match;
+    elements.forEach(function(el){
+        var text = el.textContent.trim();
+        match = text.match(/courtroom:? *(\S+)\s+/i);
+        if (match) {
+            courtroom = match[1];
+        }
+        match = text.match(/(500 Pearl|40 Foley|White Plains)/);
+        if (match) {
+            courthouse = match[1];
+        }
+    });
+    return { courthouse, courtroom };
+};
+
 axios.get("http://nysd.uscourts.gov/judges/District")
 .then(function(response){
      var dom = new JSDOM(response.data);
@@ -17,32 +33,18 @@ axios.get("http://nysd.uscourts.gov/judges/District")
 .then(function(links){
      var num_links = links.length;
      for (var i = 0; i < num_links; i++) {
-         var el = links[i];
-        (function(el,i){
+        var el = links[i];
+        (function(el){
             //console.log(`fetching ${el.href} for ${el.textContent}...${i} of ${links.length}`);
             return axios.get(el.href)
             .then(function(response){
                 var name = el.textContent.trim();
                 var doc = new JSDOM(response.data).window.document;
                 var elements = doc.querySelectorAll(".mainblock table tr.whiteback td table tr td p");
-                //console.log(`name is: ${name}`);
-                //data.USDJ[name] = {};
-                var courthouse, courtroom, match;
-                elements.forEach(function(el){
-                    var text = el.textContent.trim();
-                    var match = text.match(/courtroom:? *(\S+)\s+/i);
-                    if (match) {
-                        courtroom = match[1];
-                    }
-                    match = text.match(/(500 Pearl|40 Foley|White Plains)/);
-                    if (match) {
-                        courthouse = match[1];
-                    }
-                });
-                data.USDJ[name] = {courthouse, courtroom };
+                data.USDJ[name] = parseJudgeData(elements);
                 if (Object.keys(data.USDJ).length === links.length) {
-                    //return data;
                     console.log(JSON.stringify(data));
+                    return data;
                 }
             })
             // .then((data)=>{
@@ -50,8 +52,8 @@ axios.get("http://nysd.uscourts.gov/judges/District")
             //         console.log(JSON.stringify(data));
             //     }
             // })
-            .catch(function(err){console.log(err)});;
-        })(el,i);
+            .catch(function(err){console.log(err)});
+        })(el);
      }
  })
 .catch(function(err){console.log(err)});
