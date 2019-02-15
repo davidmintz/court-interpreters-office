@@ -1,6 +1,6 @@
 /**
  * effort to write a screen scraper with node for SDNY judges,
- * still haven't mastered this asychronous thing
+ * still haven't entirely mastered this asynchronous thing
  */
 
 const axios = require("axios");
@@ -12,11 +12,11 @@ axios.get("http://nysd.uscourts.gov/judges/District")
 .then(function(response){
      var dom = new JSDOM(response.data);
      var links = dom.window.document.querySelectorAll("table.judge_info tr td a");
-     data.USDJ._total = links.length;
      return links;
  })
 .then(function(links){
-     for (var i = 0; i < links.length; i++) {
+     var num_links = links.length;
+     for (var i = 0; i < num_links; i++) {
          var el = links[i];
         (function(el,i){
             //console.log(`fetching ${el.href} for ${el.textContent}...${i} of ${links.length}`);
@@ -39,27 +39,24 @@ axios.get("http://nysd.uscourts.gov/judges/District")
                         courthouse = match[1];
                     }
                 });
-                console.log(
-                    JSON.stringify({name, courthouse, courtroom})
-                )
                 data.USDJ[name] = {courthouse, courtroom };
-                if (i == links.length - 1) {
-                    return data;
-                }
-            })
-            .then((data)=>{
-                if (data){
+                if (Object.keys(data.USDJ).length === links.length) {
+                    //return data;
                     console.log(JSON.stringify(data));
-                    console.log("done?");
                 }
             })
+            // .then((data)=>{
+            //     if (data){
+            //         console.log(JSON.stringify(data));
+            //     }
+            // })
             .catch(function(err){console.log(err)});;
         })(el,i);
      }
  })
 .catch(function(err){console.log(err)});
 
-// and do it again?...
+// and do it again for Magistrates?...
 /*
 axios.get("http://nysd.uscourts.gov/judges/Magistrate")
 .then(function(response){
