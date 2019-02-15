@@ -120,7 +120,7 @@ DQL;
     {
         //LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
         $dql = 'SELECT e, j, f, t, c, anon_j, anon_submitter, submitter, sh, loc,
-            ploc, cr, submitter, ie,i, d FROM '.Entity\Event::class. ' e
+            ploc, cr, ie,i, d FROM '.Entity\Event::class. ' e
             LEFT JOIN e.judge j
             LEFT JOIN j.flavor f
             JOIN e.eventType t
