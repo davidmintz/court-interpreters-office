@@ -143,19 +143,15 @@ class Module
         /** @var  InterpretersOffice\Service\ScheduleUpdateManager $scheduleManager */
         $scheduleManager = $container->get('InterpretersOffice\Admin\Service\ScheduleUpdateManager');
         $sharedEvents->attach(
-            //'ENTITY_UPDATE',
-            //'InterpretersOffice\Entity\Listener\EventEntityListener',
+            // maybe narrow down the "*" to something specific?
             '*',
             'loadRequest',
             function($e) use ($log,$scheduleManager) {
-
                 $params = $e->getParams();
                 // $args = $params['args'];
                 $entity = $params['entity'];
-                $log->debug("doing shit here and now, in event listener, ".gettype($entity) . " is type of our entity");
+                $log->debug("setting previous state in loadRequest event-listener, ".gettype($entity) . " is type of our entity");
                 $scheduleManager->setPreviousState($entity);
-
-
             }
         );
     }
