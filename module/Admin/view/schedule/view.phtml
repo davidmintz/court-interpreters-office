@@ -46,9 +46,9 @@ endif;?>
 <!-- experimental debug zone -->
 <pre><?php
 $session = new \Zend\Session\Container('event_updates');
+//print_r(array_keys($this->entity));
 if ($session->{$event['id']}) {
     $this->before = $session->{$event['id']};
-    //print_r(array_keys($this->before));
     unset($session->{$event['id']});
 }
 ?></pre>
@@ -198,7 +198,7 @@ endif;?></span>
     <?php if ($event['request_id'] or true === $IS_DEFAULT_LOCATION): ?>
         <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0" style=font-size:90%;>
             <?php if ($event['request_id']):?>* this was submitted online<br><?php endif; ?>
-            <?php if (true === $IS_DEFAULT_LOCATION):?>** default location, not specified by the user<?php endif; ?>
+            <?php if ($event['location'] and true === $IS_DEFAULT_LOCATION):?>** default location, not specified by the user<?php endif; ?>
         </div>
     <?php endif ?>
 </div>

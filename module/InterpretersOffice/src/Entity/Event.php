@@ -273,6 +273,28 @@ class Event
         $language = (string)$this->getLanguage();
         return sprintf('%s %s on %s', $language, $type, $date);
     }
+
+    /**
+     * returns judge or anonymous judge as string
+     *
+     * @return string
+     */
+    public function getStringifiedJudgeOrWhatever()
+    {
+        if ($this->judge) {
+            $string = $this->judge->getFirstName().' ';
+            if ($this->judge->getMiddleName()) {
+                $string .= $this->judge->getMiddleName().' ';
+            }
+            $string .= $this->judge->getLastName().', ';
+            $string .= (string)$this->judge->getFlavor();
+            return $string;
+        } elseif ($this->anonymousJudge) {
+            return $this->anonymousJudge->getName();
+        }
+        return '';
+
+    }
     /**
      * Get id.
      *

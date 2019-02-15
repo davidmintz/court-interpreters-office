@@ -95,15 +95,19 @@ class Diff extends AbstractHelper
             } else {
                 $sep = ' ';
             }
-            return sprintf('<del>%s</del>%s<ins>%s</ins>',$before[$field],$data,$sep);
+            return sprintf('<del>%s</del>%s<ins>%s</ins>',$before[$field],$sep,$data);
         }
 
         if ($data instanceof \DateTime) {
-
-            return sprintf('<del class="avoidwrap">%s</del> <ins class="avoidwrap">%s</ins>',
-                $this->renderDateTime($field,$before[$field]),
-                $this->renderDateTime($field,$data)
-            );
+            $string_before = $this->renderDateTime($field,$before[$field]);
+            $string_after  = $this->renderDateTime($field,$data);
+            if ($string_before != $string_after) {
+                return sprintf('<del class="avoidwrap">%s</del> <ins class="avoidwrap">%s</ins>',
+                $string_before, $string_after
+                );
+            } else {
+                return $string_after;
+            }
         }
         if (is_array($data)) {
             $flatten = function($n){

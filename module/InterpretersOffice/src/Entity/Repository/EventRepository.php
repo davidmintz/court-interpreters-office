@@ -119,14 +119,19 @@ DQL;
     public function load($id)
     {
         //LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
+        // JOIN e.modifiedBy lastmod_by
         $dql = 'SELECT e, j, f, t, c, anon_j, anon_submitter, submitter, sh, loc,
-            ploc, cr, ie,i, d FROM '.Entity\Event::class. ' e
+                ploc, cr, ie,i, d, default_loc,default_parent_loc, anon_j_default_loc
+             FROM '.Entity\Event::class. ' e
             LEFT JOIN e.judge j
             LEFT JOIN j.flavor f
             JOIN e.eventType t
             JOIN t.category c
+            LEFT JOIN j.defaultLocation default_loc
+            LEFT JOIN default_loc.parentLocation default_parent_loc
             LEFT JOIN e.cancellationReason cr
             LEFT JOIN e.anonymousJudge anon_j
+            LEFT JOIN anon_j.defaultLocation anon_j_default_loc
             LEFT JOIN e.anonymousSubmitter anon_submitter
             LEFT JOIN e.location loc
             LEFT JOIN loc.parentLocation ploc
@@ -158,6 +163,8 @@ DQL;
         if (! $event) {
             return null;
         }
+        // ugly!
+        $event['judge'] = str_replace('  ',' ',$event['judge']);
         $deft_dql = 'SELECT d.surnames, d.given_names
             FROM InterpretersOffice\Entity\Event e
             JOIN e.defendants d WHERE e.id = :id';

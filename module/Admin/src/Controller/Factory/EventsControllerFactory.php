@@ -52,78 +52,87 @@ class EventsControllerFactory implements FactoryInterface
                 $args = $params['args'];
                 $entity = $params['entity'];
                 $id = $entity->getId();
-                //$em = $args->getObjectManager();
-                //$class = get_class($entity);
-                //$view_before = $em->getRepository(get_class($entity))->getView($entity->getId());
-                $view_before = [
-                    'date'=>$entity->getDate(),
-                    'time'=>$entity->getTime(),
-                    'end_time'=>$entity->getEndTime(),
-                    'last_updated'=>$entity->getModified(),
-                    // this is a little aggressive...
-                    'last_updated_by' => $entity->getModifiedBy()->getUserName(),
-                    'judge' => $entity->getStringifiedJudgeOrWhatever(),
-                    'type'  => (string)$entity->getEventType(),
-                    'category' => (string)$entity->getEventType()->getCategory(),
-                    'submission_date'=>$entity->getSubmissionDate(),
-                    'submission_time'=>$entity->getSubmissionTime(),
-                    'defendants' => array_map(function($d){
-                        return ['surnames'=>$d->getSurnames(),'given_names'=>$d->getGivenNames()];
-                    },$entity->getDefendants()->toArray()),
-                    'language' => (string)$entity->getLanguage(),
-                    'docket' => $entity->getDocket(),
-                    'interpreters' => array_map(
-                        function($ie){
-                            $i = $ie->getInterpreter();
-                            return ['lastname'=> $i->getLastname(),'firstname'=> $i->getFirstName()];
-                        },$entity->getInterpreterEvents()->toArray()
-                    ),
-                    'location' => (string)$entity->getLocation(),
-                    'parent_location'=>$entity->getLocation() ?
-                        $entity->getLocation()->getParentLocation():'',
-                    'aj_default_location'=> $entity->getAnonymousJudge()?
-                        (string)$entity->getAnonymousJudge()->getDefaultLocation():'',
-                    'default_courtroom' => call_user_func(
-                        function($judge){
-                            if (! $judge) { return ''; }
-                            $location = $judge->getDefaultLocation();
-                            return $location ? $location->getName():'';
-                        },
-                        $entity->getJudge()
-                    ),
-                    'default_courthouse' => call_user_func(
-                        function($judge){
-                            if (! $judge) { return ''; }
-                            $location = $judge->getDefaultLocation();
-                            if ($location && $location->getParentLocation()) {
-                                return $location->getParentLocation()->getName();
-                            } else {
-                                return '';
-                            }
-                        },
-                        $entity->getJudge()
-                    ),
-                    'submitter' => call_user_func(
-                        function($event) {
-                            $person = $event->getSubmitter();
-                            if ($person) {
-                                $return = $person->getFirstName().' '.$person->getLastname();
-                                $return .= ', '.(string)$person->getHat();
-                                return $return;
-                            } else {
-                                return (string)$event->getAnonymousSubmitter();
-                            }
-                        },$entity
-                    ),
-                    'submitter_hat'=> $entity->getSubmitter() ?
-                        (string)$entity->getSubmitter()->getHat() : '',
-                    'comments' => $entity->getComments(),
-                    'admin_comments' => $entity->getAdminComments(),
-                    'reason_for_cancellation' => $entity->getCancellationReason() ?
-                        (string)$entity->getCancellationReason():'n/a',
+                $em = $args->getObjectManager();
 
-                ];
-                 /* we really need...
+                if (false) {
+                    $view_before = $em->getRepository(get_class($entity))->getView($entity->getId());
+                    $log->debug("using call to repository to get event snapshot");
+                } else {
+                    $log->debug("using in-memory entity to get event snapshot");
+                    $view_before = [
+                        'date'=>$entity->getDate(),
+                        'time'=>$entity->getTime(),
+                        'end_time'=>$entity->getEndTime(),
+                        'last_updated'=>$entity->getModified(),
+                        // this is a little aggressive...
+                        'last_updated_by' => $entity->getModifiedBy()->getUserName(),
+                        'judge' => $entity->getStringifiedJudgeOrWhatever(),
+                        'type'  => (string)$entity->getEventType(),
+                        'category' => (string)$entity->getEventType()->getCategory(),
+                        'submission_date'=>$entity->getSubmissionDate(),
+                        'submission_time'=>$entity->getSubmissionTime(),
+                        'defendants' => array_map(function($d){
+                            return ['surnames'=>$d->getSurnames(),'given_names'=>$d->getGivenNames()];
+                        },$entity->getDefendants()->toArray()),
+                        'language' => (string)$entity->getLanguage(),
+                        'docket' => $entity->getDocket(),
+                        'interpreters' => array_map(
+                            function($ie){
+                                $i = $ie->getInterpreter();
+                                return ['lastname'=> $i->getLastname(),'firstname'=> $i->getFirstName()];
+                            },$entity->getInterpreterEvents()->toArray()
+                        ),
+                        'location' => (string)$entity->getLocation(),
+                        'parent_location'=>$entity->getLocation() ?
+                        $entity->getLocation()->getParentLocation():'',
+                        'aj_default_location'=> $entity->getAnonymousJudge()?
+                            (string)$entity->getAnonymousJudge()->getDefaultLocation():'',
+                        'default_courtroom' => call_user_func(
+                            function($judge){
+                                if (! $judge) { return ''; }
+                                $location = $judge->getDefaultLocation();
+                                return $location ? $location->getName():'';
+                            },
+                            $entity->getJudge()
+                        ),
+                        'default_courthouse' => call_user_func(
+                            function($judge){
+                                if (! $judge) { return ''; }
+                                $location = $judge->getDefaultLocation();
+                                if ($location && $location->getParentLocation()) {
+                                    return $location->getParentLocation()->getName();
+                                } else {
+                                    return '';
+                                }
+                            },
+                            $entity->getJudge()
+                        ),
+                        'submitter' => call_user_func(
+                            function($event) {
+                                $person = $event->getSubmitter();
+                                if ($person) {
+                                    $return = $person->getFirstName().' '.$person->getLastname();
+                                    $return .= ', '.(string)$person->getHat();
+                                    return $return;
+                                } else {
+                                    return (string)$event->getAnonymousSubmitter();
+                                }
+                            },$entity
+                            ),
+                        'submitter_hat'=> $entity->getSubmitter() ?
+                            (string)$entity->getSubmitter()->getHat() : '',
+                        'comments' => $entity->getComments(),
+                        'admin_comments' => $entity->getAdminComments(),
+                        'reason_for_cancellation' => $entity->getCancellationReason() ?
+                            (string)$entity->getCancellationReason():'n/a',
+                    ];
+                }
+                $session = new \Zend\Session\Container("event_updates");
+                $session->$id = $view_before;
+                $log->debug("stored entity state in session {$session->getName()}"
+                     ." (id $id) for later reference");
+                // */
+                /* fields we need...
                  Array
                     (
                      [0] => id
@@ -157,10 +166,7 @@ class EventsControllerFactory implements FactoryInterface
                      [28] => interpreters
                     )
                     */
-                $session = new \Zend\Session\Container("event_updates");
-                $session->$id = $view_before;
-                $log->debug("stored entity state in session {$session->getName()}"
-                     ." (id $id) for later reference");
+
             }
         );
 

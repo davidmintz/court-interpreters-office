@@ -307,7 +307,6 @@ class ScheduleUpdateManager
      */
     public function updateScheduledEvent(Request $request,Array $updates)
     {
-
         $event = $request->getEvent();
         if (! $event) {
             $this->logger->debug(__METHOD__.": no scheduled event, nothing to do");
