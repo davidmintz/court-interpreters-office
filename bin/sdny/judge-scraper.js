@@ -1,3 +1,7 @@
+/**
+ * effort to write a screen scraper with node for SDNY judges,
+ * still haven't mastered this asychronous thing
+ */
 
 const axios = require("axios");
 const jsdom = require("jsdom");
@@ -22,31 +26,31 @@ axios.get("http://nysd.uscourts.gov/judges/District")
                 var doc = new JSDOM(response.data).window.document;
                 var elements = doc.querySelectorAll(".mainblock table tr.whiteback td table tr td p");
                 //console.log(`name is: ${name}`);
-                data.USDJ[name] = {};
+                //data.USDJ[name] = {};
+                var courthouse, courtroom, match;
                 elements.forEach(function(el){
                     var text = el.textContent.trim();
-                    var ctrm = text.match(/courtroom:? *(\S+)\s+/i);
-                    if (ctrm) {
-                        data.USDJ[name].courtroom = ctrm[1];
-                        //console.log(`courtroom is ${data.USDJ[name].courtroom}`);
+                    var match = text.match(/courtroom:? *(\S+)\s+/i);
+                    if (match) {
+                        courtroom = match[1];
                     }
-                    cthouse =  text.match(/(500 Pearl|40 Foley|White Plains)/);
-                    if (cthouse) {
-                        data.USDJ[name].courthouse = cthouse[1];
-                        //console.log(`courthouse is ${data.USDJ[name].courthouse}`);
+                    match = text.match(/(500 Pearl|40 Foley|White Plains)/);
+                    if (match) {
+                        courthouse = match[1];
                     }
                 });
                 console.log(
-                    JSON.stringify({name, courthouse: data.USDJ[name].courthouse, courtroom : data.USDJ[name].courtroom})
+                    JSON.stringify({name, courthouse, courtroom})
                 )
+                data.USDJ[name] = {courthouse, courtroom };
                 if (i == links.length - 1) {
                     return data;
                 }
             })
             .then((data)=>{
                 if (data){
-                    //console.log(JSON.stringify(data));
-                    //console.log("done?");
+                    console.log(JSON.stringify(data));
+                    console.log("done?");
                 }
             })
             .catch(function(err){console.log(err)});;
