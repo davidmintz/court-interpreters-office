@@ -247,6 +247,13 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     foreach(['id','date','time','end_time','language_id','comments','admin_comments','submission_date','submission_time','created','modified'] as $column) {
         $params[":{$column}"]=$e[$column];
     }
+    if ($e['modified'] == '0000-00-00 00:00:00') {
+        $params[':modified'] = $e['created'] != '00-00-00 00:00:00' ? $e['created']
+            : date('Y-m-d H:i:s');
+    }
+    if ($e['created'] == '0000-00-00 00:00:00') {
+        $params[':created'] = date('Y-m-d H:i:s');
+    }
     // event type is mapped
     $params[':event_type_id'] = $event_types[$e['event_type_id']];
 
