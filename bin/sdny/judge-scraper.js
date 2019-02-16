@@ -50,14 +50,14 @@ const parse_judge_info = function(url){
     for (var i = 0; i < usdj_links.length; i++) {
         var name = usdj_links[i].textContent.trim();
         var url = usdj_links[i].href;
-        console.log(`fetching ${url} for: ${name}, USDJ`);
+        //console.log(`fetching ${url} for: ${name}, USDJ`);
         data.USDJ[name] = await parse_judge_info(url);
     }
     var usmj_links = await get_judge_links("Magistrate");
     for (var i = 0; i < usmj_links.length; i++) {
         var name = usmj_links[i].textContent.trim();
         var url = usmj_links[i].href;
-        console.log(`fetching ${url} for: ${name}, USMJ`);
+        //console.log(`fetching ${url} for: ${name}, USMJ`);
         data.USMJ[name] = await parse_judge_info(url);
     }
     console.log(JSON.stringify(data));

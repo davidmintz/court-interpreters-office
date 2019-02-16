@@ -49,12 +49,12 @@ class EventsControllerFactory implements FactoryInterface
             function($e) use ($log) {
                 //return;
                 $params = $e->getParams();
-                $args = $params['args'];
                 $entity = $params['entity'];
                 $id = $entity->getId();
-                $em = $args->getObjectManager();
 
                 if (false) {
+                    $args = $params['args'];
+                    $em = $args->getObjectManager();
                     $view_before = $em->getRepository(get_class($entity))->getView($entity->getId());
                     $log->debug("using call to repository to get event snapshot");
                 } else {
@@ -169,8 +169,6 @@ class EventsControllerFactory implements FactoryInterface
 
             }
         );
-
-
         return $controller;
     }
 }
