@@ -43,13 +43,15 @@ trait EmailTrait
      * @param  string $textContent plain-text content for email message
      * @return Message
      */
-    public function createEmailMessage($markup, $textContent)
+    public function createEmailMessage($markup, $textContent='')
     {
         $html = new MimePart($markup);
         $html->type = Mime::TYPE_HTML;
         $html->charset = 'utf-8';
         $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-
+        if (!$textContent) {
+            $textContent = 'You will need to view this message in an email client that supports HTML.';
+        }
         $text = new MimePart($textContent);
         $text->type = Mime::TYPE_TEXT;
         $text->charset = 'utf-8';

@@ -13,7 +13,6 @@ use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-//use Doctrine\ORM\Event\OnFlushEventArgs;
 
 use Zend\Filter\Word\DashToCamelCase;
 
@@ -80,26 +79,24 @@ class ScheduleUpdateManager
     protected $config;
 
     /**
-     * experimental
+     * pre-update state of Request entity
+     *
      * @var array
      */
     protected $previous_state;
+
+    /**
+     * interpreters assigned to related Event entity
+     *
+     * @var array
+     */
+    private $interpreters = [];
 
     /**
      * [private description]
      * @var [type]
      */
     private $objectManager;
-
-    /**
-     * whether Request's related Event was modified.
-     *
-     * this flag tell us whether to recomputeSingleEntityChangeSet() in case
-     * the Event entity corresponding to a Request has been updated
-     *
-     * @var boolean
-     */
-    private $event_was_updated;
 
     /**
      * the (most significant) user event/action
@@ -133,9 +130,6 @@ class ScheduleUpdateManager
      */
     public function setPreviousState(Request $request)
     {
-        // we are interested in: date, time, event-type, language, docket,
-        // judge, defendants, location, comments, xtra data
-
         $this->previous_state = [
             'date' =>  $request->getDate(),
             'time' =>  $request->getTime(),
@@ -328,8 +322,8 @@ class ScheduleUpdateManager
                 $getter = 'get'.ucfirst($prop);
                 $event->$setter($request->$getter());
             }
-            $this->event_was_updated = true;
         }
+
         if (isset($updates['defendants'])) {
             $this->logger->debug("they updated the defendants. need to get busy");
             // were they the same before the Request update?
@@ -373,10 +367,10 @@ class ScheduleUpdateManager
     }
 
     /**
-     * un-assigns all interpreters from Request's corresponding Event
+     * Un-assigns all interpreters from Request's corresponding Event
      *
-     * second parameter is not used, but is there to keep our signature
-     * consistent with that of other methods
+     * Second parameter is not used, but is there to keep our signature
+     * consistent with that of other methods (all are invoked dynamically).
      *
      * @param  Request $request
      * @param array $updates
@@ -385,8 +379,10 @@ class ScheduleUpdateManager
     public function removeInterpreters(Request $request, Array $updates)
     {
         $event = $request->getEvent();
+
         $interpreterEvents = $event->getInterpreterEvents();
         if ($n = $interpreterEvents->count()) {
+            $this->interpreters = $event->getInterpreters();
             $event->removeInterpreterEvents($interpreterEvents);
             $this->logger->debug(__METHOD__.": we removed $n interpreters");
         } else {
@@ -409,8 +405,8 @@ class ScheduleUpdateManager
     public function notifyAssignedInterpreters(Request $request, array $updates)
     {
         $event = $request->getEvent();
-        $interpreterEvents = $event->getInterpreterEvents();
-        $count = $interpreterEvents->count();
+        $interpreters = $this->interpreters ?: $request->getEvent()->getInterpreters();
+        $count = count($interpreters);
         $message = sprintf(
             'ScheduleUpdateManager: notifying %d interpreters about user action %s with request id %s',
             $count, $this->user_event, $request->getId()
@@ -420,8 +416,8 @@ class ScheduleUpdateManager
             return $this;
         }
 
-        foreach ($interpreterEvents as $ie) {
-            $email = $ie->getInterpreter()->getEmail();
+        foreach ($interpreters as $i) {
+            $email = $i->getEmail();
             $this->logger->info("need to email: $email");
             $message = $this->createEmailMessage('<p>hi there</p>', 'hi there');
             $this->logger->debug("we have created a ". get_class($message) . " for $email");
