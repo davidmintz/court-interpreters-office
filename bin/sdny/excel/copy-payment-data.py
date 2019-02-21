@@ -4,6 +4,21 @@
 from xlrd import open_workbook,xldate_as_tuple
 import openpyxl, json, sys, re
 from datetime import date
+import argparse
+
+parser = argparse.ArgumentParser(description='copies our Excel payment-data into their spreadsheet')
+parser.add_argument("--spreadsheet", help="path to spreadsheet containing our data to parse", required=True)
+#parser.add_argument("--name-of-worksheet",help="name of worksheet to parse", required=True)
+parser.add_argument("--target-spreadsheet",help="path to their spreadsheet",required=True)
+parser.add_argument("--target-worksheet",help="name worksheet in which to enter data",required=True,
+    choices=["FY17","FY18"])
+
+args = parser.parse_args()
+our_wb_file = args.spreadsheet
+#worksheet = args.name_of_worksheet
+target_spreadsheet = args.target_spreadsheet
+target_worksheet = args.target_worksheet
+
 
 def get_fy_and_quarter(date_obj):
     month = date_obj.month
@@ -27,17 +42,23 @@ def estimate_days(money):
         return 0.5
     return 1.0
 
-json_data_file = "data/FY18.interp-languages.json"
-our_wb_file = "./data/excel/CONTRACTOR_PAYMENTS_FY_17_18.xlsx"
+json_data_file = "data/{}.interp-languages.json".format(target_worksheet)
 
-their_wb = openpyxl.load_workbook("data/excel/bullshit-table.xlsx")
-their_wb.active = 1;
-
+their_wb = openpyxl.load_workbook(target_spreadsheet)
+if (target_worksheet == "FY17"):
+    their_wb.active = 0;
+else:
+    their_wb.active = 1;
 
 their_sheet = their_wb.get_active_sheet();
 
 our_wb = open_workbook(our_wb_file)
 sheet = our_wb.sheet_by_index(0)
+
+# how are we doing?
+print("using their {}, wksheet {}; our file is {}".format(
+    target_spreadsheet, target_worksheet, our_wb_file
+));
 n = 2;
 interpreters = json.loads(open(json_data_file).read())
 
@@ -60,7 +81,7 @@ for i in range(1,sheet.nrows):
         print("WARNING: no event-date value found in row {}".format(i))
         continue
     event_date_tuple = xldate_as_tuple(int(date_value),our_wb.datemode)
-    event_date = date(*event_date_tuple[:3]).strftime("%m-%d-%Y")
+    event_date = date(*event_date_tuple[:3]).strftime("%m/%d/%Y")
     try:
         sent_to_judge_tuple = xldate_as_tuple(int(sheet.cell(i,18).value),our_wb.datemode)
         date_sent_to_judge = date(*(sent_to_judge_tuple[:3]))
@@ -78,9 +99,11 @@ for i in range(1,sheet.nrows):
         docket = ""
         case_type = ""
     elif "CR" in docket:
-        case_type = "criminal"
+        case_type = "Criminal"
     elif (re.search("CI?V",docket) != None):
-        case_type = "civil"
+        if (language == "ASL"):
+            continue # so they tell us
+        case_type = "Civil"
     if (not case_type):
         print("WARNING: can't infer case type from docket at row {}".format(i))
     event_type = sheet.cell(i,10).value.lower()
@@ -95,8 +118,8 @@ for i in range(1,sheet.nrows):
         continue
 
     their_sheet["A{}".format(n)] = fy_and_quarter
-    their_sheet["B{}".format(n)] = "Second"
-    their_sheet["C{}".format(n)] = "SDNY"
+    their_sheet["B{}".format(n)] = "2nd"
+    their_sheet["C{}".format(n)] = "NYS"
     their_sheet["D{}".format(n)] = event_date
     their_sheet["E{}".format(n)] = case_type
     their_sheet["G{}".format(n)] = "LS"
