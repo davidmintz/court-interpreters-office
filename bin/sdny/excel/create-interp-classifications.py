@@ -2,8 +2,7 @@
 
 import configparser, pymysql.cursors, sys, os
 from xlrd import open_workbook,xldate_as_tuple
-import argparse
-import json
+import argparse, json
 from os.path import getmtime, isfile
 from datetime import date
 
@@ -19,8 +18,6 @@ outfile = args.output_file
 
 config_file = "/home/david/.my.cnf";
 
-# make this "interpreters" for production
-# database="interpreters"
 database = "dev_interpreters"
 
 if not os.access(spreadsheet,os.R_OK):
