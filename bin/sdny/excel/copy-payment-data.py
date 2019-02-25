@@ -132,7 +132,7 @@ for i in range(1,sheet.nrows):
     their_sheet["P{}".format(n)] = "Chief Interpreter"
     n += 1;
 
-their_wb.save("data/excel/bullshit-table.xlsx")
+their_wb.save(target_spreadsheet)
 their_wb.close()
 
 print("All done inserting {} rows of payment data. You're welcome".format(n))
