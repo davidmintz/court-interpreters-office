@@ -436,6 +436,7 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             printf("%d: ambiguous identity for submitter, event id %d: %s\n",
                             __LINE__,
                             $e['id'],print_r($e,true));
+                            print_r($data);
                             exit(1);
                         } elseif (!$size) {
                             printf("%d: no identity found for submitter, event id %d: %s\n",
