@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * those ratings, then you would need to have LanguageCredential entities called
  * "A", "B" and "C", and store those as attributes of the InterpreterLanguage
  * entity.
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(name="language_credentials")
  */
@@ -55,7 +55,97 @@ class LanguageCredential
      */
     private $description = '';
 
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
+    /**
+     * Set name.
+     *
+     * @param string $name
+     *
+     * @return LanguageCredential
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set abbreviation.
+     *
+     * @param string $abbreviation
+     *
+     * @return LanguageCredential
+     */
+    public function setAbbreviation($abbreviation)
+    {
+        $this->abbreviation = $abbreviation;
+
+        return $this;
+    }
+
+    /**
+     * Get abbreviation.
+     *
+     * @return string
+     */
+    public function getAbbreviation()
+    {
+        return $this->abbreviation;
+    }
+
+    /**
+     * Set description.
+     *
+     * @param string $description
+     *
+     * @return LanguageCredential
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * stringify
+     * 
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->abbreviation ?: $this->name;
+    }
 }
 /*
 CREATE TABLE `language_credentials` (
