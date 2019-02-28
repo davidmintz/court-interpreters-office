@@ -50,7 +50,8 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          e.comments,
          e.admin_comments,
          COALESCE(r.reason,'n/a') AS reason_for_cancellation,
-         rq.id request_id, rq.comments AS submitter_comments
+         rq.id request_id, rq.comments AS submitter_comments,
+         rq.extraData submitter_extra_data
          FROM InterpretersOffice\Entity\Event e
          JOIN e.eventType t
          JOIN t.category c
@@ -163,7 +164,11 @@ DQL;
         if (! $event) {
             return null;
         }
-        // ugly!
+        if ($event['submitter_extra_data']) {
+            $event['submitter_extra_data'] =
+            json_decode($event['submitter_extra_data'],\JSON_OBJECT_AS_ARRAY);
+        }
+        // ugly! let's fix this
         $event['judge'] = str_replace('  ',' ',$event['judge']);
         $deft_dql = 'SELECT d.surnames, d.given_names
             FROM InterpretersOffice\Entity\Event e
