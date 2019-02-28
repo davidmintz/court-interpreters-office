@@ -415,7 +415,7 @@ class ScheduleUpdateManager
         if (! $count) {
             return $this;
         }
-
+        /** note to self: we need to map the action to the template */
         foreach ($interpreters as $i) {
             $email = $i->getEmail();
             $this->logger->info("need to email: $email");
