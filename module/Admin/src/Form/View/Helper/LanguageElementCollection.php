@@ -17,18 +17,18 @@ class LanguageElementCollection extends AbstractHelper
      */
     protected $template = <<<TEMPLATE
 <!-- shit begins -->
-<div class="offset-sm-1 col-sm-3  interpreter-language language-name" id="language-%d">
+<div class="offset-sm-1 col-sm-3  interpreter-language language-name form-inline    " id="language-%d">
 %s
 </div>
-<div class="col-sm-8 form-inline interpreter-language language-certification">
-    <label for="fed-certification-%d">fed-certified:</label>
+<div class="col-sm-8 form-inline interpreter-language language-credential">
+    <label for="languageCredential-%d">credential:</label>
           %s
    <button class="ml-3 btn btn-warning btn-xs btn-remove-language  border" title="remove this language"><span class="fas fa-times" aria-hidden="true"></span>
         <span class="sr-only">remove this language</span></button>
     %s
 </div>
 <!-- shit ends -->
-            
+
 TEMPLATE;
 
     /**
@@ -74,25 +74,25 @@ TEMPLATE;
                 // because it's empty //echo "oops, no language?";
                 return '';
             }
-            $certification = $fieldset->get('federalCertification');
+            $credential = $fieldset->get('languageCredential');
 
             if (is_object($language)) {
                 // we were hydrated from an Interpreter entity
                 $label = $this->view->escapeHtml($language->getName());
                 $language_id = $language->getId();
-                $certifiable = $language->isFederallyCertified();
-                if ($certifiable) {
-                    // convert possibly-boolean to int, to keep test from breaking
-                    $value = $certification->getValue();
-                    $certification->setValueOptions(
-                        [-1 => '', 1 => 'yes', 0 => 'no']
-                    );
-                    $certification->setValue($value === true ? "1" : "0");
-                } else {
-                    $certification->setValue("-1")
-                        ->setAttribute("disabled", "disabled");
-                    //echo "we set cert to -1 at ".__LINE__ . "<br>";
-                }
+                // $certifiable = $language->isFederallyCertified();
+                // if ($certifiable) {
+                //     // convert possibly-boolean to int, to keep test from breaking
+                //     $value = $credential->getValue();
+                //     $credential->setValueOptions(
+                //         [-1 => 'fuck???', 1 => 'yes', 0 => 'no']
+                //     );
+                //     $credential->setValue($value === true ? "1" : "0");
+                // } else {
+                //     $credential->setValue("-1")
+                //         ->setAttribute("disabled", "disabled");
+                //     //echo "we set cert to -1 at ".__LINE__ . "<br>";
+                // }
             } else {
                 // form was populated with POST, not objects
                 $language_id = $language;
@@ -102,43 +102,44 @@ TEMPLATE;
                 // echo "\$key is $key, label $label ...<br>";
                 $certifiable = $language_options[$key]['attributes']['data-certifiable'];
                 //echo " and \$certifiable is: $certifiable ....";
-                //if ('Spanish'==$label) {var_dump($certification->getValue());}
-                if (! $certifiable) {
-                    $certification->setValue("-1")
-                            ->setAttribute("disabled", "disabled");
-                    //echo "we set cert to -1 for $label at ".__LINE__ . "<br>";
-                } else {
-                    $certification->setValueOptions(
-                        [-1 => '', 1 => 'yes', 0 => 'no']
-                    );
-                }
+                //if ('Spanish'==$label) {var_dump($credential->getValue());}
+                // if (! $certifiable) {
+                //     $credential->setValue("-1")
+                //             ->setAttribute("disabled", "disabled");
+                //     //echo "we set cert to -1 for $label at ".__LINE__ . "<br>";
+                // } else {
+                //     $credential->setValueOptions(
+                //         [-1 => '', 1 => 'yes', 0 => 'no']
+                //     );
+                // }
             }
 
             $hidden_element->setValue($language_id);
             $language_markup = $this->view->formElement($hidden_element);
             $language_markup .= $label;
-            $certification->setAttribute('id', "fed-certification-$language_id");
-            if (! $certifiable) {
-                //echo "adding hidden for $label...";
-                //$certification->setValue('-1')->setAttribute ("disabled","disabled");
-                $certification_markup = $this->view->formElement($certification);
-                $certification_markup .= sprintf(
-                    '<input type="hidden" name="interpreter[interpreterLanguages]'
-                    . '[%d][federalCertification]" value="-1">',
-                    $index
-                );
-            } else {
-                $certification_markup = $this->view->formElement($certification);
-            }
+            $credential->setAttribute('id', "language-certification-$language_id");
+            // if (! $certifiable) {
+            //     //echo "adding hidden for $label...";
+            //     //$credential->setValue('-1')->setAttribute ("disabled","disabled");
+            //     $credential_markup = $this->view->formElement($credential);
+            //     $credential_markup .= sprintf(
+            //         '<input type="hidden" name="interpreter[interpreterLanguages]'
+            //         . '[%d][federalCertification]" value="-1">',
+            //         $index
+            //     );
+            //} else {
+                $credential_markup = $this->view->formElement($credential);
+            //}
             // printf("iteration %d: now it's dark at %d<br>", $index, __LINE__);
             $messages = $collection->getMessages();
-            if ($messages && $certifiable && -1 == $certification->getValue()) {
+            if ($messages){  // && $certifiable && -1 == $credential->getValue()) {
                 $error_message = array_values($messages)[0];
                 $errors = sprintf($this->error_template, 'block', $error_message);
             } else {
                 $errors = sprintf($this->error_template, 'none', '');
             }
-            $html .= sprintf($this->template, $language_id, $language_markup, $language_id, $certification_markup, $errors);
+            $html .= sprintf($this->template, $language_id, $language_markup,
+            $language_id, $credential_markup, $errors);
         }
 
         return $html;
@@ -163,42 +164,39 @@ TEMPLATE;
             $language_id
         );
         $language_markup .= $label;
-        $certification_element = new \Zend\Form\Element\Select(
-            "interpreter[interpreterLanguages][$i][federalCertification]",
-            ['value_options' => [
-                            -1 => 'N/A',
-                            1 => 'yes',
-                            0 => 'no',
-                        ],
+
+        $credential_element = new \Zend\Form\Element\Select(
+            "interpreter[interpreterLanguages][$i][languageCredential]",
+            ['value_options' => [''=>' ']+$params['credential_options'],
                     'attributes' => [
                         'class' => 'form-control',
                         'id'    => "fed-certification-$language_id",
                     ]
             ]
         );
-        $certification_element->setAttributes(['class' => 'form-control']);
+        $credential_element->setAttributes(['class' => 'form-control']);
+        $credential_markup = $this->view->formSelect($credential_element);
 
-        if (! $language->isFederallyCertified()) {
-            // disable element, append a hidden
-            $certification_element->setAttribute('disabled', 'disabled');
-            $certification_markup = $this->view->formSelect($certification_element);
-            $name = "interpreter[interpreterLanguages][$i][federalCertification]";
-            $certification_markup .= sprintf(
-                '<input type="hidden" name="%s" value="-1">',
-                $name
-            );
-        } else {
-            $certification_element
-                    ->setValueOptions([-1 => '',1 => 'yes', 0 => 'no'])->setValue("-1");
-            $certification_markup = $this->view->formSelect($certification_element);
-        }
+        // if (! $language->isFederallyCertified()) {
+        //     // disable element, append a hidden
+        //     $credential_element->setAttribute('disabled', 'disabled');
+        //     $name = "interpreter[interpreterLanguages][$i][federalCertification]";
+        //     $credential_markup .= sprintf(
+        //         '<input type="hidden" name="%s" value="-1">',
+        //         $name
+        //     );
+        // } else {
+        //     $credential_element
+        //             ->setValueOptions([-1 => '',1 => 'yes', 0 => 'no'])->setValue("-1");
+        //     $credential_markup = $this->view->formSelect($credential_element);
+        // }
         $errors = sprintf($this->error_template, 'none', '');
         return sprintf(
             $this->template,
             $language_id,
             $language_markup,
             $language_id,
-            $certification_markup,
+            $credential_markup,
             $errors
         );
     }

@@ -26,6 +26,7 @@ class InterpretersControllerTest extends AbstractControllerTest
             [
                     new DataFixture\MinimalUserLoader(),
                     new DataFixture\LanguageLoader(),
+                    new DataFixture\LanguageCredentialLoader(),
                     new DataFixture\InterpreterLoader(),
                 ]
         );
@@ -52,6 +53,7 @@ class InterpretersControllerTest extends AbstractControllerTest
         if (! $auth->hasIdentity()) {
             exit("SHIT FAILED!\n" . $this->getResponse()->getBody());
         }
+        //$this->dispatch($url); $this->dumpResponse(); return;
         $token = $this->getCsrfToken($url, 'csrf');
 
 
@@ -139,20 +141,22 @@ class InterpretersControllerTest extends AbstractControllerTest
         $this->assertQueryCount('div.language-name', 1);
         $this->assertQueryContentRegex('div.language-name', '/Spanish/');
 
-        // and it should have federal certification == yes
-        $nodeList = $query->execute('div.language-certification > select > option', $document, Document\Query::TYPE_CSS);
-        foreach ($nodeList as $element) {
-            if ($element->getAttributeNode('selected')) {
+        // and it should have AO certification
+        $nodeList = $query->execute('div.language-credential > select > option', $document, Document\Query::TYPE_CSS);
+        /** @var \DOMElement $element */
+        $element = null;
+        foreach ($nodeList as $e) {
+            //if ($e->getAttributeNode('selected')) {
+            if ($e->nodeValue == 'AO') {
+                $element = $e;
                 break;
             }
         }
+        //var_dump($element->ownerDocument->saveXML($element));
         $this->assertInstanceOf(\DOMElement::class, $element);
         $this->assertEquals($element->getAttributeNode('selected')->value, 'selected');
-        // sanity check
-        //var_dump($interpreter->getInterpreterLanguages()->current()->getFederalCertification()); //return;
-        //echo $this->getResponse()->getBody();return;
-        $this->assertEquals(strtolower($element->nodeValue), 'yes');
-        $this->assertEquals($element->getAttributeNode('value')->value, '1');
+        //<option value="88" selected="selected">AO</option>
+        $this->assertEquals($element->nodeValue,"AO");
 
         $russian = $em->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Russian']);
@@ -177,11 +181,11 @@ class InterpretersControllerTest extends AbstractControllerTest
                 'interpreterLanguages' => [
                     [
                         'language' => $spanish->getId(),
-                        'federalCertification' => 1,
+                        'languageCredential' => "1",
                     ],
                     [
                         'language' => $russian->getId(),
-                        'federalCertification' => '-1',
+                        'languageCredential' => '2',
                     ],
                 ],
             ],

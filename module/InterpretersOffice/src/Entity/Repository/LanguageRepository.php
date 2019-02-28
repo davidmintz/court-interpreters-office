@@ -10,6 +10,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\Language;
+use InterpretersOffice\Entity\LanguageCredential;
 
 /**
  * custom EntityRepository class for Language entity.
@@ -128,6 +129,23 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         return $query->getResult();
     }
 
+    /**
+     * gets language-credential data for populating selects
+     *
+     * @return array
+     */
+     public function getCredentialOptions()
+     {
+        $q = $this->getEntityManager()->createQueryBuilder()
+            ->from(LanguageCredential::class, 'c')
+            ->select(['c.id AS value','c.abbreviation AS label'])
+            ->orderBy('c.abbreviation')
+            ->getQuery()->useResultCache(true);
+
+        return $q->getResult();
+
+
+     }
     /**
      * experimental
      *

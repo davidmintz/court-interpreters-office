@@ -10,6 +10,8 @@ class InterpreterLoader implements FixtureInterface
 {
     public function load(ObjectManager $objectManager)
     {
+        $AO =  $objectManager->getRepository('InterpretersOffice\Entity\LanguageCredential')
+                ->findOneBy(['abbreviation' => 'AO']);
         $interpreter = new Entity\Interpreter();
         $staff_hat = $objectManager->getRepository('InterpretersOffice\Entity\Hat')
                 ->findOneBy(['name' => 'staff court interpreter']);
@@ -24,7 +26,7 @@ class InterpreterLoader implements FixtureInterface
         $spanish = $objectManager->getRepository('InterpretersOffice\Entity\Language')
             ->findOneBy(['name' => 'Spanish']);
         $interpreterLanguage = (new Entity\InterpreterLanguage($interpreter, $spanish))
-            ->setFederalCertification(true);
+            ->setLanguageCredential($AO);
         $interpreter->addInterpreterLanguage($interpreterLanguage);
 
         $objectManager->persist($interpreter);
@@ -37,7 +39,8 @@ class InterpreterLoader implements FixtureInterface
             //->setDob(new \DateTime('1964-04-21'))
              ->setDob('1964-04-21')
             ->setHat($staff_hat);
-        $other_interpreter->addInterpreterLanguage(new Entity\InterpreterLanguage($other_interpreter, $spanish));
+        $other_interpreter->addInterpreterLanguage(
+            (new Entity\InterpreterLanguage($other_interpreter, $spanish))->setLanguageCredential($AO));
         $objectManager->persist($other_interpreter);
         $objectManager->flush();
     }
