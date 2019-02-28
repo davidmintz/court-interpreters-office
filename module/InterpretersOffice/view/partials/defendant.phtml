@@ -11,7 +11,7 @@
 ?>
 <li id="deft-<?php echo $this->id ?>" class="list-group-item pr-1 py-1">
 <span class="float-left deft-name align-middle pt-1"><?php echo $this->name ?></span>
-<input name="<?php echo $this->namespace ?>[<?php echo $element_name ?>][]" value="<?php echo $input_value ?>" type="hidden">
+<input name="<?php echo $this->namespace ?: 'event' ?>[<?php echo $element_name ?>][]" value="<?php echo $input_value ?>" type="hidden">
 <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this defendant">
 <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove this defendant</span></button>
 </li>
