@@ -25,3 +25,4 @@ doc/api
 test.error.log
 zend-developer-tools.local-development.php
 doc/*cache*
+bin/sdny/excel/warnings*
