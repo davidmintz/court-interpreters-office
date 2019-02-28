@@ -50,11 +50,12 @@ FROM dev_interpreters.interpreters ORDER BY interp_id);
 
 
 
-INSERT INTO interpreters_languages (SELECT interp_id, lang_id,
-    CASE fed_cert
-       WHEN 'N/A' THEN null
-       WHEN 'Y' THEN 1
-       WHEN 'N' THEN 0
+INSERT INTO interpreters_languages (interpreter_id,language_id, credential_id) (SELECT interp_id, lang_id,
+    CASE rating
+       WHEN '' THEN null
+       WHEN 'AO' THEN 1
+       WHEN 'PQ' THEN 2
+       WHEN 'LS' THEN 3
     END
     FROM dev_interpreters.interp_languages
 );
