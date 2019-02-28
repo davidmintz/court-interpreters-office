@@ -65,6 +65,8 @@ if ($this->results) : ?>
         <?php
         foreach ($this->results as $row) : /** note to self: use array hydration? */
             $interpreter = $row[0];
+            // seems very weird, needs to be investigated
+            if (! $interpreter) { continue; }
             $id = $interpreter->getId();
             $status = $interpreter->isActive() ? 'active' : 'inactive';
             $view_url = $this->url('interpreters/find_by_id', ['id' => $id])?>
