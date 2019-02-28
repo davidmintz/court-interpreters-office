@@ -58,14 +58,6 @@ class InterpreterLanguage
     protected $language;
 
     /**
-    *  @ORM\ManyToOne(targetEntity="LanguageCredential")
-    *  @ORM\JoinColumn(nullable=true,name="credential_id")
-    *
-    *  @var LanguageCredential
-    */
-   protected $languageCredential;
-
-    /**
      * Whether the Interpreter holds federal court interpreter certification in this language.
      *
      * The only certified languages in the US District Court system are Spanish,
@@ -159,15 +151,13 @@ class InterpreterLanguage
     /**
      * return this entity as an array [ language_id => federalCertification ].
      *
-     * @todo see if we really need this at all?
-     *
      * @return array
      */
     public function toArray()
     {
         return [
             'language_id' => $this->language->getId(),
-            //'federalCertification' => $this->getFederalCertification(),
+            'federalCertification' => $this->getFederalCertification(),
         ];
     }
 
@@ -183,29 +173,5 @@ class InterpreterLanguage
             throw new \RuntimeException('language entity must be set before calling '.__FUNCTION__);
         }
         return $language->isFederallyCertified();
-    }
-
-    /**
-     * Set languageCredential.
-     *
-     * @param LanguageCredential|null $languageCredential
-     *
-     * @return InterpreterLanguage
-     */
-    public function setLanguageCredential(LanguageCredential $languageCredential = null)
-    {
-        $this->languageCredential = $languageCredential;
-
-        return $this;
-    }
-
-    /**
-     * Get languageCredential.
-     *
-     * @return LanguageCredential|null
-     */
-    public function getLanguageCredential()
-    {
-        return $this->languageCredential;
     }
 }

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.25, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.24, for Linux (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.25-0ubuntu0.18.04.2
+-- Server version	5.7.24-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,30 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `admin_users`
---
-
-DROP TABLE IF EXISTS `admin_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `admin_users` (
-  `id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `username` varchar(24) NOT NULL DEFAULT '',
-  `firstname` varchar(40) NOT NULL,
-  `lastname` varchar(40) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `phone` varchar(10) NOT NULL,
-  `password` varchar(16) NOT NULL,
-  `created` datetime NOT NULL,
-  `last_login` int(10) unsigned NOT NULL,
-  `active` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `map_to_userid` smallint(5) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUsername` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `anonymous_judges`
@@ -55,18 +31,6 @@ CREATE TABLE `anonymous_judges` (
   KEY `IDX_5BD10E2D2BE3238` (`default_location_id`),
   CONSTRAINT `anonymous_judges_ibfk_1` FOREIGN KEY (`default_location_id`) REFERENCES `locations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `availability_invitees`
---
-
-DROP TABLE IF EXISTS `availability_invitees`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `availability_invitees` (
-  `interp_id` smallint(5) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -275,20 +239,6 @@ CREATE TABLE `events` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `foo`
---
-
-DROP TABLE IF EXISTS `foo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `foo` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `hats`
 --
 
@@ -385,12 +335,9 @@ CREATE TABLE `interpreters_languages` (
   `interpreter_id` smallint(5) unsigned NOT NULL,
   `language_id` smallint(5) unsigned NOT NULL,
   `federal_certification` tinyint(1) DEFAULT NULL,
-  `credential_id` smallint(5) unsigned DEFAULT NULL,
   PRIMARY KEY (`interpreter_id`,`language_id`),
   KEY `IDX_E0423968AD59FFB1` (`interpreter_id`),
   KEY `IDX_E042396882F1BAF4` (`language_id`),
-  KEY `FK_E04239682558A7A5` (`credential_id`),
-  CONSTRAINT `FK_E04239682558A7A5` FOREIGN KEY (`credential_id`) REFERENCES `language_credentials` (`id`),
   CONSTRAINT `FK_E042396882F1BAF4` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`),
   CONSTRAINT `FK_E0423968AD59FFB1` FOREIGN KEY (`interpreter_id`) REFERENCES `interpreters` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -430,24 +377,6 @@ CREATE TABLE `judges` (
   CONSTRAINT `FK_1C5E0B5D2BE3238` FOREIGN KEY (`default_location_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `FK_1C5E0B5FDDA6450` FOREIGN KEY (`flavor_id`) REFERENCES `judge_flavors` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `language_credentials`
---
-
-DROP TABLE IF EXISTS `language_credentials`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `language_credentials` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `abbreviation` varchar(15) NOT NULL DEFAULT '',
-  `name` varchar(50) NOT NULL DEFAULT '',
-  `description` varchar(400) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_name` (`name`),
-  UNIQUE KEY `unique_abbrev` (`abbreviation`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -677,4 +606,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-02-27 11:18:45
+-- Dump completed on 2019-01-20 15:56:23
