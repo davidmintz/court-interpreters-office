@@ -26,8 +26,6 @@ class InterpreterLanguage
      * @param Interpreter $interpreter
      * @param Language    $language
      *
-     * @todo a lifecycle callback to ensure certified languages have a boolean
-     * $federalCertification set
      */
     public function __construct(
         Interpreter $interpreter = null,
@@ -64,22 +62,6 @@ class InterpreterLanguage
     *  @var LanguageCredential
     */
    protected $languageCredential;
-
-    /**
-     * Whether the Interpreter holds federal court interpreter certification in this language.
-     *
-     * The only certified languages in the US District Court system are Spanish,
-     * Navajo and Haitian Creole. Of these, only the Spanish certification
-     * program is active. This field should be a boolean for the certified
-     * languages and null for everything else.
-     *
-     * @link http://www.uscourts.gov/services-forms/federal-court-interpreters/federal-court-interpreter-certification-examination the federal court certification program
-     *
-     * @ORM\Column(name="federal_certification",type="boolean",nullable=true)
-     *
-     * @var bool
-     */
-    protected $federalCertification;
 
     /**
      * Set interpreter.
@@ -129,32 +111,6 @@ class InterpreterLanguage
         return $this->language;
     }
 
-    /**
-     * Set federalCertification.
-     *
-     * @param bool $federalCertification
-     *
-     * @return InterpreterLanguage
-     */
-    public function setFederalCertification($federalCertification)
-    {
-        if ((string)$federalCertification == "-1") {
-            $federalCertification = null;
-        }
-        $this->federalCertification = $federalCertification;
-
-        return $this;
-    }
-
-    /**
-     * Get federalCertification.
-     *
-     * @return bool
-     */
-    public function getFederalCertification()
-    {
-        return $this->federalCertification;
-    }
 
     /**
      * return this entity as an array [ language_id => federalCertification ].
