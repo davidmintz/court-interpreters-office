@@ -162,6 +162,31 @@ class ScheduleUpdateManager
         return $this;
     }
 
+    public function executeActions(Request $request, $user_event,$updates)
+    {
+        // figure out what admin actions are configured for $user_event
+        $actions = $this->getUserActions($request,$user_event);
+        $filter = new DashToCamelCase();
+        $config = $this->config['event_listeners'];
+        // and whether they are enabled
+        foreach ($actions as $string) {
+            $i = strrpos($string, '.') + 1;
+            $action = substr($string, $i);
+            $method = lcfirst($filter->filter($action));
+            if ($config[$user_event][$string]) {
+                if (method_exists($this, $method)) {
+                    $this->logger->debug("we now need to call: $method()");
+                    $this->$method($request, $updates);
+                } else {
+                    $this->logger->warn("!! not running not-implemented method: $method !");
+                }
+            } else {
+                // explicity disabled in configuration
+                $this->logger->debug("not running explicitly disabled action/method: $method()");
+            }
+        }
+        return $this;
+    }
 
     /**
      * event listener for Request update
@@ -211,28 +236,28 @@ class ScheduleUpdateManager
 
             return $this->updateScheduledEvent($request,$updates);
         }
-
-        // figure out what admin actions are configured for $user_event
-        $actions = $this->getUserActions($request,$user_event);
-        $filter = new DashToCamelCase();
-        $config = $this->config['event_listeners'];
-        // and whether they are enabled
-        foreach ($actions as $string) {
-            $i = strrpos($string, '.') + 1;
-            $action = substr($string, $i);
-            $method = lcfirst($filter->filter($action));
-            if ($config[$user_event][$string]) {
-                if (method_exists($this, $method)) {
-                    $this->logger->debug("we now need to call: $method()");
-                    $this->$method($request, $updates);
-                } else {
-                    $this->logger->warn("!! not running not-implemented method: $method !");
-                }
-            } else {
-                // explicity disabled in configuration
-                $this->logger->debug("not running explicitly disabled action/method: $method()");
-            }
-        }
+        $this->executeActions($request, $user_event,$updates);
+        // // figure out what admin actions are configured for $user_event
+        // $actions = $this->getUserActions($request,$user_event);
+        // $filter = new DashToCamelCase();
+        // $config = $this->config['event_listeners'];
+        // // and whether they are enabled
+        // foreach ($actions as $string) {
+        //     $i = strrpos($string, '.') + 1;
+        //     $action = substr($string, $i);
+        //     $method = lcfirst($filter->filter($action));
+        //     if ($config[$user_event][$string]) {
+        //         if (method_exists($this, $method)) {
+        //             $this->logger->debug("we now need to call: $method()");
+        //             $this->$method($request, $updates);
+        //         } else {
+        //             $this->logger->warn("!! not running not-implemented method: $method !");
+        //         }
+        //     } else {
+        //         // explicity disabled in configuration
+        //         $this->logger->debug("not running explicitly disabled action/method: $method()");
+        //     }
+        // }
         if ($user_event == self::OTHER) {
             $this->logger->debug(__METHOD__.
                 ":  it's the default user-action: other");
@@ -288,6 +313,25 @@ class ScheduleUpdateManager
         $this->logger->debug(
             sprintf('handling request cancel in %s at %d', __METHOD__, __LINE__)
         );
+        $request = $e->getParam('request');
+        $this->objectManager = $e->getParam('entity_manager');
+        $event = $request->getEvent();
+        $this->logger->debug(
+            sprintf('is there an event? in %s at %d? %s', __METHOD__, __LINE__,
+            $event === null ? "NO":"YES"
+        )
+        );
+        if ($event) {
+            $this->executeActions($request, self::CANCEL,['cancelled']);
+            // $actions = $this->getUserActions($request,self::CANCEL);
+            // $this->logger->debug(
+            //     sprintf('actions in %s at %d: %s', __METHOD__, __LINE__,
+            //     print_r($actions, true)
+            // ));
+            // [0] => in-court.spanish.delete-scheduled-event
+            // [1] => in-court.spanish.notify-assigned-interpreters
+
+        }
     }
 
 
@@ -360,7 +404,7 @@ class ScheduleUpdateManager
      */
     public function deleteScheduledEvent($request, Array $updates)
     {
-
+        $event = $request->getEvent();
         $this->objectManager->remove($event);
         $this->logger->debug(__METHOD__.": we have REMOVED scheduled event id ".$event->getId());
         return $this;

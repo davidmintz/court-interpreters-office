@@ -74,7 +74,8 @@ class RequestLoader implements FixtureInterface
         $admin = $objectManager->getRepository(\InterpretersOffice\Entity\User::class)->findOneBy(['username'=>'david']);
         $event->setCreated($recently)->setCreatedBy($admin)
             ->setModified($recently)->setModifiedBy($admin)
-            ->setSubmissionDate($request->getCreated());
+            ->setSubmissionDate($request->getCreated())
+            ->setSubmissionTime($request->getCreated());
         $request->setEvent($event)->setPending(false);
         $objectManager->persist($event);
         $objectManager->persist($request);

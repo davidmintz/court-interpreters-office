@@ -220,11 +220,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 $repo = $this->objectManager->getRepository(Entity\Request::class);
                 if ($repo->findDuplicate($entity)) {
                     return  new JsonModel(
-                        ['validation_errors' => ['request' => ['duplicate' =>
-                        [
-                        'there is already a request with this date, time,
-                        judge, type of event, defendant(s), docket, and language'
-                        ]]]]
+                        ['validation_errors' => ['request' =>
+                        ['duplicate' =>
+                            ['there is already a request with this date, time,
+                            judge, type of event, defendant(s), docket, and language'
+                            ]
+                        ]]]
                     );
                 }
                 $form->postValidate();

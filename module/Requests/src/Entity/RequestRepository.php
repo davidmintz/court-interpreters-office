@@ -256,10 +256,10 @@ class RequestRepository extends EntityRepository
         ->join('r.eventType', 'e')
         ->join('r.submitter', 'submitter')// a Person
         ->join('submitter.hat', 'submitter_h')
-        ->join('r.modifiedBy', 'modified_by_user')
+        ->leftJoin('r.modifiedBy', 'modified_by_user')
         ->join('r.language', 'lang')
-        ->join('modified_by_user.person', 'modified_by')
-        ->join('modified_by.hat', 'modified_by_h')
+        ->leftJoin('modified_by_user.person', 'modified_by')
+        ->leftJoin('modified_by.hat', 'modified_by_h')
         ->leftJoin('r.location', 'loc')
         ->leftJoin('r.judge', 'j')
         ->leftJoin('j.flavor', 'j_flavor')

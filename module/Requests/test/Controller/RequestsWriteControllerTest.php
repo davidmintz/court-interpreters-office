@@ -36,8 +36,9 @@ class RequestsWriteControllerTest extends AbstractControllerTest
             $updateManager->onUpdateRequest($e);
 
         });
+        $em = FixtureManager::getEntityManager();
         // $container = $this->getApplicationServiceLocator();
-        $em = FixtureManager::getEntityManager();//$container->get("entity-manager");
+        //$container->get("entity-manager");
         // $listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
         $entityListener = $container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener');
@@ -145,6 +146,10 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $this->assertQuery("#date");
         $this->assertQuery("#time");
         $this->assertQuery("#defendants");
+        $this->assertQuery("#location");
+        $this->assertQuery("#judge");
+        $this->assertQuery("#comments");
+        $this->assertQuery("#language");
         //this->dumpResponse();
         //$this->assertQuery("ul#defendants > li");
 
@@ -361,7 +366,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     /**
      * @return [type] [description]
      */
-    public function testPostUpdateToScheduledRequest()
+    public function testPostUpdateToScheduledRequestUpdatesEventAutomatically()
     {
         //$this->assertTrue(is_object($request));
         $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
@@ -377,18 +382,21 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         foreach ($request->getDefendants() as $d) {
             $deft_ids[] = $d->getId();
         }
-        //$time = $request->getTime()->format('H:i a');
-        //echo "\ntime is $time";
+        $request_time = $request->getTime()->format('H:i a');
+        $event_time = $request->getEvent()->getTime()->format('H:i a');
+        $this->assertEquals($request_time, $event_time);
+        $this->assertNotEquals('3:00 pm', $request_time);
         $post = [
             'request' => [
                 'id' => $request->getId(),
                 'date' => $request->getDate()->format('m/d/Y'),
-                'time' =>'3:00 pm', // later in the date
+                'time' =>'3:00 pm', // later in the day
                 'docket' => $request->getDocket(),
                 'language' => $request->getLanguage()->getId(),
                 'judge' => $request->getJudge()->getId(),
                 'location' => $request->getLocation()->getId(),
                 'defendants' => $deft_ids,
+                'modified'=>date('Y-m-d H:i:s'),
                 'comments' => 'Time and the bell have buried the day.',
                 'eventType' => $request->getEventType()->getId(),
             ],
@@ -402,8 +410,32 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         );
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
-        // echo "\n";
-        // $this->dumpResponse();
+
+
+        //$this->dumpResponse();
+        $url = "/requests/view/{$request->getId()}";
+        /** @var \Doctrine\DBAL\Connection $db */
+        // $db = $em->getConnection();
+        // $shit = $db->executeQuery('SELECT * FROM requests WHERE id = '.$request->getId());
+        // //echo get_class($shit);
+        // $data = $shit->fetch();  //print_r($data);
+        $this->reset(true);
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertQueryCount("#time",1);
+        $this->assertQueryContentContains("#time", '3:00 pm');
+        // $request = $this->em->find('InterpretersOffice\Requests\Entity\Request',$request->getId());
+        // $event = $request->getEvent();
+        // print_r($event->getTime());
+        $this->reset();
+        $this->login('david','boink');
+        $this->reset(true);
+        $this->dispatch('/admin/schedule/view/'.$request->getEvent()->getId());
+        //$this->dumpResponse();
+        $this->assertQueryCount('.event-details', 1);
+        $this->assertQueryCount('div.time', 1);
+        $this->assertQueryContentRegex('div.time', '/3:00 pm/');
+        //$this->assertQuery('tbody tr td:first-of-type');
     }
 
     public function testViewRequestThatIsScheduled()
@@ -422,60 +454,14 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         /** @var \Doctrine\DBAL\Connection $db */
         // $db = $em->getConnection();
         // $shit = $db->executeQuery('SELECT * FROM requests WHERE id = '.$request->getId());
-        // //echo get_class($shit);
-        // $data = $shit->fetch();  //print_r($data);
+        // echo get_class($shit);
+        // $data = $shit->fetch();
+        // print_r($data);
         $this->dispatch($url);
-        // echo "\n$url\n";
         $this->assertResponseStatusCode(200);
+        $this->assertQueryCount("#time",1);
+        $this->assertQueryContentContains("#time", '10:00 am');
 
     }
-    /*        //$csrf = $q->execute("input#csrf")->current();
-
-            //echo "\n date and time are $date and $time, csrf {$csrf->getAttribute('value')}\n";
-            $deft_ids = [];
-            foreach ($request->getDefendants() as $d) {
-                $deft_ids[] = $d->getId();
-            }
-            $post = [
-                'request' => [
-                    'id' => $request->getId(),
-                    'date' => $date,
-                    'time' => $time,
-                    'docket' => $request->getDocket(),
-                    'language' => $request->getLanguage()->getId(),
-                    'judge' => $request->getJudge()->getId(),
-                    'location' => $request->getLocation()->getId(),
-                    'defendants' => $deft_ids,
-                    'comments' => $request->getComments(),
-                ],
-                //'csrf' => $csrf->textContent
-            ];
-
-            $this->login('john_somebody@nysd.uscourts.gov','gack!');
-            $this->reset(true);
-            $url = "/requests/update/{$request->getId()}";
-            $token = $this->getCsrfToken($url);
-            $post['csrf'] = $token;
-            $this->getRequest()->getHeaders()
-                ->addHeaderLine('X-Requested-With','XMLHttpRequest');
-            $this->getRequest()->setMethod('POST')->setPost(
-                new Parameters($post)
-            );
-            $this->dispatch($url);
-
-            $this->assertResponseStatusCode(200);
-
-            // $this->getRequest()->getHeaders()
-            //     ->addHeaderLine('X-Requested-With','XMLHttpRequest');
-            // $this->getRequest()->setMethod('POST')->setPost(
-            //     new Parameters($post)
-            // );
-            // $this->dispatch($url);
-            // $this->assertResponseStatusCode(200);
-            //
-            // $this->dumpResponse();
-
-            return $request;
-                */
-
+    
 }

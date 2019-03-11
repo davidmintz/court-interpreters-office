@@ -42,6 +42,7 @@ class UserLoader implements FixtureInterface
         $another_user->setRole($submitter_role)
             ->setActive(true)->setLastLogin(new \DateTime("-24 hours"))
             ->setPerson($person)
+            ->setUsername('john')
             ->setCreated(new \DateTime())
             ->setPassword('gack!')
              ->addJudge($objectManager->getRepository('InterpretersOffice\Entity\Judge')
