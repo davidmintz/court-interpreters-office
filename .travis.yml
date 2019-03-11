@@ -29,7 +29,7 @@ before_script:
 
 script:
 
-    - vendor/bin/phpunit
+    - vendor/bin/phpunit --testdox
 
 # thank you, https://gist.github.com/Pierstoval/5d3101055e9d6a5fc19e
 cache:
