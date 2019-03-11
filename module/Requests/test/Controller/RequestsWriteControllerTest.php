@@ -135,7 +135,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
             ];
     }
 
-    public function testLoadCreatePage()
+    public function testLoadPageForCreatingNewRequest()
     {
         $this->login('jane_zorkendoofer@nysd.uscourts.gov','gack!');
         $this->reset(true);
@@ -155,7 +155,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
      *
      * @return Request
      */
-    public function testCreate()
+    public function testCreateNewRequest()
     {
 
         $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
@@ -194,14 +194,13 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     }
 
     /**
-     * @depends testCreate
+     * @depends testCreateNewRequest
      * @param  Request $entity
      * @return Request
      */
-    public function testLoadUpdateForm(Request $entity)
+    public function testLoadFormToUpdateExistingRequest(Request $entity)
     {
         $this->assertTrue($entity instanceof Request);
-        $em = $this->getApplicationServiceLocator()->get('entity-manager');
         $this->login('jane_zorkendoofer@nysd.uscourts.gov','gack!');
         $this->reset(true);
         $url = "/requests/update/{$entity->getId()}";
@@ -227,11 +226,11 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     }
     /**
      * tests post method to update
-     * @depends testCreate
+     * @depends testCreateNewRequest
      * @param  Request $entity [description]
      * @return [type]          [description]
      */
-    public function testPostUpdate(Request $entity)
+    public function testPostUpdateToExistingRequest(Request $entity)
     {
         $date_before = $entity->getDate()->format('m/d/Y');
         // add a week to the date
@@ -263,7 +262,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
 
     /**
      * testClerkCannotUpdateRequestBelongingToAnotherJudge
-     * @depends testCreate
+     * @depends testCreateNewRequest
      *
      * @param  Request $entity
      * @return Request $entity
