@@ -43,6 +43,12 @@ interpreters = dict(cursor.fetchall());
 cursor.execute("SELECT name,lang_id id FROM languages")
 language_map = dict(cursor.fetchall())
 
+# update query for interpreter database
+# If args is a list or tuple, %s can be used as a placeholder in the query.
+# If args is a dict, %(name)s can be used as a placeholder in the query.
+interp_update = "UPDATE interp_languages SET rating = %(rating)s WHERE interp_id = %(interp_id)s AND lang_id = %(language_id)s";
+
+
 # open the spreadsheet, and iterate through it
 book = open_workbook(spreadsheet)
 sheet = book.sheet_by_name(worksheet)
@@ -94,6 +100,14 @@ for i in range(1,sheet.nrows):
                 print("name NOT FOUND: {}, {} at row {}".format(lastname, firstname,i))
             else:
                 print("searching for \"{}, {}\": multiple results found for lastname {} at row {}:".format(lastname,firstname,lastname,i),result)
+        # try again
+        # if (name in records):
+        #     interp_id = records[name]["id"];
+        #     for language in records[name]["languages"].keys():
+        #         language_id = language_map[language]
+        #         rating = records[name]["languages"][language]
+        #         print("running {}: language {}, id {}, rating {}".format(name,language, language_id,rating))
+        #         cursor.execute(interp_update,{"language_id":language_id,"rating":rating,"interp_id":interp_id})
 
 cursor.close()
 connection.close()
