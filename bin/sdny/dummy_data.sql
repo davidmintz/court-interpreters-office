@@ -40,11 +40,12 @@ INSERT INTO locations (type_id, parent_location_id,name) VALUES
 SET @courthouse1 = (SELECT id FROM locations WHERE name = 'Some Courthouse');
 SET @courthouse2 = (SELECT id FROM locations WHERE name = 'Other Courthouse');
 SET @jail = (SELECT id FROM locations WHERE name = 'Some Detention Center');
-
+#  INSERT INTO locations VALUES (27,1,1,'510',"duty magistrate",1);
 /* nested locations */
 INSERT INTO locations (type_id, parent_location_id,name) VALUES
 (1,@courthouse1,'101'),(1,@courthouse1,'102'),(1,@courthouse1,'103'),(1,@courthouse1,'104'),
-(1,@courthouse1,'201'),(1,@courthouse1,'202'),(1,@courthouse1,'203'),(1,@courthouse1,'204'),
+(1,@courthouse1,'201'),(1,@courthouse1,'202'),(1,@courthouse1,'510'),
+(1,@courthouse1,'203'),(1,@courthouse1,'204'),
 (1,@courthouse2,'2A'),(1,@courthouse2,'2B'),(1,@courthouse2,'2C'),(1,@courthouse2,'2D'),
 (1,@courthouse2,'4A'),(1,@courthouse2,'4B'),(1,@courthouse2,'4C'),(1,@courthouse2,'4D'),
 (1,@courthouse2,'5A'),(1,@courthouse2,'5B'),(1,@courthouse2,'5C'),(1,@courthouse2,'5D'),
@@ -380,3 +381,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
 ('Van Buren','Martin','',@ausa,'person',1,'martin.vanburen@some.usdoj.gov', '212 666-6601');
+
+# anonymous judges
+SET @ctroom = (SELECT id FROM locations WHERE name = "510");
+UPDATE anonymous_judges SET default_location_id = @ctroom WHERE name = "magistrate";
