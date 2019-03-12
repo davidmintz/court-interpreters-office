@@ -129,8 +129,8 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
 VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id) VALUES (
-     last_insert_id(), (SELECT id FROM languages WHERE name = 'Russian')
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id) VALUES (
+     last_insert_id(), (SELECT id FROM languages WHERE name = 'Russian'),2
 );
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
@@ -138,8 +138,8 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
      '123 123-4567');
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
 VALUES (last_insert_id(),'','','','','','','');
-INSERT INTO interpreters_languages (interpreter_id, language_id) VALUES (
-     last_insert_id(), (SELECT id FROM languages WHERE name = 'French')
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id) VALUES (
+     last_insert_id(), (SELECT id FROM languages WHERE name = 'French'),3
 );
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
@@ -147,8 +147,8 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
      '111 222-3210');
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
 VALUES (last_insert_id(),'','','','','','','');
-INSERT INTO interpreters_languages (interpreter_id, language_id) VALUES (
-     last_insert_id(), (SELECT id FROM languages WHERE name = 'Portuguese')
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id) VALUES (
+     last_insert_id(), (SELECT id FROM languages WHERE name = 'Portuguese'),3
 );
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
@@ -156,14 +156,14 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
      '222 333-3210');
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
 VALUES (last_insert_id(),'','','','','','','');
-INSERT INTO interpreters_languages (interpreter_id, language_id) VALUES (
-     last_insert_id(), (SELECT id FROM languages WHERE name = 'Foochow')
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id) VALUES (
+     last_insert_id(), (SELECT id FROM languages WHERE name = 'Foochow'), 3
 );
-INSERT INTO interpreters_languages (interpreter_id, language_id) VALUES (
-     last_insert_id(), (SELECT id FROM languages WHERE name = 'Cantonese')
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id) VALUES (
+     last_insert_id(), (SELECT id FROM languages WHERE name = 'Cantonese'), 3
 );
-INSERT INTO interpreters_languages (interpreter_id, language_id) VALUES (
-     last_insert_id(), (SELECT id FROM languages WHERE name = 'Mandarin')
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id) VALUES (
+     last_insert_id(), (SELECT id FROM languages WHERE name = 'Mandarin'), 3
 );
 
 SET @spanish = (SELECT id FROM languages WHERE name = 'Spanish');
@@ -174,11 +174,11 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
      '666 666-4321');
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
      VALUES (last_insert_id(),'','','','','','','');
-INSERT INTO interpreters_languages (interpreter_id, language_id)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
     VALUES (
-    last_insert_id(), (SELECT id FROM languages WHERE name = 'Hebrew')
+    last_insert_id(), (SELECT id FROM languages WHERE name = 'Hebrew'),2
 );
-INSERT INTO interpreters_languages (interpreter_id, language_id, federal_certification)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
     VALUES (
     last_insert_id(), @spanish, 1
 );
@@ -189,7 +189,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
           VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id, federal_certification)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
       VALUES (last_insert_id(), @spanish, 1
 );
 
@@ -200,7 +200,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
           VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id, federal_certification)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
       VALUES (last_insert_id(), @spanish, 1
 );
 
@@ -211,11 +211,11 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
       VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id, federal_certification)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
       VALUES (last_insert_id(), @spanish, 1
 );
-INSERT INTO interpreters_languages (interpreter_id, language_id) VALUES (
-     last_insert_id(), (SELECT id FROM languages WHERE name = 'Portuguese')
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id) VALUES (
+     last_insert_id(), (SELECT id FROM languages WHERE name = 'Portuguese'),3
 );
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
@@ -224,7 +224,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
           VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id, federal_certification)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
       VALUES (last_insert_id(), @spanish, 1
 );
 
@@ -234,7 +234,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
           VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id, federal_certification)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
       VALUES (last_insert_id(), @spanish, 1
 );
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
@@ -243,7 +243,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
           VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id, federal_certification)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
       VALUES (last_insert_id(), @spanish, 1
 );
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
@@ -252,8 +252,8 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
       VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id)
-      VALUES (last_insert_id(), (SELECT id FROM languages WHERE name = 'Arabic')
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
+      VALUES (last_insert_id(), (SELECT id FROM languages WHERE name = 'Arabic'), 2
 );
 
 /** a staff interpreter **/
@@ -268,7 +268,7 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
           VALUES (last_insert_id(),'','','','','','','');
 
-INSERT INTO interpreters_languages (interpreter_id, language_id, federal_certification)
+INSERT INTO interpreters_languages (interpreter_id, language_id, credential_id)
       VALUES (last_insert_id(), @spanish, 1
 );
 INSERT INTO users (person_id, role_id, password, username, active, last_login, created)
