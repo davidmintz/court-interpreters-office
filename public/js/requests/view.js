@@ -52,7 +52,18 @@ $(function(){
             + `${$("#date").text()} at ${$("#time").text()}`
         $.post( `${window.basePath || ""}/requests/cancel/${id}`,{description,csrf})
             .done(function(response){
-                window.document.location = `${window.basePath || ""}/requests/list`;
+                if ("success"===response.status) {
+                    return window.document.location = `${window.basePath || ""}/requests/list`;
+                }
+                /** @todo DRY this out */
+                if ("error" === response.status) {
+                    var message = response.message ||
+                    `There was an error while processing your last request.
+                    Please try again. If the problem persists please contact your site administrator.`
+                    $("#error-message").text(message);
+                    $("#error-div h3").text("error");
+                    $("#error-div").show();
+                }
             })
             .fail(fail)
             .complete(()=>{$("#modal-confirm-cancel").modal("hide")});

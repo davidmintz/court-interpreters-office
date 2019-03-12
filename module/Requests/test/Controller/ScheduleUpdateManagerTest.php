@@ -11,6 +11,9 @@ use ApplicationTest\FixtureManager;
 use ApplicationTest\FakeAuth;
 use ApplicationTest\DataFixture;
 
+use Zend\Dom;
+use Zend\Stdlib\Parameters;
+
 /**
  * tests for ScheduleUpdateManager
  */
@@ -124,7 +127,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
     }
 
-    public function testAutomaticDeletionOfEventWhenRequestIsWithdrawn()
+    public function testOnRequestCancellationScheduledEventIsDeletedAutomatically()
     {
         $this->login('john','gack!');
         $this->reset(true);
@@ -134,9 +137,28 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         ->setParameters(['username'=>'john'])->getResult();
         $this->assertTrue(count($result) == 1);
         $request = $result[0];
+        // sanity-check
         $event = $request->getEvent();
-        $this->getRequest()->setMethod('POST');
+        $this->assertInstanceOf('InterpretersOffice\Entity\Event', $event);
+        $event_id = $event->getId();
+        // get a CSRF token
+        $this->dispatch("/requests/list");
+        $html = $this->getResponse()->getBody();
+        $this->reset(true);
+        $dom = new Dom\Query($html);
+        $result = $dom->execute('#requests-table');
+        $table = $result->current();
+        $csrf = $table->getAttribute('data-csrf');
+        $this->getRequest()->setMethod('POST')
+            ->setPost(new Parameters(['csrf'=>$csrf]));
         $this->dispatch('/requests/cancel/'.$request->getId());
-        $this->dumpResponse();
+        $data = $this->getResponse()->getBody();
+        $response = json_decode($data);
+        $this->assertEquals("success",$response->status);
+
+        $event = $this->getApplicationServiceLocator()->get("entity-manager")
+            ->find('InterpretersOffice\Entity\Event',$event_id);
+        $this->assertNull($event);
+
     }
 }

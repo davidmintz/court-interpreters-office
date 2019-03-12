@@ -309,16 +309,25 @@ class WriteController extends AbstractActionController implements ResourceInterf
     public function cancelAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entity;d
+        $entity = $this->entity;
         $validator = new \Zend\Validator\Csrf();
-        //$valid = $validator->isValid()
+        $csrf = $this->params()->fromPost('csrf');
+        if (! $validator->isValid($csrf)) {
+            return new JsonModel([
+                'status' => 'error',
+                'id' => $id,
+                'message' =>
+                 'Invalid security token. Please reload the page and try again.'
+            ]);
+        }
         if ($entity) {
             try {
                 $entity->setCancelled(true);
-                $this->getEventManager()->trigger('cancel',$this,
-                    ['request'=>$entity,'entity_manager'=>$this->objectManager]);
-                $this->objectManager->flush();
                 $description = $this->params()->fromPost('description');
+                $this->getEventManager()->trigger('cancel',$this,
+                    ['request'=>$entity,'entity_manager'=>$this->objectManager,
+                    'description'=>$description]);
+                $this->objectManager->flush();
                 $message = 'This request for interpreting services ';
                 if ($description) {
                     $message .= "($description) ";
