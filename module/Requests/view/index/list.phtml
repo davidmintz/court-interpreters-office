@@ -28,7 +28,7 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
     ?><p>
         <?php echo $this->paginationControl($this->paginator, null, 'partials/pagination_head');?>
     </p>
-<table id="requests-table" data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s') ?>" class="table table-sm">
+<table id="requests-table" data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s') ?>" data-csrf="<?php echo $this->csrf ?>" class="table table-sm">
     <caption class="sr-only">list of interpreter requests</caption>
     <thead></thead>
     <tbody>

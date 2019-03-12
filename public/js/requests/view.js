@@ -47,9 +47,10 @@ $(function(){
      */
     $("#btn-confirm-cancellation").on("click",function(){
         var id = $("#request-details").data().id;
+        var csrf = $("#btn-cancel").data('csrf');
         var description = `${$("#language").text()} for a ${$("#event-type").text()} on `
             + `${$("#date").text()} at ${$("#time").text()}`
-        $.post( `${window.basePath || ""}/requests/cancel/${id}`,{description})
+        $.post( `${window.basePath || ""}/requests/cancel/${id}`,{description,csrf})
             .done(function(response){
                 window.document.location = `${window.basePath || ""}/requests/list`;
             })

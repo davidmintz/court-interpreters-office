@@ -113,9 +113,11 @@ class IndexController extends AbstractActionController //implements ResourceInte
     {
         $id = $this->params()->fromRoute('id');
         $repository = $this->objectManager->getRepository(Entity\Request::class);
+        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
         return [
             'data' => $repository->view($id),
             'deadline' => $this->getTwoBusinessDaysAfterDate(new \DateTime),
+            'csrf' => $csrf,
         ];
     }
 
@@ -163,7 +165,8 @@ class IndexController extends AbstractActionController //implements ResourceInte
         }
 
         $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
-        $view = new ViewModel(compact('paginator', 'defendants', 'deadline'));
+        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+        $view = new ViewModel(compact('paginator', 'defendants', 'deadline','csrf'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());
 
         return $view;

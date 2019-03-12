@@ -309,7 +309,9 @@ class WriteController extends AbstractActionController implements ResourceInterf
     public function cancelAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entity;
+        $entity = $this->entity;d
+        $validator = new \Zend\Validator\Csrf();
+        //$valid = $validator->isValid()
         if ($entity) {
             try {
                 $entity->setCancelled(true);
