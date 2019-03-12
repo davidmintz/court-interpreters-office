@@ -59,12 +59,13 @@ class WriteController extends AbstractActionController implements ResourceInterf
      */
     protected $acl;
 
-    /**
+    /*
+     * take this out?
      * session
      *
      * @var \Zend\Session\Container
+        protected $session;
      */
-    protected $session;
 
     /**
      * constructor.
@@ -81,7 +82,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         $this->objectManager = $objectManager;
         $this->auth = $auth;
         $this->acl = $acl;
-        $this->session = new \Zend\Session\Container("requests");
+        //$this->session = new \Zend\Session\Container("requests");
     }
 
     /**
@@ -133,11 +134,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
             if (! $entity) {
                 return parent::onDispatch($e);
             }
-            //return parent::onDispatch($e);
+            $this->getEventManager()->trigger('loadRequest',$this,
+                ['entity'=>$entity,'entity_manager'=>$this->objectManager]);
+            
             $this->entity = $entity;
             /**
-             * @todo
-             * some optimization. this is bullshit.
+             * @todo some optimization. this is bullshit.
              */
             $user = $this->objectManager->find(
                 'InterpretersOffice\Entity\User',
@@ -271,8 +273,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         if (! $this->getRequest()->isPost()) {
             return  new ViewModel(['form' => $form, 'id' => $this->params()->fromRoute('id')]);
         }
-        $this->getEventManager()->trigger('loadRequest',$this,
-            ['entity'=>$entity,'entity_manager'=>$this->objectManager]);
+
         $data = $this->getRequest()->getPost()->get('request');
         $form->filterDateTimeFields(
             ['date','time'], $data,  'request'

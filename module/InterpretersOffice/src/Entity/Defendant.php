@@ -19,7 +19,8 @@ use Doctrine\Common\Collections\Collection;
  * @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={@ORM\UniqueConstraint(name="unique_deftname",columns={"given_names", "surnames"})})
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\DefendantRepository")
  */
-class Defendant
+
+class Defendant implements \ArrayAccess
 {
     /**
      * entity id.
@@ -204,4 +205,63 @@ class Defendant
 
         return $this;
     }
+
+    /* Methods
+    abstract public offsetExists ( mixed $offset ) : bool
+    abstract public offsetGet ( mixed $offset ) : mixed
+    abstract public offsetSet ( mixed $offset , mixed $value ) : void
+    abstract public offsetUnset ( mixed $offset ) : void
+    }
+    */
+
+   /**
+    * implements \ArrayAccess
+    * @param string $offset
+    * @return boolean
+    */
+   public function offsetExists($offset) {
+       return in_array($offset,['given_names','surnames','id']);
+   }
+
+   /**
+    *implements \ArrayAccess
+    * @param string $offset
+    * @return void
+    */
+   public function offsetUnset($offset) {
+       // noop
+   }
+   /**
+    * implements \ArrayAccess
+    * @param string $offset
+    * @return string
+    */
+   public function offsetGet($offset) {
+
+       if ($offset == 'given_names') {
+           return $this->getGivenNames();
+       } elseif ($offset == 'surnames') {
+           return $this->getSurnames();
+       }  elseif ($offset == 'id') {
+           return $this->getId();
+       } else {
+           // too bad
+       }
+   }
+
+   /**
+    * implements \ArrayAccess
+    * @param string $offset
+    * @param string $value
+    * @return void
+    */
+   public function offsetSet($offset,$value) {
+       if ($offset == 'given_names') {
+           $this->setGivenNames($value);
+       } elseif ($offset == 'surnames') {
+           $this->setSurnames($value);
+       } else {
+           // too bad
+       }
+   }
 }
