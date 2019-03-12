@@ -99,16 +99,7 @@ for i in range(1,sheet.nrows):
             elif len(result) == 0:
                 print("name NOT FOUND: {}, {} at row {}".format(lastname, firstname,i))
             else:
-                print("searching for \"{}, {}\": multiple results found for lastname {} at row {}:".format(lastname,firstname,lastname,i),result)
-        # try again
-        # if (name in records):
-        #     interp_id = records[name]["id"];
-        #     for language in records[name]["languages"].keys():
-        #         language_id = language_map[language]
-        #         rating = records[name]["languages"][language]
-        #         print("running {}: language {}, id {}, rating {}".format(name,language, language_id,rating))
-        #         cursor.execute(interp_update,{"language_id":language_id,"rating":rating,"interp_id":interp_id})
-
+                print("searching for \"{}, {}\": multiple results found for lastname {} at row {}:".format(lastname,firstname,lastname,i),result)        
 cursor.close()
 connection.close()
 json_data = json.dumps(records)
