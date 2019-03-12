@@ -4,7 +4,6 @@ namespace InterpretersOffice\Service;
 
 use Zend\Mail;
 use Zend\View\Model\ViewModel;
-use Zend\View\Renderer\RendererInterface as ViewRendererInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerAwareInterface;
 
@@ -134,7 +133,7 @@ class AccountManager implements LoggerAwareInterface
     private $random_string;
 
     /**
-     * email verification ur;
+     * email verification url;
      * @var string
      */
     private $url;
