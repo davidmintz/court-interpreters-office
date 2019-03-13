@@ -80,6 +80,43 @@ class RequestLoader implements FixtureInterface
         $objectManager->persist($event);
         $objectManager->persist($request);
 
+        // create a Russian event and add to schedule AND assign an interpreter
+        //    ['Snyertzski', 'Boris'],
+        $russian = $objectManager->getRepository(\InterpretersOffice\Entity\Language::class)->findOneBy(['name'=>'Russian']);
+        $russian_guy = $objectManager->getRepository(\InterpretersOffice\Entity\Defendant::class)->findOneBy(['surnames'=>'Snyertzski']);
+        $date = new \DateTime('next Tuesday + 2 weeks');
+
+        $russian_request = new Entity\Request();
+        $russian_request->setDate($date)
+        ->setTime($time)
+        ->setJudge($judge)
+        ->setLanguage($russian)
+        ->setEventType($eventType)
+        ->setDocket('2018-CR-0321')
+        ->setComments($comments)
+        ->setSubmitter($user->getPerson())
+        ->setModified($then)
+        ->setCreated($then)
+        ->setLocation($location)
+        ->setModifiedBy($user)
+        ->setCreated(new \DateTime('-1 hour'))
+        //->setSubmissionTime(new \DateTime('-1 hour'))
+         ->addDefendant($russian_guy);
+
+        $russian_event = new \InterpretersOffice\Entity\Event();
+        foreach (['Date','Time','Judge','Language','Docket','EventType','Comments'] as $prop) {
+            $russian_event->{'set'.$prop}($russian_request->{'get'.$prop}());
+        }
+        $russian_event->setCreated($recently)->setCreatedBy($admin)
+            ->setModified($recently)->setModifiedBy($admin)
+            ->setSubmissionDate($request->getCreated())
+            ->setSubmissionTime($request->getCreated())
+            ->setSubmitter($user->getPerson());
+        $russian_request->setEvent($russian_event)->setPending(false);
+        $objectManager->persist($russian_event);
+        $objectManager->persist($russian_request);
+
+
         $psi_request =  new Entity\Request();
 
         $uspo_user = $objectManager->createQuery(
