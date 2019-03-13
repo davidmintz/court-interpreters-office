@@ -254,19 +254,19 @@ class ScheduleUpdateManager
     public function dispatchEmail(EventInterface $e)
     {
         $this->logger->debug("we need to DISPATCH emails if applicable");
-        if ($this->email_messages) {
-            try {
-                $transport = $this->getMailTransport();
-                foreach ($this->email_messages as $message) {
-                    $transport->send($message);
-                }
-            } catch (\Exception $e) {
-                $this->logger->err(
-                    "! ScheduleUpdateManager exception while sending email: ".$e->getMessage()
-                );
-                throw $e;
-            }
-        }
+        // if ($this->email_messages) {
+        //     try {
+        //         $transport = $this->getMailTransport();
+        //         foreach ($this->email_messages as $message) {
+        //             $transport->send($message);
+        //         }
+        //     } catch (\Exception $e) {
+        //         $this->logger->err(
+        //             "! ScheduleUpdateManager exception while sending email: ".$e->getMessage()
+        //         );
+        //         throw $e;
+        //     }
+        // }
     }
 
     /**
