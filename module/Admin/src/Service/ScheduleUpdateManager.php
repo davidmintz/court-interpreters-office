@@ -6,16 +6,16 @@ namespace InterpretersOffice\Admin\Service;
 use Zend\EventManager\EventInterface;
 use Zend\Log\LoggerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Filter\Word\DashToCamelCase;
-use Zend\View\Renderer\RendererInterface as Renderer;
-use Zend\View\Model\ViewModel;
+use InterpretersOffice\Entity;
+use InterpretersOffice\Requests\Entity\Request;
+use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
+use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
-use InterpretersOffice\Entity;
-use InterpretersOffice\Requests\Entity\Request;
-use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
+use Zend\Filter\Word\DashToCamelCase;
+
 use InterpretersOffice\Service\EmailTrait;
 
 /**
@@ -105,13 +105,6 @@ class ScheduleUpdateManager
     private $user_event;
 
     /**
-     * viewRenderer
-     *
-     * @var Renderer
-     */
-    private $viewRenderer;
-
-    /**
      * constructor
      *
      * @param AuthenticationServiceInterface $auth
@@ -121,12 +114,12 @@ class ScheduleUpdateManager
     public function __construct(
 
         AuthenticationServiceInterface $auth,
-        Array $config,
-        LoggerInterface $log
+        LoggerInterface $log,
+        Array $config
     ) {
         $this->logger = $log;
-        $this->config = $config;
         $this->auth = $auth;
+        $this->config = $config;
     }
 
     /**
@@ -140,12 +133,12 @@ class ScheduleUpdateManager
         $this->previous_state = [
             'date' =>  $request->getDate(),
             'time' =>  $request->getTime(),
-            'language' => (string)$request->getLanguage(),
-            'eventType' =>  (string)$request->getEventType(),
-            'location' =>  (string)$request->getLocation(),
+            'language' => $request->getLanguage(),
+            'eventType' =>  $request->getEventType(),
+            'location' =>  $request->getLocation(),
             'docket'  => $request->getDocket(),
             'comments' => $request->getComments(),
-            'judge' =>  (string)$request->getJudge(),
+            'judge' =>  $request->getJudge(),
             'extraData' => $request->getExtraData(),
             'defendants' => $request->getDefendants()->toArray(),
         ];
@@ -153,18 +146,6 @@ class ScheduleUpdateManager
         return $this;
     }
 
-    /**
-     * sets viewRenderer
-     *
-     * @param Renderer $viewRenderer
-     * @return ScheduleUpdateManager
-     */
-    public function setViewRenderer(Renderer $viewRenderer)
-    {
-        $this->viewRenderer = $viewRenderer;
-
-        return $this;
-    }
 
     /**
      * sets auth instance
@@ -181,15 +162,7 @@ class ScheduleUpdateManager
         return $this;
     }
 
-    /**
-     * runs the configured actions
-     *
-     * @param  Request $request
-     * @param  string  $user_event
-     * @param  array $updates
-     * @return ScheduleUpdateManager
-     */
-    public function executeActions(Request $request, $user_event, Array $updates)
+    public function executeActions(Request $request, $user_event,$updates)
     {
         // figure out what admin actions are configured for $user_event
         $actions = $this->getUserActions($request,$user_event);
@@ -208,27 +181,10 @@ class ScheduleUpdateManager
                     $this->logger->warn("!! not running not-implemented method: $method !");
                 }
             } else {
-                // action is explicity disabled in configuration
+                // explicity disabled in configuration
                 $this->logger->debug("not running explicitly disabled action/method: $method()");
-                if ('notify-assigned-interpreters' == $action) {
-                    $event = $request->getEvent();
-                    $interpreters = $this->interpreters ?: $request->getEvent()->getInterpreters();
-                    $this->logger->debug("we need to send a heads-up to interpreters office");
-                    $user = $this->auth->getIdentity();
-                    $view = new ViewModel(compact('request','user_event',
-                    'updates','interpreters','user'));
-                    $view->before = $this->previous_state;
-                    $view->setTemplate('interpreters-office/email/autocancellation-notice');
-                    $layout = new ViewModel();
-                    $layout->setTemplate('interpreters-office/email/layout')
-                        ->setVariable('content', $this->viewRenderer->render($view));
-                    $output = $this->viewRenderer->render($layout);
-                    // debug
-                    file_put_contents('data/email-autocancellation.html',$output);
-                }
             }
         }
-
         return $this;
     }
 
@@ -265,8 +221,7 @@ class ScheduleUpdateManager
             }
         }
         $this->logger->debug(
-            //'what was modified: '.implode(', ',array_keys($updates))
-            'updates: '.print_r($updates,true)
+            'what was modified: '.implode(', ',array_keys($updates))
         );
         $user_event = $this->getUserEvent($updates);
         $this->user_event = $user_event;
@@ -282,7 +237,27 @@ class ScheduleUpdateManager
             return $this->updateScheduledEvent($request,$updates);
         }
         $this->executeActions($request, $user_event,$updates);
-
+        // // figure out what admin actions are configured for $user_event
+        // $actions = $this->getUserActions($request,$user_event);
+        // $filter = new DashToCamelCase();
+        // $config = $this->config['event_listeners'];
+        // // and whether they are enabled
+        // foreach ($actions as $string) {
+        //     $i = strrpos($string, '.') + 1;
+        //     $action = substr($string, $i);
+        //     $method = lcfirst($filter->filter($action));
+        //     if ($config[$user_event][$string]) {
+        //         if (method_exists($this, $method)) {
+        //             $this->logger->debug("we now need to call: $method()");
+        //             $this->$method($request, $updates);
+        //         } else {
+        //             $this->logger->warn("!! not running not-implemented method: $method !");
+        //         }
+        //     } else {
+        //         // explicity disabled in configuration
+        //         $this->logger->debug("not running explicitly disabled action/method: $method()");
+        //     }
+        // }
         if ($user_event == self::OTHER) {
             $this->logger->debug(__METHOD__.
                 ":  it's the default user-action: other");
@@ -347,7 +322,15 @@ class ScheduleUpdateManager
         )
         );
         if ($event) {
-            $this->executeActions($request, self::CANCEL,['cancelled'=>[0,1]]);
+            $this->executeActions($request, self::CANCEL,['cancelled']);
+            // $actions = $this->getUserActions($request,self::CANCEL);
+            // $this->logger->debug(
+            //     sprintf('actions in %s at %d: %s', __METHOD__, __LINE__,
+            //     print_r($actions, true)
+            // ));
+            // [0] => in-court.spanish.delete-scheduled-event
+            // [1] => in-court.spanish.notify-assigned-interpreters
+
         }
     }
 

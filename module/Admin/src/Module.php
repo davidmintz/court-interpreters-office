@@ -139,7 +139,7 @@ class Module
             }
         );
 
-        // experimental?
+        // experimental.
         /** @var  InterpretersOffice\Service\ScheduleUpdateManager $scheduleManager */
         $scheduleManager = $container->get('InterpretersOffice\Admin\Service\ScheduleUpdateManager');
         $sharedEvents->attach(

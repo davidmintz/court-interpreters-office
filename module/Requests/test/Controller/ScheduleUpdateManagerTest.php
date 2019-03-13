@@ -153,7 +153,6 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
             ->setPost(new Parameters(['csrf'=>$csrf]));
         $this->dispatch('/requests/cancel/'.$request->getId());
         $data = $this->getResponse()->getBody();
-        //print($data);return;
         $response = json_decode($data);
         $this->assertEquals("success",$response->status);
 
