@@ -22,10 +22,12 @@ class ScheduleUpdateManagerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ScheduleUpdateManager(
+        $object = new ScheduleUpdateManager(
             $container->get('auth'),
-            $container->get('log'),
-            $container->get('config')
+            $container->get('config'),
+            $container->get('log')
         );
+
+        return $object->setViewRenderer($container->get('ViewRenderer'));
     }
 }

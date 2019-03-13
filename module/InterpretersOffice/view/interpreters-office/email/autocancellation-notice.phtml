@@ -1,0 +1,109 @@
+<?php
+/**
+ * view script for email sent to Interpreters Office when Spanish interpreter
+ * auto-cancel is triggered. this happens when they either (1) cancel outright
+ * or (2) reschedule a request across an am/pm boundary or (3) (rarely occuring)
+ * they  change the language from Spanish to something else. In any of these cases
+ * the Spanish interpreters are automatically cancelled but they are NOT
+ * automatically notified.
+ */
+
+/*
+{
+  "cancel": {
+    "in-court.spanish.delete-scheduled-event": true,
+    "in-court.spanish.notify-assigned-interpreters": false,
+    "out-of-court.spanish.delete-scheduled-event": true,
+    "out-of-court.spanish.notify-assigned-interpreters": true,
+    "out-of-court.non-spanish.delete-scheduled-event": true,
+    "out-of-court.non-spanish.notify-assigned-interpreters": true
+  },
+  "change-date": {
+    "all-events.all-languages.update-scheduled-event": true,
+    "all-events.all-languages.remove-interpreters": true,
+    "all-events.all-languages.notify-assigned-interpreters": true
+  },
+  "change-x-am-pm": {
+    "all-events.all-languages.update-scheduled-event": true,
+    "all-events.all-languages.notify-assigned-interpreters": true,
+    "all-events.all-languages.remove-interpreters": true
+  },
+  "change-within-am-pm": {
+    "in-court.spanish.update-scheduled-event": true,
+    "in-court.spanish.notify-assigned-interpreters": true,
+    "in-court.spanish.remove-interpreters": false,
+    "in-court.non-spanish.update-scheduled-event": true,
+    "in-court.non-spanish.notify-assigned-interpreters": true,
+    "in-court.non-spanish.remove-interpreters": false,
+    "out-of-court.spanish.update-scheduled-event": true,
+    "out-of-court.spanish.notify-assigned-interpreters": true,
+    "out-of-court.spanish.remove-interpreters": false,
+    "out-of-court.non-spanish.update-scheduled-event": true,
+    "out-of-court.non-spanish.notify-assigned-interpreters": true,
+    "out-of-court.non-spanish.remove-interpreters": false
+  },
+  "change-language": {
+    "all-events.all-languages.update-scheduled-event": true,
+    "all-events.all-languages.notify-assigned-interpreters": true,
+    "all-events.all-languages.remove-interpreters": true
+  },
+  "update-other-attributes": {
+    "all-events.all-languages.update-scheduled-event": true
+  }
+}
+ */
+if ($this->interpreters):
+    $plural =  count($this->interpreters) > 1;
+endif;
+$this->entity = [
+    'date' =>  $this->request->getDate(),
+    'time' =>  $this->request->getTime(),
+    'language' => (string)$this->request->getLanguage(),
+    'eventType' =>  (string)$this->request->getEventType(),
+    'location' =>  (string)$this->request->getLocation(),
+    'docket'  => $this->request->getDocket(),
+    'comments' => $this->request->getComments(),
+    'judge' =>  (string)$this->request->getJudge(),
+    'extraData' => $this->request->getExtraData(),
+    'defendants' => $this->request->getDefendants()->toArray(),
+];
+
+?>
+
+<p>
+This automated message is to inform you that user <?php echo "{$this->user->firstname} {$this->user->lastname}"?> has just
+<?php echo $this->user_event == 'cancel' ? "<strong>cancelled</strong>" : "modified" ?>
+the following request for interpreting services. As a result, the corresponding
+event on the schedule was automatically <?php echo $this->user_event == 'cancel' ? "deleted" : "updated" ?>.
+</p>
+<?php if ($this->interpreters):?>
+<p>Also, please note that the following <?php echo $plural ? 'interpreters were ':'interpreter was'  ?>
+    removed from the assignment, and automatic email-notification to interpreters in such cases is disabled.
+    Therefore, it's up to you
+    to contact  <?php echo $plural ? 'these interpreters':'this interpreters' ?> if you wish to do so:
+</p>
+<p style="padding-left:2em;">
+    <?php foreach ($this->interpreters as $i):
+        echo "{$i->getFirstName()} {$i->getLastname()} ",$this->escapeHtml('<'.$i->getEmail().'>'),'<br>';
+        ?>
+    <?php endforeach;?>
+</p>
+<?php endif;?>
+<table>
+    <tbody>
+
+    <?php foreach (array_keys($this->entity) as $field):
+        // need to figure out what to do with this...
+        if ($field == 'extraData') : continue; endif;
+        if ($field == 'eventType') : $label = 'event type';
+        else :
+            $label = $field;
+        endif;
+    ?>
+    <tr>
+        <td style="border-bottom:1px dotted gray"><?php echo $label ?></td>
+        <td style="border-bottom:1px dotted gray"><?php echo $this->diff($field)?></td>
+    </tr>
+<?php endforeach; ?>
+    </tbody>
+</table>
