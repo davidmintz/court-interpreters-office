@@ -31,7 +31,9 @@ class InterpreterEntityListenerFactory implements FactoryInterface
     {
         $listener = new InterpreterEntityListener();
         $listener->setLogger($container->get('log'));
-        if ($container->has(Vault::class)) {
+        $config = $container->get('config');
+        $vault_config = isset($config['vault']) ? $config['vault'] : ['enabled' => false];
+        if ($vault_config['enabled']) {
             $listener->setVaultService($container->get(Vault::class));
         }
         return $listener;

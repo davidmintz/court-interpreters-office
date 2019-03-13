@@ -22,6 +22,6 @@ $modules = [
     'Sandbox'
 ];
 if (! getenv('TRAVIS')) {
-    //$modules[] = 'SDNY\Vault';
+    $modules[] = 'SDNY\Vault';
 }
 return $modules;

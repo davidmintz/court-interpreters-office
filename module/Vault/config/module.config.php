@@ -12,7 +12,8 @@ return [
 // override this with your local configuration
 
     'vault' => [
-
+        // set to false in a local configuration to disable
+        'enabled' => true,
         // do not change this adapter
         'adapter'       => 'Zend\Http\Client\Adapter\Curl',
 
