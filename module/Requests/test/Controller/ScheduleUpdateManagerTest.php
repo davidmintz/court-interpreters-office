@@ -94,23 +94,18 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
     public function cleanup()
     {
         $em = FixtureManager::getEntityManager();
-        try {
+        $result = $em->createQuery(
+            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+            WHERE r.event IS NOT NULL'
+        )->getResult();
+        if (count($result)) {
 
-            $result = $em->createQuery(
-                'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
-                WHERE r.event IS NOT NULL'
-                )->getResult();
-                if (count($result)) {
-
-                    foreach ($result as $object) {
-                        $event = $object->getEvent();
-                        $em->remove($event);
-                        $em->remove($object);
-                    }
-                    $em->flush();
-                }
-        } catch (\Exception $e ) {
-            // shit sometimes gets into a weird state and this breaks.
+            foreach ($result as $object) {
+                $event = $object->getEvent();
+                $em->remove($event);
+                $em->remove($object);
+            }
+            $em->flush();
         }
 
     }
@@ -165,27 +160,6 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         $event = $this->getApplicationServiceLocator()->get("entity-manager")
             ->find('InterpretersOffice\Entity\Event',$event_id);
         $this->assertNull($event);
-
-    }
-
-    public function testSomeShit()
-    {
-        // $scheduleManager = $this->getMockBuilder('InterpretersOffice\Admin\Service\ScheduleUpdateManager')
-        // ->setMethods(['onUpdateRequest'])
-        // ->getMock();
-        // $scheduleManager->expects($this->once())->method('onUpdateRequest');
-        $this->login('john','gack!');
-        $this->reset(true);
-        // get our request id
-        $result = $this->em->createQuery("SELECT r FROM InterpretersOffice\Requests\Entity\Request r
-        JOIN r.submitter p JOIN InterpretersOffice\Entity\User u WITH u.person = p WHERE u.username = :username")
-        ->setParameters(['username'=>'john'])->getResult();
-        $this->assertTrue(count($result) == 1);
-        $request = $result[0];
-        // sanity-check
-        $event = $request->getEvent();
-        $this->assertInstanceOf('InterpretersOffice\Entity\Event', $event);
-        $event_id = $event->getId();
 
     }
 }
