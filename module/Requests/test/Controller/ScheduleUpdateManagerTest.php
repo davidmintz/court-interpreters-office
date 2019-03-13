@@ -19,11 +19,15 @@ use Zend\Stdlib\Parameters;
  */
 class ScheduleUpdateManagerTest extends AbstractControllerTest
 {
+
+
     public function setUp()
     {
         parent::setUp();
-        $this->cleanup();
         $container = $this->getApplicationServiceLocator();
+        $em = FixtureManager::getEntityManager();
+        $pdo = $em->getConnection();
+
         $eventManager = $container->get('SharedEventManager');
 
         $eventManager->attach(Listener\UpdateListener::class,'*',function($e) use ($container) {
@@ -36,16 +40,13 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
         });
         // $container = $this->getApplicationServiceLocator();
-        $em = FixtureManager::getEntityManager();//$container->get("entity-manager");
+        //$container->get("entity-manager");
         // $listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
         $entityListener = $container->get('InterpretersOffice\Requests\Entity\Listener\RequestEntityListener');
         $entityListener->setLogger($container->get('log'));
-        $auth = new \ApplicationTest\FakeAuth();
-        $entityListener->setAuth($auth);
         $resolver->register($entityListener);
         $update_listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
-        $update_listener->setAuth($auth);
         $resolver->register($update_listener);
         $fixtureExecutor = FixtureManager::getFixtureExecutor();
         $fixtureExecutor->execute(
@@ -91,15 +92,16 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
 
     }
-    public function cleanup()
+    private $em;
+
+    public function tearDown()
     {
-        $em = FixtureManager::getEntityManager();
+        $em = $this->em;//FixtureManager::getEntityManager();
         $result = $em->createQuery(
             'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
             WHERE r.event IS NOT NULL'
         )->getResult();
         if (count($result)) {
-
             foreach ($result as $object) {
                 $event = $object->getEvent();
                 $em->remove($event);
@@ -109,6 +111,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         }
 
     }
+
     public function testDataSetupSanity()
     {
 
