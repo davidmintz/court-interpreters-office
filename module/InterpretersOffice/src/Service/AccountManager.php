@@ -210,7 +210,7 @@ class AccountManager implements LoggerAwareInterface
     public function __construct(ObjectManager $objectManager, Array $config)
     {
         $this->objectManager = $objectManager;
-        $this->config = $config['mail'];
+        $this->config = $config;//['mail'];
     }
 
     /**
@@ -466,7 +466,8 @@ class AccountManager implements LoggerAwareInterface
             $html,
             'To read this message you need an email client that supports HTML'
         );
-        $message->setFrom($this->config['from_address'], $this->config['from_entity'])
+        $config = $this->config['mail'];
+        $message->setFrom($config['from_address'], $config['from_entity'])
             ->setTo($person->getEmail(), $person->getFullName())
             ->setSubject('Interpreters Office: reset your password');
         $this->getMailTransport()->send($message);
@@ -506,8 +507,8 @@ class AccountManager implements LoggerAwareInterface
         // for DEBUGGING
         file_put_contents('data/email-confirm-account.html', $this->viewRenderer->render($layout));
         // end DEBUGGING
-        $config = $this->config;
-        $message = $this->createEmailMessage($html, "To read this message you need a client that supports HTML email.");
+        $config = $this->config['mail'];
+        $message = $this->createEmailMessage($html);
         $person = $user->getPerson();
         $message->setFrom($config['from_address'], $config['from_entity'])
             ->setTo($person->getEmail(), $person->getFullName())
