@@ -310,7 +310,9 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     {
         $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
         $request = $em->createQuery(
-            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
+            "SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+            JOIN r.language l
+            WHERE l.name = 'Spanish' AND r.event IS NOT NULL")
             ->getOneOrNullResult();
         $this->assertTrue(is_object($request));
         $this->login('john_somebody@nysd.uscourts.gov','gack!');
@@ -371,7 +373,9 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         //$this->assertTrue(is_object($request));
         $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
         $request = $em->createQuery(
-            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
+            "SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+            JOIN r.language l
+            WHERE l.name = 'Spanish' AND r.event IS NOT NULL")
             ->getOneOrNullResult();
         $this->assertTrue(is_object($request));
         $this->login('john_somebody@nysd.uscourts.gov','gack!');
@@ -443,7 +447,9 @@ class RequestsWriteControllerTest extends AbstractControllerTest
 
         $em = $this->em; //getApplicationServiceLocator()->get('entity-manager');
         $request = $em->createQuery(
-            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r WHERE r.event IS NOT NULL')
+            "SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+            JOIN r.language l
+            WHERE l.name = 'Spanish' AND r.event IS NOT NULL")
             ->getOneOrNullResult();
         $this->assertTrue(is_object($request));
         $this->login('john_somebody@nysd.uscourts.gov','gack!');
@@ -463,5 +469,5 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $this->assertQueryContentContains("#time", '10:00 am');
 
     }
-    
+
 }
