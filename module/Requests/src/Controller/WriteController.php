@@ -289,6 +289,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
             $this->getEventManager()->trigger('updateRequest',$this,
                 ['request'=>$entity,'entity_manager'=>$this->objectManager]);
             $this->objectManager->flush();
+            $this->getEventManager()->trigger('postFlush',$this);
             $this->flashMessenger()->addSuccessMessage(
                 'This request for interpreting services has been updated successfully. Thank you.'
             );
@@ -328,6 +329,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
                     ['request'=>$entity,'entity_manager'=>$this->objectManager,
                     'description'=>$description]);
                 $this->objectManager->flush();
+                $this->getEventManager()->trigger('postFlush',$this);
                 $message = 'This request for interpreting services ';
                 if ($description) {
                     $message .= "($description) ";
