@@ -77,9 +77,10 @@ the following request for interpreting services. As a result, the corresponding
 event on the schedule was automatically <?php echo $this->user_event == 'cancel' ? "deleted" : "updated" ?>.
 </p>
 <?php if ($this->interpreters):?>
-<p>Also, please note that the following <?php echo $plural ? 'interpreters were ':'interpreter was'  ?> deleted,
-    and automatic email-notification to interpreters in such cases is disabled. Therefore, it's up to you
-    to contact  <?php echo $plural ? 'this interpreters':'these interpreters' ?> if you wish to do so:
+<p>Also, please note that the following <?php echo $plural ? 'interpreters were ':'interpreter was'  ?>
+    removed from the assignment, and automatic email-notification to interpreters in such cases is disabled.
+    Therefore, it's up to you
+    to contact  <?php echo $plural ? 'these interpreters':'this interpreters' ?> if you wish to do so:
 </p>
 <p style="padding-left:2em;">
     <?php foreach ($this->interpreters as $i):
@@ -89,53 +90,20 @@ event on the schedule was automatically <?php echo $this->user_event == 'cancel'
 </p>
 <?php endif;?>
 <table>
-    <?php foreach (array_keys($this->entity) as $field):?>
-    <tr style="border-bottom:1px dotted gray">
-        <td><?php echo $field?></td>
-        <td><?php echo $this->diff($field)?></td>
-    </tr>
-<?php endforeach ?>
-</table>
-<p>
-    user action is: <?php echo $this->user_event ?>. request is a <?php
-     echo gettype($this->request)
+    <tbody>
+
+    <?php foreach (array_keys($this->entity) as $field):
+        // need to figure out what to do with this...
+        if ($field == 'extraData') : continue; endif;
+        if ($field == 'eventType') : $label = 'event type';
+        else :
+            $label = $field;
+        endif;
     ?>
-    interpreters? <?php echo gettype($this->interpreters); if (is_array($this->interpreters)):
-        echo " ",count($this->interpreters);
-        $i = $this->interpreters[0];
-        ?>
-        <p><?php echo $i->getEmail() ?>
-        </p>
-        <?php
-    endif;?>
-</p>
-<!--
-<p>
-Please note that the following interpreter request has been <?php
-//echo $this->request_cancelled ? "cancelled" : "modified" ?> by
-<?php // echo $this->request->getModifiedBy()->getFullName() ?>.
-As a result, the corresponding event has been automatically
-<?php //echo $this->request_cancelled ? "deleted" : "updated accordingly" ?>
-and the interpreter<?php //echo $plural? 's have been' : ' has been' ?> <strong>removed</strong>.
-</p>
-<p>However, as of this writing, <strong>the interpreter<?php //echo $plural ? 's have' : ' has'?> yet to be notified of
-    this cancellation</strong> so that you have an opportunity to decide the appropriate action.
-</p>
--->
-<?php
-/*
-if ($this->request_cancelled): // a cancellation
-    echo $this->partial('partials/email/event-details.phtml',
-    [  'event'=>$this->event,
-      'interpreters_cancelled'=>$this->interpreters_cancelled ]
-    );
-else: // an update
-    echo $this->partial('requests/email/partials/request-details.diff.phtml',
-  [
-      'request'=>$this->request,
-      'changeSet'=>$this->changeSet,
-      'notificationService'=>$this->notificationService,
-  ]);
-endif
-*/
-?>
+    <tr>
+        <td style="border-bottom:1px dotted gray"><?php echo $label ?></td>
+        <td style="border-bottom:1px dotted gray"><?php echo $this->diff($field)?></td>
+    </tr>
+<?php endforeach; ?>
+    </tbody>
+</table>
