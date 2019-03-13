@@ -94,6 +94,8 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
     }
     private $em;
 
+    private $autocancellation_notice = './data/email-autocancellation.html';
+
     public function tearDown()
     {
         $em = $this->em;//FixtureManager::getEntityManager();
@@ -109,7 +111,9 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
             }
             $em->flush();
         }
-
+        if (file_exists($this->autocancellation_notice)) {
+            unlink($this->autocancellation_notice);
+        }
     }
 
     public function testDataSetupSanity()
@@ -136,8 +140,11 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         $this->reset(true);
         // get our request id
         $result = $this->em->createQuery("SELECT r FROM InterpretersOffice\Requests\Entity\Request r
-        JOIN r.submitter p JOIN InterpretersOffice\Entity\User u WITH u.person = p WHERE u.username = :username")
-        ->setParameters(['username'=>'john'])->getResult();
+        JOIN r.submitter p
+        JOIN r.language l
+        JOIN InterpretersOffice\Entity\User u
+        WITH u.person = p WHERE u.username = :username AND l.name = :language")
+        ->setParameters(['username'=>'john','language'=>"Spanish"])->getResult();
         $this->assertTrue(count($result) == 1);
         $request = $result[0];
         // sanity-check
@@ -163,6 +170,14 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         $event = $this->getApplicationServiceLocator()->get("entity-manager")
             ->find('InterpretersOffice\Entity\Event',$event_id);
         $this->assertNull($event);
+
+        // make sure an email was generated (body dumped for test purposes)
+        $this->assertTrue(file_exists($this->autocancellation_notice));
+
+    }
+
+    public function __testNonSpanishInterpretersAreNotifiedWhenAutomaticallyRemoved()
+    {
 
     }
 }
