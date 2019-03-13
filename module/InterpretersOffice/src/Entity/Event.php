@@ -278,9 +278,25 @@ class Event
     public function describe()
     {
         $type = (string)$this->getEventType();
-        $date = $this->getDate()->format('d-M-Y');
+        $datetime = $this->getDate()->format('d-M-Y');
+        if ($this->getTime()) {
+            $datetime .= ' at '.$this->getTime()->format('H:i a');
+        }
         $language = (string)$this->getLanguage();
-        return sprintf('%s %s on %s', $language, $type, $date);
+        $return = sprintf('%s %s, %s', $language, $type, $datetime);
+        $more = [];
+        if ($this->getJudge()) {
+            $more[] = $this->getJudge()->getLastName();
+        }
+        $docket = $this->getDocket();
+        if ($docket) {
+            $more[] = $docket;
+        }
+        if ($more) {
+            $return .= sprintf(' (%s)',implode(', ', $more));
+        }
+
+        return $return;
     }
 
     /**
@@ -927,7 +943,7 @@ class Event
         $this->interpreters = array_map(function($ie){
             return $ie->getInterpreter();
         },$ie_collection->toArray());
-        
+
         return $this->interpreters;
 
     }
