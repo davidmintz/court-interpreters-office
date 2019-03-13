@@ -43,15 +43,12 @@ class Module
      */
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
-
-
         $container = $event->getApplication()->getServiceManager();
 
-        /**
-         * TEMPORARY debug
-         *
+        /*
+         * for TEMPORARY debugging
          */
-
+         // ===============
          // $path = 'data/log/sql.log';
          // $fp = fopen($path,'w');
          // ftruncate($fp,0);
@@ -62,14 +59,12 @@ class Module
          // $em = $container->get('entity-manager');
          // $em->getConfiguration()->setSQLLogger($sql_logger);
          //==============
-
-
-        // $view = $container->get('ViewRenderer'); var_dump(get_class($view));
         // set the "breadcrumbs" navigation view-helper separator
         // unless there's a better way to make sure this gets done globally...
         $navigation = $container->get('ViewHelperManager')->get("navigation");
         $navigation->setDefaultAcl($container->get('acl'));
         $navigation->findHelper('breadcrumbs')->setSeparator(' | ');
+
         // workaround for phpunit and php7.2 which is less tolerant than earlier
         // php versions and throws "ini_set(): Headers already sent. You cannot
         // change the session module's ini settings at this time"
@@ -110,8 +105,7 @@ class Module
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
         $sharedEvents->attach(
-            '*',
-            'error',
+            '*','error',
             function ($event) use ($log) {
                 if ($event->getParam('exception')) {
                     $exception = $event->getParam('exception');
@@ -139,20 +133,27 @@ class Module
             }
         );
 
-        // experimental.
+        // experimental. maybe we should move this to the ScheduleUpdateManagerFactory
         /** @var  InterpretersOffice\Service\ScheduleUpdateManager $scheduleManager */
         $scheduleManager = $container->get('InterpretersOffice\Admin\Service\ScheduleUpdateManager');
         $sharedEvents->attach(
-            // maybe narrow down the "*" to something specific?
-            '*',
-            'loadRequest',
+            // maybe narrow down the "*" to something more specific?
+            '*', 'loadRequest',
             function($e) use ($log,$scheduleManager) {
                 $params = $e->getParams();
                 // $args = $params['args'];
                 $entity = $params['entity'];
-                $log->debug("setting previous state in loadRequest event-listener, ".gettype($entity) . " is type of our entity");
+                $log->debug("setting previous state in loadRequest event-listener,
+                 ".gettype($entity) . " is type of our entity");
                 $scheduleManager->setPreviousState($entity);
             }
+        );
+        // the Request write-controller triggers this following flush. This is
+        // designed to avoid the possibility of sending emails that say some
+        // database updates were run when, in the event of an Exception, they
+        // really weren't.
+        $sharedEvents->attach(
+            '*','postFlush',[$scheduleManager,'dispatchEmail']
         );
     }
 
