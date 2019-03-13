@@ -12,6 +12,7 @@ use Zend\View\Model\ViewModel;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\EntityManagerInterface;
 
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
@@ -93,8 +94,9 @@ class ScheduleUpdateManager
     private $interpreters = [];
 
     /**
-     * [private description]
-     * @var [type]
+     * entity manager
+     *
+     * @var \Doctrine\ORM\EntityManagerInterface
      */
     private $objectManager;
 
@@ -110,6 +112,16 @@ class ScheduleUpdateManager
      * @var Renderer
      */
     private $viewRenderer;
+
+    /**
+     * Container for email messages.
+     *
+     * Email messages are kept here until the database transaction
+     * completes successfully.
+     *
+     * @var array
+     */
+    private $email_messages = [];
 
     /**
      * constructor
@@ -212,7 +224,7 @@ class ScheduleUpdateManager
                 $this->logger->debug("not running explicitly disabled action/method: $method()");
                 if ('notify-assigned-interpreters' == $action) {
                     $event = $request->getEvent();
-                    $interpreters = $this->interpreters ?: $request->getEvent()->getInterpreters();
+                    $interpreters = $this->interpreters ?: $event->getInterpreters();
                     $this->logger->debug("we need to send a heads-up to interpreters office");
                     $user = $this->auth->getIdentity();
                     $view = new ViewModel(compact('request','user_event',
@@ -225,11 +237,36 @@ class ScheduleUpdateManager
                     $output = $this->viewRenderer->render($layout);
                     // debug
                     file_put_contents('data/email-autocancellation.html',$output);
+                    $message = $this->createEmailMessage($output);
+                    $contact = $this->config['site']['contact'];
+
+                    $message->setTo($contact['email'],$contact['organization_name'])
+                        ->setFrom($contact['email'],$contact['organization_name'])
+                        ->setSubject($event->describe());
+                    $this->email_messages[] = $message;
                 }
             }
         }
 
         return $this;
+    }
+
+    public function dispatchEmail(EventInterface $e)
+    {
+        $this->logger->debug("we need to DISPATCH emails if applicable");
+        if ($this->email_messages) {
+            try {
+                $transport = $this->getMailTransport();
+                foreach ($this->email_messages as $message) {
+                    $transport->send($message);
+                }
+            } catch (\Exception $e) {
+                $this->logger->err(
+                    "! ScheduleUpdateManager exception while sending email: ".$e->getMessage()
+                );
+                throw $e;
+            }
+        }
     }
 
     /**
