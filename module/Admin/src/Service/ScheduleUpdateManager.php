@@ -283,12 +283,6 @@ class ScheduleUpdateManager
         );
         $request = $e->getParam('request');
         $event = $request->getEvent();
-        if (! $event) {
-            $this->logger->debug(
-                __FUNCTION__.": request apparently NOT scheduled, no corresponding event"
-            );
-            return;
-        }
         $em =  $e->getParam('entity_manager');
         $this->objectManager = $em;
         $previous = $this->previous_state;
@@ -306,6 +300,12 @@ class ScheduleUpdateManager
             //'what was modified: '.implode(', ',array_keys($updates))
             'updates: '.print_r($updates,true)
         );
+        if (! $event) {
+            $this->logger->debug(
+                __FUNCTION__.": request apparently NOT scheduled, no corresponding event"
+            );
+            return;
+        }
         $user_event = $this->getUserEvent($updates);
         $this->user_event = $user_event;
         $this->logger->debug(
