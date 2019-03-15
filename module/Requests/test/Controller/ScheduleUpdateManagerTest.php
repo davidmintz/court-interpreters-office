@@ -14,6 +14,8 @@ use ApplicationTest\DataFixture;
 use Zend\Dom;
 use Zend\Stdlib\Parameters;
 
+use InterpretersOffice\Entity as IOEntity;
+
 /**
  * tests for ScheduleUpdateManager
  */
@@ -159,6 +161,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         $result = $dom->execute('#requests-table');
         $table = $result->current();
         $csrf = $table->getAttribute('data-csrf');
+        $this->assertFalse(file_exists($this->autocancellation_notice));
         $this->getRequest()->setMethod('POST')
             ->setPost(new Parameters(['csrf'=>$csrf]));
         $this->dispatch('/requests/cancel/'.$request->getId());
@@ -176,8 +179,66 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
     }
 
-    public function __testNonSpanishInterpretersAreNotifiedWhenAutomaticallyRemoved()
+    public function testNonSpanishInterpretersAreNotifiedWhenAutomaticallyRemoved()
     {
+        $result = $this->em->createQuery("SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+        JOIN r.submitter p
+        JOIN r.language l
+        JOIN InterpretersOffice\Entity\User u
+        WITH u.person = p WHERE u.username = :username AND l.name = :language")
+        ->setParameters(['username'=>'john','language'=>"Russian"])->getResult();
+
+        $this->assertTrue(is_object($result[0]));
+        $request = $result[0];
+        // check our data setup
+        $event = $request->getEvent();
+        // sanity check
+        $this->assertInstanceOf(IOEntity\Event::class,$event);
+        $interpreters  = $event->getInterpreters();
+        $this->assertTrue(count($interpreters) != 0);
+        $russian_interpreter = $interpreters[0];
+        $languages = $russian_interpreter->getLanguages();
+        $this->assertEquals('Russian',(string)$languages[0]);
+
+        $this->login('john','gack!');
+        $this->reset(true);
+        $id = $request->getId();
+        $url = '/requests/update/'.$id;
+        $csrf = $this->getCsrfToken($url);
+        $new_date = new \DateTime(
+            sprintf("%s + 1 weeks",$request->getDate()->format('Y-m-d'))
+        );
+        $post = [
+            'csrf' => $csrf,
+            'request' => [
+                'date' => $new_date->format('m/d/Y'),
+                'time' => $request->getTime()->format('g:i a'),
+                'judge' => $request->getJudge()->getId(),
+                'language' => $request->getLanguage()->getId(),
+                'docket' => $request->getDocket(),
+                'eventType' => $request->getEventType()->getId(),
+                'defendants' => [
+                     $request->getDefendants()[0]->getId()
+                ],
+                'comments' => $request->getComments(),
+                'id' => $request->getId(),
+            ],
+        ];
+        $this->reset(true);
+        $this->getRequest()->setMethod('POST')
+            ->setPost(new Parameters($post));
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertResponseHeaderRegex('content-type','|application/json|');
+        //$this->dumpResponse();
+        $response = json_decode($this->getResponse()->getBody());
+        $this->assertEquals("success",$response->status);
+
+        // printf("\n\$interpreters is a: %s\n",gettype($interpreters));
+        // printf("\n\$interpreters has count: %s\n",count($interpreters));
+        // printf("\n\$event language: %s\n",$event->getLanguage());
+        // printf("\ninterpreter is: %s\n",$interpreters[0]->getFullname());
+        // printf("\nrequest comments are: %s\n",$request->getComments());
 
     }
 }

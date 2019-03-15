@@ -88,22 +88,7 @@ event on the schedule was automatically <?php echo $this->user_event == 'cancel'
         ?>
     <?php endforeach;?>
 </p>
-<?php endif;?>
-<table>
-    <tbody>
+<?php endif;
 
-    <?php foreach (array_keys($this->entity) as $field):
-        // need to figure out what to do with this...
-        if ($field == 'extraData') : continue; endif;
-        if ($field == 'eventType') : $label = 'event type';
-        else :
-            $label = $field;
-        endif;
-    ?>
-    <tr>
-        <td style="border-bottom:1px dotted gray"><?php echo $label ?></td>
-        <td style="border-bottom:1px dotted gray"><?php echo $this->diff($field)?></td>
-    </tr>
-<?php endforeach; ?>
-    </tbody>
-</table>
+echo $this->partial('interpreters-office/email/partials/event-details.phtml',['entity'=>$this->entity]);
+?>
