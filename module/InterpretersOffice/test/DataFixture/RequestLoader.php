@@ -53,7 +53,7 @@ class RequestLoader implements FixtureInterface
             ->setLanguage($language)
             ->setEventType($eventType)
             ->setDocket('2016-CR-0123')
-            ->setComments($comments)
+            ->setComments('created by RequestLoader')
             ->setSubmitter($user->getPerson())
             ->setModified($then)
             ->setCreated($then)
@@ -93,7 +93,7 @@ class RequestLoader implements FixtureInterface
         ->setLanguage($russian)
         ->setEventType($eventType)
         ->setDocket('2018-CR-0321')
-        ->setComments($comments)
+        ->setComments('this is a Russian request created by data loader')
         ->setSubmitter($user->getPerson())
         ->setModified($then)
         ->setCreated($then)
@@ -112,7 +112,15 @@ class RequestLoader implements FixtureInterface
             ->setSubmissionDate($request->getCreated())
             ->setSubmissionTime($request->getCreated())
             ->setSubmitter($user->getPerson());
+        $russian_interpreter = $objectManager->getRepository('InterpretersOffice\Entity\Interpreter')
+            ->findOneBy(['email'=>'russian_interpreter@example.com']);
         $russian_request->setEvent($russian_event)->setPending(false);
+        //$russian_event->addInterpreterEvents([$russian_interpreter);
+        $collection = new ArrayCollection([
+            (new \InterpretersOffice\Entity\InterpreterEvent($russian_interpreter, $russian_event))
+                ->setCreatedBy($admin),
+        ]);
+        $russian_event->addInterpreterEvents($collection);
         $objectManager->persist($russian_event);
         $objectManager->persist($russian_request);
 

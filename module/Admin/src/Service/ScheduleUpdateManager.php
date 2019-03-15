@@ -213,6 +213,10 @@ class ScheduleUpdateManager
             $action = substr($string, $i);
             $method = lcfirst($filter->filter($action));
             if ($config[$user_event][$string]) {
+                // order of execution might not be guaranteed, so we need to
+                // watch and take note if "remove-interpreters" is required
+                // before running notify-interpreters
+                $this->logger->debug(__FUNCTION__.":  we are examining: $action");
                 if (method_exists($this, $method)) {
                     $this->logger->debug("we now need to call: $method()");
                     $this->$method($request, $updates);
