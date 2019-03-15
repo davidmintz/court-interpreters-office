@@ -276,6 +276,20 @@ class Interpreter extends Person
     }
 
     /**
+     * returns array of Language objects for this Interpreter
+     * @return Language[]
+     */
+    public function getLanguages()
+    {
+        $return = [];
+        foreach ($this->interpreterLanguages as $ie) {
+            $return[] = $ie->getLanguage();
+        }
+        
+        return $return;
+    }
+
+    /**
      * shortcut for addInterpreterLanguage().
      *
      * @param Language $language
