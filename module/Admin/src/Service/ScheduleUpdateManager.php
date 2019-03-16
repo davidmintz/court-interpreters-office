@@ -337,7 +337,7 @@ class ScheduleUpdateManager
 
             return $this->updateScheduledEvent($request,$updates);
         }
-        $this->executeActions($request, $user_event,$updates);
+        $this->executeActions($request, $user_event, $updates);
 
         if ($user_event == self::OTHER) {
             $this->logger->debug(__METHOD__.
@@ -532,21 +532,33 @@ class ScheduleUpdateManager
         if (! $count) {
             return $this;
         }
-        /* we need to map the action to the template
+        /* we need to determine the email template based on the action.
            if $this->remove_interpreters == true, tell them the event was cancelled.
            for the details, use the Request entity's previous_state
         */
-        $subject = '';
+        $data = $this->previous_state;
+        $subject = sprintf('%s interpreting assignment has been ',
+            $data['language']);
         if ($this->remove_interpreters) {
             $template = 'interpreters-office/email/interpreter-cancellation-notice';
-            //$subject
+            $subject .= 'cancelled';
         } else {
             $template = 'interpreters-office/email/event-update-notice';
+            $subject .= 'modified';
         }
-        $view = (new ViewModel())->setTemplate($template);
-        $view->setVariables([
-            'entity' => $this->previous_state,
-        ]);
+        $subject .= sprintf(
+            ' (%s, %s %s',
+                $data['eventType'],
+                $data['date']->format('D d-M-Y'),
+                $data['time']->format('g:i a')
+        );
+        if ($data['docket']) {
+            $subject .= ", {$data['docket']}";
+        }
+        $subject .= ')';
+        $view = (new ViewModel())
+            ->setTemplate($template)
+            ->setVariables(['entity' => $data,]);
 
         foreach ($interpreters as $i) {
             $view->interpreter = $i;
