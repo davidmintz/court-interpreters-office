@@ -337,33 +337,32 @@ class InterpreterFieldset extends PersonFieldset
 
                 // this is bullshit
 
-                 // [
-                 //    'name' => 'Callback',
-                 //    'options' => [
-                 //        'callback' => function ($value, $context) use ($certifiable) {
-                 //            $languages_submitted = $context['interpreterLanguages'];
-                 //            foreach ($languages_submitted as $language) {
-                 //                $id = $language['language'];
-                 //               // should never happen unless they are messing with us
-                 //                if (! isset($language['federalCertification'])) {
-                 //                    return false;
-                 //                }
-                 //                $submitted_cert =
-                 //                        in_array($language['federalCertification'], [0,1]) ?
-                 //                       (bool) $language['federalCertification'] : null;
-                 //                $cert_required = (bool) $certifiable[$id]['data-certifiable'];
-                 //                if ($cert_required && ! is_bool($submitted_cert)) {
-                 //                    return false;
-                 //                }
-                 //            }
-                 //
-                 //            return true;
-                 //        },
-                 //        'messages' => [
-                 //            \Zend\Validator\Callback::INVALID_VALUE => 'yes/no required for federal certification',
-                 //        ],
-                 //    ],
-                 // ],
+                 [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callback' => function ($value, $context) use ($certifiable) {
+                            $languages_submitted = $context['interpreterLanguages'];
+                            foreach ($languages_submitted as $language) {
+                                $id = $language['language'];
+                                if (! $language['languageCredential']) {
+                                    return false;
+                                }
+                                // $submitted_cert =
+                                //         in_array($language['federalCertification'], [0,1]) ?
+                                //        (bool) $language['federalCertification'] : null;
+                                // $cert_required = (bool) $certifiable[$id]['data-certifiable'];
+                                // if ($cert_required && ! is_bool($submitted_cert)) {
+                                //     return false;
+                                // }
+                            }
+
+                            return true;
+                        },
+                        'messages' => [
+                            \Zend\Validator\Callback::INVALID_VALUE => 'language credential is required',
+                        ],
+                    ],
+                 ],
 
             ],
         ];
