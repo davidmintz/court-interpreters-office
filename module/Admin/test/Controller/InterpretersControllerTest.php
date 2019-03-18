@@ -74,7 +74,7 @@ class InterpretersControllerTest extends AbstractControllerTest
                 'interpreterLanguages' => [
                     [
                         'language' => $russian->getId(),
-                        'federalCertification' => '-1',
+                        'languageCredential' => 2,
                     ],
                 ],
             ],
