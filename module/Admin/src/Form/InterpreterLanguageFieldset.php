@@ -67,7 +67,18 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
         $spec = [
             'languageCredential' => [
                 'required' => true,
-                'allow_empty' => true,
+                'allow_empty' => false,
+                // no this does not appear to work
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'shit is required',
+                            ],
+                        ],
+                    ],
+                ],
                 /*'filters' => [
                     [   // this callback runs twice per validator unless it
                         // returns null, in which case validator callback
@@ -93,7 +104,8 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                 ],*/
                 /** @todo two callback validators w/ different error msg
                  * for each case: certified or non-certified language*/
-                'validators' => [
+                //'validators' => [
+
                     // [
                     //     'name' => 'Callback',
                     //     'options' => [
@@ -121,7 +133,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                     //         ],
                     //     ],
                     // ],
-                ]
+            //    ]
             ]
         ];
 

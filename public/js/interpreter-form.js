@@ -103,6 +103,13 @@ $(function(){
         divs.slideUp(function(){divs.remove();});
     });
 
+    $("form").on("change",".language-credential select",function(e){
+        var value = $(this).val();
+        if (value) {
+            $(this).siblings(".validation-error:contains('required')").slideUp();
+        }
+    })
+
     // try to prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
     $('#login-modal').on("show.bs.modal",function(){
@@ -153,9 +160,9 @@ $(function(){
                     if (response.validation_errors.interpreterLanguages) {
                         $.each(response.validation_errors.interpreterLanguages,
                             function(i,error){
-                                $('div.language-certification select').not(":disabled")
-                                .children('option:selected[value="-1"]')
-                                .closest("div.language-certification")
+                                $('div.language-credential select').not(":disabled")
+                                .children('option:selected[value=""]')
+                                .closest("div.language-credential")
                                 .children(".validation-error")
                                 .text(error).show();
                                 return false;

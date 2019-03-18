@@ -117,7 +117,7 @@ TEMPLATE;
             $hidden_element->setValue($language_id);
             $language_markup = $this->view->formElement($hidden_element);
             $language_markup .= $label;
-            $credential->setAttribute('id', "language-certification-$language_id");
+            $credential->setAttribute('id', "language-credential-$language_id");
             // if (! $certifiable) {
             //     //echo "adding hidden for $label...";
             //     //$credential->setValue('-1')->setAttribute ("disabled","disabled");
@@ -170,26 +170,12 @@ TEMPLATE;
             ['value_options' => [''=>' ']+$params['credential_options'],
                     'attributes' => [
                         'class' => 'form-control',
-                        'id'    => "fed-certification-$language_id",
+                        'id'    => "language-credential-$language_id",
                     ]
             ]
         );
         $credential_element->setAttributes(['class' => 'form-control']);
         $credential_markup = $this->view->formSelect($credential_element);
-
-        // if (! $language->isFederallyCertified()) {
-        //     // disable element, append a hidden
-        //     $credential_element->setAttribute('disabled', 'disabled');
-        //     $name = "interpreter[interpreterLanguages][$i][federalCertification]";
-        //     $credential_markup .= sprintf(
-        //         '<input type="hidden" name="%s" value="-1">',
-        //         $name
-        //     );
-        // } else {
-        //     $credential_element
-        //             ->setValueOptions([-1 => '',1 => 'yes', 0 => 'no'])->setValue("-1");
-        //     $credential_markup = $this->view->formSelect($credential_element);
-        // }
         $errors = sprintf($this->error_template, 'none', '');
         return sprintf(
             $this->template,
