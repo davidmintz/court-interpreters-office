@@ -320,7 +320,9 @@ class InterpretersWriteController extends AbstractActionController
             return $this->getResponse()->setContent("<br>WTF??");
         }
         $helper = $this->getLanguageCollectionHelper();
-        $content = $helper->fromArray(compact('language', 'index'));
+        $credential_options = $this->entityManager->getRepository(Entity\Language::class)
+            ->getCredentialOptions();
+        $content = $helper->fromArray(compact('language', 'index','credential_options'));
 
         return $this->getResponse()->setContent($content);
     }
