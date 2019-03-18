@@ -221,8 +221,6 @@ class PersonFieldset extends Fieldset implements
         foreach ($this->elements as $element) {
             $this->add($element);
         }
-        //$exclude = isset($options['anonymous_hats']) ? $options['anonymous_hats']
-        //    : [];
         $this->addHatElement();
     }
 
