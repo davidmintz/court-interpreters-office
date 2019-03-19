@@ -6,6 +6,7 @@
             <directory>./module/Admin/test</directory>
             <exclude>./module/InterpretersOffice/test/AbstractControllerTest.php</exclude>
             <exclude>./module/InterpretersOffice/test/Controller/AccountControllerTest.php</exclude>
+            <exclude>./module/InterpretersOffice/test/ExampleProphecyTest.php</exclude>
             <exclude>./module/Admin/test/WebDriver/</exclude>
 			<exclude>./module/InterpretersOffice/test/codecept/</exclude>
         </testsuite>
