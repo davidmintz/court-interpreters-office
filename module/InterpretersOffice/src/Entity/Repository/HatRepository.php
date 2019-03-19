@@ -38,7 +38,6 @@ class HatRepository extends EntityRepository
     {
         // this returns "AUSA", "defense attorney", etc as well as
         // the usually-anonymous "Magistrate" and "Pretrial" unless
-        // they are in the $exclude array
         $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h '
            .' WHERE h.name NOT LIKE \'%court interpreter%\' AND h.name <> \'Judge\''
            .' AND h.role IS NULL AND h.anonymity <> 1';
@@ -74,7 +73,7 @@ class HatRepository extends EntityRepository
         if (! in_array($action, ['create','update'])) {
             throw new \DomainException('invalid action parameter');
         }
-        $dql = 'SELECT h FROM InterpretersOffice\Entity\Hat h JOIN h.role r ';
+        $dql = 'SELECT h, r FROM InterpretersOffice\Entity\Hat h JOIN h.role r ';
         switch ($auth_user_role) {
             case 'anonymous': // e.g., user registration
             case 'submitter':
