@@ -241,4 +241,57 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         // printf("\nrequest comments are: %s\n",$request->getComments());
 
     }
+
+    public function testChangeTimeWithinAmPmBoundary()
+    {
+        $result = $this->em->createQuery("SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+        JOIN r.submitter p
+        JOIN r.language l
+        JOIN InterpretersOffice\Entity\User u
+        WITH u.person = p WHERE u.username = :username AND l.name = :language")
+        ->setParameters(['username'=>'john','language'=>"Spanish"])->getResult();
+
+        $this->assertTrue(is_object($result[0]));
+        $request = $result[0];
+        // check our data setup
+        $event = $request->getEvent();
+        // sanity check
+        $this->assertInstanceOf(IOEntity\Event::class,$event);
+        $interpreters  = $event->getInterpreters();
+        $this->assertTrue(count($interpreters) != 0);
+        $russian_interpreter = $interpreters[0];
+        $languages = $russian_interpreter->getLanguages();
+        $this->assertEquals('Spanish',(string)$languages[0]);
+
+        $this->login('john','gack!');
+        $this->reset(true);
+        $id = $request->getId();
+        $url = '/requests/update/'.$id;
+        $csrf = $this->getCsrfToken($url);
+        $new_time = new \DateTime(
+            sprintf("%s + 1 hours",$request->getTime()->format('g:i a'))
+        );
+        $post = [
+            'csrf' => $csrf,
+            'request' => [
+                'date' => $request->getDate()->format('m/d/Y'),
+                'time' => $new_time->format('g:i a'),
+                'judge' => $request->getJudge()->getId(),
+                'language' => $request->getLanguage()->getId(),
+                'docket' => $request->getDocket(),
+                'eventType' => $request->getEventType()->getId(),
+                'defendants' => [
+                     $request->getDefendants()[0]->getId()
+                ],
+                'comments' => 'just updated comments in '.__FUNCTION__,
+                'id' => $request->getId(),
+            ],
+        ];
+        $this->reset(true);
+        $this->getRequest()->setMethod('POST')
+            ->setPost(new Parameters($post));
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $this->assertResponseHeaderRegex('content-type','|application/json|');
+    }
 }

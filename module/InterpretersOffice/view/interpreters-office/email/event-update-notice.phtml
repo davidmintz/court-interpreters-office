@@ -3,22 +3,37 @@
  *
  * view script for sending email when a request is updated.
  *
- * TO BE CONTINUED
- *
- * 
- *
- *
- *
  */
-?>
-<p><!-- <?php echo basename(__FILE__);?> -->
 
+if (is_object($this->entity)) {
+    $data = $this->entity = [
+        'date' =>  $this->entity->getDate(),
+        'time' =>  $this->entity->getTime(),
+        'language' => (string)$this->entity->getLanguage(),
+        'eventType' =>  (string)$this->entity->getEventType(),
+        'location' =>  (string)$this->entity->getLocation(),
+        'docket'  => $this->entity->getDocket(),
+        //'comments' => $this->entity->getComments(),
+        'judge' =>  (string)$this->entity->getJudge(),
+        'extraData' => $this->entity instanceof InterpretersOffice\Requests\Entity\Request ? $this->entity->getExtraData(): null,
+        'defendants' => $this->entity->getDefendants()->toArray(),
+    ];
+    $this->entity = $data;
+    //
+    // if (key_exists('comments',$this->before)) {
+    //     unset($this->before['comments']);
+    // }
+}?>
+
+<p>Dear <?=$this->interpreter->getFullname()?>:</p>
+
+<p>This automated message is to advise you that the following event to which you
+    are assigned as interpreter has been modified, as show below.
 </p>
 <?php
-// echo $this->partial('requests/email/partials/request-details.diff.phtml',
-//   [   'request'=>$this->request,
-//       'interpreters_cancelled' => $this->interpreters_cancelled,
-//       'changeSet'=>$this->changeSet,
-//       'notificationService'=>$this->notificationService,
-//       $this->interpreters_cancelled
-// ]);
+echo $this->partial('interpreters-office/email/partials/event-diff.phtml',
+    ['entity'=>$this->entity, 'before' => $this->before, 'with_comments'=>false]);
+?>
+<p style="margin-top:1em">
+If you have any questions, please contact the Interpreters promptly.
+</p>

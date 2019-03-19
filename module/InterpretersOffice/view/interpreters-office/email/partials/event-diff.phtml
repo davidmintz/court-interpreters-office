@@ -1,3 +1,23 @@
 <?php
 
 /** partial for displaying event-diff in an email */
+?>
+<table>
+    <tbody>
+
+    <?php foreach (array_keys($this->entity) as $field):
+        // need to figure out what to do with this...
+        if ($field == 'extraData') : continue; endif;
+        if ($field == 'comments' && !$this->with_comments) : continue; endif;
+        if ($field == 'eventType') : $label = 'event type';
+        else :
+            $label = $field;
+        endif;
+    ?>
+    <tr>
+        <td style="border-bottom:1px dotted gray"><?php echo $label ?></td>
+        <td style="border-bottom:1px dotted gray"><?php echo $this->diff($field)?></td>
+    </tr>
+<?php endforeach; ?>
+    </tbody>
+</table>
