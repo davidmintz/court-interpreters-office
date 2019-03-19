@@ -56,28 +56,19 @@ class InterpreterFieldset extends PersonFieldset
         parent::__construct($objectManager, $options);
 
         $this->options = $options;
-        ///*
-        // this is making a comeback
-        //
         $this->add([
             'type' => Element\Collection::class,
             'name' => 'interpreterLanguages',
             'options' => [
                 'label' => 'working languages',
-                // 'count' => 2,
-                // 'should_create_template' => false,
-                //'allow_add' => true,
-                //'allow_remove' => true,
                 'target_element' => new InterpreterLanguageFieldset($objectManager),
             ],
         ]);
-        //*/
         $this->add(
 
             new \InterpretersOffice\Form\Element\LanguageSelect(
                 'language-select',
                 [
-                    //'objectManager' => $objectManager,
                     'type' => 'InterpretersOffice\Form\Element\LanguageSelect',
                     'name' => 'language-select','objectManager' => $objectManager,
                     'options' => [
@@ -85,7 +76,6 @@ class InterpreterFieldset extends PersonFieldset
                         'option_attributes' =>
                             ['data-certifiable' =>
                                 function (Entity\Language $language) {
-                                    //echo "W T F ?????  ...";
                                     return $language->isFederallyCertified() ? 1 : 0;
                                 }
                              ],
@@ -100,17 +90,13 @@ class InterpreterFieldset extends PersonFieldset
         $this->add(
             [
              'name' => 'fingerprintDate',
-            //'type' => 'text',
             'type' => 'Zend\Form\Element\Text',
             'attributes' => [
-                //'required' => 'required',
-                //'size' => 15,
                 'id' => 'fingerprint_date',
                 'class' => 'date form-control',
             ],
              'options' => [
                 'label' => 'fingerprinted on',
-                //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
             ]
@@ -120,18 +106,14 @@ class InterpreterFieldset extends PersonFieldset
         $this->add(
             [
              'name' => 'securityClearanceDate',
-            //'type' => 'text',
             'type' => 'Zend\Form\Element\Text',
             'attributes' => [
-                //'required' => 'required',
-                //'size' => 15,
                 'id' => 'security_clearance_date',
                 'class' => 'date form-control',
                  'placeholder' => 'date clearance was received',
             ],
              'options' => [
                 'label' => 'security clearance date',
-                //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
             ]
@@ -140,17 +122,13 @@ class InterpreterFieldset extends PersonFieldset
         $this->add(
             [
              'name' => 'contractExpirationDate',
-            //'type' => 'text',
             'type' => 'Zend\Form\Element\Text',
             'attributes' => [
-                //'required' => 'required',
-                //'size' => 15,
                 'id' => 'contract_expiration_date',
                 'class' => 'date form-control',
             ],
              'options' => [
                 'label' => 'contract expires',
-                //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
             ]
@@ -158,18 +136,14 @@ class InterpreterFieldset extends PersonFieldset
         // date oath taken
         $this->add(
             [
-             'name' => 'oathDate',
-            //'type' => 'text',
+            'name' => 'oathDate',
             'type' => 'Zend\Form\Element\Text',
             'attributes' => [
-                //'required' => 'required',
-                //'size' => 15,
                 'id' => 'oath_date',
                 'class' => 'date form-control',
             ],
              'options' => [
                 'label' => 'oath taken',
-                //'format' => 'm/d/Y',
                 'format' => 'Y-m-d',
              ],
             ]
@@ -316,9 +290,6 @@ class InterpreterFieldset extends PersonFieldset
         $spec = parent::getInputFilterSpecification();
         $language_options = $this->get('language-select')->getValueOptions();
 
-        // require users to provide yes|no for federal-certified language
-        // which we already know from the language select > option elements'
-        // 'certifiable' attribute
         $certifiable = array_column($language_options, 'attributes', 'value');
         $spec['interpreterLanguages'] = [
 
@@ -334,9 +305,7 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                     'break_chain_on_failure' => true,
                  ],
-
                 // this is bullshit
-
                  [
                     'name' => 'Callback',
                     'options' => [

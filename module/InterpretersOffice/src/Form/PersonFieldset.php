@@ -212,7 +212,7 @@ class PersonFieldset extends Fieldset implements
         if (isset($options['existing_person'])) {
             $this->person = $options['existing_person'];
         }
-        //printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
+        
         $use_as_base_fieldset = isset($options['use_as_base_fieldset']) ? $options['use_as_base_fieldset'] : true;
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
