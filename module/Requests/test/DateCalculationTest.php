@@ -28,7 +28,7 @@ class DateCalculationTest extends TestCase
          ['date'=> 'Sun 2019-02-10 2:34 pm','expected'=> 'Wed 2019-02-13 12:00 am'],
     ];
 
-    public function testTwoBusinessDaysAfter()
+    public function testComputeTwoBusinessDaysAfter()
     {
         $shits = $this->shits;
 
@@ -44,7 +44,7 @@ class DateCalculationTest extends TestCase
         }
     }
 
-    public function testTwoBusinessDaysBefore()
+    public function testComputeTwoBusinessDaysBefore()
     {
 
         $reverse = [];
@@ -63,7 +63,7 @@ class DateCalculationTest extends TestCase
                 $result->format('D Y-m-d g:i a'),
                 'failed getting two days before '.$shit['date']
             );
-            
+
         }
     }
 }
