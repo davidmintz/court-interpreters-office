@@ -54,7 +54,6 @@ class InterpreterFieldset extends PersonFieldset
     public function __construct(ObjectManager $objectManager, $options = [])
     {
         parent::__construct($objectManager, $options);
-
         $this->options = $options;
         $this->add([
             'type' => Element\Collection::class,
@@ -288,9 +287,6 @@ class InterpreterFieldset extends PersonFieldset
     public function getInputFilterSpecification()
     {
         $spec = parent::getInputFilterSpecification();
-        $language_options = $this->get('language-select')->getValueOptions();
-
-        $certifiable = array_column($language_options, 'attributes', 'value');
         $spec['interpreterLanguages'] = [
 
             'allow_empty' => false,
@@ -309,20 +305,13 @@ class InterpreterFieldset extends PersonFieldset
                  [
                     'name' => 'Callback',
                     'options' => [
-                        'callback' => function ($value, $context) use ($certifiable) {
+                        'callback' => function ($value, $context) {
                             $languages_submitted = $context['interpreterLanguages'];
                             foreach ($languages_submitted as $language) {
                                 $id = $language['language'];
                                 if (! $language['languageCredential']) {
                                     return false;
                                 }
-                                // $submitted_cert =
-                                //         in_array($language['federalCertification'], [0,1]) ?
-                                //        (bool) $language['federalCertification'] : null;
-                                // $cert_required = (bool) $certifiable[$id]['data-certifiable'];
-                                // if ($cert_required && ! is_bool($submitted_cert)) {
-                                //     return false;
-                                // }
                             }
 
                             return true;
@@ -332,10 +321,45 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                  ],
-
             ],
         ];
-       //*/
+        /*
+        if ($this->options['form_config']
+            && !empty($this->options['form_config']['use_federal_credentialing'])
+        ) {
+            $language_options = $this->get('language-select')->getValueOptions();
+            $certifiable = array_column($language_options, 'attributes', 'value');
+            // [62]=> array(1) { ["data-certifiable"]=> string(1) "1" }
+            // [1] => Array
+            // (
+            //     [language] => 24
+            //     [languageCredential] => 1
+            // )
+
+            $spec['interpreterLanguages']['validators'][] =
+             [
+                'name' => 'Callback',
+                'options' => [
+                    'callback' => function ($value, $context) use ($certifiable) {
+                        $languages_submitted = $context['interpreterLanguages'];
+                        foreach ($languages_submitted as $language) {
+                            $id = $language['language'];
+                            $legit = $certifiable[$id]['data-certifiable'];
+                            $cred = $language['languageCredential'];
+                            if ($cred == 1 and !$legit) {
+                                // does not work so well
+                                // return false;
+                            }
+                        }
+                        return true;
+                    },
+                    'messages' => [
+                        \Zend\Validator\Callback::INVALID_VALUE => 'I don\'t like it',
+                    ],
+                ],
+            ];
+        }
+       */
         // this one is just for the UI, not part of the entity's data
         $spec['language-select'] = [
             'required' => true,

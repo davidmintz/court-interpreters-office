@@ -63,7 +63,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
     {
         //exit(sprintf("nice to know %s was called<br>\n",__METHOD__));
         $repository = $this->getObjectManager()->getRepository(Entity\Language::class);
-        $certified_languages = $repository->findAllCertifiedLanguages();
+        //$certified_languages = $repository->findAllCertifiedLanguages();
         $spec = [
             'languageCredential' => [
                 'required' => true,
@@ -79,61 +79,6 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
                         ],
                     ],
                 ],
-                /*'filters' => [
-                    [   // this callback runs twice per validator unless it
-                        // returns null, in which case validator callback
-                        // runs NEVER. not helpful.
-                        'name' => 'Zend\Filter\Callback',
-                        'options' => [
-                            'callback' => function ($value) {
-                               //echo "FILTER: filtering value $value\n";
-                               switch($value) {
-                                   case "-1":
-                                       return null;
-                                   case "0" :
-                                       return false;
-                                   case  "1" :
-                                       return true;
-                                   default:
-                                     //  return $value;
-
-                               }
-                            },
-                        ],
-                    ],
-                ],*/
-                /** @todo two callback validators w/ different error msg
-                 * for each case: certified or non-certified language*/
-                //'validators' => [
-
-                    // [
-                    //     'name' => 'Callback',
-                    //     'options' => [
-                    //         'callback' => function ($value, $context) use ($certified_languages) {
-                    //             // echo "is this shit even running at all in ".basename(__FILE__). " ? ....";
-                    //             //echo "VALIDATOR: value is $value, context is \n".print_r($context,true);
-                    //             $certified_language_ids = array_keys($certified_languages);
-                    //             //echo "certified languages ids are \n".print_r($certified_language_ids,true);
-                    //             $is_a_certified_language = in_array($context['language'], $certified_language_ids);
-                    //             //echo "language id is $context[language] ...";
-                    //             if ($is_a_certified_language && in_array($value, ["0","1"])) {
-                    //                 //echo "value $value, returning true for certified...\n";
-                    //                 return true;
-                    //             }
-                    //             if ((! $is_a_certified_language) && $value == "-1") {
-                    //                 //echo "value $value, returning true for non-certified...\n";
-                    //                 return true;
-                    //             }
-                    //             //echo "value $value, returning false...\n";
-                    //             return false;
-                    //         },
-                    //         'messages' => [
-                    //             \Zend\Validator\Callback::INVALID_VALUE
-                    //             => 'yes or no is required for certified languages',
-                    //         ],
-                    //     ],
-                    // ],
-            //    ]
             ]
         ];
 

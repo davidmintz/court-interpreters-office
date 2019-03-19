@@ -54,6 +54,13 @@ class InterpretersWriteController extends AbstractActionController
      */
     protected $viewModel;
 
+    /**
+     * form configuration
+     *
+     * @var Array
+     */
+    //protected $formConfig = [];
+
    /**
      * constructor.
      *
@@ -66,6 +73,18 @@ class InterpretersWriteController extends AbstractActionController
         $this->entityManager = $entityManager;
         $this->vault_enabled = $vault_enabled;
         $this->viewModel = new ViewModel(['vault_enabled' => $vault_enabled]);
+    }
+
+    /**
+     * sets form config options
+     * @param Array $config
+     * @returns self
+     */
+    public function __setFormConfig(Array $config)
+    {
+        $this->formConfig = $config;
+
+        return $this;
     }
 
     /**
@@ -107,8 +126,10 @@ class InterpretersWriteController extends AbstractActionController
         $viewModel = $this->viewModel;
         $form = new InterpreterForm(
             $this->entityManager,
-            [ 'action' => 'create',
-                 'vault_enabled' => $this->vault_enabled ]
+            [  'action' => 'create',
+               'vault_enabled' => $this->vault_enabled,
+              // 'form_config' => $this->formConfig,
+           ]
         );
         $viewModel->form = $form;
         $request = $this->getRequest();
@@ -171,7 +192,9 @@ class InterpretersWriteController extends AbstractActionController
         /** @var \Zend\Form\Form $form */
         $form = new InterpreterForm(
             $this->entityManager,
-            ['action' => 'update','vault_enabled' => $this->vault_enabled]
+            ['action' => 'update','vault_enabled' => $this->vault_enabled,
+                //'form_config' => $this->formConfig,
+            ]
         );
         $form->bind($entity);
         $has_related_entities = $repo->hasRelatedEntities($entity);
@@ -253,7 +276,10 @@ class InterpretersWriteController extends AbstractActionController
             $params = $this->params()->fromPost();//['interpreter'];
             $form = new InterpreterForm(
                 $this->entityManager,
-                ['action' => $action,'vault_enabled' => $this->vault_enabled]
+                ['action' => $action,
+                'vault_enabled' => $this->vault_enabled,
+                //'form_config' => $this->formConfig,
+            ]
             );
             $request = $this->getRequest();
             $form->setData($request->getPost());

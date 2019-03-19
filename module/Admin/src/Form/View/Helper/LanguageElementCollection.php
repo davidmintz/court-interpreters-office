@@ -59,11 +59,9 @@ TEMPLATE;
         $collection = $form->get('interpreter')
                 ->get('interpreterLanguages');
         $html = '';
-        //echo $collection->count(), " is the \$collection->count()<br>";
-        //echo $element_collection->count(), " is the \$element_collection->count()<br>";
         // we need these for reference
         $language_options = $this->getView()->form->get('interpreter')
-                        ->get('language-select')->getValueOptions();
+                ->get('language-select')->getValueOptions();
 
         /** INTERESTING FACT:  foreach DOES NOT ITERATE BEYOND THE 1st ELEMENT */
         for ($index = 0; $index < $collection->count(); $index++) { // as $index => $fieldset) {
@@ -80,59 +78,31 @@ TEMPLATE;
                 // we were hydrated from an Interpreter entity
                 $label = $this->view->escapeHtml($language->getName());
                 $language_id = $language->getId();
-                // $certifiable = $language->isFederallyCertified();
-                // if ($certifiable) {
-                //     // convert possibly-boolean to int, to keep test from breaking
-                //     $value = $credential->getValue();
-                //     $credential->setValueOptions(
-                //         [-1 => 'fuck???', 1 => 'yes', 0 => 'no']
-                //     );
-                //     $credential->setValue($value === true ? "1" : "0");
-                // } else {
-                //     $credential->setValue("-1")
-                //         ->setAttribute("disabled", "disabled");
-                //     //echo "we set cert to -1 at ".__LINE__ . "<br>";
-                // }
+                $certifiable = $language->isFederallyCertified();
             } else {
                 // form was populated with POST, not objects
                 $language_id = $language;
                 $key = array_search($language_id, array_column($language_options, 'value'));
-
                 $label = $language_options[$key]['label'];
                 // echo "\$key is $key, label $label ...<br>";
                 $certifiable = $language_options[$key]['attributes']['data-certifiable'];
-                //echo " and \$certifiable is: $certifiable ....";
-                //if ('Spanish'==$label) {var_dump($credential->getValue());}
-                // if (! $certifiable) {
-                //     $credential->setValue("-1")
-                //             ->setAttribute("disabled", "disabled");
-                //     //echo "we set cert to -1 for $label at ".__LINE__ . "<br>";
-                // } else {
-                //     $credential->setValueOptions(
-                //         [-1 => '', 1 => 'yes', 0 => 'no']
-                //     );
-                // }
-            }
 
+            }
+            $cred_options = $credential->getValueOptions();
+            if (!$certifiable) {
+                $i = array_search('AO',array_column($cred_options,'label'));
+                if (false !== $i) {
+                    $cred_options[$i]['attributes'] = ['disabled'=>'disabled'];
+                    $credential->setValueOptions($cred_options);
+                }
+            }
             $hidden_element->setValue($language_id);
             $language_markup = $this->view->formElement($hidden_element);
             $language_markup .= $label;
             $credential->setAttribute('id', "language-credential-$language_id");
-            // if (! $certifiable) {
-            //     //echo "adding hidden for $label...";
-            //     //$credential->setValue('-1')->setAttribute ("disabled","disabled");
-            //     $credential_markup = $this->view->formElement($credential);
-            //     $credential_markup .= sprintf(
-            //         '<input type="hidden" name="interpreter[interpreterLanguages]'
-            //         . '[%d][federalCertification]" value="-1">',
-            //         $index
-            //     );
-            //} else {
-                $credential_markup = $this->view->formElement($credential);
-            //}
-            // printf("iteration %d: now it's dark at %d<br>", $index, __LINE__);
+            $credential_markup = $this->view->formElement($credential);
             $messages = $collection->getMessages();
-            if ($messages){  // && $certifiable && -1 == $credential->getValue()) {
+            if ($messages){
                 $error_message = array_values($messages)[0];
                 $errors = sprintf($this->error_template, 'block', $error_message);
             } else {
@@ -164,16 +134,24 @@ TEMPLATE;
             $language_id
         );
         $language_markup .= $label;
-
+        $certifiable = $language->isFederallyCertified();
+        $cred_options = $params['credential_options'];
+        if (! $certifiable) {
+            $i = array_search('AO',array_column($cred_options,'label'));
+            if ($i !== false) {
+                $cred_options[$i]['attributes'] = ['disabled'=>'disabled'];
+            }
+        }
         $credential_element = new \Zend\Form\Element\Select(
             "interpreter[interpreterLanguages][$i][languageCredential]",
-            ['value_options' => [''=>' ']+$params['credential_options'],
+            ['value_options' => [''=>' ']+$cred_options,
                     'attributes' => [
                         'class' => 'form-control',
                         'id'    => "language-credential-$language_id",
-                    ]
+                ]
             ]
         );
+
         $credential_element->setAttributes(['class' => 'form-control']);
         $credential_markup = $this->view->formSelect($credential_element);
         $errors = sprintf($this->error_template, 'none', '');
