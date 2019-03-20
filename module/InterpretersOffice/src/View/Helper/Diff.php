@@ -116,18 +116,8 @@ class Diff extends AbstractHelper
                 $indexed_before = array_combine(array_column($before[$field],'id'), $before[$field]);
                 $added = array_diff(array_keys($indexed_after),array_keys($indexed_before));
                 $deleted = array_diff(array_keys($indexed_before),array_keys($indexed_after));
-                $shit =  sprintf(
-                    "before: <pre>%s; after: %s</pre>",print_r($indexed_before,true),print_r($indexed_after,true)
-                );
-                $shit .=  sprintf(
-                    "<pre>added: %s;\ndeleted: %s</pre>",print_r($added,true),print_r($deleted,true)
-                );
                 $all_ids = array_unique(array_merge(array_keys($indexed_after),array_keys($indexed_before)));
-                $shit .= sprintf(
-                    "<pre>all ids: %s</pre>",print_r($all_ids,true)
-                );
                 $return = '';
-                //exit($shit);
                 $format = '<span class="interpreter" data-id="%s" data-email="%s">%s</span><br>';
                 foreach($all_ids as $id) {
                     if (in_array($id,$deleted)) {
@@ -141,12 +131,13 @@ class Diff extends AbstractHelper
                         $return .= sprintf($format,$i['id'],$i['email'],"$i[lastname], $i[firstname]");
                     }
                 }
+                
                 return $return;
             }
+            // else, it's defendant names
             $flatten = function($n){
                 return "$n[lastname], $n[firstname]";
             };
-
             $names_now = array_map($flatten,$data);
             $names_before =  array_map($flatten,$before[$field]);
             $new = array_diff($names_now, $names_before);
