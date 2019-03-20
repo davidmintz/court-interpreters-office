@@ -223,8 +223,12 @@ class ScheduleUpdateManager
         // before running into notify-interpreters, so we will know
         // what template to use for email
         $pattern = sprintf('/%s/',self::ACTION_REMOVE_INTERPRETERS);
-        $this->remove_interpreters = preg_grep($pattern, $actions) ? true : false;
-        $this->logger->debug("we have set remove_interpreters = ".($this->remove_interpreters ? "true":"false"));
+        $shit = preg_grep($pattern, $actions);
+        if (count($shit)) {
+            $this->remove_interpreters =  $config[$user_event][array_values($shit)[0]]  ;
+        }
+        $this->logger->debug("user-event $user_event: we have set remove_interpreters = "
+            .($this->remove_interpreters ? "true":"false"));
         foreach ($actions as $string) {
             $i = strrpos($string, '.') + 1;
             $action = substr($string, $i);
@@ -246,7 +250,7 @@ class ScheduleUpdateManager
                     $this->logger->debug("we need to send a heads-up to interpreters office");
                     $user = $this->auth->getIdentity();
                     $view = new ViewModel(compact('request','user_event',
-                    'updates','interpreters','user'));
+                        'updates','interpreters','user'));
                     $view->before = $this->previous_state;
                     $view->setTemplate('interpreters-office/email/autocancellation-notice');
                     $layout = new ViewModel();
@@ -365,6 +369,7 @@ class ScheduleUpdateManager
         $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
 
         return preg_grep($pattern, array_keys($config[$user_event]));
+        //return preg_grep($pattern, $config[$user_event]);
     }
 
 
