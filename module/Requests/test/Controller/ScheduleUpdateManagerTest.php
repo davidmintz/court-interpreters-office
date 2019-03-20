@@ -98,6 +98,8 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
     private $autocancellation_notice = './data/email-autocancellation.html';
 
+    private $update_notice = './data/event-update-notice.html';
+
     public function tearDown()
     {
         $em = $this->em;//FixtureManager::getEntityManager();
@@ -115,6 +117,9 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         }
         if (file_exists($this->autocancellation_notice)) {
             unlink($this->autocancellation_notice);
+        }
+        if (file_exists($this->update_notice)) {
+            unlink($this->update_notice);
         }
     }
 
@@ -179,7 +184,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
     }
 
-    public function testNonSpanishInterpretersAreNotifiedWhenAutomaticallyRemoved()
+    public function testNonspanishInterpretersAreNotifiedWhenAutomaticallyRemoved()
     {
         $result = $this->em->createQuery("SELECT r FROM InterpretersOffice\Requests\Entity\Request r
         JOIN r.submitter p
@@ -242,7 +247,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
     }
 
-    public function testChangeTimeWithinAmPmBoundary()
+    public function testInterpretersAreNotififiedOnChangeTimeWithinAmPmBoundary()
     {
         $result = $this->em->createQuery("SELECT r FROM InterpretersOffice\Requests\Entity\Request r
         JOIN r.submitter p
@@ -293,5 +298,9 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
         $this->assertResponseHeaderRegex('content-type','|application/json|');
+
+        $this->assertTrue(file_exists($this->update_notice));
+
+
     }
 }
