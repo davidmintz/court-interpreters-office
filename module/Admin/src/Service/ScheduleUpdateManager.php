@@ -218,19 +218,19 @@ class ScheduleUpdateManager
         $actions = $this->getUserActions($request,$user_event);
         $filter = new DashToCamelCase();
         $config = $this->config['event_listeners'];
-        // and whether they are enabled
+        // order of execution might not be guaranteed, so we need to
+        // watch and take note if "remove-interpreters" is required
+        // before running into notify-interpreters, so we will know
+        // what template to use for email
+        $pattern = sprintf('/%s/',self::ACTION_REMOVE_INTERPRETERS);
+        $this->remove_interpreters = preg_grep($pattern, $actions) ? true : false;
+        $this->logger->debug("we have set remove_interpreters = ".($this->remove_interpreters ? "true":"false"));
         foreach ($actions as $string) {
             $i = strrpos($string, '.') + 1;
             $action = substr($string, $i);
             $method = lcfirst($filter->filter($action));
             if ($config[$user_event][$string]) {
-                // order of execution might not be guaranteed, so we need to
-                // watch and take note if "remove-interpreters" is required
-                // before running notify-interpreters
-                //$this->logger->debug(__FUNCTION__.":  we are examining: $action");
-                if ($action == self::ACTION_REMOVE_INTERPRETERS) {
-                    $this->remove_interpreters = true;
-                }
+                $this->logger->debug(__FUNCTION__.":  we are examining: $action");
                 if (method_exists($this, $method)) {
                     $this->logger->debug("we now need to call: $method()");
                     $this->$method($request, $updates);
@@ -315,8 +315,8 @@ class ScheduleUpdateManager
             }
         }
         $this->logger->debug(
-            //'what was modified: '.implode(', ',array_keys($updates))
-            'updates: '.print_r($updates,true)
+            'what was modified: '.implode(', ',array_keys($updates))
+            //'updates: '.print_r($updates,true)
         );
         if (! $event) {
             $this->logger->debug(
