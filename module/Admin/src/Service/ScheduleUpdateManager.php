@@ -301,7 +301,7 @@ class ScheduleUpdateManager
     public function onUpdateRequest(EventInterface $e)
     {
         $this->logger->debug(
-            __METHOD__.": here we GO !!!!!!!"
+            __METHOD__.": here we GO !!"
         );
         $request = $e->getParam('request');
         $event = $request->getEvent();
@@ -320,11 +320,11 @@ class ScheduleUpdateManager
         }
         $this->logger->debug(
             'what was modified: '.implode(', ',array_keys($updates))
-            //'updates: '.print_r($updates,true)
         );
         if (! $event) {
             $this->logger->debug(
-                __FUNCTION__.": request apparently NOT scheduled, no corresponding event"
+                __FUNCTION__
+                .": request apparently NOT scheduled, no event to update"
             );
             return;
         }
@@ -353,7 +353,7 @@ class ScheduleUpdateManager
     }
 
     /**
-     * figures out what admin actions (methods) to run based on $user_event
+     * figures out what admin actions (methods) apply based on $user_event
      *
      * @param  Request $request
      * @param  string  $user_event
@@ -369,7 +369,6 @@ class ScheduleUpdateManager
         $pattern = "/^(all-events|$type)\.(all-languages|$language)\./";
 
         return preg_grep($pattern, array_keys($config[$user_event]));
-        //return preg_grep($pattern, $config[$user_event]);
     }
 
 
@@ -382,7 +381,7 @@ class ScheduleUpdateManager
     public function onCreateRequest(EventInterface $e)
     {
         $this->logger->debug(
-            sprintf('handling request create in %s at %d', __METHOD__, __LINE__)
+            sprintf('observing request-create in %s at %d', __METHOD__, __LINE__)
         );
         $listener_config = $this->config['event_listeners'];
         // to be continued?
