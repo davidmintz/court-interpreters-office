@@ -110,10 +110,41 @@ class Diff extends AbstractHelper
             }
         }
         if (is_array($data)) {
+            $interpreters = $field == 'interpreters';
+            if ($interpreters) {
+                $indexed_after = array_combine(array_column($data,'id'), $data);
+                $indexed_before = array_combine(array_column($before[$field],'id'), $before[$field]);
+                $added = array_diff(array_keys($indexed_after),array_keys($indexed_before));
+                $deleted = array_diff(array_keys($indexed_before),array_keys($indexed_after));
+                $shit =  sprintf(
+                    "before: <pre>%s; after: %s</pre>",print_r($indexed_before,true),print_r($indexed_after,true)
+                );
+                $shit .=  sprintf(
+                    "<pre>added: %s;\ndeleted: %s</pre>",print_r($added,true),print_r($deleted,true)
+                );
+                $all_ids = array_unique(array_merge(array_keys($indexed_after),array_keys($indexed_before)));
+                $shit .= sprintf(
+                    "<pre>all ids: %s</pre>",print_r($all_ids,true)
+                );
+                $return = '';
+                //exit($shit);
+                $format = '<span class="interpreter" data-id="%s" data-email="%s">%s</span><br>';
+                foreach($all_ids as $id) {
+                    if (in_array($id,$deleted)) {
+                        $i = $indexed_before[$id];
+                        $return .= sprintf($format,$i['id'],$i['email'],'<del>'."$i[lastname], $i[firstname]".'</del>');
+                    } elseif (in_array($id,$added)) {
+                        $i = $indexed_after[$id];
+                        $return .= sprintf($format,$i['id'],$i['email'],'<ins>'."$i[lastname], $i[firstname]".'</ins>');
+                    } else {
+                        $i = $indexed_after[$id];
+                        $return .= sprintf($format,$i['id'],$i['email'],"$i[lastname], $i[firstname]");
+                    }
+                }
+                return $return;
+            }
             $flatten = function($n){
-                return isset($n['surnames']) ?
-                    "$n[surnames], $n[given_names]":
-                    "$n[lastname], $n[firstname]";
+                return "$n[lastname], $n[firstname]";
             };
 
             $names_now = array_map($flatten,$data);
@@ -135,6 +166,7 @@ class Diff extends AbstractHelper
             return $return;
         }
     }
+
 
     /**
      * renders defendant names
@@ -158,7 +190,10 @@ class Diff extends AbstractHelper
     public function renderInterpreters(Array $data){
 
         return implode('<br>',array_map(function($i){
-            return  "$i[lastname], $i[firstname]";
+            return  sprintf(
+                '<span class="interpreter" data-id="%s" data-email="%s">%s</span>',
+                $i['id'],$i['email'],"{$i['lastname']}, {$i['firstname']}"
+            );
         },$data));
     }
 

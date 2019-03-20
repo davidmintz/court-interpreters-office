@@ -1,5 +1,7 @@
 <?php /** module/Admin/view/interpreters-office/admin/schedule/view.phtml  */
-$this->headScript()->appendFile($this->basePath('js/event-delete.js'));
+$this->headScript()
+->appendFile($this->basePath('js/event-delete.js'))
+->appendFile($this->basePath('js/event-view.js'));
 //->appendFile($this->basePath('js/lib/sweetalert2.min.js'))
 //$this->headLink()->appendStylesheet($this->basePath('css/sweetalert2.css'));
 //$this->headStyle()->captureStart();?><?php //$this->headStyle()->captureEnd();
@@ -52,7 +54,9 @@ if ($session->{$event['id']}) {
     unset($session->{$event['id']});
 }
 ?></pre>
-<!-- -->
+<!-- TO DO: make partials for flat-out details and for "diff"
+    and use one or the other, depending
+-->
 <div data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
     <div class="col-sm-3 text-muted text-md-right">
         date
@@ -109,7 +113,7 @@ if ($session->{$event['id']}) {
     <div class="col-sm-3  text-muted text-md-right">
         interpreters
     </div>
-    <div class="col-sm-3 pl-0"><?php
+    <div class="col-sm-3 pl-0 interpreters"><?php
         echo $this->diff('interpreters');
     ?>
     </div>

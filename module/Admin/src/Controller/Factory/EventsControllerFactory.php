@@ -79,7 +79,7 @@ class EventsControllerFactory implements FactoryInterface
                         'interpreters' => array_map(
                             function($ie){
                                 $i = $ie->getInterpreter();
-                                return ['lastname'=> $i->getLastname(),'firstname'=> $i->getFirstName()];
+                                return ['lastname'=> $i->getLastname(),'firstname'=> $i->getFirstName(),'email'=>$i->getEmail(),'id'=>$i->getId()];
                             },$entity->getInterpreterEvents()->toArray()
                         ),
                         'location' => (string)$entity->getLocation(),
