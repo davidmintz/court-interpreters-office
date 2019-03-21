@@ -12,9 +12,9 @@ $(function(){
     }
     console.log(`email flag? ${email_flag}`);
 
-    $("#btn-email").on("click",function(){
+    $("#btn-email").on("click",function(e){e.preventDefault()});
+    $("#email-dialog").on("show.bs.modal",function(event){});
 
-        
-    });
+    $(".dropdown-menu .custom-control-input").on("click",function(e){e.preventDefault();})
 
 });

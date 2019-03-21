@@ -54,8 +54,9 @@ $(function() {
     var popover_opts = {
         html: true,
         placement: "left",
+        sanitize : false,
         title : `update interpreters <a href="#" class="close btn-cancel" title="cancel" data-dismiss="alert">&times;</a>`,
-        content : renderInterpreterEditor//,
+        content : renderInterpreterEditor,
         // maybe try to set this dynamically to the td's parent tr?
         //container : "body"
     };
