@@ -1,7 +1,7 @@
 <?php /** module/Admin/view/interpreters-office/admin/schedule/view.phtml  */
 $this->headScript()
 ->appendFile($this->basePath('js/event-delete.js'))
-->appendFile($this->basePath('js/event-view.js'));
+->appendFile($this->basePath('js/event-email.js'));
 //->appendFile($this->basePath('js/lib/sweetalert2.min.js'))
 //$this->headLink()->appendStylesheet($this->basePath('css/sweetalert2.css'));
 //$this->headStyle()->captureStart();?><?php //$this->headStyle()->captureEnd();
@@ -205,6 +205,7 @@ endif;?></span>
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
           <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
           <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
+          <a id="btn-email" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
           <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
         </div>
 
@@ -216,5 +217,6 @@ endif;?></span>
         </div>
     <?php endif ?>
 </div>
+<div id="email-dialog"></div>
 <!-- -->
 <!-- -->

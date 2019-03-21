@@ -1,7 +1,7 @@
 $(function(){
-    var noteworthy = ["date","time","type","interpreters","location"];
     var email_flag = false;
     if ( $('span.interpreter').length && $("ins, del").length) {
+        var noteworthy = ["date","time","type","interpreters","location"];
         $("ins, del").each(function(){
             var field = ($(this).parent().prev("div").text().trim());
             if (noteworthy.includes(field)) {
@@ -11,5 +11,10 @@ $(function(){
         });
     }
     console.log(`email flag? ${email_flag}`);
+
+    $("#btn-email").on("click",function(){
+
+        
+    });
 
 });
