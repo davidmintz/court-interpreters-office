@@ -205,7 +205,7 @@ endif;?></span>
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
           <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
           <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
-          <a id="btn-email" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
+          <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
           <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
         </div>
 
@@ -217,6 +217,48 @@ endif;?></span>
         </div>
     <?php endif ?>
 </div>
-<div id="email-dialog"></div>
+<div class="modal fade" id="email-dialog" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="email-modal-label">send email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div style="min-height:300px" class="modal-body">
+                <div class="container-fluid">
+                    <div class="form-row form-group">
+                        <div class="col-md-2 text-right col-form-label">To
+                        </div>
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="shit">
+                                <button class="btn btn-sm btn-secondary btn-remove-item border" title="delete recipient">
+                                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
+                               </button>
+                           </div>
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="col-md-2 text-right col-form-label">Subject
+                        </div>
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="shit">
+                                <button class="btn btn-sm btn-secondary btn-remove-item border" title="delete recipient">
+                                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
+                               </button>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="modal-footer center-block">
+            <p class="text-center">center-aligned? Really?</p>
+        </div>
+    </div>
+</div>
 <!-- -->
 <!-- -->
