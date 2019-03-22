@@ -264,12 +264,12 @@ endif;?></span>
                               // if there are any email addresses involved, assemble a dropdown to display them
                               if ($suggestions): ?>
                               <a class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
-                              <div class="dropdown-menu pl-1">
+                              <div id="email-dropdown" class="dropdown-menu pl-1">
                                     <form>
                                     <?php foreach ($suggestions as $i => $person):?>
                                         <div class="form-group">
                                           <div class="form-check">
-                                            <input name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" class="form-check-input" id="email-<?php echo $i?>">
+                                            <input name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" checked="checked" class="form-check-input" id="email-<?php echo $i?>">
                                             <label class="form-check-label" for="email-<?php echo $i?>">
                                               <?php echo $person['name'] ?>
                                             </label>
@@ -280,8 +280,10 @@ endif;?></span>
                                     <div class="dropdown-divider">
                                     </div>
                                     <div class="dropdown-item">
-                                        <button class="btn btn-sm btn-outline-secondary">OK</button>
+                                        <button id="btn-add-recipients" class="btn btn-sm btn-outline-primary">Add</button>
+                                        <button class="btn btn-sm btn-outline-secondary">Cancel</button>
                                     </div>
+                                    <div class="alert alert-warning validation-error" style="display:none"></div>
                               </div>
                           <?php endif; ?>
                            </div>
@@ -313,7 +315,7 @@ endif;?></span>
                         </div>
                     </div>
                 </div>
-                <div class="form-row ">
+                <div class="form-row">
                     <div class="col-md-2 text-right col-form-label">Message</div>
                     <div class="col-md-10">
                         <div class="input-group">

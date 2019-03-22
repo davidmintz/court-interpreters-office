@@ -57,6 +57,7 @@ if ($this->errorMessage) :   return;  endif;
             </select>
             <label for="date-input" class="text-md-right pl-2 pr-1">date</label>
             <input type="text" name="date" id="date-input" class="form-control  form-control-sm" style="max-width:125px">
+            <?php $today = date('Y/m/d'); if ($this->date->format('Y/m/d') != $today): ?><a class="btn btn-sm btn-outline-primary" role="button" href="<?php echo $this->url('events')."/$today"?>">today</a><?php endif ?>
         </div>
     </div>
 <?php echo $this->partial('interpreters-office/admin/schedule/partials/table', ['data' => $data,]);
