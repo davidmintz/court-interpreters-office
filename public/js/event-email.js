@@ -32,11 +32,20 @@ $(function(){
         }
         console.log("looks good, now doing shit...");
         elements.each(function(){
-            var email = $(this).val();
-            var name = $(this).next().text().trim();
+            var element = $(this);
+            var email = element.val();
+            var name = element.next().text().trim();
             var html = create_recipient(email,name);
             $("#email-form > .form-group:first-of-type").after(html);
+            // hide this
+            element.closest(".form-group").hide();
         });
+        if ( !$("#email-dropdown input:visible").length ) {
+            $(".dropdown-toggle, .dropdown-menu").hide();
+        }
+        if ($("#btn-send").hasClass("disabled")) {
+            $("#btn-send").removeClass("disabled");
+        }
         $(".modal-body .btn").tooltip();
         return true;
     });

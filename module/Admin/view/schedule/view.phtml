@@ -287,44 +287,7 @@ endif;?></span>
                               <?php endif; ?>
                                </div>
                             </div>
-                        </div><!-- style="display:none"
-                        <div class="form-row form-group template">
-                            <label class="col-md-2 text-right" for="">
-                                <select class="form-control custom-select">
-                                    <option value="to">To</option>
-                                    <option value="cc">Cc</option>
-                                </select>
-                            </label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-
-                                    <input type="text" id="to-1" name="to[]" class="form-control" placeholder="shit">
-                                    <button hidden class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
-                                       <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
-                                   </button>
-                                   <button class="btn btn-sm btn-primary btn-remove-item border" title="add another recipient">
-                                      <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
-                                  </button>
-                               </div>
-                            </div>
                         </div>
-                        <div class="form-row form-group">
-                            <div class="col-md-2 text-right col-form-label">Cc
-                            </div>
-                            <div class="col-md-10">
-                                <div class="input-group">
-
-                                    <input type="text" name="cc[]" class="form-control" placeholder="shit">
-                                    <button hidden class="btn btn-sm btn-primary btn-remove-item border" title="delete cc recipient">
-                                       <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
-                                   </button>
-                                   <button class="btn btn-sm btn-primary btn-remove-item border" title="add another cc recipient">
-                                      <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another cc</span>
-                                  </button>
-                               </div>
-                            </div>
-                        </div>
-                        -->
                         <div class="form-row form-group">
                             <div class="col-md-2 text-right col-form-label">Subject
                             </div>
@@ -335,8 +298,8 @@ endif;?></span>
                             </div>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="col-md-2 text-right col-form-label">Message</div>
+                    <div class="form-row form-group">
+                        <div class="col-md-2 text-right col-form-label pr-0">Message</div>
                         <div class="col-md-10">
                             <div class="input-group">
                                 <textarea class="form-control ml-2" rows="8"></textarea>
@@ -345,10 +308,12 @@ endif;?></span>
                     </div>
                 </div>
             </form>
-        </div>
-
-        <div class="modal-footer center-block">
-            <p class="text-center">center-aligned? Really?</p>
+            <div class="modal-footer center-block row" id="shit">
+                    <div class="col text-center">
+                        <button id="btn-send" class="btn btn-success disabled">send</button>
+                        <button class="btn btn-secondary">cancel</button>
+                    </div>
+            </div>
         </div>
     </div>
 </div>
