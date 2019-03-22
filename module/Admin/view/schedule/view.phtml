@@ -221,8 +221,13 @@ endif;?></span>
         if ($event['submitter_email']) {
             $suggestions[] = ['name' => $event['submitter'], 'email' => $event['submitter_email']];
         }
-        if ($event['interpreters']) {
+        if ($event['interpreters'])
+            {
             foreach($event['interpreters'] as $i) {
+                // in some cases, the submitter and the interpreter are one
+                if (count($suggestions) && in_array($i['email'],array_column($suggestions,'email'))) {
+                    continue;
+                }
                 $suggestions[] = ['name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
             }
         }
