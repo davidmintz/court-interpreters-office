@@ -215,7 +215,19 @@ endif;?></span>
             <?php if ($event['request_id']):?>* this was submitted online<br><?php endif; ?>
             <?php if ($event['location'] and true === $IS_DEFAULT_LOCATION):?>** default location, not specified by the user<?php endif; ?>
         </div>
-    <?php endif ?>
+    <?php endif;
+    $suggestions = [];
+    if ($event['interpreters'] or $event['submitter_email']):
+        if ($event['submitter_email']) {
+            $suggestions[] = ['name' => $event['submitter'], 'email' => $event['submitter_email']];
+        }
+        if ($event['interpreters']) {
+            foreach($event['interpreters'] as $i) {
+                $suggestions[] = ['name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
+            }
+        }
+    endif;
+    ?>
 </div>
 <div class="modal fade" id="email-dialog" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -234,25 +246,18 @@ endif;?></span>
                         <div class="col-md-10">
                             <div class="input-group"> <!--  dropleft -->
                                 <!--   -->
-                                <input name="to[]" type="text" class="form-control" placeholder="recipient email address">
+                                <input name="to[]" type="text" class="form-control" placeholder="type lastname<?php
+                                if ($suggestions):?>, or use the select menu --&gt;<?php endif;
+                                ?>">
                                 <button hidden class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
                                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
                                </button>
                                <button class="btn btn-sm btn-primary btn-remove-item border" title="add another recipient">
                                   <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
                               </button>
-                              <?php if ($event['interpreters'] or $event['submitter_email']):
-                                  $suggestions = [];
-                                  if ($event['submitter_email']) {
-                                      $suggestions[] = ['name' => $event['submitter'], 'email' => $event['submitter_email']];
-                                  }
-                                  if ($event['interpreters']) {
-                                      foreach($event['interpreters'] as $i) {
-                                          $suggestions[] = ['name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
-                                      }
-                                  }
-
-                              ?>
+                              <?php
+                              // if there are any email addresses involved, assemble a dropdown to display them
+                              if ($suggestions): ?>
                               <a class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
                               <div class="dropdown-menu pl-1">
                                     <form>
@@ -274,32 +279,6 @@ endif;?></span>
                                     </div>
                               </div>
                           <?php endif; ?>
-                              <!--
-                              <div class="dropdown-menu">
-                                  <form class="px-4 py-3">
-                                    <div class="form-group">
-                                      <label for="exampleDropdownFormEmail1">Email address</label>
-                                      <input type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
-                                    </div>
-                                    <div class="form-group">
-                                      <label for="exampleDropdownFormPassword1">Password</label>
-                                      <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
-                                    </div>
-                                    <div class="form-group">
-                                      <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="dropdownCheck">
-                                        <label class="form-check-label" for="dropdownCheck">
-                                          Remember me
-                                        </label>
-                                      </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Sign in</button>
-                                  </form>
-                                  <div class="dropdown-divider"></div>
-                                  <a class="dropdown-item" href="#">New around here? Sign up</a>
-                                  <a class="dropdown-item" href="#">Forgot password?</a>
-                                </div>
-                            -->
                            </div>
                         </div>
                     </div>
@@ -329,12 +308,11 @@ endif;?></span>
                         </div>
                     </div>
                 </div>
-                <div class="form-row form-group">
-                    <div class="col-md-2 text-right col-form-label">Message
-                    </div>
+                <div class="form-row ">
+                    <div class="col-md-2 text-right col-form-label">Message</div>
                     <div class="col-md-10">
                         <div class="input-group">
-                            <textarea class="form-control" rows="8"></textarea>
+                            <textarea class="form-control ml-2" rows="8"></textarea>
                        </div>
                     </div>
                 </div>
