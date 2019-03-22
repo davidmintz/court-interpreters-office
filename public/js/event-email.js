@@ -17,10 +17,12 @@ $(function(){
     $("#btn-email").on("click",function(e){e.preventDefault();});
 
     $("#email-dialog").on("show.bs.modal",function(event){
+        $(`#${this.id} .btn`).tooltip();
     });
     $("#btn-add-recipients").on("click",function(e){
         e.preventDefault();
-        if (! $("#email-dropdown input:checked").length) {
+        var elements = $("#email-dropdown input:checked");
+        if (! elements.length) {
             $("#email-dropdown .validation-error").text(
                 "select at least one recipient"
             ).show();
@@ -28,10 +30,53 @@ $(function(){
         } else {
             $("#email-dropdown .validation-error").hide();
         }
-        console.log("looks good, now do shit...");
+        console.log("looks good, now doing shit...");
+        elements.each(function(){
+            var email = $(this).val();
+            var name = $(this).next().text().trim();
+            var html = create_recipient(email,name);
+            $("#email-form > .form-group:first-of-type").after(html);
+        });
+        $(".modal-body .btn").tooltip();
         return true;
-
     });
-    //$(".dropdown-menu .custom-control-input").on("click",function(e){e.preventDefault();})
-
+    // don't let the "cancel" button in the dropdown submit the form
+    $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
 });
+
+/**
+ * returns HTML for adding an email recipient
+ *
+ * @param  {string} email
+ * @param  {string} name
+ * @return {string}
+ */
+const create_recipient = function(email,name){
+    var id, value;
+    if (email) {
+        id = "#" + email.toLowerCase().replace("@",".at.");
+        value = `${name} &lt;${email}&gt;`;
+    } else {
+        id = "";
+        value = "";
+    }
+    return `<div class="form-row form-group">
+        <label class="col-md-2 text-right" for="${id}">
+            <select class="form-control custom-select">
+                <option value="to">To</option>
+                <option value="cc">Cc</option>
+            </select>
+        </label>
+        <div class="col-md-10">
+            <div class="input-group">
+                <input type="text" id="#${id}" name="to[]" class="form-control" value="${value}" placeholder="type last name">
+                <button class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
+                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
+               </button>
+               <button class="btn btn-sm btn-primary btn-add-recipient border" title="add another recipient">
+                  <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
+              </button>
+           </div>
+        </div>
+    </div>`;
+};

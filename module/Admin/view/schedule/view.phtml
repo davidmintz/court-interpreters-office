@@ -245,85 +245,106 @@ endif;?></span>
             </div>
             <div style="min-height:300px" class="modal-body">
                 <div class="container-fluid">
-                    <div class="form-row form-group">
-                        <div class="col-md-2 text-right col-form-label">To
-                        </div>
-                        <div class="col-md-10">
-                            <div class="input-group"> <!--  dropleft -->
-                                <!--   -->
-                                <input name="to[]" type="text" class="form-control" placeholder="type lastname<?php
-                                if ($suggestions):?>, or use the select menu --&gt;<?php endif;
-                                ?>">
-                                <button hidden class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
-                                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
-                               </button>
-                               <button class="btn btn-sm btn-primary btn-remove-item border" title="add another recipient">
-                                  <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
-                              </button>
-                              <?php
-                              // if there are any email addresses involved, assemble a dropdown to display them
-                              if ($suggestions): ?>
-                              <a class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
-                              <div id="email-dropdown" class="dropdown-menu pl-1">
-                                    <form>
-                                    <?php foreach ($suggestions as $i => $person):?>
-                                        <div class="form-group">
-                                          <div class="form-check">
-                                            <input name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" checked="checked" class="form-check-input" id="email-<?php echo $i?>">
-                                            <label class="form-check-label" for="email-<?php echo $i?>">
-                                              <?php echo $person['name'] ?>
-                                            </label>
-                                          </div>
+                    <form id="email-form">
+                        <div class="form-row form-group">
+                            <label for="to-0" class="col-md-2 text-right col-form-label">To
+                            </label>
+                            <div class="col-md-10">
+                                <div class="input-group"> <!--  dropleft -->
+                                    <!--   -->
+                                    <input id="to-0" name="to[]" type="text" class="form-control" placeholder="type lastname<?php
+                                    if ($suggestions):?>, or use the select menu --&gt;<?php endif;
+                                    ?>">
+                                    <button hidden data-toggle="tooltip" class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
+                                       <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
+                                   </button>
+                                   <button data-toggle="tooltip" class="btn btn-sm btn-primary btn-add-recipient border" title="add another recipient">
+                                      <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
+                                  </button>
+                                  <?php
+                                  // if there are any email addresses involved, assemble a dropdown to display them
+                                  if ($suggestions): ?>
+                                  <a title="display suggested recipients" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
+                                  <div id="email-dropdown" class="dropdown-menu pl-1">
+                                        <?php foreach ($suggestions as $i => $person):?>
+                                            <div class="form-group">
+                                              <div class="form-check">
+                                                <input name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" checked="checked" class="form-check-input" id="email-<?php echo $i?>">
+                                                <label class="form-check-label" for="email-<?php echo $i?>">
+                                                  <?php echo $person['name'] ?>
+                                                </label>
+                                              </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <div class="dropdown-divider">
                                         </div>
-                                    <?php endforeach; ?>
-                                    </form>
-                                    <div class="dropdown-divider">
-                                    </div>
-                                    <div class="dropdown-item">
-                                        <button id="btn-add-recipients" class="btn btn-sm btn-outline-primary">Add</button>
-                                        <button class="btn btn-sm btn-outline-secondary">Cancel</button>
-                                    </div>
-                                    <div class="alert alert-warning validation-error" style="display:none"></div>
-                              </div>
-                          <?php endif; ?>
-                           </div>
+                                        <div class="dropdown-item">
+                                            <button id="btn-add-recipients" class="btn btn-sm btn-outline-primary">Add</button>
+                                            <button class="btn btn-sm btn-outline-secondary">Cancel</button>
+                                        </div>
+                                        <div class="alert alert-warning validation-error" style="display:none"></div>
+                                  </div>
+                              <?php endif; ?>
+                               </div>
+                            </div>
+                        </div><!-- style="display:none"
+                        <div class="form-row form-group template">
+                            <label class="col-md-2 text-right" for="">
+                                <select class="form-control custom-select">
+                                    <option value="to">To</option>
+                                    <option value="cc">Cc</option>
+                                </select>
+                            </label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+
+                                    <input type="text" id="to-1" name="to[]" class="form-control" placeholder="shit">
+                                    <button hidden class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
+                                       <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
+                                   </button>
+                                   <button class="btn btn-sm btn-primary btn-remove-item border" title="add another recipient">
+                                      <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
+                                  </button>
+                               </div>
+                            </div>
+                        </div>
+                        <div class="form-row form-group">
+                            <div class="col-md-2 text-right col-form-label">Cc
+                            </div>
+                            <div class="col-md-10">
+                                <div class="input-group">
+
+                                    <input type="text" name="cc[]" class="form-control" placeholder="shit">
+                                    <button hidden class="btn btn-sm btn-primary btn-remove-item border" title="delete cc recipient">
+                                       <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
+                                   </button>
+                                   <button class="btn btn-sm btn-primary btn-remove-item border" title="add another cc recipient">
+                                      <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another cc</span>
+                                  </button>
+                               </div>
+                            </div>
+                        </div>
+                        -->
+                        <div class="form-row form-group">
+                            <div class="col-md-2 text-right col-form-label">Subject
+                            </div>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="shit">
+                               </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-row form-group">
-                        <div class="col-md-2 text-right col-form-label">Cc
-                        </div>
+                    <div class="form-row">
+                        <div class="col-md-2 text-right col-form-label">Message</div>
                         <div class="col-md-10">
                             <div class="input-group">
-                                <!--  -->
-                                <input type="text" class="form-control" placeholder="shit">
-                                <button hidden class="btn btn-sm btn-primary btn-remove-item border" title="delete cc recipient">
-                                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
-                               </button>
-                               <button class="btn btn-sm btn-primary btn-remove-item border" title="add another cc recipient">
-                                  <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another cc</span>
-                              </button>
-                           </div>
-                        </div>
-                    </div>
-                    <div class="form-row form-group">
-                        <div class="col-md-2 text-right col-form-label">Subject
-                        </div>
-                        <div class="col-md-10">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="shit">
+                                <textarea class="form-control ml-2" rows="8"></textarea>
                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="col-md-2 text-right col-form-label">Message</div>
-                    <div class="col-md-10">
-                        <div class="input-group">
-                            <textarea class="form-control ml-2" rows="8"></textarea>
-                       </div>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
 
         <div class="modal-footer center-block">
