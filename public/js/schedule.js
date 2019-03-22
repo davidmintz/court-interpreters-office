@@ -69,12 +69,6 @@ $(function() {
     $("body").on("io.reload","#schedule-table",function(){
         console.log("running io.reload custom event handler");
         $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
-        //if (! window.schedule_timer) {
-        // timer_start();
-        // console.debug("restarted timer in io.reload event listener");
-        // } else {
-        //     console.debug("no need to start timer??");
-        // }
         $("table [data-toggle=\"tooltip\"]").tooltip();
         if ($(".no-events").length) {
             schedule_table.removeClass("table-hover");
@@ -226,9 +220,25 @@ $(function() {
         return reload_schedule(url);
     });
 
+    /*
+    compute interval for reloading the schedule data: 20 seconds if we are
+    looking a date >= today; otherwise, 180 seconds for historical data
+    */
+    var schedule_date = new moment($(".display-date").text(),"DD MMM YYYY");
+    var now = new moment();
+    var is_current = schedule_date.format("YYYYMMDD") >= now.format("YYYYMMDD");
+
+    if (is_current) {
+        interval = 15 * 1000;
+    } else {
+        interval = 180 * 1000;
+    }
+    console.debug(`refresh interval set to ${interval/1000} seconds`);
+
     // initialize jquery-ui datepicker
     var date_input = $("#date-input");
     date_input.datepicker({
+        defaultDate: schedule_date.toDate(),
         changeMonth: true,
         changeYear: true,
         selectOtherMonths : true,
@@ -242,20 +252,6 @@ $(function() {
         }
     });
 
-    /*
-    compute interval for reloading the schedule data: 20 seconds if we are
-    looking a date >= today; otherwise, 180 seconds for historical data
-     */
-    var schedule_date = new moment($(".display-date").text(),"DD MMM YYYY");
-    var now = new moment();
-    var is_current = schedule_date.format("YYYYMMDD") >= now.format("YYYYMMDD");
-
-    if (is_current) {
-        interval = 15 * 1000;
-    } else {
-        interval = 180 * 1000;
-    }
-    console.debug(`refresh interval set to ${interval/1000} seconds`);
 
     /**
      * periodically reloads schedule data.
