@@ -68,8 +68,9 @@ $(function() {
      */
     $("body").on("io.reload","#schedule-table",function(){
         console.log("running io.reload custom event handler");
-        $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
-        $("table [data-toggle=\"tooltip\"]").tooltip();
+        $(".edit-interpreters").on("click",(e)=>e.preventDefault())
+            .popover(popover_opts);
+        $(`table [data-toggle="tooltip"]`).tooltip();
         if ($(".no-events").length) {
             schedule_table.removeClass("table-hover");
         } else {
