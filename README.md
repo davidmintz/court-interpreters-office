@@ -37,7 +37,7 @@ completely free; the hardware you'll need is inexpensive.
 
 As of now, I don't recommend normal people attempt installing InterpretersOffice because setup is a chore. (If you're a technical person and want to give it a shot, by all means do -- and contact me if you have questions.)
 
-But when the great day arrives, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Next, you'll need to do is create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in the README files and/or comments in the config files themselves.
+But when the great day arrives, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Next, you'll need to create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in README files and comments in the config files themselves.
 
 # features
 
@@ -45,7 +45,7 @@ There is an administrative interface with which authenticated users can manage t
 
 You will be able to search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
 
-An optional module allows users outside your Interpreters Office to log in and submit requests themselves, greatly reducing the amount of data entry required of the Interpreters and eliminating the opportunity for error.
+An optional module allows users outside your Interpreters Office to log in and submit their requests themselves, a convenience to them that greatly reduces the amount of data entry required of the Interpreters and eliminates the opportunity for error.
 
 Another optional module I have in mind will generate claim forms for contract interpreter compensation and keep track of the money expended. The work flow currently happening in our organization is preposterously tedious, and this will help immensely.
 
