@@ -83,7 +83,7 @@ class PeopleController extends AbstractActionController
         $term = $this->params()->fromQuery('term');
         $hat  = $this->params()->fromQuery('hat');
         $active = $this->params()->fromQuery('active');
-        $data = $repo->autocomplete($term, $hat, $active);
+        $data = $repo->autocomplete($term, compact('hat', 'active'));
 
         return new JsonModel($data);
     }
