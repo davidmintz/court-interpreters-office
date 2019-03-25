@@ -1,7 +1,10 @@
 <?php /** module/Admin/view/interpreters-office/admin/schedule/view.phtml  */
 $this->headScript()
 ->appendFile($this->basePath('js/event-delete.js'))
+->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
 ->appendFile($this->basePath('js/event-email.js'));
+$this->headLink()
+        ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 //->appendFile($this->basePath('js/lib/sweetalert2.min.js'))
 //$this->headLink()->appendStylesheet($this->basePath('css/sweetalert2.css'));
 //$this->headStyle()->captureStart();?><?php //$this->headStyle()->captureEnd();
@@ -234,6 +237,7 @@ endif;?></span>
     endif;
     ?>
 </div>
+<!-- <input type="text" id="fucking-shit" name="" value=""> -->
 <div class="modal fade" id="email-dialog" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -252,12 +256,14 @@ endif;?></span>
                             <div class="col-md-10">
                                 <div class="input-group"> <!--  dropleft -->
                                     <!--   -->
-                                    <input id="recipient-autoselect" name="recipient-autoselect" type="text" class="form-control" placeholder="start typing last name<?php
-                                    if ($suggestions):?>, or use the select menu --&gt;<?php endif;
+                                    <input id="recipient-autocomplete" name="recipient-autocomplete" type="text" class="form-control" placeholder="start typing last name<?php
+                                    if ($suggestions):?>, or use the select menu<?php endif;
                                     ?>">
+                                    <!--
                                     <button hidden data-toggle="tooltip" class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
                                        <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
                                    </button>
+                                    -->
                                    <button data-toggle="tooltip" class="btn btn-sm btn-primary btn-add-recipient border" title="add another recipient">
                                       <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
                                   </button>
@@ -269,7 +275,7 @@ endif;?></span>
                                         <?php foreach ($suggestions as $i => $person):?>
                                             <div class="form-group">
                                               <div class="form-check">
-                                                <input name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" checked="checked" class="form-check-input" id="email-<?php echo $i?>">
+                                                <input name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" class="form-check-input" id="email-<?php echo $i?>" checked>
                                                 <label class="form-check-label" for="email-<?php echo $i?>">
                                                   <?php echo $person['name'] ?>
                                                 </label>
