@@ -85,20 +85,23 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      * returns an array of value => label for person autocompletion
      *
      * @param string $term
-     * @param int $hat hat
-     * @param int $active
-     * @param int $limit max number of rows
+     * @param Array $options
+     *
+     * @return Array
      */
-    public function autocomplete($term, $hat = null, $active = null, $limit = 20)
+    public function autocomplete($term, Array $options = [])
     {
         $name = $this->parseName($term);
         $parameters = ['lastname' => "$name[last]%"];
 
-        $dql = "SELECT p.id AS value, CONCAT(p.lastname, ', ', p.firstname) AS label"
+        //$hat = null, $active = null, $limit = 20
+        $options = array_merge(['hat'=>null,'active'=> null, 'limit' => 20, 'value_column' => 'id'],$options);
+
+        $dql = "SELECT p.{$options['value_column']} AS value, CONCAT(p.lastname, ', ', p.firstname) AS label"
                 . '  FROM InterpretersOffice\Entity\Person p ';
-        if ($hat) {
+        if ($options['hat']) {
             $dql .= ' JOIN p.hat h WHERE h.id = :hat AND';
-            $parameters['hat'] = $hat;
+            $parameters['hat'] = $options['hat'];
         } else {
             $dql .= ' WHERE';
         }
@@ -108,13 +111,13 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
             $dql .= ' AND p.firstname LIKE :firstname';
             $parameters['firstname'] = "$name[first]%";
         }
-        if ($active !== null) {
-            $dql .= ' AND p.active = '.($active ? 'TRUE' : 'FALSE');
+        if ($options['active'] !== null) {
+            $dql .= ' AND p.active = '.($options['active'] ? 'TRUE' : 'FALSE');
         }
         $dql   .= " ORDER BY p.lastname, p.firstname";
         $query = $this->createQuery($dql)
                 ->setParameters($parameters)
-                ->setMaxResults($limit);
+                ->setMaxResults($options['limit']);
 
         return $query->getResult();
     }
