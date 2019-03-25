@@ -38,7 +38,18 @@ tr.event-cancelled {
     text-decoration: line-through;
     text-decoration-color: red; /*515457*/
 }
-
+#email-dialog .email-recipient:hover {
+    cursor : pointer;
+}
+/* shit, can't figureout how to make tooltip stop breaking long email-addresses
+#email-dialog .toolip, #email-dialog  .tooltip-inner {
+    max-width : none;
+    width : auto;
+    white-space : nowrap;
+    word-wrap: break-word;
+    display:inline-block !important;
+}
+*/
 /*
 experimental, borrowed from http://stackoverflow.com/questions/40259391/bootstrap-form-inline-for-viewports-that-are-less-than-768px-wide\
 so that interpreter-languages won't stack and look crappy on a small viewport

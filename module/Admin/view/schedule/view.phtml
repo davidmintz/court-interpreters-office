@@ -252,7 +252,7 @@ endif;?></span>
                             <div class="col-md-10">
                                 <div class="input-group"> <!--  dropleft -->
                                     <!--   -->
-                                    <input id="to-0" name="to[]" type="text" class="form-control" placeholder="type lastname<?php
+                                    <input id="recipient-autoselect" name="recipient-autoselect" type="text" class="form-control" placeholder="start typing last name<?php
                                     if ($suggestions):?>, or use the select menu --&gt;<?php endif;
                                     ?>">
                                     <button hidden data-toggle="tooltip" class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
@@ -309,10 +309,10 @@ endif;?></span>
                 </div>
             </form>
             <div class="modal-footer center-block row" id="shit">
-                    <div class="col text-center">
-                        <button id="btn-send" class="btn btn-success disabled">send</button>
-                        <button class="btn btn-secondary">cancel</button>
-                    </div>
+                <div class="col text-center">
+                    <button disabled="disabled" id="btn-send" class="btn btn-success disabled">send</button>
+                    <button id="btn-cancel" class="btn btn-secondary">cancel</button>
+                </div>
             </div>
         </div>
     </div>

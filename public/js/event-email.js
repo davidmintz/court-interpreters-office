@@ -14,10 +14,31 @@ $(function(){
     }
     console.log(`email flag? ${email_flag}`);// to be continued
 
-    $("#btn-email").on("click",function(e){e.preventDefault();});
+    $("#btn-email, .btn-add-recipient").on("click",function(e){e.preventDefault();});
 
     $("#email-dialog").on("show.bs.modal",function(event){
+        // enable tooltips when dialog is shown
         $(`#${this.id} .btn`).tooltip();
+        // if the email-select dropdown exists, display it
+        $("#email-dialog a.dropdown-toggle").show();
+    })
+    .on("click",".btn-remove-item",function(event){
+        // remove form row (email recipient)
+        event.preventDefault();
+        $(this).tooltip("hide");
+        var div = $(this).closest(".form-row");
+        div.slideUp(()=> {
+            div.remove();
+            /*  -------------  */
+            // if no recipients, disable "send" button
+            if (! $(`input.email-recipient[name="to[]"]`).length) {
+                $("#btn-send").addClass("disabled").attr("disabled");
+            }
+        });
+    })
+    .on("click","#btn-cancel",function(){
+        // close dialog
+        $(".modal-header button.close").trigger("click");
     });
     $("#btn-add-recipients").on("click",function(e){
         e.preventDefault();
@@ -37,16 +58,18 @@ $(function(){
             var name = element.next().text().trim();
             var html = create_recipient(email,name);
             $("#email-form > .form-group:first-of-type").after(html);
-            // hide this
+            // hide this dropdown menu
             element.closest(".form-group").hide();
         });
         if ( !$("#email-dropdown input:visible").length ) {
             $(".dropdown-toggle, .dropdown-menu").hide();
         }
         if ($("#btn-send").hasClass("disabled")) {
-            $("#btn-send").removeClass("disabled");
+            $("#btn-send").removeClass("disabled").removeAttr("disabled");
         }
-        $(".modal-body .btn").tooltip();
+        $(".modal-body .btn, .email-recipient").tooltip();
+        // update placeholder text
+        $("#recipient-autoselect").attr({placeholder : "start typing last name..."});
         return true;
     });
     // don't let the "cancel" button in the dropdown submit the form
@@ -62,8 +85,8 @@ $(function(){
  */
 const create_recipient = function(email,name){
     var id, value;
-    if (email) {
-        id = "#" + email.toLowerCase().replace("@",".at.");
+    if (email && name) {
+        id = email.toLowerCase().replace("@",".at.");
         value = `${name} &lt;${email}&gt;`;
     } else {
         id = "";
@@ -78,13 +101,13 @@ const create_recipient = function(email,name){
         </label>
         <div class="col-md-10">
             <div class="input-group">
-                <input type="text" id="#${id}" name="to[]" class="form-control" value="${value}" placeholder="type last name">
-                <button class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
-                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
+                <div class="form-control text-primary">
+                    <span title="${email}" class="email-recipient">${name}</span>
+                <input class="email-recipient" type="hidden" id="#${id}" name="to[]" value="${value}" >
+                </div>
+                <button class="btn btn-sm btn-primary btn-remove-item border" title="delete this recipient">
+                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete this recipient</span>
                </button>
-               <button class="btn btn-sm btn-primary btn-add-recipient border" title="add another recipient">
-                  <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
-              </button>
            </div>
         </div>
     </div>`;
