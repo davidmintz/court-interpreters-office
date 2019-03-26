@@ -1,4 +1,6 @@
 const default_autocomplete_placeholder = "start typing last name...";
+
+
 $(function(){
     // decide whether to display a suggestion that they send an email
     // about a noteworthy update
@@ -20,9 +22,12 @@ $(function(){
         $("#recipient-autocomplete").autocomplete({
             source: function(request,response) {
                 var params = { term : request.term, active : 1, value_column : "email" };
+                $(this).data({searching:true})
                 // to do: error handling
                 $.get("/admin/people/autocomplete",params,"json").then(
-                    function(data){return response(data);}
+                    function(data){
+                        $(this).data({searching:false})
+                        return response(data);}
                 );
             },
             minLength: 2,
@@ -45,12 +50,18 @@ $(function(){
         .on("input",function(){
             // better yet:  detect whether a lookup is in progress
             // and if not, validate the input
-            console.log(`input is happening with ${$(this).val()|| "(not shit)"}`)
-            if ($("ul.ui-autocomplete:visible").length) {
-                console.log("shit is visible");
+            if ($(this).data("searching") || $("ul.ui-autocomplete:visible").length) {
+                console.log("searching or displaying shit?");
                 return;
             }
-            // validate the input
+            console.log(`input is ${$(this).val()|| "(not shit)"}. validate!`);
+            /* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#Validation */
+            // re = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+
+            // var input = $(this).val().trim();
+            // if (input.match(re)) {
+            //     console.warn('shit looks good!');
+            // }
 
         });
     });
