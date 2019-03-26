@@ -114,6 +114,9 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         if ($options['active'] !== null) {
             $dql .= ' AND p.active = '.($options['active'] ? 'TRUE' : 'FALSE');
         }
+        if ($options['value_column'] == 'email') {
+            $dql .= ' AND p.email IS NOT NULL';
+        }
         $dql   .= " ORDER BY p.lastname, p.firstname";
         $query = $this->createQuery($dql)
                 ->setParameters($parameters)
