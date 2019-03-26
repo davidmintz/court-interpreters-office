@@ -22,14 +22,22 @@ $(function(){
             source: function(request,response) {
                 var params = { term : request.term, active : 1, value_column : "email" };
                 $.get("/admin/people/autocomplete",params,"json").then(
-                    function(data){
-                        // if (! data.length) {
-                        //     name_element.data({id:""});
-                        // }
-                        return response(data);
-                    }
+                    function(data){return response(data);}
                 );
+            },
+            minLength: 2,
+            select: function( event, ui ) {
+                event.preventDefault();
+                var html = create_recipient(ui.item.value, ui.item.label);
+                $(".email-subject").before(html);
+                $("span.email-recipient").tooltip();
+                $(this).val("");
+            },
+            focus: function(event,ui) {
+                event.preventDefault();
+                $(this).val(ui.item.label);
             }
+
         });
 
     });
@@ -37,14 +45,13 @@ $(function(){
 
         // enable tooltips when dialog is shown
         $(`#${this.id} .btn`).tooltip();
-        // if the email-select dropdown exists, display it
+        // this needs to be reconsidered...
         // $("#email-dialog a.dropdown-toggle, #email-dropdown, #email-dropdown .form-group").show();
-        //$("#email-dialog a.dropdown-toggle, #email-dropdown .form-group").show();
+        // $("#email-dialog a.dropdown-toggle, #email-dropdown .form-group").show();
         if ( !$("#email-dropdown input:visible").length ) {
             // console.log("no inputs to see, therefore hiding dropdown shit");
             // $(".dropdown-toggle").hide(); //, .dropdown-menu
         }
-        // unless the address has already been added
     })
     // remove form row (email recipient)
     .on("click",".btn-remove-item",function(event){
@@ -125,7 +132,7 @@ const create_recipient = function(email,name){
         id = "";
         value = "";
     }
-    return `<div class="form-row form-group">
+    return `<div class="form-row form-group my-1">
         <label class="col-md-2 text-right" for="${id}">
             <select class="form-control custom-select email-header">
                 <option value="to">To</option>
