@@ -1,3 +1,4 @@
+const default_autocomplete_placeholder = "start typing last name...";
 $(function(){
     // decide whether to display a suggestion that they send an email
     // about a noteworthy update
@@ -16,11 +17,10 @@ $(function(){
 
     $("#btn-email, .btn-add-recipient").on("click",function(e){e.preventDefault();});
     $("#email-dialog").on("shown.bs.modal",function(event){
-        console.warn("initializing autocomplete?");
-        console.log($("#recipient-autocomplete").length + " inputs exist");
         $("#recipient-autocomplete").autocomplete({
             source: function(request,response) {
                 var params = { term : request.term, active : 1, value_column : "email" };
+                // to do: error handling
                 $.get("/admin/people/autocomplete",params,"json").then(
                     function(data){return response(data);}
                 );
@@ -32,17 +32,29 @@ $(function(){
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
                 $(this).val("");
+                $("#btn-send").removeClass("disabled").removeAttr("disabled")
             },
             focus: function(event,ui) {
                 event.preventDefault();
                 $(this).val(ui.item.label);
             }
+        })
+        /* the idea is disable the "+" until the manually-entered text is valid,
+            i.e., '[recipient name] <email>'
+         */
+        .on("input",function(){
+            // better yet:  detect whether a lookup is in progress
+            // and if not, validate the input
+            console.log(`input is happening with ${$(this).val()|| "(not shit)"}`)
+            if ($("ul.ui-autocomplete:visible").length) {
+                console.log("shit is visible");
+                return;
+            }
+            // validate the input
 
         });
-
     });
     $("#email-dialog").on("show.bs.modal",function(event){
-
         // enable tooltips when dialog is shown
         $(`#${this.id} .btn`).tooltip();
         // this needs to be reconsidered...
@@ -60,7 +72,6 @@ $(function(){
         var div = $(this).closest(".form-row");
         div.slideUp(()=> {
             div.remove();
-            /*  -------------  */
             // if no recipients, disable "send" button
             if (! $(`input.email-recipient[name="to[]"]`).length) {
                 $("#btn-send").addClass("disabled").attr("disabled");
@@ -69,8 +80,11 @@ $(function(){
     })
     .on("change", "select.email-header",function(){
         var input = $(this).parent().next().find("input.email-recipient");
-        var name = input.attr("name") ===  "to[]" ? "cc[]" : "to[]"
+        var name = input.attr("name") ===  "to[]" ? "cc[]" : "to[]";
         input.attr({name});
+        if (! $(`input.email-recipient[name="to[]"]`).length) {
+            $("#btn-send").addClass("disabled").attr("disabled");
+        }
     })
     // close dialog
     .on("click","#btn-cancel",function(){
@@ -100,20 +114,18 @@ $(function(){
         if ( !$("#email-dropdown input:visible").length ) {
             console.log("no inputs to see, therefore hiding dropdown");
             $(".dropdown-toggle").hide(); //, .dropdown-menu
+            $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
         }
-
         if ($("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
         }
         $(".modal-body .btn, .email-recipient").tooltip();
         // update placeholder text
-        $("#recipient-autoselect").attr({placeholder : "start typing last name..."});
-        return true;
+        //$("#recipient-autoselect").attr({placeholder : "start typing last name..."});
+        //return true;
     });
-    // don't let the "cancel" button in the dropdown submit the form
+    // don't let the buttons in the dropdown close the menu
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
-
-
 });
 
 /**
