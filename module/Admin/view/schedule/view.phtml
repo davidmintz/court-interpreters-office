@@ -7,7 +7,11 @@ $this->headLink()
         ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 //->appendFile($this->basePath('js/lib/sweetalert2.min.js'))
 //$this->headLink()->appendStylesheet($this->basePath('css/sweetalert2.css'));
-//$this->headStyle()->captureStart();?><?php //$this->headStyle()->captureEnd();
+$this->headStyle()->captureStart();?>
+.ui-autocomplete {
+  z-index: 99999 !important;
+}
+<?php $this->headStyle()->captureEnd();
 /**
  *
  * @var \InterpretersOffice\Entity\Event $event
