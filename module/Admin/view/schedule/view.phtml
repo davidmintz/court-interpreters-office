@@ -24,25 +24,6 @@ if (! $event) :  ?>
     return;
 endif;
 $this->headTitle('event details');
-// figure out location
-if ($event['location']) :
-    $IS_DEFAULT_LOCATION = false;
-    $location = $event['location'];
-    if ($event['parent_location']) :
-        $location .= ', '.$event['parent_location'];
-    endif;
-elseif ($event['category'] == 'in' && $event['default_courtroom']) :
-    // fall back on judge default
-    $IS_DEFAULT_LOCATION = true;
-    $location = $event['default_courtroom'];
-    if ($event['default_courthouse']) :
-        $location .= ', '.$event['default_courthouse'];
-    endif;
-    $location .= ' <span class="text-muted text-md-right">**</span>';
-else :
-    $location = '';
-    $IS_DEFAULT_LOCATION = null;
-endif;
 ?>
 <h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="/admin">admin</a> | <a href="/admin/schedule">schedule</a> <small class="text-muted text-md-right">event details</small></h2>
 <?php
@@ -54,6 +35,7 @@ elseif ($messenger->hasErrorMessages()) :
 endif;?>
 <!-- experimental debug zone -->
 <pre><?php
+//print_r($event);
 $session = new \Zend\Session\Container('event_updates');
 //print_r(array_keys($this->entity));
 if ($session->{$event['id']}) {
@@ -68,7 +50,7 @@ if ($session->{$event['id']}) {
     <div class="col-sm-3 text-muted text-md-right">
         date
     </div>
-    <div class="col-sm-3 pl-0">
+    <div class="col-sm-3 pl-0 date">
         <?php echo $this->diff('date')?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
@@ -80,19 +62,19 @@ if ($session->{$event['id']}) {
     <div class="col-sm-3 text-muted text-md-right">
         type
     </div>
-    <div class="col-sm-3 pl-0">
-        <?php echo $this->diff('type') ?>
+    <div class="col-sm-3 pl-0  event-type">
+        <?php echo $this->diff('type'); ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         language
     </div>
-    <div class="col-sm-3 pl-0">
+    <div class="col-sm-3 pl-0 language">
         <?php echo $this->diff('language')?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         judge
     </div>
-    <div class="col-sm-3 pl-0">
+    <div class="col-sm-3 pl-0 judge">
         <?php echo $this->diff('judge');
         if ($event['aj_default_location']) :
             ?> <span class="text-muted"><?php echo $event['aj_default_location']?></span><?php
@@ -101,13 +83,13 @@ if ($session->{$event['id']}) {
     <div class="col-sm-3  text-muted text-md-right">
         location
     </div>
-    <div class="col-sm-3 pl-0">
-        <?php echo $this->diff('location') ?>
+    <div class="col-sm-3 pl-0 location">
+        <?php echo $this->diff('location');  if ($event['is_default_location']):?> <span class="text-muted text-md-right">**</span><?php endif ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         defendants
     </div>
-    <div class="col-sm-3  defendants pl-0"><?php
+    <div class="col-sm-3 pl-0 defendants"><?php
         echo $this->diff('defendants');
     ?>
     </div>
@@ -215,12 +197,11 @@ endif;?></span>
           <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
           <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
         </div>
-
     </div>
-    <?php if ($event['request_id'] or true === $IS_DEFAULT_LOCATION): ?>
+    <?php if ($event['request_id'] or $event['is_default_location']): ?>
         <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0" style=font-size:90%;>
-            <?php if ($event['request_id']):?>* this was submitted online<br><?php endif; ?>
-            <?php if ($event['location'] and true === $IS_DEFAULT_LOCATION):?>** default location, not specified by the user<?php endif; ?>
+            <?php if ($event['request_id']):?>* request was submitted online<br><?php endif; ?>
+            <?php if ($event['is_default_location']) :?>** location not specified; this is the default<?php endif; ?>
         </div>
     <?php endif;
     $suggestions = [];
@@ -263,11 +244,6 @@ endif;?></span>
                                     <input id="recipient-autocomplete" name="recipient-autocomplete" type="text" class="form-control" placeholder="start typing last name<?php
                                     if ($suggestions):?>, or use the select menu<?php endif;
                                     ?>">
-                                    <!--
-                                    <button hidden data-toggle="tooltip" class="btn btn-sm btn-primary btn-remove-item border" title="delete recipient">
-                                       <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete recipient</span>
-                                   </button>
-                                    -->
                                    <button data-toggle="tooltip" class="btn btn-sm btn-primary btn-add-recipient border" title="add another recipient">
                                       <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
                                   </button>

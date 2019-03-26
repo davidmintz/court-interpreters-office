@@ -169,7 +169,7 @@ DQL;
             $event['submitter_extra_data'] =
             json_decode($event['submitter_extra_data'],\JSON_OBJECT_AS_ARRAY);
         }
-        // ugly! let's fix this
+        /* NOTE TO SELF: ugly! let's fix this at the source of the problem.*/
         $event['judge'] = str_replace('  ',' ',$event['judge']);
         $deft_dql = 'SELECT d.surnames, d.given_names
             FROM InterpretersOffice\Entity\Event e
@@ -183,6 +183,18 @@ DQL;
         $event['interpreters'] = $entityManager->createQuery($interp_dql)
             ->setParameters(['id' => $id])
             ->useResultCache($this->cache_enabled)->getResult();
+        $event['is_default_location'] = false;
+        if ($event['location']) {
+            if ($event['parent_location']) {
+                $event['location'] .= ', '.$event['parent_location'];
+            }
+        } elseif ($event['category'] == 'in' && $event['default_courtroom']) {
+            $event['is_default_location'] = true;
+            $event['location']  = $event['default_courtroom'];
+            if ($event['default_courthouse']) {
+                $event['location']  .= ', '.$event['default_courthouse'];
+            }
+        }
 
         return $event;
     }
