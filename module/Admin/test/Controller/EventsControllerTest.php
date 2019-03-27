@@ -126,7 +126,7 @@ class EventControllerTest extends AbstractControllerTest
         $data = $em->getRepository(Entity\Event::class)->getView($id);
         $this->assertTrue(false !== strstr($data['judge'], 'Dinklesnort'));
         $this->assertTrue(false !== strstr($data['type'], 'conference'));
-        $this->assertEquals($data['location'], '14B');
+        $this->assertEquals($data['location'], '14B, 500 Pearl');
         $this->assertEquals($data['parent_location'], '500 Pearl');
         $this->assertEquals($data['created_by'], 'david');
         $this->assertEquals($data['language'], 'Spanish');

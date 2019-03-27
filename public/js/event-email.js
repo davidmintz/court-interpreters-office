@@ -1,5 +1,6 @@
 const default_autocomplete_placeholder = "start typing last name...";
 
+const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 
 $(function(){
     // decide whether to display a suggestion that they send an email
@@ -58,10 +59,18 @@ $(function(){
             /* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#Validation */
             // re = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
-            // var input = $(this).val().trim();
-            // if (input.match(re)) {
-            //     console.warn('shit looks good!');
-            // }
+            var input = $(this).val().trim();
+            var name, email;
+            if (input.match(pattern)) {
+                // it looks plausible(ish)
+                // email = input;
+            } else {
+                var parts = input.split(/\s+/);
+                if (parts.length > 1) {
+                    email = parts.pop.replace(/[<>]/g,"");
+                    name = parts.join(" ");
+                }
+            }
 
         });
     });
