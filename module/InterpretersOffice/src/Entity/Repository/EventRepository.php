@@ -30,6 +30,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          COALESCE(
              CONCAT(j.firstname, ' ',j.middlename,' ',j.lastname,', ',f.flavor),
          aj.name) AS judge,
+         j.lastname AS judge_lastname,
          t.name AS type,
          c.category,
          lang.name AS language,

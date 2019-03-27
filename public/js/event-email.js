@@ -8,16 +8,20 @@ $(function(){
     // about a noteworthy update
     var email_flag = false;
     if ( $('span.interpreter').length && $("ins, del").length) {
-        var noteworthy = ["date","time","type","interpreters","location"];
-        $("ins, del").each(function(){
-            var field = ($(this).parent().prev("div").text().trim());
-            if (noteworthy.includes(field)) {
+        var noteworthy = ["date","time","event_type","interpreters","location"];
+        var n = noteworthy.length;
+        for (var i = 0; i < n; i++) {
+            var div = $(`.${noteworthy[i]}`);
+            console.log(`field ${noteworthy[i]}, elements? ${div.length}`);
+            var updated = div.find("ins").length + div.find("del").length;
+            if (updated) {
                 email_flag = true;
-                return false;
+                break;
             }
-        });
+        }
     }
     console.log(`email flag? ${email_flag}`);// to be continued
+
     var btn_manual_add = $("#btn-add-recipient");
 
     $("#btn-email, .btn-add-recipient").on("click",function(e){e.preventDefault();});
@@ -157,7 +161,7 @@ $(function(){
             var email = element.val();
             var name = element.next().text().trim();
             var html = create_recipient(email,name);
-            $("#email-form > .form-group:first-of-type").after(html);
+            $("#email-form .email-subject").before(html);
             // hide this row menu, since the address has now been added
             element.closest(".form-group").hide();
         });
@@ -174,6 +178,38 @@ $(function(){
     // don't let the buttons in the dropdown close the menu
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
 });
+
+const get_event_description = function(){
+
+    var e = {};
+    var fields = ["date","time","event_type","language","location","docket"];
+    for (var i = 0; i < fields.length; i++) {
+        var div = $(`.${fields[i]}`);
+        if (div.children("ins").length) {
+            e[fields[i]] = div.children("ins").text().trim();
+        } else if (div.children("del").length) {
+            e[fields[i]] = "";
+        } else {
+            e[fields[i]] =  div.text().trim();
+        }
+    }
+    e.category = $("div.event-details").data("event_category");
+    e.docket = e.docket.replace(/^(\d{2})(\d{2})(.+)/,"$2$3");
+
+    var text = `${e.language} ${e.event_type}, ${e.date}`;
+    if (e.time) {
+        text += ` ${e.time}`;
+    }
+    if (e.category !== "in" && location) {
+        text += `, ${e.location}`;
+    }
+    if (e.docket) {
+        text += ` (${e.docket})`
+    }
+
+    return text;
+
+};
 
 /**
  * returns HTML for adding an email recipient
