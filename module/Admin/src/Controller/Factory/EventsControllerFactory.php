@@ -79,12 +79,32 @@ class EventsControllerFactory implements FactoryInterface
                         'interpreters' => array_map(
                             function($ie){
                                 $i = $ie->getInterpreter();
-                                return ['lastname'=> $i->getLastname(),'firstname'=> $i->getFirstName(),'email'=>$i->getEmail(),'id'=>$i->getId()];
+                                return [
+                                    'lastname'=> $i->getLastname(),
+                                    'firstname'=> $i->getFirstName(),
+                                    'email'=>$i->getEmail(),
+                                    'id'=>$i->getId()
+                                ];
                             },$entity->getInterpreterEvents()->toArray()
                         ),
-                        'location' => (string)$entity->getLocation(),
+                        /**
+                         * @todo this is nuts. write a method on the entity
+                         * class that gets this string.
+                         */
+                        'location' => call_user_func(function($event){
+                            $location = $event->getLocation();
+                            $string = '';
+                            if ($location) {
+                                $string = (string)$location;
+                                $parent = $location->getParentLocation();
+                                if ($parent) {
+                                    $string .= ", $parent";
+                                }
+                            }
+                            return $string;
+                        },$entity),
                         'parent_location'=>$entity->getLocation() ?
-                        $entity->getLocation()->getParentLocation():'',
+                            $entity->getLocation()->getParentLocation():'',
                         'aj_default_location'=> $entity->getAnonymousJudge()?
                             (string)$entity->getAnonymousJudge()->getDefaultLocation():'',
                         'default_courtroom' => call_user_func(
