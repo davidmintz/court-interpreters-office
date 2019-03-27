@@ -1,5 +1,6 @@
 const default_autocomplete_placeholder = "start typing last name...";
 
+/* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#Validation */
 const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 
 $(function(){
@@ -17,6 +18,7 @@ $(function(){
         });
     }
     console.log(`email flag? ${email_flag}`);// to be continued
+    var btn_manual_add = $("#btn-add-recipient");
 
     $("#btn-email, .btn-add-recipient").on("click",function(e){e.preventDefault();});
     $("#email-dialog").on("shown.bs.modal",function(event){
@@ -34,6 +36,12 @@ $(function(){
             minLength: 2,
             select: function( event, ui ) {
                 event.preventDefault();
+                var email = ui.item.value.toLowerCase();
+                if ($(`input[value="${email}"]`).length) {
+                    console.log(`duplicate: ${email}`);
+                    /** @todo some error message or other feedback */
+                    return;
+                }
                 var html = create_recipient(ui.item.value, ui.item.label);
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
@@ -49,43 +57,63 @@ $(function(){
             i.e., '[recipient name] <email>'
          */
         .on("input",function(){
-            // better yet:  detect whether a lookup is in progress
+            // try to detect whether a lookup is in progress
             // and if not, validate the input
             if ($(this).data("searching") || $("ul.ui-autocomplete:visible").length) {
-                console.log("searching or displaying shit?");
                 return;
             }
-            console.log(`input is ${$(this).val()|| "(not shit)"}. validate!`);
-            /* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#Validation */
-            // re = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-
             var input = $(this).val().trim();
-            var name, email;
+            var name, email, valid;
             if (input.match(pattern)) {
                 // it looks plausible(ish)
-                // email = input;
+                email = input;
+                valid = true;
             } else {
                 var parts = input.split(/\s+/);
                 if (parts.length > 1) {
-                    email = parts.pop.replace(/[<>]/g,"");
+                    email = parts.pop().replace(/[<>]/g,"");
+                    if (email.match(pattern)) {
+                        name = parts.join(" ");
+                        valid = true;
+                    }
+                }
+            }
+            if (valid) {
+                btn_manual_add.removeClass("btn-secondary")
+                    .removeClass("disabled")
+                    .addClass("btn-primary");
+            } else {
+                if (btn_manual_add.hasClass("btn-primary")) {
+                    btn_manual_add.removeClass("btn-primary")
+                        .addClass("btn-secondary disabled");
+                }
+            }
+        });
+        btn_manual_add.on("click",function(){
+            if ($(this).hasClass("disabled")) {
+                return;
+            }
+            var email, name = "", value = $("#recipient-autocomplete").val().trim();
+            var parts = value.split(/\s+/);
+            if (parts.length) {
+                email = parts.pop().replace(/[<>]/g,"");
+                if (parts.length) {
                     name = parts.join(" ");
                 }
             }
-
+            console.warn(`valid? ${name || "[no-name]"} <${email}>`);
+            var html = create_recipient(email,name || email);
+            $(".email-subject").before(html);
+            $("#recipient-autocomplete").val("");
+            btn_manual_add.removeClass("btn-primary")
+                .addClass("btn-secondary disabled");
         });
     });
     $("#email-dialog").on("show.bs.modal",function(event){
         // enable tooltips when dialog is shown
         $(`#${this.id} .btn`).tooltip();
-        // this needs to be reconsidered...
-        // $("#email-dialog a.dropdown-toggle, #email-dropdown, #email-dropdown .form-group").show();
-        // $("#email-dialog a.dropdown-toggle, #email-dropdown .form-group").show();
-        if ( !$("#email-dropdown input:visible").length ) {
-            // console.log("no inputs to see, therefore hiding dropdown shit");
-            // $(".dropdown-toggle").hide(); //, .dropdown-menu
-        }
     })
-    // remove form row (email recipient)
+    // remove form row (email recipient) when they click "x"
     .on("click",".btn-remove-item",function(event){
         event.preventDefault();
         $(this).tooltip("hide");
@@ -104,6 +132,8 @@ $(function(){
         input.attr({name});
         if (! $(`input.email-recipient[name="to[]"]`).length) {
             $("#btn-send").addClass("disabled").attr("disabled");
+        } else {
+            $("#btn-send").removeClass("disabled").removeAttr("disabled");
         }
     })
     // close dialog
@@ -140,9 +170,6 @@ $(function(){
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
         }
         $(".modal-body .btn, .email-recipient").tooltip();
-        // update placeholder text
-        //$("#recipient-autoselect").attr({placeholder : "start typing last name..."});
-        //return true;
     });
     // don't let the buttons in the dropdown close the menu
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
@@ -159,6 +186,7 @@ const create_recipient = function(email,name){
     var id, value;
     if (email && name) {
         id = email.toLowerCase().replace("@",".at.");
+        name = name.replace(/"/g,""); // no quotes
         value = `${name} &lt;${email}&gt;`;
     } else {
         id = "";
@@ -175,7 +203,7 @@ const create_recipient = function(email,name){
             <div class="input-group">
                 <div class="form-control text-primary">
                     <span title="${email}" class="email-recipient">${name}</span>
-                <input class="email-recipient" type="hidden" id="${id}" name="to[]" value="${value}" >
+                <input class="email-recipient" data-recipient-name="${name}" type="hidden" id="${id}" name="to[]" value="${email.toLowerCase()}" >
                 </div>
                 <button class="btn btn-sm btn-primary btn-remove-item border" title="delete this recipient">
                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete this recipient</span>
