@@ -230,8 +230,8 @@ class EventsController extends AbstractActionController
                 $verbiage = 'saved (unmodified)';
             }
             $this->flashMessenger()->addSuccessMessage(sprintf(
-                "This event has been successfully $verbiage on the "
-                .'schedule for <a href="%s">%s</a>',
+                "This event has been $verbiage on the "
+                .'schedule for <a href="%s">%s</a>.',
                 $url . $date->format('/Y/m/d'),
                 $date->format('l d-M-Y')
             ));
