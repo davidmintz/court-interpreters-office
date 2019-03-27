@@ -244,7 +244,7 @@ endif;?></span>
                                     <input id="recipient-autocomplete" name="recipient-autocomplete" type="text" class="form-control" placeholder="start typing last name<?php
                                     if ($suggestions):?>, or use the select menu<?php endif;
                                     ?>">
-                                   <button data-toggle="tooltip" class="btn btn-sm btn-primary btn-add-recipient border" title="add another recipient">
+                                   <button id="btn-add-recipient" data-toggle="tooltip" class="btn btn-sm btn-secondary btn-add-recipient border disabled" title="manually add a recipient">
                                       <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
                                   </button>
                                   <?php
