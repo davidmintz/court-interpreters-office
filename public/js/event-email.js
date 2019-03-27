@@ -12,7 +12,6 @@ $(function(){
         var n = noteworthy.length;
         for (var i = 0; i < n; i++) {
             var div = $(`.${noteworthy[i]}`);
-            console.log(`field ${noteworthy[i]}, elements? ${div.length}`);
             var updated = div.find("ins").length + div.find("del").length;
             if (updated) {
                 email_flag = true;
@@ -130,6 +129,7 @@ $(function(){
             }
         });
     })
+    // toggle To|Cc email header
     .on("change", "select.email-header",function(){
         var input = $(this).parent().next().find("input.email-recipient");
         var name = input.attr("name") ===  "to[]" ? "cc[]" : "to[]";
