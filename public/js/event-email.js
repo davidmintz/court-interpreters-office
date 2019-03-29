@@ -7,6 +7,12 @@ $(function(){
     // decide whether to display a suggestion that they send an email
     // about a noteworthy update
     var email_flag = false;
+    var date_str = $(".event-details").data().event_datetime;
+
+    // to be continued: figure out if it's in the past, in which case
+    // don't bother...
+    var event_datetime =  moment(date_str,"YYYY-MM-DD HH:mm")';
+
     if ( $('span.interpreter').length && $("ins, del").length) {
         var noteworthy = ["date","time","event_type","interpreters","location"];
         var n = noteworthy.length;
