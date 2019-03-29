@@ -196,7 +196,13 @@ DQL;
                 $event['location']  .= ', '.$event['default_courthouse'];
             }
         }
-
+        $event_datetime = $event['date']->format("Y-m-d");
+        if ($event['time']) {
+            $event_datetime .= $event['time']->format(' H:i');
+        } else {
+            $event_datetime .= ' 00:00';
+        }
+        $event['datetime'] = $event_datetime;
         return $event;
     }
 

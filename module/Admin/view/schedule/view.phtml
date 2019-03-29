@@ -2,6 +2,7 @@
 $this->headScript()
 ->appendFile($this->basePath('js/event-delete.js'))
 ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
 ->appendFile($this->basePath('js/event-email.js'));
 $this->headLink()
         ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
@@ -10,7 +11,7 @@ $this->headLink()
 $this->headStyle()->captureStart();?>
 .ui-autocomplete {
   z-index: 99999 !important;
-}
+}a
 <?php $this->headStyle()->captureEnd();
 /**
  *
@@ -46,7 +47,7 @@ if ($session->{$event['id']}) {
 <!-- TO DO: make partials for flat-out details and for "diff"
     and use one or the other, depending
 -->
-<div data-event_category="<?php echo $event['category']?>" data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
+<div data-event_category="<?php echo $event['category']?>" data-event_datetime="<?php echo $event['datetime']?>" data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
     <div class="col-sm-3 text-muted text-md-right">
         date
     </div>
