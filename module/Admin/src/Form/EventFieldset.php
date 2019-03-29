@@ -302,7 +302,7 @@ class EventFieldset extends AbstractEventFieldset
                 'label' => 'event type',
                 'value_options' => $value_options,
             ],
-            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event-type'],
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event_type'],
             ]
         );
 
