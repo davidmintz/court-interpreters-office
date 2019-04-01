@@ -3,6 +3,24 @@ const default_autocomplete_placeholder = "start typing last name...";
 /* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#Validation */
 const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 
+/**
+ * determines whether to suggest sending email notification about
+ * newly updated event
+ * @return {boolean}
+ */
+const should_suggest_email = function()
+{
+    //var email_flag = false;
+    if ( ! $('span.interpreter').length || ! $("ins, del").length ) {
+        return false;
+    }
+    var date_str = $(".event-details").data().event_datetime;
+    var event_datetime =  moment(date_str,"YYYY-MM-DD HH:mm");
+    var now = moment();
+    
+
+};
+
 $(function(){
     // decide whether to display a suggestion that they send an email
     // about a noteworthy update
@@ -11,7 +29,7 @@ $(function(){
 
     // to be continued: figure out if it's in the past, in which case
     // don't bother...
-    var event_datetime =  moment(date_str,"YYYY-MM-DD HH:mm")';
+    var event_datetime =  moment(date_str,"YYYY-MM-DD HH:mm");
 
     if ( $('span.interpreter').length && $("ins, del").length) {
         var noteworthy = ["date","time","event_type","interpreters","location"];
