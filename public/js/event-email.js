@@ -10,40 +10,50 @@ const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0
  */
 const should_suggest_email = function()
 {
-    //var email_flag = false;
     if ( ! $('span.interpreter').length || ! $("ins, del").length ) {
         return false;
     }
     var date_str = $(".event-details").data().event_datetime;
     var event_datetime =  moment(date_str,"YYYY-MM-DD HH:mm");
-    var now = moment();
-    
+    var minutes_from_now = moment().add(10,'minutes');
+    if (event_datetime.isBefore(minutes_from_now)) {
+        return false;
+    }
+    var email_flag = false;
+    var noteworthy = ["date","time","event_type","interpreters","location","cancellation"];
+    var n = noteworthy.length;
+    for (var i = 0; i < n; i++) {
+        var div = $(`.${noteworthy[i]}`);
+        var updated = div.find("ins").length + div.find("del").length;
+        if (updated) {
+            email_flag = true;
+            break;
+        }
+    }
+    return email_flag;
+};
 
+const display_email_suggestion = function() {
+    var who = "interpreter";
+    if ($("span.interpreter").length > 1) {
+        who += "s";
+    }
+    var div = $(`<div style="max-width:400px">`).addClass("alert alert-warning text-center border mx-auto").html(
+         `<a id="link-email-suggest" href="#">Email notification to the ${who}?</a>`
+    );
+    div.prepend(`<button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>`);
+    div.insertBefore($(".event-details"));
+    $("#link-email-suggest").on("click",function(event){
+        event.preventDefault();
+        $("#btn-email").trigger("click");
+    });
 };
 
 $(function(){
-    // decide whether to display a suggestion that they send an email
-    // about a noteworthy update
-    var email_flag = false;
-    var date_str = $(".event-details").data().event_datetime;
-
-    // to be continued: figure out if it's in the past, in which case
-    // don't bother...
-    var event_datetime =  moment(date_str,"YYYY-MM-DD HH:mm");
-
-    if ( $('span.interpreter').length && $("ins, del").length) {
-        var noteworthy = ["date","time","event_type","interpreters","location"];
-        var n = noteworthy.length;
-        for (var i = 0; i < n; i++) {
-            var div = $(`.${noteworthy[i]}`);
-            var updated = div.find("ins").length + div.find("del").length;
-            if (updated) {
-                email_flag = true;
-                break;
-            }
-        }
+    console.log(`email flag? ${should_suggest_email()}`);
+    if (should_suggest_email()) {
+        display_email_suggestion();
     }
-    console.log(`email flag? ${email_flag}`);// to be continued
 
     var btn_manual_add = $("#btn-add-recipient");
 
@@ -64,7 +74,7 @@ $(function(){
             select: function( event, ui ) {
                 event.preventDefault();
                 var email = ui.item.value.toLowerCase();
-                if ($(`input[value="${email}"]`).length) {
+                if ($(`.form-control input[value="${email}"]`).length) {
                     console.log(`duplicate: ${email}`);
                     /** @todo some error message or other feedback */
                     return;
@@ -182,10 +192,12 @@ $(function(){
         }
         elements.each(function(){
             var element = $(this);
-            var email = element.val();
+            var email = element.val().toLowerCase();
             var name = element.next().text().trim();
-            var html = create_recipient(email,name);
-            $("#email-form .email-subject").before(html);
+            if (! $(`.form-control input[value="${email}"]`).length) {
+                var html = create_recipient(email,name);
+                $("#email-form .email-subject").before(html);
+            }
             // hide this row menu, since the address has now been added
             element.closest(".form-group").hide();
         });
