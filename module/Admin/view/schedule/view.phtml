@@ -193,7 +193,6 @@ endif;?></span>
             </div>
         <?php endif; ?>
     </div>
-
     <div class="col-12 d-flex">
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
           <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
@@ -216,7 +215,7 @@ endif;?></span>
         if ($event['interpreters'])
             {
             foreach($event['interpreters'] as $i) {
-                // in some cases, the submitter and the interpreter are one
+                // in some cases, the submitter and the interpreter are identical
                 if (count($suggestions) && in_array($i['email'],array_column($suggestions,'email'))) {
                     continue;
                 }
@@ -282,34 +281,34 @@ endif;?></span>
                             </label>
                             <div class="col-md-10">
                                 <div class="input-group">
-                                    <input id="message-subject" type="text" class="form-control" placeholder="type your subject line, or use the dropdown">
+                                    <input id="message-subject" type="text" class="form-control text-truncate" placeholder="type your subject line, or use the dropdown">
                                     <a title="suggested subject lines" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
                                     <div id="subject-dropdown" class="dropdown-menu pl-1">
                                     <?php if ($event['submitter_email']) :?>
-                                        <div data-toggle="tooltip" title="contact <?php echo $this->escapeHtml($event['submitter'])?>" data-subject="your request" class="dropdown-item">
-                                            your interpreter request
+                                        <div data-toggle="tooltip" data-placement="left" title="contact <?php echo $this->escapeHtml($event['submitter'])?>" data-subject="your request" class="dropdown-item">
+                                            <a href="#">your interpreter request
                                         </div>
                                         <div class="dropdown-divider"></div>
                                     <?php endif; ?>
-                                        <div data-toggle="tooltip" title="offer this assignment" data-subject="available" class="dropdown-item">
-                                             assignment available
+                                        <div data-toggle="tooltip" data-placement="left" title="offer this assignment" data-subject="available" class="dropdown-item">
+                                             <a href="#">assignment available</a>
                                         </div>
                                         <div class="dropdown-divider"></div>
                                     <?php if ($event['interpreters']) :?>
                                         <?php if ($event['interpreters']) :?>
-                                            <div data-toggle="tooltip" title="send details of noteworthy updates" data-subject="update" class="dropdown-item">
-                                                assignment update
+                                            <div data-toggle="tooltip" data-placement="left" title="send details of noteworthy updates" data-subject="update" class="dropdown-item">
+                                                <a href="#">assignment update</a>
                                             </div>
                                             <div class="dropdown-divider"></div>
                                         <?php endif; ?>
-                                        <div data-toggle="tooltip" title="send confirmation as to this assignment" data-subject="confirmation" class="dropdown-item">
-                                            assignment confirmation
+                                        <div data-toggle="tooltip" data-placement="left" title="send confirmation as to this assignment" data-subject="confirmation" class="dropdown-item">
+                                            <a href="#">assignment confirmation</a>
                                         </div>
                                         <div class="dropdown-divider"></div>
                                     <?php endif; ?>
                                     <?php if ('n/a' != $event['reason_for_cancellation']) :?>
-                                        <div  data-toggle="tooltip" title="notify that the assignment has been cancelled" data-subject="cancellation" class="dropdown-item">
-                                            assignment cancellation
+                                        <div data-toggle="tooltip" data-placement="left" title="notify that the assignment has been cancelled" data-subject="cancellation" class="dropdown-item">
+                                            <a href="#">assignment cancellation</a>
                                         </div>
                                         <div class="dropdown-divider"></div>
                                     <?php endif; ?>

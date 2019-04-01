@@ -1,3 +1,5 @@
+/** public/js/event-email.js */
+
 const default_autocomplete_placeholder = "start typing last name...";
 
 /* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#Validation */
@@ -12,15 +14,12 @@ const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0
  * @return {string}
  */
 const create_recipient = function(email,name){
-    var id, value;
-    if (email && name) {
-        id = email.toLowerCase().replace("@",".at.");
-        name = name.replace(/"/g,""); // no quotes
-        value = `${name} &lt;${email}&gt;`;
-    } else {
-        id = "";
-        value = "";
-    }
+    //var id, value;
+    //if (email && name) {
+    var id = email.toLowerCase().replace("@",".at.");
+    name = name.replace(/"/g,""); // strip quotes
+    var value = `${name} &lt;${email}&gt;`;
+
     return `<div class="form-row form-group my-1">
         <label class="col-md-2 text-right" for="${id}">
             <select class="form-control custom-select email-header">
@@ -132,6 +131,8 @@ $(function(){
     }
     $("[data-toggle=tooltip]").tooltip();
     var btn_manual_add = $("#btn-add-recipient");
+    var description = get_event_description();
+    $("#email-modal-label").append(` re: ${description}`);
 
     $("#btn-email, .btn-add-recipient").on("click",function(e){e.preventDefault();});
     $("#email-dialog").on("shown.bs.modal",function(event){
@@ -217,6 +218,7 @@ $(function(){
             console.warn(`valid? ${name || "[no-name]"} <${email}>`);
             var html = create_recipient(email,name || email);
             $(".email-subject").before(html);
+            $(this).tooltip("hide");
             $("#recipient-autocomplete").val("");
             btn_manual_add.removeClass("btn-primary")
                 .addClass("btn-secondary disabled");
@@ -292,5 +294,22 @@ $(function(){
 
     $("#subject-dropdown .dropdown-item").on("click",function(event){
         console.warn("do shit with: "+$(this).data("subject"));
+        $(this).tooltip("hide");
+        var subject_line;
+        switch ($(this).data("subject")) {
+            case "your request":
+            subject_line = description;
+            break;
+            case "available":
+            subject_line = "interpreter needed: "+description;
+            break;
+            case "update":
+            subject_line = "assignment update: "+description;
+            break;
+            case "confirmation":
+            subject_line = "assignment confirmed: "+description;
+            break;
+        }
+        $("#message-subject").val(subject_line);
     });
 });
