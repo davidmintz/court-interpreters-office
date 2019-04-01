@@ -54,7 +54,7 @@ $(function(){
     if (should_suggest_email()) {
         display_email_suggestion();
     }
-
+    $("[data-toggle=tooltip]").tooltip();
     var btn_manual_add = $("#btn-add-recipient");
 
     $("#btn-email, .btn-add-recipient").on("click",function(e){e.preventDefault();});
@@ -213,6 +213,10 @@ $(function(){
     });
     // don't let the buttons in the dropdown close the menu
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
+
+    $("#subject-dropdown .dropdown-item").on("click",function(event){
+        console.warn("do shit with: "+$(this).text().trim());
+    });
 });
 
 const get_event_description = function(){
