@@ -78,7 +78,7 @@ if ($entity->getLocation() && ! $entity->getLocation()->getParentLocation()) {
     $fieldset->get('parent_location')->setValue($entity->getLocation()->getId());
 }
 
-foreach (['judge','anonymousJudge','location','parent_location'] as $field) :
+foreach (['judge','anonymousJudge','location','parent_location','eventType'] as $field) :
     $element = $fieldset->get($field);
     if (is_object($element->getValue())) :
         $id = $element->getValue()->getId();

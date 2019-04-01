@@ -73,7 +73,11 @@ TEMPLATE;
                 return '';
             }
             $credential = $fieldset->get('languageCredential');
-
+            // this is BULLSHIT!
+            if (is_object($credential->getValue())) {
+                $id = $credential->getValue()->getId();
+                $credential->setValue($id);
+            }
             if (is_object($language)) {
                 // we were hydrated from an Interpreter entity
                 $label = $this->view->escapeHtml($language->getName());
