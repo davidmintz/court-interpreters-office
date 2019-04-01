@@ -78,7 +78,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertQueryCount('form#event-form', 1);
         $this->assertQueryCount('#date', 1);
         $this->assertQueryCount('#time', 1);
-        $this->assertQueryCount('#event-type', 1);
+        $this->assertQueryCount('#event_type', 1);
         $this->assertQueryCount('#judge', 1);
         $this->assertQueryCount('#language', 1);
         $this->assertQueryCount('#docket', 1);
@@ -200,7 +200,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertOptionIsSelected($language_select, $expected);
 
         $type_expected = (string)$entity->getEventType();
-        $type_select = $dom->execute('#event-type')->current();
+        $type_select = $dom->execute('#event_type')->current();
         $this->assertOptionIsSelected($type_select, $type_expected);
 
         $expected = $entity->getLocation()->getParentLocation()->getName();
