@@ -11,7 +11,10 @@ $this->headLink()
 $this->headStyle()->captureStart();?>
 .ui-autocomplete {
   z-index: 99999 !important;
-}a
+}
+.tooltip-inner {
+    text-align: left;
+}
 <?php $this->headStyle()->captureEnd();
 /**
  *
@@ -223,7 +226,6 @@ endif;?></span>
     endif;
     ?>
 </div>
-<!-- <input type="text" id="fucking-shit" name="" value=""> -->
 <div class="modal fade" id="email-dialog" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -240,10 +242,10 @@ endif;?></span>
                             <label for="recipient-autocomplete" class="col-md-2 text-right col-form-label">To
                             </label>
                             <div class="col-md-10">
-                                <div class="input-group"> <!--  dropleft -->
+                                <div class="input-group"><!--  dropleft -->
                                     <!--   -->
                                     <input id="recipient-autocomplete" name="recipient-autocomplete" type="text" class="form-control" placeholder="start typing last name<?php
-                                    if ($suggestions):?>, or use the select menu<?php endif;
+                                    if ($suggestions):?>, or use the dropdown<?php endif;
                                     ?>">
                                    <button id="btn-add-recipient" data-toggle="tooltip" class="btn btn-sm btn-secondary btn-add-recipient border disabled" title="manually add a recipient">
                                       <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
@@ -280,17 +282,38 @@ endif;?></span>
                             </label>
                             <div class="col-md-10">
                                 <div class="input-group">
-                                    <input id="message-subject" type="text" class="form-control" placeholder="shit">
+                                    <input id="message-subject" type="text" class="form-control" placeholder="type your subject line, or use the dropdown">
                                     <a title="suggested subject lines" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
                                     <div id="subject-dropdown" class="dropdown-menu pl-1">
-                                        <div class="dropdown-item">
-                                            some shit
+                                    <?php if ($event['submitter_email']) :?>
+                                        <div data-toggle="tooltip" title="contact <?php echo $this->escapeHtml($event['submitter'])?>" data-subject="your request" class="dropdown-item">
+                                            your interpreter request
                                         </div>
-                                        <div class="dropdown-item">
-                                            other shit
+                                        <div class="dropdown-divider"></div>
+                                    <?php endif; ?>
+                                        <div data-toggle="tooltip" title="offer this assignment" data-subject="available" class="dropdown-item">
+                                             assignment available
                                         </div>
+                                        <div class="dropdown-divider"></div>
+                                    <?php if ($event['interpreters']) :?>
+                                        <?php if ($event['interpreters']) :?>
+                                            <div data-toggle="tooltip" title="send details of noteworthy updates" data-subject="update" class="dropdown-item">
+                                                assignment update
+                                            </div>
+                                            <div class="dropdown-divider"></div>
+                                        <?php endif; ?>
+                                        <div data-toggle="tooltip" title="send confirmation as to this assignment" data-subject="confirmation" class="dropdown-item">
+                                            assignment confirmation
+                                        </div>
+                                        <div class="dropdown-divider"></div>
+                                    <?php endif; ?>
+                                    <?php if ('n/a' != $event['reason_for_cancellation']) :?>
+                                        <div  data-toggle="tooltip" title="notify that the assignment has been cancelled" data-subject="cancellation" class="dropdown-item">
+                                            assignment cancellation
+                                        </div>
+                                        <div class="dropdown-divider"></div>
+                                    <?php endif; ?>
                                     </div>
-
                                </div>
                             </div>
                         </div>
