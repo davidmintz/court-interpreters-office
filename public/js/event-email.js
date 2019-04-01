@@ -3,6 +3,82 @@ const default_autocomplete_placeholder = "start typing last name...";
 /* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#Validation */
 const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 
+
+/**
+ * returns HTML for adding an email recipient
+ *
+ * @param  {string} email
+ * @param  {string} name
+ * @return {string}
+ */
+const create_recipient = function(email,name){
+    var id, value;
+    if (email && name) {
+        id = email.toLowerCase().replace("@",".at.");
+        name = name.replace(/"/g,""); // no quotes
+        value = `${name} &lt;${email}&gt;`;
+    } else {
+        id = "";
+        value = "";
+    }
+    return `<div class="form-row form-group my-1">
+        <label class="col-md-2 text-right" for="${id}">
+            <select class="form-control custom-select email-header">
+                <option value="to">To</option>
+                <option value="cc">Cc</option>
+            </select>
+        </label>
+        <div class="col-md-10">
+            <div class="input-group">
+                <div class="form-control text-primary">
+                    <span title="${email}" class="email-recipient">${name}</span>
+                <input class="email-recipient" data-recipient-name="${name}" type="hidden" id="${id}" name="to[]" value="${email.toLowerCase()}" >
+                </div>
+                <button class="btn btn-sm btn-primary btn-remove-item border" title="delete this recipient">
+                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete this recipient</span>
+               </button>
+           </div>
+        </div>
+    </div>`;
+};
+
+/**
+ * gets short textual description of the event
+ *
+ * @return {string}
+ */
+const get_event_description = function(){
+
+    var e = {};
+    var fields = ["date","time","event_type","language","location","docket"];
+    for (var i = 0; i < fields.length; i++) {
+        var div = $(`.${fields[i]}`);
+        if (div.children("ins").length) {
+            e[fields[i]] = div.children("ins").text().trim();
+        } else if (div.children("del").length) {
+            e[fields[i]] = "";
+        } else {
+            e[fields[i]] =  div.text().trim();
+        }
+    }
+    e.category = $("div.event-details").data("event_category");
+    var text = e.date;
+    if (e.time) {
+        text += ` ${e.time}`.replace(/ (a|p)m/,"$1");
+    }
+    text += `, ${e.language} ${e.event_type}`
+    if (e.category !== "in" && location) {
+        text += `, ${e.location}`;
+    }
+    if (e.docket) {
+        e.docket = e.docket.replace(/^(\d{2})(\d{2})(.+)/,"$2$3");
+        text += ` (${e.docket})`
+    }
+
+    return text;
+
+};
+
 /**
  * determines whether to suggest sending email notification about
  * newly updated event
@@ -215,76 +291,6 @@ $(function(){
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
 
     $("#subject-dropdown .dropdown-item").on("click",function(event){
-        console.warn("do shit with: "+$(this).text().trim());
+        console.warn("do shit with: "+$(this).data("subject"));
     });
 });
-
-const get_event_description = function(){
-
-    var e = {};
-    var fields = ["date","time","event_type","language","location","docket"];
-    for (var i = 0; i < fields.length; i++) {
-        var div = $(`.${fields[i]}`);
-        if (div.children("ins").length) {
-            e[fields[i]] = div.children("ins").text().trim();
-        } else if (div.children("del").length) {
-            e[fields[i]] = "";
-        } else {
-            e[fields[i]] =  div.text().trim();
-        }
-    }
-    e.category = $("div.event-details").data("event_category");
-    e.docket = e.docket.replace(/^(\d{2})(\d{2})(.+)/,"$2$3");
-
-    var text = `${e.language} ${e.event_type}, ${e.date}`;
-    if (e.time) {
-        text += ` ${e.time}`;
-    }
-    if (e.category !== "in" && location) {
-        text += `, ${e.location}`;
-    }
-    if (e.docket) {
-        text += ` (${e.docket})`
-    }
-
-    return text;
-
-};
-
-/**
- * returns HTML for adding an email recipient
- *
- * @param  {string} email
- * @param  {string} name
- * @return {string}
- */
-const create_recipient = function(email,name){
-    var id, value;
-    if (email && name) {
-        id = email.toLowerCase().replace("@",".at.");
-        name = name.replace(/"/g,""); // no quotes
-        value = `${name} &lt;${email}&gt;`;
-    } else {
-        id = "";
-        value = "";
-    }
-    return `<div class="form-row form-group my-1">
-        <label class="col-md-2 text-right" for="${id}">
-            <select class="form-control custom-select email-header">
-                <option value="to">To</option>
-                <option value="cc">Cc</option>
-            </select>
-        </label>
-        <div class="col-md-10">
-            <div class="input-group">
-                <div class="form-control text-primary">
-                    <span title="${email}" class="email-recipient">${name}</span>
-                <input class="email-recipient" data-recipient-name="${name}" type="hidden" id="${id}" name="to[]" value="${email.toLowerCase()}" >
-                </div>
-                <button class="btn btn-sm btn-primary btn-remove-item border" title="delete this recipient">
-                   <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete this recipient</span>
-               </button>
-           </div>
-        </div>
-    </div>`;
-};
