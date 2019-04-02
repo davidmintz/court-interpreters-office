@@ -8,11 +8,6 @@ namespace InterpretersOffice\Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Doctrine\ORM\EntityManagerInterface;
-//use Zend\View\Model\JsonModel;
-//use Zend\Authentication\AuthenticationServiceInterface;
-//use Zend\EventManager\Event;
-//use InterpretersOffice\Admin\Form;
-
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\Event;
 use Zend\Session\Container as Session;
