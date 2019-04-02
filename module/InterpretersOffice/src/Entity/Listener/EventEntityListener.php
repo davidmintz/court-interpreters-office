@@ -225,33 +225,3 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         );
     }
 }
-
-/*
-$really_modified = false;
-$changeset = $args->getEntityChangeSet();
-$after = [
-    'date'=>$entity->getDate(),
-    'time' =>$entity->getTime(),
-    'submission_date' => $entity->getSubmissionDate(),
-    'submission_time' => $entity->getSubmissionTime(),
-];
-
-foreach ($after as $field => $object) {
-    if (strstr($field,'time')) {
-        // compare only the time part of the objects
-        $previous = $object->format("H:i");
-        $current  = $this->before[$field]->format("H:i");
-        if ($previous == $current) {
-            unset($changeset[$field]);
-        }
-    } else {
-        //compare objects, as in equivalence
-        if ($this->before[$field] == $object) {
-            unset($changeset[$field]);
-        }
-    }
-}
-if (count($changeset)) {
-    $really_modified = true;
-}
- */
