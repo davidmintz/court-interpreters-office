@@ -125,6 +125,7 @@ return [
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
             //Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
             Service\AccountManager::class => Service\Factory\AccountManagerFactory::class,
+            
             // don't quite understand this.
             /*
             'Zend\Session\SessionManager'=>function($container) {

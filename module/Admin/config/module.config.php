@@ -34,6 +34,7 @@ return [
             Controller\EventsController::class => Controller\Factory\EventsControllerFactory::class,
             Controller\DefendantsController::class => Controller\Factory\DefendantsControllerFactory::class,
             Controller\ScheduleController::class => Controller\Factory\ScheduleControllerFactory::class,
+            Controller\EmailController::class => Controller\Factory\EmailControllerFactory::class,
         ],
     ],
     'view_manager' => [
@@ -52,6 +53,8 @@ return [
              Listener\InterpreterEventEntityListener::class =>
                 Listener\Factory\InterpreterEventEntityListenerFactory::class,
             Service\ScheduleUpdateManager::class =>  Service\Factory\ScheduleUpdateManagerFactory::class,
+            Service\EmailService::class =>  Service\Factory\EmailServiceFactory::class,
+
 
         ],
         'aliases' => [

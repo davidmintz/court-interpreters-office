@@ -670,5 +670,17 @@ return  [
                 ],
             ],
         ],
+
+        'email' => [
+            'type' => Literal::class,
+               'options' => [
+                   'route' => '/admin/email/send', //[/]
+                   'defaults' => [
+                       'module' => __NAMESPACE__,
+                       'controller' => Controller\EmailController::class,
+                       'action' => 'send',
+                   ],
+               ],
+        ],
     ],
  ];
