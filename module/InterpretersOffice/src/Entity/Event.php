@@ -433,7 +433,7 @@ class Event
      *
      * @return Event
      */
-    public function setLocation(Location $location)
+    public function setLocation(Location $location = null)
     {
         $this->location = $location;
 
