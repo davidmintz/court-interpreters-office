@@ -355,7 +355,7 @@ class EventForm extends ZendForm implements
     }
 
     /**
-     * conditionally updates event modification timestamp
+     * conditionally updates event modification timestamp, etc
      *
      * @param EventInterface $e
      * @return void
@@ -366,6 +366,17 @@ class EventForm extends ZendForm implements
         $interpreters_posted = $entity->getInterpreterEvents()->toArray();
         if ($interpreters_posted != $this->interpreters_before) {
             $entity->setModified(new \DateTime());
+        }
+        $fieldset = $this->get('event');
+        if ($fieldset->get('anonymousSubmitter')->getValue()
+            &&
+            $fieldset->get('submitter')->getValue()
+        ) {
+            $this->getInputFilter()->get('event')
+                ->remove('anonymousSubmitter');
+            if ($entity->getAnonymousSubmitter()) {
+                $entity->setAnonymousSubmitter(null);
+            }
         }
     }
 }
