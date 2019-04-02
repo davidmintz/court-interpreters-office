@@ -1,5 +1,7 @@
 <?php
-/** module/InterpretersOffice/src/Service/EmailTrait.php*/
+/** module/InterpretersOffice/src/Service/EmailTrait.php */
+
+declare(strict_types=1);
 
 namespace InterpretersOffice\Service;
 
@@ -24,7 +26,7 @@ trait EmailTrait
      *
      * @return TransportInterface $transport
      */
-    public function getMailTransport()
+    public function getMailTransport() : TransportInterface
     {
         if ($this->transport) {
             return $this->transport;
@@ -44,7 +46,7 @@ trait EmailTrait
      * @param  string $textContent plain-text content for email message
      * @return Message
      */
-    public function createEmailMessage($markup, $textContent='')
+    public function createEmailMessage(string $markup, string $textContent='') : Message
     {
         $html = new MimePart($markup);
         $html->type = Mime::TYPE_HTML;
