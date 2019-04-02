@@ -14,8 +14,6 @@ const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0
  * @return {string}
  */
 const create_recipient = function(email,name){
-    //var id, value;
-    //if (email && name) {
     var id = email.toLowerCase().replace("@",".at.");
     name = name.replace(/"/g,""); // strip quotes
     var value = `${name} &lt;${email}&gt;`;
@@ -157,6 +155,8 @@ const display_email_suggestion = function() {
 
 const send_email = function(event){
     console.log("it's show time!");
+    var data = get_event_details();
+    
 }
 
 $(function(){
