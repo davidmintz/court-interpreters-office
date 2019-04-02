@@ -210,7 +210,7 @@ endif;?></span>
     $suggestions = [];
     if ($event['interpreters'] or $event['submitter_email']):
         if ($event['submitter_email']) {
-            $suggestions[] = ['name' => $event['submitter'], 'email' => $event['submitter_email']];
+            $suggestions[] = ['role'=>'submitter','name' => $event['submitter'], 'email' => $event['submitter_email']];
         }
         if ($event['interpreters'])
             {
@@ -219,7 +219,7 @@ endif;?></span>
                 if (count($suggestions) && in_array($i['email'],array_column($suggestions,'email'))) {
                     continue;
                 }
-                $suggestions[] = ['name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
+                $suggestions[] = ['role'=>'interpreter','name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
             }
         }
     endif;
@@ -257,7 +257,7 @@ endif;?></span>
                                         <?php foreach ($suggestions as $i => $person):?>
                                             <div class="form-group">
                                               <div class="form-check">
-                                                <input name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" class="form-check-input" id="email-<?php echo $i?>" checked>
+                                                <input <?php if (isset($person['role'])): ?>data-role="<?php echo $person['role']?>" <?php endif;?>name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" class="form-check-input" id="email-<?php echo $i?>" checked>
                                                 <label class="form-check-label" for="email-<?php echo $i?>">
                                                   <?php echo $person['name'] ?>
                                                 </label>

@@ -78,6 +78,35 @@ const get_event_description = function(){
 
 };
 
+const get_event_details = function()
+{
+    var data = {};
+    var fields = [
+        "date","time","language","judge","event_type","location",
+        "docket","defendants"
+    ];
+    for (var i = 0; i < fields.length; i++) {
+        var obj = $(`.${fields[i]}`);
+        if (!obj.length) {
+            console.warn("!! dude, no ."+fields[i]);
+        } else {
+            //var html = obj.html().trim();
+            data[fields[i]] = obj.html().trim();
+        }
+    }
+    return data;
+};
+/*
+date 	23-Apr-2019
+time 	10:00 am
+language 	Russian
+event type 	pretrial conference
+location 	11A
+docket 	2018-CR-0321
+comments 	this is a Russian request created by data loader
+judge 	Daniels, George, USDJ
+defendants 	Snyertzski, Boris
+ */
 /**
  * determines whether to suggest sending email notification about
  * newly updated event
@@ -118,13 +147,22 @@ const display_email_suggestion = function() {
     );
     div.prepend(`<button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>`);
     div.insertBefore($(".event-details"));
+    $("#message-subject").val("assignment update: "+get_event_description());
+    /** @todo set interpreter(s) as recipients? */
     $("#link-email-suggest").on("click",function(event){
         event.preventDefault();
         $("#btn-email").trigger("click");
     });
 };
 
+const send_email = function(event){
+    console.log("it's show time!");
+}
+
 $(function(){
+    // rig it
+    console.warn("setting fake update for test purposes...");
+    $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
     console.log(`email flag? ${should_suggest_email()}`);
     if (should_suggest_email()) {
         display_email_suggestion();
@@ -293,7 +331,7 @@ $(function(){
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
 
     $("#subject-dropdown .dropdown-item").on("click",function(event){
-        console.warn("do shit with: "+$(this).data("subject"));
+        console.warn("doing shit with: "+$(this).data("subject"));
         $(this).tooltip("hide");
         var subject_line;
         switch ($(this).data("subject")) {
@@ -312,4 +350,7 @@ $(function(){
         }
         $("#message-subject").val(subject_line);
     });
+
+    $("#btn-send").on("click",send_email);
+
 });
