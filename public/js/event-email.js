@@ -210,10 +210,10 @@ $(function(){
                 var name = input.next("label").text().trim();
                 var html = create_recipient(email,name);
                 $("#email-form .email-subject").before(html);
-                input.closest(".form-group").hide();
-                if (! $("#email-dropdown .form-group").not(":hidden").length)
+                input.attr("disabled","disabled");//closest(".form-group").hide();
+                if (! $("#email-dropdown input").not(":disabled").length)
                 {
-                    console.log("hiding dropdown");
+                    console.log("hiding dropdown for fux sake?");
                     $(".dropdown-toggle-recipients").hide();
                     $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
                 }
@@ -222,7 +222,6 @@ $(function(){
         if ($("input[name='to[]']").length && $("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
         }
-
     });
     $("#email-dialog").on("shown.bs.modal",function(event){
         $("#recipient-autocomplete").autocomplete({
@@ -321,6 +320,21 @@ $(function(){
     .on("click",".btn-remove-item",function(event){
         event.preventDefault();
         $(this).tooltip("hide");
+        var input = $(this).prev(".form-control").children("input");
+        var email = input.val();
+        var dropdown_item = $(`#email-dropdown input[value="${email}"]`);
+        if (dropdown_item.length && dropdown_item.is(":disabled")) {
+            dropdown_item.removeAttr("disabled");
+            console.log(`re-enabled ${email}`);
+            var dropdown_menu = $(".dropdown-toggle-recipients");
+            if (dropdown_menu.is(":hidden")) {
+                console.log("re-displaying recipient-dropdown");
+                dropdown_menu.show();
+                $("#recipient-autocomplete").attr({
+                    placeholder : "start typing last name, or use the dropdown"
+                });
+            }
+        }
         var div = $(this).closest(".form-row");
         div.slideUp(()=> {
             div.remove();
@@ -348,7 +362,7 @@ $(function(){
     $("#btn-add-recipients").on("click",function(e){
         // https://getbootstrap.com/docs/4.3/components/dropdowns/#methods
         e.preventDefault();
-        var elements = $("#email-dropdown input:checked:visible");
+        var elements = $("#email-dropdown input:checked").not(":disabled");
         if (! elements.length) {
             $("#email-dropdown .validation-error").text(
                 "select at least one recipient"
@@ -365,10 +379,10 @@ $(function(){
                 var html = create_recipient(email,name);
                 $("#email-form .email-subject").before(html);
             }
-            // hide this row menu, since the address has now been added
-            element.closest(".form-group").hide();
+            // disable this element, since the address has now been added
+            element.attr("disabled","disabled");
         });
-        if ( !$("#email-dropdown input:visible").length ) {
+        if ( !$("#email-dropdown input").not(":disabled").length ) {
             console.log("no inputs to see, therefore hiding dropdown");
             $(".dropdown-toggle-recipients").hide(); //, .dropdown-menu
             $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
