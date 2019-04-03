@@ -76,6 +76,11 @@ const get_event_description = function(){
 
 };
 
+/**
+ * gets object containing event details for composing email
+ *
+ * @return {object}
+ */
 const get_event_details = function()
 {
     var data = {};
@@ -149,14 +154,34 @@ const display_email_suggestion = function() {
     /** @todo set interpreter(s) as recipients? */
     $("#link-email-suggest").on("click",function(event){
         event.preventDefault();
-        $("#btn-email").trigger("click");
+        $("#btn-email").trigger("click",{interpreter_update_notice : true});
     });
 };
 
 const send_email = function(event){
     console.log("it's show time!");
-    var data = get_event_details();
-    
+    if ($("#include-details").prop("checked")) {
+        console.log("doing event details...");
+        var event_details = JSON.stringify(get_event_details());
+        //$("#email-form").append($("<input>").attr({type:"hidden",name:"event-details"}).val(event_details));
+
+    }
+    var recipients = { to: [], cc: []};
+    $("input.email-recipient").each(function(){
+        var input = $(this);
+        var email = input.val();
+        var recipient = {email};
+        if (input.data("recipient-name")) {
+            recipient.name = input.data("recipient-name");
+        }
+        if (input.attr("name") === "to[]") {
+            recipients.to.push(recipient);
+        } else {
+            recipients.cc.push(recipient);
+        }
+    });
+    console.log(recipients);
+
 }
 
 $(function(){
@@ -172,7 +197,33 @@ $(function(){
     var description = get_event_description();
     $("#email-modal-label").append(` re: ${description}`);
 
-    $("#btn-email, .btn-add-recipient").on("click",function(e){e.preventDefault();});
+    $("#btn-email, .btn-add-recipient").on("click",function(e,params){
+        e.preventDefault();
+        // if they clicked the 'notify the interpreter...' link
+        if (params && params.interpreter_update_notice) {
+            $("input[data-role='interpreter']").each(function(){
+                var input = $(this);
+                var email = input.val().toLowerCase();
+                if ($(`input.email-recipient[value="${email}"]`).length) {
+                    return;
+                }
+                var name = input.next("label").text().trim();
+                var html = create_recipient(email,name);
+                $("#email-form .email-subject").before(html);
+                input.closest(".form-group").hide();
+                if (! $("#email-dropdown .form-group").not(":hidden").length)
+                {
+                    console.log("hiding dropdown");
+                    $(".dropdown-toggle-recipients").hide();
+                    $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
+                }
+            });
+        }
+        if ($("input[name='to[]']").length && $("#btn-send").hasClass("disabled")) {
+            $("#btn-send").removeClass("disabled").removeAttr("disabled");
+        }
+
+    });
     $("#email-dialog").on("shown.bs.modal",function(event){
         $("#recipient-autocomplete").autocomplete({
             source: function(request,response) {
@@ -319,7 +370,7 @@ $(function(){
         });
         if ( !$("#email-dropdown input:visible").length ) {
             console.log("no inputs to see, therefore hiding dropdown");
-            $(".dropdown-toggle").hide(); //, .dropdown-menu
+            $(".dropdown-toggle-recipients").hide(); //, .dropdown-menu
             $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
         }
         if ($("#btn-send").hasClass("disabled")) {
