@@ -158,12 +158,12 @@ const display_email_suggestion = function() {
 
 const send_email = function(event){
     console.log("it's show time!");
-    var message = {};
+    var message = {to: [], cc: [] };
     if ($("#include-details").prop("checked")) {
         console.log("doing event details...");
         message.event_details = get_event_details();
     }
-    var recipients = { to: [], cc: []};
+    //var recipients = { to: [], cc: []};
     $("input.email-recipient").each(function(){
         var input = $(this);
         var email = input.val();
@@ -172,12 +172,13 @@ const send_email = function(event){
             recipient.name = input.data("recipient-name");
         }
         if (input.attr("name") === "to[]") {
-            recipients.to.push(recipient);
+            message.to.push(recipient);
         } else {
-            recipients.cc.push(recipient);
+            message.cc.push(recipient);
         }
     });
-    message.recipients = recipients;
+    // sabotage, as a test
+    // message.recipients.to = '';
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
     var csrf = $("[data-csrf]").data("csrf");
