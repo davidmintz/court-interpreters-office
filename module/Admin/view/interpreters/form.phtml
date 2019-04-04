@@ -177,7 +177,7 @@ endif;?>
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
             echo $this->formHidden($fieldset->get('id'));
             echo $this->formSubmit($form->get('submit'));
-            if (! $this->has_related_entities) :
+            if ($this->id && ! $this->has_related_entities) :
             ?> <button id="btn-delete" type="button" class="btn btn-warning btn-lg" title="delete this interpreter" name="delete">delete</button><?php
             endif;
             ?>
