@@ -36,20 +36,14 @@ if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
 elseif ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
-endif;?>
+endif;
+/*
 <!-- experimental debug zone -->
-<pre><?php
-//print_r($event['category']);
-$session = new \Zend\Session\Container('event_updates');
-//print_r(array_keys($this->entity));
-if ($session->{$event['id']}) {
-    $this->before = $session->{$event['id']};
-    unset($session->{$event['id']});
-}
-?></pre>
-<!-- TO DO: make partials for flat-out details and for "diff"
-    and use one or the other, depending
--->
+<pre><?php ?></pre>
+TO DO: make partials for flat-out details and for "diff"
+and use one or the other, depending
+*/
+?>
 <div data-modified="<?php echo $event['last_updated'] ? $event['last_updated']->format('Y-m-d H:i:s') : ''?>" data-event_category="<?php echo $event['category']?>" data-event_datetime="<?php echo $event['datetime']?>" data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
     <div class="col-sm-3 text-muted text-md-right">
         date
