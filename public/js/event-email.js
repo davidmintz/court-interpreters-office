@@ -5,7 +5,6 @@ const default_autocomplete_placeholder = "start typing last name...";
 /* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#Validation */
 const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 
-
 /**
  * returns HTML for adding an email recipient
  *
@@ -151,7 +150,6 @@ const display_email_suggestion = function() {
     div.prepend(`<button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>`);
     div.insertBefore($(".event-details"));
     $("#message-subject").val("assignment update: "+get_event_description());
-    /** @todo set interpreter(s) as recipients? */
     $("#link-email-suggest").on("click",function(event){
         event.preventDefault();
         $("#btn-email").trigger("click",{interpreter_update_notice : true});
@@ -160,11 +158,10 @@ const display_email_suggestion = function() {
 
 const send_email = function(event){
     console.log("it's show time!");
+    var message = {};
     if ($("#include-details").prop("checked")) {
         console.log("doing event details...");
-        var event_details = JSON.stringify(get_event_details());
-        //$("#email-form").append($("<input>").attr({type:"hidden",name:"event-details"}).val(event_details));
-
+        message.event_details = get_event_details();
     }
     var recipients = { to: [], cc: []};
     $("input.email-recipient").each(function(){
@@ -180,7 +177,14 @@ const send_email = function(event){
             recipients.cc.push(recipient);
         }
     });
-    console.log(recipients);
+    message.recipients = recipients;
+    message.subject = $("#message-subject").val().trim();
+    message.body = $("#message-body").val().trim();
+    var csrf = $("[data-csrf]").data("csrf");
+    var url = "/admin/email/send";
+    $.post(url,{message, csrf}).done((response)=> {
+        console.log("it will work");
+    });
 
 }
 
