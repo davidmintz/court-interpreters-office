@@ -40,7 +40,7 @@ var eventForm = (function () {
     * event-type select element
     * @type {jQuery}
     */
-    var eventTypeElement = $("#event-type");
+    var eventTypeElement = $("#event_type");
 
     /**
     * language select element
