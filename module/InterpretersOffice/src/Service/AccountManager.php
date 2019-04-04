@@ -169,7 +169,7 @@ class AccountManager implements LoggerAwareInterface
      * application, so it should be moved someplace sensible. There is already
      * a Form/CsrfElementCreationTrait.php that is heavily used, but this CSRF
      * spec has arisen from cases where we use Zend\InputFilter\InputFilter
-     * without any Zend\Form|Form
+     * without any Zend\Form\Form
      *
      * @var array
      */
