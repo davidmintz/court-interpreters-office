@@ -255,7 +255,7 @@ class EventsController extends AbstractActionController
             return $this->redirect()->toRoute('events');
         }
         $id = $this->params()->fromRoute('id');
-        $validator = new \Zend\Validator\Csrf('csrf');
+        $validator = new \Zend\Validator\Csrf('csrf',['timeout'=>600]);
         $token = $this->params()->fromPost('csrf');
         if (! $validator->isValid($token)) {
             return new JsonModel(['status' => 'error','message' =>
