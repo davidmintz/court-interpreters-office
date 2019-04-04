@@ -24,6 +24,18 @@ return  [
 
             ],
         ],
+        'events_index' => [
+            'type' => Literal::class,
+            'may_terminate' => true,
+            'options' => [
+                'route'=>'/admin/events',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\EventsController::class,
+                    'action' => 'index',
+                ],
+            ],
+        ],
         'events' => [
             'type' => Segment::class,
             'may_terminate' => true,

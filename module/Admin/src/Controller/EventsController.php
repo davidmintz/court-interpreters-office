@@ -45,7 +45,6 @@ use InterpretersOffice\Controller\ExceptionHandlerTrait;
 class EventsController extends AbstractActionController
 {
 
-
     use ExceptionHandlerTrait;
 
     /**
@@ -104,7 +103,7 @@ class EventsController extends AbstractActionController
      */
     public function indexAction()
     {
-        return ['title' => 'schedule'];
+        return $this->redirect()->toRoute('events');
     }
 
     /**
@@ -201,7 +200,8 @@ class EventsController extends AbstractActionController
         $form->attach($events);
         $modified_before = $entity->getModified()->format('Y-m-d h:i:s');
         $form->bind($entity);
-        $date = $entity->getDate();
+
+
         $events->trigger(
             'pre.populate',
             $this,
@@ -229,6 +229,7 @@ class EventsController extends AbstractActionController
             } else {
                 $verbiage = 'saved (unmodified)';
             }
+            $date = $entity->getDate();
             $this->flashMessenger()->addSuccessMessage(sprintf(
                 "This event has been $verbiage on the "
                 .'schedule for <a href="%s">%s</a>.',
@@ -237,6 +238,7 @@ class EventsController extends AbstractActionController
             ));
 
             return new JsonModel(['status' => 'success', 'id' => $id]);
+
         } catch (\Exception $e) {
             return $this->catch($e);
         }
@@ -285,6 +287,7 @@ class EventsController extends AbstractActionController
                 'message' => $e->getMessage()]);
         }
     }
+
     /**
      * generates markup for an interpreter
      *
@@ -306,7 +309,6 @@ class EventsController extends AbstractActionController
                     .json_encode($inputFilter->getMessages(), \JSON_PRETTY_PRINT)
             );
         }
-        // $data['created_by'] = "0";//$this->auth->getStorage()->read()->id;
         $html = $helper->fromArray($data);
         return $this->getResponse()->setContent($html);
     }
