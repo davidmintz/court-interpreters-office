@@ -88,7 +88,12 @@ class Diff extends AbstractHelper
         if (false !== strstr($field,'comments')) {
             return $this->htmlDiff($before[$field],$data);
         }
-
+        if ($field == 'location') {
+            $is_default = $this->getData()['is_default_location'];
+            if ($is_default && !$before['location'] ) {
+                return $data;
+            }
+        }
         if (is_string($data) || is_string($before[$field]) ) {
             if (! $data or ! $before[$field]) {
                 $sep = '';
@@ -131,7 +136,7 @@ class Diff extends AbstractHelper
                         $return .= sprintf($format,$i['id'],$i['email'],"$i[lastname], $i[firstname]");
                     }
                 }
-                
+
                 return $return;
             }
             // else, it's defendant names
