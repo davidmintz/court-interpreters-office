@@ -112,7 +112,7 @@ class ScheduleController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $event = $this->entityManager->getRepository(Entity\Event::class)
            ->getView($id);
-        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+        $csrf = (new \Zend\Validator\Csrf('csrf',['timeout'=> 600]))->getHash();
         $session = new \Zend\Session\Container('event_updates');
         $before = null;
         if ($session->{$event['id']}) {
