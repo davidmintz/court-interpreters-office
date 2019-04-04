@@ -82,9 +82,7 @@ $(function(){
             var m = last.attr("name").match(/\[(\d+)\]/);
             if (m.length) {
                 index = parseInt(m.pop()) + 1;
-            } else {
-                // this is an error. to do: do something?
-            }
+            } else { /* this is an error. to do: do something? */ }
         } else {
             index = 0;
         }
@@ -124,9 +122,15 @@ $(function(){
                console.warn("WTF?!");
         }).on("blur",function(){ $('.thing2').val("")});
     });
+    $("#hat").on("change",function(){
+        var element = $(this);
+        if (element.val()) { // good enough for government work
+            element.next(".validation-error").slideUp();
+        }
+    });
 
     /** validate each tab pane before moving on **/
-    // note to self: is there a Bootstrap event to observe instead?
+    // note to self: isn't there a Bootstrap event to observe instead?
     $('a[data-toggle="tab"]').on('click', function (event,params) {
         //alert("shit?");
         var id = '#'+$('div.active').attr('id');
