@@ -8,6 +8,7 @@
         "php" : "^7.2.10",
         "ext-mbstring" : "*",
         "ext-json" : "*",
+        "ext-intl" : "*",
         "zendframework/zend-mvc": "^3.1",
         "zendframework/zend-form": "^2.12",
         "zendframework/zend-log": "^2.10",
