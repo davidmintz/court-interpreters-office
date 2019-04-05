@@ -106,8 +106,8 @@ if [[ ! -z $FULL_DATABASE ]];
 	./bin/sdny/import-events.php --from 2020
 	OK;
 	echo  -n "importing defendants_events and interpreters_events..."
-	echo mysql office < bin/sdny/import-deft-and-interp-events.sql
-    echo "that returned exit status: $?"
+	mysql office < bin/sdny/import-deft-and-interp-events.sql
+    echo "returned exit status: $?"
 	OK;
 fi;
 echo  "importing request records..."
