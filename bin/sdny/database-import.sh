@@ -103,9 +103,11 @@ if [[ ! -z $FULL_DATABASE ]];
 	./bin/sdny/import-events.php --from 2011 --to 2013 && \
 	./bin/sdny/import-events.php --from 2014 --to 2016 && \
 	./bin/sdny/import-events.php --from 2017 --to 2019
+	./bin/sdny/import-events.php --from 2020
 	OK;
 	echo  -n "importing defendants_events and interpreters_events..."
-	mysql office < bin/sdny/import-deft-and-interp-events.sql
+	echo mysql office < bin/sdny/import-deft-and-interp-events.sql
+    echo "that returned exit status: $?"
 	OK;
 fi;
 echo  "importing request records..."
