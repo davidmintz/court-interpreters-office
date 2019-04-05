@@ -9,6 +9,8 @@ namespace InterpretersOffice\Admin\Service;
 use InterpretersOffice\Service\EmailTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\Validator\EmailAddress;
+use Zend\View\Renderer\RendererInterface as Renderer;
+use Zend\View\Model\ViewModel;
 
 class EmailService
 {
@@ -31,6 +33,13 @@ class EmailService
     //private $filter_spec = [];
 
     /**
+     * viewRenderer
+     *
+     * @var Renderer
+     */
+    private $viewRenderer;
+
+    /**
      * constructor
      *
      * @param Array $config
@@ -49,7 +58,42 @@ class EmailService
      */
     public function sendMessage(Array $data) : Array
     {
-        return ['status'=>'success','ps'=>'only kidding'];
+        $validation = $this->validate($data);
+        if (! $validation['valid']) {
+            return $validation;
+        }
+        $mail_config = $this->config['mail'];
+        $message = $this->createEmailMessage('<p>boink!</p>');
+        $message->setFrom($mail_config['from_address'],$mail_config['from_entity'])
+            ->setSubject($data['subject']);
+        foreach ($data['to'] as $address) {
+            $message->addTo($address['email'], $address['name'] ?: null );
+        }
+        foreach ($data['cc'] as $address) {
+            $message->addCc($address['email'], $address['name'] ?: null );
+        }
+        /* // something like....
+        $view = new ViewModel(compact('request','user_event',
+            'updates','interpreters','user'));
+        $view->setTemplate('interpreters-office/email/autocancellation-notice');
+        $layout = new ViewModel();
+        $layout->setTemplate('interpreters-office/email/layout')
+            ->setVariable('content', $this->viewRenderer->render($view));
+        $output = $this->viewRenderer->render($layout);
+        // debug
+        file_put_contents('data/email-autocancellation.html',$output);
+        */
+        $transport = $this->getMailTransport();
+
+        try {
+            $transport->send($message);
+        } catch (\Throwable $e){
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ];
+        }
+        return ['status'=>'success','ps'=>'only kidding', 'data'=>print_r($this->config['mail'],true)];
     }
 
     /**
@@ -127,6 +171,19 @@ class EmailService
         $valid = 0 == count($validation_errors);
 
         return compact('valid','validation_errors');
+    }
+
+    /**
+     * sets viewRenderer
+     *
+     * @param Renderer $viewRenderer
+     * @return EmailService
+     */
+    public function setViewRenderer(Renderer $viewRenderer)
+    {
+        $this->viewRenderer = $viewRenderer;
+
+        return $this;
     }
 
 

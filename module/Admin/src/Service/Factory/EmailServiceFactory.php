@@ -22,7 +22,10 @@ class EmailServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new EmailService($container->get('config'), $container->get('entity-manager'));
+        $service = new EmailService($container->get('config'), $container->get('entity-manager'));
+        $service->setViewRenderer($container->get('ViewRenderer'));
+        
+        return $service;
 
     }
 }

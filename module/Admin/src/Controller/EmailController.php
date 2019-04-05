@@ -48,12 +48,12 @@ class EmailController extends AbstractActionController
         $data = $this->params()->fromPost('message');
 
         // test
-        $data['to'][0]['name'] = "<this>\n(shit)  is *#$^annoying\n";
-        $result = $this->emailService->validate($data);
+        //$data['to'][0]['name'] = "<this>\n(shit)  is *#$^annoying\n";
 
-        $shit = print_r($data,true);
-        $this->getEvent()->getApplication()->getServiceManager()->get('log')
-           ->info($shit);
+        $result = $this->emailService->sendMessage($data);
+        //$shit = print_r($data,true);
+        // $this->getEvent()->getApplication()->getServiceManager()->get('log')
+        //    ->info($shit);
 
         return new JsonModel($result);
 
