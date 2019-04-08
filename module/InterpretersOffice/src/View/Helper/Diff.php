@@ -67,6 +67,9 @@ class Diff extends AbstractHelper
      * @param  string $field  the field whose value we're displaying
      * @return string the value(s), decorated with <INS> and <DEL> tags to
      * show what has changed.
+     *
+     * @todo consider using this helper ONLY if we know there's a previous state
+     * for comparison.
      */
     public function __invoke($field)
     {

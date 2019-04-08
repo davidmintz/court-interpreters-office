@@ -67,20 +67,25 @@ $this->entity = [
     'extraData' => $this->request->getExtraData(),
     'defendants' => $this->request->getDefendants()->toArray(),
 ];
-
+if ($this->user_event == 'cancel') :
+    $verb = '<strong>deleted</strong>';
+    $template = 'event-details';
+else:
+    $verb = 'updated';
+    $template = 'event-diff'
+endif;
 ?>
 
 <p>
 This automated message is to inform you that user <?php echo "{$this->user->firstname} {$this->user->lastname}"?> has just
-<?php echo $this->user_event == 'cancel' ? "<strong>cancelled</strong>" : "modified" ?>
+<?php echo $verb ?>
 the following request for interpreting services. As a result, the corresponding
 event on the schedule was automatically <?php echo $this->user_event == 'cancel' ? "deleted" : "updated" ?>.
 </p>
 <?php if ($this->interpreters):?>
 <p>Also, please note that the following <?php echo $plural ? 'interpreters were ':'interpreter was'  ?>
     removed from the assignment, and automatic email-notification to interpreters in such cases is disabled.
-    Therefore, it's up to you
-    to contact  <?php echo $plural ? 'these interpreters':'this interpreter' ?> if you wish to do so:
+    Therefore, it's up to you to contact  <?php echo $plural ? 'these interpreters':'this interpreter' ?> if you wish to do so:
 </p>
 <p style="padding-left:2em;">
     <?php foreach ($this->interpreters as $i):
@@ -90,5 +95,5 @@ event on the schedule was automatically <?php echo $this->user_event == 'cancel'
 </p>
 <?php endif;
 
-echo $this->partial('interpreters-office/email/partials/event-details.phtml',['entity'=>$this->entity]);
+echo $this->partial("interpreters-office/email/partials/{$template}.phtml",['entity'=>$this->entity]);
 ?>
