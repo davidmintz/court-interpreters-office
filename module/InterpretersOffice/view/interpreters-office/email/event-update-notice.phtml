@@ -25,15 +25,19 @@ if (is_object($this->entity)) {
     // }
 }?>
 
-<p>Dear <?=$this->interpreter->getFullname()?>:</p>
+<p>Dear You <?php //=$this->interpreter->getFullname()?>:</p>
 
 <p>This automated message is to advise you that the following event to which you
     are assigned as interpreter has been modified, as show below.
 </p>
 <?php
-echo $this->partial('interpreters-office/email/partials/event-diff.phtml',
+if ($this->before):
+    echo $this->partial('interpreters-office/email/partials/event-diff.phtml',
     ['entity'=>$this->entity, 'before' => $this->before, 'with_comments'=>false]);
-?>
+else:
+    echo $this->partial('interpreters-office/email/partials/event-details.phtml',
+    ['entity'=>$this->entity,  'with_comments'=>false,'escaped' => $this->escaped ]);
+endif;    ?>
 <p style="margin-top:1em">
 If you have any questions, please contact the Interpreters promptly.
 </p>

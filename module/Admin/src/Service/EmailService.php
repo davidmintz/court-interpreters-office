@@ -69,8 +69,25 @@ class EmailService
         foreach ($data['to'] as $address) {
             $message->addTo($address['email'], $address['name'] ?: null );
         }
-        foreach ($data['cc'] as $address) {
-            $message->addCc($address['email'], $address['name'] ?: null );
+        if (isset($data['cc'])) {
+            foreach ($data['cc'] as $address) {
+                $message->addCc($address['email'], $address['name'] ?: null );
+            }
+        }
+        $view = new ViewModel();
+
+        if (isset($data['event_details'])) {
+
+            $view->setVariables(['entity'=>$data['event_details'],'escaped'=>true]);
+            // for example...
+            $view->setTemplate('interpreters-office/email/event-update-notice.phtml');
+            $layout = new ViewModel();
+            $layout->setTemplate('interpreters-office/email/layout')
+                ->setVariable('content', $this->viewRenderer->render($view));
+            $output = $this->viewRenderer->render($layout);
+            file_put_contents('data/email-output.html',$output);
+
+
         }
         /* // something like....
         $view = new ViewModel(compact('request','user_event',
