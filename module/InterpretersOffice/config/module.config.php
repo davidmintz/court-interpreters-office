@@ -125,7 +125,7 @@ return [
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
             //Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
             Service\AccountManager::class => Service\Factory\AccountManagerFactory::class,
-            
+
             // don't quite understand this.
             /*
             'Zend\Session\SessionManager'=>function($container) {
@@ -342,12 +342,14 @@ return [
             'interpreters' => ViewHelper\InterpreterNames::class,
             'errorMessage' => ViewHelper\ErrorMessage::class,
             'diff' => ViewHelper\Diff::class,
+            'dateTime' => ViewHelper\DateTime::class,
         ],
         'factories' => [
             ViewHelper\Defendants::class => InvokableFactory::class,
             ViewHelper\ErrorMessage::class => InvokableFactory::class,
             ViewHelper\InterpreterNames::class => InvokableFactory::class,
             ViewHelper\Diff::class => InvokableFactory::class,
+            ViewHelper\DateTime::class => InvokableFactory::class,
         ],
     ],
 
