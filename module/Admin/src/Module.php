@@ -214,6 +214,10 @@ class Module
         if (!$session->last_access or $session->last_access < time() - 60 ) {
             $session->last_access = time();
         }
+        ///** @var $session_manager \Zend\Session\SessionManager */
+        // $session_manager = $container->get(\Zend\Session\SessionManager::class);
+        // $config = $session_manager->getConfig();
+        // var_dump($config->toArray());
 
     }
     /**
