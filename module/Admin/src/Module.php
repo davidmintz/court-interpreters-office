@@ -209,6 +209,12 @@ class Module
         if (! $allowed) {
              return $this->getRedirectionResponse($event);
         }
+        /** try to prevent us from timing out */
+        $session = new \Zend\Session\Container('Authentication');
+        if (!$session->last_access or $session->last_access < time() - 60 ) {
+            $session->last_access = time();
+        }
+
     }
     /**
      * checks authorization
