@@ -1,4 +1,4 @@
-<?php
+    <?php
 /** partial for displaying event details in an email */
 ?>
 <table>
@@ -15,9 +15,7 @@
     <tr>
         <td style="border-bottom:1px dotted gray"><?php echo $label ?></td>
         <td style="border-bottom:1px dotted gray"><?php
-            // echo $this->escaped ? $this->entity[$field] :
-            // $this->escapeHtml($this->entity[$field])
-            echo $this->diff($field)
+            echo $this->escaped ? $this->entity[$field] : $this->diff($field)
             ?></td>
     </tr>
 <?php endforeach; ?>

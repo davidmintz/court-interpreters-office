@@ -1,7 +1,10 @@
 <?php
 /**
  *
- * view script for sending email when a request is updated.
+ * view script for
+ * (1) email sent automatically when a request is updated or
+ * (2) email sent manually through schedule/admin interface
+ *
  *
  */
 
@@ -23,12 +26,23 @@ if (is_object($this->entity)) {
     // if (key_exists('comments',$this->before)) {
     //     unset($this->before['comments']);
     // }
-}?>
+}
+if (is_object($this->interpreter) && $this->interpreter instanceof \InterpretersOffice\Entity\Interpreter) :
+    $salutation = "Dear {$this->interpreter->getFullname()}:";
+else:
+    $salutation = print_r($this->to,true);
+    $address = $this->to;
+    if (isset($address['name']) && $address['name'] != $address['email']):
+        $salutation = "Dear {$address['name']}:";
+    else:
+        $salutation = 'Hello,';
+    endif;
+endif;
+?>
 
-<p>Dear You <?php //=$this->interpreter->getFullname()?>:</p>
-
-<p>This automated message is to advise you that the following event to which you
-    are assigned as interpreter has been modified, as show below.
+<p><?=$salutation?></p>
+<p>This is to advise you that the following event to which you
+    are assigned as interpreter has been modified, as indicated below.
 </p>
 <?php
 if ($this->before):
