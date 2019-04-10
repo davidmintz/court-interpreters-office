@@ -12,11 +12,13 @@ const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0
  * @param  {string} name
  * @return {string}
  */
-const create_recipient = function(email,name){
+const create_recipient = function(email,name, role){
     var id = email.toLowerCase().replace("@",".at.");
     name = name.replace(/"/g,""); // strip quotes
     var value = `${name} &lt;${email}&gt;`;
-
+    if (! role) {
+        role = "";
+    }
     return `<div class="form-row form-group my-1">
         <label class="col-md-2 text-right" for="${id}">
             <select class="form-control custom-select email-header">
@@ -28,7 +30,7 @@ const create_recipient = function(email,name){
             <div class="input-group">
                 <div class="form-control text-primary">
                     <span title="${email}" class="email-recipient">${name}</span>
-                <input class="email-recipient" data-recipient-name="${name}" type="hidden" id="${id}" name="to[]" value="${email.toLowerCase()}" >
+                <input class="email-recipient" data-role="${role}" data-recipient-name="${name}" type="hidden" id="${id}" name="to[]" value="${email.toLowerCase()}" >
                 </div>
                 <button class="btn btn-sm btn-primary btn-remove-item border" title="delete this recipient">
                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete this recipient</span>
@@ -212,7 +214,7 @@ $(function(){
                     return;
                 }
                 var name = input.next("label").text().trim();
-                var html = create_recipient(email,name);
+                var html = create_recipient(email,name,"interpreter");
                 $("#email-form .email-subject").before(html);
                 input.attr("disabled","disabled");//closest(".form-group").hide();
                 if (! $("#email-dropdown input").not(":disabled").length)
@@ -249,7 +251,9 @@ $(function(){
                     return;
                 }
                 console.warn(ui.item);
-                var html = create_recipient(ui.item.value, ui.item.label);
+                var role = ui.item.hat.indexOf("interpreter") > -1 ?
+                    "interpreter" : "submitter"
+                var html = create_recipient(ui.item.value, ui.item.label,role);
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
                 $(this).val("");
@@ -305,6 +309,8 @@ $(function(){
     			.append( $( "<div>" ).text( item.label ) )
                 .appendTo( ul );
          };
+         // the button they can click to add a recipient whose email and name
+         // they have typed manually
         btn_manual_add.on("click",function(){
             if ($(this).hasClass("disabled")) {
                 return;
@@ -393,7 +399,7 @@ $(function(){
             var name = element.next().text().trim();
             //console.log(element.data());
             if (! $(`.form-control input[value="${email}"]`).length) {
-                var html = create_recipient(email,name);
+                var html = create_recipient(email,name,element.data("role"));
                 $("#email-form .email-subject").before(html);
             }
             // disable this element, since the address has now been added
