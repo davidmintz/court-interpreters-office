@@ -163,7 +163,6 @@ const send_email = function(event){
         console.log("doing event details...");
         message.event_details = get_event_details();
     }
-    //var recipients = { to: [], cc: []};
     $("input.email-recipient").each(function(){
         var input = $(this);
         var email = input.val();
@@ -182,7 +181,7 @@ const send_email = function(event){
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
     var csrf = $("[data-csrf]").data("csrf");
-    var url = "/admin/email/send";
+    var url = "/admin/email/event";
     $.post(url,{message, csrf}).done((response)=> {
         console.log("it will work");
     });
@@ -191,8 +190,8 @@ const send_email = function(event){
 
 $(function(){
     // rig it
-    //console.warn("setting fake update for test purposes...");
-    //$(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
+    console.warn("faking time-update for test purposes...");
+    $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
     console.log(`email flag? ${should_suggest_email()}`);
     if (should_suggest_email()) {
         display_email_suggestion();
@@ -249,6 +248,7 @@ $(function(){
                     /** @todo some error message or other feedback */
                     return;
                 }
+                console.warn(ui.item);
                 var html = create_recipient(ui.item.value, ui.item.label);
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
@@ -296,6 +296,15 @@ $(function(){
                 }
             }
         });
+
+        $("#recipient-autocomplete").autocomplete("instance")._renderItem =
+         function(ul, item) {
+            // return $("<li>").append(item.label).appendTo(ul);
+            return $( "<li>" )
+                .attr( "data-hat", item.hat )
+    			.append( $( "<div>" ).text( item.label ) )
+                .appendTo( ul );
+         };
         btn_manual_add.on("click",function(){
             if ($(this).hasClass("disabled")) {
                 return;
@@ -317,6 +326,7 @@ $(function(){
                 .addClass("btn-secondary disabled");
         });
     });
+
     $("#email-dialog").on("show.bs.modal",function(event){
         // enable tooltips when dialog is shown
         $(`#${this.id} .btn`).tooltip();
@@ -381,6 +391,7 @@ $(function(){
             var element = $(this);
             var email = element.val().toLowerCase();
             var name = element.next().text().trim();
+            //console.log(element.data());
             if (! $(`.form-control input[value="${email}"]`).length) {
                 var html = create_recipient(email,name);
                 $("#email-form .email-subject").before(html);
