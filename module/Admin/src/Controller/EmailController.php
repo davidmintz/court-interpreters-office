@@ -43,7 +43,9 @@ class EmailController extends AbstractActionController
         }
         $csrf = $this->params()->fromPost('csrf','');
         if (! (new \Zend\Validator\Csrf('csrf',['timeout'=>600]))->isValid($csrf)) {
-            return new JsonModel(['status'=>'error','message'=>'security token is missing or expired']);
+            return new JsonModel(['status'=>'error','validation_errors'=>
+                ['csrf' => 'security token is missing or expired']
+            ]);
         }
         $data = $this->params()->fromPost('message');
 
