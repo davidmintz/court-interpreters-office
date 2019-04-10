@@ -179,7 +179,7 @@ endif;?></span>
         if ($event['submitter_extra_data'] and
             isset($event['submitter_extra_data']['defendants'])): ?>
             <div class="extra-deft-names text-muted mt-0 pt-0">
-                The submitter did not find defendant name(s) in your database:<br>
+                Defendant name(s) the submitter did not find in the database:<br>
                 <ul><li>
                 <?php echo implode('</li><li>',
                     $event['submitter_extra_data']['defendants']);
@@ -279,33 +279,32 @@ endif;?></span>
                                     <input name="subject" id="message-subject" type="text" class="form-control text-truncate" placeholder="type your subject line, or use the dropdown">
                                     <a title="suggested subject lines" class="btn btn-outline-secondary dropdown-toggle  dropdown-toggle-subject" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
                                     <div id="subject-dropdown" class="dropdown-menu pl-1">
-                                    <?php if ($event['submitter_email']) :?>
+                                    <?php $items = 0;
+                                    if ($event['submitter_email']) :?>
                                         <div data-toggle="tooltip" data-placement="left" title="contact <?php echo $this->escapeHtml($event['submitter'])?>" data-subject="your request" class="dropdown-item">
                                             <a href="#">your interpreter request
                                         </div>
-                                        <div class="dropdown-divider"></div>
-                                    <?php endif; ?>
-                                        <div data-toggle="tooltip" data-placement="left" title="offer this assignment" data-subject="available" class="dropdown-item">
-                                             <a href="#">assignment available</a>
+
+                                    <?php $items++; endif; ?>
+                                    <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
+                                    <div data-toggle="tooltip" data-placement="left" title="offer this assignment" data-subject="available" class="dropdown-item">
+                                         <a href="#">assignment available</a>
+                                    </div>
+                                    <?php if ($event['interpreters']) : $items++;?>
+                                        <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
+                                        <div data-toggle="tooltip" data-placement="left" title="details of noteworthy updates" data-subject="update" class="dropdown-item">
+                                            <a href="#">assignment update</a>
                                         </div>
                                         <div class="dropdown-divider"></div>
-                                    <?php if ($event['interpreters']) :?>
-                                        <?php if ($event['interpreters']) :?>
-                                            <div data-toggle="tooltip" data-placement="left" title="send details of noteworthy updates" data-subject="update" class="dropdown-item">
-                                                <a href="#">assignment update</a>
-                                            </div>
-                                            <div class="dropdown-divider"></div>
-                                        <?php endif; ?>
-                                        <div data-toggle="tooltip" data-placement="left" title="send confirmation as to this assignment" data-subject="confirmation" class="dropdown-item">
+                                        <div data-toggle="tooltip" data-placement="left" title="confirmation as to this assignment" data-subject="confirmation" class="dropdown-item">
                                             <a href="#">assignment confirmation</a>
                                         </div>
-                                        <div class="dropdown-divider"></div>
                                     <?php endif; ?>
-                                    <?php if ('n/a' != $event['reason_for_cancellation']) :?>
-                                        <div data-toggle="tooltip" data-placement="left" title="notify that the assignment has been cancelled" data-subject="cancellation" class="dropdown-item">
+                                    <?php if ('n/a' != $event['reason_for_cancellation']) : $items++ ?>
+                                        <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
+                                        <div data-toggle="tooltip" data-placement="left" title="notification that the assignment has been cancelled" data-subject="cancellation" class="dropdown-item">
                                             <a href="#">assignment cancellation</a>
                                         </div>
-                                        <div class="dropdown-divider"></div>
                                     <?php endif; ?>
                                     </div>
                                </div>
@@ -320,10 +319,23 @@ endif;?></span>
                         </div>
                     </div>
                     <div class="form-row form-group">
-                        <div class="form-check offset-md-2 col-md-10">
+                        <div class="form-check offset-md-2 col-md-4 pt-2">
                             <input class="form-check-input" type="checkbox" id="include-details" name="include-details" value="1" checked>
-                            <label for="include-details" class="ml-1 form-check-label">Include event details</label>
+                            <label for="include-details" class="ml-1 form-check-label">include event details</label>                            
                         </div>
+                        <label for="template" class="col-md-2 text-right col-form-label pt-2">boilerplate:</label>
+                        <div class="col-md-4">
+                                <select id="template" name="template" class="form-control custom-select">
+                                    <option value="">--none--</option>
+                                    <option value="your request">your request</option>
+                                    <option value="available">assignment available</option>
+                                    <option value="update">assignment update</option>
+                                    <option value="confirmation">assignment confirmation</option>
+                                    <option value="cancellation">assignment cancellation</option>
+                                </select>
+
+                        </div>
+
                     </div>
                     </form>
                 </div>

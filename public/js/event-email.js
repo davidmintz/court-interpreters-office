@@ -182,9 +182,17 @@ const send_email = function(event){
     // message.recipients.to = '';
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
+    message.template_hint = $("#template").val();
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
     $.post(url,{message, csrf}).done((response)=> {
+        if (response.status !== "success") {
+            if (response.validation_errors) {
+                if (response.validatation_errors.csrf) {
+
+                }
+            }
+        }
         console.log("it will work");
     });
 
@@ -250,7 +258,7 @@ $(function(){
                     /** @todo some error message or other feedback */
                     return;
                 }
-                console.warn(ui.item);
+                //console.warn(ui.item);
                 var role = ui.item.hat.indexOf("interpreter") > -1 ?
                     "interpreter" : "submitter"
                 var html = create_recipient(ui.item.value, ui.item.label,role);
@@ -305,7 +313,7 @@ $(function(){
          function(ul, item) {
             // return $("<li>").append(item.label).appendTo(ul);
             return $( "<li>" )
-                .attr( "data-hat", item.hat )
+                .attr( "data-hat", item.hat ).attr("title",item.hat)
     			.append( $( "<div>" ).text( item.label ) )
                 .appendTo( ul );
          };
@@ -417,12 +425,16 @@ $(function(){
     });
     // don't let the buttons in the dropdown close the menu
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
-
+    $("#message-subject").on("change",function(e){
+        console.log("they changed shit in the subject line?");
+    });
     $("#subject-dropdown .dropdown-item").on("click",function(event){
         console.warn("doing shit with: "+$(this).data("subject"));
         $(this).tooltip("hide");
         var subject_line;
-        switch ($(this).data("subject")) {
+        var template_hint = $(this).data("subject");
+        $("#template").val(template_hint);
+        switch (template_hint) {
             case "your request":
             subject_line = description;
             break;
@@ -435,8 +447,10 @@ $(function(){
             case "confirmation":
             subject_line = "assignment confirmed: "+description;
             break;
+            case "cancellation":
+            subject_line = "assignment cancelled: "+description;
+            break;
         }
-        $("#message-subject").val(subject_line);
     });
 
     $("#btn-send").on("click",send_email);
