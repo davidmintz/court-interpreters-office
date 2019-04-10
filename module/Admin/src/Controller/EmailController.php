@@ -33,7 +33,7 @@ class EmailController extends AbstractActionController
         $this->emailService = $emailService;
     }
 
-    public function sendAction()
+    public function emailEventAction()
     {
         if (! $this->getRequest()->isPost()) {
             /** @var \Zend\Http\Response $response */
@@ -50,7 +50,7 @@ class EmailController extends AbstractActionController
         // test
         //$data['to'][0]['name'] = "<this>\n(shit)  is *#$^annoying\n";
 
-        $result = $this->emailService->sendMessage($data);
+        $result = $this->emailService->emailEvent($data);
         //$shit = print_r($data,true);
         // $this->getEvent()->getApplication()->getServiceManager()->get('log')
         //    ->info($shit);

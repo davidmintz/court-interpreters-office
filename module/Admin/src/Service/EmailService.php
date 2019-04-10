@@ -56,7 +56,7 @@ class EmailService
      * @param  Array $data
      * @return Array result
      */
-    public function sendMessage(Array $data) : Array
+    public function emailEvent(Array $data) : Array
     {
         $validation = $this->validate($data);
         if (! $validation['valid']) {
@@ -66,29 +66,48 @@ class EmailService
         $message = $this->createEmailMessage('<p>boink!</p>');
         $message->setFrom($mail_config['from_address'],$mail_config['from_entity'])
             ->setSubject($data['subject']);
-        foreach ($data['to'] as $address) {
-            $message->addTo($address['email'], $address['name'] ?: null );
-        }
+
         if (isset($data['cc'])) {
             foreach ($data['cc'] as $address) {
                 $message->addCc($address['email'], $address['name'] ?: null );
             }
         }
+
         $view = new ViewModel();
+        /**  @todo set template based on input etc */
+        $template = 'event-update-notice';
+        $view->setTemplate("interpreters-office/email/{$template}.phtml");
+        /** @todo bear in mind event-update-notice is directed at interpreter */
+
+        $layout = new ViewModel();
+        $layout->setTemplate('interpreters-office/email/layout');
 
         if (isset($data['event_details'])) {
-
             $view->setVariables(['entity'=>$data['event_details'],'escaped'=>true]);
             // for example...
-            $view->setTemplate('interpreters-office/email/event-update-notice.phtml');
-            $layout = new ViewModel();
-            $layout->setTemplate('interpreters-office/email/layout')
-                ->setVariable('content', $this->viewRenderer->render($view));
-            $output = $this->viewRenderer->render($layout);
-            file_put_contents('data/email-output.html',$output);
 
 
         }
+        $transport = $this->getMailTransport();
+
+        foreach ($data['to'] as $i => $address) {
+            $view->to = $address;
+            $layout->setVariable('content', $this->viewRenderer->render($view));
+            $output = $this->viewRenderer->render($layout);
+            file_put_contents("data/email-output.{$i}.html",$output);
+
+            $message->setTo($address['email'], $address['name'] ?: null );
+            try {
+                $transport->send($message);
+            } catch (\Throwable $e){
+                return [
+                    'status' => 'error',
+                    'message' => $e->getMessage(),
+                ];
+            }
+        }
+
+
         /* // something like....
         $view = new ViewModel(compact('request','user_event',
             'updates','interpreters','user'));
@@ -100,17 +119,8 @@ class EmailService
         // debug
         file_put_contents('data/email-autocancellation.html',$output);
         */
-        $transport = $this->getMailTransport();
 
-        try {
-            $transport->send($message);
-        } catch (\Throwable $e){
-            return [
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ];
-        }
-        return ['status'=>'success','ps'=>'only kidding', 'data'=>print_r($this->config['mail'],true)];
+        return ['status'=>'success','ps'=>'only kidding', 'data'=>print_r($data,true)];
     }
 
     /**

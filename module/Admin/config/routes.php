@@ -686,11 +686,11 @@ return  [
         'email' => [
             'type' => Literal::class,
                'options' => [
-                   'route' => '/admin/email/send', //[/]
+                   'route' => '/admin/email/event', //[/]
                    'defaults' => [
                        'module' => __NAMESPACE__,
                        'controller' => Controller\EmailController::class,
-                       'action' => 'send',
+                       'action' => 'email-event',
                    ],
                ],
         ],
