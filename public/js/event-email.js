@@ -367,6 +367,7 @@ $(function(){
     $("#btn-add-recipients").on("click",function(e){
         // https://getbootstrap.com/docs/4.3/components/dropdowns/#methods
         e.preventDefault();
+        $(this).tooltip("hide");
         var elements = $("#email-dropdown input:checked").not(":disabled");
         if (! elements.length) {
             $("#email-dropdown .validation-error").text(
