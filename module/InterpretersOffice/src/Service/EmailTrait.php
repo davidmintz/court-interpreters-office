@@ -63,7 +63,7 @@ trait EmailTrait
         $body = new MimeMessage();
         $body->setParts([$text, $html]);
         $message = new Message();
-        $message->setBody($body);
+        $message->setBody($body)->setEncoding('UTF-8');
         $contentTypeHeader = $message->getHeaders()->get('Content-Type');
         $contentTypeHeader->setType('multipart/alternative');
 
