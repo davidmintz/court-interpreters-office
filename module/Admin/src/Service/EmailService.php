@@ -102,6 +102,9 @@ class EmailService
             } catch (\Throwable $e){
                 return [
                     'status' => 'error',
+                    'exception' => get_class($e),
+                    'address' => $address['email'],
+                    'name'   =>$address['name'],
                     'message' => $e->getMessage(),
                 ];
             }

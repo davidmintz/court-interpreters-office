@@ -30,7 +30,7 @@ if (is_object($this->entity)) {
 if (is_object($this->interpreter) && $this->interpreter instanceof \InterpretersOffice\Entity\Interpreter) :
     $salutation = "Dear {$this->interpreter->getFullname()}:";
 else:
-    $salutation = print_r($this->to,true);
+    //$salutation = print_r($this->to,true);
     $address = $this->to;
     if (isset($address['name']) && $address['name'] != $address['email']):
         $salutation = "Dear {$address['name']}:";

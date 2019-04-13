@@ -232,6 +232,7 @@ $(function(){
                     $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
                 }
             });
+            $("#template").val("update");
         }
         if ($("input[name='to[]']").length && $("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
@@ -451,6 +452,7 @@ $(function(){
             subject_line = "assignment cancelled: "+description;
             break;
         }
+        $("#message-subject").val(subject_line);
     });
 
     $("#btn-send").on("click",send_email);
