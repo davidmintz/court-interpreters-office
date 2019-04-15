@@ -135,16 +135,16 @@ class EmailService
     public function validate(Array &$data) : Array
     {
 
-        $validation_errors = [];
+        $validation_errors = ['to' => [], 'cc' => []];
         $alpha = $whitespace = null;
         $validator = new EmailAddress();
 
         if (! isset($data['to'])) {
-            $validation_errors['to'] = 'at least one "To" address is required';
+            $validation_errors['to'][] = 'at least one "To" address is required';
         } elseif (! is_array($data['to'])) {
-            $validation_errors['to'] = 'invalid parameter in "To" field';
+            $validation_errors['to'][] = 'invalid parameter in "To" field';
         } elseif (!count($data['to'])) {
-            $validation_errors['to'] = 'at least one "To" address is required';
+            $validation_errors['to'][] = 'at least one "To" address is required';
         } else {
 
             $validator = new EmailAddress();
@@ -153,13 +153,10 @@ class EmailService
                 ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
             foreach ($data['to'] as $i => $address) {
                 if (empty($address['email'])) {
-                    $validation_errors['to'] = 'missing email address in "To" recipient';
+                    $validation_errors['to'][] = 'missing email address in "To" recipient';
                 } elseif (!$validator->isValid($address['email'])){
-                    $validation_errors['to'] = 'invalid email address: '.$address['email'];
-                }
-                if (isset($validation_errors['to'])) {
-                    break;
-                }
+                    $validation_errors['to'][] = 'invalid email address: '.$address['email'];
+                }                
                 if (!empty($address['name'])) {
                     $filtered = $whitespace->filter($alpha->filter($address['name']));
                     $data['to'][$i]['name'] = $filtered;
@@ -173,16 +170,13 @@ class EmailService
         }
         if (isset($data['cc'])) {
             if (! is_array($data['cc'])) {
-                $validation_errors['cc'] = 'invalid parameter in "Cc" field';
+                $validation_errors['cc'][] = 'invalid parameter in "Cc" field';
             } else {
                 foreach ($data['cc'] as $i => $address) {
                     if (empty($address['email'])) {
-                        $validation_errors['cc'] = 'missing email address in "Cc" recipient';
+                        $validation_errors['cc'][] = 'missing email address in "Cc" recipient';
                     } elseif (!$validator->isValid($address['email'])){
-                        $validation_errors['cc'] = 'invalid email address: '.$address['email'];
-                    }
-                    if (isset($validation_errors['cc'])) {
-                        break;
+                        $validation_errors['cc'][] = 'invalid email address: '.$address['email'];
                     }
                     if (!empty($address['name'])) {
                         $filtered = $whitespace->filter($alpha->filter($address['name']));
@@ -198,7 +192,12 @@ class EmailService
         if (empty($data['event_details']) and empty($data['body'])) {
             $validation_errors['body'] = 'Either a message text or event details is required';
         }
-        $valid = 0 == count($validation_errors);
+        foreach (['to','cc'] as $field) {
+            if (! count($validation_errors[$field])) {
+                unset($validation_errors[$field]);
+            }
+        }
+        $valid = count($validation_errors) ? false : true;
 
         return compact('valid','validation_errors');
     }

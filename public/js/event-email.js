@@ -159,7 +159,7 @@ const display_email_suggestion = function() {
 };
 
 const send_email = function(event){
-    console.log("it's show time!");
+    console.log("show time!");
     var message = {to: [], cc: [] };
     if ($("#include-details").prop("checked")) {
         console.log("doing event details...");
@@ -183,15 +183,40 @@ const send_email = function(event){
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
     message.template_hint = $("#template").val();
+    //var csrf = 'shit';// for testing
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
     $.post(url,{message, csrf}).done((response)=> {
         if (response.status !== "success") {
             if (response.validation_errors) {
-                if (response.validatation_errors.csrf) {
-
+                $("#error-message ul").remove();
+                if (response.validation_errors.csrf) {
+                    $("#error-message p").html(
+                        `Sorry, this action has failed because your security token was invalid or timed out.`
+                    ).parent().show();
+                } else {
+                    $("#error-message p").html( `Sorry, we can't process this submission because`);
+                    var ul = `<ul class="ml-3">`;
+                    for (var key in response.validation_errors) {
+                        var content;
+                        if (Array.isArray(response.validation_errors[key])) {
+                            console.log("shit is an Array");
+                            if (! response.validation_errors[key].length) {
+                                continue;
+                            }
+                            content = response.validation_errors[key].join("</li><li>");
+                        } else {
+                            console.log("shit is a "+typeof response.validation_errors[key]);
+                            content = response.validation_errors[key];
+                        }
+                        ul += `<li>${content}</li>`;
+                    }
+                    ul += "</ul>";
+                    $("#error-message p").after(ul).parent().show();
                 }
             }
+        } else {
+            $("#error-message").hide();
         }
         console.log("it will work");
     });
