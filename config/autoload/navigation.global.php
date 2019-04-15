@@ -287,9 +287,16 @@ return [
                         'uri' => '#'
                     ],
                     [
+                        'label' => 'email',
+                        'route' => 'email/templates',
+                        //'uri' => '/admin/email/templates',
+                        'resource' => Admin\EmailController::class,
+                    ],
+                    [
                         'label' => 'help',
                         'uri' => '#'
                     ],
+
                 ]
 
             ],

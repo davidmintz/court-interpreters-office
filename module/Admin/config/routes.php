@@ -685,14 +685,84 @@ return  [
 
         'email' => [
             'type' => Literal::class,
-               'options' => [
-                   'route' => '/admin/email/event', //[/]
-                   'defaults' => [
-                       'module' => __NAMESPACE__,
-                       'controller' => Controller\EmailController::class,
-                       'action' => 'email-event',
-                   ],
+            'options' => [
+               'route' => '/admin/email/event', //[/]
+               'defaults' => [
+                   'module' => __NAMESPACE__,
+                   'controller' => Controller\EmailController::class,
+                   'action' => 'email-event',
                ],
+            ],
         ],
+        /*
+        'event-types' => [
+            'type' => Segment::class,
+            'may_terminate' => true,
+            'options' => [
+                'route' => '/admin/event-types',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\EventTypesController::class,
+                    'action' => 'index',
+                ],
+            ],
+            'child_routes' => [
+                 'add' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/add',
+                        'defaults' => [
+                            'action' => 'add',
+                        ],
+                    ],
+                 ],
+            ],
+        ],
+        */
+        'email' => [
+            'type' => Segment::class,
+            'options' => [
+                'route' => '/admin/email',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\EmailController::class,
+                ],
+            ],
+            'may_terminate' => false,
+            'route' => '/admin/email',
+            'child_routes' => [
+                'event' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/event',
+                        'defaults' => [
+                            'controller' => Controller\EmailController::class,
+                            'action' => 'email-event',
+                        ],
+                    ],
+                ],
+                'templates' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/templates',
+                        'defaults' => [
+                            //'controller' => Controller\EmailController::class,
+                            'action' => 'templates',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        // 'email-templates' => [
+        //     'type' => Literal::class,
+        //     'options' => [
+        //        'route' => '/admin/email/templates', //[/]
+        //        'defaults' => [
+        //            'module' => __NAMESPACE__,
+        //            'controller' => Controller\EmailController::class,
+        //            'action' => 'templates',
+        //        ],
+        //     ],
+        // ],
     ],
  ];

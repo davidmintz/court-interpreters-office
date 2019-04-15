@@ -232,10 +232,26 @@ $(function(){
         display_email_suggestion();
     }
     $("[data-toggle=tooltip]").tooltip();
+    $("div.popover").css({zIndex:1500});
+    $('[data-toggle="popover"]').popover({
+        html : true,
+        trigger: "focus",
+        sanitize: false,
+        content : `which <a href="/admin/email/templates" target="_blank">template</a> to use for verbiage preceding event details.`
+    });
     var btn_manual_add = $("#btn-add-recipient");
     var description = get_event_description();
     $("#email-modal-label").append(` re: ${description}`);
 
+    /* the "event-details" checkbox */
+    $("#include-details").on("change",function(e){
+        var checked = $(this).prop("checked");
+        if (! checked) {
+            $("#template").attr({disabled:"disabled"});
+        } else {
+            $("#template").removeAttr("disabled");
+        }
+    });
     $("#btn-email, .btn-add-recipient").on("click",function(e,params){
         e.preventDefault();
         // if they clicked the 'notify the interpreter...' link
@@ -249,7 +265,7 @@ $(function(){
                 var name = input.next("label").text().trim();
                 var html = create_recipient(email,name,"interpreter");
                 $("#email-form .email-subject").before(html);
-                input.attr("disabled","disabled");//closest(".form-group").hide();
+                input.attr("disabled","disabled");
                 if (! $("#email-dropdown input").not(":disabled").length)
                 {
                     console.log("hiding dropdown for fux sake?");

@@ -234,7 +234,7 @@ endif;?></span>
                 <div class="container-fluid">
                     <form id="email-form">
                         <div class="form-row">
-                            <div id="error-message" class="col-md-10 offset-md-2 pl-3 validation-error alert alert-warning alert-dismissible fade show" role="alert" style="display:none">
+                            <div id="error-message" class="mb-1 col-md-10 offset-md-2 pl-3 validation-error alert alert-warning alert-dismissible fade show" role="alert" style="display:none">
                                 <p></p>
                                 <!--
                                 <button type="button" class="close" data-dismiss="modal" aria-label="close">
@@ -325,7 +325,7 @@ endif;?></span>
                         <label for="message-body" class="col-md-2 text-right col-form-label">Message</label>
                         <div class="col-md-10">
                             <div class="input-group">
-                                <textarea name="message-body" placeholder="some bullshit here" id="message-body" class="form-control" rows="8"></textarea>
+                                <textarea name="message-body" placeholder="optional unless event-details are omitted" id="message-body" class="form-control" rows="8"></textarea>
                            </div>
                         </div>
                     </div>
@@ -334,7 +334,7 @@ endif;?></span>
                             <input class="form-check-input" type="checkbox" id="include-details" name="include-details" value="1" checked>
                             <label for="include-details" class="ml-1 form-check-label">include event details</label>
                         </div>
-                        <label for="template" class="col-md-2 text-right col-form-label pt-2">boilerplate:</label>
+                        <label for="template" class="col-md-2 text-right col-form-label pt-2">with <a href="#" data-toggle="popover" data-placement="top" >boilerplate</a>:</label>
                         <div class="col-md-4">
                                 <select id="template" name="template" class="form-control custom-select">
                                     <option value="">--none--</option>

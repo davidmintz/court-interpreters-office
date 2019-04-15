@@ -7,6 +7,7 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
 use Zend\Http\Response;
 //use Doctrine\ORM\EntityManagerInterface;
 //use InterpretersOffice\Entity;
@@ -32,7 +33,10 @@ class EmailController extends AbstractActionController
     {
         $this->emailService = $emailService;
     }
-
+    public function templatesAction()
+    {
+        return [];
+    }
     public function emailEventAction()
     {
         if (! $this->getRequest()->isPost()) {
