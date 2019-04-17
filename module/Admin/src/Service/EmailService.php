@@ -75,8 +75,12 @@ class EmailService
 
         $view = new ViewModel();
         /**  @todo set template based on input etc */
+        $map = [
+            'update' => 'event-update-notice',
+            // 'update' => 'event_update_notice',
+        ];
         $template = 'event-update-notice';
-        $view->setTemplate("interpreters-office/email/{$template}.phtml");
+        $view->setTemplate("email/{$template}.phtml");
         /** @todo bear in mind event-update-notice is directed at interpreter */
 
         $layout = new ViewModel();
@@ -156,7 +160,7 @@ class EmailService
                     $validation_errors['to'][] = 'missing email address in "To" recipient';
                 } elseif (!$validator->isValid($address['email'])){
                     $validation_errors['to'][] = 'invalid email address: '.$address['email'];
-                }                
+                }
                 if (!empty($address['name'])) {
                     $filtered = $whitespace->filter($alpha->filter($address['name']));
                     $data['to'][$i]['name'] = $filtered;
