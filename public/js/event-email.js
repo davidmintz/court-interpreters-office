@@ -480,13 +480,22 @@ $(function(){
         console.log("they changed shit in the subject line?");
     });
     $("#subject-dropdown .dropdown-item").on("click",function(event){
-        console.warn("doing shit with: "+$(this).data("subject"));
+        console.debug("doing shit with: "+$(this).data("subject"));
         $(this).tooltip("hide");
         var subject_line;
         var template_hint = $(this).data("subject");
         $("#template").val(template_hint);
         switch (template_hint) {
             case "your request":
+            var el = $("#email-dropdown input[data-role=submitter]");
+            var email = el.val().toLowerCase();
+            if (0 === $(`input.email-recipient[value="${email}"]`).length) {
+                console.log(`adding ${email}...`);
+                var name = el.next("label").text().trim();
+                var markup = create_recipient(email, name, "submitter");
+                $("#email-form .email-subject").before(markup);
+
+            }
             subject_line = description;
             break;
             case "available":
