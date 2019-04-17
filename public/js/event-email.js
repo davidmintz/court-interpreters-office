@@ -494,7 +494,7 @@ $(function(){
                 var name = el.next("label").text().trim();
                 var markup = create_recipient(email, name, "submitter");
                 $("#email-form .email-subject").before(markup);
-
+                /** @todo enable the send button !*/
             }
             subject_line = description;
             break;

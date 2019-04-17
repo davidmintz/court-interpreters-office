@@ -209,7 +209,7 @@ class EmailService
         * @todo support event-details and WITHOUT template?
         */
         if (isset($data['event_details'])) {
-            if (empty($data['template_hint'])) {
+            if (empty($data['template_hint']) && $data['template_hint'] != 'your request') {
                 $validation_errors['template'] = "If event details are included, a boilerplate text is required.";
             } else {
                 if (isset($data['template_hint']) && ! in_array($data['template_hint'], array_keys($this->template_map))) {
