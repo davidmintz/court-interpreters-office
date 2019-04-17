@@ -1,14 +1,18 @@
 <?php
 /**
- * view script for email sent to Interpreters Office when Spanish interpreter
- * auto-cancel is triggered. this happens when they either (1) cancel outright
- * or (2) reschedule a request across an am/pm boundary or (3) (rarely occuring)
- * they  change the language from Spanish to something else. In any of these cases
- * the Spanish interpreters are automatically cancelled but they are NOT
- * automatically notified.
+ * View script for email sent to Interpreters Office when Spanish interpreter
+ * auto-cancel is triggered in the Requests module. This happens when the
+ * request-submitter either (1) cancels outright or (2) reschedules a request
+ * across an am/pm boundary or (3) (rarely occuring) changes the language from
+ * Spanish to something else.
+ *
+ * This script is to be used when our configuration has automatic interpreter
+ * notification turned OFF.The underlying idea is that in many cases human
+ * judgment should decide whether it makes sense to send email to the
+ * interpreter.
  */
 
-/*
+/* example configuration
 {
   "cancel": {
     "in-court.spanish.delete-scheduled-event": true,
@@ -77,15 +81,16 @@ endif;
 ?>
 
 <p>
-This automated message is to inform you that user <?php echo "{$this->user->firstname} {$this->user->lastname}"?> has just
-<?php echo $verb ?>
-the following request for interpreting services. As a result, the corresponding
+This automated message is to inform you that user <?php echo "{$this->user->firstname} {$this->user->lastname}"?>
+has just <?php echo $verb ?> the following request for interpreting services. As a result, the corresponding
 event on the schedule was automatically <?php echo $this->user_event == 'cancel' ? "deleted" : "updated" ?>.
 </p>
 <?php if ($this->interpreters):?>
-<p>Also, please note that the following <?php echo $plural ? 'interpreters were ':'interpreter was'  ?>
-    removed from the assignment, and automatic email-notification to interpreters in such cases is disabled.
-    Therefore, it's up to you to contact  <?php echo $plural ? 'these interpreters':'this interpreter' ?> if you wish to do so:
+<p>
+Also, please note that the following <?php echo $plural ? 'interpreters were ':'interpreter was'  ?>
+removed from the assignment, and automatic email-notification to interpreters in such cases is disabled.
+Therefore, it's up to you to contact  <?php echo $plural ? 'these interpreters':'this interpreter' ?> if
+you wish to do so:
 </p>
 <p style="padding-left:2em;">
     <?php foreach ($this->interpreters as $i):
@@ -95,5 +100,6 @@ event on the schedule was automatically <?php echo $this->user_event == 'cancel'
 </p>
 <?php endif;
 
-echo $this->partial("interpreters-office/email/partials/{$template}.phtml",['entity'=>$this->entity]);
+echo $this->partial("interpreters-office/email/partials/{$template}.phtml",
+    ['entity'=>$this->entity]);
 ?>
