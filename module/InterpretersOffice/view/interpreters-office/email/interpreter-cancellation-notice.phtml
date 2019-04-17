@@ -9,9 +9,10 @@
 ?>
 <p>Dear <?=$this->interpreter->getFullname()?>:</p>
 
-<p>This is to advise you that the following event to which you were assigned in the Southern District of New York
+<p>This is to advise you that the following event to which you were assigned
 <strong>has been cancelled</strong>.</p>
-<p style="font-size:115%;"><em>Please reply to the Interpreters Office at your earliest convenience to acknowledge this notice.</em></p>
+<p style="font-size:115%;"><em>Please reply to the Interpreters Office at your
+    earliest convenience to acknowledge this notice.</em></p>
 <?php
 echo $this->partial('interpreters-office/email/partials/event-details.phtml',
     ['entity'=>$this->entity]);
