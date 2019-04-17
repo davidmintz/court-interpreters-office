@@ -40,15 +40,23 @@ class EmailController extends AbstractActionController
     }
 
     /**
-     * placeholder for entry point to administer templates
-     * 
-     * @return
+     * (placeholder) for entry point to administer email templates
+     *
+     * @return ViewModel
      */
     public function templatesAction()
     {
         return (new ViewModel)->setTemplate('email/templates');
     }
 
+    /**
+     *
+     * Sends email regarding an Event (entity).
+     *
+     * This action will usually invoked from /admin/schedule/view/<event_id>.
+     *
+     * @return JsonModel
+     */
     public function emailEventAction()
     {
         if (! $this->getRequest()->isPost()) {
@@ -64,19 +72,10 @@ class EmailController extends AbstractActionController
             ]);
         }
         $data = $this->params()->fromPost('message');
-
-        // test
-        //$data['to'][0]['name'] = "<this>\n(shit)  is *#$^annoying\n";
-
         $result = $this->emailService->emailEvent($data);
-        //$shit = print_r($data,true);
-        // $this->getEvent()->getApplication()->getServiceManager()->get('log')
-        //    ->info($shit);
 
         return new JsonModel($result);
-
     }
-
 }
 /* ----------
 $factory = new \Zend\InputFilter\Factory();
