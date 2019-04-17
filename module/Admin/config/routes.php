@@ -694,31 +694,6 @@ return  [
                ],
             ],
         ],
-        /*
-        'event-types' => [
-            'type' => Segment::class,
-            'may_terminate' => true,
-            'options' => [
-                'route' => '/admin/event-types',
-                'defaults' => [
-                    'module' => __NAMESPACE__,
-                    'controller' => Controller\EventTypesController::class,
-                    'action' => 'index',
-                ],
-            ],
-            'child_routes' => [
-                 'add' => [
-                    'type' => Segment::class,
-                    'options' => [
-                        'route' => '/add',
-                        'defaults' => [
-                            'action' => 'add',
-                        ],
-                    ],
-                 ],
-            ],
-        ],
-        */
         'email' => [
             'type' => Segment::class,
             'options' => [
@@ -736,7 +711,6 @@ return  [
                     'options' => [
                         'route' => '/event',
                         'defaults' => [
-                            'controller' => Controller\EmailController::class,
                             'action' => 'email-event',
                         ],
                     ],
@@ -746,7 +720,6 @@ return  [
                     'options' => [
                         'route' => '/templates',
                         'defaults' => [
-                            //'controller' => Controller\EmailController::class,
                             'action' => 'templates',
                         ],
                     ],
