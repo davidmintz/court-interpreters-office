@@ -29,14 +29,26 @@ class EmailController extends AbstractActionController
      */
     private $emailService;
 
+    /**
+     * constructor
+     *
+     * @param EmailService $emailService
+     */
     public function __construct(EmailService $emailService)
     {
         $this->emailService = $emailService;
     }
+
+    /**
+     * placeholder for entry point to administer templates
+     * 
+     * @return
+     */
     public function templatesAction()
     {
-        return [];
+        return (new ViewModel)->setTemplate('email/templates');
     }
+
     public function emailEventAction()
     {
         if (! $this->getRequest()->isPost()) {

@@ -252,7 +252,7 @@ class ScheduleUpdateManager
                     $view = new ViewModel(compact('request','user_event',
                         'updates','interpreters','user'));
                     $view->before = $this->previous_state;
-                    $view->setTemplate('interpreters-office/email/autocancellation-notice');
+                    $view->setTemplate('email/autocancellation-notice');
                     $layout = new ViewModel();
                     $layout->setTemplate('interpreters-office/email/layout')
                         ->setVariable('content', $this->viewRenderer->render($view));
@@ -546,7 +546,7 @@ class ScheduleUpdateManager
         if ($this->remove_interpreters) {
             $subject .= 'cancelled';
             $view_variables = ['entity' => $data ];
-            $template = 'interpreters-office/email/interpreter-cancellation-notice';
+            $template = 'email/interpreter-cancellation-notice';
         } else {
             $subject .= 'modified';
             $view_variables = ['entity' => $request,'before'=> $this->previous_state ];
