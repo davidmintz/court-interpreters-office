@@ -1,0 +1,24 @@
+<?php
+
+$address = $this->to;
+if (isset($address['name']) && $address['name'] != $address['email']):
+    $salutation = "Dear {$address['name']}:";
+else:
+    $salutation = 'Hello,';
+endif;
+?>
+<p><?php echo $salutation ?></p>
+<p>
+    This is to confirm your assignment as interpreter for the following event:
+</p>
+<?php
+echo $this->partial('interpreters-office/email/partials/event-details.phtml',
+    ['entity'=>$this->entity]);
+?>
+
+<p>
+    Please feel free to contact us with any questions.
+</p>
+<p>Very truly yours,</p>
+
+<p>The Interpreters Office</p>

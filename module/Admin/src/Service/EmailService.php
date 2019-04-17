@@ -30,7 +30,17 @@ class EmailService
      */
     private $entityManager;
 
-    //private $filter_spec = [];
+    /**
+     * map email-subject hints to template filenames
+     * @var array
+     */
+    private $template_map = [
+        '' => 'blank-page',
+        'available' => 'assignment-availability-notice',
+        'confirmation' => 'assignment-confirmation-notice',
+        'cancellation' => 'interpreter-cancellation-notice',
+        'update' => 'event-update-notice',
+    ];
 
     /**
      * viewRenderer
@@ -74,28 +84,25 @@ class EmailService
         }
 
         $view = new ViewModel();
-        /**  @todo set template based on input etc */
-        $map = [
-            'update' => 'event-update-notice',
-            // 'update' => 'event_update_notice',
-        ];
-        $template = 'event-update-notice';
+        /**  set template based on input etc */
+        $template = $this->template_map[$data['template_hint']];
         $view->setTemplate("email/{$template}.phtml");
-        /** @todo bear in mind event-update-notice is directed at interpreter */
 
         $layout = new ViewModel();
         $layout->setTemplate('interpreters-office/email/layout');
 
         if (isset($data['event_details'])) {
             $view->setVariables(['entity'=>$data['event_details'],'escaped'=>true]);
-            // for example...
-
-
+        }
+        if (!empty($data['body'])) {
+            $view->body = $data['body'];
+            $view->setTemplate('email/blank-page');
         }
         $transport = $this->getMailTransport();
 
         foreach ($data['to'] as $i => $address) {
             $view->to = $address;
+
             $layout->setVariable('content', $this->viewRenderer->render($view));
             $output = $this->viewRenderer->render($layout);
             file_put_contents("data/email-output.{$i}.html",$output);
@@ -114,7 +121,6 @@ class EmailService
             }
         }
 
-
         /* // something like....
         $view = new ViewModel(compact('request','user_event',
             'updates','interpreters','user'));
@@ -131,14 +137,16 @@ class EmailService
     }
 
     /**
-     * validates and filters data for composing message
+     * Validates and filters data for composing message.
+     *
+     * This is crude, but using Zend\InputFilter\etc for this was too
+     * complicated and we don't want or need a Zend\Form\Form.
      *
      * @param  Array $data
      * @return Array
      */
     public function validate(Array &$data) : Array
     {
-
         $validation_errors = ['to' => [], 'cc' => []];
         $alpha = $whitespace = null;
         $validator = new EmailAddress();
@@ -150,7 +158,6 @@ class EmailService
         } elseif (!count($data['to'])) {
             $validation_errors['to'][] = 'at least one "To" address is required';
         } else {
-
             $validator = new EmailAddress();
             $alpha = new \Zend\I18n\Filter\Alpha(true);
             $whitespace = new \Zend\Filter\PregReplace(
@@ -193,14 +200,29 @@ class EmailService
         if (empty($data['subject'])) {
             $validation_errors['subject'] = 'a valid subject line is required';
         }
+
         if (empty($data['event_details']) and empty($data['body'])) {
             $validation_errors['body'] = 'Either a message text or event details is required';
+        }
+        /**
+        * if event-details ARE included, template is REQUIRED.
+        * @todo support event-details and WITHOUT template?
+        */
+        if (isset($data['event_details'])) {
+            if (empty($data['template_hint'])) {
+                $validation_errors['template'] = "If event details are included, a boilerplate text is required.";
+            } else {
+                if (isset($data['template_hint']) && ! in_array($data['template_hint'], array_keys($this->template_map))) {
+                    $validation_errors['template'] = "Invalid boilerplate text.";
+                }
+            }
         }
         foreach (['to','cc'] as $field) {
             if (! count($validation_errors[$field])) {
                 unset($validation_errors[$field]);
             }
         }
+
         $valid = count($validation_errors) ? false : true;
 
         return compact('valid','validation_errors');

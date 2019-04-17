@@ -1,13 +1,13 @@
     <?php
 /** partial for displaying event details in an email */
 ?>
-<table>
+<table style="margin-bottom:1em">
     <tbody>
 
     <?php foreach (array_keys($this->entity) as $field):
         // need to figure out what to do with this...
         if ($field == 'extraData') : continue; endif;
-        if ($field == 'eventType') : $label = 'event type';
+        if ($field == 'eventType' or $field == 'event_type') : $label = 'event type';
         else :
             $label = $field;
         endif;

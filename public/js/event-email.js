@@ -233,11 +233,20 @@ $(function(){
     }
     $("[data-toggle=tooltip]").tooltip();
     $("div.popover").css({zIndex:1500});
-    $('[data-toggle="popover"]').popover({
+    const boilerplate_popover  = $(`label[for=template] a[data-toggle="popover"]`);
+    boilerplate_popover.popover({
         html : true,
-        trigger: "focus",
+        trigger: "click",
+        container : "#email-form",
         sanitize: false,
-        content : `which <a href="/admin/email/templates" target="_blank">template</a> to use for verbiage preceding event details.`
+        content : `<button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">×</span></button> which <a href="/admin/email/templates" target="_blank">template</a> to use
+        for verbiage preceding event details.`
+    });
+    $("#email-form").on("click",".popover-body button.close",function(e){
+        e.stopPropagation();
+        console.log("close the shit");
+        boilerplate_popover.popover("hide");
     });
     var btn_manual_add = $("#btn-add-recipient");
     var description = get_event_description();

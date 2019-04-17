@@ -18,14 +18,12 @@ if (is_object($this->entity)) {
         'docket'  => $this->entity->getDocket(),
         //'comments' => $this->entity->getComments(),
         'judge' =>  (string)$this->entity->getJudge(),
-        'extraData' => $this->entity instanceof InterpretersOffice\Requests\Entity\Request ? $this->entity->getExtraData(): null,
+        'extraData' => $this->entity instanceof InterpretersOffice\Requests\Entity\Request
+            ? $this->entity->getExtraData(): null,
         'defendants' => $this->entity->getDefendants()->toArray(),
     ];
     $this->entity = $data;
-    //
-    // if (key_exists('comments',$this->before)) {
-    //     unset($this->before['comments']);
-    // 
+
 }
 if (is_object($this->interpreter) && $this->interpreter instanceof \InterpretersOffice\Entity\Interpreter) :
     $salutation = "Dear {$this->interpreter->getFullname()}:";
@@ -51,6 +49,6 @@ else:
     echo $this->partial('interpreters-office/email/partials/event-details.phtml',
     ['entity'=>$this->entity,  'with_comments'=>false,'escaped' => $this->escaped ]);
 endif;    ?>
-<p style="margin-top:1em">
+<p>
 If you have any questions, please contact the Interpreters promptly.
 </p>

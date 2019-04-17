@@ -273,6 +273,16 @@ class ScheduleUpdateManager
         return $this;
     }
 
+    /**
+     * Sends email messages created earlier in request cycle.
+     *
+     * Email message objects are saved in $this->email_messages so we can wait
+     * until the database transaction completes successfully, rather than risk
+     * sending email that announced something that didn't happen.
+     *
+     * @param  EventInterface $e [description]
+     * @return void
+     */
     public function dispatchEmail(EventInterface $e)
     {
         $this->logger->debug("we need to DISPATCH emails if applicable");
@@ -285,7 +295,8 @@ class ScheduleUpdateManager
                 }
             } catch (\Exception $e) {
                 $this->logger->err(
-                    "! ScheduleUpdateManager exception while sending email: ".$e->getMessage()
+                    "oh shit! ScheduleUpdateManager exception while sending email: "
+                    .$e->getMessage()
                 );
                 throw $e;
             }
@@ -301,7 +312,7 @@ class ScheduleUpdateManager
     public function onUpdateRequest(EventInterface $e)
     {
         $this->logger->debug(
-            __METHOD__.": here we GO !!"
+            __METHOD__.": here's Johnny!"
         );
         $request = $e->getParam('request');
         $event = $request->getEvent();
@@ -550,7 +561,7 @@ class ScheduleUpdateManager
         } else {
             $subject .= 'modified';
             $view_variables = ['entity' => $request,'before'=> $this->previous_state ];
-            $template = 'interpreters-office/email/event-update-notice';
+            $template = 'email/event-update-notice';
         }
         $subject .= sprintf(
             ' (%s, %s %s',
