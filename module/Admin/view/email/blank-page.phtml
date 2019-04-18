@@ -1,5 +1,5 @@
 <?php
-
+/**  module/Admin/view/email/blank-page.phtml  */
 $address = $this->to;
 if (!empty($address['name'])):
     $salutation = "Dear {$address['name']}:";
@@ -8,6 +8,10 @@ else:
 endif;
 ?>
 <p><?php echo $salutation ?></p>
+<p>
+<?php echo //nl2br()
+    $this->body ?>
+</p>
 <?php
 if ($this->entity):
     echo $this->partial('interpreters-office/email/partials/event-details.phtml',

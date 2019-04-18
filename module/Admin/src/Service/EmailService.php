@@ -36,6 +36,7 @@ class EmailService
      */
     private $template_map = [
         '' => 'blank-page',
+        'your request' => 'blank-page',
         'available' => 'assignment-availability-notice',
         'confirmation' => 'assignment-confirmation-notice',
         'cancellation' => 'interpreter-cancellation-notice',
@@ -123,7 +124,7 @@ class EmailService
             }
         }
 
-        return ['status'=>'success','ps'=>'only kidding', 'data'=>print_r($data,true)];
+        return ['status'=>'success','ps'=>"template: $template", 'data'=>print_r($data,true)];
     }
 
     /**
@@ -193,6 +194,9 @@ class EmailService
 
         if (empty($data['event_details']) and empty($data['body'])) {
             $validation_errors['body'] = 'Either a message text or event details is required';
+        }
+        if ($data['template_hint'] == "your request"  && empty($data['body'])) {
+            $validation_errors['body'] = "If you're contacting the submitter about this request, some message text is required";
         }
         /**
         * if event-details ARE included, template is REQUIRED.

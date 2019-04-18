@@ -189,7 +189,8 @@ const send_email = function(event){
     });
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
-    message.template_hint = $("#template").val();
+    message.template_hint = $("#template").val()||$("#subject-dropdown").data("template_hint");
+
     //var csrf = 'shit';// testing
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
@@ -314,10 +315,14 @@ $(function(){
                     /** @todo some error message or other feedback */
                     return;
                 }
-                //console.warn(ui.item);
+
                 var role = ui.item.hat.indexOf("interpreter") > -1 ?
-                    "interpreter" : "submitter"
-                var html = create_recipient(ui.item.value, ui.item.label,role);
+                    "interpreter" : "submitter";
+                // flip the last/first names
+                var n = ui.item.label.lastIndexOf(", ");
+                var name = `${ui.item.label.substring(n+2)} ${ui.item.label.substring(0,n)}`;
+                //console.warn(ui.item.label);
+                var html = create_recipient(email, name ,role);
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
                 $(this).val("");
@@ -486,10 +491,10 @@ $(function(){
         console.log("they changed shit in the subject line?");
     });
     $("#subject-dropdown .dropdown-item").on("click",function(event){
-        console.debug("doing shit with: "+$(this).data("subject"));
+        var template_hint = $(this).data("subject");
+        $("#subject-dropdown").data({template_hint});
         $(this).tooltip("hide");
         var subject_line;
-        var template_hint = $(this).data("subject");
         $("#template").val(template_hint);
         switch (template_hint) {
             case "your request":
@@ -500,7 +505,8 @@ $(function(){
                 var name = el.next("label").text().trim();
                 var markup = create_recipient(email, name, "submitter");
                 $("#email-form .email-subject").before(markup);
-                /** @todo enable the send button !*/
+                /** enable the send button ! */
+                $("#btn-send").removeClass("disabled").removeAttr("disabled");
             }
             subject_line = description;
             break;
