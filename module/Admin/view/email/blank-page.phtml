@@ -1,0 +1,19 @@
+<?php
+
+$address = $this->to;
+if (!empty($address['name'])):
+    $salutation = "Dear {$address['name']}:";
+else:
+    $salutation = 'Hello,';
+endif;
+?>
+<p><?php echo $salutation ?></p>
+<?php
+if ($this->entity):
+    echo $this->partial('interpreters-office/email/partials/event-details.phtml',
+        ['entity'=>$this->entity]);
+endif;
+?>
+<p>Very truly yours,</p>
+
+<p>The Interpreters Office</p>

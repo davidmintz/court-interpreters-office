@@ -140,7 +140,10 @@ const should_suggest_email = function()
     }
     return email_flag;
 };
-
+/**
+ * Displays a message encouraging user to send email.
+ * @return {void}
+ */
 const display_email_suggestion = function() {
     var who = "interpreter";
     if ($("span.interpreter").length > 1) {
@@ -158,6 +161,12 @@ const display_email_suggestion = function() {
     });
 };
 
+/**
+ * assembles and submits email, and handles response.
+ *
+ * @param  {object} event
+ * @return {void}
+ */
 const send_email = function(event){
     console.log("show time!");
     var message = {to: [], cc: [] };
@@ -178,12 +187,10 @@ const send_email = function(event){
             message.cc.push(recipient);
         }
     });
-    // sabotage, as a test
-    // message.recipients.to = '';
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
     message.template_hint = $("#template").val();
-    //var csrf = 'shit';// for testing
+    //var csrf = 'shit';// testing
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
     $.post(url,{message, csrf}).done((response)=> {
@@ -200,13 +207,11 @@ const send_email = function(event){
                     for (var key in response.validation_errors) {
                         var content;
                         if (Array.isArray(response.validation_errors[key])) {
-                            console.log("shit is an Array");
-                            if (! response.validation_errors[key].length) {
+                            if (0 === response.validation_errors[key].length) {
                                 continue;
                             }
                             content = response.validation_errors[key].join("</li><li>");
                         } else {
-                            console.log("shit is a "+typeof response.validation_errors[key]);
                             content = response.validation_errors[key];
                         }
                         ul += `<li>${content}</li>`;
@@ -217,16 +222,15 @@ const send_email = function(event){
             }
         } else {
             $("#error-message").hide();
+            console.log("it worked");
         }
-        console.log("it will work");
     });
-
 }
 
 $(function(){
     // rig it
-    console.warn("faking time-update for test purposes...");
-    $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
+    // console.warn("faking time-update for test purposes...");
+    // $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
     console.log(`email flag? ${should_suggest_email()}`);
     if (should_suggest_email()) {
         display_email_suggestion();
@@ -245,7 +249,6 @@ $(function(){
     });
     $("#email-form").on("click",".popover-body button.close",function(e){
         e.stopPropagation();
-        console.log("close the shit");
         boilerplate_popover.popover("hide");
     });
     var btn_manual_add = $("#btn-add-recipient");
@@ -261,7 +264,8 @@ $(function(){
             $("#template").removeAttr("disabled");
         }
     });
-    $("#btn-email, .btn-add-recipient").on("click",function(e,params){
+    /* listener for event/view "email" button and for the "+" adjacent to autocomplete input */
+    $("#btn-email, #btn-add-recipient").on("click",function(e,params){
         e.preventDefault();
         // if they clicked the 'notify the interpreter...' link
         if (params && params.interpreter_update_notice) {
@@ -286,8 +290,9 @@ $(function(){
         }
         if ($("input[name='to[]']").length && $("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
-        }
+        } else { console.warn("shit?");}
     });
+    /* initialize autocompletion for email recipient in dialog */
     $("#email-dialog").on("shown.bs.modal",function(event){
         $("#recipient-autocomplete").autocomplete({
             source: function(request,response) {
@@ -383,12 +388,13 @@ $(function(){
                 }
             }
             console.warn(`valid? ${name || "[no-name]"} <${email}>`);
-            var html = create_recipient(email,name || email);
+            var html = create_recipient(email,name || "");
             $(".email-subject").before(html);
             $(this).tooltip("hide");
             $("#recipient-autocomplete").val("");
             btn_manual_add.removeClass("btn-primary")
                 .addClass("btn-secondary disabled");
+            $("#btn-send").removeClass("disabled").removeAttr("disabled");
         });
     });
 

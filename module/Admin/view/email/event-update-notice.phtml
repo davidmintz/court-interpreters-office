@@ -30,7 +30,7 @@ if (is_object($this->interpreter) && $this->interpreter instanceof \Interpreters
 else:
     //$salutation = print_r($this->to,true);
     $address = $this->to;
-    if (isset($address['name']) && $address['name'] != $address['email']):
+    if (!empty($address['name'])):
         $salutation = "Dear {$address['name']}:";
     else:
         $salutation = 'Hello,';

@@ -1,7 +1,7 @@
 <?php
 
 $address = $this->to;
-if (isset($address['name']) && $address['name'] != $address['email']):
+if (!empty($address['name'])):
     $salutation = "Dear {$address['name']}:";
 else:
     $salutation = 'Hello,';

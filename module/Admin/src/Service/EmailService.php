@@ -92,6 +92,9 @@ class EmailService
         $layout->setTemplate('interpreters-office/email/layout');
 
         if (isset($data['event_details'])) {
+            if (isset($data['event_details']['location'])) {
+                $data['event_details']['location'] = str_replace('*','',$data['event_details']['location']);
+            }
             $view->setVariables(['entity'=>$data['event_details'],'escaped'=>true]);
         }
         if (!empty($data['body'])) {
@@ -102,7 +105,6 @@ class EmailService
 
         foreach ($data['to'] as $i => $address) {
             $view->to = $address;
-
             $layout->setVariable('content', $this->viewRenderer->render($view));
             $output = $this->viewRenderer->render($layout);
             file_put_contents("data/email-output.{$i}.html",$output);
@@ -120,18 +122,6 @@ class EmailService
                 ];
             }
         }
-
-        /* // something like....
-        $view = new ViewModel(compact('request','user_event',
-            'updates','interpreters','user'));
-        $view->setTemplate('interpreters-office/email/autocancellation-notice');
-        $layout = new ViewModel();
-        $layout->setTemplate('interpreters-office/email/layout')
-            ->setVariable('content', $this->viewRenderer->render($view));
-        $output = $this->viewRenderer->render($layout);
-        // debug
-        file_put_contents('data/email-autocancellation.html',$output);
-        */
 
         return ['status'=>'success','ps'=>'only kidding', 'data'=>print_r($data,true)];
     }
