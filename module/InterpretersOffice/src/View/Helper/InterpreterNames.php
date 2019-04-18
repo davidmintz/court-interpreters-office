@@ -55,7 +55,7 @@ class InterpreterNames extends AbstractHelper
      */
     public function __invoke($id)
     {
-         $return = '' ;
+        $return = '' ;
         if (! $this->getInterpreters() or ! isset($this->interpreters[$id])) {
             return $return;
         }
@@ -64,6 +64,6 @@ class InterpreterNames extends AbstractHelper
             sprintf($this->template, $n['id'], $n['lastname'], $n['firstname']);
         }
 
-         return $return;
+        return $return;
     }
 }
