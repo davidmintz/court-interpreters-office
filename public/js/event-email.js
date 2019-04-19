@@ -87,7 +87,7 @@ const get_event_details = function()
     var data = {};
     var fields = [
         "date","time","language","judge","event_type","location",
-        "docket","defendants"
+        "docket","defendants","interpreters"
     ];
     for (var i = 0; i < fields.length; i++) {
         var obj = $(`.${fields[i]}`);
@@ -154,12 +154,22 @@ const display_email_suggestion = function() {
     );
     div.prepend(`<button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>`);
     div.insertBefore($(".event-details"));
-    /** @todo reconsider this? */
-    //"div.interpreters"...
-    $("#message-subject").val("assignment update: "+get_event_description());
+    /** @todo consider this? */
+    var interpreter_update_notice = true;
+    // var interp_modifications =  $("div.interpreters span").children("ins, del").length;
+    // if (interp_modifications &&
+    //     interp_modifications ===  $("ins, del").length - $("div.last-modified").children("ins, del").length
+    // ) {
+    //     //console.warn("looks like more than just the interpreters were updated");
+    //     interpreter_update_notice = false;
+    //     $("#message-subject").val("");
+    // } else {
+         $("#message-subject").val("assignment update: "+get_event_description());
+    // }
+
     $("#link-email-suggest").on("click",function(event){
         event.preventDefault();
-        $("#btn-email").trigger("click",{interpreter_update_notice : true});
+        $("#btn-email").trigger("click",{interpreter_update_notice});
     });
 };
 

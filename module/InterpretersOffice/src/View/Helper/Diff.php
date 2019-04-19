@@ -144,7 +144,7 @@ class Diff extends AbstractHelper
             }
             // else, it's defendant names
             $flatten = function($n){
-                return "$n[lastname], $n[firstname]";
+                return "$n[surnames], $n[given_names]";
             };
             $names_now = array_map($flatten,$data);
             $names_before =  array_map($flatten,$before[$field]);

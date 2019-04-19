@@ -149,7 +149,7 @@ endif;?></span>
     <div class="col-sm-3 text-muted text-md-right">
         last updated
     </div>
-    <div class="col-sm-3 pl-0">
+    <div class="col-sm-3 pl-0 last-modified">
         <?php echo $event['created'] != $event['last_updated'] ?
         "{$this->diff('last_updated')} ({$this->diff('last_updated_by')})"
         : '<span class="text-muted">n/a</span>';
@@ -217,6 +217,14 @@ endif;?></span>
                 $suggestions[] = ['role'=>'interpreter','name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
             }
         }
+    endif;
+    if ($this->before && isset($this->before['interpreters'])) :
+        foreach ($this->before['interpreters'] as $i) :
+            if (! $event['interpreters'] or
+                ! in_array($i['email'],array_column($suggestions,'email'))):
+                $suggestions[] = ['role'=>'interpreter','name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
+            endif;
+        endforeach;
     endif;
     ?>
 </div>
