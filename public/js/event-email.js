@@ -224,7 +224,7 @@ const send_email = function(event){
             $("#error-message").hide();
             console.log("it worked");
         }
-    });
+    }).fail(function(response){console.warn("shit")});
 }
 
 $(function(){
