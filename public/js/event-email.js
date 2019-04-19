@@ -189,8 +189,7 @@ const send_email = function(event){
     });
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
-    message.template_hint = $("#template").val()||$("#subject-dropdown").data("template_hint");
-
+    message.template_hint = $("#template").val();
     //var csrf = 'shit';// testing
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
@@ -293,7 +292,6 @@ $(function(){
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
         } else { console.warn("shit?");}
     });
-    
     /* initialize autocompletion for email recipient in dialog */
     $("#email-dialog").on("shown.bs.modal",function(event){
         $("#recipient-autocomplete").autocomplete({
@@ -316,14 +314,10 @@ $(function(){
                     /** @todo some error message or other feedback */
                     return;
                 }
-
+                //console.warn(ui.item);
                 var role = ui.item.hat.indexOf("interpreter") > -1 ?
-                    "interpreter" : "submitter";
-                // flip the last/first names
-                var n = ui.item.label.lastIndexOf(", ");
-                var name = `${ui.item.label.substring(n+2)} ${ui.item.label.substring(0,n)}`;
-                //console.warn(ui.item.label);
-                var html = create_recipient(email, name ,role);
+                    "interpreter" : "submitter"
+                var html = create_recipient(ui.item.value, ui.item.label,role);
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
                 $(this).val("");
@@ -376,7 +370,7 @@ $(function(){
             // return $("<li>").append(item.label).appendTo(ul);
             return $( "<li>" )
                 .attr( "data-hat", item.hat ).attr("title",item.hat)
-    			.append( $("<div>").text(item.label) )
+    			.append( $( "<div>" ).text( item.label ) )
                 .appendTo( ul );
          };
          // the button they can click to add a recipient whose email and name
@@ -450,10 +444,7 @@ $(function(){
     // close dialog
     .on("click","#btn-cancel",function(){
         $(".modal-header button.close").trigger("click");
-
-    /* ----------------- */
-
-    /* listener for "add-recipients" button in dropdown menu */
+    });
     $("#btn-add-recipients").on("click",function(e){
         // https://getbootstrap.com/docs/4.3/components/dropdowns/#methods
         e.preventDefault();
@@ -471,6 +462,7 @@ $(function(){
             var element = $(this);
             var email = element.val().toLowerCase();
             var name = element.next().text().trim();
+            //console.log(element.data());
             if (! $(`.form-control input[value="${email}"]`).length) {
                 var html = create_recipient(email,name,element.data("role"));
                 $("#email-form .email-subject").before(html);
@@ -488,19 +480,16 @@ $(function(){
         }
         $(".modal-body .btn, .email-recipient").tooltip();
     });
-
     // don't let the buttons in the dropdown close the menu
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
     $("#message-subject").on("change",function(e){
         console.log("they changed shit in the subject line?");
     });
-
-    /* observe the subject-dropdown items' "click" event */
     $("#subject-dropdown .dropdown-item").on("click",function(event){
-        var template_hint = $(this).data("subject");
-        $("#subject-dropdown").data({template_hint});
+        console.debug("doing shit with: "+$(this).data("subject"));
         $(this).tooltip("hide");
         var subject_line;
+        var template_hint = $(this).data("subject");
         $("#template").val(template_hint);
         switch (template_hint) {
             case "your request":
@@ -511,8 +500,7 @@ $(function(){
                 var name = el.next("label").text().trim();
                 var markup = create_recipient(email, name, "submitter");
                 $("#email-form .email-subject").before(markup);
-                /** enable the send button ! */
-                $("#btn-send").removeClass("disabled").removeAttr("disabled");
+                /** @todo enable the send button !*/
             }
             subject_line = description;
             break;
