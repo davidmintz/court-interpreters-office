@@ -123,7 +123,7 @@ class EmailService
                 ];
             }
         }
-
+        /** now is a good time to log this */
         return ['status'=>'success','ps'=>"template: $template", 'data'=>print_r($data,true)];
     }
 

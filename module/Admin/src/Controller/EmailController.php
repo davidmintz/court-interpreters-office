@@ -73,7 +73,9 @@ class EmailController extends AbstractActionController
         }
         $data = $this->params()->fromPost('message');
         $result = $this->emailService->emailEvent($data);
-
+        if (isset($result['status']) && 'error' == $result['status']) {
+            $this->getResponse()->setStatusCode(500);
+        }
         return new JsonModel($result);
     }
 }

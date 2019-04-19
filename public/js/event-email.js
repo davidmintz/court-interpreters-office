@@ -154,6 +154,8 @@ const display_email_suggestion = function() {
     );
     div.prepend(`<button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>`);
     div.insertBefore($(".event-details"));
+    /** @todo reconsider this? */
+    //"div.interpreters"...
     $("#message-subject").val("assignment update: "+get_event_description());
     $("#link-email-suggest").on("click",function(event){
         event.preventDefault();
@@ -181,6 +183,7 @@ const send_email = function(event){
         if (input.data("recipient-name")) {
             recipient.name = input.data("recipient-name");
         }
+        recipient.role = input.data("role") || "";
         if (input.attr("name") === "to[]") {
             message.to.push(recipient);
         } else {
@@ -225,7 +228,7 @@ const send_email = function(event){
             $("#error-message").hide();
             console.log("it worked");
         }
-    });
+    }).fail(function(response){console.warn("shit")});
 }
 
 $(function(){
@@ -239,6 +242,7 @@ $(function(){
     $("[data-toggle=tooltip]").tooltip();
     $("div.popover").css({zIndex:1500});
     const boilerplate_popover  = $(`label[for=template] a[data-toggle="popover"]`);
+    /* popover with help info for the boilerplate/template control */
     boilerplate_popover.popover({
         html : true,
         trigger: "click",
@@ -293,7 +297,7 @@ $(function(){
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
         } else { console.warn("shit?");}
     });
-    /* initialize autocompletion for email recipient in dialog */
+    /* initialize autocompletion, etc for email recipient in dialog */
     $("#email-dialog").on("shown.bs.modal",function(event){
         $("#recipient-autocomplete").autocomplete({
             source: function(request,response) {
@@ -403,11 +407,11 @@ $(function(){
         });
     });
 
+    /* enable tooltips when dialog is shown */
     $("#email-dialog").on("show.bs.modal",function(event){
-        // enable tooltips when dialog is shown
         $(`#${this.id} .btn`).tooltip();
     })
-    // remove form row (email recipient) when they click "x"
+    /* remove form row (email recipient) when they click "x" */
     .on("click",".btn-remove-item",function(event){
         event.preventDefault();
         $(this).tooltip("hide");
@@ -433,9 +437,16 @@ $(function(){
             if (! $(`input.email-recipient[name="to[]"]`).length) {
                 $("#btn-send").addClass("disabled").attr("disabled");
             }
+            if (0 === $("input.email-recipient[data-role=submitter]").length) {
+                // subject should not be "your request"
+                if ( "your request" === $("#subject-dropdown").data("template_hint")) {
+                    $("#subject-dropdown").data({template_hint:""});
+                    $("#message-subject").val("");
+                }
+            }
         });
     })
-    // toggle To|Cc email header
+    /* toggle To|Cc email header */
     .on("change", "select.email-header",function(){
         var input = $(this).parent().next().find("input.email-recipient");
         var name = input.attr("name") ===  "to[]" ? "cc[]" : "to[]";
@@ -446,7 +457,7 @@ $(function(){
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
         }
     })
-    // close dialog
+    /* close email dialog */
     .on("click","#btn-cancel",function(){
         $(".modal-header button.close").trigger("click");
     });
@@ -485,11 +496,9 @@ $(function(){
         }
         $(".modal-body .btn, .email-recipient").tooltip();
     });
-    // don't let the buttons in the dropdown close the menu
+    /* don't let the buttons in the dropdown close the menu */
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
-    $("#message-subject").on("change",function(e){
-        console.log("they changed shit in the subject line?");
-    });
+    /* listener for email-subject dropdown */
     $("#subject-dropdown .dropdown-item").on("click",function(event){
         var template_hint = $(this).data("subject");
         $("#subject-dropdown").data({template_hint});
@@ -508,22 +517,22 @@ $(function(){
                 /** enable the send button ! */
                 $("#btn-send").removeClass("disabled").removeAttr("disabled");
             }
-            subject_line = description;
+            subject_line = "your request for ";
             break;
             case "available":
-            subject_line = "interpreter needed: "+description;
+            subject_line = "interpreter needed: ";
             break;
             case "update":
-            subject_line = "assignment update: "+description;
+            subject_line = "assignment update: ";
             break;
             case "confirmation":
-            subject_line = "assignment confirmed: "+description;
+            subject_line = "assignment confirmed: ";
             break;
             case "cancellation":
-            subject_line = "assignment cancelled: "+description;
+            subject_line = "assignment cancelled: ";
             break;
         }
-        $("#message-subject").val(subject_line);
+        $("#message-subject").val(subject_line + description);
     });
 
     $("#btn-send").on("click",send_email);
