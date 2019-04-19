@@ -182,6 +182,15 @@ class EventForm extends ZendForm implements
             $input->set('event', $event);
             return;
         }
+        /*
+           to solve the undefined index problem when updating just the
+           interpreters from the schedule page
+        */
+        if ($this->getValidationGroup()) {
+            return;
+        }
+
+
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null
         /** @todo untangle this and make error message specific to context */
@@ -366,6 +375,8 @@ class EventForm extends ZendForm implements
         $interpreters_posted = $entity->getInterpreterEvents()->toArray();
         if ($interpreters_posted != $this->interpreters_before) {
             $entity->setModified(new \DateTime());
+            // and this suffices to make the Doctrine EventEntityListener's
+            // preUpdate take note and set the last-modified-by
         }
         $fieldset = $this->get('event');
         if ($fieldset->get('anonymousSubmitter')->getValue()

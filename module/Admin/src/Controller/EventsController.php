@@ -201,7 +201,6 @@ class EventsController extends AbstractActionController
         $modified_before = $entity->getModified()->format('Y-m-d h:i:s');
         $form->bind($entity);
 
-
         $events->trigger(
             'pre.populate',
             $this,
@@ -378,6 +377,8 @@ class EventsController extends AbstractActionController
                 $this->entityManager,
                 ['action' => 'update','object' => $entity,]
             );
+            $events = $this->getEventManager();
+            $form->attach($events);
             $form->bind($entity)
                 ->setValidationGroup([
                 'csrf', 'event' => [
@@ -388,11 +389,13 @@ class EventsController extends AbstractActionController
                 ],
                 ]);
             $form->setData($this->getRequest()->getPost());
+            $events->trigger('pre.validate', $this);
             if (! $form->isValid()) {
                 return new JsonModel(
                     ['validation_errors' => $form->getMessages()]
                 );
             }
+            $events->trigger('post.validate', $this);
             $this->entityManager->flush();
             $collection = $entity->getInterpreterEvents();
             $html = '';
