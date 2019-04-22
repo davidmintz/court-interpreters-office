@@ -206,7 +206,7 @@ const send_email = function(event){
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
     message.template_hint = $("#template").val()||$("#subject-dropdown").data("template_hint");
-
+    message.event_id = $("div.event-details").data("event_id");
     //var csrf = 'shit';// testing
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
@@ -515,6 +515,7 @@ $(function(){
     $("#btn-add-recipients + .btn").on("click",function(e) {e.preventDefault()});
     /* listener for email-subject dropdown */
     $("#subject-dropdown .dropdown-item").on("click",function(event){
+        event.preventDefault();
         var template_hint = $(this).data("subject");
         $("#subject-dropdown").data({template_hint});
         $(this).tooltip("hide");

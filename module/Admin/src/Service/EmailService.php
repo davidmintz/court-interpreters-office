@@ -16,6 +16,8 @@ use Zend\View\Renderer\RendererInterface as Renderer;
 use Zend\View\Model\ViewModel;
 use Zend\Authentication\AuthenticationServiceInterface;
 
+use Zend\Mime\Mime;
+use Zend\Mime\Part as MimePart;
 
 class EmailService implements ObjectManagerAwareInterface
 {
@@ -87,10 +89,12 @@ class EmailService implements ObjectManagerAwareInterface
             return $validation;
         }
         $mail_config = $this->config['mail'];
-        $message = $this->createEmailMessage('<p>boink!</p>');
-        $message->setFrom($mail_config['from_address'],$mail_config['from_entity'])
-            ->setSubject($data['subject']);
+        $message = $this->createEmailMessage('');
 
+        $message->setFrom($mail_config['from_address'],$mail_config['from_entity'])
+            ->setBcc($mail_config['from_address'])
+            ->setSubject($data['subject']);
+        $message->getHeaders()->addHeaderLine('X-Sent-By', 'InterpretersOffice https://interpretersoffice.org');
         if (isset($data['cc'])) {
             foreach ($data['cc'] as $address) {
                 $message->addCc($address['email'], $address['name'] ?: null );
@@ -120,13 +124,30 @@ class EmailService implements ObjectManagerAwareInterface
         foreach ($data['to'] as $i => $address) {
             $view->to = $address;
             $layout->setVariable('content', $this->viewRenderer->render($view));
-            $output = $this->viewRenderer->render($layout);
-            file_put_contents("data/email-output.{$i}.html",$output);
-
+            $content = $this->viewRenderer->render($layout);
+            $parts = $message->getBody()->getParts();
+            $html = new MimePart($content);
+            $html->type = Mime::TYPE_HTML;
+            $html->charset = 'utf-8';
+            $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+            $message->getBody()->setParts([$parts[0],$html]);
+            file_put_contents("data/email-output.{$i}.html",$content);
             $message->setTo($address['email'], $address['name'] ?: null );
+            /** @var $pdo \PDO */
+            $pdo = $this->getObjectManager()->getConnection();
             try {
+                $pdo->beginTransaction();
+                $params = [
+                    ':timestamp' => date('Y-m-d H:i:s'),
+                    ':recipient_id' => !empty($address['id']) ? $address['id'] : null,
+                    ':email' => $address['email'],
+                    ':subject'=> $data['subject'],
+                    ':event_id' => $data['event_id']
+                ];
+                $log_statement->execute($params);
                 $transport->send($message);
-                $this->logEmailMessage();
+                $pdo->commit();
+
             } catch (\Throwable $e){
                 return [
                     'status' => 'error',
@@ -145,12 +166,11 @@ class EmailService implements ObjectManagerAwareInterface
 
     public function getStatement()
     {
-
         $user_id = $this->auth->getIdentity()->id;
         /** @var $pdo \PDO */
         $pdo = $this->getObjectManager()->getConnection();
-        $sql = "INSERT INTO event_emails (`timestamp`, user_id, recipient_id, email, subject)
-            VALUES (:timestamp, $user_id, :recipient_id, :email, :subject)";
+        $sql = "INSERT INTO event_emails (event_id, `timestamp`, user_id, recipient_id, email, subject)
+            VALUES (:event_id, :timestamp, $user_id, :recipient_id, :email, :subject)";
 
         return $pdo->prepare($sql);
 
@@ -164,15 +184,6 @@ class EmailService implements ObjectManagerAwareInterface
  subject
  comment
  */
-
-    public function logEmailMessage()
-    {
-        // $pdo = $this->getObjectManager()->getConnection();
-        // $sql = 'INSERT INTO event_emails (`timestamp`, user_id, recipient_id, email, subject)
-        //     VALUES (:timestamp, :user_id, :recipient_id, :email, :subject)';
-
-
-    }
 
     /**
      * Validates and filters data for composing message.
