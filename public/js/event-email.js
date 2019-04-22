@@ -192,7 +192,7 @@ const send_email = function(event){
     $("input.email-recipient").each(function(){
         var input = $(this);
         var email = input.val();
-        var recipient = {email};
+        var recipient = {email, id : input.data("id")};
         if (input.data("recipient-name")) {
             recipient.name = input.data("recipient-name");
         }
@@ -294,7 +294,7 @@ $(function(){
                     return;
                 }
                 var name = input.next("label").text().trim();
-                var html = create_recipient(email,name,"interpreter");
+                var html = create_recipient(email,name,"interpreter",input.data("id"));
                 $("#email-form .email-subject").before(html);
                 input.attr("disabled","disabled");
                 if (! $("#email-dropdown input").not(":disabled").length)
@@ -527,7 +527,7 @@ $(function(){
             if (0 === $(`input.email-recipient[value="${email}"]`).length) {
                 console.log(`adding ${email}...`);
                 var name = el.next("label").text().trim();
-                var markup = create_recipient(email, name, "submitter");
+                var markup = create_recipient(email, name, "submitter", el.data("id"));
                 $("#email-form .email-subject").before(markup);
                 /** enable the send button ! */
                 $("#btn-send").removeClass("disabled").removeAttr("disabled");
