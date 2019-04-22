@@ -13,7 +13,7 @@ use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
 use InterpretersOffice\Form\Validator\UniqueObject;
 use Zend\Validator;
 use InterpretersOffice\Entity\Hat;
-
+use InterpretersOffice\Service\ObjectManagerAwareTrait;
 /**
  * Fieldset for Person entity.
  */
@@ -212,7 +212,7 @@ class PersonFieldset extends Fieldset implements
         if (isset($options['existing_person'])) {
             $this->person = $options['existing_person'];
         }
-        
+
         $use_as_base_fieldset = isset($options['use_as_base_fieldset']) ? $options['use_as_base_fieldset'] : true;
         parent::__construct($this->fieldset_name, $options);
         $this->objectManager = $objectManager;
