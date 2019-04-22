@@ -8,11 +8,13 @@ namespace InterpretersOffice\Admin\Service;
 
 use InterpretersOffice\Service\EmailTrait;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
+use InterpretersOffice\Admin\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Zend\Validator\EmailAddress;
 use Zend\View\Renderer\RendererInterface as Renderer;
 use Zend\View\Model\ViewModel;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 
 class EmailService implements ObjectManagerAwareInterface
@@ -53,6 +55,13 @@ class EmailService implements ObjectManagerAwareInterface
      * @var Renderer
      */
     private $viewRenderer;
+
+    /**
+     * auth
+     *
+     * @var \Zend\Authentication\AuthenticationServiceInterface
+     */
+    private $auth;
 
     /**
      * constructor
@@ -107,7 +116,7 @@ class EmailService implements ObjectManagerAwareInterface
             $view->setTemplate('email/blank-page');
         }
         $transport = $this->getMailTransport();
-
+        $log_statement = $this->getStatement();
         foreach ($data['to'] as $i => $address) {
             $view->to = $address;
             $layout->setVariable('content', $this->viewRenderer->render($view));
@@ -117,6 +126,7 @@ class EmailService implements ObjectManagerAwareInterface
             $message->setTo($address['email'], $address['name'] ?: null );
             try {
                 $transport->send($message);
+                $this->logEmailMessage();
             } catch (\Throwable $e){
                 return [
                     'status' => 'error',
@@ -127,16 +137,40 @@ class EmailService implements ObjectManagerAwareInterface
                 ];
             }
         }
-        /** now is a good time to log this */
-        return ['status'=>'success','ps'=>"template: $template", 'data'=>print_r($data,true)];
+
+        return ['status'=>'success','ps'=>"template: $template", 'debug'=>
+         "user id is {$this->auth->getIdentity()->id}"
+        ];
     }
 
+    public function getStatement()
+    {
 
+        $user_id = $this->auth->getIdentity()->id;
+        /** @var $pdo \PDO */
+        $pdo = $this->getObjectManager()->getConnection();
+        $sql = "INSERT INTO event_emails (`timestamp`, user_id, recipient_id, email, subject)
+            VALUES (:timestamp, $user_id, :recipient_id, :email, :subject)";
 
+        return $pdo->prepare($sql);
+
+    }
+/*
+ event_id
+ timestamp
+ user_id
+ recipient_id
+ email
+ subject
+ comment
+ */
 
     public function logEmailMessage()
     {
-        $pdo = $this->getObjectManager()->getConnection();
+        // $pdo = $this->getObjectManager()->getConnection();
+        // $sql = 'INSERT INTO event_emails (`timestamp`, user_id, recipient_id, email, subject)
+        //     VALUES (:timestamp, :user_id, :recipient_id, :email, :subject)';
+
 
     }
 
@@ -241,12 +275,25 @@ class EmailService implements ObjectManagerAwareInterface
      * @param Renderer $viewRenderer
      * @return EmailService
      */
-    public function setViewRenderer(Renderer $viewRenderer)
+    public function setViewRenderer(Renderer $viewRenderer) : EmailService
     {
         $this->viewRenderer = $viewRenderer;
 
         return $this;
     }
 
+
+    /**
+     * sets auth
+     *
+     * @param  AuthenticationServiceInterface $auth [description
+     * @return EmailService
+     */
+    public function setAuth(AuthenticationServiceInterface $auth) : EmailService
+    {
+        $this->auth = $auth;
+
+        return $this;
+    }
 
 }

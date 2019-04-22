@@ -99,7 +99,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
 
         $dql = "SELECT p.{$options['value_column']} AS value, CONCAT(p.lastname, ', ', p.firstname) AS label";
         if ('email' == $options['value_column']) {
-            $dql .= ", h.name AS hat";
+            $dql .= ", h.name AS hat, p.id";
         }
         $dql .= '  FROM InterpretersOffice\Entity\Person p JOIN p.hat h';
         if ($options['hat']) {

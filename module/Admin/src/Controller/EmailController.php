@@ -76,6 +76,7 @@ class EmailController extends AbstractActionController
         if (isset($result['status']) && 'error' == $result['status']) {
             $this->getResponse()->setStatusCode(500);
         }
+        
         return new JsonModel($result);
     }
 }

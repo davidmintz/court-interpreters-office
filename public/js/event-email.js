@@ -12,12 +12,15 @@ const pattern = "^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0
  * @param  {string} name
  * @return {string}
  */
-const create_recipient = function(email,name, role){
+const create_recipient = function(email,name, role, person_id){
     var id = email.toLowerCase().replace("@",".at.");
     name = name.replace(/"/g,""); // strip quotes
     var value = `${name} &lt;${email}&gt;`;
     if (! role) {
         role = "";
+    }
+    if (!person_id) {
+        person_id = "";
     }
     return `<div class="form-row form-group my-1">
         <label class="col-md-2 text-right" for="${id}">
@@ -30,7 +33,7 @@ const create_recipient = function(email,name, role){
             <div class="input-group">
                 <div class="form-control text-primary">
                     <span title="${email}" class="email-recipient">${name}</span>
-                <input class="email-recipient" data-role="${role}" data-recipient-name="${name}" type="hidden" id="${id}" name="to[]" value="${email.toLowerCase()}" >
+                <input class="email-recipient" data-id="${person_id}" data-role="${role}" data-recipient-name="${name}" type="hidden" id="${id}" name="to[]" value="${email.toLowerCase()}" >
                 </div>
                 <button class="btn btn-sm btn-primary btn-remove-item border" title="delete this recipient">
                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">delete this recipient</span>
@@ -336,7 +339,7 @@ $(function(){
                 var n = ui.item.label.lastIndexOf(", ");
                 var name = `${ui.item.label.substring(n+2)} ${ui.item.label.substring(0,n)}`;
                 //console.warn(ui.item.label);
-                var html = create_recipient(email, name ,role);
+                var html = create_recipient(email, name, role, ui.item.id);
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
                 $(this).val("");
@@ -388,7 +391,9 @@ $(function(){
          function(ul, item) {
             // return $("<li>").append(item.label).appendTo(ul);
             return $( "<li>" )
-                .attr( "data-hat", item.hat ).attr("title",item.hat)
+                .attr( "data-hat", item.hat )
+                .attr("title",item.hat)
+                .attr("data-id",item.id)
     			.append( $( "<div>" ).text( item.label ) )
                 .appendTo( ul );
          };
@@ -426,10 +431,10 @@ $(function(){
         event.preventDefault();
         $(this).tooltip("hide");
         var input = $(this).prev(".form-control").children("input");
-        var email = input.val();
+        var email = input.val().toLowerCase();
         var dropdown_item = $(`#email-dropdown input[value="${email}"]`);
         if (dropdown_item.length && dropdown_item.is(":disabled")) {
-            dropdown_item.removeAttr("disabled");
+            dropdown_item.removeAttr("disabled").removeClass("disabled");
             console.log(`re-enabled ${email}`);
             var dropdown_menu = $(".dropdown-toggle-recipients");
             if (dropdown_menu.is(":hidden")) {
@@ -488,9 +493,9 @@ $(function(){
             var element = $(this);
             var email = element.val().toLowerCase();
             var name = element.next().text().trim();
-            //console.log(element.data());
+            console.log(element.data());
             if (! $(`.form-control input[value="${email}"]`).length) {
-                var html = create_recipient(email,name,element.data("role"));
+                var html = create_recipient(email,name,element.data("role"),element.data("id"));
                 $("#email-form .email-subject").before(html);
             }
             // disable this element, since the address has now been added

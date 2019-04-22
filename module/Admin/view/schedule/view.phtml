@@ -44,6 +44,7 @@ TO DO: make partials for flat-out details and for "diff"
 and use one or the other, depending
 */
 ?>
+
 <div data-modified="<?php echo $event['last_updated'] ? $event['last_updated']->format('Y-m-d H:i:s') : ''?>" data-event_category="<?php echo $event['category']?>" data-event_datetime="<?php echo $event['datetime']?>" data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
     <div class="col-sm-3 text-muted text-md-right">
         date
@@ -113,7 +114,7 @@ and use one or the other, depending
         <div class="col-sm-3  text-muted text-md-right">
         <?php if ($event['request_id']):?>* <?php endif ?>request by
     </div>
-    <div class="col-sm-3 pl-0"><span class="avoidwrap">
+    <div class="col-sm-3 pl-0 submitter" data-id="<?php echo $event['submitter_id']?>"><span class="avoidwrap">
         <?php echo $event['submitter'] ;
         ?><?php
 if ($event['submitter_hat']) :
@@ -204,7 +205,8 @@ endif;?></span>
     $suggestions = [];
     if ($event['interpreters'] or $event['submitter_email']):
         if ($event['submitter_email']) {
-            $suggestions[] = ['role'=>'submitter','name' => $event['submitter'], 'email' => $event['submitter_email']];
+            $suggestions[] = ['role'=>'submitter','name' => $event['submitter'],
+            'email' => strtolower($event['submitter_email']), 'id' => $event['submitter_id']];
         }
         if ($event['interpreters'])
             {
@@ -214,7 +216,9 @@ endif;?></span>
                     $suggestions[0]['role'] = 'interpreter';
                     continue;
                 }
-                $suggestions[] = ['role'=>'interpreter','name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
+                $suggestions[] = ['role'=>'interpreter','name' => "$i[firstname] $i[lastname]",
+                'id' => $i['id'],
+                'email' =>  strtolower($i['email'])];
             }
         }
     endif;
@@ -222,7 +226,8 @@ endif;?></span>
         foreach ($this->before['interpreters'] as $i) :
             if (! $event['interpreters'] or
                 ! in_array($i['email'],array_column($suggestions,'email'))):
-                $suggestions[] = ['role'=>'interpreter','name' => "$i[firstname] $i[lastname]", 'email' => $i['email']];
+                $suggestions[] = ['role'=>'interpreter','name' => "$i[firstname] $i[lastname]",
+                    'email' => $i['email'], 'id' => $event['submitter_id']];
             endif;
         endforeach;
     endif;
@@ -271,7 +276,7 @@ endif;?></span>
                                         <?php foreach ($suggestions as $i => $person):?>
                                             <div class="form-group">
                                               <div class="form-check">
-                                                <input <?php if (isset($person['role'])): ?>data-role="<?php echo $person['role']?>" <?php endif;?>name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" class="form-check-input" id="email-<?php echo $i?>" checked>
+                                                <input data-id="<?php echo $person['id']?>" <?php if (isset($person['role'])): ?>data-role="<?php echo $person['role']?>" <?php endif;?>name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" class="form-check-input" id="email-<?php echo $i?>" checked>
                                                 <label class="form-check-label" for="email-<?php echo $i?>">
                                                   <?php echo $person['name'] ?>
                                                 </label>
@@ -367,5 +372,6 @@ endif;?></span>
         </div>
     </div>
 </div>
+
 <!-- -->
 <!-- -->

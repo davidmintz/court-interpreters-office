@@ -44,6 +44,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
              AS submitter,
          h.name AS submitter_hat,
          p.email AS submitter_email,
+         p.id AS submitter_id,
          e.submission_date, e.submission_time,
          user1.username AS created_by,
          e.created,
