@@ -3,7 +3,7 @@
  * module/InterpretersOffice/src/Form/ObjectManagerAwareTrait.php.
  */
 
-namespace InterpretersOffice\Form;
+namespace InterpretersOffice\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
 

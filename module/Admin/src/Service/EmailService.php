@@ -7,14 +7,18 @@ namespace InterpretersOffice\Admin\Service;
 
 
 use InterpretersOffice\Service\EmailTrait;
+use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Zend\Validator\EmailAddress;
 use Zend\View\Renderer\RendererInterface as Renderer;
 use Zend\View\Model\ViewModel;
 
-class EmailService
+
+class EmailService implements ObjectManagerAwareInterface
 {
     use EmailTrait;
+    use ObjectManagerAwareTrait;
 
     /**
      * configuration
@@ -58,7 +62,7 @@ class EmailService
     function __construct(Array $config, EntityManagerInterface $em)
     {
         $this->config = $config;
-        $this->entityManager = $em;
+        $this->setObjectManager($em);
     }
 
     /**
@@ -125,6 +129,15 @@ class EmailService
         }
         /** now is a good time to log this */
         return ['status'=>'success','ps'=>"template: $template", 'data'=>print_r($data,true)];
+    }
+
+
+
+
+    public function logEmailMessage()
+    {
+        $pdo = $this->getObjectManager()->getConnection();
+
     }
 
     /**

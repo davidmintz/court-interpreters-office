@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Requests\Form;
 
 use InterpretersOffice\Admin\Form\AbstractEventFieldset;
-use InterpretersOffice\Form\ObjectManagerAwareTrait;
+use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\EventType;
 use InterpretersOffice\Entity\Repository\LocationRepository;

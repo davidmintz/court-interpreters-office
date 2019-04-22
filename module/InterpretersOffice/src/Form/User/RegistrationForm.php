@@ -7,7 +7,7 @@ use Zend\Validator\ValidatorChain;
 use Zend\Validator\Callback;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
-use InterpretersOffice\Form\ObjectManagerAwareTrait;
+use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\User\RegistrationForm;
 use InterpretersOffice\Admin\Form\UserFieldset;
 use InterpretersOffice\Entity;

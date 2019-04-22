@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
-use InterpretersOffice\Form\ObjectManagerAwareTrait;
+use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\CourtClosing;
 

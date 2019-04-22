@@ -9,7 +9,7 @@ use Zend\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-use InterpretersOffice\Form\ObjectManagerAwareTrait;
+use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
 use InterpretersOffice\Entity;
 

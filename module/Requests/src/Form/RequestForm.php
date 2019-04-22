@@ -4,7 +4,7 @@
 namespace InterpretersOffice\Requests\Form;
 
 use InterpretersOffice\Admin\Form\AbstractEventFieldset;
-use InterpretersOffice\Form\ObjectManagerAwareTrait;
+use InterpretersOffice\Service\ObjectManagerAwareTrait;
 
 
 use Zend\Form\Form as ZendForm;
