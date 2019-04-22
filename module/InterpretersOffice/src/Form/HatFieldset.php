@@ -9,6 +9,7 @@ use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Service\ObjectManagerAwareTrait;
 
 /**
  * Fieldset for the Hat entity, yet to be completed.
