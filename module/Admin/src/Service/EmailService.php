@@ -157,18 +157,20 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                     ':event_id' => $data['event_id'],
                     ':comments' => $log_comments,
                 ];
-                $log_statement->execute($params);
                 $transport->send($message);
+                $log_statement->execute($params);
                 $result['sent_to'][] = $address;
+                throw new \Exception("shit happened");
                 $pdo->commit();
 
             } catch (\Throwable $e){
+                $pdo->rollback();
                 $details = [
                     'status' => 'error',
                     'exception_class' => get_class($e),
                     'address' => $address['email'],
                     'name'   =>$address['name'],
-                    'message' => $e->getMessage(),
+                    'error' => ['message' => $e->getMessage()],
                 ];
                 $this->getEventManager()
                     ->trigger('error',$this,['exception' => $e, 'details' => $details]);

@@ -115,7 +115,7 @@ judge 	Daniels, George, USDJ
 defendants 	Snyertzski, Boris
  */
 /**
- * determines whether to suggest sending email notification about
+ * decides whether to suggest sending email notification about
  * newly updated event
  * @return {boolean}
  */
@@ -143,6 +143,7 @@ const should_suggest_email = function()
     }
     return email_flag;
 };
+
 /**
  * Displays a message encouraging user to send email.
  * @return {void}
@@ -263,7 +264,15 @@ const send_email = function(event){
             $("div.email-prompt").hide();
             console.warn("it worked!");
         }
-    }).fail(function(response){console.warn("shit")});
+    }).fail(function(response){
+        $("#email-dialog").modal("hide");
+        console.log(response.responseJSON);
+        console.warn("shit");
+        $("div.event-details").before($("#error-message").addClass("center-block mx-auto").show());
+        $("div.email-prompt").hide();
+        /** to be revised... */
+        fail(response);
+    });
 }
 
 $(function(){
@@ -287,8 +296,8 @@ $(function(){
         container : "#email-form",
         sanitize: false,
         content : `<button type="button" class="close" data-dismiss="modal" aria-label="close">
-                    <span aria-hidden="true">&times;</span></button> which <a href="/admin/email/templates" target="_blank">template</a> to use
-        for verbiage preceding event details.`
+                    <span aria-hidden="true">&times;</span></button> which <a href="/admin/email/templates" target="_blank">template</a>
+                     to use for verbiage preceding event details.`
     });
     $("#email-form").on("click",".popover-body button.close",function(e){
         e.stopPropagation();
@@ -330,8 +339,8 @@ $(function(){
                 }
             });
             /** @todo decide whether and how to be clever about setting defaults... */
-            // $("#message-subject").val("assignment update: "+get_event_description());
-            // $("#template").val("update");
+            $("#message-subject").val("assignment update: "+get_event_description());
+            $("#template").val("update");
         }
         if ($("input[name='to[]']").length && $("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
