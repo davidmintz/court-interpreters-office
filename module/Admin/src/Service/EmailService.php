@@ -109,7 +109,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                     : $a['email'];
             },$data['cc']));
         }
-
+        $result = ['sent_to' => [], 'cc_to' => []];
         $view = new ViewModel();
         /**  set template based on input etc */
         $template = $this->template_map[$data['template_hint']];
@@ -130,7 +130,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
         }
         $transport = $this->getMailTransport();
         $log_statement = $this->getStatement();
-        $result = ['sent_to' => []];
+
         foreach ($data['to'] as $i => $address) {
             $view->to = $address;
             $layout->setVariable('content', $this->viewRenderer->render($view));
@@ -138,14 +138,15 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             $parts = $message->getBody()->getParts();
             $html = new MimePart($content);
             $html->type = Mime::TYPE_HTML;
-            $html->charset = 'utf-8';
+            $html->charset = 'UTF-8';
             $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
             $message->getBody()->setParts([$parts[0],$html]);
+            /* DEBUG */
             file_put_contents("data/email-output.{$i}.html",$content);
-            $message->setTo($address['email'], $address['name'] ?: null );
+            $message->setTo($address['email'], !empty($address['name']) ? $address['name'] : null );
             /** @var $pdo \PDO */
             $pdo = $this->getObjectManager()->getConnection();
-            if ($data['cc'])
+            //if ($data['cc'])
             try {
                 $pdo->beginTransaction();
                 $params = [
@@ -174,7 +175,9 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                 return array_merge($result, $details);
             }
         }
-
+        if (!empty($data['cc'])) {
+            $result['cc_to'] = $data['cc']; // for confirmation
+        }
         return array_merge($result,['status'=>'success','info'=>"template: $template",]);
     }
 

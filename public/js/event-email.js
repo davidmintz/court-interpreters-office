@@ -32,7 +32,7 @@ const create_recipient = function(email,name, role, person_id){
         <div class="col-md-10">
             <div class="input-group">
                 <div class="form-control text-primary">
-                    <span title="${email}" class="email-recipient">${name}</span>
+                    <span title="${email}" class="email-recipient">${name||email}</span>
                 <input class="email-recipient" data-id="${person_id}" data-role="${role}" data-recipient-name="${name}" type="hidden" id="${id}" name="to[]" value="${email.toLowerCase()}" >
                 </div>
                 <button class="btn btn-sm btn-primary btn-remove-item border" title="delete this recipient">
@@ -167,7 +167,7 @@ const display_email_suggestion = function() {
     //     interpreter_update_notice = false;
     //     $("#message-subject").val("");
     // } else {
-         $("#message-subject").val("assignment update: "+get_event_description());
+    //$("#message-subject").val("assignment update: "+get_event_description());
     // }
 
     $("#link-email-suggest").on("click",function(event){
@@ -240,8 +240,26 @@ const send_email = function(event){
         } else {
             $("#error-message").hide();
             var div = $("div.alert-success").first();
-            div.children("p").text("shit worked");
-            console.log(response.sent_to);
+            var to = response.sent_to;
+            var message = "Email has been sent to: ";
+            message += to.map((p)=>{
+                if (! p.name) {
+                    return `<strong>${p.email}</strong>`;
+                }
+                return `<strong>${p.name}</strong> &lt;${p.email}&gt;`;
+            }).join(", ");
+            if (response.cc_to && response.cc_to.length) {
+                message += " with cc to: ";
+                message += response.cc_to.map((p)=>{
+                    if (! p.name) {
+                        return `<strong>${p.email}</strong>`;
+                    }
+                    return `<strong>${p.name}</strong> &lt;${p.email}&gt;`;
+                }).join(", ");
+            }
+            message += "."
+            div.children("p").html(message);
+
             div.show();
             $(".modal-header button.close").trigger("click");
             $("div.email-prompt").hide();
@@ -313,7 +331,9 @@ $(function(){
                     $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
                 }
             });
-            $("#template").val("update");
+            /** @todo decide whether and how to be clever about setting defaults... */
+            // $("#message-subject").val("assignment update: "+get_event_description());
+            // $("#template").val("update");
         }
         if ($("input[name='to[]']").length && $("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
@@ -359,7 +379,7 @@ $(function(){
                 $(this).val(ui.item.label);
             }
         })
-        /* the idea is disable the "+" until the manually-entered text is valid,
+        /* the idea is disable the "+" until the manually-entered text looks valid,
             i.e., '[recipient name] <email>'
          */
         .on("input",function(){
