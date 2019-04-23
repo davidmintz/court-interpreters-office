@@ -241,10 +241,11 @@ const send_email = function(event){
             $("#error-message").hide();
             var div = $("div.alert-success").first();
             div.children("p").text("shit worked");
+            console.log(response.sent_to);
             div.show();
             $(".modal-header button.close").trigger("click");
             $("div.email-prompt").hide();
-            console.warn("it worked?");
+            console.warn("it worked!");
         }
     }).fail(function(response){console.warn("shit")});
 }
@@ -259,10 +260,8 @@ $(function(){
     }
     $("[data-toggle=tooltip]").tooltip();
     $("a[data-toggle=popover]").on("click",(e)=>e.preventDefault());
-    $(".alert button[data-hide]").on("click",function(e){
-        //e.preventDefault();
-        $(this).parent().slideUp();
-    });
+    $(".alert button[data-hide]").on("click",
+        function(e){$(this).parent().slideUp();});
     $("div.popover").css({zIndex:1500});
     const boilerplate_popover  = $(`label[for=template] a[data-toggle="popover"]`);
     /* popover with help info for the boilerplate/template control */
@@ -272,7 +271,7 @@ $(function(){
         container : "#email-form",
         sanitize: false,
         content : `<button type="button" class="close" data-dismiss="modal" aria-label="close">
-                    <span aria-hidden="true">×</span></button> which <a href="/admin/email/templates" target="_blank">template</a> to use
+                    <span aria-hidden="true">&times;</span></button> which <a href="/admin/email/templates" target="_blank">template</a> to use
         for verbiage preceding event details.`
     });
     $("#email-form").on("click",".popover-body button.close",function(e){

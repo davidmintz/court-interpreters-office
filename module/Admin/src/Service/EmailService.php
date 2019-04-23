@@ -98,10 +98,16 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             ->setBcc($mail_config['from_address'])
             ->setSubject($data['subject']);
         $message->getHeaders()->addHeaderLine('X-Sent-By', 'InterpretersOffice https://interpretersoffice.org');
+        $log_comments = '';
         if (isset($data['cc'])) {
+            $log_comments .= "Cc: ";
             foreach ($data['cc'] as $address) {
                 $message->addCc($address['email'], $address['name'] ?: null );
             }
+            $log_comments .= implode('; ',array_map(function($a){
+                return $a['name'] ? "{$a['name']} <{$a['email']}>"
+                    : $a['email'];
+            },$data['cc']));
         }
 
         $view = new ViewModel();
@@ -139,6 +145,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             $message->setTo($address['email'], $address['name'] ?: null );
             /** @var $pdo \PDO */
             $pdo = $this->getObjectManager()->getConnection();
+            if ($data['cc'])
             try {
                 $pdo->beginTransaction();
                 $params = [
@@ -146,7 +153,8 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                     ':recipient_id' => !empty($address['id']) ? $address['id'] : null,
                     ':email' => $address['email'],
                     ':subject'=> $data['subject'],
-                    ':event_id' => $data['event_id']
+                    ':event_id' => $data['event_id'],
+                    ':comments' => $log_comments,
                 ];
                 $log_statement->execute($params);
                 $transport->send($message);
@@ -175,8 +183,8 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
         $user_id = $this->auth->getIdentity()->id;
         /** @var $pdo \PDO */
         $pdo = $this->getObjectManager()->getConnection();
-        $sql = "INSERT INTO event_emails (event_id, `timestamp`, user_id, recipient_id, email, subject)
-            VALUES (:event_id, :timestamp, $user_id, :recipient_id, :email, :subject)";
+        $sql = "INSERT INTO event_emails (event_id, `timestamp`, user_id, recipient_id, email, subject, comments)
+            VALUES (:event_id, :timestamp, $user_id, :recipient_id, :email, :subject, :comments)";
 
         return $pdo->prepare($sql);
 
