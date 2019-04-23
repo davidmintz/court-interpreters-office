@@ -250,12 +250,10 @@ const send_email = function(event){
             }).join(", ");
             if (response.cc_to && response.cc_to.length) {
                 message += " with cc to: ";
-                message += response.cc_to.map((p)=>{
-                    if (! p.name) {
-                        return `<strong>${p.email}</strong>`;
-                    }
-                    return `<strong>${p.name}</strong> &lt;${p.email}&gt;`;
-                }).join(", ");
+                message += response.cc_to.map(
+                    p => p.name ? `<strong>${p.name}</strong> &lt;${p.email}&gt;`
+                        :  `<strong>${p.email}</strong>`
+                ).join(", ");
             }
             message += "."
             div.children("p").html(message);

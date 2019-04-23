@@ -102,10 +102,10 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
         if (isset($data['cc'])) {
             $log_comments .= "Cc: ";
             foreach ($data['cc'] as $address) {
-                $message->addCc($address['email'], $address['name'] ?: null );
+                $message->addCc($address['email'], !empty($address['name']) ? $address['name'] : null );
             }
             $log_comments .= implode('; ',array_map(function($a){
-                return $a['name'] ? "{$a['name']} <{$a['email']}>"
+                return !empty($address['name']) ? "{$a['name']} <{$a['email']}>"
                     : $a['email'];
             },$data['cc']));
         }
