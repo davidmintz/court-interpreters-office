@@ -246,6 +246,14 @@ class EmailService implements ObjectManagerAwareInterface
             }
         }
         $data['subject'] = trim($whitespace->filter($data['subject']));
+
+        foreach (['template_hint','body'] as $field) {
+            if (! empty($data[$field])) {
+                $data[$field] = trim($data[$field]);
+            } else {
+                 $data[$field] = '';
+            }
+        }
         if (empty($data['subject'])) {
             $validation_errors['subject'] = 'a valid subject line is required';
         }
@@ -253,10 +261,13 @@ class EmailService implements ObjectManagerAwareInterface
         if (empty($data['event_details']) and empty($data['body'])) {
             $validation_errors['body'] = 'Either a message text or event details is required';
         }
+        if (empty($data['template_hint']) &&  empty($data['body'])) {
+            //$validation_errors['body'] = "If you're not using boilerplate, some message text is required";
+        }
         if ($data['template_hint'] == "your request"  && empty($data['body'])) {
             $validation_errors['body'] = "If you're contacting the submitter about this request, some message text is required";
         }
-        /**
+        /*
         * if event-details ARE included, template is REQUIRED.
         * @todo support event-details and WITHOUT template?
         */
