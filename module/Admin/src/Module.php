@@ -71,11 +71,16 @@ class Module
         if ('testing' != getenv('environment')) {
             $container->get(SessionManager::class);
         }
-        $user = $container->get('auth')->getIdentity();
-        if ($user) {
-            $navigation->setDefaultRole($user->role);
-        }
 
+        /** catch  Zend\Session\Exception\RuntimeException validation failure */
+        try {
+            $user = $container->get('auth')->getIdentity();
+            if ($user) {
+                $navigation->setDefaultRole($user->role);
+            }
+        } catch (\Zend\Session\Exception\RuntimeException $e) {
+             return $this->getRedirectionResponse($event);
+        }
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user,$container) {
