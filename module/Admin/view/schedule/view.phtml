@@ -34,7 +34,11 @@ $this->headTitle('event details');
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
-elseif ($messenger->hasErrorMessages()) :
+else : ?>
+<div class="alert alert-success mx-auto" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
+<?php
+endif;
+if ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;
 /*
@@ -42,9 +46,7 @@ endif;
 <pre><?php ?></pre>
 TO DO: make partials for flat-out details and for "diff"
 and use one or the other, depending
-*/
-?>
-
+*/?>
 <div data-modified="<?php echo $event['last_updated'] ? $event['last_updated']->format('Y-m-d H:i:s') : ''?>" data-event_category="<?php echo $event['category']?>" data-event_datetime="<?php echo $event['datetime']?>" data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
     <div class="col-sm-3 text-muted text-md-right">
         date

@@ -152,7 +152,7 @@ const display_email_suggestion = function() {
     if ($("span.interpreter").length > 1) {
         who += "s";
     }
-    var div = $(`<div style="max-width:400px">`).addClass("alert alert-warning text-center border mx-auto").html(
+    var div = $(`<div style="max-width:500px">`).addClass("alert alert-warning text-center border mx-auto email-prompt").html(
          `<a id="link-email-suggest" href="#">Email notification to the ${who}?</a>`
     );
     div.prepend(`<button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>`);
@@ -239,21 +239,30 @@ const send_email = function(event){
             }
         } else {
             $("#error-message").hide();
-            console.log("it worked");
+            var div = $("div.alert-success").first();
+            div.children("p").text("shit worked");
+            div.show();
+            $(".modal-header button.close").trigger("click");
+            $("div.email-prompt").hide();
+            console.warn("it worked?");
         }
     }).fail(function(response){console.warn("shit")});
 }
 
 $(function(){
     // rig it
-    // console.warn("faking time-update for test purposes...");
-    // $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
+    console.warn("faking time-update for test purposes...");
+    $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
     console.log(`email flag? ${should_suggest_email()}`);
     if (should_suggest_email()) {
         display_email_suggestion();
     }
     $("[data-toggle=tooltip]").tooltip();
     $("a[data-toggle=popover]").on("click",(e)=>e.preventDefault());
+    $(".alert button[data-hide]").on("click",function(e){
+        //e.preventDefault();
+        $(this).parent().slideUp();
+    });
     $("div.popover").css({zIndex:1500});
     const boilerplate_popover  = $(`label[for=template] a[data-toggle="popover"]`);
     /* popover with help info for the boilerplate/template control */
