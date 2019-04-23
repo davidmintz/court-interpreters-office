@@ -25,7 +25,9 @@ class EmailServiceFactory implements FactoryInterface
         $service = new EmailService($container->get('config'), $container->get('entity-manager'));
         $service
             ->setViewRenderer($container->get('ViewRenderer'))
-            ->setAuth($container->get('auth'));
+            ->setAuth($container->get('auth'))
+            //->setEventManager($container->get('SharedEventManager'))
+            ;
 
         return $service;
 

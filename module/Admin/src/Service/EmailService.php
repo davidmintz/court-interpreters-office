@@ -18,11 +18,14 @@ use Zend\Authentication\AuthenticationServiceInterface;
 
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
+use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerAwareInterface;
 
-class EmailService implements ObjectManagerAwareInterface
+class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInterface
 {
     use EmailTrait;
     use ObjectManagerAwareTrait;
+    use EventManagerAwareTrait;
 
     /**
      * configuration
@@ -121,6 +124,7 @@ class EmailService implements ObjectManagerAwareInterface
         }
         $transport = $this->getMailTransport();
         $log_statement = $this->getStatement();
+        $result = ['sent_to' => []];
         foreach ($data['to'] as $i => $address) {
             $view->to = $address;
             $layout->setVariable('content', $this->viewRenderer->render($view));
@@ -146,22 +150,24 @@ class EmailService implements ObjectManagerAwareInterface
                 ];
                 $log_statement->execute($params);
                 $transport->send($message);
+                $result['sent_to'][] = $address;
                 $pdo->commit();
 
             } catch (\Throwable $e){
-                return [
+                $details = [
                     'status' => 'error',
-                    'exception' => get_class($e),
+                    'exception_class' => get_class($e),
                     'address' => $address['email'],
                     'name'   =>$address['name'],
                     'message' => $e->getMessage(),
                 ];
+                $this->getEventManager()
+                    ->trigger('error',$this,['exception' => $e, 'details' => $details]);
+                return array_merge($result, $details);
             }
         }
 
-        return ['status'=>'success','ps'=>"template: $template", 'debug'=>
-         "user id is {$this->auth->getIdentity()->id}"
-        ];
+        return array_merge($result,['status'=>'success','info'=>"template: $template",]);
     }
 
     public function getStatement()
@@ -175,15 +181,6 @@ class EmailService implements ObjectManagerAwareInterface
         return $pdo->prepare($sql);
 
     }
-/*
- event_id
- timestamp
- user_id
- recipient_id
- email
- subject
- comment
- */
 
     /**
      * Validates and filters data for composing message.
