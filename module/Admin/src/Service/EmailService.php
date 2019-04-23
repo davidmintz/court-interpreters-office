@@ -257,20 +257,35 @@ class EmailService implements ObjectManagerAwareInterface
         if (empty($data['subject'])) {
             $validation_errors['subject'] = 'a valid subject line is required';
         }
-
+        // validation rules are kind of complicated here
+        if ($data['template_hint'] == "your request"  && empty($data['body'])) {
+            $validation_errors['body'] = "If you're contacting the submitter about this request, a message text is required";
+        } else {
+            if (isset($data['event_details'])) {
+                if (empty($data['template_hint']) && empty($data['body'])) {
+                    $validation_errors['body'] = 'If event details are included, either a boilerplate or message text is required.';
+                }
+            } else {
+                if (empty($data['body'])) {
+                    $validation_errors['body'] = 'If event details are not included, a message text is required.';
+                }
+            }
+        }
+        /*
         if (empty($data['event_details']) and empty($data['body'])) {
-            $validation_errors['body'] = 'Either a message text or event details is required';
+            //$validation_errors['body'] = 'Either a message text or event details is required';
         }
         if (empty($data['template_hint']) &&  empty($data['body'])) {
-            //$validation_errors['body'] = "If you're not using boilerplate, some message text is required";
+            $validation_errors['body'] = "If you're not using boilerplate, some message text is required";
         }
+
         if ($data['template_hint'] == "your request"  && empty($data['body'])) {
             $validation_errors['body'] = "If you're contacting the submitter about this request, some message text is required";
         }
         /*
         * if event-details ARE included, template is REQUIRED.
         * @todo support event-details and WITHOUT template?
-        */
+        /
         if (isset($data['event_details'])) {
             if (empty($data['template_hint']) && $data['template_hint'] != 'your request') {
                 $validation_errors['template'] = "If event details are included, a boilerplate text is required.";
@@ -280,6 +295,7 @@ class EmailService implements ObjectManagerAwareInterface
                 }
             }
         }
+        */
         foreach (['to','cc'] as $field) {
             if (! count($validation_errors[$field])) {
                 unset($validation_errors[$field]);

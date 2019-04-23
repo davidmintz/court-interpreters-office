@@ -253,6 +253,7 @@ $(function(){
         display_email_suggestion();
     }
     $("[data-toggle=tooltip]").tooltip();
+    $("a[data-toggle=popover]").on("click",(e)=>e.preventDefault());
     $("div.popover").css({zIndex:1500});
     const boilerplate_popover  = $(`label[for=template] a[data-toggle="popover"]`);
     /* popover with help info for the boilerplate/template control */
