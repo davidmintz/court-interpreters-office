@@ -118,7 +118,9 @@ class Module
                     if ($event->getParam('details')) {
                         $message .= sprintf(
                             "details: %s\n",
-                            $event->getParam('details')
+                            is_string($event->getParam('details')) ?
+                                $event->getParam('details')
+                            : json_encode($event->getParam('details'))
                         );
                     }
                     $trace = $exception->getTraceAsString();
