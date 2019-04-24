@@ -275,7 +275,7 @@ class EventsController extends AbstractActionController
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
-                    'this event (%s) has been deleted from the schedule',
+                    'this event &mdash; %s &mdash; has been deleted from the schedule',
                     $entity->describe()
                 )
             );

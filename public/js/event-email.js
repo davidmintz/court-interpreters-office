@@ -216,8 +216,11 @@ const send_email = function(event){
             if (response.validation_errors) {
                 $("#error-message ul").remove();
                 if (response.validation_errors.csrf) {
-                    $("#error-message p").html(
-                        `Sorry, this action has failed because your security token was invalid or timed out.`
+                    $("#email-dialog").modal("hide");
+                    $("div.alert-success").hide();
+                    $("div.alert-warning p").html(
+                        `Sorry, this action has failed because your security token was invalid or expired.
+                        Please <a href="${document.location.toString()}">reload the page</a> and try again.`
                     ).parent().show();
                 } else {
                     $("#error-message p").html( `Sorry, we can't process this submission because`);

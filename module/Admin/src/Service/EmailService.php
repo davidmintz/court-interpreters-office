@@ -160,7 +160,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                 $transport->send($message);
                 $log_statement->execute($params);
                 $result['sent_to'][] = $address;
-                throw new \Exception("shit happened");
+                //throw new \Exception("shit happened");
                 $pdo->commit();
 
             } catch (\Throwable $e){

@@ -40,7 +40,9 @@ else : ?>
 endif;
 if ($messenger->hasErrorMessages()) :
     echo $messenger->render('danger', ['alert','alert-danger',], false);
-endif;
+else: ?>
+<div class="alert alert-warning mx-auto pt-3 pb-0" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
+<?php endif;
 /*
 <!-- experimental debug zone -->
 <pre><?php ?></pre>
