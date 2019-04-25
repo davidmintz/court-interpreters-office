@@ -146,7 +146,6 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             $message->setTo($address['email'], !empty($address['name']) ? $address['name'] : null );
             /** @var $pdo \PDO */
             $pdo = $this->getObjectManager()->getConnection();
-            //if ($data['cc'])
             try {
                 $pdo->beginTransaction();
                 $params = [
@@ -160,7 +159,6 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                 $transport->send($message);
                 $log_statement->execute($params);
                 $result['sent_to'][] = $address;
-                //throw new \Exception("shit happened");
                 $pdo->commit();
 
             } catch (\Throwable $e){
