@@ -277,7 +277,7 @@ DQL;
          LEFT JOIN loc.type as loc_type
          LEFT JOIN loc.parentLocation ploc
          LEFT JOIN e.cancellationReason cr
-         WHERE e.date = :date';
+         WHERE e.deleted = false AND e.date = :date';
         if (isset($options['language']) && 'all' != $options['language']) {
             $dql .= ' AND lang.name ';
             if ($options['language'] == 'spanish') {
