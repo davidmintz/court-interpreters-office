@@ -42,7 +42,7 @@ class RequestRepository extends EntityRepository
      * @param int $id
      * @return Request
      */
-    public function getRequestWithEvent($id)//, e, s, h, ie, i, dr, de
+    public function getRequestWithEvent($id)
     {
         $dql = 'SELECT r, e, s, h, ie, de, dr, i
             FROM InterpretersOffice\Requests\Entity\Request r
@@ -87,7 +87,9 @@ class RequestRepository extends EntityRepository
              ->andWhere('l.id = :language_id')
              ->andWhere('r.cancelled = false')
              ->andWhere('e.id = :event_type_id');
-             $judge = $entity->getJudge();
+
+
+        $judge = $entity->getJudge();
         if ($judge) {
             $qb->andWhere('j.id = :judge_id');
             $params[':judge_id'] = $judge->getId();
@@ -100,7 +102,7 @@ class RequestRepository extends EntityRepository
             $qb->andWhere('r.id <> :id');
             $params[':id'] = $id;
         }
-            $result = $qb->getQuery()->setParameters($params)->getResult();
+        $result = $qb->getQuery()->setParameters($params)->getResult();
         if (count($result)) {
             $duplicate = $result[0];
             // compare defendants
@@ -111,7 +113,7 @@ class RequestRepository extends EntityRepository
             }
         }
 
-            return false;
+        return false;
     }
 
     /**
@@ -234,7 +236,7 @@ class RequestRepository extends EntityRepository
     public function view($id)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
-        ->select(['r.id','r.time','r.date','r.docket','e.name type',
+        ->select(['r.id','r.time','r.date','r.docket','e.name type','r.cancelled',
             'lang.id language_id',
             'e.id event_type_id',
             'lang.name language','r.comments',
@@ -246,6 +248,7 @@ class RequestRepository extends EntityRepository
             'submitter_h.name submitter_hat',
             'loc.name location','parent_loc.name parent_location',
             'event.id event_id','r.pending',
+            'event.deleted event_deleted',
             'event.date event_date', 'event.time event_time',
             'cr.reason cancellation',
             'j.id judge_id',

@@ -256,7 +256,8 @@ class WriteController extends AbstractActionController implements ResourceInterf
     {
 
         $entity = $this->entity;
-        if (! $entity) {
+        $id = $this->params()->fromRoute('id');
+        if (! $entity or $entity->getCancelled()) {
             $this->flashMessenger()->addErrorMessage(
                 "The request with id $id was not found in the database"
             );
@@ -269,7 +270,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         $form->bind($entity);
 
         if (! $this->getRequest()->isPost()) {
-            return  new ViewModel(['form' => $form, 'id' => $this->params()->fromRoute('id')]);
+            return  new ViewModel(['form' => $form, 'id' => $id]);
         }
         $this->getEventManager()->trigger('loadRequest',$this,
             ['entity'=>$entity,'entity_manager'=>$this->objectManager]);
