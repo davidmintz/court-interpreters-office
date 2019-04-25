@@ -25,7 +25,7 @@ var request_insert =
     INSERT INTO requests VALUES (null,'${date}','11:00:00',@judge_id,NULL,16,62,'2018-CR-0611',62,@user_id,'${req_created_str}',
     '${req_created_str}',31,'dummy request for automated testing purposes',null,0,0,'');
     INSERT INTO defendants_requests VALUES (23805,LAST_INSERT_ID())`
-var event_insert = `INSERT INTO events VALUES (NULL,62,@judge_id,@user_id,NULL,'${date}','11:00:00',NULL,'2018-CR-0611','dummy event for automated test','','${event_created}',
+    var event_insert = `INSERT INTO events (id,language_id,judge_id,submitter_id,location_id,date,time,end_time,docket,comments,admin_comments,created,modified,event_type_id,created_by_id,anonymous_judge_id,anonymous_submitter_id,cancellation_reason_id,modified_by_id,submission_date,submission_time) VALUES (NULL,62,@judge_id,@user_id,NULL,'${date}','11:00:00',NULL,'2018-CR-0611','dummy event for automated test','','${event_created}',
     '${event_created}',41,524,NULL,NULL,NULL,31,'${req_created_str.substring(0,10)}','${req_created_str.substring(11)}');
     INSERT INTO defendants_events VALUES (LAST_INSERT_ID(),23805);
     INSERT INTO interpreters_events (event_id, interpreter_id, created, created_by_id)
