@@ -187,7 +187,9 @@ class EventsController extends AbstractActionController
         /** @var \InterpretersOffice\Entity\Event $entity  */
         $entity = $this->entityManager->getRepository(Entity\Event::class)
             ->load($id);
-
+        if ($entity->isDeleted()) {
+            return ['errorMessage' => 'This event has been deleted and therefore is no longer mutable. If you need to have it restored, please contact your database administrator.','header'=>'error: event deleted'];
+        }
         if (! $entity) {
             return ['errorMessage' => "No event with id $id was found in the database.",'header'=>'error: event not found'];
         }
@@ -226,7 +228,7 @@ class EventsController extends AbstractActionController
                 or $this->params()->fromPost('deftnames_modified')) {
                 $verbiage = 'updated';
             } else {
-                $verbiage = 'saved (unmodified)';
+                $verbiage = 'saved (unchanged)';
             }
             $date = $entity->getDate();
             $this->flashMessenger()->addSuccessMessage(sprintf(
@@ -263,15 +265,21 @@ class EventsController extends AbstractActionController
         }
         $entity = $this->entityManager->find(Entity\Event::class, $id);
         if (! $entity) {
-            $result = [
+            return new JsonModel([
                 'status' => 'ENTITY NOT FOUND',
                 'deleted' => false,
                 'message' => "Event id $id was not found in the database"
-            ];
-            return new JsonModel($result);
+            ]);
+        }
+        if ($entity->getDeleted()) {
+            return new JsonModel([
+                'status' => 'success',
+                'deleted' => true,
+                'message' => "This event has already been deleted",
+            ]);
         }
         try {
-            $this->entityManager->remove($entity);
+            $entity->setDeleted(true);
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(
                 sprintf(
@@ -282,6 +290,8 @@ class EventsController extends AbstractActionController
             return new JsonModel(['deleted' => true,'status' => 'success',
                 'message' => "this event has been deleted"]);
         } catch (\Exception $e) {
+            $this->getEventManager()->trigger('error',$this,
+                ['details'=>"attempting soft-deletion of event id $id",'exception' => $e]);
             return new JsonModel(['deleted' => false,'status' => 'error',
                 'message' => $e->getMessage()]);
         }

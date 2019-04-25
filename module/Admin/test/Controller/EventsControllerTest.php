@@ -330,4 +330,33 @@ class EventControllerTest extends AbstractControllerTest
             'Event count was incremented where insertion should have failed'
         );
     }
+
+    public function testEventSoftDeletion()
+    {
+        $em = FixtureManager::getEntityManager();
+        $id = $em->createQuery('SELECT MAX(e.id) FROM InterpretersOffice\Entity\Event e
+            WHERE e.deleted = false')
+            ->getSingleScalarResult();
+        $count_was =  $em->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+            ->getSingleScalarResult();
+        $this->assertTrue(is_numeric($id));
+        $this->login('david', 'boink');
+        $this->reset(true);
+        //$this->dispatch('/admin/schedule/view/'.$id);
+        $token = $this->getCsrfToken('/admin/schedule/edit/'.$id);
+        $this->dispatch("/admin/schedule/delete/$id",'POST',['csrf'=>$token],true);
+        $this->assertResponseStatusCode(200);
+        $response = json_decode($this->getResponse()->getBody());
+        $this->assertTrue(is_object($response));
+        $this->assertEquals("success",$response->status);
+        $count_is =  $em->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+            ->getSingleScalarResult();
+        $this->assertEquals($count_is,$count_was);
+        $entity = $em->createQuery('SELECT e FROM InterpretersOffice\Entity\Event e
+                WHERE e.id = :id')->setParameters([':id'=>$id])
+            ->getOneOrNullResult();
+        $this->assertTrue(is_object($entity));
+        $this->assertTrue($entity->isDeleted());
+
+    }
 }
