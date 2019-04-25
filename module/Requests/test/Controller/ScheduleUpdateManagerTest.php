@@ -171,13 +171,14 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
             ->setPost(new Parameters(['csrf'=>$csrf]));
         $this->dispatch('/requests/cancel/'.$request->getId());
         $data = $this->getResponse()->getBody();
-        //$this->dumpResponse();return;
+        //$this->dumpResponse();//return;
         $response = json_decode($data);
         $this->assertEquals("success",$response->status);
 
         $event = $this->getApplicationServiceLocator()->get("entity-manager")
             ->find('InterpretersOffice\Entity\Event',$event_id);
-        $this->assertNull($event);
+        // $this->assertNull($event);
+        $this->assertTrue($event->isDeleted());
 
         // make sure an email was generated (body dumped for test purposes)
         $this->assertTrue(file_exists($this->autocancellation_notice));

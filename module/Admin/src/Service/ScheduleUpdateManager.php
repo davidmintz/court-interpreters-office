@@ -493,8 +493,9 @@ class ScheduleUpdateManager
     public function deleteScheduledEvent($request, Array $updates)
     {
         $event = $request->getEvent();
-        $this->objectManager->remove($event);
-        $this->logger->debug(__METHOD__.": we have REMOVED scheduled event id ".$event->getId());
+        $event->setDeleted(true);
+        //$this->objectManager->remove($event);
+        $this->logger->debug(__METHOD__.": we have soft-deleted scheduled event id ".$event->getId());
         return $this;
     }
 
