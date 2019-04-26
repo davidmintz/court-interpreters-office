@@ -274,6 +274,7 @@ CREATE TABLE `events` (
   `modified_by_id` smallint(5) unsigned DEFAULT NULL,
   `submission_date` date NOT NULL,
   `submission_time` time DEFAULT NULL,
+  `deleted` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `IDX_5387574A82F1BAF4` (`language_id`),
   KEY `IDX_5387574AB7D66194` (`judge_id`),
@@ -700,4 +701,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-22 17:13:32
+-- Dump completed on 2019-04-26 10:34:19
