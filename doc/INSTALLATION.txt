@@ -11,7 +11,7 @@ git clone https://github.com/davidmintz/court-interpreters-office
 cd court-interpreters-office
 
 composer install
-
+# if something like this happens...
   Problem 1
     - The requested PHP extension ext-mbstring * is missing from your system. Install or enable PHP's mbstring extension.
   Problem 2
@@ -26,8 +26,9 @@ composer install
   Problem 5
     - phpunit/phpunit 7.5.8 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
 
+# do something like this:
 sudo apt-get install --yes php7.2-mbstring
-
+# and try again
 composer install
 
 mkdir data
