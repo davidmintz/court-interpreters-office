@@ -1,0 +1,65 @@
+As of 26-Apr-2019
+
+create the database and set user/password
+
+create the vhost configuration for your webserver
+	enable PHP 7.2+
+	enable mod_rewrite or equivalent
+
+git clone https://github.com/davidmintz/court-interpreters-office
+
+cd court-interpreters-office
+
+composer install
+
+  Problem 1
+    - The requested PHP extension ext-mbstring * is missing from your system. Install or enable PHP's mbstring extension.
+  Problem 2
+    - Installation request for zendframework/zend-crypt 3.3.0 -> satisfiable by zendframework/zend-crypt[3.3.0].
+    - zendframework/zend-crypt 3.3.0 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
+  Problem 3
+    - Installation request for zendframework/zend-math 3.2.0 -> satisfiable by zendframework/zend-math[3.2.0].
+    - zendframework/zend-math 3.2.0 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
+  Problem 4
+    - Installation request for phpunit/phpunit 7.5.8 -> satisfiable by phpunit/phpunit[7.5.8].
+    - phpunit/phpunit 7.5.8 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
+  Problem 5
+    - phpunit/phpunit 7.5.8 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
+
+sudo apt-get install --yes php7.2-mbstring
+
+composer install
+
+mkdir data
+cd data
+mkdir session mail log
+cd ../..
+setfacl -dRm u:www-data:rwx data
+setfacl -dRm u:$(whoami):rwx data
+
+cd config/autoload
+
+# for development installation
+cp development.local.php.dist development.local.php
+nano development.local.php
+cp doctrine.local.php.dist doctrine.local.php
+nano doctrine.local.php
+
+cd ..
+nano modules.config.php
+# ensure reference to Vault is commented out unless you want to set it all up
+
+cd ../bin/sql
+cat mysql-schema.sql initial-data.sql | mysql <database-name>
+
+cd ../..
+# set up first admin user
+bin/admin-cli setup:create-adm
+
+You still have a mostly empty database and so if you try to add events, you will be frustrated by select elements
+that are required but contain no options. You need: locations, languages, event-types, judges, and so forth. The 
+form to add/edit events at this point has no facility for inserting related entities in place.
+
+
+
+
