@@ -257,10 +257,17 @@ class WriteController extends AbstractActionController implements ResourceInterf
 
         $entity = $this->entity;
         $id = $this->params()->fromRoute('id');
+        $error = false;
         if (! $entity or $entity->getCancelled()) {
-            $this->flashMessenger()->addErrorMessage(
-                "The request with id $id was not found in the database"
-            );
+            $error = "The request with id $id was not found in the database";
+        } elseif ($entity->getEvent() and $entity->getEvent()->isDeleted()) {
+            $url = $this->getEvent()->getApplication()->getServiceManager()
+                ->get('ViewHelperManager')->get('url')('requests/view',['id'=>$id]);
+            $error = "This <a href=\"$url\">request</a> was scheduled and subsequently deleted from
+            the Interpreters' schedule. Please contact them if you have any questions.";
+        }
+        if ($error) {
+            $this->flashMessenger()->addErrorMessage($error);
             return $this->redirect()->toRoute('requests');
         }
         $form = new Form\RequestForm(
@@ -276,7 +283,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
             ['entity'=>$entity,'entity_manager'=>$this->objectManager]);
         $data = $this->getRequest()->getPost()->get('request');
         $form->filterDateTimeFields(
-            ['date','time'], $data,  'request'
+            ['date','time'], $data, 'request'
         );
         $form->setData($this->getRequest()->getPost());
         if (! $form->isValid()) {
