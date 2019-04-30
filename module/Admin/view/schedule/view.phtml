@@ -194,12 +194,19 @@ endif;?></span>
     </div>
     <div class="col-12 d-flex">
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
-          <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
-          <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
-          <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
-          <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
+        <?php if (!$event['deleted']):?>
+            <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
+            <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
+            <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
+            <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
         </div>
+        <?php else: ?>
+            <div class="alert alert-warning pt-2 border">
+                This event has been deleted from your schedule.
+            </div>
+        <?php endif; ?>
     </div>
+</div>
     <?php if ($event['request_id'] or $event['is_default_location']): ?>
         <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0" style=font-size:90%;>
             <?php if ($event['request_id']):?>* request was submitted online<br><?php endif; ?>
@@ -236,7 +243,7 @@ endif;?></span>
         endforeach;
     endif;
     ?>
-</div>
+
 <div class="modal fade" id="email-dialog" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -246,7 +253,6 @@ endif;?></span>
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-
             <div style="min-height:300px" class="modal-body">
                 <div class="container-fluid">
                     <form id="email-form">

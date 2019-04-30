@@ -280,8 +280,8 @@ const send_email = function(event){
 
 $(function(){
     // rig it
-    console.warn("faking time-update for test purposes...");
-    $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
+    // console.warn("faking time-update for test purposes...");
+    // $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
     console.log(`email flag? ${should_suggest_email()}`);
     if (should_suggest_email()) {
         display_email_suggestion();

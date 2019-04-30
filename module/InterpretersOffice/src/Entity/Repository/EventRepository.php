@@ -34,7 +34,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          t.name AS type,
          c.category,
          lang.name AS language,
-         e.docket,
+         e.docket,e.deleted,
          loc.name AS location,
          ploc.name AS parent_location,
          ctrm.name AS default_courtroom,
