@@ -45,7 +45,7 @@ $(function(){
             }
             if (response.status === "error") {
                 show_error_message(response);
-                if (response.message.match(/already.*schedule/i)) {
+                if (response.message.match(/already.*schedule|request.*cancel/i)) {
                     row.remove();
                     update_verbiage();
                 }
