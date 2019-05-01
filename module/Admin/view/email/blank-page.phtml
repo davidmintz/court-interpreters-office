@@ -12,8 +12,9 @@ endif;
 <?php echo //nl2br()
     $this->body ?>
 </p>
-<?php
-if ($this->entity):
+<?php if ($this->entity): ?>
+<p>Event details:</p>
+<?php 
     echo $this->partial('interpreters-office/email/partials/event-details.phtml',
         ['entity'=>$this->entity]);
 endif;
