@@ -1,0 +1,141 @@
+<?php /**  module/Admin/view/schedule/email-modal.phtml */?>
+<div class="modal fade" id="email-dialog" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="email-modal-label">send email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div style="min-height:300px" class="modal-body">
+                <div class="container-fluid">
+                    <form id="email-form">
+                        <div class="form-row">
+                            <div id="error-message" class="mb-1 col-md-10 offset-md-2 pl-3 validation-error alert alert-warning alert-dismissible fade show" role="alert" style="display:none">
+                                <p></p>
+                                <!--
+                                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                -->
+                            </div>
+                        </div>
+                        <div class="form-row form-group mb-3">
+                            <label for="recipient-autocomplete" class="col-md-2 text-right col-form-label">To
+                            </label>
+                            <div class="col-md-10">
+                                <div class="input-group"><!--  dropleft -->
+                                    <!--   -->
+                                    <input id="recipient-autocomplete" name="recipient-autocomplete" type="text" class="form-control" placeholder="start typing last name<?php
+                                    if ($suggestions):?>, or use the dropdown<?php endif;
+                                    ?>">
+                                   <button id="btn-add-recipient" data-toggle="tooltip" class="btn btn-sm btn-secondary btn-add-recipient border disabled" title="manually add a recipient">
+                                      <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
+                                  </button>
+                                  <?php
+                                  // if there are any email addresses involved, assemble a dropdown to display them
+                                  if ($suggestions): ?>
+                                  <a title="suggested recipients" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-recipients" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
+                                  <div id="email-dropdown" class="dropdown-menu pl-1">
+                                        <?php foreach ($suggestions as $i => $person):?>
+                                            <div class="form-group">
+                                              <div class="form-check">
+                                                <input data-id="<?php echo $person['id']?>" <?php if (isset($person['role'])): ?>data-role="<?php echo $person['role']?>" <?php endif;?>name="recipients[]" value="<?php echo $person['email']?>" type="checkbox" class="form-check-input" id="email-<?php echo $i?>" checked>
+                                                <label class="form-check-label" for="email-<?php echo $i?>">
+                                                  <?php echo $person['name'] ?>
+                                                </label>
+                                              </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <div class="dropdown-divider">
+                                        </div>
+                                        <div class="dropdown-item">
+                                            <button title="add people selected above as email recipients" id="btn-add-recipients" class="btn btn-sm btn-outline-primary">Add</button>
+                                            <button class="btn btn-sm btn-outline-secondary">Cancel</button>
+                                        </div>
+                                        <div class="alert alert-warning validation-error" style="display:none"></div>
+                                  </div>
+                              <?php endif; ?>
+                               </div>
+                            </div>
+                        </div>
+                        <div class="form-row form-group email-subject">
+                            <label for="message-subject" class="col-md-2 text-right col-form-label">Subject
+                            </label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <input name="subject" id="message-subject" type="text" class="form-control text-truncate" placeholder="type your subject line, or use the dropdown">
+                                    <a title="suggested subject lines" class="btn btn-outline-secondary dropdown-toggle  dropdown-toggle-subject" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
+                                    <div id="subject-dropdown" class="dropdown-menu pl-1">
+                                    <?php $items = 0;
+                                    if ($event['submitter_email']) :?>
+                                        <div data-template_hint="" data-toggle="tooltip" data-placement="left" title="contact <?php echo $this->escapeHtml($event['submitter'])?>" data-subject="your request" class="dropdown-item">
+                                            <a href="#">your interpreter request
+                                        </div>
+
+                                    <?php $items++; endif; ?>
+                                    <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
+                                    <div data-template_hint="assignment available" data-toggle="tooltip" data-placement="left" title="offer this assignment" data-subject="available" class="dropdown-item">
+                                         <a href="#">assignment available</a>
+                                    </div>
+                                    <?php if ($event['interpreters']) : $items++;?>
+                                        <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
+                                        <div data-template_hint="assignment update" data-toggle="tooltip" data-placement="left" title="details of noteworthy updates" data-subject="update" class="dropdown-item">
+                                            <a href="#">assignment update</a>
+                                        </div>
+                                        <div class="dropdown-divider"></div>
+                                        <div data-template_hint="assignment confirmation" data-toggle="tooltip" data-placement="left" title="confirmation as to this assignment" data-subject="confirmation" class="dropdown-item">
+                                            <a href="#">assignment confirmation</a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if ('n/a' != $event['reason_for_cancellation']) : $items++ ?>
+                                        <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
+                                        <div data-template_hint="assignment cancellation" data-toggle="tooltip" data-placement="left" title="notification that the assignment has been cancelled" data-subject="cancellation" class="dropdown-item">
+                                            <a href="#">assignment cancellation</a>
+                                        </div>
+                                    <?php endif; ?>
+                                    </div>
+                               </div>
+                            </div>
+                        </div>
+                    <div class="form-row form-group">
+                        <label for="message-body" class="col-md-2 text-right col-form-label">Message</label>
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                <textarea name="message-body" placeholder="optional, unless event-details are omitted (salutation and closing are provided automatically)" id="message-body" class="form-control" rows="5"></textarea>
+                           </div>
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="form-check offset-md-2 col-md-4 pt-2">
+                            <input class="form-check-input" type="checkbox" id="include-details" name="include-details" value="1" checked>
+                            <label for="include-details" class="ml-1 form-check-label">include event details</label>
+                        </div>
+                        <label for="template" class="col-md-2 text-right col-form-label pt-2">with <a href="#" data-toggle="popover" data-placement="top" >boilerplate</a>:</label>
+                        <div class="col-md-4">
+                                <select id="template" name="template" class="form-control custom-select">
+                                    <option value=""></option>
+                                    <!-- <option value="your request">your request</option> -->
+                                    <option value="available">assignment available</option>
+                                    <option value="update">assignment update</option>
+                                    <option value="confirmation">assignment confirmation</option>
+                                    <option value="cancellation">assignment cancellation</option>
+                                </select>
+
+                        </div>
+
+                    </div>
+                    </form>
+                </div>
+            <div class="modal-footer center-block row" id="modal-footer">
+                <div class="col text-center">
+                    <button disabled="disabled" id="btn-send" class="btn btn-success disabled">send</button>
+                    <button id="btn-cancel" class="btn btn-secondary">cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- -->
