@@ -305,6 +305,17 @@ $(function(){
     $("#email-form").on("click",".popover-body button.close",function(e){
         e.stopPropagation();
         boilerplate_popover.popover("hide");
+    }).on("change",function(){
+        var details = $("#include-details").prop("checked");
+        var boilerplate = $("#template").val() && !$("#template").attr("disabled");
+        var message = $("#message-body").val().trim();
+        if (boilerplate && message) {
+            console.log("should message replace, be prepended or appended to boilerplate?");
+            $(`label[for="message-body"]`).text("Notes");
+        } else {
+            $(`label[for="message-body"]`).text("Message");
+        }
+
     });
     var btn_manual_add = $("#btn-add-recipient");
     var description = get_event_description();

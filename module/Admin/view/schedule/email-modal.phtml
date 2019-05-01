@@ -36,8 +36,8 @@
                                   <?php
                                   // if there are any email addresses involved, assemble a dropdown to display them
                                   if ($suggestions): ?>
-                                  <a title="suggested recipients" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-recipients" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
-                                  <div id="email-dropdown" class="dropdown-menu pl-1">
+                                  <button title="suggested recipients" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-recipients" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</button>
+                                  <div id="email-dropdown" role="menu" class="dropdown-menu pl-1">
                                         <?php foreach ($suggestions as $i => $person):?>
                                             <div class="form-group">
                                               <div class="form-check">
@@ -66,19 +66,18 @@
                             <div class="col-md-10">
                                 <div class="input-group">
                                     <input name="subject" id="message-subject" type="text" class="form-control text-truncate" placeholder="type your subject line, or use the dropdown">
-                                    <a title="suggested subject lines" class="btn btn-outline-secondary dropdown-toggle  dropdown-toggle-subject" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</a>
-                                    <div id="subject-dropdown" class="dropdown-menu pl-1">
+                                    <button title="suggested subject lines"class="btn btn-outline-secondary dropdown-toggle  dropdown-toggle-subject" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</button>
+                                    <div id="subject-dropdown" role="menu" class="dropdown-menu pl-1">
                                     <?php $items = 0;
                                     if ($event['submitter_email']) :?>
                                         <div data-template_hint="" data-toggle="tooltip" data-placement="left" title="contact <?php echo $this->escapeHtml($event['submitter'])?>" data-subject="your request" class="dropdown-item">
-                                            <a href="#">your interpreter request
+                                            <a href="#">your interpreter request</a>
                                         </div>
-
                                     <?php $items++; endif; ?>
                                     <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
-                                    <div data-template_hint="assignment available" data-toggle="tooltip" data-placement="left" title="offer this assignment" data-subject="available" class="dropdown-item">
-                                         <a href="#">assignment available</a>
-                                    </div>
+                                        <div data-template_hint="assignment available" data-toggle="tooltip" data-placement="left" title="offer this assignment" data-subject="available" class="dropdown-item">
+                                             <a href="#">assignment available</a>
+                                        </div>
                                     <?php if ($event['interpreters']) : $items++;?>
                                         <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
                                         <div data-template_hint="assignment update" data-toggle="tooltip" data-placement="left" title="details of noteworthy updates" data-subject="update" class="dropdown-item">
