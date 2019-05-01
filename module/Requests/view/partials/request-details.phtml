@@ -35,6 +35,8 @@ else: ?> <em>not assigned</em> <?php endif;
 <div class="col-md-2 text-muted text-md-right pr-1">status</div><div id="request-status" class="col-md-10"><?php
     if ($r['pending']):
         ?>pending<?php
+    elseif ($r['event_deleted']):
+        ?><strong>deleted</strong> from Interpreters schedule<?php
     elseif ($r['event_id']) :
         if ($r['cancellation']) :
             ?>cancelled<?php
@@ -47,7 +49,5 @@ else: ?> <em>not assigned</em> <?php endif;
         else :
             ?>scheduled<?php
         endif;
-    else :
-        ?>deleted<?php
     endif;
 ?></div>

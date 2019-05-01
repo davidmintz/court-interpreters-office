@@ -18,10 +18,11 @@ $this->headScript()
 
 $r = $this->data; // we are lazy
 $scheduled_datetime = new \DateTime(sprintf('%s %s',$r['date']->format("Y-m-d"), $r['time']->format('H:i')));
-$editable = $scheduled_datetime > $this->deadline;
+$editable = ($scheduled_datetime > $this->deadline) && !$r['event_deleted'];
+//var_dump($r['event_deleted']);var_dump($editable);
 echo $this->partial('partials/request-details',['request'=>$r, 'deadline'=> $this->deadline]);
 ?>
-    <div class="col-md-12 text-center"><?php
+    <div class="col-md-12 text-center pt-2"><?php
         if ($editable):
             ?>
             <a role="button" title="modify this request" class="btn btn-success request-update" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>">update</a>

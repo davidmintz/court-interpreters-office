@@ -335,7 +335,10 @@ class RequestRepository extends EntityRepository
         $em = $this->getEntityManager();
         $request = $em->find(Request::class,$request_id);
         if (! $request) {
-            return ['status'=>'error','message'=>"request entity with id $request_id not found"];
+            return ['status'=>'error','message'=>"request entity with id $request_id was not found, hence cannot be scheduled"];
+        }
+        if ($request->isCancelled()) {
+            return ['status'=>'error','message'=>"this request has just been cancelled, so it should not be scheduled"];
         }
         $existing = $request->getEvent();
         if ($existing) {
