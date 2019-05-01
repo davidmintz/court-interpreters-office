@@ -206,7 +206,7 @@ const send_email = function(event){
     });
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
-    message.template_hint = $("#template").val()||$("#subject-dropdown").data("template_hint");
+    message.template_hint = boilerplate.val()||$("#subject-dropdown").data("template_hint");
     message.event_id = $("div.event-details").data("event_id");
     //var csrf = 'shit';// testing
     var csrf = $("[data-csrf]").data("csrf");
@@ -286,6 +286,29 @@ $(function(){
     if (should_suggest_email()) {
         display_email_suggestion();
     }
+    const recipient_autocomplete = $("#recipient-autocomplete");
+    const details = $("#include-details");
+    const message = $("#message-body");
+    const boilerplate = $("#template");
+    const message_label = $(`label[for="message-body"]`);
+    const note_placement = $("#note-placement");
+    const onFormChange = function(){
+        var include_details = details.prop("checked");
+        var use_boilerplate = boilerplate.val();
+        var message_text = message.val().trim();
+        if (include_details && use_boilerplate && message_text) {
+            if (note_placement.is(":visible")) { return; }
+            message_label.text("Notes");
+            note_placement.show();
+        } else {
+            message_label.text("Message");
+            note_placement.slideUp();
+        }
+    };
+    details.on("click",onFormChange);
+    message.on("input",onFormChange);
+    boilerplate.on("click",onFormChange);
+
     $("[data-toggle=tooltip]").tooltip();
     $("a[data-toggle=popover]").on("click",(e)=>e.preventDefault());
     $(".alert button[data-hide]").on("click",
@@ -305,18 +328,8 @@ $(function(){
     $("#email-form").on("click",".popover-body button.close",function(e){
         e.stopPropagation();
         boilerplate_popover.popover("hide");
-    }).on("change",function(){
-        var details = $("#include-details").prop("checked");
-        var boilerplate = $("#template").val() && !$("#template").attr("disabled");
-        var message = $("#message-body").val().trim();
-        if (boilerplate && message) {
-            console.log("should message replace, be prepended or appended to boilerplate?");
-            $(`label[for="message-body"]`).text("Notes");
-        } else {
-            $(`label[for="message-body"]`).text("Message");
-        }
-
     });
+
     var btn_manual_add = $("#btn-add-recipient");
     var description = get_event_description();
     $("#email-modal-label").append(` re: ${description}`);
@@ -325,9 +338,9 @@ $(function(){
     $("#include-details").on("change",function(e){
         var checked = $(this).prop("checked");
         if (! checked) {
-            $("#template").attr({disabled:"disabled"});
+            boilerplate.attr({disabled:"disabled"});
         } else {
-            $("#template").removeAttr("disabled");
+            boilerplate.removeAttr("disabled");
         }
     });
     /* listener for event/view "email" button and for the "+" adjacent to autocomplete input */
@@ -349,20 +362,20 @@ $(function(){
                 {
                     console.log("hiding dropdown for fux sake?");
                     $(".dropdown-toggle-recipients").hide();
-                    $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
+                    recipient_autocomplete.attr({placeholder : default_autocomplete_placeholder});
                 }
             });
             /** @todo decide whether and how to be clever about setting defaults... */
             $("#message-subject").val("assignment update: "+get_event_description());
-            $("#template").val("update");
+            boilerplate.val("update");
         }
         if ($("input[name='to[]']").length && $("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
-        } else { console.warn("shit?");}
+        } // else { console.warn("shit?");}
     });
     /* initialize autocompletion, etc for email recipient in dialog */
     $("#email-dialog").on("shown.bs.modal",function(event){
-        $("#recipient-autocomplete").autocomplete({
+        recipient_autocomplete.autocomplete({
             source: function(request,response) {
                 var params = { term : request.term, active : 1, value_column : "email" };
                 $(this).data({searching:true})
@@ -388,7 +401,6 @@ $(function(){
                 // flip the last/first names
                 var n = ui.item.label.lastIndexOf(", ");
                 var name = `${ui.item.label.substring(n+2)} ${ui.item.label.substring(0,n)}`;
-                //console.warn(ui.item.label);
                 var html = create_recipient(email, name, role, ui.item.id);
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
@@ -437,7 +449,7 @@ $(function(){
             }
         });
 
-        $("#recipient-autocomplete").autocomplete("instance")._renderItem =
+        recipient_autocomplete.autocomplete("instance")._renderItem =
          function(ul, item) {
             // return $("<li>").append(item.label).appendTo(ul);
             return $( "<li>" )
@@ -453,7 +465,7 @@ $(function(){
             if ($(this).hasClass("disabled")) {
                 return;
             }
-            var email, name = "", value = $("#recipient-autocomplete").val().trim();
+            var email, name = "", value = recipient_autocomplete.val().trim();
             var parts = value.split(/\s+/);
             if (parts.length) {
                 email = parts.pop().replace(/[<>]/g,"");
@@ -465,7 +477,7 @@ $(function(){
             var html = create_recipient(email,name || "");
             $(".email-subject").before(html);
             $(this).tooltip("hide");
-            $("#recipient-autocomplete").val("");
+            recipient_autocomplete.val("");
             btn_manual_add.removeClass("btn-primary")
                 .addClass("btn-secondary disabled");
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
@@ -490,7 +502,7 @@ $(function(){
             if (dropdown_menu.is(":hidden")) {
                 console.log("re-displaying recipient-dropdown");
                 dropdown_menu.show();
-                $("#recipient-autocomplete").attr({
+                recipient_autocomplete.attr({
                     placeholder : "start typing last name, or use the dropdown"
                 });
             }
@@ -554,7 +566,7 @@ $(function(){
         if ( !$("#email-dropdown input").not(":disabled").length ) {
             console.log("no inputs to see, therefore hiding dropdown");
             $(".dropdown-toggle-recipients").hide(); //, .dropdown-menu
-            $("#recipient-autocomplete").attr({placeholder : default_autocomplete_placeholder});
+            recipient_autocomplete.attr({placeholder : default_autocomplete_placeholder});
         }
         if ($("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
@@ -570,7 +582,7 @@ $(function(){
         $("#subject-dropdown").data({template_hint});
         $(this).tooltip("hide");
         var subject_line;
-        $("#template").val(template_hint);
+        boilerplate.val(template_hint);
         switch (template_hint) {
             case "your request":
             var el = $("#email-dropdown input[data-role=submitter]");
