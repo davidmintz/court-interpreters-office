@@ -126,12 +126,11 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
         }
         if (!empty($data['body'])) {
             if (!$data['template_hint']) {
-                // the message body is injected as an additional note
-                $view->body = $data['body'];
-            } else {
                 // the additional notes are the message body (no event-details)
                 $view->body = $data['body'];
-                $view->setTemplate('email/blank-page');
+            } else {
+                // the message body is injected as an additional note
+                $view->notes = $data['body'];
             }
         }
         $transport = $this->getMailTransport();
