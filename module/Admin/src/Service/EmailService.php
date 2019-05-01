@@ -124,9 +124,9 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             }
             $view->setVariables(['entity'=>$data['event_details'],'escaped'=>true]);
         }
-        if (!empty($data['body'])) {
-            $view->body = $data['body'];
-            $view->setTemplate('email/blank-page');
+        if (!empty($data['body']) && $template) {
+            $view->notes = $data['body'];
+            //$view->setTemplate('email/blank-page');
         }
         $transport = $this->getMailTransport();
         $log_statement = $this->getStatement();

@@ -49,6 +49,10 @@ else:
     echo $this->partial('interpreters-office/email/partials/event-details.phtml',
     ['entity'=>$this->entity,  'with_comments'=>false,'escaped' => $this->escaped ]);
 endif;    ?>
+<?php if ($this->notes):?>
+<p>Additional notes:</p>
+<p style="margin-left:2em"><?php echo $this->notes ?></p>
+<?php endif ?>
 <p>
 If you have any questions, please contact the Interpreters promptly.
 </p>

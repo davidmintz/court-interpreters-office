@@ -17,6 +17,10 @@
 echo $this->partial('interpreters-office/email/partials/event-details.phtml',
     ['entity'=>$this->entity]);
 ?>
+<?php if ($this->notes):?>
+<p>Additional notes:</p>
+<p style="margin-left:2em"><?php echo $this->notes ?></p>
+<?php endif ?>
 <p style="margin-top:2em">Very truly yours,</p>
 
 <p>The Interpreters Office</p>

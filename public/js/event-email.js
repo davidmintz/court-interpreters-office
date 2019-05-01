@@ -206,7 +206,7 @@ const send_email = function(event){
     });
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
-    message.template_hint = boilerplate.val()||$("#subject-dropdown").data("template_hint");
+    message.template_hint = $("#template").val()||$("#subject-dropdown").data("template_hint");
     message.event_id = $("div.event-details").data("event_id");
     //var csrf = 'shit';// testing
     var csrf = $("[data-csrf]").data("csrf");
