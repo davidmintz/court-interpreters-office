@@ -188,10 +188,11 @@ class EventsController extends AbstractActionController
         $entity = $this->entityManager->getRepository(Entity\Event::class)
             ->load($id);
         if ($entity->isDeleted()) {
-            return ['errorMessage' => 'This event has been deleted, and therefore is no longer mutable. If you need to have it restored, please contact your database administrator.','header'=>'error: event deleted'];
+            return ['errorMessage' => 'This event has been deleted from the schedule, and therefore is no longer mutable. If you need to have it restored, please contact your database administrator.',
+            'header'=>'event deleted'];
         }
         if (! $entity) {
-            return ['errorMessage' => "No event with id $id was found in the database.",'header'=>'error: event not found'];
+            return ['errorMessage' => "No event with id $id was found in the database.",'header'=>'event not found'];
         }
         $form = new Form\EventForm(
             $this->entityManager,
