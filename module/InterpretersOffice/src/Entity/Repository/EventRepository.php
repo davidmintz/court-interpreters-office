@@ -49,6 +49,9 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          user1.username AS created_by,
          e.created,
          user2.username AS last_updated_by,
+         u2_role.name AS last_update_user_role,
+         u2_person.lastname AS last_update_lastname,
+         SUBSTRING(u2_person.firstname, 1, 1) AS last_update_firstname_init,
          e.modified AS last_updated,
          e.comments,
          e.admin_comments,
@@ -74,6 +77,8 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          LEFT JOIN e.anonymousSubmitter anon_submitter
          JOIN e.createdBy user1
          LEFT JOIN e.modifiedBy user2
+         LEFT JOIN user2.role u2_role
+         LEFT JOIN user2.person u2_person
          LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
 
 DQL;
