@@ -52,7 +52,7 @@ class EventsControllerFactory implements FactoryInterface
                 $entity = $params['entity'];
                 $id = $entity->getId();
 
-                if (false) {
+                if (false) { // debugging/testing
                     $args = $params['args'];
                     $em = $args->getObjectManager();
                     $view_before = $em->getRepository(get_class($entity))->getView($entity->getId());
@@ -65,7 +65,7 @@ class EventsControllerFactory implements FactoryInterface
                         'end_time'=>$entity->getEndTime(),
                         'last_updated'=>$entity->getModified(),
                         // this is a little aggressive...
-                        'last_updated_by' => $entity->getModifiedBy()->getUserName(),
+                        'last_updated_by' => $entity->getModifiedBy()->getUserOrProperName(),
                         'judge' => $entity->getStringifiedJudgeOrWhatever(),
                         'type'  => (string)$entity->getEventType(),
                         'category' => (string)$entity->getEventType()->getCategory(),

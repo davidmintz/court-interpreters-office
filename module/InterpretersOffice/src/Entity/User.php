@@ -165,6 +165,22 @@ class User implements ResourceInterface, RoleInterface
     }
 
     /**
+     * gets the Person first initial and lastname if username == email
+     *
+     * @return string
+     */
+    public function getUserOrProperName()
+    {
+        $person = $this->getPerson();
+        if (strtolower($person->getEmail()) != strtolower($this->username)) {
+            return $this->username;
+        } else {
+            $init = substr($person->getFirstname(),0,1);
+            return "{$init}. {$person->getLastname()}";
+        }
+    }
+
+    /**
      * Set password.
      *
      * @param string $password
