@@ -55,9 +55,6 @@ class UpdateListener implements
      */
     protected $auth;
 
-
-
-
     /**
      * the entity on which we are operating
      *
