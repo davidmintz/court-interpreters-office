@@ -36,6 +36,7 @@ return [
         'contact' => [
             'organization_name' => 'US District Court, SDNY',
             'telephone' => '212 805-0084',
+            'organization_locality' => 'New York, NY',
             'email' => 'interpreters@nysd.uscourts.gov',
         ],
     ]
