@@ -1,43 +1,19 @@
--- MySQL dump 10.13  Distrib 5.7.26, for Linux (x86_64)
+-- MySQL dump 10.16  Distrib 10.1.38-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.26-0ubuntu0.18.04.1
+-- Server version	10.1.38-MariaDB-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `admin_users`
---
-
-DROP TABLE IF EXISTS `admin_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `admin_users` (
-  `id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `username` varchar(24) NOT NULL DEFAULT '',
-  `firstname` varchar(40) NOT NULL,
-  `lastname` varchar(40) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `phone` varchar(10) NOT NULL,
-  `password` varchar(16) NOT NULL,
-  `created` datetime NOT NULL,
-  `last_login` int(10) unsigned NOT NULL,
-  `active` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `map_to_userid` smallint(5) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUsername` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `anonymous_judges`
@@ -73,18 +49,6 @@ CREATE TABLE `app_event_log` (
   `priority_name` varchar(12) NOT NULL,
   `extra` varchar(1200) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `availability_invitees`
---
-
-DROP TABLE IF EXISTS `availability_invitees`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `availability_invitees` (
-  `interp_id` smallint(5) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -315,20 +279,6 @@ CREATE TABLE `events` (
   CONSTRAINT `FK_5387574AB7D66194` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`),
   CONSTRAINT `FK_5387574AFF915C63` FOREIGN KEY (`anonymous_judge_id`) REFERENCES `anonymous_judges` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `foo`
---
-
-DROP TABLE IF EXISTS `foo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `foo` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -682,21 +632,23 @@ DROP TABLE IF EXISTS `view_locations`;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE VIEW `view_locations` AS SELECT 
- 1 AS `id`,
- 1 AS `type_id`,
- 1 AS `parent_location_id`,
- 1 AS `name`,
- 1 AS `comments`,
- 1 AS `active`,
- 1 AS `parent`,
- 1 AS `category`*/;
+/*!50001 CREATE TABLE `view_locations` (
+  `id` tinyint NOT NULL,
+  `type_id` tinyint NOT NULL,
+  `parent_location_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `comments` tinyint NOT NULL,
+  `active` tinyint NOT NULL,
+  `parent` tinyint NOT NULL,
+  `category` tinyint NOT NULL
+) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
 --
 -- Final view structure for view `view_locations`
 --
 
+/*!50001 DROP TABLE IF EXISTS `view_locations`*/;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -719,4 +671,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-02 22:15:22
+-- Dump completed on 2019-05-06 21:10:38
