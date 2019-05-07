@@ -6,9 +6,9 @@
     <p>The court interpreter management system.</p>
     <?php if (! $this->identity()) : ?>
     <div class="mx-auto" style="max-width:500px">
-        <a id="login" href="/login"><button class="btn btn-primary btn-lg btn-block">log in</button></a>
+        <a id="login" href="<?php echo $this->basePath('login')?>"><button class="btn btn-primary btn-lg btn-block">log in</button></a>
         or
-        <a href="/user/register"><button class="btn btn-primary btn-lg border btn-block">create an account</button></a>
+        <a href="<?php echo $this->basePath('user/register')?>"><button class="btn btn-primary btn-lg border btn-block">create an account</button></a>
     </div>
     <?php endif; ?>
 </div>
