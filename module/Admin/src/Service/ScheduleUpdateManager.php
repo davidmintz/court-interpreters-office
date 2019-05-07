@@ -465,15 +465,14 @@ class ScheduleUpdateManager
 
             if ($was_the_same) {
                  $theirs = $request->getDefendants()->toArray();
-                 //$log->info("trying to update event defts");
                  $to_be_added = array_diff($theirs,$ours);
                  foreach ($to_be_added as $d) {
-                      $this->logger->info("need to add? ".$d->getSurnames());
+                      $this->logger->debug("need to add? ".$d->getSurnames());
                       $event->addDefendant($d);
                  }
                  $to_be_removed = array_diff($ours,$theirs);
                  foreach ($to_be_removed as $d) {
-                      $this->logger->info("need to remove? ".$d->getSurnames());
+                      $this->logger->debug("need to remove? ".$d->getSurnames());
                       $event->removeDefendant($d);
                  }
             }
@@ -540,11 +539,6 @@ class ScheduleUpdateManager
         $event = $request->getEvent();
         $interpreters = $this->interpreters ?: $request->getEvent()->getInterpreters();
         $count = count($interpreters);
-        $message = sprintf(
-            'ScheduleUpdateManager: notifying %d interpreters about user action %s with request id %s',
-            $count, $this->user_event, $request->getId()
-        );
-        $this->logger->info($message);
         if (! $count) {
             return $this;
         }
@@ -601,6 +595,12 @@ class ScheduleUpdateManager
             $this->logger->debug("we have created a ". get_class($message)
                 . " for {$i->getEmail()}");
         }
+        $message = sprintf(
+            'ScheduleUpdateManager automatically notified %d interpreters about user action %s with request id %s',
+            $count, $this->user_event, $request->getId()
+        );
+        $this->logger->info($message,
+            ['entity_class' => Request::class,'entity_id' => $request->getId()]);
 
         return $this;
     }
