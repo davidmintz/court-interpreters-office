@@ -89,8 +89,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             $this,
             [   'entity'=>$entity,
                 'args'=>$args,
-                //'defendants'=>$this->previous_defendants,
-                //'interpreters'=> $this->previous_interpreters,
             ]
         );
     }
@@ -207,8 +205,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             // for us
             $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user);
-            $this->logger->debug(__FUNCTION__
-            . " am I running or WHAT???");
         } else {
             // so we don't blow up in the test environment
             $user = $entity->getCreatedBy();
@@ -217,7 +213,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                 ->setModifiedBy($user)
                 ->setModified($this->now);
         $this->logger->debug(__FUNCTION__
-        . " in EventEntityListener really did shit");
+        . " in EventEntityListener set metadata");
         $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
