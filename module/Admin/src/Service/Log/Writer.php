@@ -11,7 +11,7 @@ use Zend\Log\Writer\AbstractWriter;
  * ```
  * $pdo  = new \PDO("mysql:dbname={$params['dbname']}",$params['user'],$params['password']);
  * $log = new Logger();
- * $log->addWriter(new Writer(['pdo'=>$pdo]));
+ * $log->addWriter(new Writer($pdo));
  * $log->info("say shit to my ass",['entity_class'=> "Foo"]);
  * ```
  */
@@ -41,10 +41,10 @@ class Writer extends AbstractWriter
      * @param  array|Traversable $options
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($options = null)
+    public function __construct(\PDO $pdo, $options = null)
     {
-        $this->pdo = $options['pdo'];
-        parent::__construct( $options);
+        $this->pdo = $pdo;
+        parent::__construct($options);
     }
 
     /**
