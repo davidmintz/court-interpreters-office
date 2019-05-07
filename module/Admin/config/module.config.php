@@ -9,6 +9,7 @@ namespace InterpretersOffice\Admin;
 use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Entity\Listener\InterpreterEventEntityListener;
 use InterpretersOffice\Entity\Listener\Factory\InterpreterEntityListenerFactory;
+use InterpretersOffice\Admin\Service\Factory\DbLogWriterFactory;
 
 return [
 
@@ -57,7 +58,7 @@ return [
                 Listener\Factory\InterpreterEventEntityListenerFactory::class,
             Service\ScheduleUpdateManager::class =>  Service\Factory\ScheduleUpdateManagerFactory::class,
             Service\EmailService::class =>  Service\Factory\EmailServiceFactory::class,
-
+            Service\Log\Writer::class =>  Service\Factory\DbLogWriterFactory::class,
 
         ],
         'aliases' => [
