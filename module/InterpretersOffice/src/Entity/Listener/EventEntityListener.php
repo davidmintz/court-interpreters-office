@@ -81,7 +81,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         LifecycleEventArgs $args
     ) {
         $log = $this->getLogger();
-        $log->debug("postLoad callback in Event entity listener; triggering postLoad");
+        $log->debug("postLoad callback in Event entity listener: triggering postLoad");
         $this->previous_defendants = $entity->getDefendants()->toArray();
         $this->previous_interpreters = $entity->getInterpreterEvents()->toArray();
         $this->getEventManager()->trigger(
@@ -120,11 +120,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $entity,
         LifecycleEventArgs $args
     ) {
-        $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            compact('args', 'entity')
-        );
+        //$this->logger->info();
     }
     /**
      * was data really updated?
@@ -214,10 +210,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                 ->setModified($this->now);
         $this->logger->debug(__FUNCTION__
         . " in EventEntityListener set metadata");
-        $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            compact('args', 'entity')
-        );
+        // $this->getEventManager()->trigger(
+        //     __FUNCTION__, $this,compact('args', 'entity')
+        // );
     }
 }

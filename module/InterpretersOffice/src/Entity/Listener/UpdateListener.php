@@ -11,6 +11,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\EventSubscriber;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
+use InterpretersOffice\Entity\InterpreterEvent;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
 //use InterpretersOffice\Module;
@@ -107,12 +108,39 @@ class UpdateListener implements
     */
     public function postPersist(LifecycleEventArgs $args)
     {
-        $user = $this->getAuthenticatedUser($args);
-        $this->logger->debug(
-            sprintf('user %s has inserted entity %s',
-                $user ? $user->getUsername() : 'nobody',
-                get_class($args->getObject())
-            )
+        $entity = $args->getObject();
+        $entity_class = get_class($entity);
+        if (method_exists($entity, 'getId')) {
+            $entity_id = $entity->getId();
+        } else {
+            $entity_id = null;
+        }
+        $auth_user = $this->getAuthenticatedUser($args);
+        $user = $auth_user ? $auth_user->getUsername() : '<nobody>';
+        switch ($entity_class) {
+            case Entity\Event::class:
+            $message = "user $user added a new event: ".$entity->describe();
+            break;
+            case Entity\InterpreterEvent::class:
+                $who = $entity->getInterpreter()->getFullName();
+                $what = $entity->getEvent()->describe();
+                $message = "user $user assigned $who to $what";
+                $entity_id = $entity->getEvent()->getId();
+                $entity_class =  Entity\Event::class;
+            break;
+            default:
+            $basename = substr($entity_class, strrpos($entity_class, '\\') + 1);
+                $message = sprintf('user %s added a new %s',
+                    $user,strtolower($basename));
+                if (method_exists($entity, '__toString')) {
+                    $message .= ": $entity";
+                } elseif (method_exists($entity, 'getFullName')) {
+                    $message .= ": {$entity->getFullName()}";
+                }
+            }
+
+        $this->logger->info(
+            $message,compact('entity_id','entity_class')
         );
         $this->clearCache($args);
     }
