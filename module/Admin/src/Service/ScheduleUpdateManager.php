@@ -243,7 +243,12 @@ class ScheduleUpdateManager
                 }
             } else {
                 // action is explicity disabled in configuration
-                $this->logger->debug("not running explicitly disabled action/method: $method()");
+                $this->logger->info("NOT doing disabled $action in response to user-event: $user_event",
+                    [
+                        'entity_class'=>Request::class,
+                        'entity_id' => $request->getId(),
+                    ]
+                );
                 if ('notify-assigned-interpreters' == $action) {
                     $event = $request->getEvent();
                     $interpreters = $this->interpreters ?: $event->getInterpreters();
@@ -329,9 +334,17 @@ class ScheduleUpdateManager
                 $updates[$field] = [$previous[$field],$after];
             }
         }
-        $this->logger->debug(
-            'what was modified: '.implode(', ',array_keys($updates))
+        $what = implode(', ',array_keys($updates));
+        $message = sprintf(
+            'user %s updated request #%d (%s)',
+            $this->auth->getIdentity()->username,
+            $request->getId(),
+            $what
         );
+        $this->logger->info($message,[
+            'entity_class'=>Request::class,
+            'entity_id' => $request->getId()
+        ]);
         if (! $event) {
             $this->logger->debug(
                 __FUNCTION__
@@ -346,7 +359,7 @@ class ScheduleUpdateManager
              $user_event, __LINE__)
          );
         if (! isset($this->config['event_listeners'][$user_event])) {
-            $this->logger->warn(__METHOD__.
+            $this->logger->debug(__METHOD__.
             ":\nno configuration found for user-event '$user_event'
                 TO DO: IMPLEMENT");
 
@@ -420,6 +433,15 @@ class ScheduleUpdateManager
         if ($event) {
             $this->executeActions($request, self::CANCEL,['cancelled'=>[0,1]]);
         }
+        $message = sprintf('user %s cancelled a request (id %d) for %s on %s',
+            $this->auth->getIdentity()->username,
+            $request->getId(),
+            $request->getLanguage(),
+            $request->getDate()->format('d-M-Y')
+        );
+        $this->logger->info($message,
+            ['entity_class' => Request::class,'entity_id' => $request->getId()]
+        );
     }
 
 
@@ -443,7 +465,7 @@ class ScheduleUpdateManager
         ];
         $updatable = array_intersect($props, array_keys($updates));
         $shit = print_r(array_keys($updates), true);
-        $this->logger->warn("what changed:\n$shit");
+        $this->logger->debug("what changed:\n$shit");
         if ($updatable) {
             foreach ($updatable as $prop) {
                 $this->logger->debug(__METHOD__.": setting $prop on event entity");
@@ -464,6 +486,7 @@ class ScheduleUpdateManager
             $this->logger->debug("were they the same before? ".($was_the_same?"YES":"NO"));
 
             if ($was_the_same) {
+                $updatable[] = 'defendants';
                  $theirs = $request->getDefendants()->toArray();
                  $to_be_added = array_diff($theirs,$ours);
                  foreach ($to_be_added as $d) {
@@ -475,9 +498,16 @@ class ScheduleUpdateManager
                       $this->logger->debug("need to remove? ".$d->getSurnames());
                       $event->removeDefendant($d);
                  }
-            }
+            } // else it's too complicated.
         }
-
+        if ($updatable) {
+            $this->logger->info(
+                sprintf(
+                    'event #%d was auto-updated to keep consistent with request #%s',
+                    $event->getId(), $request->getId()
+                ),['entity_class'=>Entity\Event::class,'entity_id'=>$event->getId()]
+            );
+        }
         return $this;
     }
 
@@ -493,8 +523,9 @@ class ScheduleUpdateManager
     {
         $event = $request->getEvent();
         $event->setDeleted(true);
-        //$this->objectManager->remove($event);
-        $this->logger->debug(__METHOD__.": we have soft-deleted scheduled event id ".$event->getId());
+        //$this->user_event
+        $this->logger->info(sprintf('event id %d has been automatically removed from the schedule',$event->getId()),
+            ['entity_class'=> get_class($event),'entity_id'=>$event->getId()]);
         return $this;
     }
 
@@ -513,10 +544,17 @@ class ScheduleUpdateManager
         $event = $request->getEvent();
 
         $interpreterEvents = $event->getInterpreterEvents();
-        if ($n = $interpreterEvents->count()) {
+        if ($interpreterEvents->count()) {
             $this->interpreters = $event->getInterpreters();
             $event->removeInterpreterEvents($interpreterEvents);
-            $this->logger->debug(__METHOD__.": we removed $n interpreters");
+            $message = sprintf("automatically removed interpreter(s) from event #%d: %s",
+                $event->getId(),
+                implode(", ",array_map(function($i){
+                    return $i->getFullname();
+                },$this->interpreters)));
+            $this->logger->info($message,
+                ['entity_class'=> get_class($event),'entity_id'=>$event->getId()]
+            );
         } else {
             $this->logger->debug(__METHOD__.": NO interpreters to remove ");
         }
@@ -571,10 +609,11 @@ class ScheduleUpdateManager
         $view = (new ViewModel())
             ->setTemplate($template)
             ->setVariables($view_variables);
-
+        $who = [];
         foreach ($interpreters as $i) {
             $view->interpreter = $i;
-            $this->logger->info("using $template to prepare email to: {$i->getEmail()}");
+            $who[] = $i->getFullName();
+            $this->logger->debug("using $template to prepare email to: {$i->getEmail()}");
             $layout = new ViewModel();
             $layout->setTemplate('interpreters-office/email/layout')
                 ->setVariable('content', $this->viewRenderer->render($view));
@@ -592,12 +631,10 @@ class ScheduleUpdateManager
                 //->addHeaderLine('X-Autogenerated-By','InterpretersOffice')
                 ->setSubject($subject);
             $this->email_messages[] = $message;
-            $this->logger->debug("we have created a ". get_class($message)
-                . " for {$i->getEmail()}");
         }
         $message = sprintf(
-            'ScheduleUpdateManager automatically notified %d interpreters about user action %s with request id %s',
-            $count, $this->user_event, $request->getId()
+            'automatically notifying interpreter(s) following user-action %s with request id %s: %s',
+            $this->user_event, $request->getId(), implode(', ',$who)
         );
         $this->logger->info($message,
             ['entity_class' => Request::class,'entity_id' => $request->getId()]);

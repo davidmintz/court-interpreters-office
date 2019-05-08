@@ -15,6 +15,7 @@ use InterpretersOffice\Service\SqlLogger;
 use InterpretersOffice\Requests\Controller\Admin\IndexController as AdminController;
 
 use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
+use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 
 /**
  * Factory class for instantiating Requests\IndexController.
@@ -40,7 +41,12 @@ class RequestsControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** */
+        /** @var \Zend\Log\Logger $log */
+        $log = $container->get('log');
+        if ($requestedName != Controller\IndexController::class and !$log->getWriterPluginManager()->has(DbWriter::class)) {
+            $log->addWriter($container->get(DbWriter::class),100);// [, $priority, $options])
+            $log->debug("added DbWriter to log instance in RequestsControllerFactory");
+        }
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
         $resolver = $entityManager->getConfiguration()

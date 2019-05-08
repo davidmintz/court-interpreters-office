@@ -72,7 +72,7 @@ $this->entity = [
     'defendants' => $this->request->getDefendants()->toArray(),
 ];
 if ($this->user_event == 'cancel') :
-    $verb = '<strong>deleted</strong>';
+    $verb = '<strong>cancelled</strong>';
     $template = 'event-details';
 else:
     $verb = 'updated';
@@ -82,7 +82,7 @@ endif;
 <p>
 This automated message is to inform you that user <?php echo "{$this->user->firstname} {$this->user->lastname}"?>
 has just <?php echo $verb ?> the following request for interpreting services. As a result, the corresponding
-event on the schedule was automatically <?php echo $this->user_event == 'cancel' ? "deleted" : "updated" ?>.
+event on the schedule was automatically <?php echo $this->user_event == 'cancel' ? "removed" : "updated" ?>.
 </p>
 <?php if ($this->interpreters):?>
 <p>

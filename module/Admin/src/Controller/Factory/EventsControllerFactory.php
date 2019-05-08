@@ -9,7 +9,7 @@ use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller\EventsController;
 
 use InterpretersOffice\Entity\Listener;
-
+use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 /**
  * Factory for instantiating EventController
  */
@@ -39,7 +39,12 @@ class EventsControllerFactory implements FactoryInterface
         $resolver->register($container->get(Listener\UpdateListener::class)->setAuth($auth));
         // experimental
         $sharedEvents = $container->get('SharedEventManager');
+        /** @var \Zend\Log\Logger $log */
         $log = $container->get('log');
+        if (!$log->getWriterPluginManager()->has(DbWriter::class)) {
+            $log->debug("adding DbWriter to log instance in EventsControllerFactory");
+            $log->addWriter($container->get(DbWriter::class),100);// [, $priority, $options])
+        }
         /**
          * this next bit is a shit-show but never fear, we  will clean it up
          */

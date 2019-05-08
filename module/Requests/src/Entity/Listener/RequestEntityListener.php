@@ -88,7 +88,8 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         if (! $request->getSubmitter()) {
             $request->setSubmitter($this->getCurrentUserPerson($args));
         }
-        $this->getLogger()->debug("YES, set Request metadata in prePersist listener");
+        //$this->getLogger()->debug("YES, set Request metadata in prePersist listener");
+
     }
 
     /**
@@ -118,16 +119,12 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
      */
     public function preUpdate(Entity\Request $request, PreUpdateEventArgs $args)
     {
-        $really_modified = false;
         $fields_updated = array_keys($args->getEntityChangeSet());
-
         if (count($fields_updated) or $this->defendantsWereModified($request)) {
             $shit = print_r($fields_updated,true);
-            $this->getLogger()->info(__METHOD__." is updating: $shit, setting metadata") ;
+            $this->getLogger()->debug(__METHOD__." is updating: $shit, setting metadata") ;
              $request->setModified(new \DateTime())
                  ->setModifiedBy($this->getAuthenticatedUser($args));
-             $user = $this->getAuthenticatedUser($args)->getUsername();
-
         }
 
         // Request cancellation. Cancellation is in fact an update: the entity's

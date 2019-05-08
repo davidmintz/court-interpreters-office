@@ -6,6 +6,8 @@ namespace InterpretersOffice\Admin\Service\Factory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
+use Zend\Log\Filter\Priority;
+use Zend\Log\Logger;
 
 /**
  * db log-writer factory
@@ -24,7 +26,9 @@ class DbLogWriterFactory implements FactoryInterface
     {
         $pdo = $container->get('entity-manager')
             ->getConnection()->getWrappedConnection();
-        return new DbWriter($pdo);
+        $writer = new DbWriter($pdo);
+        $writer->addFilter(new Priority(Logger::INFO));
+        return $writer;
         // $object = new DbWriter(
         //     $container->get('auth'),
         // );

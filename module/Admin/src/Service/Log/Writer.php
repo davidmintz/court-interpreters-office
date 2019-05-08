@@ -1,4 +1,4 @@
-<?php /**   */
+<?php /**  module/Admin/src/Service/Log/Writer.php */
 
 namespace InterpretersOffice\Admin\Service\Log;
 

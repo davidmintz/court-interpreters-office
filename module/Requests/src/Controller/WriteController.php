@@ -292,8 +292,6 @@ class WriteController extends AbstractActionController implements ResourceInterf
         try {
             $form->postValidate();
             $event = $entity->getEvent();
-            $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
-            $log->info("controller NOW TRIGGERING updateRequest");
             $this->getEventManager()->trigger('updateRequest',$this,
                 ['request'=>$entity,'entity_manager'=>$this->objectManager]);
             $this->objectManager->flush();
