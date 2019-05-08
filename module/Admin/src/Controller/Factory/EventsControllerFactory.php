@@ -42,7 +42,6 @@ class EventsControllerFactory implements FactoryInterface
         /** @var \Zend\Log\Logger $log */
         $log = $container->get('log');
         if (!$log->getWriterPluginManager()->has(DbWriter::class)) {
-            $log->debug("adding DbWriter to log instance in EventsControllerFactory");
             $log->addWriter($container->get(DbWriter::class),100);// [, $priority, $options])
         }
         /**
