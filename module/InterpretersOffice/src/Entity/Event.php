@@ -291,9 +291,8 @@ class Event
         $type = (string)$this->getEventType();
         $datetime = $this->getDate()->format('d-M-Y');
         if ($this->getTime()) {
-            $datetime .= ' at '.$this->getTime()->format('H:i a');
+            $datetime .= ' at '.$this->getTime()->format('g:i a');
         }
-        $language = (string)$this->getLanguage();
         $return = sprintf('%s %s, %s', $language, $type, $datetime);
         $more = [];
         if ($this->getJudge()) {
