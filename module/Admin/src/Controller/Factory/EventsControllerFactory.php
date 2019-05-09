@@ -10,6 +10,7 @@ use InterpretersOffice\Admin\Controller\EventsController;
 
 use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
+
 /**
  * Factory for instantiating EventController
  */
@@ -31,7 +32,7 @@ class EventsControllerFactory implements FactoryInterface
         $em = $container->get('entity-manager');
         $controller = new EventsController(
             $em,
-            $auth // maybe we won't need this
+            $auth
         );
         //attach the entity listeners
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
@@ -48,7 +49,7 @@ class EventsControllerFactory implements FactoryInterface
          * this next bit is a shit-show but never fear, we  will clean it up
          */
         $sharedEvents->attach(
-            'InterpretersOffice\Entity\Listener\EventEntityListener',
+            Listener\EventEntityListener::class,
             'postLoad',
             function($e) use ($log) {
                 //return;
@@ -155,7 +156,6 @@ class EventsControllerFactory implements FactoryInterface
                 $session->$id = $view_before;
                 $log->debug("stored entity state in session {$session->getName()}"
                      ." (id $id) for later reference");
-                // */
                 /* fields we need...
                  Array
                     (
