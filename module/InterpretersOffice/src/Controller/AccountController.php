@@ -82,13 +82,15 @@ class AccountController extends AbstractActionController
      */
     public function indexAction()
     {
+        /*
         $thing = $this->layout();
         echo "INTERESTING FACTS:<br>";
         echo get_class($thing) . " is the class of \$this->layout() in our controller<br>";
         $plugins = $this->getEvent()->getApplication()->getServiceManager()->get('ControllerPluginManager');
         $thing2 = $plugins->get('layout');
         echo get_class($thing2) . " is the class of \$plugins->get('layout') in our controller<br>";
-        return false;
+        */
+        //return false;
         return new ViewModel();
     }
     /**
