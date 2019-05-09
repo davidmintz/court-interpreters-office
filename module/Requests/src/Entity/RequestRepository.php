@@ -39,21 +39,25 @@ class RequestRepository extends EntityRepository
     /**
      * gets Request entity with associated Event entity, not proxy
      *
+     * ugly, but it cuts the number of select queries down to 1
+     *
      * @param int $id
      * @return Request
      */
     public function getRequestWithEvent($id)
     {
-        $dql = 'SELECT r, e, s, h, ie, de, dr, i
+        $dql = 'SELECT r, e, s, h, ih, ie, de, dr,i, t, tc
             FROM InterpretersOffice\Requests\Entity\Request r
             JOIN r.submitter s
             JOIN s.hat h
-
+            JOIN r.eventType t
+            JOIN t.category tc
             LEFT JOIN r.defendants dr
             LEFT JOIN r.event e
             LEFT JOIN e.interpreterEvents ie
             LEFT JOIN e.defendants de
             LEFT JOIN ie.interpreter i
+            LEFT JOIN i.hat ih
             WHERE r.id = :id';
         return $this->getEntityManager()->createQuery($dql)
             ->setParameters([':id'=>$id])
@@ -176,7 +180,11 @@ class RequestRepository extends EntityRepository
         return $qb;
     }
 
-
+    public function list_v2()
+    {
+        //$dql = ''
+        return [];
+    }
 
     /**
      * returns paginated Requests data for current user

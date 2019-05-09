@@ -65,8 +65,8 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     public function postLoad(Entity\Request $request, LifecycleEventArgs $args)
     {
 
-        $log = $this->getLogger();
-        $log->debug("postload in RequestEntityListener: saving deft state");
+        //$log = $this->getLogger();
+        //$log->debug("postload in RequestEntityListener: saving deft state");
         $this->previous_defendants = $request->getDefendants()->toArray();
 
     }
