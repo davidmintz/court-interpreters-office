@@ -94,23 +94,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     }
 
     /**
-     * preRemove callback
-     *
-     * @param Entity\Event $entity
-     * @param LifecycleEventArgs $args
-     */
-    public function preRemove(
-        Entity\Event $entity,
-        LifecycleEventArgs $args
-    ) {
-        $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            compact('args', 'entity')
-        );
-    }
-
-    /**
      * postRemove callback
      *
      * @param Entity\Event $entity
@@ -120,8 +103,16 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         Entity\Event $entity,
         LifecycleEventArgs $args
     ) {
-        //$this->logger->info();
+        $auth_user = $this->getAuthenticatedUser($args);
+        $user = $auth_user ? $auth_user->getUsername() : '<nobody>';
+        $message = "user $user deleted (purged) event id {$event->getId()}";
+        $this->logger->info($message,[
+            'entity_class'=> Entity\Event::class,
+            'entity_id' => $entity->getId(),
+            'description' => $entity->describe(),
+        ]);
     }
+
     /**
      * was data really updated?
      *
@@ -135,24 +126,16 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @return array
      */
     private function reallyModified(
-        Entity\Event $entity,
-        PreUpdateEventArgs $args
-    ) {
+        Entity\Event $entity, PreUpdateEventArgs $args)
+    {
 
         $fields_updated = array_keys($args->getEntityChangeSet());
         $this->logger->debug(__METHOD__.": looks like updates to:\n"
             . implode('; ', $fields_updated));
-        //$changeset = $args->getEntityChangeSet();
-        //$this->logger->debug(gettype($changeset['judge'][0]));
-        // if ($fields_updated) {
-        //     return true;
-        // }
+
         $interpreterEvents = $entity->getInterpreterEvents()->toArray();
         if ($interpreterEvents != $this->previous_interpreters) {
-            $this->logger->debug(__METHOD__.":  interpreters were updated "
-            . "; there are now ".count($interpreterEvents));
             $fields_updated[] = 'interpreters';
-            //return true;
         }
 
         $defendants = $entity->getDefendants()->toArray();
@@ -162,9 +145,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             $fields_updated[] = 'defendants';
             return true;
         }
-        //$this->logger->debug("NOTHING really modified in Event entity?");
 
-        // return false;
         return $fields_updated;
     }
 
@@ -208,10 +189,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $entity->setCreated($this->now)
                 ->setModifiedBy($user)
                 ->setModified($this->now);
-        $this->logger->debug(__FUNCTION__
-        . " in EventEntityListener set metadata");
-        // $this->getEventManager()->trigger(
-        //     __FUNCTION__, $this,compact('args', 'entity')
-        // );
+        $this->logger->debug(__METHOD__. ": set metadata");
     }
 }
