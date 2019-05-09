@@ -105,7 +105,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     ) {
         $auth_user = $this->getAuthenticatedUser($args);
         $user = $auth_user ? $auth_user->getUsername() : '<nobody>';
-        $message = "user $user deleted (purged) event id {$event->getId()}";
+        $message = "user $user deleted (purged) event id {$entity->getId()}";
         $this->logger->info($message,[
             'entity_class'=> Entity\Event::class,
             'entity_id' => $entity->getId(),

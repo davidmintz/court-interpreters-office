@@ -154,11 +154,19 @@ class UpdateListener implements
     */
     public function postRemove(LifecycleEventArgs $args)
     {
-        $this->logger->debug(
+        $entity = $args->getObject();
+        $entity_class = get_class($entity);
+        if ($entity_class == Entity\Event::class) {
+            return;
+        }
+        if ($entity_class == Entity\InterpretersEvent::class) {
+            // to be continued
+        }
+        $this->logger->info(
             sprintf(
-                'user %s appears to be deleting entity %s',
+                'user %s deleted entity %s',
                 $this->getAuthenticatedUser($args)->getUsername(),
-                get_class($args->getObject())
+                $entity_class
             )
         );
         $this->clearCache($args);
