@@ -293,7 +293,7 @@ class Event
         if ($this->getTime()) {
             $datetime .= ' at '.$this->getTime()->format('g:i a');
         }
-        $return = sprintf('%s %s, %s', $language, $type, $datetime);
+        $return = sprintf('%s %s, %s', $this->getLanguage(), $type, $datetime);
         $more = [];
         if ($this->getJudge()) {
             $more[] = $this->getJudge()->getLastName();
