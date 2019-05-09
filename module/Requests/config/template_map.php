@@ -2,12 +2,11 @@
 return [
     'interpreters-office/requests/index/index' => __DIR__ . '/../view/index/index.phtml',
     'interpreters-office/requests/index/list' => __DIR__ . '/../view/index/list.phtml',
-    //'interpreters-office/requests/index/create' => __DIR__ . '/../view/index/form.phtml',
-    // 'interpreters-office/requests/index/update' => __DIR__ . '/../view/index/form.phtml',
     'interpreters-office/requests/write/create' => __DIR__ . '/../view/index/form.phtml',
     'interpreters-office/requests/write/update' => __DIR__ . '/../view/index/form.phtml',
     'interpreters-office/requests/index/search' => __DIR__ . '/../view/index/search.phtml',
     'interpreters-office/requests/index/view' => __DIR__ . '/../view/index/view.phtml',
+    'interpreters-office/requests/index/help' => __DIR__ . '/../view/index/help.phtml',
     'denied' =>  __DIR__ . '/../view/index/denied.phtml',
     'confirm-cancel' =>  __DIR__ . '/../view/index/confirm-cancel.phtml',
 

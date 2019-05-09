@@ -98,16 +98,6 @@ return [
                 'hydration_cache' => $doctrine_cache,
              ],
         ],
-        /**  WTF? comment this out and it still works fine? */
-         // 'authentication' => [
-         //    'orm_default' => [
-         //        'object_manager' => 'Doctrine\ORM\EntityManager',
-         //        'identity_class' => 'InterpretersOffice\Entity\User',
-         //        //'identity_property' => 'email',
-         //        'credential_property' => 'password',
-         //        'credential_callable' => 'InterpretersOffice\Entity\User::verifyPassword'//[ new Entity\User, 'passwordCallback'],
-         //    ],
-         // ],
     ],
 
     'service_manager' => [
@@ -118,7 +108,6 @@ return [
         ],
         'factories' => [
             'Zend\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',
-
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
             \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,

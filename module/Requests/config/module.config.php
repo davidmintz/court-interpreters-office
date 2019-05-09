@@ -107,6 +107,10 @@ return [
                     [
                         'route' => 'requests/view',
                         'label' => 'view details',
+                    ],
+                    [
+                        'route' => 'requests/help',
+                        'label' => 'help',
                     ]
                 ],
             ],
@@ -132,6 +136,11 @@ return [
                 'route' => 'requests/search',
                 'label' => 'search',
                 'title' => 'search for past interpreter requests'
+            ],
+            [
+                'route' => 'requests/help',
+                'label' => 'help',
+                'title' => 'get help with this application'
             ],
 
             //*
@@ -269,6 +278,16 @@ return [
                             ],
                         ],
                     ],
+                    'help' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/help',
+                            'defaults' => [
+                                'controller' => Controller\IndexController::class,
+                                'action' => 'help',
+                            ],
+                        ],
+                    ],
                     'cancel' => [
                         'type' => Segment::class,
                         'options' => [
@@ -317,6 +336,7 @@ return [
             'configCheckbox' => 'InterpretersOffice\Requests\View\Helper\ConfigCheckbox',
         ],
     ],
+    // for configuring the behavior of ScheduleUpdateManager
     'event_listeners' => json_decode(file_get_contents($event_configuration_file),true),
 
 

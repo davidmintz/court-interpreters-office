@@ -142,6 +142,16 @@ class IndexController extends AbstractActionController //implements ResourceInte
     }
 
     /**
+     * help.
+     *
+     * @return ViewModel
+     */
+    public function helpAction()
+    {
+        return new ViewModel();
+    }
+
+    /**
      * displays the user's requests
      *
      * @return ViewModel
