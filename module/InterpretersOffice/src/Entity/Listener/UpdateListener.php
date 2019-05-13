@@ -209,7 +209,7 @@ class UpdateListener implements
         $this->logger->debug(
             sprintf(
                 'updated entity %s, current user is %s ',
-                get_class($args->getObject()).
+                get_class($args->getObject()),
                 $user ? $user->getUsername() : 'nobody'
             )
         );
