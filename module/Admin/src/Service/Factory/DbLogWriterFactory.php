@@ -28,9 +28,8 @@ class DbLogWriterFactory implements FactoryInterface
             ->getConnection()->getWrappedConnection();
         $writer = new DbWriter($pdo);
         $writer->addFilter(new Priority(Logger::INFO));
+
         return $writer;
-        // $object = new DbWriter(
-        //     $container->get('auth'),
-        // );
+
     }
 }

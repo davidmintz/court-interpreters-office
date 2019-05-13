@@ -162,7 +162,7 @@ class UpdateListener implements
         if ($entity_class == Entity\InterpretersEvent::class) {
             // to be continued
         }
-        $this->logger->info(
+        $this->logger->debug(
             sprintf(
                 'user %s deleted entity %s',
                 $this->getAuthenticatedUser($args)->getUsername(),
@@ -205,13 +205,12 @@ class UpdateListener implements
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
-
         $user = $this->getAuthenticatedUser($args);
         $this->logger->debug(
             sprintf(
-                'user %s updated entity %s',
-                $user ? $user->getUsername() : 'nobody',
-                get_class($args->getObject())
+                'updated entity %s, current user is %s ',
+                get_class($args->getObject()).
+                $user ? $user->getUsername() : 'nobody'
             )
         );
         $this->clearCache($args);
