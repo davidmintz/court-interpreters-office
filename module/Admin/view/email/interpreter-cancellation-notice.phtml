@@ -6,8 +6,14 @@
  * idea:  a button in the message linked to a script at sdnyinterpreters.org,
  * with a token in the url that triggers an email on their behalf and says thanks
  */
+$address = $this->to;
+if (!empty($address['name'])):
+    $salutation = "Dear {$address['name']}:";
+else:
+    $salutation = 'Hello,';
+endif;
 ?>
-<p>Dear <?=$this->interpreter->getFullname()?>:</p>
+<p><?php echo $salutation ?></p>
 
 <p>This is to advise you that the following event to which you were assigned
 <strong>has been cancelled</strong>.</p>
