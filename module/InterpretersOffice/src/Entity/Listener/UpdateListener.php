@@ -160,14 +160,29 @@ class UpdateListener implements
             return;
         }
         if ($entity_class == Entity\InterpretersEvent::class) {
-            // to be continued
+            $user = $this->getAuthenticatedUser($args);
+            $interpreter_name = $entity->getInterpreter()->getFullName();
+            $event_id =  $entity->getEvent()->getId();
+            if ($user) {
+                if ((string)$user->getRole() == 'submitter') {
+                    $message = "interpreter $interpreter_name was automatically removed from event id $event_id";
+                } else {
+                    $message =  "interpreter $interpreter_name was removed from event id $event_id (user: {$user->getUsername()})";
+                }
+                $this->logger->info(
+                    $message,['entity_class'=>$entity_class,'entity_id'=>$event_id]
+                );
+            }
+            return;
         }
-        $this->logger->debug(
+        $this->logger->info(
             sprintf(
                 'user %s deleted entity %s',
                 $this->getAuthenticatedUser($args)->getUsername(),
                 $entity_class
-            )
+            ),['entity_class'=>$entity_class, 'entity_id' =>
+                method_exists($entity,'getId') ? $entity->getId() : null
+            ]
         );
         $this->clearCache($args);
     }
