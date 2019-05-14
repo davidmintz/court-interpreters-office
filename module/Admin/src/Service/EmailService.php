@@ -221,7 +221,8 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             $validation_errors['to'][] = 'at least one "To" address is required';
         } else {
             $validator = new EmailAddress();
-            $alpha = new \Zend\I18n\Filter\Alpha(true);
+            // this removes hyphens, so we can't use
+            //$alpha = new \Zend\I18n\Filter\Alpha(true);
             $whitespace = new \Zend\Filter\PregReplace(
                 ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
             foreach ($data['to'] as $i => $address) {
@@ -231,16 +232,16 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                     $validation_errors['to'][] = 'invalid email address: '.$address['email'];
                 }
                 if (!empty($address['name'])) {
-                    $filtered = $whitespace->filter($alpha->filter($address['name']));
+                    $filtered = $whitespace->filter($address['name']);
                     $data['to'][$i]['name'] = $filtered;
                 }
             }
         }
-        if (!$alpha) {
-            $alpha = new \Zend\I18n\Filter\Alpha(true);
-            $whitespace = new \Zend\Filter\PregReplace(
-                ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
-        }
+        // if (!$alpha) {
+        //     $alpha = new \Zend\I18n\Filter\Alpha(true);
+        //     $whitespace = new \Zend\Filter\PregReplace(
+        //         ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
+        // }
         if (isset($data['cc'])) {
             if (! is_array($data['cc'])) {
                 $validation_errors['cc'][] = 'invalid parameter in "Cc" field';
@@ -252,7 +253,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                         $validation_errors['cc'][] = 'invalid email address: '.$address['email'];
                     }
                     if (!empty($address['name'])) {
-                        $filtered = $whitespace->filter($alpha->filter($address['name']));
+                        $filtered = $whitespace->filter($address['name']);
                         $data['cc'][$i]['name'] = $filtered;
                     }
                 }
