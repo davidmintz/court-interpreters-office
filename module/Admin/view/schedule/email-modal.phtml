@@ -88,12 +88,12 @@
                                             <a href="#">assignment confirmation</a>
                                         </div>
                                     <?php endif; ?>
-                                    <?php if ('n/a' != $event['reason_for_cancellation']) : $items++ ?>
-                                        <?php if ($items):?><div class="dropdown-divider"></div><?php endif;?>
+                                    <?php $items++ ?>
+                                        <div class="dropdown-divider"></div>
                                         <div data-template_hint="assignment cancellation" data-toggle="tooltip" data-placement="left" title="notification that the assignment has been cancelled" data-subject="cancellation" class="dropdown-item">
                                             <a href="#">assignment cancellation</a>
                                         </div>
-                                    <?php endif; ?>
+                                    <?php // endif; ?>
                                     </div>
                                </div>
                             </div>
