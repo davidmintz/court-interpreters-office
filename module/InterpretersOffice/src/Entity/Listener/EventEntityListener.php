@@ -126,7 +126,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @return array
      */
     private function reallyModified(
-        Entity\Event $entity, PreUpdateEventArgs $args)
+        Entity\Event $entity, PreUpdateEventArgs $args) : Array
     {
 
         $fields_updated = array_keys($args->getEntityChangeSet());
@@ -143,7 +143,6 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         if ($defendants != $this->previous_defendants) {
             $this->logger->debug("defendants were modified");
             $fields_updated[] = 'defendants';
-            return true;
         }
 
         return $fields_updated;
@@ -162,6 +161,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
 
         $fields_updated = $this->reallyModified($entity, $args);
         $user = $this->getAuthenticatedUser($args);
+        //$shit = array_keys($args->getEntityChangeSet());
         if (in_array('deleted',$fields_updated) && $entity->getDeleted()) {
             $id = $entity->getId();
             $message = sprintf('user %s deleted event #%d from the schedule',
