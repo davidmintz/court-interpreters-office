@@ -11,14 +11,14 @@ $(function(){
             return;
         }
         console.log("deleting shit...");
-        var url = '/admin/schedule/delete/'+event_id;
-        var redirect_url = '/admin/schedule';
+        var url = `/admin/schedule/delete/${event_id}`;
+        var redirect_url = `${window.basePath}/admin/schedule/view/${event_id}`;
         $.post(url,{csrf:csrf_token},"json")
             .success(function(response){
                 if (response.status === "success" ) {
                     document.location = redirect_url;
                 } else {
-                    // deal with it
+                    /** @todo deal with it */
                 }
             }).fail(fail);
     });
