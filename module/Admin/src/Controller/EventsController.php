@@ -283,14 +283,11 @@ class EventsController extends AbstractActionController
             $entity->setDeleted(true);
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage(
-                sprintf(
-                    'this event &mdash; %s &mdash; has been deleted from the schedule',
-                    $entity->describe()
-                )
+                    'this event has been deleted from the schedule'
             );
             return new JsonModel(['deleted' => true,'status' => 'success',
                 'message' => "this event has been deleted"]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->getEventManager()->trigger('error',$this,
                 ['details'=>"attempting soft-deletion of event id $id",'exception' => $e]);
             return new JsonModel(['deleted' => false,'status' => 'error',
