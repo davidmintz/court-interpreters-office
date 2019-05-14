@@ -633,7 +633,7 @@ class ScheduleUpdateManager
             $this->email_messages[] = $message;
         }
         $message = sprintf(
-            'automatically notifying interpreter(s) following user-action %s with request id %s: %s',
+            'automatically notifying interpreter(s) following user-action %s with request #%s: %s',
             $this->user_event, $request->getId(), implode(', ',$who)
         );
         $this->logger->info($message,
