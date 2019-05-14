@@ -161,9 +161,19 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
     ) {
 
         $fields_updated = $this->reallyModified($entity, $args);
+        $user = $this->getAuthenticatedUser($args);
+        if (in_array('deleted',$fields_updated) && $entity->getDeleted()) {
+            $id = $entity->getId();
+            $message = sprintf('user %s deleted event #%d from the schedule',
+                $user->getUsername(), $id
+            );
+            $this->logger->info($message,
+                ['entity_class'=> Entity\Event::class,'entity_id'=>$id ]
+            );
+        }
         if ($fields_updated) {
             $entity->setModified($this->now);
-            $entity->setModifiedBy($this->getAuthenticatedUser($args));
+            $entity->setModifiedBy($user);
         }
     }
 
