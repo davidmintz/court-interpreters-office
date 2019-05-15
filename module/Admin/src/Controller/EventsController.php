@@ -282,9 +282,9 @@ class EventsController extends AbstractActionController
         try {
             $entity->setDeleted(true);
             $this->entityManager->flush();
-            $this->flashMessenger()->addSuccessMessage(
-                    'this event has been deleted from the schedule'
-            );
+            // $this->flashMessenger()->addSuccessMessage(
+            //         'this event has been deleted from the schedule'
+            // );
             return new JsonModel(['deleted' => true,'status' => 'success',
                 'message' => "this event has been deleted"]);
         } catch (\Throwable $e) {

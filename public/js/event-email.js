@@ -116,21 +116,28 @@ defendants 	Snyertzski, Boris
  */
 /**
  * decides whether to suggest sending email notification about
- * newly updated event
+ * newly updated (or deleted) event
  * @return {boolean}
  */
 const should_suggest_email = function()
 {
-    if ( ! $('span.interpreter').length || ! $("ins, del").length ) {
+    if ( ! $('span.interpreter').length ) { //|| ! $("ins, del, .alert.event-deleted").length  ) {
+        console.debug("no interpreters? returning false");
+        return false;
+    }
+    if ( ! $("ins, del, .alert.event-deleted").length) {
+        console.debug("no ins or del or .alert.event-deleted? returning false");
         return false;
     }
     var date_str = $(".event-details").data().event_datetime;
     var event_datetime =  moment(date_str,"YYYY-MM-DD HH:mm");
     var minutes_from_now = moment().add(10,'minutes');
     if (event_datetime.isBefore(minutes_from_now)) {
+        console.debug("event is not current, returning false");
         return false;
     }
-    if ($(".alert-warning.event-deleted").length) {
+    if ($(".alert.event-deleted").length) {
+        console.debug("looks like deletion, returning true");
         return true;
     }
     var email_flag = false;
@@ -174,7 +181,7 @@ const display_email_suggestion = function() {
     //$("#message-subject").val("assignment update: "+get_event_description());
     // }
 
-    $("#link-email-suggest").on("click",function(event){
+    $(".container").on("click", "#link-email-suggest", function(event){
         event.preventDefault();
         $("#btn-email").trigger("click",{interpreter_update_notice});
     });
@@ -286,7 +293,7 @@ $(function(){
     // rig it
     // console.warn("faking time-update for test purposes...");
     // $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
-    console.log(`email flag? ${should_suggest_email()}`);
+    //console.log(`email flag? ${should_suggest_email()}`);
     if (should_suggest_email()) {
         display_email_suggestion();
     }

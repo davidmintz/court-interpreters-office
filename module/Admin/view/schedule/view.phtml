@@ -1,13 +1,10 @@
 <?php /** module/Admin/view/interpreters-office/admin/schedule/view.phtml  */
 $this->headScript()
-->appendFile($this->basePath('js/event-delete.js'))
 ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
 ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-->appendFile($this->basePath('js/event-email.js'));
-$this->headLink()
-        ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
-//->appendFile($this->basePath('js/lib/sweetalert2.min.js'))
-//$this->headLink()->appendStylesheet($this->basePath('css/sweetalert2.css'));
+->appendFile($this->basePath('js/event-email.js'))
+->appendFile($this->basePath('js/event-delete.js'));
+$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headStyle()->captureStart();?>
 .ui-autocomplete {
   z-index: 99999 !important;
@@ -26,8 +23,12 @@ if ('submitter' ==  $event['last_update_user_role']) :
     //echo " ... {$event['last_updated_by']}? ...";
 endif;
 $this->entity = $event; // hint the Diff helper
-if (! $event) :  ?>
-    <p class="alert alert-warning">event not found!</p>
+if (! $event or $event['deleted']) :
+    $this->headTitle('event not found');
+     ?>
+    <div class="alert alert-warning mx-auto mt-3 border shadow-sm" style="max-width:600px">
+        <h3>event not found</h3>
+        Event id #<?= $this->id ?>  was not found in the database. You may have a wrong id in your URL parameter, or the event may have been deleted.</div>
     <?php
     return;
 endif;
@@ -48,6 +49,9 @@ if ($messenger->hasErrorMessages()) :
 else: ?>
 <div class="alert alert-warning mx-auto pt-3 pb-0" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
 <?php endif;
+if ($event['deleted']):
+ echo "say shit";
+endif;
 /*
 <!-- experimental debug zone -->
 <pre><?php ?></pre>
