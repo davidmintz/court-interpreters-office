@@ -130,6 +130,9 @@ const should_suggest_email = function()
     if (event_datetime.isBefore(minutes_from_now)) {
         return false;
     }
+    if ($(".alert-warning.event-deleted").length) {
+        return true;
+    }
     var email_flag = false;
     var noteworthy = ["date","time","event_type","interpreters","location","cancellation"];
     var n = noteworthy.length;
@@ -159,7 +162,7 @@ const display_email_suggestion = function() {
     div.prepend(`<button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>`);
     div.insertBefore($(".event-details"));
     /** @todo consider this? */
-    var interpreter_update_notice = true;
+    var interpreter_update_notice = $(".alert.event-deleted").length ? "cancellation" : "update";
     // var interp_modifications =  $("div.interpreters span").children("ins, del").length;
     // if (interp_modifications &&
     //     interp_modifications ===  $("ins, del").length - $("div.last-modified").children("ins, del").length
@@ -203,6 +206,7 @@ const send_email = function(event){
         } else {
             message.cc.push(recipient);
         }
+        console.log(message);
     });
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
@@ -365,9 +369,10 @@ $(function(){
                     recipient_autocomplete.attr({placeholder : default_autocomplete_placeholder});
                 }
             });
+            var what = params.interpreter_update_notice;
             /** @todo decide whether and how to be clever about setting defaults... */
-            $("#message-subject").val("assignment update: "+get_event_description());
-            boilerplate.val("update");
+            $("#message-subject").val(`assignment ${what}: ${get_event_description()}`);
+            boilerplate.val(what);
         }
         if ($("input[name='to[]']").length && $("#btn-send").hasClass("disabled")) {
             $("#btn-send").removeClass("disabled").removeAttr("disabled");
