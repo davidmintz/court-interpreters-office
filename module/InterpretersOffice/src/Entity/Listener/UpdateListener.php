@@ -159,21 +159,22 @@ class UpdateListener implements
         if ($entity_class == Entity\Event::class) {
             return;
         }
-        if ($entity_class == Entity\InterpretersEvent::class) {
-            $user = $this->getAuthenticatedUser($args);
-            $interpreter_name = $entity->getInterpreter()->getFullName();
-            $event_id =  $entity->getEvent()->getId();
-            if ($user) {
-                if ((string)$user->getRole() == 'submitter') {
-                    $message = "interpreter $interpreter_name was automatically removed from event id $event_id";
-                } else {
-                    $message =  "interpreter $interpreter_name was removed from event id $event_id (user: {$user->getUsername()})";
-                }
-                $this->logger->info(
-                    $message,['entity_class'=>$entity_class,'entity_id'=>$event_id]
-                );
-            }
-            return;
+        if ($entity_class == Entity\InterpreterEvent::class) {
+            // $user = $this->getAuthenticatedUser($args);
+            // $interpreter_name = $entity->getInterpreter()->getFullName();
+            // /** @todo examine why "getId() on null" in mocha test */
+            // $event_id =  $entity->getEvent()->getId();
+            // if ($user) {
+            //     if ((string)$user->getRole() == 'submitter') {
+            //         $message = "interpreter $interpreter_name was automatically removed from event id $event_id";
+            //     } else {
+            //         $message =  "interpreter $interpreter_name was removed from event id $event_id (user: {$user->getUsername()})";
+            //     }
+            //     $this->logger->info(
+            //         $message,['entity_class'=>$entity_class,'entity_id'=>$event_id]
+            //     );
+            // }
+            // return;
         }
         $this->logger->info(
             sprintf(
