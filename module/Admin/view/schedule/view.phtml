@@ -206,7 +206,7 @@ endif;?></span>
             <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
         </div>
         <?php else: ?>
-            <div class="alert alert-warning pt-2 border">
+            <div class="alert alert-warning pt-2 border event-deleted">
                 This event has been deleted from your schedule.
             </div>
         <?php endif; ?>
