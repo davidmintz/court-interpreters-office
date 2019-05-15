@@ -7,6 +7,7 @@ namespace InterpretersOffice\Service\Listener;
 use Zend\EventManager\Event;
 use Zend\Log\Logger;
 use Doctrine\ORM\EntityManager;
+use InterpretersOffice\Entity\User;
 
 /**
  * listener that observes user login attempts and logout.
@@ -71,11 +72,11 @@ class AuthenticationListener
             $message = sprintf(
                 'login failed for user %s from IP address %s, reason: %s',
                 $params['identity'],
-                $ip,
-                json_encode($result->getMessages())
+                $ip, json_encode($result->getMessages())
             );
+            $user = null;
         }
-        $this->log->info($message);
+        $this->log->info($message,['entity_class'=> User::class,'entity_id'=> $user ? $user->id : null]);
     }
 
     /**
@@ -87,8 +88,6 @@ class AuthenticationListener
     {
         $user = $e->getParam('user');
         $message = sprintf('user %s logged out', $user->email);
-        //$session = new \Zend\Session\Container('Authentication');
-        //$session->role = 'anonymous'; // do we still need this?
-        $this->log->info($message);
+        $this->log->info($message, ['entity_class'=> User::class,'entity_id'=> $user ? $user->id : null]);
     }
 }
