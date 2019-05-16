@@ -14,14 +14,13 @@ $(function(){
             return;
         }
         var url = `/admin/schedule/delete/${event_id}`;
-        //var redirect_url = `${window.basePath}/admin/schedule/view/${event_id}`;
         $.post(url,{csrf:csrf_token},"json")
             .success(function(response){
                 if (response.status === "success" ) {
                     $(".alert-success").addClass("event-deleted");
                     var html = "This event has now been deleted from the schedule.";
                     if (should_suggest_email()) {
-                        var who = 'interpreter';
+                        var who = "interpreter";
                         if ($("span.interpreter").length > 1) {
                             who += "s";
                         }
