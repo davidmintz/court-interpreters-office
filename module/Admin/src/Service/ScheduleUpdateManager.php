@@ -290,7 +290,7 @@ class ScheduleUpdateManager
      */
     public function dispatchEmail(EventInterface $e)
     {
-        $this->logger->debug("we need to DISPATCH emails if applicable");
+        $this->logger->debug(sprintf("need to DISPATCH %d emails",count($this->email_messages)));
         if ($this->email_messages) {
             try {
                 $transport = $this->getMailTransport();
