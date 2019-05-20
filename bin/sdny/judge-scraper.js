@@ -51,14 +51,22 @@ const parse_judge_info = function(url){
         var name = usdj_links[i].textContent.trim();
         var url = usdj_links[i].href;
         //console.log(`fetching ${url} for: ${name}, USDJ`);
-        data.USDJ[name] = await parse_judge_info(url);
+        info = await parse_judge_info(url);
+        if (info.courthouse && info.courtroom) {
+            data.USDJ[name] = info;
+        }
+        //data.USDJ[name] = await parse_judge_info(url);
     }
     var usmj_links = await get_judge_links("Magistrate");
     for (var i = 0; i < usmj_links.length; i++) {
         var name = usmj_links[i].textContent.trim();
         var url = usmj_links[i].href;
         //console.log(`fetching ${url} for: ${name}, USMJ`);
-        data.USMJ[name] = await parse_judge_info(url);
+        //info = await parse_judge_info(url);
+        if (info.courthouse && info.courtroom) {
+            data.USMJ[name] = info;
+        }
+        //data.USMJ[name] = await parse_judge_info(url);
     }
     console.log(JSON.stringify(data));
 })();
