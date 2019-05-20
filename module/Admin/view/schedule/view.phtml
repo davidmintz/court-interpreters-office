@@ -20,9 +20,8 @@ $this->headStyle()->captureStart();?>
 $event = $this->event;
 if ('submitter' ==  $event['last_update_user_role']) :
     $event['last_updated_by'] = "{$event['last_update_firstname_init']}. {$event['last_update_lastname']}";
-    //echo " ... {$event['last_updated_by']}? ...";
 endif;
-$this->entity = $event; // hint the Diff helper
+$this->entity = $event;
 if (! $event or $event['deleted']) :
     $this->headTitle('event not found');
      ?>
@@ -50,44 +49,41 @@ else: ?>
 <div class="alert alert-warning mx-auto pt-3 pb-0" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
 <?php endif;
 if ($event['deleted']):
- echo "say shit";
+ echo "say shit, we have been deleted";
 endif;
-/*
-<!-- experimental debug zone -->
-<pre><?php ?></pre>
-TO DO: make partials for flat-out details and for "diff"
-and use one or the other, depending
-*/?>
+?>
 <div data-modified="<?php echo $event['last_updated'] ? $event['last_updated']->format('Y-m-d H:i:s') : ''?>" data-event_category="<?php echo $event['category']?>" data-event_datetime="<?php echo $event['datetime']?>" data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
+<?php
+if (!$this->before):?>
     <div class="col-sm-3 text-muted text-md-right">
         date
     </div>
     <div class="col-sm-3 pl-0 date">
-        <?php echo $this->diff('date')?>
+        <?php echo $this->event['date']->format('d-M-Y')?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         time
     </div>
     <div class="col-sm-3 pl-0 time">
-        <?php echo $this->diff('time') ?: '<em>?</em>' ?>
+        <?php echo $this->event['time'] ?$this->event['time']->format('g:i a'): '<em>?</em>' ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         type
     </div>
     <div class="col-sm-3 pl-0  event_type">
-        <?php echo $this->diff('type'); ?>
+        <?php echo $this->event['type']; ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         language
     </div>
     <div class="col-sm-3 pl-0 language">
-        <?php echo $this->diff('language')?>
+        <?php echo $this->event['language']?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         judge
     </div>
     <div class="col-sm-3 pl-0 judge"<?php if ($event['judge_lastname']) : ?> data-judge_lastname="<?php echo $this->escapeHtml($event['judge_lastname'])?>"<?php endif; ?>>
-        <?php echo $this->diff('judge');
+        <?php echo $this->event['judge'];
         if ($event['aj_default_location']) :
             ?> <span class="text-muted"><?php echo $event['aj_default_location']?></span><?php
         endif; ?>
@@ -96,33 +92,37 @@ and use one or the other, depending
         location
     </div>
     <div class="col-sm-3 pl-0 location">
-        <?php echo $this->diff('location');  if ($event['is_default_location']):?> <span class="text-muted text-md-right">**</span><?php endif ?>
+        <?php echo $this->event['location'];  if ($event['is_default_location']):?> <span class="text-muted text-md-right">**</span><?php endif ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         defendants
     </div>
     <div class="col-sm-3 pl-0 defendants"><?php
-        echo $this->diff('defendants');
+        echo implode('<br>',array_map(function($d){
+            return $this->escapeHtml("{$d['surnames']}, {$d['given_names']}");
+        },$this->event['defendants']))
     ?>
     </div>
     <div class="col-sm-3  text-muted text-md-right">
         docket
     </div>
     <div class="col-sm-3 pl-0 docket">
-        <?php echo $this->diff('docket') ?>
+        <?php echo $this->event['docket'] ?>
     </div>
     <div class="col-sm-3  text-muted text-md-right">
         interpreters
     </div>
     <div class="col-sm-3 pl-0 interpreters"><?php
-        echo $this->diff('interpreters');
+    echo implode('<br>',array_map(function($i){
+        return $this->escapeHtml("{$i['lastname']}, {$i['firstname']}");
+    },$this->event['interpreters']))
     ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         cancellation
     </div>
     <div class="col-sm-3 pl-0 cancellation">
-        <?php echo $this->diff('reason_for_cancellation') ;//?: '<span class="text-muted">n/a</span>'?>
+        <?php echo $this->event['reason_for_cancellation'] ?: '<span class="text-muted">n/a</span>'?>
     </div>
         <div class="col-sm-3  text-muted text-md-right">
         <?php if ($event['request_id']):?>* <?php endif ?>request by
@@ -130,27 +130,20 @@ and use one or the other, depending
     <div class="col-sm-3 pl-0 submitter" data-id="<?php echo $event['submitter_id']?>"><span class="avoidwrap">
         <?php echo $event['submitter'] ;
         ?><?php
-if ($event['submitter_hat']) :
+    if ($event['submitter_hat']) :
     ?>,</span> <span class="avoidwrap"><?php
-    echo $this->diff('submitter_hat');
-endif;?></span>
+    echo $this->event['submitter_hat'];
+    endif;?></span>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         requested on
     </div>
     <div class="col-sm-3 pl-0">
     <?php
-    if ($event['request_id']):
         printf('%s %s',
         $event['submission_date']->format('d-M-Y'),
         $event['submission_time']->format('g:i a')
         );
-    else:
-        printf('%s %s',
-            $this->diff('submission_date'),
-            $this->diff('submission_time')
-        );
-    endif;
     ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
@@ -165,31 +158,29 @@ endif;?></span>
     <div class="col-sm-3 pl-0 last-modified">
         <?php
         echo $event['created'] != $event['last_updated'] ?
-        "{$this->diff('last_updated')}<br>({$this->diff('last_updated_by')})"
+        "{$this->event['last_updated']->format('d-M-Y g:i a')}<br>({$this->event['last_updated_by']})"
         : '<span class="text-muted">n/a</span>';
         ?>
     </div>
-<?php if ($event['submitter_comments']): ?>
+    <?php if ($event['submitter_comments']): ?>
     <div class="col-sm-3 text-muted text-md-right">
         submitter comments
     </div>
     <div class="col-sm-9 pl-0">
-        <?php echo nl2br($this->escapeHtml($event['submitter_comments'])) ?>
+        <?php echo nl2br($this->escapeHtml($this->event['submitter_comments'])) ?>
     </div>
-<?php endif; ?>
+    <?php endif; ?>
     <div class="col-sm-3 text-muted text-md-right">
         comments (public)
     </div>
     <div class="col-sm-9 pl-0">
-        <?php //echo nl2br($this->escapeHtml($event['comments']))
-        echo nl2br($this->diff('comments'))
-        ?>
+        <?php echo nl2br($this->escapeHtml($this->event['comments']))?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         comments (internal)
     </div>
     <div class="col-sm-9 pl-0">
-        <?php echo nl2br($this->diff('admin_comments'));
+        <?php echo nl2br($this->escapeHtml($this->event['admin_comments']));
         if ($event['submitter_extra_data'] and
             isset($event['submitter_extra_data']['defendants'])): ?>
             <div class="extra-deft-names text-muted mt-0 pt-0">
@@ -201,6 +192,9 @@ endif;?></span>
             </div>
         <?php endif; ?>
     </div>
+<?php else: ?>
+
+<?php endif; ?>
     <div class="col-12 d-flex">
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
         <?php if (!$event['deleted']):?>
@@ -215,14 +209,14 @@ endif;?></span>
             </div>
         <?php endif; ?>
     </div>
-</div>
     <?php if ($event['request_id'] or $event['is_default_location']): ?>
-        <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0" style=font-size:90%;>
-            <?php if ($event['request_id']):?>* request was submitted online<br><?php endif; ?>
-            <?php if ($event['is_default_location']) :?>** location not specified; this is the default<?php endif; ?>
-        </div>
-    <?php endif;
-    $suggestions = [];
+    <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0" style=font-size:90%;>
+        <?php if ($event['request_id']):?>* request was submitted online<br><?php endif; ?>
+        <?php if ($event['is_default_location']) :?>** location not specified; this is the default<?php endif; ?>
+    </div>
+    <?php endif;?>
+</div>
+    <?php $suggestions = [];
     if ($event['interpreters'] or $event['submitter_email']):
         if ($event['submitter_email']) {
             $suggestions[] = ['role'=>'submitter','name' => $event['submitter'],
