@@ -1,0 +1,73 @@
+<?php
+/**
+ * module/Admin/view/email/schedule-update-notice.phtml
+ *
+ *
+ *
+ */
+
+if (is_object($this->entity)) {
+    $data = $this->entity = [
+        'date' =>  $this->entity->getDate(),
+        'time' =>  $this->entity->getTime(),
+        'language' => (string)$this->entity->getLanguage(),
+        'eventType' =>  (string)$this->entity->getEventType(),
+        'location' =>  (string)$this->entity->getLocation(),
+        'docket'  => $this->entity->getDocket(),
+        //'comments' => $this->entity->getComments(),
+        'judge' =>  (string)$this->entity->getJudge(),
+        'extraData' => $this->entity instanceof InterpretersOffice\Requests\Entity\Request
+            ? $this->entity->getExtraData(): null,
+        'defendants' => $this->entity->getDefendants()->toArray(),
+    ];
+    $this->entity = $data;
+}
+?>
+<p>Hello,</p>
+<p>This is to advise you that the following interpreter request
+    has just been updated by <?php echo "{$this->user->firstname} {$this->user->lastname} ({$this->user->email})" ?>
+    and the corresponding event on the schedule will be automatically updated
+    accordingly.
+</p>
+<?php if (! $this->interpreters): ?>
+<p>
+    As of now, no interpreters are assigned.
+</p>
+<?php else:
+    $interpreter_names = implode("<br>",array_map(
+        function($i){ return $i->getFullName();},$this->interpreters
+    ));
+    $what = [];
+    if ($this->remove_interpreters):
+        $what[] = 'removing'; endif;
+    if ($this->notify_interpreters):
+        $what[] = 'emailing notification to';
+    endif;
+    if ($what) : $actions = implode(' and ',$what)?>
+    <p>We are automatically <?php echo $actions ?> the following interpreter(s).
+        <?php if (count($what )< 2): ?> No further action is being done automatically.<?php endif ?></p>
+    <?php
+    else:
+    ?>
+    <p>As of now, the following interpreters are assigned to this event. No further action is being
+        done automatically.</p>
+    <?php
+    endif;
+?>
+    <p style="margin-left:2em">
+        <?php echo $interpreter_names ?>
+    </p>
+<?php endif; ?>
+<?php // echo count($this->interpreters)," interpreters<br>";?>
+<?php //echo "remove interpreters: ",  ($this->remove_interpreters ? "true":"false"), "<br>";?>
+<?php // echo "notify interpreters: ",  ($this->notify_interpreters ? "true":"false"), "<br>";?>
+<?php
+/** @todo  should there even be any if/else here ? */
+if ($this->before):
+    echo "DEBUG: we are rendering partials/event-diff because \$this->before";
+    echo $this->partial('interpreters-office/email/partials/event-diff.phtml',
+    ['entity'=>$this->entity, 'before' => $this->before, 'with_comments'=>true]);
+else:
+    echo $this->partial('interpreters-office/email/partials/event-details.phtml',
+    ['entity'=>$this->entity,  'with_comments'=>true,'escaped' => $this->escaped ]);
+endif;    ?>

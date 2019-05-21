@@ -14,14 +14,13 @@ else:
 endif;
 ?>
 <p><?php echo $salutation ?></p>
-
 <p>This is to advise you that the following event to which you were assigned
 <strong>has been cancelled</strong>.</p>
 <p style="font-size:115%;"><em>Please reply to the Interpreters Office at your
     earliest convenience to acknowledge this notice.</em></p>
 <?php
 echo $this->partial('interpreters-office/email/partials/event-details.phtml',
-    ['entity'=>$this->entity]);
+    ['entity'=>$entity, ]);
 ?>
 <?php if ($this->notes):?>
 <p>Additional notes:</p>
