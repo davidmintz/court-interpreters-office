@@ -20,8 +20,8 @@
     <tr>
         <td style="border-bottom:1px dotted gray; vertical-align:top"><?php echo $label ?></td>
         <td style="border-bottom:1px dotted gray"><?php
-        // the "escaped" flag means it is string data/finished HTML
-            echo $this->escaped ? $this->entity[$field] : $this->diff($field)
+           // the "escaped" flag means it is already string data/finished HTML
+            echo $this->escaped ? $this->entity[$field] : $this->escapeHtml($this->entity[$field])
             ?></td>
     </tr>
 <?php endforeach; ?>
