@@ -192,7 +192,7 @@ if (!$this->before):?>
             </div>
         <?php endif; ?>
     </div>
-<?php else: ?>
+<?php else: $this->with_comments = true; // for the diff() helper ?>
     <div class="col-sm-3 text-muted text-md-right">
         date
     </div>
