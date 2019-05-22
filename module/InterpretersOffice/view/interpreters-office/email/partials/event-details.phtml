@@ -3,6 +3,7 @@
 // this is event-details.phtml; escaped?
 // var_dump($this->escaped)
 // does this-&gt;entity have comments? <?php echo key_exists('comments',$this->entity) ? "YES": "NO"
+use InterpretersOffice\View\Helper\Diff;
 ?>
 <br>
 <table style="margin-bottom:1em">
@@ -21,7 +22,23 @@
         <td style="border-bottom:1px dotted gray; vertical-align:top"><?php echo $label ?></td>
         <td style="border-bottom:1px dotted gray"><?php
            // the "escaped" flag means it is already string data/finished HTML
-            echo $this->escaped ? $this->entity[$field] : $this->escapeHtml($this->entity[$field])
+            if ($this->escaped): echo $this->entity[$field];
+            elseif (is_string($this->entity[$field])):
+                echo $this->escapeHtml($this->entity[$field]);
+            else:
+                $helper = new Diff();
+                $data = $this->entity[$field];
+                if ('defendants' == $field):
+                    echo $helper->renderDefendants($data);
+                elseif ('interpreters' == $field) :
+                    echo $helper->renderInterpreters($data);
+                elseif ($data instanceof \DateTime) :
+                    echo $helper->renderDateTime($field, $data);
+                else : throw new \RuntimeException(
+                    sprintf("viewscript event-details cannot render entity field $field (type: %s)",
+                    gettype($data)));
+                endif;
+            endif;
             ?></td>
     </tr>
 <?php endforeach; ?>
