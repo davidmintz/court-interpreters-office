@@ -20,6 +20,8 @@ $this->headStyle()->captureStart();?>
 $event = $this->event;
 if ('submitter' ==  $event['last_update_user_role']) :
     $event['last_updated_by'] = "{$event['last_update_firstname_init']}. {$event['last_update_lastname']}";
+else :
+    echo "WTF";
 endif;
 $this->entity = $event;
 if (! $event or $event['deleted']) :
@@ -158,7 +160,7 @@ if (!$this->before):?>
     <div class="col-sm-3 pl-0 last-modified">
         <?php
         echo $event['created'] != $event['last_updated'] ?
-        "{$this->event['last_updated']->format('d-M-Y g:i a')}<br>({$this->event['last_updated_by']})"
+        "{$this->event['last_updated']->format('d-M-Y g:i a')}<br>({$event['last_updated_by']})"
         : '<span class="text-muted">n/a</span>';
         ?>
     </div>
