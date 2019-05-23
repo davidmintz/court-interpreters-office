@@ -1,8 +1,9 @@
 <?php
-/** partial for displaying event details in an email */
-// this is event-details.phtml; escaped?
-// var_dump($this->escaped)
-// does this-&gt;entity have comments? <?php echo key_exists('comments',$this->entity) ? "YES": "NO"
+/** partial for displaying event details in an email
+ * @todo refactor InterpretersOffice\View\Helper\Diff because there is
+ * not supposed to be any before/after involved here unless it's already
+ * rendered as HTML, in which case it's already taken care of.
+ */
 use InterpretersOffice\View\Helper\Diff;
 ?>
 <br>
