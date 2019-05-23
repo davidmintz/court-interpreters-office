@@ -43,13 +43,11 @@ DROP TABLE IF EXISTS `app_event_log`;
 CREATE TABLE `app_event_log` (
   `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `message` varchar(250) NOT NULL,
-  `entity_id` mediumint(8) unsigned DEFAULT NULL,
+  `entity_id` varchar(32) DEFAULT NULL,
   `entity_class` varchar(250) NOT NULL DEFAULT '',
   `priority` tinyint(3) unsigned NOT NULL,
   `priority_name` varchar(12) NOT NULL,
-  `extra` varchar(1200) NOT NULL DEFAULT '',
-  `id` mediumint(5) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`)
+  `extra` varchar(1200) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -671,4 +669,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-08 16:45:52
+-- Dump completed on 2019-05-23 17:34:10
