@@ -160,6 +160,7 @@ class UpdateListener implements
             return;
         }
         if ($entity_class == Entity\InterpreterEvent::class) {
+            return;
             // $user = $this->getAuthenticatedUser($args);
             // $interpreter_name = $entity->getInterpreter()->getFullName();
             // /** @todo examine why "getId() on null" in mocha test */
@@ -174,7 +175,7 @@ class UpdateListener implements
             //         $message,['entity_class'=>$entity_class,'entity_id'=>$event_id]
             //     );
             // }
-            // return;
+            //
         }
         $this->logger->info(
             sprintf(
