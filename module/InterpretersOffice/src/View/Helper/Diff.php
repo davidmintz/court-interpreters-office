@@ -77,7 +77,7 @@ class Diff extends AbstractHelper
         $data = $this->getData()[$field];
         // if there's no update, render as per normal, getting it done
         // as soon as possible
-        if (! $before or $before[$field] == $data) {
+        if ($before[$field] == $data) {
             if (is_string($data)) {
                 return $data;
             } elseif (is_array($data)) {
@@ -88,7 +88,7 @@ class Diff extends AbstractHelper
             }
         }
         // yes, there is a diff to show them
-        if (false !== strstr($field,'comments')) {
+        if (false !== strstr($field,'comments') && $this->getView()->with_comments ) {
             return $this->htmlDiff($before[$field],$data);
         }
         if ($field == 'location') {

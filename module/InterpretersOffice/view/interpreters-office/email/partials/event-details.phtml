@@ -1,8 +1,10 @@
 <?php
-/** partial for displaying event details in an email */
-// this is event-details.phtml; escaped?
-// var_dump($this->escaped)
-// does this-&gt;entity have comments? <?php echo key_exists('comments',$this->entity) ? "YES": "NO"
+/** partial for displaying event details in an email
+ * @todo refactor InterpretersOffice\View\Helper\Diff because there is
+ * not supposed to be any before/after involved here unless it's already
+ * rendered as HTML, in which case it's already taken care of.
+ */
+use InterpretersOffice\View\Helper\Diff;
 ?>
 <br>
 <table style="margin-bottom:1em">
@@ -20,8 +22,24 @@
     <tr>
         <td style="border-bottom:1px dotted gray; vertical-align:top"><?php echo $label ?></td>
         <td style="border-bottom:1px dotted gray"><?php
-        // the "escaped" flag means it is string data/finished HTML
-            echo $this->escaped ? $this->entity[$field] : $this->diff($field)
+           // the "escaped" flag means it is already string data/finished HTML
+            if ($this->escaped): echo $this->entity[$field];
+            elseif (is_string($this->entity[$field])):
+                echo $this->escapeHtml($this->entity[$field]);
+            else:
+                $helper = new Diff();
+                $data = $this->entity[$field];
+                if ('defendants' == $field):
+                    echo $helper->renderDefendants($data);
+                elseif ('interpreters' == $field) :
+                    echo $helper->renderInterpreters($data);
+                elseif ($data instanceof \DateTime) :
+                    echo $helper->renderDateTime($field, $data);
+                else : throw new \RuntimeException(
+                    sprintf("viewscript event-details cannot render entity field $field (type: %s)",
+                    gettype($data)));
+                endif;
+            endif;
             ?></td>
     </tr>
 <?php endforeach; ?>

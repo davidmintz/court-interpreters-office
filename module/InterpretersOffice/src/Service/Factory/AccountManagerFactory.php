@@ -26,12 +26,12 @@ class AccountManagerFactory implements FactoryInterface
             $container->get('entity-manager'),
             $container->get('config')
         );
+        $container->get('log')->addWriter($container->get('InterpretersOffice\Admin\Service\Log\Writer'));
         $accountManager
             ->setLogger($container->get('log'))
             ->setViewRenderer($container->get('ViewRenderer'))
             ->setPluginManager($container->get('ControllerPluginManager'));
-        //$viewManager = $container->get('ViewManager');
-        //printf("<pre>%s</pre>",print_r(get_class_methods($viewManager),true));
+
         return $accountManager;
     }
 }
