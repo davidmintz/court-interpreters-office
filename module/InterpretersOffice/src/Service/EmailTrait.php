@@ -66,6 +66,8 @@ trait EmailTrait
         $message->setBody($body)->setEncoding('UTF-8');
         $contentTypeHeader = $message->getHeaders()->get('Content-Type');
         $contentTypeHeader->setType('multipart/alternative');
+        $message->getHeaders()->addHeaderLine('X-Sent-By',
+            'InterpretersOffice https://interpretersoffice.org');
 
         return $message;
     }
