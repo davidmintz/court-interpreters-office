@@ -80,7 +80,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
     }
 
     /**
-     * sends message
+     * sends email message
      *
      * @param  Array $data
      * @return Array result
@@ -93,11 +93,9 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
         }
         $mail_config = $this->config['mail'];
         $message = $this->createEmailMessage('');
-
         $message->setFrom($mail_config['from_address'],$mail_config['from_entity'])
             ->setBcc($mail_config['from_address'])
             ->setSubject($data['subject']);
-        $message->getHeaders()->addHeaderLine('X-Sent-By', 'InterpretersOffice https://interpretersoffice.org');
         $log_comments = '';
         if (isset($data['cc'])) {
             $log_comments .= "Cc: ";
