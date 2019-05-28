@@ -302,6 +302,13 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
         $this->assertTrue(file_exists($this->update_notice));
 
+    }
+    /**
+     *
+     *
+     */
+    function __testInterpretersGetEmail()
+    {
 
     }
 }
