@@ -20,8 +20,8 @@ $this->headStyle()->captureStart();?>
 $event = $this->event;
 if ('submitter' ==  $event['last_update_user_role']) :
     $event['last_updated_by'] = "{$event['last_update_firstname_init']}. {$event['last_update_lastname']}";
-else :
-    echo "WTF";
+// else :
+//     echo "WTF";
 endif;
 $this->entity = $event;
 if (! $event or $event['deleted']) :
