@@ -230,7 +230,7 @@ class ScheduleUpdateManager
         // figure out what admin actions are configured for $user_event
         $actions = $this->getUserActions($request,$user_event);
         $this->logger->debug(
-            print_r($actions,true)
+            "configured user actions for $user_event: ".print_r($actions,true)
         );
         $filter = new DashToCamelCase();
         $config = $this->config['event_listeners'];
@@ -241,15 +241,16 @@ class ScheduleUpdateManager
         $pattern = sprintf('/%s/',self::ACTION_REMOVE_INTERPRETERS);
         $shit = preg_grep($pattern, $actions);
         $this->logger->debug(
-            '\$shit at  '.__LINE__. ": ".
-            print_r($shit,true)
+            '\$shit at  '.__LINE__. ": ".print_r($shit,true)
         );
-        if (count($shit)) {
+        if ($shit) {
             $this->remove_interpreters =  $config[$user_event][array_values($shit)[0]]  ;
         }
         $pattern = sprintf('/%s/',self::ACTION_NOTIFY_INTERPRETERS);
         $shit = preg_grep($pattern, $actions);
-        $this->notify_interpreters =  $config[$user_event][array_values($shit)[0]];
+        if ($shit) {
+            $this->notify_interpreters = $config[$user_event][array_values($shit)[0]];
+        }
         $this->logger->debug("user-event $user_event: we have set remove_interpreters = "
             .($this->remove_interpreters ? "true":"false"));
         $this->logger->debug("user-event $user_event: we have set notify_interpreters = "
