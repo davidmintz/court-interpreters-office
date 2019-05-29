@@ -122,9 +122,11 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         $fields_updated = array_keys($args->getEntityChangeSet());
         if (count($fields_updated) or $this->defendantsWereModified($request)) {
             $shit = print_r($fields_updated,true);
-            $this->getLogger()->debug(__METHOD__." is updating: $shit, setting metadata") ;
-             $request->setModified(new \DateTime())
-                 ->setModifiedBy($this->getAuthenticatedUser($args));
+            $this->getLogger()->debug(__METHOD__.": updating: $shit") ;
+            if (array_diff($fields_updated,['event','pending'])) {
+                $request->setModified(new \DateTime())
+                ->setModifiedBy($this->getAuthenticatedUser($args));
+            }
         }
 
         // Request cancellation. Cancellation is in fact an update: the entity's
