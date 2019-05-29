@@ -61,13 +61,14 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td>non-Spanish</td>
                 <td>any</td>
                 <td><?php
-                $base = 'out-of-court.non-spanish.';
+                $base = 'all-events.non-spanish.';
                 $element = $fs->get($base.'delete-scheduled-event');
                 echo $this->configCheckbox($element);
                 $element = $fs->get($base.'notify-assigned-interpreters');
                 echo $this->configCheckbox($element);
                 ?></td>
             </tr>
+            <!--   ==========================================  -->
             <tr>
                 <td class="text-monospace">change date</td>
                 <td>any</td>
