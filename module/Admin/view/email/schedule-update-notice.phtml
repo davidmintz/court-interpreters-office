@@ -14,11 +14,12 @@ if (is_object($this->entity)) {
         'eventType' =>  (string)$this->entity->getEventType(),
         'location' =>  (string)$this->entity->getLocation(),
         'docket'  => $this->entity->getDocket(),
-        //'comments' => $this->entity->getComments(),
+        'comments' => $this->entity->getComments(),
         'judge' =>  (string)$this->entity->getJudge(),
         'extraData' => $this->entity instanceof InterpretersOffice\Requests\Entity\Request
             ? $this->entity->getExtraData(): null,
         'defendants' => $this->entity->getDefendants()->toArray(),
+        //'is_default_location' => 'whatever',
     ];
     $this->entity = $data;
 }
@@ -26,8 +27,7 @@ if (is_object($this->entity)) {
 <p>Hello,</p>
 <p>This is to advise you that the following interpreter request
     has just been updated by <?php echo "{$this->user->firstname} {$this->user->lastname} ({$this->user->email})" ?>
-    and the corresponding event on the schedule will be automatically updated
-    accordingly.
+    and the corresponding event on the schedule will be updated as needed.
 </p>
 <?php if (! $this->interpreters): ?>
 <p>
@@ -59,12 +59,11 @@ if (is_object($this->entity)) {
     </p>
 <?php endif; ?>
 <?php // echo count($this->interpreters)," interpreters<br>";?>
-<?php //echo "remove interpreters: ",  ($this->remove_interpreters ? "true":"false"), "<br>";?>
-<?php // echo "notify interpreters: ",  ($this->notify_interpreters ? "true":"false"), "<br>";?>
+<?php // echo "remove interpreters: ",  ($this->remove_interpreters === true ? "true":"false"), "<br>";?>
+<?php // echo "notify interpreters: ",  ($this->notify_interpreters === true ? "true":"false"), "<br>";?>
 <?php
-/** @todo  should there even be any if/else here ? */
 if ($this->before):
-    echo "DEBUG: we are rendering partials/event-diff because \$this->before";
+    //echo "DEBUG: we are rendering partials/event-diff because of \$this->before";
     echo $this->partial('interpreters-office/email/partials/event-diff.phtml',
     ['entity'=>$this->entity, 'before' => $this->before, 'with_comments'=>true]);
 else:

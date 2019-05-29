@@ -1,14 +1,16 @@
 <?php
-
-/** partial for displaying event-diff in an email */
+/** module/InterpretersOffice/view/interpreters-office/email/partials/event-diff.phtml
+ *  partial for displaying event-diff in an email
+ */
 ?>
 <table>
     <tbody>
-
     <?php foreach (array_keys($this->entity) as $field):
         // need to figure out what to do with this...
         if ($field == 'extraData') : continue; endif;
-        if ($field == 'comments' && !$this->with_comments) : continue; endif;
+        if ($field == 'comments'  && !$this->with_comments) :
+            continue;
+        endif;
         if ($field == 'eventType') : $label = 'event type';
         else :
             $label = $field;

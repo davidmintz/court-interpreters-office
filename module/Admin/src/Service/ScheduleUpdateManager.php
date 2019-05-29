@@ -141,6 +141,12 @@ class ScheduleUpdateManager
     private $remove_interpreters;
 
     /**
+     * whether interpreters should be sent email notification
+     * @var boolean
+     */
+    private $notify_interpreters;
+
+    /**
      * constructor
      *
      * @param AuthenticationServiceInterface $auth
@@ -177,6 +183,7 @@ class ScheduleUpdateManager
             'judge' =>  (string)$request->getJudge(),
             'extraData' => $request->getExtraData(),
             'defendants' => $request->getDefendants()->toArray(),
+            //'is_default_location' => 'whatever',
         ];
 
         return $this;
@@ -344,6 +351,9 @@ class ScheduleUpdateManager
         $previous = $this->previous_state;
         $updates = [];
         foreach ($previous as $field => $value) {
+            if ($field == 'is_default_location') {
+                continue;
+            }
             $after = $request->{'get'.ucfirst($field)}();
             if ($field == 'defendants') {
                 $after = $after->toArray();
