@@ -92,10 +92,10 @@ class Diff extends AbstractHelper
             return $this->htmlDiff($before[$field],$data);
         }
         if ($field == 'location') {
-            $is_default = $this->getData()['is_default_location'];
-            if ($is_default && !$before['location'] ) {
-                return $data;
-            }
+            //$is_default = (! empty($this->getData()['is_default_location']);
+            // if ($is_default && !$before['location'] ) {
+            //     return $data;
+            // }
         }
         if (is_string($data) || is_string($before[$field]) ) {
             if (! $data or ! $before[$field]) {
