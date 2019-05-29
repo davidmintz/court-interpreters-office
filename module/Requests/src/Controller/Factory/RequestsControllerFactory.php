@@ -51,13 +51,12 @@ class RequestsControllerFactory implements FactoryInterface
         $auth = $container->get('auth');
         $resolver = $entityManager->getConfiguration()
             ->getEntityListenerResolver();
-
+        $resolver->register($container->get(Listener\UpdateListener::class)
+                ->setAuth($auth));
         if ($requestedName == Controller\WriteController::class) {
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
             // add Doctine entity listeners
-            $resolver->register($container->get(Listener\UpdateListener::class)
-                ->setAuth($auth));
             $resolver->register($container->get(RequestEntityListener::class));
             $resolver->register($container->get(EventEntityListener::class));
 
@@ -74,8 +73,7 @@ class RequestsControllerFactory implements FactoryInterface
                 ['update','cancel'],
                 new ModificationAuthorizedAssertion($controller)
             );
-
-            // experimental.
+            // attach event listeners
             $eventManager = $container->get('SharedEventManager');
             $scheduleManager = $container->get(ScheduleUpdateManager::class);
             $eventManager->attach($requestedName,'updateRequest',
