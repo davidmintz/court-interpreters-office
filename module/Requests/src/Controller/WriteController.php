@@ -329,6 +329,11 @@ class WriteController extends AbstractActionController implements ResourceInterf
         }
         if ($entity) {
             try {
+                $this->getEventManager()->trigger(
+                    'loadRequest',$this,[
+                        'entity' => $entity,
+                    ]
+                );
                 $entity->setCancelled(true);
                 $description = $this->params()->fromPost('description');
                 $this->getEventManager()->trigger('cancel',$this,

@@ -94,6 +94,8 @@ const fail = function(response) {
         administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
     }
     $("#error-message").html(msg).parent().show();
+    console.log(response.responseText);
+    $("html").html(response.responseText);
 };
 
 $("button[data-hide]").on("click",function(e){

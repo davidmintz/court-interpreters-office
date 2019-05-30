@@ -4,8 +4,8 @@
         "in-court.spanish.notify-assigned-interpreters": false,
         "out-of-court.spanish.delete-scheduled-event": true,
         "out-of-court.spanish.notify-assigned-interpreters": true,
-        "out-of-court.non-spanish.delete-scheduled-event": true,
-        "out-of-court.non-spanish.notify-assigned-interpreters": true
+        "all-events.non-spanish.delete-scheduled-event": true,
+        "all-events.non-spanish.notify-assigned-interpreters": true
     },
     "change-date": {
         "all-events.all-languages.update-scheduled-event": true,

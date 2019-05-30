@@ -92,7 +92,8 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             return $validation;
         }
         $mail_config = $this->config['mail'];
-        $message = $this->createEmailMessage('');
+        $message = $this->createEmailMessage();
+
         $message->setFrom($mail_config['from_address'],$mail_config['from_entity'])
             ->setBcc($mail_config['from_address'])
             ->setSubject($data['subject']);

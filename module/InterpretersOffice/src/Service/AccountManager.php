@@ -431,7 +431,7 @@ class AccountManager implements LoggerAwareInterface
             $email,
             $user ? $user->getPerson()->getFullName() : 'nobody',
             $request ? $request->getServer('REMOTE_ADDR', 'n/a') : 'none'
-        ));
+        ),['entity_class'=> Entity\User::class, 'entity_id' => $user ? $user->getId() : null]);
         if (! $user) {
             return false;
         }
@@ -440,11 +440,10 @@ class AccountManager implements LoggerAwareInterface
                 sprintf(
                     'user active: no. last login: %s. returning false',
                     $user->getLastLogin() ?: 'never'
-                )
+                ),['entity_class'=> Entity\User::class, 'entity_id' => $user->getId()]
             );
             return false;
         }
-        $log->info("(not quite) sending email for password reset");
 
         $token = $this->createVerificationToken($user);
         $url = $this->assembleVerificationUrl($token, $request, 'account/reset-password');
@@ -471,6 +470,9 @@ class AccountManager implements LoggerAwareInterface
             ->setTo($person->getEmail(), $person->getFullName())
             ->setSubject('Interpreters Office: reset your password');
         $this->getMailTransport()->send($message);
+        $log->info("sent email for password reset to {$person->getFullName()} ({$person->getEmail()})",[
+            'entity_class' => Entity\User::class, 'entity_id' => $user->getId()
+        ]);
 
         return $this;
     }
@@ -558,7 +560,11 @@ class AccountManager implements LoggerAwareInterface
         $valid = password_verify($token, $data['token']);
         if (! $valid) {
             $log->info('verification token failed password_verify() '
-                . "for user {$data['email']} with token $token and data[token] = $data[token]");
+                . "for user {$data['email']} with token $token and data[token] = $data[token]",
+                [
+                    'entity_class'=> Entity\User::class,
+                    'entity_id' => $data['id'],
+                ]);
 
             return ['error' => self::ERROR_TOKEN_VALIDATION_FAILED,
                 'data' => $data];
@@ -566,7 +572,12 @@ class AccountManager implements LoggerAwareInterface
         /* maybe we should ensure that this never happens */
         if (self::CONFIRM_EMAIL == $action && $data['active']) {
             $log->info('email verification: account has already been activated '
-            . "for user {$data['email']}, person id {$data['person_id']}");
+            . "for user {$data['email']}, person id {$data['person_id']}",
+            [
+                'entity_class'=> Entity\User::class,
+                'entity_id' => $data['id'],
+            ]
+        );
         }
         /* self-service registration is not an option for users in any but the
         least privileged role, which is "submitter" */
@@ -625,7 +636,7 @@ class AccountManager implements LoggerAwareInterface
         $query = $this->objectManager->createQuery($DQL)
             ->setParameters(['id' => $id,]);
         $affected = $query->getResult();
-        $this->getLogger()->info(sprintf(
+        $this->getLogger()->debug(sprintf(
             "%s: deleted $affected verification tokens",
             __METHOD__
         ));

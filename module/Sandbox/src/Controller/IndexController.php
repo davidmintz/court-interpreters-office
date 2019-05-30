@@ -13,7 +13,9 @@ class IndexController extends AbstractActionController
         $em = $this->getEvent()->getApplication()->getServiceManager()->get('entity-manager');
         //$event = $em->find('InterpretersOffice\Requests\Entity\RepositoryEvent',115656);
         $repo = $em->getRepository('InterpretersOffice\Requests\Entity\Request');
-        $request = $repo->getRequestWithEvent(20572);
+        //$request = $repo->getRequestWithEvent(20572);
+        $result = $repo->list_v2();
+        return (new ViewModel())->setTemplate('sandbox/index/index');
         //$event = $em->getRepository('InterpretersOffice\Entity\Event')->load(115656);
         //$event->getJudge()->getLastname();
         //return new ViewModel(['event'=>$event]);

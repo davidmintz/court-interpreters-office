@@ -65,6 +65,17 @@ class ScheduleUpdateManager
     const ACTION_REMOVE_INTERPRETERS = 'remove-interpreters';
 
     /**
+     * @var string
+     */
+    const ACTION_NOTIFY_INTERPRETERS = 'notify-assigned-interpreters';
+
+    /**
+     * @var string
+     */
+    const ACTION_DELETE_SCHEDULED_EVENT = 'delete-scheduled-event';
+
+
+    /**
      * LoggerInterface
      *
      * @var LoggerInterface
@@ -135,6 +146,12 @@ class ScheduleUpdateManager
     private $remove_interpreters;
 
     /**
+     * whether interpreters should be sent email notification
+     * @var boolean
+     */
+    private $notify_interpreters;
+
+    /**
      * constructor
      *
      * @param AuthenticationServiceInterface $auth
@@ -171,6 +188,7 @@ class ScheduleUpdateManager
             'judge' =>  (string)$request->getJudge(),
             'extraData' => $request->getExtraData(),
             'defendants' => $request->getDefendants()->toArray(),
+            //'is_default_location' => 'whatever',
         ];
 
         return $this;
@@ -216,19 +234,31 @@ class ScheduleUpdateManager
     {
         // figure out what admin actions are configured for $user_event
         $actions = $this->getUserActions($request,$user_event);
-        $filter = new DashToCamelCase();
         $config = $this->config['event_listeners'];
+        $this->logger->debug('FYI: '.print_r( $config[$user_event],true));
+        // $this->logger->debug("configured user actions for $user_event: ".print_r($actions,true));
+        $filter = new DashToCamelCase();
         // order of execution might not be guaranteed, so we need to
         // watch and take note if "remove-interpreters" is required
         // before running into notify-interpreters, so we will know
         // what template to use for email
-        $pattern = sprintf('/%s/',self::ACTION_REMOVE_INTERPRETERS);
+        //
+
+        $pattern = sprintf('/%s|%s/',self::ACTION_REMOVE_INTERPRETERS, self::ACTION_DELETE_SCHEDULED_EVENT);
         $shit = preg_grep($pattern, $actions);
-        if (count($shit)) {
-            $this->remove_interpreters =  $config[$user_event][array_values($shit)[0]]  ;
+        $this->logger->debug('\$shit at '.__LINE__.  " is: ".print_r($shit,true));
+        if ($shit) {
+            $this->remove_interpreters = $config[$user_event][array_values($shit)[0]]  ;
+        }
+        $pattern = sprintf('/%s/',self::ACTION_NOTIFY_INTERPRETERS);
+        $shit = preg_grep($pattern, $actions);
+        if ($shit) {
+            $this->notify_interpreters = $config[$user_event][array_values($shit)[0]];
         }
         $this->logger->debug("user-event $user_event: we have set remove_interpreters = "
             .($this->remove_interpreters ? "true":"false"));
+        $this->logger->debug("user-event $user_event: we have set notify_interpreters = "
+                .($this->notify_interpreters ? "true":"false"));
         foreach ($actions as $string) {
             $i = strrpos($string, '.') + 1;
             $action = substr($string, $i);
@@ -295,6 +325,7 @@ class ScheduleUpdateManager
             try {
                 $transport = $this->getMailTransport();
                 foreach ($this->email_messages as $message) {
+                    $message->getHeaders()->addHeaderLine('X-Generated-By', 'InterpretersOffice https://interpretersoffice.org');
                     $transport->send($message);
                     $this->logger->debug("sent email to someone");
                 }
@@ -326,6 +357,9 @@ class ScheduleUpdateManager
         $previous = $this->previous_state;
         $updates = [];
         foreach ($previous as $field => $value) {
+            if ($field == 'is_default_location') {
+                continue;
+            }
             $after = $request->{'get'.ucfirst($field)}();
             if ($field == 'defendants') {
                 $after = $after->toArray();
@@ -422,6 +456,7 @@ class ScheduleUpdateManager
         $this->logger->debug(
             sprintf('handling request cancel in %s at %d', __METHOD__, __LINE__)
         );
+        $this->user_event = 'cancel';
         $request = $e->getParam('request');
         $this->objectManager = $e->getParam('entity_manager');
         $event = $request->getEvent();
@@ -508,6 +543,38 @@ class ScheduleUpdateManager
                 ),['entity_class'=>Entity\Event::class,'entity_id'=>$event->getId()]
             );
         }
+        // send FYI to your Interpreters Office.
+        //** @todo DRY this out */
+        $user = $this->auth->getIdentity();
+        $view_variables = [
+            'user' => $user,
+            'entity' => $request,
+            'before'=> $this->previous_state,
+            'interpreters' => $event->getInterpreters(),
+            'notify_interpreters' => $this->notify_interpreters,
+            'remove_interpreters' => $this->remove_interpreters,
+        ];
+        $subject = sprintf('update: %s',$event->describe());
+        $template = 'email/schedule-update-notice';
+        $view = (new ViewModel())
+            ->setTemplate($template)
+            ->setVariables($view_variables);
+        $layout = new ViewModel();
+        $layout->setTemplate('interpreters-office/email/layout')
+            ->setVariable('content', $this->viewRenderer->render($view));
+        $output = $this->viewRenderer->render($layout);
+        // debug
+        $shit = basename($template);
+        file_put_contents("data/$shit.html",$output);
+        //$interpreters =
+        $message = $this->createEmailMessage($output);
+        $contact = $this->config['site']['contact'];
+        $message->setTo($contact['email'],$contact['organization_name'])
+            ->setFrom($contact['email'],$contact['organization_name'])
+            ->setSubject($subject);
+
+        $this->email_messages[] = $message;
+        $this->logger->debug("queued up FYI email to office at ".__LINE__);
         return $this;
     }
 
@@ -578,6 +645,7 @@ class ScheduleUpdateManager
         $interpreters = $this->interpreters ?: $request->getEvent()->getInterpreters();
         $count = count($interpreters);
         if (! $count) {
+
             return $this;
         }
         $data = $this->previous_state;
@@ -618,17 +686,15 @@ class ScheduleUpdateManager
             $layout->setTemplate('interpreters-office/email/layout')
                 ->setVariable('content', $this->viewRenderer->render($view));
             $output = $this->viewRenderer->render($layout);
-            // debug
+            // for debugging
             $shit = basename($template);
             file_put_contents("data/$shit.html",$output);
 
             $message = $this->createEmailMessage($output);
             $contact = $this->config['site']['contact'];
-
             $message->setFrom($contact['email'],$contact['organization_name'])
                 ->setTo($i->getEmail(),$i->getFullname())
                 ->addCc($contact['email'],$contact['organization_name'])
-                //->addHeaderLine('X-Autogenerated-By','InterpretersOffice')
                 ->setSubject($subject);
             $this->email_messages[] = $message;
         }
