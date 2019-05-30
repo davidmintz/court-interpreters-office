@@ -70,7 +70,8 @@ class EventsControllerFactory implements FactoryInterface
                         'end_time'=>$entity->getEndTime(),
                         'last_updated'=>$entity->getModified(),
                         // this is a little aggressive...
-                        'last_updated_by' => $entity->getModifiedBy()->getUserOrProperName(),
+                        'last_updated_by' => 'submitter' == (string)$entity->getModifiedBy()->getRole()
+                            ? 'system': $entity->getModifiedBy()->getUserOrProperName(),
                         'judge' => $entity->getStringifiedJudgeOrWhatever(),
                         'type'  => (string)$entity->getEventType(),
                         'category' => (string)$entity->getEventType()->getCategory(),
