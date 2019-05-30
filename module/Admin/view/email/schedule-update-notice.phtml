@@ -34,9 +34,9 @@ if (is_object($this->entity)) {
     As of now, no interpreters are assigned.
 </p>
 <?php else:
-    $interpreter_names = implode("<br>",array_map(
+    $interpreter_names = '<ul style="margin-left:2em"><li>' . implode("</li><li>",array_map(
         function($i){ return $i->getFullName();},$this->interpreters
-    ));
+    )) . '</li></ul>';
     $what = [];
     if ($this->remove_interpreters):
         $what[] = 'removing'; endif;
@@ -44,19 +44,16 @@ if (is_object($this->entity)) {
         $what[] = 'emailing notification to';
     endif;
     if ($what) : $actions = implode(' and ',$what)?>
-    <p>We are automatically <?php echo $actions ?> the following interpreter(s).
-        <?php if (count($what )< 2): ?> No further action is being done automatically.<?php endif ?></p>
-    <?php
+        <p>We are <?php echo $actions ?> the following interpreter(s).
+            <?php if (count($what )< 2): ?> No further action is being taken automatically.<?php endif ?></p>
+        <?php
     else:
-    ?>
-    <p>As of now, the following interpreters are assigned to this event. No further action is being
-        done automatically.</p>
-    <?php
+        ?>
+        <p>No further action is being taken automatically. As of now, the interpreters assigned to this event are:</p>
+        <?php
     endif;
 ?>
-    <p style="margin-left:2em">
         <?php echo $interpreter_names ?>
-    </p>
 <?php endif; ?>
 <?php // echo count($this->interpreters)," interpreters<br>";?>
 <?php // echo "remove interpreters: ",  ($this->remove_interpreters === true ? "true":"false"), "<br>";?>
