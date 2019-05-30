@@ -235,7 +235,7 @@ class ScheduleUpdateManager
         // figure out what admin actions are configured for $user_event
         $actions = $this->getUserActions($request,$user_event);
         $config = $this->config['event_listeners'];
-        // $this->logger->debug('FYI: '.print_r( $config[$user_event],true));
+        $this->logger->debug('FYI: '.print_r( $config[$user_event],true));
         // $this->logger->debug("configured user actions for $user_event: ".print_r($actions,true));
         $filter = new DashToCamelCase();
         // order of execution might not be guaranteed, so we need to
@@ -248,7 +248,7 @@ class ScheduleUpdateManager
         $shit = preg_grep($pattern, $actions);
         $this->logger->debug('\$shit at '.__LINE__.  " is: ".print_r($shit,true));
         if ($shit) {
-            $this->remove_interpreters = true; //$config[$user_event][array_values($shit)[0]]  ;
+            $this->remove_interpreters = $config[$user_event][array_values($shit)[0]]  ;
         }
         $pattern = sprintf('/%s/',self::ACTION_NOTIFY_INTERPRETERS);
         $shit = preg_grep($pattern, $actions);
@@ -325,6 +325,7 @@ class ScheduleUpdateManager
             try {
                 $transport = $this->getMailTransport();
                 foreach ($this->email_messages as $message) {
+                    $message->getHeaders()->addHeaderLine('X-Generated-By', 'InterpretersOffice https://interpretersoffice.org');
                     $transport->send($message);
                     $this->logger->debug("sent email to someone");
                 }
@@ -554,14 +555,6 @@ class ScheduleUpdateManager
             'remove_interpreters' => $this->remove_interpreters,
         ];
         $subject = sprintf('update: %s',$event->describe());
-        // $this->logger->debug(
-        //     (key_exists('is_default_location',$this->previous_state) ? "YES":"NO")
-        //     . " key is_default_location in \$this->previous_state"
-        // );
-        // $this->logger->debug(
-        //     (key_exists('is_default_location',$request) ? "YES":"NO")
-        //     . " key is_default_location in \$request"
-        // );
         $template = 'email/schedule-update-notice';
         $view = (new ViewModel())
             ->setTemplate($template)
@@ -576,8 +569,9 @@ class ScheduleUpdateManager
         //$interpreters =
         $message = $this->createEmailMessage($output);
         $contact = $this->config['site']['contact'];
-        $message->setTo($contact['email'],$contact['organization_name']);
-        $message->setFrom($contact['email'],$contact['organization_name']);
+        $message->setTo($contact['email'],$contact['organization_name'])
+            ->setFrom($contact['email'],$contact['organization_name'])
+            ->setSubject($subject);
 
         $this->email_messages[] = $message;
         $this->logger->debug("queued up FYI email to office at ".__LINE__);
