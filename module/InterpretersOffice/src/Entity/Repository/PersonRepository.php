@@ -95,7 +95,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         $parameters = ['lastname' => "$name[last]%"];
 
         //$hat = null, $active = null, $limit = 20
-        $options = array_merge(['hat'=>null,'active'=> null, 'limit' => 20, 'value_column' => 'id'],$options);
+        $options = array_merge(['hat' => null,'active' => null, 'limit' => 20, 'value_column' => 'id'], $options);
 
         $dql = "SELECT p.{$options['value_column']} AS value, CONCAT(p.lastname, ', ', p.firstname) AS label";
         if ('email' == $options['value_column']) {

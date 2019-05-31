@@ -11,6 +11,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Service\Listener\AuthenticationListener;
 use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
+
 /**
  * Factory for instantiating user listener service.
  */
@@ -28,8 +29,8 @@ class AuthenticationListenerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $log = $container->get('log');
-        if (!$log->getWriterPluginManager()->has(DbWriter::class)) {
-            $log->addWriter($container->get(DbWriter::class),100);// [, $priority, $options])
+        if (! $log->getWriterPluginManager()->has(DbWriter::class)) {
+            $log->addWriter($container->get(DbWriter::class), 100);// [, $priority, $options])
         }
         return new AuthenticationListener(
             $log,

@@ -14,6 +14,7 @@ use InterpretersOffice\Form\Validator\UniqueObject;
 use Zend\Validator;
 use InterpretersOffice\Entity\Hat;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
+
 /**
  * Fieldset for Person entity.
  */
@@ -455,7 +456,7 @@ class PersonFieldset extends Fieldset implements
             'use_context' => true,
         ];
 
-        if ('create' == $this->action && !$this->person) {
+        if ('create' == $this->action && ! $this->person) {
             // use the NoObjectExists validator
             $validatorClass = NoObjectExistsValidator::class;
             $validatorOptions['messages'] = [

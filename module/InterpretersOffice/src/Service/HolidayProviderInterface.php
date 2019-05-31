@@ -17,5 +17,4 @@ interface HolidayProviderInterface
      * @return Array of date/strings formatted YYYY-MM-DD
      */
     public function getHolidaysForPeriod($to, $from);
-
 }

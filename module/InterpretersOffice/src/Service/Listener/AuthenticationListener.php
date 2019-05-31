@@ -72,11 +72,12 @@ class AuthenticationListener
             $message = sprintf(
                 'login failed for user %s from IP address %s, reason: %s',
                 $params['identity'],
-                $ip, json_encode($result->getMessages())
+                $ip,
+                json_encode($result->getMessages())
             );
             $user = null;
         }
-        $this->log->info($message,['entity_class'=> User::class,'entity_id'=> $user ? $user->id : null]);
+        $this->log->info($message, ['entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
     }
 
     /**
@@ -88,6 +89,6 @@ class AuthenticationListener
     {
         $user = $e->getParam('user');
         $message = sprintf('user %s logged out', $user->email);
-        $this->log->info($message, ['entity_class'=> User::class,'entity_id'=> $user ? $user->id : null]);
+        $this->log->info($message, ['entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
     }
 }

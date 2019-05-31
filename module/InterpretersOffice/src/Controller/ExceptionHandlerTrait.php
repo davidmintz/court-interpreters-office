@@ -1,4 +1,4 @@
-<?php /** module/InterpretersOffice/src/Controller/ExceptionHandlerTrait.php */ 
+<?php /** module/InterpretersOffice/src/Controller/ExceptionHandlerTrait.php */
 
 namespace InterpretersOffice\Controller;
 

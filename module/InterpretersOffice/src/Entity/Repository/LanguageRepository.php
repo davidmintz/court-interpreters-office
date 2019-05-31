@@ -134,18 +134,16 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      *
      * @return array
      */
-     public function getCredentialOptions()
-     {
+    public function getCredentialOptions()
+    {
         $q = $this->getEntityManager()->createQueryBuilder()
-            ->from(LanguageCredential::class, 'c')
-            ->select(['c.id AS value','c.abbreviation AS label'])
-            ->orderBy('c.abbreviation')
-            ->getQuery()->useResultCache(true);
+           ->from(LanguageCredential::class, 'c')
+           ->select(['c.id AS value','c.abbreviation AS label'])
+           ->orderBy('c.abbreviation')
+           ->getQuery()->useResultCache(true);
 
         return $q->getResult();
-
-
-     }
+    }
     /**
      * experimental
      *

@@ -56,5 +56,4 @@ trait DateCalculatorTrait
     {
         return $this->getDateCalc()->getTwoBusinessDaysBefore($date);
     }
-
 }

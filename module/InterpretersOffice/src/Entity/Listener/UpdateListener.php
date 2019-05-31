@@ -119,28 +119,32 @@ class UpdateListener implements
         $user = $auth_user ? $auth_user->getUsername() : '<nobody>';
         switch ($entity_class) {
             case Entity\Event::class:
-            $message = "user $user added a new event: ".$entity->describe();
-            break;
+                $message = "user $user added a new event: ".$entity->describe();
+                break;
             case Entity\InterpreterEvent::class:
                 $who = $entity->getInterpreter()->getFullName();
                 $what = $entity->getEvent()->describe();
                 $message = "user $user assigned $who to $what";
                 $entity_id = $entity->getEvent()->getId();
-                $entity_class =  Entity\Event::class;
-            break;
+                $entity_class = Entity\Event::class;
+                break;
             default:
-            $basename = substr($entity_class, strrpos($entity_class, '\\') + 1);
-                $message = sprintf('user %s added a new %s',
-                    $user,strtolower($basename));
+                $basename = substr($entity_class, strrpos($entity_class, '\\') + 1);
+                $message = sprintf(
+                    'user %s added a new %s',
+                    $user,
+                    strtolower($basename)
+                );
                 if (method_exists($entity, '__toString')) {
                     $message .= ": $entity";
                 } elseif (method_exists($entity, 'getFullName')) {
                     $message .= ": {$entity->getFullName()}";
                 }
-            }
+        }
 
         $this->logger->info(
-            $message,compact('entity_id','entity_class')
+            $message,
+            compact('entity_id', 'entity_class')
         );
         $this->clearCache($args);
     }
@@ -182,8 +186,9 @@ class UpdateListener implements
                 'user %s deleted entity %s',
                 $this->getAuthenticatedUser($args)->getUsername(),
                 $entity_class
-            ),['entity_class'=>$entity_class, 'entity_id' =>
-                method_exists($entity,'getId') ? $entity->getId() : null
+            ),
+            ['entity_class' => $entity_class, 'entity_id' =>
+                method_exists($entity, 'getId') ? $entity->getId() : null
             ]
         );
         $this->clearCache($args);
@@ -255,6 +260,5 @@ class UpdateListener implements
         //         get_class($args->getObject())
         //     )
         // );
-
     }
 }

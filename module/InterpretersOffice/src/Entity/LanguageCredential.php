@@ -3,6 +3,7 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  * Models a credential -- certification, rating, classification -- for a
  * given InterpreterLanguage.

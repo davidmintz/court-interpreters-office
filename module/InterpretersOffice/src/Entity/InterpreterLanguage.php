@@ -63,7 +63,7 @@ class InterpreterLanguage
     *
     *  @var LanguageCredential
     */
-   protected $languageCredential;
+    protected $languageCredential;
 
     /**
      * Set interpreter.

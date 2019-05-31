@@ -303,7 +303,7 @@ class Event
             $more[] = $docket;
         }
         if ($more) {
-            $return .= sprintf(' (%s)',implode(', ', $more));
+            $return .= sprintf(' (%s)', implode(', ', $more));
         }
 
         return $return;
@@ -328,7 +328,6 @@ class Event
             return $this->anonymousJudge->getName();
         }
         return '';
-
     }
     /**
      * Get id.
@@ -984,12 +983,11 @@ class Event
         if ($this->interpreters) {
             return $this->interpreters;
         }
-        $this->interpreters = array_map(function($ie){
+        $this->interpreters = array_map(function ($ie) {
             return $ie->getInterpreter();
-        },$ie_collection->toArray());
+        }, $ie_collection->toArray());
 
         return $this->interpreters;
-
     }
 
     /**

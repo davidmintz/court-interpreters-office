@@ -46,13 +46,13 @@ trait EmailTrait
      * @param  string $textContent plain-text content for email message
      * @return Message
      */
-    public function createEmailMessage(string $markup = '', string $textContent='') : Message
+    public function createEmailMessage(string $markup = '', string $textContent = '') : Message
     {
         $html = new MimePart($markup);
         $html->type = Mime::TYPE_HTML;
         $html->charset = 'utf-8';
         $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
-        if (!$textContent) {
+        if (! $textContent) {
             $textContent = 'You will need to view this message in an email client that supports HTML.';
         }
         $text = new MimePart($textContent);
@@ -66,8 +66,10 @@ trait EmailTrait
         $message->setBody($body)->setEncoding('UTF-8');
         $contentTypeHeader = $message->getHeaders()->get('Content-Type');
         $contentTypeHeader->setType('multipart/alternative');
-        $message->getHeaders()->addHeaderLine('X-Sent-By',
-            'InterpretersOffice https://interpretersoffice.org');
+        $message->getHeaders()->addHeaderLine(
+            'X-Sent-By',
+            'InterpretersOffice https://interpretersoffice.org'
+        );
 
         return $message;
     }

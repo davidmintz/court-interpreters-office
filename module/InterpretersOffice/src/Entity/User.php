@@ -175,7 +175,7 @@ class User implements ResourceInterface, RoleInterface
         if (strtolower($person->getEmail()) != strtolower($this->username)) {
             return $this->username;
         } else {
-            $init = substr($person->getFirstname(),0,1);
+            $init = substr($person->getFirstname(), 0, 1);
             return "{$init}. {$person->getLastname()}";
         }
     }

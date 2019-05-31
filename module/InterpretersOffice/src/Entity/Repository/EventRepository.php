@@ -174,10 +174,10 @@ DQL;
         }
         if ($event['submitter_extra_data']) {
             $event['submitter_extra_data'] =
-            json_decode($event['submitter_extra_data'],\JSON_OBJECT_AS_ARRAY);
+            json_decode($event['submitter_extra_data'], \JSON_OBJECT_AS_ARRAY);
         }
         /* NOTE TO SELF: ugly! let's fix this at the source of the problem.*/
-        $event['judge'] = str_replace('  ',' ',$event['judge']);
+        $event['judge'] = str_replace('  ', ' ', $event['judge']);
         $deft_dql = 'SELECT d.surnames, d.given_names
             FROM InterpretersOffice\Entity\Event e
             JOIN e.defendants d WHERE e.id = :id';

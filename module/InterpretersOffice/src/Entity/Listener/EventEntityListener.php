@@ -87,8 +87,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
-            [   'entity'=>$entity,
-                'args'=>$args,
+            [   'entity' => $entity,
+                'args' => $args,
             ]
         );
     }
@@ -106,8 +106,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $auth_user = $this->getAuthenticatedUser($args);
         $user = $auth_user ? $auth_user->getUsername() : '<nobody>';
         $message = "user $user deleted (purged) event id {$entity->getId()}";
-        $this->logger->info($message,[
-            'entity_class'=> Entity\Event::class,
+        $this->logger->info($message, [
+            'entity_class' => Entity\Event::class,
             'entity_id' => $entity->getId(),
             'description' => $entity->describe(),
         ]);
@@ -126,8 +126,9 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
      * @return array
      */
     private function reallyModified(
-        Entity\Event $entity, PreUpdateEventArgs $args) : Array
-    {
+        Entity\Event $entity,
+        PreUpdateEventArgs $args
+    ) : Array {
 
         $fields_updated = array_keys($args->getEntityChangeSet());
         $this->logger->debug(__METHOD__.": looks like updates to:\n"
@@ -162,14 +163,17 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $fields_updated = $this->reallyModified($entity, $args);
         $user = $this->getAuthenticatedUser($args);
         //$shit = array_keys($args->getEntityChangeSet());
-        if (in_array('deleted',$fields_updated) && $entity->getDeleted()) {
+        if (in_array('deleted', $fields_updated) && $entity->getDeleted()) {
             $id = $entity->getId();
             if ((string)$user->getRole() !== 'submitter') {
-                $message = sprintf('user %s deleted event #%d from the schedule',
-                    $user->getUsername(), $id
+                $message = sprintf(
+                    'user %s deleted event #%d from the schedule',
+                    $user->getUsername(),
+                    $id
                 );
-                $this->logger->info($message,
-                    ['entity_class'=> Entity\Event::class,'entity_id'=>$id ]
+                $this->logger->info(
+                    $message,
+                    ['entity_class' => Entity\Event::class,'entity_id' => $id ]
                 );
             }
         }

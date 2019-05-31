@@ -84,12 +84,12 @@ class Diff extends AbstractHelper
                 return $field == 'interpreters' ? $this->renderInterpreters($data)
                         : $this->renderDefendants($data);
             } elseif ($data instanceof \DateTime) {
-                return $this->renderDateTime($field,$data);
+                return $this->renderDateTime($field, $data);
             }
         }
         // yes, there is a diff to show them
-        if (false !== strstr($field,'comments') && $this->getView()->with_comments ) {
-            return $this->htmlDiff($before[$field],$data);
+        if (false !== strstr($field, 'comments') && $this->getView()->with_comments) {
+            return $this->htmlDiff($before[$field], $data);
         }
         if ($field == 'location') {
             //$is_default = (! empty($this->getData()['is_default_location']);
@@ -97,21 +97,23 @@ class Diff extends AbstractHelper
             //     return $data;
             // }
         }
-        if (is_string($data) || is_string($before[$field]) ) {
+        if (is_string($data) || is_string($before[$field])) {
             if (! $data or ! $before[$field]) {
                 $sep = '';
             } else {
                 $sep = ' ';
             }
-            return sprintf('<del>%s</del>%s<ins>%s</ins>',$before[$field],$sep,$data);
+            return sprintf('<del>%s</del>%s<ins>%s</ins>', $before[$field], $sep, $data);
         }
 
         if ($data instanceof \DateTime) {
-            $string_before = $this->renderDateTime($field,$before[$field]);
-            $string_after  = $this->renderDateTime($field,$data);
+            $string_before = $this->renderDateTime($field, $before[$field]);
+            $string_after  = $this->renderDateTime($field, $data);
             if ($string_before != $string_after) {
-                return sprintf('<del class="avoidwrap">%s</del> <ins class="avoidwrap">%s</ins>',
-                $string_before, $string_after
+                return sprintf(
+                    '<del class="avoidwrap">%s</del> <ins class="avoidwrap">%s</ins>',
+                    $string_before,
+                    $string_after
                 );
             } else {
                 return $string_after;
@@ -120,40 +122,40 @@ class Diff extends AbstractHelper
         if (is_array($data)) {
             $interpreters = $field == 'interpreters';
             if ($interpreters) {
-                $indexed_after = array_combine(array_column($data,'id'), $data);
-                $indexed_before = array_combine(array_column($before[$field],'id'), $before[$field]);
-                $added = array_diff(array_keys($indexed_after),array_keys($indexed_before));
-                $deleted = array_diff(array_keys($indexed_before),array_keys($indexed_after));
-                $all_ids = array_unique(array_merge(array_keys($indexed_after),array_keys($indexed_before)));
+                $indexed_after = array_combine(array_column($data, 'id'), $data);
+                $indexed_before = array_combine(array_column($before[$field], 'id'), $before[$field]);
+                $added = array_diff(array_keys($indexed_after), array_keys($indexed_before));
+                $deleted = array_diff(array_keys($indexed_before), array_keys($indexed_after));
+                $all_ids = array_unique(array_merge(array_keys($indexed_after), array_keys($indexed_before)));
                 $return = '';
                 $format = '<span class="interpreter" data-id="%s" data-email="%s">%s</span><br>';
-                foreach($all_ids as $id) {
-                    if (in_array($id,$deleted)) {
+                foreach ($all_ids as $id) {
+                    if (in_array($id, $deleted)) {
                         $i = $indexed_before[$id];
-                        $return .= sprintf($format,$i['id'],$i['email'],'<del>'."$i[lastname], $i[firstname]".'</del>');
-                    } elseif (in_array($id,$added)) {
+                        $return .= sprintf($format, $i['id'], $i['email'], '<del>'."$i[lastname], $i[firstname]".'</del>');
+                    } elseif (in_array($id, $added)) {
                         $i = $indexed_after[$id];
-                        $return .= sprintf($format,$i['id'],$i['email'],'<ins>'."$i[lastname], $i[firstname]".'</ins>');
+                        $return .= sprintf($format, $i['id'], $i['email'], '<ins>'."$i[lastname], $i[firstname]".'</ins>');
                     } else {
                         $i = $indexed_after[$id];
-                        $return .= sprintf($format,$i['id'],$i['email'],"$i[lastname], $i[firstname]");
+                        $return .= sprintf($format, $i['id'], $i['email'], "$i[lastname], $i[firstname]");
                     }
                 }
 
                 return $return;
             }
             // else, it's defendant names
-            $flatten = function($n){
+            $flatten = function ($n) {
                 return "$n[surnames], $n[given_names]";
             };
-            $names_now = array_map($flatten,$data);
-            $names_before =  array_map($flatten,$before[$field]);
+            $names_now = array_map($flatten, $data);
+            $names_before = array_map($flatten, $before[$field]);
             $new = array_diff($names_now, $names_before);
-            $deleted = array_diff($names_before,$names_now);
-            $all = array_unique(array_merge($names_now,$names_before));
+            $deleted = array_diff($names_before, $names_now);
+            $all = array_unique(array_merge($names_now, $names_before));
             $return = '';
-            foreach($all as $n) {
-                if (in_array($n,$deleted)) {
+            foreach ($all as $n) {
+                if (in_array($n, $deleted)) {
                     $return .= "<del>$n</del><br>";
                 } elseif (in_array($n, $new)) {
                     $return .= "<ins>$n</ins><br>";
@@ -173,11 +175,12 @@ class Diff extends AbstractHelper
      * @param  Array  $data
      * @return string
      */
-    public function renderDefendants(Array $data){
+    public function renderDefendants(Array $data)
+    {
 
-        return implode('<br>',array_map(function($d){
+        return implode('<br>', array_map(function ($d) {
             return  "$d[surnames], $d[given_names]";
-        },$data));
+        }, $data));
     }
 
     /**
@@ -186,14 +189,17 @@ class Diff extends AbstractHelper
      * @param  Array  $data
      * @return string
      */
-    public function renderInterpreters(Array $data){
+    public function renderInterpreters(Array $data)
+    {
 
-        return implode('<br>',array_map(function($i){
+        return implode('<br>', array_map(function ($i) {
             return  sprintf(
                 '<span class="interpreter" data-id="%s" data-email="%s">%s</span>',
-                $i['id'],$i['email'],"{$i['lastname']}, {$i['firstname']}"
+                $i['id'],
+                $i['email'],
+                "{$i['lastname']}, {$i['firstname']}"
             );
-        },$data));
+        }, $data));
     }
 
     /**
@@ -203,7 +209,8 @@ class Diff extends AbstractHelper
      * @param  \DateTime $obj
      * @return string
      */
-    public function renderDateTime($field,\DateTime $obj) {
+    public function renderDateTime($field, \DateTime $obj)
+    {
 
         switch ($field) {
             case 'time':
@@ -257,11 +264,11 @@ class Diff extends AbstractHelper
      */
     public function diff($old, $new)
     {
-        $matrix = array();
+        $matrix = [];
         $maxlen = 0;
-        foreach($old as $oindex => $ovalue){
+        foreach ($old as $oindex => $ovalue) {
             $nkeys = array_keys($new, $ovalue);
-            foreach($nkeys as $nindex){
+            foreach ($nkeys as $nindex) {
                 $matrix[$oindex][$nindex] = isset($matrix[$oindex - 1][$nindex - 1]) ?
                     $matrix[$oindex - 1][$nindex - 1] + 1 : 1;
                 if ($matrix[$oindex][$nindex] > $maxlen) {
@@ -271,11 +278,14 @@ class Diff extends AbstractHelper
                 }
             }
         }
-        if ($maxlen == 0) return array(array('d'=>$old, 'i'=>$new));
+        if ($maxlen == 0) {
+            return [['d' => $old, 'i' => $new]];
+        }
         return array_merge(
             $this->diff(array_slice($old, 0, $omax), array_slice($new, 0, $nmax)),
             array_slice($new, $nmax, $maxlen),
-            $this->diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen)));
+            $this->diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen))
+        );
     }
 
     /**
@@ -290,11 +300,13 @@ class Diff extends AbstractHelper
         $ret = '';
         $view = $this->getView();
         $diff = $this->diff(preg_split("/[\s]+/", $old), preg_split("/[\s]+/", $new));
-        foreach($diff as $k){
-            if(is_array($k))
-                $ret .= (!empty($k['d'])?"<del>".$view->escapeHtml(implode(' ',$k['d']))."</del> ":'').
-                    (!empty($k['i'])?"<ins>".$view->escapeHtml(implode(' ',$k['i']))."</ins> ":'');
-            else $ret .= $view->escapeHtml($k) . ' ';
+        foreach ($diff as $k) {
+            if (is_array($k)) {
+                $ret .= (! empty($k['d']) ? "<del>".$view->escapeHtml(implode(' ', $k['d']))."</del> " : '').
+                    (! empty($k['i']) ? "<ins>".$view->escapeHtml(implode(' ', $k['i']))."</ins> " : '');
+            } else {
+                $ret .= $view->escapeHtml($k) . ' ';
+            }
         }
         return $ret;
     }

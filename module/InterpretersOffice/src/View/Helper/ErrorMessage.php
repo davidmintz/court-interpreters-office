@@ -32,7 +32,7 @@ EOT;
      * @param string $header
      * @return string
      */
-    public function __invoke($message = null,$header = 'system error')
+    public function __invoke($message = null, $header = 'system error')
     {
         $html = sprintf(
             $this->template,

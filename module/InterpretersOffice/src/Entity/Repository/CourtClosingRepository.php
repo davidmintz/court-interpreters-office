@@ -150,8 +150,8 @@ class CourtClosingRepository extends EntityRepository implements
      * @param  string $message
      * @return void
      */
-    private function debug($message) {
-
+    private function debug($message)
+    {
     }
      /*
       * returns a DateTime that is two SDNY business days from $when

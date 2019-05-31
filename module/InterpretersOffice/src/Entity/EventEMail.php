@@ -5,6 +5,7 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 //use Doctrine\Common\Collections\Collection;
 //use Doctrine\Common\Collections\ArrayCollection;
 
@@ -15,7 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="event_emails")
  *
  */
-class EventEMail {
+class EventEMail
+{
 
     /**
      * entity id.
@@ -54,7 +56,7 @@ class EventEMail {
 
     /**
      * User who sent the email
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(nullable=true,name="user_id")
      *

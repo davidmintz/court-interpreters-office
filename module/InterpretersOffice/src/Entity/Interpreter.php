@@ -285,7 +285,7 @@ class Interpreter extends Person
         foreach ($this->interpreterLanguages as $ie) {
             $return[] = $ie->getLanguage();
         }
-        
+
         return $return;
     }
 
