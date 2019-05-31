@@ -21,6 +21,9 @@ use Zend\Mime\Part as MimePart;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerAwareInterface;
 
+/**
+ * sends email from the admin/schedule interface
+ */
 class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInterface
 {
     use EmailTrait;
@@ -72,6 +75,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
      * constructor
      *
      * @param Array $config
+     * @param EntityManagerInterface $em
      */
     function __construct(Array $config, EntityManagerInterface $em)
     {
@@ -185,6 +189,11 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
         return array_merge($result,['status'=>'success','info'=>"template: $template",]);
     }
 
+    /**
+     * gets PDO statement
+     * 
+     * @return \PDOStatement
+     */
     public function getStatement()
     {
         $user_id = $this->auth->getIdentity()->id;

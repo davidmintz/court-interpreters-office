@@ -56,6 +56,8 @@ class InterpreterLanguage
     protected $language;
 
     /**
+    *  language credential
+    *
     *  @ORM\ManyToOne(targetEntity="LanguageCredential")
     *  @ORM\JoinColumn(nullable=true,name="credential_id")
     *

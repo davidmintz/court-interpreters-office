@@ -53,6 +53,8 @@ class EventEMail {
     private $recipient;
 
     /**
+     * User who sent the email
+     * 
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(nullable=true,name="user_id")
      *

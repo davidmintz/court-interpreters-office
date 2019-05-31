@@ -1,4 +1,4 @@
-<?php /* module/InterpretersOffice/src/Service/DateCalculator.php */
+<?php /** module/InterpretersOffice/src/Service/DateCalculator.php */
 
 namespace InterpretersOffice\Service;
 

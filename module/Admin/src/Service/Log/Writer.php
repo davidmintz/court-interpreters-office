@@ -37,7 +37,8 @@ class Writer extends AbstractWriter
 
     /**
      * Constructor
-     *
+     * 
+     * @param \PDO $pdo
      * @param  array|Traversable $options
      * @throws Exception\InvalidArgumentException
      */

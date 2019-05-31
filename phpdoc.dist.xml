@@ -4,11 +4,12 @@
     <target>doc/parser</target>
   </parser>
   <transformer>
-    <target>doc</target>
+    <target>doc/api</target>
   </transformer>
   <files>
     <directory>module</directory>
     <ignore>module/*test/*</ignore>
     <ignore>module/*/view/*</ignore>
+    <ignore>module/Sandbox/*</ignore>
   </files>
 </phpdoc>

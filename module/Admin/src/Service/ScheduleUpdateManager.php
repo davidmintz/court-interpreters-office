@@ -155,8 +155,8 @@ class ScheduleUpdateManager
      * constructor
      *
      * @param AuthenticationServiceInterface $auth
-     * @param LoggerInterface                $log
      * @param Array                          $config
+     * @param LoggerInterface                $log
      */
     public function __construct(
 

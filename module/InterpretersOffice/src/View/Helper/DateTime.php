@@ -5,7 +5,9 @@ namespace InterpretersOffice\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 
-
+/**
+ * helper for rendering \DateTime instances
+ */
 class DateTime extends AbstractHelper
 {
     /**
