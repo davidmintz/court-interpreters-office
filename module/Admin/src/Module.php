@@ -83,7 +83,7 @@ class Module
         }
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user,$container) {
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user, $container) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
                 $viewModel = $event->getApplication()->getMvcEvent()
@@ -110,7 +110,8 @@ class Module
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
         $sharedEvents->attach(
-            '*','error',
+            '*',
+            'error',
             function ($event) use ($log) {
                 if ($event->getParam('exception')) {
                     $exception = $event->getParam('exception');
@@ -145,8 +146,9 @@ class Module
         $scheduleManager = $container->get('InterpretersOffice\Admin\Service\ScheduleUpdateManager');
         $sharedEvents->attach(
             // maybe narrow down the "*" to something more specific?
-            '*', 'loadRequest',
-            function($e) use ($log,$scheduleManager) {
+            '*',
+            'loadRequest',
+            function ($e) use ($log, $scheduleManager) {
                 $params = $e->getParams();
                 // $args = $params['args'];
                 $entity = $params['entity'];
@@ -160,7 +162,9 @@ class Module
         // database updates were run when, in the event of an Exception, they
         // really weren't.
         $sharedEvents->attach(
-            '*','postFlush',[$scheduleManager,'dispatchEmail']
+            '*',
+            'postFlush',
+            [$scheduleManager,'dispatchEmail']
         );
     }
 
@@ -218,14 +222,13 @@ class Module
         }
         /** try to prevent us from timing out */
         $session = new \Zend\Session\Container('Authentication');
-        if (!$session->last_access or $session->last_access < time() - 60 ) {
+        if (! $session->last_access or $session->last_access < time() - 60) {
             $session->last_access = time();
         }
         ///** @var $session_manager \Zend\Session\SessionManager */
         // $session_manager = $container->get(\Zend\Session\SessionManager::class);
         // $config = $session_manager->getConfig();
         // var_dump($config->toArray());
-
     }
     /**
      * checks authorization

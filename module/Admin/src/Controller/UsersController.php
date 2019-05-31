@@ -103,7 +103,7 @@ class UsersController extends AbstractActionController implements Authentication
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
         $events->attach('load-person', function (EventInterface $e)
-            use ($entityManager, $role_id) {
+ use ($entityManager, $role_id) {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
@@ -185,7 +185,7 @@ class UsersController extends AbstractActionController implements Authentication
     {
         $email = $this->params()->fromQuery('email');
         $hat = $this->params()->fromQuery('hat');
-        if (!$email or !$hat) {
+        if (! $email or ! $hat) {
             return new JsonModel([
                 'status' => 'error',
                 'valid'  => false,
@@ -225,12 +225,11 @@ class UsersController extends AbstractActionController implements Authentication
         if (! $person_id && isset($this->params()->fromPost()['user'])) {
             // try post parameters
             $user = $this->params()->fromPost()['user'];
-            if (isset($user['person']) && !empty($user['person']['id']))
-            {
+            if (isset($user['person']) && ! empty($user['person']['id'])) {
                 $person_id = $user['person']['id'];
             }
         }
-        $options =  [
+        $options = [
             'action' => 'create',
             'auth_user_role' => $this->auth_user_role,
         ];
@@ -247,7 +246,7 @@ class UsersController extends AbstractActionController implements Authentication
         } else {
             $person = null;
         }
-        $form = new UserForm($this->entityManager,$options);
+        $form = new UserForm($this->entityManager, $options);
         $user = new Entity\User();
         if ($person) {
             $this->events->trigger(
@@ -264,7 +263,6 @@ class UsersController extends AbstractActionController implements Authentication
         $request = $this->getRequest();
 
         if ($request->isPost()) {
-
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 return new JsonModel(['status' => 'error',

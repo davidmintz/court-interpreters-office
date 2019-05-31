@@ -44,7 +44,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
             'name' => 'languageCredential',
             'type' => 'Zend\Form\Element\Select',
             'options' => [
-                'value_options' =>[''=>'']+$credential_options,
+                'value_options' => ['' => ''] + $credential_options,
             ],
             'attributes' => [
                 'class' => 'form-control'

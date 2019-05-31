@@ -30,6 +30,5 @@ class EmailServiceFactory implements FactoryInterface
             ;
 
         return $service;
-
     }
 }

@@ -262,7 +262,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
             $error = "The request with id $id was not found in the database";
         } elseif ($entity->getEvent() and $entity->getEvent()->isDeleted()) {
             $url = $this->getEvent()->getApplication()->getServiceManager()
-                ->get('ViewHelperManager')->get('url')('requests/view',['id'=>$id]);
+                ->get('ViewHelperManager')->get('url')('requests/view', ['id' => $id]);
             $error = "This <a href=\"$url\">request</a> was scheduled and subsequently deleted from
             the Interpreters' schedule. Please contact them if you have any questions.";
         }
@@ -279,11 +279,16 @@ class WriteController extends AbstractActionController implements ResourceInterf
         if (! $this->getRequest()->isPost()) {
             return  new ViewModel(['form' => $form, 'id' => $id]);
         }
-        $this->getEventManager()->trigger('loadRequest',$this,
-            ['entity'=>$entity,'entity_manager'=>$this->objectManager]);
+        $this->getEventManager()->trigger(
+            'loadRequest',
+            $this,
+            ['entity' => $entity,'entity_manager' => $this->objectManager]
+        );
         $data = $this->getRequest()->getPost()->get('request');
         $form->filterDateTimeFields(
-            ['date','time'], $data, 'request'
+            ['date','time'],
+            $data,
+            'request'
         );
         $form->setData($this->getRequest()->getPost());
         if (! $form->isValid()) {
@@ -292,10 +297,13 @@ class WriteController extends AbstractActionController implements ResourceInterf
         try {
             $form->postValidate();
             $event = $entity->getEvent();
-            $this->getEventManager()->trigger('updateRequest',$this,
-                ['request'=>$entity,'entity_manager'=>$this->objectManager]);
+            $this->getEventManager()->trigger(
+                'updateRequest',
+                $this,
+                ['request' => $entity,'entity_manager' => $this->objectManager]
+            );
             $this->objectManager->flush();
-            $this->getEventManager()->trigger('postFlush',$this);
+            $this->getEventManager()->trigger('postFlush', $this);
             $this->flashMessenger()->addSuccessMessage(
                 'This request for interpreting services has been updated successfully. Thank you.'
             );
@@ -330,17 +338,22 @@ class WriteController extends AbstractActionController implements ResourceInterf
         if ($entity) {
             try {
                 $this->getEventManager()->trigger(
-                    'loadRequest',$this,[
+                    'loadRequest',
+                    $this,
+                    [
                         'entity' => $entity,
                     ]
                 );
                 $entity->setCancelled(true);
                 $description = $this->params()->fromPost('description');
-                $this->getEventManager()->trigger('cancel',$this,
-                    ['request'=>$entity,'entity_manager'=>$this->objectManager,
-                    'description'=>$description]);
+                $this->getEventManager()->trigger(
+                    'cancel',
+                    $this,
+                    ['request' => $entity,'entity_manager' => $this->objectManager,
+                    'description' => $description]
+                );
                 $this->objectManager->flush();
-                $this->getEventManager()->trigger('postFlush',$this);
+                $this->getEventManager()->trigger('postFlush', $this);
                 $message = 'This request for interpreting services ';
                 if ($description) {
                     $message .= "($description) ";

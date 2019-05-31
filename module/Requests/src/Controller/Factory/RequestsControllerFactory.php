@@ -43,8 +43,8 @@ class RequestsControllerFactory implements FactoryInterface
     {
         /** @var \Zend\Log\Logger $log */
         $log = $container->get('log');
-        if ($requestedName != Controller\IndexController::class and !$log->getWriterPluginManager()->has(DbWriter::class)) {
-            $log->addWriter($container->get(DbWriter::class),100);// [, $priority, $options])
+        if ($requestedName != Controller\IndexController::class and ! $log->getWriterPluginManager()->has(DbWriter::class)) {
+            $log->addWriter($container->get(DbWriter::class), 100);// [, $priority, $options])
             $log->debug("added DbWriter to log instance in RequestsControllerFactory");
         }
         $entityManager = $container->get('entity-manager');
@@ -64,7 +64,8 @@ class RequestsControllerFactory implements FactoryInterface
             $acl = $container->get('acl');
             $controller = new $requestedName($entityManager, $auth, $acl);
             // @todo optimize this...
-            $user = $entityManager->find('InterpretersOffice\Entity\User',
+            $user = $entityManager->find(
+                'InterpretersOffice\Entity\User',
                 $auth->getIdentity()->id
             );
             $acl->allow(
@@ -76,12 +77,21 @@ class RequestsControllerFactory implements FactoryInterface
             // attach event listeners
             $eventManager = $container->get('SharedEventManager');
             $scheduleManager = $container->get(ScheduleUpdateManager::class);
-            $eventManager->attach($requestedName,'updateRequest',
-                [$scheduleManager,'onUpdateRequest']);
-            $eventManager->attach($requestedName,'cancel',
-                [$scheduleManager,'onCancelRequest']);
-            $eventManager->attach(RequestEntityListener::class, 'create',
-                [$scheduleManager,'onCreateRequest']);
+            $eventManager->attach(
+                $requestedName,
+                'updateRequest',
+                [$scheduleManager,'onUpdateRequest']
+            );
+            $eventManager->attach(
+                $requestedName,
+                'cancel',
+                [$scheduleManager,'onCancelRequest']
+            );
+            $eventManager->attach(
+                RequestEntityListener::class,
+                'create',
+                [$scheduleManager,'onCreateRequest']
+            );
 
             return $controller;
         }

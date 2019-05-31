@@ -176,11 +176,9 @@ class IndexController extends AbstractActionController //implements ResourceInte
 
         $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
         $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
-        $view = new ViewModel(compact('paginator', 'defendants', 'deadline','csrf'));
+        $view = new ViewModel(compact('paginator', 'defendants', 'deadline', 'csrf'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());
 
         return $view;
     }
-
-
 }

@@ -161,7 +161,7 @@ class IndexController extends AbstractActionController
         $entity = $this->objectManager->getRepository(Request::class)->view($id);
         $validator = new \Zend\Validator\Csrf('csrf');
         $token = $validator->getHash();
-        return ['request' => $entity,'csrf'=>$token];
+        return ['request' => $entity,'csrf' => $token];
     }
 
     /**
@@ -185,7 +185,7 @@ class IndexController extends AbstractActionController
             $repository = $this->objectManager->getRepository(Request::class);
             $result = $repository->createEventFromRequest($request_id);
             return new JsonModel($result);
-        } catch (\Throwable $e){
+        } catch (\Throwable $e) {
             return $this->catch($e);
         }
     }

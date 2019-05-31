@@ -15,12 +15,10 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 use Doctrine\ORM\EntityManager;
 
-
 /**
  * Request entity listener.
  */
 class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareInterface
-
 {
     use Log\LoggerAwareTrait;
     use EventManagerAwareTrait;
@@ -68,7 +66,6 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         //$log = $this->getLogger();
         //$log->debug("postload in RequestEntityListener: saving deft state");
         $this->previous_defendants = $request->getDefendants()->toArray();
-
     }
 
     /**
@@ -89,7 +86,6 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
             $request->setSubmitter($this->getCurrentUserPerson($args));
         }
         //$this->getLogger()->debug("YES, set Request metadata in prePersist listener");
-
     }
 
     /**
@@ -121,9 +117,9 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
         $fields_updated = array_keys($args->getEntityChangeSet());
         if (count($fields_updated) or $this->defendantsWereModified($request)) {
-            $shit = print_r($fields_updated,true);
+            $shit = print_r($fields_updated, true);
             $this->getLogger()->debug(__METHOD__.": updating: $shit") ;
-            if (array_diff($fields_updated,['event','pending'])) {
+            if (array_diff($fields_updated, ['event','pending'])) {
                 $request->setModified(new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));
             }

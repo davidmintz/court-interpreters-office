@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 namespace InterpretersOffice\Admin\Service;
 
-
 use InterpretersOffice\Service\EmailTrait;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Admin\Service\EmailService;
@@ -77,7 +76,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
      * @param Array $config
      * @param EntityManagerInterface $em
      */
-    function __construct(Array $config, EntityManagerInterface $em)
+    public function __construct(Array $config, EntityManagerInterface $em)
     {
         $this->config = $config;
         $this->setObjectManager($em);
@@ -98,19 +97,19 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
         $mail_config = $this->config['mail'];
         $message = $this->createEmailMessage();
 
-        $message->setFrom($mail_config['from_address'],$mail_config['from_entity'])
+        $message->setFrom($mail_config['from_address'], $mail_config['from_entity'])
             ->setBcc($mail_config['from_address'])
             ->setSubject($data['subject']);
         $log_comments = '';
         if (isset($data['cc'])) {
             $log_comments .= "Cc: ";
             foreach ($data['cc'] as $address) {
-                $message->addCc($address['email'], !empty($address['name']) ? $address['name'] : null );
+                $message->addCc($address['email'], ! empty($address['name']) ? $address['name'] : null);
             }
-            $log_comments .= implode('; ',array_map(function($a){
-                return !empty($address['name']) ? "{$a['name']} <{$a['email']}>"
+            $log_comments .= implode('; ', array_map(function ($a) {
+                return ! empty($address['name']) ? "{$a['name']} <{$a['email']}>"
                     : $a['email'];
-            },$data['cc']));
+            }, $data['cc']));
         }
         $result = ['sent_to' => [], 'cc_to' => []];
         $view = new ViewModel();
@@ -123,12 +122,12 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
 
         if (isset($data['event_details'])) {
             if (isset($data['event_details']['location'])) {
-                $data['event_details']['location'] = str_replace('*','',$data['event_details']['location']);
+                $data['event_details']['location'] = str_replace('*', '', $data['event_details']['location']);
             }
-            $view->setVariables(['entity'=>$data['event_details'],'escaped'=>true]);
+            $view->setVariables(['entity' => $data['event_details'],'escaped' => true]);
         }
-        if (!empty($data['body'])) {
-            if (!$data['template_hint']) {
+        if (! empty($data['body'])) {
+            if (! $data['template_hint']) {
                 // the additional notes are the message body (no event-details)
                 $view->body = $data['body'];
             } else {
@@ -150,17 +149,17 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
             $message->getBody()->setParts([$parts[0],$html]);
             /* DEBUG */
-            file_put_contents("data/email-output.{$i}.html",$content);
-            $message->setTo($address['email'], !empty($address['name']) ? $address['name'] : null );
+            file_put_contents("data/email-output.{$i}.html", $content);
+            $message->setTo($address['email'], ! empty($address['name']) ? $address['name'] : null);
             /** @var $pdo \PDO */
             $pdo = $this->getObjectManager()->getConnection();
             try {
                 $pdo->beginTransaction();
                 $params = [
                     ':timestamp' => date('Y-m-d H:i:s'),
-                    ':recipient_id' => !empty($address['id']) ? $address['id'] : null,
+                    ':recipient_id' => ! empty($address['id']) ? $address['id'] : null,
                     ':email' => $address['email'],
-                    ':subject'=> $data['subject'],
+                    ':subject' => $data['subject'],
                     ':event_id' => $data['event_id'],
                     ':comments' => $log_comments,
                 ];
@@ -168,30 +167,29 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                 $log_statement->execute($params);
                 $result['sent_to'][] = $address;
                 $pdo->commit();
-
-            } catch (\Throwable $e){
+            } catch (\Throwable $e) {
                 $pdo->rollback();
                 $details = [
                     'status' => 'error',
                     'exception_class' => get_class($e),
                     'address' => $address['email'],
-                    'name'   =>$address['name'],
+                    'name'   => $address['name'],
                     'error' => ['message' => $e->getMessage()],
                 ];
                 $this->getEventManager()
-                    ->trigger('error',$this,['exception' => $e, 'details' => $details]);
+                    ->trigger('error', $this, ['exception' => $e, 'details' => $details]);
                 return array_merge($result, $details);
             }
         }
-        if (!empty($data['cc'])) {
+        if (! empty($data['cc'])) {
             $result['cc_to'] = $data['cc']; // for confirmation
         }
-        return array_merge($result,['status'=>'success','info'=>"template: $template",]);
+        return array_merge($result, ['status' => 'success','info' => "template: $template",]);
     }
 
     /**
      * gets PDO statement
-     * 
+     *
      * @return \PDOStatement
      */
     public function getStatement()
@@ -203,7 +201,6 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             VALUES (:event_id, :timestamp, $user_id, :recipient_id, :email, :subject, :comments)";
 
         return $pdo->prepare($sql);
-
     }
 
     /**
@@ -225,21 +222,22 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             $validation_errors['to'][] = 'at least one "To" address is required';
         } elseif (! is_array($data['to'])) {
             $validation_errors['to'][] = 'invalid parameter in "To" field';
-        } elseif (!count($data['to'])) {
+        } elseif (! count($data['to'])) {
             $validation_errors['to'][] = 'at least one "To" address is required';
         } else {
             $validator = new EmailAddress();
             // this removes hyphens, so we can't use
             //$alpha = new \Zend\I18n\Filter\Alpha(true);
             $whitespace = new \Zend\Filter\PregReplace(
-                ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
+                ['pattern' => '/\s+/', 'replacement' => ' ' ]
+            );
             foreach ($data['to'] as $i => $address) {
                 if (empty($address['email'])) {
                     $validation_errors['to'][] = 'missing email address in "To" recipient';
-                } elseif (!$validator->isValid($address['email'])){
+                } elseif (! $validator->isValid($address['email'])) {
                     $validation_errors['to'][] = 'invalid email address: '.$address['email'];
                 }
-                if (!empty($address['name'])) {
+                if (! empty($address['name'])) {
                     $filtered = $whitespace->filter($address['name']);
                     $data['to'][$i]['name'] = $filtered;
                 }
@@ -257,10 +255,10 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                 foreach ($data['cc'] as $i => $address) {
                     if (empty($address['email'])) {
                         $validation_errors['cc'][] = 'missing email address in "Cc" recipient';
-                    } elseif (!$validator->isValid($address['email'])){
+                    } elseif (! $validator->isValid($address['email'])) {
                         $validation_errors['cc'][] = 'invalid email address: '.$address['email'];
                     }
-                    if (!empty($address['name'])) {
+                    if (! empty($address['name'])) {
                         $filtered = $whitespace->filter($address['name']);
                         $data['cc'][$i]['name'] = $filtered;
                     }
@@ -326,7 +324,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
 
         $valid = count($validation_errors) ? false : true;
 
-        return compact('valid','validation_errors');
+        return compact('valid', 'validation_errors');
     }
 
     /**
@@ -355,5 +353,4 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
 
         return $this;
     }
-
 }

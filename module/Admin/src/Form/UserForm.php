@@ -59,9 +59,7 @@ class UserForm extends Form
                 ->get('person')->get('email');
         $email_input->setRequired(true)->setAllowEmpty(false)
             ->getValidatorChain()->attach(new NotEmpty(
-                ['messages'=>['isEmpty' => 'email is required']]
-            )
-        );
+                ['messages' => ['isEmpty' => 'email is required']]
+            ));
     }
-
 }

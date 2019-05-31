@@ -37,7 +37,7 @@ class Writer extends AbstractWriter
 
     /**
      * Constructor
-     * 
+     *
      * @param \PDO $pdo
      * @param  array|Traversable $options
      * @throws Exception\InvalidArgumentException
@@ -63,9 +63,9 @@ class Writer extends AbstractWriter
         $params = $event;
         $params['timestamp'] = $timestamp;
         $extra = $event['extra'];
-        $defaults = ['entity_id'=> null, 'entity_class'=> ''];
+        $defaults = ['entity_id' => null, 'entity_class' => ''];
         foreach (['entity_class','entity_id'] as $field) {
-            if (!empty($extra[$field])) {
+            if (! empty($extra[$field])) {
                 $params["{$field}"] = $extra[$field];
                 unset($params['extra'][$field]);
             } else {

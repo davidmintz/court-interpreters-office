@@ -63,8 +63,8 @@ class BasicEntityControllerFactory implements FactoryInterface
                 );
         }
         $log = $container->get('log');
-        if (!$log->getWriterPluginManager()->has(DbWriter::class)) {
-            $log->addWriter($container->get(DbWriter::class),100);
+        if (! $log->getWriterPluginManager()->has(DbWriter::class)) {
+            $log->addWriter($container->get(DbWriter::class), 100);
         }
 
         // ensure UpdateListener knows who current user is

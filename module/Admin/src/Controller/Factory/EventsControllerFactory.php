@@ -42,8 +42,8 @@ class EventsControllerFactory implements FactoryInterface
         $sharedEvents = $container->get('SharedEventManager');
         /** @var \Zend\Log\Logger $log */
         $log = $container->get('log');
-        if (!$log->getWriterPluginManager()->has(DbWriter::class)) {
-            $log->addWriter($container->get(DbWriter::class),100);// [, $priority, $options])
+        if (! $log->getWriterPluginManager()->has(DbWriter::class)) {
+            $log->addWriter($container->get(DbWriter::class), 100);// [, $priority, $options])
         }
         /**
          * this next bit is a shit-show but never fear, we  will clean it up
@@ -51,7 +51,7 @@ class EventsControllerFactory implements FactoryInterface
         $sharedEvents->attach(
             Listener\EventEntityListener::class,
             'postLoad',
-            function($e) use ($log) {
+            function ($e) use ($log) {
                 //return;
                 $params = $e->getParams();
                 $entity = $params['entity'];
@@ -65,39 +65,40 @@ class EventsControllerFactory implements FactoryInterface
                 } else {
                     $log->debug("using in-memory entity to get event snapshot");
                     $view_before = [
-                        'date'=>$entity->getDate(),
-                        'time'=>$entity->getTime(),
-                        'end_time'=>$entity->getEndTime(),
-                        'last_updated'=>$entity->getModified(),
+                        'date' => $entity->getDate(),
+                        'time' => $entity->getTime(),
+                        'end_time' => $entity->getEndTime(),
+                        'last_updated' => $entity->getModified(),
                         // this is a little aggressive...
                         'last_updated_by' => 'submitter' == (string)$entity->getModifiedBy()->getRole()
-                            ? 'system': $entity->getModifiedBy()->getUserOrProperName(),
+                            ? 'system' : $entity->getModifiedBy()->getUserOrProperName(),
                         'judge' => $entity->getStringifiedJudgeOrWhatever(),
                         'type'  => (string)$entity->getEventType(),
                         'category' => (string)$entity->getEventType()->getCategory(),
-                        'submission_date'=>$entity->getSubmissionDate(),
-                        'submission_time'=>$entity->getSubmissionTime(),
-                        'defendants' => array_map(function($d){
-                            return ['surnames'=>$d->getSurnames(),'given_names'=>$d->getGivenNames()];
-                        },$entity->getDefendants()->toArray()),
+                        'submission_date' => $entity->getSubmissionDate(),
+                        'submission_time' => $entity->getSubmissionTime(),
+                        'defendants' => array_map(function ($d) {
+                            return ['surnames' => $d->getSurnames(),'given_names' => $d->getGivenNames()];
+                        }, $entity->getDefendants()->toArray()),
                         'language' => (string)$entity->getLanguage(),
                         'docket' => $entity->getDocket(),
                         'interpreters' => array_map(
-                            function($ie){
+                            function ($ie) {
                                 $i = $ie->getInterpreter();
                                 return [
-                                    'lastname'=> $i->getLastname(),
-                                    'firstname'=> $i->getFirstName(),
-                                    'email'=>$i->getEmail(),
-                                    'id'=>$i->getId()
+                                    'lastname' => $i->getLastname(),
+                                    'firstname' => $i->getFirstName(),
+                                    'email' => $i->getEmail(),
+                                    'id' => $i->getId()
                                 ];
-                            },$entity->getInterpreterEvents()->toArray()
+                            },
+                            $entity->getInterpreterEvents()->toArray()
                         ),
                         /**
                          * @todo this is nuts. write a method on the entity
                          * class that gets this string.
                          */
-                        'location' => call_user_func(function($event){
+                        'location' => call_user_func(function ($event) {
                             $location = $event->getLocation();
                             $string = '';
                             if ($location) {
@@ -108,22 +109,26 @@ class EventsControllerFactory implements FactoryInterface
                                 }
                             }
                             return $string;
-                        },$entity),
-                        'parent_location'=>$entity->getLocation() ?
-                            $entity->getLocation()->getParentLocation():'',
-                        'aj_default_location'=> $entity->getAnonymousJudge()?
-                            (string)$entity->getAnonymousJudge()->getDefaultLocation():'',
+                        }, $entity),
+                        'parent_location' => $entity->getLocation() ?
+                            $entity->getLocation()->getParentLocation() : '',
+                        'aj_default_location' => $entity->getAnonymousJudge() ?
+                            (string)$entity->getAnonymousJudge()->getDefaultLocation() : '',
                         'default_courtroom' => call_user_func(
-                            function($judge){
-                                if (! $judge) { return ''; }
+                            function ($judge) {
+                                if (! $judge) {
+                                    return '';
+                                }
                                 $location = $judge->getDefaultLocation();
-                                return $location ? $location->getName():'';
+                                return $location ? $location->getName() : '';
                             },
                             $entity->getJudge()
                         ),
                         'default_courthouse' => call_user_func(
-                            function($judge){
-                                if (! $judge) { return ''; }
+                            function ($judge) {
+                                if (! $judge) {
+                                    return '';
+                                }
                                 $location = $judge->getDefaultLocation();
                                 if ($location && $location->getParentLocation()) {
                                     return $location->getParentLocation()->getName();
@@ -134,7 +139,7 @@ class EventsControllerFactory implements FactoryInterface
                             $entity->getJudge()
                         ),
                         'submitter' => call_user_func(
-                            function($event) {
+                            function ($event) {
                                 $person = $event->getSubmitter();
                                 if ($person) {
                                     $return = $person->getFirstName().' '.$person->getLastname();
@@ -143,14 +148,15 @@ class EventsControllerFactory implements FactoryInterface
                                 } else {
                                     return (string)$event->getAnonymousSubmitter();
                                 }
-                            },$entity
-                            ),
-                        'submitter_hat'=> $entity->getSubmitter() ?
+                            },
+                            $entity
+                        ),
+                        'submitter_hat' => $entity->getSubmitter() ?
                             (string)$entity->getSubmitter()->getHat() : '',
                         'comments' => $entity->getComments(),
                         'admin_comments' => $entity->getAdminComments(),
                         'reason_for_cancellation' => $entity->getCancellationReason() ?
-                            (string)$entity->getCancellationReason():'n/a',
+                            (string)$entity->getCancellationReason() : 'n/a',
                     ];
                 }
                 $session = new \Zend\Session\Container("event_updates");
@@ -191,7 +197,6 @@ class EventsControllerFactory implements FactoryInterface
                      [28] => interpreters
                     )
                     */
-
             }
         );
         return $controller;

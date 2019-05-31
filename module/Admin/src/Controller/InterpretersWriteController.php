@@ -129,7 +129,7 @@ class InterpretersWriteController extends AbstractActionController
             [  'action' => 'create',
                'vault_enabled' => $this->vault_enabled,
               // 'form_config' => $this->formConfig,
-           ]
+            ]
         );
         $viewModel->form = $form;
         $request = $this->getRequest();
@@ -279,7 +279,7 @@ class InterpretersWriteController extends AbstractActionController
                 ['action' => $action,
                 'vault_enabled' => $this->vault_enabled,
                 //'form_config' => $this->formConfig,
-            ]
+                ]
             );
             $request = $this->getRequest();
             $form->setData($request->getPost());
@@ -348,7 +348,7 @@ class InterpretersWriteController extends AbstractActionController
         $helper = $this->getLanguageCollectionHelper();
         $credential_options = $this->entityManager->getRepository(Entity\Language::class)
             ->getCredentialOptions();
-        $content = $helper->fromArray(compact('language', 'index','credential_options'));
+        $content = $helper->fromArray(compact('language', 'index', 'credential_options'));
 
         return $this->getResponse()->setContent($content);
     }

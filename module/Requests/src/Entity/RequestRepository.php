@@ -58,7 +58,7 @@ class RequestRepository extends EntityRepository
             LEFT JOIN i.hat ih
             WHERE r.id = :id';
         return $this->getEntityManager()->createQuery($dql)
-            ->setParameters([':id'=>$id])
+            ->setParameters([':id' => $id])
             ->getOneOrNullResult();
     }
 
@@ -339,12 +339,12 @@ class RequestRepository extends EntityRepository
     public function createEventFromRequest($request_id)
     {
         $em = $this->getEntityManager();
-        $request = $em->find(Request::class,$request_id);
+        $request = $em->find(Request::class, $request_id);
         if (! $request) {
-            return ['status'=>'error','message'=>"request entity with id $request_id was not found, hence cannot be scheduled"];
+            return ['status' => 'error','message' => "request entity with id $request_id was not found, hence cannot be scheduled"];
         }
         if ($request->isCancelled()) {
-            return ['status'=>'error','message'=>"this request has just been cancelled, so it should not be scheduled"];
+            return ['status' => 'error','message' => "this request has just been cancelled, so it should not be scheduled"];
         }
         $existing = $request->getEvent();
         if ($existing) {
@@ -356,7 +356,7 @@ class RequestRepository extends EntityRepository
             ];
         }
         $event = new Entity\Event();
-        foreach(['Date','Time','Judge','Docket','Language','EventType','Comments'] as $prop) {
+        foreach (['Date','Time','Judge','Docket','Language','EventType','Comments'] as $prop) {
             $event->{'set'.$prop}($request->{'get'.$prop}());
         }
         $event->addDefendants($request->getDefendants());
@@ -380,7 +380,6 @@ class RequestRepository extends EntityRepository
             'event_date' => $event->getDate()->format('Y-m-d'),
             'event_id' => $event->getId(),
         ];
-
     }
 
     /**
@@ -393,5 +392,4 @@ class RequestRepository extends EntityRepository
     {
         return $this->view($id);
     }
-
 }

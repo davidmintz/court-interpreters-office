@@ -90,13 +90,12 @@ TEMPLATE;
                 $label = $language_options[$key]['label'];
                 // echo "\$key is $key, label $label ...<br>";
                 $certifiable = $language_options[$key]['attributes']['data-certifiable'];
-
             }
             $cred_options = $credential->getValueOptions();
-            if (!$certifiable) {
-                $i = array_search('AO',array_column($cred_options,'label'));
+            if (! $certifiable) {
+                $i = array_search('AO', array_column($cred_options, 'label'));
                 if (false !== $i) {
-                    $cred_options[$i]['attributes'] = ['disabled'=>'disabled'];
+                    $cred_options[$i]['attributes'] = ['disabled' => 'disabled'];
                     $credential->setValueOptions($cred_options);
                 }
             }
@@ -106,14 +105,20 @@ TEMPLATE;
             $credential->setAttribute('id', "language-credential-$language_id");
             $credential_markup = $this->view->formElement($credential);
             $messages = $collection->getMessages();
-            if ($messages){
+            if ($messages) {
                 $error_message = array_values($messages)[0];
                 $errors = sprintf($this->error_template, 'block', $error_message);
             } else {
                 $errors = sprintf($this->error_template, 'none', '');
             }
-            $html .= sprintf($this->template, $language_id, $language_markup,
-            $language_id, $credential_markup, $errors);
+            $html .= sprintf(
+                $this->template,
+                $language_id,
+                $language_markup,
+                $language_id,
+                $credential_markup,
+                $errors
+            );
         }
 
         return $html;
@@ -141,18 +146,18 @@ TEMPLATE;
         $certifiable = $language->isFederallyCertified();
         $cred_options = $params['credential_options'];
         if (! $certifiable) {
-            $i = array_search('AO',array_column($cred_options,'label'));
+            $i = array_search('AO', array_column($cred_options, 'label'));
             if ($i !== false) {
-                $cred_options[$i]['attributes'] = ['disabled'=>'disabled'];
+                $cred_options[$i]['attributes'] = ['disabled' => 'disabled'];
             }
         }
         $credential_element = new \Zend\Form\Element\Select(
             "interpreter[interpreterLanguages][$i][languageCredential]",
-            ['value_options' => [''=>' ']+$cred_options,
+            ['value_options' => ['' => ' '] + $cred_options,
                     'attributes' => [
                         'class' => 'form-control',
                         'id'    => "language-credential-$language_id",
-                ]
+                    ]
             ]
         );
 

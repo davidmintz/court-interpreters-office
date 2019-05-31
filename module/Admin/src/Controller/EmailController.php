@@ -63,11 +63,11 @@ class EmailController extends AbstractActionController
             /** @var \Zend\Http\Response $response */
             $response = $this->getResponse();
             $response->setStatusCode(405);
-            return new JsonModel(['status'=>'error','message'=>'method not allowed']);
+            return new JsonModel(['status' => 'error','message' => 'method not allowed']);
         }
-        $csrf = $this->params()->fromPost('csrf','');
-        if (! (new \Zend\Validator\Csrf('csrf',['timeout'=>600]))->isValid($csrf)) {
-            return new JsonModel(['status'=>'error','validation_errors'=>
+        $csrf = $this->params()->fromPost('csrf', '');
+        if (! (new \Zend\Validator\Csrf('csrf', ['timeout' => 600]))->isValid($csrf)) {
+            return new JsonModel(['status' => 'error','validation_errors' =>
                 ['csrf' => 'security token is missing or expired']
             ]);
         }
@@ -76,7 +76,7 @@ class EmailController extends AbstractActionController
         if (isset($result['status']) && 'error' == $result['status']) {
             $this->getResponse()->setStatusCode(500);
         }
-        
+
         return new JsonModel($result);
     }
 }

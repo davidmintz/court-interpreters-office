@@ -189,10 +189,10 @@ class EventsController extends AbstractActionController
             ->load($id);
         if ($entity->isDeleted()) {
             return ['errorMessage' => 'This event has been deleted from the schedule, and therefore is no longer mutable. If you need to have it restored, please contact your database administrator.',
-            'header'=>'event deleted'];
+            'header' => 'event deleted'];
         }
         if (! $entity) {
-            return ['errorMessage' => "No event with id $id was found in the database.",'header'=>'event not found'];
+            return ['errorMessage' => "No event with id $id was found in the database.",'header' => 'event not found'];
         }
         $form = new Form\EventForm(
             $this->entityManager,
@@ -240,7 +240,6 @@ class EventsController extends AbstractActionController
             ));
 
             return new JsonModel(['status' => 'success', 'id' => $id]);
-
         } catch (\Exception $e) {
             return $this->catch($e);
         }
@@ -257,7 +256,7 @@ class EventsController extends AbstractActionController
             return $this->redirect()->toRoute('events');
         }
         $id = $this->params()->fromRoute('id');
-        $validator = new \Zend\Validator\Csrf('csrf',['timeout'=>600]);
+        $validator = new \Zend\Validator\Csrf('csrf', ['timeout' => 600]);
         $token = $this->params()->fromPost('csrf');
         if (! $validator->isValid($token)) {
             return new JsonModel(['status' => 'error','message' =>
@@ -288,8 +287,11 @@ class EventsController extends AbstractActionController
             return new JsonModel(['deleted' => true,'status' => 'success',
                 'message' => "this event has been deleted"]);
         } catch (\Throwable $e) {
-            $this->getEventManager()->trigger('error',$this,
-                ['details'=>"attempting soft-deletion of event id $id",'exception' => $e]);
+            $this->getEventManager()->trigger(
+                'error',
+                $this,
+                ['details' => "attempting soft-deletion of event id $id",'exception' => $e]
+            );
             return new JsonModel(['deleted' => false,'status' => 'error',
                 'message' => $e->getMessage()]);
         }

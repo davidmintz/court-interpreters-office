@@ -30,6 +30,5 @@ class DbLogWriterFactory implements FactoryInterface
         $writer->addFilter(new Priority(Logger::INFO));
 
         return $writer;
-
     }
 }
