@@ -1,27 +1,23 @@
+#!/usr/bin/env python3
+
 
 import unittest, time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 class InterpretersOffice(unittest.TestCase):
 
     def setUp(self):
-        driver = webdriver.Firefox()
-        #options.add_argument('--ignore-certificate-errors')
-        #options.add_argument("--test-type")
-        #options.binary_location = "/usr/bin/chromium-browser"
-        #driver = webdriver.Chrome(options=options)
+        options = FirefoxOptions()
+        # experience shows that if we want headless, we can use
+        # the --headless option here, or else use e.g.,
+        # MOZ_HEADLESS=1 pytest --testdox <path/to/tests>
+        # options.add_argument("--headless")
+        # options.add_argument('--ignore-certificate-errors')
+        # options.add_argument("--test-type")
+        driver = webdriver.Firefox(options=options)
         self.driver = driver
-        #self.driver = webdriver.Firefox()
-
-    # def test_search_in_python_org(self):
-    #     driver = self.driver
-    #     driver.get("http://www.python.org")
-    #     self.assertIn("Python", driver.title)
-    #     elem = driver.find_element_by_name("q")
-    #     elem.send_keys("pycon")
-    #     elem.send_keys(Keys.RETURN)
-    #     assert "No results found." not in driver.page_source
 
     def test_login_from_main_page(self):
 
