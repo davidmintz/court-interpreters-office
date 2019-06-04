@@ -134,8 +134,9 @@ $(function(){
             $('#results .status-message').show();
             $("li div.details").remove();
         });
+        $("#btn-add-person").show();
     });
-    if ($("#search-form").data("session_defaults")) {
-        button.trigger("click");
-    }
+    // if ($("#search-form").data("session_defaults")) {
+    //     //button.trigger("click");
+    // }
 });

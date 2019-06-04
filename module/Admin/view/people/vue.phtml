@@ -65,7 +65,7 @@ endif;
         <li class="page-item" v-if="pages.lastPageInRange < pages.last"><a class="page-link last" v-bind:href="url + '&page=' + pages.last">&gt;&gt;</a></li>
     </ul>
 </nav>
-<a href="<?php echo $this->url('people/add')?>" role="button" title="add a new person" id="btn-add-person" class="btn btn-primary">
+<a href="<?php echo $this->url('people/add')?>" style="display:none" role="button" title="add a new person" id="btn-add-person" class="btn btn-primary">
 <span aria-hidden="true" class="icon fa fa-plus"></span> new person
 </a>
 </div>
