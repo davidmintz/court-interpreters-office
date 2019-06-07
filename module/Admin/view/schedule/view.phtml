@@ -343,7 +343,7 @@ endif;?></span>
             <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
             <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
             <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
-            <a role="button" data-toggle="modal" data-target="#modal-confirm-delete" data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" class="btn btn-success">fuckin delete</a>
+            <a role="button" data-toggle="modal" data-target="#modal-confirm-delete" data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" class="btn btn-success">delete</a>
         </div>
         <?php else: ?>
             <div class="alert alert-warning pt-2 border event-deleted">
