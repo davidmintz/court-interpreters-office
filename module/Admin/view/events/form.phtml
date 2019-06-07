@@ -169,8 +169,8 @@ echo $this->form()->openTag($form); ?>
                  </div>
                 <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
                     <?php
-                    $interpreters = $form->getObject()->getInterpreterEvents();
-                    if ($interpreters->count()) :
+                    $count_interpreters = $form->getObject()->getInterpreterEvents()->count();
+                    if ($count_interpreters) :
                         $helper = (new InterpreterElementCollection())->setView($this);
                         echo $helper($fieldset->get('interpreterEvents'));
                     endif;
@@ -250,7 +250,7 @@ echo $this->form()->openTag($form); ?>
         <div class="alert alert-warning validation-error px-2" id="error_modified" style="text-align:left;display:none"></div>
         <?php
         echo $this->formSubmit($form->get('submit')); if ($this->id) :
-        ?><a id="btn-delete" role="button" href="<?php echo $this->url('events/edit', ['action' => 'delete','id' => $this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
+        ?><a id="btn-delete" role="button" data-toggle="modal" data-target="#modal-confirm-delete" href="<?php echo $this->url('events/edit', ['action' => 'delete','id' => $this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
         endif;?>
     </div>
 </div>
@@ -277,7 +277,7 @@ endif;
         </div>
      </div>
 </div>
-<div id="modal-assign-interpreter" class="modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+<div id="modal-assign-interpreter" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header"></div>
@@ -287,6 +287,6 @@ endif;
         --><button id="btn-no-assign-interpreter" type="button" class="btn btn-secondary ml-1" data-dismiss="modal">no</button>
       </div>
     </div>
-    </div>
   </div>
 </div>
+<?php echo $this->partial('schedule/confirm-delete-modal.phtml',['count_interpreters'=>$count_interpreters]);

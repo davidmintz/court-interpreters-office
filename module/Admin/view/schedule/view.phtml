@@ -18,6 +18,7 @@ $this->headStyle()->captureStart();?>
  * @var \InterpretersOffice\Entity\Event $event
  */
 $event = $this->event;
+
 if ('submitter' ==  $event['last_update_user_role']) :
     $event['last_updated_by'] = 'system';
     // instead of "{$event['last_update_firstname_init']}. {$event['last_update_lastname']}";
@@ -124,7 +125,7 @@ if (!$this->before):?>
     <div class="col-sm-3 pl-0 cancellation">
         <?php echo $this->event['reason_for_cancellation'] ?: '<span class="text-muted">n/a</span>'?>
     </div>
-        <div class="col-sm-3  text-muted text-md-right">
+    <div class="col-sm-3  text-muted text-md-right">
         <?php if ($event['request_id']):?>* <?php endif ?>request by
     </div>
     <div class="col-sm-3 pl-0 submitter" data-id="<?php echo $event['submitter_id']?>"><span class="avoidwrap">
@@ -342,7 +343,7 @@ endif;?></span>
             <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
             <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
             <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
-            <a data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" role="button" class="btn btn-success">delete</a>
+            <a role="button" data-toggle="modal" data-target="#modal-confirm-delete" data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" class="btn btn-success">fuckin delete</a>
         </div>
         <?php else: ?>
             <div class="alert alert-warning pt-2 border event-deleted">
@@ -387,4 +388,5 @@ endif;?></span>
         endforeach;
     endif;
     echo $this->partial('schedule/email-modal.phtml',compact('suggestions','event'));
+    echo $this->partial('schedule/confirm-delete-modal.phtml',['count_interpreters'=>count($event['interpreters'])]);
 ?><!-- -->

@@ -194,6 +194,19 @@ class ScheduleUpdateManager
         return $this;
     }
 
+
+    /**
+     * sets entity previous state
+     *
+     * @param Array $data
+     * @return ScheduleUpdateManager
+     */
+    public function setPreviousEventState(Array $data) {
+        $this->previous_state = $data;
+
+        return $this;
+    }
+
     /**
      * sets viewRenderer
      *
@@ -235,7 +248,7 @@ class ScheduleUpdateManager
         // figure out what admin actions are configured for $user_event
         $actions = $this->getUserActions($request,$user_event);
         $config = $this->config['event_listeners'];
-        $this->logger->debug('FYI: '.print_r( $config[$user_event],true));
+        $this->logger->debug("configured actions for user_event $user_event: ".print_r( $config[$user_event],true));
         // $this->logger->debug("configured user actions for $user_event: ".print_r($actions,true));
         $filter = new DashToCamelCase();
         // order of execution might not be guaranteed, so we need to
@@ -479,6 +492,23 @@ class ScheduleUpdateManager
         );
     }
 
+    public function onDeleteEvent(EventInterface $e) {
+        $params = $e->getParams();
+        if (empty($params['email_notification'])) {
+            return;
+        }
+        /* otherwise... */
+        $this->remove_interpreters = true;
+        $this->notify_interpreters = true;// superfluous?
+        $this->user_event = 'delete';
+        $event = $params['entity'];
+        $this->logger->debug(
+            __METHOD__. " calling notifyAssignedInterpreters()"
+        );
+        $this->notifyAssignedInterpreters($event);
+
+
+    }
 
     /**
      * updates an Event entity to synchronize with Request
@@ -586,7 +616,7 @@ class ScheduleUpdateManager
      * @return ScheduleUpdateManager
      *
      */
-    public function deleteScheduledEvent($request, Array $updates)
+    public function deleteScheduledEvent(Request $request, Array $updates)
     {
         $event = $request->getEvent();
         $event->setDeleted(true);
@@ -639,13 +669,12 @@ class ScheduleUpdateManager
      * @param  Array  $updates
      * @return ScheduleUpdateManager
      */
-    public function notifyAssignedInterpreters(Request $request, array $updates)
+    public function notifyAssignedInterpreters(Entity\Interpretable $entity, Array $updates = [])
     {
-        $event = $request->getEvent();
-        $interpreters = $this->interpreters ?: $request->getEvent()->getInterpreters();
+
+        $interpreters = $this->interpreters ?: $entity->getInterpreters();
         $count = count($interpreters);
         if (! $count) {
-
             return $this;
         }
         $data = $this->previous_state;
@@ -653,20 +682,20 @@ class ScheduleUpdateManager
            if $this->remove_interpreters == true, tell them the event was cancelled.
            for the details, use the Request entity's previous_state
         */
-            $subject = sprintf('%s interpreting assignment has been ',
-            $data['language']);
+        $subject = sprintf('%s interpreting assignment has been ',
+        $data['language']);
         if ($this->remove_interpreters) {
             $subject .= 'cancelled';
             $view_variables = ['entity' => $data ];
             $template = 'email/interpreter-cancellation-notice';
         } else {
             $subject .= 'modified';
-            $view_variables = ['entity' => $request,'before'=> $this->previous_state ];
+            $view_variables = ['entity' => $entity,'before'=> $this->previous_state ];
             $template = 'email/event-update-notice';
         }
         $subject .= sprintf(
             ' (%s, %s %s',
-                $data['eventType'],
+                isset($data['type'])? $data['type']:$data['eventType'],
                 $data['date']->format('D d-M-Y'),
                 $data['time']->format('g:i a')
         );
@@ -678,13 +707,13 @@ class ScheduleUpdateManager
             ->setTemplate($template)
             ->setVariables($view_variables);
         $who = [];
+        $layout = $this->getEmailLayout();
+
         foreach ($interpreters as $i) {
             $view->interpreter = $i;
             $who[] = $i->getFullName();
             $this->logger->debug("using $template to prepare email to: {$i->getEmail()}");
-            $layout = new ViewModel();
-            $layout->setTemplate('interpreters-office/email/layout')
-                ->setVariable('content', $this->viewRenderer->render($view));
+            $layout->setVariable('content', $this->viewRenderer->render($view));
             $output = $this->viewRenderer->render($layout);
             // for debugging
             $shit = basename($template);
@@ -692,18 +721,16 @@ class ScheduleUpdateManager
 
             $message = $this->createEmailMessage($output);
             $contact = $this->config['site']['contact'];
-            $message->setFrom($contact['email'],$contact['organization_name'])
-                ->setTo($i->getEmail(),$i->getFullname())
-                ->addCc($contact['email'],$contact['organization_name'])
+            $this->setMessageHeaders($message,$i,$contact)
                 ->setSubject($subject);
             $this->email_messages[] = $message;
         }
         $message = sprintf(
-            'automatically notifying interpreter(s) following user-action %s with request #%s: %s',
-            $this->user_event, $request->getId(), implode(', ',$who)
+            'notifying interpreter(s) following user-action %s with %s #%s: %s',
+            $this->user_event, get_class($entity), $entity->getId(), implode(', ',$who)
         );
-        $this->logger->info($message,
-            ['entity_class' => Request::class,'entity_id' => $request->getId()]);
+        $this->logger->debug($message,
+            ['entity_class' => get_class($entity),'entity_id' => $entity->getId()]);
 
         return $this;
     }

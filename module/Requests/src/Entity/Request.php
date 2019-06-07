@@ -6,7 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use InterpretersOffice\Entity\Person;
-
+use InterpretersOffice\Entity\Interpreter;
+use InterpretersOffice\Entity\Interpretable;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -17,7 +18,7 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
  *
  * @ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
  */
-class Request implements ResourceInterface
+class Request implements Interpretable, ResourceInterface
 {
 
     /**
@@ -730,5 +731,19 @@ class Request implements ResourceInterface
         $data = $this->getExtraData();
 
         return isset($data['defendants']) ? $data['defendants'] : [];
+    }
+
+    /**
+     * gets Interpreters
+     * 
+     * @return Interpreter[]
+     */
+    public function getInterpreters() : Array
+    {
+        $e = $this->getEvent();
+        if (! $e) {
+            return [];
+        }
+        return $e->getInterpreters();
     }
 }

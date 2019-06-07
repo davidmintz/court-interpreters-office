@@ -17,6 +17,7 @@ use InterpretersOffice\Admin\Form;
 
 use InterpretersOffice\Entity;
 use InterpretersOffice\Controller\ExceptionHandlerTrait;
+use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 
 /**
  *  EventsController
@@ -69,6 +70,12 @@ class EventsController extends AbstractActionController
     protected $viewModel;
 
     /**
+     * update listener
+     * @var ScheduleUpdateManager
+     */
+    protected $updateManager;
+
+    /**
      * constructor
      *
      * @param EntityManagerInterface $em
@@ -76,10 +83,12 @@ class EventsController extends AbstractActionController
      */
     public function __construct(
         EntityManagerInterface $em,
-        AuthenticationServiceInterface $auth
+        AuthenticationServiceInterface $auth,
+        ScheduleUpdateManager $updateManager
     ) {
         $this->entityManager = $em;
         $this->auth = $auth;
+        $this->updateManager = $updateManager;
     }
 
     /**
@@ -248,14 +257,18 @@ class EventsController extends AbstractActionController
     /**
      * deletes an entity
      *
-     * @return JsonModel
+     * @return JsonModel|ViewModel
      */
     public function deleteAction()
     {
+        $id = $this->params()->fromRoute('id');
+        // if ($this->getRequest()->isGet() && ! $this->getRequest()->isXmlHttpRequest()) {
+        //     return $this->redirect()->toRoute('events/view',['id'=>$id]);
+        // }
+
         if (! $this->getRequest()->isPost()) {
             return $this->redirect()->toRoute('events');
         }
-        $id = $this->params()->fromRoute('id');
         $validator = new \Zend\Validator\Csrf('csrf', ['timeout' => 600]);
         $token = $this->params()->fromPost('csrf');
         if (! $validator->isValid($token)) {
@@ -280,7 +293,11 @@ class EventsController extends AbstractActionController
         }
         try {
             $entity->setDeleted(true);
+            $this->getEventManager()->trigger('deleteEvent',$this,
+                ['entity'=>$entity,
+                'email_notification'=> $this->params()->fromPost('email_notification')]);
             $this->entityManager->flush();
+            $this->getEventManager()->trigger('postFlush',$this);
             // $this->flashMessenger()->addSuccessMessage(
             //         'this event has been deleted from the schedule'
             // );

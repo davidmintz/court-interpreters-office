@@ -188,7 +188,7 @@ const display_email_suggestion = function() {
 };
 
 /**
- * assembles and submits email, and handles response.
+ * assembles and submits data for composing email, handles response.
  *
  * @param  {object} event
  * @return {void}
@@ -295,6 +295,7 @@ $(function(){
     // $(".time").html(`<del>2:30 pm</del> <ins>4:00 pm</ins>`);
     //console.log(`email flag? ${should_suggest_email()}`);
     if (should_suggest_email()) {
+        console.log("running should_suggest_email()...");
         display_email_suggestion();
     }
     const recipient_autocomplete = $("#recipient-autocomplete");

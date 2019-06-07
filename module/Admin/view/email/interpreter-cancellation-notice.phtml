@@ -9,6 +9,8 @@
 $address = $this->to;
 if (!empty($address['name'])):
     $salutation = "Dear {$address['name']}:";
+elseif ($this->interpreter):
+    $salutation = sprintf('Dear %s:',$this->interpreter->getFullName());
 else:
     $salutation = 'Hello,';
 endif;

@@ -10,6 +10,8 @@ use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
 use Zend\Mail\Transport\TransportInterface;
+use Zend\View\Model\ViewModel;
+use InterpretersOffice\Entity;
 
 /**
  * for convenient re-use
@@ -20,6 +22,9 @@ trait EmailTrait
 
     /** @var TransportInterface transport */
     protected $transport;
+
+    /** @var ViewModel email layout */
+    protected $layout;
 
     /**
      * returns email transport
@@ -72,5 +77,36 @@ trait EmailTrait
         );
 
         return $message;
+    }
+
+    /**
+     * adds headers to message
+     *
+     * @param Message      $message
+     * @param Entity\Person $person
+     * @param Array        $contact
+     */
+    public function setMessageHeaders(Message $message, Entity\Person $person, Array $contact)
+    {
+        $message->setFrom($contact['email'],$contact['organization_name'])
+            ->setTo($person->getEmail(),$person->getFullname())
+            ->addCc($contact['email'],$contact['organization_name']);
+
+        return $message;
+    }
+
+
+    /**
+     * gets email layout
+     *
+     * @param  string $template
+     * @return ViewModel
+     */
+    public function getEmailLayout($template = 'interpreters-office/email/layout' )
+    {
+        if (! $this->layout) {
+            $this->layout = (new ViewModel())->setTemplate($template);
+        }
+        return $this->layout;
     }
 }

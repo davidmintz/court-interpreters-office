@@ -5,16 +5,31 @@
  * rendered as HTML, in which case it's already taken care of.
  */
 use InterpretersOffice\View\Helper\Diff;
+$fields = [
+    'date',
+    'time',
+    'language',
+    'eventType',
+    'location',
+    'docket',
+    'judge',
+    'defendants',
+     'comments',
+];
 ?>
 <br>
 <table style="margin-bottom:1em">
     <tbody>
-    <?php $entity = $this->entity; foreach (array_keys($entity) as $field):
+    <?php $entity = $this->entity; foreach ($fields as $field):
         /** @todo  need to figure out what to do with this 'extraData'... */
-        if ($field == 'extraData') : continue; endif;
+        // if ($field == 'extraData') : continue; endif;
+        // if ($field == 'end_time'): continue; endif;
         if ($field == 'comments' && !$this->with_comments) : continue; endif;
         if ($field == 'eventType' or $field == 'event_type') :
             $label = 'event type';
+            if (!key_exists($field,$this->entity)) :
+                $field = 'type';
+            endif;
         else :
             $label = $field;
         endif;

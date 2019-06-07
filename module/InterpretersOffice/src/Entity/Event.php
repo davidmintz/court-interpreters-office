@@ -19,7 +19,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"InterpretersOffice\Entity\Listener\EventEntityListener"})
  */
-class Event
+class Event implements Interpretable
 {
     /**
      * entity id.
@@ -258,7 +258,7 @@ class Event
      * getting just the Interpreter entities from InterpreterEvents
      * @var array
      */
-    private $interpreters;
+    private $interpreters = [];
 
     /**
      * soft-deletion flag
@@ -974,7 +974,7 @@ class Event
      *
      * @return Array
      */
-    public function getInterpreters()
+    public function getInterpreters() : Array
     {
         $ie_collection = $this->getInterpreterEvents();
         if (! $ie_collection->count()) {

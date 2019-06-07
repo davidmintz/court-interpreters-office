@@ -30,9 +30,11 @@ class EventsControllerFactory implements FactoryInterface
     {
         $auth = $container->get('auth');
         $em = $container->get('entity-manager');
+        $updateManager = $container->get(ScheduleUpdateManager::class);
         $controller = new EventsController(
             $em,
-            $auth
+            $auth,
+            $updateManager
         );
         //attach the entity listeners
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
@@ -43,15 +45,21 @@ class EventsControllerFactory implements FactoryInterface
         /** @var \Zend\Log\Logger $log */
         $log = $container->get('log');
         if (! $log->getWriterPluginManager()->has(DbWriter::class)) {
-            $log->addWriter($container->get(DbWriter::class), 100);// [, $priority, $options])
+            //$log->addWriter($container->get(DbWriter::class), 100);// [, $priority, $options])
         }
+        $sharedEvents->attach(
+            EventsController::class,
+            'deleteEvent',
+            [$updateManager,'onDeleteEvent']
+        );
         /**
          * this next bit is a shit-show but never fear, we  will clean it up
+         * @todo clean this up
          */
         $sharedEvents->attach(
             Listener\EventEntityListener::class,
             'postLoad',
-            function ($e) use ($log) {
+            function ($e) use ($updateManager,$log) {
                 //return;
                 $params = $e->getParams();
                 $entity = $params['entity'];
@@ -157,6 +165,7 @@ class EventsControllerFactory implements FactoryInterface
                 $session->$id = $view_before;
                 $log->debug("stored entity state in session {$session->getName()}"
                      ." (id $id) for later reference");
+                $updateManager->setPreviousEventState($view_before);
             }
         );
         return $controller;
