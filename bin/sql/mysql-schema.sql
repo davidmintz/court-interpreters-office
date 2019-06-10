@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.26-0ubuntu0.18.04.1
+-- Server version	5.7.26-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -47,7 +47,7 @@ CREATE TABLE `app_event_log` (
   `entity_class` varchar(250) NOT NULL DEFAULT '',
   `priority` tinyint(3) unsigned NOT NULL,
   `priority_name` varchar(12) NOT NULL,
-  `extra` varchar(1200) NOT NULL DEFAULT ''
+  `extra` varchar(5000) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -669,4 +669,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-23 17:34:10
+-- Dump completed on 2019-06-10  9:27:06

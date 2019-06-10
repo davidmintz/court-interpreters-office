@@ -74,6 +74,9 @@ class Writer extends AbstractWriter
         }
         if (count($params['extra'])) {
             $params['extra'] = json_encode($params['extra']);
+            if (strlen($params['extra']) > 5000) {
+                $params['extra'] = json_encode(['db_storage_error'=>'"extra" data exceeded 5000 character limit']);
+            }
         } else {
             $params['extra'] = '';
         }

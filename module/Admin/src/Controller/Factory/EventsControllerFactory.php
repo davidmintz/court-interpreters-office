@@ -45,7 +45,7 @@ class EventsControllerFactory implements FactoryInterface
         /** @var \Zend\Log\Logger $log */
         $log = $container->get('log');
         if (! $log->getWriterPluginManager()->has(DbWriter::class)) {
-            //$log->addWriter($container->get(DbWriter::class), 100);// [, $priority, $options])
+            $log->addWriter($container->get(DbWriter::class), 100);// [, $priority, $options]
         }
         $sharedEvents->attach(
             EventsController::class,
