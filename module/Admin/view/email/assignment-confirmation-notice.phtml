@@ -14,7 +14,7 @@ endif;
 </p>
 <?php
 echo $this->partial('interpreters-office/email/partials/event-details.phtml',
-    ['entity'=>$this->entity]);
+    ['entity'=>$this->entity, 'escaped' => $this->escaped]);
 ?>
 <?php if ($this->notes):?>
 <p>Additional notes:</p>

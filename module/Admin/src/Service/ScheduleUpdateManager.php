@@ -181,7 +181,7 @@ class ScheduleUpdateManager
             'date' =>  $request->getDate(),
             'time' =>  $request->getTime(),
             'language' => (string)$request->getLanguage(),
-            'eventType' =>  (string)$request->getEventType(),
+            'event_type' =>  (string)$request->getEventType(),
             'location' =>  (string)$request->getLocation(),
             'docket'  => $request->getDocket(),
             'comments' => $request->getComments(),
@@ -373,7 +373,11 @@ class ScheduleUpdateManager
             if ($field == 'is_default_location') {
                 continue;
             }
-            $after = $request->{'get'.ucfirst($field)}();
+            if ($field == 'event_type') {
+                $after = $request->getEventType();
+            } else {
+                $after = $request->{'get'.ucfirst($field)}();
+            }
             if ($field == 'defendants') {
                 $after = $after->toArray();
             }
@@ -695,7 +699,7 @@ class ScheduleUpdateManager
         }
         $subject .= sprintf(
             ' (%s, %s %s',
-                isset($data['type'])? $data['type']:$data['eventType'],
+                isset($data['type'])? $data['type']:$data['event_type'],
                 $data['date']->format('D d-M-Y'),
                 $data['time']->format('g:i a')
         );

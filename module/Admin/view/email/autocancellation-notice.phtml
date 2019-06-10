@@ -63,7 +63,7 @@ $this->entity = [
     'date' =>  $this->request->getDate(),
     'time' =>  $this->request->getTime(),
     'language' => (string)$this->request->getLanguage(),
-    'eventType' =>  (string)$this->request->getEventType(),
+    'event_type' =>  (string)$this->request->getEventType(),
     'location' =>  (string)$this->request->getLocation(),
     'docket'  => $this->request->getDocket(),
     'comments' => $this->request->getComments(),
@@ -81,14 +81,14 @@ endif;
 ?>
 <p>
 This automated message is to inform you that user <?php echo "{$this->user->firstname} {$this->user->lastname}"?>
-has just <?php echo $verb ?> the following request for interpreting services. As a result, the corresponding
+ has just <?php echo $verb ?> the following request for interpreting services. As a result, the corresponding
 event on the schedule was automatically <?php echo $this->user_event == 'cancel' ? "removed" : "updated" ?>.
 </p>
 <?php if ($this->interpreters):?>
 <p>
-Also, please note that the following <?php echo $plural ? 'interpreters were ':'interpreter was'  ?>
-removed from the assignment, and automatic email-notification to interpreters in such cases is disabled.
-Therefore, it's up to you to contact  <?php echo $plural ? 'these interpreters':'this interpreter' ?> if
+Also, please note that the following <?php echo $plural ? 'interpreters were ':'interpreter was '  ?>
+removed from the assignment, but automatic email-notification to interpreters in such cases is disabled.
+It's up to you to contact the <?php echo $plural ? 'interpreters':'interpreter' ?> if
 you wish to do so:
 </p>
 <p style="padding-left:2em;">

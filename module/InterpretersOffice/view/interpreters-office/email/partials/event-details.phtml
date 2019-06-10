@@ -9,49 +9,63 @@ $fields = [
     'date',
     'time',
     'language',
-    'eventType',
+    'event_type',
     'location',
     'docket',
     'judge',
     'defendants',
-     'comments',
+    'interpreters',
+    'comments',
 ];
+$debug = '';
+$entity = $this->entity;
+// this nastiness is designed to normalize our inconsistent naming
+$keys = preg_grep('/type$/i',array_keys($entity));
+if ($keys):
+    $event_type_key = array_pop($keys);
+    if ('event_type' != $event_type_key) :
+        $entity['event_type'] = $entity[$event_type_key];
+    endif;
+endif;
 ?>
 <br>
 <table style="margin-bottom:1em">
     <tbody>
-    <?php $entity = $this->entity; foreach ($fields as $field):
+    <?php foreach ($fields as $field):
         /** @todo  need to figure out what to do with this 'extraData'... */
         // if ($field == 'extraData') : continue; endif;
         // if ($field == 'end_time'): continue; endif;
         if ($field == 'comments' && !$this->with_comments) : continue; endif;
-        if ($field == 'eventType' or $field == 'event_type') :
+
+        if ($field == 'event_type') :
             $label = 'event type';
-            if (!key_exists($field,$this->entity)) :
-                $field = 'type';
-            endif;
         else :
             $label = $field;
+        endif;
+
+        if (! isset($entity[$field])) : //$debug .= "no $field key in entity array\n";
+            continue;
         endif;
     ?>
     <tr>
         <td style="border-bottom:1px dotted gray; vertical-align:top"><?php echo $label ?></td>
         <td style="border-bottom:1px dotted gray"><?php
            // the "escaped" flag means it is already string data/finished HTML
-            if ($this->escaped): echo $this->entity[$field];
-            elseif (is_string($this->entity[$field])):
-                echo $this->escapeHtml($this->entity[$field]);
+            if ($this->escaped): echo $entity[$field];
+            elseif (is_string($entity[$field])):
+                echo $this->escapeHtml($entity[$field]);
             else:
                 $helper = new Diff();
-                $data = $this->entity[$field];
+                $data = $entity[$field];
                 if ('defendants' == $field):
                     echo $helper->renderDefendants($data);
                 elseif ('interpreters' == $field) :
                     echo $helper->renderInterpreters($data);
                 elseif ($data instanceof \DateTime) :
                     echo $helper->renderDateTime($field, $data);
-                else : throw new \RuntimeException(
-                    sprintf("viewscript event-details cannot render entity field $field (type: %s)",
+                else :
+                    throw new \RuntimeException(
+                    sprintf("viewscript event-details cannot render entity field '$field' (type: %s)",
                     gettype($data)));
                 endif;
             endif;
@@ -60,3 +74,6 @@ $fields = [
 <?php endforeach; ?>
     </tbody>
 </table>
+<pre>
+    <?php echo $debug ?>
+</pre>
