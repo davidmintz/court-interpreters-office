@@ -36,7 +36,7 @@ $(function(){
             return;
         }
 
-        var url = /*window.basePath +*/ "/admin/interpreters";
+        var url = `${window.basePath}/admin/interpreters`;
         var selected = nameElement.data();
         // if we have an interpreter id, use it in the url
         if (name === selected.interpreterName) {
