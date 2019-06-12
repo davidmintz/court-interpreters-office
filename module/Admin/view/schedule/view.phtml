@@ -35,7 +35,7 @@ if (! $event or $event['deleted']) :
 endif;
 $this->headTitle('event details');
 ?>
-<h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="/admin">admin</a> | <a href="/admin/schedule">schedule</a> <small class="text-muted text-md-right">event details</small></h2>
+<h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="<?php echo $this->url('admin') ?>">admin</a> | <a href="<?php echo $this->url('events') ?>">schedule</a> <small class="text-muted text-md-right">event details</small></h2>
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
