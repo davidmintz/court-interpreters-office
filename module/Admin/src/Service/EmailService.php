@@ -243,11 +243,10 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                 }
             }
         }
-        // if (!$alpha) {
-        //     $alpha = new \Zend\I18n\Filter\Alpha(true);
-        //     $whitespace = new \Zend\Filter\PregReplace(
-        //         ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
-        // }
+        $whitespace = new \Zend\Filter\PregReplace(
+                 ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
+        $data['subject'] = trim($whitespace->filter($data['subject']));
+
         if (isset($data['cc'])) {
             if (! is_array($data['cc'])) {
                 $validation_errors['cc'][] = 'invalid parameter in "Cc" field';
@@ -265,7 +264,6 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
                 }
             }
         }
-        $data['subject'] = trim($whitespace->filter($data['subject']));
 
         foreach (['template_hint','body'] as $field) {
             if (! empty($data[$field])) {
