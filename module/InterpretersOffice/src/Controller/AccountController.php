@@ -298,6 +298,25 @@ class AccountController extends AbstractActionController
             $this->redirect()->toRoute('login');
             return;
         }
-        return new ViewModel();
+        $user = $this->auth->getIdentity();
+        // a work in progress...
+        $em = $this->objectManager;
+        $dql = 'SELECT u, p, r, h
+            FROM InterpretersOffice\Entity\User u
+            JOIN u.person p JOIN u.role r JOIN p.hat h
+            WHERE u.id = :id';
+        $entity = $em->createQuery($dql)->setParameters(['id'=>$user->id])
+            ->getOneOrNullResult();
+        $form = new \InterpretersOffice\Admin\Form\UserForm($this->objectManager,
+            [
+            'action' => 'update',
+            'auth_user_role' => $user->role,
+            'user' => $entity,
+            ]);
+
+        $form->get('user')->get('person')->setObject($entity->getPerson());
+        $form->get('user')->addPasswordElements();
+        // this is gonna change.
+        return new ViewModel(compact('form'));
     }
 }

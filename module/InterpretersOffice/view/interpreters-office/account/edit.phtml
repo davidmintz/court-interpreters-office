@@ -1,1 +1,26 @@
 <p>this is edit.phtml</p>
+<?php
+$u = $this->form->get('user');
+$p = $u->get('person');
+?>elements in userfieldset:<br>
+<p>
+    <?php
+    foreach ($u->getElements() as $e):
+        echo $e->getName(),'<br>';
+    endforeach;
+    ?>
+</p>
+<p>
+    elements in person fieldset:
+</p>
+<p>
+    <?php
+    foreach ($p->getElements() as $e):
+        echo $e->getName(),'<br>';
+    endforeach;
+
+    ?>
+</p>
+<p>
+    role <?php echo $this->identity()->role ?> with hat <?php echo $p->getObject()->getHat()?>
+</p>
