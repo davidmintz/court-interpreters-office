@@ -283,20 +283,83 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertEquals(1, $defts->count());
     }
 
-    public function testAssigningInterpretersResultsInMetaDataUpdate()
+    public function testLoadEventUpdateForm()
     {
-        $db = FixtureManager::getEntityManager()->getConnection();
-        $when = (new \DateTime('-10 minutes'))->format("Y-m-d H:i:s");
-        $db->executeQuery("UPDATE events SET modified = '$when' WHERE id = 1");
-
-        $this->login('david', 'boink');
-        $this->reset(true);
-        $this->dispatch('/admin/schedule/edit/1');
-        // sanity
+       $this->login('david', 'boink');
+       $this->reset(true);
+       $this->dispatch('/admin/schedule/edit/1');
         $this->assertResponseStatusCode(200);
         $this->assertQuery('#event-form');
         $this->assertQueryCount('ul.interpreters-assigned li', 1);
-        // to be continued...
+        $this->assertQueryContentRegex('ul.interpreters-assigned li',"/Mintz, David/"); 
+    }
+    public function testAssigningInterpretersResultsInMetaDataUpdate()
+    {
+        $db = FixtureManager::getEntityManager()->getConnection();
+        $then = (new \DateTime('-10 minutes'))->format("Y-m-d H:i:s");
+        $db->executeQuery("UPDATE events SET modified = '$then' WHERE id = 1");
+
+        $entity = FixtureManager::getEntityManager()->find('InterpretersOffice\Entity\Event',1);
+        //$defts = $entity->getDefendants()->toArray();
+
+        $data = [
+            'judge' => $entity->getJudge()->getId(),
+            'language' => $entity->getLanguage()->getId(),
+            'date' => $entity->getDate()->format("m/d/Y"),
+            'time' => $entity->getTime()->format("g:i a"),
+            'docket' => $entity->getDocket(),
+            'eventType' => $entity->getEventType()->getId(),
+            'location' =>$entity->getJudge()->getDefaultLocation()->getId(),
+            'parentLocation' => '',
+            'submission_date' => $entity->getSubmissionDate()->format("m/d/Y"),
+            'submission_time' => $entity->getSubmissionTime()->format("g:i a"),
+            'anonymousSubmitter' => '',
+            'submitter' => $entity->getSubmitter()->getId(),
+            'anonymousJudge' => '',
+            'is_anonymous_judge' => '',
+            'cancellationReason' => '',
+            'id' => $entity->getId(),
+            'defendants' => [
+                $entity->getDefendants()->toArray()[0]->getId()
+            ],
+            
+        ];
+        $interpreter_id = FixtureManager::getEntityManager()->createQuery(
+             'SELECT i.id FROM InterpretersOffice\Entity\Interpreter i WHERE i.lastname = :lastname'
+        )->setParameters([':lastname'=>'Somebody'])->getSingleScalarResult();
+        $data['interpreterEvents'] = array(
+            [
+                'interpreter' => $interpreter_id,
+                'event'       => $entity->getId(),
+            ],
+            [
+                'interpreter' => $entity->getInterpreters()[0]->getId(),
+                'event'       => $entity->getId(),
+
+            ]
+        );
+        $url = "/admin/schedule/edit/{$data['id']}";
+        $this->login('david', 'boink');
+        $this->reset(true);
+        $token = $this->getCsrfToken($url, 'csrf');
+        //printf("\nthe fucking token is %s\n",$token);
+        $this->getRequest()
+            ->setMethod('POST')->setPost(
+            new Parameters([
+                'event' => $data,
+                'csrf' => $token,
+                'modified' => $entity->getModified()->format('Y-m-d H:i:s'),
+            ])
+        )->getHeaders()->addHeaderLine('X-Requested-With','XMLHttpRequest');
+        
+        $this->dispatch($url);
+        $this->assertResponseStatusCode(200);
+        $now =  $entity = FixtureManager::getEntityManager()->find('InterpretersOffice\Entity\Event',1)
+            ->getModified()->format('Y-m-d H:i:s');
+        //$this->dumpResponse();
+        $this->assertNotEquals($then,$now);
+        /**/
+        
     }
 
     public function testEventInputValidation()
