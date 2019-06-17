@@ -371,12 +371,19 @@ class EventForm extends ZendForm implements
      */
     public function postValidate(EventInterface $e)
     {
+        $controller = $e->getTarget();
+        $logger = $controller->getEvent()->getApplication()
+        ->getServiceManager()->get('log');
         $entity = $this->getObject();
         $interpreters_posted = $entity->getInterpreterEvents()->toArray();
         if ($interpreters_posted != $this->interpreters_before) {
+            $logger->debug('interpreters were modified');
             $entity->setModified(new \DateTime());
             // and this suffices to make the Doctrine EventEntityListener's
             // preUpdate take note and set the last-modified-by
+        } else {
+            $logger->warn("interpreters NOT modified?");
+     
         }
         $fieldset = $this->get('event');
         if ($fieldset->get('anonymousSubmitter')->getValue()
