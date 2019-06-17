@@ -313,10 +313,17 @@ class AccountController extends AbstractActionController
             'auth_user_role' => $user->role,
             'user' => $entity,
             ]);
-
+        // $has_related_entities = $this->objectManager
+        //         ->getRepository(Entity\Person::class)
+        //         ->hasRelatedEntities($entity->getPerson()->getId());
+        $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
+            ->countRelatedEntities($entity);
+            
+        $form->get('user')->setObject($entity);
         $form->get('user')->get('person')->setObject($entity->getPerson());
         $form->get('user')->addPasswordElements();
+        $form->get('user')->remove('role')->remove('active');
         // this is gonna change.
-        return new ViewModel(compact('form'));
+        return new ViewModel(compact('form','related_entities'));
     }
 }

@@ -2,10 +2,12 @@
 /**
  * module/InterpretersOffice/Entity/Repository/UserRepository.php
  */
+declare(strict_types=1);
 
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use InterpretersOffice\Entity;
 
 /**
  * UserRepository
@@ -67,4 +69,39 @@ class UserRepository extends EntityRepository
         )
             ->getOneOrNullResult();
     }
+
+    /**
+     * 
+     * 
+     */
+    public function countRelatedEntities(Entity\User $user) : Array
+    {
+        $person_id = $user->getPerson()->getId();
+        $role = (string)$user->getRole();
+        if ('submitter' == $role) {
+            $dql = 'SELECT COUNT(r.id) requests, 
+            (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+                JOIN e.submitter s WHERE s.id = :person_id
+            ) events 
+            FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
+            JOIN r.modifiedBy m WHERE p.id = :person_id OR (m.person = p and p.id = :person_id)';
+            $params = [':person_id'=>$person_id];
+            $result = $this->createQuery($dql)->setParameters([':person_id'=>$person_id])
+                ->getResult();
+        } else {
+            $dql = '';
+        }
+        
+        return $this->createQuery($dql)->setParameters($params)->getResult();
+    }
+
+    /*
+    SELECT COUNT(r.id) requests, 
+    (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+    JOIN e.submitter s WHERE s.id = 1476
+    ) events 
+    FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
+    JOIN r.modifiedBy m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
+
+     */
 }

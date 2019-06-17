@@ -1,6 +1,11 @@
 <p>this is edit.phtml</p>
+<pre>
+    <?php print_r($this->related_entities)?>
+</pre>
 <?php
 $u = $this->form->get('user');
+$user = $u->getObject();
+echo get_class($user),"<br>";
 $p = $u->get('person');
 ?>elements in userfieldset:<br>
 <p>
@@ -24,3 +29,4 @@ $p = $u->get('person');
 <p>
     role <?php echo $this->identity()->role ?> with hat <?php echo $p->getObject()->getHat()?>
 </p>
+

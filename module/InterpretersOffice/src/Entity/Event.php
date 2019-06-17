@@ -286,7 +286,7 @@ class Event implements Interpretable
      *
      * @return string
      */
-    public function describe()
+    public function describe() : string
     {
         $type = (string)$this->getEventType();
         $datetime = $this->getDate()->format('d-M-Y');
@@ -346,7 +346,7 @@ class Event implements Interpretable
      *
      * @return Event
      */
-    public function setDate(\DateTime $date)
+    public function setDate(\DateTime $date) : Event
     {
         $this->date = $date;
 
@@ -358,7 +358,7 @@ class Event implements Interpretable
      *
      * @return \DateTime
      */
-    public function getDate()
+    public function getDate() : ? \DateTime
     {
         return $this->date;
     }
@@ -370,7 +370,7 @@ class Event implements Interpretable
      *
      * @return Event
      */
-    public function setTime(\DateTime $time = null)
+    public function setTime(\DateTime $time = null) : Event
     {
         $this->time = $time;
 
@@ -382,7 +382,7 @@ class Event implements Interpretable
      *
      * @return \DateTime
      */
-    public function getTime()
+    public function getTime() : ? \DateTime
     {
         return $this->time;
     }
@@ -394,7 +394,7 @@ class Event implements Interpretable
      *
      * @return Event
      */
-    public function setEndTime(\DateTime $endTime = null)
+    public function setEndTime(\DateTime $endTime = null) : Event
     {
         $this->end_time = $endTime;
 
@@ -406,7 +406,7 @@ class Event implements Interpretable
      *
      * @return \DateTime
      */
-    public function getEndTime()
+    public function getEndTime() : ? \DateTime
     {
         return $this->end_time;
     }
