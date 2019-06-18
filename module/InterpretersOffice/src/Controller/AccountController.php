@@ -305,25 +305,29 @@ class AccountController extends AbstractActionController
             FROM InterpretersOffice\Entity\User u
             JOIN u.person p JOIN u.role r JOIN p.hat h
             WHERE u.id = :id';
+        $id = $user->id;
         $entity = $em->createQuery($dql)->setParameters(['id'=>$user->id])
             ->getOneOrNullResult();
+        //$entity = $this->objectManager->find(Entity\User::class,$user->id);
         $form = new \InterpretersOffice\Admin\Form\UserForm($this->objectManager,
             [
             'action' => 'update',
             'auth_user_role' => $user->role,
             'user' => $entity,
             ]);
-        // $has_related_entities = $this->objectManager
-        //         ->getRepository(Entity\Person::class)
-        //         ->hasRelatedEntities($entity->getPerson()->getId());
-        $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
+        $form->bind($entity);
+        if ($user->role == 'submitter') {
+            $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
             ->countRelatedEntities($entity);
-            
-        $form->get('user')->setObject($entity);
-        $form->get('user')->get('person')->setObject($entity->getPerson());
-        $form->get('user')->addPasswordElements();
-        $form->get('user')->remove('role')->remove('active');
+        
+        } else { $related_entities = null; }
+        $user_fieldset = $form->get('user');
+        $user_fieldset->setObject($entity);
+        $user_fieldset->addPasswordElements();
+        //$user_fieldset->remove('role')->remove('active');
+        $person_fieldset = $user_fieldset->get('person');
+        $person_fieldset->setObject($entity->getPerson());
         // this is gonna change.
-        return new ViewModel(compact('form','related_entities'));
+        return new ViewModel(compact('form','related_entities','id'));//->setTemplate('users/form',['id'=>$user->id]);
     }
 }

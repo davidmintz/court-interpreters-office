@@ -58,7 +58,7 @@ class UserRepository extends EntityRepository
      * @param  string $email
      * @return InterpretersOffice\Entity\User|null
      */
-    public function findSubmitterByEmail($email)
+    public function findSubmitterByEmail(string $email) : ? Entity\User
     {
 
         $dql = 'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p '
@@ -70,27 +70,37 @@ class UserRepository extends EntityRepository
             ->getOneOrNullResult();
     }
 
+  
     /**
+     * Gets count of event|requests created|modified by User.
      * 
-     * 
+     * For deciding whether Users can modify their Hat through the 
+     * profile-update feature.
+     *
+     * @param Entity\User $user
+     * @throws \RuntimeException
+     * @return Array
      */
     public function countRelatedEntities(Entity\User $user) : Array
     {
         $person_id = $user->getPerson()->getId();
         $role = (string)$user->getRole();
-        if ('submitter' == $role) {
-            $dql = 'SELECT COUNT(r.id) requests, 
-            (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
-                JOIN e.submitter s WHERE s.id = :person_id
-            ) events 
-            FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
-            JOIN r.modifiedBy m WHERE p.id = :person_id OR (m.person = p and p.id = :person_id)';
-            $params = [':person_id'=>$person_id];
-            $result = $this->createQuery($dql)->setParameters([':person_id'=>$person_id])
-                ->getResult();
-        } else {
-            $dql = '';
+        if ($role != 'submitter') {
+            throw new \RuntimeException(
+                __FUNCTION__. " can only be used for User entities whose role is 'submitter'"
+            );
         }
+        $dql = 'SELECT COUNT(r.id) requests, 
+        (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+            JOIN e.submitter s WHERE s.id = :person_id
+        ) events 
+        FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
+        JOIN r.modifiedBy m WHERE p.id = :person_id OR (m.person = p and p.id = :person_id)';
+        $params = [':person_id'=>$person_id];
+        $result = $this->createQuery($dql)
+            ->useResultCache(false)
+            ->setParameters([':person_id'=>$person_id])
+            ->getResult();
         
         return $this->createQuery($dql)->setParameters($params)->getResult();
     }

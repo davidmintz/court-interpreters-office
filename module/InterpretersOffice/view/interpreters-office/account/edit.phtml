@@ -1,11 +1,35 @@
+<?php var_dump(
+    $form->get('user')->get('person')->useAsBaseFieldset()
+) ?>
+
+
 <p>this is edit.phtml</p>
 <pre>
-    <?php print_r($this->related_entities)?>
+    form object is a <?php echo get_class($this->form->getObject())?><br>
+    <?php echo $this->form->getObject()->getPerson()->getFullName()?>
 </pre>
-<?php
-$u = $this->form->get('user');
-$user = $u->getObject();
-echo get_class($user),"<br>";
+<div style="max-width:800px" class="mx-auto">
+    <?php 
+    $form = $this->form;
+    $person_fieldset = $form->get('user')->get('person');
+    $form->prepare();
+    //var_dump($person_fieldset->useAsBaseFieldset());
+    echo $this->form()->openTag($form);
+    ?><div id="error_existing_entity_required" class="offset-sm-3 col-sm-9 alert alert-warning validation-error" style="display:none"></div><?php
+    // text inputs
+    foreach (['lastname','firstname','middlename','email','office_phone','mobile_phone'] as $elementName) :
+        $element = $person_fieldset->get($elementName);?>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3">shit? <?php echo $element->getValue() ?> <?php echo $element->getLabel()?></label>
+        <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>
+        </div>
+    </div>
+    <?php endforeach;
+    ?>
+    </form>
+</div>
+<?php return;
+$u =  $form->get('user');
 $p = $u->get('person');
 ?>elements in userfieldset:<br>
 <p>

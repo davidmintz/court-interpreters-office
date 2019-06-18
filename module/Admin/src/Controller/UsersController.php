@@ -316,7 +316,7 @@ class UsersController extends AbstractActionController implements Authentication
 
 
         /** @todo do this initialization somewhere else?  */
-        $form->get('user')->get('person')->setObject($user->getPerson());
+        $form->get('user')->get('person')->setObject($person);
         /* -------------------------- */
         $viewModel->form = $form;
         $has_related_entities = $this->entityManager
