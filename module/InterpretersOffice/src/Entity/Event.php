@@ -972,7 +972,7 @@ class Event implements Interpretable
     /**
      * gets array of our Interpreter entities
      *
-     * @return Array
+     * @return Interpreter[]
      */
     public function getInterpreters() : Array
     {
