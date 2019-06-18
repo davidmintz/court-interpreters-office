@@ -130,8 +130,9 @@ class EventForm extends ZendForm implements
 
         $input = $e->getTarget()->getRequest()->getPost();
         $event = $input->get('event');
-        $this->interpreters_before = $this->getObject()->getInterpreterEvents()
-            ->toArray();
+        $this->interpreters_before = 
+            array_map(function($i){return $i->getId();},
+                $this->getObject()->getInterpreters());
 
         /* there is one form control for the judge, but its value may
          * correspond to either the 'judge' or the 'anonymousJudge' property,
@@ -371,21 +372,18 @@ class EventForm extends ZendForm implements
      */
     public function postValidate(EventInterface $e)
     {
-        $controller = $e->getTarget();
-        $logger = $controller->getEvent()->getApplication()
-        ->getServiceManager()->get('log');
+       
+        $fieldset = $this->get('event');
+        $input = $this->getInputFilter()->get('event')->get('interpreterEvents')->getValue();
+        $interpreters_posted = $input ? array_column($input,'interpreter'): [];
         $entity = $this->getObject();
-        $interpreters_posted = $entity->getInterpreterEvents()->toArray();
-        if ($interpreters_posted != $this->interpreters_before) {
-            $logger->debug('interpreters were modified');
+        if (array_diff($interpreters_posted, $this->interpreters_before) 
+            || array_diff( $this->interpreters_before,$interpreters_posted))
+        {
             $entity->setModified(new \DateTime());
             // and this suffices to make the Doctrine EventEntityListener's
             // preUpdate take note and set the last-modified-by
-        } else {
-            $logger->warn("interpreters NOT modified?");
-     
         }
-        $fieldset = $this->get('event');
         if ($fieldset->get('anonymousSubmitter')->getValue()
             &&
             $fieldset->get('submitter')->getValue()
