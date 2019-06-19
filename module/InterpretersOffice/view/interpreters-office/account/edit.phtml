@@ -1,5 +1,5 @@
-<p>this is edit.phtml</p>
 <div style="max-width:800px" class="mx-auto">
+    <h2 class="navigation">user profile</h2>
     <?php 
     $form = $this->form;
     $user_fieldset = $form->get('user');
@@ -44,48 +44,33 @@
         </div>
     </div>
     <fieldset>
-    <legend class="offset-sm-3">shit</legend>
+    <legend class="offset-sm-3">password <span class="text-muted">(optional)</span></legend>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3" for="current-password">current password</label>
+        <div class="col-sm-9">
+           <input type="password" name="current-password" class="form-control" id="current-password" value="">
+        </div>
+    </div>
     <div class="form-group form-row">
         <label class="col-form-label col-sm-3">new password</label>
         <div class="col-sm-9"><?php
-            //$form->get('user')->get('password')->setValue('');
-            //$user_fieldset->getObject()->setPassword('');
-            echo $this->formPassword($form->get('user')->get('password')),
+            echo $this->formPassword($form->get('user')->get('password')->setAttributes(['placeholder'=>'your new password'])),
             $this->formElementErrors($form->get('user')->get('password'))?>
         </div>
     </div>
     <div class="form-group form-row">
         <label class="col-form-label col-sm-3">confirm new password</label>
-        <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password-confirm')),
+        <div class="col-sm-9"><?php  
+        echo $this->formPassword($form->get('user')->get('password-confirm')->setAttributes(['placeholder'=>'reconfirm new password'])),
             $this->formElementErrors($form->get('user')->get('password-confirm'))?>
         </div>
     </div>
     </fieldset>
+    <div class="form-group form-row">
+        <div class="offset-sm-3 col-sm-9"><button class="btn btn-success" type="submit">save</button>
+
+        </div>
+    </div>
     </form>
 </div>
-<?php return;
-$u =  $form->get('user');
-$p = $u->get('person');
-?>elements in userfieldset:<br>
-<p>
-    <?php
-    foreach ($u->getElements() as $e):
-        echo $e->getName(),'<br>';
-    endforeach;
-    ?>
-</p>
-<p>
-    elements in person fieldset:
-</p>
-<p>
-    <?php
-    foreach ($p->getElements() as $e):
-        echo $e->getName(),'<br>';
-    endforeach;
-
-    ?>
-</p>
-<p>
-    role <?php echo $this->identity()->role ?> with hat <?php echo $p->getObject()->getHat()?>
-</p>
 

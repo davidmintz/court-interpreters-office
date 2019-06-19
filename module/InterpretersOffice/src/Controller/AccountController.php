@@ -316,7 +316,6 @@ class AccountController extends AbstractActionController
             'action' => 'update',
             'auth_user_role' => $auth->role,
             'user' =>  $user,
-            'existing_person' => $person,
             ]);
         $form->get('user')->get('person')->setObject($person);
         $form->bind($user);
@@ -326,12 +325,19 @@ class AccountController extends AbstractActionController
         if ($auth->role == 'submitter') {
             $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
             ->countRelatedEntities($user);
-            //$user_fieldset->addJudgeElement();
         } else { $related_entities = null; }
         $user_fieldset->addPasswordElements();
         $viewModel->related_entities = $related_entities;
+        if ($this->getRequest()->isPost()) {
+
+        } else {
+            return $viewModel;
+        }
         
-        return $viewModel;
-        
+    }
+
+    public function postProfileUpdate()
+    {
+
     }
 }
