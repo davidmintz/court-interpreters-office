@@ -12,4 +12,5 @@ filename = args.parse_args().filename
 data = open(filename)
 msg = parser.Parser().parse(data)
 html = msg.get_payload()[1]
-print(html.get_payload(decode=True))
+thing = str(html.get_payload(decode=True))
+print(thing.replace('\\n','\n'))
