@@ -1,31 +1,45 @@
-<?php var_dump(
-    $form->get('user')->get('person')->useAsBaseFieldset()
-) ?>
-
-
 <p>this is edit.phtml</p>
-<pre>
-    form object is a <?php echo get_class($this->form->getObject())?><br>
-    <?php echo $this->form->getObject()->getPerson()->getFullName()?>
-</pre>
 <div style="max-width:800px" class="mx-auto">
     <?php 
     $form = $this->form;
+    $user_fieldset = $form->get('user');
     $person_fieldset = $form->get('user')->get('person');
     $form->prepare();
-    //var_dump($person_fieldset->useAsBaseFieldset());
     echo $this->form()->openTag($form);
     ?><div id="error_existing_entity_required" class="offset-sm-3 col-sm-9 alert alert-warning validation-error" style="display:none"></div><?php
     // text inputs
     foreach (['lastname','firstname','middlename','email','office_phone','mobile_phone'] as $elementName) :
         $element = $person_fieldset->get($elementName);?>
     <div class="form-group form-row">
-        <label class="col-form-label col-sm-3">shit? <?php echo $element->getValue() ?> <?php echo $element->getLabel()?></label>
+        <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
         <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>
         </div>
+    </div>    
+    <?php endforeach;?>
+    <?php if ($user_fieldset->has('judge-select')) :?>
+    <div id="judge-div" class="form-group form-row" style="display:none">
+        <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">select the judge(s) for whom this user works, and click the <strong>+</strong> button.</div>
+        <label  for="judges" class="col-form-label col-sm-3">Judge(s)</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+                <?php echo $this->formSelect($form->get('user')->get('judge-select'))?><button class="btn btn-info fas fa-plus" title="identify the currently selected Judge as one for whom you work" type="button" id="btn-add-judge"><span class="sr-only">select</span></button>
+            </div>
+            <?php $errors = $this->formElementErrors($user_fieldset->get('judges'));
+            echo $errors;?>
+            <ul id="judges" class="list-group mt-1"><?php if ($has_judges && ! $errors) :
+                foreach ($form->getObject()->getJudges() as $judge) :?>
+                    <ul id="judges" class="list-group mt-1"><li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li></ul>
+                <?php endforeach;
+            endif;?></ul>
+        </div>
     </div>
-    <?php endforeach;
-    ?>
+    <?php endif;?>
+    <?php $username = $user_fieldset->get('username');?>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3"><?php echo $username->getLabel()?></label>
+        <div class="col-sm-9"><?php echo $this->formElement($username),$this->formElementErrors($username) ?>
+        </div>
+    </div>
     </form>
 </div>
 <?php return;
