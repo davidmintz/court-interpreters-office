@@ -15,10 +15,12 @@
         <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>
         </div>
     </div>    
-    <?php endforeach;?>
-    <?php if ($user_fieldset->has('judge-select')) :?>
-    <div id="judge-div" class="form-group form-row" style="display:none">
-        <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">select the judge(s) for whom this user works, and click the <strong>+</strong> button.</div>
+    <?php 
+    endforeach;
+    $judges = $form->getObject()->getJudges();
+    if ($judges->count()) :?>
+    <div id="judge-div" class="form-group form-row"">
+        <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">select the judge for whom you work directly, then click the <strong>+</strong> button.</div>
         <label  for="judges" class="col-form-label col-sm-3">Judge(s)</label>
         <div class="col-sm-9">
             <div class="input-group">
@@ -26,10 +28,11 @@
             </div>
             <?php $errors = $this->formElementErrors($user_fieldset->get('judges'));
             echo $errors;?>
-            <ul id="judges" class="list-group mt-1"><?php if ($has_judges && ! $errors) :
-                foreach ($form->getObject()->getJudges() as $judge) :?>
-                    <ul id="judges" class="list-group mt-1"><li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li></ul>
-                <?php endforeach;
+            <ul id="judges" class="list-group mt-1"><?php if (! $errors) :
+                foreach ($judges as $judge) :?>
+                    <li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li>
+            <?php 
+                endforeach;
             endif;?></ul>
         </div>
     </div>
@@ -40,6 +43,24 @@
         <div class="col-sm-9"><?php echo $this->formElement($username),$this->formElementErrors($username) ?>
         </div>
     </div>
+    <fieldset>
+    <legend class="offset-sm-3">shit</legend>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3">new password</label>
+        <div class="col-sm-9"><?php
+            //$form->get('user')->get('password')->setValue('');
+            //$user_fieldset->getObject()->setPassword('');
+            echo $this->formPassword($form->get('user')->get('password')),
+            $this->formElementErrors($form->get('user')->get('password'))?>
+        </div>
+    </div>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3">confirm new password</label>
+        <div class="col-sm-9"><?php  echo $this->formPassword($form->get('user')->get('password-confirm')),
+            $this->formElementErrors($form->get('user')->get('password-confirm'))?>
+        </div>
+    </div>
+    </fieldset>
     </form>
 </div>
 <?php return;

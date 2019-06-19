@@ -17,6 +17,8 @@ use InterpretersOffice\Service\AccountManager;
 use Zend\Session\Container as Session;
 use Zend\InputFilter\InputFilterInterface;
 
+use InterpretersOffice\Admin\Form\UserForm;
+
 /**
  *  AccountController.
  *
@@ -298,36 +300,38 @@ class AccountController extends AbstractActionController
             $this->redirect()->toRoute('login');
             return;
         }
-        $user = $this->auth->getIdentity();
-        // a work in progress...
+        $auth =  $this->auth->getIdentity();
         $em = $this->objectManager;
+        /** @todo move to repo method */
         $dql = 'SELECT u, p, r, h
             FROM InterpretersOffice\Entity\User u
             JOIN u.person p JOIN u.role r JOIN p.hat h
             WHERE u.id = :id';
-        $id = $user->id;
-        $entity = $em->createQuery($dql)->setParameters(['id'=>$user->id])
+        $user = $em->createQuery($dql)->setParameters(['id'=>$auth->id])
             ->getOneOrNullResult();
-        //$entity = $this->objectManager->find(Entity\User::class,$user->id);
-        $form = new \InterpretersOffice\Admin\Form\UserForm($this->objectManager,
-            [
+        /* ------------------------- */
+        /** @var $person \InterpretersOffice\Entity\Person */
+        $person = $user->getPerson();
+        $form = new UserForm($em, [
             'action' => 'update',
-            'auth_user_role' => $user->role,
-            'user' => $entity,
+            'auth_user_role' => $auth->role,
+            'user' =>  $user,
+            'existing_person' => $person,
             ]);
-        $form->bind($entity);
-        if ($user->role == 'submitter') {
-            $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
-            ->countRelatedEntities($entity);
-        
-        } else { $related_entities = null; }
+        $form->get('user')->get('person')->setObject($person);
+        $form->bind($user);
+        $viewModel = (new ViewModel(['title' => 'user | profile',
+            'form'=>$form]));
         $user_fieldset = $form->get('user');
-        $user_fieldset->setObject($entity);
+        if ($auth->role == 'submitter') {
+            $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
+            ->countRelatedEntities($user);
+            //$user_fieldset->addJudgeElement();
+        } else { $related_entities = null; }
         $user_fieldset->addPasswordElements();
-        //$user_fieldset->remove('role')->remove('active');
-        $person_fieldset = $user_fieldset->get('person');
-        $person_fieldset->setObject($entity->getPerson());
-        // this is gonna change.
-        return new ViewModel(compact('form','related_entities','id'));//->setTemplate('users/form',['id'=>$user->id]);
+        $viewModel->related_entities = $related_entities;
+        
+        return $viewModel;
+        
     }
 }
