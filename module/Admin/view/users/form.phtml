@@ -11,9 +11,6 @@ $this->headScript()
 ?>
 <div class="center-block" style="max-width:800px"><!-- wrapper -->
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php var_dump(
-    $form->get('user')->get('person')->useAsBaseFieldset()
-) ?>
 <?php if ($this->errorMessage) : ?>
 <div class="alert alert-danger"><?php echo $this->errorMessage ?></div></div>
     <?php
@@ -69,7 +66,7 @@ $user_fieldset = $this->form->get("user");
         echo $errors;?>
         <ul id="judges" class="list-group mt-1"><?php if ($has_judges && ! $errors) :
             foreach ($form->getObject()->getJudges() as $judge) :?>
-                <ul id="judges" class="list-group mt-1"><li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li></ul>
+                <li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li>
             <?php endforeach;
         endif;?></ul>
     </div>

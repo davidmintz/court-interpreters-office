@@ -25,5 +25,6 @@ doc/api
 test.error.log
 zend-developer-tools.local-development.php
 doc/*cache*
+doc/parser*
 bin/sdny/excel/warnings*
 bin/scratch

@@ -302,10 +302,11 @@ class AccountController extends AbstractActionController
         }
         $auth =  $this->auth->getIdentity();
         $em = $this->objectManager;
-        /** @todo move to repo method */
-        $dql = 'SELECT u, p, r, h
+        /** @todo we will move this to a repo method */
+        $dql = 'SELECT u, p, r, h, j
             FROM InterpretersOffice\Entity\User u
             JOIN u.person p JOIN u.role r JOIN p.hat h
+            LEFT JOIN u.judges j
             WHERE u.id = :id';
         $user = $em->createQuery($dql)->setParameters(['id'=>$auth->id])
             ->getOneOrNullResult();
@@ -317,27 +318,45 @@ class AccountController extends AbstractActionController
             'auth_user_role' => $auth->role,
             'user' =>  $user,
             ]);
-        $form->get('user')->get('person')->setObject($person);
+        /** @todo move this initialization somewhere else */
+        /** @var InterpretersOffice\Admin\Form\UserFieldset $user_fieldset */
+        $user_fieldset = $form->get('user');
+        $user_fieldset->get('person')->setObject($person);
         $form->bind($user);
         $viewModel = (new ViewModel(['title' => 'user | profile',
             'form'=>$form]));
-        $user_fieldset = $form->get('user');
+        // they don't manipulate their own role, once set
+        $form->getInputFilter()->get('user')->remove('role')->remove('id');
         if ($auth->role == 'submitter') {
             $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
-            ->countRelatedEntities($user);
-        } else { $related_entities = null; }
+                ->countRelatedEntities($user);
+        } else { 
+            $related_entities = null;
+            //$form->getInputFilter()->get('user')->get('person')->remove('hat');
+            // an email validator that enforces hat-email uniqueness will fire and 
+            // throw an undefined index error if no 'hat' 
+        }
         $user_fieldset->addPasswordElements();
         $viewModel->related_entities = $related_entities;
         if ($this->getRequest()->isPost()) {
-
+            $post = $this->getRequest()->getPost();
+            $data = $post->get('user');
+            $data['person']['hat'] = $person->getHat()->getId();
+            $post->set('user',$data);
+            return $this->postProfileUpdate($user,$form);
         } else {
             return $viewModel;
         }
         
     }
 
-    public function postProfileUpdate()
+    public function postProfileUpdate(Entity\User $user, UserForm $form)
     {
-
+        $data = $this->getRequest()->getPost();
+        $form->setData($data);
+        if (!$form->isValid()) {
+            return new JsonModel($form->getMessages());
+        }
+        return new JsonModel(['status'=>'boink!']);
     }
 }

@@ -1,4 +1,6 @@
-<div style="max-width:800px" class="mx-auto">
+<?php /** module/InterpretersOffice/view/interpreters-office/account/edit.phtml */ 
+$this->headTitle('user | profile');
+?><div style="max-width:800px" class="mx-auto">
     <h2 class="navigation">user profile</h2>
     <?php 
     $form = $this->form;
@@ -68,7 +70,7 @@
     </fieldset>
     <div class="form-group form-row">
         <div class="offset-sm-3 col-sm-9"><button class="btn btn-success" type="submit">save</button>
-
+        <?php echo $this->formHidden($form->get('csrf')),$this->formElementErrors($form->get('csrf')) ?>
         </div>
     </div>
     </form>
