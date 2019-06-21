@@ -342,6 +342,7 @@ class AccountController extends AbstractActionController
             $post = $this->getRequest()->getPost();
             $data = $post->get('user');
             $data['person']['hat'] = $person->getHat()->getId();
+            $data['person']['id'] = $person->getId();
             $post->set('user',$data);
             return $this->postProfileUpdate($user,$form);
         } else {
