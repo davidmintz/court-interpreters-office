@@ -17,15 +17,18 @@ use InterpretersOffice\Service\AccountManager;
 use Zend\Session\Container as Session;
 use Zend\InputFilter\InputFilterInterface;
 
+use InterpretersOffice\Admin\Form\UserForm;
+use InterpretersOffice\Controller\ExceptionHandlerTrait;
 /**
  *  AccountController.
  *
  *  For registration, password reset and email verification.
- *  Very much incomplete.
+ *  
  */
 
 class AccountController extends AbstractActionController
 {
+    use ExceptionHandlerTrait;
     /**
      * objectManager instance.
      *
@@ -131,6 +134,7 @@ class AccountController extends AbstractActionController
                 'validation_errors' => $form->getFlattenedErrorMessages(),
                 ]);
         }
+
         return new JsonModel(['valid' => true, 'debug' => $validation_group]);
     }
 
@@ -186,7 +190,7 @@ class AccountController extends AbstractActionController
 
     /**
      * email verification
-     * s
+     * 
      * @return ViewModel
      */
     public function verifyEmailAction()
@@ -298,6 +302,78 @@ class AccountController extends AbstractActionController
             $this->redirect()->toRoute('login');
             return;
         }
-        return new ViewModel();
+        $auth =  $this->auth->getIdentity();
+        $em = $this->objectManager;
+        /** @todo we will move this to a repo method */
+        $dql = 'SELECT u, p, r, h, j
+            FROM InterpretersOffice\Entity\User u
+            JOIN u.person p JOIN u.role r JOIN p.hat h
+            LEFT JOIN u.judges j
+            WHERE u.id = :id';
+        $user = $em->createQuery($dql)->setParameters(['id'=>$auth->id])
+            ->getOneOrNullResult();
+        /* ------------------------- */
+        /** @var $person \InterpretersOffice\Entity\Person */
+        $person = $user->getPerson();
+        $form = new UserForm($em, [
+            'action' => 'update',
+            'auth_user_role' => $auth->role,
+            'user' =>  $user,
+            ]);
+        /** @todo move this initialization somewhere else */
+        /** @var InterpretersOffice\Admin\Form\UserFieldset $user_fieldset */
+        $user_fieldset = $form->get('user');
+        $user_fieldset->get('person')->setObject($person);
+        $form->bind($user);
+        $viewModel = (new ViewModel([ //'title' => 'user | profile',
+            'form'=>$form]));
+        // they don't get to manipulate their own role, once set
+        $form->getInputFilter()->get('user')->remove('role')->remove('id');
+        if ($auth->role == 'submitter') {
+            // we might want to let a newly registered user correct her/his "hat" if there is
+            // zero data history
+            $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
+                ->countRelatedEntities($user);
+        } else { 
+            $related_entities = null;
+        }
+        $user_fieldset->addPasswordElements();
+        $viewModel->related_entities = $related_entities;
+        if ($this->getRequest()->isPost()) {
+            return $this->postProfileUpdate($user,$form);
+        } else {
+            return $viewModel;
+        }
+        
+    }
+
+    /**
+     * handles POST request to update user profile
+     *
+     * @param Entity\User $user
+     * @param UserForm $form
+     * @return JsonModel
+     */
+    public function postProfileUpdate(Entity\User $user, UserForm $form)
+    {
+        $data = $this->getRequest()->getPost();
+        $person = $user->getPerson();
+        $user_params = $data->get('user');
+        $user_params['person']['hat'] = $person->getHat()->getId();
+        $user_params['person']['id'] = $person->getId();
+        if ($user_params['password'] or $user_params['password-confirm']) {
+            $form->addPasswordValidators();
+        }
+        $data->set('user',$user_params);
+        $form->setData($data);
+        if (!$form->isValid()) {
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+        }
+        try {
+            $this->objectManager->flush();
+        } catch (\Throwable $e) {
+            return $this->catch($e);
+        }
+        return new JsonModel(['status'=>'success',]);
     }
 }

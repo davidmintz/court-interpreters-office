@@ -1,1 +1,80 @@
-<p>this is edit.phtml</p>
+<?php /** module/InterpretersOffice/view/interpreters-office/account/edit.phtml */ 
+$this->headTitle('user | profile');
+$this->headScript()->appendFile($this->basePath('js/user-profile.js'));
+?><div style="max-width:800px" class="mx-auto">
+    <h2 class="navigation">user profile</h2>
+    <div id="status-message" class="alert alert-success" style="display:none">Your profile data has been successfully saved.</div>
+    <?php 
+    $form = $this->form;
+    $user_fieldset = $form->get('user');
+    $person_fieldset = $form->get('user')->get('person');
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    ?><div id="error_existing_entity_required" class="offset-sm-3 col-sm-9 alert alert-warning validation-error" style="display:none"></div><?php
+    // text inputs
+    foreach (['lastname','firstname','middlename','email','office_phone','mobile_phone'] as $elementName) :
+        $element = $person_fieldset->get($elementName);?>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
+        <div class="col-sm-9"><?php echo $this->formText($element),$this->formElementErrors($element) ?>
+        </div>
+    </div>    
+    <?php 
+    endforeach;
+    $judges = $form->getObject()->getJudges();
+    if ($judges->count()) :?>
+    <div id="judge-div" class="form-group form-row"">
+        <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">select the judge for whom you work directly, then click the <strong>+</strong> button.</div>
+        <label  for="judges" class="col-form-label col-sm-3">Judge(s)</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+                <?php echo $this->formSelect($form->get('user')->get('judge-select'))?><button class="btn btn-info fas fa-plus" title="identify the currently selected Judge as one for whom you work" type="button" id="btn-add-judge"><span class="sr-only">select</span></button>
+            </div>
+            <?php $errors = $this->formElementErrors($user_fieldset->get('judges'));
+            echo $errors;?>
+            <ul id="judges" class="list-group mt-1"><?php if (! $errors) :
+                foreach ($judges as $judge) :?>
+                    <li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li>
+            <?php 
+                endforeach;
+            endif;?></ul>
+        </div>
+    </div>
+    <?php endif;?>
+    <?php $username = $user_fieldset->get('username');?>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3"><?php echo $username->getLabel()?></label>
+        <div class="col-sm-9"><?php echo $this->formElement($username),$this->formElementErrors($username) ?>
+        </div>
+    </div>
+    <fieldset>
+    <legend class="offset-sm-3">password <span class="text-muted">(optional)</span></legend>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3" for="current-password">current password</label>
+        <div class="col-sm-9">
+           <input type="password" name="current-password" class="form-control" id="current-password" value="">
+        </div>
+    </div>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3">new password</label>
+        <div class="col-sm-9"><?php
+            echo $this->formPassword($form->get('user')->get('password')->setAttributes(['placeholder'=>'your new password'])),
+            $this->formElementErrors($form->get('user')->get('password'))?>
+        </div>
+    </div>
+    <div class="form-group form-row">
+        <label class="col-form-label col-sm-3">confirm new password</label>
+        <div class="col-sm-9"><?php  
+        echo $this->formPassword($form->get('user')->get('password-confirm')->setAttributes(['placeholder'=>'reconfirm new password'])),
+            $this->formElementErrors($form->get('user')->get('password-confirm'))?>
+        </div>
+    </div>
+    </fieldset>
+    <div class="form-group form-row">
+        <div class="offset-sm-3 col-sm-9"><button class="btn btn-success" type="submit">save</button>
+        <?php echo $this->formHidden($form->get('csrf')),$this->formElementErrors($form->get('csrf')) ?>
+        </div>
+    </div>
+    </form>
+</div>
+

@@ -263,7 +263,7 @@ return [
                         'type' => Segment::class,
                         'options' => [
                             // to do: add parameters
-                            'route' => '/edit',
+                            'route' => '/profile',
                             'defaults' => [
                                 'action' => 'edit',
                             ],

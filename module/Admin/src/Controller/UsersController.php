@@ -102,8 +102,8 @@ class UsersController extends AbstractActionController implements Authentication
 
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
-        $events->attach('load-person', function (EventInterface $e)
- use ($entityManager, $role_id) {
+        $events->attach('load-person', function (EventInterface $e) use ($entityManager, $role_id)
+        {
 
             $person = $e->getParam('person');
             $hat = $person->getHat();
@@ -305,7 +305,7 @@ class UsersController extends AbstractActionController implements Authentication
             return $viewModel->setVariables(['errorMessage' =>
                 "user with id $id was not found in your database."]);
         }
-        $this->events->trigger('load-user', $this, ['user' => $user,]);
+        $this->getEventManager()->trigger('load-user', $this, ['user' => $user,]);
         $form = new UserForm($this->entityManager, [
             'action' => 'update',
             'auth_user_role' => $this->auth_user_role,
@@ -314,9 +314,8 @@ class UsersController extends AbstractActionController implements Authentication
         /** @var $person \InterpretersOffice\Entity\Person */
         $person = $user->getPerson();
 
-
         /** @todo do this initialization somewhere else?  */
-        $form->get('user')->get('person')->setObject($user->getPerson());
+        $form->get('user')->get('person')->setObject($person);
         /* -------------------------- */
         $viewModel->form = $form;
         $has_related_entities = $this->entityManager
