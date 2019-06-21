@@ -14,6 +14,7 @@ use InterpretersOffice\Admin\Form\UserFieldset;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\ValidatorChain;
 use Zend\Validator\NotEmpty;
+use Zend\InputFilter\Input;
 
 /**
  * UserForm intended for administrative use
@@ -61,5 +62,41 @@ class UserForm extends Form
             ->getValidatorChain()->attach(new NotEmpty(
                 ['messages' => ['isEmpty' => 'email is required']]
             ));
+    }
+
+    /**
+     * adds password validation
+     *
+     * 
+     */
+    public function addPasswordValidators()
+    {
+        $inputFilter = $this->getInputFilter();
+        $input = new Input('password');
+        $chain = $input->getValidatorChain();
+        $input->getFilterChain()->attachByName('StringTrim');
+        $chain->attachByName('NotEmpty', [
+                'required' => true,
+                'break_chain_on_failure'=> true,
+                'messages' => ['isEmpty' => 'password field is required',]
+                , true])
+            ->attachByName('StringLength', ['min' => 8,'max' => '150','messages' => [
+                'stringLengthTooLong' => 'password length exceeds maximum (150 characters)',
+                'stringLengthTooShort' => 'password length must be a minimum of 8 characters',
+            ]], true);
+        $inputFilter->get('user')->add($input);
+        $confirmation_input = new Input('password-confirm');
+        $confirmation_input->getFilterChain()->attachByName('StringTrim');
+        $chain = $confirmation_input->getValidatorChain()
+            ->attachByName('NotEmpty', [
+                'required' => true,
+                'break_chain_on_failure'=> true,
+                'messages' => ['isEmpty' => 'password-confirmation field is required',]
+                , true])
+  
+            ->attachByName('Identical', ['token' => 'password','messages' => [
+                'notSame' => 'password confirmation field does not match'
+        ]]);
+        $inputFilter->get('user')->add($confirmation_input);
     }
 }

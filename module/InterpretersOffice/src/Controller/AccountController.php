@@ -18,16 +18,17 @@ use Zend\Session\Container as Session;
 use Zend\InputFilter\InputFilterInterface;
 
 use InterpretersOffice\Admin\Form\UserForm;
-
+use InterpretersOffice\Controller\ExceptionHandlerTrait;
 /**
  *  AccountController.
  *
  *  For registration, password reset and email verification.
- *  Very much incomplete.
+ *  
  */
 
 class AccountController extends AbstractActionController
 {
+    use ExceptionHandlerTrait;
     /**
      * objectManager instance.
      *
@@ -133,6 +134,7 @@ class AccountController extends AbstractActionController
                 'validation_errors' => $form->getFlattenedErrorMessages(),
                 ]);
         }
+
         return new JsonModel(['valid' => true, 'debug' => $validation_group]);
     }
 
@@ -188,7 +190,7 @@ class AccountController extends AbstractActionController
 
     /**
      * email verification
-     * s
+     * 
      * @return ViewModel
      */
     public function verifyEmailAction()
@@ -323,27 +325,21 @@ class AccountController extends AbstractActionController
         $user_fieldset = $form->get('user');
         $user_fieldset->get('person')->setObject($person);
         $form->bind($user);
-        $viewModel = (new ViewModel(['title' => 'user | profile',
+        $viewModel = (new ViewModel([ //'title' => 'user | profile',
             'form'=>$form]));
-        // they don't manipulate their own role, once set
+        // they don't get to manipulate their own role, once set
         $form->getInputFilter()->get('user')->remove('role')->remove('id');
         if ($auth->role == 'submitter') {
+            // we might want to let a newly registered user correct her/his "hat" if there is
+            // zero data history
             $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
                 ->countRelatedEntities($user);
         } else { 
             $related_entities = null;
-            //$form->getInputFilter()->get('user')->get('person')->remove('hat');
-            // an email validator that enforces hat-email uniqueness will fire and 
-            // throw an undefined index error if no 'hat' 
         }
         $user_fieldset->addPasswordElements();
         $viewModel->related_entities = $related_entities;
         if ($this->getRequest()->isPost()) {
-            $post = $this->getRequest()->getPost();
-            $data = $post->get('user');
-            $data['person']['hat'] = $person->getHat()->getId();
-            $data['person']['id'] = $person->getId();
-            $post->set('user',$data);
             return $this->postProfileUpdate($user,$form);
         } else {
             return $viewModel;
@@ -351,13 +347,33 @@ class AccountController extends AbstractActionController
         
     }
 
+    /**
+     * handles POST request to update user profile
+     *
+     * @param Entity\User $user
+     * @param UserForm $form
+     * @return JsonModel
+     */
     public function postProfileUpdate(Entity\User $user, UserForm $form)
     {
         $data = $this->getRequest()->getPost();
+        $person = $user->getPerson();
+        $user_params = $data->get('user');
+        $user_params['person']['hat'] = $person->getHat()->getId();
+        $user_params['person']['id'] = $person->getId();
+        if ($user_params['password'] or $user_params['password-confirm']) {
+            $form->addPasswordValidators();
+        }
+        $data->set('user',$user_params);
         $form->setData($data);
         if (!$form->isValid()) {
-            return new JsonModel($form->getMessages());
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
-        return new JsonModel(['status'=>'boink!']);
+        try {
+            $this->objectManager->flush();
+        } catch (\Throwable $e) {
+            return $this->catch($e);
+        }
+        return new JsonModel(['status'=>'success',]);
     }
 }

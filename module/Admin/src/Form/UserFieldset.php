@@ -6,7 +6,9 @@
 namespace InterpretersOffice\Admin\Form;
 
 use Zend\Form\Fieldset;
+use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\InputFilter\Input;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -264,37 +266,6 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         ]);
 
         return $this;
-    }
-
-    /**
-     * adds password validation
-     *
-     * @param InputFilterInterface $inputFilter
-     */
-    public function addPasswordValidators(InputFilterInterface $inputFilter)
-    {
-        //return;
-        $input = new Input('password');
-        $chain = $input->getValidatorChain();
-        $input->getFilterChain()->attachByName('StringTrim');
-        $chain->attachByName('NotEmpty', [
-                'required' => true,
-                'messages' => ['isEmpty' => 'password field is required',]
-                , true])
-            ->attachByName('StringLength', ['min' => 8,'max' => '150','messages' => [
-                'stringLengthTooLong' => 'password length exceeds maximum (150 characters)',
-                'stringLengthTooShort' => 'password length must be a minimum of 8 characters',
-            ]], true);
-        $inputFilter->add($input);
-        $confirmation_input = new Input('confirm-password');
-        $confirmation_input->getFilterChain()->attachByName('StringTrim');
-        $chain = $confirmation_input->getValidatorChain();
-        //$shit = new \Zend\Validator\ZendValidatorIdentical();
-        //\Zend\Validator\Identical::NOT_SAME
-        $chain->attachByName('Identical', ['token' => 'password','messages' => [
-            'notSame' => 'password confirmation field does not match'
-        ]]);
-        $inputFilter->add($confirmation_input);
     }
 
     /**
