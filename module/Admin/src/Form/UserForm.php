@@ -13,8 +13,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Admin\Form\UserFieldset;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\ValidatorChain;
+use Zend\Validator\Callback;
 use Zend\Validator\NotEmpty;
 use Zend\InputFilter\Input;
+
+use InterpretersOffice\Entity;
+
+use \password_verify;
 
 /**
  * UserForm intended for administrative use
@@ -51,6 +56,7 @@ class UserForm extends Form
             if ($hat->isJudgesStaff()) {
                 $fieldset->addJudgeElement();
             }
+            $fieldset->setObject($user);
         }
         $this->add($fieldset);
         $this->addCsrfElement();
@@ -98,5 +104,58 @@ class UserForm extends Form
                 'notSame' => 'password confirmation field does not match'
         ]]);
         $inputFilter->get('user')->add($confirmation_input);
+    }
+
+    /**
+     * adds (current) password element and validators for user/profile
+     *
+     * @return UserForm
+     */
+    public function addCurrentPasswordElement()
+    {
+        $fs = $this->get('user');
+        $fs->add([
+            'type' => 'password','name' => 'current-password',
+            'attributes' => ['class' => 'form-control','id' => 'current-password']
+        ]);
+        $inputFilter = $this->getInputFilter();
+        $input = new Input('current-password');
+        $input->getFilterChain()->attachByName('StringTrim');
+        $chain = $input->getValidatorChain();
+        $hash = $fs->getObject()->getPassword();
+        $chain->attachByName('NotEmpty', [
+            'required' => true,
+            'allow_empty' => false,
+            'break_chain_on_failure'=> true,
+            'messages' => ['isEmpty' => 'current password is required',]
+            ])
+            ->attachByName('Callback',[
+                'callback'=>function($password) use ($hash) {
+                    /** @todo trigger a failed-authentication/security event? */
+                    return password_verify($password,$hash);},
+                'messages' => [
+                    Callback::INVALID_VALUE => 'Authentication failed: invalid password.'
+                ]
+            ]);
+        $inputFilter->get('user')->add($input);
+
+        return $this;
+    }
+
+    public function addUniqueEmailValidator()
+    {
+        $inputFilter = $this->getInputFilter();
+        $chain = $inputFilter->get('user')->get('person')->get('email')->getValidatorChain();
+        $repo = $this->get('user')->getObjectManager()->getRepository(Entity\User::class);
+        $user = $this->get('user')->getObject();
+        $chain->attachByName('Callback',[
+            'callback'=>function($email) use ($repo, $user) {
+                $count = $repo->countExistingUserEmail($user,$email);
+                return ! $count;
+            },
+            'messages' => [
+                Callback::INVALID_VALUE => 'This email address is currently in use by another user.'
+            ]
+        ]);
     }
 }

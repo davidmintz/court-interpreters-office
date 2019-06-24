@@ -62,8 +62,7 @@ class UserRepository extends EntityRepository
     {
 
         $dql = 'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p '
-        . ' JOIN u.role r '
-        . ' WHERE p.email = :email AND r.name = :role';
+        . ' JOIN u.role r WHERE p.email = :email AND r.name = :role';
         return $this->createQuery($dql)->setParameters(
             ['email' => $email,'role' => 'submitter']
         )
@@ -105,6 +104,17 @@ class UserRepository extends EntityRepository
         return $this->createQuery($dql)->setParameters($params)->getResult();
     }
 
+    public function countExistingUserEmail(Entity\User $user, $email)
+    {
+        $dql = 'SELECT COUNT(p.id) FROM '.Entity\Person::class 
+        . ' p JOIN '.Entity\User::class 
+        . ' u WITH u.person = p WHERE p.email = :email AND p.id <> :id';
+        $person = $user->getPerson();
+       
+        return $this->createQuery($dql)->useResultCache(false)
+        ->setParameters(['email'=> $email,'id'   => $person->getId(),])
+        ->getSingleScalarResult();
+    }
     /*
     SELECT COUNT(r.id) requests, 
     (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e

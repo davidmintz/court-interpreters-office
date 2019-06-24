@@ -39,7 +39,7 @@ class RegistrationForm extends Form
      /**
       * sets the existing user found in the database
       *
-      * this is experimental.
+      * this is experimental. sort of.
       *
       * @param Entity\User $user
       */
@@ -159,7 +159,7 @@ class RegistrationForm extends Form
                 ->attachByName('StringTrim');
         }
 
-        // tweak error message for "hat" element
+        // tweak error message for "hat" element -- so very awkward and ugly.
         $chain = $inputFilter->get('user')->get('person')->get('hat')
             ->getValidatorChain();
         /** @var \Zend\Validator\NotEmpty $shit */

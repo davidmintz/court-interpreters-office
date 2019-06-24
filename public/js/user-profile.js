@@ -26,7 +26,7 @@ $(function(){
             $(".validation-error").hide();
             $("#status-message").slideDown();
             $("form").hide();
-        });
-    }).fail(fail);
+        }).fail(fail);
+    });
     
 });
