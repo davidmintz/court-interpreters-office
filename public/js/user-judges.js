@@ -18,8 +18,7 @@ var appendJudge = function(event) {
 };
 /** sort of a template for the judge widget */
 var judge_tmpl = $("<li>").addClass("list-group-item py-1").append(
-    "<button type=\"button\" title=\"click to remove this judge\" class=\"btn "
-    + "btn-warning btn-sm float-right remove-div\">X</button>"
+    `<button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button>`
 );
 
 $(function(){
@@ -38,8 +37,6 @@ $(function(){
             $("#judge-div").slideUp();
         }
     });
-
-
 
     /** assign handler */
     $("#btn-add-judge").on("click",appendJudge);

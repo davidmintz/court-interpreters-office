@@ -366,13 +366,25 @@ class AccountController extends AbstractActionController
             $form->addPasswordValidators();
         }
         $data->set('user',$user_params);
-        //$hash = $user->getPassword();
         $form->setData($data);
         if (!$form->isValid()) {
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
         try {
             $this->objectManager->flush();
+            $obj = (object)[
+                'lastname' => $person->getLastname(),
+                'firstname' => $person->getFirstname(),
+                'email' => $person->getEmail(),
+                'hat' => (string)$person->getHat(),
+                'username' => $user->getUserName(),
+                'id' => $user->getId(),
+                'person_id' => $person->getId(),
+                'role' => (string)$user->getRole(),
+                'judge_ids' => isset($user_params['judges']) ? $user_params['judges']:[]
+            ];
+           $this->auth->getStorage()->write($obj);
+            
         } catch (\Throwable $e) {
             return $this->catch($e);
         }

@@ -142,6 +142,11 @@ class UserForm extends Form
         return $this;
     }
 
+    /**
+     * adds email uniqueness validator for user/profile
+     *
+     * @return UserForm
+     */
     public function addUniqueEmailValidator()
     {
         $inputFilter = $this->getInputFilter();
