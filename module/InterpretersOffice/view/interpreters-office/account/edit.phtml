@@ -47,14 +47,14 @@ $this->headScript()->appendFile($this->basePath('js/user-profile.js'));
         <div class="col-sm-9"><?php echo $this->formElement($username),$this->formElementErrors($username) ?>
         </div>
     </div>
-    <fieldset>
-    <legend class="offset-sm-3">password <span class="text-muted">(optional)</span></legend>
     <div class="form-group form-row">
         <label class="col-form-label col-sm-3" for="current-password">current password</label>
         <div class="col-sm-9">
-           <input type="password" name="current-password" class="form-control" id="current-password" value="">
+           <input type="password" placeholder="required when updating account details" name="user[current-password]" class="form-control" id="current-password" value="">
         </div>
     </div>
+    <fieldset>
+    <legend class="offset-sm-3">change password <span class="text-muted">(optional)</span></legend>
     <div class="form-group form-row">
         <label class="col-form-label col-sm-3">new password</label>
         <div class="col-sm-9"><?php

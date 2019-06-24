@@ -320,6 +320,7 @@ class AccountController extends AbstractActionController
             'auth_user_role' => $auth->role,
             'user' =>  $user,
             ]);
+        $form->addCurrentPasswordElement()->addUniqueEmailValidator();
         /** @todo move this initialization somewhere else */
         /** @var InterpretersOffice\Admin\Form\UserFieldset $user_fieldset */
         $user_fieldset = $form->get('user');
@@ -330,7 +331,7 @@ class AccountController extends AbstractActionController
         // they don't get to manipulate their own role, once set
         $form->getInputFilter()->get('user')->remove('role')->remove('id');
         if ($auth->role == 'submitter') {
-            // we might want to let a newly registered user correct her/his "hat" if there is
+            // we may decide we want to let a newly registered user correct her/his "hat" if there is
             // zero data history
             $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
                 ->countRelatedEntities($user);
@@ -365,6 +366,7 @@ class AccountController extends AbstractActionController
             $form->addPasswordValidators();
         }
         $data->set('user',$user_params);
+        //$hash = $user->getPassword();
         $form->setData($data);
         if (!$form->isValid()) {
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
