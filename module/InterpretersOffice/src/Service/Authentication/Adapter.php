@@ -49,8 +49,8 @@ class Adapter extends AbstractAdapter
 
         $objectManager = $this->entityManager;
         $query = $objectManager->createQuery(
-            "SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p"
-                . " JOIN u.role r "
+            "SELECT u, p, r, h, j FROM InterpretersOffice\Entity\User u JOIN u.person p "
+                . " JOIN p.hat h LEFT JOIN u.judges j JOIN u.role r "
             .'WHERE p.email = :identity OR u.username = :identity'
         )
            ->setParameters([':identity' => $this->identity]);
