@@ -101,19 +101,28 @@ class UserRepository extends EntityRepository
             ->setParameters([':person_id'=>$person_id])
             ->getResult();
         
-        return $this->createQuery($dql)->setParameters($params)->getResult();
+        return $result;
     }
 
-    public function countExistingUserEmail(Entity\User $user, $email)
+    /**
+     * Counts existing uses of $email
+     * 
+     * For use with UserForm and user/profile action.
+     *
+     * @param Entity\User $user
+     * @param string $email
+     * @return int
+     */
+    public function countExistingUserEmail(Entity\User $user, string $email) : int
     {
         $dql = 'SELECT COUNT(p.id) FROM '.Entity\Person::class 
         . ' p JOIN '.Entity\User::class 
         . ' u WITH u.person = p WHERE p.email = :email AND p.id <> :id';
         $person = $user->getPerson();
-       
-        return $this->createQuery($dql)->useResultCache(false)
-        ->setParameters(['email'=> $email,'id'   => $person->getId(),])
-        ->getSingleScalarResult();
+        $query = $this->createQuery($dql)->useResultCache(false)
+        ->setParameters(['email'=> $email,'id'   => $person->getId(),]);
+
+        return (int)$query->getSingleScalarResult();
     }
     /*
     SELECT COUNT(r.id) requests, 
