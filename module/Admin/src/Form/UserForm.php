@@ -50,6 +50,8 @@ class UserForm extends Form
 
         parent::__construct($this->form_name, $options);
         $fieldset = new UserFieldset($objectManager, $options);
+        $this->add($fieldset);
+        $this->addCsrfElement();
         if (key_exists('user', $options)) {
             $user = $options['user'];
             $hat = $user->getPerson()->getHat();
@@ -57,9 +59,16 @@ class UserForm extends Form
                 $fieldset->addJudgeElement();
             }
             $fieldset->setObject($user);
+
+            $username =  strtolower($user->getUserName());
+            $person_email = strtolower($user->getPerson()->getEmail());
+            if ($username != $person_email) {
+                $fieldset->get('username')->setAttribute('disabled','disabled');
+                $this->getInputFilter()->get('user')->remove('username');
+            }
         }
-        $this->add($fieldset);
-        $this->addCsrfElement();
+        
+        
 
         // make the email required
         $email_input = $this->getInputFilter()->get('user')
@@ -163,4 +172,6 @@ class UserForm extends Form
             ]
         ]);
     }
+
+
 }
