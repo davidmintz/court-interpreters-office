@@ -254,11 +254,5 @@ class UpdateListener implements
                 "set createdBy and timestamp on InterpreterEvent in ".__METHOD__
             );
         }
-        // $this->logger->debug(sprintf(
-        //         '%s:  user %s is creating a new %s',
-        //         __METHOD__, $user ? $user->getUsername() : 'nobody',
-        //         get_class($args->getObject())
-        //     )
-        // );
     }
 }

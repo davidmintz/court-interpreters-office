@@ -359,6 +359,7 @@ class AccountController extends AbstractActionController
     {
         $data = $this->getRequest()->getPost();
         $person = $user->getPerson();
+        $person_before = ['mobile'=>$person->getMobilePhone(),'office'=>$person->getOfficePhone() ];
         $user_params = $data->get('user');
         $user_params['person']['hat'] = $person->getHat()->getId();
         $user_params['person']['id'] = $person->getId();
@@ -372,7 +373,8 @@ class AccountController extends AbstractActionController
         }
         try {
             $this->objectManager->flush();
-            $obj = (object)[
+            $before = $this->auth->getIdentity();
+            $after = (object)[
                 'lastname' => $person->getLastname(),
                 'firstname' => $person->getFirstname(),
                 'email' => $person->getEmail(),
@@ -383,7 +385,13 @@ class AccountController extends AbstractActionController
                 'role' => (string)$user->getRole(),
                 'judge_ids' => isset($user_params['judges']) ? $user_params['judges']:[]
             ];
-           $this->auth->getStorage()->write($obj);
+            $this->auth->getStorage()->write($after);
+            $params = compact('user','before','after','person_before');
+            $this->getEventManager()->trigger(
+                AccountManager::USER_ACCOUNT_MODIFIED,
+                $this,$params
+            );
+
             
         } catch (\Throwable $e) {
             return $this->catch($e);
