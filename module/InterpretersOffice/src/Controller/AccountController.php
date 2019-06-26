@@ -304,7 +304,7 @@ class AccountController extends AbstractActionController
         }
         $auth =  $this->auth->getIdentity();
         $em = $this->objectManager;
-        /** @todo we will move this to a repo method */
+        /** @todo we WILL move this to a repo method */
         $dql = 'SELECT u, p, r, h, j
             FROM InterpretersOffice\Entity\User u
             JOIN u.person p JOIN u.role r JOIN p.hat h
@@ -359,6 +359,7 @@ class AccountController extends AbstractActionController
     {
         $data = $this->getRequest()->getPost();
         $person = $user->getPerson();
+        $person_before = ['mobile'=>$person->getMobilePhone(),'office'=>$person->getOfficePhone() ];
         $user_params = $data->get('user');
         $user_params['person']['hat'] = $person->getHat()->getId();
         $user_params['person']['id'] = $person->getId();
@@ -372,7 +373,8 @@ class AccountController extends AbstractActionController
         }
         try {
             $this->objectManager->flush();
-            $obj = (object)[
+            $before = $this->auth->getIdentity();
+            $after = (object)[
                 'lastname' => $person->getLastname(),
                 'firstname' => $person->getFirstname(),
                 'email' => $person->getEmail(),
@@ -383,11 +385,16 @@ class AccountController extends AbstractActionController
                 'role' => (string)$user->getRole(),
                 'judge_ids' => isset($user_params['judges']) ? $user_params['judges']:[]
             ];
-           $this->auth->getStorage()->write($obj);
-            
+            $this->auth->getStorage()->write($after);
+            $this->getEventManager()->trigger(
+                AccountManager::USER_ACCOUNT_MODIFIED,
+                $this, 
+                compact('user','before','after','person_before')
+            );
         } catch (\Throwable $e) {
             return $this->catch($e);
         }
+
         return new JsonModel(['status'=>'success',]);
     }
 }

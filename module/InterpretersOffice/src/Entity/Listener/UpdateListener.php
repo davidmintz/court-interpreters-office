@@ -160,26 +160,8 @@ class UpdateListener implements
     {
         $entity = $args->getObject();
         $entity_class = get_class($entity);
-        if ($entity_class == Entity\Event::class) {
+        if (in_array($entity_class, [Entity\Event::class, Entity\InterpreterEvent::class])) {
             return;
-        }
-        if ($entity_class == Entity\InterpreterEvent::class) {
-            return;
-            // $user = $this->getAuthenticatedUser($args);
-            // $interpreter_name = $entity->getInterpreter()->getFullName();
-            // /** @todo examine why "getId() on null" in mocha test */
-            // $event_id =  $entity->getEvent()->getId();
-            // if ($user) {
-            //     if ((string)$user->getRole() == 'submitter') {
-            //         $message = "interpreter $interpreter_name was automatically removed from event id $event_id";
-            //     } else {
-            //         $message =  "interpreter $interpreter_name was removed from event id $event_id (user: {$user->getUsername()})";
-            //     }
-            //     $this->logger->info(
-            //         $message,['entity_class'=>$entity_class,'entity_id'=>$event_id]
-            //     );
-            // }
-            //
         }
         $this->logger->info(
             sprintf(
@@ -254,11 +236,5 @@ class UpdateListener implements
                 "set createdBy and timestamp on InterpreterEvent in ".__METHOD__
             );
         }
-        // $this->logger->debug(sprintf(
-        //         '%s:  user %s is creating a new %s',
-        //         __METHOD__, $user ? $user->getUsername() : 'nobody',
-        //         get_class($args->getObject())
-        //     )
-        // );
     }
 }

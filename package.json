@@ -1,0 +1,39 @@
+{
+  "name": "court-interpreters-office",
+  "version": "1.0.0-dev",
+  "description": "court interpreter management system",
+  "main": "index.js",
+  "bin": {
+    "court-interpreters-office": "casper-login-example.js"
+  },
+  "directories": {
+    "doc": "doc"
+  },
+  "dependencies": {
+    "ajv": "^6.5.3",
+    "axios": "^0.18.0",
+    "bootstrap": "^4.1.3",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "eslint": "^5.13.0",
+    "ini": "^1.3.5",
+    "jquery": "^3.3.1",
+    "moment": "^2.22.2",
+    "mysql": "^2.16.0",
+    "popper": "^1.0.1",
+    "popper.js": "^1.14.4",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "slimerjs": "^1.0.0",
+    "zombie": "^6.1.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com//davidmintz/court-interpreters-office"
+  },
+  "author": "david@davidmintz.org",
+  "license": "MIT"
+}

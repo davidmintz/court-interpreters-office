@@ -143,12 +143,7 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(200);
         $this->assertQuery('div.validation-error');
         $this->assertQueryCount('div.validation-error', 1);
-        //echo $this->getResponse()->getBody();
-        //return;
-        $this->assertQueryContentContains(
-            'div.validation-error',
-            'there is already a person in your database with this email address and "active" setting'
-        );
+        $this->assertQueryContentRegex('div.validation-error', '/email.+in your database/i');
         $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);
@@ -171,9 +166,6 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $other_person = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Person')
                         ->findByEmail('john.somebody.else@lawfirm.com')[0];
-
-        //$this->login('susie', 'boink');
-        //$this->reset(true);
         $url = '/admin/people/edit/'.$other_person->getId();
         $data['person']['email'] = 'john.somebody@lawfirm.com';
         $this->reset(true);
@@ -189,7 +181,7 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->assertQuery('div.validation-error');
         //echo $this->getResponse()->getBody();
         $this->assertQueryCount('div.validation-error', 1);
-        $this->assertQueryContentRegex('div.validation-error', '/person.+Hat.+email.+in your database/i');
+        $this->assertQueryContentRegex('div.validation-error', '/email.+in your database/i');
     }
     /**
      * @depends testAdd

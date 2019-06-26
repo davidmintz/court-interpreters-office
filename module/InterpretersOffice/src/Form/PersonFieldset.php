@@ -475,20 +475,19 @@ class PersonFieldset extends Fieldset implements
             $validatorOptions['fields'] = ['active', 'email'];
             $validatorOptions['messages'] = [
                 NoObjectExistsValidator::ERROR_OBJECT_FOUND =>
-                    'there is already a person in your database with this email address and "active" setting',
+                'this email address is currently in use by another person in your database',
             ];
             $spec['email']['validators'][] = [
                 'name' => $validatorClass,
                 'options' => $validatorOptions,
                 'break_chain_on_failure' => true,
             ];
-        } else { // action is update, use the UniqueObject validator
-            //printf('DEBUG action is %s in PersonFieldset line %d<br>',$this->action,__LINE__);
+        } else { // action is update, so we use the UniqueObject validator
             $validatorClass = UniqueObject::class;
 
             $validatorOptions['messages'] = [
                 UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
-                    'there is already a person in your database with this email address and "active" setting',
+                'this email address is currently in use by another person in your database',
             ];
             $validatorOptions['fields'] = ['hat', 'email'];
 
@@ -496,12 +495,6 @@ class PersonFieldset extends Fieldset implements
                 'name' => $validatorClass,
                 'options' => $validatorOptions,
                 'break_chain_on_failure' => true,
-            ];
-
-            // ... and again, for the active and email fields
-            $validatorOptions['messages'] = [
-                UniqueObject::ERROR_OBJECT_NOT_UNIQUE =>
-                    'there is already a person with this "hat" and email address in your database',
             ];
             $validatorOptions['fields'] = ['active', 'email'];
             $spec['email']['validators'][] = [

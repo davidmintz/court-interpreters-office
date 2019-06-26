@@ -54,6 +54,12 @@ class AccountManager implements LoggerAwareInterface
     const EVENT_EMAIL_VERIFIED = 'email verified';
 
     /**
+     * name for user account modification event
+     * @var string
+     */
+    const USER_ACCOUNT_MODIFIED = 'user account modified';
+
+    /**
      * error code for failed email verification query
      *
      * For user registration, we follow the common practice of emailing a link
