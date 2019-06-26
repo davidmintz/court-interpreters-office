@@ -304,7 +304,7 @@ class AccountController extends AbstractActionController
         }
         $auth =  $this->auth->getIdentity();
         $em = $this->objectManager;
-        /** @todo we will move this to a repo method */
+        /** @todo we WILL move this to a repo method */
         $dql = 'SELECT u, p, r, h, j
             FROM InterpretersOffice\Entity\User u
             JOIN u.person p JOIN u.role r JOIN p.hat h
@@ -386,16 +386,15 @@ class AccountController extends AbstractActionController
                 'judge_ids' => isset($user_params['judges']) ? $user_params['judges']:[]
             ];
             $this->auth->getStorage()->write($after);
-            $params = compact('user','before','after','person_before');
             $this->getEventManager()->trigger(
                 AccountManager::USER_ACCOUNT_MODIFIED,
-                $this,$params
+                $this, 
+                compact('user','before','after','person_before')
             );
-
-            
         } catch (\Throwable $e) {
             return $this->catch($e);
         }
+
         return new JsonModel(['status'=>'success',]);
     }
 }
