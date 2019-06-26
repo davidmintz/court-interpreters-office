@@ -5,6 +5,7 @@
 namespace InterpretersOffice\Form\Validator;
 
 use DoctrineModule\Validator\UniqueObject as DoctrineModuleUniqueObject;
+use InterpretersOffice\Entity\Person;
 
 /**
  * workaround for the problem that the Doctrine validator will not handle
@@ -35,6 +36,10 @@ class UniqueObject extends DoctrineModuleUniqueObject
 
         if (! is_object($match)) {
             return true;
+        } else {
+            if ($match instanceof Person and ! $match->isActive()) {
+                return true;
+            }
         }
 
         $expectedIdentifiers = $this->getExpectedIdentifiers($context);
