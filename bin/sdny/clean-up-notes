@@ -1,0 +1,11 @@
+
+
+s3cmd --config ~/.dh-sdny.s3cfg  get  s3://sdny/interpreters.2018-10-30T1830.sql.gz .
+
+SET SESSION sql_mode = '' ;
+ALTER TABLE events MODIFY COLUMN lastmod datetime default null;
+ALTER TABLE events MODIFY COLUMN req_date date default null;
+ALTER TABLE events MODIFY COLUMN event_date date default null;
+ALTER TABLE events MODIFY COLUMN created datetime default null;
+DELETE FROM request_users where id IN (530, 531) and active = 0 and last_login = 0
+UPDATE events set lastmod = created where lastmod = '0000-00-00 00:00:00'
