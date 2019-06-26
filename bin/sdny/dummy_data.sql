@@ -385,3 +385,77 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, emai
 # anonymous judges
 SET @ctroom = (SELECT id FROM locations WHERE name = "510");
 UPDATE anonymous_judges SET default_location_id = @ctroom WHERE name = "magistrate";
+
+
+/*
+ select * from event_types;
++----+-------------+-----------------------+----------+
+| id | category_id | name                  | comments |
++----+-------------+-----------------------+----------+
+|  1 |           1 | conference            |          |
+|  2 |           2 | atty/client interview |          |
+|  3 |           1 | sentence              |          |
+|  4 |           1 | plea                  |          |
+|  5 |           1 | presentment           |          |
+|  6 |           1 | arraignment           |          |
+|  7 |           2 | probation interview   |          |
+|  8 |           1 | trial                 |          |
+|  9 |           1 | bail hearing          |          |
+| 10 |           1 | suppression hearing   |          |
+| 11 |           3 | document translation  |          |
++----+-------------+-----------------------+----------+
+
+SELECT p.lastname, p.id judge_id, l.name courtroom, l.id location_id FROM people p JOIN judges j ON p.id = j.id JOIN locations l ON l.id = j.default_location_id;
++---------------+----------+-----------+-------------+
+| lastname      | judge_id | courtroom | location_id |
++---------------+----------+-----------+-------------+
+| Dorkendoofer  |        5 | 101       |           4 |
+| Boinkleheimer |        6 | 201       |           8 |
+| Harshbarger   |        1 | 2A        |          12 |
+| Bludgeon      |        2 | 2B        |          13 |
+| Judicious     |        3 | 2C        |          14 |
+| Wiseburger    |        4 | 2D        |          15 |
++---------------+----------+-----------+-------------+
+
+ select p.lastname user, p.id submitter_id, j.lastname judge, cj.* FROM people p JOIN users u ON p.id = u.person_id JOIN clerks_judges cj 
+ ON u.id = cj.user_id JOIN people j ON cj.judge_id = j.id;
++--------------+--------------+---------------+---------+----------+
+| user         | submitter_id | judge         | user_id | judge_id |
++--------------+--------------+---------------+---------+----------+
+| Schwartzberg |           29 | Bludgeon      |       6 |        2 |
+| Hartford     |           30 | Bludgeon      |       7 |        2 |
+| Rojas        |           31 | Dorkendoofer  |       8 |        5 |
+| Zimmer       |           32 | Boinkleheimer |       9 |        6 |
+| Ho           |           33 | Wiseburger    |      10 |        4 |
+| Montgomery   |           34 | Wiseburger    |      11 |        4 |
++--------------+--------------+---------------+---------+----------+
+*/
+SET @submitter = (SELECT p.id FROM people p JOIN users u ON p.id = u.person_id JOIN clerks_judges cj ON cj.user_id = u.id JOIN people j ON j.id = cj.judge_id WHERE j.lastname = 'Dorkendoofer' LIMIT 1);
+SET @user =  (select id FROM users WHERE person_id = @submitter);
+INSERT INTO requests (
+          date, time, judge_id, event_type_id, language_id, docket, location_id, submitter_id, 
+          created, modified, modified_by_id, comments, event_id, pending, cancelled)
+VALUES(
+     DATE_ADD(CURDATE(), INTERVAL 4 WEEK),'10:00:00',5, 1,@spanish,'2019-CR-0123', 4, @submitter,
+     NOW(), NOW(), @user, '',NULL,1, 0
+);
+
+INSERT INTO defendants_requests (defendant_id, request_id) VALUES (
+     (SELECT id FROM defendant_names WHERE surnames LIKE '%rodriguez%' LIMIT 1),
+     LAST_INSERT_ID()
+);
+
+SET @submitter = (SELECT p.id FROM people p JOIN users u ON p.id = u.person_id JOIN clerks_judges cj ON cj.user_id = u.id JOIN people j ON j.id = cj.judge_id WHERE j.lastname = 'Bludgeon' LIMIT 1);
+SET @user =  (select id FROM users WHERE person_id = @submitter);
+INSERT INTO requests (
+          date, time, judge_id, event_type_id, language_id, docket, location_id, submitter_id,
+          created, modified, modified_by_id, comments, event_id, pending, cancelled)
+VALUES(
+     DATE_ADD(CURDATE(), INTERVAL 5 WEEK),'15:00:00',2, 6, @spanish,'2019-CR-0234', 13, @submitter,
+     NOW(), NOW(), @user, '',NULL,1, 0
+);
+INSERT INTO defendants_requests (defendant_id, request_id) VALUES (
+     (SELECT id FROM defendant_names WHERE surnames LIKE '%garcia%' LIMIT 1),
+     LAST_INSERT_ID()
+);
+
