@@ -29,6 +29,11 @@ class AuthenticationListener
     protected $entityManager;
 
     /**
+     * @var string
+     */
+    const CHANNEL = 'security';
+
+    /**
      * constructor.
      *
      * @param Logger
@@ -77,7 +82,7 @@ class AuthenticationListener
             );
             $user = null;
         }
-        $this->log->info($message, ['entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
+        $this->log->info($message, ['channel'=>self::CHANNEL, 'entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
     }
 
     /**
@@ -89,6 +94,6 @@ class AuthenticationListener
     {
         $user = $e->getParam('user');
         $message = sprintf('user %s logged out', $user->email);
-        $this->log->info($message, ['entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
+        $this->log->info($message, ['channel'=>self::CHANNEL,'entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
     }
 }
