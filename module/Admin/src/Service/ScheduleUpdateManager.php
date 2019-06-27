@@ -491,7 +491,7 @@ class ScheduleUpdateManager
             $request->getDate()->format('d-M-Y')
         );
         $this->logger->info($message,
-            ['entity_class' => Request::class,'entity_id' => $request->getId()]
+            ['entity_class' => Request::class,'entity_id' => $request->getId(),'channel'=>'schedule-update-manager']
         );
     }
 
@@ -573,7 +573,7 @@ class ScheduleUpdateManager
                 sprintf(
                     'event #%d was auto-updated to keep consistent with request #%s',
                     $event->getId(), $request->getId()
-                ),['entity_class'=>Entity\Event::class,'entity_id'=>$event->getId()]
+                ),['entity_class'=>Entity\Event::class,'entity_id'=>$event->getId(),'channel'=>'schedule-update-manager']
             );
         }
         // send FYI to your Interpreters Office.
@@ -625,7 +625,7 @@ class ScheduleUpdateManager
         $event->setDeleted(true);
         //$this->user_event
         $this->logger->info(sprintf('event id %d has been automatically removed from the schedule',$event->getId()),
-            ['entity_class'=> get_class($event),'entity_id'=>$event->getId()]);
+            ['entity_class'=> get_class($event),'entity_id'=>$event->getId(),'channel'=>'schedule-update-manager']);
         return $this;
     }
 
@@ -653,7 +653,7 @@ class ScheduleUpdateManager
                     return $i->getFullname();
                 },$this->interpreters)));
             $this->logger->info($message,
-                ['entity_class'=> get_class($event),'entity_id'=>$event->getId()]
+                ['entity_class'=> get_class($event),'entity_id'=>$event->getId(),'channel'=>'schedule-update-manager']
             );
         } else {
             $this->logger->debug(__METHOD__.": NO interpreters to remove ");
@@ -733,7 +733,8 @@ class ScheduleUpdateManager
             $this->user_event, get_class($entity), $entity->getId(), implode(', ',$who)
         );
         $this->logger->info($message,
-            ['entity_class' => get_class($entity),'entity_id' => $entity->getId()]);
+            ['entity_class' => get_class($entity),
+             'entity_id' => $entity->getId(),'channel'=>'email']);
 
         return $this;
     }

@@ -36,6 +36,10 @@ class Writer extends AbstractWriter
              :priority, :priorityName, :extra)';
 
     /**
+     * @var \PDOStatement
+     */
+    private $statement;
+    /**
      * Constructor
      *
      * @param \PDO $pdo
@@ -56,8 +60,7 @@ class Writer extends AbstractWriter
      */
     public function doWrite(Array $event)
     {
-        /** @var $db \PDO */
-        $db = $this->pdo;
+        
         // move this to a processor class!
         $timestamp = $event['timestamp']->format('Y-m-d H:i:s');
         $params = $event;
@@ -80,7 +83,22 @@ class Writer extends AbstractWriter
         } else {
             $params['extra'] = '';
         }
-        $stmt = $db->prepare($this->sql);
+        $stmt = $this->getStatement();
         $stmt->execute($params);
+    }
+
+    /**
+     * gets PDOStatement
+     * 
+     * @return \PDOStatement
+     */
+    private function getStatement() : \PDOStatement
+    {
+        if ($this->statement) {
+            return $this->statement;
+        }
+        $this->statement = $this->pdo->prepare($this->sql);
+
+        return $this->statement;
     }
 }

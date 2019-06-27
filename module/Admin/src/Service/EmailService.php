@@ -223,22 +223,6 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
     }
 
     /**
-     * gets PDO statement
-     *
-     * @return \PDOStatement
-     */
-    public function getStatement()
-    {
-        $user_id = $this->auth->getIdentity()->id;
-        /** @var $pdo \PDO */
-        $pdo = $this->getObjectManager()->getConnection();
-        $sql = "INSERT INTO event_emails (event_id, `timestamp`, user_id, recipient_id, email, subject, comments)
-            VALUES (:event_id, :timestamp, $user_id, :recipient_id, :email, :subject, :comments)";
-
-        return $pdo->prepare($sql);
-    }
-
-    /**
      * Validates and filters data for composing message.
      *
      * This is crude, but using Zend\InputFilter\etc for this was too
