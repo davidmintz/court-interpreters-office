@@ -30,8 +30,8 @@ class EmailServiceFactory implements FactoryInterface
         $service
             ->setViewRenderer($container->get('ViewRenderer'))
             ->setAuth($container->get('auth'))
-            ->setLogger($log)
-            ->setEventManager($container->get('SharedEventManager'));
+            ->setLogger($log);
+            
 
         return $service;
     }

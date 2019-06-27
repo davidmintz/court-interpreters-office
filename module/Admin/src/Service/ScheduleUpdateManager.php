@@ -256,7 +256,6 @@ class ScheduleUpdateManager
         // before running into notify-interpreters, so we will know
         // what template to use for email
         //
-
         $pattern = sprintf('/%s|%s/',self::ACTION_REMOVE_INTERPRETERS, self::ACTION_DELETE_SCHEDULED_EVENT);
         $shit = preg_grep($pattern, $actions);
         $this->logger->debug('\$shit at '.__LINE__.  " is: ".print_r($shit,true));
@@ -277,7 +276,7 @@ class ScheduleUpdateManager
             $action = substr($string, $i);
             $method = lcfirst($filter->filter($action));
             if ($config[$user_event][$string]) {
-                $this->logger->debug(__FUNCTION__.":  we are examining: $action");
+                $this->logger->debug(__FUNCTION__.":  examining action '$action'");
                 if (method_exists($this, $method)) {
                     $this->logger->debug("we now need to call: $method()");
                     $this->$method($request, $updates);
@@ -733,7 +732,7 @@ class ScheduleUpdateManager
             'notifying interpreter(s) following user-action %s with %s #%s: %s',
             $this->user_event, get_class($entity), $entity->getId(), implode(', ',$who)
         );
-        $this->logger->debug($message,
+        $this->logger->info($message,
             ['entity_class' => get_class($entity),'entity_id' => $entity->getId()]);
 
         return $this;

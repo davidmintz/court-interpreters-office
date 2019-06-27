@@ -30,9 +30,9 @@ class Writer extends AbstractWriter
      *
      * @var string
      */
-    private $sql = 'INSERT INTO app_event_log (timestamp, message, entity_id,
+    private $sql = 'INSERT INTO app_event_log (timestamp, message, channel, entity_id,
             entity_class, priority, priority_name, extra)
-        VALUES (:timestamp, :message, :entity_id, :entity_class,
+        VALUES (:timestamp, :message, :channel, :entity_id, :entity_class,
              :priority, :priorityName, :extra)';
 
     /**
@@ -63,8 +63,8 @@ class Writer extends AbstractWriter
         $params = $event;
         $params['timestamp'] = $timestamp;
         $extra = $event['extra'];
-        $defaults = ['entity_id' => null, 'entity_class' => ''];
-        foreach (['entity_class','entity_id'] as $field) {
+        $defaults = ['entity_id' => null, 'entity_class' => '', 'channel' => ''];
+        foreach (['entity_class','entity_id','channel'] as $field) {
             if (! empty($extra[$field])) {
                 $params["{$field}"] = $extra[$field];
                 unset($params['extra'][$field]);

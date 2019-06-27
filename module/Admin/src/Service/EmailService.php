@@ -14,14 +14,15 @@ use Zend\Validator\EmailAddress;
 use Zend\View\Renderer\RendererInterface as Renderer;
 use Zend\View\Model\ViewModel;
 use Zend\Authentication\AuthenticationServiceInterface;
-
+use InterpretersOffice\Entity;
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\Log\LoggerAwareTrait;
 use Zend\Log\LoggerAwareInterface;
-use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
+
+//use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 /**
  * sends email from the admin/schedule interface
  */
@@ -30,6 +31,11 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
     use EmailTrait;
     use LoggerAwareTrait;
     use EventManagerAwareTrait;
+
+    /**
+     * @var string
+     */
+    const CHANNEL = 'email';
 
     /**
      * configuration
@@ -162,7 +168,14 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
                 $transport->send($message);
                 //$log_statement->execute($params);
                 $result['sent_to'][] = $address;
-                $this->getLogger()->info("is it working?");
+                $this->log([
+                    'recipient_id'=>! empty($address['id']) ? $address['id'] : null,
+                    'event_id' => $data['event_id'],
+                    'email' => $address,
+                    'subject' => $data['subject'],
+                    'comments' => $log_comments,
+                    'address' => $address,
+                ]);
             } catch (\Throwable $e) {
                 //$pdo->rollback();
                 $details = [
@@ -181,6 +194,32 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
             $result['cc_to'] = $data['cc']; // for confirmation
         }
         return array_merge($result, ['status' => 'success','info' => "template: $template",]);
+    }
+
+    private function log(Array $data,string $channel = 'email')
+    {
+        
+        $user = $this->auth->getIdentity()->username;
+        $recipient = $data['address']['email'];
+        if (isset($data['address']['name'])) {
+            $recipient = $data['address']['name'] . " <{$recipient}>";
+        }
+        $message = sprintf(
+            "user %s sent email to %s re: '%s'",
+            $user,$recipient,$data['subject']
+        );
+        $this->getLogger()->info(
+            $message,[
+                'entity_class' => Entity\Event::class,
+                'entity_id'    => $data['event_id'],
+                'channel'  => $channel,
+                'recipient_id' => $data['recipient_id'],
+                'comments' => $data['comments'],
+                'recipient' => $recipient,
+            ]
+        );
+
+        return $this;
     }
 
     /**
