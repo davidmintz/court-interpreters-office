@@ -78,9 +78,11 @@ describe("updating a request that is scheduled",function(){
             browser.assert.text("#date",request_date);
             browser.assert.element("#request-details");
             browser.assert.elements("a.request-update",{atLeast : 1});
-            return browser.fire("a.btn:nth-child(1)","click");
+            return browser.fire("#request-details a.btn:nth-child(1)","click");
         })
         .then(function(){
+            //console.log(`fuckin' request id is ${request_id}`);
+            //console.log(browser.html());
             browser.assert.url({ pathname: `/requests/update/${request_id}` });
             browser.assert.element("#btn-save");
             browser.assert.element("#date");
