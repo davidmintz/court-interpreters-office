@@ -137,6 +137,20 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $interpreterEvents = $entity->getInterpreterEvents()->toArray();
         if ($interpreterEvents != $this->previous_interpreters) {
             $fields_updated[] = 'interpreters';
+            $this->logger->debug("interpreters were modified, fool!");
+            $removed = array_diff($this->previous_interpreters,$interpreterEvents);
+            if (count($removed)) {
+                $who = implode(", ",array_map(function($ie){return $ie->getInterpreter()->getFullName();},$removed));
+                $what = $entity->describe();
+                $user = $this->getAuthenticatedUser($args);
+                $message = sprintf("user %s removed %s from event #%d (%s)",
+                    $user->getUsername(),$who, $entity->getId(),$what);
+                $this->logger->info($message,[
+                    'entity_class' => get_class($entity),
+                    'entity_id' =>$entity->getId(),
+                    'channel'  => 'scheduling',
+                ]);
+            }
         }
 
         $defendants = $entity->getDefendants()->toArray();
@@ -173,7 +187,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                 );
                 $this->logger->info(
                     $message,
-                    ['entity_class' => Entity\Event::class,'entity_id' => $id ]
+                    ['entity_class' => Entity\Event::class,'entity_id' => $id,'channel'=>'scheduling', ]
                 );
             }
         }

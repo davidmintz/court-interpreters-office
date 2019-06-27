@@ -117,9 +117,11 @@ class UpdateListener implements
         }
         $auth_user = $this->getAuthenticatedUser($args);
         $user = $auth_user ? $auth_user->getUsername() : '<nobody>';
+        $channel = '';
         switch ($entity_class) {
             case Entity\Event::class:
                 $message = "user $user added a new event: ".$entity->describe();
+                $channel = 'scheduling';
                 break;
             case Entity\InterpreterEvent::class:
                 $who = $entity->getInterpreter()->getFullName();
@@ -127,13 +129,15 @@ class UpdateListener implements
                 $message = "user $user assigned $who to $what";
                 $entity_id = $entity->getEvent()->getId();
                 $entity_class = Entity\Event::class;
+                $channel = 'scheduling';
                 break;
             default:
-                $basename = substr($entity_class, strrpos($entity_class, '\\') + 1);
+                $basename = strtolower(substr($entity_class, strrpos($entity_class, '\\') + 1));
+                $channel = "{$basename}s";
                 $message = sprintf(
                     'user %s added a new %s',
                     $user,
-                    strtolower($basename)
+                    $basename
                 );
                 if (method_exists($entity, '__toString')) {
                     $message .= ": $entity";
@@ -144,11 +148,10 @@ class UpdateListener implements
 
         $this->logger->info(
             $message,
-            compact('entity_id', 'entity_class')
+            compact('entity_id', 'entity_class','channel')
         );
         $this->clearCache($args);
     }
-
 
     /**
     * postRemove event handler
@@ -160,17 +163,21 @@ class UpdateListener implements
     {
         $entity = $args->getObject();
         $entity_class = get_class($entity);
-        if (in_array($entity_class, [Entity\Event::class, Entity\InterpreterEvent::class])) {
+        $channel = null;
+        if (in_array($entity_class, [Entity\InterpreterEvent::class, Entity\Event::class])) {
             return;
         }
+        $basename = strtolower(substr($entity_class, strrpos($entity_class, '\\') + 1));
+        $channel = $channel ?: "{$basename}s";
         $this->logger->info(
             sprintf(
-                'user %s deleted entity %s',
+                'user %s deleted an entity (%s)',
                 $this->getAuthenticatedUser($args)->getUsername(),
-                $entity_class
+                $basename
             ),
             ['entity_class' => $entity_class, 'entity_id' =>
-                method_exists($entity, 'getId') ? $entity->getId() : null
+                method_exists($entity, 'getId') ? $entity->getId() : null,
+                'channel'=>$channel,
             ]
         );
         $this->clearCache($args);
@@ -210,6 +217,8 @@ class UpdateListener implements
     public function postUpdate(LifecycleEventArgs $args)
     {
         $user = $this->getAuthenticatedUser($args);
+        // $basename = strtolower(substr($entity_class, strrpos($entity_class, '\\') + 1));
+        // $channel = "{$basename}s";
         $this->logger->debug(
             sprintf(
                 'updated entity %s, current user is %s ',
