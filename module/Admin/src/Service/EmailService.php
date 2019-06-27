@@ -8,7 +8,7 @@ namespace InterpretersOffice\Admin\Service;
 use InterpretersOffice\Service\EmailTrait;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Admin\Service\EmailService;
-use Doctrine\ORM\EntityManagerInterface;
+//use Doctrine\ORM\EntityManagerInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Zend\Validator\EmailAddress;
 use Zend\View\Renderer\RendererInterface as Renderer;
@@ -19,14 +19,16 @@ use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerAwareInterface;
-
+use Zend\Log\LoggerAwareTrait;
+use Zend\Log\LoggerAwareInterface;
+use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 /**
  * sends email from the admin/schedule interface
  */
-class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInterface
+class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
 {
     use EmailTrait;
-    use ObjectManagerAwareTrait;
+    use LoggerAwareTrait;
     use EventManagerAwareTrait;
 
     /**
@@ -36,13 +38,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
      */
     private $config;
 
-    /**
-     * entity manager
-     *
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
+   
     /**
      * map email-subject hints to template filenames
      * @var array
@@ -74,12 +70,12 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
      * constructor
      *
      * @param Array $config
-     * @param EntityManagerInterface $em
+     * 
      */
-    public function __construct(Array $config, EntityManagerInterface $em)
+    public function __construct(Array $config)
     {
         $this->config = $config;
-        $this->setObjectManager($em);
+        //$this->setObjectManager($em);
     }
 
     /**
@@ -136,7 +132,7 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             }
         }
         $transport = $this->getMailTransport();
-        $log_statement = $this->getStatement();
+        //$log_statement = $this->getStatement();
 
         foreach ($data['to'] as $i => $address) {
             $view->to = $address;
@@ -152,23 +148,23 @@ class EmailService implements ObjectManagerAwareInterface, EventManagerAwareInte
             file_put_contents("data/email-output.{$i}.html", $content);
             $message->setTo($address['email'], ! empty($address['name']) ? $address['name'] : null);
             /** @var $pdo \PDO */
-            $pdo = $this->getObjectManager()->getConnection();
+            //$pdo = $this->getObjectManager()->getConnection();
             try {
-                $pdo->beginTransaction();
-                $params = [
-                    ':timestamp' => date('Y-m-d H:i:s'),
-                    ':recipient_id' => ! empty($address['id']) ? $address['id'] : null,
-                    ':email' => $address['email'],
-                    ':subject' => $data['subject'],
-                    ':event_id' => $data['event_id'],
-                    ':comments' => $log_comments,
-                ];
+                //$pdo->beginTransaction();
+                // $params = [
+                //     ':timestamp' => date('Y-m-d H:i:s'),
+                //     ':recipient_id' => ! empty($address['id']) ? $address['id'] : null,
+                //     ':email' => $address['email'],
+                //     ':subject' => $data['subject'],
+                //     ':event_id' => $data['event_id'],
+                //     ':comments' => $log_comments,
+                // ];
                 $transport->send($message);
-                $log_statement->execute($params);
+                //$log_statement->execute($params);
                 $result['sent_to'][] = $address;
-                $pdo->commit();
+                $this->getLogger()->info("is it working?");
             } catch (\Throwable $e) {
-                $pdo->rollback();
+                //$pdo->rollback();
                 $details = [
                     'status' => 'error',
                     'exception_class' => get_class($e),
