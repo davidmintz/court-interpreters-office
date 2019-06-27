@@ -6,7 +6,7 @@ echo $this->doctype();
         <?php echo $this->headMeta()
          ->appendName('viewport', 'width=device-width, initial-scale=1.0, shrink-to-fit=no');?>
     <meta name="description" content="SDNY Interpreters Office court interpreter management system">
-    <meta name="author" content="David Mintz, Interpreters Office, US District Court, Southern District of New York">
+    <meta name="author" content="David Mintz, Interpreters Office, US District Court, Southern District of` New York">
     <?php echo $this->headTitle('Court Interpreters Office')->setSeparator(' | ')->setAutoEscape(false) ?>
     <!-- Bootstrap core CSS -->
     <link href="<?php echo $this->basePath('css/bootstrap/bootstrap.min.css')?>" rel="stylesheet">
@@ -28,14 +28,16 @@ echo $this->headStyle();?>
                 echo $this->navigation($this->layout()->navigation_menu)
                     ->menu()->setPartial('partials/navbar.phtml'); endif;?>
             <?php if ($this->layout()->user) : $user = $this->layout()->user;?>
-            <div>
-                <?php /* this is bullshit. needs more work. */?>
-                <span class="d-none d-xl-inline">
-                    welcome <?php echo $user->username != $user->email ? $user->username : "$user->firstname $user->lastname"?>
-                </span>
-                <span class="px-2 py-1"><a href="<?php echo $this->url('logout')?>">log out</a></span>
-            </div>
-            <?php endif; ?>
+                <div class="dropdown">
+                    <a class="btn btn-link dropdown-toggle" role="button" id="btn-user-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fa fa-user"></span><span class="sr-only">my account</span> <span class="d-none d-xl-inline">
+                         welcome <?php echo $user->username != $user->email ? $user->username : "$user->firstname $user->lastname"?></span></a>
+                    <div class="dropdown-menu" aria-labelledby="btn-user-menu">
+                        <a class="dropdown-item" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
+                        <a class="dropdown-item" href="<?php echo $this->url('logout')?>">log out</a>
+                    </div>                
+                </div>
+           <?php endif; ?>
           </div>
       </nav>
     <?php  echo $this->content; ?>
