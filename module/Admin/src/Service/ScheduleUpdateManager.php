@@ -647,13 +647,14 @@ class ScheduleUpdateManager
         if ($interpreterEvents->count()) {
             $this->interpreters = $event->getInterpreters();
             $event->removeInterpreterEvents($interpreterEvents);
-            $message = sprintf("automatically removed interpreter(s) from event #%d: %s",
+            $message = sprintf("removed interpreter(s) from event #%d: %s",
                 $event->getId(),
                 implode(", ",array_map(function($i){
                     return $i->getFullname();
                 },$this->interpreters)));
             $this->logger->info($message,
-                ['entity_class'=> get_class($event),'entity_id'=>$event->getId(),'channel'=>'schedule-update-manager']
+                ['entity_class'=> get_class($event),'entity_id'=>$event->getId(),
+                'channel'=>'schedule-update-manager','user-event'=>$this->user_event,'request_id'=>$request->getId()]
             );
         } else {
             $this->logger->debug(__METHOD__.": NO interpreters to remove ");
