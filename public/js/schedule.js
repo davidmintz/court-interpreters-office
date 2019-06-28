@@ -269,7 +269,7 @@ $(function() {
                 console.debug("popovers up? run() is starting over");
                 return run();
             }
-            $.get(document.location.href).done((data)=>{
+            $.get(document.location.pathname).done((data)=>{
                 var new_data = $(data).html();
                 if (previous_data != new_data) {
                     console.debug("shit changed");
