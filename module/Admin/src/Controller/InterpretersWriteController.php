@@ -75,19 +75,7 @@ class InterpretersWriteController extends AbstractActionController
         $this->viewModel = new ViewModel(['vault_enabled' => $vault_enabled]);
     }
 
-    /**
-     * sets form config options
-     * @param Array $config
-     * @returns self
-     */
-    public function __setFormConfig(Array $config)
-    {
-        $this->formConfig = $config;
-
-        return $this;
-    }
-
-    /**
+     /**
      * on dispatch event handler
      *
      * @param  MvcEvent $e

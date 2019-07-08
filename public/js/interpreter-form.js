@@ -255,14 +255,16 @@ $(function(){
     });
     /**
     @todo run partial validation here?
+    @todo to do is to fix this suckage causing unpleasant jumping from the default first tab
+    to the first one with a validation error
     */
     $('#interpreter-form').on("submit",function(event){
         //event.preventDefault();
         if ($(".validation-error:visible").length) {
             console.warn("boink! not valid");
-            return false;
+            //return false;
         }
-        //$('a[data-toggle="tab"]').trigger("click",{submit:true});
+        $('a[data-toggle="tab"]').trigger("click",{submit:true});
         return true;
     });
 
