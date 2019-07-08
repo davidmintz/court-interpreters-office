@@ -43,6 +43,7 @@ DROP TABLE IF EXISTS `app_event_log`;
 CREATE TABLE `app_event_log` (
   `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `message` varchar(250) NOT NULL,
+  `channel` varchar(60) NOT NULL DEFAULT '',
   `entity_id` varchar(32) DEFAULT NULL,
   `entity_class` varchar(250) NOT NULL DEFAULT '',
   `priority` tinyint(3) unsigned NOT NULL,
@@ -669,4 +670,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-06-10  9:27:06
+-- Dump completed on 2019-07-08 13:47:25
