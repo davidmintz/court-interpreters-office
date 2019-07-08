@@ -1,5 +1,5 @@
-<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php
+<?PHP /** module/Admin/view/users/index.phtml */
+$this->headTitle('admin | users');
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
@@ -8,12 +8,31 @@ if ($messenger->hasErrorMessages()) :
     echo $messenger->render('error', ['alert','alert-warning',], false);
 endif;
 ?>
+<div class="mx-auto" style="max-width:800px">
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<p class="border shadow-sm p-3">To edit an existing user account, search the database to find it. To create a new user account, first check to see if
+the person is already in your database.</p>
+    <div class="form-group row">
+        <label for="user" class="col-sm-3 col-form-label text-sm-right pr-1">user</label>
+        <div class="col-sm-7 input-group">
+            <input id="user" type="text" name="user" placeholder="last name[, first name] or email address" class="form-control">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" id="button-search"><span class="fa fa-search"></span> <span class="sr-only">search</span> </button>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="user" class="col-sm-3 col-form-label text-sm-right pr-1">or find user by Judge</label>
+        <div class="col-sm-7 input-group">
+            <select id="user" type="text" name="judge" class="custom-select">
+                <option value="one">one</option>
+                <option value="two">two</option>
+                <option value="three">three</option>
+            </select>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" id="button-search"><span class="fa fa-search"></span> <span class="sr-only">search</span> </button>
+            </div>
+        </div>
+    </div>
 
-<p>current user's role is: <?php echo $this->identity()->role ?></p>
-<p>To edit an existing user account, search the database to find it.</p>
-<p>To create a new user account, first check to see if the user is already in your database.</p>
-
-<p>Enter the lastname or email address in the field below</p>
-
-
-<em>[to be continued]</em>
+</div>

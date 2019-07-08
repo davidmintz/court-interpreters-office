@@ -8,7 +8,11 @@ namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Service\ProperNameParsingTrait;
 
+use Zend\Paginator\Paginator as ZendPaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 /**
  * UserRepository
  *
@@ -19,6 +23,8 @@ class UserRepository extends EntityRepository
 
 
     use ResultCachingQueryTrait;
+
+    use ProperNameParsingTrait;
 
      /**
      * @var string cache id
@@ -61,7 +67,7 @@ class UserRepository extends EntityRepository
     public function findSubmitterByEmail(string $email) : ? Entity\User
     {
 
-        $dql = 'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p '
+        $dql = 'SELECT u, p FROM InterpretersOffice\Entity\User u JOIN u.person p '
         . ' JOIN u.role r WHERE p.email = :email AND r.name = :role';
         return $this->createQuery($dql)->setParameters(
             ['email' => $email,'role' => 'submitter']
@@ -69,11 +75,11 @@ class UserRepository extends EntityRepository
             ->getOneOrNullResult();
     }
 
-  
+
     /**
      * Gets count of event|requests created|modified by User.
-     * 
-     * For deciding whether Users can modify their Hat through the 
+     *
+     * For deciding whether Users can modify their Hat through the
      * profile-update feature.
      *
      * @param Entity\User $user
@@ -89,10 +95,10 @@ class UserRepository extends EntityRepository
                 __FUNCTION__. " can only be used for User entities whose role is 'submitter'"
             );
         }
-        $dql = 'SELECT COUNT(r.id) requests, 
+        $dql = 'SELECT COUNT(r.id) requests,
         (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
             JOIN e.submitter s WHERE s.id = :person_id
-        ) events 
+        ) events
         FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
         JOIN r.modifiedBy m WHERE p.id = :person_id OR (m.person = p and p.id = :person_id)';
         $params = [':person_id'=>$person_id];
@@ -100,13 +106,13 @@ class UserRepository extends EntityRepository
             ->useResultCache(false)
             ->setParameters([':person_id'=>$person_id])
             ->getResult();
-        
+
         return $result;
     }
 
     /**
      * Counts existing uses of $email
-     * 
+     *
      * For use with UserForm and user/profile action.
      *
      * @param Entity\User $user
@@ -115,8 +121,8 @@ class UserRepository extends EntityRepository
      */
     public function countExistingUserEmail(Entity\User $user, string $email) : int
     {
-        $dql = 'SELECT COUNT(p.id) FROM '.Entity\Person::class 
-        . ' p JOIN '.Entity\User::class 
+        $dql = 'SELECT COUNT(p.id) FROM '.Entity\Person::class
+        . ' p JOIN '.Entity\User::class
         . ' u WITH u.person = p WHERE p.email = :email AND p.id <> :id';
         $person = $user->getPerson();
         $query = $this->createQuery($dql)->useResultCache(false)
@@ -124,11 +130,42 @@ class UserRepository extends EntityRepository
 
         return (int)$query->getSingleScalarResult();
     }
+
+    /**
+     * looks up user/person by name or email
+     *
+     * work in progress
+     *
+     * @param string $name_or_email
+     * @return array
+     */
+    public function search(string $name_or_email) : array
+    {
+        $is_email = false !== strstr($name_or_email,'@');
+        $name = $is_email ? null : $this->parseName($name);
+        return [];
+
+    }
+
+    /**
+     * autocompletion for admin/users name-or-email
+     *
+     * work in progress
+     *
+     * @param string
+     * @return array
+     */
+    public function autocomplete(string $name_or_email) : array
+    {
+        $is_email = false !== strstr($name_or_email,'@');
+        return [];
+
+    }
     /*
-    SELECT COUNT(r.id) requests, 
+    SELECT COUNT(r.id) requests,
     (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
     JOIN e.submitter s WHERE s.id = 1476
-    ) events 
+    ) events
     FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
     JOIN r.modifiedBy m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
 
