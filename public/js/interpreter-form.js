@@ -177,6 +177,7 @@ $(function(){
                     }
 
                 } else {
+                    /** @todo here's what sucks. use xhr instead for form submission rather than .submit() */
                     if (params && params.submit) {
                         // they hit the submit button
                         return $('#interpreter-form').submit();
