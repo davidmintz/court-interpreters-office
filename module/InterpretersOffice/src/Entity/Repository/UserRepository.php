@@ -139,7 +139,7 @@ class UserRepository extends EntityRepository
      * @param string $name_or_email
      * @return array
      */
-    public function search(string $name_or_email) : array
+    public function search(string $name_or_email, bool $autocomplete = false) : array
     {
         $is_email = false !== strstr($name_or_email,'@');
         $name = $is_email ? null : $this->parseName($name);
@@ -152,12 +152,12 @@ class UserRepository extends EntityRepository
      *
      * work in progress
      *
-     * @param string
+     * @param string $name_or_email
+     * @param $options
      * @return array
      */
-    public function autocomplete(string $name_or_email) : array
+    public function autocomplete(string $name_or_email, Array $options = []) : array
     {
-        $is_email = false !== strstr($name_or_email,'@');
         return [];
 
     }
