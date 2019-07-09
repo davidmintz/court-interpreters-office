@@ -356,9 +356,11 @@ class UsersController extends AbstractActionController implements Authentication
      */
     public function indexAction()
     {
-        //echo ($this->params()->fromRoute('action'));
 
-        return new ViewModel(['title' => 'admin | users','role' => $this->auth_user_role]);
+        $judges = $this->entityManager->getRepository('InterpretersOffice\Entity\Judge')
+            ->getJudgeOptions();
+
+        return new ViewModel(['role' => $this->auth_user_role, 'judges' => $judges]);
     }
 
     /**
