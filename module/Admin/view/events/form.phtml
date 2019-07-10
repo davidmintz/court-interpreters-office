@@ -184,7 +184,7 @@ echo $this->form()->openTag($form); ?>
                 <div class="input-group">
                     <?php echo $this->formElement($fieldset->get('defendant-search'));?>
                      <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
-                     <?php /* empty element so, they can delete the whole collection */
+                     <?php /* empty element, so that they can delete the whole collection */
                      ?><input type="hidden" name="event[defendants][]" value="">
                 </div>
                 <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
@@ -204,11 +204,16 @@ echo $this->form()->openTag($form); ?>
         <div class="form-group form-row my-2">
             <label class="col-form-label pr-1 col-sm-4" for="hat">submitted by</label>
             <div class="col-sm-8">
+
             <?php
                 echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
-            <?php $element = $fieldset->get('submitter');
-                echo $this->formElement($element), $this->formElementErrors($element);
-            ?>
+            <div class="input-group">
+                <?php $element = $fieldset->get('submitter');
+                echo $this->formElement($element);?>
+                <button class="btn btn-info fas fa-question" title="help with user management" type="button" id="btn-add-interpreter"><span class="sr-only">help</span></button>
+                <?php echo  $this->formElementErrors($element);?>
+            </div>
+            
             </div>
         </div>
         <div class="form-group form-row">
