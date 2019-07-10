@@ -17,8 +17,12 @@ $judge_element = (new Select(
 <div class="mx-auto" style="max-width:800px">
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <pre><?php //print_r($this->judges)?></pre>
-<p class="border shadow-sm p-3">To edit an existing user account, search the database to find it.
-    To create a new user account, first check to see if the person is already in your database.</p>
+<p class="border shadow-sm p-3">To edit an existing user account, search the database to find it.<br>
+To set up a new account, first search the user database to see whether an account already exists.
+    <?php 
+    /*To create a new user account, first <a href="<?php echo $this->url('people') ?>">check to see if the 
+     person is already in your database.</a></p>*/
+    ?>
     <div class="form-group row">
         <label for="user" class="col-sm-3 col-form-label text-sm-right pr-1">user</label>
         <div class="col-sm-7 input-group">
