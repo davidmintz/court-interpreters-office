@@ -186,6 +186,7 @@ class EventFieldset extends AbstractEventFieldset
                 'property' => 'name',
                 'label' => 'submitted by',
                 // the default is:'find_method' => ['name' => 'findAll'],
+                //'find_method' => ['name' => 'findAll'],
                 'display_empty_item' => true,
                 'empty_item_label' => '(title/description)',
                 'option_attributes' => [
@@ -193,6 +194,9 @@ class EventFieldset extends AbstractEventFieldset
                         function ($hat) {
                             return $hat->getAnonymity();
                         },
+                    'data-role' => function($hat) {
+                        return (string)$hat->getRole();
+                    }
                 ],
             ],
             'attributes' => ['class' => 'form-control custom-select', 'id' => 'hat'],

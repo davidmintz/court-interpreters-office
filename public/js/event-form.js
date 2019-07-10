@@ -330,7 +330,8 @@ var eventForm = (function () {
         var init_values = submitterElement.data();
         var anonymity = hatElement.children(":selected").data("anonymity");
         if (anonymity === 1) {
-            submitterElement.attr("disabled","disabled");
+            submitterElement.attr("disabled","disabled")
+                .next("button").attr({hidden:true});
             return;
         } else {
             submitterElement.removeAttr("disabled");
@@ -367,7 +368,7 @@ var eventForm = (function () {
                     html : true,
                     sanitize: false,
                     content: get_submitter_help_message,
-                   trigger : 'focus',
+                    trigger : 'focus',
                     placement : 'top',
                     title: '',
                     container:'body'
@@ -382,11 +383,27 @@ var eventForm = (function () {
      * @return {string}
      */
     const get_submitter_help_message = function(){
-        return `<p class="popover-submitter-admin">To enter the name of a court employee who is not 
-        found in the select menu, please go to 
-        <a href="${window.basePath}/admin/users">user administration</a>.</p>
-        <p class="popover-submitter-admin">To add other people to the database, please see <a href="${window.basePath}/admin/people">admin/people</a>.</p>`;
-        
+        var hat_option = hatElement.children(":selected");
+        var data = hat_option.data();
+        var label = hat_option.text().toLowerCase();
+        var html = 'whatever';
+        switch (data.role) {
+            case "submitter":
+            case "manager":
+            case "staff":
+                html = `<div class="popover-submitter-admin">To enter the name of a court employee who is not 
+                found in the select menu, please go to <a href="${window.basePath}/admin/users">user administration</a>.</div>`;
+                break;
+            default :
+                if (label.indexOf("interpreter") > -1) {
+                    html = `<div class="popover-submitter-admin">To enter the name of a court interpreter who is not 
+                    found in the select menu, please go to <a href="${window.basePath}/admin/interpreters">the interpreter roster</a>.</div>`;
+                } else {
+                    html = `<div class="popover-submitter-admin">To enter the name of a person who is not 
+                    found in the select menu, please go to <a href="${window.basePath}/admin/people">admin/people</a>.</div>`;;
+                }
+        }
+        return html;
     };
     /**
      * callback for form's submit event
