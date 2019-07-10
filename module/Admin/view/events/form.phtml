@@ -204,16 +204,14 @@ echo $this->form()->openTag($form); ?>
         <div class="form-group form-row my-2">
             <label class="col-form-label pr-1 col-sm-4" for="hat">submitted by</label>
             <div class="col-sm-8">
-
             <?php
                 echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
-            <div class="input-group">
-                <?php $element = $fieldset->get('submitter');
-                echo $this->formElement($element);?>
-                <button class="btn btn-info fas fa-question" title="help with user management" type="button" id="btn-add-interpreter"><span class="sr-only">help</span></button>
-                <?php echo  $this->formElementErrors($element);?>
-            </div>
-            
+                <div class="input-group">
+                    <?php $element = $fieldset->get('submitter');
+                    echo $this->formElement($element);?>
+                    <button data-toggle="popover" class="btn btn-info fas fa-question"  type="button" id="btn-submitter-help" hidden><span class="sr-only">help</span></button>
+                    <?php echo  $this->formElementErrors($element);?>
+                </div>           
             </div>
         </div>
         <div class="form-group form-row">

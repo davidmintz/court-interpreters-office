@@ -338,6 +338,7 @@ var eventForm = (function () {
         var hat_id = $(this).val();
         if (! hat_id) {
             submitterElement.children().not(":first").remove();
+            $("#submitter + button").attr("hidden",true)
             return;
         } else {
             // if the initial "submitter" value was an inactive person, extra
@@ -362,10 +363,31 @@ var eventForm = (function () {
                 submitterElement.children().not(":first").remove();
                 submitterElement.append(options)
                     .trigger("sdny.submitter-update-complete");
+                $("#submitter + button").popover({
+                    html : true,
+                    sanitize: false,
+                    content: get_submitter_help_message,
+                   trigger : 'focus',
+                    placement : 'top',
+                    title: '',
+                    container:'body'
+                }).attr({hidden:false});
             }
         );
+        
     };
 
+    // this is going to become dynamic
+    /**
+     * @return {string}
+     */
+    const get_submitter_help_message = function(){
+        return `<p class="popover-submitter-admin">To enter the name of a court employee who is not 
+        found in the select menu, please go to 
+        <a href="${window.basePath}/admin/users">user administration</a>.</p>
+        <p class="popover-submitter-admin">To add other people to the database, please see <a href="${window.basePath}/admin/people">admin/people</a>.</p>`;
+        
+    };
     /**
      * callback for form's submit event
      *
@@ -532,7 +554,9 @@ var eventForm = (function () {
      * @return {void}
      */
     var init = function() {
-
+        $("body").on("mousedown",".popover-submitter-admin a",function(e){
+            document.location = e.target.href;
+        });
         $("input.docket").on("change",formatDocketElement);
 
         $("input.date").datepicker({
@@ -661,8 +685,7 @@ var eventForm = (function () {
                     + name + "</strong> to this event?");
                 $("#modal-assign-interpreter").modal();
             }
-        });
-
+        });        
         form.on("submit",formSubmit);
     };
 
