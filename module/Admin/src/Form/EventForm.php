@@ -191,7 +191,8 @@ class EventForm extends ZendForm implements
             return;
         }
 
-
+        $log = $e->getTarget()->getEvent()->getApplication()->getServiceManager()->get('log');
+        
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null
         /** @todo untangle this and make error message specific to context */
@@ -202,13 +203,13 @@ class EventForm extends ZendForm implements
         // find out if this "hat" can be anonymous without hitting the database
         $can_be_anonymous = (! $key) ? false :
                 $hat_options[$key]['attributes']['data-anonymity'] <> "0";
-
+        $log->debug('can be anonymous? '.($can_be_anonymous ? 'true':'false'));
         $submitter_input = $this->getInputFilter()->get('event')
                 ->get('submitter');
 
         if ((empty($event['submitter']) && empty($event['anonymousSubmitter']))
                 or
-            (! $can_be_anonymous  && empty($event['submitter']))
+            (! $can_be_anonymous  and empty($event['submitter']))
         ) {
             $validator = new \Zend\Validator\NotEmpty([
                 'messages' =>
@@ -218,13 +219,17 @@ class EventForm extends ZendForm implements
             ]);
             $submitter_input->setAllowEmpty(false);
             $submitter_input->getValidatorChain()->attach($validator);
+            $log->debug(__METHOD__. " we attached a validator for non-anonymous hat type");
         }
         // if NO submitter but YES anonymous submitter, unset submitter
-        if (empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
+        elseif (empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
             unset($event['submitter']);
             $submitter_input->setRequired(false)->setAllowEmpty(true);
+            
         // if YES submitter and YES anonymous submitter, unset anon submitter
-        } elseif (! empty($event['submitter'])
+        }
+        
+        elseif (! empty($event['submitter'])
             && ! empty($event['anonymousSubmitter'])) {
             unset($event['anonymousSubmitter']);
             $anon_submitter_input = $this->getInputFilter()->get('event')
