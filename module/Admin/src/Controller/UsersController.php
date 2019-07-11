@@ -400,4 +400,19 @@ class UsersController extends AbstractActionController implements Authentication
             ['search_by'=>$get['search_by']]);
         return new JsonModel($data);
     }
+
+    public function searchAction()
+    {
+        $repository = $this->entityManager
+                ->getRepository(Entity\User::class);
+        $get = $this->params()->fromQuery();
+        /** @var Zend\Paginator\Paginator $paginator */
+        $paginator = $repository->paginate($get['term'],
+            ['search_by'=>$get['search_by']]);
+        return new JsonModel(
+        [
+            'data' => $paginator->getCurrentItems(),
+            'pages' => $paginator->getPages(),
+        ]);
+    }
 }

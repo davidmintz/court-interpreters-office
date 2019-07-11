@@ -609,6 +609,16 @@ return  [
                         ],
                     ],
                 ],
+                'search' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/search',
+                        'defaults' => [
+                            'action' => 'search',
+
+                        ],
+                    ],
+                ],
             ],
         ],
         'court-closings' => [
