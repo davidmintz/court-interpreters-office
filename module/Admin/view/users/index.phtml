@@ -59,19 +59,29 @@ To set up a new account, first search the user database to see whether an accoun
             }
         });
         $("#user").autocomplete({
-                //source: "/defendants/autocomplete",
-                source: ["Apple","Banana","Bahooma","Bazinga","Coconut","Dick"],
-                minLength: 2,
-                select: function( event, ui ) {
-                    //event.preventDefault();
-                    //$(this).val("");
-
-                },
-                focus: function(event,ui) {
-                    event.preventDefault();
-                    $(this).val(ui.item.label);
-                },
+            source : function(request,response) {
+                var search_by = $("#search-by").val().trim();
+                $.getJSON(`${window.basePath}/admin/users/autocomplete`,{
+                    search_by, term: request.term
+                })
+                .then((data)=>{
+                    response(data);
+                })
+                .fail(fail);
+            },
+            minLength: 2,
+            select: function( event, ui ) {
+                event.preventDefault();
+                console.log(ui.item);// to be continued
+            },
+            focus: function(event,ui) {
+                event.preventDefault();
+                $(this).val(ui.item.label);
+            },
         });
+    });
+    $('#button-search').on("click",function(e){
+        console.warn("hello! time to query");
     });
     <?php  $this->headScript()->captureEnd(); ?>
 </div>

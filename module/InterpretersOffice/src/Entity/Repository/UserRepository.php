@@ -131,36 +131,54 @@ class UserRepository extends EntityRepository
         return (int)$query->getSingleScalarResult();
     }
 
-    /**
-     * looks up user/person by name or email
-     *
-     * work in progress
-     *
-     * @param string $name_or_email
-     * @return array
-     */
-    public function search(string $name_or_email, bool $autocomplete = false) : array
-    {
-        $is_email = false !== strstr($name_or_email,'@');
-        $name = $is_email ? null : $this->parseName($name);
-        return [];
-
-    }
 
     /**
      * autocompletion for admin/users name-or-email
      *
-     * work in progress
-     *
      * @param string $name_or_email
-     * @param $options
+     * @param array $options
      * @return array
      */
-    public function autocomplete(string $name_or_email, Array $options = []) : array
+    public function autocomplete(string $name_or_email, Array $options) : array
     {
-        return [];
+        if ('name' == $options['search_by']) {
+            $name = $this->parseName($name_or_email);
+            $parameters = ['lastname' => "$name[last]%"];
+            if ($name['first']) {
+                $parameters['firstname'] = "$name[first]%";
+            }
+        } elseif ('email' == $options['search_by']) {
+            $parameters['email'] = $name_or_email.'%';
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                '"search_by" option must be one of "name" or "email", got option: (%s) %s',
+                gettype($options['search_by']),
+                is_object($options['search_by']) ? 'instance of '.get_class($options['search_by']) :
+                    print_r($options['search_by'],true)
+            ));
+        }
 
+        $qb = $this->createQueryBuilder('u')->join('u.person','p');
+        $qb->select([
+            $qb->expr()->concat(
+                'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
+            ). 'AS label',
+            'u.id AS value',
+        ]);
+        if (isset($parameters['email'])) {
+            $qb->where('p.email LIKE :email');
+        } else { // search by name
+            $qb->where('p.lastname LIKE :lastname');
+            if ($name['first']) {
+                $qb->andWhere('p.firstname LIKE :firstname');
+            }
+        }
+        $qb->setParameters($parameters)
+        ->setMaxResults(20);
+
+        return $data = $qb->getQuery()->getResult();
     }
+
     /*
     SELECT COUNT(r.id) requests,
     (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
@@ -168,6 +186,5 @@ class UserRepository extends EntityRepository
     ) events
     FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
     JOIN r.modifiedBy m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
-
      */
 }
