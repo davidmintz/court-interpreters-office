@@ -173,7 +173,9 @@ class UserRepository extends EntityRepository
                 $qb->andWhere('p.firstname LIKE :firstname');
             }
         }
-        $qb->setParameters($parameters)
+        $qb
+        ->orderBy('label','ASC')
+        ->setParameters($parameters)
         ->setMaxResults(20);
 
         return $data = $qb->getQuery()->getResult();
