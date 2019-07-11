@@ -137,7 +137,8 @@ class HatRepository extends EntityRepository
      */
     public function findAll()
     {
-        return $this->createQuery('SELECT h FROM InterpretersOffice\Entity\Hat h
+        return $this->createQuery('SELECT h, r FROM InterpretersOffice\Entity\Hat h
+            LEFT JOIN h.role r
             ORDER BY h.name')
             ->getResult();
     }

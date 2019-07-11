@@ -20,6 +20,7 @@ use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Entity\Hat;
+use InterpretersOffice\Entity\Repository\UserRepository;
 
 use Zend\View\Model\JsonModel;
 
@@ -80,7 +81,6 @@ class UsersController extends AbstractActionController implements Authentication
         $this->auth = $auth;
         $this->auth_user_role = $auth->getIdentity()->role;
     }
-
 
    /**
     * attaches event handlers
@@ -381,6 +381,23 @@ class UsersController extends AbstractActionController implements Authentication
             $this->auth_user_role
         );
 
+        return new JsonModel($data);
+    }
+
+    /**
+     * autocomplete for admin/users
+     *
+     * @return JsonModel
+     *
+     */
+    public function autocompleteAction()
+    {
+        /** @var InterpretersOffice\Entity\Repository\UserRepository $repository */
+        $repository = $this->entityManager
+                ->getRepository(Entity\User::class);
+        $get = $this->params()->fromQuery();
+        $data = $repository->autocomplete($get['term'],
+            ['search_by'=>$get['search_by']]);
         return new JsonModel($data);
     }
 }
