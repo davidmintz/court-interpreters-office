@@ -25,8 +25,8 @@
         "zendframework/zend-crypt": "^3.3"
     },
     "scripts" : {
-        "zdt-on":  "sed -i -e 's/false/true/' config/autoload/toolbar-enabled.local.php",
-        "zdt-off": "sed -i -e 's/true/false/' config/autoload/toolbar-enabled.local.php"
+        "zdt-on":  "sed -i -e 's/false/true/' config/autoload/toolbar.enabled.php",
+        "zdt-off": "sed -i -e 's/true/false/' config/autoload/toolbar.enabled.php"
     },
     "require-dev": {
         "ext-dom": "*",
