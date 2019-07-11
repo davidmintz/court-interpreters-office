@@ -213,8 +213,7 @@ class EventForm extends ZendForm implements
         ) {
             $validator = new \Zend\Validator\NotEmpty([
                 'messages' =>
-                    [ 'isEmpty' =>
-                        "identity or description of submitter is required"],
+                    [ 'isEmpty' => "identity of submitter is required"],
                 'break_chain_on_failure' => true,
             ]);
             $submitter_input->setAllowEmpty(false);
