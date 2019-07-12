@@ -52,7 +52,7 @@ $('#button-search').on("click",function(e){
         term, search_by : $("#search-by").val().trim(),
     }).then(
         (response) => {
-            console.log(response);
+            $("#results").html(response);
         }
     );
 });

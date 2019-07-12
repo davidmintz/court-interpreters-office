@@ -191,12 +191,15 @@ class UserRepository extends EntityRepository
     {
         $page = isset($options['page']) ? $options['page']: 1;
         $parameters = $this->parseOptions($name_or_email,$options);
-        $qb = $this->createQueryBuilder('u')//,'p','h'
-            ->join('u.person','p')->join('p.hat', 'h');
-        $qb->select(
-            'PARTIAL u.{id}',
-            'u.id','u.active',
-            'p.lastname','p.firstname','p.email','h.name hat');
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('u, p, h, r')
+            ->from(Entity\User::class, 'u')
+            ->join('u.person','p')->join('p.hat', 'h')->join('u.role','r');
+        // this is too much bullshit...
+        // $qb->select(
+        //     'PARTIAL u.{id}',
+        //     'u.id','u.active',
+        //     'p.lastname','p.firstname','p.email','h.name hat');
         // $qb->select([
         //     $qb->expr()->concat(
         //         'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
@@ -222,8 +225,7 @@ class UserRepository extends EntityRepository
         $paginator = new ZendPaginator($adapter);
         $paginator
             ->setCurrentPageNumber($page)
-            ->setItemCountPerPage(30);
-
+            ->setItemCountPerPage(20);
         return $paginator;
     }
     /*
