@@ -165,19 +165,21 @@ class UserRepository extends EntityRepository
         return $data = $qb->getQuery()->getResult();
     }
 
-    private function parseOptions(string $name_or_email,array $options) : array
+    private function parseOptions(string $term,array $options) : array
     {
         if ('name' == $options['search_by']) {
-            $name = $this->parseName($name_or_email);
+            $name = $this->parseName($term);
             $parameters = ['lastname' => "$name[last]%"];
             if ($name['first']) {
                 $parameters['firstname'] = "$name[first]%";
             }
         } elseif ('email' == $options['search_by']) {
-            $parameters['email'] = $name_or_email.'%';
+            $parameters['email'] = $term.'%';
+        } elseif ('judge' == $options['search_by']) {
+            $parameters['judge'] = $term;
         } else {
             throw new \InvalidArgumentException(sprintf(
-                '"search_by" option must be one of "name" or "email", got option: (%s) %s',
+                '"search_by" option must be one of "name", "email", or "judge", got option: (%s) %s',
                 gettype($options['search_by']),
                 is_object($options['search_by']) ? 'instance of '.get_class($options['search_by']) :
                     print_r($options['search_by'],true)
@@ -195,23 +197,11 @@ class UserRepository extends EntityRepository
             ->select('u, p, h, r')
             ->from(Entity\User::class, 'u')
             ->join('u.person','p')->join('p.hat', 'h')->join('u.role','r');
-        // this is too much bullshit...
-        // $qb->select(
-        //     'PARTIAL u.{id}',
-        //     'u.id','u.active',
-        //     'p.lastname','p.firstname','p.email','h.name hat');
-        // $qb->select([
-        //     $qb->expr()->concat(
-        //         'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
-        //     ). 'AS name',
-        //     'u.id',
-        //     'p.id AS person_id',
-        //     'p.email',
-        //     'u.active',
-        // ]);
-        //
 
-        if (!empty($parameters['email'])) {
+        if (! empty($parameters['judge'])) {
+            $qb->join('u.judges','j')->where('j.id = :judge');
+            //exit($qb->getDQL());
+        }  elseif (!empty($parameters['email'])) {
             $qb->where('p.email LIKE :email');
         } else { // search by name
             $qb->where('p.lastname LIKE :lastname');
@@ -228,12 +218,28 @@ class UserRepository extends EntityRepository
             ->setItemCountPerPage(20);
         return $paginator;
     }
-    /*
-    SELECT COUNT(r.id) requests,
-    (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
-    JOIN e.submitter s WHERE s.id = 1476
-    ) events
-    FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
-    JOIN r.modifiedBy m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
-     */
 }
+/*
+SELECT COUNT(r.id) requests,
+(SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+JOIN e.submitter s WHERE s.id = 1476
+) events
+FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
+JOIN r.modifiedBy m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
+ */
+/*
+ //this is too much bullshit...
+ $qb->select(
+     'PARTIAL u.{id}',
+     'u.id','u.active',
+     'p.lastname','p.firstname','p.email','h.name hat');
+ $qb->select([
+     $qb->expr()->concat(
+         'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
+     ). 'AS name',
+     'u.id',
+     'p.id AS person_id',
+     'p.email',
+     'u.active',
+ ]);
+ */

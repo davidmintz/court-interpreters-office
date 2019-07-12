@@ -12,7 +12,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventInterface;
 use Zend\Authentication\AuthenticationService;
 
-//use Zend\Session\Container as Session;
+use Zend\Session\Container as Session;
 
 use InterpretersOffice\Admin\Form\UserForm;
 use InterpretersOffice\Entity;
@@ -58,6 +58,13 @@ class UsersController extends AbstractActionController implements Authentication
     protected $acl;
 
     /**
+     * session
+     *
+     * @var Zend\Session\Container
+     */
+    protected $session;
+
+    /**
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
@@ -69,6 +76,7 @@ class UsersController extends AbstractActionController implements Authentication
     ) {
         $this->entityManager = $entityManager;
         $this->setAuthenticationService($auth);
+
     }
 
     /**
@@ -357,14 +365,19 @@ class UsersController extends AbstractActionController implements Authentication
     public function indexAction()
     {
 
+        $this->session = new Session('user_admin');
+
         if ($this->getRequest()->isXmlHttpRequest() &&
             $this->params()->fromQuery()) {
             return $this->search();
         }
+
         $judges = $this->entityManager->getRepository('InterpretersOffice\Entity\Judge')
             ->getJudgeOptions();
-
-        return new ViewModel(['role' => $this->auth_user_role, 'judges' => $judges]);
+        return new ViewModel(
+            ['role' => $this->auth_user_role, 'judges' => $judges,
+            'defaults' => $this->session->params, ]
+        );
     }
 
     /**
@@ -418,6 +431,7 @@ class UsersController extends AbstractActionController implements Authentication
             ->setTerminal(true)
             ->setTemplate('users/results');
         $get = $this->params()->fromQuery();
+        $this->session->params = $get;
         if ( empty($get['term']) or empty($get['search_by'])) {
             return $view->setVariables(
                 ['errorMessage'=> 'Sorry, invalid request parameters']);

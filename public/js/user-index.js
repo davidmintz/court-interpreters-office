@@ -39,20 +39,28 @@ $(function(){
             $(this).val(ui.item.label);
         },
     });
-});
-$('#button-search').on("click",function(e){
-    console.warn("hello! time to query");
-    var term = $("#user").val().trim();
-    if (! term) {
-        $("#input-validation").text("search text is required").attr({hidden:false});
-        return;
-    }
-    $("#input-validation").attr({hidden:true});
-    $.get(document.location.pathname,{
-        term, search_by : $("#search-by").val().trim(),
-    }).then(
-        (response) => {
-            $("#results").html(response);
+    $('#button-search').on("click",function(e){
+        var term;
+        if ("judge" === $("#search-by").val()) {
+            term = $("#judge").val();
+        } else {
+            term = $("#user").val().trim();
         }
-    );
+        if (! term) {
+            $("#input-validation").text("search text is required").attr({hidden:false});
+            return;
+        }
+        $("#input-validation").attr({hidden:true});
+        $.get(document.location.pathname,{
+            term, search_by : $("#search-by").val().trim(),
+        }).then(
+            (response) => {
+                $("#results").html(response);
+            }
+        );
+
+    });
+    if ($("#user").val().trim().length || $("#judge").val()) {
+        console.log("we have defaults");
+    }
 });
