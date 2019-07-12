@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.26-0ubuntu0.16.04.1
+-- Server version	5.7.26-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -42,8 +42,8 @@ DROP TABLE IF EXISTS `app_event_log`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `app_event_log` (
   `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `message` varchar(250) NOT NULL,
   `channel` varchar(60) NOT NULL DEFAULT '',
+  `message` varchar(250) NOT NULL,
   `entity_id` varchar(32) DEFAULT NULL,
   `entity_class` varchar(250) NOT NULL DEFAULT '',
   `priority` tinyint(3) unsigned NOT NULL,
@@ -670,4 +670,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-07-08 13:47:25
+-- Dump completed on 2019-07-11 22:38:09
