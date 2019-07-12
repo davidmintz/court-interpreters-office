@@ -357,6 +357,9 @@ class UsersController extends AbstractActionController implements Authentication
     public function indexAction()
     {
 
+        if ($this->getRequest()->isXmlHttpRequest() && $this->params()->fromQuery()) {
+            return $this->search();
+        }
         $judges = $this->entityManager->getRepository('InterpretersOffice\Entity\Judge')
             ->getJudgeOptions();
 
@@ -401,18 +404,21 @@ class UsersController extends AbstractActionController implements Authentication
         return new JsonModel($data);
     }
 
-    public function searchAction()
+    public function search()
     {
+
         $repository = $this->entityManager
                 ->getRepository(Entity\User::class);
+        $view = (new ViewModel())
+            ->setTerminal(true)
+            ->setTemplate('users/results');
         $get = $this->params()->fromQuery();
+        if ( empty($get['term']) or empty($get['search_by'])) {
+            return $view->setVariables(['errorMessage'=> 'Sorry, invalid request parameters']);
+        }
         /** @var Zend\Paginator\Paginator $paginator */
         $paginator = $repository->paginate($get['term'],
             ['search_by'=>$get['search_by']]);
-        return new JsonModel(
-        [
-            'data' => $paginator->getCurrentItems(),
-            'pages' => $paginator->getPages(),
-        ]);
+        return $view->setVariables(['paginator'=>$paginator]);
     }
 }

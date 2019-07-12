@@ -6,7 +6,7 @@ $(function(){
         email : "user's email address",
     };
     $("#search-by").on("change",function(){
-        var search_by =$(this).val();
+        var search_by = $(this).val();
         if ("judge" === search_by) {
             if ($("#user").is(":visible")) {
                 $("#judge, #user").toggle();
@@ -42,4 +42,17 @@ $(function(){
 });
 $('#button-search').on("click",function(e){
     console.warn("hello! time to query");
+    var term = $("#user").val().trim();
+    if (! term) {
+        $("#input-validation").text("search text is required").attr({hidden:false});
+        return;
+    }
+    $("#input-validation").attr({hidden:true});
+    $.get(document.location.pathname,{
+        term, search_by : $("#search-by").val().trim(),
+    }).then(
+        (response) => {
+            console.log(response);
+        }
+    );
 });
