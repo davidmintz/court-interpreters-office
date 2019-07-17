@@ -11,6 +11,7 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
 <table class="table table-sm">
     <tbody>
         <?php foreach ($this->paginator as $user):
+            $url = $this->url('users/edit',['id'=>$user->getId()]);
             $person = $user->getPerson()?>
             <tr>
                 <td><?php echo $this->escapeHtml("{$person->getLastname()}, {$person->getFirstname()}"); ?></td>
@@ -21,5 +22,5 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
 </table>
 <?php echo $this->paginationControl(
     $this->paginator,
-    'sliding','partials/pagination_control',['route' => 'users'],$this->defaults
+    'sliding','partials/pagination_control',['route' => 'users']
 );?>
