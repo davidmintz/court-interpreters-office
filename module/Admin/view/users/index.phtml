@@ -25,7 +25,6 @@ if ($this->defaults):
         if ('judge' == $this->defaults['search_by']):
             $judge_element->setValue($term);
             $hide_text_element = true;
-
         else :
              $judge_element->setAttributes(['style'=>'display:none']);
              $hide_text_element = false;
@@ -36,6 +35,7 @@ else :
     $default_search = 'name';
     $term = '';
 endif;
+
 ?>
 <div class="mx-auto" style="max-width:800px">
     <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
@@ -45,14 +45,14 @@ endif;
     <div class="form-group form-row">
         <label for="search-by" class="col-sm-2 col-form-label text-sm-right pr-1">user's</label>
         <div class="col-sm-2">
-            <select class="custom-select" name="search-by" id="search-by">
+            <select class="custom-select" name="search_by" id="search-by">
                 <option value="name" label="name">name</option>
                 <option value="email" label="email" <?php if ($default_search == 'email'): ?> selected<?php endif ?>>email</option>
                 <option value="judge" label="judge" <?php if ($default_search == 'judge'): ?> selected<?php endif ?>>judge</option>
             </select>
         </div>
         <div class="col-sm-5 input-group ml-0 pl-0">
-            <input id="user" type="text" name="user" value="<?php echo $term ?>" placeholder="last name[, first name]" class="form-control" <?php
+            <input id="term" type="text" name="term" value="<?php echo !is_numeric($term)?$term:''; /*don't print a judge id*/?>" placeholder="last name[, first name]" class="form-control" <?php
                 if ($hide_text_element):?> style="display:none"<?php endif; ?>>
             <?php echo $this->formElement($judge_element) ?>
             <div class="input-group-append">
@@ -66,6 +66,6 @@ endif;
         </div>
     <div>
     <div id="results" class="pl-3 ml-2 mt-2"><?php
-        if ($this->paginator):?>yes paginator<?php else: ?>no paginator<?
-    <?php endif ?></div>
+        if ($this->paginator): echo $this->render('users/results'); endif;?>
+    </div>
 </div>

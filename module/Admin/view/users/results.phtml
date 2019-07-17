@@ -1,5 +1,10 @@
 <?php
-if (! $this->paginator): return; endif;
+if ($this->errorMessage):
+?>
+<p class="alert alert-warning"><?php echo $this->escapeHtml($this->errorMessage) ?></p>
+<?php
+return; endif;
+    if (! $this->paginator): return; endif;
 if (!$this->paginator->getTotalItemCount() ) : ?>
 <p>No matching records found.</p>
 <?php return; endif;?>
@@ -16,6 +21,7 @@ echo $this->paginationControl($this->languages, null, 'partials/pagination_head'
             <tr>
                 <td><?php echo $this->escapeHtml("{$person->getLastname()}, {$person->getFirstname()}"); ?></td>
                 <td><?php echo (string)$person->getHat(); ?></td>
+
             </tr>
         <?php endforeach;?>
     </tbody>
