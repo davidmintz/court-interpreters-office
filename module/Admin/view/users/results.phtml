@@ -1,0 +1,25 @@
+<?php
+if (! $this->paginator): return; endif;
+if (!$this->paginator->getTotalItemCount() ) : ?>
+<p>No matching records found.</p>
+<?php return; endif;?>
+<p>
+<?php
+echo $this->paginationControl($this->languages, null, 'partials/pagination_head');
+?>
+</p>
+<table class="table table-sm">
+    <tbody>
+        <?php foreach ($this->paginator as $user):
+            $person = $user->getPerson()?>
+            <tr>
+                <td><?php echo $this->escapeHtml("{$person->getLastname()}, {$person->getFirstname()}"); ?></td>
+                <td><?php echo (string)$person->getHat(); ?></td>
+            </tr>
+        <?php endforeach;?>
+    </tbody>
+</table>
+<?php echo $this->paginationControl(
+    $this->paginator,
+    'sliding','partials/pagination_control',['route' => 'users'],$this->defaults
+);?>
