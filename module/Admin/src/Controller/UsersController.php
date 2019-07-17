@@ -12,7 +12,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventInterface;
 use Zend\Authentication\AuthenticationService;
 
-//use Zend\Session\Container as Session;
+use Zend\Session\Container as Session;
 
 use InterpretersOffice\Admin\Form\UserForm;
 use InterpretersOffice\Entity;
@@ -58,6 +58,13 @@ class UsersController extends AbstractActionController implements Authentication
     protected $acl;
 
     /**
+     * session
+     *
+     * @var Zend\Session\Container
+     */
+    protected $session;
+
+    /**
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
@@ -69,6 +76,7 @@ class UsersController extends AbstractActionController implements Authentication
     ) {
         $this->entityManager = $entityManager;
         $this->setAuthenticationService($auth);
+
     }
 
     /**
@@ -357,10 +365,61 @@ class UsersController extends AbstractActionController implements Authentication
     public function indexAction()
     {
 
-        $judges = $this->entityManager->getRepository('InterpretersOffice\Entity\Judge')
-            ->getJudgeOptions();
+        $this->session = new Session('user_admin');
+        $get = $this->params()->fromQuery();
+        if ($this->getRequest()->isXmlHttpRequest() && $get) {
+            return $this->search();
+        }
+        $paginator = null;
+        if ((! $get) && $this->session->params) {
+            // not xhr, no query parameters, yes session parameters
+            $page = isset($this->session->params['page']) ?
+                $this->session->params['page']:1;
+            $paginator =  $this->entityManager
+                ->getRepository(Entity\User::class)
+                ->paginate($this->session->params['term'],
+                    ['search_by'=>$this->session->params['search_by'],
+                    'page'=>$this->params()->fromQuery('page',$page)]);
+        }
+        $repository = $this->entityManager
+            ->getRepository('InterpretersOffice\Entity\Judge');
+        $judges = $repository->getJudgeOptions();
+        return new ViewModel(
+            ['role' => $this->auth_user_role, 'judges' => $judges,
+            'defaults' => $this->session->params,'paginator'=>$paginator ]
+        );
+    }
 
-        return new ViewModel(['role' => $this->auth_user_role, 'judges' => $judges]);
+    /**
+     * fetches users
+     *
+     * @return ViewModel
+     */
+    public function search()
+    {
+        $repository = $this->entityManager
+                ->getRepository(Entity\User::class);
+        $view = (new ViewModel())
+            ->setTerminal(true)
+            ->setTemplate('users/results');
+        $get = $this->params()->fromQuery();
+        /** @todo legit validation */
+        if ( empty($get['search_by']) or empty($get['term']))
+            {
+            return $view->setVariables(
+                ['errorMessage'=> 'Sorry, invalid request parameters']);
+        }
+        $this->session->params = $get;
+        /** @var Zend\Paginator\Paginator $paginator */
+        $paginator = $repository->paginate($get['term'],
+            ['search_by'=>$get['search_by'],'page'=>$this->params()->fromQuery('page',1)]);
+
+        return $view->setVariables(['paginator'=>$paginator]);
+    }
+
+    public function viewAction()
+    {
+        
     }
 
     /**

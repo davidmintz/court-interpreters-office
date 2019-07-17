@@ -1,6 +1,10 @@
 <?PHP /** module/Admin/view/users/index.phtml */
 use Zend\Form\Element\Select;
 $this->headTitle('admin | users');
+$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+->appendFile($this->basePath('js/user-index.js'));
+
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
@@ -12,76 +16,56 @@ $judge_element = (new Select(
     'judge',
     ['value_options' => $this->judges,
     'empty_option' => ' ',]
-))->setAttributes(['class' => 'custom-select','id' => 'judge', 'style'=>'display:none']);
-$this->headLink()
-        ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
-$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
+))->setAttributes(['class' => 'custom-select','id' => 'judge',]);
+$hide_text_element = false;
+if ($this->defaults):
+    $term = isset($this->defaults['term']) ? $this->defaults['term']:'';
+    if (isset($this->defaults['search_by'])):
+        $default_search = $this->defaults['search_by'];
+        if ('judge' == $this->defaults['search_by']):
+            $judge_element->setValue($term);
+            $hide_text_element = true;
+        else :
+             $judge_element->setAttributes(['style'=>'display:none']);
+             $hide_text_element = false;
+        endif;
+    endif;
+else :
+    $judge_element->setAttributes(['style'=>'display:none']);
+    $default_search = 'name';
+    $term = '';
+endif;
+
 ?>
 <div class="mx-auto" style="max-width:800px">
-<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<pre><?php //print_r($this->judges)?></pre>
-<p class="border shadow-sm p-3">To edit an existing user account, search the database to find it.<br>
-To set up a new account, first search the user database to see whether an account already exists.
-    <div class="form-group row">
+    <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    <p class="border shadow-sm p-3">To edit an existing user account, search the database to find it.<br>
+        To set up a new account, first search the user database to see whether an account already exists.
+    </p>
+    <div class="form-group form-row">
         <label for="search-by" class="col-sm-2 col-form-label text-sm-right pr-1">user's</label>
         <div class="col-sm-2">
-        <select class="custom-select" name="search-by" id="search-by">
-            <option value="name" label="name">name</option>
-            <option value="email" label="email">email</option>
-            <option value="judges" label="judges">judges</option>
-        </select>
+            <select class="custom-select" name="search_by" id="search-by">
+                <option value="name" label="name">name</option>
+                <option value="email" label="email" <?php if ($default_search == 'email'): ?> selected<?php endif ?>>email</option>
+                <option value="judge" label="judge" <?php if ($default_search == 'judge'): ?> selected<?php endif ?>>judge</option>
+            </select>
         </div>
         <div class="col-sm-5 input-group ml-0 pl-0">
-            <input id="user" type="text" name="user" placeholder="last name[, first name]" class="form-control">
+            <input id="term" type="text" name="term" value="<?php echo !is_numeric($term)?$term:''; /*don't print a judge id*/?>" placeholder="last name[, first name]" class="form-control" <?php
+                if ($hide_text_element):?> style="display:none"<?php endif; ?>>
             <?php echo $this->formElement($judge_element) ?>
             <div class="input-group-append">
                 <button class="btn btn-primary" type="button" id="button-search"><span class="fa fa-search"></span> <span class="sr-only">search</span> </button>
             </div>
         </div>
     <div>
-    <?php  $this->headScript()->captureStart(); ?>
-    $(function(){
-        var placeholders = {
-            name : "last name[, first name]",
-            email : "user's email address",
-        };
-        $("#search-by").on("change",function(){
-            var search_by =$(this).val();
-            if ("judges" === search_by) {
-                if ($("#user").is(":visible")) {
-                    $("#judge, #user").toggle();
-                }
-            } else {
-                $("#user").attr({placeholder: placeholders[search_by]});
-                if ($("#judge").is(":visible")) {
-                    $("#judge, #user").toggle();
-                }
-            }
-        });
-        $("#user").autocomplete({
-            source : function(request,response) {
-                var search_by = $("#search-by").val().trim();
-                $.getJSON(`${window.basePath}/admin/users/autocomplete`,{
-                    search_by, term: request.term
-                })
-                .then((data)=>{
-                    response(data);
-                })
-                .fail(fail);
-            },
-            minLength: 2,
-            select: function( event, ui ) {
-                event.preventDefault();
-                console.log(ui.item);// to be continued
-            },
-            focus: function(event,ui) {
-                event.preventDefault();
-                $(this).val(ui.item.label);
-            },
-        });
-    });
-    $('#button-search').on("click",function(e){
-        console.warn("hello! time to query");
-    });
-    <?php  $this->headScript()->captureEnd(); ?>
+    <div class="form-row">
+        <div class="col-sm-5 offset-sm-5 px-0">
+            <div id="input-validation" class="m1-0 px-2 py-1 alert alert-warning text-danger" hidden></div>
+        </div>
+    <div>
+    <div id="results" class="pl-3 ml-2 mt-2"><?php
+        if ($this->paginator): echo $this->render('users/results'); endif;?>
+    </div>
 </div>

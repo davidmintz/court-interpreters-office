@@ -571,7 +571,7 @@ return  [
 
                         ],
                         'constraints' => [
-                            'action' => 'edit|delete',
+                            'action' => 'edit|delete|view',
                             'id' => '[1-9]\d*',
                         ],
                     ],
@@ -605,6 +605,16 @@ return  [
                         'route' => '/autocomplete',
                         'defaults' => [
                             'action' => 'autocomplete',
+
+                        ],
+                    ],
+                ],
+                'search' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/search',
+                        'defaults' => [
+                            'action' => 'search',
 
                         ],
                     ],

@@ -13,6 +13,7 @@ use InterpretersOffice\Service\ProperNameParsingTrait;
 use Zend\Paginator\Paginator as ZendPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+
 /**
  * UserRepository
  *
@@ -141,23 +142,7 @@ class UserRepository extends EntityRepository
      */
     public function autocomplete(string $name_or_email, Array $options) : array
     {
-        if ('name' == $options['search_by']) {
-            $name = $this->parseName($name_or_email);
-            $parameters = ['lastname' => "$name[last]%"];
-            if ($name['first']) {
-                $parameters['firstname'] = "$name[first]%";
-            }
-        } elseif ('email' == $options['search_by']) {
-            $parameters['email'] = $name_or_email.'%';
-        } else {
-            throw new \InvalidArgumentException(sprintf(
-                '"search_by" option must be one of "name" or "email", got option: (%s) %s',
-                gettype($options['search_by']),
-                is_object($options['search_by']) ? 'instance of '.get_class($options['search_by']) :
-                    print_r($options['search_by'],true)
-            ));
-        }
-
+        $parameters = $this->parseOptions($name_or_email, $options);
         $qb = $this->createQueryBuilder('u')->join('u.person','p');
         $qb->select([
             $qb->expr()->concat(
@@ -165,28 +150,96 @@ class UserRepository extends EntityRepository
             ). 'AS label',
             'u.id AS value',
         ]);
-        if (isset($parameters['email'])) {
+        if (!empty($parameters['email'])) {
             $qb->where('p.email LIKE :email');
         } else { // search by name
             $qb->where('p.lastname LIKE :lastname');
-            if ($name['first']) {
+            if (!empty($parameters['firstname'])) {
                 $qb->andWhere('p.firstname LIKE :firstname');
             }
         }
-        $qb
-        ->orderBy('label','ASC')
+        $qb->orderBy('label','ASC')
         ->setParameters($parameters)
         ->setMaxResults(20);
 
         return $data = $qb->getQuery()->getResult();
     }
 
-    /*
-    SELECT COUNT(r.id) requests,
-    (SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
-    JOIN e.submitter s WHERE s.id = 1476
-    ) events
-    FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
-    JOIN r.modifiedBy m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
-     */
+    private function parseOptions(string $term,array $options) : array
+    {
+        if ('name' == $options['search_by']) {
+            $name = $this->parseName($term);
+            $parameters = ['lastname' => "$name[last]%"];
+            if ($name['first']) {
+                $parameters['firstname'] = "$name[first]%";
+            }
+        } elseif ('email' == $options['search_by']) {
+            $parameters['email'] = $term.'%';
+        } elseif ('judge' == $options['search_by']) {
+            $parameters['judge'] = $term;
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                '"search_by" option must be one of "name", "email", or "judge", got option: (%s) %s',
+                gettype($options['search_by']),
+                is_object($options['search_by']) ? 'instance of '.get_class($options['search_by']) :
+                    print_r($options['search_by'],true)
+            ));
+        }
+
+        return $parameters;
+    }
+
+    public function paginate(string $name_or_email, Array $options) :ZendPaginator
+    {
+        $page = isset($options['page']) ? $options['page']: 1;
+        $parameters = $this->parseOptions($name_or_email,$options);
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('u, p, h, r')
+            ->from(Entity\User::class, 'u')
+            ->join('u.person','p')->join('p.hat', 'h')->join('u.role','r');
+
+        if (! empty($parameters['judge'])) {
+            $qb->join('u.judges','j')->where('j.id = :judge');
+            //exit($qb->getDQL());
+        }  elseif (!empty($parameters['email'])) {
+            $qb->where('p.email LIKE :email');
+        } else { // search by name
+            $qb->where('p.lastname LIKE :lastname');
+            if (!empty($parameters['firstname'])) {
+                $qb->andWhere('p.firstname LIKE :firstname');
+            }
+        }
+        $qb->setParameters($parameters)->orderBy('p.lastname');
+        $query = $qb->getQuery();
+        $adapter = new DoctrineAdapter(new ORMPaginator($query));
+        $paginator = new ZendPaginator($adapter);
+        $paginator
+            ->setCurrentPageNumber($page)
+            ->setItemCountPerPage(20);
+        return $paginator;
+    }
 }
+/*
+SELECT COUNT(r.id) requests,
+(SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+JOIN e.submitter s WHERE s.id = 1476
+) events
+FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
+JOIN r.modifiedBy m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
+ */
+/*
+ //this is too much bullshit...
+ $qb->select(
+     'PARTIAL u.{id}',
+     'u.id','u.active',
+     'p.lastname','p.firstname','p.email','h.name hat');
+ $qb->select([
+     $qb->expr()->concat(
+         'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
+     ). 'AS name',
+     'u.id',
+     'p.id AS person_id',
+     'p.email',
+     'u.active',
+ ]);
+ */

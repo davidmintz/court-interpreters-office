@@ -1,0 +1,46 @@
+<?php
+if ($this->errorMessage):
+?>
+<p class="alert alert-warning"><?php echo $this->escapeHtml($this->errorMessage) ?></p>
+<?php
+return; endif;
+    if (! $this->paginator): return; endif;
+if (!$this->paginator->getTotalItemCount() ) : ?>
+<p>No matching records found.</p>
+<?php else: ?>
+<p>
+    <?php
+    echo $this->paginationControl($this->languages, null, 'partials/pagination_head');
+    ?>
+</p>
+<table class="table table-sm table-hover">
+    <tbody>
+        <?php foreach ($this->paginator as $user):
+            $edit = $this->url('users/edit',['id'=>$user->getId(),]);
+            $view = $this->url('users/edit',['id'=>$user->getId(),'action'=>'view']);
+            $person = $user->getPerson()?>
+            <tr<?php if (! $user->isActive()):?> class="text-muted"<?php endif ?>>
+                <td><a data-toggle="tooltip" title="view user details" href="<?php echo $view ?>"><?php echo $this->escapeHtml("{$person->getLastname()}, {$person->getFirstname()}"); ?></a></td>
+                <td class="text-md-left">
+                    <?php if (! $user->isActive()):?>
+                        <span  data-toggle="tooltip" title="this user is inactive" style="opacity:.75" class="align-self-center fas fa-times text-danger"></span>
+                        <span class="sr-only">(inactive)</span>
+                    <?php endif; ?>
+                </td>
+                <td><?php echo (string)$person->getHat(); ?></td>
+                <td class="border-left-0"><a data-toggle="tooltip" title="edit this user" class="link-edit-user" href="<?php echo $edit ?>">
+                    <span class="fas fa-edit"></span><span class="sr-only">edit this user</span>
+                </a></td>
+            </tr>
+        <?php endforeach;?>
+    </tbody>
+</table>
+<nav class="mb-2">
+    <?php echo $this->paginationControl(
+        $this->paginator,
+        'sliding','partials/pagination_control',['route' => 'users']
+    );?>
+</nav>
+<?php endif;?>
+<a href="<?php echo $this->url('users/add')?>"role="button" title="add a new user" id="btn-add-user" class="btn btn-primary btn-sm">
+<span aria-hidden="true" class="icon fa fa-plus"></span> new user</a>
