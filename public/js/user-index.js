@@ -8,17 +8,17 @@ $(function(){
     $("#search-by").on("change",function(){
         var search_by = $(this).val();
         if ("judge" === search_by) {
-            if ($("#user").is(":visible")) {
-                $("#judge, #user").toggle();
+            if ($("#term").is(":visible")) {
+                $("#judge, #term").toggle();
             }
         } else {
-            $("#user").attr({placeholder: placeholders[search_by]});
+            $("#term").attr({placeholder: placeholders[search_by]});
             if ($("#judge").is(":visible")) {
-                $("#judge, #user").toggle();
+                $("#judge, #term").toggle();
             }
         }
     });
-    $("#user").autocomplete({
+    $("#term").autocomplete({
         source : function(request,response) {
             var search_by = $("#search-by").val().trim();
             $.getJSON(`${window.basePath}/admin/users/autocomplete`,{
@@ -32,7 +32,8 @@ $(function(){
         minLength: 2,
         select: function( event, ui ) {
             event.preventDefault();
-            console.log(ui.item);// to be continued
+            console.log(ui.item);
+            $('#button-search').trigger("click");
         },
         focus: function(event,ui) {
             event.preventDefault();
@@ -40,27 +41,31 @@ $(function(){
         },
     });
     $('#button-search').on("click",function(e){
-        var term;
-        if ("judge" === $("#search-by").val()) {
-            term = $("#judge").val();
-        } else {
-            term = $("#user").val().trim();
-        }
-        if (! term) {
+        params = get_search_parameters();
+        if (! params.term) {
             $("#input-validation").text("search text is required").attr({hidden:false});
             return;
         }
         $("#input-validation").attr({hidden:true});
-        $.get(document.location.pathname,{
-            term, search_by : $("#search-by").val().trim(),
-        }).then(
-            (response) => {
-                $("#results").html(response);
-            }
+        $.get(document.location.pathname,params).then(
+            response => {$("#results").html(response);$(`[data-toggle="tooltip"]`).tooltip();}
         );
-
     });
-    if ($("#user").val().trim().length || $("#judge").val()) {
-        console.log("we have defaults");
-    }
+    $("#results").on("click","a.page-link",function(e){
+        e.preventDefault();
+        $.get(this.href,get_search_parameters()).then(
+            response=>{$("#results").html(response);$(`[data-toggle="tooltip"]`).tooltip();}
+        );
+    });
+    $(`[data-toggle="tooltip"]`).tooltip();
 });
+
+var get_search_parameters = function(){
+    var term;
+    if ("judge" === $("#search-by").val()) {
+        term = $("#judge").val();
+    } else {
+        term = $("#term").val().trim();
+    }
+    return {term,search_by : $("#search-by").val().trim()};
+};
