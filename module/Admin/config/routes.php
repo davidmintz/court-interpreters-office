@@ -571,7 +571,7 @@ return  [
 
                         ],
                         'constraints' => [
-                            'action' => 'edit|delete',
+                            'action' => 'edit|delete|view',
                             'id' => '[1-9]\d*',
                         ],
                     ],

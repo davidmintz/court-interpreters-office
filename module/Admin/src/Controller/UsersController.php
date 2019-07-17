@@ -405,9 +405,6 @@ class UsersController extends AbstractActionController implements Authentication
         $get = $this->params()->fromQuery();
         /** @todo legit validation */
         if ( empty($get['search_by']) or empty($get['term']))
-            //or ($get['search_by'] != 'judge' && empty($get['term'])))
-            //or empty($get['judge'])
-
             {
             return $view->setVariables(
                 ['errorMessage'=> 'Sorry, invalid request parameters']);
@@ -418,6 +415,11 @@ class UsersController extends AbstractActionController implements Authentication
             ['search_by'=>$get['search_by'],'page'=>$this->params()->fromQuery('page',1)]);
 
         return $view->setVariables(['paginator'=>$paginator]);
+    }
+
+    public function viewAction()
+    {
+        
     }
 
     /**

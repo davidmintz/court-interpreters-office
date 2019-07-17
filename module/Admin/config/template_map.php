@@ -25,6 +25,7 @@ return [
     'interpreters-office/admin/users/form' => __DIR__ . '/../view/users/form.phtml',
     'interpreters-office/admin/users/add' => __DIR__ . '/../view/users/form.phtml',
     'interpreters-office/admin/users/edit' => __DIR__ . '/../view/users/form.phtml',
+    'interpreters-office/admin/users/view' => __DIR__ . '/../view/users/view.phtml',
     'interpreters-office/admin/locations/index' => __DIR__ . '/../view/locations/index.phtml',
     'interpreters-office/admin/locations/add' => __DIR__ . '/../view/locations/form.phtml',
     'interpreters-office/admin/locations/edit' => __DIR__ . '/../view/locations/form.phtml',
