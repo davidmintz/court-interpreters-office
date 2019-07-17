@@ -366,18 +366,51 @@ class UsersController extends AbstractActionController implements Authentication
     {
 
         $this->session = new Session('user_admin');
-
-        if ($this->getRequest()->isXmlHttpRequest() &&
-            $this->params()->fromQuery()) {
+        $get = $this->params()->fromQuery();
+        if ($this->getRequest()->isXmlHttpRequest() && $get) {
             return $this->search();
         }
-
-        $judges = $this->entityManager->getRepository('InterpretersOffice\Entity\Judge')
-            ->getJudgeOptions();
+        $paginator = null;
+        if ((! $get) && $this->session->params) {
+            // not xhr, no query parameters, yes session parameters
+            $paginator =  $this->entityManager
+                ->getRepository(Entity\User::class)
+                ->paginate($this->session->params['term'],
+                    ['search_by'=>$this->session->params['search_by']]);
+        }
+        $repository = $this->entityManager
+            ->getRepository('InterpretersOffice\Entity\Judge');
+        $judges = $repository->getJudgeOptions();
         return new ViewModel(
             ['role' => $this->auth_user_role, 'judges' => $judges,
-            'defaults' => $this->session->params, ]
+            'defaults' => $this->session->params,'paginator'=>$paginator ]
         );
+    }
+
+    /**
+     * fetches users
+     *
+     * @return ViewModel
+     */
+    public function search()
+    {
+        $repository = $this->entityManager
+                ->getRepository(Entity\User::class);
+        $view = (new ViewModel())
+            ->setTerminal(true)
+            ->setTemplate('users/results');
+        $get = $this->params()->fromQuery();
+        /** @todo legit validation */
+        if ( empty($get['term']) or empty($get['search_by'])) {
+            return $view->setVariables(
+                ['errorMessage'=> 'Sorry, invalid request parameters']);
+        }
+        $this->session->params = $get;
+        /** @var Zend\Paginator\Paginator $paginator */
+        $paginator = $repository->paginate($get['term'],
+            ['search_by'=>$get['search_by']]);
+
+        return $view->setVariables(['paginator'=>$paginator]);
     }
 
     /**
@@ -416,30 +449,5 @@ class UsersController extends AbstractActionController implements Authentication
         $data = $repository->autocomplete($get['term'],
             ['search_by'=>$get['search_by']]);
         return new JsonModel($data);
-    }
-
-    /**
-     * fetches users
-     *
-     * @return ViewModel
-     */
-    public function search()
-    {
-        $repository = $this->entityManager
-                ->getRepository(Entity\User::class);
-        $view = (new ViewModel())
-            ->setTerminal(true)
-            ->setTemplate('users/results');
-        $get = $this->params()->fromQuery();
-        $this->session->params = $get;
-        if ( empty($get['term']) or empty($get['search_by'])) {
-            return $view->setVariables(
-                ['errorMessage'=> 'Sorry, invalid request parameters']);
-        }
-        /** @var Zend\Paginator\Paginator $paginator */
-        $paginator = $repository->paginate($get['term'],
-            ['search_by'=>$get['search_by']]);
-
-        return $view->setVariables(['paginator'=>$paginator]);
     }
 }

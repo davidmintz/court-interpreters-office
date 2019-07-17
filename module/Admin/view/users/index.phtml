@@ -34,6 +34,7 @@ if ($this->defaults):
 else :
     $judge_element->setAttributes(['style'=>'display:none']);
     $default_search = 'name';
+    $term = '';
 endif;
 ?>
 <div class="mx-auto" style="max-width:800px">
@@ -64,5 +65,7 @@ endif;
             <div id="input-validation" class="m1-0 px-2 py-1 alert alert-warning text-danger" hidden></div>
         </div>
     <div>
-    <div id="results" class="pl-3 ml-2 mt-2"></div>
+    <div id="results" class="pl-3 ml-2 mt-2"><?php
+        if ($this->paginator):?>yes paginator<?php else: ?>no paginator<?
+    <?php endif ?></div>
 </div>
