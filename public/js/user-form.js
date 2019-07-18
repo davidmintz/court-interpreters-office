@@ -33,8 +33,8 @@ $(document).ready(function(){
         });
     });
     var id = $("input[name='user[id]']").val();
-    if (id) {
-        //hatElement.trigger("change");
+    if (id && hatElement.children(":selected").data("is_judges_staff")) {
+        $("#judge-div").show();
     }
     // help enforce logical consistency between user-account "active"
     // and person "active" properties
