@@ -4,7 +4,6 @@
  * event listeners for admin/interpreters/edit/<id>
  *
  */
-*/
 $(function(){
 
     $('input.date').each(function(i,element){
@@ -147,6 +146,7 @@ $(function(){
                         displayValidationErrors(response.validation_errors);
                     }
 
+                    return false;
                 }
             },'json'
         );
