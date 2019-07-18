@@ -1,9 +1,10 @@
 /**
- * attach event listeners
+ * public/js/interpreter-form.js
  *
- * @todo refactor to make less long and monolithic
+ * event listeners for admin/interpreters/edit/<id>
+ *
  */
-//*/
+*/
 $(function(){
 
     $('input.date').each(function(i,element){
@@ -12,46 +13,42 @@ $(function(){
         }
     });
    // }
-    // in order for server-side partial validation to know the context
+    // for server-side partial validation to know the context
     var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
-
     // pad the div holding the checkbox
     $("#person-active").parent().addClass("pt-2");
 
-    // make the first tab active, unless we are coming back from
-    // a validation failure
-
     //if (! Modernizr.inputtypes.date) {
-        $('input.date').datepicker({
-            changeMonth: true,
-            changeYear: true,
-            constrainInput : false,
-            selectOtherMonths : true,
-            showOtherMonths : true
-        });
+    $('input.date').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        constrainInput : false,
+        selectOtherMonths : true,
+        showOtherMonths : true
+    });
         // if the dob field is enabled, set datepicker options
-        if (!($('#dob').val())) { // i.e., if it isn't just '**********'
-            $('#dob').datepicker("option",{
-                maxDate: "-18y",
-                minDate : "-100y",
-                yearRange : "-100:-18"
-            });
-        }
-        /** @todo
-         * set datepicker options to display year for dob, if element exists
-         * set options to constrain security_clearance, fingerprint etc date ranges
-         * NOTE TO SELF: setting the relative maxDate to 0 has the interesting side
-         * effect of making invalid dates NOT display in cases like 04/17/23472348789374
-         */
-        /*
+    if (!($('#dob').val())) { // i.e., if it isn't just '**********'
+        $('#dob').datepicker("option",{
+            maxDate: "-18y",
+            minDate : "-100y",
+            yearRange : "-100:-18"
+        });
+    }
+    /** @todo
+     * set datepicker options to display year for dob, if element exists
+     * set options to constrain security_clearance, fingerprint etc date ranges
+     * NOTE TO SELF: setting the relative maxDate to 0 has the interesting side
+     * effect of making invalid dates NOT display in cases like 04/17/23472348789374
+     */
+    /*
         $('#fingerprint_date, #oath_date, #security_clearance_date').datepicker("option",{
             maxDate: 0
-        });        */
-    //}
+        });
+    */
+
     /**
      * add a working language.
-     * @todo solve case where "at least one language is required" is printed twice
      */
     var languageSelect = $('#language-select');
     $('#btn-add-language').on('click',function(event){
@@ -115,7 +112,7 @@ $(function(){
 
     /** validate each tab pane before moving on **/
     // note to self: isn't there a Bootstrap event to observe instead?
-    $('a[data-toggle="tab"]').on('click', function (event,params) {
+    $('a[data-toggle="tab"]').on('click', function (event) {
 
         var id = `#${$('div.active').attr('id')}`;
         if (id.indexOf('languages') !== -1 &&
@@ -131,11 +128,6 @@ $(function(){
             }
             return false;
         }
-        // else {
-        //     // this should now be redundant, right?
-        //     $('#languages .language-required').remove();
-        // }
-
         var selector = `${id} input, ${id} select`;
         var data =($(selector).serialize());
         var that = this;
@@ -155,14 +147,6 @@ $(function(){
                         displayValidationErrors(response.validation_errors);
                     }
 
-                } else {
-                    /** @todo here's what sucks. use xhr instead for form submission rather than .submit() */
-                    if (params && params.submit) {
-                        // they hit the submit button
-                        return $('#interpreter-form').submit();
-                    }
-                    $(id + " .validation-error").hide();
-                    $(that).tab("show");
                 }
             },'json'
         );
