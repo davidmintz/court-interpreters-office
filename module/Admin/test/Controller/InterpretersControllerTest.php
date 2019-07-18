@@ -195,9 +195,13 @@ class InterpretersControllerTest extends AbstractControllerTest
             new Parameters($data)
         );
         $this->dispatch($url);
-        $this->assertRedirect();
-        $this->assertRedirectTo('/admin/interpreters');
-
+        //$this->assertRedirect();
+        //$this->assertRedirectTo('/admin/interpreters');
+        $this->assertResponseStatusCode(200);
+        $response = $this->getResponse()->getBody();
+        $json = json_decode($response);
+        $this->assertTrue(is_object($json));
+        $this->assertEquals($json->status,'success');
         // load the form again
         $this->reset(true);
         $this->dispatch($url);
@@ -220,8 +224,11 @@ class InterpretersControllerTest extends AbstractControllerTest
             new Parameters($data)
         );
         $this->dispatch($url);
-        $this->assertRedirect();
-        $this->assertRedirectTo('/admin/interpreters');
+        $this->assertResponseStatusCode(200);
+        $response = $this->getResponse()->getBody();
+        $json = json_decode($response);
+        $this->assertTrue(is_object($json));
+        $this->assertEquals($json->status,'success');
 
         // load the form again
         $this->reset(true);
