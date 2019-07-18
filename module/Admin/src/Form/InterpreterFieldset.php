@@ -309,11 +309,10 @@ class InterpreterFieldset extends PersonFieldset
                             $languages_submitted = $context['interpreterLanguages'];
                             foreach ($languages_submitted as $language) {
                                 $id = $language['language'];
-                                if (! $language['languageCredential']) {
+                                if (empty($language['languageCredential'])) {
                                     return false;
                                 }
                             }
-
                             return true;
                         },
                         'messages' => [
@@ -323,43 +322,6 @@ class InterpreterFieldset extends PersonFieldset
                  ],
             ],
         ];
-        /*
-        if ($this->options['form_config']
-            && !empty($this->options['form_config']['use_federal_credentialing'])
-        ) {
-            $language_options = $this->get('language-select')->getValueOptions();
-            $certifiable = array_column($language_options, 'attributes', 'value');
-            // [62]=> array(1) { ["data-certifiable"]=> string(1) "1" }
-            // [1] => Array
-            // (
-            //     [language] => 24
-            //     [languageCredential] => 1
-            // )
-
-            $spec['interpreterLanguages']['validators'][] =
-             [
-                'name' => 'Callback',
-                'options' => [
-                    'callback' => function ($value, $context) use ($certifiable) {
-                        $languages_submitted = $context['interpreterLanguages'];
-                        foreach ($languages_submitted as $language) {
-                            $id = $language['language'];
-                            $legit = $certifiable[$id]['data-certifiable'];
-                            $cred = $language['languageCredential'];
-                            if ($cred == 1 and !$legit) {
-                                // does not work so well
-                                // return false;
-                            }
-                        }
-                        return true;
-                    },
-                    'messages' => [
-                        \Zend\Validator\Callback::INVALID_VALUE => 'I don\'t like it',
-                    ],
-                ],
-            ];
-        }
-       */
         // this one is just for the UI, not part of the entity's data
         $spec['language-select'] = [
             'required' => true,
@@ -379,7 +341,7 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
          ];
-         // @todo:  major validation stuff !
+         // @todo:  more validation stuff?
 
          // dates
          $spec['fingerprintDate'] = [

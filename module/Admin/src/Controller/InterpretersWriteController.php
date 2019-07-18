@@ -5,11 +5,11 @@ namespace InterpretersOffice\Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Form\InterpreterForm;
 use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-use Zend\View\Model\JsonModel;
 use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection as
     LanguageCollectionHelper;
 use Zend\Stdlib\Parameters;
@@ -197,38 +197,45 @@ class InterpretersWriteController extends AbstractActionController
                 ->setRequired(false);
         }
         $request = $this->getRequest();
-        if ($request->isPost()) {
-            $input = $request->getPost();
-            $form->setData($input);
-            if (! $form->isValid()) {
-                // whether the encrypted fields should be obscured (again)
-                // or not depends on whether they changed them
-                $viewModel->obscure_values =
-                  ! $this->getEncryptedFieldsWereModified($values_before, $input);
-                return $viewModel;
-            }
-            try {
-                $this->entityManager->flush();
-            } catch (VaultException $e) {
-                $viewModel->vault_error = $e->getMessage();
-                return $viewModel;
-            }
-
-            $this->flashMessenger()->addSuccessMessage(sprintf(
-                'The interpreter <strong>%s %s</strong> has been updated.',
-                $entity->getFirstname(),
-                $entity->getLastname()
-            ));
-            $this->redirect()->toRoute('interpreters');
-            // echo "<br>success. NOT redirecting...
-            // <a href=\"/admin/interpreters/edit/$id\">do it again</a> ";
-        } else {    // not a POST
+        if ($request->isGet()) {
             if ($this->vault_enabled) {
                 $viewModel->obscure_values = true;
             }
+            return $viewModel;
+        }
+        $input = $request->getPost();
+        $form->setData($input);
+        if (! $form->isValid()) {
+            return new JsonModel(
+                ['validation_errors'=>$form->getMessages()]
+            );
+            // whether the encrypted fields should be obscured (again)
+            // or not depends on whether they changed them
+            // $viewModel->obscure_values =
+            //   ! $this->getEncryptedFieldsWereModified($values_before, $input);
+            // return $viewModel;
+        }
+        try {
+            $this->entityManager->flush();
+        } catch (VaultException $e) {
+            // $viewModel->vault_error = $e->getMessage();
+            // return $viewModel;
+            return new JsonModel([
+                'status'=>'error',
+                'error' => $e->getMessage(),
+            ]);
         }
 
-        return $viewModel;
+        $this->flashMessenger()->addSuccessMessage(sprintf(
+            'The interpreter <strong>%s %s</strong> has been updated.',
+            $entity->getFirstname(),
+            $entity->getLastname()
+        ));
+        return new JsonModel(['status'=>'success']);
+        // $this->redirect()->toRoute('interpreters');
+        // // echo "<br>success. NOT redirecting...
+        // // <a href=\"/admin/interpreters/edit/$id\">do it again</a> ";
+        // return $viewModel;
     }
     /**
      * were the dob and ssn fields modified?

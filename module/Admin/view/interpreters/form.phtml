@@ -87,6 +87,8 @@ $form->add([
                 echo $collectionErrors;
             endif;
             ?>
+            <div class="alert alert-warning validation-error col-sm-9" style="display:none" id="error_interpreterLanguages">               
+            </div>
             </div><!-- /languages-div -->
             <?php $element = $fieldset->get('comments');?>
             <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
