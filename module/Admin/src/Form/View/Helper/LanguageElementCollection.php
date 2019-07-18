@@ -17,11 +17,11 @@ class LanguageElementCollection extends AbstractHelper
      */
     protected $template = <<<TEMPLATE
 <!-- shit begins -->
-<div class="offset-sm-1 col-sm-3  interpreter-language language-name form-inline    " id="language-%d">
+<div class="offset-sm-1 col-sm-3  interpreter-language language-name form-inline" id="language-%d">
 %s
 </div>
 <div class="col-sm-8 form-inline interpreter-language language-credential">
-    <label for="languageCredential-%d">credential:</label>
+    <label for="language-credential-%d">credential:</label>
           %s
    <button class="ml-3 btn btn-warning btn-xs btn-remove-language  border" title="remove this language"><span class="fas fa-times" aria-hidden="true"></span>
         <span class="sr-only">remove this language</span></button>
@@ -35,8 +35,8 @@ TEMPLATE;
      * error template
      * @var string
      */
-    protected $error_template = '<div class="alert alert-warning '
-            . 'validation-error" style="display:%s">%s</div>';
+    protected $error_template =
+        '<div class="col-sm-8 alert alert-warning validation-error credential-required" style="display:%s">%s</div>';
 
     /**
      * proxies to render()
@@ -146,22 +146,17 @@ TEMPLATE;
         $certifiable = $language->isFederallyCertified();
         $cred_options = $params['credential_options'];
         if (! $certifiable) {
-            $i = array_search('AO', array_column($cred_options, 'label'));
-            if ($i !== false) {
-                $cred_options[$i]['attributes'] = ['disabled' => 'disabled'];
+            $n = array_search('AO', array_column($cred_options, 'label'));
+            if ($n !== false) {
+                $cred_options[$n]['attributes'] = ['disabled' => 'disabled'];
             }
         }
         $credential_element = new \Zend\Form\Element\Select(
             "interpreter[interpreterLanguages][$i][languageCredential]",
-            ['value_options' => ['' => ' '] + $cred_options,
-                    'attributes' => [
-                        'class' => 'form-control',
-                        'id'    => "language-credential-$language_id",
-                    ]
-            ]
+            ['value_options' => ['' => ' '] + $cred_options,]
         );
 
-        $credential_element->setAttributes(['class' => 'form-control']);
+        $credential_element->setAttributes(['id'    => "language-credential-$language_id",'class' => 'form-control']);
         $credential_markup = $this->view->formSelect($credential_element);
         $errors = sprintf($this->error_template, 'none', '');
         return sprintf(
