@@ -32,8 +32,13 @@ if ($this->has_related_entities) :
     if ((string)$user->getRole() == 'submitter') :
         $role_element->setAttribute('disabled', 'disabled');
     endif;
+//else:
 endif;
 $has_judges = $form->getObject()->getJudges()->count();
+if  (!$has_judges && $form->getObject()->getId()) {
+    $hat = $form->getObject()->getPerson()->getHat();
+    if ($hat->isJudgesStaff()): $has_judges = true; endif;
+}
 $form->prepare();
 echo $this->form()->openTag($form);
 ?><div id="error_existing_entity_required" class="offset-sm-3 col-sm-9 alert alert-warning validation-error" style="display:none"></div><?php
@@ -54,8 +59,7 @@ $user_fieldset = $this->form->get("user");
     <div class="col-sm-9"><?php echo $this->formElement($hat),$this->formElementErrors($hat) ?>
     </div>
 </div>
-<?php if ($user_fieldset->has('judge-select')) :?>
-<div id="judge-div" class="form-group form-row" style="display:none">
+<div id="judge-div" class="form-group form-row" <?php if (!$has_judges):?> style="display:none"<?php endif;?>>
     <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">select the judge(s) for whom this user works, and click the <strong>+</strong> button.</div>
     <label  for="judges" class="col-form-label col-sm-3">Judge(s)</label>
     <div class="col-sm-9">
@@ -69,9 +73,10 @@ $user_fieldset = $this->form->get("user");
                 <li class="list-group-item py-1"><input name="user[judges][]" value="<?php echo $judge->getId()?>" type="hidden"><?php echo $judge ?><button type="button" title="click to remove this judge" class="btn btn-warning btn-sm float-right remove-div">X</button></li>
             <?php endforeach;
         endif;?></ul>
+        <input type="hidden" name="user[judges][]" value="">
     </div>
 </div>
-<?php endif;
+<?php
 $person_active = $person_fieldset->get('active');?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $person_active->getLabel()?></label>
@@ -91,11 +96,20 @@ $person_active = $person_fieldset->get('active');?>
 </div>
 <?php
 $user_active = $user_fieldset->get('active');?>
+<!--
+<div class="form-row form-group">
+    <div class="custom-control custom-switch offset-sm-3 col-sm-9">
+    <input type="checkbox" class="custom-control-input" name="user[active]" value="1" id="user-active">
+    <label class="custom-control-label" for="user-active">user account enabled</label>
+    </div>
+</div>
+-->
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3">user account enabled</label>
     <div class="col-sm-9 pt-2" style="padding-top:.25em"><?php echo $this->formCheckbox($user_active),$this->formElementErrors($user_active) ?>
     </div>
- </div>
+</div>
+
 <div class="form-group form-row">
     <div class="offset-sm-3 col-sm-9" style="margin-top:.5em">
         <div style="display:none" id="error_csrf" class="alert alert-warning validation-error"></div>
@@ -105,6 +119,9 @@ $user_active = $user_fieldset->get('active');?>
     echo $this->formHidden($person_fieldset->get('id'));
     echo $this->formHidden($user_fieldset->get('id'));
     echo $this->formSubmit($form->get('submit'));
+    if ($form->getObject()->getId() && ! $this->has_related_entities):
+    ?><button id="btn-delete" class="btn btn-warning btn-lg">delete</button><?php
+    endif;
     ?></div>
 </div>
 <?php

@@ -26,13 +26,13 @@ $(function(){
     /** toggle visibility of judge control depending on the hat */
     $("#hat").on("change",function(){
         if (! $(this).val()) {
-            $("#judge-div").hide();
-            return;
+            // $("#judge-div").hide();
+            // return;
         }
 
         var hat = $(this).children(":selected");
         if (hat.data().is_judges_staff) {
-            $("#judge-div").slideDown();
+            $("#judge-div").slideDown();console.log("fucking what??");
         } else {
             $("#judge-div").slideUp();
         }
