@@ -127,24 +127,25 @@ class InterpretersWriteController extends AbstractActionController
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 //printf("<pre>%s</pre>",print_r($form->getMessages(),true));
-                return $viewModel;
+                return new JsonModel(['validation_errors'=>$form->getMessages()]);
             }
             try {
                 $this->entityManager->persist($entity);
                 $this->entityManager->flush();
+                $this->flashMessenger()->addSuccessMessage(
+                    sprintf(
+                        'The interpreter <strong>%s %s</strong> has been added to the database',
+                        $entity->getFirstname(),
+                        $entity->getLastname()
+                        )
+                    );
+                return new JsonModel(['status'=>'success','id'=>$entity->getId()]);
             } catch (VaultException $e) {
                 $viewModel->vault_error = $e->getMessage();
                 return $viewModel;
+            } catch (\Throwable $e) {
+                throw $e;
             }
-            $this->flashMessenger()->addSuccessMessage(
-                sprintf(
-                    'The interpreter <strong>%s %s</strong> has been added to the database',
-                    $entity->getFirstname(),
-                    $entity->getLastname()
-                )
-            );
-            //echo "success. NOT redirecting. <a href=\"/admin/interpreters/add\">again</a>";
-            $this->redirect()->toRoute('interpreters');
         }
 
         return $viewModel;
