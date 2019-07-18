@@ -289,6 +289,7 @@ class ScheduleUpdateManager
                     [
                         'entity_class'=>Request::class,
                         'entity_id' => $request->getId(),
+                        'channel' => 'schedule-update-manager',
                     ]
                 );
                 if ('notify-assigned-interpreters' == $action) {
@@ -359,9 +360,7 @@ class ScheduleUpdateManager
      */
     public function onUpdateRequest(EventInterface $e)
     {
-        $this->logger->debug(
-            __METHOD__.": here's Johnny!"
-        );
+        $this->logger->debug(__METHOD__.": here's Johnny!");
         $request = $e->getParam('request');
         $event = $request->getEvent();
         $em =  $e->getParam('entity_manager');
@@ -393,7 +392,8 @@ class ScheduleUpdateManager
         );
         $this->logger->info($message,[
             'entity_class'=>Request::class,
-            'entity_id' => $request->getId()
+            'entity_id' => $request->getId(),
+            'channel'  => 'requests',
         ]);
         if (! $event) {
             $this->logger->debug(
