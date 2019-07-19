@@ -1,0 +1,153 @@
+diff --git a/public/js/interpreter-form.js b/public/js/interpreter-form.js
+index 8082fb4d..f3417657 100644
+--- a/public/js/interpreter-form.js
++++ b/public/js/interpreter-form.js
+@@ -22,6 +22,22 @@ $(function(){
+     // make the first tab active, unless we are coming back from
+     // a validation failure
+ 
++    if (! $(".validation-error").text()) {
++       $('#nav-tabs li:first a').tab("show");
++    } else {
++       // not entirely satisfactory, it makes shit jump,
++       // but better than nothing for now
++       var pane = $(".validation-error").not(":empty").first().closest('div.tab-pane');
++       var id = pane.attr("id");
++       // console.warn(id +  " is our id, bitch");
++       $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
++       $(".validation-error").each(function(){
++            var div = $(this);
++            if (-1 != div.text().indexOf("language is required")) {
++                div.addClass("language-required");
++            }
++       });
++    }
+     //if (! Modernizr.inputtypes.date) {
+         $('input.date').datepicker({
+             changeMonth: true,
+@@ -117,27 +133,20 @@ $(function(){
+     // note to self: isn't there a Bootstrap event to observe instead?
+     $('a[data-toggle="tab"]').on('click', function (event,params) {
+ 
+-        var id = `#${$('div.active').attr('id')}`;
+-        if (id.indexOf('languages') !== -1 &&
+-           ! $(".interpreter-language input").length
++        var id = '#'+$('div.active').attr('id');
++        if (id.indexOf('languages') !== -1 && ! $(".interpreter-language input").length
+         ) {
+             if (! $('#languages-div .language-required').length) {
+                 $('#languages-div').append(
+-                    $('<div>').addClass("alert alert-warning validation-error language-required")
++                    $('<div >').addClass("alert alert-warning validation-error language-required")
+                     .text("at least one language is required")
+                 );
+-            } else {
+-                $(".language-required").addClass("border border-danger")
+             }
+             return false;
+         }
+-        // else {
+-        //     // this should now be redundant, right?
+-        //     $('#languages .language-required').remove();
+-        // }
+-
+-        var selector = `${id} input, ${id} select`;
++        var selector = id + " input, " + id + " select";
+         var data =($(selector).serialize());
++        //console.log(data);
+         var that = this;
+         /**
+          * when they change panels, post the data in the panel they're leaving
+@@ -149,7 +158,15 @@ $(function(){
+             function(response){
+                 if (response.validation_errors) {
+                     if (response.validation_errors.interpreterLanguages) {
+-                        render_language_validation_errors(response.validation_errors.interpreterLanguages);
++                        $.each(response.validation_errors.interpreterLanguages,
++                            function(i,error){
++                                $('div.language-credential select').not(":disabled")
++                                .children('option:selected[value=""]')
++                                .closest("div.language-credential")
++                                .children(".validation-error")
++                                .text(error).show();
++                                return false;
++                            });
+                     } else {
+                         console.warn("shit has nada to do with languages?");
+                         displayValidationErrors(response.validation_errors);
+@@ -233,45 +250,19 @@ $(function(){
+             }
+         });
+     });
+-
+-    $(`#interpreter-form input[type="submit"]`).on("click",function(event){
+-        event.preventDefault();
++    /**
++    @todo run partial validation here?
++    @todo to do is to fix this suckage causing unpleasant jumping from the default first tab
++    to the first one with a validation error
++    */
++    $('#interpreter-form').on("submit",function(event){
++        //event.preventDefault();
+         if ($(".validation-error:visible").length) {
+-            $(".validation-error:visible").addClass("border border-danger");
+-            console.warn("boink! not valid, returning");
+-            return false;
++            console.warn("boink! not valid");
++            //return false;
+         }
+-        var id = `${$('div.active').attr('id')}`;
+-        var partial_data = $(`#${id} input, #${id} select`).serialize();
+-        $.post(`/admin/interpreters/validate-partial?action=${action}`,partial_data)
+-        .then((res) => {
+-            if (!res.validation_errors) {
+-                return true;
+-            } else {
+-                if (id === "languages") {
+-                    render_language_validation_errors(res.validation_errors.interpreterLanguages);
+-                } else {
+-                    displayValidationErrors(res.validation_errors);
+-                }
+-                return false;
+-            }
+-        })
+-        .then((valid)=>{
+-            if (! valid) { return; }
+-            var form = $("#interpreter-form");
+-            var data = form.serialize();
+-            var url = form.attr("action");
+-            $.post(url,data)
+-            .then((response) => {
+-                    if (response.validation_errors) {
+-                        return console.warn("validation errors should not happen");
+-                    }
+-                    if (response.status === "success") {
+-                        window.document.location = `${window.basePath||""}/admin/interpreters`;
+-                    }
+-                }
+-            );
+-        }).fail(fail);
++        $('a[data-toggle="tab"]').trigger("click",{submit:true});
++        return true;
+     });
+ 
+     $("#btn-delete").on("click",function(event){
+@@ -289,18 +280,6 @@ $(function(){
+         .fail(fail);
+     });
+ });
+-
+-const render_language_validation_errors = function(errors) {
+-    $.each(errors,
+-        function(i,error){
+-            $('div.language-credential select').not(":disabled")
+-            .children('option:selected[value=""]')
+-            .closest("div.language-credential")
+-            .children(".validation-error")
+-            .text(error).show();
+-        });
+-};
+-
+ test = function(){
+     $('#languages-pane').tab("show");
+     $('#language-select').val(62);
