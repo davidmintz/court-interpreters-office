@@ -143,33 +143,23 @@ $(function(){
             data,
             function(response){
                 if (response.validation_errors) {
-                    if (response.validation_errors.interpreterLanguages) {
-                        $.each(response.validation_errors.interpreterLanguages,
-                            function(i,error){
-                                $('div.language-credential select').not(":disabled")
-                                .children('option:selected[value=""]')
-                                .closest("div.language-credential")
-                                .children(".validation-error")
-                                .text(error).show();
-                                return false;
-                            });
-                    } else {
-                        console.warn("shit has nada to do with languages?");
+                    // if (response.validation_errors.interpreterLanguages) {
+                    //     $.each(response.validation_errors.interpreterLanguages,
+                    //         function(i,error){
+                    //             $('div.language-credential select').not(":disabled")
+                    //             .children('option:selected[value=""]')
+                    //             .closest("div.language-credential")
+                    //             .children(".validation-error")
+                    //             .text(error).show();
+                    //             return false;
+                    //         });
+                    // } else {
+                        //console.warn("shit has nada to do with languages?");
                         displayValidationErrors(response.validation_errors);
-                    }
+                    //}
 
                 } else {
-                    // /** @todo here's what sucks. use xhr instead for form submission rather than .submit() */
-                    // if (params && params.submit) {
-                    //     // they hit the submit button
-                    //     $.post(document.location.pathname,form.serialize())
-                    //     .then((res)=>{
-                    //         console.log(res);
-                    //         if ("success" === res.status) {
-                    //             document.location = `${window.basePath}/admin/interpreters`;
-                    //         }
-                    //     });
-                    // }
+
                     $(id + " .validation-error").hide();
                     $(that).tab("show");
                 }
