@@ -35,13 +35,24 @@ jQuery.ajaxSetup({
  * @returns void
  */
 var displayValidationErrors = function(validationErrors,options) {
+    var debug = function(message) {
+        if (! options || !options.debug) { return; }
+        console.log(message);
+    }
     $(".validation-error").hide();
-    var debug = (options && options.debug) || false;
+    //var debug = (options && options.debug) || false;
     for (var field in validationErrors) {
-        if (debug) { console.log("looking at: "+field); }
+        debug("looking at field: "+field);
         for (var key in validationErrors[field]) {
-            if (debug) { console.log("looking at: "+key); }
+            debug("looking at key: "+key);
+            //if (debug) { console.log("looking at: "+key); }
             var message = validationErrors[field][key];
+
+            if (typeof message === "object") {
+                debug("message happens to be an object; recursing"); ;
+                return displayValidationErrors(validationErrors[field]);
+
+            }
             var element = $("#" +field);
             if (! element.length) {
                 // nothing to lose by trying harder; undo camelcase
@@ -51,16 +62,13 @@ var displayValidationErrors = function(validationErrors,options) {
             var errorDiv = $("#error_"+field);
             if (! errorDiv.length) { errorDiv = null;}
             if (! element.length) {
-                if (debug) { console.log("is there no element "+field+ " ?"); }
+                debug("is there no element "+field+ " ?"); ;
                 // look for an existing div by id
                 if ($("#error_"+field).length) {
                     $("#error_"+field).html(message).show();
                 } else {
-                    if (debug) {
-                        console.log(`'message' is of type ${typeof message}`);
-                        console.warn("no element with id "+field
-                            + ", and nowhere to put message: "+message);
-                    }
+                    debug(`'message' is of type ${typeof message};`);
+                    debug(`no element with id ${field}and nowhere to put message: "${message}"`);
                 }
             } else { // yes, there is an element for inserting error
                 errorDiv = errorDiv || element.next(".validation-error");
