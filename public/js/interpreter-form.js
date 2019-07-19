@@ -159,7 +159,6 @@ $(function(){
                     //}
 
                 } else {
-
                     $(id + " .validation-error").hide();
                     $(that).tab("show");
                 }
@@ -244,10 +243,6 @@ $(function(){
             $(".validation-error:visible").addClass("border border-danger");
             return false;
         }
-        // $('a[data-toggle="tab"]').trigger("click",{submit:true});
-        // return true;
-        /** @todo here's what sucks. use xhr instead for form submission rather than .submit() */
-            // they hit the submit button
         $.post(document.location.pathname,form.serialize())
         .then((res)=>{
             console.log(res);
@@ -277,7 +272,7 @@ $(function(){
         .fail(fail);
     });
 });
-test = function(){
+var test = function(){
     $("#lastname").val("Doinkle");
     $("#firstname").val("Boinker");
     $("#email").val("doink@boink.com");
