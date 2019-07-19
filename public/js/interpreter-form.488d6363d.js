@@ -19,23 +19,24 @@ $(function(){
     // pad the div holding the checkbox
     $("#person-active").parent().addClass("pt-2");
 
-    // make the first tab active
-    $('#nav-tabs li:first a').tab("show");
+    // make the first tab active, unless we are coming back from
+    // a validation failure
+
     if (! $(".validation-error").text()) {
-      // $('#nav-tabs li:first a').tab("show");
+       $('#nav-tabs li:first a').tab("show");
     } else {
        // not entirely satisfactory, it makes shit jump,
        // but better than nothing for now
-       // var pane = $(".validation-error").not(":empty").first().closest('div.tab-pane');
-       // var id = pane.attr("id");
-       // // console.warn(id +  " is our id, bitch");
-       // $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
-       // $(".validation-error").each(function(){
-       //      var div = $(this);
-       //      if (-1 != div.text().indexOf("language is required")) {
-       //          div.addClass("language-required");
-       //      }
-       // });
+       var pane = $(".validation-error").not(":empty").first().closest('div.tab-pane');
+       var id = pane.attr("id");
+       // console.warn(id +  " is our id, bitch");
+       $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
+       $(".validation-error").each(function(){
+            var div = $(this);
+            if (-1 != div.text().indexOf("language is required")) {
+                div.addClass("language-required");
+            }
+       });
     }
     //if (! Modernizr.inputtypes.date) {
         $('input.date').datepicker({
@@ -284,10 +285,7 @@ $(function(){
     });
 });
 test = function(){
-    $("#lastname").val("Doinkle");
-    $("#firstname").val("Boinker");
-    $("#email").val("doink@boink.com");
-    // $('#languages-pane').tab("show");
-    // $('#language-select').val(62);
-    // $('#btn-add-language').trigger("click");
+    $('#languages-pane').tab("show");
+    $('#language-select').val(62);
+    $('#btn-add-language').trigger("click");
 };
