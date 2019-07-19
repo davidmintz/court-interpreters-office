@@ -11,9 +11,9 @@ $(function(){
             element.value = element.value.replace(/(\d{4})-(\d\d)-(\d\d)/,"$2/$3/$1");
         }
     });
-   // }
+    var form = $('#interpreter-form');
     // in order for server-side partial validation to know the context
-    var action = $('#interpreter-form').attr('action').indexOf('/edit/') > -1 ?
+    var action = form.attr('action').indexOf('/edit/') > -1 ?
             'update' : 'create';
 
     // pad the div holding the checkbox
@@ -21,49 +21,32 @@ $(function(){
 
     // make the first tab active
     $('#nav-tabs li:first a').tab("show");
-    if (! $(".validation-error").text()) {
-      // $('#nav-tabs li:first a').tab("show");
-    } else {
-       // not entirely satisfactory, it makes shit jump,
-       // but better than nothing for now
-       // var pane = $(".validation-error").not(":empty").first().closest('div.tab-pane');
-       // var id = pane.attr("id");
-       // // console.warn(id +  " is our id, bitch");
-       // $('#nav-tabs a[aria-controls="'+id+'"]').tab("show");
-       // $(".validation-error").each(function(){
-       //      var div = $(this);
-       //      if (-1 != div.text().indexOf("language is required")) {
-       //          div.addClass("language-required");
-       //      }
-       // });
-    }
     //if (! Modernizr.inputtypes.date) {
-        $('input.date').datepicker({
-            changeMonth: true,
-            changeYear: true,
-            constrainInput : false,
-            selectOtherMonths : true,
-            showOtherMonths : true
+    $('input.date').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        constrainInput : false,
+        selectOtherMonths : true,
+        showOtherMonths : true
+    });
+    // if the dob field is enabled, set datepicker options
+    if (!($('#dob').val())) { // i.e., if it isn't just '**********'
+        $('#dob').datepicker("option",{
+            maxDate: "-18y",
+            minDate : "-100y",
+            yearRange : "-100:-18"
         });
-        // if the dob field is enabled, set datepicker options
-        if (!($('#dob').val())) { // i.e., if it isn't just '**********'
-            $('#dob').datepicker("option",{
-                maxDate: "-18y",
-                minDate : "-100y",
-                yearRange : "-100:-18"
-            });
-        }
-        /** @todo
-         * set datepicker options to display year for dob, if element exists
-         * set options to constrain security_clearance, fingerprint etc date ranges
-         * NOTE TO SELF: setting the relative maxDate to 0 has the interesting side
-         * effect of making invalid dates NOT display in cases like 04/17/23472348789374
-         */
-        /*
-        $('#fingerprint_date, #oath_date, #security_clearance_date').datepicker("option",{
-            maxDate: 0
-        });        */
-    //}
+    }
+    /** @todo
+     * set datepicker options to display year for dob, if element exists
+     * set options to constrain security_clearance, fingerprint etc date ranges
+     * NOTE TO SELF: setting the relative maxDate to 0 has the interesting side
+     * effect of making invalid dates NOT display in cases like 04/17/23472348789374
+     */
+    /*
+    $('#fingerprint_date, #oath_date, #security_clearance_date').datepicker("option",{
+        maxDate: 0
+    });        */
     /**
      * add a working language.
      * @todo solve case where "at least one language is required" is printed twice
@@ -131,7 +114,7 @@ $(function(){
     /** validate each tab pane before moving on **/
     // note to self: isn't there a Bootstrap event to observe instead?
     $('a[data-toggle="tab"]').on('click', function (event,params) {
-        //alert("shit?");
+        console.log("shit? click event on a tab");
         var id = '#'+$('div.active').attr('id');
         if (id.indexOf('languages') !== -1 &&
            ! $(".interpreter-language input").length
@@ -176,11 +159,17 @@ $(function(){
                     }
 
                 } else {
-                    /** @todo here's what sucks. use xhr instead for form submission rather than .submit() */
-                    if (params && params.submit) {
-                        // they hit the submit button
-                        return $('#interpreter-form').submit();
-                    }
+                    // /** @todo here's what sucks. use xhr instead for form submission rather than .submit() */
+                    // if (params && params.submit) {
+                    //     // they hit the submit button
+                    //     $.post(document.location.pathname,form.serialize())
+                    //     .then((res)=>{
+                    //         console.log(res);
+                    //         if ("success" === res.status) {
+                    //             document.location = `${window.basePath}/admin/interpreters`;
+                    //         }
+                    //     });
+                    // }
                     $(id + " .validation-error").hide();
                     $(that).tab("show");
                 }
@@ -259,13 +248,28 @@ $(function(){
     to the first one with a validation error
     */
     $('#interpreter-form').on("submit",function(event){
-        //event.preventDefault();
+        event.preventDefault();
         if ($(".validation-error:visible").length) {
             console.warn("boink! not valid");
-            //return false;
+            $(".validation-error:visible").addClass("border border-danger");
+            return false;
         }
-        $('a[data-toggle="tab"]').trigger("click",{submit:true});
-        return true;
+        // $('a[data-toggle="tab"]').trigger("click",{submit:true});
+        // return true;
+        /** @todo here's what sucks. use xhr instead for form submission rather than .submit() */
+            // they hit the submit button
+        $.post(document.location.pathname,form.serialize())
+        .then((res)=>{
+            console.log(res);
+            if ("success" === res.status) {
+                document.location = `${window.basePath}/admin/interpreters`;
+            } else {
+                if (res.validation_errors) {
+                    console.log("You have validation errors my friend.");
+                    displayValidationErrors(res.validation_errors,{debug:true});
+                }
+            }
+        });
     });
 
     $("#btn-delete").on("click",function(event){

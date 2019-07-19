@@ -260,7 +260,7 @@ $(function(){
     to the first one with a validation error
     */
     $('#interpreter-form').on("submit",function(event){
-        //event.preventDefault();
+        event.preventDefault();
         if ($(".validation-error:visible").length) {
             console.warn("boink! not valid");
             //return false;
