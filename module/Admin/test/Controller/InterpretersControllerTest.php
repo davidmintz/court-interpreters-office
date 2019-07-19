@@ -84,9 +84,11 @@ class InterpretersControllerTest extends AbstractControllerTest
             new Parameters($data)
         );
         $this->dispatch($url);
-        //echo $this->getResponse()->getBody(); return;
-        $this->assertRedirect();
-        $this->assertRedirectTo('/admin/interpreters');
+        $this->assertResponseStatusCode(200);
+        $response = $this->getResponse()->getBody();
+        $json = json_decode($response);
+        $this->assertTrue(is_object($json));
+        $this->assertEquals($json->status,'success');
 
         $count_after = $em->createQuery('SELECT COUNT(i.id) FROM InterpretersOffice\Entity\Interpreter i')
                 ->getSingleScalarResult();
