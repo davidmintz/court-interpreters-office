@@ -40,6 +40,7 @@ var displayValidationErrors = function(validationErrors,options) {
         console.log(message);
     }
     $(".validation-error").hide();
+    debug("running displayValidationErrors()");
     //var debug = (options && options.debug) || false;
     for (var field in validationErrors) {
         debug("looking at field: "+field);
@@ -47,12 +48,11 @@ var displayValidationErrors = function(validationErrors,options) {
             debug("looking at key: "+key);
             //if (debug) { console.log("looking at: "+key); }
             var message = validationErrors[field][key];
-
             if (typeof message === "object") {
                 debug("message happens to be an object; recursing"); ;
-                return displayValidationErrors(validationErrors[field]);
-
+                return displayValidationErrors(validationErrors[field],options);
             }
+            debug("the FUCK?");
             var element = $("#" +field);
             if (! element.length) {
                 // nothing to lose by trying harder; undo camelcase
@@ -60,6 +60,7 @@ var displayValidationErrors = function(validationErrors,options) {
                 element = $(id);
             }
             var errorDiv = $("#error_"+field);
+            debug(`error div? ${errorDiv.length}`);
             if (! errorDiv.length) { errorDiv = null;}
             if (! element.length) {
                 debug("is there no element "+field+ " ?"); ;
@@ -73,14 +74,17 @@ var displayValidationErrors = function(validationErrors,options) {
             } else { // yes, there is an element for inserting error
                 errorDiv = errorDiv || element.next(".validation-error");
                 if (! errorDiv.length) {
+                    debug("creating a div for validation error");
                     errorDiv = $("<div/>")
                         .addClass("alert alert-warning validation-error")
                         .attr({id:"error_"+field})
                         .insertAfter(element);
+                } else {
+                    debug("found existing div for validation error");
                 }
+                debug("putting shit in there and showing");
                 errorDiv.html(message).show();
             }
-            //break;
         }
     }
 };

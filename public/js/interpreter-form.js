@@ -116,20 +116,10 @@ $(function(){
     $('a[data-toggle="tab"]').on('click', function (event,params) {
         console.log("shit? click event on a tab");
         var id = '#'+$('div.active').attr('id');
-        if (id.indexOf('languages') !== -1 &&
-           ! $(".interpreter-language input").length
-        ) {
-            if (! $('#languages-div .language-required').length) {
-                $('#languages-div').append(
-                    $('<div >').addClass("alert alert-warning validation-error language-required")
-                    .text("at least one language is required")
-                );
-            }
+        if (!validate_languages()) {
             return false;
-        } else {
-            // this should now be redundant, right?
-            $('#languages .language-required').remove();
         }
+        //$('#languages .language-required').hide();
         var selector = id + " input, " + id + " select";
         var data =($(selector).serialize());
         //console.log(data);
@@ -141,23 +131,14 @@ $(function(){
          */
         $.post('/admin/interpreters/validate-partial?action='+action,
             data,
-            function(response){
-                if (response.validation_errors) {
-                    // if (response.validation_errors.interpreterLanguages) {
-                    //     $.each(response.validation_errors.interpreterLanguages,
-                    //         function(i,error){
-                    //             $('div.language-credential select').not(":disabled")
-                    //             .children('option:selected[value=""]')
-                    //             .closest("div.language-credential")
-                    //             .children(".validation-error")
-                    //             .text(error).show();
-                    //             return false;
-                    //         });
-                    // } else {
+            function(res){
+                if (res.validation_errors) {
+                    if (res.validation_errors.interpreterLanguages) {
+                        render_interpreter_language_errors(res.validation_errors.interpreterLanguages)
+                    } else {
                         //console.warn("shit has nada to do with languages?");
-                        displayValidationErrors(response.validation_errors);
-                    //}
-
+                        displayValidationErrors(res.validation_errors,{debug:true});
+                    }
                 } else {
                     $(id + " .validation-error").hide();
                     $(that).tab("show");
@@ -250,8 +231,18 @@ $(function(){
                 document.location = `${window.basePath}/admin/interpreters`;
             } else {
                 if (res.validation_errors) {
-                    console.log("You have validation errors my friend.");
-                    displayValidationErrors(res.validation_errors,{debug:true});
+                    var errors = res.validation_errors;
+                    var language_errors;
+                    if (errors.interpreter.interpreterLanguages) {
+                        console.debug("rendering interpreterLanguage errors");
+                        language_errors = errors.interpreter.interpreterLanguages;
+                        delete errors.interpreter.interpreterLanguages;
+                        displayValidationErrors(res.validation_errors,{debug:true});
+                        render_interpreter_language_errors(language_errors);
+                    } else {
+                        displayValidationErrors(res.validation_errors,{debug:true});
+                    }
+                    console.warn("STILL TO DO: make sure to show the first tab that has errors");
                 }
             }
         });
@@ -272,6 +263,52 @@ $(function(){
         .fail(fail);
     });
 });
+var render_interpreter_language_errors = function(errors) {
+    console.debug("running render_blabla(): ");
+    console.debug(errors);
+    $.each(errors,
+        function(i,error){
+            if (error.indexOf("language is required") > -1 ) {
+                console.warn("FUCK OUR ASS?");
+                var el;
+                if (! $(".language-required").length) {
+                    el = $(`<div class="alert alert-warning validation-error language-required"></div>`);
+                    $("#languages-div").append(el);
+                }
+                el.text(error).show();
+                return;
+            }
+            //console.debug("trying to show: "+error)
+            $('div.language-credential select').not(":disabled")
+            .children('option:selected[value=""]')
+            .closest("div.language-credential")
+            .children(".validation-error")
+            .text(error).show();
+            //return false;
+        });
+
+};
+var validate_languages = function(){
+    var id = '#'+$('div.active').attr('id');
+    if (id.indexOf('languages') !== -1 &&
+       ! $(".interpreter-language input").length
+    ) {
+        console.log("language required!");
+        if (! $('#languages-div .language-required').length) {
+            $('#languages-div').append(
+                $('<div>').addClass("alert alert-warning validation-error language-required")
+                .text("at least one language is required")
+            );
+        } else {
+            $('#languages .language-required').show();
+        }
+        console.log("returning false");
+        return false;
+    } else {
+        console.log("returning true");
+        return true;
+    }
+};
 var test = function(){
     $("#lastname").val("Doinkle");
     $("#firstname").val("Boinker");
