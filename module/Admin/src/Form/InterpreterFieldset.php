@@ -316,7 +316,7 @@ class InterpreterFieldset extends PersonFieldset
                             return true;
                         },
                         'messages' => [
-                            \Zend\Validator\Callback::INVALID_VALUE => 'language credential is required',
+                            \Zend\Validator\Callback::INVALID_VALUE => 'credential is required',
                         ],
                     ],
                  ],
