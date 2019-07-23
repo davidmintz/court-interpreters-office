@@ -86,7 +86,9 @@ $(function(){
     $("form").on("change",".language-credential select",function(e){
         var value = $(this).val();
         if (value) {
-            $(this).siblings(".validation-error:contains('required')").slideUp();
+            $(this).siblings(".validation-error:contains('required')").slideUp(
+                function(){$(this).empty()}
+            );
         }
     })
 
@@ -107,7 +109,7 @@ $(function(){
     $("#hat").on("change",function(){
         var element = $(this);
         if (element.val()) { // good enough for government work
-            element.next(".validation-error").slideUp();
+            element.next(".validation-error").slideUp().empty();
         }
     });
 
@@ -140,7 +142,7 @@ $(function(){
                         displayValidationErrors(res.validation_errors,{debug:true});
                     }
                 } else {
-                    $(id + " .validation-error").hide();
+                    $(id + " .validation-error").hide().empty();
                     $(that).tab("show");
                 }
             },'json'
@@ -231,6 +233,11 @@ $(function(){
                 document.location = `${window.basePath}/admin/interpreters`;
             } else {
                 if (res.validation_errors) {
+                    /* note to self: the reason for these unpleasant contortions
+                    is that displayValidationErrors() hides existing validation
+                    error messages, so if you show other .validation-error elements
+                    before calling it, it will hide them
+                    */
                     var errors = res.validation_errors;
                     var language_errors;
                     if (errors.interpreter.interpreterLanguages) {
@@ -242,7 +249,9 @@ $(function(){
                     } else {
                         displayValidationErrors(res.validation_errors,{debug:true});
                     }
-                    console.warn("STILL TO DO: make sure to show the first tab that has errors");
+                    var pane = $(".validation-error").not(":empty").first().closest('div.tab-pane');
+                    var id = pane.attr("id");
+                    $(`#nav-tabs a[aria-controls="${id}"]`).tab("show");
                 }
             }
         });
