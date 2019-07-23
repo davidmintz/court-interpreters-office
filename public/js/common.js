@@ -39,7 +39,7 @@ var displayValidationErrors = function(validationErrors,options) {
         if (! options || !options.debug) { return; }
         console.log(message);
     }
-    $(".validation-error").hide();
+    $(".validation-error").hide().empty();
     debug("running displayValidationErrors()");
     //var debug = (options && options.debug) || false;
     for (var field in validationErrors) {
