@@ -189,6 +189,13 @@ class UserRepository extends EntityRepository
         return $parameters;
     }
 
+    /**
+     * gets search results
+     *
+     * @param  string        $name_or_email
+     * @param  Array         $options
+     * @return ZendPaginator
+     */
     public function paginate(string $name_or_email, Array $options) :ZendPaginator
     {
         $page = isset($options['page']) ? $options['page']: 1;

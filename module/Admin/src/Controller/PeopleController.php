@@ -69,8 +69,8 @@ class PeopleController extends AbstractActionController
         return new ViewModel(
             ['title' => 'people','defaults' => $session->defaults,'options' => $opts]
         );
-            // for a vue.js learning exercise
-            //->setTemplate('interpreters-office/admin/people/vue.phtml');
+        // for a vue.js learning exercise
+        //->setTemplate('interpreters-office/admin/people/vue.phtml');
     }
 
     /**
@@ -211,24 +211,24 @@ class PeopleController extends AbstractActionController
         return new JsonModel($data);
     }
 
+
     /**
      * search
      */
     public function searchAction()
     {
         $repo = $this->entityManager->getRepository(Entity\Person::class);
-        $id = $this->params()->fromQuery('id');
         $session = new Session('people_index');
         $params = $this->params()->fromQuery();
         $session->defaults = $params;
         /** @var \Zend\Paginator\Paginator $paginator */
-        $paginator = $repo->search($params);
+        $paginator = $repo->paginate($params);
+        $view = (new ViewModel())
+            ->setTerminal(true)
+            ->setTemplate('people/results');
+            
+        return $view->setVariables(['paginator'=>$paginator]);
 
-        return new JsonModel([
-            'data' => $paginator->getCurrentItems(),
-            'count' => $paginator->getTotalItemCount(),
-            'pages' => $paginator->getPages()
-        ]);
     }
 
     /**

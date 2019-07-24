@@ -129,9 +129,56 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         return $query->getResult();
     }
 
+
+    public function paginate(Array $terms)
+    {
+        if (!empty((int)$terms['page'])) {
+            $page = $terms['page'];
+        } else {
+            $page = 1;
+        }
+        $params = [];
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('p, h')
+            ->from(Person::class, 'p')
+            ->join('p.hat', 'h');
+        if (isset($terms['id'])) {
+            $qb->where('p.id = :id');
+            $params = ['id' => $terms['id']];
+        } else {
+            if (! empty($terms['name'])) {
+                $name = $this->parseName($terms['name']);
+                $qb->where("p.lastname LIKE :lastname");
+                $params = ['lastname' => "$name[last]%"];
+                if ($name['first']) {
+                    $qb->andWhere('p.firstname LIKE :firstname');
+                    $params['firstname'] = "$name[first]%";
+                }
+            }
+            if (isset($terms['active']) && $terms['active'] !== '') {
+                $qb->andWhere('p.active = :active');
+                $params['active'] = $terms['active'] ? "true" : "false";
+            }
+            if (isset($terms['hat']) && $terms['hat'] !== '') {
+                $qb->andWhere("h.id = :hat");
+                $params['hat'] = $terms['hat'];
+            }
+        }
+
+        $qb->setParameters($params)->orderBy('p.lastname, p.firstname');
+        $query = $qb->getQuery();
+        $adapter = new DoctrineAdapter(new ORMPaginator($query));
+        $paginator = new ZendPaginator($adapter);
+        $paginator
+            ->setCurrentPageNumber($page)
+            ->setItemCountPerPage(20);
+
+        return $paginator;
+    }
+
     /**
-     * look up people
-     *
+     * look up people. destined for removal.
+     * @deprecated
      * @param array $parameters
      * @return \Zend\Zend\Paginator\Paginator
      */
