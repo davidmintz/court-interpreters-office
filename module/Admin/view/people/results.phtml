@@ -36,10 +36,8 @@ if (!$this->paginator->getTotalItemCount() ) : ?>
         <?php endforeach;?>
     </tbody>
 </table>
-
-    <?php echo $this->paginationControl(
+<?php echo $this->paginationControl(
         $this->paginator,
         'sliding','partials/pagination_control',['route' => 'people']
-    );?>
-
+);?>
 <?php endif;
