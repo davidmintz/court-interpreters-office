@@ -157,14 +157,16 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
             }
             if (isset($terms['active']) && $terms['active'] !== '') {
                 $qb->andWhere('p.active = :active');
-                $params['active'] = $terms['active'] ? "true" : "false";
+                $params['active'] = (bool)$terms['active'] ;
             }
             if (isset($terms['hat']) && $terms['hat'] !== '') {
                 $qb->andWhere("h.id = :hat");
                 $params['hat'] = $terms['hat'];
             }
-        }
 
+        }
+        // var_dump($params);
+        // echo $qb->getDQL();exit();
         $qb->setParameters($params)->orderBy('p.lastname, p.firstname');
         $query = $qb->getQuery();
         $adapter = new DoctrineAdapter(new ORMPaginator($query));

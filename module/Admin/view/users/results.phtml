@@ -10,7 +10,7 @@ if (!$this->paginator->getTotalItemCount() ) : ?>
 <?php else: ?>
 <p>
     <?php
-    echo $this->paginationControl($this->languages, null, 'partials/pagination_head');
+    echo $this->paginationControl($this->paginator, null, 'partials/pagination_head');
     ?>
 </p>
 <table class="table table-sm table-hover">

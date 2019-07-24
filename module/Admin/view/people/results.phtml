@@ -1,7 +1,45 @@
 <?php
-if ($this->paginator):
-    echo "You have a paginator... ";
-endif;
+if ($this->errorMessage):?>
+<p class="alert alert-warning"><?php echo $this->escapeHtml($this->errorMessage) ?></p>
+<?php
+return; endif;
+if (! $this->paginator): return; endif;
+if (!$this->paginator->getTotalItemCount() ) : ?>
+<p>No people found matching the above criteria.</p>
+<?php else: ?>
+<p>
+<?php
+    echo $this->paginationControl($this->paginator, null, 'partials/pagination_head');
 ?>
+</p>
+<table class="table table-sm table-hover">
+    <tbody>
+        <?php foreach ($this->paginator as $person):
 
-I got your results right here.
+            $edit = $this->url('people/edit',['id'=>$person->getId(),]);
+            $view = '.';//$this->url('people/edit',['id'=>$person->getId(),'action'=>'view']);
+            //continue;
+            ?>
+            <tr<?php if (! $person->isActive()):?> class="text-muted"<?php endif ?>>
+                <td><a data-toggle="tooltip" title="view details" href="<?php echo $view ?>"><?php echo $this->escapeHtml("{$person->getLastname()}, {$person->getFirstname()}"); ?></a></td>
+                <td class="text-md-left">
+                    <?php if (! $person->isActive()):?>
+                        <span  data-toggle="tooltip" title="this person is inactive" style="opacity:.75" class="align-self-center fas fa-times text-danger"></span>
+                        <span class="sr-only">(inactive)</span>
+                    <?php endif; ?>
+                </td>
+                <td><?php echo (string)$person->getHat(); ?></td>
+                <td class="border-left-0"><a data-toggle="tooltip" title="edit this person" class="link-edit-person" href="<?php echo $edit ?>">
+                    <span class="fas fa-edit"></span><span class="sr-only">edit this person</span>
+                </a></td>
+            </tr>
+        <?php endforeach;?>
+    </tbody>
+</table>
+
+    <?php echo $this->paginationControl(
+        $this->paginator,
+        'sliding','partials/pagination_control',['route' => 'people']
+    );?>
+
+<?php endif;

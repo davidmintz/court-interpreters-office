@@ -36,6 +36,12 @@ class PeopleController extends AbstractActionController
     protected $formConfig;
 
     /**
+     * session
+     * @var Session
+     */
+    protected $session;
+
+    /**
      * sets form configuration
      *
      * @param Array $config
@@ -53,6 +59,7 @@ class PeopleController extends AbstractActionController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->session = new Session('people_index');
     }
 
     /**
@@ -62,12 +69,27 @@ class PeopleController extends AbstractActionController
      */
     public function indexAction()
     {
-        $session = new Session('people_index');
+
+        $get = $this->params()->fromQuery();
+        if ($this->getRequest()->isXmlHttpRequest() && $get) {
+            return $this->search();
+        }
+        $paginator = null;
+        if ((! $get) && $this->session->defaults) {
+            // not xhr, no query parameters, yes session parameters
+            $paginator =  $this->entityManager
+                ->getRepository(Entity\Person::class)
+                ->paginate($this->session->defaults);
+        }
         $repo = $this->entityManager->getRepository(Entity\Hat::class);
         $opts = $repo->getHatOptions([Entity\Hat::ANONYMITY_NEVER,
             Entity\Hat::ANONYMITY_OPTIONAL]);
         return new ViewModel(
-            ['title' => 'people','defaults' => $session->defaults,'options' => $opts]
+            [   'title' => 'people',
+                'defaults' => $this->session->defaults,
+                'options' => $opts,
+                'paginator' => $paginator,
+            ]
         );
         // for a vue.js learning exercise
         //->setTemplate('interpreters-office/admin/people/vue.phtml');
@@ -215,18 +237,18 @@ class PeopleController extends AbstractActionController
     /**
      * search
      */
-    public function searchAction()
+    public function search()
     {
         $repo = $this->entityManager->getRepository(Entity\Person::class);
-        $session = new Session('people_index');
         $params = $this->params()->fromQuery();
-        $session->defaults = $params;
+        //print_r($params); exit();
+        $this->session->defaults = $params;
         /** @var \Zend\Paginator\Paginator $paginator */
         $paginator = $repo->paginate($params);
         $view = (new ViewModel())
             ->setTerminal(true)
             ->setTemplate('people/results');
-            
+
         return $view->setVariables(['paginator'=>$paginator]);
 
     }
