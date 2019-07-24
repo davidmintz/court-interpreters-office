@@ -238,10 +238,10 @@ $(function(){
                         if (errors.interpreter.interpreterLanguages) {
                             language_errors = errors.interpreter.interpreterLanguages;
                             delete errors.interpreter.interpreterLanguages;
-                            displayValidationErrors(res.validation_errors,{debug:true});
+                            displayValidationErrors(res.validation_errors,{debug:false});
                             render_interpreter_language_errors(language_errors);
                         } else {
-                            displayValidationErrors(res.validation_errors,{debug:true});
+                            displayValidationErrors(res.validation_errors,{debug:false});
                         }
                         var pane = $(".validation-error").not(":empty").first().closest("div.tab-pane");
                         var id = pane.attr("id");
@@ -270,16 +270,20 @@ var render_interpreter_language_errors = function(errors) {
     $.each(errors,
         function(i,error){
             if (error.indexOf("language is required") > -1 ) {
-                var el;
-                if (! $(".language-required").length) {
-                    el = $("<div class=\"alert alert-warning validation-error language-required\"></div>");
+                var el =  $(".language-required");
+                if (! el.length) {
+                    el = $(`<div class="alert alert-warning validation-error language-required"></div>`);
                     $("#languages-div").append(el);
+                } else {
+                    if ($(".language-required:visible").length) {
+                        el.addClass("border border-danger");
+                    }
                 }
                 el.text(error).show();
                 return;
             }
             $("div.language-credential select").not(":disabled")
-                .children("option:selected[value=\"\"]")
+                .children(`option:selected[value=""]`)
                 .closest("div.language-credential")
                 .children(".validation-error")
                 .text(error).show();
@@ -297,14 +301,18 @@ var validate_languages = function(){
                     .text("at least one language is required")
             );
         } else {
-            $("#languages .language-required").show();
+            if ($("#languages .language-required:visible").length) {
+                $("#languages .language-required").addClass("border border-danger")
+            } else {
+                $("#languages .language-required").show();
+            }
         }
         return false;
     } else {
         return true;
     }
 };
-/*
+///*
 var test = function(){
     $("#lastname").val("Doinkle");
     $("#firstname").val("Boinker");
@@ -313,4 +321,4 @@ var test = function(){
     $('#language-select').val(62);
     $('#btn-add-language').trigger("click");
 };
-*/
+//*/

@@ -17,7 +17,7 @@ class LanguageElementCollection extends AbstractHelper
      */
     protected $template = <<<TEMPLATE
 <!-- shit begins -->
-<div class="offset-sm-1 col-sm-3  interpreter-language language-name form-inline" id="language-%d">
+<div class="offset-sm-1 col-sm-3  interpreter-language language-name pt-2" id="language-%d">
 %s
 </div>
 <div class="col-sm-8 form-inline interpreter-language language-credential">
