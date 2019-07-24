@@ -32,6 +32,7 @@ return [
     'interpreters-office/admin/judges/index' => __DIR__ . '/../view/judges/index.phtml',
     'interpreters-office/admin/judges/add' => __DIR__ . '/../view/judges/form.phtml',
     'interpreters-office/admin/judges/edit' => __DIR__ . '/../view/judges/form.phtml',
+    'interpreters-office/admin/judges/view' => __DIR__ . '/../view/judges/view.phtml',
     'interpreters-office/admin/defendants/index' => __DIR__ . '/../view/defendants/index.phtml',
     'interpreters-office/admin/defendants/edit' => __DIR__ . '/../view/defendants/form.phtml',
     'interpreters-office/admin/defendants/add' => __DIR__ . '/../view/defendants/form.phtml',

@@ -391,6 +391,19 @@ return  [
                         ],
                     ],
                 ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:id',
+                        'defaults' => [
+                            'action' => 'view',
+
+                        ],
+                        'constraints' => [
+                            'id' => '[1-9]\d*',
+                        ],
+                    ],
+                ],
             ],
         ],
         'admin-defendants' => [

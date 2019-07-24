@@ -139,9 +139,9 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         }
         $params = [];
         $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('p, h')
+            ->select('p, h, r')
             ->from(Person::class, 'p')
-            ->join('p.hat', 'h');
+            ->join('p.hat', 'h')->leftJoin('h.role','r');    
         if (isset($terms['id'])) {
             $qb->where('p.id = :id');
             $params = ['id' => $terms['id']];

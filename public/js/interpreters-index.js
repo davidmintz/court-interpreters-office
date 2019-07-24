@@ -24,9 +24,9 @@ $(function(){
         }
     });
 
-    if (document.referrer.indexOf('interpreters/language')!== -1) {
-        // for their convenience, point back to index page in its previous state
-        $("h2 a:contains(interpreters)").attr({href:document.referrer })
+    if (document.referrer.indexOf('interpreters/language')!== -1 ||
+        document.referrer.indexOf("admin/people") !== -1) {
+        $(`h2 a:contains("interpreters")`).attr({href:document.referrer })
     }
 
     $('#btn-search-name').on("click",function(event){

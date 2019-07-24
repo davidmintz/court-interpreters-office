@@ -44,6 +44,6 @@ endif;
     <input type="text" id="name" name="name" class="form-control" value="<?php echo $this->escapeHtml($defaults['name'])?>" placeholder="last name[, first ]">
     <button type="submit" id="btn-search" class="btn btn-primary my-1 ml-1 "><span class="icon fa fa-search"></span> search</button>
 </form>
-<div id="results" class="mx-auto results" style="max-width:850px">
+<div id="results" class="mx-auto results" style="max-width:650px">
     <?php if ($this->paginator): echo $this->render('people/results'); endif;?>
 </div>

@@ -52,6 +52,16 @@ $(function(){
         $.get(url).then(function(res){results_div.html(res);});
 
     });
+    /* work in progress */
+    results_div.on("click","td a[title='view details']",function(e){
+        if ($(this).text().trim() === "#") {
+            e.preventDefault();
+        }
+        if ($(this).data('user_role')) {
+            e.preventDefault();
+            console.warn("so and so has default role: "+$(this).data('user_role'))
+        }
+    });
 });
 
 const get_people_search_url = function(page){

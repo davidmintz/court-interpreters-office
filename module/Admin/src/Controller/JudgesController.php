@@ -46,6 +46,15 @@ class JudgesController extends AbstractActionController
 
         return new ViewModel(['title' => 'judges', 'judges' => $judges, ]);
     }
+    /**
+     * view judge details
+     *
+     * @return ViewModel|array
+     */
+    public function viewAction()
+    {
+        return [];
+    }
 
     /**
      * add a new Judge.
