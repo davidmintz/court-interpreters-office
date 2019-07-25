@@ -84,6 +84,8 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
     /**
      * returns an array of value => label for person autocompletion
      *
+     * @todo consider rewriting with the querybuilder
+     *
      * @param string $term
      * @param Array $options
      *
@@ -91,33 +93,12 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      */
     public function autocomplete($term, Array $options = [])
     {
-        /*
-         //this is too much bullshit...
-         $qb->select(
-             'PARTIAL u.{id}',
-             'u.id','u.active',
-             'p.lastname','p.firstname','p.email','h.name hat');
-         $qb->select([
-             $qb->expr()->concat(
-                 'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
-             ). 'AS label',
-             'u.id AS value',
-         ]);
-         */
-
+        $options = array_merge(['hat' => null,'active' => null, 'limit' => 20, ], $options);
         $name = $this->parseName($term);
         $parameters = ['lastname' => "$name[last]%"];
-
-        //$hat = null, $active = null, $limit = 20
-        $options = array_merge(['hat' => null,'active' => null, 'limit' => 20, 'value_column' => 'id'], $options);
-
-        $dql = "SELECT p.{$options['value_column']} AS value, CONCAT(p.lastname, ', ', p.firstname) AS label";
-        if ('email' == $options['value_column']) {
-            $dql .= ", h.name AS hat, p.id";
-        }
+        $dql = "SELECT p.id AS value, CONCAT(p.lastname, ', ', p.firstname) AS label";
         $dql .= '  FROM InterpretersOffice\Entity\Person p JOIN p.hat h';
         if ($options['hat']) {
-            //$dql .= ' JOIN p.hat h
             $dql .= ' WHERE h.id = :hat AND';
             $parameters['hat'] = $options['hat'];
         } else {
@@ -130,10 +111,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
             $parameters['firstname'] = "$name[first]%";
         }
         if ($options['active'] !== null) {
-            $dql .= ' AND p.active = '.($options['active'] ? 'TRUE' : 'FALSE');
-        }
-        if ($options['value_column'] == 'email') {
-            $dql .= ' AND p.email IS NOT NULL';
+            $dql .= ' AND p.active = '.($options['active'] ? true : false);
         }
         $dql   .= " ORDER BY p.lastname, p.firstname";
         $query = $this->createQuery($dql)
