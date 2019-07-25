@@ -3,12 +3,19 @@
  *  viewscript for main people-administration page
  */
 use Zend\Form\Element;
-$defaults = $this->defaults ?: [
-    'active' => '',
-    'hat' => '',
-    'name' => '',
-    'id' => '',
-];
+if ($this->defaults):
+    $defaults = array_merge([
+        'active' => '','hat' => '', 'name' => '',
+        'id' => '',],$this->defaults);
+else:
+    $defaults = [
+        'active' => '',
+        'hat' => '',
+        'name' => '',
+        'id' => '',
+    ];
+endif;
+
 $hat_element = (new Element\Select(
     'hat',
     ['value_options' => $this->options,
