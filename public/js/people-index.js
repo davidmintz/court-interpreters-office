@@ -52,7 +52,9 @@ $(function(){
         $.get(url).then(function(res){results_div.html(res);});
 
     });
-    /* work in progress */
+    /*  work in progress. it might be cool to show details for generic people in
+        a popover. for people who have a user account, refer them 
+     */
     results_div.on("click","td a[title='view details']",function(e){
         if ($(this).text().trim() === "#") {
             e.preventDefault();

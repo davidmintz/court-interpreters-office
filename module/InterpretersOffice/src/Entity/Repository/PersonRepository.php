@@ -91,6 +91,20 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      */
     public function autocomplete($term, Array $options = [])
     {
+        /*
+         //this is too much bullshit...
+         $qb->select(
+             'PARTIAL u.{id}',
+             'u.id','u.active',
+             'p.lastname','p.firstname','p.email','h.name hat');
+         $qb->select([
+             $qb->expr()->concat(
+                 'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
+             ). 'AS label',
+             'u.id AS value',
+         ]);
+         */
+
         $name = $this->parseName($term);
         $parameters = ['lastname' => "$name[last]%"];
 
@@ -129,7 +143,12 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         return $query->getResult();
     }
 
-
+    /**
+     * returns a paginator of Person entities
+     *
+     * @param  Array  $terms search terms
+     * @return ZendPaginator
+     */
     public function paginate(Array $terms)
     {
         if (!empty((int)$terms['page'])) {
@@ -141,7 +160,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('p, h, r')
             ->from(Person::class, 'p')
-            ->join('p.hat', 'h')->leftJoin('h.role','r');    
+            ->join('p.hat', 'h')->leftJoin('h.role','r');
         if (isset($terms['id'])) {
             $qb->where('p.id = :id');
             $params = ['id' => $terms['id']];
@@ -163,17 +182,13 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
                 $qb->andWhere("h.id = :hat");
                 $params['hat'] = $terms['hat'];
             }
-
         }
-        // var_dump($params);
-        // echo $qb->getDQL();exit();
+        // var_dump($params); echo $qb->getDQL();exit();
         $qb->setParameters($params)->orderBy('p.lastname, p.firstname');
         $query = $qb->getQuery();
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
-        $paginator
-            ->setCurrentPageNumber($page)
-            ->setItemCountPerPage(20);
+        $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
 
         return $paginator;
     }
