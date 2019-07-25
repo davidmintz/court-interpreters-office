@@ -53,7 +53,7 @@ $(function(){
 
     });
     /*  work in progress. it might be cool to show details for generic people in
-        a popover. for people who have a user account, refer them 
+        a popover. for people who have a user account, refer them
      */
     results_div.on("click","td a[title='view details']",function(e){
         if ($(this).text().trim() === "#") {
@@ -73,7 +73,7 @@ const get_people_search_url = function(page){
     var query;
     var path = `${window.document.location.pathname}`;
     if (id) {
-        query `id=${id}`;
+        query = `id=${id}`;
     } else {
         query =  $("#search-form").serialize();
     }
