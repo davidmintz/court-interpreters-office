@@ -417,9 +417,12 @@ class UsersController extends AbstractActionController implements Authentication
         return $view->setVariables(['paginator'=>$paginator]);
     }
 
+    /**
+     * @todo implement
+     */
     public function viewAction()
     {
-        
+
     }
 
     /**
