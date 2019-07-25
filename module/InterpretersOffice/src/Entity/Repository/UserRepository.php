@@ -144,15 +144,20 @@ class UserRepository extends EntityRepository
     {
         $parameters = $this->parseOptions($name_or_email, $options);
         $qb = $this->createQueryBuilder('u')->join('u.person','p');
-        $qb->select([
-            $qb->expr()->concat(
-                'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
-            ). 'AS label',
-            'u.id AS value',
-        ]);
+
         if (!empty($parameters['email'])) {
+            $qb->select([
+                'p.email AS label',
+                'u.id AS value',
+            ]);
             $qb->where('p.email LIKE :email');
         } else { // search by name
+            $qb->select([
+                $qb->expr()->concat(
+                    'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
+                ). 'AS label',
+                'u.id AS value',
+            ]);
             $qb->where('p.lastname LIKE :lastname');
             if (!empty($parameters['firstname'])) {
                 $qb->andWhere('p.firstname LIKE :firstname');
