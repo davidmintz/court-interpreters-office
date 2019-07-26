@@ -1,4 +1,6 @@
+
 $(function(){
+
     var button = $("#btn-search");
     var name_element = $("#name");
     var autocomplete_options = {
@@ -10,12 +12,17 @@ $(function(){
             if ($("#active").val() !== "") {
                 params.active = $("#active").val();
             }
-            $.get("/admin/people/autocomplete",params,"json").then(
-                function(data){
-                    if (! data.length) {
-                        name_element.data({id:""});
+            $.get("/admin/people/autocomplete",params,"json").done(
+                function(data,statusText,jqXHR){
+                    // bullshit, experimental effort to handle non-json
+                    // responses e.g., redirects to /login
+                    if (-1 < jqXHR.getResponseHeader("content-type")
+                            .toLowerCase().indexOf("application/json")) {
+                        if (! data.length) {
+                             name_element.data({id:""});
+                        }
+                        return response(data);
                     }
-                    return response(data);
                 }
             );
         },
