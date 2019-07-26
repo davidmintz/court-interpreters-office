@@ -476,9 +476,11 @@ while ($e = $stmt->fetch(PDO::FETCH_ASSOC)) {
     if ($e['cancel_reason'] == 'N/A') {
         $params[':cancellation_reason_id'] = NULL;
     } else {
-        $params[':cancellation_reason_id'] = $cancellations[$e['cancel_reason']];
-        if ($e['cancel_reason'] == 'forçe majeure') {
+        # Undefined index: for�e majeure on line 479
+        if (strstr($e['cancel_reason'],'majeure')) {
             $params[':cancellation_reason_id'] = 5; // trust me
+        } else {
+            $params[':cancellation_reason_id'] = $cancellations[$e['cancel_reason']];
         }
     }
 
