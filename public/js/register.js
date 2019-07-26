@@ -23,6 +23,7 @@ $(function(){
     {
         event.preventDefault();
         var params, id = $("fieldset:visible").attr("id");
+        console.warn(id);
         if (id === "fieldset-hat") { // last step
             if (hasIncompleteJudgeSelection(id)) {
                 $("#modal-add-judge .modal-body").html(
@@ -72,28 +73,26 @@ $(function(){
         if (id === "fieldset-personal-data" || id === "fieldset-password") {
             params = $("fieldset:visible, #csrf").serialize();
             $.post("/user/register/validate?step="+id,params)
-                .then(function(response) {
-                    if (response.validation_errors) {
-                        var errors = response.validation_errors;
-                        var url = window.basePath + "/user/request-password";
-                        // special case: duplicate account
-                        if (errors.email && errors.email.callbackValue) {
-                            $("#modal-duplicate-account .modal-body").html(
-                                "A user account has previously been created for this email address."
-                + " If you need to reset your password, please go to <a href=\""
-                + url + "\">"+ url +"</a>.");
-                            $("#modal-duplicate-account").modal();
-                        }
-                        displayValidationErrors(errors);
-                    } else {
-                        $("fieldset:visible .validation-error").hide();
-                        $(".carousel").carousel("next");
-                    }
-                });
-        }
-    }
-    );
+            .then(function(response) {
+                if (response.validation_errors) {
+                    var errors = response.validation_errors;
+                    var url = window.basePath + "/user/request-password";
+                    // special case: duplicate account
+                    if (errors.email && errors.email.objectFound) {
+                        $("#modal-duplicate-account .modal-body").html(
+                    `A user account has previously been created for this email address.
+                     If you need to reset your password, please go to <a href="${url}">${url}</a>.`);
 
+                     $("#modal-duplicate-account").modal();
+                     displayValidationErrors(errors);
+                    }
+                } else {
+                    $("fieldset:visible .validation-error").hide();
+                    $(".carousel").carousel("next");
+                }
+            });
+        }
+    });
     var hasIncompleteJudgeSelection = function(id)
     {
         return id === "fieldset-hat" && $("#judge-select").val();

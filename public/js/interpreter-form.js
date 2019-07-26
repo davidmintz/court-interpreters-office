@@ -223,32 +223,39 @@ $(function(){
             return false;
         }
         $.post(document.location.pathname,form.serialize())
-            .then((res)=>{
-                if ("success" === res.status) {
-                    document.location = `${window.basePath}/admin/interpreters`;
-                } else {
-                    if (res.validation_errors) {
-                    /* note to self: the reason for these unpleasant contortions
-                    is that displayValidationErrors() hides existing validation
-                    error messages, so if you show other .validation-error elements
-                    before calling it, it will hide them
-                    */
-                        var errors = res.validation_errors;
-                        var language_errors;
-                        if (errors.interpreter.interpreterLanguages) {
-                            language_errors = errors.interpreter.interpreterLanguages;
-                            delete errors.interpreter.interpreterLanguages;
-                            displayValidationErrors(res.validation_errors,{debug:false});
-                            render_interpreter_language_errors(language_errors);
-                        } else {
-                            displayValidationErrors(res.validation_errors,{debug:false});
-                        }
-                        var pane = $(".validation-error").not(":empty").first().closest("div.tab-pane");
-                        var id = pane.attr("id");
-                        $(`#nav-tabs a[aria-controls="${id}"]`).tab("show");
+        .then((res)=>{
+            if ("success" === res.status) {
+                $("body").prepend("<h1>shit was valid</h1>");
+                document.location = `${window.basePath}/admin/interpreters`;
+            } else {
+                if (res.validation_errors) {
+                /* trying to figure out why python-selenium does not submit "#hat" value */
+                // $("body").prepend(`<p>${form.serialize()}</p>`);
+                // $("body").prepend(JSON.stringify(res.validation_errors));
+                // $("body").prepend("<h1>shit was NOT valid</h1>");
+                //$("body").prepend(`<h2>hat? ${$("#hat").val()}</h2>`);
+
+                /* note to self: the reason for these unpleasant contortions
+                is that displayValidationErrors() hides existing validation
+                error messages, so if you show other .validation-error elements
+                before calling it, it will hide them
+                */
+                    var errors = res.validation_errors;
+                    var language_errors;
+                    if (errors.interpreter.interpreterLanguages) {
+                        language_errors = errors.interpreter.interpreterLanguages;
+                        delete errors.interpreter.interpreterLanguages;
+                        displayValidationErrors(res.validation_errors,{debug:false});
+                        render_interpreter_language_errors(language_errors);
+                    } else {
+                        displayValidationErrors(res.validation_errors,{debug:false});
                     }
+                    var pane = $(".validation-error").not(":empty").first().closest("div.tab-pane");
+                    var id = pane.attr("id");
+                    $(`#nav-tabs a[aria-controls="${id}"]`).tab("show");
                 }
-            });
+            }
+        });
     });
 
     $("#btn-delete").on("click",function(event){

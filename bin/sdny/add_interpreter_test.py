@@ -3,7 +3,7 @@
 import unittest, time, configparser, os, pymysql
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as EC, select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -47,7 +47,12 @@ class InterpreterAdminTests(unittest.TestCase):
         params = config["client"]
         db = pymysql.connect(user=params["user"],password=params["password"],
                              db="office")
-        db.query("DELETE FROM people WHERE email = 'gacker_boink@nysd.uscourts.gov'")
+        cursor = db.cursor();
+        query = "DELETE FROM people WHERE email = 'gacker_boink@nysd.uscourts.gov'"
+        print(cursor.execute(query))
+        db.commit()
+
+
 
     def setUp(self):
         # options = FirefoxOptions()
@@ -62,6 +67,7 @@ class InterpreterAdminTests(unittest.TestCase):
         pass
 
     def test_interpreter_add_form_validation(self):
+
         driver = self.driver
         driver.get("https://office.localhost/admin/interpreters/add")
         driver.find_element_by_id("lastname").send_keys("Gacker")
@@ -70,6 +76,7 @@ class InterpreterAdminTests(unittest.TestCase):
         driver.find_element_by_id("languages-tab").click()
         wait = WebDriverWait(driver, 3)
         wait.until(EC.visibility_of_element_located((By.ID, 'language-select')))
+        driver.find_element_by_id("comments").send_keys("these are some comments, carefully considered.")
         driver.find_element_by_css_selector("#language-select option[value='3']").click()
         driver.find_element_by_id("btn-add-language").click()
 
@@ -87,8 +94,16 @@ class InterpreterAdminTests(unittest.TestCase):
     def test_something_else(self):
         driver = self.driver
         self.assertEqual("https://office.localhost/admin/interpreters/add",driver.current_url)
+        menu = select.Select(driver.find_element_by_id("hat"))
+        menu.select_by_visible_text("contract court interpreter")
         xpath =  "//option[text()='contract court interpreter']"
-        driver.find_element_by_xpath(xpath).click()
+        option = driver.find_element_by_xpath(xpath)
+        wait = WebDriverWait(driver, 3)
+        wait.until(EC.element_to_be_selected(option))
+        script = '$("#interpreter-form").append(`<input name="interpreter[hat]" value="3">`);'
+        driver.execute_script(script)
+        # "/* $('#hat').val(3); */$('body').prepend(`<strong>WTF? hat is now ${$('#hat').val()}</strong>`)");
+        #driver.find_element_by_xpath(xpath).click()
         driver.find_element_by_css_selector("input[name='submit']").click()
 
 
@@ -102,9 +117,9 @@ class InterpreterAdminTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(self):
-        time.sleep(2)
-        self.driver.close()
-        #pass
+        # time.sleep(2)
+        # self.driver.close()
+        pass
 
 
 if __name__ == "__main__":
