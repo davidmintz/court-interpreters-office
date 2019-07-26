@@ -201,6 +201,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         );
         $this->add($fieldset);
 
+        $this->addJudgeElement();
+        
         return $this;
     }
 

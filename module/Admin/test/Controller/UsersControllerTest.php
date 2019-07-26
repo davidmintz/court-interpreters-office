@@ -62,4 +62,13 @@ class UsersControllerTest extends AbstractControllerTest
         $this->dispatch($url);
         $this->assertRedirect();
     }
+
+    public function testAddUser()
+    {
+        $this->login('susie', 'boink');
+        $this->reset(true);
+        $this->dispatch('/admin/users/add');
+        $this->assertResponseStatusCode(200);
+
+    }
 }
