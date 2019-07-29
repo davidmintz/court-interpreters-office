@@ -53,7 +53,10 @@ $(function(){
     });
     $("#results").on("click","a.page-link",function(e){
         e.preventDefault();
-        $.get(this.href,get_search_parameters()).then(
+        var url = document.location.pathname;
+        var params = get_search_parameters();
+        params.page = $(this).text().trim();
+        $.get(url,params).then(
             response=>{$("#results").html(response);$(`[data-toggle="tooltip"]`).tooltip();}
         );
     });

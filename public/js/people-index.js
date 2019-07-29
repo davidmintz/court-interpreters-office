@@ -76,14 +76,8 @@ $(function(){
 const get_people_search_url = function(page){
 
     var name_element = $("#name");
-    var id = name_element.data("id");
-    var query;
+    var query =  $("#search-form").serialize();
     var path = `${window.document.location.pathname}`;
-    if (id) {
-        query = `id=${id}`;
-    } else {
-        query =  $("#search-form").serialize();
-    }
     if (! page) {
         page = 1;
     }
