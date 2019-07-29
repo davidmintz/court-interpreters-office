@@ -200,9 +200,13 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ]
         );
         $this->add($fieldset);
+        /**
+         * see how this works out...
+         */
+        if (!$hat or $hat->isJudgesStaff()) {
+            $this->addJudgeElement();
+        }
 
-        $this->addJudgeElement();
-        
         return $this;
     }
 

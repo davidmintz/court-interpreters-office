@@ -67,8 +67,8 @@ class UserForm extends Form
                 $this->getInputFilter()->get('user')->remove('username');
             }
         }
-        
-        
+
+
 
         // make the email required
         $email_input = $this->getInputFilter()->get('user')
@@ -82,7 +82,7 @@ class UserForm extends Form
     /**
      * adds password validation
      *
-     * 
+     *
      */
     public function addPasswordValidators()
     {
@@ -108,7 +108,7 @@ class UserForm extends Form
                 'break_chain_on_failure'=> true,
                 'messages' => ['isEmpty' => 'password-confirmation field is required',]
                 , true])
-  
+
             ->attachByName('Identical', ['token' => 'password','messages' => [
                 'notSame' => 'password confirmation field does not match'
         ]]);

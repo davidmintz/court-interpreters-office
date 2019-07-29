@@ -23,7 +23,7 @@ use InterpretersOffice\Controller\ExceptionHandlerTrait;
  *  AccountController.
  *
  *  For registration, password reset and email verification.
- *  
+ *
  */
 
 class AccountController extends AbstractActionController
@@ -190,7 +190,7 @@ class AccountController extends AbstractActionController
 
     /**
      * email verification
-     * 
+     *
      * @return ViewModel
      */
     public function verifyEmailAction()
@@ -326,8 +326,7 @@ class AccountController extends AbstractActionController
         $user_fieldset = $form->get('user');
         $user_fieldset->get('person')->setObject($person);
         $form->bind($user);
-        $viewModel = (new ViewModel([ //'title' => 'user | profile',
-            'form'=>$form]));
+        $viewModel = (new ViewModel(['form'=>$form]));
         // they don't get to manipulate their own role, once set
         $form->getInputFilter()->get('user')->remove('role')->remove('id');
         if ($auth->role == 'submitter') {
@@ -335,7 +334,7 @@ class AccountController extends AbstractActionController
             // zero data history
             $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
                 ->countRelatedEntities($user);
-        } else { 
+        } else {
             $related_entities = null;
         }
         $user_fieldset->addPasswordElements();
@@ -345,7 +344,6 @@ class AccountController extends AbstractActionController
         } else {
             return $viewModel;
         }
-        
     }
 
     /**
@@ -388,7 +386,7 @@ class AccountController extends AbstractActionController
             $this->auth->getStorage()->write($after);
             $this->getEventManager()->trigger(
                 AccountManager::USER_ACCOUNT_MODIFIED,
-                $this, 
+                $this,
                 compact('user','before','after','person_before')
             );
         } catch (\Throwable $e) {
