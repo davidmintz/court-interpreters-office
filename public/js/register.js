@@ -78,7 +78,7 @@ $(function(){
                     var errors = response.validation_errors;
                     var url = window.basePath + "/user/request-password";
                     // special case: duplicate account
-                    if (errors.email && errors.email.objectFound) {
+                    if (errors.email && errors.email.callbackValue) {
                         $("#modal-duplicate-account .modal-body").html(
                     `A user account has previously been created for this email address.
                      If you need to reset your password, please go to <a href="${url}">${url}</a>.`);
@@ -103,16 +103,16 @@ $(function(){
 ///*
 var stuffIt = function()
 {
-    $("#firstname").val("Wanker");
-    $("#lastname").val("Boink");
-    $("#email").val("wanker_boink@nysd.uscourts.gov");
+    $("#firstname").val("Gloria");
+    $("#lastname").val("Rojas");
+    $("#email").val("gloria_rojas@nysd.uscourts.gov");
     $("#hat").val(6).trigger("change");
     $("#judge-select").val(
-        $("#judge-select option:contains(Engelmayer)").attr("value")
+        $("#judge-select option:contains(Cote)").attr("value")
     );
     $("#btn-add-judge").trigger("click");
     $("#password").val("dinkleDorf^B23");
     $("#password-confirm").val("dinkleDorf^B23");
-    $(".carousel").carousel(2);
+    //$(".carousel").carousel(2);
 
 };
