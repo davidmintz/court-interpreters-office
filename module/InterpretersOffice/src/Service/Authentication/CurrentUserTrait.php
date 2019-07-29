@@ -39,7 +39,8 @@ trait CurrentUserTrait
                 return null;
             }
             $this->user = $em->createQuery(
-                'SELECT u FROM InterpretersOffice\Entity\User u WHERE u.id = :id'
+                'SELECT u, p FROM InterpretersOffice\Entity\User u JOIN u.person p
+                    WHERE u.id = :id'
             )
                 ->setParameters(['id' => $id])
                 ->useResultCache(true)->getOneOrNullResult();

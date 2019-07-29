@@ -52,7 +52,11 @@ class AccountControllerFactory implements FactoryInterface
                         $person->getFirstname(),
                         $person->getLastname(),
                         $person->getEmail()
-                    )
+                    ),[
+                        'channel' => 'users',
+                        'entity_class' => User::class,
+                        'entity_id'    => $user->getId(),
+                    ]
                 );
             }
         );
@@ -65,7 +69,7 @@ class AccountControllerFactory implements FactoryInterface
                 $before = $event->getParam('before');
                 $after = $event->getParam('after');
                 $entity = $event->getParam('user');
-                if (array_diff($before->judge_ids,$after->judge_ids) 
+                if (array_diff($before->judge_ids,$after->judge_ids)
                     or array_diff($after->judge_ids,$before->judge_ids)) {
                     $judges_updated = true;
                 }

@@ -96,7 +96,7 @@ class UpdateListener implements
      */
     public function getSubscribedEvents()
     {
-        return ['postUpdate','postRemove','postPersist','prePersist',];
+        return ['postUpdate','preRemove','postPersist','prePersist',];
     }
 
 
@@ -159,7 +159,7 @@ class UpdateListener implements
     * @param LifecycleEventArgs $args
     * @return void
     */
-    public function postRemove(LifecycleEventArgs $args)
+    public function preRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
         $entity_class = get_class($entity);
@@ -168,6 +168,9 @@ class UpdateListener implements
             return;
         }
         $basename = strtolower(substr($entity_class, strrpos($entity_class, '\\') + 1));
+        if ($basename == 'person') {
+            $channel = 'people';
+        }
         $channel = $channel ?: "{$basename}s";
         $this->logger->info(
             sprintf(

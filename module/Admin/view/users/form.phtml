@@ -16,13 +16,18 @@ $this->headScript()
     <?php
     return;
 endif;
+?>
+<div class="alert alert-warning status-message" hidden>
+    <p></p>
+</div>
+<?php
 $formAction = strstr($this->title, 'add') ? $this->url('users/add')
     : $this->url('users/edit', ['id' => $this->id ]);
 $form = $this->form;
 $form->add([
     'name' => 'submit', 'type' => 'Zend\Form\Element\Submit',
-    'attributes' =>
-     ['id' => 'btn-submit','value' => 'save','class' => 'btn btn-success btn-lg'],
+    'attributes' =>  ['id' => 'btn-submit','value' => 'save',
+        'class' => 'btn btn-success btn-lg'],
 ])->setAttributes(['class' => 'form-horizontal','action' => $formAction]);
 $person_fieldset = $this->form->get('user')->get('person');
 $role_element = $form->get('user')->get('role');

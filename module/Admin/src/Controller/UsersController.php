@@ -7,6 +7,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventInterface;
@@ -21,6 +22,7 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Entity\Hat;
 use InterpretersOffice\Entity\Repository\UserRepository;
+use InterpretersOffice\Controller\ExceptionHandlerTrait;
 
 use Zend\View\Model\JsonModel;
 
@@ -36,7 +38,7 @@ use Zend\View\Model\JsonModel;
  */
 class UsersController extends AbstractActionController implements AuthenticationAwareInterface
 {
-
+    use ExceptionHandlerTrait;
     /**
      * entity manager.
      *
@@ -112,7 +114,6 @@ class UsersController extends AbstractActionController implements Authentication
         $role_id = $this->auth_user_role;
         $events->attach('load-person', function (EventInterface $e) use ($entityManager, $role_id)
         {
-
             $person = $e->getParam('person');
             $hat = $person->getHat();
             $form = $e->getParam('form');
@@ -179,6 +180,12 @@ class UsersController extends AbstractActionController implements Authentication
                 $message = "Access denied to {$resource_id}'s user account";
                 $controller->flashMessenger()->addErrorMessage($message);
                 return $controller->redirect()->toRoute('users');
+            } else {
+                $services = $e->getTarget()->getEvent()->getApplication()
+                                ->getServiceManager();
+                $services->get(Entity\Listener\UpdateListener::class)
+                    ->setAuth($this->auth);
+
             }
         });
         return parent::setEventManager($events);
@@ -446,6 +453,41 @@ class UsersController extends AbstractActionController implements Authentication
         return new JsonModel($data);
     }
 
+    /**
+     * delete a user
+     * @return JsonModel
+     */
+    public function deleteAction()
+    {
+        if (!$this->getRequest()->isPost()) {
+            return new JsonModel(['status'=>'error','message'=> 'POST method required']);
+        }
+        $id = $this->params()->fromRoute('id');
+        $user = $this->entityManager->find(Entity\User::class,$id);
+        $this->getEventManager()->trigger('load-user', $this, ['user' => $user,]);
+        $person = $user->getPerson();
+        $this->entityManager->remove($user);
+        $this->entityManager->remove($person);
+        try {
+            $this->entityManager->flush();
+            $this->flashMessenger()
+                ->addSuccessMessage(sprintf(
+                    'The user <strong>%s %s</strong> has been deleted.',
+                    $person->getFirstname(),$person->getLastname()
+            ));
+            return new JsonModel(['status'=>'success','message'=>"This user has now been deleted."]);
+        } catch (ForeignKeyConstraintViolationException $e) {
+            return new JsonModel([
+                'status' => 'error',
+                'message' => 'Sorry, this user has a data history and can no longer be deleted.',
+            ]);
+        } catch (\Throwable $e) {
+            return $this->catch($e,[
+                'details'=>'running delete action in Admin users controller'
+            ]);
+        }
+    }
+    
     /**
      * autocomplete for admin/users
      *

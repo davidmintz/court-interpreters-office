@@ -103,9 +103,9 @@ $(function(){
 ///*
 var stuffIt = function()
 {
-    $("#firstname").val("Gloria");
-    $("#lastname").val("Rojas");
-    $("#email").val("gloria_rojas@nysd.uscourts.gov");
+    $("#firstname").val("Wanker");
+    $("#lastname").val("Gack");
+    $("#email").val("wanker_gack@nysd.uscourts.gov");
     $("#hat").val(6).trigger("change");
     $("#judge-select").val(
         $("#judge-select option:contains(Cote)").attr("value")

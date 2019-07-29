@@ -11,6 +11,7 @@ var $, displayValidationErrors;
  */
 
 $(document).ready(function(){
+
     // dynamically re-populate role element depending on hat element value
     var hatElement = $('#hat');
     var roleElement = $('#role');
@@ -57,7 +58,7 @@ $(document).ready(function(){
     var hat_element = $("#hat");
     // $("#role").on("change",function(){
     //     if ($(this).val() === "submitter") {
-    //         console.log(hat_element.childrem(":selected").data());
+    //         console.log(hat_element.children(":selected").data());
     //     }
     // });
     var person_id_element =  $("input[name='user[person][id]']");
@@ -130,12 +131,29 @@ $(document).ready(function(){
             }
         });
     });
+    $("#btn-delete").on("click",function(e){
+        e.preventDefault();
+        console.warn("FUCK?");
+        var id = $(`input[name="user[id]"]`).val();
+        console.warn(`boink! delete ${id}`);
+        $.post(`${window.basePath}/admin/users/delete/${id}`)
+         .done(function(res){
+             console.warn(res.message);
+             if (res.status !== "success" && res.message) {
+                 $("div.status-message p").text(res.message)
+                 .parent().removeAttr("hidden");
+                 return;
+             }
+             return postcallback(res);
+         })
+         .fail(fail);
+    });
 });
 
 var postcallback = function(response) {
     console.log("postcallback running ");
     if (response.status === "success") {
-        document.location = "/admin/users";
+        document.location = `${window.basePath}/admin/users`;
         return;
     }
     if (response.validation_errors) {
