@@ -32,7 +32,7 @@ $(function(){
 
         var hat = $(this).children(":selected");
         if (hat.data().is_judges_staff) {
-            $("#judge-div").slideDown();console.log("fucking what??");
+            $("#judge-div").slideDown();
         } else {
             $("#judge-div").slideUp();
         }

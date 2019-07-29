@@ -54,10 +54,10 @@ class UserForm extends Form
         $this->addCsrfElement();
         if (key_exists('user', $options)) {
             $user = $options['user'];
-            $hat = $user->getPerson()->getHat();
-            if ($hat->isJudgesStaff()) {
-                $fieldset->addJudgeElement();
-            }
+            // $hat = $user->getPerson()->getHat();
+            // if ($hat->isJudgesStaff()) {
+            //     $fieldset->addJudgeElement();
+            // }
             $fieldset->setObject($user);
 
             $username =  strtolower($user->getUserName());
@@ -67,8 +67,6 @@ class UserForm extends Form
                 $this->getInputFilter()->get('user')->remove('username');
             }
         }
-
-
 
         // make the email required
         $email_input = $this->getInputFilter()->get('user')

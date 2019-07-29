@@ -1,4 +1,4 @@
-var $, displayValidationErrors, appendJudge;
+var $, displayValidationErrors, fail, appendJudge;
 
 $(function(){
     /** fix the minumum height for (sliding) fieldsets */
@@ -63,10 +63,7 @@ $(function(){
                         $('#registration-form').remove();
                         $('#success-message').html(html).show();
                     }
-                    // else, error
-                    /** @todo deal with error condition */
-
-                });
+                }).fail(fail);
             }
         }
         // inter-fieldset validation
@@ -84,8 +81,8 @@ $(function(){
                      If you need to reset your password, please go to <a href="${url}">${url}</a>.`);
 
                      $("#modal-duplicate-account").modal();
-                     displayValidationErrors(errors);
                     }
+                    displayValidationErrors(errors);
                 } else {
                     $("fieldset:visible .validation-error").hide();
                     $(".carousel").carousel("next");
