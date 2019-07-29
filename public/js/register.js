@@ -1,4 +1,4 @@
-var $, displayValidationErrors, fail, appendJudge;
+var $, displayValidationErrors, appendJudge;
 
 $(function(){
     /** fix the minumum height for (sliding) fieldsets */
