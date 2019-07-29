@@ -500,7 +500,8 @@ class AccountManager implements LoggerAwareInterface
     public function register(Entity\User $user, $request)
     {
         $log = $this->getLogger();
-        $user->setRole($this->getDefaultRole());
+        $user->setRole($this->getDefaultRole())
+            ->setActive(false);
         $this->objectManager->persist($user);
         $this->objectManager->persist($user->getPerson());
         $token = $this->createVerificationToken($user);
