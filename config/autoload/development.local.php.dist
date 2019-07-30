@@ -20,6 +20,22 @@ return [
     'view_manager' => [
         'display_exceptions' => true,
     ],
+    // for production...
+    ///*
+    // 'mail' => [
+    //     'transport' => Mail\Transport\Smtp::class,
+    //     'transport_options' => [
+    //         'class' => Mail\Transport\SmtpOptions::class,
+    //         'options' => [
+    //             'name' => 'smtp.uscmail.dcn',
+    //             'host' => 'smtp.uscmail.dcn',
+    //             //'port' => '',
+    //         ],
+    //     ],
+    //     'from_address' => 'interpreters@nysd.uscourts.gov',
+    //     'from_entity' => 'SDNY Interpreters Office',
+    // ],
+    //*/
     /** configuration for Zend\Mail */
     'mail' => [
         'transport' => Mail\Transport\File::class,
