@@ -60,7 +60,7 @@ class Writer extends AbstractWriter
      */
     public function doWrite(Array $event)
     {
-        
+
         // move this to a processor class!
         $timestamp = $event['timestamp']->format('Y-m-d H:i:s');
         $params = $event;
@@ -75,6 +75,7 @@ class Writer extends AbstractWriter
                 $params[$field] = $defaults[$field];
             }
         }
+        
         if (count($params['extra'])) {
             $params['extra'] = json_encode($params['extra']);
             if (strlen($params['extra']) > 5000) {
@@ -89,7 +90,7 @@ class Writer extends AbstractWriter
 
     /**
      * gets PDOStatement
-     * 
+     *
      * @return \PDOStatement
      */
     private function getStatement() : \PDOStatement

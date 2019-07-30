@@ -82,6 +82,8 @@ class Module
              return $this->getRedirectionResponse($event);
         }
         $eventManager = $event->getApplication()->getEventManager();
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user, $container) {
             $routeMatch = $event->getRouteMatch();
@@ -109,37 +111,7 @@ class Module
 
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
-        $sharedEvents->attach(
-            '*',
-            'error',
-            function ($event) use ($log) {
-                if ($event->getParam('exception')) {
-                    $exception = $event->getParam('exception');
-                    $message = "system error was triggered!\n";
-                    if ($event->getParam('details')) {
-                        $message .= sprintf(
-                            "details: %s\n",
-                            is_string($event->getParam('details')) ?
-                                $event->getParam('details')
-                            : json_encode($event->getParam('details'))
-                        );
-                    }
-                    $trace = $exception->getTraceAsString();
-                    do {
-                        $message .= sprintf(
-                            "%s:%d %s (%d) [%s]\n",
-                            $exception->getFile(),
-                            $exception->getLine(),
-                            $exception->getMessage(),
-                            $exception->getCode(),
-                            get_class($exception)
-                        );
-                    } while ($exception = $exception->getPrevious());
-                    $message .= sprintf("stack trace:\n%s", $trace);
-                    $log->err($message);
-                }
-            }
-        );
+        $sharedEvents->attach('*', 'error',[$this, 'logError']);
 
         // experimental. maybe we should move this to the ScheduleUpdateManagerFactory
         /** @var  InterpretersOffice\Service\ScheduleUpdateManager $scheduleManager */
@@ -162,9 +134,7 @@ class Module
         // database updates were run when, in the event of an Exception, they
         // really weren't.
         $sharedEvents->attach(
-            '*',
-            'postFlush',
-            [$scheduleManager,'dispatchEmail']
+            '*','postFlush', [$scheduleManager,'dispatchEmail']
         );
     }
 
@@ -258,8 +228,41 @@ class Module
         return $acl->isAllowed($role, $resource, $privilege);
     }
 
+    public function logError(MvcEvent $event)
+    {
+        $container = $event->getApplication()->getServiceManager();
+        $log = $container->get('log');
+        if ($event->getParam('exception')) {
+            $exception = $event->getParam('exception');
+            $message = "error thrown on event {$event->getName()}\n";
+            if ($event->getParam('details')) {
+                $message .= sprintf(
+                    "details: %s\n",
+                    is_string($event->getParam('details')) ?
+                        $event->getParam('details')
+                    : json_encode($event->getParam('details'))
+                );
+            }
+            $trace = $exception->getTraceAsString();
+            do {
+                $message .= sprintf(
+                    "%s:%d %s (%d) [%s]\n",
+                    $exception->getFile(),
+                    $exception->getLine(),
+                    $exception->getMessage(),
+                    $exception->getCode(),
+                    get_class($exception)
+                );
+            } while ($exception = $exception->getPrevious());
+            $log->err($message,['stacktrace'=>$trace,'channel'=> 'error']);
+        }
+    }
+
+
     /**
      * returns a Response redirecting to the login page.
+     *
+     * @todo see about handling xhr/JSON redirects
      *
      * @param MvcEvent $event
      *
@@ -267,6 +270,9 @@ class Module
      */
     public function getRedirectionResponse(MvcEvent $event)
     {
+        $container = $event->getApplication()->getServiceManager();
+        $log = $container->get('log');
+        $log->debug("this is ".__METHOD__);
         $response = $event->getResponse();
         $baseUrl = $event->getRequest()->getBaseurl();
         $response->getHeaders()
