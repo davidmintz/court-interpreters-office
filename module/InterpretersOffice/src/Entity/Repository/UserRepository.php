@@ -221,7 +221,7 @@ class UserRepository extends EntityRepository
                 $qb->andWhere('p.firstname LIKE :firstname');
             }
         }
-        $qb->setParameters($parameters)->orderBy('p.lastname');
+        $qb->setParameters($parameters)->orderBy('p.lastname, p.firstname');
         $query = $qb->getQuery();
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
