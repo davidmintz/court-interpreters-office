@@ -22,7 +22,6 @@ use Zend\EventManager\EventManagerAwareInterface;
 use Zend\Log\LoggerAwareTrait;
 use Zend\Log\LoggerAwareInterface;
 
-//use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 /**
  * sends email from the admin/schedule interface
  */
@@ -44,7 +43,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
      */
     private $config;
 
-   
+
     /**
      * map email-subject hints to template filenames
      * @var array
@@ -76,7 +75,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
      * constructor
      *
      * @param Array $config
-     * 
+     *
      */
     public function __construct(Array $config)
     {
@@ -198,7 +197,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
 
     private function log(Array $data,string $channel = 'email')
     {
-        
+
         $user = $this->auth->getIdentity()->username;
         $recipient = $data['address']['email'];
         if (isset($data['address']['name'])) {

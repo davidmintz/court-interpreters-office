@@ -5,12 +5,10 @@ namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-
 use InterpretersOffice\Entity\Listener;
 use Doctrine\ORM\Events;
-
 use Zend\Filter\Word\CamelCaseToDash as Filter;
-use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
+
 
 /**
  * Factory for instantiating Controllers for managing our relatively
@@ -62,11 +60,6 @@ class BasicEntityControllerFactory implements FactoryInterface
                     "$requestedName a/k/a $shortName"
                 );
         }
-        $log = $container->get('log');
-        if (! $log->getWriterPluginManager()->has(DbWriter::class)) {
-            $log->addWriter($container->get(DbWriter::class), 100);
-        }
-
         // ensure UpdateListener knows who current user is
         $container->get(Listener\UpdateListener::class)
             ->setAuth($container->get('auth'));

@@ -24,13 +24,18 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     public function setUp()
     {
         parent::setUp();
+        $em = FixtureManager::getEntityManager();
+        //$em = $this->em;
+        $pdo = $em->getConnection()->getWrappedConnection();
+        //$pdo->execute('DELETE FROM events');
+        $pdo->query('DELETE FROM requests WHERE event_id IS NOT NULL');
         $container = $this->getApplicationServiceLocator();
         $eventManager = $container->get('SharedEventManager');
 
         $eventManager->attach(Listener\UpdateListener::class,'*',function($e) use ($container) {
-            $container->get('log')->debug(
-                "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
-            );
+            // $container->get('log')->debug(
+            //     "SHIT HAS BEEN TRIGGERED! {$e->getName()} is the event, calling ScheduleUpdateManager"
+            // );
             /** @var ScheduleUpdateManager $updateManager */
             $updateManager = $container->get(ScheduleUpdateManager::class);
             $updateManager->onUpdateRequest($e);
@@ -68,19 +73,23 @@ class RequestsWriteControllerTest extends AbstractControllerTest
 
     public function tearDown()
     {
-        $em = $this->em;//FixtureManager::getEntityManager();
-        $result = $em->createQuery(
-            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
-            WHERE r.event IS NOT NULL'
-        )->getResult();
-        if (count($result)) {
-            foreach ($result as $object) {
-                $event = $object->getEvent();
-                $em->remove($event);
-                $em->remove($object);
-            }
-            $em->flush();
-        }
+        // $em = $this->em;
+        // $pdo = $em->getConnection()->getWrappedConnection();
+        // $pdo->execute('DELETE FROM events');
+        // $pdo->execute('DELETE FROM requests WHERE event_id IS NOT NULL');
+        // //$pdo->execute('DELETE FROM requests WHERE event IS NOT NULL');
+        // $result = $em->createQuery(
+        //     'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+        //     WHERE r.event IS NOT NULL'
+        // )->getResult();
+        // if (count($result)) {
+        //     foreach ($result as $object) {
+        //         $event = $object->getEvent();
+        //         $em->remove($event);
+        //         $em->remove($object);
+        //     }
+        //     $em->flush();
+        // }
 
     }
 

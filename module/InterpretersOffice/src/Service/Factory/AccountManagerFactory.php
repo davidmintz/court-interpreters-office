@@ -26,7 +26,6 @@ class AccountManagerFactory implements FactoryInterface
             $container->get('entity-manager'),
             $container->get('config')
         );
-        $container->get('log')->addWriter($container->get('InterpretersOffice\Admin\Service\Log\Writer'));
         $accountManager
             ->setLogger($container->get('log'))
             ->setViewRenderer($container->get('ViewRenderer'))

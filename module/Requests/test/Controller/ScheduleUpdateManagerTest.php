@@ -28,7 +28,11 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         parent::setUp();
         $container = $this->getApplicationServiceLocator();
         $em = FixtureManager::getEntityManager();
-        $pdo = $em->getConnection();
+        //$pdo = $em->getConnection();
+        //$em = $this->em;//FixtureManager::getEntityManager();
+        $pdo = $em->getConnection()->getWrappedConnection();
+        //$pdo->query('DELETE FROM events');
+        $pdo->query('DELETE FROM requests WHERE event_id IS NOT NULL');
 
         $eventManager = $container->get('SharedEventManager');
 
@@ -102,19 +106,23 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
     public function tearDown()
     {
-        $em = $this->em;//FixtureManager::getEntityManager();
-        $result = $em->createQuery(
-            'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
-            WHERE r.event IS NOT NULL'
-        )->getResult();
-        if (count($result)) {
-            foreach ($result as $object) {
-                $event = $object->getEvent();
-                $em->remove($event);
-                $em->remove($object);
-            }
-            $em->flush();
-        }
+        $em = FixtureManager::getEntityManager();
+        $pdo = $em->getConnection()->getWrappedConnection();
+        //$pdo->query('DELETE FROM events');
+        $pdo->query('DELETE FROM requests WHERE event_id IS NOT NULL');
+
+        // $result = $em->createQuery(
+        //     'SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+        //     WHERE r.event IS NOT NULL'
+        // )->getResult();
+        // if (count($result)) {
+        //     foreach ($result as $object) {
+        //         $event = $object->getEvent();
+        //         $em->remove($event);
+        //         $em->remove($object);
+        //     }
+        //     $em->flush();
+        // }
         if (file_exists($this->autocancellation_notice)) {
             unlink($this->autocancellation_notice);
         }

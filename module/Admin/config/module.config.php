@@ -26,7 +26,6 @@ return [
             Controller\LocationsController::class => Controller\Factory\BasicEntityControllerFactory::class,
             Controller\EventTypesController::class => Controller\Factory\BasicEntityControllerFactory::class,
             Controller\CourtClosingsController::class => Controller\Factory\BasicEntityControllerFactory::class,
-
             Controller\PeopleController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\JudgesController::class => Controller\Factory\PeopleControllerFactory::class,
             Controller\InterpretersController::class => Controller\Factory\PeopleControllerFactory::class,

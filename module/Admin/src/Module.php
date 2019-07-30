@@ -10,7 +10,7 @@ use Zend\Session\SessionManager;
 
 use InterpretersOffice\Admin\Controller;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
-
+use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 //use InterpretersOffice\Controller;
 /**
  * Module class for our InterpretersOffice\Admin module.
@@ -44,7 +44,8 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
-
+        $log = $container->get('log');
+        $log->addWriter($container->get(DbWriter::class));
         /*
          * for TEMPORARY debugging
          */
@@ -234,7 +235,8 @@ class Module
         $log = $container->get('log');
         if ($event->getParam('exception')) {
             $exception = $event->getParam('exception');
-            $message = "error thrown on event {$event->getName()}\n";
+            //$message = "error thrown on event {$event->getName()}\n";
+            $message = $exception->getMessage();
             if ($event->getParam('details')) {
                 $message .= sprintf(
                     "details: %s\n",
@@ -243,9 +245,10 @@ class Module
                     : json_encode($event->getParam('details'))
                 );
             }
-            $trace = $exception->getTraceAsString();
+            $stacktrace =  $exception->getTraceAsString();
+            $previous = '';
             do {
-                $message .= sprintf(
+                $previous .= sprintf(
                     "%s:%d %s (%d) [%s]\n",
                     $exception->getFile(),
                     $exception->getLine(),
@@ -254,7 +257,12 @@ class Module
                     get_class($exception)
                 );
             } while ($exception = $exception->getPrevious());
-            $log->err($message,['stacktrace'=>$trace,'channel'=> 'error']);
+            $context = ['stacktrace'=> $stacktrace,'channel'=> 'error'];
+            $context['event'] = $event->getName();
+            if ($previous) {
+                $context['previous'] = $previous;
+            }
+            $log->err($message,$context);
         }
     }
 

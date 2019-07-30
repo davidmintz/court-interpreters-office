@@ -9,7 +9,6 @@ use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller\EventsController;
 
 use InterpretersOffice\Entity\Listener;
-use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 /**
  * Factory for instantiating EventController
@@ -44,9 +43,6 @@ class EventsControllerFactory implements FactoryInterface
         $sharedEvents = $container->get('SharedEventManager');
         /** @var \Zend\Log\Logger $log */
         $log = $container->get('log');
-        if (! $log->getWriterPluginManager()->has(DbWriter::class)) {
-            $log->addWriter($container->get(DbWriter::class), 100);// [, $priority, $options]
-        }
         $sharedEvents->attach(
             EventsController::class,
             'deleteEvent',
@@ -168,6 +164,7 @@ class EventsControllerFactory implements FactoryInterface
                 $updateManager->setPreviousEventState($view_before);
             }
         );
+        
         return $controller;
     }
 }

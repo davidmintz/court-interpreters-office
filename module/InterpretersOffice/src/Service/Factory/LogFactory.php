@@ -9,6 +9,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
+use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 use Zend\Log\Filter\Priority as Filter;
 
 /**
@@ -36,8 +37,15 @@ class LogFactory implements FactoryInterface
         // I think the 2nd argument 'priority' means the order
         // in which writers write, not the filter
         $log->addWriter($writer);
+        // $pdo = $container->get('entity-manager')
+        //     ->getConnection()->getWrappedConnection();
+        //$writer = new DbWriter($pdo);
+        // $log->addWriter($container->get(DbWriter::class));
+        //    ->getConnection()->getWrappedConnection();
+        //$db_writer = new DbWriter($pdo);
+        //$db_writer->addFilter(new Priority(Logger::INFO));
         // for now, mark the (approximate) beginning of each request cycle
-        $log->debug("\n================================\n");
+        //$log->debug("\n================================\n");
 
         return $log;
     }

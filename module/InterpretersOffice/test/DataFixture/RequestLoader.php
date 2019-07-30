@@ -15,6 +15,8 @@ class RequestLoader implements FixtureInterface
 {
     public function load(ObjectManager $objectManager)
     {
+        $pdo = $objectManager->getConnection()->getWrappedConnection();
+        $pdo->query('DELETE FROM requests WHERE event_id IS NOT NULL');
         $date = new \DateTime('next monday + 2 weeks');
 
         $time = new \DateTime('10:00 am');

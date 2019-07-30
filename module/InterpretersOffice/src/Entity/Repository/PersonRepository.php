@@ -145,7 +145,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         } else {
             if (! empty($terms['name'])) {
                 $name = $this->parseName($terms['name']);
-                $qb->where("p.lastname LIKE :lastname");
+                $qb->where("p.lastname SHIT LIKE :lastname");
                 $params = ['lastname' => "$name[last]%"];
                 if ($name['first']) {
                     $qb->andWhere('p.firstname LIKE :firstname');

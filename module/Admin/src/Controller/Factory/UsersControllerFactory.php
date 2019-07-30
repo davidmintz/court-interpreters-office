@@ -21,13 +21,9 @@ class UsersControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $db_logger = $container->get('InterpretersOffice\Admin\Service\Log\Writer');
-        $container->get('log')->addWriter($db_logger);
         return new UsersController(
             $container->get('entity-manager'),
             $container->get('auth')
         );
-        //$controller->setAuthenticationService
-        //return $controller;
     }
 }
