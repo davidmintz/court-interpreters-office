@@ -49,7 +49,11 @@ $(function(){
     var results_div = $("#results");
     $("body").on("click","nav .pagination a",function(event){
         event.preventDefault();
-        var url = get_people_search_url($(this).text().trim());
+        var page, m = this.href.match(/page=(\d+)/);
+        if (m && m[1]) {
+            page = m[1];
+        }
+        var url = get_people_search_url(page);
         $.get(url).then(function(res){results_div.html(res);});
     });
     button.on("click",function(event)
@@ -60,7 +64,7 @@ $(function(){
 
     });
     /*  work in progress. it might be cool to show details for generic people in
-        a popover. for people who have a user account, refer them
+        a popover. for people who have a user account, refer them to user admin
      */
     results_div.on("click","td a[title='view details']",function(e){
         if ($(this).text().trim() === "#") {
