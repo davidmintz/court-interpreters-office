@@ -478,7 +478,8 @@ class AccountManager implements LoggerAwareInterface
             ->setSubject('Interpreters Office: reset your password');
         $this->getMailTransport()->send($message);
         $log->info("sent email for password reset to {$person->getFullName()} ({$person->getEmail()})", [
-            'entity_class' => Entity\User::class, 'entity_id' => $user->getId()
+            'entity_class' => Entity\User::class,
+            'channel' => 'security', 'entity_id' => $user->getId()
         ]);
 
         return $this;
@@ -688,10 +689,11 @@ class AccountManager implements LoggerAwareInterface
         $user->setPassword($password);
         $this->objectManager->flush();
         $session->getManager()->getStorage()->clear();
-        $log->info(sprintf(
-            '%s: we have reset password for user %s',
-            __CLASS__,
-            $user->getPerson()->getEmail()
+        $log->info(sprintf('reset password for user %s',
+            $user->getPerson()->getEmail(),
+            ['channel' => 'security',
+            'entity_class' => Entity\User::class, 
+            'entity_id' => $user->getId()]
         ));
 
         return true;

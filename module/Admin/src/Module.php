@@ -85,8 +85,11 @@ class Module
         $db_writer = $container->get(DbWriter::class);
         $log = $container->get('log');
         $eventManager = $event->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH,
-            function($e) use ($log,$db_writer){ $log->addWriter($db_writer); });
+        $eventManager->attach(MvcEvent::EVENT_ROUTE,
+            function($e) use ($log,$db_writer){
+                $log->addWriter($db_writer);
+                $log->debug("is the EVENT_ROUTE callback running, or am I hallucinating?");
+            });
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
