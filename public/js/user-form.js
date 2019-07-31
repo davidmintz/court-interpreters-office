@@ -133,7 +133,9 @@ $(document).ready(function(){
     });
     $("#btn-delete").on("click",function(e){
         e.preventDefault();
-        console.warn("FUCK?");
+        if (!window.confirm("Delete this user from the database?")) {
+            return;
+        }
         var id = $(`input[name="user[id]"]`).val();
         console.warn(`boink! delete ${id}`);
         $.post(`${window.basePath}/admin/users/delete/${id}`)

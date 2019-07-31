@@ -172,11 +172,17 @@ class UpdateListener implements
             $channel = 'people';
         }
         $channel = $channel ?: "{$basename}s";
+        $what = $basename;
+        if (method_exists($entity,'__toString')) {
+            $what .= " $entity";
+        } elseif (method_exists($entity,'getFullName')) {
+            $what .= " {$entity->getFullName()}";
+        }
         $this->logger->info(
             sprintf(
                 'user %s deleted an entity (%s)',
                 $this->getAuthenticatedUser($args)->getUsername(),
-                $basename
+                $what
             ),
             ['entity_class' => $entity_class, 'entity_id' =>
                 method_exists($entity, 'getId') ? $entity->getId() : null,

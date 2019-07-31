@@ -60,6 +60,19 @@ class AccountControllerFactory implements FactoryInterface
                 );
             }
         );
+
+        $sharedEvents->attach($requestedName,AccountManager::EVENT_EMAIL_VERIFIED,
+        function($e) use ($log)
+        {
+            $user = $e->getParam('user');
+            $email = $user->getPerson()->getEmail();
+            $log->info("successful email verification by user $email",[
+                'entity_class'=> get_class($user),
+                'entity_id'   => $user->getId(),
+                'channel'     => 'security',
+            ]);
+        });
+
         $sharedEvents->attach(
             $requestedName,
             AccountManager::USER_ACCOUNT_MODIFIED,

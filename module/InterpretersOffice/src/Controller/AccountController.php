@@ -211,7 +211,7 @@ class AccountController extends AbstractActionController
             $this->objectManager->flush();
             $this->getEventManager()->trigger(
                 AccountManager::EVENT_EMAIL_VERIFIED,
-                $this,
+                $this->accountManager,
                 ['user' => $user]
             );
             return new ViewModel(['user' => $user]);

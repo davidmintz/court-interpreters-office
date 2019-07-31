@@ -222,6 +222,8 @@ $(function(){
             $(".validation-error:visible").addClass("border border-danger");
             return false;
         }
+        //serialized form values + encodeURI("&interpreter[hat]=3") is required
+        // to get python selenium working
         $.post(document.location.pathname,form.serialize())
         .then((res)=>{
             if ("success" === res.status) {

@@ -425,7 +425,7 @@ class AccountManager implements LoggerAwareInterface
      */
     public function requestPasswordReset($email, Request $request = null)
     {
-        $dql = 'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p
+        $dql = 'SELECT u, p FROM InterpretersOffice\Entity\User u JOIN u.person p
             WHERE p.email = :email';
 
         $user = $this->objectManager->createQuery($dql)
@@ -573,7 +573,7 @@ class AccountManager implements LoggerAwareInterface
                 . "for user {$data['email']} with token $token and data[token] = $data[token]",
                 [
                     'entity_class' => Entity\User::class,
-                    'entity_id' => $data['id'],
+                    'entity_id' => $data['id'],'channel' => 'security',
                 ]
             );
 
@@ -588,6 +588,7 @@ class AccountManager implements LoggerAwareInterface
                 [
                 'entity_class' => Entity\User::class,
                 'entity_id' => $data['id'],
+                'channel' => 'security',
                 ]
             );
         }
@@ -692,7 +693,7 @@ class AccountManager implements LoggerAwareInterface
         $log->info(sprintf('reset password for user %s',
             $user->getPerson()->getEmail(),
             ['channel' => 'security',
-            'entity_class' => Entity\User::class, 
+            'entity_class' => Entity\User::class,
             'entity_id' => $user->getId()]
         ));
 
