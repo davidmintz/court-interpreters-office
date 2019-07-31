@@ -64,6 +64,7 @@ $user_fieldset = $this->form->get("user");
     <div class="col-sm-9"><?php echo $this->formElement($hat),$this->formElementErrors($hat) ?>
     </div>
 </div>
+<?php if ($user_fieldset->has('judge-select')):?>
 <div id="judge-div" class="form-group form-row" <?php if (!$has_judges):?> style="display:none"<?php endif;?>>
     <div id="judge-help" class="offset-sm-3 pl-1 form-text text-muted">select the judge(s) for whom this user works, and click the <strong>+</strong> button.</div>
     <label  for="judges" class="col-form-label col-sm-3">Judge(s)</label>
@@ -81,7 +82,7 @@ $user_fieldset = $this->form->get("user");
         <input type="hidden" name="user[judges][]" value="">
     </div>
 </div>
-<?php
+<?php endif;
 $person_active = $person_fieldset->get('active');?>
 <div class="form-group form-row">
     <label class="col-form-label col-sm-3"><?php echo $person_active->getLabel()?></label>
