@@ -55,7 +55,10 @@ $(function(){
         e.preventDefault();
         var url = document.location.pathname;
         var params = get_search_parameters();
-        params.page = $(this).text().trim();
+        var m = this.href.match(/page=(\d+)/);
+        if (m && m[1]) {
+            params.page = m[1];
+        }
         $.get(url,params).then(
             response=>{$("#results").html(response);$(`[data-toggle="tooltip"]`).tooltip();}
         );
