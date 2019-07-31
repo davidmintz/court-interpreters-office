@@ -44,8 +44,8 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
-        $log = $container->get('log');
-        $log->addWriter($container->get(DbWriter::class));
+        // $log = $container->get('log');
+        //$log->addWriter($container->get(DbWriter::class));
         /*
          * for TEMPORARY debugging
          */
@@ -82,7 +82,11 @@ class Module
         } catch (\Zend\Session\Exception\RuntimeException $e) {
              return $this->getRedirectionResponse($event);
         }
+        $db_writer = $container->get(DbWriter::class);
+        $log = $container->get('log');
         $eventManager = $event->getApplication()->getEventManager();
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH,
+            function($e) use ($log,$db_writer){ $log->addWriter($db_writer); });
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
@@ -114,12 +118,11 @@ class Module
         $log = $container->get('log');
         $sharedEvents->attach('*', 'error',[$this, 'logError']);
 
-        // experimental. maybe we should move this to the ScheduleUpdateManagerFactory
+        /** @todo move this to the ScheduleUpdateManagerFactory */
         /** @var  InterpretersOffice\Service\ScheduleUpdateManager $scheduleManager */
         $scheduleManager = $container->get('InterpretersOffice\Admin\Service\ScheduleUpdateManager');
         $sharedEvents->attach(
-            // maybe narrow down the "*" to something more specific?
-            '*',
+            '*', // maybe narrow down "*" to something more specific?
             'loadRequest',
             function ($e) use ($log, $scheduleManager) {
                 $params = $e->getParams();
@@ -137,6 +140,7 @@ class Module
         $sharedEvents->attach(
             '*','postFlush', [$scheduleManager,'dispatchEmail']
         );
+        /*  -------------------------------------------------------------    */
     }
 
 
