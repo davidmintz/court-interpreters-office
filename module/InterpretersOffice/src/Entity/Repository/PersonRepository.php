@@ -93,10 +93,11 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      */
     public function autocomplete($term, Array $options = [])
     {
-        $options = array_merge(['hat' => null,'active' => null, 'limit' => 20, ], $options);
+        $options = array_merge(['value_column'=>'id','hat' => null,'active' => null, 'limit' => 20, ], $options);
         $name = $this->parseName($term);
         $parameters = ['lastname' => "$name[last]%"];
-        $dql = "SELECT p.id AS value, CONCAT(p.lastname, ', ', p.firstname) AS label";
+        $dql = "SELECT p.{$options['value_column']} AS value,
+            CONCAT(p.lastname, ', ', p.firstname) AS label, h.name AS hat";
         $dql .= '  FROM InterpretersOffice\Entity\Person p JOIN p.hat h';
         if ($options['hat']) {
             $dql .= ' WHERE h.id = :hat AND';
