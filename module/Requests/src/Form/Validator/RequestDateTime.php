@@ -16,6 +16,7 @@ class RequestDateTime extends AbstractValidator
     const LESS_THAN_TWO_BUSINESS_DAYS_NOTICE = 'lessThanTwoBusinessDaysNotice';
     const DATE_IS_IN_THE_PAST = 'dateIsInThePast';
     const DATE_IS_NOT_A_BUSINESS_DAY = 'dateIsNotABusinessDay';
+    const DATETIME_INVALID = 'datetimeInvalid';
 
 
     /**
@@ -35,8 +36,10 @@ class RequestDateTime extends AbstractValidator
         'A minimum two full business days\' notice is required. For assistance in emergent matters please contact the Interpreters by phone.',
 
             self::DATE_IS_IN_THE_PAST => 'Invalid date. Request date has to be in the future.',
+            self::DATETIME_INVALID => 'Invalid date/time format',
             // not yet in use
             self::DATE_IS_NOT_A_BUSINESS_DAY => 'Date is not a business day',
+
     ];
 
     /**
@@ -75,8 +78,10 @@ class RequestDateTime extends AbstractValidator
         try {
             $request_datetime = new \DateTime("$date $context[time]");
         } catch (\Exception $e) {
+            $this->error(self::DATETIME_INVALID);
+            return false;
             // means time is malformed; let another validator handle it
-            return true;
+            //return true;
         }
         $now = new \DateTime();
         if ($request_datetime < $now) {

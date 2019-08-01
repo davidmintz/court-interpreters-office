@@ -49,8 +49,9 @@ class InterpreterAdminTests(unittest.TestCase):
                              db="office")
         cursor = db.cursor();
         query = "DELETE FROM people WHERE email = 'gacker_boink@nysd.uscourts.gov'"
-        print(cursor.execute(query))
+        cursor.execute(query)
         db.commit()
+        cls.db = db
 
 
 
@@ -91,22 +92,30 @@ class InterpreterAdminTests(unittest.TestCase):
         error_divs = driver.find_elements_by_css_selector("#administrative .validation-error")
         self.assertGreater(len(error_divs),0)
 
-    # def test_something_else(self):
+    def test_something_else(self):
         driver = self.driver
-        # self.assertEqual("https://office.localhost/admin/interpreters/add",driver.current_url)
+        self.assertEqual("https://office.localhost/admin/interpreters/add",driver.current_url)
         menu = select.Select(driver.find_element_by_id("hat"))
         menu.select_by_visible_text("contract court interpreter")
         xpath =  "//option[text()='contract court interpreter']"
         option = driver.find_element_by_xpath(xpath)
         wait = WebDriverWait(driver, 3)
         wait.until(EC.element_to_be_selected(option))
-        script = '$("#interpreter-form").append(`<input name="interpreter[hat]" value="3">`);'
-        driver.execute_script(script)
+        #script = '$("#interpreter-form").append(`<input name="interpreter[hat]" value="3">`);$("#interpreter-form").submit();'
+        #driver.execute_script(script)
         # "/* $('#hat').val(3); */$('body').prepend(`<strong>WTF? hat is now ${$('#hat').val()}</strong>`)");
         #driver.find_element_by_xpath(xpath).click()
         driver.find_element_by_css_selector("input[name='submit']").click()
 
 
+    # def test_form_submission_really_worked(self):
+    #
+    #     db = self.db
+    #     cursor = db.cursor();
+    #     query = "SELECT COUNT(*) FROM people WHERE email = 'gacker_boink@nysd.uscourts.gov'"
+    #     cursor.execute(query)
+    #     result = cursor.fetchone();
+    #     # print("we got... ")print(result)
 
 
     def tearDown(self):

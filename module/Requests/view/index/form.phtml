@@ -94,8 +94,7 @@
         </div>
     </div>
     <div class="form-group form-row">
-        <div id="error_insufficient_notice" class="col-sm-7 offset-sm-3 alert alert-warning validation-error" style="display:none">
-        </div>
+
         <label for="date" class="col-form-label col-sm-3 pr-1">date</label>
         <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('date')),
             $this->formElementErrors($fieldset->get('date'));?>
@@ -103,6 +102,8 @@
         <label for="time" class="col-form-label col-sm-1">time</label>
         <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('time')),
             $this->formElementErrors($fieldset->get('time'));?>
+        </div>
+        <div id="error_date" class="col-sm-7 offset-sm-3 alert alert-warning validation-error" style="display:none">
         </div>
     </div>
     <?php
