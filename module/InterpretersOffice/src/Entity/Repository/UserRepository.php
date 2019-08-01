@@ -60,6 +60,26 @@ class UserRepository extends EntityRepository
     }
 
     /**
+     * intended to help but only seems to make matters worse
+     * @param  int    $id
+     * @return Entity\User
+     */
+    public function getUser(int $id) : ? Entity\User
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('u, p, h, r, j')
+            ->from(Entity\User::class, 'u')
+            ->join('u.person','p')
+            ->join('p.hat', 'h')
+            ->join('u.role','r')
+            ->leftJoin('u.judges', 'j')
+            ->where('u.id = :id')
+            ->setParameters(['id'=>$id]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
      * finds a submitter based on email
      *
      * @param  string $email
@@ -68,7 +88,7 @@ class UserRepository extends EntityRepository
     public function findSubmitterByEmail(string $email) : ? Entity\User
     {
 
-        $dql = 'SELECT u, p FROM InterpretersOffice\Entity\User u JOIN u.person p '
+        $dql = 'SELECT u, p, r FROM InterpretersOffice\Entity\User u JOIN u.person p '
         . ' JOIN u.role r WHERE p.email = :email AND r.name = :role';
         return $this->createQuery($dql)->setParameters(
             ['email' => $email,'role' => 'submitter']

@@ -80,8 +80,6 @@ class RequestDateTime extends AbstractValidator
         } catch (\Exception $e) {
             $this->error(self::DATETIME_INVALID);
             return false;
-            // means time is malformed; let another validator handle it
-            //return true;
         }
         $now = new \DateTime();
         if ($request_datetime < $now) {

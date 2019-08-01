@@ -106,7 +106,7 @@ class User implements ResourceInterface, RoleInterface
      * @todo consider whether/how to solve the efficiency/aesthetic problem that a
      * lot of Users have NO judges, and therefore do not need this at all. Subclass?
      *
-     * @ORM\ManyToMany(targetEntity="Judge")
+     * @ORM\ManyToMany(targetEntity="Judge",fetch="EAGER")
      * @ORM\JoinTable(name="clerks_judges",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="judge_id", referencedColumnName="id")}

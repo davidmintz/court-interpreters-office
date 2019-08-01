@@ -133,16 +133,18 @@ class WriteController extends AbstractActionController implements ResourceInterf
             if (! $entity) {
                 return parent::onDispatch($e);
             }
-            //return parent::onDispatch($e);
             $this->entity = $entity;
             /**
              * @todo
              * some optimization. this is bullshit.
              */
-            $user = $this->objectManager->find(
-                'InterpretersOffice\Entity\User',
-                $this->auth->getIdentity()->id
-            );
+            $user = $this->objectManager->find('InterpretersOffice\Entity\User',
+                $this->auth->getIdentity()->id);
+            // ... or ...
+            // $user = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
+            //     ->getUser($this->auth->getIdentity()->id);
+
+
             $allowed = $this->acl->isAllowed(
                 $user,
                 $this,
