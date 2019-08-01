@@ -248,5 +248,10 @@ var stuff = function()
     appendDefendant({
         label : "Rodriguez, Nelson", value: 9082
     });
-
-}
+};
+var force_error = function() {
+    $("#date").val(44);$("#time").val("10:00 am");
+    $("#language").val($("option:contains('Russian')").val()).trigger("change");
+    $("#eventType").val($("option:contains('conference')").val()).trigger("change");
+    $(".btn-success").trigger("click");
+};
