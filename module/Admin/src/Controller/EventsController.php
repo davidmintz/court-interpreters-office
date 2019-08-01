@@ -249,10 +249,6 @@ class EventsController extends AbstractActionController
     public function deleteAction()
     {
         $id = $this->params()->fromRoute('id');
-        // if ($this->getRequest()->isGet() && ! $this->getRequest()->isXmlHttpRequest()) {
-        //     return $this->redirect()->toRoute('events/view',['id'=>$id]);
-        // }
-
         if (! $this->getRequest()->isPost()) {
             return $this->redirect()->toRoute('events');
         }

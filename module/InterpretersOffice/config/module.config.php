@@ -150,6 +150,17 @@ return [
                     ],
                 ],
             ],
+            'contact' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/contact',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\IndexController::class,
+                        'action' => 'contact',
+                    ],
+                ],
+            ],
             'public-locations' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
@@ -269,7 +280,6 @@ return [
                         ],
                     ],
                 ],
-                // to be continued
             ],
             'defendant-autocomplete' => [
                 'type' => Segment::class,
