@@ -12,6 +12,7 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
+use InterpretersOffice\Entity\User;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Service\DateCalculatorTrait;
@@ -95,6 +96,20 @@ class WriteController extends AbstractActionController implements ResourceInterf
     }
 
 
+    private $user_entity;
+
+    public function getUserEntity()
+    {
+        return $this->user_entity;
+    }
+
+    public function setUserEntity(User $user)
+    {
+        $this->user_entity = $user;
+
+        return $this;
+    }
+
     /**
      * gets the Request entity we're working with
      *
@@ -134,19 +149,8 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 return parent::onDispatch($e);
             }
             $this->entity = $entity;
-            /**
-             * @todo
-             * some optimization. this is bullshit.
-             */
-            $user = $this->objectManager->find('InterpretersOffice\Entity\User',
-                $this->auth->getIdentity()->id);
-            // ... or ...
-            // $user = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
-            //     ->getUser($this->auth->getIdentity()->id);
-
-
             $allowed = $this->acl->isAllowed(
-                $user,
+                $this->user_entity,
                 $this,
                 $params['action']
             );
@@ -174,7 +178,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
                         'message' =>
                         "$message this <a href=\"$url\">request</a>."])
                 );
-                    $viewModel = $e->getViewModel()
+                $viewModel = $e->getViewModel()
                     ->setVariables(['content' => $content]);
 
                 return $this->getResponse()

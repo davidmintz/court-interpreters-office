@@ -59,11 +59,9 @@ class RequestsControllerFactory implements FactoryInterface
             // add another ACL rule
             $acl = $container->get('acl');
             $controller = new $requestedName($entityManager, $auth, $acl);
-            // @todo optimize this horribly inefficient query...
-            $user = $entityManager->find(
-                'InterpretersOffice\Entity\User',
-                $auth->getIdentity()->id
-            );
+            $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
+                 ->getUser($auth->getIdentity()->id);
+            $controller->setUserEntity($user);
             $acl->allow(
                 $user,
                 $controller,
