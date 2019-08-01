@@ -128,7 +128,7 @@ const should_suggest_email = function()
     if ( 0 === $("ins, del, .alert.event-deleted").length || $(".last-modified").text().indexOf("system") !== -1) {
         console.debug("no ins or del or .alert.event-deleted, or last-mod by system? returning false");
         return false;
-    } else { console.debug("suck my dick");}
+    }
     var date_str = $(".event-details").data().event_datetime;
     var event_datetime =  moment(date_str,"YYYY-MM-DD HH:mm");
     var minutes_from_now = moment().add(10,'minutes');
