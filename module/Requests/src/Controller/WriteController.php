@@ -216,38 +216,31 @@ class WriteController extends AbstractActionController implements ResourceInterf
         $form->bind($entity);
 
         if ($this->getRequest()->isPost()) {
-            try {
-                $form->setData($this->getRequest()->getPost());
-                if (! $form->isValid()) {
-                    return new JsonModel(['validation_errors' =>
-                        $form->getMessages()]);
-                }
-                // post-validation: make sure it is not a near-exact duplicate
-                $repo = $this->objectManager->getRepository(Entity\Request::class);
-                if ($repo->findDuplicate($entity)) {
-                    return  new JsonModel(
-                        ['validation_errors' => ['request' =>
-                        ['duplicate' =>
-                            ['there is already a request with this date, time,
-                            judge, type of event, defendant(s), docket, and language'
-                            ]
-                        ]]]
-                    );
-                }
-                $form->postValidate();
-                $this->objectManager->persist($entity);
-                $this->objectManager->flush();
-                $this->flashMessenger()->addSuccessMessage(
-                    'Your request for interpreting services has been submitted. Thank you.'
-                );
-                return  new JsonModel(['status' => 'success','id' => $entity->getId()]);
-            } catch (\Exception $e) {
-                //$this->getResponse()->setStatusCode(500);
-                // $this->events->trigger('error', $this, ['exception' => $e,
-                //     'details' => 'doing create in Requests module']);
-                throw $e;
-                //return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
+            $form->setData($this->getRequest()->getPost());
+            if (! $form->isValid()) {
+                return new JsonModel(['validation_errors' =>
+                    $form->getMessages()]);
             }
+            // post-validation: make sure it is not a near-exact duplicate
+            $repo = $this->objectManager->getRepository(Entity\Request::class);
+            if ($repo->findDuplicate($entity)) {
+                return  new JsonModel(
+                    ['validation_errors' => ['request' =>
+                    ['duplicate' =>
+                        ['there is already a request with this date, time,
+                        judge, type of event, defendant(s), docket, and language'
+                        ]
+                    ]]]
+                );
+            }
+            $form->postValidate();
+            $this->objectManager->persist($entity);
+            $this->objectManager->flush();
+            $this->flashMessenger()->addSuccessMessage(
+                'Your request for interpreting services has been submitted. Thank you.'
+            );
+
+            return  new JsonModel(['status' => 'success','id' => $entity->getId()]);
         }
 
         return $view;
@@ -300,26 +293,20 @@ class WriteController extends AbstractActionController implements ResourceInterf
         if (! $form->isValid()) {
             return new JsonModel(['validation_errors' => $form->getMessages()]);
         }
-        try {
-            $form->postValidate();
-            $event = $entity->getEvent();
-            $this->getEventManager()->trigger(
-                'updateRequest',
-                $this,
-                ['request' => $entity,'entity_manager' => $this->objectManager]
-            );
-            $this->objectManager->flush();
-            $this->getEventManager()->trigger('postFlush', $this);
-            $this->flashMessenger()->addSuccessMessage(
-                'This request for interpreting services has been updated successfully. Thank you.'
-            );
-            return new JsonModel(['status' => 'success']);
-        } catch (\Exception $e) {
-            $this->getResponse()->setStatusCode(500);
-            $this->events->trigger('error', $this, ['exception' => $e,
-                'details' => 'doing update in Requests module']);
-            return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
-        }
+        $form->postValidate();
+        $event = $entity->getEvent();
+        $this->getEventManager()->trigger(
+            'updateRequest',
+            $this,
+            ['request' => $entity,'entity_manager' => $this->objectManager]
+        );
+        $this->objectManager->flush();
+        $this->getEventManager()->trigger('postFlush', $this);
+        $this->flashMessenger()->addSuccessMessage(
+            'This request for interpreting services has been updated successfully. Thank you.'
+        );
+
+        return new JsonModel(['status' => 'success']);
     }
 
     /**
@@ -342,40 +329,34 @@ class WriteController extends AbstractActionController implements ResourceInterf
             ]);
         }
         if ($entity) {
-            try {
-                $this->getEventManager()->trigger(
-                    'loadRequest',
-                    $this,
-                    [
-                        'entity' => $entity,
-                    ]
-                );
-                $entity->setCancelled(true);
-                $description = $this->params()->fromPost('description');
-                $this->getEventManager()->trigger(
-                    'cancel',
-                    $this,
-                    ['request' => $entity,'entity_manager' => $this->objectManager,
-                    'description' => $description]
-                );
-                $this->objectManager->flush();
-                $this->getEventManager()->trigger('postFlush', $this);
-                $message = 'This request for interpreting services ';
-                if ($description) {
-                    $message .= "($description) ";
-                }
-                $message .= 'has now been cancelled. Thank you.';
-                $this->flashMessenger()->addSuccessMessage($message);
-                return new JsonModel([
-                    'status' => 'success',
-                    'id' => $id,
-                ]);
-            } catch (\Exception $e) {
-                $this->getResponse()->setStatusCode(500);
-                $this->events->trigger('error', $this, ['exception' => $e,
-                    'details' => 'doing delete (cancel) in Requests module']);
-                return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
+
+            $this->getEventManager()->trigger(
+                'loadRequest',
+                $this,
+                [
+                    'entity' => $entity,
+                ]
+            );
+            $entity->setCancelled(true);
+            $description = $this->params()->fromPost('description');
+            $this->getEventManager()->trigger(
+                'cancel',
+                $this,
+                ['request' => $entity,'entity_manager' => $this->objectManager,
+                'description' => $description]
+            );
+            $this->objectManager->flush();
+            $this->getEventManager()->trigger('postFlush', $this);
+            $message = 'This request for interpreting services ';
+            if ($description) {
+                $message .= "($description) ";
             }
+            $message .= 'has now been cancelled. Thank you.';
+            $this->flashMessenger()->addSuccessMessage($message);
+            return new JsonModel([
+                'status' => 'success',
+                'id' => $id,
+            ]);
         }
     }
 }

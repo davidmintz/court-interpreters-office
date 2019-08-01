@@ -65,32 +65,28 @@ class Acl extends ZendAcl implements EventManagerAwareInterface
             'administrator' => null,
         ],
          */
-        try {
-            foreach ($this->config['allow'] as $role => $rules) {
-                if (null === $rules) {
-                    $this->allow($role);
-                    continue;
-                }
-                foreach ($rules as $resource => $privileges) {
-                    //printf ("we are setting allow on role %s, resource %s, privs %s<br>",$role,$resource, is_scalar($privileges)
-                    // ? $privileges : implode(",",$privileges));
-                    $this->allow($role, $resource, $privileges);
-                }
+        foreach ($this->config['allow'] as $role => $rules) {
+            if (null === $rules) {
+                $this->allow($role);
+                continue;
             }
-            foreach ($this->config['deny'] as $role => $rules) {
-                if (null === $rules) {
-                    $this->deny($role);
-                    continue;
-                }
-                foreach ($rules as $resource => $privileges) {
-                     // printf ("we are setting allow on role %s, resource %s,
-                     // privs %s<br>",$role,$resource, is_scalar($privileges)
-                     // ? $privileges : implode(",",$privileges));
-                     $this->deny($role, $resource, $privileges);
-                }
+            foreach ($rules as $resource => $privileges) {
+                //printf ("we are setting allow on role %s, resource %s, privs %s<br>",$role,$resource, is_scalar($privileges)
+                // ? $privileges : implode(",",$privileges));
+                $this->allow($role, $resource, $privileges);
             }
-        } catch (Exception $e) {
-            echo $e->getMessage();
+        }
+        foreach ($this->config['deny'] as $role => $rules) {
+            if (null === $rules) {
+                $this->deny($role);
+                continue;
+            }
+            foreach ($rules as $resource => $privileges) {
+                 // printf ("we are setting allow on role %s, resource %s,
+                 // privs %s<br>",$role,$resource, is_scalar($privileges)
+                 // ? $privileges : implode(",",$privileges));
+                 $this->deny($role, $resource, $privileges);
+            }
         }
     }
 

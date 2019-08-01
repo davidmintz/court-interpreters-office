@@ -104,14 +104,8 @@ class CourtClosingsController extends AbstractActionController
         if (! $entity->getId()) {
             $this->entityManager->persist($entity);
         }
-        try {
-            $this->entityManager->flush();
-        } catch (\Exception $e) {
-            $this->getResponse()->setStatusCode(500);
-            return new JsonModel([
-                'result' => 'error','message' => $e->getMessage(),
-                'entity_id' => $entity->getId()]);
-        }
+        $this->entityManager->flush();
+
         return new JsonModel([
             'result' => 'success','entity_id' => $entity->getId()]);
     }

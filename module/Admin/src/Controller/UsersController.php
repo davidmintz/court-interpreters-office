@@ -3,42 +3,32 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventInterface;
 use Zend\Authentication\AuthenticationService;
-
+use Zend\View\Model\JsonModel;
+use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Session\Container as Session;
 
 use InterpretersOffice\Admin\Form\UserForm;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Entity\Hat;
 use InterpretersOffice\Entity\Repository\UserRepository;
-use InterpretersOffice\Controller\ExceptionHandlerTrait;
-
-use Zend\View\Model\JsonModel;
 
 /**
  * controller for admin/users.
  *
- * things we need to do here:
- *
- *   * supply a way to browse and edit existing users
- *   * add new user: encourage (require?) looking up existing person first.
- *     autocompletion?
  *
  */
 class UsersController extends AbstractActionController implements AuthenticationAwareInterface
 {
-    use ExceptionHandlerTrait;
     /**
      * entity manager.
      *
@@ -188,6 +178,7 @@ class UsersController extends AbstractActionController implements Authentication
 
             }
         });
+
         return parent::setEventManager($events);
     }
 
@@ -358,9 +349,9 @@ class UsersController extends AbstractActionController implements Authentication
                     $person->getFirstname(),
                     $person->getLastname()
                 ));
-            //$this->redirect()->toRoute('users');
             return new JsonModel(['status' => 'success','validation_errors' => null]);
         }
+
         return $viewModel;
     }
 
@@ -481,13 +472,9 @@ class UsersController extends AbstractActionController implements Authentication
                 'status' => 'error',
                 'message' => 'Sorry, this user has a data history and can no longer be deleted.',
             ]);
-        } catch (\Throwable $e) {
-            return $this->catch($e,[
-                'details'=>'running delete action in Admin users controller'
-            ]);
         }
     }
-    
+
     /**
      * autocomplete for admin/users
      *
@@ -502,6 +489,7 @@ class UsersController extends AbstractActionController implements Authentication
         $get = $this->params()->fromQuery();
         $data = $repository->autocomplete($get['term'],
             ['search_by'=>$get['search_by']]);
+            
         return new JsonModel($data);
     }
 }

@@ -11,7 +11,6 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Stdlib\ArrayObject;
 use InterpretersOffice\Requests\Form\ConfigForm;
 use InterpretersOffice\Requests\Entity\Request;
-use InterpretersOffice\Controller\ExceptionHandlerTrait;
 
 /**
  * admin controller for Requests module
@@ -19,7 +18,6 @@ use InterpretersOffice\Controller\ExceptionHandlerTrait;
 class IndexController extends AbstractActionController
 {
 
-    use ExceptionHandlerTrait;
     /**
      * objectManager instance.
      *
@@ -181,12 +179,9 @@ class IndexController extends AbstractActionController
                 'Invalid or missing security token. '
                 .'You may need to refresh this page and try again.']);
         }
-        try {
-            $repository = $this->objectManager->getRepository(Request::class);
-            $result = $repository->createEventFromRequest($request_id);
-            return new JsonModel($result);
-        } catch (\Throwable $e) {
-            return $this->catch($e);
-        }
+        $repository = $this->objectManager->getRepository(Request::class);
+        $result = $repository->createEventFromRequest($request_id);
+
+        return new JsonModel($result);
     }
 }

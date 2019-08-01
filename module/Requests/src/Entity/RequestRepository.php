@@ -368,12 +368,7 @@ class RequestRepository extends EntityRepository
         $em->persist($event);
         $request->setPending(false)->setEvent($event);
         $em->flush();
-        // } catch (\Throwable $e) {
-        //     return [
-        //         'message' => $e->getMessage(),
-        //         'status'  => 'error',
-        //     ];
-        // }
+        
         return [
             'status' => 'success',
             'message' => 'new event has been added to the schedule',

@@ -8,27 +8,24 @@ namespace InterpretersOffice\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use Zend\Session\Container as Session;
+use Zend\InputFilter\InputFilterInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Form\FormInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Form\User\RegistrationForm;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Form\FormInterface;
 use InterpretersOffice\Service\AccountManager;
-use Zend\Session\Container as Session;
-use Zend\InputFilter\InputFilterInterface;
-
 use InterpretersOffice\Admin\Form\UserForm;
-use InterpretersOffice\Controller\ExceptionHandlerTrait;
+
 /**
  *  AccountController.
  *
  *  For registration, password reset and email verification.
  *
  */
-
 class AccountController extends AbstractActionController
 {
-    use ExceptionHandlerTrait;
     /**
      * objectManager instance.
      *
@@ -164,28 +161,18 @@ class AccountController extends AbstractActionController
                 ['validation_errors' => $form->getFlattenedErrorMessages()]
             );
         }
-        try {
-            $this->accountManager->register($user, $this->getRequest());
-            $this->objectManager->flush();
-            $this->getEventManager()->trigger(
-                AccountManager::EVENT_REGISTRATION_SUBMITTED,
-                $this,
-                ['user' => $user]
-            );
-            return new JsonModel(
-                ['validation_errors' => null, 'data' => $data,
-                'status' => 'success']
-            );
-        } catch (\Exception $e) {
-            return new JsonModel(
-                [   'validation_errors' => null,
-                    'data' => $data,
-                    'status' => 'error',
-                    'exception' => get_class($e),
-                    'message' => $e->getMessage(),
-                ]
-            );
-        }
+        $this->accountManager->register($user, $this->getRequest());
+        $this->objectManager->flush();
+        $this->getEventManager()->trigger(
+            AccountManager::EVENT_REGISTRATION_SUBMITTED,
+            $this,
+            ['user' => $user]
+        );
+
+        return new JsonModel(
+            ['validation_errors' => null, 'data' => $data,
+            'status' => 'success']
+        );
     }
 
     /**
@@ -369,29 +356,26 @@ class AccountController extends AbstractActionController
         if (!$form->isValid()) {
             return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
-        try {
-            $this->objectManager->flush();
-            $before = $this->auth->getIdentity();
-            $after = (object)[
-                'lastname' => $person->getLastname(),
-                'firstname' => $person->getFirstname(),
-                'email' => $person->getEmail(),
-                'hat' => (string)$person->getHat(),
-                'username' => $user->getUserName(),
-                'id' => $user->getId(),
-                'person_id' => $person->getId(),
-                'role' => (string)$user->getRole(),
-                'judge_ids' => isset($user_params['judges']) ? $user_params['judges']:[]
-            ];
-            $this->auth->getStorage()->write($after);
-            $this->getEventManager()->trigger(
-                AccountManager::USER_ACCOUNT_MODIFIED,
-                $this,
-                compact('user','before','after','person_before')
-            );
-        } catch (\Throwable $e) {
-            return $this->catch($e);
-        }
+
+        $this->objectManager->flush();
+        $before = $this->auth->getIdentity();
+        $after = (object)[
+            'lastname' => $person->getLastname(),
+            'firstname' => $person->getFirstname(),
+            'email' => $person->getEmail(),
+            'hat' => (string)$person->getHat(),
+            'username' => $user->getUserName(),
+            'id' => $user->getId(),
+            'person_id' => $person->getId(),
+            'role' => (string)$user->getRole(),
+            'judge_ids' => isset($user_params['judges']) ? $user_params['judges']:[]
+        ];
+        $this->auth->getStorage()->write($after);
+        $this->getEventManager()->trigger(
+            AccountManager::USER_ACCOUNT_MODIFIED,
+            $this,
+            compact('user','before','after','person_before')
+        );
 
         return new JsonModel(['status'=>'success',]);
     }

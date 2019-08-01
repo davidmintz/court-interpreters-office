@@ -55,20 +55,7 @@ trait DeletionTrait
                     'exception' => 'foreign_key_constraint',
                 ];
                 $this->getResponse()->setStatusCode(403);
-            } catch (\Exception $e) {
-                $result = 'error';
-                $redirect = false;
-                $this->events->trigger(
-                    'error',
-                    ['details' => "trying to delete $what"]
-                );
-                $error = ['message' =>
-                    "Sorry, we hit an unexpected system error.",
-                    'code' => $e->getCode(),
-                    'exception' => get_class($e)
-                ];
-                $this->getResponse()->setStatusCode(500);
-            }
+            } 
         } else {
             $result = 'error';
             $error = ['message' => "$what $name (id $id) not found"];

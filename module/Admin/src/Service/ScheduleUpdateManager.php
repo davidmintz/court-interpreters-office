@@ -333,7 +333,7 @@ class ScheduleUpdateManager
      */
     public function dispatchEmail(EventInterface $e)
     {
-        $this->logger->debug(sprintf("need to DISPATCH %d emails",count($this->email_messages)));
+        $this->logger->debug(sprintf("now going to DISPATCH %d emails",count($this->email_messages)));
         if ($this->email_messages) {
             try {
                 $transport = $this->getMailTransport();
@@ -344,7 +344,7 @@ class ScheduleUpdateManager
                 }
             } catch (\Exception $e) {
                 $this->logger->err(
-                    "oh shit! ScheduleUpdateManager exception while sending email: "
+                    "shit! ScheduleUpdateManager exception while sending email: "
                     .$e->getMessage()
                 );
                 throw $e;

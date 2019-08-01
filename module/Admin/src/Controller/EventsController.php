@@ -9,14 +9,10 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Zend\EventManager\Event;
 use Zend\Authentication\AuthenticationServiceInterface;
-
 use InterpretersOffice\Admin\Form;
-
 use InterpretersOffice\Entity;
-use InterpretersOffice\Controller\ExceptionHandlerTrait;
 use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 
 /**
@@ -45,8 +41,6 @@ use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
  */
 class EventsController extends AbstractActionController
 {
-
-    use ExceptionHandlerTrait;
 
     /**
      * entity manager
@@ -152,38 +146,34 @@ class EventsController extends AbstractActionController
             $form->bind($event);
             return $viewModel;
         }
-        try {
-            $data = $request->getPost();
-            $input = $data->get('event');
-            $form->bind($event);
-            $this->getEventManager()->trigger(
-                'pre.validate',
-                $this,
-                ['input' => $data,]
-            );
-            $form->setData($data);
-            if (! $form->isValid()) {
-                return new JsonModel(
-                    ['validation_errors' => $form->getMessages()]
-                );
-            }
-            $this->entityManager->persist($event);
-            $this->entityManager->flush();
-            $url = $this->getEvent()->getApplication()->getServiceManager()
-            ->get('ViewHelperManager')->get('url')('events');
-            $date = $event->getDate();
-            $this->flashMessenger()->addSuccessMessage(sprintf(
-                'This event has been added to the schedule for <a href="%s">%s</a>',
-                $url . $date->format('/Y/m/d'),
-                $date->format('l d-M-Y')
-            ));
-
+        $data = $request->getPost();
+        $input = $data->get('event');
+        $form->bind($event);
+        $this->getEventManager()->trigger(
+            'pre.validate',
+            $this,
+            ['input' => $data,]
+        );
+        $form->setData($data);
+        if (! $form->isValid()) {
             return new JsonModel(
-                ['status' => 'success','id' => $event->getId()]
+                ['validation_errors' => $form->getMessages()]
             );
-        } catch (\Exception $e) {
-            return $this->catch($e);
         }
+        $this->entityManager->persist($event);
+        $this->entityManager->flush();
+        $url = $this->getEvent()->getApplication()->getServiceManager()
+        ->get('ViewHelperManager')->get('url')('events');
+        $date = $event->getDate();
+        $this->flashMessenger()->addSuccessMessage(sprintf(
+            'This event has been added to the schedule for <a href="%s">%s</a>',
+            $url . $date->format('/Y/m/d'),
+            $date->format('l d-M-Y')
+        ));
+
+        return new JsonModel(
+            ['status' => 'success','id' => $event->getId()]
+        );
     }
 
     /**
@@ -223,35 +213,32 @@ class EventsController extends AbstractActionController
         }
         $events->trigger('pre.validate', $this);
         $form->setData($this->getRequest()->getPost());
-        try {
-            if (! $form->isValid()) {
-                return new JsonModel(
-                    ['validation_errors' => $form->getMessages()]
-                );
-            }
-            $events->trigger('post.validate', $this);
-            $this->entityManager->flush();
-            $url = $this->getEvent()->getApplication()
-                ->getServiceManager()->get('ViewHelperManager')
-                ->get('url')('events');
-            if ($modified_before != $entity->getModified()->format('Y-m-d h:i:s')
-                or $this->params()->fromPost('deftnames_modified')) {
-                $verbiage = 'updated';
-            } else {
-                $verbiage = 'saved (unchanged)';
-            }
-            $date = $entity->getDate();
-            $this->flashMessenger()->addSuccessMessage(sprintf(
-                "This event has been $verbiage on the "
-                .'schedule for <a href="%s">%s</a>.',
-                $url . $date->format('/Y/m/d'),
-                $date->format('l d-M-Y')
-            ));
-
-            return new JsonModel(['status' => 'success', 'id' => $id]);
-        } catch (\Exception $e) {
-            return $this->catch($e);
+        if (! $form->isValid()) {
+            return new JsonModel(
+                ['validation_errors' => $form->getMessages()]
+            );
         }
+        $events->trigger('post.validate', $this);
+        $this->entityManager->flush();
+        $url = $this->getEvent()->getApplication()
+            ->getServiceManager()->get('ViewHelperManager')
+            ->get('url')('events');
+        if ($modified_before != $entity->getModified()->format('Y-m-d h:i:s')
+            or $this->params()->fromPost('deftnames_modified')) {
+            $verbiage = 'updated';
+        } else {
+            $verbiage = 'saved (unchanged)';
+        }
+        $date = $entity->getDate();
+        $this->flashMessenger()->addSuccessMessage(sprintf(
+            "This event has been $verbiage on the "
+            .'schedule for <a href="%s">%s</a>.',
+            $url . $date->format('/Y/m/d'),
+            $date->format('l d-M-Y')
+        ));
+
+        return new JsonModel(['status' => 'success', 'id' => $id]);
+
     }
 
     /**
@@ -291,27 +278,16 @@ class EventsController extends AbstractActionController
                 'message' => "This event has already been deleted",
             ]);
         }
-        try {
-            $entity->setDeleted(true);
-            $this->getEventManager()->trigger('deleteEvent',$this,
-                ['entity'=>$entity,
-                'email_notification'=> $this->params()->fromPost('email_notification')]);
-            $this->entityManager->flush();
-            $this->getEventManager()->trigger('postFlush',$this);
-            // $this->flashMessenger()->addSuccessMessage(
-            //         'this event has been deleted from the schedule'
-            // );
-            return new JsonModel(['deleted' => true,'status' => 'success',
-                'message' => "this event has been deleted"]);
-        } catch (\Throwable $e) {
-            $this->getEventManager()->trigger(
-                'error',
-                $this,
-                ['details' => "attempting soft-deletion of event id $id",'exception' => $e]
-            );
-            return new JsonModel(['deleted' => false,'status' => 'error',
-                'message' => $e->getMessage()]);
-        }
+
+        $entity->setDeleted(true);
+        $this->getEventManager()->trigger('deleteEvent',$this,
+            ['entity'=>$entity,
+            'email_notification'=> $this->params()->fromPost('email_notification')]);
+        $this->entityManager->flush();
+        $this->getEventManager()->trigger('postFlush',$this);
+
+        return new JsonModel(['deleted' => true,'status' => 'success',
+            'message' => "this event has been deleted"]);
     }
 
     /**

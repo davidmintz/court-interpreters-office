@@ -14,8 +14,6 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InterpretersOffice\Admin\Form\DefendantForm;
 use InterpretersOffice\Entity\Defendant;
 
-use InterpretersOffice\Controller\ExceptionHandlerTrait;
-
 /**
  * controller for admin/defendants.
  */
@@ -36,7 +34,6 @@ class DefendantsController extends AbstractActionController
     protected $repository;
 
     use DeletionTrait;
-    use ExceptionHandlerTrait;
 
     /**
      * constructor.
@@ -121,11 +118,6 @@ class DefendantsController extends AbstractActionController
                     :
                     $viewModel->setVariables(['duplicate_entry_error' => true,
                             'existing_entity' => $existing_entity]);
-            } catch (\Exception $e) {
-                return $this->catch(
-                    $e,
-                    ['details' => 'running defendant name update']
-                );
             }
         }
 
@@ -196,21 +188,16 @@ class DefendantsController extends AbstractActionController
             if (! $form->isValid()) {
                 return new JsonModel(['validation_errors' => $form->getMessages()]);
             }
-            try {
-                // do we have an existing match?
-                $existing_name = $this->repository->findDuplicate($entity);
-                $resolution = $form->get('duplicate_resolution')->getValue();
-                $result = $this->repository->updateDefendantEvents(
-                    $entity,
-                    $input->get('occurrences', []),
-                    $existing_name,
-                    $resolution,
-                    $this->params()->fromQuery('event_id')
-                );
-            } catch (\Exception $e) {
-                $this->events->trigger('error', $this, ['exception' => $e]);
-                $result = ['message' => $e->getMessage(), 'status' => 'error'];
-            }
+            // do we have an existing match?
+            $existing_name = $this->repository->findDuplicate($entity);
+            $resolution = $form->get('duplicate_resolution')->getValue();
+            $result = $this->repository->updateDefendantEvents(
+                $entity,
+                $input->get('occurrences', []),
+                $existing_name,
+                $resolution,
+                $this->params()->fromQuery('event_id')
+            );
             $context = $this->params()->fromQuery('context', 'defendants');
             if ("success" == $result['status'] && 'events' !== $context) {
                 $this->flashMessenger()->addSuccessMessage(
@@ -269,8 +256,6 @@ class DefendantsController extends AbstractActionController
                     'id' => $existing_entity->getId(),
                 ]
              ]);
-        } catch (\Exception $e) {
-            $this->catch($e, ['details' => 'attempting defendant name update']);
         }
     }
 

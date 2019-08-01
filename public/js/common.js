@@ -104,10 +104,11 @@ const fail = function(response) {
         processing your last request. If the problem recurs, please notify your site
         administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
     }
+    $(".alert-success").hide();
     $("#error-message").html(msg).parent().show();
     // for development...
-    console.log(response.responseText);
     //$("html").html(response.responseText);
+    console.log(response.responseText);
 };
 
 $("button[data-hide]").on("click",function(e){

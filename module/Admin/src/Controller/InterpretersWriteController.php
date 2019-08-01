@@ -143,8 +143,6 @@ class InterpretersWriteController extends AbstractActionController
             } catch (VaultException $e) {
                 $viewModel->vault_error = $e->getMessage();
                 return $viewModel;
-            } catch (\Throwable $e) {
-                throw $e;
             }
         }
 
@@ -219,24 +217,18 @@ class InterpretersWriteController extends AbstractActionController
         try {
             $this->entityManager->flush();
         } catch (VaultException $e) {
-            // $viewModel->vault_error = $e->getMessage();
-            // return $viewModel;
             return new JsonModel([
                 'status'=>'error',
                 'error' => $e->getMessage(),
             ]);
         }
-
         $this->flashMessenger()->addSuccessMessage(sprintf(
             'The interpreter <strong>%s %s</strong> has been updated.',
             $entity->getFirstname(),
             $entity->getLastname()
         ));
+
         return new JsonModel(['status'=>'success']);
-        // $this->redirect()->toRoute('interpreters');
-        // // echo "<br>success. NOT redirecting...
-        // // <a href=\"/admin/interpreters/edit/$id\">do it again</a> ";
-        // return $viewModel;
     }
     /**
      * were the dob and ssn fields modified?
@@ -267,36 +259,33 @@ class InterpretersWriteController extends AbstractActionController
         if (! $this->getRequest()->isXmlHttpRequest()) {
             $this->redirect()->toRoute('interpreters');
         }
-        try {
-            $action = $this->params()->fromQuery('action');
-            $params = $this->params()->fromPost();//['interpreter'];
-            $form = new InterpreterForm(
-                $this->entityManager,
-                ['action' => $action,
-                'vault_enabled' => $this->vault_enabled,
-                //'form_config' => $this->formConfig,
-                ]
+        //try {
+        $action = $this->params()->fromQuery('action');
+        $params = $this->params()->fromPost();//['interpreter'];
+        $form = new InterpreterForm(
+            $this->entityManager,
+            ['action' => $action,
+            'vault_enabled' => $this->vault_enabled,
+            //'form_config' => $this->formConfig,
+            ]
+        );
+        $request = $this->getRequest();
+        $form->setData($request->getPost());
+        if (key_exists('interpreter', $params)) {
+            $form->setValidationGroup(
+                ['interpreter' => array_keys($params['interpreter'])]
             );
-            $request = $this->getRequest();
-            $form->setData($request->getPost());
-            if (key_exists('interpreter', $params)) {
-                $form->setValidationGroup(
-                    ['interpreter' => array_keys($params['interpreter'])]
-                );
-                if (! $form->isValid()) {
-                    return new JsonModel([
-                        'valid' => false,
-                        'validation_errors' =>
-                            $form->getMessages()['interpreter']
-                    ]);
-                }
+            if (! $form->isValid()) {
+                return new JsonModel([
+                    'valid' => false,
+                    'validation_errors' =>
+                        $form->getMessages()['interpreter']
+                ]);
             }
-            return new JsonModel(['valid' => true]);
-        } catch (\Exception $e) {
-            return new JsonModel(['valid' => false, 'error' => $e->getMessage()]);
         }
-    }
 
+        return new JsonModel(['valid' => true]);
+    }
     /**
      * creates form view helper for interpreter-language markup
      *
