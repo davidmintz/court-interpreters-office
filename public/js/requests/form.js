@@ -122,35 +122,11 @@ $(function(){
         $.post(form.attr("action"),post)
             .done(function(response){
                 if (response.validation_errors) {
-                    // we can do better than this.
-                    /** @todo revise displayValidationErrors helper */
-                    var untimely = false;
-                    if (response.validation_errors.request) {
-                        // look for key lessThanTwoBusinessDaysNotice,
-                        // which has no corresponding form element or div
-                        var errors = response.validation_errors.request;
-                        if (errors.date && errors.date.lessThanTwoBusinessDaysNotice) {
-                            untimely = true;
-                            $("#error_insufficient_notice")
-                                .text(new String(errors.date.lessThanTwoBusinessDaysNotice));
-                            delete errors.date.lessThanTwoBusinessDaysNotice;
-                        }
-                        displayValidationErrors(response.validation_errors.request);
-                        delete response.validation_errors.request;
-                    }
-                    // some might be outside the  '.request' property
-                    if (Object.keys(response.validation_errors).length) {
-                        displayValidationErrors(response.validation_errors);
-                    }
-                    if (untimely) {
-                        // this sucks: undo the .hide() in displayValidationErrors
-                        $("#error_insufficient_notice").show();
-                    }
                     console.log("shit failed validation");
-                    return;
+                    return displayValidationErrors(response.validation_errors);
+                } else {
+                    return document.location = `${window.basePath}/requests/list`;
                 }
-                return document.location = `${window.basePath}/requests/list`;
-
             }).fail(fail);
     });
 
