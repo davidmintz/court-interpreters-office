@@ -236,11 +236,11 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 );
                 return  new JsonModel(['status' => 'success','id' => $entity->getId()]);
             } catch (\Exception $e) {
-                $this->getResponse()->setStatusCode(500);
-                $this->events->trigger('error', $this, ['exception' => $e,
-                    'details' => 'doing create in Requests module']);
-                $this->getResponse()->setStatusCode(500);
-                return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
+                //$this->getResponse()->setStatusCode(500);
+                // $this->events->trigger('error', $this, ['exception' => $e,
+                //     'details' => 'doing create in Requests module']);
+                throw $e;
+                //return new JsonModel(['error' => ['message' => $e->getMessage(),]]);
             }
         }
 

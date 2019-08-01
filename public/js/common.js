@@ -107,7 +107,7 @@ const fail = function(response) {
     $("#error-message").html(msg).parent().show();
     // for development...
     console.log(response.responseText);
-    $("html").html(response.responseText);
+    //$("html").html(response.responseText);
 };
 
 $("button[data-hide]").on("click",function(e){
