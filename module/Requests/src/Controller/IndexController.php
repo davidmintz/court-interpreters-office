@@ -138,7 +138,8 @@ class IndexController extends AbstractActionController //implements ResourceInte
      */
     public function indexAction()
     {
-        return new ViewModel();
+        $repo = $this->objectManager->getRepository(Entity\Request::class);
+        return new ViewModel(['count'=> $repo->count()]);
     }
 
     /**

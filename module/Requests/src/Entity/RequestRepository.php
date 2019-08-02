@@ -35,6 +35,21 @@ class RequestRepository extends EntityRepository
     }
 
     /**
+     * counts Request entities matching certain criteria.
+     *
+     * work in progress
+     *
+     * @param  array  $options
+     * @return int
+     */
+    public function count(Array $options = [])
+    {
+        $dql = 'SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r';
+
+        return $this->getEntityManager()->createQuery($dql)->getSingleScalarResult();
+    }
+
+    /**
      * gets Request entity with associated Event entity, not proxy
      *
      * ugly, but it cuts the number of select queries down to 1
@@ -368,7 +383,7 @@ class RequestRepository extends EntityRepository
         $em->persist($event);
         $request->setPending(false)->setEvent($event);
         $em->flush();
-        
+
         return [
             'status' => 'success',
             'message' => 'new event has been added to the schedule',
