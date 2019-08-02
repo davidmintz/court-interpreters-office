@@ -70,7 +70,11 @@ $(function(){
                     /** @todo deal with different responses */
                     console.warn(response);
                 }
-            }).fail(fail);
+            }).fail((response)=>
+            {
+                $("#modal-confirm-delete").modal("hide");
+                fail(response);
+            });
 
         });
     });
