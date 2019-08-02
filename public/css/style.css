@@ -188,3 +188,15 @@ div.event-details .col-sm-4 {
 }
 
 .alert-success p { margin-bottom : 0; padding-left: 2em; }
+
+a.nav-link:not(.active), a.dropdown-item:not(.active) { color : #007bff !important;}
+
+a.nav-link:hover,a.dropdown-item:hover { text-decoration : underline;}
+.nav-item.active, .nav-item.active a {
+     /*
+     background-color: rgb(0, 123, 255);
+      */
+     /* border : 1px solid  rgb(0, 123, 255); */
+     /*color:inherit !important;*/
+     text-decoration : underline;
+ }
