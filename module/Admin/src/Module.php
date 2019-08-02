@@ -86,10 +86,7 @@ class Module
         $log = $container->get('log');
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE,
-            function($e) use ($log,$db_writer){
-                $log->addWriter($db_writer);
-                $log->debug("is the EVENT_ROUTE callback running, or am I hallucinating?");
-            });
+            function($e) use ($log,$db_writer){ $log->addWriter($db_writer); });
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
@@ -116,7 +113,7 @@ class Module
                 }
             }
         });
-
+        /** @todo: lose this, and see what happens? */
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
         $sharedEvents->attach('*', 'error',[$this, 'logError']);
