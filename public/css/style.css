@@ -87,6 +87,9 @@ so that interpreter-languages won't stack and look crappy on a small viewport
        margin-left: 10%;
        margin-right: 10%;
     }
+    a.navbar-brand {
+        font-family: monospace;
+    }
 }
 /* form labels align right unless width makes form controls and labels stack */
 /* @todo get rid of this! use text-{md}-right instead */
