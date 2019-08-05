@@ -289,4 +289,13 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         return $this->createQuery($dql)->setParameters([':email' => $email])
                 ->getResult();
     }
+
+    public function view(int $id)
+    {
+        $dql = 'SELECT p, h FROM InterpretersOffice\Entity\Person p
+        JOIN p.hat h WHERE p.id = :id';
+        return $this->getEntityManager()->createQuery($dql)
+            ->setParameters(['id'=>$id])
+            ->getOneOrNullResult();
+    }
 }

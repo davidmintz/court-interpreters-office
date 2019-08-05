@@ -282,7 +282,22 @@ class PeopleController extends AbstractActionController
     {
         $id = $this->params()->fromRoute('id');
         $class = $this->params()->fromRoute('class','person');
+        $entity = null;
+        switch ($class) {
+            case 'person':
+            $repo = $this->entityManager->getRepository(Entity\Person::class);
+            break;
+            case 'judge':
+            $repo = $this->entityManager
+                ->getRepository(Entity\Judge::class);
+            break;
+            case 'user':
+            $repo = $this->entityManager
+                ->getRepository(Entity\User::class);
+            break;
+        }
+        $entity = $repo->view($id);
 
-        return compact('id','class');
+        return compact('id','class','entity');
     }
 }

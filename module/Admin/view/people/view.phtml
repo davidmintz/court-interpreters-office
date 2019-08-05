@@ -1,0 +1,21 @@
+<?php /** module/Admin/view/people/view.phtml */ ?>
+<h2>work in progress</h2>
+<p>
+    page for displaying person id <?php echo $this->id ?> of class <?php echo $this->class ?>
+</p>
+
+<p>
+we have an entity <?php echo get_class($this->entity) ?>.
+
+<?php
+if ($this->class == 'judge'):
+    echo $this->entity;
+elseif ($this->class == 'person'):
+    echo $this->entity->getFullname(),', ', $this->entity->getHat();
+elseif ($this->class == 'user'):
+    $person = $this->entity->getPerson();
+    echo $person->getFullname(),', ', $person->getHat();
+
+endif;;
+?>
+</p>

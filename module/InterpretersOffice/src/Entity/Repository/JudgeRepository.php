@@ -344,4 +344,14 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         }
         return $name;
     }
+
+    public function view(int $id)
+    {
+        $dql = 'SELECT j, f, h FROM '.Entity\Judge::class.
+        ' j JOIN j.flavor f JOIN j.hat h WHERE j.id = :id';
+
+        return $this->getEntityManager()->createQuery($dql)
+            ->setParameters(['id'=>$id])
+            ->getOneOrNullResult();
+    }
 }

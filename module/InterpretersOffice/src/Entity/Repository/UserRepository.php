@@ -214,6 +214,20 @@ class UserRepository extends EntityRepository
         return $parameters;
     }
 
+    public function view(int $id)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('u, p, h, r, j')
+            ->from(Entity\User::class, 'u')
+            ->join('u.person','p', 'WITH','p.id = :id')->join('p.hat', 'h')
+            ->join('u.role','r')
+            ->leftJoin('u.judges', 'j')
+            ->setParameters(['id'=>$id]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+
+    }
+
     /**
      * gets search results
      *
