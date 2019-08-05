@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * For federal court, that means either USMJ or USDJ. This should be set up just
  * once at installation time.
  *
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
  * @ORM\Table(name="judge_flavors",uniqueConstraints={@ORM\UniqueConstraint(name="unique_judge_flavor",columns={"flavor"})})
  */
 class JudgeFlavor
