@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * an administrator can do except manage other users in the manager and
  * administrator roles.
  *
- * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\RoleRepository")
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\RoleRepository",readOnly=true)
  * @ORM\Table(name="roles")
  */
 class Role
