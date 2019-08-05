@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * These categories should be set up once and for all at installation time.
  *
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
  * @ORM\Table(name="cancellation_reasons",uniqueConstraints=@ORM\UniqueConstraint(name="unique_cancel_reason",columns={"reason"}))
  */
 class ReasonForCancellation

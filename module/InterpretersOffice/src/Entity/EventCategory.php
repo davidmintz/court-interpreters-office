@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * These categories should be set up once and for all at installation time.
  *
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true)
  * @ORM\Table(name="event_categories",uniqueConstraints=@ORM\UniqueConstraint(name="unique_event_category",columns={"category"}))
  */
 class EventCategory

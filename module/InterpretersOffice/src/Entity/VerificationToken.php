@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * storage for email verification and password reset tokens
  *
- * @ORM\Entity  @ORM\Table(name="verification_tokens")
+ * @ORM\Entity(readOnly=true)  @ORM\Table(name="verification_tokens")
  *
  */
 
