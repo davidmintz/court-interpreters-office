@@ -1,21 +1,64 @@
 <?php /** module/Admin/view/people/view.phtml */ ?>
-<h2>work in progress</h2>
-<p>
-    page for displaying person id <?php echo $this->id ?> of class <?php echo $this->class ?>
-</p>
+<div class="mx-auto px-2 pt-2" style="max-width:800px">
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
+<?php if (!$this->entity): ?>
+<div class="alert alert-warning">
+    No person with id <?php echo $this->id ?> found in the database.
+</div>
+<?php return; endif;?>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h3 class="card-title">
+            <?php
+            if ($this->class == 'judge'):
+                echo $this->entity->getFullName(), ', ', $this->entity->getFlavor();
+            elseif ($this->class == 'person'):
+                echo $this->entity->getFullname(),', ', $this->entity->getHat();
+            elseif ($this->class == 'user'):
+                $person = $this->entity->getPerson();
+                echo $person->getFullname(),', ', $person->getHat();
+            endif;
+            ?>
+            </h3>
+            <div class="row">
+                <?php if ($this->class == 'judge' && $this->entity->getDefaultLocation()):?>
+                <div class="col-sm-2 text-md-right">
+                    location
+                </div>
+                <div class="col-sm-9">
+                 <?php
+                     $location = $this->entity->getDefaultLocation();
+                     if ($location):
+                         echo $location;
+                         if ($location->getParentLocation()):
+                             echo ", {$location->getParentLocation()}";
+                         endif;
+                    endif;
+                 ?>
+                </div>
+            <?php endif;
 
-<p>
-we have an entity <?php echo get_class($this->entity) ?>.
+            ?>
+            <div class="col-sm-2 text-md-right">
+                    label
+                </div>
+                <div class="col-sm-9">
+                    value
+                </div>
+                <div class="col-sm-2 text-md-right">
+                    another label
+                </div>
+                <div class="col-sm-9">
+                    value
+                </div>
+                <div class="col-sm-2 text-md-right">
+                    more
+                </div>
+                <div class="col-sm-9">
+                    shit
+                </div>
+            </div>
 
-<?php
-if ($this->class == 'judge'):
-    echo $this->entity;
-elseif ($this->class == 'person'):
-    echo $this->entity->getFullname(),', ', $this->entity->getHat();
-elseif ($this->class == 'user'):
-    $person = $this->entity->getPerson();
-    echo $person->getFullname(),', ', $person->getHat();
-
-endif;;
-?>
-</p>
+        </div>
+    </div>
+</div>

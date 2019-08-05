@@ -97,9 +97,13 @@ return [
                             ],
                             [
                             'label' => 'edit',
-                            'route' => 'people/edit'
+                            'route' => 'people/edit',
                             ],
-                        ]
+                            [
+                            'label' => 'view details',
+                            'route' => 'people/view',
+                            ],
+                        ],
                     ],
                     [
                         'label' => 'event-types',

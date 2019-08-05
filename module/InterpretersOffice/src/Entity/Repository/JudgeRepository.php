@@ -347,8 +347,11 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
 
     public function view(int $id)
     {
-        $dql = 'SELECT j, f, h FROM '.Entity\Judge::class.
-        ' j JOIN j.flavor f JOIN j.hat h WHERE j.id = :id';
+        $dql = 'SELECT j, f, h, loc, ploc FROM '.Entity\Judge::class.
+        ' j JOIN j.flavor f JOIN j.hat h
+        LEFT JOIN j.defaultLocation loc
+        LEFT JOIN loc.parentLocation ploc
+        WHERE j.id = :id';
 
         return $this->getEntityManager()->createQuery($dql)
             ->setParameters(['id'=>$id])
