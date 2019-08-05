@@ -129,11 +129,12 @@ DQL;
     {
         //LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
         // JOIN e.modifiedBy lastmod_by
-        $dql = 'SELECT e, j, f, t, c, anon_j, anon_submitter, submitter, sh, loc,
+        $dql = 'SELECT e, j, f, t, c, anon_j, anon_submitter, submitter, sh, loc, lang,
                 ploc, cr, ie,i, d, default_loc,default_parent_loc, anon_j_default_loc
              FROM '.Entity\Event::class. ' e
             LEFT JOIN e.judge j
             LEFT JOIN j.flavor f
+            JOIN e.language lang
             JOIN e.eventType t
             JOIN t.category c
             LEFT JOIN j.defaultLocation default_loc
