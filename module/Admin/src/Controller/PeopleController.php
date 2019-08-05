@@ -272,4 +272,17 @@ class PeopleController extends AbstractActionController
             return $this->delete(compact('entity', 'id', 'name', 'what'));
         }
     }
+
+    /**
+     * displays Person details
+     *
+     * @return ViewModel
+     */
+    public function viewAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $class = $this->params()->fromRoute('class','person');
+
+        return compact('id','class');
+    }
 }

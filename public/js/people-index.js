@@ -67,11 +67,11 @@ $(function(){
         a popover. for people who have a user account, refer them to user admin
      */
     results_div.on("click","td a[title='view details']",function(e){
-        if ($(this).text().trim() === "#") {
-            e.preventDefault();
-        }
+        // if ($(this).text().trim() === "#") {
+        //     e.preventDefault();
+        // }
         if ($(this).data('user_role')) {
-            e.preventDefault();
+            //e.preventDefault();
             console.warn("so and so has default role: "+$(this).data('user_role'))
         }
     });

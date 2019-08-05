@@ -7,6 +7,7 @@ return [
     // 'interpreters-office/admin/people/index' => __DIR__ . '/../view/people/vue.phtml',
     'interpreters-office/admin/people/edit' => __DIR__ . '/../view/people/form.phtml',
     'interpreters-office/admin/people/add' => __DIR__ . '/../view/people/form.phtml',
+    'interpreters-office/admin/people/view' => __DIR__ . '/../view/people/view.phtml',
     'interpreters-office/admin/languages/index' => __DIR__ . '/../view/languages/index.phtml',
     'interpreters-office/admin/languages/add' => __DIR__ . '/../view/languages/form.phtml',
     'interpreters-office/admin/languages/edit' => __DIR__ . '/../view/languages/form.phtml',
@@ -41,8 +42,8 @@ return [
     'interpreters-office/admin/events/add' => __DIR__ . '/../view/events/form.phtml',
     'interpreters-office/admin/event-types/index' => __DIR__ . '/../view/event-types/index.phtml',
     'interpreters-office/admin/event-types/add' => __DIR__ . '/../view/event-types/form.phtml',
-    // this is a bit weird
-    'interpreters-office/admin/email/templates' => __DIR__ . '/../../InterpretersOffice/view/interpreters-office/email/templates.phtml',
     'interpreters-office/admin/normalization/index' => __DIR__ . '/../view/normalization/index.phtml',
+    // this one's a bit weird...
+    'interpreters-office/admin/email/templates' => __DIR__ . '/../../InterpretersOffice/view/interpreters-office/email/templates.phtml',
 
 ];

@@ -23,16 +23,16 @@ if (!$this->paginator->getTotalItemCount() ) : ?>
                 $view = $this->url('interpreters/find_by_id',['id'=>$person->getId()]);
             elseif ($person instanceof Entity\Judge) :
                 $edit = $this->url('judges/edit',['id'=>$person->getId(),]);
-                $view = $this->url('judges/view',['id'=>$person->getId(),]);
+                $view = $this->url('people/view',['id'=>$person->getId(),'class'=>'judge']);
             elseif ($user_role):
                 // work in progress. note to self: there is no controller action
                 // for finding a user entity by person-id, and the user-id is not
                 // in the Person entity.
                 $edit = $this->url('people/edit',['id'=>$person->getId(),]);
-                $view = '#';
+                $view =  $this->url('people/view',['id'=>$person->getId(),'class'=>'user']);;
             else :
                 $edit = $this->url('people/edit',['id'=>$person->getId(),]);
-                $view = '#';
+                $view = $this->url('people/view',['id'=>$person->getId()]);
             endif;
             ?>
             <tr<?php if (! $person->isActive()):?> class="text-muted"<?php endif ?>>

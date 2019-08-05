@@ -332,6 +332,21 @@ return  [
                         ],
                     ],
                 ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/[view/][:class/]:id',
+                        'defaults' => [
+                            'action' => 'view',
+
+                        ],
+                        'constraints' => [
+                            'action' => 'view',
+                            'id' => '[1-9]\d*',
+                            'class' => 'user|judge'
+                        ],
+                    ],
+                ],
                 'find' => [
                     'type' => Segment::class,
                     'options' => [
