@@ -33,6 +33,7 @@ return [
         Admin\ScheduleController::class => Admin\EventsController::class,
         Admin\CourtClosingsController::class => Admin\EventsController::class,
         Admin\EmailController::class => Admin\EventsController::class,
+        Admin\NormalizationController::class => Admin\EventsController::class,
         // the topmost controller
         Main\IndexController::class => null,
         Requests\IndexController::class => null,

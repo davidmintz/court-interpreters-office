@@ -716,17 +716,17 @@ return  [
             ],
         ],
 
-        'email' => [
-            'type' => Literal::class,
-            'options' => [
-               'route' => '/admin/email/event', //[/]
-               'defaults' => [
-                   'module' => __NAMESPACE__,
-                   'controller' => Controller\EmailController::class,
-                   'action' => 'email-event',
-               ],
-            ],
-        ],
+        // 'email' => [
+        //     'type' => Literal::class,
+        //     'options' => [
+        //        'route' => '/admin/email/event', //[/]
+        //        'defaults' => [
+        //            'module' => __NAMESPACE__,
+        //            'controller' => Controller\EmailController::class,
+        //            'action' => 'email-event',
+        //        ],
+        //     ],
+        // ],
         'email' => [
             'type' => Segment::class,
             'options' => [
@@ -759,6 +759,8 @@ return  [
                 ],
             ],
         ],
+
+
         // 'email-templates' => [
         //     'type' => Literal::class,
         //     'options' => [
@@ -770,5 +772,17 @@ return  [
         //        ],
         //     ],
         // ],
+        'normalization' => [
+            'type' => Segment::class,
+            'may_terminate' => true,
+            'options' => [
+                'route' => '/admin/normalize',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\NormalizationController::class,
+                    'action' => 'index',
+                ],
+            ],
+        ],
     ],
  ];
