@@ -114,9 +114,11 @@ class JudgesController extends AbstractActionController
             ['action' => 'update', 'object' => $entity,]
         );
         $form->bind($entity);
-        $viewModel->setVariables(['form' => $form,
-            'has_related_entities' => $repo->hasRelatedEntities($id)]);
-
+        $has_related_entities = $repo->hasRelatedEntities($id);
+        $viewModel->setVariables(compact('form','has_related_entities'));
+        if ($has_related_entities) {
+            $form->getInputFilter()->get('judge')->remove('flavor');
+        }
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());

@@ -37,15 +37,16 @@ $form->prepare();
 $fieldset = $form->get('judge');
 echo $this->form()->openTag($form);?>
 <?php
-$flavor = $fieldset->get('flavor');?>
+$flavor_element = $fieldset->get('flavor');
+$flavor = $flavor_element->getValue();
+if (is_object($flavor)): $flavor_element->setValue($flavor->getId()); endif;?>
 <div class="form-group form-row">
-    <label class="col-form-label col-sm-3"><?php echo $flavor->getLabel()?></label>
+    <label class="col-form-label col-sm-3"><?php echo $flavor_element->getLabel()?></label>
     <div class="col-sm-9"><?php
-    if ($this->has_related_entities) :
-        $flavor->setAttribute('disabled', 'disabled');
-        ?><input type="hidden" name="judge[flavor]" value="<?php echo $flavor->getValue()?>"><?php
-    endif;
-        echo $this->formSelect($flavor),$this->formElementErrors($flavor);  ?>
+        if ($this->has_related_entities) :
+            $flavor_element->setAttribute('disabled', 'disabled');
+        endif;
+        echo $this->formSelect($flavor_element),$this->formElementErrors($flavor_element);  ?>
     </div>
 </div>
 <?php // text inputs

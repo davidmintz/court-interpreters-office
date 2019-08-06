@@ -175,6 +175,7 @@ class JudgeFieldset extends PersonFieldset
         foreach ($flavors as $f) {
             $options[$f['id']] = $f['flavor'];
         }
+        
         return $options;
     }
 
