@@ -318,6 +318,20 @@ return  [
                         ],
                     ],
                 ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/[view/]:id',
+                        'defaults' => [
+                            'action' => 'view',
+                        ],
+                        'constraints' => [
+                            'action' => 'view',
+                            'id' => '[1-9]\d*',
+                            'class' => 'user|judge'
+                        ],
+                    ],
+                ],
                 'edit' => [
                     'type' => Segment::class,
                     'options' => [
@@ -329,21 +343,6 @@ return  [
                         'constraints' => [
                             'action' => 'edit|delete',
                             'id' => '[1-9]\d*',
-                        ],
-                    ],
-                ],
-                'view' => [
-                    'type' => Segment::class,
-                    'options' => [
-                        'route' => '/[view/][:class/]:id',
-                        'defaults' => [
-                            'action' => 'view',
-
-                        ],
-                        'constraints' => [
-                            'action' => 'view',
-                            'id' => '[1-9]\d*',
-                            'class' => 'user|judge'
                         ],
                     ],
                 ],
@@ -570,7 +569,7 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/[people/]users',
+                'route' => '/admin/users',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\UsersController::class,
@@ -590,16 +589,27 @@ return  [
                         ]
                     ],
                 ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/view/:id',
+                        'defaults' => [
+                            'action' => 'view',
+                        ],
+                        'constraints' => [
+                            'id' => '[1-9]\d*',
+                        ],
+                    ],
+                ],
                 'edit' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/:action/:id',
+                        'route' => '[/people]/:action/:id',
                         'defaults' => [
                             'action' => 'edit',
-
                         ],
                         'constraints' => [
-                            'action' => 'edit|delete|view',
+                            'action' => 'edit|delete',
                             'id' => '[1-9]\d*',
                         ],
                     ],

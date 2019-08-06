@@ -131,6 +131,10 @@ return [
                                 'label' => 'edit',
                                 'route' => 'users/edit'
                             ],
+                            [
+                                'label' => 'view details',
+                                'route' => 'users/view'
+                            ],
                         ]
                     ],
                     [

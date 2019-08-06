@@ -420,7 +420,11 @@ class UsersController extends AbstractActionController implements Authentication
      */
     public function viewAction()
     {
-
+        $repo = $this->entityManager
+            ->getRepository(Entity\User::class);
+        $id = $this->params()->fromRoute('id');
+        $entity = $repo->find($id);
+        return ['entity'=>$entity,'id'=>$id ];
     }
 
     /**
@@ -489,7 +493,7 @@ class UsersController extends AbstractActionController implements Authentication
         $get = $this->params()->fromQuery();
         $data = $repository->autocomplete($get['term'],
             ['search_by'=>$get['search_by']]);
-            
+
         return new JsonModel($data);
     }
 }

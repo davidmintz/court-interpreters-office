@@ -286,18 +286,23 @@ class PeopleController extends AbstractActionController
         switch ($class) {
             case 'person':
             $repo = $this->entityManager->getRepository(Entity\Person::class);
+            $template = 'people/view';
             break;
             case 'judge':
             $repo = $this->entityManager
                 ->getRepository(Entity\Judge::class);
+            $template = 'judges/view';
             break;
             case 'user':
             $repo = $this->entityManager
                 ->getRepository(Entity\User::class);
+            $template = 'users/view';
             break;
         }
         $entity = $repo->view($id);
+        $view = new ViewModel(compact('id','class','entity'));
+        $view->setTemplate($template);
 
-        return compact('id','class','entity');
+        return $view;
     }
 }

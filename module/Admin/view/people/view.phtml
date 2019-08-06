@@ -2,8 +2,9 @@
 <div class="mx-auto px-2 pt-2" style="max-width:800px">
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
 <?php if (!$this->entity): ?>
-<div class="alert alert-warning">
-    No person with id <?php echo $this->id ?> found in the database.
+    <div class="alert alert-warning">
+        No person with id <?php echo $this->id ?> found in the database.
+    </div>
 </div>
 <?php return; endif;?>
     <div class="card mt-4">
@@ -37,7 +38,6 @@
                  ?>
                 </div>
             <?php endif;
-
             ?>
             <div class="col-sm-2 text-md-right">
                     label
@@ -58,7 +58,6 @@
                     shit
                 </div>
             </div>
-
         </div>
     </div>
 </div>
