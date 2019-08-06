@@ -86,7 +86,7 @@ class Module
         $log = $container->get('log');
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE,
-            function($e) use ($log,$db_writer){ $log->addWriter($db_writer); });
+        function($e) use ($log,$db_writer){ $log->addWriter($db_writer); });
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
@@ -112,11 +112,14 @@ class Module
                     $viewModel->navigation_menu = 'Zend\Navigation\Requests';
                 }
             }
+            $request = $event->getApplication()->getRequest();
+            $viewModel->referrer = $request->getServer()->get('HTTP_REFERER');
+
         });
         /** @todo: lose this, and see what happens? */
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
-        $sharedEvents->attach('*', 'error',[$this, 'logError']);
+        // $sharedEvents->attach('*', 'error',[$this, 'logError']);
 
         /** @todo move this to the ScheduleUpdateManagerFactory */
         /** @var  InterpretersOffice\Service\ScheduleUpdateManager $scheduleManager */

@@ -375,7 +375,7 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/judges',
+                'route' => '/admin/[people/]judges',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\JudgesController::class,
@@ -462,7 +462,7 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/interpreters',//[/list] was an experiment
+                'route' => '/admin/[people/]interpreters',//[/list] was an experiment
 
                 'defaults' => [
                     'module' => __NAMESPACE__,
@@ -570,7 +570,7 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/users',
+                'route' => '/admin/[people/]users',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\UsersController::class,

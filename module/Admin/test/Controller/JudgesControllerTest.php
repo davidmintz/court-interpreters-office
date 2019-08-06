@@ -80,7 +80,7 @@ class JudgesControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/judges/add');
         //$this->getResponse()->getBody(); //return;
         $this->assertRedirect();
-        $this->assertRedirectTo('/admin/judges');
+        $this->assertRedirectTo('/admin/people/judges');
 
         $this->assertEquals(
             $count + 1,
@@ -148,6 +148,6 @@ class JudgesControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/judges/add');
         //echo $this->getResponse()->getBody(); //return;
         $this->assertRedirect();
-        $this->assertRedirectTo('/admin/judges');
+        $this->assertRedirectTo('/admin/people/judges');
     }
 }
