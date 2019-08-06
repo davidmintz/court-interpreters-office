@@ -144,7 +144,7 @@ $i = $this->interpreter;
             <div class="col-8 border mt-2 px-2 py-2" style="line-height: 120%"><?php echo $i->getComments() ?>
             </div>
             <div class="w-100"></div>
-            <div class="col-12 text-center pt-2"><a href="<?php echo $this->url('interpreters/edit', ['id' => $i->getId()])?>" class="btn btn-primary">edit</a></div>
+            <div class="col-12 text-center pt-2"><a id="btn-edit" href="<?php echo $this->url('interpreters/edit', ['id' => $i->getId()])?>" class="btn btn-primary">edit</a></div>
         </div>
     </div>
 </div>
