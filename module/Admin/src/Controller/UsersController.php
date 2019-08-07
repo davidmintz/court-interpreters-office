@@ -68,7 +68,6 @@ class UsersController extends AbstractActionController implements Authentication
     ) {
         $this->entityManager = $entityManager;
         $this->setAuthenticationService($auth);
-
     }
 
     /**
@@ -102,6 +101,7 @@ class UsersController extends AbstractActionController implements Authentication
 
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
+        // echo " the fuck? ... not sure why this runs twice";
         $events->attach('load-person', function (EventInterface $e) use ($entityManager, $role_id)
         {
             $person = $e->getParam('person');
@@ -134,6 +134,7 @@ class UsersController extends AbstractActionController implements Authentication
              */
             $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
                     ->findOneBy(['person' => $person]);
+                    //->getUser(['entity'=>'person','id' => $person->getId()]);
             if ($user) {
                 $container = $e->getTarget()->getEvent()->getApplication()
                         ->getServiceManager();
@@ -241,6 +242,7 @@ class UsersController extends AbstractActionController implements Authentication
         ];
 
         if ($person_id) {
+            /** @todo better db efficiency... */
             $person = $this->entityManager
                     ->find('InterpretersOffice\Entity\Person', $person_id);
             if (! $person) {
@@ -366,6 +368,8 @@ class UsersController extends AbstractActionController implements Authentication
     {
 
         $this->session = new Session('user_admin');
+        $this->acl = $this->getEvent()->getApplication()
+            ->getServiceManager()->get('acl');
         $get = $this->params()->fromQuery();
         if ($this->getRequest()->isXmlHttpRequest() && $get) {
             return $this->search();
@@ -384,8 +388,10 @@ class UsersController extends AbstractActionController implements Authentication
         $repository = $this->entityManager
             ->getRepository('InterpretersOffice\Entity\Judge');
         $judges = $repository->getJudgeOptions();
+
         return new ViewModel(
             ['role' => $this->auth_user_role, 'judges' => $judges,
+            'acl' => $this->acl,
             'defaults' => $this->session->params,'paginator'=>$paginator ]
         );
     }
@@ -412,9 +418,10 @@ class UsersController extends AbstractActionController implements Authentication
         $this->session->params = $get;
         /** @var Zend\Paginator\Paginator $paginator */
         $paginator = $repository->paginate($get['term'],
-            ['search_by'=>$get['search_by'],'page'=>$this->params()->fromQuery('page',1)]);
+            ['search_by'=>$get['search_by'],
+            'page'=>$this->params()->fromQuery('page',1)]);
 
-        return $view->setVariables(['paginator'=>$paginator]);
+        return $view->setVariables(['paginator'=>$paginator,'acl'=>$this->acl]);
     }
 
     /**
