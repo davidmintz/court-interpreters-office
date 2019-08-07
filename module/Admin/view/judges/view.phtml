@@ -1,7 +1,60 @@
 <?php $this->headTitle('judges | view')?>
-<h2>
-    <?php echo $this->navigation()->breadcrumbs('admin-breadcrumbs')?>
-</h2>
-<p>
- <?php echo get_class($this->judge)?>
-</p>
+<div class="mx-auto px-2 pt-2" style="max-width:800px">
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
+<?php if (!$this->judge): ?>
+    <div class="alert alert-warning">
+        No judge with id <?php echo $this->id ?> found in the database.
+    </div>
+</div>
+<?php return; endif;?>
+<div class="card mt-4">
+    <div class="card-body">
+        <h3 class="card-title">
+        <?php echo $this->escapeHtml($this->judge->getFullName(). ', '.$this->judge->getFlavor());
+        ?>
+        </h3>
+        <div class="row">
+            <?php if ($this->judge->getDefaultLocation()):?>
+            <div class="col-sm-2 text-md-right">
+                location
+            </div>
+            <div class="col-sm-9">
+             <?php
+                 $location = $this->judge->getDefaultLocation();
+                 if ($location):
+                     echo $location;
+                     if ($location->getParentLocation()):
+                         echo ", {$location->getParentLocation()}";
+                     endif;
+                endif;
+            endif;
+             ?>
+            </div>
+            <div class="col-sm-2 text-md-right">
+                phone
+            </div>
+            <div class="col-sm-9">
+                <?php echo $this->judge->getOfficePhone()?: '-'?>
+            </div>
+            <div class="col-sm-2 text-md-right">
+                email
+            </div>
+            <div class="col-sm-9">
+                <?php echo $this->judge->getEmail()?: '-'?>
+            </div>
+            <div class="col-sm-2 text-md-right">
+                active
+            </div>
+            <div class="col-sm-9">
+                <?php echo $this->judge->getActive() ? 'yes' : 'no' ?>
+            </div>
+            <div class="offset-sm-2 pt-2">
+                <a role="button" class="btn btn-primary btn-sm" href="<?php
+                echo $this->url('judges/edit',['id'=>$this->judge->getId()])
+                ?>">edit</a>
+            </div>
+        </div>
+        <p class="pt-2 text-muted">note to self: display names of current courtroom deps/law clerks?</p>
+    </div>
+</div>
+</div>

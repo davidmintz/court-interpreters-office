@@ -6,58 +6,40 @@
         No person with id <?php echo $this->id ?> found in the database.
     </div>
 </div>
-<?php return; endif;?>
+<?php return; endif;
+    $person = $this->entity;
+?>
     <div class="card mt-4">
         <div class="card-body">
             <h3 class="card-title">
             <?php
-            if ($this->class == 'judge'):
-                echo $this->entity->getFullName(), ', ', $this->entity->getFlavor();
-            elseif ($this->class == 'person'):
-                echo $this->entity->getFullname(),', ', $this->entity->getHat();
-            elseif ($this->class == 'user'):
-                $person = $this->entity->getPerson();
-                echo $person->getFullname(),', ', $person->getHat();
-            endif;
+                echo $this->escapeHtml($person->getFullname().', '. $person->getHat());
             ?>
             </h3>
             <div class="row">
-                <?php if ($this->class == 'judge' && $this->entity->getDefaultLocation()):?>
                 <div class="col-sm-2 text-md-right">
-                    location
+                    phone
                 </div>
                 <div class="col-sm-9">
-                 <?php
-                     $location = $this->entity->getDefaultLocation();
-                     if ($location):
-                         echo $location;
-                         if ($location->getParentLocation()):
-                             echo ", {$location->getParentLocation()}";
-                         endif;
-                    endif;
-                 ?>
-                </div>
-            <?php endif;
-            ?>
-            <div class="col-sm-2 text-md-right">
-                    label
-                </div>
-                <div class="col-sm-9">
-                    value
+                    <?php echo $person->getOfficePhone()?: '-'?>
                 </div>
                 <div class="col-sm-2 text-md-right">
-                    another label
+                    email
                 </div>
                 <div class="col-sm-9">
-                    value
+                    <?php echo $person->getEmail()?: '-'?>
                 </div>
                 <div class="col-sm-2 text-md-right">
-                    more
+                    active
                 </div>
                 <div class="col-sm-9">
-                    shit
+                    <?php echo $person->getActive() ? 'yes' : 'no' ?>
                 </div>
-            </div>
+                <div class="offset-sm-2 pt-2">
+                    <a role="button" class="btn btn-primary btn-sm" href="<?php
+                    echo $this->url('people/edit',['id'=>$person->getId()])
+                    ?>">edit</a>
+                </div>
         </div>
     </div>
 </div>

@@ -63,7 +63,7 @@ foreach ($flavors as $flavor) :
                     endif;?>>
                     <td><?php
                     $name = sprintf("%s, %s %s", $judge['lastname'], $judge['firstname'], $judge['middlename']);
-                    printf('<a data-toggle="tooltip" title="edit this database record" href="%s">%s</a>', $this->url('judges/edit', ['id' => $judge['id']]), $name);
+                    printf('<a data-toggle="tooltip" title="view judge details" href="%s">%s</a>', $this->url('judges/view', ['id' => $judge['id']]), $name);
                     ?></td>
                     <td style="color:#515457" class="pl-0"><?php echo $location ?></td>
                     <td class="text-md-right">

@@ -57,7 +57,7 @@ class JudgesController extends AbstractActionController
         $repo = $this->entityManager
             ->getRepository(Entity\Judge::class);
 
-        return ['judge'=>$repo->getJudge($id)];
+        return ['judge'=>$repo->getJudge($id),'id'=>$id];
     }
 
     /**

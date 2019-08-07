@@ -6,11 +6,85 @@
         No user with id <?php echo $this->id ?> found in the database.
     </div>
 </div>
-<?php return; endif;?>
-the FUCK? <?php echo $this->layout()->action ?>
+<?php return; endif;
+$user = $this->entity;
+$person = $user->getPerson();
+?>
+
     <div class="card mt-4">
         <div class="card-body">
-            <h3 class="card-title"></h3>
+            <h3 class="card-title">
+            <?php
+                echo $this->escapeHtml($person->getFullname().', '. $person->getHat());
+            ?>
+            </h3>
+            <div class="row">
+                <div class="col-sm-3 text-md-right">
+                    office phone
+                </div>
+                <div class="col-sm-9">
+                    <?php echo $person->getOfficePhone()?: '-'?>
+                </div>
+                <div class="col-sm-3 text-md-right">
+                    mobile phone
+                </div>
+                <div class="col-sm-9">
+                    <?php echo $person->getMobilePhone()?: '-'?>
+                </div>
+                <div class="col-sm-3 text-md-right">
+                    email
+                </div>
+                <div class="col-sm-9">
+                    <?php echo $person->getEmail()?: '-'?>
+                </div>
+                <?php
+                /** @var InterpretersOffice\Entity\Hat $hat */
+                $hat = $person->getHat();
+                if ($hat->isJudgesStaff()):
+                    $judges = $user->getJudges();
+                    $count = $judges->count();
+                ?><div class="col-sm-3 text-md-right">
+                    judge<?php if ($count > 1):?>s<?php endif?>
+                </div>
+                <div class="col-sm-9">
+                <?php
+                    $judges = $user->getJudges();
+                    if ($count):
+                        foreach ($judges as $judge):
+                            echo $this->escapeHtml($judge->getFullName(). ', '.$judge->getFlavor());
+                            ?><br><?php
+                        endforeach;
+                    else : ?> -<?php
+                    endif; ?>
+                </div><?php
+                endif; ?>
+                <div class="col-sm-3 text-md-right">
+                    active
+                </div>
+                <div class="col-sm-9">
+                    <?php echo $person->getActive() ? 'yes' : 'no' ?>
+                </div>
+                <div class="col-sm-3 text-md-right">
+                    account status
+                </div>
+                <div class="col-sm-9">
+                    <?php echo $user->getActive()? 'active': 'inactive'?>
+                </div>
+                <div class="col-sm-3 text-md-right">
+                    last login
+                </div>
+                <div class="col-sm-9">
+                    <?php echo $user->getLastLogin() ?
+                        $user->getLastLogin()->format('d-M-Y g:i a')
+                        : '<em>never</em>'
+                    ?>
+                </div>
+                <div class="offset-sm-3 pt-2">
+                    <a role="button" class="btn btn-primary btn-sm" href="<?php
+                    echo $this->url('people/edit',['id'=>$person->getId()])
+                    ?>">edit</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
