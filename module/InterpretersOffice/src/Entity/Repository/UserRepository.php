@@ -60,21 +60,29 @@ class UserRepository extends EntityRepository
     }
 
     /**
-     * intended to help but only seems to make matters worse
+     * gets User entity, fully hydrated
+     * 
      * @param  int    $id
+     * @param $entity entity that $id identifies
      * @return Entity\User
      */
-    public function getUser(int $id) : ? Entity\User
+    public function getUser(int $id, string $entity = 'user') : ? Entity\User
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('u, p, h, r, j')
+            ->select('u, p, h, r, j, jh, jf')
             ->from(Entity\User::class, 'u')
             ->join('u.person','p')
             ->join('p.hat', 'h')
             ->join('u.role','r')
             ->leftJoin('u.judges', 'j')
-            ->where('u.id = :id')
-            ->setParameters(['id'=>$id]);
+            ->leftJoin('j.hat', 'jh')
+            ->leftJoin('j.flavor', 'jf');
+            if ('person' == $entity) {
+                $qb->where('p.id = :id');
+            } else {
+                $qb->where('u.id = :id');
+            }
+            $qb->setParameters(['id'=>$id]);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

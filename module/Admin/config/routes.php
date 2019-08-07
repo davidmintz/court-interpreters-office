@@ -592,25 +592,27 @@ return  [
                 'view' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/:id',
+                        'route' => '[/:entity]/:id',
                         'defaults' => [
                             'action' => 'view',
                         ],
                         'constraints' => [
                             'id' => '[1-9]\d*',
+                            'entity'=>'person',
                         ],
                     ],
                 ],
                 'edit' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/:action/:id',
+                        'route' => '/:action[/:entity]/:id',
                         'defaults' => [
                             'action' => 'edit',
                         ],
                         'constraints' => [
                             'action' => 'edit|delete',
                             'id' => '[1-9]\d*',
+                            'entity'=>'person',
                         ],
                     ],
                 ],

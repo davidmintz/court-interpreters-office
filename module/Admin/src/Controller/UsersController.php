@@ -306,7 +306,9 @@ class UsersController extends AbstractActionController implements Authentication
         $id = $this->params()->fromRoute('id');
         $viewModel = (new ViewModel(['title' => 'edit a user','id' => $id]))
                 ->setTemplate('interpreters-office/admin/users/form');
-        $user = $this->entityManager->find('InterpretersOffice\Entity\User', $id);
+        $entity = $this->params()->fromRoute('entity','user');
+        $repo = $this->entityManager->getRepository('InterpretersOffice\Entity\User');
+        $user = $repo->getUser($id, $entity);
         if (! $user) {
             return $viewModel->setVariables(['errorMessage' =>
                 "user with id $id was not found in your database."]);
@@ -416,15 +418,16 @@ class UsersController extends AbstractActionController implements Authentication
     }
 
     /**
-     * @todo implement
+     * view action for user/person details
      */
     public function viewAction()
     {
         $repo = $this->entityManager
             ->getRepository(Entity\User::class);
         $id = $this->params()->fromRoute('id');
-        $entity = $repo->find($id);
-        return ['entity'=>$entity,'id'=>$id ];
+        $entity = $this->params()->fromRoute('entity','user');
+        $user = $repo->getUser($id,$entity);
+        return ['entity'=>$user,'id'=>$id ];
     }
 
     /**
