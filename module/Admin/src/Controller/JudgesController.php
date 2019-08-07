@@ -42,7 +42,7 @@ class JudgesController extends AbstractActionController
     public function indexAction()
     {
         $judges = $this->entityManager
-            ->getRepository('InterpretersOffice\Entity\Judge')->getList();
+            ->getRepository(Entity\Judge::class)->getList();
 
         return new ViewModel(['title' => 'judges', 'judges' => $judges, ]);
     }
@@ -53,7 +53,11 @@ class JudgesController extends AbstractActionController
      */
     public function viewAction()
     {
-        return [];
+        $id = $this->params()->fromRoute('id');
+        $repo = $this->entityManager
+            ->getRepository(Entity\Judge::class);
+
+        return ['judge'=>$repo->getJudge($id)];
     }
 
     /**
