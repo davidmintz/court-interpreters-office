@@ -18,20 +18,6 @@ return [
                 'route' => 'admin',
                 'pages' => [
                     [
-                        'label' => 'judges',
-                        'route' => 'judges',
-                        'pages' => [
-                            [
-                                'label' => 'add',
-                                'route' => 'judges/add'
-                            ],
-                            [
-                                'label' => 'edit',
-                                'route' => 'judges/edit'
-                            ],
-                        ]
-                    ],
-                    [
                         'label' => 'schedule',
                         'route' => 'events',
                         'pages' => [
@@ -44,34 +30,6 @@ return [
                                 'route' => 'events/edit'
                             ],
                         ],
-                    ],
-                    // [
-                    //     'label' => 'interpreters',
-                    //     'route' => 'interpreters',
-                    //     //'resource' => Admin\InterpretersController::class,
-                    //     'pages' => [
-                    //         [
-                    //             'label' => 'add',
-                    //             'route' => 'interpreters/add'
-                    //         ],
-                    //         [
-                    //             'label' => 'edit',
-                    //             'route' => 'interpreters/edit',
-                    //         ],
-                    //         [
-                    //             'label' => 'view details',
-                    //             'route' => 'interpreters/find_by_id',
-                    //         ],
-                    //     ],
-                    // ],
-                    [
-                        'label' => 'interpreters',
-                        'route' => 'interpreters/find_by_language',
-
-                    ],
-                    [
-                        'label' => 'interpreters',
-                        'route' => 'interpreters/find_by_name',
                     ],
                     [
                         'label' => 'languages',
@@ -120,6 +78,50 @@ return [
                                         'label' => 'view details',
                                         'route' => 'interpreters/find_by_id',
                                     ],
+                                    [
+                                        'label' => 'search',
+                                        'route' => 'interpreters/find_by_language',
+                                    ],
+                                    [
+                                        'label' => 'search',
+                                        'route' => 'interpreters/find_by_name',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'label' => 'judges',
+                                'route' => 'judges',
+                                'pages' => [
+                                    [
+                                        'label' => 'add',
+                                        'route' => 'judges/add'
+                                    ],
+                                    [
+                                        'label' => 'edit',
+                                        'route' => 'judges/edit'
+                                    ],
+                                    [
+                                        'label' => 'view details',
+                                        'route' => 'judges/view'
+                                    ],
+                                ]
+                            ],
+                            [
+                                'label' => 'users',
+                                'route' => 'users',
+                                'pages' => [
+                                    [
+                                        'label' => 'add',
+                                        'route' => 'users/add'
+                                    ],
+                                    [
+                                        'label' => 'edit',
+                                        'route' => 'users/edit'
+                                    ],
+                                    [
+                                        'label' => 'view details',
+                                        'route' => 'users/view'
+                                    ],
                                 ],
                             ],
                         ],
@@ -138,24 +140,24 @@ return [
                             ],
                         ],
                     ],
-                    [
-                        'label' => 'users',
-                        'route' => 'users',
-                        'pages' => [
-                            [
-                                'label' => 'add',
-                                'route' => 'users/add'
-                            ],
-                            [
-                                'label' => 'edit',
-                                'route' => 'users/edit'
-                            ],
-                            [
-                                'label' => 'view details',
-                                'route' => 'users/view'
-                            ],
-                        ]
-                    ],
+                    // [
+                    //     'label' => 'users',
+                    //     'route' => 'users',
+                    //     'pages' => [
+                    //         [
+                    //             'label' => 'add',
+                    //             'route' => 'users/add'
+                    //         ],
+                    //         [
+                    //             'label' => 'edit',
+                    //             'route' => 'users/edit'
+                    //         ],
+                    //         [
+                    //             'label' => 'view details',
+                    //             'route' => 'users/view'
+                    //         ],
+                    //     ]
+                    // ],
                     [
                         'label' => 'locations',
                         'route' => 'locations',

@@ -391,6 +391,19 @@ return  [
                         ],
                     ],
                 ],
+                'view' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/:id',
+                        'defaults' => [
+                            'action' => 'view',
+
+                        ],
+                        'constraints' => [
+                            'id' => '[1-9]\d*',
+                        ],
+                    ],
+                ],
                 'edit' => [
                     'type' => Segment::class,
                     'options' => [
@@ -401,19 +414,6 @@ return  [
                         ],
                         'constraints' => [
                             'action' => 'edit|delete',
-                            'id' => '[1-9]\d*',
-                        ],
-                    ],
-                ],
-                'view' => [
-                    'type' => Segment::class,
-                    'options' => [
-                        'route' => '/:id',
-                        'defaults' => [
-                            'action' => 'view',
-
-                        ],
-                        'constraints' => [
                             'id' => '[1-9]\d*',
                         ],
                     ],
