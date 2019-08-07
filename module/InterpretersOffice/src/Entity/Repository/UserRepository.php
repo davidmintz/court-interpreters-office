@@ -61,7 +61,7 @@ class UserRepository extends EntityRepository
 
     /**
      * gets User entity, fully hydrated
-     * 
+     *
      * @param  int    $id
      * @param $entity entity that $id identifies
      * @return Entity\User
@@ -253,14 +253,18 @@ class UserRepository extends EntityRepository
         $page = isset($options['page']) ? $options['page']: 1;
         $parameters = $this->parseOptions($name_or_email,$options);
         $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('u, p, h, r')
+            ->select('u, p, h, r, j, jh, jf')
             ->from(Entity\User::class, 'u')
-            ->join('u.person','p')->join('p.hat', 'h')->join('u.role','r');
+            ->join('u.person','p')->join('p.hat', 'h')
+            ->join('u.role','r')
+            ->leftJoin('u.judges','j')
+            ->leftJoin('j.flavor','jf')
+            ->leftJoin('j.hat','jh');
 
         if (! empty($parameters['judge'])) {
-            $qb->join('u.judges','j')->where('j.id = :judge');
-            //exit($qb->getDQL());
-        }  elseif (!empty($parameters['email'])) {
+            $qb->where('j.id = :judge');
+        }
+         elseif (!empty($parameters['email'])) {
             $qb->where('p.email LIKE :email');
         } else { // search by name
             $qb->where('p.lastname LIKE :lastname');
