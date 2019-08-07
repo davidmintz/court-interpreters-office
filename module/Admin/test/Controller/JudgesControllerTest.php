@@ -1,6 +1,6 @@
 <?php
 /**
- * module/Admin/test/Controller/PeopleControllerTest.php.
+ * module/Admin/test/Controller/JudgesControllerTest.php.
  */
 
 namespace ApplicationTest\Controller;
@@ -80,7 +80,7 @@ class JudgesControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/judges/add');
         //$this->getResponse()->getBody(); //return;
         $this->assertRedirect();
-        $this->assertRedirectTo('/admin/people/judges');
+        $this->assertRedirectTo('/admin/judges');
 
         $this->assertEquals(
             $count + 1,
@@ -148,6 +148,6 @@ class JudgesControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/judges/add');
         //echo $this->getResponse()->getBody(); //return;
         $this->assertRedirect();
-        $this->assertRedirectTo('/admin/people/judges');
+        $this->assertRedirectTo('/admin/judges');
     }
 }

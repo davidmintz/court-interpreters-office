@@ -321,7 +321,7 @@ return  [
                 'view' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/[view/]:id',
+                        'route' => '[/:class]/:id',
                         'defaults' => [
                             'action' => 'view',
                         ],
@@ -374,7 +374,7 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/[people/]judges',
+                'route' => '/admin/judges',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\JudgesController::class,
@@ -461,7 +461,7 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/[people/]interpreters',//[/list] was an experiment
+                'route' => '/admin/interpreters',//[/list] was an experiment
 
                 'defaults' => [
                     'module' => __NAMESPACE__,
@@ -592,7 +592,7 @@ return  [
                 'view' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '/view/:id',
+                        'route' => '/:id',
                         'defaults' => [
                             'action' => 'view',
                         ],
@@ -604,7 +604,7 @@ return  [
                 'edit' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route' => '[/people]/:action/:id',
+                        'route' => '/:action/:id',
                         'defaults' => [
                             'action' => 'edit',
                         ],

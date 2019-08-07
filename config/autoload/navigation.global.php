@@ -45,25 +45,25 @@ return [
                             ],
                         ],
                     ],
-                    [
-                        'label' => 'interpreters',
-                        'route' => 'interpreters',
-                        //'resource' => Admin\InterpretersController::class,
-                        'pages' => [
-                            [
-                                'label' => 'add',
-                                'route' => 'interpreters/add'
-                            ],
-                            [
-                                'label' => 'edit',
-                                'route' => 'interpreters/edit',
-                            ],
-                            [
-                                'label' => 'view details',
-                                'route' => 'interpreters/find_by_id',
-                            ],
-                        ],
-                    ],
+                    // [
+                    //     'label' => 'interpreters',
+                    //     'route' => 'interpreters',
+                    //     //'resource' => Admin\InterpretersController::class,
+                    //     'pages' => [
+                    //         [
+                    //             'label' => 'add',
+                    //             'route' => 'interpreters/add'
+                    //         ],
+                    //         [
+                    //             'label' => 'edit',
+                    //             'route' => 'interpreters/edit',
+                    //         ],
+                    //         [
+                    //             'label' => 'view details',
+                    //             'route' => 'interpreters/find_by_id',
+                    //         ],
+                    //     ],
+                    // ],
                     [
                         'label' => 'interpreters',
                         'route' => 'interpreters/find_by_language',
@@ -102,6 +102,25 @@ return [
                             [
                             'label' => 'view details',
                             'route' => 'people/view',
+                            ],
+                            [
+                                'label' => 'interpreters',
+                                'route' => 'interpreters',
+                                //'resource' => Admin\InterpretersController::class,
+                                'pages' => [
+                                    [
+                                        'label' => 'add',
+                                        'route' => 'interpreters/add'
+                                    ],
+                                    [
+                                        'label' => 'edit',
+                                        'route' => 'interpreters/edit',
+                                    ],
+                                    [
+                                        'label' => 'view details',
+                                        'route' => 'interpreters/find_by_id',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
