@@ -251,6 +251,9 @@ class RequestRepository extends EntityRepository
     /**
     * gets human-friendly view of a Request
     *
+    * @todo revise completely. return a fully-hydrated entity object
+    * rather than an array. deal with consequential fallout down the line.
+    *
     * @param  int $id
     * @return array
     */
@@ -266,6 +269,7 @@ class RequestRepository extends EntityRepository
             'modified_by_h.name modified_by_hat',
             'r.created','submitter.lastname submitter_lastname',
             'submitter.firstname submitter_firstname',
+            'submitter.email submitter_email',
             'submitter_h.name submitter_hat',
             'loc.name location','parent_loc.name parent_location',
             'event.id event_id','r.pending',

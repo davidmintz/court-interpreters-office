@@ -1,4 +1,7 @@
 <?php /**  module/Admin/view/schedule/email-modal.phtml */?>
+<?php if (empty($event)){
+    $event = $this->request;
+}?>
 <div class="modal fade" id="email-dialog" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -28,14 +31,14 @@
                                 <div class="input-group"><!--  dropleft -->
                                     <!--   -->
                                     <input id="recipient-autocomplete" name="recipient-autocomplete" type="text" class="form-control" placeholder="start typing last name<?php
-                                    if ($suggestions):?>, or use the dropdown<?php endif;
+                                    if (!empty($suggestions)):?>, or use the dropdown<?php endif;
                                     ?>">
                                    <button id="btn-add-recipient" data-toggle="tooltip" class="btn btn-sm btn-secondary btn-add-recipient border disabled" title="manually add a recipient">
                                       <span class="fas fa-plus" aria-hidden="true"></span><span class="sr-only">add another recipient</span>
                                   </button>
                                   <?php
                                   // if there are any email addresses involved, assemble a dropdown to display them
-                                  if ($suggestions): ?>
+                                  if (!empty($suggestions)): ?>
                                   <button title="suggested recipients" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-recipients" data-toggle="dropdown" data-offset="-50" aria-haspopup="true" aria-expanded="false">select</button>
                                   <div id="email-dropdown" role="menu" class="dropdown-menu pl-1">
                                         <?php foreach ($suggestions as $i => $person):?>
