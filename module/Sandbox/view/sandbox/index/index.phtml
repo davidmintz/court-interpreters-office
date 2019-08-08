@@ -1,2 +1,36 @@
 
 <p>hello!</p>
+
+<?php if ($this->request):
+
+    printf('we have a %s<br>',get_class($this->request));
+
+    printf('it has a %s who submitted it: %s<br>',get_class($this->request->getSubmitter()),
+    $this->request->getSubmitter()->getFullName()
+    );
+    printf('it has a %s : %s<br>',get_class($this->request->getJudge()),
+    $this->request->getJudge()->getFullName()
+    );
+
+    printf('defendants? %d<br>',$this->request->getDefendants()->count());
+
+
+    $getters = preg_grep('/^get/', get_class_methods($this->request));
+    ?>
+    <h2>get methods</h2>
+    <?php
+    printf('<pre>%s</pre>',print_r($getters,true));
+
+
+
+    $event = $request->getEvent();
+
+    if ($event):
+        printf('we have a %s<br>',get_class($event));
+        $getters = preg_grep('/^get/', get_class_methods($event));
+        ?>
+        <h2>get methods</h2>
+        <?php
+        printf('<pre>%s</pre>',print_r($getters,true));
+    endif;
+endif;

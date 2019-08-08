@@ -143,7 +143,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
 
         if (in_array($params['action'], ['update','cancel'])) {
             $entity = $this->objectManager->getRepository(Entity\Request::class)
-                ->getRequestWithEvent($params['id']);
+                ->getRequest($params['id']);
 
             if (! $entity) {
                 return parent::onDispatch($e);
