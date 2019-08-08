@@ -334,7 +334,7 @@ $(function(){
         container : "#email-form",
         sanitize: false,
         content : `<button type="button" class="close" data-dismiss="modal" aria-label="close">
-                    <span aria-hidden="true">&times;</span></button> which <a href="/admin/email/templates" target="_blank">template</a>
+                    <span aria-hidden="true">&times;</span></button> which <a href="${window.basePath}/admin/email/templates" target="_blank">template</a>
                      to use for verbiage preceding event details.`
     });
     $("#email-form").on("click",".popover-body button.close",function(e){
@@ -355,7 +355,8 @@ $(function(){
             boilerplate.removeAttr("disabled");
         }
     });
-    /* listener for event/view "email" button and for the "+" adjacent to autocomplete input */
+    /* listener for event/view "email" button and
+     for the "+" adjacent to autocomplete input */
     $("#btn-email, #btn-add-recipient").on("click",function(e,params){
         e.preventDefault();
         // if they clicked the 'notify the interpreter...' link
@@ -461,7 +462,7 @@ $(function(){
                 }
             }
         });
-
+        
         recipient_autocomplete.autocomplete("instance")._renderItem =
          function(ul, item) {
             // return $("<li>").append(item.label).appendTo(ul);
