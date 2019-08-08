@@ -115,7 +115,7 @@ class IndexController extends AbstractActionController //implements ResourceInte
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
         return [
-            'data' => $repository->view($id),
+            'data' => $repository->getRequest($id),
             'deadline' => $this->getTwoBusinessDaysAfterDate(new \DateTime),
             'csrf' => $csrf,
         ];
