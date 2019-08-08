@@ -50,7 +50,7 @@ class RequestRepository extends EntityRepository
     }
 
     /**
-     * gets fully-hydrated Request entity
+     * gets fully-hydrated Request entity.
      *
      * ugly, but it reduces SELECT queries by alot.
      *

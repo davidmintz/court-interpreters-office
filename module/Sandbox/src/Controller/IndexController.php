@@ -14,7 +14,7 @@ class IndexController extends AbstractActionController
         $em = $serviceManager->get('entity-manager');
         //$event = $em->find('InterpretersOffice\Requests\Entity\RepositoryEvent',115656);
         $repo = $em->getRepository('InterpretersOffice\Requests\Entity\Request');
-        $request = $repo->getRequestWithEvent(20572);
+        $request = $repo->getRequest(20572);
 
         // looks like trying to update a read-only entity merely fails
         // without error
