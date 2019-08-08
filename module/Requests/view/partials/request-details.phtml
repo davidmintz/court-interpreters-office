@@ -1,49 +1,54 @@
 <?php $r = $this->request;?>
-<div id="request-details" data-id="<?php echo $r['id'] ?>" class="row mx-auto border p-3 shadow-sm" <?php if ($this->deadline) : ?>data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s')?>"<?php endif ?> style="max-width:825px">
-<div class="col-md-2 text-muted text-md-right pr-1">date</div><div id="date" class="col-md-4"><?php echo $r['date']->format('D d-M-Y') ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">time</div><div id="time" class="col-md-4"><?php echo $r['time']->format('g:i a') ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">judge</div><div class="col-md-4"><?php if ($r['judge_lastname']):
-    echo "{$r['judge_firstname']} {$r['judge_middlename']} {$r['judge_lastname']}, {$r['judge_flavor']}"; endif; ?></div>
+<div id="request-details" data-id="<?php echo $r->getId() ?>" class="row mx-auto border p-3 shadow-sm" <?php if ($this->deadline) : ?>data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s')?>"<?php endif ?> style="max-width:825px">
+<div class="col-md-2 text-muted text-md-right pr-1">date</div><div id="date" class="col-md-4"><?php echo $r->getDate()->format('D d-M-Y') ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">time</div><div id="time" class="col-md-4"><?php echo $r->getTime()->format('g:i a') ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">judge</div><div class="col-md-4"><?php if ($r->getJudge()):
+    echo "{$r->getJudge()->getFullName()}, {$r->getJudge()->getFlavor()}"; endif; ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">place</div><div class="col-md-4"><?php
-    echo $r['location']; if ($r['parent_location']): echo ", {$r['parent_location']}";
+    $location = $r->getLocation();
+    if ($location): echo "$location";
+    if ($location->getParentLocation()):  echo ", {$location->getParentLocation()}";endif;
 endif; ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">type</div><div id="event-type" class="col-md-4"><?php echo $r['type'] ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">language</div><div id="language" class="col-md-4"><?php echo $r['language'] ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">type</div><div id="event-type" class="col-md-4"><?php echo $r->getEventType() ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">language</div><div id="language" class="col-md-4"><?php echo $r->getLanguage()?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">defendants</div><div class="col-md-4"><?php
-    if ($r['defendants']):
-        foreach ($r['defendants']  as $d):
-            echo $this->escapeHtml("{$d['surnames']}, {$d['given_names']}"),'<br>';
+    if ($r->getDefendants()->count()):
+        foreach ($r->getDefendants()  as $d):
+            echo $this->escapeHtml($d->getFullName()),'<br>';
         endforeach;
     endif;
 ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">docket</div><div class="col-md-4"><?php echo $r['docket'] ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">docket</div><div class="col-md-4"><?php echo $r->getDocket() ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">interpreters</div><div class="col-md-10"><?php
-if (isset($r['interpreters'])):
-    foreach($r['interpreters'] as $i): echo $this->escapeHtml("$i[lastname], $i[firstname]"),"<br>";endforeach;
+if (count($r->getInterpreters())):
+    foreach($r->getInterpreters() as $i): echo $this->escapeHtml($i->getFullName()),"<br>";endforeach;
 else: ?> <em>not assigned</em> <?php endif;
  ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">comments</div><div class="col-md-10"><?php echo $r['comments'] ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">comments</div><div class="col-md-10"><?php echo $r->getComments() ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">submitted</div><div class="col-md-10"><?php
-    echo "{$r['created']->format('d-M-Y g:i a')}  by {$r['submitter_firstname']} {$r['submitter_lastname']}, {$r['submitter_hat']}";
+    echo "{$r->getCreated()->format('d-M-Y g:i a')}  by {$r->getSubmitter()->getFullName()}, {$r->getSubmitter()->getHat()}";
 ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">updated</div><div class="col-md-10"><?php
-    if ($r['created'] != $r['modified']):
-        echo "{$r['modified']->format('d-M-Y g:i a')}  by {$r['modified_by_firstname']} {$r['modified_by_lastname']}, {$r['modified_by_hat']}";
+    if ($r->getCreated() != $r->getModified()):
+        $mod_by = $r->getModifiedBy()->getPerson();
+        echo "{$r->getModified()->format('d-M-Y g:i a')}  by {$mod_by->getFullName()}, {$mod_by->getHat()}";
     else: ?>(n/a)<?php
     endif;
 ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">status</div><div id="request-status" class="col-md-10"><?php
-    if ($r['pending']):
+    if ($r->getPending()):
         ?>pending<?php
-    elseif ($r['event_deleted']):
+    elseif ($r->getEvent() && $r->getEvent()->getDeleted()):
         ?><strong>deleted</strong> from Interpreters schedule<?php
-    elseif ($r['event_id']) :
-        if ($r['cancellation']) :
+    elseif ($r->getEvent()) :
+        $event = $r->getEvent();
+        if ($event->getCancellationReason()) :
+            $why = $event->getCancellationReason();
             ?>cancelled<?php
-            if ($r['cancellation'] !== 'other'):
-                echo " ({$r['cancellation']})";
+            if ($why !== 'other'):
+                echo " ($why)";
             endif;
-        elseif ($r['event_date'] < new \DateTime()):
+        elseif ($event->getDate() < new \DateTime()):
             // it's in the past
             ?>completed<?php
         else :

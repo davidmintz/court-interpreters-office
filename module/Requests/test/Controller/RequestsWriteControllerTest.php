@@ -426,6 +426,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         // $data = $shit->fetch();  //print_r($data);
         $this->reset(true);
         $this->dispatch($url);
+        //$this->dumpResponse();return;
         $this->assertResponseStatusCode(200);
         $this->assertQueryCount("#time",1);
         $this->assertQueryContentContains("#time", '3:00 pm');

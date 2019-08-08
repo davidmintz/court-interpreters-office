@@ -50,21 +50,28 @@ class RequestRepository extends EntityRepository
     }
 
     /**
-     * gets Request entity with associated Event entity, not proxy
+     * gets fully-hydrated Request entity.
      *
-     * ugly, but it cuts the number of select queries down to 1
+     * ugly, but it greatly reduces SELECT queries.
      *
      * @param int $id
      * @return Request
      */
-    public function getRequestWithEvent($id)
+    public function getRequest($id)
     {
-        $dql = 'SELECT r, e, s, h, ih, ie, de, dr,i, t, tc
+        $dql = 'SELECT r, e, s, h, ih, ie, de, dr, i, t, tc,
+                j, jh, jf, lang, loc, ploc
             FROM InterpretersOffice\Requests\Entity\Request r
             JOIN r.submitter s
             JOIN s.hat h
             JOIN r.eventType t
             JOIN t.category tc
+            JOIN r.language lang
+            LEFT JOIN r.location loc
+            LEFT JOIN loc.parentLocation ploc
+            LEFT JOIN r.judge j
+            LEFT JOIN j.hat jh
+            LEFT JOIN j.flavor jf
             LEFT JOIN r.defendants dr
             LEFT JOIN r.event e
             LEFT JOIN e.interpreterEvents ie

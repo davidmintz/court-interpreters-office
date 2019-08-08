@@ -17,18 +17,18 @@ $this->headScript()
     ->appendFile($this->basePath('js/requests/view.js'));
 
 $r = $this->data; // we are lazy
-$scheduled_datetime = new \DateTime(sprintf('%s %s',$r['date']->format("Y-m-d"), $r['time']->format('H:i')));
-$editable = ($scheduled_datetime > $this->deadline) && !$r['event_deleted'];
+$scheduled_datetime = new \DateTime(sprintf('%s %s',$r->getDate()->format("Y-m-d"), $r->getTime()->format('H:i')));
+$editable = ($scheduled_datetime > $this->deadline) && !($r->getEvent() && $r->getEvent()->getDeleted());
 //var_dump($r['event_deleted']);var_dump($editable);
 echo $this->partial('partials/request-details',['request'=>$r, 'deadline'=> $this->deadline]);
 ?>
     <div class="col-md-12 text-center pt-2"><?php
         if ($editable):
             ?>
-            <a role="button" title="modify this request" class="btn btn-success request-update" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>">update</a>
-            <a data-csrf="<?php echo $this->csrf ?>" role="button" id="btn-cancel" title="withdraw this request" class="btn btn-success request-update" href="<?php echo $this->url('requests/cancel',['id'=>$r['id']])?>">cancel request</a>
+            <a role="button" title="modify this request" class="btn btn-success request-update" href="<?php echo $this->url('requests/update',['id'=>$r->getId()])?>">update</a>
+            <a data-csrf="<?php echo $this->csrf ?>" role="button" id="btn-cancel" title="withdraw this request" class="btn btn-success request-update" href="<?php echo $this->url('requests/cancel',['id'=>$r->getId()])?>">cancel request</a>
             <?php
-        endif;?> <a role="button" class="btn btn-success" href="<?php echo $this->url('requests/create',['id'=>$r['id']])?>">repeat</a>
+        endif;?> <a role="button" class="btn btn-success" href="<?php echo $this->url('requests/create',['id'=>$r->getId()])?>">repeat</a>
     </div>
     <div class="col-md-12" style="display:none"><!-- experiment/learning exercise -->
         <div style="position:relative; font-size:200%;">
