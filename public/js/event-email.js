@@ -218,7 +218,13 @@ const send_email = function(event){
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
     message.template_hint = $("#template").val()||$("#subject-dropdown").data("template_hint");
-    message.event_id = $("div.event-details").data("event_id");
+    if ($("div.event-details").length) {
+        message.event_id = $("div.event-details").data("event_id");
+        message.entity_class = 'Event';
+    } else {
+        message.request_id = $("div#request-details").data("id");
+        message.entity_class = 'Request';
+    }
     //var csrf = 'shit';// testing
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
@@ -462,7 +468,7 @@ $(function(){
                 }
             }
         });
-        
+
         recipient_autocomplete.autocomplete("instance")._renderItem =
          function(ul, item) {
             // return $("<li>").append(item.label).appendTo(ul);

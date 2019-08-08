@@ -1,7 +1,18 @@
 <?php $this->headTitle("requests | view details");
 $this->headScript()->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
 ->appendFile($this->basePath('js/requests/admin/requests.js'))
+->appendFile($this->basePath('js/event-email.js'))
 ->appendFile($this->basePath('js/requests/admin/view.js'));
+$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+$this->headStyle()->captureStart();?>
+.ui-autocomplete {
+  z-index: 99999 !important;
+}
+.tooltip-inner {
+    text-align: left;
+}
+<?php $this->headStyle()->captureEnd();
 ?>
 <h2 class="text-center py-2 navigation"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?></h2>
 <div id="message-success" class="alert alert-success alert-dismissible" role="alert" style="display:none">
@@ -17,7 +28,11 @@ if ($this->request):
     ?><button id="btn-schedule-request" data-csrf="<?php echo $this->csrf?>" data-request_id="<?php echo $this->request->getId()?>" type="button" class="btn  btn-success">add to schedule</button> <?php endif; ?>
     <?php list($year,$month,$date) = explode('-',$this->request->getDate()->format('Y-m-d'));?>
     <a role="button" class="btn  btn-secondary" href="<?php echo $this->url('events/display',compact('year','month','date'))?>">view schedule</a>
-    <button  id="btn-email" data-toggle="modal" data-target="#email-dialog" class="btn btn-secondary">send email</button>
+    <button id="btn-email" data-toggle="modal" data-target="#email-dialog" class="btn btn-secondary">send email</button>
     </div>
-<?php endif;
-echo $this->render('schedule/email-modal');
+
+<?php
+
+$suggestions = [ ['role'=>'submitter','person'=> $this->request->getSubmitter()] ];
+echo $this->partial('email-modal',['suggestions'=>$suggestions, 'request'=>$this->request]);
+endif;

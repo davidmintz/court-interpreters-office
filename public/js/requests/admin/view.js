@@ -17,4 +17,18 @@ $(function(){
             }
         }).fail(fail);
     });
+    /**
+     * event handlers for email-dialog buttons
+     */
+    $("#email-dropdown .dropdown-item button").on("click",function(e){
+        e.preventDefault();
+        console.log("click shit");
+    });
+    $("#subject-dropdown .dropdown-item a").on("click",function(e){
+        e.preventDefault();
+        console.log("click other shit");
+    });
+    $("#btn-cancel").on("click",function(){
+        $("#email-dialog").modal("hide");
+    });
 });

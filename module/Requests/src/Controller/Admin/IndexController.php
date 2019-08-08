@@ -156,7 +156,8 @@ class IndexController extends AbstractActionController
     public function viewAction()
     {
         $id = $this->params()->fromRoute('id');
-        $entity = $this->objectManager->getRepository(Request::class)->getRequest($id);
+        $entity = $this->objectManager->getRepository(Request::class)
+            ->getRequest($id);
         $validator = new \Zend\Validator\Csrf('csrf');
         $token = $validator->getHash();
         return ['request' => $entity,'csrf' => $token];

@@ -360,7 +360,7 @@ endif;?></span>
     </div>
     <?php endif;?>
 </div>
-    <?php $suggestions = [];
+    <?php $suggestions = []; // create array of plausible email recipients for modal
     if ($event['interpreters'] or $event['submitter_email']):
         if ($event['submitter_email']) {
             $suggestions[] = ['role'=>'submitter','name' => $event['submitter'],
@@ -374,9 +374,11 @@ endif;?></span>
                     $suggestions[0]['role'] = 'interpreter';
                     continue;
                 }
-                $suggestions[] = ['role'=>'interpreter','name' => "$i[firstname] $i[lastname]",
-                'id' => $i['id'],
-                'email' =>  strtolower($i['email'])];
+                $suggestions[] = [
+                    'role'=>'interpreter',
+                    'name' => "$i[firstname] $i[lastname]",
+                    'id' => $i['id'],
+                    'email' =>  strtolower($i['email'])];
             }
         }
     endif;

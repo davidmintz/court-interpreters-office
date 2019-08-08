@@ -15,6 +15,7 @@ use Zend\View\Renderer\RendererInterface as Renderer;
 use Zend\View\Model\ViewModel;
 use Zend\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Request\Entity\Request;
 use Zend\Mime\Mime;
 use Zend\Mime\Part as MimePart;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -167,9 +168,19 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
                 $transport->send($message);
                 //$log_statement->execute($params);
                 $result['sent_to'][] = $address;
-                $this->log([
+                // temporary hack!
+                $data['entity_id'] = isset($data['event_id']) ? $data['event_id']:$data['request_id'];
+                if (isset($data['event_id'])) {
+                    $data['entity_id'] = $data['event_id'];
+                    $data['entity_class'] = Entity\Event::class;
+                } else {
+                    $data['entity_id'] = $data['request_id'];
+                    $data['entity_class'] = Request::class;
+                }
+                 $this->log([
                     'recipient_id'=>! empty($address['id']) ? $address['id'] : null,
-                    'event_id' => $data['event_id'],
+                    'entity_id' => $data['entity_id'],
+                    'entity_class' => $data['entity_class'],
                     'email' => $address,
                     'subject' => $data['subject'],
                     'comments' => $log_comments,
@@ -209,8 +220,8 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
         );
         $this->getLogger()->info(
             $message,[
-                'entity_class' => Entity\Event::class,
-                'entity_id'    => $data['event_id'],
+                'entity_class' => $data['entity_class'],
+                'entity_id'    => $data['entity_id'],
                 'channel'  => $channel,
                 'recipient_id' => $data['recipient_id'],
                 'comments' => $data['comments'],
