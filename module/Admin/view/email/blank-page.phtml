@@ -10,11 +10,11 @@ endif;
 <p><?php echo $salutation ?></p>
 <p>
 <?php echo //nl2br()
-    $this->body ?>
+    $this->notes ?>
 </p>
 <?php if ($this->entity): ?>
 <p>Event details:</p>
-<?php 
+<?php
     echo $this->partial('interpreters-office/email/partials/event-details.phtml',
         ['entity'=>$this->entity]);
 endif;

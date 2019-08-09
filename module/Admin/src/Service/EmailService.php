@@ -124,7 +124,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
 
         if (isset($data['event_details'])) {
             if (isset($data['event_details']['location'])) {
-                $data['event_details']['location'] = str_replace('*', '', $data['event_details']['location']);
+                $data['event_details']['location'] = strip_tags(str_replace('*', '', $data['event_details']['location']));
             }
             $view->setVariables(['entity' => $data['event_details'],'escaped' => true]);
         }
@@ -152,6 +152,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
             $message->getBody()->setParts([$parts[0],$html]);
             /* DEBUG */
             file_put_contents("data/email-output.{$i}.html", $content);
+            $this->getLogger()->debug(__METHOD__.": using email template: '$template'");
             $message->setTo($address['email'], ! empty($address['name']) ? $address['name'] : null);
             /** @var $pdo \PDO */
             //$pdo = $this->getObjectManager()->getConnection();
@@ -168,7 +169,6 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
                 $transport->send($message);
                 //$log_statement->execute($params);
                 $result['sent_to'][] = $address;
-                // temporary hack!
                 $data['entity_id'] = isset($data['event_id']) ? $data['event_id']:$data['request_id'];
                 if (isset($data['event_id'])) {
                     $data['entity_id'] = $data['event_id'];
