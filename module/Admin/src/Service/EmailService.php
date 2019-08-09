@@ -117,6 +117,10 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
         $view = new ViewModel();
         /**  set template based on input etc */
         $template = $this->template_map[$data['template_hint']];
+        // however...
+        if (!isset($data['event_details'])) {
+            $template = 'blank-page';
+        }
         $view->setTemplate("email/{$template}.phtml");
 
         $layout = new ViewModel();
@@ -138,8 +142,6 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
             }
         }
         $transport = $this->getMailTransport();
-        //$log_statement = $this->getStatement();
-
         foreach ($data['to'] as $i => $address) {
             $view->to = $address;
             $layout->setVariable('content', $this->viewRenderer->render($view));
@@ -152,53 +154,40 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
             $message->getBody()->setParts([$parts[0],$html]);
             /* DEBUG */
             file_put_contents("data/email-output.{$i}.html", $content);
-            $this->getLogger()->debug(__METHOD__.": using email template: '$template'");
+            $this->getLogger()->debug(__FUNCTION__.": using email template: '$template'");
             $message->setTo($address['email'], ! empty($address['name']) ? $address['name'] : null);
-            /** @var $pdo \PDO */
-            //$pdo = $this->getObjectManager()->getConnection();
-            try {
-                //$pdo->beginTransaction();
-                // $params = [
-                //     ':timestamp' => date('Y-m-d H:i:s'),
-                //     ':recipient_id' => ! empty($address['id']) ? $address['id'] : null,
-                //     ':email' => $address['email'],
-                //     ':subject' => $data['subject'],
-                //     ':event_id' => $data['event_id'],
-                //     ':comments' => $log_comments,
-                // ];
-                $transport->send($message);
-                //$log_statement->execute($params);
-                $result['sent_to'][] = $address;
-                $data['entity_id'] = isset($data['event_id']) ? $data['event_id']:$data['request_id'];
-                if (isset($data['event_id'])) {
-                    $data['entity_id'] = $data['event_id'];
-                    $data['entity_class'] = Entity\Event::class;
-                } else {
-                    $data['entity_id'] = $data['request_id'];
-                    $data['entity_class'] = Request::class;
-                }
-                 $this->log([
-                    'recipient_id'=>! empty($address['id']) ? $address['id'] : null,
-                    'entity_id' => $data['entity_id'],
-                    'entity_class' => $data['entity_class'],
-                    'email' => $address,
-                    'subject' => $data['subject'],
-                    'comments' => $log_comments,
-                    'address' => $address,
-                ]);
-            } catch (\Throwable $e) {
-                //$pdo->rollback();
-                $details = [
-                    'status' => 'error',
-                    'exception_class' => get_class($e),
-                    'address' => $address['email'],
-                    'name'   => $address['name'],
-                    'error' => ['message' => $e->getMessage()],
-                ];
-                $this->getEventManager()
-                    ->trigger('error', $this, ['exception' => $e, 'details' => $details]);
-                return array_merge($result, $details);
+            // try {
+            $transport->send($message);
+            $result['sent_to'][] = $address;
+            $data['entity_id'] = isset($data['event_id']) ? $data['event_id']:$data['request_id'];
+            if (isset($data['event_id'])) {
+                $data['entity_id'] = $data['event_id'];
+                $data['entity_class'] = Entity\Event::class;
+            } else {
+                $data['entity_id'] = $data['request_id'];
+                $data['entity_class'] = Request::class;
             }
+             $this->log([
+                'recipient_id'=>! empty($address['id']) ? $address['id'] : null,
+                'entity_id' => $data['entity_id'],
+                'entity_class' => $data['entity_class'],
+                'email' => $address,
+                'subject' => $data['subject'],
+                'comments' => $log_comments,
+                'address' => $address,
+            ]);
+            // } catch (\Throwable $e) {
+            //     $details = [
+            //         'status' => 'error',
+            //         'exception_class' => get_class($e),
+            //         'address' => $address['email'],
+            //         'name'   => $address['name'],
+            //         'error' => ['message' => $e->getMessage()],
+            //     ];
+            //     $this->getEventManager()
+            //         ->trigger('error', $this, ['exception' => $e, 'details' => $details]);
+            //     return array_merge($result, $details);
+            // }
         }
         if (! empty($data['cc'])) {
             $result['cc_to'] = $data['cc']; // for confirmation
