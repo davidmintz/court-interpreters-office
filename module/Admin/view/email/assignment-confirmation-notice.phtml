@@ -9,6 +9,9 @@ else:
 endif;
 ?>
 <p><?php echo $salutation ?></p>
+<?php if (!$this->entity):?>
+<p><?php echo $this->escapeHtml($this->notes) ?></p>
+<?php else: ?>
 <p>
     This is to confirm your assignment as interpreter for the following event:
 </p>
@@ -16,9 +19,10 @@ endif;
 echo $this->partial('interpreters-office/email/partials/event-details.phtml',
     ['entity'=>$this->entity, 'escaped' => $this->escaped]);
 ?>
-<?php if ($this->notes):?>
-<p>Additional notes:</p>
-<p style="margin-left:2em"><?php echo $this->notes ?></p>
+    <?php if ($this->notes):?>
+    <p>Additional notes:</p>
+    <p style="margin-left:2em"><?php echo $this->notes ?></p>
+    <?php endif ?>
 <?php endif ?>
 <p>
     Please feel free to contact us with any questions.

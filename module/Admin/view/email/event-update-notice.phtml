@@ -38,6 +38,9 @@ else:
 endif;
 ?>
 <p><?=$salutation?></p>
+<?php if (!$this->entity):?>
+<p><?php echo $this->escapeHtml($this->notes) ?></p>
+<?php else: ?>
 <p>This is to advise you that the following event to which you
     are assigned as interpreter has been modified, as indicated below.
 </p>
@@ -49,10 +52,14 @@ else:
     echo $this->partial('interpreters-office/email/partials/event-details.phtml',
     ['entity'=>$this->entity,  'with_comments'=>false,'escaped' => $this->escaped ]);
 endif;    ?>
-<?php if ($this->notes):?>
-<p>Additional notes:</p>
-<p style="margin-left:2em"><?php echo $this->notes ?></p>
+    <?php if ($this->notes):?>
+    <p>Additional notes:</p>
+    <p style="margin-left:2em"><?php echo $this->notes ?></p>
+    <?php endif ?>
 <?php endif ?>
 <p>
 If you have any questions, please contact the Interpreters promptly.
 </p>
+<p>Very truly yours,</p>
+
+<p>The Interpreters Office</p>
