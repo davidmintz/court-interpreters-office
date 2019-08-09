@@ -51,7 +51,7 @@ class EmailController extends AbstractActionController
 
     /**
      *
-     * Sends email regarding an Event (entity).
+     * Sends email regarding an Event or Request (entity).
      *
      * This action will usually invoked from /admin/schedule/view/<event_id>.
      *
@@ -73,9 +73,9 @@ class EmailController extends AbstractActionController
         }
         $data = $this->params()->fromPost('message');
         $result = $this->emailService->emailEvent($data);
-        if (isset($result['status']) && 'error' == $result['status']) {
-            $this->getResponse()->setStatusCode(500);
-        }
+        // if (isset($result['status']) && 'error' == $result['status']) {
+        //     $this->getResponse()->setStatusCode(500);
+        // }
 
         return new JsonModel($result);
     }

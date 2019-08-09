@@ -647,11 +647,13 @@ class ScheduleUpdateManager
         if ($interpreterEvents->count()) {
             $this->interpreters = $event->getInterpreters();
             $event->removeInterpreterEvents($interpreterEvents);
-            $message = sprintf("removed interpreter(s) from event #%d: %s",
-                $event->getId(),
+            $message = sprintf("removed interpreter(s) %s from event #%d (%s)",
                 implode(", ",array_map(function($i){
                     return $i->getFullname();
-                },$this->interpreters)));
+                },$this->interpreters)),
+                $event->getId(),
+                $event->describe()
+            );
             $this->logger->info($message,
                 ['entity_class'=> get_class($event),'entity_id'=>$event->getId(),
                 'channel'=>'schedule-update-manager','user-event'=>$this->user_event,'request_id'=>$request->getId()]

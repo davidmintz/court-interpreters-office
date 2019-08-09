@@ -16,7 +16,7 @@ endif;
 <p>Event details:</p>
 <?php
     echo $this->partial('interpreters-office/email/partials/event-details.phtml',
-        ['entity'=>$this->entity]);
+        ['entity'=>$this->entity, 'escaped'=>true]);
 endif;
 ?>
 <p>Very truly yours,</p>

@@ -143,13 +143,23 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                 $who = implode(", ",array_map(function($ie){return $ie->getInterpreter()->getFullName();},$removed));
                 $what = $entity->describe();
                 $user = $this->getAuthenticatedUser($args);
-                $message = sprintf("user %s removed %s from event #%d (%s)",
+                // the authenticated user might not be doing it directly...
+                $user_role = (string)$user->getRole();
+                if ($user_role != 'submitter') {
+                    $message = sprintf("user %s removed %s from event #%d (%s)",
                     $user->getUsername(),$who, $entity->getId(),$what);
-                $this->logger->info($message,[
-                    'entity_class' => get_class($entity),
-                    'entity_id' =>$entity->getId(),
-                    'channel'  => 'scheduling',
-                ]);
+                    $this->logger->info($message,[
+                        'entity_class' => get_class($entity),
+                        'entity_id' =>$entity->getId(),
+                        'channel'  => 'scheduling',
+                    ]);
+                }
+                // else {
+                //     $message = sprintf(
+                //         "%s has been removed from event #%d (%s); current user is %s",
+                //         $who, $entity->getId(),$what,$user->getUsername()
+                //     );
+                // }
             }
         }
 

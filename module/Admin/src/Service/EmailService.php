@@ -133,13 +133,14 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
             $view->setVariables(['entity' => $data['event_details'],'escaped' => true]);
         }
         if (! empty($data['body'])) {
-            if (! $data['template_hint']) {
-                // the additional notes are the message body (no event-details)
-                $view->body = $data['body'];
-            } else {
-                // the message body is injected as an additional note
-                $view->notes = $data['body'];
-            }
+            $view->notes = $data['body'];
+            // if (empty($data['template_hint']) or $template == 'blank-page') {
+            //     // the additional notes are the message body (no event-details)
+            //     $view->body = $data['body'];
+            // } else {
+            //     // the message body is injected as an additional note
+            //     $view->notes = $data['body'];
+            // }
         }
         $transport = $this->getMailTransport();
         foreach ($data['to'] as $i => $address) {
