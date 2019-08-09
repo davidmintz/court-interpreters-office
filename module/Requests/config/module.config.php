@@ -83,7 +83,8 @@ return [
                 ],
             ],
         ],
-        'RequestsBreadcrumbs' => [
+        'RequestsBreadcrumbs' =>
+        [
             [
                 'label' => 'requests',
                 'route' => 'requests',
@@ -91,6 +92,16 @@ return [
                     [
                         'route' => 'requests/list',
                         'label' => 'list',
+                        'pages' => [
+                            [
+                                'route' => 'requests/update',
+                                'label' => 'update',
+                            ],
+                            [
+                                'route' => 'requests/view',
+                                'label' => 'view details',
+                            ],
+                        ],
                     ],
                     [
                         'route' => 'requests/create',
@@ -100,14 +111,11 @@ return [
                         'route' => 'requests/search',
                         'label' => 'search',
                     ],
-                    [
-                        'route' => 'requests/update',
-                        'label' => 'update',
-                    ],
-                    [
-                        'route' => 'requests/view',
-                        'label' => 'view details',
-                    ],
+                    // [
+                    //     'route' => 'requests/update',
+                    //     'label' => 'update',
+                    // ],
+
                     [
                         'route' => 'requests/help',
                         'label' => 'help',
@@ -237,7 +245,7 @@ return [
                         'options' => [
                             'route' => '/list',
                             'defaults' => [
-                                'controller' => Controller\IndexController::class,
+                                //  'controller' => Controller\IndexController::class,
                                 'action' => 'list',
                             ],
                         ],
