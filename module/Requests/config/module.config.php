@@ -257,9 +257,9 @@ return [
                             'defaults' => [
                                 'controller' => Controller\WriteController::class,
                                 'action' => 'create',
-                                'constraints' => [
-                                    'id' => '[1-9]\d*',
-                                ],
+                            ],
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
                             ],
                         ],
                     ],
