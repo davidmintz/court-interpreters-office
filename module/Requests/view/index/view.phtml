@@ -70,8 +70,3 @@ echo $this->partial('partials/request-details',['request'=>$r, 'deadline'=> $thi
         )
  */
 ?>
-<script>
-if (document.referrer.indexOf("/requests/list") !== -1) {
-    document.querySelector("h2.navigation a").href = document.referrer;
-}
-</script>
