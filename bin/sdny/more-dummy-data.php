@@ -18,6 +18,10 @@ $config = parse_ini_file($config_file);
 $pdo = new \PDO("mysql:host=localhost;dbname=$database",$config['user'],$config['password'],[
     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
 ]);
+// hash all the passwords
+
+$hash = password_hash("boink",PASSWORD_DEFAULT);
+$pdo->execute("UPDATE users SET password='$hash'");
 
 // create a string of events from pretrial all the way through sentencing
 
@@ -180,6 +184,9 @@ $interp_event_insert->execute(
         'created_by_id' => $admin,
     ]
 );
+
+/* another atty/client ... */
+
 $pdo->commit();
 
 
