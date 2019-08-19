@@ -1,6 +1,5 @@
 $(function(){
     $('#judge-filter').on('change',function(){
-
         if ($(this).val() === "1") {
             $('tr.inactive').show();
         } else {

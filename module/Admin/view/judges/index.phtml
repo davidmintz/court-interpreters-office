@@ -6,17 +6,15 @@
 $this->headScript()->appendFile($this->basePath('js/judges-index.js'));
 $this->headTitle($this->title);?>
 <div class="center-block mx-auto" style="max-width:600px"><!-- wrapper -->
-<div class="row">
-    <h2 class="navigation mb-3 mt-4 col-6"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?>
+    <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?>
     </h2>
-    <div class="col-6 form-inline float-right pt-2">
+    <div class="form-inline pt-2 mb-1">
          <label class="pr-1" for="judge-filter">inactive judges: </label>
          <select id="judge-filter" class="form-control form-control-sm custom-select">
              <option value="0">hide</option>
              <option value="1">show</option>
         </select>
     </div>
-</div>
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
