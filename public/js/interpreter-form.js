@@ -227,7 +227,7 @@ $(function(){
         $.post(document.location.pathname,form.serialize())
         .then((res)=>{
             if ("success" === res.status) {
-                $("body").prepend("<h1>shit was valid</h1>");
+                //$("body").prepend("<h1>shit was valid</h1>");
                 document.location = `${window.basePath}/admin/interpreters`;
             } else {
                 if (res.validation_errors) {
