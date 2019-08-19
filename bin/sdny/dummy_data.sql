@@ -51,8 +51,7 @@ INSERT INTO locations (type_id, parent_location_id,name) VALUES
 (1,@courthouse2,'5A'),(1,@courthouse2,'5B'),(1,@courthouse2,'5C'),(1,@courthouse2,'5D'),
 (3,@courthouse1,'the holding cell'),
 (6,@courthouse1,'your Interpreters Office'),
-(4,@courthouse2,'your Probation Office');
-
+(4,@courthouse2,'your Probation Office'),(5,@courthouse1,'Pretrial Services',);
 /* proceedings a/k/a event-types */
 /*
 +----+----------------+
@@ -67,7 +66,7 @@ INSERT INTO event_types (name,category_id ) VALUES
  ('conference',1),('atty/client interview',2),
  ('sentence', 1), ('plea', 1), ('presentment', 1), ('arraignment', 1),
  ('probation interview',2),('trial',1),('bail hearing',1),('suppression hearing',1),
- ('document translation',3);
+ ('document translation',3),('pretrial services intake',2);
 
 SET @usdj = (SELECT id FROM judge_flavors WHERE flavor = 'USDJ');
  /* some judges */
@@ -264,7 +263,7 @@ SET @admin = (SELECT id FROM roles WHERE name = "administrator");
 
 
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active, email, mobile_phone) VALUES
-('Staffinterp','Sonia','',@staff_interp,'person',1,'sonia_staffinterp@some.uscourts.gov',
+('Staffinterp','Sonia','',@staff_interp,'interpreter',1,'sonia_staffinterp@some.uscourts.gov',
     '212 840-0084');
 INSERT INTO interpreters (id,comments, address1,address2,city,state,zip,country)
           VALUES (last_insert_id(),'','','','','','','');
@@ -417,7 +416,7 @@ SELECT p.lastname, p.id judge_id, l.name courtroom, l.id location_id FROM people
 | Wiseburger    |        4 | 2D        |          15 |
 +---------------+----------+-----------+-------------+
 
- select p.lastname user, p.id submitter_id, j.lastname judge, cj.* FROM people p JOIN users u ON p.id = u.person_id JOIN clerks_judges cj 
+ select p.lastname user, p.id submitter_id, j.lastname judge, cj.* FROM people p JOIN users u ON p.id = u.person_id JOIN clerks_judges cj
  ON u.id = cj.user_id JOIN people j ON cj.judge_id = j.id;
 +--------------+--------------+---------------+---------+----------+
 | user         | submitter_id | judge         | user_id | judge_id |
@@ -433,7 +432,7 @@ SELECT p.lastname, p.id judge_id, l.name courtroom, l.id location_id FROM people
 SET @submitter = (SELECT p.id FROM people p JOIN users u ON p.id = u.person_id JOIN clerks_judges cj ON cj.user_id = u.id JOIN people j ON j.id = cj.judge_id WHERE j.lastname = 'Dorkendoofer' LIMIT 1);
 SET @user =  (select id FROM users WHERE person_id = @submitter);
 INSERT INTO requests (
-          date, time, judge_id, event_type_id, language_id, docket, location_id, submitter_id, 
+          date, time, judge_id, event_type_id, language_id, docket, location_id, submitter_id,
           created, modified, modified_by_id, comments, event_id, pending, cancelled)
 VALUES(
      DATE_ADD(CURDATE(), INTERVAL 4 WEEK),'10:00:00',5, 1,@spanish,'2019-CR-0123', 4, @submitter,
@@ -458,4 +457,3 @@ INSERT INTO defendants_requests (defendant_id, request_id) VALUES (
      (SELECT id FROM defendant_names WHERE surnames LIKE '%garcia%' LIMIT 1),
      LAST_INSERT_ID()
 );
-
