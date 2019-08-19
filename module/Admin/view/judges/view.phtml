@@ -14,12 +14,12 @@
         ?>
         </h3>
         <div class="row">
-            <?php if ($this->judge->getDefaultLocation()):?>
             <div class="col-sm-2 text-md-right">
                 location
             </div>
             <div class="col-sm-9">
              <?php
+             if ($this->judge->getDefaultLocation()):
                  $location = $this->judge->getDefaultLocation();
                  if ($location):
                      echo $location;
@@ -27,6 +27,7 @@
                          echo ", {$location->getParentLocation()}";
                      endif;
                 endif;
+            else: ?> - <?php
             endif;
              ?>
             </div>
