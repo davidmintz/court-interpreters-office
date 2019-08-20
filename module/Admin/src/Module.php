@@ -172,6 +172,9 @@ class Module
         $allowed = true;
         $container = $event->getApplication()->getServiceManager();
         $auth = $container->get('auth');
+        $log = $container->get('log');
+        $log->debug("FYI, referrer? ".$request->getServer()->get('HTTP_REFERER'));
+        $log->debug("uri string: ".$event->getRequest()->getUriString());
         if (! $auth->hasIdentity()) {
             // everything else requires authentication
             $flashMessenger = $container
@@ -182,9 +185,7 @@ class Module
             // except that phpunit tests blow up.
             $session = new \Zend\Session\Container('Authentication');
             $request = $event->getRequest();
-            $log = $container->get('log');
             $log->debug("authentication failed, request is xhr? ".($request->isXmlHttpRequest()?"yes":"no"));
-            $log->debug("referrer? ".$request->getServer()->get('HTTP_REFERER'));
             $session->redirect_url = $event->getRequest()->getUriString();
             // $session->redirect_url = $event->getRequest()
             //     ->getServer()->get('HTTP_REFERER');
