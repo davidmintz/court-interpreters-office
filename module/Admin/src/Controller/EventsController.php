@@ -363,10 +363,10 @@ class EventsController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
         $entity = $this->entityManager->find(Entity\Event::class, $id);
-        if (! $entity) {
+        if (! $entity or $entity->isDeleted()) {
             return new JsonModel([
                 'status' => 'error',
-                'message' => "The event with id $id was not found in the database.",
+                'message' => "This event (id $id) was not found in the database.",
             ]);
         }
         if ($this->getRequest()->isPost()) {

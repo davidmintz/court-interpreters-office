@@ -57,8 +57,6 @@ $(function() {
         sanitize : false,
         title : `update interpreters <a href="#" class="close btn-cancel" title="cancel" data-dismiss="alert">&times;</a>`,
         content : renderInterpreterEditor,
-        // maybe try to set this dynamically to the td's parent tr?
-        //container : "body"
     };
 
     /**
@@ -81,67 +79,61 @@ $(function() {
     // --- (delegated) event handlers for table containing schedule new_data
 
     schedule_table.on("click",".btn-cancel",function(event){
-        event.preventDefault();
-        console.log("closing the popover");
+        event.preventDefault(); // console.log("closing the popover");
         $(this).parents(".popover").popover("hide");
     })
     /**
      * removes an interpreter from the popover
      */
-        .on("click",".popover-body .btn-remove-item",function(event){
-            event.preventDefault();
-            console.log("interpreter to be deleted: "+$(this).prev().text());
-            $(this).prev(".interpreter-name").css({textDecoration:"line-through"});
-            $(this).closest("li").slideUp(500,function(){$(this).remove();});
-        })
+    .on("click",".popover-body .btn-remove-item",function(event){
+        event.preventDefault();
+        console.log("interpreter to be deleted: "+$(this).prev().text());
+        $(this).prev(".interpreter-name").css({textDecoration:"line-through"});
+        $(this).closest("li").slideUp(500,function(){$(this).remove();});
+    })
     /**
      * submits interpreter data
      */
-        .on("click",".popover-body .btn-success",function(event){
-            event.preventDefault();
-            var csrf = schedule_table.data("csrf");
-            var popover_body = $(this).closest(".popover-body");
-            var popover = popover_body.parent();
-            var event_id = popover.data().event_id;
-            var data = popover_body.children("form").serialize() + `&csrf=${csrf}`;
-            $.post("/admin/schedule/update-interpreters/"+event_id,data)
-                .success((response)=>{
-                    if (response.status === "success") {
-                        var element = popover.data("bs.popover").element;
-                        var td = $(element).parent().prev("td");
-                        td.html(response.html);
-                        popover.popover("hide");
-                        return console.warn("praise the lord!!");
+    .on("click",".popover-body .btn-success",function(event){
+        event.preventDefault();
+        var csrf = schedule_table.data("csrf");
+        var button = $(this);
+        var popover_body = button.closest(".popover-body");
+        var popover = popover_body.parent();
+        var event_id = popover.data().event_id;
+        var data = popover_body.children("form").serialize() + `&csrf=${csrf}`;
+        $.post("/admin/schedule/update-interpreters/"+event_id,data)
+            .success((response)=>{
+                var element = popover.data("bs.popover").element;
+                var td = $(element).parent().prev("td");
+                td.html(response.html);
+                if (response.status === "success") {
+                    return popover.popover("hide");
+                    // console.warn("praise the lord!!");
+                }
+                if (response.status == "error") {
+                    popover_body.children("form").hide();
+                    popover_body.find(".input-group")
+                        .html(`<p class="alert alert-warning border border-danger">Oops! ${response.message}</p>`);
+                    button.attr({disabled:true});
+                    button.next("button").one("click",function(){
+                        td.parent().slideUp();
+                    });
+                }
+                if (response.validation_errors) {
+                    if (response.validation_errors.csrf) {
+                        var message = "Sorry &mdash; it appears your security token has timed out. Please refresh this page and try again";
+                        popover.addClass("alert alert-warning").html(message);
+                    } else {
+                        fail(response);
                     }
-                    if (response.validation_errors) {
-                        if (response.validation_errors.csrf) {
-                            var message = "Sorry &mdash; it appears your security token has timed out. Please refresh this page and try again";
-                            popover.addClass("alert alert-warning").html(message);
-                        } else {
-                            fail(response);
-                        }
-                    }
-                })
-                .fail(fail);
+                }
+            })
+            .fail(fail);
         })
-    /**
-     * stops the schedule-reload timer on popover "show" event
-     */
-        .on("show.bs.popover",".edit-interpreters",()=>{
-            //timer_stop();
-        })
-    /**
-     * (re)starts schedule-reload timer when popovers are gone
-     */
-        .on("hidden.bs.popover",".edit-interpreters",()=>{
-            console.debug("bs hidden event");
-            if ($(".popover").length === 0) {
-                //timer_start();
-            }
-        })
-    /**
-     * adds to the popover the interpreter to be assigned
-     */
+        /**
+         * adds to the popover the interpreter to be assigned
+         */
         .on("click",".popover-body .btn-add-interpreter",function(event){
             event.preventDefault();
             var btn = $(this);
@@ -169,49 +161,48 @@ $(function() {
      * when popover is shown, sets data attributes and populates
      * interpreter select element
      */
-        .on("shown.bs.popover",".edit-interpreters",(e)=>{
-            var language_id = $(e.target).parent().prev().data().language_id;
-            var event_id = $(e.target).closest("tr").data().id;
-            var popover = $(".popover").last();
-            popover.data({event_id});
-            var interpreter_select = popover.find("select");
-            $.getJSON("/admin/schedule/interpreter-options?language_id="
-            + language_id + "&csrf=1" )
-                .success((response)=>{
-                    var options = response.options.map(function(item){
-                        return $("<option>").val(item.value).text(item.label);
-                    });
-                    interpreter_select.append(options);
-                    schedule_table.data({csrf:response.csrf});
+    .on("shown.bs.popover",".edit-interpreters",(e)=>{
+        var language_id = $(e.target).parent().prev().data().language_id;
+        var event_id = $(e.target).closest("tr").data().id;
+        var popover = $(".popover").last();
+        popover.data({event_id});
+        var interpreter_select = popover.find("select");
+        $.getJSON("/admin/schedule/interpreter-options?language_id="
+        + language_id + "&csrf=1" )
+            .success((response)=>{
+                var options = response.options.map(function(item){
+                    return $("<option>").val(item.value).text(item.label);
                 });
-        })
+                interpreter_select.append(options);
+                schedule_table.data({csrf:response.csrf});
+            });
+    })
     /**
      * toggles display of additional defendant-names
      */
-        .on("click", "a.expand-deftnames", function(e){
-            e.preventDefault();
-            $(this).hide().siblings().slideDown();
-        })
-        .on("click","a.collapse-deftnames", function(e){
-            e.preventDefault();
-            var self = $(this);
-            self.hide().siblings().not(":first-of-type").hide();
-            self.siblings("a.expand-deftnames").show();
-        })
+    .on("click", "a.expand-deftnames", function(e){
+        e.preventDefault();
+        $(this).hide().siblings().slideDown();
+    })
+    .on("click","a.collapse-deftnames", function(e){
+        e.preventDefault();
+        var self = $(this);
+        self.hide().siblings().not(":first-of-type").hide();
+        self.siblings("a.expand-deftnames").show();
+    })
     /**
      * triggers click on interpreter-edit button when they click adjacent
      * TD element containing interpreter names
      */
-        .on("click",".interpreters-assigned",function(){
-            $(this).next("td").children("a").trigger("click");
-        });
+    .on("click",".interpreters-assigned",function(){
+        $(this).next("td").children("a").trigger("click");
+    });
 
-    //-------- end #schedule_table event handlers --------------
+    //-------- end #schedule-table event handlers --------------
 
     // initialize Bootstrap popover for editing interpreters
     $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
     $(`[data-toggle="tooltip"]`).tooltip();
-
 
     // refresh table when they change language filter
     $("#language-select").on("change",function(){
@@ -222,7 +213,7 @@ $(function() {
     });
 
     /*
-    compute interval for reloading the schedule data: 20 seconds if we are
+    compute interval for reloading the schedule data: 15 seconds if we are
     looking a date >= today; otherwise, 180 seconds for historical data
     */
     var schedule_date = new moment($(".display-date").text(),"DD MMM YYYY");
@@ -234,7 +225,7 @@ $(function() {
     } else {
         interval = 180 * 1000;
     }
-    console.debug(`refresh interval set to ${interval/1000} seconds`);
+    console.debug(`refresh interval: ${interval/1000} seconds`);
 
     // initialize jquery-ui datepicker
     var date_input = $("#date-input");
@@ -263,10 +254,9 @@ $(function() {
      * are named rather than anonymous so we can call ourself recursively.
      */
     (function run(){
-        //console.debug("starting timer in run()");
         window.schedule_timer = window.setTimeout(function(){
             if ($(".popover").length !== 0) {
-                console.debug("popovers up? run() is starting over");
+                console.debug("popovers are up, run() is starting over");
                 return run();
             }
             $.get(document.location.pathname).done((data)=>{
