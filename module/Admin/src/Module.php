@@ -92,9 +92,9 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user, $container) {
             $routeMatch = $event->getRouteMatch();
+            $viewModel = $event->getApplication()->getMvcEvent()
+                ->getViewModel();
             if ($routeMatch) {
-                $viewModel = $event->getApplication()->getMvcEvent()
-                        ->getViewModel();
                 $viewModel->setVariables($routeMatch->getParams());
                 $config = $container->get('config');
                 if (isset($config['site'])) {
@@ -112,15 +112,14 @@ class Module
                     $viewModel->navigation_menu = 'Zend\Navigation\Requests';
                 }
             }
+            // and the purpose of this was... ?
             $request = $event->getApplication()->getRequest();
             $viewModel->referrer = $request->getServer()->get('HTTP_REFERER');
 
         });
-        /** @todo: lose this, and see what happens? */
+
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
-        // $sharedEvents->attach('*', 'error',[$this, 'logError']);
-
         /** @todo move this to the ScheduleUpdateManagerFactory */
         /** @var  InterpretersOffice\Service\ScheduleUpdateManager $scheduleManager */
         $scheduleManager = $container->get('InterpretersOffice\Admin\Service\ScheduleUpdateManager');
@@ -182,7 +181,13 @@ class Module
             // $session = $container->get('Authentication') ;
             // except that phpunit tests blow up.
             $session = new \Zend\Session\Container('Authentication');
+            $request = $event->getRequest();
+            $log = $container->get('log');
+            $log->debug("authentication failed, request is xhr? ".($request->isXmlHttpRequest()?"yes":"no"));
+            $log->debug("referrer? ".$request->getServer()->get('HTTP_REFERER'));
             $session->redirect_url = $event->getRequest()->getUriString();
+            // $session->redirect_url = $event->getRequest()
+            //     ->getServer()->get('HTTP_REFERER');
             $allowed = false;
         } else {
             // check authorization

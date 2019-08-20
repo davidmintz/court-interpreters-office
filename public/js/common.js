@@ -8,7 +8,6 @@ var $, jQuery;
 var basePath;
 /**
  * redirect to login page if, e.g., session has timed out
- * note that this does NOT work well with xhr
  */
 $( document ).ajaxComplete(function(event, xhr) {
     if (xhr.getResponseHeader("X-Authentication-required")) {

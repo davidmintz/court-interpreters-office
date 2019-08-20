@@ -107,6 +107,10 @@ class AuthController extends AbstractActionController
 
                 return $this->redirect()->toUrl($url);
             }
+            // nice try...
+            // if ($data['referrer']) {
+            //     return $this->redirect()->toUrl($data['referrer']);
+            // }
             // managers and administrators go to /admin
             if (in_array($role, ['administrator', 'manager'])) {
                 $route = 'admin';

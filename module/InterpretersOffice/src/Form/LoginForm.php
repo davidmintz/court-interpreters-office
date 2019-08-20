@@ -60,6 +60,11 @@ class LoginForm extends Form implements InputFilterProviderInterface
         );
 
         $this->add($csrf);
+        // really? I doubt it.
+        $this->add([
+            'type' => 'Hidden',
+            'name' => 'referrer',
+        ]);
         $inputFilter = $this->getInputFilter();
         $validatorChain = $inputFilter->get('login_csrf')->getValidatorChain();
         $validatorChain->prependByName('NotEmpty', ['messages' => [

@@ -11,5 +11,9 @@
     </div>
       <button type="submit" class="btn btn-success ml-1">log in</button>
         <?php echo $this->formElement($this->form->get('login_csrf')) ?>
+        <?php
+        // nope.
+        $referrer = $this->form->get('referrer'); $referrer->setValue($this->layout()->referrer);
+        echo $this->formElement($referrer); ?>
         <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>
  </form>
