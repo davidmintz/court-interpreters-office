@@ -9,10 +9,11 @@ $this->headTitle($this->title);?>
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?>
     </h2>
     <div class="form-inline pt-2 mb-1">
-         <label class="pr-1" for="judge-filter">inactive judges: </label>
+         <label class="pr-1" for="judge-filter">display: </label>
          <select id="judge-filter" class="form-control form-control-sm custom-select">
-             <option value="0">hide</option>
-             <option value="1">show</option>
+             <option value="active" <?php if ($this->display == 'active'):?> selected<?php endif;?>>active</option>
+             <option value="all"<?php if ($this->display == 'all'):?> selected<?php endif;?>>all</option>
+             <option value="inactive"<?php if ($this->display == 'inactive'):?> selected<?php endif;?>>inactive</option>
         </select>
     </div>
 <?php
@@ -50,15 +51,21 @@ foreach ($flavors as $flavor) :
                 <?php
                 foreach ($this->judges[$flavor] as $judge) :
                     $location = '';
+                    $status   = $judge['active'] ? 'active':'inactive';
+                    if ($this->display == 'active' && $status == 'inactive') :
+                        $hidden = true;
+                    elseif ($this->display == 'inactive' && $status == 'active') :
+                        $hidden = true;
+                    else:
+                        $hidden = false;
+                    endif;
                     if ($judge['location']) :
                         $location .= $judge['location'];
                         if ($judge['parent_location']) :
                             $location .= ', '. $judge['parent_location'];
                         endif;
                     endif; ?>
-                <tr <?php if (! $judge['active']) :
-                    ?> class="inactive"<?php
-                    endif;?>>
+                <tr class="judge-<?php echo $status; ?>"<?php if ($hidden):?> hidden<?php endif;?>>
                     <td><?php
                     $name = sprintf("%s, %s %s", $judge['lastname'], $judge['firstname'], $judge['middlename']);
                     printf('<a data-toggle="tooltip" title="view judge details" href="%s">%s</a>', $this->url('judges/view', ['id' => $judge['id']]), $name);

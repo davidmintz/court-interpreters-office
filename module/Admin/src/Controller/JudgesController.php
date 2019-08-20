@@ -7,9 +7,11 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use InterpretersOffice\Admin\Form\JudgeForm;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
+use Zend\Session\Container as Session;
 
 /**
  * JudgesController.
@@ -24,6 +26,9 @@ class JudgesController extends AbstractActionController
      */
     protected $entityManager;
 
+    /** @var Zend\Session\Container */
+    private $session;
+
     /**
      * constructor.
      *
@@ -34,6 +39,14 @@ class JudgesController extends AbstractActionController
         $this->entityManager = $entityManager;
     }
 
+    private function getSession()
+    {
+        if (!$this->session) {
+            $this->session = new Session("judges_list");
+        }
+        return $this->session;
+    }
+
     /**
      * index action.
      *
@@ -41,10 +54,20 @@ class JudgesController extends AbstractActionController
      */
     public function indexAction()
     {
+
+        $display = $this->params()->fromQuery('display');
+        if (! $display) {
+            $display = $this->getSession()->display ?: 'active';
+        } else {
+             $this->getSession()->display = $display;
+        }
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            return new JsonModel(['status'=>'OK','display'=>$display]) ;
+        }
         $judges = $this->entityManager
             ->getRepository(Entity\Judge::class)->getList();
 
-        return new ViewModel(['title' => 'judges', 'judges' => $judges, ]);
+        return new ViewModel(['title' => 'judges', 'judges' => $judges, 'display'=>$display]);
     }
     /**
      * view judge details
