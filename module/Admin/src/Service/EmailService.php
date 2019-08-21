@@ -236,7 +236,8 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
         $validation_errors = ['to' => [], 'cc' => []];
         $alpha = $whitespace = null;
         $validator = new EmailAddress();
-
+        $whitespace = new \Zend\Filter\PregReplace(
+                 ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
         if (! isset($data['to'])) {
             $validation_errors['to'][] = 'at least one "To" address is required';
         } elseif (! is_array($data['to'])) {
@@ -244,12 +245,6 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
         } elseif (! count($data['to'])) {
             $validation_errors['to'][] = 'at least one "To" address is required';
         } else {
-            $validator = new EmailAddress();
-            // this removes hyphens, so we can't use
-            //$alpha = new \Zend\I18n\Filter\Alpha(true);
-            $whitespace = new \Zend\Filter\PregReplace(
-                ['pattern' => '/\s+/', 'replacement' => ' ' ]
-            );
             foreach ($data['to'] as $i => $address) {
                 if (empty($address['email'])) {
                     $validation_errors['to'][] = 'missing email address in "To" recipient';
@@ -262,10 +257,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
                 }
             }
         }
-        $whitespace = new \Zend\Filter\PregReplace(
-                 ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
         $data['subject'] = trim($whitespace->filter($data['subject']));
-
         if (isset($data['cc'])) {
             if (! is_array($data['cc'])) {
                 $validation_errors['cc'][] = 'invalid parameter in "Cc" field';
@@ -308,31 +300,6 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
                 }
             }
         }
-        /*
-        if (empty($data['event_details']) and empty($data['body'])) {
-            //$validation_errors['body'] = 'Either a message text or event details is required';
-        }
-        if (empty($data['template_hint']) &&  empty($data['body'])) {
-            $validation_errors['body'] = "If you're not using boilerplate, some message text is required";
-        }
-
-        if ($data['template_hint'] == "your request"  && empty($data['body'])) {
-            $validation_errors['body'] = "If you're contacting the submitter about this request, some message text is required";
-        }
-        /*
-        * if event-details ARE included, template is REQUIRED.
-        * @todo support event-details and WITHOUT template?
-        /
-        if (isset($data['event_details'])) {
-            if (empty($data['template_hint']) && $data['template_hint'] != 'your request') {
-                $validation_errors['template'] = "If event details are included, a boilerplate text is required.";
-            } else {
-                if (isset($data['template_hint']) && ! in_array($data['template_hint'], array_keys($this->template_map))) {
-                    $validation_errors['template'] = "Invalid boilerplate text.";
-                }
-            }
-        }
-        */
         foreach (['to','cc'] as $field) {
             if (! count($validation_errors[$field])) {
                 unset($validation_errors[$field]);
