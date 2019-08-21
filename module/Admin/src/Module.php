@@ -173,9 +173,13 @@ class Module
         $container = $event->getApplication()->getServiceManager();
         $auth = $container->get('auth');
         $log = $container->get('log');
-        $log->debug("FYI, referrer? ".$request->getServer()->get('HTTP_REFERER'));
-        $log->debug("uri string: ".$event->getRequest()->getUriString());
+        $request = $event->getRequest();
+        // temporary
+        $channel = ['channel'=>'redirect-debug'];
+        $log->debug("uri string: ".$event->getRequest()->getUriString(),$channel);
+        $log->debug("FYI, referrer? ".($request->getServer()->get('HTTP_REFERER')?:'NULL'),$channel);
         if (! $auth->hasIdentity()) {
+            $log->debug("not authenticated",$channel);
             // everything else requires authentication
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
@@ -184,13 +188,13 @@ class Module
             // $session = $container->get('Authentication') ;
             // except that phpunit tests blow up.
             $session = new \Zend\Session\Container('Authentication');
-            $request = $event->getRequest();
-            $log->debug("authentication failed, request is xhr? ".($request->isXmlHttpRequest()?"yes":"no"));
+            $log->debug("authentication failed, request is xhr? ".($request->isXmlHttpRequest()?"yes":"no"),$channel);
             $session->redirect_url = $event->getRequest()->getUriString();
             // $session->redirect_url = $event->getRequest()
             //     ->getServer()->get('HTTP_REFERER');
             $allowed = false;
         } else {
+            $log->debug("YES authenticated",$channel);
             // check authorization
             $user = $auth->getIdentity();
             $role = $user->role;
@@ -199,6 +203,7 @@ class Module
                     ->get('ControllerPluginManager')->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Access denied.');
                 $allowed = false;
+                $log->debug("...but NOT authorized",$channel);
             }
         }
         if (! $allowed) {
