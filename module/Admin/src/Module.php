@@ -11,7 +11,9 @@ use Zend\Session\SessionManager;
 use InterpretersOffice\Admin\Controller;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
 use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
-//use InterpretersOffice\Controller;
+
+use Zend\Uri\UriFactory;
+
 /**
  * Module class for our InterpretersOffice\Admin module.
  */
@@ -172,14 +174,12 @@ class Module
         $allowed = true;
         $container = $event->getApplication()->getServiceManager();
         $auth = $container->get('auth');
-        $log = $container->get('log');
         $request = $event->getRequest();
         // temporary
-        $channel = ['channel'=>'redirect-debug'];
-        $log->debug("uri string: ".$event->getRequest()->getUriString(),$channel);
-        $log->debug("FYI, referrer? ".($request->getServer()->get('HTTP_REFERER')?:'NULL'),$channel);
+        //$channel = ['channel'=>'redirect-debug'];
+        //$log = $container->get('log');
+        $request_uri = $request->getUri();
         if (! $auth->hasIdentity()) {
-            $log->debug("not authenticated",$channel);
             // everything else requires authentication
             $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
@@ -188,13 +188,22 @@ class Module
             // $session = $container->get('Authentication') ;
             // except that phpunit tests blow up.
             $session = new \Zend\Session\Container('Authentication');
-            $log->debug("authentication failed, request is xhr? ".($request->isXmlHttpRequest()?"yes":"no"),$channel);
-            $session->redirect_url = $event->getRequest()->getUriString();
-            // $session->redirect_url = $event->getRequest()
-            //     ->getServer()->get('HTTP_REFERER');
+            $is_xhr = $request->isXmlHttpRequest();
+            if ($is_xhr) {
+                $http_referrer = $request->getServer()->get('HTTP_REFERER');
+                if ($http_referrer) {
+                    $referrer = UriFactory::factory($http_referrer);
+                    if ($referrer->getHost() == $request_uri->getHost()) {
+                        // $log->debug("setting redirect-url to: ".($referrer->getPath()?:"/"),$channel);
+                        $session->redirect_url = $referrer->getPath()?:"/";
+                    }
+                }
+            } else {
+                //$log->debug("setting redirect-url to: $request_uri",$channel);
+                $session->redirect_url = (string)$request_uri;
+            }
             $allowed = false;
         } else {
-            $log->debug("YES authenticated",$channel);
             // check authorization
             $user = $auth->getIdentity();
             $role = $user->role;
@@ -203,7 +212,6 @@ class Module
                     ->get('ControllerPluginManager')->get('FlashMessenger');
                 $flashMessenger->addWarningMessage('Access denied.');
                 $allowed = false;
-                $log->debug("...but NOT authorized",$channel);
             }
         }
         if (! $allowed) {
