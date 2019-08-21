@@ -1,0 +1,23 @@
+<?php /** module/InterpretersOffice/view/interpreters-office/index/contact.phtml */
+$this->headTitle('contact');
+$email = $this->layout()->email;
+$phone = $this->layout()->telephone;
+$missing = 0; // a thought...
+?>
+<div class="mx-auto" style="max-width:600px">
+    <h2 class="text-center"><?php echo $this->layout()->organization_name  ?: 'Court Interpreters'?>
+    </h2>
+        <h3 class="text-muted text-center"><?php echo $this->layout()->organization_locality ?></h3>
+    <dl class="row shadow-sm border border-primary bg-light mx-auto mt-4 pt-2" ">
+        <dt class="col-sm-3 font-weight-light text-md-right">phone</dt>
+        <dd class="col-sm-9"><?php echo $phone ?></dd>
+        <dt class="col-sm-3 font-weight-light text-md-right">email</dt>
+        <dd class="col-sm-9"><?php echo $email ?></dd>
+    </dl>
+    <?php
+    if (file_exists(
+        './module/InterpretersOffice/view/interpreters-office/custom/contact.phtml'
+    )) :?>
+        <?php  echo $this->render('interpreters-office/custom/contact');?>
+    <?php endif;?>
+</div>
