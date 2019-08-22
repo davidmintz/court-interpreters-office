@@ -4,9 +4,9 @@ namespace InterpretersOffice\Admin\Form;
 use Zend\Form\Fieldset;
 use Zend\Form\Element;
 use Zend\InputFilter\InputFilterProviderInterface;
-use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
 
 use InterpretersOffice\Form\Element\LanguageSelect;
