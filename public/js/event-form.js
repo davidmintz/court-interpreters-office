@@ -375,7 +375,7 @@ var eventForm = (function () {
                 }).attr({hidden:false});
             }
         );
-        
+
     };
 
     // this is going to become dynamic
@@ -391,15 +391,15 @@ var eventForm = (function () {
             case "submitter":
             case "manager":
             case "staff":
-                html = `<div class="popover-submitter-admin">To enter the name of a court employee who is not 
+                html = `<div class="popover-submitter-admin">To enter the name of a court employee who is not
                 found in the select menu, please go to <a href="${window.basePath}/admin/users">user administration</a>.</div>`;
                 break;
             default :
                 if (label.indexOf("interpreter") > -1) {
-                    html = `<div class="popover-submitter-admin">To enter the name of a court interpreter who is not 
+                    html = `<div class="popover-submitter-admin">To enter the name of a court interpreter who is not
                     found in the select menu, please go to <a href="${window.basePath}/admin/interpreters">the interpreter roster</a>.</div>`;
                 } else {
-                    html = `<div class="popover-submitter-admin">To enter the name of a person who is not 
+                    html = `<div class="popover-submitter-admin">To enter the name of a person who is not
                     found in the select menu, please go to <a href="${window.basePath}/admin/people">admin/people</a>.</div>`;;
                 }
         }
@@ -585,8 +585,6 @@ var eventForm = (function () {
 
         $("input.time").on("change",parseTime);
 
-        $("input.docket").on("change",formatDocketElement);
-
         $("select").on("change",toggleSelectClass).trigger("change");
 
         /* ============  stuff related to defendant names =======================*/
@@ -702,7 +700,7 @@ var eventForm = (function () {
                     + name + "</strong> to this event?");
                 $("#modal-assign-interpreter").modal();
             }
-        });        
+        });
         form.on("submit",formSubmit);
     };
 
@@ -722,7 +720,7 @@ var eventForm = (function () {
  * initializes handlers for defendant-name editing
  *
  * depends on a global eventForm. for admin mode only. we need a different
- * approach for request mode.
+ * approach for Requests mode.
  * @return {object}
  */
 var defendantForm = (function(){
