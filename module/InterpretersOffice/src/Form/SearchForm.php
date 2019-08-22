@@ -10,6 +10,7 @@ use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Admin\Form\Validator;
 use InterpretersOffice\Admin\Form\Filter;
 use Doctrine\Common\Persistence\ObjectManager;
+use Zend\Validator\Callback;
 
 class SearchForm extends Form implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
@@ -22,6 +23,22 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
         $this->setObjectManager = $objectManager;
         parent::__construct('search-form',$options);
         $this->addCsrfElement();
+        $this->getInputFilter()->get('csrf')->getValidatorChain()
+        ->attachByName('Callback',[
+            'callback'=>function($value, $context) {
+                unset($context['csrf']);
+                foreach ($context as $field => $value) {
+                    if (trim($value)) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            'messages' => [
+                Callback::INVALID_VALUE => 'Please enter at least one search criterion.',
+            ]
+        ]);
+
         $this->add([
             'name' => 'docket',
             'type' => 'Zend\Form\Element\Text',

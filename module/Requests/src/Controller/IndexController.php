@@ -176,14 +176,22 @@ class IndexController extends AbstractActionController implements ResourceInterf
         }
         return new ViewModel(['form'=>$form]);
     }
+    // work in progress (quite fucked up at the moment)
     protected function doSearch(SearchForm $form, Array $query)
     {
         $form->setData($query);
         $response = [];
         if ($form->isValid()) {
-            $this->session->search = $form->getData();
+            $data = $form->getData();
+            unset($data['csrf']);
+            $this->session->search = $data;
             $response['valid'] = true;
             $response['form_data'] = $form->getData();
+            $view = new ViewModel();
+            $view ->setTemplate('index/results')
+                 ->setVariables(['results'=>['some shit']])
+                 ->setTerminal($this->getRequest()->isXmlHttpRequest());
+            return $view;
         } else {
             $response['valid'] = false;
             $response['validation_errors'] = $form->getMessages();

@@ -31,7 +31,10 @@ return [
         ],
     ],
     'view_manager' => [
-        'template_map' => include(__DIR__.'/template_map.php')
+        'template_map' => include(__DIR__.'/template_map.php'),
+        'template_path_stack' => [
+            __DIR__.'/../view',
+        ],
     ],
 
     'service_manager' => [
