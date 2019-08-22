@@ -42,12 +42,12 @@ class RequestRepository extends EntityRepository
      * @param  array  $options
      * @return int
      */
-    public function count(Array $options = [])
-    {
-        $dql = 'SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r';
-
-        return $this->getEntityManager()->createQuery($dql)->getSingleScalarResult();
-    }
+    // public function count(Array $options = [])
+    // {
+    //     $dql = 'SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r';
+    //
+    //     return $this->getEntityManager()->createQuery($dql)->getSingleScalarResult();
+    // }
 
     /**
      * gets fully-hydrated Request entity.

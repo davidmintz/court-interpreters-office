@@ -12,8 +12,10 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
+use InterpretersOffice\Entity\User;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 use InterpretersOffice\Requests\Form;
+use InterpretersOffice\Form\SearchForm;
 
 use InterpretersOffice\Service\DateCalculatorTrait;
 
@@ -129,7 +131,8 @@ class IndexController extends AbstractActionController //implements ResourceInte
      */
     public function searchAction()
     {
-        return new ViewModel();
+        $form = new SearchForm($this->objectManager);
+        return new ViewModel(['form'=>$form]);
     }
     /**
      * index action.
@@ -139,7 +142,8 @@ class IndexController extends AbstractActionController //implements ResourceInte
     public function indexAction()
     {
         $repo = $this->objectManager->getRepository(Entity\Request::class);
-        return new ViewModel(['count'=> $repo->count()]);
+        $user = $this->objectManager->getRepository(User::class)->getUser($this->getIdentity()->id);
+        return new ViewModel(['count'=> $repo->count(['submitter'=>$user->getPerson()])]);
     }
 
     /**

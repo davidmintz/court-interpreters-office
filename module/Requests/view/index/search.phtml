@@ -1,4 +1,43 @@
 <?php     $this->headTitle('requests | '.$this->layout()->action);?>
-<h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
 
-<p>to be continued</p>
+<h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
+<form class="mx-auto p-3" style="max-width:800px" action="<?php ?>" method="get">
+    <p class="border border-light bg-light p-2">
+        Enter one or more search criteria
+    </p>
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label text-md-right pr-0" for="docket">docket</label>
+    <div class="col-sm-3">
+        <?php echo $this->formElement($form->get('docket'))?>
+    </div>
+    <label class="col-form-label text-md-right pr-0" for="language">language</label>
+    <div class="col-sm-3">
+        <?php echo $this->formElement($form->get('language'))?>
+    </div>
+</div>
+<!-- -->
+<div class="form-group row">
+    <div class="col-sm-2 col-form-label text-md-right pr-0">date range</div>
+    <label class="col-form-label text-md-right pl-3 pr-0 text-muted" for="date-from">from</label>
+    <div class="col-sm-3">
+        <input type="text" class="form-control" name="date-from" value="">
+    </div>
+    <label class="col-form-label pr-0 text-muted" for="date-to">to</label>
+    <div class="col-sm-3">
+        <input type="text" class="form-control" name="date-to" value="">
+    </div>
+    <!--
+    <div class="col-sm-2"></div>
+    -->
+</div>
+<div class="form-group row">
+    <div class="offset-sm-2">
+        <button type="button" class="btn btn-primary">
+            <span class="fas fa-search"></span> search
+        </button>
+    </div>
+
+</div>
+<!-- -->
+
+</form>
