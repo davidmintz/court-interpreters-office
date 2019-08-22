@@ -16,7 +16,7 @@ server such as [Apache](https://httpd.apache.org/); [MySQL](https://www.mysql.co
 [PHP](http://php.net/) version 7.2. On the client side, users will need no more than a
 standard web browser and network access to the server where the application is installed.
 
-With [docker](https://www.docker.com/) having become such a thing, the chances are very good
+With [docker](https://www.docker.com/) having become such a thing, there's a good chance
 that we will also make this application available as a docker image. In English, this more or less means a single,
 self-contained thing that will depend on little else being installed on the computer where it resides.
 
