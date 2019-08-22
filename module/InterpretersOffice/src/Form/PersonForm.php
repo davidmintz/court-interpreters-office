@@ -5,14 +5,12 @@
 namespace InterpretersOffice\Form;
 
 use Zend\Form\Form as ZendForm;
-//use Zend\InputFilter\InputFilterProviderInterface;
-//use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Form for a Person entity.
  */
-class PersonForm extends ZendForm //implements ObjectManagerAwareInterface
+class PersonForm extends ZendForm
 {
     use CsrfElementCreationTrait;
 
