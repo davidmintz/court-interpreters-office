@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# possibly useful in tests, for getting html payload from
-# .eml files produced by Zend\Mail
+# useful for development and testing, this gets the html payload from
+# .eml files (e.g., as produced by Zend\Mail) and prints it to STDOUT
 
 from email import parser;
 import argparse;
