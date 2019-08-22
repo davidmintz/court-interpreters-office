@@ -67,6 +67,9 @@ class WriteController extends AbstractActionController implements ResourceInterf
      */
     protected $session;
 
+    /** @var InterpretersOffice\Entity\User */
+    private $user_entity;
+
     /**
      * constructor.
      *
@@ -95,8 +98,6 @@ class WriteController extends AbstractActionController implements ResourceInterf
          return self::class;
     }
 
-
-    private $user_entity;
 
     public function getUserEntity()
     {
@@ -130,6 +131,8 @@ class WriteController extends AbstractActionController implements ResourceInterf
         return $this->auth->getIdentity();
     }
 
+
+
     /**
      * onDispatch event Listener
      *
@@ -141,10 +144,9 @@ class WriteController extends AbstractActionController implements ResourceInterf
 
         $params = $this->params()->fromRoute();
 
-        if (in_array($params['action'], ['update','cancel'])) {
+        if (in_array($params['action'], ['update','cancel',])) {
             $entity = $this->objectManager->getRepository(Entity\Request::class)
                 ->getRequest($params['id']);
-
             if (! $entity) {
                 return parent::onDispatch($e);
             }
@@ -154,15 +156,15 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 $this,
                 $params['action']
             );
+            $this->allowed = $allowed;
             if (! $allowed) {
                 $this->getResponse()->setStatusCode(403);
                 $message = "Sorry, you are not authorized to {$params['action']}";
                 if ($this->getRequest()->isXmlHttpRequest()) {
-                    $data = [ 'error' => [
-                                'code' => 403,
-                                'message' => "$message this request.",
-                            ]
-                        ];
+                    $data = [
+                        'code' => 403,
+                        'message' => "$message this request.",
+                    ];
                     $response = $this->getResponse()
                         ->setContent(json_encode($data));
                     $response->getHeaders()

@@ -20,12 +20,13 @@ use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
  * Factory class for instantiating controllers in Requests module.
  *
  * This factory produces the read-only IndexController as well as the
- * WriteController for the Request module, and the Admin\IndexController.
- * If the $requestedName (controller) we're creating is the WriteController,
- * we update the ACL (which is mostly configured by now) on the fly, so that
- * we can add an ACL assertion that depends on conditions we can't know until
- * this controller is created, and which is also expensive enough to warrant
- * delaying until we know we need it.
+ * WriteController for the Requests module, and the Admin\IndexController.
+ * If the $requestedName (controller) we're creating is the either IndexController or
+ * WriteController, we update the ACL (which is mostly configured by now) on the
+ * fly, so that we can add an ACL assertion that depends on conditions we can't
+ * know until we have Request and User entities in hand, i.e., once this
+ * controller is created. And the overhead seems enough to warrant waiting until
+ * we know we need it.
  */
 class RequestsControllerFactory implements FactoryInterface
 {
@@ -45,22 +46,19 @@ class RequestsControllerFactory implements FactoryInterface
 
         $entityManager = $container->get('entity-manager');
         $auth = $container->get('auth');
+        $acl = $container->get('acl');
         $resolver = $entityManager->getConfiguration()
             ->getEntityListenerResolver();
         $resolver->register($container->get(Listener\UpdateListener::class)
                 ->setAuth($auth));
-        if ($requestedName == Controller\WriteController::class) {
-            //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
-            //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
-            // add Doctrine entity listeners
-            $resolver->register($container->get(RequestEntityListener::class));
-            $resolver->register($container->get(EventEntityListener::class));
-
-            // add another ACL rule
-            $acl = $container->get('acl');
-            $controller = new $requestedName($entityManager, $auth, $acl);
+        $controller = new $requestedName($entityManager, $auth, $acl);
+        // crude, but...
+        if (method_exists($controller,'setUserEntity')) {
+            //... both the IndexController and WriteController in the
+            //  InterpretersOffice\Requests\Controller namespace need to
+            //  be able to check ACL
             $user = $entityManager->getRepository('InterpretersOffice\Entity\User')
-                 ->getUser($auth->getIdentity()->id);
+                ->getUser($auth->getIdentity()->id);
             $controller->setUserEntity($user);
             $acl->allow(
                 $user,
@@ -68,6 +66,19 @@ class RequestsControllerFactory implements FactoryInterface
                 ['update','cancel'],
                 new ModificationAuthorizedAssertion($controller)
             );
+        }
+        if ($requestedName == Controller\IndexController::class) {
+            return $controller;
+        }
+        if ($requestedName == Controller\WriteController::class) {
+
+            //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
+            //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
+
+            // add Doctrine entity listeners
+            $resolver->register($container->get(RequestEntityListener::class));
+            $resolver->register($container->get(EventEntityListener::class));
+
             // attach event listeners
             $eventManager = $container->get('SharedEventManager');
             $scheduleManager = $container->get(ScheduleUpdateManager::class);

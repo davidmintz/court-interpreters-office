@@ -18,8 +18,8 @@ $this->headScript()
 
 $r = $this->data; // we are lazy
 $scheduled_datetime = new \DateTime(sprintf('%s %s',$r->getDate()->format("Y-m-d"), $r->getTime()->format('H:i')));
-$editable = ($scheduled_datetime > $this->deadline) && !($r->getEvent() && $r->getEvent()->getDeleted());
-//var_dump($r['event_deleted']);var_dump($editable);
+$editable = $this->write_access && ($scheduled_datetime > $this->deadline) && !($r->getEvent() && $r->getEvent()->getDeleted());
+//var_dump($this->write_access);var_dump($editable);
 echo $this->partial('partials/request-details',['request'=>$r, 'deadline'=> $this->deadline]);
 ?>
     <div class="col-md-12 text-center pt-2"><?php

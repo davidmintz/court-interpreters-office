@@ -9,6 +9,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
@@ -16,7 +17,7 @@ use InterpretersOffice\Entity\User;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 use InterpretersOffice\Requests\Form;
 use InterpretersOffice\Form\SearchForm;
-
+use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Service\DateCalculatorTrait;
 
 use Zend\Mvc\MvcEvent;
@@ -26,7 +27,7 @@ use Zend\Http\Request;
  *  IndexController for Requests module
  *
  */
-class IndexController extends AbstractActionController //implements ResourceInterface
+class IndexController extends AbstractActionController implements ResourceInterface
 {
     use DateCalculatorTrait;
     /**
@@ -51,6 +52,8 @@ class IndexController extends AbstractActionController //implements ResourceInte
     protected $auth;
 
 
+    /** @var InterpretersOffice\Entity\User */
+    private $user_entity;
 
     /**
      * session
@@ -60,18 +63,29 @@ class IndexController extends AbstractActionController //implements ResourceInte
     protected $session;
 
     /**
+     * Acl - access control service
+     *
+     * @var Acl
+     */
+    protected $acl;
+
+    /**
      * constructor.
      *
      * @param ObjectManager $objectManager
      * @param AuthenticationServiceInterface $auth
+     * @param Acl $acl
      */
     public function __construct(
         ObjectManager $objectManager,
-        AuthenticationServiceInterface $auth
-    ) {
+        AuthenticationServiceInterface $auth,
+        Acl $acl)
+    {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
+        $this->acl = $acl;
         $this->session = new \Zend\Session\Container("requests");
+
     }
 
     /**
@@ -84,6 +98,16 @@ class IndexController extends AbstractActionController //implements ResourceInte
          return self::class;
     }
 
+    /**
+     * set currently authorized user entity
+     * @param User $user
+     */
+    public function setUserEntity(User $user)
+    {
+        $this->user_entity = $user;
+
+        return $this;
+    }
 
     /**
      * gets the Request entity we're working with
@@ -115,11 +139,21 @@ class IndexController extends AbstractActionController //implements ResourceInte
     {
         $id = $this->params()->fromRoute('id');
         $repository = $this->objectManager->getRepository(Entity\Request::class);
+        $this->entity = $repository->getRequest($id);
         $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+        if ($this->entity) {
+            $write_access = $this->acl->isAllowed(
+                $this->user_entity,
+                $this,
+                'update'
+            );
+        } else {
+            $write_access = null;
+        }
         return [
-            'data' => $repository->getRequest($id),
+            'data' => $this->entity,
             'deadline' => $this->getTwoBusinessDaysAfterDate(new \DateTime),
-            'csrf' => $csrf,
+            'csrf' => $csrf,'write_access'=>$write_access
         ];
     }
 
@@ -132,7 +166,29 @@ class IndexController extends AbstractActionController //implements ResourceInte
     public function searchAction()
     {
         $form = new SearchForm($this->objectManager);
+        $query = $this->params()->fromQuery();
+        if ($query) {
+            return $this->doSearch($form, $query);
+        } else {
+            if ($this->session->search) {
+                $form->setData($this->session->search);
+            }
+        }
         return new ViewModel(['form'=>$form]);
+    }
+    protected function doSearch(SearchForm $form, Array $query)
+    {
+        $form->setData($query);
+        $response = [];
+        if ($form->isValid()) {
+            $this->session->search = $form->getData();
+            $response['valid'] = true;
+            $response['form_data'] = $form->getData();
+        } else {
+            $response['valid'] = false;
+            $response['validation_errors'] = $form->getMessages();
+        }
+        return new JsonModel($response);
     }
     /**
      * index action.
