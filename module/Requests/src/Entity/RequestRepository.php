@@ -200,10 +200,45 @@ class RequestRepository extends EntityRepository
         return $qb;
     }
 
-    public function list_v2()
+    /**
+     * searches for Request entities
+     *
+     * @param  Array   $criteria search parameters
+     * @param  integer $page
+     * @return ZendPaginator|null
+     */
+    public function search(Array $criteria, int $page = 1) :? ZendPaginator
     {
-        //$dql = ''
-        return [];
+
+        $qb = $this->getEntityManager()->createQueryBuilder()
+        ->select('r,type,lang, j, jhat, jflav,mod_by, mod_by_p, mod_by_judges,
+            mod_by_role, submitter, submitter_hat, defts')
+        ->from('InterpretersOffice\Requests\Entity\Request', 'r')
+        ->join('r.eventType', 'type')
+        ->join('r.language', 'lang')
+        ->join('r.modifiedBy', 'mod_by')
+        ->join('mod_by.person', 'mod_by_p')
+        ->join('mod_by.role', 'mod_by_role')
+        ->leftJoin('mod_by.judges', 'mod_by_judges')
+        ->join('r.submitter','submitter')
+        ->join('submitter.hat','submitter_hat')
+        ->leftJoin('r.defendants', 'defts')
+        ->leftJoin('r.judge', 'j')
+        ->leftJoin('j.hat', 'jhat')
+        ->leftJoin('j.flavor', 'jflav')
+        //->leftJoin('r.event', 'e')
+        ->where('r.docket = :docket')->setParameters(['docket'=>'2018-CR-0552']);
+        //->where('r.id = :id')->setParameters(['id'=>20714]);
+        $query = $qb->getQuery();
+        // return $query->getResult();
+        // return $query->getDql();
+        $adapter = new DoctrineAdapter(new ORMPaginator($query));
+        $paginator = new ZendPaginator($adapter);
+        if (! count($paginator)) {
+            return null;
+        }
+
+        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
     }
 
     /**

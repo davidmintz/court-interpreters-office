@@ -99,7 +99,7 @@ const fail = function(response) {
     if (response.status === 403 && response.responseJSON) {
         msg = response.responseJSON.message;
     } else {
-        msg = `<p>Sorry &mdash; we encountered an unexpected system error while
+        msg = `<p>Sorry &mdash; a system error happened while
         processing your last request. If the problem recurs, please notify your site
         administrator for assistance.</p><p>We apologize for the inconvenience.</p>`;
     }

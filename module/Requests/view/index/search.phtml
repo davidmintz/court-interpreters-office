@@ -14,7 +14,7 @@ $form = $this->form;
         Enter one or more search criteria
     </small>
 </h2>
-<pre><?php echo get_class($form->get('csrf'))?></pre>
+<?php echo $this->errorMessage($this->errorMessage,$this->header); ?>
 <form class="mx-auto mt-4" style="max-width:800px" action="<?php echo $this->url('requests/search') ?>" method="get">
 <div class="form-group row">
     <label class="col-sm-2 col-form-label text-md-right pr-0" for="docket">docket</label>
@@ -46,7 +46,7 @@ $form = $this->form;
     <!-- -->
     <div class="col-sm-2">
         <button type="button" id="btn-submit" class="btn btn-primary">
-            <span class="fas fa-search"></span> search
+            <span class="fas fa-search"></span><span class="sr-only">search</span>
         </button>
         <?php echo $this->formElement($form->get('csrf'))?>
     </div>
@@ -57,4 +57,4 @@ $form = $this->form;
     </div>
 </div>
 </form>
-<div id="results"></div>
+<div id="results"><?php if ($this->results): echo $this->render('index/results'); endif;?></div>

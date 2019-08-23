@@ -160,44 +160,50 @@ class IndexController extends AbstractActionController implements ResourceInterf
     /**
      * search action
      *
-     * @return ViewModel
-     * @todo implement
+     * @return ViewModel|JsonModel
+     *
      */
     public function searchAction()
     {
-        $form = new SearchForm($this->objectManager);
         $query = $this->params()->fromQuery();
-        if ($query) {
-            return $this->doSearch($form, $query);
-        } else {
-            if ($this->session->search) {
-                $form->setData($this->session->search);
+        $form = new SearchForm($this->objectManager);
+        $repository = $this->objectManager->getRepository(Entity\Request::class);
+        if (!$query) {
+            if ($this->session->search_defaults) {
+                $params = $this->session->search_defaults;
+                $form->setData($params);
+                $results = $repository->search($params);
+            } else {
+                $results = null;
             }
+            return new ViewModel(compact('form','results'));
         }
-        return new ViewModel(['form'=>$form]);
-    }
-    // work in progress (quite fucked up at the moment)
-    protected function doSearch(SearchForm $form, Array $query)
-    {
+        // else, we have form/query data to validate
         $form->setData($query);
-        $response = [];
-        if ($form->isValid()) {
-            $data = $form->getData();
-            unset($data['csrf']);
-            $this->session->search = $data;
-            $response['valid'] = true;
-            $response['form_data'] = $form->getData();
-            $view = new ViewModel();
-            $view ->setTemplate('index/results')
-                 ->setVariables(['results'=>['some shit']])
-                 ->setTerminal($this->getRequest()->isXmlHttpRequest());
-            return $view;
-        } else {
-            $response['valid'] = false;
-            $response['validation_errors'] = $form->getMessages();
+        if (!$form->isValid()) {
+            $response = [
+                'valid' => false,
+                'validation_errors' => $form->getMessages(),
+            ];
+            return new JsonModel($response);
         }
-        return new JsonModel($response);
+        // all good
+        $form_values = $form->getData();
+        unset($form_values['csrf']);
+        $this->session->search_defaults = $form_values;
+        $results = $repository->search($form_values);
+        $view = new ViewModel(['results'=>$results]);
+        $is_xhr = $this->getRequest()->isXmlHttpRequest();
+        if (!$is_xhr) {
+            $view->setVariables(['form' => $form,]);
+        } else {
+            $view->setTemplate('index/results')
+                 ->setTerminal(true);
+        }
+
+        return $view;
     }
+
     /**
      * index action.
      *

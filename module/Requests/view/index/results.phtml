@@ -1,1 +1,14 @@
 hello!
+<?php
+if ($this->results): ?>
+<pre>
+results is a <?php echo get_class($results)?>
+
+<?php foreach($this->results as $r):
+?>  id is <?php echo $r->getId()?>
+
+<?php endforeach;?>
+
+</pre>
+<?php
+endif;
