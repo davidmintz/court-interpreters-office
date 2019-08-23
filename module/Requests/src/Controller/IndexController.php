@@ -167,12 +167,14 @@ class IndexController extends AbstractActionController implements ResourceInterf
     {
         $query = $this->params()->fromQuery();
         $form = new SearchForm($this->objectManager);
+        $page = (int)$this->params()->fromQuery('page',1);
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         if (!$query) {
             if ($this->session->search_defaults) {
-                $params = $this->session->search_defaults;
+                $defaults = $this->session->search_defaults;
+                $params = $defaults;
                 $form->setData($params);
-                $results = $repository->search($params);
+                $results = $repository->search($params,$defaults['page']);
             } else {
                 $results = null;
             }
@@ -190,8 +192,9 @@ class IndexController extends AbstractActionController implements ResourceInterf
         // all good
         $form_values = $form->getData();
         unset($form_values['csrf']);
+        $form_values['page'] = $page;
         $this->session->search_defaults = $form_values;
-        $results = $repository->search($form_values);
+        $results = $repository->search($form_values,$page);
         $view = new ViewModel(['results'=>$results]);
         $is_xhr = $this->getRequest()->isXmlHttpRequest();
         if (!$is_xhr) {

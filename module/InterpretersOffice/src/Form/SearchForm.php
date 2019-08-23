@@ -9,6 +9,7 @@ use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Admin\Form\Validator;
 use InterpretersOffice\Admin\Form\Filter;
+use InterpretersOffice\Entity;
 use Doctrine\Common\Persistence\ObjectManager;
 use Zend\Validator\Callback;
 
@@ -20,7 +21,7 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
     public function __construct(ObjectManager $objectManager, array $options = [])
     {
 
-        $this->setObjectManager = $objectManager;
+        $this->setObjectManager($objectManager);
         parent::__construct('search-form',$options);
         $this->addCsrfElement();
         $this->getInputFilter()->get('csrf')->getValidatorChain()
@@ -83,7 +84,6 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
                 'id' => 'date-to',
                 'class' => 'date form-control',
             ],
-            //'options' => [ ],
         ]);
         $this->add([
             'name' => 'defendant-name',
@@ -92,7 +92,31 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
                 'id' => 'defendant-name',
                 'class' => 'form-control',
             ],
-            //'options' => [ ],
+        ]);
+        /** @var $repository \InterpretersOffice\Entity\Repository\JudgeRepository */
+        $repository = $this->getObjectManager()->getRepository(Entity\Judge::class);
+        $opts = ['include_pseudo_judges' => true];
+        $value_options = $repository->getJudgeOptions($opts);
+        array_unshift(
+            $value_options,
+            [ 'value' => '','attributes' => ['label' => ' '] ]
+        );
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'judge',
+            'options' => [
+                'label' => 'judge',
+                'value_options' => $value_options,
+            ],
+            'attributes' => [
+                'class' => 'form-control custom-select',
+                'id' => 'judge'],
+        ]);
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'pseudo_judge',
+            'attributes' => [
+                'id' => 'pseudo_judge'],
         ]);
     }
 
@@ -134,6 +158,21 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
                     ['name' => 'StringTrim'],
                 ],
             ],
+            'judge' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+            ],
+            'pseudo_judge' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    // @todo a Boolean filter?
+                    ['name' => 'StringTrim'],
+                ],
+            ]
         ];
     }
 }

@@ -10,7 +10,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
-
+use InterpretersOffice\Service\ProperNameParsingTrait;
 /**
  * request repository
  *
@@ -18,6 +18,7 @@ use InterpretersOffice\Requests\Entity\Request;
  */
 class RequestRepository extends EntityRepository
 {
+    use ProperNameParsingTrait;
 
     protected $cache_namespace = 'requests';
 
@@ -207,36 +208,60 @@ class RequestRepository extends EntityRepository
      * @param  integer $page
      * @return ZendPaginator|null
      */
-    public function search(Array $criteria, int $page = 1) :? ZendPaginator
+    public function search(Array $criteria, int $page = 1) : ZendPaginator
     {
-
         $qb = $this->getEntityManager()->createQueryBuilder()
-        ->select('r,type,lang, j, jhat, jflav,mod_by, mod_by_p, mod_by_judges,
-            mod_by_role, submitter, submitter_hat, defts')
-        ->from('InterpretersOffice\Requests\Entity\Request', 'r')
-        ->join('r.eventType', 'type')
-        ->join('r.language', 'lang')
-        ->join('r.modifiedBy', 'mod_by')
-        ->join('mod_by.person', 'mod_by_p')
-        ->join('mod_by.role', 'mod_by_role')
-        ->leftJoin('mod_by.judges', 'mod_by_judges')
-        ->join('r.submitter','submitter')
-        ->join('submitter.hat','submitter_hat')
-        ->leftJoin('r.defendants', 'defts')
-        ->leftJoin('r.judge', 'j')
-        ->leftJoin('j.hat', 'jhat')
-        ->leftJoin('j.flavor', 'jflav')
-        //->leftJoin('r.event', 'e')
-        ->where('r.docket = :docket')->setParameters(['docket'=>'2018-CR-0552']);
-        //->where('r.id = :id')->setParameters(['id'=>20714]);
-        $query = $qb->getQuery();
-        // return $query->getResult();
-        // return $query->getDql();
+            ->select('r,type,lang, j, jhat, jflav,mod_by, mod_by_p,
+                mod_by_judges, mod_by_role, submitter, submitter_hat, defts')
+            ->from(Request::class, 'r')
+            ->join('r.eventType', 'type')
+            ->join('r.language', 'lang')
+            ->join('r.modifiedBy', 'mod_by')
+            ->join('mod_by.person', 'mod_by_p')
+            ->join('mod_by.role', 'mod_by_role')
+            ->leftJoin('mod_by.judges', 'mod_by_judges')
+            ->join('r.submitter','submitter')
+            ->join('submitter.hat','submitter_hat')
+            ->leftJoin('r.defendants', 'defts')
+            ->leftJoin('r.judge', 'j')
+            ->leftJoin('j.hat', 'jhat')
+            ->leftJoin('j.flavor', 'jflav')
+            ->orderBy('r.date', 'DESC');
+        $params = [];
+        if (!empty($criteria['language'])) {
+            $qb->where('lang.id = :language_id');
+            $params['language_id'] = $criteria['language'];
+        }
+        if (!empty($criteria['docket'])) {
+            $qb->andWhere('r.docket = :docket');
+            $params['docket'] = $criteria['docket'];
+        }
+        if (!empty($criteria['date-from'])) {
+            $qb->andWhere('r.date >= :min_date');
+            $params['min_date'] = new \DateTime($criteria['date-from']);
+        }
+        if (!empty($criteria['date-to'])) {
+            $qb->andWhere('r.date <= :max_date');
+            $params['max_date'] = new \DateTime($criteria['date-to']);
+        }
+        if (! empty($criteria['defendant-name'])) {
+            $name = $this->parseName($criteria['defendant-name']);
+            $qb->andWhere($qb->expr()->like(
+                'defts.surnames',$qb->expr()->literal("{$name['last']}%")
+            ));
+            if ($name['first']) {
+                $qb->andWhere($qb->expr()->like(
+                    'defts.given_names',$qb->expr()->literal("{$name['first']}%")
+                ));
+            }
+        }
+        /** @todo judge criterion, with anonymous-judge logic */
+        
+        //->leftJoin('r.event', 'e');
+        //echo $qb->getDql();
+        $query = $qb->setParameters($params)->getQuery();
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
-        if (! count($paginator)) {
-            return null;
-        }
 
         return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
     }

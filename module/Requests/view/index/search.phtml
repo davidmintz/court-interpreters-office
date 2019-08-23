@@ -15,7 +15,7 @@ $form = $this->form;
     </small>
 </h2>
 <?php echo $this->errorMessage($this->errorMessage,$this->header); ?>
-<form class="mx-auto mt-4" style="max-width:800px" action="<?php echo $this->url('requests/search') ?>" method="get">
+<form class="mx-auto mt-4" style="max-width:850px" action="<?php echo $this->url('requests/search') ?>" method="get">
 <div class="form-group row">
     <label class="col-sm-2 col-form-label text-md-right pr-0" for="docket">docket</label>
     <div class="col-sm-3">
@@ -26,6 +26,7 @@ $form = $this->form;
         <?php echo $this->formElement($form->get('language'))?>
     </div>
 </div>
+<!-- -->
 <div class="form-group row">
     <div class="col-sm-2 col-form-label text-md-right pr-0">date range</div>
     <label class="col-form-label text-md-right pl-3 pr-0 text-muted" for="date-from">from</label>
@@ -37,9 +38,12 @@ $form = $this->form;
         <?php echo $this->formElement($form->get('date-to'))?>
     </div>
 </div>
-<!-- -->
 <div class="form-group row">
-    <label class="col-sm-2 col-form-label text-md-right pr-0" for="defendant-name">defendant name</label>
+    <label class="col-sm-2 col-form-label text-md-right pr-0" for="judge">judge</label>
+    <div class="col-sm-4">
+        <?php echo $this->formElement($form->get('judge'))?>
+    </div>
+    <label class="col-sm-1 col-form-label text-md-right pr-0 pl-1" for="defendant-name">defendant</label>
     <div class="col-sm-3">
         <?php echo $this->formElement($form->get('defendant-name'))?>
     </div>
