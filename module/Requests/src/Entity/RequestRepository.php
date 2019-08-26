@@ -189,12 +189,14 @@ class RequestRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
         $parameters = [];
         $qb->select(['partial r.{id,date,time,docket, extraData}',
-            't.name type','j.lastname judge','loc.name location',
+            't.name type','j.lastname judge','loc.name location','defts d',
+
             'lang.name language'])
             ->from(Request::class, 'r')
             ->join('r.eventType', 't')
             ->join('r.judge', 'j')
             ->join('r.language', 'lang')
+            ->leftJoin('r.defendants','defts')
             ->leftJoin('r.location', 'loc')
             ->orderBy('r.date', 'DESC');
 
@@ -210,23 +212,24 @@ class RequestRepository extends EntityRepository
      */
     public function search(Array $criteria, int $page = 1) : ZendPaginator
     {
-        $qb = $this->getEntityManager()->createQueryBuilder()
-            ->select('r,type,lang, j, jhat, jflav,mod_by, mod_by_p,
-                mod_by_judges, mod_by_role, submitter, submitter_hat, defts')
-            ->from(Request::class, 'r')
-            ->join('r.eventType', 'type')
-            ->join('r.language', 'lang')
-            ->join('r.modifiedBy', 'mod_by')
-            ->join('mod_by.person', 'mod_by_p')
-            ->join('mod_by.role', 'mod_by_role')
-            ->leftJoin('mod_by.judges', 'mod_by_judges')
-            ->join('r.submitter','submitter')
-            ->join('submitter.hat','submitter_hat')
-            ->leftJoin('r.defendants', 'defts')
-            ->leftJoin('r.judge', 'j')
-            ->leftJoin('j.hat', 'jhat')
-            ->leftJoin('j.flavor', 'jflav')
-            ->orderBy('r.date', 'DESC');
+        // $qb = $this->getEntityManager()->createQueryBuilder()
+        //     ->select('r,type,lang, j, jhat, jflav,mod_by, mod_by_p,
+        //         mod_by_judges, mod_by_role, submitter, submitter_hat, defts')
+        //     ->from(Request::class, 'r')
+        //     ->join('r.eventType', 'type')
+        //     ->join('r.language', 'lang')
+        //     ->join('r.modifiedBy', 'mod_by')
+        //     ->join('mod_by.person', 'mod_by_p')
+        //     ->join('mod_by.role', 'mod_by_role')
+        //     ->leftJoin('mod_by.judges', 'mod_by_judges')
+        //     ->join('r.submitter','submitter')
+        //     ->join('submitter.hat','submitter_hat')
+        //     ->leftJoin('r.defendants', 'defts')
+        //     ->leftJoin('r.judge', 'j')
+        //     ->leftJoin('j.hat', 'jhat')
+        //     ->leftJoin('j.flavor', 'jflav')
+        //     ->orderBy('r.date', 'DESC');
+        $qb = $this->getBaseQuery();
         $params = [];
         if (!empty($criteria['language'])) {
             $qb->where('lang.id = :language_id');
@@ -256,10 +259,11 @@ class RequestRepository extends EntityRepository
             }
         }
         /** @todo judge criterion, with anonymous-judge logic */
-        
+
         //->leftJoin('r.event', 'e');
         //echo $qb->getDql();
         $query = $qb->setParameters($params)->getQuery();
+        $query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
 

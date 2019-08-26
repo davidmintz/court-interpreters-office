@@ -7,21 +7,27 @@ if ($this->results):
 <p>
     <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>
 </p>
+<?php $sample = $this->results->getItem(0); ?>
+<pre>
+    <?php $e = $sample[0] ; print_r(array_keys($sample));
+print_r(array_keys($e));
+    //echo get_class($e)?>
+</pre>
 <table class="table table-sm">
     <tbody>
-        <?php  $view = $this; foreach ($this->results as $r): ?>
+        <?php  $view = $this; foreach ($this->results as $r): $e = $r[0];?>
             <tr>
-                <td><?php echo $r->getDate()->format('d-M-Y')?></td>
-                <td><?php echo $this->escapeHtml($r->getLanguage()) ?></td>
-                <td><?php echo $this->escapeHtml($r->getEventType()) ?></td>
-                <td><?php echo $this->escapeHtml($r->getDocket()) ?></td>
+                <td><?php //echo $e->getDate()->format('d-M-Y')?></td>
+                <td><?php echo $r['language']//echo $this->escapeHtml($r->getLanguage()) ?></td>
+                <td><?php echo $r['type'];//echo $this->escapeHtml($r->getEventType()) ?></td>
+                <td><?php //echo $this->escapeHtml($e->getDocket()) ?></td>
                 <td><?php
-                    $defts = $r->getDefendants();
-                    if ($defts) :
-                        echo implode('<br>',array_map(function($d) use ($view)
-                        { return $view->escapeHtml($d->getFullName());},
-                        $defts->toArray()));
-                    endif;
+                    // $defts = $r->getDefendants();
+                    // if ($defts) :
+                    //     echo implode('<br>',array_map(function($d) use ($view)
+                    //     { return $view->escapeHtml($d->getFullName());},
+                    //     $defts->toArray()));
+                    // endif;
                 ?></td>
             </tr>
         <?php endforeach; ?>
