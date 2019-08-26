@@ -257,7 +257,6 @@ class RequestRepository extends EntityRepository
                 ));
             }
         }
-        /** @todo judge criterion, with anonymous-judge logic */
         if (! empty($criteria['judge'])) {
             $qb->andWhere('j.id = :judge_id');
             $params['judge_id'] = $criteria['judge'];
@@ -266,7 +265,7 @@ class RequestRepository extends EntityRepository
             $params['judge_id'] = $criteria['judge'];
         }
         //->leftJoin('r.event', 'e');
-        //echo $qb->getDql();
+
         $query = $qb->setParameters($params)->getQuery();
         $query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
