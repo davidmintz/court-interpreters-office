@@ -49,19 +49,19 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
         ?><tr data-request_id="<?php echo $r['id']?>">
             <td class="date"><span class="avoidwrap"><?php echo $r['date']->format('d-M-Y')?></span></td>
             <td class="d-md-none d-lg-table-cell time"><?php echo $r['time']->format('g:i a')?></td>
-            <td class="language"><?php echo $r['language']?></td>
-            <td class="event-type"><?php echo $r['type']?></td>
-            <td><?php echo $r['location'] ?></td>
-            <td class="d-md-none d-lg-table-cell"><?php echo $docket ?></td>
+            <td class="language"><?php echo $this->escapeHtml($r['language']) ?></td>
+            <td class="event-type"><?php echo $this->escapeHtml($r['type'])?></td>
+            <td><?php echo $this->escapeHtml($r['location']) ?></td>
+            <td class="d-md-none d-lg-table-cell"><?php echo $this->escapeHtml($docket) ?></td>
             <td><?php echo $r['judge']?></td>
             <td><?php echo $this->defendants($r['id']),$xtra_defts?></td>
-            <td class="dropleft"><a style="color:purple" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
+            <td class="dropleft"><a class="text-muted" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" title="show menu of available actions with this request" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
               <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
                 <a title="display detailed view of this request" class="dropdown-item request-details text-primary" href="<?php echo $this->url('requests/view',['id'=>$r['id']])?>">view details</a>
                 <div class="dropdown-divider"></div>
-                <a title="modify this request" class="dropdown-item request-update disabled" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>">edit</a>
+                <a title="modify this request" class="dropdown-item request-update text-muted disabled" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>"><span class="text-muted">edit</span></a>
                 <div class="dropdown-divider"></div>
-                <a title="cancel this request" class="dropdown-item request-cancel disabled" href="<?php echo $this->url('requests/cancel',['id'=>$r['id']])?>">cancel</a>
+                <a title="cancel this request" class="dropdown-item request-cancel text-muted disabled" href="<?php echo $this->url('requests/cancel',['id'=>$r['id']])?>"><span class="text-muted">cancel</span></a>
                 <div class="dropdown-divider"></div>
                 <a title="schedule an interpreter for another event in this same case" class="dropdown-item request-repeat text-primary" href="<?php echo $this->url('requests/create',['id'=>$r['id']])?>">repeat</a>
               </div>
