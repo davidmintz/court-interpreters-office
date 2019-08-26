@@ -15,8 +15,8 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Requests\Entity\RequestRepository");
  * @ORM\Table(name="requests")
- *
- * @ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
+ * @ORM\HasLifecycleCallbacks
+ * //ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
  */
 class Request implements Interpretable, ResourceInterface
 {
@@ -127,7 +127,7 @@ class Request implements Interpretable, ResourceInterface
     protected $location;
 
     /**
-     * date/time when Event was created.
+     * date/time when Request was created.
      *
      * @ORM\Column(type="datetime",nullable=false)
      *
@@ -145,7 +145,7 @@ class Request implements Interpretable, ResourceInterface
     protected $modified;
 
     /**
-     * last User who updated the Event.
+     * last User who updated the Request.
      *
      * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\User")
      * @ORM\JoinColumn(nullable=true,name="modified_by_id")
@@ -188,7 +188,7 @@ class Request implements Interpretable, ResourceInterface
      * @ORM\Column(type="boolean",options={"nullable":false,"default":false})
      * @var boolean
      */
-    protected $cancelled;
+    protected $cancelled = false;
 
     /**
      * Defendant names.
@@ -226,6 +226,23 @@ class Request implements Interpretable, ResourceInterface
         $this->defendants = new ArrayCollection();
     }
 
+
+    /**
+     * ensures that creation datetime is set
+     *
+     * @ORM\PrePersist
+     *
+     */
+    public function prePersist()
+    {
+        if (!$this->created) {
+            $this->setCreated(new \DateTime());
+        }
+        if (!$this->getSubmitter()) {
+            throw new \RuntimeException(
+                'Request submitter property can\'t be null');
+        }
+    }
     /**
      * implements ResourceInterface
      *
@@ -735,7 +752,7 @@ class Request implements Interpretable, ResourceInterface
 
     /**
      * gets Interpreters
-     * 
+     *
      * @return Interpreter[]
      */
     public function getInterpreters() : Array

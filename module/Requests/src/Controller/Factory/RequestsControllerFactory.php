@@ -77,6 +77,7 @@ class RequestsControllerFactory implements FactoryInterface
 
             // add Doctrine entity listeners
             $resolver->register($container->get(RequestEntityListener::class));
+            $container->get('log')->debug("attached RequestEntityListener in RequestsControllerFactory");
             $resolver->register($container->get(EventEntityListener::class));
 
             // attach event listeners

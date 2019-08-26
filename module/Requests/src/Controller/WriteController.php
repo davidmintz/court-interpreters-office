@@ -144,7 +144,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
 
         $params = $this->params()->fromRoute();
 
-        if (in_array($params['action'], ['update','cancel',])) {
+        if (in_array($params['action'], ['update','cancel'])) {
             $entity = $this->objectManager->getRepository(Entity\Request::class)
                 ->getRequest($params['id']);
             if (! $entity) {
@@ -235,7 +235,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
                     ]]]
                 );
             }
-            $form->postValidate();
+            $form->postValidate($this);
             $this->objectManager->persist($entity);
             $this->objectManager->flush();
             $this->flashMessenger()->addSuccessMessage(
@@ -295,7 +295,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         if (! $form->isValid()) {
             return new JsonModel(['validation_errors' => $form->getMessages()]);
         }
-        $form->postValidate();
+        $form->postValidate($this);
         $event = $entity->getEvent();
         $this->getEventManager()->trigger(
             'updateRequest',

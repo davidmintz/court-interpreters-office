@@ -11,7 +11,7 @@ use Zend\Form\Form as ZendForm;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Form\DateTimeElementFilterTrait;
-
+use  Zend\Mvc\Controller\AbstractActionController;
 /**
  * form for Request entity
  *
@@ -73,7 +73,7 @@ class RequestForm extends ZendForm
      *
      * @return RequestForm
      */
-    public function postValidate()
+    public function postValidate(AbstractActionController $controller)
     {
         // subject to reconsideration, the least ugly way to store the
         // names they could|would not find in the database
@@ -88,6 +88,10 @@ class RequestForm extends ZendForm
                     $entity->setExtraData([]);
                 }
             }
+        }
+        if (!$entity->getSubmitter()) {
+            $person = $controller->getUserEntity()->getPerson();
+            $entity->setSubmitter($person);
         }
 
         return $this;

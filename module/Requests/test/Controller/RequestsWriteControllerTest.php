@@ -24,12 +24,12 @@ class RequestsWriteControllerTest extends AbstractControllerTest
     public function setUp()
     {
         parent::setUp();
-        $em = FixtureManager::getEntityManager();
+        $container = $this->getApplicationServiceLocator();
+        $em = $container->get('entity-manager');//FixtureManager::getEntityManager();
         //$em = $this->em;
         $pdo = $em->getConnection()->getWrappedConnection();
         //$pdo->execute('DELETE FROM events');
         $pdo->query('DELETE FROM requests WHERE event_id IS NOT NULL');
-        $container = $this->getApplicationServiceLocator();
         $eventManager = $container->get('SharedEventManager');
 
         $eventManager->attach(Listener\UpdateListener::class,'*',function($e) use ($container) {
@@ -41,7 +41,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
             $updateManager->onUpdateRequest($e);
 
         });
-        $em = FixtureManager::getEntityManager();
+        //$em = FixtureManager::getEntityManager();
         // $container = $this->getApplicationServiceLocator();
         //$container->get("entity-manager");
         // $listener = $container->get('InterpretersOffice\Entity\Listener\UpdateListener');
