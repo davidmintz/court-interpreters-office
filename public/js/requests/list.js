@@ -51,7 +51,7 @@ $(function(){
         var editable = $(this).closest("tr").data().editable
         var disabled_items = $(`#${$(this).attr('id')}`).next(".dropdown-menu").children("a.disabled");
         if (editable) {
-            disabled_items.removeClass("disabled").addClass("text-primary");
+            disabled_items.removeClass("disabled").children("span").removeClass("text-muted");
         } else {
             disabled_items.attr({title:"this action is no longer available"})
                 .on("click", (e) => e.preventDefault()
