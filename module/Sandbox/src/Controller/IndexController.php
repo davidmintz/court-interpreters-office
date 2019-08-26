@@ -14,7 +14,8 @@ class IndexController extends AbstractActionController
         $em = $serviceManager->get('entity-manager');
         //$event = $em->find('InterpretersOffice\Requests\Entity\RepositoryEvent',115656);
         $repo = $em->getRepository('InterpretersOffice\Requests\Entity\Request');
-        $request = $repo->getRequest(20572);
+        $results = $repo->search([]);
+        return (new ViewModel(['results'=>$results]))->setTemplate('sandbox/index/index');
 
         // looks like trying to update a read-only entity merely fails
         // without error
@@ -22,7 +23,7 @@ class IndexController extends AbstractActionController
         // $hat->setName("some other shit");
         // $em->flush();
 
-        return (new ViewModel(['request'=>$request]))->setTemplate('sandbox/index/index');
+        //return (new ViewModel(['request'=>$request]))->setTemplate('sandbox/index/index');
         //$event = $em->getRepository('InterpretersOffice\Entity\Event')->load(115656);
         //$event->getJudge()->getLastname();
         //return new ViewModel(['event'=>$event]);

@@ -1,7 +1,19 @@
 
 <p>hello!</p>
+shit?<br>
+<?php if ($this->results):
+    echo get_class($this->results),"<br>";
+    foreach ($this->results as $obj) {
+        echo $obj->getId(), "<br>";
+    }
+?>
+<pre>
+//<?php echo count($this->results); ?>
+</pre>
+<?php
 
-<?php if ($this->request):
+return; endif;
+if ($this->request):
 
     printf('we have a %s<br>',get_class($this->request));
 
