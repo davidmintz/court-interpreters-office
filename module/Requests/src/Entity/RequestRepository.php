@@ -228,7 +228,7 @@ class RequestRepository extends EntityRepository
         //     ->leftJoin('r.judge', 'j')
         //     ->leftJoin('j.hat', 'jhat')
         //     ->leftJoin('j.flavor', 'jflav')
-        //     ->orderBy('r.date', 'DESC');
+        //     ->orderBy('r.date', 'DESC'); ... does not perform so well
         $qb = $this->getBaseQuery();
         $params = [];
         if (!empty($criteria['language'])) {
