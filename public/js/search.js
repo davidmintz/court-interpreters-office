@@ -40,7 +40,14 @@ $(function(){
     });
     $("#results").on("click", ".pagination a",function(e){
         e.preventDefault();
-        $.get(this.href,form.serialize())
+        var page, m = this.href.match(/page=(\d+)/);
+        if (m && m[1]) {
+            page = m[1];
+        } else {
+            page = 1;
+        }
+        var path = window.document.location.pathname;
+        $.get(`${path}?${form.serialize()}&page=${page}`)
         .done(function(html){
             $("#results").html(html);
         })
