@@ -18,7 +18,7 @@ $(function(){
     $("#defendant-name").autocomplete(deft_autocomplete_opts)
     var btn = $("#btn-submit");
     var form = btn.closest("form");
-    form.append($("<input>").attr({type:"hidden",id:"pseudo_judge"}));
+    form.append($("<input>").attr({type:"hidden",name:"pseudo_judge",id:"pseudo_judge"}));
     var judge = $("#judge");
     judge.on("change",()=>{
         if (judge.val()) {
