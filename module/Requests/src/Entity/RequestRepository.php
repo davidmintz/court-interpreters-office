@@ -187,14 +187,13 @@ class RequestRepository extends EntityRepository
     public function getBaseQuery()
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $parameters = [];
         $qb->select(['partial r.{id,date,time,docket, extraData}',
             't.name type','j.lastname judge','loc.name location','defts d',
-
-            'lang.name language'])
+            'aj.name anon_judge', 'lang.name language'])
             ->from(Request::class, 'r')
             ->join('r.eventType', 't')
-            ->join('r.judge', 'j')
+            ->leftJoin('r.judge', 'j')
+            ->leftJoin('r.anonymousJudge', 'aj')
             ->join('r.language', 'lang')
             ->leftJoin('r.defendants','defts')
             ->leftJoin('r.location', 'loc')
@@ -259,7 +258,13 @@ class RequestRepository extends EntityRepository
             }
         }
         /** @todo judge criterion, with anonymous-judge logic */
-
+        if (! empty($criteria['judge'])) {
+            $qb->andWhere('j.id = :judge_id');
+            $params['judge_id'] = $criteria['judge'];
+        } elseif (! empty($criteria['pseudo_judge'])) {
+            $qb->andWhere('aj.id = :judge_id');
+            $params['judge_id'] = $criteria['judge'];
+        }
         //->leftJoin('r.event', 'e');
         //echo $qb->getDql();
         $query = $qb->setParameters($params)->getQuery();
