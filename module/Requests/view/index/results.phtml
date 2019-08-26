@@ -4,6 +4,7 @@ if ($this->results):
 <p>We found no records matching the above criteria.</p>
     <?php return; endif;
 ?>
+<pre><?php // print_r($this->layout()->user)?></pre>
 <p>
     <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>
 </p>
@@ -24,6 +25,7 @@ if ($this->results):
                         $defts));
                     endif;
                 ?></td>
+                <td></td>
             </tr>
         <?php endforeach; ?>
     </tbody>
