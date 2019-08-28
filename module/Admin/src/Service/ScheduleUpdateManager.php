@@ -383,6 +383,12 @@ class ScheduleUpdateManager
                 $updates[$field] = [$previous[$field],$after];
             }
         }
+        if (!count($updates)) {
+            $this->logger->debug(sprintf(
+                'ScheduleUpdateManager:%s at %d: no update detected, returning',__FUNCTION__,__LINE__
+            ));
+            return;
+        }
         $what = implode(', ',array_keys($updates));
         $message = sprintf(
             'user %s updated request #%d (%s)',
@@ -524,6 +530,10 @@ class ScheduleUpdateManager
     public function updateScheduledEvent(Request $request,Array $updates)
     {
         $event = $request->getEvent();
+        if (! count($updates)) {
+            $this->logger->debug(__METHOD__.": nothing appears to have been modified, nothing to do");
+            return; // important! from here on we might just assume...
+        }
         if (! $event) {
             $this->logger->debug(__METHOD__.": no scheduled event, nothing to do");
             return; // important! from here on we might just assume...
@@ -608,6 +618,7 @@ class ScheduleUpdateManager
 
         $this->email_messages[] = $message;
         $this->logger->debug("queued up FYI email to office at ".__LINE__);
+
         return $this;
     }
 
