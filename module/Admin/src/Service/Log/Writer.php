@@ -61,11 +61,15 @@ class Writer extends AbstractWriter
     public function doWrite(Array $event)
     {
 
-        // move this to a processor class!
+        // move this to a processor class?
         $timestamp = $event['timestamp']->format('Y-m-d H:i:s');
         $params = $event;
         $params['timestamp'] = $timestamp;
         $extra = $event['extra'];
+        if (strlen($params['message']) > 250) {
+            $message = substr($params['message'],0,247).'...';
+            $params['message'] = $message;
+        }
         $defaults = ['entity_id' => null, 'entity_class' => '', 'channel' => ''];
         foreach (['entity_class','entity_id','channel'] as $field) {
             if (! empty($extra[$field])) {
