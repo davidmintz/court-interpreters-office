@@ -15,7 +15,7 @@ $form = $this->form;
     </small>
 </h2>
 <?php echo $this->errorMessage($this->errorMessage,$this->header); ?>
-<form class="mx-auto mt-4" style="max-width:850px" action="<?php echo $this->url('requests/search') ?>" method="get">
+<form name="search-form" class="mx-auto mt-4" style="max-width:850px" action="<?php echo $this->url('requests/search') ?>" method="get">
 <div class="form-group row">
     <label class="col-sm-2 col-form-label text-md-right pr-0" for="docket">docket</label>
     <div class="col-sm-3">
@@ -48,16 +48,14 @@ $form = $this->form;
         <?php echo $this->formElement($form->get('defendant-name'))?>
     </div>
     <!-- -->
-    <div class="col-sm-2">
-        <button type="button" id="btn-submit" class="btn btn-primary">
-            <span class="fas fa-search"></span><span class="sr-only">search</span>
-        </button>
-        <?php echo $this->formElement($form->get('csrf'))?>
-    </div>
+    <button id="btn-submit" class="btn btn-primary col-sm-1">
+        <span class="fas fa-search"></span><span class="sr-only">search</span>
+    </button>
     <!-- -->
 </div>
 <div class="form-group row">
-    <div class="p-1 col-sm-5 validation-error offset-sm-2 alert alert-warning" style="display:none" id="error_csrf">
+    <?php echo $this->formElement($form->get('submit')) ?>
+    <div class="p-1 col-sm-5 validation-error offset-sm-2 mt-0 alert alert-warning" style="display:none" id="error_submit">
     </div>
 </div>
 </form>

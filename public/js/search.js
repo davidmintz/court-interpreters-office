@@ -28,6 +28,7 @@ $(function(){
         }
     }).trigger("change");
     $("#btn-submit").on("click",function(e){
+        e.preventDefault();
         $.get(form.attr("action"),form.serialize())
         .done((res, status, xhr)=>{
             $(".validation-error").hide();

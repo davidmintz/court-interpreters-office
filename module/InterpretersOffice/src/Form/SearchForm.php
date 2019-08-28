@@ -6,7 +6,6 @@ use Zend\InputFilter\InputFilterProviderInterface;
 use InterpretersOffice\Form\Element\LanguageSelect;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
-use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Admin\Form\Validator;
 use InterpretersOffice\Admin\Form\Filter;
 use InterpretersOffice\Entity;
@@ -16,18 +15,23 @@ use Zend\Validator\Callback;
 class SearchForm extends Form implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
     use ObjectManagerAwareTrait;
-    use CsrfElementCreationTrait;
 
     public function __construct(ObjectManager $objectManager, array $options = [])
     {
 
         $this->setObjectManager($objectManager);
         parent::__construct('search-form',$options);
-        $this->addCsrfElement();
-        $this->getInputFilter()->get('csrf')->getValidatorChain()
+        $this->add([
+            'name' => 'submit',
+            'type' => 'Zend\Form\Element\Hidden',
+            'attributes' => [
+                'value' => 1,
+            ],
+        ]);
+        $this->getInputFilter()->get('submit')->getValidatorChain()
         ->attachByName('Callback',[
             'callback'=>function($value, $context) {
-                unset($context['csrf']);
+                unset($context['submit']);
                 foreach ($context as $field => $value) {
                     if (trim($value)) {
                         return true;
@@ -172,6 +176,10 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
                     // @todo a Boolean filter?
                     ['name' => 'StringTrim'],
                 ],
+            ],
+            'submit' => [
+                'required' => true,
+                'allow_empty' => false,
             ]
         ];
     }
