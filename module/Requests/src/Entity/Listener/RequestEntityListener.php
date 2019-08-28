@@ -64,7 +64,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     {
 
         $log = $this->getLogger();
-        //$log->debug("postload in RequestEntityListener: saving deft state");
+        $log->debug("postload in RequestEntityListener: saving deft state");
         $defts = $request->getDefendants();
         // $this->previous_defendants = $defts ? $defts->toArray() : [];
         $this->previous_defendants = $defts->toArray();
@@ -87,7 +87,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
         if (! $request->getSubmitter()) {
             $request->setSubmitter($this->getCurrentUserPerson($args));
         }
-        //$this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
+        $this->getLogger()->debug("YES, we set Request metadata in prePersist listener");
     }
 
     /**
