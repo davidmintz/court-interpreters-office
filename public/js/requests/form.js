@@ -89,7 +89,6 @@ $(function(){
     const defendant_search = $("#defendant-search");
     const defendant_name_form = $("#form-add-deft");
     const slideout = $("#deft-results-slideout");
-
     const location = $("#location");
 
     // set default location if possible. TO DO: do this server-side?
@@ -124,8 +123,11 @@ $(function(){
                 if (response.validation_errors) {
                     console.log("shit failed validation");
                     return displayValidationErrors(response.validation_errors);
-                } else {
+                } else if (response.status === "success"){
                     return document.location = `${window.basePath}/requests/list`;
+                } else {
+                    console.warn("shit blew up?")
+                    fail(response);
                 }
             }).fail(fail);
     });
