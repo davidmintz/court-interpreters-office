@@ -10,7 +10,7 @@
     "doc": "doc"
   },
   "dependencies": {
-    "ajv": "^6.10.0",
+    "ajv": "^6.10.2",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "chai": "^4.2.0",
