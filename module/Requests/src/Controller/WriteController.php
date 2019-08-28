@@ -327,17 +327,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 'status' => 'error',
                 'id' => $id,
                 'message' =>
-                 'Invalid security token. Please reload the page and try again.'
+                    'Invalid security token. Please reload the page and try again.'
             ]);
         }
         if ($entity) {
-
             $this->getEventManager()->trigger(
-                'loadRequest',
-                $this,
-                [
-                    'entity' => $entity,
-                ]
+                'loadRequest', $this,[ 'entity' => $entity,]
             );
             $entity->setCancelled(true);
             $description = $this->params()->fromPost('description');
