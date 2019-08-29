@@ -170,6 +170,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $page = (int)$this->params()->fromQuery('page',1);
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
+        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
         if (!$query) {
             if ($this->session->search_defaults) {
                 $defaults = $this->session->search_defaults;
@@ -179,7 +180,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
             } else {
                 $results = null;
             }
-            return new ViewModel(compact('form','results','deadline'));
+            return new ViewModel(compact('form','results','deadline','csrf'));
         }
         // else, we have form/query data to validate
         $form->setData($query);
@@ -192,11 +193,10 @@ class IndexController extends AbstractActionController implements ResourceInterf
         }
         // all good
         $form_values = $form->getData();
-        unset($form_values['csrf']);
         $form_values['page'] = $page;
         $this->session->search_defaults = $form_values;
         $results = $repository->search($form_values,$page);
-        $view = new ViewModel(['results'=>$results,'deadline'=>$deadline]);
+        $view = new ViewModel(compact('results','deadline','csrf'));
         $is_xhr = $this->getRequest()->isXmlHttpRequest();
         if (!$is_xhr) {
             $view->setVariables(['form' => $form,]);

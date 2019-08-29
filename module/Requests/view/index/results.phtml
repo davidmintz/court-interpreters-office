@@ -7,15 +7,16 @@ if ($this->results):
 <p>
     <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>
 </p>
-<table data-deadline="<?php echo $this->deadline->format('Y-m-d h:i')?>" class="table table-sm">
+<table id="requests-table" data-csrf="<?php echo $this->csrf?>" data-deadline="<?php echo $this->deadline->format('Y-m-d h:i')?>" class="table table-sm">
     <tbody>
-        <?php  $view = $this; foreach ($this->results as $r):?>
-            <tr <?php printf('data-submitter_id="%s" data-category="%s" data-judge_id="%s"',
-                $r['submitter_id'],$r['category'],$r['judge_id'])?>>
-                <td><?php echo $r[0]['date']->format('d-M-Y')?></td>
-                <td hidden><?php echo $r[0]['time']->format('g:i a')?></td>
-                <td><?php echo $this->escapeHtml($r['language']) ?></td>
-                <td><?php echo $this->escapeHtml($r['type']); ?></td>
+        <?php  $view = $this; foreach ($this->results as $r): $r['id'] = $r[0]['id']?>
+            <tr <?php printf(
+                'data-submitter_id="%s" data-category="%s" data-judge_id="%s" data-request_id="%s"',
+                $r['submitter_id'],$r['category'],$r['judge_id'], $r['id'])?>>
+                <td class="date"><?php echo $r[0]['date']->format('d-M-Y')?></td>
+                <td class="time" hidden><?php echo $r[0]['time']->format('g:i a')?></td>
+                <td class="language"><?php echo $this->escapeHtml($r['language']) ?></td>
+                <td class="event-type"><?php echo $this->escapeHtml($r['type']); ?></td>
                 <td><?php echo $this->escapeHtml($r[0]['docket']) ?></td>
                 <td><?php echo $this->escapeHtml($r['judge'])?></td>
                 <td><?php
@@ -26,7 +27,21 @@ if ($this->results):
                         $defts));
                     endif;
                 ?></td>
-                <td></td>
+                <td class="dropdown">
+                    <a class="btn dropdown-toggle text-primary" role="button" data-toggle="dropdown"  id="request-dropdown-<?php echo $r['id']?>" aria-haspopup="true" aria-expanded="false">
+                        <span class="fas fa-bars"></span>
+                        <span class="sr-only">menu</span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
+                      <a title="display detailed view of this request" class="dropdown-item request-details text-primary" href="<?php echo $this->url('requests/view',['id'=>$r['id']])?>">view details</a>
+                      <div class="dropdown-divider"></div>
+                      <a title="schedule an interpreter for another event in this same case" class="dropdown-item request-repeat text-primary" href="<?php echo $this->url('requests/create',['id'=>$r['id']])?>">repeat</a>
+                      <div class="dropdown-divider"></div>
+                      <a title="modify this request" class="dropdown-item request-update text-muted disabled" href="<?php echo $this->url('requests/update',['id'=>$r['id']])?>"><span class="text-muted">edit</span></a>
+                      <div class="dropdown-divider"></div>
+                      <a title="cancel this request" class="dropdown-item request-cancel text-muted disabled" href="<?php echo $this->url('requests/cancel',['id'=>$r['id']])?>"><span class="text-muted">cancel</span></a>
+                    </div>
+                </td>
             </tr>
         <?php endforeach; ?>
     </tbody>

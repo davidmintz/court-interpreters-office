@@ -5,6 +5,7 @@ $this->headScript()
         ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
         ->appendFile($this->basePath('js/form-utilities.js'))
+        ->appendFile($this->basePath('js/requests/index.js'))
         ->appendFile($this->basePath('js/search.js'));
 $form = $this->form;
 ?>
@@ -16,6 +17,12 @@ $form = $this->form;
 </h2>
 <?php echo $this->errorMessage($this->errorMessage,$this->header); ?>
 <form name="search-form" class="mx-auto mt-4" style="max-width:850px" action="<?php echo $this->url('requests/search') ?>" method="get">
+    <?php
+    $messenger = $this->flashMessenger();
+    if ($messenger->hasSuccessMessages()) :
+        echo $messenger->render('success', ['alert','alert-success',], false);
+    endif;
+    ?>
 <div class="form-group row">
     <label class="col-sm-2 col-form-label text-md-right pr-0" for="docket">docket</label>
     <div class="col-sm-3">
@@ -60,3 +67,4 @@ $form = $this->form;
 </div>
 </form>
 <div id="results"><?php if ($this->results): echo $this->render('index/results'); endif;?></div>
+<?php echo $this->render('confirm-cancel')?>

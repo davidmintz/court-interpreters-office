@@ -5,8 +5,8 @@
 */
 $this->headScript()
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-    ->appendFile($this->basePath('js/requests/list.js'))
-    ;
+    ->appendFile($this->basePath('js/requests/index.js'))
+    ->appendFile($this->basePath('js/requests/list.js'));
 $this->headTitle('requests | list') ?>
 <div id="content">
 <h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
