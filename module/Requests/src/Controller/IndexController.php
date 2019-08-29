@@ -169,6 +169,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $form = new SearchForm($this->objectManager);
         $page = (int)$this->params()->fromQuery('page',1);
         $repository = $this->objectManager->getRepository(Entity\Request::class);
+        $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
         if (!$query) {
             if ($this->session->search_defaults) {
                 $defaults = $this->session->search_defaults;
@@ -178,7 +179,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
             } else {
                 $results = null;
             }
-            return new ViewModel(compact('form','results'));
+            return new ViewModel(compact('form','results','deadline'));
         }
         // else, we have form/query data to validate
         $form->setData($query);
@@ -195,7 +196,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $form_values['page'] = $page;
         $this->session->search_defaults = $form_values;
         $results = $repository->search($form_values,$page);
-        $view = new ViewModel(['results'=>$results]);
+        $view = new ViewModel(['results'=>$results,'deadline'=>$deadline]);
         $is_xhr = $this->getRequest()->isXmlHttpRequest();
         if (!$is_xhr) {
             $view->setVariables(['form' => $form,]);

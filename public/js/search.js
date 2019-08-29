@@ -1,4 +1,8 @@
-var $, formatDocketElement, displayValidationErrors;
+var $, formatDocketElement, displayValidationErrors, moment;
+
+const timestamp_format = "YYYY-MM-DD HH:mm:ss";
+const seconds = 30;
+
 /** autocompletion options for defendant name search */
 const deft_autocomplete_opts = {
     source: "/defendants/autocomplete",
@@ -12,7 +16,78 @@ const deft_autocomplete_opts = {
         $(this).val(ui.item.label);
     }
 };
+const init = function(user){
+    var rows = $("#results table tbody tr");
+    if (! rows.length) {
+        return;
+    }
+    // on page load, deadline is set to 2 business days from now.
+    // anything scheduled BEFORE that datetime cannot be updated
+    var deadline = new moment($("#results table").data("deadline"),timestamp_format);
+    rows.each(function(){
+        var tr = $(this);
+        var editable = update_is_allowed(user,tr,deadline);
+        tr.data({editable});
+        // var data = tr.data();
+        // var editable;
+        // if (user.is_judge_staff) {
+        //
+        // }
+        //
+        // var td = $(this).children("td").slice(0,2).get();
+        // var str = td.map(x => x.textContent.trim()).join(" ");
+        // var scheduled_datetime = new moment(str, "DD-MMM-Y h:mm a");
+        // editable = scheduled_datetime.isAfter(deadline);
+    });
+}
+/**
+ * is user allowed write access to entity represented by table row?
+ * @param  {object} user
+ * @param  {jQuery} row
+ * @param {object} Moment
+ * @return {boolean}
+ */
+const update_is_allowed = function (user, row, deadline)
+{
+    console.debug(row.text());
+    console.debug("testing timeliness... ");
+    var td = row.children("td").slice(0,2).get();
+    var str = td.map(x => x.textContent.trim()).join(" ");
+    var scheduled_datetime = new moment(str, "DD-MMM-Y h:mm a");
+    if (scheduled_datetime.isSameOrBefore(deadline)) {
+        console.debug("returning false: too late");
+        return false;
+    } else {
+        console.debug("time is ok, checking permissions");
+    }
+    var request = row.data();
+    if (user.is_judge_staff) {
+        // it has to be in-court AND belong to one of user's judges
+        if (request.category !== "in") {
+            console.debug("returning false: user is judge-staff, event is out");
+            return false;
+        }
+        if (! user.judge_ids.includes(request.judge_id)) {
+            console.debug(`returning false: judge id ${request.judge_id} not among user's judges`);
+            return false;
+        }
+    } else {
+        // it has to be owned by them, AND be out-of-court
+        // (in case of a change of hat)
+        if (request.category !== "out") {
+            console.debug("returning false: user is non-judge-staff, event is in-court");
+            return false;
+        }
+        if (request.submitter_id !== user.person_id) {
+            console.debug("returning false: out-of-court event is owned by someone else");
+            return false;
+        }
+    }
+    console.log("returning true: DONE");
+    return true;
+}
 $(function(){
+    init(window.user);
     $("input.docket").on("change",formatDocketElement);
     $("input.date").datepicker({});
     $("#defendant-name").autocomplete(deft_autocomplete_opts)
@@ -36,6 +111,7 @@ $(function(){
                 return displayValidationErrors(res.validation_errors);
             }
             $("#results").html(res);
+            init(window.user);
         })
         .fail(fail);
     });
@@ -51,6 +127,7 @@ $(function(){
         $.get(`${path}?${form.serialize()}&page=${page}`)
         .done(function(html){
             $("#results").html(html);
+            init(window.user);
         })
         .fail(fail);
     });

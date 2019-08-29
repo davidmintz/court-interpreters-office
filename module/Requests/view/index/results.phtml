@@ -4,15 +4,16 @@ if ($this->results):
 <p>We found no records matching the above criteria.</p>
     <?php return; endif;
 ?>
-<pre><?php // print_r($this->layout()->user)?></pre>
 <p>
     <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>
 </p>
-<table class="table table-sm">
+<table data-deadline="<?php echo $this->deadline->format('Y-m-d h:i')?>" class="table table-sm">
     <tbody>
-        <?php  $view = $this; foreach ($this->results as $r): //$e = $r[0];?>
-            <tr>
+        <?php  $view = $this; foreach ($this->results as $r):?>
+            <tr <?php printf('data-submitter_id="%s" data-category="%s" data-judge_id="%s"',
+                $r['submitter_id'],$r['category'],$r['judge_id'])?>>
                 <td><?php echo $r[0]['date']->format('d-M-Y')?></td>
+                <td hidden><?php echo $r[0]['time']->format('g:i a')?></td>
                 <td><?php echo $this->escapeHtml($r['language']) ?></td>
                 <td><?php echo $this->escapeHtml($r['type']); ?></td>
                 <td><?php echo $this->escapeHtml($r[0]['docket']) ?></td>
@@ -34,3 +35,5 @@ if ($this->results):
     echo $this->paginationControl($this->results,'sliding',
         'partials/pagination_control',['route' => 'requests/search']);
 endif;
+?><!-- -->
+<script>window.user = <?php echo json_encode($this->layout()->user);?>;</script>

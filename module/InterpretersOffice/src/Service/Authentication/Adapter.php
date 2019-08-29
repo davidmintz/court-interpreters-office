@@ -133,11 +133,13 @@ class Adapter extends AbstractAdapter
             }
         }
         $person = $entity->getPerson();
+        $hat = $person->getHat();
         $user->lastname = $person->getLastname();
         $user->firstname = $person->getFirstname();
         $user->person_id = $person->getId();
         $user->email = $person->getEmail();
-        $user->hat = (string)$person->getHat();
+        $user->hat = (string)$hat;
+        $user->is_judge_staff = $hat->getIsJudgeStaff();
         $user->username = $entity->getUserName();
         $user->role = (string)$entity->getRole();
         $user->id = $entity->getId();

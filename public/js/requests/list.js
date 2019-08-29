@@ -10,7 +10,7 @@ const seconds = 30;
  *
  * @return void
  */
-var init_rows = function(){
+const init_rows = function(){
     // on page load, deadline is set to 2 business days from now
     var deadline = new moment($("#requests-table").data("deadline"),timestamp_format);
     var rows = $("#requests-table tbody tr");

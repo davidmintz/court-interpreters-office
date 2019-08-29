@@ -188,8 +188,9 @@ class RequestRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select(['partial r.{id,date,time,docket, extraData}',
-            't.name type','j.lastname judge','loc.name location','defts d',
-            'aj.name anon_judge', 'lang.name language'])
+            't.name type','j.lastname judge','j.id judge_id',
+            'loc.name location','defts d','aj.name anon_judge',
+            'lang.name language',])
             ->from(Request::class, 'r')
             ->join('r.eventType', 't')
             ->leftJoin('r.judge', 'j')
@@ -197,7 +198,8 @@ class RequestRepository extends EntityRepository
             ->join('r.language', 'lang')
             ->leftJoin('r.defendants','defts')
             ->leftJoin('r.location', 'loc')
-            ->orderBy('r.date', 'DESC');
+            ->orderBy('r.date', 'DESC')
+            ->addOrderBy('r.time', 'ASC');
 
         return $qb;
     }
@@ -211,24 +213,11 @@ class RequestRepository extends EntityRepository
      */
     public function search(Array $criteria, int $page = 1) : ZendPaginator
     {
-        // $qb = $this->getEntityManager()->createQueryBuilder()
-        //     ->select('r,type,lang, j, jhat, jflav,mod_by, mod_by_p,
-        //         mod_by_judges, mod_by_role, submitter, submitter_hat, defts')
-        //     ->from(Request::class, 'r')
-        //     ->join('r.eventType', 'type')
-        //     ->join('r.language', 'lang')
-        //     ->join('r.modifiedBy', 'mod_by')
-        //     ->join('mod_by.person', 'mod_by_p')
-        //     ->join('mod_by.role', 'mod_by_role')
-        //     ->leftJoin('mod_by.judges', 'mod_by_judges')
-        //     ->join('r.submitter','submitter')
-        //     ->join('submitter.hat','submitter_hat')
-        //     ->leftJoin('r.defendants', 'defts')
-        //     ->leftJoin('r.judge', 'j')
-        //     ->leftJoin('j.hat', 'jhat')
-        //     ->leftJoin('j.flavor', 'jflav')
-        //     ->orderBy('r.date', 'DESC'); ... does not perform so well
+
         $qb = $this->getBaseQuery();
+        // get these columns for computing permissions. so intuitive, right?
+        $qb->addSelect('s.id submitter_id')->join('r.submitter','s')
+            ->addSelect('c.category category')->join('t.category','c');
         $params = [];
         if (!empty($criteria['language'])) {
             $qb->where('lang.id = :language_id');
@@ -272,6 +261,23 @@ class RequestRepository extends EntityRepository
         $paginator = new ZendPaginator($adapter);
 
         return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
+        // $qb = $this->getEntityManager()->createQueryBuilder()
+        //     ->select('r,type,lang, j, jhat, jflav,mod_by, mod_by_p,
+        //         mod_by_judges, mod_by_role, submitter, submitter_hat, defts')
+        //     ->from(Request::class, 'r')
+        //     ->join('r.eventType', 'type')
+        //     ->join('r.language', 'lang')
+        //     ->join('r.modifiedBy', 'mod_by')
+        //     ->join('mod_by.person', 'mod_by_p')
+        //     ->join('mod_by.role', 'mod_by_role')
+        //     ->leftJoin('mod_by.judges', 'mod_by_judges')
+        //     ->join('r.submitter','submitter')
+        //     ->join('submitter.hat','submitter_hat')
+        //     ->leftJoin('r.defendants', 'defts')
+        //     ->leftJoin('r.judge', 'j')
+        //     ->leftJoin('j.hat', 'jhat')
+        //     ->leftJoin('j.flavor', 'jflav')
+        //     ->orderBy('r.date', 'DESC'); ... does not perform so well
     }
 
     /**
