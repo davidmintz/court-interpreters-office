@@ -16,7 +16,7 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
  * @ORM\Entity(repositoryClass="InterpretersOffice\Requests\Entity\RequestRepository");
  * @ORM\Table(name="requests")
  * @ORM\HasLifecycleCallbacks
- * // ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
+ * @ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
  */
 class Request implements Interpretable, ResourceInterface
 {

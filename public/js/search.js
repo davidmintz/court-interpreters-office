@@ -1,3 +1,18 @@
+/**
+ * Sets up event listeners for /requests/search
+ *
+ * Unfortunately, this has a lot of redundancy with /public/js/requests/list.js
+ * and we should do something about that. Both that and this try to test whether
+ * the user allowed write-access to the entities underlying the table data, so we
+ * know whether to display (or enable) menu items for certain actions. (There
+ * are of course server-side checks in place, but for the sake of user
+ * experience we don't want to offer them a link to a page that will simply turn
+ * them away. The key difference is that in list.js, all the entities that are
+ * displayed "belong" to them, so we have only to check the dates against the
+ * datetime two business days from now, whereas here it's more complicated.
+ *
+ */
+
 var $, formatDocketElement, displayValidationErrors, moment;
 
 const timestamp_format = "YYYY-MM-DD HH:mm:ss";
@@ -32,6 +47,7 @@ const init = function(user){
 }
 /**
  * is user allowed write access to entity represented by table row?
+ * 
  * @param  {object} user
  * @param  {jQuery} row
  * @param {object} Moment
@@ -75,6 +91,14 @@ const update_is_allowed = function (user, row, deadline)
 }
 $(function(){
     init(window.user);
+    window.setInterval(()=> {
+        var table = $("#results table");
+        if (!table.length) { return; }
+        var deadline = new moment(table.data("deadline"),timestamp_format);
+        var str = deadline.add(seconds,"seconds").format(timestamp_format);
+        table.data({deadline: str});//console.log(`deadline is now: ${str}`);
+        init(window.user);
+    }, seconds * 1000);
     $("input.docket").on("change",formatDocketElement);
     $("input.date").datepicker({});
     $("#defendant-name").autocomplete(deft_autocomplete_opts)

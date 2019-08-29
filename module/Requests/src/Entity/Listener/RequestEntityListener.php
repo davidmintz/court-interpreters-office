@@ -118,9 +118,10 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     public function preUpdate(Entity\Request $request, PreUpdateEventArgs $args)
     {
         $fields_updated = array_keys($args->getEntityChangeSet());
+        $this->getLogger()->warn(__METHOD__."FUCK YOU") ;
         if (count($fields_updated) or $this->defendantsWereModified($request)) {
             $shit = print_r($fields_updated, true);
-            $this->getLogger()->debug(__METHOD__.": updating: $shit") ;
+            $this->getLogger()->warn(__METHOD__.": updating: $shit") ;
             if (array_diff($fields_updated, ['event','pending'])) {
                 $request->setModified(new \DateTime())
                 ->setModifiedBy($this->getAuthenticatedUser($args));

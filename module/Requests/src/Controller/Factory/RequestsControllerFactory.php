@@ -51,6 +51,8 @@ class RequestsControllerFactory implements FactoryInterface
             ->getEntityListenerResolver();
         $resolver->register($container->get(Listener\UpdateListener::class)
                 ->setAuth($auth));
+        $resolver->register($container->get(RequestEntityListener::class));
+        $container->get('log')->debug("attached our RequestEntityListener in RequestsControllerFactory");
         $controller = new $requestedName($entityManager, $auth, $acl);
         // crude, but...
         if (method_exists($controller,'setUserEntity')) {
@@ -76,8 +78,6 @@ class RequestsControllerFactory implements FactoryInterface
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
 
             // add Doctrine entity listeners
-            $resolver->register($container->get(RequestEntityListener::class));
-            $container->get('log')->debug("attached our RequestEntityListener in RequestsControllerFactory");
             $resolver->register($container->get(EventEntityListener::class));
 
             // attach event listeners
