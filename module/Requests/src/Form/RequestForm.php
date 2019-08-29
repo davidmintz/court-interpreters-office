@@ -89,9 +89,10 @@ class RequestForm extends ZendForm
                 }
             }
         }
-        if (!$entity->getSubmitter()) {
-            $person = $controller->getUserEntity()->getPerson();
-            $entity->setSubmitter($person);
+        if ($this->options['action'] == 'create') {
+            $user =  $controller->getUserEntity();
+            $entity->setSubmitter($user->getPerson())
+                ->setModifiedBy($user);
         }
 
         return $this;

@@ -16,6 +16,7 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
  * @ORM\Entity(repositoryClass="InterpretersOffice\Requests\Entity\RequestRepository");
  * @ORM\Table(name="requests")
  * @ORM\HasLifecycleCallbacks
+ * @ORM\EntityListeners({"InterpretersOffice\Requests\Entity\Listener\RequestEntityListener"})
  */
 class Request implements Interpretable, ResourceInterface
 {
@@ -234,8 +235,13 @@ class Request implements Interpretable, ResourceInterface
      */
     public function prePersist()
     {
+        $now = null;
         if (!$this->created) {
-            $this->setCreated(new \DateTime());
+            $now = new \DateTime();
+            $this->setCreated($now);
+        }
+        if (! $this->modified) {
+            $this->setModified($now ?:new \DateTime());
         }
         if (!$this->getSubmitter()) {
             throw new \RuntimeException(
