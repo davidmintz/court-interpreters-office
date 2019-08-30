@@ -1,7 +1,28 @@
 <?php /**  module/Admin/view/schedule/email-modal.phtml */?>
-<?php if (empty($event)){
-    $event = $this->request;
-}?>
+<?php if (empty($event)):
+    // VERY nasty! we need to fix this... but for now,
+    // we basically cast Request entity data to array
+    if (is_object($this->request)):
+        $event = [
+            'submitter_email' => $this->request->getSubmitter()->getEmail(),
+            'submitter' =>  $this->request->getSubmitter()->getFullName(),
+            'interpreters' => $this->request->getInterpreters(),
+        ];
+    endif;
+    if (!empty($suggestions)) :
+        foreach($suggestions as $i => $person):
+            $obj = $this->request->getSubmitter();
+            $array = [
+                'name' => $obj->getFullName(),
+                'id'   => $obj->getId(),
+                'role' => 'submitter',
+                'email'=>$obj->getEmail(),
+            ];
+            $suggestions[$i] = $array;
+        endforeach;
+    endif;
+endif;
+?>
 <div class="modal fade" id="email-dialog" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -90,12 +111,12 @@
                                         <div data-template_hint="assignment confirmation" data-toggle="tooltip" data-placement="left" title="confirmation as to this assignment" data-subject="confirmation" class="dropdown-item">
                                             <a href="#">assignment confirmation</a>
                                         </div>
-                                    <?php endif; ?>
                                     <?php $items++ ?>
                                         <div class="dropdown-divider"></div>
                                         <div data-template_hint="assignment cancellation" data-toggle="tooltip" data-placement="left" title="notification that the assignment has been cancelled" data-subject="cancellation" class="dropdown-item">
                                             <a href="#">assignment cancellation</a>
                                         </div>
+                                    <?php endif; ?>
                                     <?php // endif; ?>
                                     </div>
                                </div>
@@ -121,11 +142,15 @@
                         <div class="col-md-4">
                                 <select id="template" name="template" class="form-control custom-select">
                                     <option label=" " value=""></option>
-                                    <!-- <option value="your request">your request</option> -->
+                                    <?php if ($this->request): ?>
+                                    <option value="your request">your request</option>
+                                    <?php endif;?>
                                     <option value="available">assignment available</option>
+                                    <?php if ($event['interpreters']):?>
                                     <option value="update">assignment update</option>
                                     <option value="confirmation">assignment confirmation</option>
                                     <option value="cancellation">assignment cancellation</option>
+                                    <?php endif ?>
                                 </select>
 
                         </div>
