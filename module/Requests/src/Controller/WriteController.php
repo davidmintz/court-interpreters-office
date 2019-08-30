@@ -8,18 +8,18 @@ namespace InterpretersOffice\Requests\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use Zend\Mvc\MvcEvent;
 use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Http\Request;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\User;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Service\DateCalculatorTrait;
 use InterpretersOffice\Requests\Form;
 
-use Zend\Mvc\MvcEvent;
-use Zend\Http\Request;
 
 /**
  *  update|create|cancel Requests
@@ -139,7 +139,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
      * @param  MvcEvent $e
      * @return mixed
      */
-    public function onDispatch($e)
+    public function onDispatch(MvcEvent $e)
     {
 
         $params = $this->params()->fromRoute();
