@@ -6,7 +6,7 @@ namespace InterpretersOffice\View\Helper;
 use Zend\View\Helper\AbstractHelper;
 
 /**
- * View help for displaying defendant names
+ * View helper for displaying defendant names
  *
  * @author david
  */
@@ -26,9 +26,7 @@ class Defendants extends AbstractHelper
      */
     protected function getDefendants()
     {
-        if ($this->defendants) {
-            return $this->defendants;
-        }
+        
         $data = $this->getView()->data;
         if (! (is_array($data) && isset($data['defendants']))) {
             // try something else

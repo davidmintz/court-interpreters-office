@@ -22,9 +22,11 @@ if ($this->results):
                 <td><?php
                     $defts = $r[0]['defendants'];
                     if ($defts) :
-                        echo implode('<br>',array_map(function($d) use ($view)
-                        { return $view->escapeHtml("{$d['surnames']}, {$d['given_names']}");},
-                        $defts));
+                        $this->defendants = [$r['id']=>$defts];
+                        echo $this->defendants($r['id']);
+                        // echo implode('<br>',array_map(function($d) use ($view)
+                        // { return $view->escapeHtml("{$d['surnames']}, {$d['given_names']}");},
+                        // $defts));
                     endif;
                 ?></td>
                 <td class="dropdown">
