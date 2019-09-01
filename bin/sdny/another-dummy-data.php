@@ -1,13 +1,20 @@
 #!/usr/bin/env php
 <?php
 /**
+ * Work in progress.
+ *
+ * Another attempt to generate and insert a few thousand dummy records for demo
+ * purposes, using real data from the SDNY interpreters (current) production
+ * database, but swapping real names for fake ones. We assume the .my.cnf in
+ * $HOME has a username and password good for both.
+ *
  * prerequisites:
  *  cat sql/mysql-schema.sql sql/initial-data.sql sql/dummy_data.sql | mysql office_demo;
  *
  */
 require __DIR__.'/../../vendor/autoload.php';
 if (!isset($argv[1])) {
-    exit(sprintf("usage: %s <database>\n",basename(__FILE__)));
+    exit(sprintf("usage: %s <target-database> [source-database]\n",basename(__FILE__)));
 } else {
     $office_database = $argv[1];
 }
