@@ -15,6 +15,8 @@ SET foreign_key_checks = 1;
 /*  insert some languages  */
 
 INSERT INTO languages (name) VALUES ('Spanish'),('Foochow'),('Mandarin'),('Russian'),('Arabic'),
+('Armenian'),('Burmese'),('Dutch'),('Fulani'),('Ga'),('Latvian'),('Lithuanian'),('Mandingo'),
+('Sinhala'),('Ukrainian'),('Twi'),('Yoruba'),('Taishanese'),
 ('Cantonese'),('Korean'),('French'),('Urdu'),('Punjabi'),('Hebrew'),('Pashto'),('Romanian'),('Bengali'),
 ('Turkish'),('Albanian'),('Georgian'),('Portuguese'),('Farsi'),('Somali');
 
@@ -41,17 +43,21 @@ SET @courthouse1 = (SELECT id FROM locations WHERE name = 'Some Courthouse');
 SET @courthouse2 = (SELECT id FROM locations WHERE name = 'Other Courthouse');
 SET @jail = (SELECT id FROM locations WHERE name = 'Some Detention Center');
 #  INSERT INTO locations VALUES (27,1,1,'510',"duty magistrate",1);
+
 /* nested locations */
 INSERT INTO locations (type_id, parent_location_id,name) VALUES
 (1,@courthouse1,'101'),(1,@courthouse1,'102'),(1,@courthouse1,'103'),(1,@courthouse1,'104'),
 (1,@courthouse1,'201'),(1,@courthouse1,'202'),(1,@courthouse1,'510'),
 (1,@courthouse1,'203'),(1,@courthouse1,'204'),
+(1,@courthouse1,'403'),(1,@courthouse1,'504'),
+(1,@courthouse1,'603'),(1,@courthouse1,'704'),
+(1,@courthouse1,'803'),(1,@courthouse1,'804'),
 (1,@courthouse2,'2A'),(1,@courthouse2,'2B'),(1,@courthouse2,'2C'),(1,@courthouse2,'2D'),
 (1,@courthouse2,'4A'),(1,@courthouse2,'4B'),(1,@courthouse2,'4C'),(1,@courthouse2,'4D'),
 (1,@courthouse2,'5A'),(1,@courthouse2,'5B'),(1,@courthouse2,'5C'),(1,@courthouse2,'5D'),
 (3,@courthouse1,'the holding cell'),
 (6,@courthouse1,'your Interpreters Office'),
-(4,@courthouse2,'your Probation Office'),(5,@courthouse1,'Pretrial Services',);
+(4,@courthouse2,'your Probation Office'),(5,@courthouse1,'Pretrial Services');
 /* proceedings a/k/a event-types */
 /*
 +----+----------------+
@@ -108,6 +114,50 @@ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALU
 INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
      last_insert_id(), (SELECT id FROM locations WHERE name = '201'),
      @usdj);
+
+ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALUES
+  ('Corcoran','Lawrence','B.',@judge_hat,'judge',1);
+ INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
+      last_insert_id(), (SELECT id FROM locations WHERE name = '403'),
+      @usdj);
+
+  INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALUES
+   ('Hunrichs','Lisa','M.',@judge_hat,'judge',1);
+  INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
+           last_insert_id(), (SELECT id FROM locations WHERE name = '504'),
+           @usdj);
+
+INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALUES
+('Peña','Petronila','',@judge_hat,'judge',1);
+INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
+                last_insert_id(), (SELECT id FROM locations WHERE name = '603'),
+                @usdj);
+
+INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALUES
+ ('Marx','Selma','K.',@judge_hat,'judge',1);
+INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
+                 last_insert_id(), (SELECT id FROM locations WHERE name = '4B'),
+                 @usdj);
+
+ INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALUES
+  ('Borodin','Alexander','S.',@judge_hat,'judge',1);
+
+ INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
+                  last_insert_id(), (SELECT id FROM locations WHERE name = '5B'),
+                  @usdj);
+INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALUES
+('Mcrae','Carmen','T.',@judge_hat,'judge',1);
+INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
+               last_insert_id(), (SELECT id FROM locations WHERE name = '704'),
+               @usdj);
+
+INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALUES
+('Davis','Miles','T.',@judge_hat,'judge',1);
+INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
+              last_insert_id(), (SELECT id FROM locations WHERE name = '804'),
+              @usdj);
+
+
 
 /* some defendant names */
 INSERT INTO defendant_names (surnames, given_names) VALUES
@@ -428,7 +478,6 @@ SELECT p.lastname, p.id judge_id, l.name courtroom, l.id location_id FROM people
 | Ho           |           33 | Wiseburger    |      10 |        4 |
 | Montgomery   |           34 | Wiseburger    |      11 |        4 |
 +--------------+--------------+---------------+---------+----------+
-*/
 SET @submitter = (SELECT p.id FROM people p JOIN users u ON p.id = u.person_id JOIN clerks_judges cj ON cj.user_id = u.id JOIN people j ON j.id = cj.judge_id WHERE j.lastname = 'Dorkendoofer' LIMIT 1);
 SET @user =  (select id FROM users WHERE person_id = @submitter);
 INSERT INTO requests (
@@ -457,3 +506,4 @@ INSERT INTO defendants_requests (defendant_id, request_id) VALUES (
      (SELECT id FROM defendant_names WHERE surnames LIKE '%garcia%' LIMIT 1),
      LAST_INSERT_ID()
 );
+*/
