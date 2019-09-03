@@ -146,7 +146,7 @@ INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
                   last_insert_id(), (SELECT id FROM locations WHERE name = '5B'),
                   @usdj);
 INSERT INTO people (lastname, firstname, middlename, hat_id, discr, active) VALUES
-('Mcrae','Carmen','T.',@judge_hat,'judge',1);
+('McRae','Carmen','T.',@judge_hat,'judge',1);
 INSERT INTO judges (id,default_location_id,flavor_id) VALUES (
                last_insert_id(), (SELECT id FROM locations WHERE name = '704'),
                @usdj);
@@ -419,6 +419,17 @@ VALUES (LAST_INSERT_ID(), @submitter, 'boink','wes',1,NULL,NOW());
 
 INSERT INTO clerks_judges (user_id, judge_id) VALUES (LAST_INSERT_ID(),(SELECT id FROM people
 WHERE discr = "judge" AND lastname = "Wiseburger"));
+
+/* more judges */
+INSERT INTO `people` VALUES (7,14,NULL,'Corcoran','Lawrence','B.','','',1,'judge'),(8,14,NULL,'Hunrichs','Lisa','M.','','',1,'judge'),(9,14,NULL,'Peña','Petronila','','','',1,'judge'),(10,14,NULL,'Marx','Selma','K.','','',1,'judge'),(11,14,NULL,'Borodin','Alexander','S.','','',1,'judge'),(12,14,NULL,'McRae','Carmen','T.','','',1,'judge'),(13,14,NULL,'Davis','Miles','T.','','',1,'judge');
+INSERT INTO `judges` VALUES (7,13,1),(8,14,1),(9,15,1),(10,24,1),(11,28,1),(12,16,1),(13,18,1);
+
+/* more clerks */
+INSERT INTO `people` VALUES (45,6,'hoyt_gackersley@some.uscourts.gov','Gackersly','Hoyt','','','',1,'person'),(46,6,'deedee_bridgewater@some.uscourts.gov','Bridgewater','Deedee','','','',1,'person'),(47,7,'carmen_lundy@some.uscourts.gov','Lundy','Carmen','','','',1,'person'),(48,6,'serena_williams@some.uscourts.gov','Williams','Serena','','','',1,'person'),(49,7,'charlie_parker@nysd.uscourts.gov','Parker','Charles','','','',1,'person'),(50,7,'allen_ginsberg@some.uscourts.gov','Ginsberg','Allen','','','',1,'person'),
+(51,6,'iris_murdoch@some.uscourts.gov','Murdoch','Iris','','','',1,'person'),(52,6,'herbie_hancock@some.uscourts.gov','Hancock','Herbie','','','',1,'person'),(53,6,'ronald_mcdonald@some.uscourts.gov','McDonald','Ronald','','','',1,'person');
+INSERT INTO `users` VALUES (12,45,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','hoyt',1,NULL,'2019-09-03 13:51:30'),(13,46,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','deedee',1,NULL,'2019-09-03 13:52:24'),(14,47,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','carmen',1,NULL,'2019-09-03 13:53:33'),(15,48,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','serena',1,NULL,'2019-09-03 13:55:15'),(16,49,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','charlie',1,NULL,'2019-09-03 13:56:14'),(17,50,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','allen',1,NULL,'2019-09-03 14:26:57'),(18,51,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','iris',1,NULL,'2019-09-03 14:30:21'),(19,52,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','herbie',1,NULL,'2019-09-03 14:31:55'),(20,53,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','ronald',1,NULL,'2019-09-03 14:33:14');
+
+INSERT INTO `clerks_judges` VALUES (12,7),(13,9),(14,10),(15,8),(16,13),(17,1),(18,11),(19,12),(20,3);
 
 /* prosecutors */
 SET @ausa = (SELECT id FROM hats WHERE name = "AUSA");

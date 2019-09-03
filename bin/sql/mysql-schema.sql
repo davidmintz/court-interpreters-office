@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.27, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.26, for Linux (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.27-0ubuntu0.18.04.1
+-- Server version	5.7.26-0ubuntu0.16.04.1-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,30 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `admin_users`
+--
+
+DROP TABLE IF EXISTS `admin_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `admin_users` (
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `username` varchar(24) NOT NULL DEFAULT '',
+  `firstname` varchar(40) NOT NULL,
+  `lastname` varchar(40) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `phone` varchar(10) NOT NULL,
+  `password` varchar(16) NOT NULL,
+  `created` datetime NOT NULL,
+  `last_login` int(10) unsigned NOT NULL,
+  `active` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `map_to_userid` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idxUsername` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `anonymous_judges`
@@ -43,13 +67,25 @@ DROP TABLE IF EXISTS `app_event_log`;
 CREATE TABLE `app_event_log` (
   `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `channel` varchar(60) NOT NULL DEFAULT '',
-  `message` varchar(350) NOT NULL,
+  `message` varchar(250) NOT NULL,
   `entity_id` varchar(32) DEFAULT NULL,
   `entity_class` varchar(250) NOT NULL DEFAULT '',
   `priority` tinyint(3) unsigned NOT NULL,
   `priority_name` varchar(12) NOT NULL,
   `extra` varchar(5000) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `availability_invitees`
+--
+
+DROP TABLE IF EXISTS `availability_invitees`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `availability_invitees` (
+  `interp_id` smallint(5) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -280,6 +316,20 @@ CREATE TABLE `events` (
   CONSTRAINT `FK_5387574AB7D66194` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`),
   CONSTRAINT `FK_5387574AFF915C63` FOREIGN KEY (`anonymous_judge_id`) REFERENCES `anonymous_judges` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `foo`
+--
+
+DROP TABLE IF EXISTS `foo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `foo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -670,4 +720,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-08-01 14:35:04
+-- Dump completed on 2019-09-03 15:16:20

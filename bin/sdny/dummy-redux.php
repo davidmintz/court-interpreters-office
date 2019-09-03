@@ -9,7 +9,7 @@ if (!isset($argv[1])) {
 }
 $source_database = isset($argv[2]) ? $argv[2] : 'office';
 
-// echo "using target database '$office_database', importing from '$interpreters_database'\n";
+// echo "using target database '$dummy_database', importing from '$source_database'\n";
 // echo "connecting...\n";
 
 $config_file = getenv('HOME').'/.my.cnf';
@@ -27,20 +27,35 @@ try {
 
 $dummy_judge_ids = $pdo_dummy->query('SELECT id from judges')->fetchAll(PDO::FETCH_COLUMN);
 $number_of_judges = count($dummy_judge_ids);
-
+//echo $number_of_judges,"\n";exit();
 // select our $number_of_judges most popular judges
 $judge_query = "SELECT j.id, j.lastname, COUNT(e.id) events
 FROM people j JOIN events e ON e.judge_id = j.id JOIN languages l ON e.language_id = l.id
 JOIN $dummy_database.languages dummy_langs ON dummy_langs.name = l.name
 WHERE docket <> '' AND e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
 GROUP BY j.id ORDER BY events desc limit $number_of_judges";
+//exit($judge_query);
 $judge_ids = $pdo_source->query($judge_query)->fetchAll(PDO::FETCH_COLUMN);
-$judge_map = array_combine($judge_ids,$dummy_judge_ids);
-
+//$judge_map = array_combine($judge_ids,$dummy_judge_ids);
+//print_r($judge_ids); exit();
 $dummy_langs = $pdo_dummy->query('SELECT name, id from languages')->fetchAll(PDO::FETCH_KEY_PAIR);
+
+/** this needs work here... */
+$event_types = $pdo_dummy->query('select et.id, oet.id o_id from event_types et JOIN office.event_types oet ON et.name = oet.name order by o_id')
+    ->fetchAll(PDO::FETCH_KEY_PAIR);
+foreach( [
+    9 => 10, // bail
+    1 => 7, // PSI
+    44 => 10, // suppression
+    34 => 12, // pretrial
+] as $office_id => $demo_id) {
+    $event_types[$office_id] = $demo_id;
+}
+// --------------------
+
+
 $insert_sql =
 'INSERT INTO events (
-
     language_id,
     judge_id,
     submitter_id,
@@ -86,6 +101,8 @@ VALUES
     :submission_time,
     :deleted)';
 $str_judge_ids = implode(',',$judge_ids);
+// $str_event_type_ids = implode(',',array_keys($event_types));
+// exit($str_event_type_ids);
 $event_select =
     "SELECT e.*,l.name language, t.name event_type,
     dummy_langs.id AS dummy_lang_id,
@@ -98,8 +115,8 @@ $event_select =
     JOIN languages l ON e.language_id = l.id
     JOIN $dummy_database.languages dummy_langs ON dummy_langs.name = l.name
     WHERE e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
-    AND (e.judge_id IN ($str_judge_ids)
-        OR (aj.name = 'magistrate' AND aj_locations.name = '5A'))
+    AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate' AND aj_locations.name = '5A'))
+    /*AND e.event_type_id IN (\$str_event_type_ids)*/
     AND e.docket <> '' ORDER BY e.created";
 $stmt = $pdo_source->prepare($event_select);
 $stmt->execute();
