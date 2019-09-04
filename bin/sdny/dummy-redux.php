@@ -204,20 +204,24 @@ $i = 0;
 echo "\n";
 while ($e = $stmt->fetch()) {
     if (! isset($type_map[$e->event_type_id])) {
+        $dummy_id = null;
         if (preg_match('/^bail/', $e->event_type)) {
-            // echo "adding $e->event_type...\n";
             $type_map[$e->event_type_id] = $generic_bail_id;
         } elseif (preg_match('/suppression/',$e->event_type)) {
-            // echo "adding $e->event_type...\n";
-            $dummy_id = key(preg_grep('/suppression/',array_keys($dummy_types)));
-            $type_map[$e->event_type_id] = $dummy_id;
+            $key = current(preg_grep('/suppression/',array_keys($dummy_types)));
+            $dummy_id = $dummy_types[$key];
+
         } elseif (preg_match('/^pretrial services/',$e->event_type)) {
-            $dummy_id = key(preg_grep('/^pretrial services/',array_keys($dummy_types)));
-            $type_map[$e->event_type_id] = $dummy_id;
-        } else {
-            echo "OUCH! can't map event-type: $e->event_type\n";
-            continue;
+            $key = current(preg_grep('/^pretrial services/',array_keys($dummy_types)));
+            $dummy_id = $dummy_types[$key];
         }
+        if ($dummy_id) {
+            $type_map[$e->event_type_id] = $dummy_id;
+        }
+    }
+    if (!isset($type_map[$e->event_type_id])) {
+        print_r($e);
+        exit("can't figure out event type mapping for $e->event_type");
     }
     $params = ['language_id' => $e->dummy_lang_id];
     $params['event_type_id'] = $type_map[$e->event_type_id];
@@ -272,8 +276,8 @@ while ($e = $stmt->fetch()) {
     } else {
         if (isset($submitter_map[$e->submitter_id])) {
             $params['submitter_id'] = $submitter_map[$e->submitter_id];
-            echo "already have: ";
-            var_dump($params['submitter_id']);
+            // echo "already have: ";
+            // var_dump($params['submitter_id']);
 
         } else {
             if ($e->creator_person_id == $e->submitter_id) {
