@@ -1,6 +1,9 @@
 #!/usr/bin/env php
 <?php
+/*
 
+*/
+$sql = 'INSERT INTO event_types (SELECT * FROM office.event_types WHERE id IN (13,15,18,19,20,23,24,26,30,36,50,51,5))';
 require __DIR__.'/../../vendor/autoload.php';
 if (!isset($argv[1])) {
     exit(sprintf("usage: %s <target-dummy-database> [source-database]\n",basename(__FILE__)));
@@ -41,19 +44,14 @@ $judge_ids = $pdo_source->query($judge_query)->fetchAll(PDO::FETCH_COLUMN);
 $dummy_langs = $pdo_dummy->query('SELECT name, id from languages')->fetchAll(PDO::FETCH_KEY_PAIR);
 
 /** this needs work here... */
-$event_types = $pdo_dummy->query('select et.id, oet.id o_id from event_types et JOIN office.event_types oet ON et.name = oet.name order by o_id')
-    ->fetchAll(PDO::FETCH_KEY_PAIR);
-foreach( [
-    9 => 10, // bail
-    1 => 7, // PSI
-    44 => 10, // suppression
-    34 => 12, // pretrial
-] as $office_id => $demo_id) {
-    $event_types[$office_id] = $demo_id;
-}
-// --------------------
-
-
+$event_types = $pdo_dummy->query('select et.id dummy_id, et.name dummy_name, oet.id o_id from event_types et JOIN office.event_types oet ON et.name = oet.name order by o_id')
+    ->fetchAll(PDO::FETCH_ASSOC);
+//print_r($event_types);//exit();
+$type_map = array_combine(
+    array_column($event_types, 'o_id'),
+    array_column($event_types, 'dummy_id')
+);
+//print_r($type_map);
 $insert_sql =
 'INSERT INTO events (
     language_id,
@@ -103,6 +101,41 @@ VALUES
 $str_judge_ids = implode(',',$judge_ids);
 // $str_event_type_ids = implode(',',array_keys($event_types));
 // exit($str_event_type_ids);
+$generic_bail_id = $pdo_dummy->query('SELECT id FROM event_types WHERE name LIKE "bail%"')->fetch(PDO::FETCH_COLUMN);
+$dummy_types = $pdo_dummy->query('SELECT name,id FROM event_types')->fetchAll(PDO::FETCH_KEY_PAIR);
+
+/*
+print_r($dummy_types); exit;
+[appt/subst of counsel] => 52
+   [arraignment] => 6
+   [atty/client interview] => 2
+   [bail hearing] => 9
+   [bond] => 13
+   [competency hearing] => 15
+   [conference] => 1
+   [Curcio hearing] => 18
+   [deferred prosecution] => 19
+   [detention hearing] => 20
+   [document translation] => 11
+   [Fatico] => 23
+   [Habeas] => 24
+   [identity hearing] => 26
+   [motions/oral argument] => 30
+   [plea] => 4
+   [presentment] => 5
+   [pretrial services intake] => 12
+   [pro se (civil)] => 36
+   [probation interview] => 7
+   [probation supervision interview] => 53
+   [PTS supervision interview] => 54
+   [sentence] => 3
+   [suppression hearing] => 10
+   [trial] => 8
+   [vop hearing] => 50
+   [vsr hearing] => 51
+
+ */
+
 $event_select =
     "SELECT e.*,l.name language, t.name event_type,
     dummy_langs.id AS dummy_lang_id,
@@ -116,7 +149,7 @@ $event_select =
     JOIN $dummy_database.languages dummy_langs ON dummy_langs.name = l.name
     WHERE e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
     AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate' AND aj_locations.name = '5A'))
-    /*AND e.event_type_id IN (\$str_event_type_ids)*/
+    AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
     AND e.docket <> '' ORDER BY e.created";
 $stmt = $pdo_source->prepare($event_select);
 $stmt->execute();
@@ -124,6 +157,22 @@ $count = $stmt->rowCount();
 echo ("total: $count\n");
 while ($e = $stmt->fetch()) {
 
+    if (! isset($type_map[$e->event_type_id])) {
+        if (preg_match('/^bail/', $e->event_type)) {
+            // echo "adding $e->event_type...\n";
+            $type_map[$e->event_type_id] = $generic_bail_id;
+        } elseif (preg_match('/suppression/',$e->event_type)) {
+            // echo "adding $e->event_type...\n";
+            $dummy_id = key(preg_grep('/suppression/',array_keys($dummy_types)));
+            $type_map[$e->event_type_id] = $dummy_id;
+        } elseif (preg_match('/^pretrial services/',$e->event_type)) {
+            $dummy_id = key(preg_grep('/^pretrial services/',array_keys($dummy_types)));
+            $type_map[$e->event_type_id] = $dummy_id;
+        } else {
+            echo "can't map event-type: $e->event_type\n";
+        }
+    }
+    $params['event_type_id'] = $type_map[$e->event_type_id];
     $params = ['language_id' => $e->dummy_lang_id];
     $params['judge_id'] = $e->judge_id ?: null;
     $params['anonymous_judge_id'] = $e->anonymous_judge_id ?: null;
@@ -136,7 +185,6 @@ while ($e = $stmt->fetch()) {
     }
     // still to do:
     /*
-    event_type_id,
     created_by_id,
     submitter_id,
     location_id,

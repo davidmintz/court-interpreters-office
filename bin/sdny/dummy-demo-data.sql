@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.26, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.27, for Linux (x86_64)
 --
 -- Host: localhost    Database: office_demo
 -- ------------------------------------------------------
--- Server version	5.7.26-0ubuntu0.16.04.1-log
+-- Server version	5.7.27-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,67 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `admin_users`
+--
+
+DROP TABLE IF EXISTS `admin_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `admin_users` (
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `username` varchar(24) NOT NULL DEFAULT '',
+  `firstname` varchar(40) NOT NULL,
+  `lastname` varchar(40) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `phone` varchar(10) NOT NULL,
+  `password` varchar(16) NOT NULL,
+  `created` datetime NOT NULL,
+  `last_login` int(10) unsigned NOT NULL,
+  `active` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `map_to_userid` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idxUsername` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `admin_users`
+--
+
+LOCK TABLES `admin_users` WRITE;
+/*!40000 ALTER TABLE `admin_users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `admin_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `anonymous_judges`
+--
+
+DROP TABLE IF EXISTS `anonymous_judges`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `anonymous_judges` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `default_location_id` smallint(5) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_anon_judge` (`name`,`default_location_id`),
+  KEY `IDX_5BD10E2D2BE3238` (`default_location_id`),
+  CONSTRAINT `anonymous_judges_ibfk_1` FOREIGN KEY (`default_location_id`) REFERENCES `locations` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `anonymous_judges`
+--
+
+LOCK TABLES `anonymous_judges` WRITE;
+/*!40000 ALTER TABLE `anonymous_judges` DISABLE KEYS */;
+INSERT INTO `anonymous_judges` VALUES (2,'(not applicable)',NULL),(3,'(unknown)',NULL),(1,'magistrate',NULL);
+/*!40000 ALTER TABLE `anonymous_judges` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `app_event_log`
@@ -40,8 +101,54 @@ CREATE TABLE `app_event_log` (
 
 LOCK TABLES `app_event_log` WRITE;
 /*!40000 ALTER TABLE `app_event_log` DISABLE KEYS */;
-INSERT INTO `app_event_log` VALUES ('2019-09-03 13:47:32','security','user mintz@vernontbludgeon.com logged out','512','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:49:21','security','user admin authenticated from IP address: 127.0.0.1','1','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:51:30','persons','user <nobody> added a new person: Hoyt Gackersly','45','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:51:30','users','user <nobody> added a new user','12','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:52:24','persons','user <nobody> added a new person: Deedee Bridgewater','46','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:52:24','users','user <nobody> added a new user','13','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:53:33','persons','user <nobody> added a new person: Carmen Lundy','47','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:53:33','users','user <nobody> added a new user','14','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:55:15','persons','user <nobody> added a new person: Serena Williams','48','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:55:15','users','user <nobody> added a new user','15','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:56:14','persons','user <nobody> added a new person: Charles Parker','49','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:56:14','users','user <nobody> added a new user','16','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 14:26:57','persons','user <nobody> added a new person: Allen Ginsberg','50','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 14:26:57','users','user <nobody> added a new user','17','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 14:30:21','persons','user <nobody> added a new person: Iris Murdoch','51','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 14:30:21','users','user <nobody> added a new user','18','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 14:31:55','persons','user <nobody> added a new person: Herbie Hancock','52','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 14:31:55','users','user <nobody> added a new user','19','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 14:33:14','persons','user <nobody> added a new person: Ronald McDonald','53','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 14:33:14','users','user <nobody> added a new user','20','InterpretersOffice\\Entity\\User',6,'INFO','');
+INSERT INTO `app_event_log` VALUES ('2019-09-03 13:47:32','security','user mintz@vernontbludgeon.com logged out','512','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:49:21','security','user admin authenticated from IP address: 127.0.0.1','1','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:51:30','persons','user <nobody> added a new person: Hoyt Gackersly','45','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:51:30','users','user <nobody> added a new user','12','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:52:24','persons','user <nobody> added a new person: Deedee Bridgewater','46','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:52:24','users','user <nobody> added a new user','13','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:53:33','persons','user <nobody> added a new person: Carmen Lundy','47','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:53:33','users','user <nobody> added a new user','14','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:55:15','persons','user <nobody> added a new person: Serena Williams','48','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:55:15','users','user <nobody> added a new user','15','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 13:56:14','persons','user <nobody> added a new person: Charles Parker','49','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 13:56:14','users','user <nobody> added a new user','16','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 14:26:57','persons','user <nobody> added a new person: Allen Ginsberg','50','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 14:26:57','users','user <nobody> added a new user','17','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 14:30:21','persons','user <nobody> added a new person: Iris Murdoch','51','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 14:30:21','users','user <nobody> added a new user','18','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 14:31:55','persons','user <nobody> added a new person: Herbie Hancock','52','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 14:31:55','users','user <nobody> added a new user','19','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-03 14:33:14','persons','user <nobody> added a new person: Ronald McDonald','53','InterpretersOffice\\Entity\\Person',6,'INFO',''),('2019-09-03 14:33:14','users','user <nobody> added a new user','20','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-04 11:02:54','security','login failed for user david from IP address 127.0.0.1, reason: [\"A record with the supplied identity could not be found.\"]',NULL,'InterpretersOffice\\Entity\\User',6,'INFO','{\"entity_id\":null}'),('2019-09-04 11:03:48','security','login failed for user david from IP address 127.0.0.1, reason: [\"A record with the supplied identity could not be found.\"]',NULL,'InterpretersOffice\\Entity\\User',6,'INFO','{\"entity_id\":null}'),('2019-09-04 11:03:54','security','user admin authenticated from IP address: 127.0.0.1','1','InterpretersOffice\\Entity\\User',6,'INFO',''),('2019-09-04 11:08:23','','no vault enabled, not encrypting any interpreter data',NULL,'',6,'INFO',''),('2019-09-04 11:08:23','interpreters','user admin added a new interpreter: Ángel Romero','54','InterpretersOffice\\Entity\\Interpreter',6,'INFO',''),('2019-09-04 11:08:23','interpreterlanguages','user admin added a new interpreterlanguage',NULL,'InterpretersOffice\\Entity\\InterpreterLanguage',6,'INFO','{\"entity_id\":null}'),('2019-09-04 11:09:03','users','user <nobody> added a new user','21','InterpretersOffice\\Entity\\User',6,'INFO','');
 /*!40000 ALTER TABLE `app_event_log` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `availability_invitees`
+--
+
+DROP TABLE IF EXISTS `availability_invitees`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `availability_invitees` (
+  `interp_id` smallint(5) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `availability_invitees`
+--
+
+LOCK TABLES `availability_invitees` WRITE;
+/*!40000 ALTER TABLE `availability_invitees` DISABLE KEYS */;
+/*!40000 ALTER TABLE `availability_invitees` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cancellation_reasons`
+--
+
+DROP TABLE IF EXISTS `cancellation_reasons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cancellation_reasons` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `reason` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_cancel_reason` (`reason`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cancellation_reasons`
+--
+
+LOCK TABLES `cancellation_reasons` WRITE;
+/*!40000 ALTER TABLE `cancellation_reasons` DISABLE KEYS */;
+INSERT INTO `cancellation_reasons` VALUES (3,'belatedly adjourned'),(1,'defendant not produced'),(5,'forçe majeure'),(2,'no interpreter needed'),(7,'other'),(4,'party did not appear'),(6,'reason unknown');
+/*!40000 ALTER TABLE `cancellation_reasons` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -206,6 +313,31 @@ INSERT INTO `defendants_requests` VALUES (5,2),(5,4),(5,6),(5,8),(23,1),(23,3),(
 UNLOCK TABLES;
 
 --
+-- Table structure for table `event_categories`
+--
+
+DROP TABLE IF EXISTS `event_categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_categories` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_event_category` (`category`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `event_categories`
+--
+
+LOCK TABLES `event_categories` WRITE;
+/*!40000 ALTER TABLE `event_categories` DISABLE KEYS */;
+INSERT INTO `event_categories` VALUES (1,'in'),(3,'not applicable'),(2,'out');
+/*!40000 ALTER TABLE `event_categories` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `event_emails`
 --
 
@@ -254,7 +386,7 @@ CREATE TABLE `event_types` (
   UNIQUE KEY `unique_event_type` (`name`),
   KEY `IDX_182B381C12469DE2` (`category_id`),
   CONSTRAINT `FK_182B381C12469DE2` FOREIGN KEY (`category_id`) REFERENCES `event_categories` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -263,7 +395,7 @@ CREATE TABLE `event_types` (
 
 LOCK TABLES `event_types` WRITE;
 /*!40000 ALTER TABLE `event_types` DISABLE KEYS */;
-INSERT INTO `event_types` VALUES (1,1,'conference',''),(2,2,'atty/client interview',''),(3,1,'sentence',''),(4,1,'plea',''),(5,1,'presentment',''),(6,1,'arraignment',''),(7,2,'probation interview',''),(8,1,'trial',''),(9,1,'bail hearing',''),(10,1,'suppression hearing',''),(11,3,'document translation',''),(12,2,'pretrial services intake','');
+INSERT INTO `event_types` VALUES (1,1,'conference',''),(2,2,'atty/client interview',''),(3,1,'sentence',''),(4,1,'plea',''),(5,1,'presentment',''),(6,1,'arraignment',''),(7,2,'probation PSI interview',''),(8,1,'trial',''),(9,1,'bail hearing',''),(10,1,'suppression hearing',''),(11,3,'document translation',''),(12,2,'pretrial services intake',''),(13,2,'bond',''),(15,1,'competency hearing',''),(18,1,'Curcio hearing',''),(19,1,'deferred prosecution',''),(20,1,'detention hearing',''),(23,1,'Fatico',''),(24,1,'Habeas',''),(26,1,'identity hearing',''),(30,1,'motions/oral argument',''),(36,1,'pro se (civil)',''),(50,1,'vop hearing',''),(51,1,'vsr hearing',''),(52,1,'appt/subst of counsel',''),(53,2,'probation supervision interview',''),(54,2,'PTS supervision interview','');
 /*!40000 ALTER TABLE `event_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -332,6 +464,83 @@ INSERT INTO `events` VALUES (9,1,NULL,NULL,28,'2019-08-12','10:45:00','11:22:00'
 UNLOCK TABLES;
 
 --
+-- Table structure for table `foo`
+--
+
+DROP TABLE IF EXISTS `foo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `foo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `foo`
+--
+
+LOCK TABLES `foo` WRITE;
+/*!40000 ALTER TABLE `foo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `foo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `hats`
+--
+
+DROP TABLE IF EXISTS `hats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `hats` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `role_id` smallint(5) unsigned DEFAULT NULL,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `anonymity` int(10) unsigned NOT NULL DEFAULT '0',
+  `is_judges_staff` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `hat_idx` (`name`),
+  KEY `IDX_149C3D93D60322AC` (`role_id`),
+  CONSTRAINT `FK_149C3D93D60322AC` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `hats`
+--
+
+LOCK TABLES `hats` WRITE;
+/*!40000 ALTER TABLE `hats` DISABLE KEYS */;
+INSERT INTO `hats` VALUES (1,2,'staff court interpreter',0,0),(2,2,'Interpreters Office staff',0,0),(3,NULL,'contract court interpreter',0,0),(4,NULL,'defense attorney',2,0),(5,NULL,'AUSA',2,0),(6,1,'Courtroom Deputy',0,1),(7,1,'Law Clerk',0,1),(8,1,'USPO',0,0),(9,1,'Pretrial Services Officer',0,0),(10,NULL,'paralegal',2,0),(11,NULL,'staff, US Attorneys Office',2,0),(12,NULL,'Pretrial',1,0),(13,NULL,'Magistrates',1,0),(14,NULL,'Judge',0,0);
+/*!40000 ALTER TABLE `hats` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `holidays`
+--
+
+DROP TABLE IF EXISTS `holidays`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `holidays` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `holidays`
+--
+
+LOCK TABLES `holidays` WRITE;
+/*!40000 ALTER TABLE `holidays` DISABLE KEYS */;
+INSERT INTO `holidays` VALUES (1,'New Year\'s Day'),(2,'Martin Luther King Day'),(3,'Lincoln\'s Birthday'),(4,'President\'s Day'),(5,'Memorial Day'),(6,'Independence Day'),(7,'Labor Day'),(8,'Columbus Day'),(9,'Veterans\' Day'),(10,'Thanksgiving'),(11,'Christmas'),(12,'Election Day');
+/*!40000 ALTER TABLE `holidays` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `interpreters`
 --
 
@@ -366,7 +575,7 @@ CREATE TABLE `interpreters` (
 
 LOCK TABLES `interpreters` WRITE;
 /*!40000 ALTER TABLE `interpreters` DISABLE KEYS */;
-INSERT INTO `interpreters` VALUES (14,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(15,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(16,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(17,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(18,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(19,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(20,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(21,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(22,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(23,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(24,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(25,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(26,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','','');
+INSERT INTO `interpreters` VALUES (14,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(15,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(16,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(17,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(18,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(19,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(20,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(21,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(22,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(23,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(24,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(25,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(26,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','',''),(54,'',NULL,NULL,NULL,NULL,NULL,NULL,'','','','','','','United States');
 /*!40000 ALTER TABLE `interpreters` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -430,8 +639,34 @@ CREATE TABLE `interpreters_languages` (
 
 LOCK TABLES `interpreters_languages` WRITE;
 /*!40000 ALTER TABLE `interpreters_languages` DISABLE KEYS */;
-INSERT INTO `interpreters_languages` VALUES (18,1,1),(19,1,1),(20,1,1),(21,1,1),(22,1,1),(23,1,1),(24,1,1),(26,1,1),(14,4,2),(18,24,2),(25,5,2),(15,21,3),(16,31,3),(17,2,3),(17,3,3),(17,19,3),(21,31,3);
+INSERT INTO `interpreters_languages` VALUES (18,1,1),(19,1,1),(20,1,1),(21,1,1),(22,1,1),(23,1,1),(24,1,1),(26,1,1),(54,1,1),(14,4,2),(18,24,2),(25,5,2),(15,21,3),(16,31,3),(17,2,3),(17,3,3),(17,19,3),(21,31,3);
 /*!40000 ALTER TABLE `interpreters_languages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `judge_flavors`
+--
+
+DROP TABLE IF EXISTS `judge_flavors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `judge_flavors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `flavor` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `weight` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_judge_flavor` (`flavor`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `judge_flavors`
+--
+
+LOCK TABLES `judge_flavors` WRITE;
+/*!40000 ALTER TABLE `judge_flavors` DISABLE KEYS */;
+INSERT INTO `judge_flavors` VALUES (1,'USDJ',0),(2,'USMJ',5),(3,'USBJ',10);
+/*!40000 ALTER TABLE `judge_flavors` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -465,6 +700,34 @@ INSERT INTO `judges` VALUES (1,19,1),(2,20,1),(3,21,1),(4,22,1),(5,4,1),(6,8,1),
 UNLOCK TABLES;
 
 --
+-- Table structure for table `language_credentials`
+--
+
+DROP TABLE IF EXISTS `language_credentials`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `language_credentials` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `abbreviation` varchar(15) NOT NULL DEFAULT '',
+  `name` varchar(50) NOT NULL DEFAULT '',
+  `description` varchar(400) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_name` (`name`),
+  UNIQUE KEY `unique_abbrev` (`abbreviation`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `language_credentials`
+--
+
+LOCK TABLES `language_credentials` WRITE;
+/*!40000 ALTER TABLE `language_credentials` DISABLE KEYS */;
+INSERT INTO `language_credentials` VALUES (1,'AO','AOUSC-certified','Certified by the Administrative Office of the US Courts. Also known as federal certification, the certification exam has been administered for only three languages: Spanish, Navajo, and Haitian Creole. The exam is no longer offered for any language other than Spanish.'),(2,'PQ','Professionally Qualified','A designation created and defined by the AOUSC for languages having no federal court certification program.'),(3,'LS','Language-skilled','Created and defined by the AOUSC, LS is a level beneath PQ and is the default in the absence of PQ or AO');
+/*!40000 ALTER TABLE `language_credentials` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `languages`
 --
 
@@ -488,6 +751,32 @@ LOCK TABLES `languages` WRITE;
 /*!40000 ALTER TABLE `languages` DISABLE KEYS */;
 INSERT INTO `languages` VALUES (1,'Spanish',''),(2,'Foochow',''),(3,'Mandarin',''),(4,'Russian',''),(5,'Arabic',''),(6,'Armenian',''),(7,'Burmese',''),(8,'Dutch',''),(9,'Fulani',''),(10,'Ga',''),(11,'Latvian',''),(12,'Lithuanian',''),(13,'Mandingo',''),(14,'Sinhala',''),(15,'Ukrainian',''),(16,'Twi',''),(17,'Yoruba',''),(18,'Taishanese',''),(19,'Cantonese',''),(20,'Korean',''),(21,'French',''),(22,'Urdu',''),(23,'Punjabi',''),(24,'Hebrew',''),(25,'Pashto',''),(26,'Romanian',''),(27,'Bengali',''),(28,'Turkish',''),(29,'Albanian',''),(30,'Georgian',''),(31,'Portuguese',''),(32,'Farsi',''),(33,'Somali','');
 /*!40000 ALTER TABLE `languages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `location_types`
+--
+
+DROP TABLE IF EXISTS `location_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `location_types` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+  `comments` varchar(200) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_type` (`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `location_types`
+--
+
+LOCK TABLES `location_types` WRITE;
+/*!40000 ALTER TABLE `location_types` DISABLE KEYS */;
+INSERT INTO `location_types` VALUES (1,'courtroom',''),(2,'jail',''),(3,'holding cell',''),(4,'US Probation office',''),(5,'Pretrial Services office',''),(6,'interpreters office',''),(7,'courthouse',''),(8,'public area','');
+/*!40000 ALTER TABLE `location_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -545,7 +834,7 @@ CREATE TABLE `people` (
   UNIQUE KEY `hat_active_email_idx` (`email`,`hat_id`,`active`),
   KEY `IDX_28166A268C6A5980` (`hat_id`),
   CONSTRAINT `FK_28166A268C6A5980` FOREIGN KEY (`hat_id`) REFERENCES `hats` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -554,7 +843,7 @@ CREATE TABLE `people` (
 
 LOCK TABLES `people` WRITE;
 /*!40000 ALTER TABLE `people` DISABLE KEYS */;
-INSERT INTO `people` VALUES (1,14,NULL,'Harshbarger','Thaddeus','Q.','','',1,'judge'),(2,14,NULL,'Bludgeon','Vernon','T.','','',1,'judge'),(3,14,NULL,'Judicious','Jane','T.','','',1,'judge'),(4,14,NULL,'Wiseburger','Wilma','T.','','',1,'judge'),(5,14,NULL,'Dorkendoofer','William','D.','','',1,'judge'),(6,14,NULL,'Boinkleheimer','Ronda','B.','','',1,'judge'),(7,14,NULL,'Corcoran','Lawrence','B.','','',1,'judge'),(8,14,NULL,'Hunrichs','Lisa','M.','','',1,'judge'),(9,14,NULL,'Peña','Petronila','','','',1,'judge'),(10,14,NULL,'Marx','Selma','K.','','',1,'judge'),(11,14,NULL,'Borodin','Alexander','S.','','',1,'judge'),(12,14,NULL,'McRae','Carmen','T.','','',1,'judge'),(13,14,NULL,'Davis','Miles','T.','','',1,'judge'),(14,3,'russian_interpreter@example.org','Pavlova','Yana','','','917 123-4567',1,'interpreter'),(15,3,'french_interpreter@example.org','Françoise','Marie Louise','','','123 123-4567',1,'interpreter'),(16,3,'portuguese_interpreter@example.org','Silva','Jose Luiz','','','111 222-3210',1,'interpreter'),(17,3,'foochow_interpreter@example.org','Lau','Lily','','','222 333-3210',1,'interpreter'),(18,3,'hebrew_interpreter@example.org','Mintzenberger','David','','','666 666-4321',1,'interpreter'),(19,3,'spanish_interpreter_1@example.org','Hispanófona','Carmen','','','666 666-4321',1,'interpreter'),(20,3,'spanish_interpreter_2@example.org','Intérprete','Cristina','','','666 321-4321',1,'interpreter'),(21,3,'spanish_interpreter_3@example.org','Granados','Enrique','','','789 555-4321',1,'interpreter'),(22,3,'spanish_interpreter_4@example.org','Nadal','Rafael','','','012 123-4321',1,'interpreter'),(23,3,'spanish_interpreter_5@example.org','López','Jennifer','','','444 555-4321',1,'interpreter'),(24,3,'spanish_interpreter_6@example.org','del Potro','Juan Martín','','','444 555-7890',1,'interpreter'),(25,3,'arabic_interpreter_1@example.org','Codouni','Marwan','','','321 321-4321',1,'interpreter'),(26,1,'sonia_staffinterp@some.uscourts.gov','Staffinterp','Sonia','','','212 840-0084',1,'interpreter'),(27,4,'mister_lawyer@lawfirm.org','Litigious','Henry','','','222 333-6666',1,'person'),(28,4,'edelbaum@philslawfirm.com','Edelbaum','Phillip','','','222 333-6666',1,'person'),(29,4,'vergara@somelawfirm.com','Vergara','Elizabeth','','','234 234-2345',1,'person'),(30,4,'roland@defenselawfirm.com','Thau','Roland','','','234 234-2345',1,'person'),(31,4,'bricker@herlawpractice.com','Bricker','Carrie','','','234 666-2345',1,'person'),(32,8,'lyvia@some.uspd.uscourts.gov','Ramos','Lyvia','','','212 666-2345',1,'person'),(33,8,'sternberg@some.uspd.uscourts.gov','Sternberg','Brian','','','212 777-2345',1,'person'),(34,8,'perez@some.uspd.uscourts.gov','Pérez','Graciela','','','212 333-3333',1,'person'),(35,8,'susan_somebody@some.uscourts.gov','Somebody','Susan','','','212 666-2345',1,'person'),(36,7,'mylie_schwartzberg@some.uscourts.gov','Schwartzberg','Mylie','','','212 666-9876',1,'person'),(37,7,'amy_hartford@some.uscourts.gov','Hartford','Amy','','','212 666-8899',1,'person'),(38,6,'esmeralda_rojas@some.uscourts.gov','Rojas','Esmeralda','','','212 666-8899',1,'person'),(39,6,'zack_zimmer@some.uscourts.gov','Zimmer','Zack','','','212 666-1324',1,'person'),(40,6,'ting_ho@some.uscourts.gov','Ho','Ting','','','212 666-4235',1,'person'),(41,6,'wes_montgomery@some.uscourts.gov','Montgomery','Wes','','','212 666-7892',1,'person'),(42,5,'jane.prosecutor@some.usdoj.gov','Jackson','Jane','','','212 666-6637',1,'person'),(43,5,'millard.fillmore@some.usdoj.gov','Fillmore','Millard','','','212 666-6600',1,'person'),(44,5,'martin.vanburen@some.usdoj.gov','Van Buren','Martin','','','212 666-6601',1,'person'),(45,6,'hoyt_gackersley@some.uscourts.gov','Gackersly','Hoyt','','','',1,'person'),(46,6,'deedee_bridgewater@some.uscourts.gov','Bridgewater','Deedee','','','',1,'person'),(47,7,'carmen_lundy@some.uscourts.gov','Lundy','Carmen','','','',1,'person'),(48,6,'serena_williams@some.uscourts.gov','Williams','Serena','','','',1,'person'),(49,7,'charlie_parker@nysd.uscourts.gov','Parker','Charles','','','',1,'person'),(50,7,'allen_ginsberg@some.uscourts.gov','Ginsberg','Allen','','','',1,'person'),(51,6,'iris_murdoch@some.uscourts.gov','Murdoch','Iris','','','',1,'person'),(52,6,'herbie_hancock@some.uscourts.gov','Hancock','Herbie','','','',1,'person'),(53,6,'ronald_mcdonald@some.uscourts.gov','McDonald','Ronald','','','',1,'person');
+INSERT INTO `people` VALUES (1,14,NULL,'Harshbarger','Thaddeus','Q.','','',1,'judge'),(2,14,NULL,'Bludgeon','Vernon','T.','','',1,'judge'),(3,14,NULL,'Judicious','Jane','T.','','',1,'judge'),(4,14,NULL,'Wiseburger','Wilma','T.','','',1,'judge'),(5,14,NULL,'Dorkendoofer','William','D.','','',1,'judge'),(6,14,NULL,'Boinkleheimer','Ronda','B.','','',1,'judge'),(7,14,NULL,'Corcoran','Lawrence','B.','','',1,'judge'),(8,14,NULL,'Hunrichs','Lisa','M.','','',1,'judge'),(9,14,NULL,'Peña','Petronila','','','',1,'judge'),(10,14,NULL,'Marx','Selma','K.','','',1,'judge'),(11,14,NULL,'Borodin','Alexander','S.','','',1,'judge'),(12,14,NULL,'McRae','Carmen','T.','','',1,'judge'),(13,14,NULL,'Davis','Miles','T.','','',1,'judge'),(14,3,'russian_interpreter@example.org','Pavlova','Yana','','','917 123-4567',1,'interpreter'),(15,3,'french_interpreter@example.org','Françoise','Marie Louise','','','123 123-4567',1,'interpreter'),(16,3,'portuguese_interpreter@example.org','Silva','Jose Luiz','','','111 222-3210',1,'interpreter'),(17,3,'foochow_interpreter@example.org','Lau','Lily','','','222 333-3210',1,'interpreter'),(18,3,'hebrew_interpreter@example.org','Mintzenberger','David','','','666 666-4321',1,'interpreter'),(19,3,'spanish_interpreter_1@example.org','Hispanófona','Carmen','','','666 666-4321',1,'interpreter'),(20,3,'spanish_interpreter_2@example.org','Intérprete','Cristina','','','666 321-4321',1,'interpreter'),(21,3,'spanish_interpreter_3@example.org','Granados','Enrique','','','789 555-4321',1,'interpreter'),(22,3,'spanish_interpreter_4@example.org','Nadal','Rafael','','','012 123-4321',1,'interpreter'),(23,3,'spanish_interpreter_5@example.org','López','Jennifer','','','444 555-4321',1,'interpreter'),(24,3,'spanish_interpreter_6@example.org','del Potro','Juan Martín','','','444 555-7890',1,'interpreter'),(25,3,'arabic_interpreter_1@example.org','Codouni','Marwan','','','321 321-4321',1,'interpreter'),(26,1,'sonia_staffinterp@some.uscourts.gov','Staffinterp','Sonia','','','212 840-0084',1,'interpreter'),(27,4,'mister_lawyer@lawfirm.org','Litigious','Henry','','','222 333-6666',1,'person'),(28,4,'edelbaum@philslawfirm.com','Edelbaum','Phillip','','','222 333-6666',1,'person'),(29,4,'vergara@somelawfirm.com','Vergara','Elizabeth','','','234 234-2345',1,'person'),(30,4,'roland@defenselawfirm.com','Thau','Roland','','','234 234-2345',1,'person'),(31,4,'bricker@herlawpractice.com','Bricker','Carrie','','','234 666-2345',1,'person'),(32,8,'lyvia@some.uspd.uscourts.gov','Ramos','Lyvia','','','212 666-2345',1,'person'),(33,8,'sternberg@some.uspd.uscourts.gov','Sternberg','Brian','','','212 777-2345',1,'person'),(34,8,'perez@some.uspd.uscourts.gov','Pérez','Graciela','','','212 333-3333',1,'person'),(35,8,'susan_somebody@some.uscourts.gov','Somebody','Susan','','','212 666-2345',1,'person'),(36,7,'mylie_schwartzberg@some.uscourts.gov','Schwartzberg','Mylie','','','212 666-9876',1,'person'),(37,7,'amy_hartford@some.uscourts.gov','Hartford','Amy','','','212 666-8899',1,'person'),(38,6,'esmeralda_rojas@some.uscourts.gov','Rojas','Esmeralda','','','212 666-8899',1,'person'),(39,6,'zack_zimmer@some.uscourts.gov','Zimmer','Zack','','','212 666-1324',1,'person'),(40,6,'ting_ho@some.uscourts.gov','Ho','Ting','','','212 666-4235',1,'person'),(41,6,'wes_montgomery@some.uscourts.gov','Montgomery','Wes','','','212 666-7892',1,'person'),(42,5,'jane.prosecutor@some.usdoj.gov','Jackson','Jane','','','212 666-6637',1,'person'),(43,5,'millard.fillmore@some.usdoj.gov','Fillmore','Millard','','','212 666-6600',1,'person'),(44,5,'martin.vanburen@some.usdoj.gov','Van Buren','Martin','','','212 666-6601',1,'person'),(45,6,'hoyt_gackersley@some.uscourts.gov','Gackersly','Hoyt','','','',1,'person'),(46,6,'deedee_bridgewater@some.uscourts.gov','Bridgewater','Deedee','','','',1,'person'),(47,7,'carmen_lundy@some.uscourts.gov','Lundy','Carmen','','','',1,'person'),(48,6,'serena_williams@some.uscourts.gov','Williams','Serena','','','',1,'person'),(49,7,'charlie_parker@nysd.uscourts.gov','Parker','Charles','','','',1,'person'),(50,7,'allen_ginsberg@some.uscourts.gov','Ginsberg','Allen','','','',1,'person'),(51,6,'iris_murdoch@some.uscourts.gov','Murdoch','Iris','','','',1,'person'),(52,6,'herbie_hancock@some.uscourts.gov','Hancock','Herbie','','','',1,'person'),(53,6,'ronald_mcdonald@some.uscourts.gov','McDonald','Ronald','','','',1,'person'),(54,1,'angel_romero@some.uscourts.gov','Romero','Ángel','','','',1,'interpreter');
 /*!40000 ALTER TABLE `people` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -662,7 +951,7 @@ CREATE TABLE `users` (
   KEY `IDX_1483A5E9D60322AC` (`role_id`),
   CONSTRAINT `FK_1483A5E9D60322AC` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -671,7 +960,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,26,3,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','admin',1,'2019-09-03 13:49:21','2019-09-03 10:26:09'),(2,32,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','lyvia',1,NULL,'2019-09-03 10:26:09'),(3,33,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','sternberg',1,NULL,'2019-09-03 10:26:10'),(4,34,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','graciela',1,NULL,'2019-09-03 10:26:10'),(5,35,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','susan',1,NULL,'2019-09-03 10:26:10'),(6,36,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','mylie',1,NULL,'2019-09-03 10:26:10'),(7,37,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','amy',1,NULL,'2019-09-03 10:26:10'),(8,38,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','esmeralda',1,NULL,'2019-09-03 10:26:10'),(9,39,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','zack',1,NULL,'2019-09-03 10:26:10'),(10,40,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','ting',1,NULL,'2019-09-03 10:26:10'),(11,41,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','wes',1,NULL,'2019-09-03 10:26:10'),(12,45,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','hoyt',1,NULL,'2019-09-03 13:51:30'),(13,46,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','deedee',1,NULL,'2019-09-03 13:52:24'),(14,47,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','carmen',1,NULL,'2019-09-03 13:53:33'),(15,48,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','serena',1,NULL,'2019-09-03 13:55:15'),(16,49,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','charlie',1,NULL,'2019-09-03 13:56:14'),(17,50,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','allen',1,NULL,'2019-09-03 14:26:57'),(18,51,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','iris',1,NULL,'2019-09-03 14:30:21'),(19,52,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','herbie',1,NULL,'2019-09-03 14:31:55'),(20,53,1,'$2y$10$UlDcmYoB37nXfi3RC21h8ubtp.OO3/W7h/LT40B2FxfPQE6bmqlrC','ronald',1,NULL,'2019-09-03 14:33:14');
+INSERT INTO `users` VALUES (1,26,3,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','admin',1,'2019-09-04 11:03:54','2019-09-03 10:26:09'),(2,32,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','lyvia',1,NULL,'2019-09-03 10:26:09'),(3,33,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','sternberg',1,NULL,'2019-09-03 10:26:10'),(4,34,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','graciela',1,NULL,'2019-09-03 10:26:10'),(5,35,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','susan',1,NULL,'2019-09-03 10:26:10'),(6,36,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','mylie',1,NULL,'2019-09-03 10:26:10'),(7,37,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','amy',1,NULL,'2019-09-03 10:26:10'),(8,38,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','esmeralda',1,NULL,'2019-09-03 10:26:10'),(9,39,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','zack',1,NULL,'2019-09-03 10:26:10'),(10,40,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','ting',1,NULL,'2019-09-03 10:26:10'),(11,41,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','wes',1,NULL,'2019-09-03 10:26:10'),(12,45,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','hoyt',1,NULL,'2019-09-03 13:51:30'),(13,46,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','deedee',1,NULL,'2019-09-03 13:52:24'),(14,47,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','carmen',1,NULL,'2019-09-03 13:53:33'),(15,48,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','serena',1,NULL,'2019-09-03 13:55:15'),(16,49,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','charlie',1,NULL,'2019-09-03 13:56:14'),(17,50,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','allen',1,NULL,'2019-09-03 14:26:57'),(18,51,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','iris',1,NULL,'2019-09-03 14:30:21'),(19,52,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','herbie',1,NULL,'2019-09-03 14:31:55'),(20,53,1,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','ronald',1,NULL,'2019-09-03 14:33:14'),(21,54,2,'$2y$10$G7yNKmteeId2JO0eK3vb/e/jdScyr.bqVthCj8UEwVuIhYmU/B.Pq','angel',1,NULL,'2019-09-04 11:09:03');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -745,4 +1034,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-03 15:12:47
+-- Dump completed on 2019-09-04 11:12:35
