@@ -1,8 +1,36 @@
 #!/usr/bin/env php
 <?php
 /*
+INSERT INTO people (hat_id, email, lastname, firstname, discr, active)
+    VALUES (3,'van_eyck@awesomepainters.com','van Eyeck','Jan', 'interpreter', 1 );
+
+INSERT INTO interpreters (id,comments,address1,address2,city,state,zip,country) VALUES (last_insert_id(),'','','','','','','');
+INSERT INTO interpreters_languages VALUES (last_insert_id(),(SELECT id FROM languages WHERE name = 'Dutch'),2);
 
 */
+*// to be continued...
+$interpreters = [
+    'Bengali' => ['Rakshit','Haimanti','haimanti@rakshit.com'],
+    "Burmese"=>['Aye','Kyi','aye.kyi@example.org'],
+    "Farsi"=>["Qa'ani",'Habibollah','habibollah@example.org'],
+    "Fulani"=>['dan Fodio','Usman','usman@example.org'],
+    "Ga"=>[],
+    "Georgian"=>[],
+    "Korean"=>[],
+    "Lithuanian"=>[],
+    "Mandingo"=>[],
+    "Pashto"=>[],
+    "Punjabi"=>[],
+    "Romanian"=>[],
+    "Sinhala"=>[],
+    "Somali"=>[],
+    "Taishanese"=>[],
+    "Turkish"=>[],
+    "Twi"=>[],
+    "Ukrainian"=>[],
+    "Urdu"=>[],
+    "Yoruba"=>[],
+];
 $sql = 'INSERT INTO event_types (SELECT * FROM office.event_types WHERE id IN (13,15,18,19,20,23,24,26,30,36,50,51,5))';
 require __DIR__.'/../../vendor/autoload.php';
 if (!isset($argv[1])) {
