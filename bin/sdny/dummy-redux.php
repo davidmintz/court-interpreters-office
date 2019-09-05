@@ -24,7 +24,7 @@ try {
 } catch (\Exception $e) {
     exit("connection failed. ".$e->getMessage() . "\n");
 }
-
+$event_id_map = [];
 $dummy_judge_ids = $pdo_dummy->query('SELECT id from judges')->fetchAll(PDO::FETCH_COLUMN);
 $number_of_judges = count($dummy_judge_ids);
 //echo $number_of_judges,"\n";exit();
@@ -94,11 +94,9 @@ VALUES
     :deleted)');
 
 $str_judge_ids = implode(',',$judge_ids);
-// $str_event_type_ids = implode(',',array_keys($event_types));
-// exit($str_event_type_ids);
+
 /*
-print_r($dummy_types); exit;
-[appt/subst of counsel] => 52
+   [appt/subst of counsel] => 52
    [arraignment] => 6
    [atty/client interview] => 2
    [bail hearing] => 9
@@ -165,8 +163,10 @@ $event_select =
     LEFT JOIN locations aj_locations ON aj.default_location_id = aj_locations.id
     JOIN languages l ON e.language_id = l.id
     JOIN $dummy_database.languages dummy_langs ON dummy_langs.name = l.name
+
     WHERE e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
-    AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate' AND aj_locations.name = '5A'))
+    AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate'
+        AND aj_locations.name = '5A'))
     AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
     AND e.docket <> '' ORDER BY e.created";
 
@@ -278,7 +278,6 @@ while ($e = $stmt->fetch()) {
             $params['submitter_id'] = $submitter_map[$e->submitter_id];
             // echo "already have: ";
             // var_dump($params['submitter_id']);
-
         } else {
             if ($e->creator_person_id == $e->submitter_id) {
                 $get_random_office_user->execute(['hat_id'=>$e->creator_hat_id]);
@@ -302,21 +301,22 @@ while ($e = $stmt->fetch()) {
             $params['submitter_id'] = $submitter_map[$e->submitter_id];
         }
     }
-
     if (!$params['anonymous_submitter_id'] and !$params['submitter_id']) {
-        printf("\nshit: %s\n data: %s",print_r($params,true),print_r($e,true));
+        printf("\nshit! no submitter or anon_submitter. params : %s\n data: %s",
+            print_r($params,true),print_r($e,true));
         exit;
     }
     try {
         $event_insert->execute($params);
-        printf("inserted %d of %d\r",++$i,$count);
+        $event_id_map[$e->id] = $pdo_dummy->query('SELECT last_insert_id()')->fetch(PDO::FETCH_COLUMN);
+        printf("inserted %d of %d event records\r",++$i,$count);
     } catch (\Exception $ex) {
-        print_r($submitter_map);
         exit("fuck: ".$ex->getMessage()
             ."\nparameters: ".print_r($params,true)
             ."\ndata: ".print_r($e,true)
         );
     }
+
 }
 
 function insert_fake_interpreters(Array $interpreters) {
@@ -380,6 +380,25 @@ function insert_fake_interpreters(Array $interpreters) {
 
         */
     }
+    $interpreter_map = [];
+    //$ie_insert = $pdo_dummy
+    $ie_query = $pdo_source->prepare(
+        "SELECT ie.* FROM interpreters_events ie  JOIN events e ON ie.event_id = e.id
+        JOIN event_types t ON t.id = e.event_type_id
+        LEFT JOIN anonymous_judges aj ON e.anonymous_judge_id = aj.id
+        LEFT JOIN locations aj_locations ON aj.default_location_id = aj_locations.id
+        WHERE e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
+        AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate'
+            AND aj_locations.name = '5A'))
+        AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
+        AND e.docket <> '' ORDER BY e.created"
+    );
+    $ie_query->execute();
+
+    // to be continued
+
+
+
 
 }
 
