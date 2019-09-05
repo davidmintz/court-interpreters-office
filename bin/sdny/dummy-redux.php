@@ -137,7 +137,6 @@ $event_select =
     creator_p.id creator_person_id,
     modifier_hat.id modifier_hat_id,
     loc_type.id location_type_id
-
     FROM events e
     JOIN event_types t ON t.id = e.event_type_id
     JOIN event_categories tc ON t.category_id = tc.id
@@ -145,16 +144,12 @@ $event_select =
     JOIN roles creator_role on creator_role.id = creator.role_id
     JOIN people creator_p ON creator_p.id = creator.person_id
     JOIN hats creator_hat ON creator_hat.id = creator_p.hat_id
-
     LEFT JOIN locations loc ON e.location_id = loc.id
     LEFT JOIN location_types loc_type ON loc.type_id = loc_type.id
-
     JOIN users modifier ON e.modified_by_id = modifier.id
     JOIN roles modifier_role on modifier_role.id = modifier.role_id
     JOIN people modifier_p ON modifier_p.id = modifier.person_id
     JOIN hats modifier_hat ON modifier_hat.id = modifier_p.hat_id
-
-
     LEFT JOIN hats anon_submitter ON anon_submitter.id = e.anonymous_submitter_id
     LEFT JOIN people submitter ON e.submitter_id = submitter.id
     LEFT JOIN hats submitter_hat ON submitter.hat_id = submitter_hat.id
@@ -307,8 +302,8 @@ while ($e = $stmt->fetch()) {
         exit;
     }
     try {
-        $event_insert->execute($params);
-        $event_id_map[$e->id] = $pdo_dummy->query('SELECT last_insert_id()')->fetch(PDO::FETCH_COLUMN);
+        // $event_insert->execute($params);
+        // $event_id_map[$e->id] = $pdo_dummy->query('SELECT last_insert_id()')->fetch(PDO::FETCH_COLUMN);
         printf("inserted %d of %d event records\r",++$i,$count);
     } catch (\Exception $ex) {
         exit("fuck: ".$ex->getMessage()
@@ -318,6 +313,34 @@ while ($e = $stmt->fetch()) {
     }
 
 }
+echo "\n\n";
+$interpreter_map = [];
+//$ie_insert = $pdo_dummy
+$ie_query = $pdo_source->prepare(
+    "SELECT ie.*, e.language_id, l.name language
+    FROM interpreters_events ie
+    JOIN events e ON ie.event_id = e.id
+    JOIN languages l ON e.language_id = l.id
+    JOIN event_types t ON t.id = e.event_type_id
+    JOIN $dummy_database.languages dummy_langs ON dummy_langs.name = l.name
+    LEFT JOIN anonymous_judges aj ON e.anonymous_judge_id = aj.id
+    LEFT JOIN locations aj_locations ON aj.default_location_id = aj_locations.id
+    WHERE e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
+    AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate'
+        AND aj_locations.name = '5A'))
+    AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
+    AND e.docket <> '' ORDER BY e.created"
+);
+$ie_query->execute();
+$count = $ie_query->rowCount();
+$n = 0;
+while ($ie = $ie_query->fetch()) {
+    printf("doing %d of $count ie records\r",++$n);
+}
+echo "\n";
+// to be continued
+// Krivola, Nina
+
 
 function insert_fake_interpreters(Array $interpreters) {
     global $pdo_dummy;
@@ -380,26 +403,6 @@ function insert_fake_interpreters(Array $interpreters) {
 
         */
     }
-    $interpreter_map = [];
-    //$ie_insert = $pdo_dummy
-    $ie_query = $pdo_source->prepare(
-        "SELECT ie.* FROM interpreters_events ie  JOIN events e ON ie.event_id = e.id
-        JOIN event_types t ON t.id = e.event_type_id
-        LEFT JOIN anonymous_judges aj ON e.anonymous_judge_id = aj.id
-        LEFT JOIN locations aj_locations ON aj.default_location_id = aj_locations.id
-        WHERE e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
-        AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate'
-            AND aj_locations.name = '5A'))
-        AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
-        AND e.docket <> '' ORDER BY e.created"
-    );
-    $ie_query->execute();
-
-    // to be continued
-
-
-
-
 }
 
 exit(0);
