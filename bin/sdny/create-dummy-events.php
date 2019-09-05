@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 require __DIR__.'/../../vendor/autoload.php';
+use Zend\Log\Logger;
+use Zend\Log\Writer\Stream as FileWriter;
+$log = new Logger();
+$log->addWriter(new FileWriter(__DIR__.'/log.dummy-data'));
 
 if (!isset($argv[1])) {
     exit(sprintf("usage: %s <target-dummy-database> [source-database]\n",basename(__FILE__)));
@@ -9,7 +13,7 @@ if (!isset($argv[1])) {
 }
 $source_database = isset($argv[2]) ? $argv[2] : 'office';
 
-// echo "using target database '$dummy_database', importing from '$source_database'\n";
+// echo  "using target database '$dummy_database', importing from '$source_database'\n";
 // echo "connecting...\n";
 
 $config_file = getenv('HOME').'/.my.cnf';
@@ -24,10 +28,12 @@ try {
 } catch (\Exception $e) {
     exit("connection failed. ".$e->getMessage() . "\n");
 }
+
+
 $event_id_map = [];
 $dummy_judge_ids = $pdo_dummy->query('SELECT id from judges')->fetchAll(PDO::FETCH_COLUMN);
 $number_of_judges = count($dummy_judge_ids);
-//echo $number_of_judges,"\n";exit();
+
 // select our $number_of_judges most popular judges
 $judge_query = "SELECT j.id, j.lastname, COUNT(e.id) events
 FROM people j JOIN events e ON e.judge_id = j.id JOIN languages l ON e.language_id = l.id
@@ -36,17 +42,14 @@ WHERE docket <> '' AND e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
 GROUP BY j.id ORDER BY events desc limit $number_of_judges";
 $judge_ids = $pdo_source->query($judge_query)->fetchAll(PDO::FETCH_COLUMN);
 $judge_map = array_combine($judge_ids,$dummy_judge_ids);
-//print_r($judge_ids); exit();
-$dummy_langs = $pdo_dummy->query('SELECT name, id from languages')->fetchAll(PDO::FETCH_KEY_PAIR);
 
+$dummy_langs = $pdo_dummy->query('SELECT name, id from languages')->fetchAll(PDO::FETCH_KEY_PAIR);
 $event_types = $pdo_dummy->query('select et.id dummy_id, et.name dummy_name, oet.id o_id from event_types et JOIN office.event_types oet ON et.name = oet.name order by o_id')
     ->fetchAll(PDO::FETCH_ASSOC);
-//print_r($event_types);//exit();
 $type_map = array_combine(
     array_column($event_types, 'o_id'),
     array_column($event_types, 'dummy_id')
 );
-//print_r($type_map);
 $event_insert = $pdo_dummy->prepare(
 'INSERT INTO events (
     language_id,
@@ -216,7 +219,7 @@ while ($e = $stmt->fetch()) {
     }
     if (!isset($type_map[$e->event_type_id])) {
         print_r($e);
-        exit("can't figure out event type mapping for $e->event_type");
+        exit("\ncan't figure out event type mapping for $e->event_type\n");
     }
     $params = ['language_id' => $e->dummy_lang_id];
     $params['event_type_id'] = $type_map[$e->event_type_id];
@@ -271,8 +274,6 @@ while ($e = $stmt->fetch()) {
     } else {
         if (isset($submitter_map[$e->submitter_id])) {
             $params['submitter_id'] = $submitter_map[$e->submitter_id];
-            // echo "already have: ";
-            // var_dump($params['submitter_id']);
         } else {
             if ($e->creator_person_id == $e->submitter_id) {
                 $get_random_office_user->execute(['hat_id'=>$e->creator_hat_id]);
@@ -299,11 +300,11 @@ while ($e = $stmt->fetch()) {
     if (!$params['anonymous_submitter_id'] and !$params['submitter_id']) {
         printf("\nshit! no submitter or anon_submitter. params : %s\n data: %s",
             print_r($params,true),print_r($e,true));
-        exit;
+        exit(1);
     }
     try {
-        // $event_insert->execute($params);
-        // $event_id_map[$e->id] = $pdo_dummy->query('SELECT last_insert_id()')->fetch(PDO::FETCH_COLUMN);
+        $event_insert->execute($params);
+        $event_id_map[$e->id] = $pdo_dummy->query('SELECT last_insert_id()')->fetch(PDO::FETCH_COLUMN);
         printf("inserted %d of %d event records\r",++$i,$count);
     } catch (\Exception $ex) {
         exit("fuck: ".$ex->getMessage()
@@ -313,9 +314,9 @@ while ($e = $stmt->fetch()) {
     }
 
 }
-echo "\n\n";
-$interpreter_map = [];
-//$ie_insert = $pdo_dummy
+file_put_contents('event-map.json',json_encode($event_id_map));
+echo "\n";
+//==================================================================//
 $ie_query = $pdo_source->prepare(
     "SELECT ie.*, e.language_id, l.name language
     FROM interpreters_events ie
@@ -329,21 +330,105 @@ $ie_query = $pdo_source->prepare(
     AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate'
         AND aj_locations.name = '5A'))
     AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
-    AND e.docket <> '' ORDER BY e.created"
+    AND e.docket <> '' ORDER BY ie.event_id, ie.interpreter_id"
 );
 $ie_query->execute();
 $count = $ie_query->rowCount();
 $n = 0;
-while ($ie = $ie_query->fetch()) {
-    printf("doing %d of $count ie records\r",++$n);
+$interpreter_query = $pdo_dummy->query(
+    'SELECT il.*, l.name language, i.lastname FROM interpreters_languages il
+    JOIN languages l ON il.language_id = l.id
+    JOIN people i ON i.id = il.interpreter_id'
+);
+$dummy_interpreters = [];
+while ($data = $interpreter_query->fetch()) {
+    if (isset($dummy_interpreters[$data->language])) {
+        $dummy_interpreters[$data->language][] = $data->interpreter_id;
+    } else {
+        $dummy_interpreters[$data->language] = [$data->interpreter_id];
+    }
 }
-echo "\n";
-// to be continued
-// Krivola, Nina
+$ie_insert = $pdo_dummy->prepare(
+    'INSERT INTO interpreters_events (interpreter_id,event_id,created,created_by_id)
+    VALUES (:interpreter_id,:event_id,:created,:created_by_id)'
+);
+$interpreter_map = [];
+$previous = null;
+$failed = 0;
+$bailed = 0;
+while ($ie = $ie_query->fetch()) {
+    $params = [];
+    if (!isset($interpreter_map[$ie->interpreter_id])) {
+        $index = array_rand($dummy_interpreters[$ie->language]);
+        $interpreter_map[$ie->interpreter_id] = $dummy_interpreters[$ie->language][$index];
+    }
+    $params['interpreter_id'] = $interpreter_map[$ie->interpreter_id];
+    $params['event_id'] =$event_id_map[$ie->event_id];
+    $params['created_by_id'] = $user_id_map[$ie->created_by_id];
+    $params['created'] = $ie->created;
+    if ($previous == [$params['event_id'],$params['interpreter_id']]) {
+        // try again
+        $log->debug("trying to avoid duplicate entry error",$params);
+        $number_of_interpreters = count($dummy_interpreters[$ie->language]);
+        if ($number_of_interpreters == 1) {
+            $log->warn("do we need another $ie->language interpreter?",['data'=>$ie,'params'=>$params]);
+            continue;
+        } else {
+            $attempts = 0;
+            while ($params['interpreter_id']  == $previous[1]) {
+                $log->debug("looking for another $ie->language interpreter");
+                $index = array_rand($dummy_interpreters[$ie->language]);
+                $params['interpreter_id'] = $dummy_interpreters[$ie->language][$index];
+                if (++$attempts > 10) {
+                    $log->warn("infinite loop? giving up on dummy {$event_id_map[$ie->event_id]}, event $ie->event_id");
+                    $bailed++;
+                    continue 2;
+                }
+            }
+        }
+    }
+    try {
+        $ie_insert->execute($params);
+        $previous = [$params['event_id'],$params['interpreter_id']];
+        printf("inserted %d of $count ie records\r",++$n);
+    } catch (\PDOException $x) {
+        // one more try
+        if (empty($one_more)) {
+            $one_more = $pdo_dummy->prepare(
+                'SELECT i.id FROM interpreters i JOIN interpreters_languages il ON i.id = il.interpreter_id
+                JOIN languages l ON l.id = il.language_id WHERE l.name = :language AND i.id NOT IN
+                (SELECT interpreter_id FROM interpreters_events WHERE event_id = :event_id)
+                ORDER BY RAND() LIMIT 1');    // LEFT JOIN ...WHERE x IS NULL would work too
+        }
+        $one_more->execute(['language'=>$ie->language,'event_id'=>$params['event_id']]);
+        $id = $one_more->fetch(PDO::FETCH_COLUMN);
+        if ($id) {
+            $params['interpreter_id'] = $id;
+            try {
+                $ie_insert->execute($params);
+                $previous = [$params['event_id'],$params['interpreter_id']];
+                printf("inserted %d of $count ie records\r",++$n);
 
+            } catch (\PDOException $z) {
+                $log->warn("more bad news: ". $z->getMessage());
+            }
+        } else {
+            $log->err($x->getMessage(),['data'=>$ie,'params'=>$params]);
+            $failed++;
+            continue;
+        }
+        //exit("\n");
+    }
+}
+echo "\ncompleted $n of $count. $failed failed, $bailed bailed\n";
+if ($n == $count) {
+    //unlink('./event-map.json');
+}
+
+exit(0);
 
 function insert_fake_interpreters(Array $interpreters) {
-    global $pdo_dummy;
+    global $pdo_dummy,$dummy_langs;
     //$interpreters = [
         // 'Bengali' => ['Rakshit','Haimanti','haimanti@rakshit.com'],
         // "Burmese"=>  ['Aye','Kyi','aye.kyi@example.org'],
@@ -397,10 +482,8 @@ function insert_fake_interpreters(Array $interpreters) {
         /*
         INSERT INTO people (hat_id, email, lastname, firstname, discr, active)
             VALUES (3,'van_eyck@awesomepainters.com','van Eyeck','Jan', 'interpreter', 1 );
-
         INSERT INTO interpreters (id,comments,address1,address2,city,state,zip,country) VALUES (last_insert_id(),'','','','','','','');
         INSERT INTO interpreters_languages VALUES (last_insert_id(),(SELECT id FROM languages WHERE name = 'Dutch'),2);
-
         */
     }
 }
