@@ -168,9 +168,9 @@ $event_select =
     AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
     AND e.docket <> '' ORDER BY e.created";
 
-$stmt = $pdo_source->prepare($event_select);
-$stmt->execute();
-$count = $stmt->rowCount();
+$events_stmt = $pdo_source->prepare($event_select);
+$events_stmt->execute();
+$count = $events_stmt->rowCount();
 $submitter_map = [];
 $user_id_map = [];
 $generic_bail_id = $pdo_dummy->query('SELECT id FROM event_types WHERE name LIKE "bail%"')->fetch(PDO::FETCH_COLUMN);
@@ -200,7 +200,7 @@ $magistrate_courtroom_id = $pdo_dummy->query(
     ->fetch(PDO::FETCH_COLUMN);
 $i = 0;
 echo "\n";
-while ($e = $stmt->fetch()) {
+while ($e = $events_stmt->fetch()) {
     if (! isset($type_map[$e->event_type_id])) {
         $dummy_id = null;
         if (preg_match('/^bail/', $e->event_type)) {
@@ -304,7 +304,7 @@ while ($e = $stmt->fetch()) {
     }
     try {
         $event_insert->execute($params);
-        $event_id_map[$e->id] = $pdo_dummy->query('SELECT last_insert_id()')->fetch(PDO::FETCH_COLUMN);
+        $event_id_map[$e->id] = $pdo_dummy->lastInsertId();
         printf("inserted %d of %d event records\r",++$i,$count);
     } catch (\Exception $ex) {
         exit("fuck: ".$ex->getMessage()
@@ -312,9 +312,9 @@ while ($e = $stmt->fetch()) {
             ."\ndata: ".print_r($e,true)
         );
     }
-
 }
 file_put_contents('event-map.json',json_encode($event_id_map));
+unset($events_stmt);
 echo "\n";
 //==================================================================//
 $ie_query = $pdo_source->prepare(
@@ -425,6 +425,109 @@ if ($n == $count) {
     //unlink('./event-map.json');
 }
 
+$defts_query = $pdo_source->prepare(
+    "SELECT de.*, d.given_names, d.surnames, e.language_id, l.name language
+    FROM defendants_events de
+    JOIN events e ON de.event_id = e.id
+    JOIN defendant_names d ON d.id = de.defendant_id
+    JOIN languages l ON e.language_id = l.id
+    JOIN event_types t ON t.id = e.event_type_id
+    JOIN $dummy_database.languages dummy_langs ON dummy_langs.name = l.name
+    LEFT JOIN anonymous_judges aj ON e.anonymous_judge_id = aj.id
+    LEFT JOIN locations aj_locations ON aj.default_location_id = aj_locations.id
+    WHERE e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
+    AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate'
+        AND aj_locations.name = '5A'))
+    AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
+    AND e.docket <> '' ORDER BY de.event_id, de.defendant_id");
+
+$defts_query->execute();
+$count = $defts_query->rowCount();
+//echo "\nFUCKING $count rows?\n";
+$deft_map = [];
+$i = 0;
+echo "\n";
+$deft_event_insert = $pdo_dummy->prepare(
+    'INSERT INTO defendants_events (event_id, defendant_id)
+    VALUES (:event_id,:defendant_id)'
+);
+$deft_insert = $pdo_dummy->prepare(
+    'INSERT INTO defendant_names (surnames, given_names, language_hint)
+    VALUES (:surnames,:given_names, :language)'
+);
+$get_random_deft = $pdo_dummy->prepare(
+    'SELECT d.id FROM defendant_names d LEFT JOIN defendants_events de ON d.id = de.defendant_id
+        WHERE language_hint LIKE :language AND de.event_id IS NULL ORDER BY RAND() LIMIT 1');
+
+$get_deft_by_name = $pdo_dummy->prepare(
+    'SELECT id FROM defendant_names WHERE given_names = :given_names and surnames = :surnames');
+while($data = $defts_query->fetch()) {
+    /* TOTAL CLUSTERFUCK*/
+    //$i++;
+    //echo json_encode($data),"\n";
+    $params = [];
+    $params['event_id'] = $event_id_map[$data->event_id];
+    if (isset($deft_map[$data->defendant_id])) {
+        $params['defendant_id'] = $deft_map[$data->defendant_id];
+    } else {
+        $get_random_deft->execute(['language'=> "%{$data->language}%"]);
+        $id = $get_random_deft->fetch(PDO::FETCH_COLUMN);
+        if ($id) {
+            $params['defendant_id'] = $id;
+        } else {
+            $log->info("no luck grabbing random name, will try finding/adding fake",['data'=>$data]);
+            try {
+                $deft_insert->execute([
+                    'given_names' => $data->language,
+                    'surnames'  => 'Placeholder',
+                    'language' => $data->language,
+                ]);
+                $params['defendant_id'] = $pdo_dummy->lastInsertId();
+            } catch (\PDOException $x) {
+                $log->err('deft insert failed: '.$x->getMessage(),
+                    ['data'=>$data,'params'=>$params]);
+                // try something else
+            }
+        }
+        if (isset($params['defendant_id'])) {
+            try {
+                $deft_event_insert->execute($params);
+                $deft_map[$data->defendant_id] = $params['defendant_id'];
+                printf("inserted %d of $count deft_event records\n",++$i);
+            } catch (PDOException $x) {
+                $log->err('deft_event insert failed: '.$x->getMessage(),
+                    ['data'=>$data,'params'=>$params]);
+                if (stristr($x->getMessage(),'1062 Duplicate entry')) {
+                    $get_deft_by_name->execute(['given_names' => $data->language,
+                        'surnames'  => 'Placeholder',]);
+                    $deft_id = $get_deft_by_name->fetch(PDO::FETCH_COLUMN);
+                    if ($deft_id) {
+                        $params['deft_id'] = $deft_id;
+                        try {
+                            $deft_event_insert->execute($params);
+                            $deft_map[$data->defendant_id] = $params['defendant_id'];
+                            printf("inserted %d of $count deft_event records\n",++$i);
+                        }  catch (PDOException $x) {
+                            $log->err('deft_event insert failed AGAIN: '.$x->getMessage(),
+                                ['data'=>$data,'params'=>$params]);
+                        }
+                    } else {
+                        $log->warn("deft-event insert: shit ain't working",['data'=>$data,'params'=>$params]);
+                    }
+                }
+            }
+        } else {
+            $i++;
+            $log->err(
+                "could not set a defendant id at iteration $i",
+                ['data'=>$data,'params'=>$params]
+            );
+        }
+    }
+
+
+}
+
 exit(0);
 
 function insert_fake_interpreters(Array $interpreters) {
@@ -487,5 +590,23 @@ function insert_fake_interpreters(Array $interpreters) {
         */
     }
 }
+
+unset($ie_query);
+
+$defts_query = $pdo_source->prepare(
+    "SELECT de.*, d.given_names, d.surnames, e.language_id, l.name language
+    FROM defendants_events de
+    JOIN events e ON de.event_id = e.id
+    JOIN defendant_names d ON d.id = de.defendant_id
+    JOIN languages l ON e.language_id = l.id
+    JOIN event_types t ON t.id = e.event_type_id
+    JOIN $dummy_database.languages dummy_langs ON dummy_langs.name = l.name
+    LEFT JOIN anonymous_judges aj ON e.anonymous_judge_id = aj.id
+    LEFT JOIN locations aj_locations ON aj.default_location_id = aj_locations.id
+    WHERE e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
+    AND (e.judge_id IN ($str_judge_ids) OR (aj.name = 'magistrate'
+        AND aj_locations.name = '5A'))
+    AND t.name NOT REGEXP 'civil$|^telephone |^agents|atty/other|unspecified|settlement|^sight|court staff|^AUSA'
+    AND e.docket <> '' ORDER BY ie.event_id, ie.interpreter_id");
 
 exit(0);
