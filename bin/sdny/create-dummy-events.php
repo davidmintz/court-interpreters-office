@@ -42,7 +42,7 @@ WHERE docket <> '' AND e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
 GROUP BY j.id ORDER BY events desc limit $number_of_judges";
 $judge_ids = $pdo_source->query($judge_query)->fetchAll(PDO::FETCH_COLUMN);
 $judge_map = array_combine($judge_ids,$dummy_judge_ids);
-
+file_put_contents(__DIR__.'/judge-map.json',json_encode($judge_ids));
 $dummy_langs = $pdo_dummy->query('SELECT name, id from languages')->fetchAll(PDO::FETCH_KEY_PAIR);
 $event_types = $pdo_dummy->query('select et.id dummy_id, et.name dummy_name, oet.id o_id from event_types et JOIN office.event_types oet ON et.name = oet.name order by o_id')
     ->fetchAll(PDO::FETCH_ASSOC);
@@ -314,7 +314,7 @@ while ($e = $events_stmt->fetch()) {
         );
     }
 }
-file_put_contents('event-map.json',json_encode($event_id_map));
+file_put_contents(__DIR__.'/event-map.json',json_encode($event_id_map));
 unset($events_stmt);
 echo "\n";
 //==================================================================//
@@ -421,11 +421,7 @@ while ($ie = $ie_query->fetch()) {
     }
 }
 echo "\ncompleted $n of $count. $failed failed, $bailed bailed\n";
-unset($ie_query);
-
-if ($n == $count) {
-    //unlink('./event-map.json');
-}
+exit(0);
 
 // figure out number of defts per event
 $n_deft_q = $pdo_source->prepare("select e.id event_id,
@@ -447,6 +443,7 @@ $n_deft_events = [];
 while ($row = $n_deft_q->fetch()) {
     $n_deft_events[$event_id_map[$row->event_id]] = $row->defts;
 }
+
 $deft_insert = $pdo_dummy->prepare(
 'INSERT INTO defendants_names (surnames, given_names,language_hint)
 VALUES (:surnames, :given_names, :hint)');
