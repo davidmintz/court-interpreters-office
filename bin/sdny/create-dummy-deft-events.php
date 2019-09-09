@@ -111,7 +111,7 @@ while($row = $events_q->fetch()) {
                 $inserts++;
             }
         } else {
-            printf("need $names_needed, but we have cached: %d\n",$names_found);
+            //printf("need $names_needed, but we have cached: %d\n",$names_found);
             $get_defts_by_language->execute(['hint'=>$row->language,]);
             $more_ids = $get_defts_by_language->fetchAll(PDO::FETCH_COLUMN);
             // Compares array1 against one or more other arrays and
@@ -166,4 +166,5 @@ while($row = $events_q->fetch()) {
         $docket_language_cache[$key] = $cache;
     }
     printf("inserted $inserts, skipped $skipped of $total\r");
+    file_put_contents(__DIR__.'/docket-language-defts.json',json_encode($docket_language_cache));
 }

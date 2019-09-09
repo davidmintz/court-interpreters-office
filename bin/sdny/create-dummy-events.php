@@ -42,7 +42,7 @@ WHERE docket <> '' AND e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
 GROUP BY j.id ORDER BY events desc limit $number_of_judges";
 $judge_ids = $pdo_source->query($judge_query)->fetchAll(PDO::FETCH_COLUMN);
 $judge_map = array_combine($judge_ids,$dummy_judge_ids);
-file_put_contents(__DIR__.'/judge-map.json',json_encode($judge_ids));
+file_put_contents(__DIR__.'/judge-map.json',json_encode($judge_map));
 $dummy_langs = $pdo_dummy->query('SELECT name, id from languages')->fetchAll(PDO::FETCH_KEY_PAIR);
 $event_types = $pdo_dummy->query('select et.id dummy_id, et.name dummy_name, oet.id o_id from event_types et JOIN office.event_types oet ON et.name = oet.name order by o_id')
     ->fetchAll(PDO::FETCH_ASSOC);
@@ -315,6 +315,8 @@ while ($e = $events_stmt->fetch()) {
     }
 }
 file_put_contents(__DIR__.'/event-map.json',json_encode($event_id_map));
+file_put_contents(__DIR__.'/user-map.json',json_encode($user_id_map));
+file_put_contents(__DIR__.'/submitter-map.json',json_encode($submitter_map));
 unset($events_stmt);
 echo "\n";
 //==================================================================//
