@@ -100,6 +100,7 @@ while($row = $events_q->fetch()) {
     if (key_exists($key, $docket_language_cache)) {
         //printf("we have $key: %s\n",print_r($docket_language_cache[$key],true));
         $ids = $docket_language_cache[$key];
+        shuffle($ids);
         $names_found = count($ids);
         //printf("need $names_needed, we have cached %d\n",$names_found);
         if ($names_found >= $names_needed) {
@@ -110,14 +111,38 @@ while($row = $events_q->fetch()) {
                 $inserts++;
             }
         } else {
-            printf("used cache, still short by %s names\n",$names_needed - $names_found);
+            printf("need $names_needed, but we have cached: %d\n",$names_found);
+            $get_defts_by_language->execute(['hint'=>$row->language,]);
+            $more_ids = $get_defts_by_language->fetchAll(PDO::FETCH_COLUMN);
+            // Compares array1 against one or more other arrays and
+            // returns the values in array1 that are not present in any
+            // of the other arrays.
+            // printf("cached ids are currently: %s\n",print_r($ids,true));
+            $more_ids = array_diff($more_ids,$ids);
+            $ids = $ids + $more_ids;
+
+            if (count($ids) >= $names_needed) {
+                $cache = [];
+                $ids = array_values($ids);
+                for ($i = 0; $i < $names_needed; $i++) {
+                    $id = $ids[$i];
+                    $params = ['event_id'=>$row->event_id,'defendant_id'=>$id];
+                    $deft_event_insert->execute($params);
+                    $inserts++;
+                    $cache[] = $id;
+                }
+                $docket_language_cache[$key] = $cache;
+                // printf("and now: cached ids are currently: %s\n",print_r($cache,true));
+            } else {
+                // printf("used cache and db, still short by %s names\n", $names_needed - count($ids));
+            }
         }
 
     } else {
         $get_defts_by_language->execute(['hint'=>$row->language,]);
         $ids = $get_defts_by_language->fetchAll(PDO::FETCH_COLUMN);
         $names_found = count($ids);
-
+        $cache = [];
         // printf("found %s of %s needed for $key\n",$names_found,$names_needed);
         // print_r($ids);
         if ($names_found >= $names_needed) {
@@ -126,6 +151,7 @@ while($row = $events_q->fetch()) {
                 $params = ['event_id'=>$row->event_id,'defendant_id'=>$id];
                 $deft_event_insert->execute($params);
                 $inserts++;
+                $cache[] = $id;
             }
         } else {
             for ($i = 0; $i < $names_found; $i++) {
@@ -133,10 +159,11 @@ while($row = $events_q->fetch()) {
                 $params = ['event_id'=>$row->event_id,'defendant_id'=>$id];
                 $deft_event_insert->execute($params);
                 $inserts++;
+                $cache[] = $id;
             }
-            printf("still short by %s names\n",$names_needed - $names_found);
+            //printf("still short by %s names\n",$names_needed - $names_found);
         }
-        $docket_language_cache[$key] = $ids;
+        $docket_language_cache[$key] = $cache;
     }
-    printf("inserted $inserts, skipped $skipped of $total\n");
+    printf("inserted $inserts, skipped $skipped of $total\r");
 }
