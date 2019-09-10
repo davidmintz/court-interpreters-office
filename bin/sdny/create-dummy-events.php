@@ -29,6 +29,9 @@ try {
     exit("connection failed. ".$e->getMessage() . "\n");
 }
 
+$pdo_dummy->exec('TRUNCATE TABLE tmp_event_map');
+$tmp_event_insert = $ins = $pdo_dummy->prepare('INSERT INTO tmp_event_map VALUES (:office,:dummy)');
+
 
 $event_id_map = [];
 $dummy_judge_ids = $pdo_dummy->query('SELECT id from judges')->fetchAll(PDO::FETCH_COLUMN);
@@ -305,7 +308,9 @@ while ($e = $events_stmt->fetch()) {
     }
     try {
         $event_insert->execute($params);
-        $event_id_map[$e->id] = $pdo_dummy->lastInsertId();
+        $dummy_id = $pdo_dummy->lastInsertId();
+        $tmp_event_insert->execute(['office'=>$e->id,'dummy'=>$dummy_id]);
+        $event_id_map[$e->id] = $dummy_id;
         printf("inserted %d of %d event records\r",++$i,$count);
     } catch (\Exception $ex) {
         exit("fuck: ".$ex->getMessage()
