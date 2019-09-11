@@ -24,14 +24,14 @@ if (count($r->getInterpreters())):
     foreach($r->getInterpreters() as $i): echo $this->escapeHtml($i->getFullName()),"<br>";endforeach;
 else: ?> <em>not assigned</em> <?php endif;
  ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">comments</div><div class="col-md-10"><?php echo $r->getComments() ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">comments</div><div class="col-md-10"><?php echo $this->escapeHtml($r->getComments()) ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">submitted</div><div class="col-md-10"><?php
-    echo "{$r->getCreated()->format('d-M-Y g:i a')}  by {$r->getSubmitter()->getFullName()}, {$r->getSubmitter()->getHat()}";
+    echo $this->escapeHtml("{$r->getCreated()->format('d-M-Y g:i a')}  by {$r->getSubmitter()->getFullName()}, {$r->getSubmitter()->getHat()}");
 ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">updated</div><div class="col-md-10"><?php
     if ($r->getCreated() != $r->getModified()):
         $mod_by = $r->getModifiedBy()->getPerson();
-        echo "{$r->getModified()->format('d-M-Y g:i a')}  by {$mod_by->getFullName()}, {$mod_by->getHat()}";
+        echo $this->escapeHtml("{$r->getModified()->format('d-M-Y g:i a')}  by {$mod_by->getFullName()}, {$mod_by->getHat()}");
     else: ?>(n/a)<?php
     endif;
 ?></div>
@@ -46,7 +46,7 @@ else: ?> <em>not assigned</em> <?php endif;
             $why = $event->getCancellationReason();
             ?>cancelled<?php
             if ($why !== 'other'):
-                echo " ($why)";
+                echo $this->escapeHtml(" ($why)");
             endif;
         elseif ($event->getDate() < new \DateTime()):
             // it's in the past

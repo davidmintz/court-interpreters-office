@@ -48,7 +48,7 @@ $i = $this->interpreter;
                 endif;
                  $country = $i->getCountry();
                 if ($country && 'United States' != $country) :
-                    echo "<br>$country";
+                    echo "<br>",$this->escapeHtml($country);
                 endif;
                 ?>
                 </address>
@@ -61,7 +61,7 @@ $i = $this->interpreter;
             foreach (['mobile','office','home'] as $phone) :
                 $number = $i->{'get'.ucfirst($phone).'Phone'}();
                 ?>
-            <div class="col-2 text-md-right"><?php echo $phone ?> <span class="fas fa-phone fa-rotate-180 text-info"></span></div>
+            <div class="col-2 text-md-right"><?php echo $this->escapeHtml($phone) ?> <span class="fas fa-phone fa-rotate-180 text-info"></span></div>
             <div class="col-4"><?php echo $number ?: '<span class="text-muted">&mdash;</span>' ?></div>
                 <?php
             endforeach;
@@ -141,7 +141,7 @@ $i = $this->interpreter;
             </div>
             <div class="w-100"></div>
             <div class="col-3 text-md-right mt-2 pt-2">comments</div>
-            <div class="col-8 border mt-2 px-2 py-2" style="line-height: 120%"><?php echo $i->getComments() ?>
+            <div class="col-8 border mt-2 px-2 py-2" style="line-height: 120%"><?php echo $this->escapeHtml($i->getComments()) ?>
             </div>
             <div class="w-100"></div>
             <div class="col-12 text-center pt-2"><a id="btn-edit" href="<?php echo $this->url('interpreters/edit', ['id' => $i->getId()])?>" class="btn btn-primary">edit</a></div>
