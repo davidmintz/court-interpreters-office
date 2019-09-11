@@ -1,33 +1,32 @@
-#!/usr/bin/env php
 <?php
-require __DIR__.'/../../vendor/autoload.php';
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream as FileWriter;
-$log = new Logger();
-$log->addWriter(new FileWriter(__DIR__.'/log.dummy-data','w'));
+// require __DIR__.'/../../vendor/autoload.php';
+// use Zend\Log\Logger;
+// use Zend\Log\Writer\Stream as FileWriter;
+// $log = new Logger();
+// $log->addWriter(new FileWriter(__DIR__.'/log.dummy-data','a'));
 
-if (!isset($argv[1])) {
-    exit(sprintf("usage: %s <target-dummy-database> [source-database]\n",basename(__FILE__)));
-} else {
-    $dummy_database = $argv[1];
-}
-$source_database = isset($argv[2]) ? $argv[2] : 'office';
-
-// echo  "using target database '$dummy_database', importing from '$source_database'\n";
-// echo "connecting...\n";
-
-$config_file = getenv('HOME').'/.my.cnf';
-$config = parse_ini_file($config_file);
-try {
-    $pdo_dummy = new \PDO("mysql:host=localhost;dbname=$dummy_database",$config['user'],$config['password'],[
-        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ]);
-    $pdo_source =  new \PDO("mysql:host=localhost;dbname=$source_database",$config['user'],$config['password'],[
-        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-    ]);
-} catch (\Exception $e) {
-    exit("connection failed. ".$e->getMessage() . "\n");
-}
+// if (!isset($argv[1])) {
+//     exit(sprintf("usage: %s <target-dummy-database> [source-database]\n",basename(__FILE__)));
+// } else {
+//     $dummy_database = $argv[1];
+// }
+// $source_database = isset($argv[2]) ? $argv[2] : 'office';
+//
+// // echo  "using target database '$dummy_database', importing from '$source_database'\n";
+// // echo "connecting...\n";
+//
+// $config_file = getenv('HOME').'/.my.cnf';
+// $config = parse_ini_file($config_file);
+// try {
+//     $pdo_dummy = new \PDO("mysql:host=localhost;dbname=$dummy_database",$config['user'],$config['password'],[
+//         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
+//     ]);
+//     $pdo_source =  new \PDO("mysql:host=localhost;dbname=$source_database",$config['user'],$config['password'],[
+//         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
+//     ]);
+// } catch (\Exception $e) {
+//     exit("connection failed. ".$e->getMessage() . "\n");
+// }
 
 // we repeat ourself, but...
 $dummy_judge_ids = $pdo_dummy->query('SELECT id from judges')->fetchAll(PDO::FETCH_COLUMN);
@@ -72,16 +71,12 @@ $events_q = $pdo_dummy->prepare(
 JOIN languages l ON l.id = e.language_id ORDER BY e.date, e.id'
 );
 $events_q->execute();
-printf("You have %d events\n",  $events_q->rowCount());
-printf("You have %d elements in the array\n",  count($event_id_map));
-
-//$reverse_id_map = array_flip($event_id_map);
+// printf("You have %d events\n",  $events_q->rowCount());
+// printf("You have %d elements in the array\n",  count($event_id_map));
 $docket_language_cache = [];
 $get_defts_by_language = $pdo_dummy->prepare(
     'SELECT d.id FROM defendant_names d WHERE d.language_hint LIKE :hint ORDER BY RAND()'
 );
-// -- LEFT JOIN defendants_events de ON d.id = de.defendant_id
-// -- WHERE d.language_hint LIKE :hint AND de.event_id IS NULL ORDER BY RAND()'
 $deft_event_insert = $pdo_dummy->prepare('INSERT INTO defendants_events (event_id, defendant_id) VALUES (:event_id,:defendant_id)');
 $inserts = 0;
 $total =  count($event_id_map);
@@ -89,16 +84,13 @@ $skipped = 0;
 while($row = $events_q->fetch()) {
     // how many defts do we need?
     // our event id is $row->event_id, theirs is {$reverse_id_map[$row->event_id]}
-    // shit needs %d names\n",$n_deft_events[$row->event_id]);
     $names_needed = $n_deft_events[$row->event_id];
     if (0 == $names_needed) {
-        //echo "no deft-events, skipping event id $row->event_id\n";
         $skipped++;
         continue;
     }
     $key = "{$row->docket}-{$row->language}";
     if (key_exists($key, $docket_language_cache)) {
-        //printf("we have $key: %s\n",print_r($docket_language_cache[$key],true));
         $ids = $docket_language_cache[$key];
         shuffle($ids);
         $names_found = count($ids);
@@ -114,13 +106,9 @@ while($row = $events_q->fetch()) {
             //printf("need $names_needed, but we have cached: %d\n",$names_found);
             $get_defts_by_language->execute(['hint'=>$row->language,]);
             $more_ids = $get_defts_by_language->fetchAll(PDO::FETCH_COLUMN);
-            // Compares array1 against one or more other arrays and
-            // returns the values in array1 that are not present in any
-            // of the other arrays.
             // printf("cached ids are currently: %s\n",print_r($ids,true));
             $more_ids = array_diff($more_ids,$ids);
             $ids = $ids + $more_ids;
-
             if (count($ids) >= $names_needed) {
                 $cache = [];
                 $ids = array_values($ids);
@@ -132,9 +120,6 @@ while($row = $events_q->fetch()) {
                     $cache[] = $id;
                 }
                 $docket_language_cache[$key] = $cache;
-                // printf("and now: cached ids are currently: %s\n",print_r($cache,true));
-            } else {
-                // printf("used cache and db, still short by %s names\n", $names_needed - count($ids));
             }
         }
 
@@ -144,7 +129,6 @@ while($row = $events_q->fetch()) {
         $names_found = count($ids);
         $cache = [];
         // printf("found %s of %s needed for $key\n",$names_found,$names_needed);
-        // print_r($ids);
         if ($names_found >= $names_needed) {
             for ($i = 0; $i < $names_needed; $i++) {
                 $id = $ids[$i];
@@ -161,10 +145,12 @@ while($row = $events_q->fetch()) {
                 $inserts++;
                 $cache[] = $id;
             }
-            //printf("still short by %s names\n",$names_needed - $names_found);
+            $log->info(sprintf("still short by %s names\n",$names_needed - $names_found),['cache_key'=>$key]);
         }
         $docket_language_cache[$key] = $cache;
     }
-    printf("inserted $inserts, skipped $skipped of $total\r");
-    file_put_contents(__DIR__.'/docket-language-defts.json',json_encode($docket_language_cache));
+    printf("inserted $inserts deft-event rows, skipped $skipped for $total events\r");
 }
+file_put_contents(__DIR__.'/docket-language-defts.json',json_encode($docket_language_cache));
+
+return true;
