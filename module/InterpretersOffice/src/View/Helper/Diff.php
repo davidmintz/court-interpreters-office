@@ -79,7 +79,7 @@ class Diff extends AbstractHelper
         // as soon as possible
         if ($before[$field] == $data) {
             if (is_string($data)) {
-                return $data;
+                return $this->getView()->escapeHtml($data);
             } elseif (is_array($data)) {
                 return $field == 'interpreters' ? $this->renderInterpreters($data)
                         : $this->renderDefendants($data);
