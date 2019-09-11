@@ -19,33 +19,33 @@
                     $magistrate_default = $e['aj_default_location'];
                 endif;
                 ?>
-        <tr data-id="<?php echo $e['id']?>" class="event-category-<?php echo str_replace(' ', '-', $e['category']) ?><?php
+        <tr data-id="<?php echo $e['id'] ?>" class="event-category-<?php echo str_replace(' ', '-', $e['category']) ?><?php
         if ($e['cancellation']) :
             echo " event-cancelled" ;
         endif;?>">
-            <td class="text-right text-nowrap"><?php echo $e['time'] ? $e['time']->format('g:i a') : ''?></td>
-            <td class="border-right-0"><!--  style="line-height:1.2em" class="py-2 clearfix" -->
+            <td class="text-right text-nowrap"><?php echo $this->escapeHtml($e['time'] ? $e['time']->format('g:i a') : '') ?></td>
+            <td class="border-right-0">
                 <a data-toggle="tooltip" data-container="#schedule-table" title="view event details" href="<?php echo $this->url('events/view', ['id' => $e['id']]);?>"><?php
                     echo $e['type']; ?><?php
                 if ($e['location_type'] == 'jail' or ($e['location'] && $e['category'] == "not applicable")) :
-                    ?><br><span class="text-muted"><?php echo $e['location'];?></span><?php
+                    ?><br><span class="text-muted"><?php echo $this->escapeHtml($e['location']); ?></span><?php
                 endif;
                 ?></a>
             </td>
             <td class="border-left-0"><a class="link-edit-event" href="<?php echo $this->url('events/edit', ['id' => $e['id']]) ?>">
                 <span data-toggle="tooltip" data-container="#schedule-table" title="edit this event" class="fas fa-edit"></span><span class="sr-only">edit this event</span>
             </a></td>
-            <td class="text-nowrap"><?php echo $e['judge'];
+            <td class="text-nowrap"><?php echo $this->escapeHtml($e['judge']);
             if (($e['category'] == "in" or 'magistrate' == $e['judge'])) :
                  $location = $e['location'] ?: $e['aj_default_location'];
                  if ($location && $e['parent_location']): $location .= ", {$e['parent_location']}"; endif;
-                ?><br><span class="text-muted"><?php echo $location ;?></span><?php
+                ?><br><span class="text-muted"><?php echo $this->escapeHtml($location) ;?></span><?php
             endif;
             ?></td>
-            <td><?php echo $e['language']?></td>
-            <td class="text-nowrap d-none d-lg-table-cell"><?php echo substr($e['docket'], 2)?></td>
+            <td><?php echo $this->escapeHtml($e['language']) ?></td>
+            <td class="text-nowrap d-none d-lg-table-cell"><?php echo $this->escapeHtml(substr($e['docket'], 2))?></td>
             <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
-            <td class="d-none d-lg-table-cell"style="line-height: 1.2em; font-size: 95%"><?php echo $e['comments']?></td>
+            <td class="d-none d-lg-table-cell" style="line-height: 1.2em; font-size: 95%"><?php echo $this->escapeHtml($e['comments']) ?></td>
             <td data-language_id="<?php echo $e['language_id']?>" class="interpreters-assigned text-nowrap border-right-0"><?php echo $this->interpreters($e['id'])?></td>
             <td class="border-left-0">
                 <a class="edit-interpreters" data-toggle="tooltip"  title="add/remove interpreters" data-container="#schedule-table" role="button" href="#"><span class="fas fa-edit"></span></a></td>
@@ -53,7 +53,7 @@
     <?php endforeach;  // data-container="tr[data-id=<?php echo $e['id']]..."
         else :
         ?><tr><td colspan="9" class="text-center py-4 px-4 no-events">
-        <div class="alert alert-info mx-auto">no events scheduled for this date and language criterion.</div>
+        <div class="alert alert-info mx-auto">no events scheduled on this date for this language criterion.</div>
     </td></tr><?php
         endif;?>
     </tbody>
