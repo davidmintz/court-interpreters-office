@@ -42,7 +42,7 @@ $(function(){
             self.hide().siblings().not(":first-of-type").slideUp(
                 function(){self.siblings("a.expand-deftnames").show();}
             );
-            });
+        });
 
         $("#btn-confirm-cancellation").on("click",function(){
             console.warn("cancelling shit");
