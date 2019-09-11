@@ -74,21 +74,21 @@ if (!$this->before):?>
         type
     </div>
     <div class="col-sm-3 pl-0  event_type">
-        <?php echo $this->event['type']; ?>
+        <?php echo $this->escapeHtml($this->event['type']); ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         language
     </div>
     <div class="col-sm-3 pl-0 language">
-        <?php echo $this->event['language']?>
+        <?php echo $this->escapeHtml($this->event['language'])?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         judge
     </div>
     <div class="col-sm-3 pl-0 judge"<?php if ($event['judge_lastname']) : ?> data-judge_lastname="<?php echo $this->escapeHtml($event['judge_lastname'])?>"<?php endif; ?>>
-        <?php echo $this->event['judge'];
+        <?php echo $this->escapeHtml($this->event['judge']);
         if ($event['aj_default_location']) :
-            ?> <span class="text-muted"><?php echo $event['aj_default_location']?></span><?php
+            ?> <span class="text-muted"><?php echo $this->escapeHtml($event['aj_default_location']) ?></span><?php
         endif; ?>
     </div>
     <div class="col-sm-3  text-muted text-md-right">
@@ -110,7 +110,7 @@ if (!$this->before):?>
         docket
     </div>
     <div class="col-sm-3 pl-0 docket">
-        <?php echo $this->event['docket'] ?>
+        <?php echo $this->escapeHtml($this->event['docket']) ?>
     </div>
     <div class="col-sm-3  text-muted text-md-right">
         interpreters
@@ -131,7 +131,7 @@ if (!$this->before):?>
         <?php if ($event['request_id']):?>* <?php endif ?>request by
     </div>
     <div class="col-sm-3 pl-0 submitter" data-id="<?php echo $event['submitter_id']?>"><span class="avoidwrap">
-        <?php echo $event['submitter'] ;
+        <?php echo $this->escapeHtml($event['submitter']) ;
         ?><?php
     if ($event['submitter_hat']) :
     ?>,</span> <span class="avoidwrap"><?php
@@ -153,7 +153,7 @@ if (!$this->before):?>
         created
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $event['created']->format('d-M-Y g:i a'), " ({$event['created_by']})"; ?>
+        <?php echo $this->escapeHtml($event['created']->format('d-M-Y g:i a'), " ({$event['created_by']})"); ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         last updated
@@ -161,7 +161,7 @@ if (!$this->before):?>
     <div class="col-sm-3 pl-0 last-modified">
         <?php
         echo $event['created'] != $event['last_updated'] ?
-        "{$this->event['last_updated']->format('d-M-Y g:i a')}<br>({$event['last_updated_by']})"
+        $this->escapeHtml("{$this->event['last_updated']->format('d-M-Y g:i a')}<br>({$event['last_updated_by']})")
         : '<span class="text-muted">n/a</span>';
         ?>
     </div>
