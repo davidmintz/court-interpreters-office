@@ -1,32 +1,4 @@
 <?php
-// require __DIR__.'/../../vendor/autoload.php';
-// use Zend\Log\Logger;
-// use Zend\Log\Writer\Stream as FileWriter;
-// $log = new Logger();
-// $log->addWriter(new FileWriter(__DIR__.'/log.dummy-data','a'));
-
-// if (!isset($argv[1])) {
-//     exit(sprintf("usage: %s <target-dummy-database> [source-database]\n",basename(__FILE__)));
-// } else {
-//     $dummy_database = $argv[1];
-// }
-// $source_database = isset($argv[2]) ? $argv[2] : 'office';
-//
-// // echo  "using target database '$dummy_database', importing from '$source_database'\n";
-// // echo "connecting...\n";
-//
-// $config_file = getenv('HOME').'/.my.cnf';
-// $config = parse_ini_file($config_file);
-// try {
-//     $pdo_dummy = new \PDO("mysql:host=localhost;dbname=$dummy_database",$config['user'],$config['password'],[
-//         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-//     ]);
-//     $pdo_source =  new \PDO("mysql:host=localhost;dbname=$source_database",$config['user'],$config['password'],[
-//         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
-//     ]);
-// } catch (\Exception $e) {
-//     exit("connection failed. ".$e->getMessage() . "\n");
-// }
 
 // we repeat ourself, but...
 $dummy_judge_ids = $pdo_dummy->query('SELECT id from judges')->fetchAll(PDO::FETCH_COLUMN);
@@ -82,8 +54,6 @@ $inserts = 0;
 $total =  count($event_id_map);
 $skipped = 0;
 while($row = $events_q->fetch()) {
-    // how many defts do we need?
-    // our event id is $row->event_id, theirs is {$reverse_id_map[$row->event_id]}
     $names_needed = $n_deft_events[$row->event_id];
     if (0 == $names_needed) {
         $skipped++;
@@ -149,6 +119,7 @@ while($row = $events_q->fetch()) {
         }
         $docket_language_cache[$key] = $cache;
     }
+    echo "\n";
     printf("inserted $inserts deft-event rows, skipped $skipped for $total events\r");
 }
 file_put_contents(__DIR__.'/docket-language-defts.json',json_encode($docket_language_cache));

@@ -47,11 +47,13 @@ FROM people j JOIN events e ON e.judge_id = j.id JOIN languages l ON e.language_
 JOIN $dummy_database.languages dummy_langs ON dummy_langs.name = l.name
 WHERE docket <> '' AND e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
 GROUP BY j.id ORDER BY events desc limit $number_of_judges";
+
 $judge_ids = $pdo_source->query($judge_query)->fetchAll(PDO::FETCH_COLUMN);
 $judge_map = array_combine($judge_ids,$dummy_judge_ids);
 file_put_contents(__DIR__.'/judge-map.json',json_encode($judge_map));
 $dummy_langs = $pdo_dummy->query('SELECT name, id from languages')->fetchAll(PDO::FETCH_KEY_PAIR);
-$event_types = $pdo_dummy->query('select et.id dummy_id, et.name dummy_name, oet.id o_id from event_types et JOIN office.event_types oet ON et.name = oet.name order by o_id')
+$event_types = $pdo_dummy->query('SELECT et.id dummy_id, et.name dummy_name, oet.id o_id from event_types et
+    JOIN office.event_types oet ON et.name = oet.name order by o_id')
     ->fetchAll(PDO::FETCH_ASSOC);
 $type_map = array_combine(
     array_column($event_types, 'o_id'),
@@ -329,6 +331,8 @@ unset($events_stmt);
 echo "\n";
 
 //==================================================================//
+// populate interpreter_events
+//==================================================================//
 
 $ie_query = $pdo_source->prepare(
     "SELECT ie.*, e.language_id, l.name language
@@ -424,6 +428,7 @@ while ($ie = $ie_query->fetch()) {
 
             } catch (\PDOException $z) {
                 $log->warn("more bad news: ". $z->getMessage());
+                exit($e->getMessage());
             }
         } else {
             $log->err($x->getMessage(),['data'=>$ie,'params'=>$params]);
@@ -442,6 +447,22 @@ if ($success) {
 
 exit(0);
 
+/**
+ * inserts dummy interpreters
+ * @param  Array  $interpreters
+ * @return void
+ *
+ * $interpreters should look like
+ * <code>
+ *      [
+ *          'language_name' => [
+ *              [lastname, firstname, [email]],
+ *              // ...
+ *            ],
+ *          //...
+ *      ]
+ * </code>
+ */
 function insert_fake_interpreters(Array $interpreters) {
     global $pdo_dummy,$dummy_langs;
     $person_insert = $pdo_dummy->prepare(
