@@ -658,9 +658,25 @@ var eventForm = (function () {
                 });
             }
         }
+        if ($("#judge option[selected]").length > 1) {
+            // horrible hack, for cases where two judge option elements
+            // share the same value. the last one wins, right or wrong, unless
+            // we intervene... @todo something better, e.g., hack the pseudojudge
+            // values by appending an "A" or something and save real value as
+            // a data attribute, or some such
+            var judge_val = judgeElement.val();
+            var selector, non_anonymous_judge = !$("#anonymousJudge").val();
+            if (non_anonymous_judge) {
+                selector = `#judge option[data-pseudojudge][selected]`;
+            } else {
+                selector = `#judge option:not([data-pseudojudge])[selected]`;
+            }
+            $(selector).removeAttr("selected");
+            judgeElement.val(judge_val);
+        }
+
         /** needs revision for request mode */
         judgeElement.on("change",judgeElementChange);
-
         // initialize this stuff
         /** to do: get rid of unnecessary stuff? */
         if (judgeElement.val()) {
