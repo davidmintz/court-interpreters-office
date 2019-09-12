@@ -12,7 +12,7 @@ TRUNCATE TABLE clerks_judges;
 TRUNCATE TABLE users;
 SET foreign_key_checks = 1;
 
--- ALTER TABLE defendant_names ADD COLUMN  `language_hint` varchar(100) COLLATE utf8_unicode_ci DEFAULT 'Spanish';
+ALTER TABLE defendant_names ADD COLUMN  `language_hint` varchar(100) COLLATE utf8_unicode_ci DEFAULT 'Spanish';
 CREATE TABLE `tmp_event_map` (
  `office_id` mediumint(8) unsigned NOT NULL,
  `dummy_id` mediumint(8) unsigned NOT NULL,
