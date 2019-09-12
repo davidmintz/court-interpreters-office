@@ -153,7 +153,7 @@ if (!$this->before):?>
         created
     </div>
     <div class="col-sm-3 pl-0">
-        <?php echo $this->escapeHtml($event['created']->format('d-M-Y g:i a'), " ({$event['created_by']})"); ?>
+        <?php echo $this->escapeHtml("{$event['created']->format('d-M-Y g:i a')}  ({$event['created_by']})"); ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         last updated
@@ -161,7 +161,7 @@ if (!$this->before):?>
     <div class="col-sm-3 pl-0 last-modified">
         <?php
         echo $event['created'] != $event['last_updated'] ?
-        $this->escapeHtml("{$this->event['last_updated']->format('d-M-Y g:i a')}<br>({$event['last_updated_by']})")
+        ("{$this->event['last_updated']->format('d-M-Y g:i a')}<br>".$this->escapeHtml("({$event['last_updated_by']})"))
         : '<span class="text-muted">n/a</span>';
         ?>
     </div>
