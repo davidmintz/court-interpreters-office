@@ -146,7 +146,19 @@ return [
             [
                 'route' => 'requests/search',
                 'label' => 'search',
-                'title' => 'search for past interpreter requests'
+                'title' => 'search for past interpreter requests',
+                'pages' => [
+                    [
+                        'label' => 'shit',
+                        'title' => 'quick search',
+                        'route' => 'requests/search',
+                    ],
+                    [
+                        'label' => 'more options',
+                        'title' => 'advanced search options',
+                        'route' => 'requests/search',
+                    ],
+                ]
             ],
             [
                 'route' => 'requests/help',
