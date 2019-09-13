@@ -119,7 +119,6 @@ while($row = $events_q->fetch()) {
         }
         $docket_language_cache[$key] = $cache;
     }
-    echo "\n";
     printf("inserted $inserts deft-event rows, skipped $skipped for $total events\r");
 }
 file_put_contents(__DIR__.'/docket-language-defts.json',json_encode($docket_language_cache));
