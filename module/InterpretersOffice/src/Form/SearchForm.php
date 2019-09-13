@@ -122,6 +122,13 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
             'attributes' => [
                 'id' => 'pseudo_judge'],
         ]);
+        if (isset($options['user'])) {
+            $user = $options['user'];
+            if ($user->judge_ids && 1 == count($user->judge_ids)) {
+                $default_judge = $user->judge_ids[0];
+                $this->get('judge')->setValue($default_judge);
+            }
+        }
     }
 
     public function getInputFilterSpecification()

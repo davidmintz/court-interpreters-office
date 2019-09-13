@@ -166,7 +166,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function searchAction()
     {
         $query = $this->params()->fromQuery();
-        $form = new SearchForm($this->objectManager);
+        $form = new SearchForm($this->objectManager,['user'=>$this->getIdentity()]);
         $page = (int)$this->params()->fromQuery('page',1);
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
