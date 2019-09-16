@@ -7,7 +7,7 @@ if ($this->errorMessage):?>
 return; endif;
 if (! $this->paginator): return; endif;
 if (!$this->paginator->getTotalItemCount() ) : ?>
-<p>No people found matching the above criteria.</p>
+<p class="mt-3 p-2 border border-warning rounded">No people were found who match the above criteria.</p>
 <?php else: ?>
 <p class="py-1 px-2 m-2 border rounded">
 <?php
@@ -61,4 +61,6 @@ if (!$this->paginator->getTotalItemCount() ) : ?>
         $this->paginator,
         'sliding','partials/pagination_control',['route' => 'people']
 );?>
-<?php endif;
+<?php endif; ?><?php if ($this->defaults or $this->paginator):?><a title="add a new person" href="<?php echo $this->url('people/add')?>" role="button" name="button" class="btn btn-primary text-light mt-1">
+    <span class="fa fa-plus"></span>
+    add</a><?php endif ?>

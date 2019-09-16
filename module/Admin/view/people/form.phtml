@@ -22,7 +22,15 @@ $form->add([
 ?>
 <div class="center-block" style="max-width:750px"><!-- wrapper -->
 <h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
+<?php if ($this->layout()->action == 'add'):?>
+<div class="row">
+    <p class="col-sm-9 offset-sm-3 form-text">
+        This form is for managing "generic" people who contact your office. For interpreters and for judges, please use the respective <a href="<?php echo $this->url('interpreters') ?>">interpreter</a>
+        or <a href="<?php echo $this->url('judges') ?>">judge</a> management pages, and <a href="<?php echo $this->url('users') ?>">user administration</a> for managing user accounts.
+    </p>
+</div>
 <?php
+endif;
 $form->prepare();
 $fieldset = $form->get('person');
 echo $this->form()->openTag($form);?>
