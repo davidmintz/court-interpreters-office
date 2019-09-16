@@ -78,12 +78,10 @@ $(function(){
 });
 
 const get_people_search_url = function(page){
-
     var query =  $("#search-form").serialize();
     var path = `${window.document.location.pathname}`;
     if (! page) {
         page = 1;
     }
     return `${path}?${query}&page=${page}`;
-
 }
