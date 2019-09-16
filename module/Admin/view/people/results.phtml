@@ -62,5 +62,4 @@ if (!$this->paginator->getTotalItemCount() ) : ?>
         'sliding','partials/pagination_control',['route' => 'people']
 );?>
 <?php endif; ?><?php if ($this->defaults or $this->paginator):?><a title="add a new person" href="<?php echo $this->url('people/add')?>" role="button" name="button" class="btn btn-primary text-light mt-1">
-    <span class="fa fa-plus"></span>
-    add</a><?php endif ?>
+    <span class="fa fa-plus"></span> add</a><?php endif ?>
