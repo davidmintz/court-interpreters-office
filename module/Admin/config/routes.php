@@ -786,19 +786,18 @@ return  [
                 ],
             ],
         ],
-
-
-        // 'email-templates' => [
-        //     'type' => Literal::class,
-        //     'options' => [
-        //        'route' => '/admin/email/templates', //[/]
-        //        'defaults' => [
-        //            'module' => __NAMESPACE__,
-        //            'controller' => Controller\EmailController::class,
-        //            'action' => 'templates',
-        //        ],
-        //     ],
-        // ],
+        'search' => [
+            'type' => Segment::class,
+            'may_terminate' => true,
+            'options' => [
+                'route' => '/admin/search',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\SearchController::class,
+                    'action' => 'index',
+                ],
+            ],
+        ],
         'normalization' => [
             'type' => Segment::class,
             'may_terminate' => true,

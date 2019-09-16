@@ -43,6 +43,7 @@ return [
     'interpreters-office/admin/event-types/index' => __DIR__ . '/../view/event-types/index.phtml',
     'interpreters-office/admin/event-types/add' => __DIR__ . '/../view/event-types/form.phtml',
     'interpreters-office/admin/normalization/index' => __DIR__ . '/../view/normalization/index.phtml',
+    'interpreters-office/admin/search/index' => __DIR__ . '/../view/search/index.phtml',
     // this one's a bit weird...
     'interpreters-office/admin/email/templates' => __DIR__ . '/../../InterpretersOffice/view/interpreters-office/email/templates.phtml',
 

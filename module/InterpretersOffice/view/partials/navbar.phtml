@@ -2,6 +2,9 @@
 $route = $this->layout()->routeMatch;
 // map routes to navigation labels because
 // there isn't necessarily one-to-one correspondence
+/**
+ * @todo this is so complicated, it must be bullshit
+ */
 $labels = [
     'events/add' => 'add event',
     'events'  => 'schedule',
@@ -31,11 +34,30 @@ foreach ($this->container as $page) :
     if (false === $page->display || !$page->isVisible() || !$this->navigation()->accept($page)) :
         continue;
     endif;
+    if ($label == 'search'): ?>
+        <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">search</a>
+            <div class="dropdown-menu"  style="max-width:250px;min-width:200px" >
+                <div class="px-2" method="get">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="docket" placeholder="docket #" value="">
+                        <div class="input-group-append">
+                            <a href="<?php echo $this->url($page->route)?>" role="button" class="btn btn-primary">
+                                <span class="fa fa-search"></span>
+                                <span class="sr-only">search</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <a href="<?php echo $this->url($page->route)?>" class="dropdown-item pl-3">more options</a>
+            </div>
+        </li>
+    <?php continue;  endif;
     if (! $page->hasPages() or false === $page->expand_children ) :
-?><li class="nav-item<?php if ($active): ?> active<?php endif; ?>"><a title="<?php if ($page->title): echo $page->title; endif ?>" class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
+?><li class="nav-item<?php if ($active): ?> active<?php endif; if ($page->css_class): echo " $page->css_class";endif ?>"><a title="<?php if ($page->title): echo $page->title; endif ?>" class="nav-link" href="<?php echo $page->getHref() ?>"><?php echo $label ?></a></li>
 <?php else :
 ?><li class="nav-item dropdown">
     <a title="<?php if ($page->title): echo $page->title; endif ?>" href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
+
     <div class="dropdown-menu"><?php foreach ($page->getPages() as $child) : ?>
         <?php
         if (!$child->isVisible() || !$this->navigation()->accept($child)) :
@@ -47,7 +69,7 @@ foreach ($this->container as $page) :
          else:
              $active = false;
          endif;
-        ?><a  title="<?php if ($page->title): echo $page->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
+        ?><a  title="<?php if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; if ($child->css_class): echo " $child->css_class";endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
     <?php endforeach; ?>
     </div>
 </li>

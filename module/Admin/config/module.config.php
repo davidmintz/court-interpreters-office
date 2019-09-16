@@ -36,6 +36,7 @@ return [
             Controller\ScheduleController::class => Controller\Factory\ScheduleControllerFactory::class,
             Controller\EmailController::class => Controller\Factory\EmailControllerFactory::class,
             Controller\NormalizationController::class => Controller\Factory\NormalizationControllerFactory::class,
+            Controller\SearchController::class => Controller\Factory\SearchControllerFactory::class,
         ],
     ],
     'view_manager' => [

@@ -4,9 +4,9 @@ namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use InterpretersOffice\Admin\Controller\NormalizationController;
+use InterpretersOffice\Admin\Controller\SearchController;
 
-class NormalizationControllerFactory implements FactoryInterface
+class SearchControllerFactory implements FactoryInterface
 {
     /**
      * @param ContainerInterface $container
@@ -16,6 +16,6 @@ class NormalizationControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new NormalizationController($container->get('entity-manager'));
+        return new SearchController($container->get('entity-manager'));
     }
 }

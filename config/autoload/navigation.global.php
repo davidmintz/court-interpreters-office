@@ -140,24 +140,10 @@ return [
                             ],
                         ],
                     ],
-                    // [
-                    //     'label' => 'users',
-                    //     'route' => 'users',
-                    //     'pages' => [
-                    //         [
-                    //             'label' => 'add',
-                    //             'route' => 'users/add'
-                    //         ],
-                    //         [
-                    //             'label' => 'edit',
-                    //             'route' => 'users/edit'
-                    //         ],
-                    //         [
-                    //             'label' => 'view details',
-                    //             'route' => 'users/view'
-                    //         ],
-                    //     ]
-                    // ],
+                    [
+                        'label' => 'search',
+                        'route' => 'search',
+                    ],
                     [
                         'label' => 'locations',
                         'route' => 'locations',
@@ -226,6 +212,13 @@ return [
                 'privilege' => 'add',
             ],
             [
+                'label' => 'search',
+                'route' => 'search',
+                'resource' => Admin\SearchController::class,
+                'css_class' => 'd-none d-xl-inline',
+
+            ],
+            [
                 'label' => 'interpreters',
                 'route' => 'interpreters',
                 'title' => 'manage the roster of interpreters',
@@ -250,16 +243,6 @@ return [
                     [
                         'label' => 'judges',
                         'route' => 'judges',
-                        'pages' => [
-                            [
-                                'label' => 'add',
-                                'route' => 'judges/add'
-                            ],
-                            [
-                                'label' => 'edit',
-                                'route' => 'judges/edit'
-                            ],
-                        ]
                     ],
                     [
                         'label' => 'users',
@@ -278,18 +261,8 @@ return [
                     [
                         'label' => 'defendants',
                         'route' => 'admin-defendants',
+                        'foo'  => 'boink',
                         'resource' => Admin\DefendantsController::class,
-                        'expand_children' => false,
-                        'pages' => [
-                            [
-                                'label' => 'add',
-                                'route' => 'admin-defendants/add'
-                            ],
-                            [
-                                'label' => 'edit',
-                                'route' => 'admin-defendants/edit'
-                            ],
-                        ]
                     ],
                     [
                         'resource' => Admin\CourtClosingsController::class,
@@ -309,7 +282,9 @@ return [
                 'pages' => [
                     [
                         'label' => 'search',
-                        'uri' => '#'
+                        'route' => 'search',
+                        //'css_class' => 'd-none d-sm-block',
+
                     ],
                     [
                         'label' => 'reports',
@@ -318,16 +293,13 @@ return [
                     [
                         'label' => 'email',
                         'route' => 'email/templates',
-                        //'uri' => '/admin/email/templates',
                         'resource' => Admin\EmailController::class,
                     ],
                     [
                         'label' => 'help',
                         'uri' => '#'
                     ],
-
                 ]
-
             ],
             // [
             //     'label' => 'help',
