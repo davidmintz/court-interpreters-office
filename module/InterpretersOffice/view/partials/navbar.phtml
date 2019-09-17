@@ -41,12 +41,13 @@ foreach ($this->container as $page) :
                     <div class="input-group">
                         <input class="form-control" type="text" name="docket" placeholder="docket #" value="">
                         <div class="input-group-append">
-                            <a href="<?php echo $this->url($page->route)?>" role="button" class="btn btn-primary">
+                            <a id="btn-docket-search" href="<?php echo $this->url($page->route)?>" role="button" class="btn btn-primary">
                                 <span class="fa fa-search"></span>
                                 <span class="sr-only">search</span>
                             </a>
                         </div>
                     </div>
+                    <div class="validation-error alert alert-warning" style="display:none"></div>
                 </div>
                 <a href="<?php echo $this->url($page->route)?>" class="dropdown-item pl-3">more options</a>
             </div>

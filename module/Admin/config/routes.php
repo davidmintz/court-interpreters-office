@@ -622,7 +622,6 @@ return  [
                         'route' => '/role-options/:hat_id',
                         'defaults' => [
                             'action' => 'get-role-options-for-hat',
-
                         ],
                         'constraints' => [
                             'hat_id' => '[1-9]\d*',
@@ -646,6 +645,7 @@ return  [
                         'defaults' => [
                             'action' => 'autocomplete',
 
+
                         ],
                     ],
                 ],
@@ -655,8 +655,8 @@ return  [
                         'route' => '/search',
                         'defaults' => [
                             'action' => 'search',
-
                         ],
+
                     ],
                 ],
             ],
@@ -790,7 +790,7 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/search',
+                'route' => '/admin/search[/:docket]',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\SearchController::class,

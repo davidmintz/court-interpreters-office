@@ -75,7 +75,7 @@ var formatDocketElement = function(event)
     var errorDiv = element.next(".validation-error");
     if (! errorDiv.length) {
         // try something else
-        errorDiv = $("#docket").parent().next(".validation-error");
+        errorDiv = element.parent().next(".validation-error");
         if (! errorDiv.length)  {
             // last resort
             element.after($("<div>").addClass("alert alert-warning validation-error"));
