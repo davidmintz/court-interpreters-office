@@ -6,7 +6,10 @@ namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
-
+use Zend\Paginator\Paginator as ZendPaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity;
 
 /**
@@ -413,5 +416,17 @@ DQL;
             $result = ['modified' => null, 'error' => 'ENTITY NOT FOUND'];
         }
         return $result;
+    }
+
+    /**
+     * searches for Event entities
+     *
+     * @param  Array   $query search parameters
+     * @param  integer $page
+     * @return ZendPaginator|null
+     */
+    public function search(Array $query, $page = 1) : ZendPaginator
+    {
+        throw new \Exception("search is not yet implemented");
     }
 }
