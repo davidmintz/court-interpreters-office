@@ -36,7 +36,7 @@ echo $this->headStyle();?>
                 <div class="dropdown">
                     <a class="btn btn-link dropdown-toggle" role="button" id="btn-user-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="fa fa-user"></span><span class="sr-only">my account</span> <span class="d-none d-xl-inline">
-                         welcome <?php echo $user->username != $user->email ? $user->username : "$user->firstname $user->lastname"?></span></a>
+                         welcome <?php echo $this->escapeHtml($user->username != $user->email ? $user->username : "$user->firstname $user->lastname")?></span></a>
                     <div class="dropdown-menu" aria-labelledby="btn-user-menu">
                         <a class="dropdown-item" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
                         <a class="dropdown-item" href="<?php echo $this->url('logout')?>">log out</a>
@@ -58,6 +58,7 @@ echo $this->headStyle();?>
         <script src="<?php echo $this->basePath('js/lib/jquery.min.js')?>"></script>
         <script src="<?php echo $this->basePath('js/lib/bootstrap/bootstrap.bundle.js')?>"></script>
         <script src="<?php echo $this->basePath('js/common.js')?>"></script>
+        <script src="<?php echo $this->basePath('js/form-utilities.js')?>"></script>
         <?php echo $this->headScript()?>
         <?php echo $this->inlineScript() ?>
         <script>basePath = '<?php echo $this->basePath() ?>';</script>

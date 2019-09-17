@@ -2,9 +2,6 @@
 $route = $this->layout()->routeMatch;
 // map routes to navigation labels because
 // there isn't necessarily one-to-one correspondence
-/**
- * @todo this is so complicated, it must be bullshit
- */
 $labels = [
     'events/add' => 'add event',
     'events'  => 'schedule',
@@ -26,6 +23,9 @@ $labels = [
 foreach ($this->container as $page) :
     $label = $page->getLabel();
     $active = false;
+    /**
+     * @todo this is so complicated, it must be bullshit
+     */
     if ( $label == $route
          or isset($labels[$route]) && $label == $labels[$route] ):
         $active = true;
@@ -34,7 +34,7 @@ foreach ($this->container as $page) :
     if (false === $page->display || !$page->isVisible() || !$this->navigation()->accept($page)) :
         continue;
     endif;
-    if ($label == 'search'): ?>
+    if ($label == 'search'): // this one is a special case ?>
         <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">search</a>
             <div class="dropdown-menu"  style="max-width:250px;min-width:200px" >
                 <div class="px-2" method="get">
