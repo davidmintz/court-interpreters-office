@@ -9,7 +9,7 @@ endif; ?>
 <p>
     <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>
 </p>
-<table class="table">
+<table class="table table-sm">
 <thead></thead>
     <tbody>
         <?php foreach ($this->results as $e): ?>
@@ -33,6 +33,21 @@ endif; ?>
                          echo $this->escapeHtml($i->getInterpreter()->getFullName()),'<br>';
                     endforeach;
                     ?>
+                </td>
+                <td class="dropdown">
+                    <a class="btn dropdown-toggle text-primary" role="button" data-toggle="dropdown"  id="event-dropdown-<?php echo $e->getId()?>" aria-haspopup="true" aria-expanded="false">
+                        <span class="fas fa-bars"></span>
+                        <span class="sr-only">menu</span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="event-dropdown-<?php echo $e->getId()?>">
+                      <a title="display detailed view of thiseventt" class="dropdown-item event-details text-primary" href="<?php echo $this->url('events/view',['id'=>$e->getId()])?>">view details</a>
+                      <div class="dropdown-divider"></div>
+                      <a title="create another event in this same case" class="dropdown-item event-repeat text-primary" href="<?php echo $this->url('events/add',['id'=>$e->getId()])?>">repeat</a>
+                      <div class="dropdown-divider"></div>
+                      <a title="edit this event" class="dropdown-item" href="<?php echo $this->url('events/edit',['id'=>$e->getId()])?>">edit</a>
+                      <div class="dropdown-divider"></div>
+                      <a title="delete this event" class="dropdown-item event-delete" href="<?php echo $this->url('events',['action'=>'delete',  'id'=>$e->getId()])?>">delete</a>
+                    </div>
                 </td>
             </tr>
         <?php endforeach ?>

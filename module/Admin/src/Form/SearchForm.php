@@ -11,14 +11,15 @@ use Doctrine\Common\Persistence\ObjectManager;
  */
 class SearchForm extends AbstractSearchForm
 {
-    public function __construct(ObjectManager $objectManager, array $options = [])
-    {
-        parent::__construct($objectManager, $options);
-        // add more elements
-    }
-
+    /**
+     * adds more elements
+     *
+     * @return SearchForm
+     */
     public function init()
     {
-        echo "this is init";
+        // add more elements!
+        return $this;
     }
+
 }

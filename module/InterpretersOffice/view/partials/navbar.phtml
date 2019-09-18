@@ -35,7 +35,7 @@ foreach ($this->container as $page) :
         continue;
     endif;
     if ($label == 'search'): // this one is a special case ?>
-        <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">search</a>
+        <li class="nav-item dropdown" id="nav-search"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">search</a>
             <div class="dropdown-menu"  style="max-width:250px;min-width:200px" >
                 <div class="px-2" method="get">
                     <div class="input-group">

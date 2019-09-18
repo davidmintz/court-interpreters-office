@@ -130,6 +130,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
                 $this->get('judge')->setValue($default_judge);
             }
         }
+        $this->init();
     }
 
     public function getInputFilterSpecification()

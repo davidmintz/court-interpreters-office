@@ -457,7 +457,7 @@ DQL;
             $params['language_id'] = $query['language'];
         }
         if (!empty($query['docket'])) {
-            $qb->andWhere('r.docket = :docket');
+            $qb->andWhere('e.docket = :docket');
             $params['docket'] = $query['docket'];
         }
         if (!empty($query['date-from'])) {
