@@ -13,7 +13,7 @@ class SearchForm extends AbstractSearchForm
 {
     public function __construct(ObjectManager $objectManager, array $options = [])
     {
-        parent::__construct( [$objectManager, $options]);
+        parent::__construct($objectManager, $options);
         // add more elements
     }
 

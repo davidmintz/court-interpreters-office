@@ -42,6 +42,7 @@ class SearchController extends AbstractActionController
         $form = new SearchForm($this->em);
         $page = (int)$this->params()->fromQuery('page',1);
         $repository = $this->em->getRepository(Entity\Event::class);
+        //exit("fuck me");
         if (!$query) {
             if ($this->session->search_defaults) {
                 $defaults = $this->session->search_defaults;
@@ -72,7 +73,7 @@ class SearchController extends AbstractActionController
         if (!$is_xhr) {
             $view->setVariables(['form' => $form,]);
         } else {
-            $view->setTemplate('index/results')
+            $view->setTemplate('search/results')
                  ->setTerminal(true);
         }
 

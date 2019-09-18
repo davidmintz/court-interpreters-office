@@ -427,6 +427,32 @@ DQL;
      */
     public function search(Array $query, $page = 1) : ZendPaginator
     {
-        throw new \Exception("search is not yet implemented");
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e, l, t, tc, j, jf, aj, cr, loc, ploc, ie, defts, jh, s, sh' )
+            ->from(Entity\Event::class, 'e')
+            ->join('e.eventType', 't')
+            ->join('t.category', 'tc')
+            ->leftJoin('e.judge', 'j')
+            ->leftJoin('e.submitter', 's')
+            ->leftJoin('s.hat', 'sh')
+            ->leftJoin('j.flavor', 'jf')
+            ->leftJoin('j.hat', 'jh')
+            ->leftJoin('e.anonymousJudge', 'aj')
+            ->join('e.language', 'l')
+            ->leftJoin('e.defendants','defts')
+            ->leftJoin('e.location', 'loc')
+            ->leftJoin('loc.parentLocation', 'ploc')
+            ->leftJoin('e.cancellationReason', 'cr')
+            ->leftJoin('e.interpreterEvents', 'ie')
+            // // ->leftJoin('ie.interpreter', 'interpreters')
+            ->orderBy('e.date', 'DESC')
+            ->addOrderBy('e.time', 'ASC');
+        $qb->where('e.docket = :docket')->setParameters(['docket'=>'2018-CR-0802']);
+        $query = $qb->getQuery();
+        //$query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        $adapter = new DoctrineAdapter(new ORMPaginator($query));
+        $paginator = new ZendPaginator($adapter);
+
+        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
     }
 }
