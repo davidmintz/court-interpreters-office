@@ -1,5 +1,6 @@
-
 <?php
+use InterpretersOffice\Entity;
+
 if ($this->results):
     if (!count($this->results)):?>
 <p>We found no records matching the above criteria.</p>
@@ -12,7 +13,28 @@ endif; ?>
 <thead></thead>
     <tbody>
         <?php foreach ($this->results as $e): ?>
-
+            <tr>
+                <td><?php echo $e->getDate()->format('d-M-Y')?></td>
+                <td><?php echo $this->escapeHtml($e->getLanguage())?></td>
+                <td><?php echo $this->escapeHtml($e->getEventType())?></td>
+                <td><?php $judge = $e->getJudge() ?: $e->getAnonymousJudge();
+                if ($judge instanceof Entity\Judge):
+                    echo $this->escapeHtml($judge->getLastName());
+                else:
+                    echo $this->escapeHtml($judge->getName());
+                endif;
+                ?></td>
+                <td><?php echo $this->escapeHtml($e->getDocket())?></td>
+                <td><?php foreach ($e->getDefendants() as $d):
+                    echo $this->escapeHtml($d->getFullName()),'<br>';
+                endforeach;?></td>
+                <td><?php
+                    foreach ($e->getInterpreterEvents() as $i):
+                         echo $this->escapeHtml($i->getInterpreter()->getFullName()),'<br>';
+                    endforeach;
+                    ?>
+                </td>
+            </tr>
         <?php endforeach ?>
     </tbody>
 </table>
