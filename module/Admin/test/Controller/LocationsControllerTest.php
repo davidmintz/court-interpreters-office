@@ -167,8 +167,8 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
         $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error', 1);
-        $this->assertQueryContentRegex('.validation-error', '/location has to have a parent/');
+        $this->assertQueryCount('form .validation-error', 1);
+        $this->assertQueryContentRegex('form .validation-error', '/location has to have a parent/');
 
         //$query = new Query($this->getResponse()->getBody());
         //$element = $query->execute('.validation-error')->current();
@@ -194,10 +194,10 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/locations/add');
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
-        $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error', 1);
+        $this->assertQuery('form .validation-error');
+        $this->assertQueryCount('form .validation-error', 1);
         $error = 'this type of location cannot have any parent location';
-        $this->assertQueryContentContains('.validation-error', $error);
+        $this->assertQueryContentContains('form .validation-error', $error);
 
         // interpreters office has to be somewhere
         $interpretersoffice_type = $em->getRepository('InterpretersOffice\Entity\LocationType')
@@ -219,9 +219,9 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/locations/add');
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
-        $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error', 1);
-        $this->assertQueryContentRegex('.validation-error', '/location has to have a parent/');
+        $this->assertQuery('form .validation-error');
+        $this->assertQueryCount('form .validation-error', 1);
+        $this->assertQueryContentRegex('form .validation-error', '/location has to have a parent/');
 
         // holding cell has to be somewhere
 
@@ -244,9 +244,9 @@ class LocationsControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/locations/add');
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
-        $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error', 1);
-        $this->assertQueryContentRegex('.validation-error', '/location has to have a parent/');
+        $this->assertQuery('form .validation-error');
+        $this->assertQueryCount('form .validation-error', 1);
+        $this->assertQueryContentRegex('form .validation-error', '/location has to have a parent/');
     }
 
     public function testLocationTypeIsRequired()
@@ -272,8 +272,8 @@ class LocationsControllerTest extends AbstractControllerTest
         //echo $this->getResponse()->getBody();
         $this->assertNotRedirect();
         $this->assertQuery('.validation-error');
-        $this->assertQueryCount('.validation-error', 1);
-        $this->assertQueryContentRegex('.validation-error', '/location type is required/');
+        $this->assertQueryCount('form .validation-error', 1);
+        $this->assertQueryContentRegex('form .validation-error', '/location type is required/');
     }
 
     public function testDeleteLocation()
