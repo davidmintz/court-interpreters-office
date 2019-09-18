@@ -35,7 +35,23 @@ $(function(){
             if ( xhr.responseJSON && !res.valid ) {
                 return displayValidationErrors(res.validation_errors);
             }
-            $("#results").html(res);        
+            $("#results").html(res);
+        })
+        .fail(fail);
+    });
+    const content = $("#results");
+    content.on("click", ".pagination a",function(e){
+        e.preventDefault();
+        var page, m = this.href.match(/page=(\d+)/);
+        if (m && m[1]) {
+            page = m[1];
+        } else {
+            page = 1;
+        }
+        var path = window.document.location.pathname;
+        $.get(`${path}?${form.serialize()}&page=${page}`)
+        .done(function(html){
+            content.html(html);
         })
         .fail(fail);
     });

@@ -431,7 +431,8 @@ DQL;
     {
         //printf("<pre>%s</pre>",print_r($query)); exit();
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('e, l, t, tc, j, jf, aj, cr, loc, ploc, defts, jh, s, sh, ie, i' )
+        $qb->select('e, l, t, tc, j, jf, aj, cr, loc, ploc,
+        defts, jh, s, sh, ie, i' )
             ->from(Entity\Event::class, 'e')
             ->join('e.eventType', 't')
             ->leftJoin('e.interpreterEvents', 'ie')

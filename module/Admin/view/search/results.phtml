@@ -24,7 +24,7 @@ endif; ?>
                     echo $this->escapeHtml($judge->getName());
                 endif;
                 ?></td>
-                <td><?php echo $this->escapeHtml($e->getDocket())?></td>
+                <td><?php echo $this->escapeHtml(substr($e->getDocket(),2))?></td>
                 <td><?php foreach ($e->getDefendants() as $d):
                     echo $this->escapeHtml($d->getFullName()),'<br>';
                 endforeach;?></td>
