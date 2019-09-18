@@ -15,7 +15,7 @@ use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\User;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
-use InterpretersOffice\Form\SearchForm;
+use InterpretersOffice\Requests\Form\SearchForm;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Service\DateCalculatorTrait;
 

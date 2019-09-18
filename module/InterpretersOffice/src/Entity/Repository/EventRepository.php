@@ -130,7 +130,7 @@ DQL;
      */
     public function load($id)
     {
-        //LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
+        // LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
         // JOIN e.modifiedBy lastmod_by
         $dql = 'SELECT e, j, f, t, c, anon_j, anon_submitter, submitter, sh, loc, lang,
                 ploc, cr, ie,i, d, default_loc,default_parent_loc, anon_j_default_loc

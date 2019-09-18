@@ -12,7 +12,7 @@ use InterpretersOffice\Entity;
 use Doctrine\Common\Persistence\ObjectManager;
 use Zend\Validator\Callback;
 
-class SearchForm extends Form implements InputFilterProviderInterface, ObjectManagerAwareInterface
+class AbstractSearchForm extends Form implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
     use ObjectManagerAwareTrait;
 
@@ -63,7 +63,7 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
                     'objectManager' => $objectManager,
                     'attributes'  => [
                         'id' => 'language',
-                        'class' => 'custom-select text-muted'
+                        'class' => 'custom-select'
                     ],
                     'options' => [
                         'label' => 'language',
@@ -95,6 +95,7 @@ class SearchForm extends Form implements InputFilterProviderInterface, ObjectMan
             'attributes' => [
                 'id' => 'defendant-name',
                 'class' => 'form-control',
+                'placeholder' => 'last name[, first name]'
             ],
         ]);
         /** @var $repository \InterpretersOffice\Entity\Repository\JudgeRepository */
