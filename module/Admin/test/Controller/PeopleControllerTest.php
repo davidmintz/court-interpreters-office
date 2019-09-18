@@ -98,7 +98,7 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $person = $em->getRepository(Entity\Person::class)->findBy([
             'email' => 'john.somebody@lawfirm.com'
-        ]);        
+        ]);
         // try to add the same guy again
         $data = [
             'person' => [
@@ -115,10 +115,10 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
         $this->assertResponseStatusCode(200);
-        $this->assertQuery('div.validation-error');
-        $this->assertQueryCount('div.validation-error', 1);
+        $this->assertQuery('#person-form div.validation-error');
+        $this->assertQueryCount('#person-form div.validation-error', 1);
         // a person with this &quot;Hat&quot; and email address is already in your database
-        $this->assertQueryContentRegex('div.validation-error', '/person.+Hat.+email.+in your database/i');
+        $this->assertQueryContentRegex('#person-form div.validation-error', '/person.+Hat.+email.+in your database/i');
 
         // different hat, but active and with same email...
         $hat = FixtureManager::getEntityManager()->getRepository('InterpretersOffice\Entity\Hat')
@@ -141,9 +141,9 @@ class PeopleControllerTest extends AbstractControllerTest
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
         $this->assertResponseStatusCode(200);
-        $this->assertQuery('div.validation-error');
-        $this->assertQueryCount('div.validation-error', 1);
-        $this->assertQueryContentRegex('div.validation-error', '/email.+in your database/i');
+        $this->assertQuery('#person-form div.validation-error');
+        $this->assertQueryCount('#person-form div.validation-error', 1);
+        $this->assertQueryContentRegex('#person-form div.validation-error', '/email.+in your database/i');
         $this->reset(true);
         $this->login('susie', 'boink');
         $this->reset(true);
@@ -178,10 +178,10 @@ class PeopleControllerTest extends AbstractControllerTest
 
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
-        $this->assertQuery('div.validation-error');
+        $this->assertQuery('#person-form div.validation-error');
         //echo $this->getResponse()->getBody();
-        $this->assertQueryCount('div.validation-error', 1);
-        $this->assertQueryContentRegex('div.validation-error', '/email.+in your database/i');
+        $this->assertQueryCount('#person-form div.validation-error', 1);
+        $this->assertQueryContentRegex('#person-form div.validation-error', '/email.+in your database/i');
     }
     /**
      * @depends testAdd
@@ -258,8 +258,8 @@ class PeopleControllerTest extends AbstractControllerTest
         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
-        $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error', '/invalid characters/');
+        $this->assertQuery('#person-form div.validation-error');
+        $this->assertQueryContentRegex('#person-form div.validation-error', '/invalid characters/');
 
         $data['person']['lastname'] = '';
         $data['person']['firstname'] = 'John';
@@ -272,8 +272,8 @@ class PeopleControllerTest extends AbstractControllerTest
         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
-        $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error', '/last name.+required/');
+        $this->assertQuery('#person-form div.validation-error');
+        $this->assertQueryContentRegex('#person-form div.validation-error', '/last name.+required/');
 
         $data['person']['lastname'] = 'Somebody';
         $data['person']['firstname'] = '';
@@ -283,8 +283,8 @@ class PeopleControllerTest extends AbstractControllerTest
         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
-        $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error', '/first name.+required/');
+        $this->assertQuery('#person-form div.validation-error');
+        $this->assertQueryContentRegex('#person-form div.validation-error', '/first name.+required/');
 
         $data['person']['firstname'] = 'John';
         $data['csrf'] = $this->getCsrfToken('/admin/people/add');
@@ -295,8 +295,8 @@ class PeopleControllerTest extends AbstractControllerTest
         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
-        $this->assertQuery('div.validation-error');
-        $this->assertQueryContentRegex('div.validation-error', '/hat.+required/');
+        $this->assertQuery('#person-form div.validation-error');
+        $this->assertQueryContentRegex('#person-form div.validation-error', '/hat.+required/');
 
         $data['person']['hat'] = $attorneyHat;
         /*
@@ -337,7 +337,7 @@ class PeopleControllerTest extends AbstractControllerTest
         );
         $this->dispatch('/admin/people/add');
         $this->assertNotRedirect();
-        $this->assertQueryCount('div.validation-error', 1);
-        $this->assertQueryContentRegex('div.validation-error', '/invalid.+hat/');
+        $this->assertQueryCount('#person-form div.validation-error', 1);
+        $this->assertQueryContentRegex('#person-form div.validation-error', '/invalid.+hat/');
     }
 }
