@@ -11,6 +11,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Service\ProperNameParsingTrait;
 
 /**
  * EventRepository
@@ -18,6 +19,7 @@ use InterpretersOffice\Entity;
  */
 class EventRepository extends EntityRepository implements CacheDeletionInterface
 {
+    use ProperNameParsingTrait;
 
     /**
      * DQL statement for human-friendly representation of Event
@@ -427,6 +429,7 @@ DQL;
      */
     public function search(Array $query, $page = 1) : ZendPaginator
     {
+        //printf("<pre>%s</pre>",print_r($query)); exit();
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('e, l, t, tc, j, jf, aj, cr, loc, ploc, defts, jh, s, sh, ie, i' )
             ->from(Entity\Event::class, 'e')
@@ -447,12 +450,47 @@ DQL;
             ->leftJoin('e.cancellationReason', 'cr')
             ->orderBy('e.date', 'DESC')
             ->addOrderBy('e.time', 'ASC');
-        $qb->where('e.docket = :docket')->setParameters(['docket'=>'2018-CR-0802']);
+        $params = [];
+        if (!empty($query['language'])) {
+            $qb->where('l.id = :language_id');
+            $params['language_id'] = $query['language'];
+        }
+        if (!empty($query['docket'])) {
+            $qb->andWhere('r.docket = :docket');
+            $params['docket'] = $query['docket'];
+        }
+        if (!empty($query['date-from'])) {
+            $qb->andWhere('e.date >= :min_date');
+            $params['min_date'] = new \DateTime($query['date-from']);
+        }
+        if (!empty($query['date-to'])) {
+            $qb->andWhere('e.date <= :max_date');
+            $params['max_date'] = new \DateTime($query['date-to']);
+        }
+        if (! empty($query['defendant-name'])) {
+            $name = $this->parseName($query['defendant-name']);
+            $qb->andWhere($qb->expr()->like(
+                'defts.surnames',$qb->expr()->literal("{$name['last']}%")
+            ));
+            if ($name['first']) {
+                $qb->andWhere($qb->expr()->like(
+                    'defts.given_names',$qb->expr()->literal("{$name['first']}%")
+                ));
+            }
+        }
+        if (! empty($query['judge'])) {
+            $qb->andWhere('j.id = :judge_id');
+            $params['judge_id'] = $query['judge'];
+        } elseif (! empty($query['pseudo_judge'])) {
+            $qb->andWhere('aj.id = :judge_id');
+            $params['judge_id'] = $query['judge'];
+        }
+        $qb->setParameters($params);
         $query = $qb->getQuery();
         //$query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
         $paginator = new ZendPaginator($adapter);
 
-        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(10);
+        return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
     }
 }

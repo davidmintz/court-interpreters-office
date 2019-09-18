@@ -42,7 +42,6 @@ class SearchController extends AbstractActionController
         $form = new SearchForm($this->em);
         $page = (int)$this->params()->fromQuery('page',1);
         $repository = $this->em->getRepository(Entity\Event::class);
-        //exit("fuck me");
         if (!$query) {
             if ($this->session->search_defaults) {
                 $defaults = $this->session->search_defaults;
