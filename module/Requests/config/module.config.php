@@ -293,11 +293,22 @@ return [
                     ],
                     'search' => [
                         'type' => Segment::class,
+                        'may_terminate' => true,
                         'options' => [
                             'route' => '/search',
                             'defaults' => [
                                 'controller' => Controller\IndexController::class,
                                 'action' => 'search',
+                            ],
+                        ],
+                        'child_routes' => [
+                            'docket' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/docket/:docket',
+                                    'defaults' => ['action'=>'docket-search'],
+                                    'constraints'=>[ 'docket' => '\d{4}-([A-Z]|[a-z]){2,4}-\d{3,5}']
+                                ],
                             ],
                         ],
                     ],

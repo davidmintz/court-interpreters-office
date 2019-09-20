@@ -157,6 +157,16 @@ class IndexController extends AbstractActionController implements ResourceInterf
     }
 
     /**
+     * quick docket-based search from main nav
+     */
+    public function docketSearchAction()
+    {
+        $docket = $this->params()->fromRoute("docket");
+        $this->session->search_defaults = ['docket' => $docket,'page'=>1];
+        $this->redirect()->toRoute('requests/search');
+    }
+    
+    /**
      * search action
      *
      * @return ViewModel|JsonModel

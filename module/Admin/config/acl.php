@@ -56,7 +56,7 @@ return [
     'allow' => [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
-            Requests\IndexController::class => ['index','list','view','create','update','search','cancel','help'],
+            Requests\IndexController::class => ['index','list','view','create','update','search','cancel','help','docket-search'],
             Requests\WriteController::class => ['create','update','cancel'],
             // not sure what we were thinking when this was allowed...
             //Admin\EventsController::class => ['index', 'view', 'search'],

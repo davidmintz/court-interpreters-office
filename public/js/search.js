@@ -1,4 +1,7 @@
 /** autocompletion options for defendant name search */
+
+var formatDocketElement;
+
 const deft_autocomplete_opts = {
     source: "/defendants/autocomplete",
     minLength: 2,
@@ -13,7 +16,14 @@ const deft_autocomplete_opts = {
 };
 
 $(function(){
-    $("input.docket").on("change",formatDocketElement);
+    var docket_input = $("input.docket");
+    docket_input.on("change",formatDocketElement);
+    // and/or check the referer? we have been redirected from
+    // the /search/docket/<docket>
+    console.log(`referer: ${document.referer}`);
+    if (docket_input.val()) {
+        docket_input.trigger("change");
+    }
     $("input.date").datepicker({});
     $("#defendant-name").autocomplete(deft_autocomplete_opts)
     var btn = $("#btn-submit");
@@ -57,7 +67,6 @@ $(function(){
     });
     $('.event-delete').on("click",function(e){
         e.preventDefault();
-
     });
 
 });
