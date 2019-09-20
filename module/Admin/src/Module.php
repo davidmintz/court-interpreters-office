@@ -67,7 +67,12 @@ class Module
         $navigation = $container->get('ViewHelperManager')->get("navigation");
         $navigation->setDefaultAcl($container->get('acl'));
         $navigation->findHelper('breadcrumbs')->setSeparator(' | ');
-
+        $config = $container->get('config');
+        $viewModel = $event->getApplication()->getMvcEvent()
+            ->getViewModel();
+        if (isset($config['site'])) {
+            $viewModel->setVariables($config['site']['contact']);
+        }
         // workaround for phpunit and php7.2 which is less tolerant than earlier
         // php versions and throws "ini_set(): Headers already sent. You cannot
         // change the session module's ini settings at this time"
@@ -77,9 +82,21 @@ class Module
 
         /** catch  Zend\Session\Exception\RuntimeException validation failure */
         try {
-            $user = $container->get('auth')->getIdentity();
-            if ($user) {
-                $navigation->setDefaultRole($user->role);
+            // try something a little different
+            $auth = $container->get('auth');
+            if ($auth->hasIdentity()) {
+                $user = $container->get('auth')->getIdentity();
+                if ($user) {
+                    $viewModel->user = $user;
+                    $navigation->setDefaultRole($user->role);
+                    if (in_array($user->role, ['administrator','manager','staff',])) {
+                        $viewModel->navigation_menu = 'default';
+                    } elseif ('submitter' == $user->role) {
+                        $viewModel->navigation_menu = 'Zend\Navigation\Requests';
+                    }
+                }
+            } else {
+                $user = null;
             }
         } catch (\Zend\Session\Exception\RuntimeException $e) {
              return $this->getRedirectionResponse($event);
@@ -92,31 +109,16 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($user, $container) {
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($viewModel)
+        {
             $routeMatch = $event->getRouteMatch();
-            $viewModel = $event->getApplication()->getMvcEvent()
-                ->getViewModel();
             if ($routeMatch) {
                 $viewModel->setVariables($routeMatch->getParams());
-                $config = $container->get('config');
-                if (isset($config['site'])) {
-                    $viewModel->setVariables($config['site']['contact']);
-                }
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
-                $viewModel->user = $user;
-                if (! $user) {
-                    return;
-                }
-                // figure out proper navigation bar
-                if (in_array($user->role, ['administrator','manager','staff',])) {
-                    $viewModel->navigation_menu = 'default';
-                } elseif ('submitter' == $user->role) {
-                    $viewModel->navigation_menu = 'Zend\Navigation\Requests';
-                }
             }
             // and the purpose of this was... ?
-            $request = $event->getApplication()->getRequest();
-            $viewModel->referrer = $request->getServer()->get('HTTP_REFERER');
+            // $request = $event->getApplication()->getRequest();
+            // $viewModel->referrer = $request->getServer()->get('HTTP_REFERER');
 
         });
 
@@ -130,7 +132,6 @@ class Module
             'loadRequest',
             function ($e) use ($log, $scheduleManager) {
                 $params = $e->getParams();
-                // $args = $params['args'];
                 $entity = $params['entity'];
                 $log->debug("setting previous state in loadRequest event-listener,
                  ".gettype($entity) . " is type of our entity");
