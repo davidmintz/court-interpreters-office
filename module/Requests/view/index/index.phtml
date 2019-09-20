@@ -1,6 +1,21 @@
 <?php $this->headTitle('requests') ?>
-
-<h2>Interpreter Scheduling</h2>
+<?php $this->headScript()->captureStart();?>
+$(function(){
+$("#main-menu").on("click","a.docket-search",function(e){
+    e.preventDefault();
+    $("#nav-search").dropdown("show");
+    $("#nav-search input").focus();
+});
+$(`#main-menu [data-toggle="popover"]`).on("click",(e)=>e.preventDefault())
+.popover({
+    sanitize: false, html: true,  container: "#main-menu",
+    content : function(){
+        return `If you have a docket number that you've used before, use the <a class="docket-search" href="#">search</a> button and
+        submit a docket number. Then select a past event in the search results and hit "repeat" on its dropdown menu.`;
+    }
+});});
+<?php $this->headScript()->captureEnd();?>
+<h2 class="text-primary">Interpreter Scheduling</h2>
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasErrorMessages()) :
@@ -8,27 +23,27 @@ if ($messenger->hasErrorMessages()) :
 endif;
 ?>
 <div class="row">
-    <div class="col-md-5 offset-md-1">
-            <p class="mt-3"><a class="btn btn-primary btn-block btn-lg" role="button" href="<?php echo $this->url('requests/list')?>">list</a>
-                <span class="text-muted">view/manage your past requests for interpreters</span>
+    <div id="main-menu" class="col-md-6 offset-md-1 pr-4 navigation">
+            <p class="mt-3"><a class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/list')?>">list</a>
+                <span class="text-muted">view/manage your requests for interpreters<?php if ($this->count): ?> (<?php echo number_format($this->count)?> posted to date)<?php  endif;?></span>
             </p>
-            <p class="text-muted"><a  class="btn btn-primary btn-block btn-lg" role="button" href="<?php echo $this->url('requests/create')?>">create</a>
-                <span class="text-muted">schedule an interpreter for a future event</span>
+            <p class="text-muted"><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/create')?>">create</a>
+                <span class="text-muted">schedule an interpreter for a future event <a title="helpful hint"  data-toggle="popover" href="#">(here's a tip)</a></span>
             </p>
-            <p class="text-muted"><a  class="btn btn-primary btn-block btn-lg" role="button" href="<?php echo $this->url('requests/search')?>">search</a>
+            <p class="text-muted"><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/search')?>">search</a>
                 <span class="text-muted">find previous requests</span>
             </p>
-            <p class=""><a  class="btn btn-primary btn-block btn-lg" role="button" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
+            <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
             <span class="text-muted">edit your user account details</span>
             </p>
-            <p class=""><a  class="btn btn-primary btn-block btn-lg" role="button" href="<?php echo $this->url('requests/help')?>">help</a>
+            <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/help')?>">help</a>
                 <span class="text-muted">read the help documentation</span>
             </p>
-            <p class=""><a  class="btn btn-primary btn-block btn-lg" role="button" href="<?php echo $this->url('contact')?>">contact</a>
+            <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('contact')?>">contact</a>
             <span class="text-muted">contact the Interpreters Office</span>
             </p>
     </div>
-    <div class="col-md-4 pt-2">
-        <?php echo number_format($this->count) ?> total requests posted to date.
+    <div class="col-md-3 pt-2">
+
     </div>
 </div>
