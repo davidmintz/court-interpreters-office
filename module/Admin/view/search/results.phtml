@@ -46,7 +46,7 @@ endif; ?>
                       <div class="dropdown-divider"></div>
                       <a title="edit this event" class="dropdown-item" href="<?php echo $this->url('events/edit',['id'=>$e->getId()])?>">edit</a>
                       <div class="dropdown-divider"></div>
-                      <a title="delete this event" class="dropdown-item event-delete" href="<?php echo $this->url('events',['action'=>'delete',  'id'=>$e->getId()])?>">delete</a>
+                      <a title="delete this event" class="dropdown-item event-delete" href="<?php echo $this->url('events/edit',['action'=>'delete','id'=>$e->getId()])?>">delete</a>
                     </div>
                 </td>
             </tr>
@@ -56,14 +56,3 @@ endif; ?>
 <?php
     echo $this->paginationControl($this->results,'sliding',
         'partials/pagination_control',['route' => 'search']);
-
-/*
-[0] => 0
-    [1] => type
-    [2] => judge
-    [3] => judge_id
-    [4] => location
-    [5] => anon_judge
-    [6] => language
-    [7] => cancellation
- */

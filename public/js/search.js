@@ -48,12 +48,16 @@ $(function(){
         } else {
             page = 1;
         }
-        var path = window.document.location.pathname;
+        var path = form.attr("action");
         $.get(`${path}?${form.serialize()}&page=${page}`)
         .done(function(html){
             content.html(html);
         })
         .fail(fail);
+    });
+    $('.event-delete').on("click",function(e){
+        e.preventDefault();
+
     });
 
 });

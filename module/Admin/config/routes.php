@@ -764,7 +764,7 @@ return  [
                 ],
             ],
             'may_terminate' => false,
-            'route' => '/admin/email',
+            //'route' => '/admin/email',
             'child_routes' => [
                 'event' => [
                     'type' => Segment::class,
@@ -790,11 +790,21 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/search[/:docket]',
+                'route' => '/admin/search',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\SearchController::class,
-                    'action' => 'index',
+                    'action' => 'search',
+                ],
+            ],
+            'child_routes' => [
+                'docket' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/docket/:docket',
+                        'defaults' => ['action'=>'docket-search'],
+                        'constraints'=>[ 'docket' => '\d{4}-([A-Z]|[a-z]){2,4}-\d{3,5}']
+                    ],
                 ],
             ],
         ],

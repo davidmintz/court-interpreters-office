@@ -32,18 +32,26 @@ class SearchController extends AbstractActionController
         $this->session = new \Zend\Session\Container("event_search");
     }
 
-    /**
-     * displays search form and results
-     * @return JsonModel|ViewModel
-     */
-    public function indexAction()
+    public function docketSearchAction()
     {
         $docket = $this->params()->fromRoute('docket');
-        if ($docket) {
-            $query = ['docket' => $docket,'submit'=>1];
-        } else {
-            $query = $this->params()->fromQuery();
-        }
+        $this->session->search_defaults = ['docket' => $docket,'page'=>1];
+        $this->redirect()->toRoute('search');
+    }
+
+    /**
+     * displays search form and results
+     *
+     * @return JsonModel|ViewModel
+     */
+    public function searchAction()
+    {
+        //$docket = $this->params()->fromRoute('docket');
+        // if ($docket) {
+        //     $query = ['docket' => $docket,'submit'=>1];
+        // } else {
+        // }
+        $query = $this->params()->fromQuery();
         $form = new SearchForm($this->em);
         $page = (int)$this->params()->fromQuery('page',1);
         $repository = $this->em->getRepository(Entity\Event::class);

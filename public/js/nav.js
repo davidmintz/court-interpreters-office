@@ -8,7 +8,7 @@ $(function(){
         if (!input.data().valid) {
             e.stopPropagation();
         } else {
-            document.location = `${btn.attr("href")}/${input.val()}`;
+            document.location = `${btn.attr("href")}/docket/${input.val()}`;
         }
     });
     var input = $(`.nav-item input[name="docket"]`);
