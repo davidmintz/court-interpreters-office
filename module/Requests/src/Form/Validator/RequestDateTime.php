@@ -33,7 +33,7 @@ class RequestDateTime extends AbstractValidator
      */
     protected $messageTemplates = [
             self::LESS_THAN_TWO_BUSINESS_DAYS_NOTICE =>
-        'A minimum two full business days\' notice is required. For assistance in emergent matters please contact the Interpreters by phone.',
+        'A minimum two business days\' notice is required. For emergent matters please contact the Interpreters by phone.',
 
             self::DATE_IS_IN_THE_PAST => 'Invalid date. Request date has to be in the future.',
             self::DATETIME_INVALID => 'Invalid date/time format',
