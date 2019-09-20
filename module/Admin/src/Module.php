@@ -46,7 +46,6 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
-
         // $log = $container->get('log');
         //$log->addWriter($container->get(DbWriter::class));
         /*
@@ -85,26 +84,6 @@ class Module
         } catch (\Zend\Session\Exception\RuntimeException $e) {
              return $this->getRedirectionResponse($event);
         }
-        $viewModel = $event->getApplication()->getMvcEvent()
-            ->getViewModel();
-        $config = $container->get('config');
-        if (isset($config['site'])) {
-            $viewModel->setVariables($config['site']['contact']);
-        }
-        $viewModel->user = $user;
-        if (! $user) {
-            return;
-        }
-        // figure out proper navigation bar
-        if (in_array($user->role, ['administrator','manager','staff',])) {
-            $viewModel->navigation_menu = 'default';
-        } elseif ('submitter' == $user->role) {
-            $viewModel->navigation_menu = 'Zend\Navigation\Requests';
-        }
-        // and the purpose of this was... ?
-        $request = $event->getApplication()->getRequest();
-        $viewModel->referrer = $request->getServer()->get('HTTP_REFERER');
-
         $db_writer = $container->get(DbWriter::class);
         $log = $container->get('log');
         $eventManager = $event->getApplication()->getEventManager();
@@ -119,25 +98,25 @@ class Module
                 ->getViewModel();
             if ($routeMatch) {
                 $viewModel->setVariables($routeMatch->getParams());
+                $config = $container->get('config');
+                if (isset($config['site'])) {
+                    $viewModel->setVariables($config['site']['contact']);
+                }
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
+                $viewModel->user = $user;
+                if (! $user) {
+                    return;
+                }
+                // figure out proper navigation bar
+                if (in_array($user->role, ['administrator','manager','staff',])) {
+                    $viewModel->navigation_menu = 'default';
+                } elseif ('submitter' == $user->role) {
+                    $viewModel->navigation_menu = 'Zend\Navigation\Requests';
+                }
             }
-            // $config = $container->get('config');
-            // if (isset($config['site'])) {
-            //     $viewModel->setVariables($config['site']['contact']);
-            // }
-            // $viewModel->user = $user;
-            // if (! $user) {
-            //     return;
-            // }
-            // // figure out proper navigation bar
-            // if (in_array($user->role, ['administrator','manager','staff',])) {
-            //     $viewModel->navigation_menu = 'default';
-            // } elseif ('submitter' == $user->role) {
-            //     $viewModel->navigation_menu = 'Zend\Navigation\Requests';
-            // }
-            // // and the purpose of this was... ?
-            // $request = $event->getApplication()->getRequest();
-            // $viewModel->referrer = $request->getServer()->get('HTTP_REFERER');
+            // and the purpose of this was... ?
+            $request = $event->getApplication()->getRequest();
+            $viewModel->referrer = $request->getServer()->get('HTTP_REFERER');
 
         });
 
