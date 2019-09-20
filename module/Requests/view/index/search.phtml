@@ -4,12 +4,10 @@ $this->headLink()
 $this->headScript()
         ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-        //->appendFile($this->basePath('js/form-utilities.js'))
         ->appendFile($this->basePath('js/requests/index.js'))
         ->appendFile($this->basePath('js/requests/search.js'));
 $form = $this->form;
 ?>
-
 <h2><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?>
     <small class="border border-light bg-light p-2 text-muted" style="font-size:50%">
         Enter one or more search criteria
