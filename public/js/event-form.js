@@ -624,18 +624,20 @@ var eventForm = (function () {
         $("#slideout-toggle .close").on("click",
             function(){slideout.toggle("slide");}
         );
-
+        
+        languageElement.on("change",languageElementChange);
         if (! languageElement.val()) {
             interpreterSelectElement.attr("disabled","disabled");
+        } else {
+            languageElement.trigger("change");
+            console.warn("fuck?");
         }
-
         if (! parentLocationElement.val()){
             locationElement.val("").attr({disabled : "disabled"});
         }
 
         parentLocationElement.on("change",parentLocationChange);
 
-        languageElement.on("change",languageElementChange);
 
         // interpreter and deft name "remove" buttons event handler
         $("#interpreters-assigned, #defendant-names").on("click",".btn-remove-item",
