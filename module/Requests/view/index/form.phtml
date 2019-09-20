@@ -101,10 +101,8 @@
             </div>
         </div>
         <label for="time" class="col-form-label col-sm-1">time</label>
-        <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('time')),
-            $this->formElementErrors($fieldset->get('time'));?>
+        <div class="col-sm-3"><?php echo $this->formElement($fieldset->get('time'));?>
         </div>
-
     </div>
     <?php
         foreach (['language','judge','eventType','location','docket'] as $name) :
@@ -113,8 +111,7 @@
     <div class="form-group form-row">
         <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-3 col-form-label pr-1">
             <?php echo $element->getLabel()?></label>
-        <div class="col-sm-7"><?php echo $this->formElement($element),
-            $this->formElementErrors($element);?></div>
+        <div class="col-sm-7"><?php echo $this->formElement($element);?></div>
     </div>
     <?php endforeach ?>
     <div class="form-group form-row">

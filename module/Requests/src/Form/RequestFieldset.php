@@ -263,7 +263,7 @@ class RequestFieldset extends AbstractEventFieldset
                             \Zend\Validator\StringLength::TOO_LONG =>
                                 'maximum length allowed is %max% characters',
                              \Zend\Validator\StringLength::TOO_SHORT =>
-                                'minimum length allowed is %min characters',
+                                'minimum length allowed is %min% characters',
                             ]
                         ]
                     ]
