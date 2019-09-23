@@ -7,7 +7,8 @@ $this->headScript()
 $form = $this->form;
 ?>
 <h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
-<?php if ($this->docket): ?>your docket number is <code><?php echo $this->escapeHtml($this->docket)?></code> <?php endif ?>
+<?php if ($this->docket): ?>your docket number is <code><?php echo $this->escapeHtml($this->docket)?></code>
+<?php endif;?>
 
 <?php echo $this->errorMessage($this->errorMessage,$this->header); ?>
 <form name="search-form" class="mx-auto mt-4" style="max-width:850px" action="<?php echo $this->url('search') ?>" method="get">
@@ -43,6 +44,17 @@ $form = $this->form;
     <label class="col-sm-2 col-form-label text-md-right pr-0" for="judge">judge</label>
     <div class="col-sm-4">
         <?php echo $this->formElement($form->get('judge'))?>
+    </div>
+    <label class="col-sm-1 col-form-label text-md-right pr-0 pl-1" for="interpreter">interpreter</label>
+    <div class="col-sm-3">
+        <input type="text" placeholder="last name[, first name]" name="interpreter" id="interpreter" class="form-control" value="">
+    </div>
+
+</div>
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label text-md-right pr-0" for="event_type">event-type</label>
+    <div class="col-sm-4">
+        <?php echo $this->formElement($form->get('eventType'))?>
     </div>
     <label class="col-sm-1 col-form-label text-md-right pr-0 pl-1" for="defendant-name">defendant</label>
     <div class="col-sm-3">

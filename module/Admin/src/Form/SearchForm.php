@@ -19,6 +19,24 @@ class SearchForm extends AbstractSearchForm
     public function init()
     {
         // add more elements!
+        $repo = $this->objectManager->getRepository(Entity\EventType::class);
+        $value_options = array_merge(
+            [
+                  ['label' => ' ','value' => '',]
+                ],
+            $repo->getEventTypeOptions()
+        );
+        $this->add(
+            [
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'eventType',
+            'options' => [
+                'label' => 'event type',
+                'value_options' => $value_options,
+            ],
+            'attributes' => ['class' => 'custom-select', 'id' => 'event_type'],
+            ]
+        );
         return $this;
     }
 

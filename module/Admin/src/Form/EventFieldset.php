@@ -89,7 +89,6 @@ class EventFieldset extends AbstractEventFieldset
                 'class' => 'form-control custom-select',
                 'id' => 'interpreter-select',
             ],
-
         ]);
 
         $this->addDefendantsElement();
