@@ -1,18 +1,25 @@
 <?php $this->headTitle('requests') ?>
 <?php $this->headScript()->captureStart();?>
 $(function(){
-$("#main-menu").on("click","a.docket-search",function(e){
-    e.preventDefault();
-    $("#nav-search").dropdown("show");
-    $("#nav-search input").focus();
-});
-$(`#main-menu [data-toggle="popover"]`).on("click",(e)=>e.preventDefault())
-.popover({
-    sanitize: false, html: true,  container: "#main-menu",
-    content : function(){
-        return `If you have a docket number that you've used before, use the <a class="docket-search" href="#">search</a> button and
-        submit a docket number. Then select a past event in the search results and hit "repeat" on its dropdown menu.`;
-    }
+    $("#main-menu").on("click","a.docket-search",function(e){
+        $("#nav-search").css({border:"2px solid red"}).addClass("rounded")
+            .one("click",()=>{$("#nav-search").css("border","none");});
+
+    }).on("click","button[data-dismiss]",
+        ()=>$(`#main-menu [data-toggle="popover"]`).popover("hide"));
+
+    $(`#main-menu [data-toggle="popover"]`).on("click",
+    (e)=>e.preventDefault()).popover({
+        sanitize: false, html: true,  container: "#main-menu",
+        title : `helpful hint <button type="button" class="close" data-dismiss="popover" aria-label="close">
+    <span aria-hidden="true">&times;</span></button>`,
+        content : function(){
+            return `If you have a docket number that you've used before, use the
+            <a href="javascript:void(0)" class="docket-search">search</a>
+                button in the above navigation bar and submit it. Then
+                select a past event in the search results and hit "repeat"
+                on its dropdown menu.`;
+        }
 });});
 <?php $this->headScript()->captureEnd();?>
 <h2 class="text-primary">Interpreter Scheduling</h2>
@@ -24,24 +31,24 @@ endif;
 ?>
 <div class="row">
     <div id="main-menu" class="col-md-6 offset-md-1 pr-4 navigation">
-            <p class="mt-3"><a class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/list')?>">list</a>
-                <span class="text-muted">view/manage your requests for interpreters<?php if ($this->count): ?> (<?php echo number_format($this->count)?> posted to date)<?php  endif;?></span>
-            </p>
-            <p class="text-muted"><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/create')?>">create</a>
-                <span class="text-muted">schedule an interpreter for a future event <a title="helpful hint"  data-toggle="popover" href="#">(here's a tip)</a></span>
-            </p>
-            <p class="text-muted"><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/search')?>">search</a>
-                <span class="text-muted">find previous requests</span>
-            </p>
-            <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
-            <span class="text-muted">edit your user account details</span>
-            </p>
-            <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/help')?>">help</a>
-                <span class="text-muted">read the help documentation</span>
-            </p>
-            <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('contact')?>">contact</a>
-            <span class="text-muted">contact the Interpreters Office</span>
-            </p>
+        <p class="mt-3"><a class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/list')?>">list</a>
+            <span class="text-muted">view/manage your requests for interpreters<?php if ($this->count): ?> (<?php echo number_format($this->count)?> posted to date)<?php  endif;?></span>
+        </p>
+        <p class="text-muted"><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/create')?>">create</a>
+            <span class="text-muted">schedule an interpreter for a future event <a data-toggle="popover" href="#">(here's a tip)</a></span>
+        </p>
+        <p class="text-muted"><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/search')?>">search</a>
+            <span class="text-muted">find previous requests</span>
+        </p>
+        <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
+        <span class="text-muted">edit your user account details</span>
+        </p>
+        <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('requests/help')?>">help</a>
+            <span class="text-muted">read the help documentation</span>
+        </p>
+        <p class=""><a  class="btn btn-outline-primary bg-light btn-block btn-lg" role="button" href="<?php echo $this->url('contact')?>">contact</a>
+        <span class="text-muted">contact the Interpreters Office</span>
+        </p>
     </div>
     <div class="col-md-3 pt-2">
 
