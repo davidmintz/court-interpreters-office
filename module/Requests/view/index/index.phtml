@@ -11,16 +11,13 @@ $(function(){
     $(`#main-menu [data-toggle="popover"]`).on("click",
     (e)=>e.preventDefault()).popover({
         sanitize: false, html: true,  container: "#main-menu",
-        title : `helpful hint <button type="button" class="close" data-dismiss="popover" aria-label="close">
-    <span aria-hidden="true">&times;</span></button>`,
-        content : function(){
-            return `If you have a docket number that you've used before, use the
-            <a href="javascript:void(0)" class="docket-search">search</a>
-                button in the above navigation bar and submit it. Then
-                select a past event in the search results and hit "repeat"
-                on its dropdown menu.`;
-        }
-});});
+        title : `helpful hint <button type="button" class="close" data-dismiss="popover" aria-label="close"><span aria-hidden="true">&times;</span></button>`,
+        content : `If you have a docket number that you've used before, use the
+            <a href="javascript:void(0)" class="docket-search">search</a> button in
+            the above navigation bar to submit it. Then select a past event in the
+            search results and hit "repeat" from its dropdown menu.`
+    });
+});
 <?php $this->headScript()->captureEnd();?>
 <h2 class="text-primary">Interpreter Scheduling</h2>
 <?php
@@ -50,7 +47,5 @@ endif;
         <span class="text-muted">contact the Interpreters Office</span>
         </p>
     </div>
-    <div class="col-md-3 pt-2">
-
-    </div>
+    <div class="col-md-3 pt-2"></div>
 </div>
