@@ -21,7 +21,7 @@ use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
  */
 
 /* some handy SQL
- SELECT e.id, e.date, e.time, t.name type, l.name language,
+ SELECT e.id, e.date, e.time, e.docket, t.name type, l.name language,
  COALESCE(j.lastname, a.name) AS judge, p.name AS place,
  COALESCE(s.lastname,as.name) submitter, submission_date, submission_time FROM events e
  JOIN event_types t ON e.event_type_id = t.id
