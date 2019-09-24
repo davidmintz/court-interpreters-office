@@ -7,69 +7,73 @@ $this->headScript()
 $form = $this->form;
 ?>
 <h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
-<?php if ($this->docket): ?>your docket number is <code><?php echo $this->escapeHtml($this->docket)?></code>
-<?php endif;?>
-
 <?php echo $this->errorMessage($this->errorMessage,$this->header); ?>
-<form name="search-form" class="mx-auto mt-4" style="max-width:850px" action="<?php echo $this->url('search') ?>" method="get">
-    <?php
-    $messenger = $this->flashMessenger();
-    if ($messenger->hasSuccessMessages()) :
-        echo $messenger->render('success', ['alert','alert-success',], false);
-    endif;
-    ?>
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label text-md-right pr-0" for="docket">docket</label>
-    <div class="col-sm-3">
-        <?php echo $this->formElement($form->get('docket'))?>
+<form name="search-form" class="mx-auto mt-4" style="max-width:1000px" action="<?php echo $this->url('search') ?>" method="get">
+    <div class="form-group row">
+        <label for="docket" class="col-form-label col-auto text-md-right pr-0">
+            docket
+        </label>
+        <div class="col-sm-2">
+            <?php echo $this->formElement($form->get('docket'))?>
+        </div>
+        <label for="language" class="col-form-label  col-sm-1 text-md-right pr-0">
+            language
+        </label>
+        <div class="col-sm-2">
+            <?php echo $this->formElement($form->get('language'))?>
+        </div>
+        <label for="judge" class="col-form-label col-auto text-md-right pr-0">
+            judge
+        </label>
+        <div class="col-sm-3">
+            <?php echo $this->formElement($form->get('judge'))?>
+        </div>
     </div>
-    <label class="col-form-label text-md-right pr-0" for="language">language</label>
-    <div class="col-sm-3">
-        <?php echo $this->formElement($form->get('language'))?>
+    <div class="form-group row">
+        <label for="event_type" class="col-form-label col-auto text-md-right pr-0">
+            type
+        </label>
+        <div class="col-auto">
+            <?php echo $this->formElement($form->get('eventType'))?>
+        </div>
+        <label class="col-form-label col-auto text-md-right pr-0" for="defendant-name">defendant</label>
+        <div class="col-auto">
+            <?php echo $this->formElement($form->get('defendant-name'))?>
+        </div>
+        <label class="col-form-label col-auto text-md-right pr-0" for="interpreter">interpreter</label>
+        <div class="col-auto">
+            <input type="text" placeholder="last name[, first name]" name="interpreter" id="interpreter" class="form-control" value="">
+            <input type="hidden" name="interpreter_id" id="interpreter_id" value="">
+        </div>
     </div>
-</div>
-<!-- -->
-<div class="form-group row">
-    <div class="col-sm-2 col-form-label text-md-right pr-0">date range</div>
-    <label class="col-form-label text-md-right pl-3 pr-0 text-muted" for="date-from">from</label>
-    <div class="col-sm-3">
-        <?php echo $this->formElement($form->get('date-from'))?>
+    <div class="form-group row">
+        <div class="col-form-label col-auto text-md-right pr-0">date range</div>
+        <label class="col-form-label text-md-right pl-3 pr-0 text-muted" for="date-from">from</label>
+        <div class="col-auto">
+            <?php echo $this->formElement($form->get('date-from'))?>
+        </div>
+        <label class="col-form-label col-auto pr-0 text-muted" for="date-to">to</label>
+        <div class="col-auto">
+            <?php echo $this->formElement($form->get('date-to'))?>
+        </div>
+        <label for="order" class="col-form-label col-auto text-md-right pr-0">
+            sort by
+        </label>
+        <div class="col-auto">
+            <select class="custom-select" name="order" id="order">
+                <option value="asc">newest first</option>
+                <option value="desc">oldest first</option>
+            </select>
+        </div>
+        <button id="btn-submit" class="btn btn-primary col-sm-1">
+            <span class="fas fa-search"></span><span class="sr-only">search</span>
+        </button>
     </div>
-    <label class="col-form-label pr-0 text-muted" for="date-to">to</label>
-    <div class="col-sm-3">
-        <?php echo $this->formElement($form->get('date-to'))?>
+    <div class="form-group row">
+        <?php echo $this->formElement($form->get('submit')) ?>
+        <div class="p-1 col-sm-5 validation-error offset-sm-2 mt-0 alert alert-warning" style="display:none" id="error_submit">
+        </div>
     </div>
-</div>
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label text-md-right pr-0" for="judge">judge</label>
-    <div class="col-sm-4">
-        <?php echo $this->formElement($form->get('judge'))?>
-    </div>
-    <label class="col-sm-1 col-form-label text-md-right pr-0 pl-1" for="interpreter">interpreter</label>
-    <div class="col-sm-3">
-        <input type="text" placeholder="last name[, first name]" name="interpreter" id="interpreter" class="form-control" value="">
-    </div>
-
-</div>
-<div class="form-group row">
-    <label class="col-sm-2 col-form-label text-md-right pr-0" for="event_type">event-type</label>
-    <div class="col-sm-4">
-        <?php echo $this->formElement($form->get('eventType'))?>
-    </div>
-    <label class="col-sm-1 col-form-label text-md-right pr-0 pl-1" for="defendant-name">defendant</label>
-    <div class="col-sm-3">
-        <?php echo $this->formElement($form->get('defendant-name'))?>
-    </div>
-    <!-- -->
-    <button id="btn-submit" class="btn btn-primary col-sm-1">
-        <span class="fas fa-search"></span><span class="sr-only">search</span>
-    </button>
-    <!-- -->
-</div>
-<div class="form-group row">
-    <?php echo $this->formElement($form->get('submit')) ?>
-    <div class="p-1 col-sm-5 validation-error offset-sm-2 mt-0 alert alert-warning" style="display:none" id="error_submit">
-    </div>
-</div>
 </form>
+
 <div id="results"><?php if ($this->results): echo $this->render('search/results'); endif;?></div>

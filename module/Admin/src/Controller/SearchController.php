@@ -46,11 +46,6 @@ class SearchController extends AbstractActionController
      */
     public function searchAction()
     {
-        //$docket = $this->params()->fromRoute('docket');
-        // if ($docket) {
-        //     $query = ['docket' => $docket,'submit'=>1];
-        // } else {
-        // }
         $query = $this->params()->fromQuery();
         $form = new SearchForm($this->em);
         $page = (int)$this->params()->fromQuery('page',1);

@@ -15,6 +15,20 @@ const deft_autocomplete_opts = {
     }
 };
 
+const interpreter_autocomplete_opts = {
+    source: "/admin/interpreters",
+    minLength: 2,
+    select: (event, ui) => {
+        event.preventDefault();
+        $("#interpreter").val("");
+        $("#interpreter_id").val(ui.item.id);
+    },
+    focus: function(event,ui) {
+        event.preventDefault();
+        $(this).val(ui.item.label);
+    }
+};
+
 $(function(){
     var docket_input = $("input.docket");
     docket_input.on("change",formatDocketElement);
@@ -68,5 +82,5 @@ $(function(){
     $('.event-delete').on("click",function(e){
         e.preventDefault();
     });
-
+    $("#interpreter").autocomplete(interpreter_autocomplete_opts);
 });

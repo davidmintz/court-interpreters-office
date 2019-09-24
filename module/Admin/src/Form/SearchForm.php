@@ -37,7 +37,26 @@ class SearchForm extends AbstractSearchForm
             'attributes' => ['class' => 'custom-select', 'id' => 'event_type'],
             ]
         );
+        $this->add(
+            [
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'interpreter_id',
+            'attributes' => ['id' => 'interpreter_id'],
+            ]
+        );
         return $this;
     }
 
+    public function getInputFilterSpecification() {
+        
+        $spec = parent::getInputFilterSpecification();
+        $spec['interpreter_id'] = [
+            'required'=>false, 'allow_empty' => true,
+        ];
+        $spec['eventType'] = [
+            'required'=>false, 'allow_empty' => true,
+        ];
+
+        return $spec;
+    }
 }

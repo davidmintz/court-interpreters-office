@@ -130,6 +130,21 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
                 $this->get('judge')->setValue($default_judge);
             }
         }
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'order',
+            'options' => [
+                'label' => 'sort by',
+                'value_options' =>[
+                    'desc' => 'latest first',
+                    'asc' => 'oldest first',
+                ]
+            ],
+            'attributes' => [
+                'class' => 'form-control custom-select',
+                'id' => 'order'],
+        ]);
         $this->init();
     }
 
@@ -185,6 +200,10 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
                     // @todo a Boolean filter?
                     ['name' => 'StringTrim'],
                 ],
+            ],
+            'order' => [
+                'required' => false,
+                'allow_empty' => true,
             ],
             'submit' => [
                 'required' => true,
