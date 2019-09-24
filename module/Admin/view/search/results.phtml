@@ -6,7 +6,7 @@ if ($this->results):
 <p>We found no records matching the above criteria.</p>
     <?php return; endif;
 endif; ?>
-<p>
+<p class="mt-3 px-4 py-2 border border-info rounded d-inline-flex">
     <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>
 </p>
 <table class="table table-sm">
