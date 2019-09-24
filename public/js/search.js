@@ -19,8 +19,7 @@ const interpreter_autocomplete_opts = {
     source: "/admin/interpreters",
     minLength: 2,
     select: (event, ui) => {
-        event.preventDefault();
-        $("#interpreter").val("");
+        event.preventDefault();        
         $("#interpreter_id").val(ui.item.id);
     },
     focus: function(event,ui) {

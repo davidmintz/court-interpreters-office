@@ -32,6 +32,9 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         ->attachByName('Callback',[
             'callback'=>function($value, $context) {
                 unset($context['submit']);
+                if (isset($context['order'])) {
+                    unset($context['order']);
+                }
                 foreach ($context as $field => $value) {
                     if (trim($value)) {
                         return true;

@@ -448,9 +448,7 @@ DQL;
             ->leftJoin('e.defendants','defts')
             ->leftJoin('e.location', 'loc')
             ->leftJoin('loc.parentLocation', 'ploc')
-            ->leftJoin('e.cancellationReason', 'cr')
-            ->orderBy('e.date', 'DESC')
-            ->addOrderBy('e.time', 'ASC');
+            ->leftJoin('e.cancellationReason', 'cr');
         $params = [];
         if (!empty($query['language'])) {
             $qb->where('l.id = :language_id');
@@ -485,6 +483,24 @@ DQL;
         } elseif (! empty($query['pseudo_judge'])) {
             $qb->andWhere('aj.id = :judge_id');
             $params['judge_id'] = $query['judge'];
+        }
+
+        if (! empty($query['eventType'])) {
+            $qb->andWhere('t.id = :event_type_id');
+            $params[':event_type_id'] = $query['eventType'];
+        }
+        if (!empty($query['interpreter_id'])) {
+            $qb->andWhere('i.id = :interpreter_id');
+            $params[':interpreter_id'] = $query['interpreter_id'];
+        }
+        if (! empty($query['order'])) {
+            $order_by = $query['order'];
+            // date ASCENDING
+            if ($order_by == 'desc') {
+                $qb->orderBy('e.date', 'DESC')->addOrderBy('e.time', 'ASC');
+            }
+        } else {
+            $qb->orderBy('e.date', 'ASC')->addOrderBy('e.time', 'ASC');
         }
         $qb->setParameters($params);
         $query = $qb->getQuery();

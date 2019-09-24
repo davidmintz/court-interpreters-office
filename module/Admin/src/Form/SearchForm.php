@@ -44,13 +44,25 @@ class SearchForm extends AbstractSearchForm
             'attributes' => ['id' => 'interpreter_id'],
             ]
         );
+        $this->add(
+            [
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'interpreter',
+            'attributes' => ['id' => 'interpreter',
+                'placeholder' => 'last name[, first name]',
+                'class'=> 'form-control'],
+            ]
+        );
         return $this;
     }
 
     public function getInputFilterSpecification() {
-        
+
         $spec = parent::getInputFilterSpecification();
         $spec['interpreter_id'] = [
+            'required'=>false, 'allow_empty' => true,
+        ];
+        $spec['interpreter'] = [
             'required'=>false, 'allow_empty' => true,
         ];
         $spec['eventType'] = [

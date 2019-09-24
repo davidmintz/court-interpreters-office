@@ -10,7 +10,18 @@ endif; ?>
     <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>
 </p>
 <table class="table table-sm">
-<thead></thead>
+<thead>
+    <tr class="font-weight-normal">
+        <th class="font-weight-normal text-info">date</th>
+        <th class="font-weight-normal text-info">language</th>
+        <th class="font-weight-normal text-info">type</th>
+        <th class="font-weight-normal text-info">judge</th>
+        <th class="font-weight-normal text-info">docket</th>
+        <th class="font-weight-normal text-info">defendants</th>
+        <th class="font-weight-normal text-info">interpreters</th>
+        <th class="font-weight-normal text-info"></th>
+    </tr>
+</thead>
     <tbody>
         <?php foreach ($this->results as $e): ?>
             <tr>
