@@ -237,14 +237,15 @@ class RequestRepository extends EntityRepository
         }
         if (! empty($criteria['defendant-name'])) {
             $name = $this->parseName($criteria['defendant-name']);
-            $qb->andWhere($qb->expr()->like(
-                'defts.surnames',$qb->expr()->literal("{$name['last']}%")
-            ));
+            $qb2 = $this->getEntityManager()->createQueryBuilder();
+            $qb2->select('r2.id')->from(Request::class,'r2')->join('r2.defendants', 'd2')
+                ->where($qb2->expr()->like('d2.surnames',$qb->expr()->literal("{$name['last']}%")));
             if ($name['first']) {
-                $qb->andWhere($qb->expr()->like(
-                    'defts.given_names',$qb->expr()->literal("{$name['first']}%")
-                ));
+                $qb2->andWhere($qb->expr()->like(
+                    'd2.given_names',$qb->expr()->literal("{$name['first']}%")));
             }
+            $qb->andWhere($qb->expr()->in('r.id',$qb2->getDQL()));
+
         }
         if (! empty($criteria['judge'])) {
             $qb->andWhere('j.id = :judge_id');
