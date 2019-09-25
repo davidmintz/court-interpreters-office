@@ -12,6 +12,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\ProperNameParsingTrait;
+use InterpretersOffice\Entity\Defendant;
 
 /**
  * EventRepository
@@ -432,11 +433,12 @@ DQL;
         //printf("<pre>%s</pre>",print_r($query)); exit();
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('e, l, t, tc, j, jf, aj, cr, loc, ploc,
-        defts, jh, s, sh, ie, i' )
+         jh, s, sh, defts,ie, i' )
             ->from(Entity\Event::class, 'e')
             ->join('e.eventType', 't')
             ->leftJoin('e.interpreterEvents', 'ie')
             ->leftJoin('ie.interpreter', 'i')
+            ->leftJoin('e.defendants','defts')
             ->join('t.category', 'tc')
             ->leftJoin('e.judge', 'j')
             ->leftJoin('e.submitter', 's')
@@ -445,7 +447,6 @@ DQL;
             ->leftJoin('j.hat', 'jh')
             ->leftJoin('e.anonymousJudge', 'aj')
             ->join('e.language', 'l')
-            ->leftJoin('e.defendants','defts')
             ->leftJoin('e.location', 'loc')
             ->leftJoin('loc.parentLocation', 'ploc')
             ->leftJoin('e.cancellationReason', 'cr');
@@ -466,16 +467,21 @@ DQL;
             $qb->andWhere('e.date <= :max_date');
             $params['max_date'] = new \DateTime($query['date-to']);
         }
+        /*
+        because we have fetch-joined the defendant names, if we want the returned
+        event entities to be hydrated with all the related defendant names (not just the
+        one that meets the WHERE condition), we have to do this...
+        */
         if (! empty($query['defendant-name'])) {
             $name = $this->parseName($query['defendant-name']);
-            $qb->andWhere($qb->expr()->like(
-                'defts.surnames',$qb->expr()->literal("{$name['last']}%")
-            ));
+            $qb2 = $this->getEntityManager()->createQueryBuilder();
+            $qb2->select('e2.id')->from(Entity\Event::class,'e2')->join('e2.defendants', 'd')
+                ->where($qb2->expr()->like('d.surnames',$qb->expr()->literal("{$name['last']}%")));
             if ($name['first']) {
-                $qb->andWhere($qb->expr()->like(
-                    'defts.given_names',$qb->expr()->literal("{$name['first']}%")
-                ));
+                $qb2->andWhere($qb->expr()->like(
+                    'd.given_names',$qb->expr()->literal("{$name['first']}%")));
             }
+            $qb->andWhere($qb->expr()->in('e.id',$qb2->getDQL()));
         }
         if (! empty($query['judge'])) {
             $qb->andWhere('j.id = :judge_id');
@@ -489,8 +495,15 @@ DQL;
             $qb->andWhere('t.id = :event_type_id');
             $params[':event_type_id'] = $query['eventType'];
         }
+        // same as above, with the related defendant names
         if (!empty($query['interpreter_id'])) {
-            $qb->andWhere('i.id = :interpreter_id');
+            $qb2 = $this->getEntityManager()->createQueryBuilder();
+            $qb2->select('e3.id')->from(Entity\Event::class,'e3')
+                ->join('e3.interpreterEvents', 'ie2')
+                ->join('ie2.interpreter', 'i2')
+                ->where('i2.id = :interpreter_id');
+
+            $qb->andWhere($qb->expr()->in('e.id',$qb2->getDQL()));
             $params[':interpreter_id'] = $query['interpreter_id'];
         }
         if (! empty($query['order'])) {
