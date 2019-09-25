@@ -3,7 +3,7 @@
 $(function(){
     $('#btn-delete').on("click",function(event){
         event.preventDefault();
-        if (! window.confirm("Are you sure you want to delete this event-type?")) {
+        if (! window.confirm("Are you sure you want to delete this location?")) {
             return;
         }
         var data = $('form#location').data();
