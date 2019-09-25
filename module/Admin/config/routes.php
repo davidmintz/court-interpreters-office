@@ -806,6 +806,13 @@ return  [
                         'constraints'=>[ 'docket' => '\d{4}-([A-Z]|[a-z]){2,4}-\d{3,5}']
                     ],
                 ],
+                'clear' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/clear',
+                        'defaults' => ['action'=>'clear'],
+                    ],
+                ],
             ],
         ],
         'normalization' => [

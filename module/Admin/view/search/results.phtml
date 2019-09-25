@@ -23,7 +23,7 @@ endif; ?>
     </tr>
 </thead>
     <tbody>
-        <?php foreach ($this->results as $e): ?>
+        <?php foreach ($this->results as $e): $id = $e->getId(); ?>
             <tr>
                 <td><?php echo $e->getDate()->format('d-M-Y')?></td>
                 <td><?php echo $this->escapeHtml($e->getLanguage())?></td>
@@ -36,9 +36,12 @@ endif; ?>
                 endif;
                 ?></td>
                 <td><?php echo $this->escapeHtml(substr($e->getDocket(),2))?></td>
-                <td><?php foreach ($e->getDefendants() as $d):
-                    echo $this->escapeHtml($d->getFullName()),'<br>';
-                endforeach;?></td>
+                <td><?php $defts = $e->getDefendants();
+                if ($defts) :
+                    $this->defendants = [$id=>$defts];
+                    echo $this->defendants($id);
+                endif;?>
+                </td>
                 <td><?php
                     foreach ($e->getInterpreterEvents() as $i):
                          echo $this->escapeHtml($i->getInterpreter()->getFullName()),'<br>';
@@ -51,11 +54,11 @@ endif; ?>
                         <span class="sr-only">menu</span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="event-dropdown-<?php echo $e->getId()?>">
-                      <a title="display detailed view of thiseventt" class="dropdown-item event-details text-primary" href="<?php echo $this->url('events/view',['id'=>$e->getId()])?>">view details</a>
+                      <a title="display detailed view of this event" class="dropdown-item event-details text-primary" href="<?php echo $this->url('events/view',['id'=>$id])?>">view details</a>
                       <div class="dropdown-divider"></div>
-                      <a title="create another event in this same case" class="dropdown-item event-repeat text-primary" href="<?php echo $this->url('events/add',['id'=>$e->getId()])?>">repeat</a>
+                      <a title="create another event in this same case" class="dropdown-item event-repeat text-primary" href="<?php echo $this->url('events/add',['id'=>$id])?>">repeat</a>
                       <div class="dropdown-divider"></div>
-                      <a title="edit this event" class="dropdown-item" href="<?php echo $this->url('events/edit',['id'=>$e->getId()])?>">edit</a>
+                      <a title="edit this event" class="dropdown-item" href="<?php echo $this->url('events/edit',['id'=>$id])?>">edit</a>
                       <div class="dropdown-divider"></div>
                       <a title="delete this event" class="dropdown-item event-delete" href="<?php echo $this->url('events/edit',['action'=>'delete','id'=>$e->getId()])?>">delete</a>
                     </div>

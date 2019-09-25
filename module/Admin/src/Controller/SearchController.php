@@ -87,4 +87,10 @@ class SearchController extends AbstractActionController
         return $view;
     }
 
+    public function clearAction()
+    {
+        $this->session->search_defaults = null;
+        return false;
+    }
+
 }

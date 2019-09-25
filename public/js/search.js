@@ -12,6 +12,7 @@ const deft_autocomplete_opts = {
     focus: function(event,ui) {
         event.preventDefault();
         $(this).val(ui.item.label);
+        $(event.target).trigger("change");
     }
 };
 
@@ -19,8 +20,9 @@ const interpreter_autocomplete_opts = {
     source: "/admin/interpreters",
     minLength: 2,
     select: (event, ui) => {
-        event.preventDefault();        
+        event.preventDefault();
         $("#interpreter_id").val(ui.item.id);
+        $(event.target).trigger("change");
     },
     focus: function(event,ui) {
         event.preventDefault();
@@ -29,11 +31,12 @@ const interpreter_autocomplete_opts = {
 };
 
 $(function(){
+
     var docket_input = $("input.docket");
     docket_input.on("change",formatDocketElement);
     // and/or check the referer? we have been redirected from
     // the /search/docket/<docket>
-    console.log(`referer: ${document.referer}`);
+    //console.log(`referer: ${document.referer}`);
     if (docket_input.val()) {
         docket_input.trigger("change");
     }
@@ -77,9 +80,54 @@ $(function(){
             content.html(html);
         })
         .fail(fail);
+    })
+    /**
+     * toggles display of additional defendant-names
+     */
+    .on("click", "a.expand-deftnames", function(e){
+        e.preventDefault();
+        $(this).hide().siblings().slideDown();
+    })
+    .on("click","a.collapse-deftnames", function(e){
+        e.preventDefault();
+        var self = $(this);
+        self.hide().siblings().not(":first-of-type").slideUp(
+            function(){self.siblings("a.expand-deftnames").show();}
+        );
     });
     $('.event-delete').on("click",function(e){
         e.preventDefault();
     });
     $("#interpreter").autocomplete(interpreter_autocomplete_opts);
+    var btn_reset = $("#btn-reset");
+    form.on("change",function(e){
+        var target = $(e.target);
+        var what = target.attr("name");
+        if (["submit","order"].includes(what)) {
+            return;
+        }
+        var has_defaults, elements = form.find('select, input');
+        elements.each(function(){
+            var e = $(this);
+            if (e.val() && ! ["submit","order"].includes(e.attr("name"))) {
+                //console.log(`${$(this).attr("name")} has a truthy value`);
+                has_defaults = true;
+            }
+        });
+        if (has_defaults) {
+             btn_reset.removeAttr("hidden")
+        } else {
+            btn_reset.attr({hidden:true});
+        }
+    });
+    btn_reset.on("click",function(e){
+        e.preventDefault();
+        $("#results").empty();
+        form.find('select, input').each(function(i,e){
+            if (!["submit","order"].includes(e.name)) {
+                $(this).val("");
+            }
+        });
+        $.get("/admin/search/clear").then(()=>btn_reset.attr({hidden:true}));
+    });
 });
