@@ -18,6 +18,7 @@ $modules = [
     'Zend\Navigation',
     'InterpretersOffice',
     'InterpretersOffice\Admin',
+    'InterpretersOffice\Admin\Notes',
     'InterpretersOffice\Requests',
     'Sandbox'
 ];
