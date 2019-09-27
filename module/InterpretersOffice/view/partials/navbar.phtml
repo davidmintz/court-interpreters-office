@@ -27,7 +27,7 @@ foreach ($this->container as $page) :
                     </div>
                     <div class="validation-error alert alert-warning" style="display:none"></div>
                 </div>
-                <a href="<?php echo $this->url($page->route)?>" class="dropdown-item pl-3">more options</a>
+                <a href="<?php echo $this->url($page->route)?>" class="dropdown-item pl-3">advanced search</a>
             </div>
         </li>
     <?php continue;  endif;
@@ -48,7 +48,15 @@ foreach ($this->container as $page) :
          else:
              $active = false;
          endif;
-        ?><a title="<?php if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; if ($child->css_class): echo " $child->css_class";endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
+         if ($label == 'notes'): // another special case ?>
+            <!-- <a class="nav-link dropdown-toggle pl-4" data-toggle="dropdown" title="notes" href="#">notes</a>
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item">one</a>
+                <a href="#" class="dropdown-item">two</a>
+            </div> -->
+     <?php // continue;
+            endif;
+        ?><a title="<?php if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; ?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
     <?php endforeach; ?>
     </div>
 </li>

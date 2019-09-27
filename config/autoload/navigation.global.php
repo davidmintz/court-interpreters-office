@@ -1,7 +1,10 @@
 <?php
 /** config/autoload/navigation.global.php
  *
- * still a work in progress
+ * This is the config for the main admin navigation.
+ *
+ * Other modules under the Admin namespace have their own configurations,
+ * which are merged with this.
  */
 use InterpretersOffice\Controller as Main;
 
@@ -195,6 +198,7 @@ return [
                 'label' => 'admin',
                 'route' => 'admin',
                 'title' => 'main admin page',
+                'order' => -10,
                 'resource' => Admin\IndexController::class,
             ],
             [
@@ -209,26 +213,28 @@ return [
                 'resource' => Admin\EventsController::class,
 
             ],
-            [
-                'label' => 'add event',
-                'route' => 'events/add',
-                'route_matches'=>[
-                    'events/add',
-                ],
-                'title' => 'create a new event on the schedule',
-                'resource' => Admin\EventsController::class,
-                'privilege' => 'add',
-            ],
+            // [
+            //     'label' => 'add event',
+            //     'route' => 'events/add',
+            //     'route_matches'=>[
+            //         'events/add',
+            //     ],
+            //     'title' => 'create a new event on the schedule',
+            //     'resource' => Admin\EventsController::class,
+            //     'privilege' => 'add',
+            // ],
             [
                 'label' => 'search',
                 'route' => 'search',
                 'resource' => Admin\SearchController::class,
-                'css_class' => 'd-none d-xl-inline',
+                'order' => 20,
+                //'css_class' => 'd-none d-xl-inline',
 
             ],
             [
                 'label' => 'interpreters',
                 'route' => 'interpreters',
+                'order' => 30,
                 'route_matches'=>[
                     'interpreters/find_by_language',
                     'interpreters/find_by_name',
@@ -237,12 +243,13 @@ return [
                 'resource' => Admin\InterpretersController::class,
                 //'order' => 6000,
             ],
+
             [
                 'label' => 'other data',
                 'route' => 'admin',
                 'title' => 'manage other data entities',
                 'resource' => Admin\IndexController::class,
-                'order' => 600,
+                'order' => 500,
                 'pages' => [
                     [
                         'label' => 'languages',
