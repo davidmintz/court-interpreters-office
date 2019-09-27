@@ -28,13 +28,24 @@ class NotesController extends AbstractRestfulController
     public function get($id)
     {
         $type = $this->params()->fromRoute('type');
-        return new JsonModel(['date'=> 'whenever','message'=> 'fuck yeah!', 'id'=>$id,'type'=>$type]);
+        $id = $this->params()->fromRoute('id');
+        return new JsonModel(
+            [
+                'date'=> 'whenever','message'=> __METHOD__, 'id'=>$id,'type'=>$type
+
+        ]);
+    }
+
+    public function testAction()
+    {
+        //$type = $this->params()->fromRoute('type');
+        return new JsonModel(['date'=> 'whenever','message'=> 'fuck yeah!', ]);
     }
 
     public function getByDateAction()
     {
         $date =  $this->params()->fromRoute('date');
         $type = $this->params()->fromRoute('type');
-        return new JsonModel(['message'=> "fuck yeah! you want $type for $date", 'date'=>$date,]);
+        return new JsonModel(['message'=> "fuck yeah! you want $type for $date", 'action'=>__FUNCTION__,'date'=>$date,]);
     }
 }

@@ -68,7 +68,8 @@ return [
                         'controller' => Controller\NotesController::class,
                     ],
                 ],
-                /** interesting fact/note-to-self:
+                /**
+                *  interesting fact/note-to-self:
                 *   with RestfulController, you don't specify the controller
                 *   action because the framework does it for you
                 */
@@ -90,10 +91,9 @@ return [
                     'get_for_date' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/:type/date/:date',
+                            'route' => '/date/:date:/:type',
                             'verb' => 'GET',
-                            'defaults' => [
-                                //'controller' => Controller\NotesController::class,
+                            'defaults' => [                            
                                 'action' => 'get-by-date',
                                 'constraints' => [
                                     'date' => '^\d{4}-\d{2}-\d{2}$',
