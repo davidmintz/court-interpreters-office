@@ -16,4 +16,28 @@ return [
             ],
         ],
     ],
+    'navigation' => [
+        'default' => [
+             'tools' => [
+                 //'order' => 40,
+                 'pages' => [
+                     [
+                         'label' => 'notes',
+                         'uri' => '#',
+                         //'order' => -1000,
+                         'pages' => [
+                             'foo' => [
+                                 'label' => 'foo',
+                                 'uri' => '#',
+                             ],
+                             'bar' => [
+                                 'label' => 'bar',
+                                 'uri' => '#',
+                             ],
+                         ]
+                     ],
+                 ],
+             ]
+        ],
+    ],
 ];

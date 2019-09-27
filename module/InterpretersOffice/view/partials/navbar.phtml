@@ -1,41 +1,19 @@
 <?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */
-$route = $this->layout()->routeMatch;
-// map routes to navigation labels because
-// there isn't necessarily one-to-one correspondence
-$labels = [
-    'events/add' => 'add event',
-    'events'  => 'schedule',
-    'events/display'=>'schedule',
-    'events/edit'  => 'schedule',
-    'admin-defendants'  => 'defendants',
-    'admin-requests' => 'requests',
-
-    'requests' => 'requests',
-    'requests/list' => 'list',
-    'requests/create' => 'create',
-    'requests/search' => 'search',
-    'interpreters/find_by_language'=>'interpreters',
-    'interpreters/find_by_name'=>'interpreters',
-];
-?>
+$route = $this->layout()->routeMatch;?>
 <ul class="navbar-nav mr-auto"><?php
 /* @var $page Zend\Navigation\Page\Mvc */
 foreach ($this->container as $page) :
     $label = $page->getLabel();
     $active = false;
-    /**
-     * @todo this is so complicated, it must be bullshit
-     */
-    if ( $label == $route
-         or isset($labels[$route]) && $label == $labels[$route] ):
+    if ( $label == $route or ($page->route_matches && in_array($route,$page->route_matches))):
         $active = true;
     endif;
     // when using partials we need to manually check for ACL conditions
     if (false === $page->display || !$page->isVisible() || !$this->navigation()->accept($page)) :
         continue;
     endif;
-    if ($label == 'search'): // this one is a special case ?>
-        <li class="nav-item dropdown" id="nav-search"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">search</a>
+    if ($label == 'search'): // this one is a special case ?><?php //if ($active):.. //endif;?>
+        <li class="nav-item dropdown <?php if ($active): ?> active<?php endif;?>" id="nav-search"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">search</a>
             <div class="dropdown-menu"  style="max-width:250px;min-width:200px" >
                 <div class="px-2" method="get">
                     <div class="input-group">
@@ -58,19 +36,19 @@ foreach ($this->container as $page) :
 <?php else :
 ?><li class="nav-item dropdown">
     <a title="<?php if ($page->title): echo $page->title; endif ?>" href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
-
-    <div class="dropdown-menu"><?php foreach ($page->getPages() as $child) : ?>
+    <div class="dropdown-menu"><?php
+     foreach ($page->getPages() as $child) : ?>
         <?php
         if (!$child->isVisible() || !$this->navigation()->accept($child)) :
             continue;
         endif;
         $label = $child->getLabel();
-        if ($label == $route or ( isset($labels[$route]) && $label == $labels[$route] )) :
+            if ( $label == $route or ($child->route_matches && in_array($route,$child->route_matches))):
              $active = true;
          else:
              $active = false;
          endif;
-        ?><a  title="<?php if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; if ($child->css_class): echo " $child->css_class";endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
+        ?><a title="<?php if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; if ($child->css_class): echo " $child->css_class";endif;?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
     <?php endforeach; ?>
     </div>
 </li>

@@ -201,12 +201,20 @@ return [
                 'label' => 'schedule',
                 'title' => 'view the interpreters\' schedule',
                 'route' => 'events',
+                'route_matches'=>[
+                    'events',
+                    'events/display',
+                    'events/edit',
+                ],
                 'resource' => Admin\EventsController::class,
 
             ],
             [
                 'label' => 'add event',
                 'route' => 'events/add',
+                'route_matches'=>[
+                    'events/add',
+                ],
                 'title' => 'create a new event on the schedule',
                 'resource' => Admin\EventsController::class,
                 'privilege' => 'add',
@@ -221,8 +229,13 @@ return [
             [
                 'label' => 'interpreters',
                 'route' => 'interpreters',
+                'route_matches'=>[
+                    'interpreters/find_by_language',
+                    'interpreters/find_by_name',
+                ],
                 'title' => 'manage the roster of interpreters',
                 'resource' => Admin\InterpretersController::class,
+                //'order' => 6000,
             ],
             [
                 'label' => 'other data',
@@ -231,36 +244,46 @@ return [
                 'resource' => Admin\IndexController::class,
                 'order' => 600,
                 'pages' => [
-
                     [
                         'label' => 'languages',
                         'route' => 'languages',
+                        'route_matches'=>['languages/edit','languages/add'],
                     ],
                     [
                         'label' => 'locations',
                         'route' => 'locations',
+                        'route_matches'=>['locations/edit','locations/add'],
                     ],
                     [
                         'label' => 'judges',
+                        'route_matches'=>['judges/edit','judges/add'],
                         'route' => 'judges',
                     ],
                     [
                         'label' => 'users',
                         'route' => 'users',
+                        'route_matches'=>['users/edit','users/add'],
+
                     ],
                     [
                         'label' => 'people',
                         'route' => 'people',
+                        'route_matches'=>['people/edit','people/add'],
                         'resource' => Admin\PeopleController::class,
                     ],
                     [
                         'resource' => Admin\EventTypesController::class,
                         'label' => 'event-types',
+                        'route_matches'=>['event-types/edit','event-types/add',],
                         'route' => 'event-types',
+
                     ],
                     [
                         'label' => 'defendants',
                         'route' => 'admin-defendants',
+                        'route_matches'=>[
+                             'admin-defendants',
+                        ],
                         'foo'  => 'boink',
                         'resource' => Admin\DefendantsController::class,
                     ],
@@ -268,14 +291,16 @@ return [
                         'resource' => Admin\CourtClosingsController::class,
                         'label' => 'court closings',
                         'route' => 'court-closings',
+                        'route_matches'=>[
+                              'court-closings',
+                        ],
                     ],
                 ],
             ],
-
+            'tools'=>
             [
                 'label' => 'tools',
                 'title' => 'yadda',
-                //'route' => 'events',
                 'order' => 700,
                 'uri' => '/',
                 //'resource' => Admin\EventsController::class,
@@ -283,12 +308,13 @@ return [
                     [
                         'label' => 'search',
                         'route' => 'search',
+                        //'order' => 50000,
                         //'css_class' => 'd-none d-sm-block',
-
                     ],
                     [
                         'label' => 'reports',
-                        'uri' => '#'
+                        'uri' => '#',
+                        //'order' => 20,
                     ],
                     [
                         'label' => 'email',
@@ -297,20 +323,10 @@ return [
                     ],
                     [
                         'label' => 'help',
-                        'uri' => '#'
+                        'uri' => '#',
                     ],
                 ]
             ],
-            // [
-            //     'label' => 'help',
-            //     'title' => 'get help',
-            //     //'route' => 'events',
-            //     'order' => 700,
-            //     'uri' => '/',
-            //     //'resource' => Admin\EventsController::class,
-            //
-            // ],
-
         ],
     ],
     'service_manager' => [

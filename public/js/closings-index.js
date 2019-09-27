@@ -1,9 +1,6 @@
 var $, displayValidationErrors;
 
 $(function(){
-
-    $("a.dropdown-item:contains('court closings')").addClass("active");
-
     // load closings for the year the clicked
     $(".court-closings").on("click",".closing-link",function(event,params){
         event.preventDefault();

@@ -136,16 +136,19 @@ return [
             [
                 'label' => 'list',
                 'route' => 'requests/list',
+                'route_matches' => ['requests/list'],
                 'title' => 'display requests for interpreting services'
             ],
             [
                 'route' => 'requests/create',
+                'route_matches' => ['requests/create'],
                 'label' => 'create',
                 'title' => 'schedule an interpreter'
             ],
             [
                 'route' => 'requests/search',
                 'label' => 'search',
+                'route_matches' => ['requests/search'],
                 'title' => 'search for past interpreter requests',
                 'pages' => [
                     [
@@ -162,6 +165,7 @@ return [
             ],
             [
                 'route' => 'requests/help',
+                'route_matches' => ['requests/help'],
                 'label' => 'help',
                 'title' => 'get help with this application'
             ],
@@ -173,10 +177,11 @@ return [
             [
                 'label' => 'requests',
                 'route' => 'admin-requests',
+                'route_matches' => ['admin-requests',],
                 'title' =>  'manage incoming requests',
                 'order' => 200,
                 'expand' => false,
-            ]
+            ],
         ],
     ],
     'router' => [
