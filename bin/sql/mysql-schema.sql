@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.27, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.26, for Linux (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.27-0ubuntu0.18.04.1
+-- Server version	5.7.26-0ubuntu0.16.04.1-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,30 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `admin_users`
+--
+
+DROP TABLE IF EXISTS `admin_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `admin_users` (
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `username` varchar(24) NOT NULL DEFAULT '',
+  `firstname` varchar(40) NOT NULL,
+  `lastname` varchar(40) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `phone` varchar(10) NOT NULL,
+  `password` varchar(16) NOT NULL,
+  `created` datetime NOT NULL,
+  `last_login` int(10) unsigned NOT NULL,
+  `active` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `map_to_userid` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idxUsername` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `anonymous_judges`
@@ -53,6 +77,18 @@ CREATE TABLE `app_event_log` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `availability_invitees`
+--
+
+DROP TABLE IF EXISTS `availability_invitees`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `availability_invitees` (
+  `interp_id` smallint(5) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `cancellation_reasons`
 --
 
@@ -65,6 +101,21 @@ CREATE TABLE `cancellation_reasons` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_cancel_reason` (`reason`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `category`
+--
+
+DROP TABLE IF EXISTS `category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `category` (
+  `name` char(120) NOT NULL DEFAULT '',
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `supercat_id` smallint(5) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,6 +218,30 @@ CREATE TABLE `event_categories` (
   `category` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_event_category` (`category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `event_emails`
+--
+
+DROP TABLE IF EXISTS `event_emails`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_emails` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `event_id` mediumint(8) unsigned DEFAULT NULL,
+  `timestamp` datetime NOT NULL,
+  `user_id` smallint(5) unsigned NOT NULL,
+  `recipient_id` smallint(5) unsigned DEFAULT NULL,
+  `email` varchar(60) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `subject` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `comments` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `event_id` (`event_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `event_emails_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `event_emails_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -460,6 +535,54 @@ CREATE TABLE `locations` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `motd`
+--
+
+DROP TABLE IF EXISTS `motd`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `motd` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `created_by_id` smallint(5) unsigned NOT NULL,
+  `modified_by_id` smallint(5) unsigned DEFAULT NULL,
+  `date` date NOT NULL,
+  `content` varchar(2000) COLLATE utf8_unicode_ci NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `date_idx` (`date`),
+  KEY `IDX_AA0F656CB03A8386` (`created_by_id`),
+  KEY `IDX_AA0F656C99049ECE` (`modified_by_id`),
+  CONSTRAINT `FK_AA0F656C99049ECE` FOREIGN KEY (`modified_by_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `FK_AA0F656CB03A8386` FOREIGN KEY (`created_by_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `motw`
+--
+
+DROP TABLE IF EXISTS `motw`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `motw` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `created_by_id` smallint(5) unsigned NOT NULL,
+  `modified_by_id` smallint(5) unsigned DEFAULT NULL,
+  `week_of` date NOT NULL,
+  `content` varchar(2000) COLLATE utf8_unicode_ci NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `week_idx` (`week_of`),
+  KEY `created_by_id` (`created_by_id`),
+  KEY `modified_by_id` (`modified_by_id`),
+  CONSTRAINT `motw_ibfk_1` FOREIGN KEY (`created_by_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `motw_ibfk_2` FOREIGN KEY (`modified_by_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `people`
 --
 
@@ -631,4 +754,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-11 20:00:40
+-- Dump completed on 2019-09-30 16:24:17
