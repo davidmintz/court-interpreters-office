@@ -334,7 +334,7 @@ class Event implements Interpretable
      *
      * @return int
      */
-    public function getId() : int
+    public function getId() :? int
     {
         return $this->id;
     }
@@ -358,7 +358,7 @@ class Event implements Interpretable
      *
      * @return \DateTime
      */
-    public function getDate() : \DateTime
+    public function getDate() : ?\DateTime
     {
         return $this->date;
     }
