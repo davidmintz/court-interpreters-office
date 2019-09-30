@@ -47,11 +47,21 @@ class NotesController extends AbstractRestfulController
         return new JsonModel(['date'=> 'whenever','message'=> 'fuck yeah!', ]);
     }
 
+    /**
+     * still scribbling
+     *
+     * @return JsonModel
+     */
     public function getByDateAction()
     {
         $date =  $this->params()->fromRoute('date');
         $type = $this->params()->fromRoute('type');
-        //
-        return new JsonModel(['message'=> "fuck yeah! you want $type for $date", 'action'=>__FUNCTION__,'date'=>$date,]);
+        $result = $this->em->getRepository(MOTD::class)->findOneBy(['date'=>new \DateTime($date)]);
+        if ($result) {
+            $content = $result->getContent();
+            return new JsonModel(['message'=> $content, 'action'=>__FUNCTION__,'date'=>$date,]);
+        } else {
+            return ['message'=> null];
+        }
     }
 }
