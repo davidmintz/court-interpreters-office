@@ -5,6 +5,8 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\View\Model\JsonModel;
 
+use InterpretersOffice\Admin\Notes\Entity\MOTD;
+
 class NotesController extends AbstractRestfulController
 {
 
@@ -30,10 +32,13 @@ class NotesController extends AbstractRestfulController
         $type = $this->params()->fromRoute('type');
         $id = $this->params()->fromRoute('id');
         return new JsonModel(
-            [
-                'date'=> 'whenever','message'=> __METHOD__, 'id'=>$id,'type'=>$type
+            [  'date'=> 'whenever','message'=> __METHOD__, 'id'=>$id,'type'=>$type  ]
+        );
+    }
 
-        ]);
+    public function __getList()
+    {
+        return [];
     }
 
     public function testAction()
@@ -46,6 +51,7 @@ class NotesController extends AbstractRestfulController
     {
         $date =  $this->params()->fromRoute('date');
         $type = $this->params()->fromRoute('type');
+        //
         return new JsonModel(['message'=> "fuck yeah! you want $type for $date", 'action'=>__FUNCTION__,'date'=>$date,]);
     }
 }

@@ -24,6 +24,7 @@ $dbParams['driver'] = 'pdo_sqlite';
 $entitiesPath = [
     __DIR__.'/../../../InterpretersOffice/src/Entity/',
     __DIR__ .'/../../../Requests/src/Entity/',
+    __DIR__ .'/../../../Notes/src/Entity/',
 
 ];
 

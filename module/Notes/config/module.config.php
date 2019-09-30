@@ -58,14 +58,15 @@ return [
     'router' => [
         'routes' => [
             'notes' => [
-                'type' =>Segment::class,
-                'may_terminate' => false,
+                'type' => Segment::class,
+                'may_terminate' => true,
                 'options' => [
-                    'verb' => 'GET',
+                    // 'verb' => 'GET',
                     'route'=>'/admin/notes',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\NotesController::class,
+                        //'action'=>'test',
                     ],
                 ],
                 /**
@@ -74,6 +75,20 @@ return [
                 *   action because the framework does it for you
                 */
                 'child_routes' => [
+                    'get_for_date' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/date/:date:/:type',
+                            'verb' => 'GET',
+                            'defaults' => [
+                                'action' => 'get-by-date',
+                                'constraints' => [
+                                    'date' => '^\d{4}-\d{2}-\d{2}$',
+                                    'type' => 'mot[dw]',
+                                ],
+                            ],
+                        ],
+                    ],
                     'get' => [
                         'type' => Segment::class,
                         'options' => [
@@ -83,20 +98,6 @@ return [
                                 'controller' => Controller\NotesController::class,
                                 'constraints' => [
                                     'id' => '[1-9]\d*',
-                                    'type' => 'mot[dw]',
-                                ],
-                            ],
-                        ],
-                    ],
-                    'get_for_date' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/date/:date:/:type',
-                            'verb' => 'GET',
-                            'defaults' => [                            
-                                'action' => 'get-by-date',
-                                'constraints' => [
-                                    'date' => '^\d{4}-\d{2}-\d{2}$',
                                     'type' => 'mot[dw]',
                                 ],
                             ],

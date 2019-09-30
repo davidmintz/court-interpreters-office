@@ -314,7 +314,7 @@ class Event implements Interpretable
      *
      * @return string
      */
-    public function getStringifiedJudgeOrWhatever()
+    public function getStringifiedJudgeOrWhatever() : string
     {
         if ($this->judge) {
             $string = $this->judge->getFirstName().' ';
@@ -334,7 +334,7 @@ class Event implements Interpretable
      *
      * @return int
      */
-    public function getId()
+    public function getId() : int
     {
         return $this->id;
     }
@@ -358,7 +358,7 @@ class Event implements Interpretable
      *
      * @return \DateTime
      */
-    public function getDate() : ? \DateTime
+    public function getDate() : \DateTime
     {
         return $this->date;
     }
@@ -430,7 +430,7 @@ class Event implements Interpretable
      *
      * @return string
      */
-    public function getDocket()
+    public function getDocket() : string
     {
         return $this->docket;
     }
@@ -442,7 +442,7 @@ class Event implements Interpretable
      *
      * @return Event
      */
-    public function setLocation(Location $location = null)
+    public function setLocation(Location $location = null) : Event
     {
         $this->location = $location;
 
@@ -454,7 +454,7 @@ class Event implements Interpretable
      *
      * @return Location
      */
-    public function getLocation()
+    public function getLocation() : ?Location
     {
         return $this->location;
     }

@@ -32,6 +32,7 @@ $dbParams = $params['doctrine']['connection']['orm_default']['params'];
 $entitiesPath = [
     __DIR__.'/../module/InterpretersOffice/src/Entity/',
     __DIR__.'/../module/Requests/src/Entity/',
+    __DIR__.'/../module/Notes/src/Entity/',
 ];
 $config = Setup::createAnnotationMetadataConfiguration($entitiesPath, true, null, null, false);
 $em = EntityManager::create($dbParams, $config);
