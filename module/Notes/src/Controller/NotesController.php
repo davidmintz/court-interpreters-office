@@ -4,8 +4,11 @@ namespace InterpretersOffice\Admin\Notes\Controller;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
 
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
+use InterpretersOffice\Admin\Notes\Entity\MOTW;
+use Parsedown;
 
 class NotesController extends AbstractRestfulController
 {
@@ -36,22 +39,21 @@ class NotesController extends AbstractRestfulController
         );
     }
 
-    public function __getList()
-    {
-        return [];
-    }
-
-    public function testAction()
-    {
-        //$type = $this->params()->fromRoute('type');
-        return new JsonModel(['date'=> 'whenever','message'=> 'fuck yeah!', ]);
-    }
-
+    /**
+     * still scribbling
+     *
+     * @return JsonModel
+     */
     public function getByDateAction()
     {
         $date =  $this->params()->fromRoute('date');
-        $type = $this->params()->fromRoute('type');
-        //
-        return new JsonModel(['message'=> "fuck yeah! you want $type for $date", 'action'=>__FUNCTION__,'date'=>$date,]);
+        $type =  strtoupper($this->params()->fromRoute('type'));
+
+        $class = $type == 'MOTD' ? MOTD::class : MOTW::class;
+        $motd = $this->em->getRepository($class)->findByDate(new \DateTime($date));
+        $motd->setContent((new Parsedown())->text(nl2br($motd->getContent())));
+
+        return new ViewModel(['motd'=>$motd]);
+
     }
 }

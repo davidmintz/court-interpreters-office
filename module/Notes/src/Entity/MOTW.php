@@ -10,13 +10,13 @@ use InterpretersOffice\Entity\User;
 use DateTime;
 
 /**
- * Entity class representing MOTD
+ * Entity class representing MOTW a/k/a Message Of The Week
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Notes\Entity\MOTDRepository")
  * @ORM\Table(name="motd",uniqueConstraints={@ORM\UniqueConstraint(name="date_idx",columns={"date"})})
  * @ORM\HasLifecycleCallbacks
  */
-class MOTD implements \JsonSerializable
+class MOTW implements \JsonSerializable
 {
 
     /**
@@ -31,7 +31,7 @@ class MOTD implements \JsonSerializable
      *
      * @ORM\Column(type="date",nullable=false)
      */
-    private $date;
+    private $week_of;
 
     /**
      * content
@@ -93,9 +93,9 @@ class MOTD implements \JsonSerializable
       *
       * @return MOTD
       */
-     public function setDate(DateTime $date)
+     public function setWeekOf(DateTime $date)
      {
-         $this->date = $date;
+         $this->week_of = $date;
 
          return $this;
      }
@@ -105,22 +105,23 @@ class MOTD implements \JsonSerializable
       *
       * @return \DateTime
       */
-     public function getDate() : DateTime
+     public function getWeekOf() : DateTime
      {
-         return $this->date;
+         return $this->week_of;
      }
 
      public function jsonSerialize()
      {
          $data = ['content' => $this->getContent()];
+         $data['id'] = $this->id;
+         $data['week_of'] = $this->getDate()->format('D d-M-Y');
          $data['created_by'] = $this->getCreatedBy()->getUserName();
          $data['created'] = $this->getCreated()->format('D d-M-Y g:i a');
          $data['modified_by'] = $this->getModifiedBy() ?
             $this->getModifiedBy()->getUserName() : null;
          $data['modified'] = $this->getModified() ?
             $this->getModified()->format('D d-M-Y g:i a') : null;
-         $data['date'] = $this->getDate()->format('l d-M-Y');
-         $data['id'] = $this->id;
+
          return $data;
      }
 
@@ -242,5 +243,24 @@ class MOTD implements \JsonSerializable
      public function getModifiedBy() : ?User
      {
          return $this->modifiedBy;
+     }
+
+     /**
+      * Lifecycle callback/sanity check for week_of.
+      *
+      * @ORM\PrePersist
+      * @ORM\PreUpdate
+      *
+      * @throws \RuntimeException
+      */
+     public function onSave()
+     {
+         if ((int)$this->week_of->format('N') != 1) {
+             new \RuntimeException(
+                 sprintf('the "week_of" must be a Monday, but %s is a %s',
+                 $this->week_of->format('d-M-Y'),
+                 $this->week_of->format('l'))
+             );
+         }
      }
 }

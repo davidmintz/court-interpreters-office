@@ -112,6 +112,10 @@ if [[ ! -z $FULL_DATABASE ]];
 fi;
 echo  "importing request records..."
 bin/sdny/import-requests.php
+OK;
+echo "importing MOTD|MOTW..."
+bin/sdny/motd-import.php
+OK;
 echo "success!"
 echo completed at $(date);
 exit 0;

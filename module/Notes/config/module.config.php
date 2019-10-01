@@ -75,10 +75,10 @@ return [
                 *   action because the framework does it for you
                 */
                 'child_routes' => [
-                    'get_for_date' => [
+                    'get' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/date/:date:/:type',
+                            'route' => '/date/:date[/:type]',
                             'verb' => 'GET',
                             'defaults' => [
                                 'action' => 'get-by-date',
@@ -89,20 +89,20 @@ return [
                             ],
                         ],
                     ],
-                    'get' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'verb' => 'GET',
-                            'route' => '/:type/:id',
-                            'defaults' => [
-                                'controller' => Controller\NotesController::class,
-                                'constraints' => [
-                                    'id' => '[1-9]\d*',
-                                    'type' => 'mot[dw]',
-                                ],
-                            ],
-                        ],
-                    ],
+                    // 'get' => [
+                    //     'type' => Segment::class,
+                    //     'options' => [
+                    //         'verb' => 'GET',
+                    //         'route' => '/:type/:id',
+                    //         'defaults' => [
+                    //             'controller' => Controller\NotesController::class,
+                    //             'constraints' => [
+                    //                 'id' => '[1-9]\d*',
+                    //                 'type' => 'mot[dw]',
+                    //             ],
+                    //         ],
+                    //     ],
+                    // ],
                 ],
             ],
         ],
@@ -111,5 +111,11 @@ return [
         'factories' => [
             Controller\NotesController::class => Controller\NotesControllerFactory::class,
         ],
+    ],
+    'view_manager' => [
+        'template_map' => include(__DIR__.'/template_map.php'),
+        // 'template_path_stack' => [
+        //     __DIR__.'/../view',
+        // ],
     ],
 ];
