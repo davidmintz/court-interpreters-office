@@ -30,30 +30,35 @@ class NotesController extends AbstractRestfulController
         $this->em = $em;
     }
 
-    public function get($id)
-    {
-        $type = $this->params()->fromRoute('type');
-        $id = $this->params()->fromRoute('id');
-        return new JsonModel(
-            [  'date'=> 'whenever','message'=> __METHOD__, 'id'=>$id,'type'=>$type  ]
-        );
-    }
-
     /**
      * still scribbling
      *
      * @return JsonModel
      */
-    public function getByDateAction()
+    public function get($date)
     {
-        $date =  $this->params()->fromRoute('date');
+        $view_class = $this->getRequest()->isXMLHttpRequest() ? JsonModel::class : ViewModel::class;
+        $type =  strtoupper($this->params()->fromRoute('type','all'));
+        $repository = $this->em->getRepository(MOTD::class);
+        if ('ALL' != $type) {
+            $message = $repository->findByDate(new \DateTime($date),$type);
+            $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
+            return new $view_class([$type => $message]);
+        } else {
+            $messages = $repository->findAllForDate(new \DateTime($date));
+            return new $view_class($messages);
+        }
+
+        //return new ViewModel(['motd'=>$motd]);
+
+    }
+
+    public function getByIdAction()
+    {
+        $id = $this->params()->fromRoute('id');
         $type =  strtoupper($this->params()->fromRoute('type'));
-
         $class = $type == 'MOTD' ? MOTD::class : MOTW::class;
-        $motd = $this->em->getRepository($class)->findByDate(new \DateTime($date));
-        $motd->setContent((new Parsedown())->text(nl2br($motd->getContent())));
-
-        return new ViewModel(['motd'=>$motd]);
-
+        // etc
+        return new JsonModel(['motd'=>'boink']);
     }
 }
