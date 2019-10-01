@@ -31,7 +31,7 @@ class NotesController extends AbstractRestfulController
     }
 
     /**
-     * still scribbling
+     * gets the MOTD and/or MOTD for a date
      *
      * @return JsonModel
      */
@@ -48,17 +48,21 @@ class NotesController extends AbstractRestfulController
             $messages = $repository->findAllForDate(new \DateTime($date));
             return new $view_class($messages);
         }
-
-        //return new ViewModel(['motd'=>$motd]);
-
     }
 
+    /**
+     * gets MOTD or MOTW by date
+     * 
+     * @return JsonModel|ViewModel
+     */
     public function getByIdAction()
     {
         $id = $this->params()->fromRoute('id');
         $type =  strtoupper($this->params()->fromRoute('type'));
         $class = $type == 'MOTD' ? MOTD::class : MOTW::class;
-        // etc
-        return new JsonModel(['motd'=>'boink']);
+        $view_class = $this->getRequest()->isXMLHttpRequest() ?
+            JsonModel::class : ViewModel::class;
+
+        return new $view_class(['motd'=>'boink']);
     }
 }

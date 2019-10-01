@@ -8,7 +8,7 @@ namespace InterpretersOffice\Admin\Notes\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use InterpretersOffice\Entity\User;
 use DateTime;
-
+use JsonSerializable;
 /**
  * Entity class representing MOTD
  *
@@ -16,7 +16,7 @@ use DateTime;
  * @ORM\Table(name="motd",uniqueConstraints={@ORM\UniqueConstraint(name="date_idx",columns={"date"})})
  * @ORM\HasLifecycleCallbacks
  */
-class MOTD implements \JsonSerializable
+class MOTD implements JsonSerializable, NoteInterface
 {
 
     /**

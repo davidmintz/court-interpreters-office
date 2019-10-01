@@ -75,34 +75,34 @@ return [
                 *   action because the framework does it for you
                 */
                 'child_routes' => [
+                    // the "id" for these purposes is a date string YYYY-MM-DD
                     'get' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/date/:date[/:type]',
-                            'verb' => 'GET',
+                            'route' => '/date/:id[/:type]',
                             'defaults' => [
-                                'action' => 'get-by-date',
                                 'constraints' => [
-                                    'date' => '^\d{4}-\d{2}-\d{2}$',
+                                    'id' => '^\d{4}-\d{2}-\d{2}$',
+                                    'type' => 'mot[dw]|all',
+                                ],
+                            ],
+                        ],
+                    ],
+                    // and this one is for the conventional id
+                    'get_by_id' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/:type/id/:id',
+                            'defaults' => [
+                                'action' => 'get-by-id',
+                                'controller' => Controller\NotesController::class,
+                                'constraints' => [
+                                    'id' => '[1-9]\d*',
                                     'type' => 'mot[dw]',
                                 ],
                             ],
                         ],
                     ],
-                    // 'get' => [
-                    //     'type' => Segment::class,
-                    //     'options' => [
-                    //         'verb' => 'GET',
-                    //         'route' => '/:type/:id',
-                    //         'defaults' => [
-                    //             'controller' => Controller\NotesController::class,
-                    //             'constraints' => [
-                    //                 'id' => '[1-9]\d*',
-                    //                 'type' => 'mot[dw]',
-                    //             ],
-                    //         ],
-                    //     ],
-                    // ],
                 ],
             ],
         ],

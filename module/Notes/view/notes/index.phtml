@@ -1,5 +1,11 @@
-
+<?php $what = $this->MOTD ? 'MOTD':'MOTW';
+if ($this->$what) : ?>
 <h2>
-    <?php echo $this->motd->getDate()->format('D d-M-Y') ?>
+    <?php echo $this->{$what}->getDate()->format('D d-M-Y') ?>
 </h2>
-    <?php echo $this->motd->getContent()?>
+    <?php echo $this->{$what}->getContent()?>
+<?php endif;
+
+if ($this->motd):
+echo "yes.";
+endif;

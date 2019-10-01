@@ -13,10 +13,10 @@ use DateTime;
  * Entity class representing MOTW a/k/a Message Of The Week
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Notes\Entity\MOTDRepository")
- * @ORM\Table(name="motd",uniqueConstraints={@ORM\UniqueConstraint(name="date_idx",columns={"date"})})
+ * @ORM\Table(name="motw",uniqueConstraints={@ORM\UniqueConstraint(name="week_idx",columns={"week_of"})})
  * @ORM\HasLifecycleCallbacks
  */
-class MOTW implements \JsonSerializable
+class MOTW implements \JsonSerializable, NoteInterface
 {
 
     /**
@@ -93,7 +93,7 @@ class MOTW implements \JsonSerializable
       *
       * @return MOTD
       */
-     public function setWeekOf(DateTime $date)
+     public function setWeekOf(DateTime $date) : NoteInterface
      {
          $this->week_of = $date;
 
@@ -110,6 +110,11 @@ class MOTW implements \JsonSerializable
          return $this->week_of;
      }
 
+     /**
+      * implements JsonSerializable
+      * 
+      * @return Array
+      */
      public function jsonSerialize()
      {
          $data = ['content' => $this->getContent()];
@@ -125,14 +130,19 @@ class MOTW implements \JsonSerializable
          return $data;
      }
 
+     public function getDate() : DateTime
+     {
+         return $this->getWeekOf();
+     }
+
      /**
       * Set content.
       *
       * @param string $content
       *
-      * @return MOTD
+      * @return NoteInterface
       */
-     public function setContent(string $content) : MOTD
+     public function setContent(string $content) : NoteInterface
      {
          $this->content = $content;
 

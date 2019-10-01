@@ -5,8 +5,8 @@ namespace InterpretersOffice\Admin\Notes\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\QueryBuilder;
-use InterpretersOffice\Entity;
-use InterpretersOffice\Admin\Notes\Entity\MOTD;
+//use InterpretersOffice\Entity;
+//
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use \DateTime;
 
@@ -16,7 +16,11 @@ use \DateTime;
  */
 class MOTDRepository extends EntityRepository implements CacheDeletionInterface
 {
-
+    /**
+     * cache namespace
+     * 
+     * @var string
+     */
     protected $cache_namespace = 'motd';
 
     /**
@@ -42,36 +46,58 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
         $cache->deleteAll();
     }
 
-    public function findMOTWByDate(DateTime $date)
+
+    /**
+     * gets MOTD and MOTW for $date
+     * @param  DateTime $date
+     * @return Array
+     */
+    public function findAllForDate(DateTime $date) : Array
     {
-        $qb = $this->getbaseQuery('MOTW')
-            ->where('m.week_of = :date')
-            ->setParameters(['date'=>$date]);
+        return [
+            'MOTD' => $this->findByDate($date,'MOTD'),
+            'MOTW' => $this->findByDate($date,'MOTW'),
+        ];
+    }
+
+    /**
+     * finds MOTD|MOTW by date
+     *
+     * @param  DateTime $date
+     * @param  string  $type
+     * @return NoteInterface
+     */
+    public function findByDate(DateTime $date, string $type = 'MOTD') : ? NoteInterface
+    {
+        $qb = $this->getBaseQuery($type);
+        if ($type == 'MOTW') {
+            $column = 'week_of';
+            $day_of_week = (int)$date->format('N');
+            if (1 != $day_of_week) {
+                $interval = sprintf('P%sD',$day_of_week - 1);
+                $date->sub(new \DateInterval($interval));
+            }
+        } else {
+            $column = 'date';
+        }
+        $qb->where("m.{$column} = :{$column}")
+            ->setParameters([$column => $date]);
 
         return $qb->getQuery()->useResultCache(true)->getOneOrNullResult();
     }
 
-    public function findAllForDate(DateTime $date)
-    {
-
-    }
-
-    public function findByDate(DateTime $date) :? MOTD
-    {
-        $qb = $this->getbaseQuery('MOTD')
-            ->where('m.date = :date')
-            ->setParameters(['date'=>$date]);
-
-        return $qb->getQuery()->useResultCache(true)->getOneOrNullResult();
-
-    }
-
+    /**
+     * gets basic DQL querybuilder for MOTD|MOTW
+     *
+     * @param  string $type
+     * @return  \Doctrine\ORM\QueryBuilder
+     */
     public function getBaseQuery(string $type)
     {
-
         $qb = $this->getEntityManager()->createQueryBuilder();
+        $class = strtoupper($type) == 'MOTD'? MOTD::class : MOTW::class;
         $qb->select('m, c_by, cp, cph,cr, cj, m_by, mr, mj, mp, mph')
-            ->from(strtoupper($type) == 'MOTD'? MOTD::class : MOTW::class,'m')
+            ->from(strtoupper($type) == 'MOTD' ? MOTD::class : MOTW::class,'m')
             ->join('m.createdBy','c_by')
             ->join('c_by.person','cp')
             ->join('c_by.role','cr')
