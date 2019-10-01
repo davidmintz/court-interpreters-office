@@ -88,6 +88,18 @@ return [
                             ],
                         ],
                     ],
+                    'put' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/update/:type/:id',
+                            'defaults' => [
+                                'constraints' => [
+                                    'id' => '[1-9]\d*',
+                                    'type' => 'mot[dw]',
+                                ],
+                            ],
+                        ]
+                    ],
                     // and this one is for the conventional id
                     'get_by_id' => [
                         'type' => Segment::class,

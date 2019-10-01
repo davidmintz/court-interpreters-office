@@ -8,10 +8,8 @@ echo $this->doctype();
     <meta name="description" content="SDNY Interpreters Office court interpreter management system">
     <meta name="author" content="David Mintz, Interpreters Office, US District Court, Southern District of` New York">
     <?php echo $this->headTitle('Court Interpreters Office')->setSeparator(' | ')->setAutoEscape(false) ?>
-    <!-- Bootstrap core CSS -->
     <link href="<?php echo $this->basePath('css/bootstrap/bootstrap.min.css')?>" rel="stylesheet">
-<?php echo
-        $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
+<?php echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
         ->appendStylesheet($this->basePath('css/style.css'))
         ->appendStylesheet($this->basePath('css/font-awesome/css/fontawesome-all.min.css'));
 echo $this->headStyle();?>

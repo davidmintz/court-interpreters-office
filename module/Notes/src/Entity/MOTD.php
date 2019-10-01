@@ -54,6 +54,8 @@ class MOTD implements JsonSerializable, NoteInterface
      *
      * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\User")
      * @ORM\JoinColumn(nullable=false,name="created_by_id")
+     *
+     * @var User
      */
     private $createdBy;
 
@@ -73,6 +75,8 @@ class MOTD implements JsonSerializable, NoteInterface
      *
      * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\User")
      * @ORM\JoinColumn(nullable=true,name="modified_by_id")
+     *
+     * @var User
      */
     private $modifiedBy;
 
@@ -227,7 +231,7 @@ class MOTD implements JsonSerializable, NoteInterface
       *
       * @return MOTD
       */
-     public function setModifiedBy(User $modifiedBy = null) :? User
+     public function setModifiedBy(User $modifiedBy = null) : MOTD
      {
          $this->modifiedBy = $modifiedBy;
 

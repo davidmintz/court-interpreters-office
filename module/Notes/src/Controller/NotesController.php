@@ -5,7 +5,7 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
-
+use InterpretersOffice\Entity\User;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
 use InterpretersOffice\Admin\Notes\Entity\MOTW;
 use Parsedown;
@@ -21,6 +21,20 @@ class NotesController extends AbstractRestfulController
     private $em;
 
     /**
+     *
+     * @var stdClass $user
+     */
+    private $user;
+
+    public function onDispatch($e)
+    {
+        $auth = $this->getEvent()->getApplication()->getServiceManager()
+            ->get('auth');
+        $this->user = $auth->getIdentity();
+        return parent::onDispatch($e);
+    }
+
+    /**
      * constructor
      *
      * @param EntityManagerInterface $em
@@ -28,6 +42,37 @@ class NotesController extends AbstractRestfulController
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+    }
+
+    /**
+     * updates entity
+     *
+     * work in progress. needs to handle not-found, handle different
+     * entity-types etc
+     *
+     * @param  $id  entity id
+     * @param  array $data
+     *
+     * @return JsonModel
+     */
+    public function update($id, $data)
+    {
+        $type =  strtoupper($this->params()->fromRoute('type'));
+        $repository = $this->em->getRepository(MOTD::class);
+        $entity = $repository->find($id);
+        $before = $entity->getContent();
+        $mod_before_by = $entity->getModifiedBy()->getId();
+        $entity->setContent($data['content']);
+        if ($before != $data['content']) {
+            $entity->setModified(new \DateTime());
+            if ($this->user->id != $mod_before_by) {
+                $user_entity = $this->em->getRepository(User::class)
+                    ->getUser($this->user->id);
+                $entity->setModifiedBy($user_entity);
+            }
+        }
+        $this->em->flush();
+        return new JsonModel([$type=>$entity]);
     }
 
     /**
@@ -52,7 +97,7 @@ class NotesController extends AbstractRestfulController
 
     /**
      * gets MOTD or MOTW by date
-     * 
+     *
      * @return JsonModel|ViewModel
      */
     public function getByIdAction()
