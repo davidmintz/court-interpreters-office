@@ -6,7 +6,8 @@ namespace InterpretersOffice\Admin\Notes\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\Authentication\AuthenticationServiceInterface as AuthService;
 use InterpretersOffice\Admin\Notes\Entity\NoteInterface;
-use  InterpretersOffice\Admin\Notes\Entity\NoteRepository;
+use  InterpretersOffice\Admin\Notes\Entity\MOTD;
+use  InterpretersOffice\Admin\Notes\Entity\MOTDRepository;
 use DateTime;
 /**
  * manages MOTW|MOTDs
@@ -29,7 +30,7 @@ class NotesService
 
     /**
      * Notes repository
-     * @var NoteRepository
+     * @var MOTDRepository
      */
     private $noteRepository;
 
@@ -52,10 +53,10 @@ class NotesService
      *
      * @return NoteRepository
      */
-    private function getRepository(): NoteRepository
+    private function getRepository()//: MOTDRepository
     {
         if (! $this->noteRepository) {
-            $this->noteRepository = $this->em->getRepository(NoteRepository::class);
+            $this->noteRepository = $this->em->getRepository(MOTD::class);
         }
 
         return $this->noteRepository;

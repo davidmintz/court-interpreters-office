@@ -14,7 +14,7 @@ use \DateTime;
  * MOTD repository
  *
  */
-class NoteRepository extends EntityRepository implements CacheDeletionInterface
+class MOTDRepository extends EntityRepository implements CacheDeletionInterface
 {
     /**
      * cache namespace
