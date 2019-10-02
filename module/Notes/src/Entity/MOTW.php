@@ -12,7 +12,7 @@ use DateTime;
 /**
  * Entity class representing MOTW a/k/a Message Of The Week
  *
- * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Notes\Entity\MOTDRepository")
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Notes\Entity\NoteRepository")
  * @ORM\Table(name="motw",uniqueConstraints={@ORM\UniqueConstraint(name="week_idx",columns={"week_of"})})
  * @ORM\HasLifecycleCallbacks
  */

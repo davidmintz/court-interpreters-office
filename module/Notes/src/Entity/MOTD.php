@@ -12,7 +12,7 @@ use JsonSerializable;
 /**
  * Entity class representing MOTD
  *
- * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Notes\Entity\MOTDRepository")
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Notes\Entity\NoteRepository")
  * @ORM\Table(name="motd",uniqueConstraints={@ORM\UniqueConstraint(name="date_idx",columns={"date"})})
  * @ORM\HasLifecycleCallbacks
  */

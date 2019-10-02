@@ -10,6 +10,7 @@ use InterpretersOffice\Entity\User;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
 use InterpretersOffice\Admin\Notes\Entity\MOTW;
 use Parsedown;
+use DateTime;
 
 class NotesController extends AbstractRestfulController
 {
@@ -94,16 +95,17 @@ class NotesController extends AbstractRestfulController
         $view_class = $this->getRequest()->isXMLHttpRequest() ? JsonModel::class : ViewModel::class;
         $data = ['test'=>'1 2 3'];
         $type =  strtoupper($this->params()->fromRoute('type','all'));
-        // $repository = $this->em->getRepository(MOTD::class);
-        // if ('ALL' != $type) {
-        //     $message = $repository->findByDate(new \DateTime($date),$type);
-        //     $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
-        //     return new $view_class([$type => $message]);
-        // } else {
-        //     $messages = $repository->findAllForDate(new \DateTime($date));
-        //     return new $view_class($messages);
-        // }
-        return new $view_class($data);
+        /** @var $service InterpretersOffice\Admin\Notes\Service\NotesService */
+        $service = $this->notesService;
+        if ('ALL' != $type) {
+            $message = $service->getNoteByDate(new DateTime($date), $type);
+            $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
+            return new $view_class([$type => $message]);
+        } else {
+            $messages = $service->findAllForDate(new \DateTime($date));
+            return new $view_class($messages);
+        }
+        //return new $view_class($data);
     }
 
     /**

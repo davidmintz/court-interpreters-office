@@ -6,7 +6,8 @@ namespace InterpretersOffice\Admin\Notes\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Zend\Authentication\AuthenticationServiceInterface as AuthService;
 use InterpretersOffice\Admin\Notes\Entity\NoteInterface;
-
+use  InterpretersOffice\Admin\Notes\Entity\NoteRepository;
+use DateTime;
 /**
  * manages MOTW|MOTDs
  */
@@ -27,6 +28,14 @@ class NotesService
     private $auth;
 
     /**
+     * Notes repository
+     * @var NoteRepository
+     */
+    private $noteRepository;
+
+
+
+    /**
      * constructor
      *
      * @param EntityManagerInterface $em
@@ -38,8 +47,33 @@ class NotesService
         $this->user = $auth->getIdentity();
     }
 
-    public function getNoteByDate(string $type,DateTime $date) :? NoteInterface
+    /**
+     * gets Repository
+     *
+     * @return NoteRepository
+     */
+    private function getRepository(): NoteRepository
     {
-        
+        if (! $this->noteRepository) {
+            $this->noteRepository = $this->em->getRepository(NoteRepository::class);
+        }
+
+        return $this->noteRepository;
+    }
+
+    public function getNoteByDate(DateTime $date, string $type) :? NoteInterface
+    {
+        return $this->getRepository()->findByDate($date,$type);
+    }
+
+    /**
+     * gets MOTD and MOTW for $date
+     *
+     * @param  DateTime $date
+     * @return Array
+     */
+    public function findAllForDate(DateTime $date) : Array
+    {
+        return $this->getRepository()->findAllForDate($date);
     }
 }
