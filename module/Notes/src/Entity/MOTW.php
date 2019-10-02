@@ -41,7 +41,7 @@ class MOTW implements \JsonSerializable, NoteInterface
     private $content;
 
     /**
-    * timestamp of motd creation.
+    * timestamp of motw creation.
     *
     * @ORM\Column(type="datetime",nullable=false)
     *
@@ -50,7 +50,7 @@ class MOTW implements \JsonSerializable, NoteInterface
     private $created;
 
     /**
-     * last User who updated the motd.
+     * last User who updated the motw.
      *
      * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\User")
      * @ORM\JoinColumn(nullable=false,name="created_by_id")
@@ -69,7 +69,7 @@ class MOTW implements \JsonSerializable, NoteInterface
 
 
     /**
-     * last User who updated the motd.
+     * last User who updated the motw.
      *
      * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\User")
      * @ORM\JoinColumn(nullable=true,name="modified_by_id")
@@ -112,7 +112,7 @@ class MOTW implements \JsonSerializable, NoteInterface
 
      /**
       * implements JsonSerializable
-      * 
+      *
       * @return Array
       */
      public function jsonSerialize()
@@ -130,6 +130,11 @@ class MOTW implements \JsonSerializable, NoteInterface
          return $data;
      }
 
+     /**
+      * implements NoteInterface
+      * 
+      * @return DateTime
+      */
      public function getDate() : DateTime
      {
          return $this->getWeekOf();

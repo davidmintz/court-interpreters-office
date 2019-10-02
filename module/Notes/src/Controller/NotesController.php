@@ -93,23 +93,34 @@ class NotesController extends AbstractRestfulController
     public function get($date)
     {
         $view_class = $this->getRequest()->isXMLHttpRequest() ? JsonModel::class : ViewModel::class;
-        $data = ['test'=>'1 2 3'];
         $type =  strtoupper($this->params()->fromRoute('type','all'));
         /** @var $service InterpretersOffice\Admin\Notes\Service\NotesService */
         $service = $this->notesService;
         if ('ALL' != $type) {
             $message = $service->getNoteByDate(new DateTime($date), $type);
-            $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
+            if ($message) {            
+                $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
+            }
             return new $view_class([$type => $message]);
         } else {
             $messages = $service->findAllForDate(new \DateTime($date));
             return new $view_class($messages);
         }
-        //return new $view_class($data);
+
+    }
+
+    public function updateSettingsAction()
+    {
+        $params = $this->params()->fromPost();
+        $this->notesService->updateSettings($params);
+
+        return new JsonModel($this->notesService->getSession()->settings);
     }
 
     /**
      * gets MOTD or MOTW by date
+     *
+     * // to be continued
      *
      * @return JsonModel|ViewModel
      */
