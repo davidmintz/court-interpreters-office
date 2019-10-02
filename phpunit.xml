@@ -13,6 +13,9 @@
         <testsuite name="Requests">
             <directory>./module/Requests/test</directory>
         </testsuite>
+        <testsuite name="Notes">
+            <directory>./module/Notes/test</directory>
+        </testsuite>
     </testsuites>
 	<php>
 	  <ini name="error_log" value="./data/test.error.log"/>
