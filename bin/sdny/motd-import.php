@@ -62,9 +62,9 @@ while ($row = $query->fetch()) {
     $params['date'] = $row->date;
     $insert->execute($params);
     $count++;
-    echo "inserted $count of $total\r";
+    echo "inserted $count MOTDs of $total\r";
 }
-echo "\n";
+echo "\ndone.\n";
 $insert = $db->prepare('INSERT INTO motw (week_of, created, created_by_id, modified, modified_by_id, content)
 VALUES (:week_of, :created, :created_by_id, :modified, :modified_by_id, :content)');
 $query = $old_db->prepare('SELECT * FROM motw ORDER BY week_of');
@@ -106,5 +106,5 @@ while ($row = $query->fetch()) {
     $params['week_of'] = $row->week_of;
     $insert->execute($params);
     $count++;
-    echo "inserted $count of $total\r";
+    echo "inserted $count MOTWs of $total\r";
 }
