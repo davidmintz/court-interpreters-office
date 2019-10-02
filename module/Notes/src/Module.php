@@ -1,8 +1,9 @@
 <?php
-
 /** module/Notes/src/Module.php */
 
 namespace InterpretersOffice\Admin\Notes;
+
+use Zend\EventManager\EventInterface;
 
 /**
  * Module class for our InterpretersOffice\Admin\Notes module.
@@ -17,10 +18,22 @@ class Module {
         return include __DIR__.'/../config/module.config.php';
     }
 
-    public function onBootstrap(\Zend\EventManager\EventInterface $event)
+    /**
+     * onBootstrap listener
+     *
+     * @param  EventInterface $event
+     * @return void
+     */
+    public function onBootstrap(EventInterface $event)
     {
-        $container = $event->getApplication()->getServiceManager();
-        $log = $container->get('log')
-            ->debug("new module Notes is up and running");
+
+        $container =  $event->getApplication()->getMvcEvent()->getApplication()
+            ->getServiceManager();
+        $auth = $container->get('auth');
+        if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
+            $viewModel = $event->getApplication()->getMvcEvent()
+                ->getViewModel();
+            $viewModel->notes_enabled = true;    
+        }
     }
 }

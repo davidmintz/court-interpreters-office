@@ -5,6 +5,7 @@ namespace InterpretersOffice\Admin\Notes\Controller;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Notes\Controller\NotesController;
+use InterpretersOffice\Admin\Notes\Service\NotesService;
 
 class NotesControllerFactory implements FactoryInterface
 {
@@ -18,6 +19,12 @@ class NotesControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new NotesController($container->get('entity-manager'));
+        /** consider a factory for this? */
+        $notesService = new NotesService(
+            $container->get('entity-manager'),
+            $container->get('auth')
+        );
+
+        return new NotesController($notesService);
     }
 }

@@ -117,10 +117,6 @@ class Module
                 $viewModel->setVariables($routeMatch->getParams());
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
             }
-            // and the purpose of this was... ?
-            // $request = $event->getApplication()->getRequest();
-            // $viewModel->referrer = $request->getServer()->get('HTTP_REFERER');
-
         });
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
@@ -195,12 +191,10 @@ class Module
                 if ($http_referrer) {
                     $referrer = UriFactory::factory($http_referrer);
                     if ($referrer->getHost() == $request_uri->getHost()) {
-                        // $log->debug("setting redirect-url to: ".($referrer->getPath()?:"/"),$channel);
                         $session->redirect_url = $referrer->getPath()?:"/";
                     }
                 }
             } else {
-                //$log->debug("setting redirect-url to: $request_uri",$channel);
                 $session->redirect_url = (string)$request_uri;
             }
             $allowed = false;
@@ -223,10 +217,6 @@ class Module
         if (! $session->last_access or $session->last_access < time() - 60) {
             $session->last_access = time();
         }
-        ///** @var $session_manager \Zend\Session\SessionManager */
-        // $session_manager = $container->get(\Zend\Session\SessionManager::class);
-        // $config = $session_manager->getConfig();
-        // var_dump($config->toArray());
     }
     /**
      * checks authorization

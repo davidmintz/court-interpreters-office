@@ -32,13 +32,13 @@ class NotesControllerTest extends AbstractControllerTest
     {
         $this->login('david','boink');
         $this->reset(true);
-        $this->dispatch('/admin/notes/get/3');
+        $this->dispatch('/admin/notes/motd/id/3');
         $this->assertResponseStatusCode(200);
     }
 
     public function testGetMethodFailsIfUserIsNotLoggedIn()
     {
-        $this->dispatch('/admin/notes/get/3');
+        $this->dispatch('/admin/notes/motd/id/3');
         $this->assertNotResponseStatusCode(200);
     }
 
