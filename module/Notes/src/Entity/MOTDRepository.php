@@ -18,7 +18,7 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
 {
     /**
      * cache namespace
-     * 
+     *
      * @var string
      */
     protected $cache_namespace = 'motd';
@@ -63,9 +63,9 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
     /**
      * finds MOTD|MOTW by date
      *
-     * @param  DateTime $date
      * @param  string  $type
-     * @return NoteInterface
+     * @param  DateTime $date
+     * @return NoteInterface|null
      */
     public function findByDate(DateTime $date, string $type = 'MOTD') : ? NoteInterface
     {

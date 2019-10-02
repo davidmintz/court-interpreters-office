@@ -2,35 +2,44 @@
 namespace InterpretersOffice\Admin\Notes\Controller;
 
 use Zend\Mvc\Controller\AbstractRestfulController;
-use Doctrine\ORM\EntityManagerInterface;
+//use Doctrine\ORM\EntityManagerInterface;
+use InterpretersOffice\Admin\Notes\Service\NotesService;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use InterpretersOffice\Entity\User;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
 use InterpretersOffice\Admin\Notes\Entity\MOTW;
 use Parsedown;
+use DateTime;
 
 class NotesController extends AbstractRestfulController
 {
 
-    /**
+    /*
      * entity manager
      *
      * @var EntityManagerInterface
+     private $em;
      */
-    private $em;
 
     /**
      *
      * @var stdClass $user
+     * private $user;
      */
-    private $user;
+
+    /**
+     * notes service
+     *
+     * @var NotesService
+     */
+    private $notesService;
 
     public function onDispatch($e)
     {
-        $auth = $this->getEvent()->getApplication()->getServiceManager()
-            ->get('auth');
-        $this->user = $auth->getIdentity();
+        // $auth = $this->getEvent()->getApplication()->getServiceManager()
+        //     ->get('auth');
+        // $this->user = $auth->getIdentity();
         return parent::onDispatch($e);
     }
 
@@ -39,9 +48,9 @@ class NotesController extends AbstractRestfulController
      *
      * @param EntityManagerInterface $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(NotesService $notesService)
     {
-        $this->em = $em;
+        $this->notesService = $notesService;
     }
 
     /**
@@ -57,22 +66,23 @@ class NotesController extends AbstractRestfulController
      */
     public function update($id, $data)
     {
-        $type =  strtoupper($this->params()->fromRoute('type'));
-        $repository = $this->em->getRepository(MOTD::class);
-        $entity = $repository->find($id);
-        $before = $entity->getContent();
-        $mod_before_by = $entity->getModifiedBy()->getId();
-        $entity->setContent($data['content']);
-        if ($before != $data['content']) {
-            $entity->setModified(new \DateTime());
-            if ($this->user->id != $mod_before_by) {
-                $user_entity = $this->em->getRepository(User::class)
-                    ->getUser($this->user->id);
-                $entity->setModifiedBy($user_entity);
-            }
-        }
-        $this->em->flush();
-        return new JsonModel([$type=>$entity]);
+        // $type =  strtoupper($this->params()->fromRoute('type'));
+        // $repository = $this->em->getRepository(MOTD::class);
+        // $entity = $repository->find($id);
+        // $before = $entity->getContent();
+        // $mod_before_by = $entity->getModifiedBy()->getId();
+        // $entity->setContent($data['content']);
+        // if ($before != $data['content']) {
+        //     $entity->setModified(new \DateTime());
+        //     if ($this->user->id != $mod_before_by) {
+        //         $user_entity = $this->em->getRepository(User::class)
+        //             ->getUser($this->user->id);
+        //         $entity->setModifiedBy($user_entity);
+        //     }
+        // }
+        // $this->em->flush();
+        //return new JsonModel([$type=>$entity]);
+        return new JsonModel(['test'=>'1 2 3']);
     }
 
     /**
@@ -84,19 +94,33 @@ class NotesController extends AbstractRestfulController
     {
         $view_class = $this->getRequest()->isXMLHttpRequest() ? JsonModel::class : ViewModel::class;
         $type =  strtoupper($this->params()->fromRoute('type','all'));
-        $repository = $this->em->getRepository(MOTD::class);
+        /** @var $service InterpretersOffice\Admin\Notes\Service\NotesService */
+        $service = $this->notesService;
         if ('ALL' != $type) {
-            $message = $repository->findByDate(new \DateTime($date),$type);
-            $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
+            $message = $service->getNoteByDate(new DateTime($date), $type);
+            if ($message) {            
+                $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
+            }
             return new $view_class([$type => $message]);
         } else {
-            $messages = $repository->findAllForDate(new \DateTime($date));
+            $messages = $service->findAllForDate(new \DateTime($date));
             return new $view_class($messages);
         }
+
+    }
+
+    public function updateSettingsAction()
+    {
+        $params = $this->params()->fromPost();
+        $this->notesService->updateSettings($params);
+
+        return new JsonModel($this->notesService->getSession()->settings);
     }
 
     /**
      * gets MOTD or MOTW by date
+     *
+     * // to be continued
      *
      * @return JsonModel|ViewModel
      */

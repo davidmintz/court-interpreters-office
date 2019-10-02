@@ -14,12 +14,14 @@ echo $this->doctype();
         ->appendStylesheet($this->basePath('css/font-awesome/css/fontawesome-all.min.css'));
 echo $this->headStyle();?>
 </head>
-<body>
-    <div class="card" style="position:absolute;width:350px;height:250px;left:50px; top:50px;z-index:1000; opacity:.9" hidden>
+<body><?php if ($this->layout()->notes_enabled):?>
+    <?php echo $this->partial('notes/partials/notes.phtml') ?>
+    <!-- <div class="card" style="position:absolute;width:350px;height:250px;left:50px; top:50px;z-index:1000; opacity:.9" >
         <div class="card-body">
             placeholder for a forthcoming feature.
         </div>
-    </div>
+    </div> -->
+<?php endif ?>
     <div class="container" style="min-height:400px">
         <nav class="navbar navbar-expand-lg  navbar-light bg-light rounded mb-3 py-1 shadow-sm">
                 <a class="navbar-brand" href="<?php echo $this->url('home')?>">InterpretersOffice</a>
@@ -29,7 +31,7 @@ echo $this->headStyle();?>
           <div class="collapse navbar-collapse" id="navbar-collapse">
             <?php if ($this->layout()->navigation_menu):
                 echo $this->navigation($this->layout()->navigation_menu)->menu()->setPartial('partials/navbar.phtml'); endif;?>
-            <?php if ($this->layout()->user) : $user = $this->layout()->user;?>
+            <?php $user = $this->layout()->user ?: false; if ($user) :?>
                 <div class="dropdown">
                     <a class="btn btn-link dropdown-toggle" role="button" id="btn-user-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="fa fa-user"></span><span class="sr-only">my account</span> <span class="d-none d-xl-inline">
@@ -44,6 +46,7 @@ echo $this->headStyle();?>
       </nav>
     <?php  echo $this->content; ?>
     </div>
+    <pre><?php print_r($this->layout()->note_settings)?></pre>
     <div class="container">
         <footer class="border-top border-bottom mt-4 text-center text-muted"><?php
             echo
@@ -57,6 +60,11 @@ echo $this->headStyle();?>
         <script src="<?php echo $this->basePath('js/common.js')?>"></script>
         <script src="<?php echo $this->basePath('js/form-utilities.js')?>"></script>
         <script src="<?php echo $this->basePath('js/nav.js')?>"></script>
+        <?php
+        if ($this->layout()->notes_enabled) :?>
+        <script src="<?php echo $this->basePath('js/admin/notes.js')?>"></script>
+
+        <?php  endif; ?>
         <?php echo $this->headScript()?>
         <?php echo $this->inlineScript() ?>
         <script>basePath = '<?php echo $this->basePath() ?>';</script>

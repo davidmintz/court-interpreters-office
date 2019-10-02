@@ -1,11 +1,15 @@
 <?php
-
+/**  module/Notes/src/Controller/NotesControllerFactory.php */
 namespace InterpretersOffice\Admin\Notes\Controller;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Notes\Controller\NotesController;
+use InterpretersOffice\Admin\Notes\Service\NotesService;
 
+/**
+ * factory for NotesController
+ */
 class NotesControllerFactory implements FactoryInterface
 {
     /**
@@ -18,6 +22,8 @@ class NotesControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new NotesController($container->get('entity-manager'));
+        $notesService = $container->get(NotesService::class);
+
+        return new NotesController($notesService);
     }
 }
