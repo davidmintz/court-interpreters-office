@@ -1,1 +1,34 @@
-hi there
+<?php /**  module/Notes/view/notes/partials/notes.phtml  */
+$motd = $this->config['motd'];
+$pos = $motd['position'];
+$size = $motd['size'];
+$display = $motd['visible'] ? 'inline-block':'none';
+$date = (new DateTime($config['date']))->format('D d-M-Y');
+$format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;width:%s';
+$style = sprintf($format,$display,$pos['top'],$pos['left'],//$size['height'],auto',
+$size['width']);
+?>
+<div id="motd" class="card" style="<?php echo $style;?>">
+    <div class="card-header">MOTD: <?php echo $date ?></div>
+    <div class="card-body" style="height:<?php echo $size['height']?>">
+        <p class="card-text">Our content goes here</p>
+    </div>
+    <div class="card-footer">
+      <a href="#" class="btn btn-primary">do shit</a>
+    </div>
+</div><?php
+$motw = $this->config['motw'];
+$pos = $motw['position'];
+$size = $motw['size'];
+$display = $motw['visible'] ? 'inline-block':'none';
+$style = sprintf($format,$display,$pos['top'],$pos['left'],$size['width']);
+?>
+<div id="motw" class="card" style="<?php echo $style;?>">
+    <div class="card-header">MOTW: <?php echo $date ?>(ish)</div>
+    <div class="card-body" style="height:<?php echo $size['height']?>">
+        <p class="card-text">Our MOTW content goes here</p>
+    </div>
+    <div class="card-footer">
+      <a href="#" class="btn btn-primary">do shit</a>
+    </div>
+</div>
