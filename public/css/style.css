@@ -203,3 +203,5 @@ a.nav-link:hover,a.dropdown-item:hover { text-decoration : underline;}
      /*color:inherit !important;*/
      text-decoration : underline;
  }
+#motd, #motw { opacity : .9 ; }
+/* #motd .card-body, #motw .card-body { background-color : #FEFDE1} */
