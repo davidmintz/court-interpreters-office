@@ -9,6 +9,8 @@ form { max-width: 900px;}
 .multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
 <?php $this->headStyle()->captureEnd();
 //echo $this->headStyle() ;
+//
+
 $user = $this->identity() ?>
 <h2>admin</h2>
 <p>hello user <?php echo $user->username ?> in role <?php echo $user->role ?></p>

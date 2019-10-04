@@ -35,14 +35,6 @@ class NotesController extends AbstractRestfulController
      */
     private $notesService;
 
-    public function onDispatch($e)
-    {
-        // $auth = $this->getEvent()->getApplication()->getServiceManager()
-        //     ->get('auth');
-        // $this->user = $auth->getIdentity();
-        return parent::onDispatch($e);
-    }
-
     /**
      * constructor
      *
@@ -98,7 +90,7 @@ class NotesController extends AbstractRestfulController
         $service = $this->notesService;
         if ('ALL' != $type) {
             $message = $service->getNoteByDate(new DateTime($date), $type);
-            if ($message) {            
+            if ($message) {
                 $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
             }
             return new $view_class([$type => $message]);

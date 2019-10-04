@@ -20,7 +20,7 @@ $(function(){
                 && $("#email-notification").is(":checked")) ? 1 : 0;
             console.log("email notification: "  + email_notification);
             $.post(url,{csrf,email_notification},"json")
-            .success(function(response){
+            .then(function(response){
                 if (response.status === "success" ) {
                     $("#modal-confirm-delete").modal("hide");
                     if (context === "view") {

@@ -61,6 +61,7 @@ class Module {
         $log = $container->get('log');
         $default_date = null;
         $session = new Container('notes');
+        //$session->settings = null;
         if ('schedule' == $this->viewModel->action) {
             $children = $this->viewModel->getChildren();
             if (count($children)) {

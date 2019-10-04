@@ -2,10 +2,9 @@
 use InterpretersOffice\Admin\Form\View\Helper\InterpreterElementCollection;
 
 $this->headTitle('admin | schedule | '.$this->layout()->action);
-$this->headLink()
-        ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+//$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headScript()
-        ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
+        //->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
         ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
         //->appendFile($this->basePath('js/form-utilities.js'))
         ->appendFile($this->basePath('js/event-form.js'));

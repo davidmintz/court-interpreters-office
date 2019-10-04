@@ -29,10 +29,9 @@ $status_element = (new Element\Select(
 ))->setAttributes(['class' => 'custom-select','id' => 'active'])
 ->setValue($defaults['active']);
 $this->headScript()
-    ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
+    //->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
     ->appendFile($this->basePath('js/people-index.js'));
-    $this->headLink()
-            ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+    //$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headTitle($this->title);
 ?>
 <h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>

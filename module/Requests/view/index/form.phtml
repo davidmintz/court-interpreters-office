@@ -1,11 +1,9 @@
 <?php
     $this->headTitle('requests | '.$this->layout()->action);
-    $this->headLink()
-            ->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+    //$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
     $this->headScript()
-            ->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
+            //->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
             ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-            //->appendFile($this->basePath('js/form-utilities.js'))
             ->appendFile($this->basePath('js/requests/form.js'));
     $this->headStyle()->captureStart()?>
         span.fas:hover { cursor : pointer; }

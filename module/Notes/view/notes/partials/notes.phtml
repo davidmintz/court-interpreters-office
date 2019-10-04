@@ -4,31 +4,32 @@ $pos = $motd['position'];
 $size = $motd['size'];
 $display = $motd['visible'] ? 'inline-block':'none';
 $date = (new DateTime($config['date']))->format('D d-M-Y');
-$format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;width:%s';
-$style = sprintf($format,$display,$pos['top'],$pos['left'],//$size['height'],auto',
-$size['width']);
+$format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
+$style = sprintf($format,$display,$pos['top'],$pos['left']);
+//,auto',
 ?>
 <div id="motd" class="card" style="<?php echo $style;?>">
     <div class="card-header">MOTD: <?php echo $date ?></div>
-    <div class="card-body" style="height:<?php echo $size['height']?>">
+    <div class="card-body" style="<?php echo "width:{$size['width']};height:{$size['height']}"?>">
         <p class="card-text">Our content goes here</p>
     </div>
-    <div class="card-footer">
+    <!-- <div class="card-footer d-flex align-items-end">
       <a href="#" class="btn btn-primary">do shit</a>
-    </div>
+    </div> -->
 </div><?php
 $motw = $this->config['motw'];
 $pos = $motw['position'];
 $size = $motw['size'];
 $display = $motw['visible'] ? 'inline-block':'none';
-$style = sprintf($format,$display,$pos['top'],$pos['left'],$size['width']);
+$style = sprintf($format,$display,$pos['top'],$pos['left']);//,$size['width'],$size['height']);
 ?>
 <div id="motw" class="card" style="<?php echo $style;?>">
     <div class="card-header">MOTW: <?php echo $date ?>(ish)</div>
-    <div class="card-body" style="height:<?php echo $size['height']?>">
+    <div class="card-body" style="<?php echo "width:{$size['width']};height:{$size['height']}"?>">
         <p class="card-text">Our MOTW content goes here</p>
+
     </div>
-    <div class="card-footer">
+    <!-- <div class="card-footer d-flex align-items-end">
       <a href="#" class="btn btn-primary">do shit</a>
-    </div>
+    </div> -->
 </div>

@@ -48,15 +48,8 @@ foreach ($this->container as $page) :
          else:
              $active = false;
          endif;
-         if ($label == 'notes'): // another special case ?>
-            <!-- <a class="nav-link dropdown-toggle pl-4" data-toggle="dropdown" title="notes" href="#">notes</a>
-            <div class="dropdown-menu">
-                <a href="#" class="dropdown-item">one</a>
-                <a href="#" class="dropdown-item">two</a>
-            </div> -->
-     <?php // continue;
-            endif;
-        ?><a title="<?php if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; ?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
+
+        ?><a <?php if ($child->id): printf('id="%s" ',$child->id); endif;?>title="<?php if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; ?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
     <?php endforeach; ?>
     </div>
 </li>

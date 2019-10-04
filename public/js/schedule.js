@@ -103,7 +103,7 @@ $(function() {
         var event_id = popover.data().event_id;
         var data = popover_body.children("form").serialize() + `&csrf=${csrf}`;
         $.post("/admin/schedule/update-interpreters/"+event_id,data)
-            .success((response)=>{
+            .then((response)=>{
                 var element = popover.data("bs.popover").element;
                 var td = $(element).parent().prev("td");
                 td.html(response.html);
@@ -169,7 +169,7 @@ $(function() {
         var interpreter_select = popover.find("select");
         $.getJSON("/admin/schedule/interpreter-options?language_id="
         + language_id + "&csrf=1" )
-            .success((response)=>{
+            .then((response)=>{
                 var options = response.options.map(function(item){
                     return $("<option>").val(item.value).text(item.label);
                 });

@@ -30,29 +30,31 @@ return [
                 'pages' => [
                     [
                         'label' => 'manage',
-                        'uri'   => 'gack',
+                        'uri'   => '#',
                         'title' => 'view, edit, add, delete notes',
                     ],
                     [
-                        'label' => 'daily',
-                        'uri'   => 'gack',
+                        'label' => 'MOTD',
+                        'uri'   => '#',
                         'title' => 'toggle display of MOTD',
+                        'id'    => 'btn-motd',
                     ],
                     [
-                        'label' => 'weekly',
-                        'uri'   => 'gack',
+                        'label' => 'MOTW',
+                        'uri'   => '#',
                         'title' => 'toggle display of MOTW',
+                        'id' => 'btn-motw',
                     ],
                 ]
             ],
-             'tools' => [
+            'tools' => [
                  'pages' => [
                      [
                          'label' => 'notes',
                          'uri' => '#',
                      ],
                  ],
-             ]
+             ],
         ],
     ],
     'router' => [
