@@ -110,6 +110,6 @@ const fail = function(response) {
     console.log(response.responseText);
 };
 
-$("button[data-hide]").on("click",function(e){
+$(".alert button[data-hide]").on("click",function(e){
     $(this).parent().slideUp();
 });
