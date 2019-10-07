@@ -50,6 +50,11 @@ class Module {
         }
     }
 
+    /**
+     * initializes MOTD, MOTW (a/k/a Notes)
+     *
+     * @param  EventInterface $event
+     */
     public function initialize(EventInterface $event) {
 
         $container =  $event->getApplication()->getMvcEvent()->getApplication()
@@ -80,24 +85,26 @@ class Module {
                 }
             }
         }
-
+        $service = $container->get(Service\NotesService::class);
         if ($session->settings) {
             $this->viewModel->note_settings = $session->settings;
             $log->debug("setting MOTD/MOTW session values to view");
             $settings = $session->settings;
             if ($settings['motd']['visible'] && $settings['motw']['visible']) {
-                $log->debug("fetch both motd and motw for {$settings['date']}");
+                $this->viewModel->setVariables($service->getAllForDate(new \DateTime($settings['date'])));
+                $log->debug("fetched both motd and motw for {$settings['date']}");
             } elseif ($settings['motd']['visible'] xor $settings['motw']['visible']) {
                 foreach (['motd','motw']  as $type) {
                     if ($settings[$type]['visible']) {
-                        $log->debug("fetch $type for {$settings['date']}");
+                        $this->viewModel->$type = $service->getNoteByDate(new \DateTime($settings['date']),$type);
+                        $log->debug("fetched $type for {$settings['date']}");
                         break;
                     }
                 }
             } else {
                 $log->debug("fetch neither motd nor motw for {$settings['date']}");
             }
-            $container->get(Service\NotesService::class)->setSession($session);
+            $service->setSession($session);
         } else {
             $log->debug("setting MOTD/MOTW default values");
             // defaults

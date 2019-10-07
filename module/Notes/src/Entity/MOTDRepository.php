@@ -52,7 +52,7 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
      * @param  DateTime $date
      * @return Array
      */
-    public function findAllForDate(DateTime $date) : Array
+    public function getAllForDate(DateTime $date) : Array
     {
         return [
             'MOTD' => $this->findByDate($date,'MOTD'),

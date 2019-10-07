@@ -16,12 +16,7 @@ echo $this->doctype();
 echo $this->headStyle();?>
 </head>
 <body><?php if ($this->layout()->notes_enabled):?>
-    <?php  echo $this->partial('notes/partials/notes.phtml',['config'=>$this->layout()->note_settings,]) ?>
-    <!-- <div class="card" style="position:absolute;width:350px;height:250px;left:50px; top:50px;z-index:1000; opacity:.9" >
-        <div class="card-body">
-            placeholder for a forthcoming feature.
-        </div>
-    </div> -->
+    <?php  echo $this->partial('notes/partials/notes.phtml',['config'=>$this->layout()->note_settings,'motd'=>$this->motd,'motw'=>$this->motw]) ?>
 <?php endif ?>
     <div class="container" style="min-height:400px">
         <nav class="navbar navbar-expand-lg  navbar-light bg-light rounded mb-3 py-1 shadow-sm">

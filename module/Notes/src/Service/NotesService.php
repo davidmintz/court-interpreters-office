@@ -126,7 +126,7 @@ class NotesService
         if (! $this->session) {
             $this->session = new SessionContainer('notes');
         }
-        
+
         return $this->session;
     }
 
@@ -144,19 +144,26 @@ class NotesService
         return $this->noteRepository;
     }
 
+    /**
+     * gets MOT(D|W) by date
+     *
+     * @param  DateTime $date
+     * @param  string   $type
+     * @return NoteInterface|null
+     */
     public function getNoteByDate(DateTime $date, string $type) :? NoteInterface
     {
         return $this->getRepository()->findByDate($date,$type);
     }
 
     /**
-     * gets MOTD and MOTW for $date
+     * gets both MOTD and MOTW for $date
      *
      * @param  DateTime $date
      * @return Array
      */
-    public function findAllForDate(DateTime $date) : Array
+    public function getAllForDate(DateTime $date) : Array
     {
-        return $this->getRepository()->findAllForDate($date);
+        return $this->getRepository()->getAllForDate($date);
     }
 }
