@@ -55,8 +55,8 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
     public function getAllForDate(DateTime $date) : Array
     {
         return [
-            'MOTD' => $this->findByDate($date,'MOTD'),
-            'MOTW' => $this->findByDate($date,'MOTW'),
+            'motd' => $this->findByDate($date,'MOTD'),
+            'motw' => $this->findByDate($date,'MOTW'),
         ];
     }
 
@@ -92,7 +92,7 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
      * @param  string $type
      * @return  \Doctrine\ORM\QueryBuilder
      */
-    public function getBaseQuery(string $type)
+    public function getBaseQuery(string $type) :  QueryBuilder
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $class = strtoupper($type) == 'MOTD'? MOTD::class : MOTW::class;
