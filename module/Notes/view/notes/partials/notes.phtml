@@ -1,21 +1,21 @@
 <?php /**  module/Notes/view/notes/partials/notes.phtml  */
-$motd = $this->config['motd'];
-$pos = $motd['position'];
-$size = $motd['size'];
-$display = $motd['visible'] ? 'inline-block':'none';
-$date = (new DateTime($config['date']))->format('D d-M-Y');
+$motd_cfg = $this->config['motd'];
+$pos = $motd_cfg['position'];
+$size = $motd_cfg['size'];
+$display = $motd_cfg['visible'] ? 'inline-block':'none';
+$date = (new DateTime($this->config['date']))->format('D d-M-Y');
 $format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
 $style = sprintf($format,$display,$pos['top'],$pos['left']);
-//,auto',
 ?>
 <div id="motd" class="card" style="<?php echo $style;?>">
     <div class="card-header">MOTD: <?php echo $date ?></div>
-    <div class="card-body" style="<?php echo "width:{$size['width']};height:{$size['height']}"?>">
-        <p class="card-text">Our content goes here</p>
+    <div class="card-body" style="<?php echo "width:{$size['width']};height:{$size['height']}"?>"><?php
+        echo $this->motd ? nl2br($this->motd->getContent())
+        : '<span class="no-motd font-italic">No MOTD for this date.</span>'
+    ?></div>
+    <div class="card-footer d-flex align-items-end">
+      <a href="#" class="btn btn-primary btn-sm">do shit</a>
     </div>
-    <!-- <div class="card-footer d-flex align-items-end">
-      <a href="#" class="btn btn-primary">do shit</a>
-    </div> -->
 </div><?php
 $motw = $this->config['motw'];
 $pos = $motw['position'];
