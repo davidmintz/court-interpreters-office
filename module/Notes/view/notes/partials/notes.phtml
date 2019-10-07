@@ -2,18 +2,19 @@
 $motd_cfg = $this->config['motd'];
 $pos = $motd_cfg['position'];
 $size = $motd_cfg['size'];
-$display = $motd_cfg['visible'] ? 'inline-block':'none';
+$display = $motd_cfg['visible'] ? 'flex':'none';
 $date = (new DateTime($this->config['date']))->format('D d-M-Y');
 $format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
 $style = sprintf($format,$display,$pos['top'],$pos['left']);
+$style .= "width:{$size['width']};height:{$size['height']}";
 ?>
 <div id="motd" class="card" style="<?php echo $style;?>">
     <div class="card-header">MOTD: <?php echo $date ?></div>
-    <div class="card-body" style="<?php echo "width:{$size['width']};height:{$size['height']}"?>"><?php
+    <div class="card-body" style="overflow:auto"?><?php
         echo $this->motd ? nl2br($this->motd->getContent())
         : '<span class="no-motd font-italic">No MOTD for this date.</span>'
     ?></div>
-    <div class="card-footer d-flex align-items-end">
+    <div class="card-footer">
       <a href="#" class="btn btn-primary btn-sm">do shit</a>
     </div>
 </div><?php
@@ -27,7 +28,6 @@ $style = sprintf($format,$display,$pos['top'],$pos['left']);//,$size['width'],$s
     <div class="card-header">MOTW: <?php echo $date ?>(ish)</div>
     <div class="card-body" style="<?php echo "width:{$size['width']};height:{$size['height']}"?>">
         <p class="card-text">Our MOTW content goes here</p>
-
     </div>
     <!-- <div class="card-footer d-flex align-items-end">
       <a href="#" class="btn btn-primary">do shit</a>

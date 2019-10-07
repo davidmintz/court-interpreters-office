@@ -1,8 +1,8 @@
 $(function(){
-    $("#motd .card-body, #motw .card-body").resizable({
+    $("#motd, #motw").resizable({
         //handles : 'all',
         stop: function (event,ui) {
-            var type = $(event.target).parent().attr("id");
+            var type = $(event.target).attr("id");
             var settings = {[type]: {
                 size: {
                     width: `${ui.size.width}px`,
