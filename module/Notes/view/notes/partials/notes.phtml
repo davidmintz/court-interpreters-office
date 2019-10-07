@@ -1,35 +1,55 @@
 <?php /**  module/Notes/view/notes/partials/notes.phtml  */
+/*
+renders the MOTW and/or MOTW
+ */
+$date_obj = new DateTime($this->config['date']);
+$format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
 $motd_cfg = $this->config['motd'];
 $pos = $motd_cfg['position'];
 $size = $motd_cfg['size'];
 $display = $motd_cfg['visible'] ? 'flex':'none';
-$date = (new DateTime($this->config['date']))->format('D d-M-Y');
-$format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
 $style = sprintf($format,$display,$pos['top'],$pos['left']);
 $style .= "width:{$size['width']};height:{$size['height']}";
 ?>
-<div id="motd" class="card" style="<?php echo $style;?>">
-    <div class="card-header">MOTD: <?php echo $date ?></div>
+<div id="motd" class="card" style="<?php echo $style;?>" data-date="<?php echo $date_obj->format('Y-m-d')?>">
+    <div class="card-header">MOTD: <?php echo $date_obj->format('D d-M-Y')?><button type="button" class="close" data-hide="motd" aria-label="close">
+    <span aria-hidden="true">&times;</span>
+  </button></div>
     <div class="card-body" style="overflow:auto"?><?php
         echo $this->motd ? nl2br($this->motd->getContent())
         : '<span class="no-motd font-italic">No MOTD for this date.</span>'
     ?></div>
     <div class="card-footer">
-      <a href="#" class="btn btn-primary btn-sm">do shit</a>
+      <a href="#" class="btn btn-primary btn-sm"><span class="fas fa-edit mr-1"></span>edit</a>
     </div>
 </div><?php
-$motw = $this->config['motw'];
-$pos = $motw['position'];
-$size = $motw['size'];
-$display = $motw['visible'] ? 'inline-block':'none';
-$style = sprintf($format,$display,$pos['top'],$pos['left']);//,$size['width'],$size['height']);
+$motw_cfg = $this->config['motw'];
+$pos = $motw_cfg['position'];
+$size = $motw_cfg['size'];
+$display = $motw_cfg['visible'] ? 'flex':'none';
+$style = sprintf($format,$display,$pos['top'],$pos['left']);
+$style .= "width:{$size['width']};height:{$size['height']}";
+if ($this->motw):
+    $monday = $this->motw->getDate();
+else :
+    $dow = (int)$date_obj->format('w');
+    if ($dow != 1) :
+        $diff = $dow - 1;
+        $monday = new DateTime("{$this->config['date']} - $diff days");
+    else :
+        $monday = $date_obj;
+    endif;
+endif;
 ?>
-<div id="motw" class="card" style="<?php echo $style;?>">
-    <div class="card-header">MOTW: <?php echo $date ?>(ish)</div>
-    <div class="card-body" style="<?php echo "width:{$size['width']};height:{$size['height']}"?>">
-        <p class="card-text">Our MOTW content goes here</p>
+<div data-date="<?php echo $monday->format('Ÿ-m-d')?>" id="motw" class="card" style="<?php echo $style;?>">
+    <div class="card-header">MOTW: <?php echo $monday->format('D d-M-Y') ?><button type="button" class="close" data-hide="motw" aria-label="close">
+    <span aria-hidden="true">&times;</span>
+  </button></div>
+    <div class="card-body" style="overflow:auto"><?php
+        echo $this->motw ? nl2br($this->motw->getContent())
+        : '<span class="no-motw font-italic">No MOTW for this date.</span>'
+    ?></div>
+    <div class="card-footer d-flex align-items-end">
+      <a href="#" class="btn btn-primary btn-sm"><span class="fas fa-edit mr-1"></span>edit</a>
     </div>
-    <!-- <div class="card-footer d-flex align-items-end">
-      <a href="#" class="btn btn-primary">do shit</a>
-    </div> -->
 </div>

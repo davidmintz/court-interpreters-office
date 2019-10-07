@@ -72,7 +72,6 @@ class Module {
             if (count($children)) {
                 $view = $children[0];
                 if ($view->date) {
-                    $log->debug("FUCK YEAH");
                     $default_date = $view->date->format('Y-m-d');
                     if (!$session->settings) {
                         $session->settings = array_merge(
@@ -90,14 +89,15 @@ class Module {
             $this->viewModel->note_settings = $session->settings;
             $log->debug("setting MOTD/MOTW session values to view");
             $settings = $session->settings;
+            $date = new \DateTime($settings['date']);
             if ($settings['motd']['visible'] && $settings['motw']['visible']) {
-                $this->viewModel->setVariables($service->getAllForDate(new \DateTime($settings['date'])));
+                $this->viewModel->setVariables($service->getAllForDate($date));
                 $log->debug("fetched both motd and motw for {$settings['date']}");
             } elseif ($settings['motd']['visible'] xor $settings['motw']['visible']) {
                 foreach (['motd','motw']  as $type) {
                     if ($settings[$type]['visible']) {
-                        $this->viewModel->$type = $service->getNoteByDate(new \DateTime($settings['date']),$type);
-                        $log->debug("fetched $type for {$settings['date']}");
+                        $this->viewModel->$type = $service->getNoteByDate($date,$type);
+                        $log->debug("fetched $type for {$settings['date']}: ".gettype($this->viewModel->$type));
                         break;
                     }
                 }

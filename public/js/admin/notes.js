@@ -33,8 +33,20 @@ $(function(){
         div.toggle();
         var visible = div.is(":visible");
         $(`#btn-${type}`).text(`${visible ? "hide":"show"} ${type.toUpperCase()}`);
+        if (div.find(`.no-${type}`).length){
+            console.log(`now try to get ${type} for ${div.data().date}`);
+            $.get(`/admin/notes/date/${div.data().date}/${type}`).then((res)=>{
+                //div.children(".card-body").replaceWith(res.MOTD.content);
+            });
+        }
         $.post("/admin/notes/update-settings",{[type]: {visible: visible ? 1 : 0}})
     });
+
+    $(".card-header button[data-hide]").on("click",function(){
+        var what = $(this).closest(".card").attr("id");
+        $(`#btn-${what}`).trigger("click");
+    });
+
     var motd_visible = $("#motd").is(":visible");
     $("#btn-motd").text(`${motd_visible ? "hide":"show"} MOTD`);
     var motw_visible = $("#motw").is(":visible");
