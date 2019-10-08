@@ -88,17 +88,22 @@ class NotesController extends AbstractRestfulController
         $type =  strtoupper($this->params()->fromRoute('type','all'));
         /** @var $service InterpretersOffice\Admin\Notes\Service\NotesService */
         $service = $this->notesService;
+        try {
+            $date_obj = new DateTime($date);
+        } catch (\Exception $e) {
+            throw new \RuntimeException("invalid date parameter: '$date'");
+        }
         if ('ALL' != $type) {
-            $message = $service->getNoteByDate(new DateTime($date), $type);
+            $message = $service->getNoteByDate($date_obj, $type);
             if ($message) {
                 $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
             }
             return new $view_class([$type => $message]);
         } else {
-            $messages = $service->findAllForDate(new \DateTime($date));
+            $messages = $service->findAllForDate($date_obj);
+
             return new $view_class($messages);
         }
-
     }
 
     public function updateSettingsAction()
@@ -109,6 +114,11 @@ class NotesController extends AbstractRestfulController
         return new JsonModel($this->notesService->getSession()->settings);
     }
 
+    public function indexAction()
+    {
+
+    }
+    
     /**
      * gets MOTD or MOTW by date
      *
@@ -125,5 +135,15 @@ class NotesController extends AbstractRestfulController
             JsonModel::class : ViewModel::class;
 
         return new $view_class(['motd'=>'boink']);
+    }
+
+    public function editAction()
+    {
+
+    }
+
+    public function createAction()
+    {
+
     }
 }

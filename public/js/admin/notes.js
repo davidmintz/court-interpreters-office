@@ -45,6 +45,7 @@ $(function(){
                     var key = type.toUpperCase();
                     if (res[key]) {
                         div.children(".card-body").html(res[key].content);
+                        div.data({id:res[key].id});
                     } else {
                         console.log(`hmm, still no ${type}`);
                     }

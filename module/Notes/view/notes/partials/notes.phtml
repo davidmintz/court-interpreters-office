@@ -11,7 +11,7 @@ $display = $motd_cfg['visible'] ? 'flex':'none';
 $style = sprintf($format,$display,$pos['top'],$pos['left']);
 $style .= "width:{$size['width']};height:{$size['height']}";
 ?>
-<div id="motd" class="card" style="<?php echo $style;?>" data-date="<?php echo $date_obj->format('Y-m-d')?>">
+<div <?php if ($this->motd): printf(' data-id="%d"',$this->motd->getId()); endif;?>id="motd" class="card" style="<?php echo $style;?>" data-date="<?php echo $date_obj->format('Y-m-d')?>">
     <div class="card-header">MOTD: <?php echo $date_obj->format('D d-M-Y')?><button type="button" class="close" data-hide="motd" aria-label="close">
     <span aria-hidden="true">&times;</span>
   </button></div>
@@ -20,7 +20,11 @@ $style .= "width:{$size['width']};height:{$size['height']}";
         : '<span class="no-motd font-italic">No MOTD for this date.</span>'
     ?></div>
     <div class="card-footer">
-      <a href="#" class="btn btn-primary btn-sm"><span class="fas fa-edit mr-1"></span>edit</a>
+      <a href="<?php
+      echo $this->motd ?
+        $this->url('notes/edit',['type'=>'motd','id'=> $this->motd->getId()])
+        :  $this->url('notes/create',['type'=>'motd','date'=> $date_obj->format('Y-m-d')]);
+        ?>" class="btn btn-primary btn-sm"><span class="fas fa-edit mr-1"></span>edit</a>
     </div>
 </div><?php
 $motw_cfg = $this->config['motw'];
@@ -50,6 +54,9 @@ endif;
         : '<span class="no-motw font-italic">No MOTW for this date.</span>'
     ?></div>
     <div class="card-footer d-flex align-items-end">
-      <a href="#" class="btn btn-primary btn-sm"><span class="fas fa-edit mr-1"></span>edit</a>
+      <a href="<?php  echo $this->motw ?
+        $this->url('notes/edit',['type'=>'motw','id'=> $this->motw->getId()])
+        :  $this->url('notes/create',['type'=>'motw','date'=>$monday->format('Y-m-d')]);
+        ?>" class="btn btn-primary btn-sm"><span class="fas fa-edit mr-1"></span>edit</a>
     </div>
 </div>

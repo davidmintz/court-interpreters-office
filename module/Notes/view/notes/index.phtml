@@ -1,4 +1,8 @@
-<?php $what = $this->MOTD ? 'MOTD':'MOTW';
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<?php
+
+
+$what = $this->MOTD ? 'MOTD':'MOTW';
 if ($this->$what) : ?>
 <h2>
     <?php echo $this->{$what}->getDate()->format('D d-M-Y') ?>

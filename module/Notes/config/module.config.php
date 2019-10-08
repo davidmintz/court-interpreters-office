@@ -56,6 +56,30 @@ return [
                  ],
              ],
         ],
+        'admin_breadcrumbs' =>  [
+            [
+                'label' => 'admin',
+                'route' => 'admin',
+                'pages' => [
+                    [
+                        'label' => 'notes',
+                        'route' => 'notes',
+                        'expand' => false,
+                        'pages' => [
+                            [
+                                'label'=>'edit',
+                                'route'=>'notes/edit',
+                            ],
+                            [
+                                'label' => 'create',
+                                'route' => 'notes/create',
+                                //'expand' => false,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ],
     'router' => [
         'routes' => [
@@ -68,7 +92,7 @@ return [
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\NotesController::class,
-                        //'action'=>'test',
+                        //'action'=>'index',
                     ],
                 ],
                 /**
@@ -126,7 +150,33 @@ return [
 
                             ],
                         ],
-                    ]
+                    ],
+                    'edit' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/edit/:type/:id',
+                            'defaults' => [
+                                'action' => 'edit',
+                                'constraints' => [
+                                    'id' => '[1-9]\d*',
+                                    'type' => 'mot[dw]',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'create' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/create/:type/:date',
+                            'defaults' => [
+                                'action' => 'create',
+                                'constraints' => [
+                                    'type' => 'mot[dw]',
+                                    'date' =>  '^\d{4}-\d{2}-\d{2}$',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
