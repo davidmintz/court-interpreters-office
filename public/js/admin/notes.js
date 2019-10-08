@@ -51,7 +51,6 @@ $(function(){
                         edit_btn.attr({ href:
                             `${window.basePath}/admin/notes/edit/${type}/${note.id}`
                         });
-
                     } // else {console.debug(`hmm, still no ${type}`);}
                     div.slideDown(()=>link.text("hide "+type.toUpperCase()));
                 });
