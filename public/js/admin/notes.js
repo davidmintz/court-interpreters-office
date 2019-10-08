@@ -1,6 +1,6 @@
 $(function(){
     $("#motd, #motw").resizable({
-        //handles : 'all',
+        handles : 'all',
         stop: function (event,ui) {
             var type = $(event.target).attr("id");
             var settings = {[type]: {
@@ -44,11 +44,15 @@ $(function(){
                 .then((res)=>{
                     var key = type.toUpperCase();
                     if (res[key]) {
-                        div.children(".card-body").html(res[key].content);
-                        div.data({id:res[key].id});
-                    } else {
-                        console.log(`hmm, still no ${type}`);
-                    }
+                        var note = res[key];
+                        div.children(".card-body").html(note.content);
+                        div.data({id:note.id});
+                        var edit_btn = div.find(".card-footer a");
+                        edit_btn.attr({ href:
+                            `${window.basePath}/admin/notes/edit/${type}/${note.id}`
+                        });
+
+                    } // else {console.debug(`hmm, still no ${type}`);}
                     div.slideDown(()=>link.text("hide "+type.toUpperCase()));
                 });
             } else {
