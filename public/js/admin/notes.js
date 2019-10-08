@@ -43,7 +43,11 @@ $(function(){
                 $.get(`/admin/notes/date/${div.data().date}/${type}`)
                 .then((res)=>{
                     var key = type.toUpperCase();
-                    div.children(".card-body").html(res[key].content);
+                    if (res[key]) {
+                        div.children(".card-body").html(res[key].content);
+                    } else {
+                        console.log(`hmm, still no ${type}`);
+                    }
                     div.slideDown(()=>link.text("hide "+type.toUpperCase()));
                 });
             } else {
