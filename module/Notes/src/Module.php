@@ -85,9 +85,8 @@ class Module {
             }
         }
         $service = $container->get(Service\NotesService::class);
-        if ($session->settings) {
+        if ($session->settings) { // inject Notes config from session into view
             $this->viewModel->note_settings = $session->settings;
-            $log->debug("setting MOTD/MOTW session values to view");
             $settings = $session->settings;
             $date = new \DateTime($settings['date']);
             if ($settings['motd']['visible'] && $settings['motw']['visible']) {
@@ -101,13 +100,9 @@ class Module {
                         break;
                     }
                 }
-            } else {
-                $log->debug("fetch neither motd nor motw for {$settings['date']}");
-            }
+            } // else {log->debug("fetch neither motd nor motw for {$settings['date']}");}
             $service->setSession($session);
-        } else {
-            $log->debug("setting MOTD/MOTW default values");
-            // defaults
+        } else { // inject default Notes config into view
             $defaults = Service\NotesService::$default_settings;
             $defaults['date'] = $default_date ?: date('Y-m-d');
             $this->viewModel->note_settings = $defaults;
