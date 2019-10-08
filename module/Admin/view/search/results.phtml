@@ -59,8 +59,6 @@ endif; ?>
                       <a title="create another event in this same case" class="dropdown-item event-repeat text-primary" href="<?php echo $this->url('events/add',['id'=>$id])?>">repeat</a>
                       <div class="dropdown-divider"></div>
                       <a title="edit this event" class="dropdown-item" href="<?php echo $this->url('events/edit',['id'=>$id])?>">edit</a>
-                      <div class="dropdown-divider"></div>
-                      <a title="delete this event" class="dropdown-item event-delete" href="<?php echo $this->url('events/edit',['action'=>'delete','id'=>$e->getId()])?>">delete</a>
                     </div>
                 </td>
             </tr>
