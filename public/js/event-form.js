@@ -236,7 +236,7 @@ var eventForm = (function () {
             return;
         }
         $.getJSON("/admin/schedule/interpreter-options?language_id="+language_id)
-            .then(
+            .success(
                 function(data){
                     var options = data.map(function(item){
                         return $("<option>").val(item.value).text(item.label);
@@ -625,19 +625,17 @@ var eventForm = (function () {
             function(){slideout.toggle("slide");}
         );
 
-        languageElement.on("change",languageElementChange);
         if (! languageElement.val()) {
             interpreterSelectElement.attr("disabled","disabled");
-        } else {
-            languageElement.trigger("change");
-            console.warn("fuck?");
         }
+
         if (! parentLocationElement.val()){
             locationElement.val("").attr({disabled : "disabled"});
         }
 
         parentLocationElement.on("change",parentLocationChange);
 
+        languageElement.on("change",languageElementChange);
 
         // interpreter and deft name "remove" buttons event handler
         $("#interpreters-assigned, #defendant-names").on("click",".btn-remove-item",
@@ -982,10 +980,9 @@ var defendantForm = (function(){
         //console.debug("we are in defendantUpdateSubmit, about to post");
         $.post(url,defendantForm.serialize(),
             defendantFormSubmitCallback,"json")
-            .then(function(){
+            .success(function(){
                 getEventModificationTime(event_id);
-            })
-            .fail(fail);
+            });
     };
 
     var init = function() {
