@@ -48,8 +48,7 @@ class NotesController extends AbstractRestfulController
     /**
      * updates entity
      *
-     * work in progress. needs to handle not-found, handle different
-     * entity-types etc
+     * work in progress.
      *
      * @param  $id  entity id
      * @param  array $data
@@ -58,6 +57,23 @@ class NotesController extends AbstractRestfulController
      */
     public function update($id, $data)
     {
+        $service = $this->notesService;
+        $inputFilter = $service->getInputFilter();
+        $inputFilter->setData($data);
+        if (! $inputFilter->isValid()) {
+            $errors = $inputFilter->getMessages();
+            return new JsonModel([
+                'validation_errors' => $errors,
+            ]);
+        }
+        $type =  $this->params()->fromRoute('type');
+
+        return new JsonModel(
+            $service->update($type, (int)$id, $inputFilter->getValues())
+        );
+
+        // $note = $service->{'get'.\strtoupper($type)}($id)
+        //     ->setContent($inputFilter->get('content')->getValue());
         // $type =  strtoupper($this->params()->fromRoute('type'));
         // $repository = $this->em->getRepository(MOTD::class);
         // $entity = $repository->find($id);
@@ -74,7 +90,6 @@ class NotesController extends AbstractRestfulController
         // }
         // $this->em->flush();
         //return new JsonModel([$type=>$entity]);
-        return new JsonModel(['test'=>'1 2 3']);
     }
 
     public function create($data)
@@ -115,6 +130,7 @@ class NotesController extends AbstractRestfulController
     {
         $params = $this->params()->fromPost();
         $this->notesService->updateSettings($params);
+
         return new JsonModel($this->notesService->getSession()->settings);
     }
 
@@ -163,8 +179,6 @@ class NotesController extends AbstractRestfulController
             }
             return ['date'=> $note->getDate(),'type'=>$type, 'note'=>$note];
         }
-        $inputFilter = $this->notesService->getInputFilter();
-        echo get_class($inputFilter);
     }
 
     public function createAction()
@@ -172,7 +186,7 @@ class NotesController extends AbstractRestfulController
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
         if ($this->getRequest()->isGet()) {
-            // see if one already exists
+            // to do: first see if one already exists
 
             return ['date'=>new \DateTime($date_string),'type'=>$type];
         }

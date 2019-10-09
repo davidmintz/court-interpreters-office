@@ -26,7 +26,9 @@ endif;
         <div class="form-row">
             <label class="col-sm-2 col-form-label text-md-right pr-1" for="content">text of <?php echo $type ?></label>
             <div class="col">
-                <textarea class="form-control" name="content" id="note-content" placeholder="Enter text here. You can use markdown" rows="6" cols="60"></textarea>
+                <textarea class="form-control" name="content" id="note-content" placeholder="Enter text here. You can use markdown" rows="6" cols="60"><?php
+                    echo strip_tags($this->note->getContent())
+                ?></textarea>
             </div>
         </div>
         <div class="form-row">

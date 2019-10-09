@@ -10,7 +10,7 @@ $(function(){
                 }
             }};
             console.warn(settings);
-            $.post("/admin/notes/update-settings",settings);
+            $.post("/admin/notes/update-settings",settings).fail(fail);
         }
     });
     $("#motd, #motw").draggable({
@@ -22,7 +22,7 @@ $(function(){
                     left: `${ui.position.left}px`
                 }
             }};
-            $.post("/admin/notes/update-settings",settings);
+            $.post("/admin/notes/update-settings",settings).fail(fail);
         }
     });
 
@@ -36,6 +36,7 @@ $(function(){
             div.slideUp(
                 ()=>$.post("/admin/notes/update-settings",{[type]: {visible:0}})
                 .then(()=>link.text("show "+type.toUpperCase()))
+                .fail(fail)
             );
         } else {
             if (div.find(`.no-${type}`).length) {
@@ -49,16 +50,16 @@ $(function(){
                         div.data({id:note.id});
                         var edit_btn = div.find(".card-footer a");
                         edit_btn.attr({ href:
-                            `${window.basePath}/admin/notes/edit/${type}/${note.id}`
+                            `${window.basePath}/admin/notes/edit/${type}/${note.id}/date/${div.data('date')}`
                         });
                     } // else {console.debug(`hmm, still no ${type}`);}
                     div.slideDown(()=>link.text("hide "+type.toUpperCase()));
-                });
+                }).fail(fail);
             } else {
                 div.slideDown(()=>link.text("hide "+type.toUpperCase()));
             }
             visible = visible ? 0 : 1;
-            $.post("/admin/notes/update-settings",{[type]: {visible}});
+            $.post("/admin/notes/update-settings",{[type]: {visible}}).fail(fail);
         }
     });
 

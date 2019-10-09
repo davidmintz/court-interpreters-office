@@ -115,15 +115,21 @@ class NotesService
                             'name' => Validator\NotEmpty::class,
                             'options' => [
                                 'messages' => [
-                                    Validator\NotEmpty::IS_EMPTY => "fuck you",
+                                    Validator\NotEmpty::IS_EMPTY => "some message text is required",
                                 ]
-                            ]
-
-                        ]
+                            ],
+                        ],
                     ],
                     'filters' => [
 
                     ],
+                ]
+            );
+            $inputFilter->add(
+                [
+                    'name' => 'csrf',
+                    'required' => true,
+                    // etc
                 ]
             );
             $this->inputFilter = $inputFilter;
@@ -194,6 +200,33 @@ class NotesService
         return $this->getEntityManager()->getRepository(MOTW::class)
             ->find($id);
     }
+
+    /**
+     * updates MOT[DW]
+     *
+     * work in progress. still have to update meta.
+     *
+     * @param  string $type MOTD|MOTW
+     * @param  int    $id
+     * @param  Array  $data
+     * @return Array
+     */
+    public function update(string $type, int $id, Array $data)
+    {
+        $entity = $this->{'get'.\strtoupper($type)}($id);
+        if (!$entity) {
+            return [
+                'status' => 'error',
+                'message' => "$type with id $id not found",
+            ];
+        }
+        $entity->setContent($data['content']);
+        $this->em->flush();
+        return [$type => $entity, 'status'=>'success'];
+
+
+    }
+
     /**
      * gets Repository
      *
