@@ -11,6 +11,12 @@ use InterpretersOffice\Admin\Notes\Entity\MOTDRepository;
 use DateTime;
 use Zend\Session\Container as SessionContainer;
 
+use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\Input;
+use Zend\Validator;
+use Zend\Validator\NotEmpty;
+//use Zend\Validator\NotEmpty;
+
 /**
  * manages MOTW|MOTDs
  */
@@ -43,6 +49,11 @@ class NotesService
      */
     private $session;
 
+    /**
+     * default settings for MOTD|MOTW
+     *
+     * @var array
+     */
     public static $default_settings = [
         'date' => null,
         'motd' => [
@@ -52,8 +63,8 @@ class NotesService
                 'height'=>'250px',
             ],
             'position' => [
-                'left' => '50px',
-                'top' => '50px',
+                'left' => '25px',
+                'top' => '120px',
             ],
         ],
         'motw' => [
@@ -63,11 +74,18 @@ class NotesService
                 'height'=>'250px',
             ],
             'position' => [
-                'left' => '50px',
+                'left' => '25px',
                 'top' => '150px',
             ],
         ],
     ];
+
+    /**
+     * inputfilter for MOT[DW]
+     *
+     * @var InputFilter
+     */
+    private $inputFilter;
 
 
 
@@ -83,6 +101,42 @@ class NotesService
         $this->user = $auth->getIdentity();
     }
 
+    public function getInputFilter() : InputFilter
+    {
+
+        if (!$this->inputFilter) {
+            $inputFilter = new InputFilter();
+            $inputFilter->add(
+                [
+                    'name' => 'content',
+                    'required' => true,
+                    'validators' => [
+                        [
+                            'name' => Validator\NotEmpty::class,
+                            'options' => [
+                                'messages' => [
+                                    Validator\NotEmpty::IS_EMPTY => "fuck you",
+                                ]
+                            ]
+
+                        ]
+                    ],
+                    'filters' => [
+
+                    ],
+                ]
+            );
+            $this->inputFilter = $inputFilter;
+        }
+
+        return $this->inputFilter;
+    }
+
+    /**
+     * sets session container
+     *
+     * @param SessionContainer $session
+     */
     public function setSession(SessionContainer $session)
     {
         $this->session = $session;
@@ -130,12 +184,22 @@ class NotesService
         return $this->session;
     }
 
+    public function getMOTD($id)
+    {
+        return $this->getRepository()->find($id);
+    }
+
+    public function getMOTW($id)
+    {
+        return $this->getEntityManager()->getRepository(MOTW::class)
+            ->find($id);
+    }
     /**
      * gets Repository
      *
-     * @return NoteRepository
+     * @return MOTDRepository
      */
-    private function getRepository() : MOTDRepository
+    public function getRepository() : MOTDRepository
     {
         if (! $this->noteRepository) {
             $this->noteRepository = $this->em->getRepository(MOTD::class);

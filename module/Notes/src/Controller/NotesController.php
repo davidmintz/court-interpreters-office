@@ -77,6 +77,11 @@ class NotesController extends AbstractRestfulController
         return new JsonModel(['test'=>'1 2 3']);
     }
 
+    public function create($data)
+    {
+
+    }
+
     /**
      * gets the MOTD and/or MOTD for a date
      *
@@ -110,7 +115,6 @@ class NotesController extends AbstractRestfulController
     {
         $params = $this->params()->fromPost();
         $this->notesService->updateSettings($params);
-
         return new JsonModel($this->notesService->getSession()->settings);
     }
 
@@ -118,7 +122,7 @@ class NotesController extends AbstractRestfulController
     {
 
     }
-    
+
     /**
      * gets MOTD or MOTW by date
      *
@@ -137,13 +141,46 @@ class NotesController extends AbstractRestfulController
         return new $view_class(['motd'=>'boink']);
     }
 
+    /**
+     * renders form for MOTD
+     *
+     */
     public function editAction()
     {
-
+        $type = $this->params()->fromRoute('type');
+        $date_string = $this->params()->fromRoute('date');
+        $id = $this->params()->fromRoute('id');
+        if ($this->getRequest()->isGet()) {
+            $method = 'get'.\strtoupper($type);
+            $note = $this->notesService->$method($id);
+            // find the entity
+            if (! $note && $date_string) {
+                if ($date_string) {
+                    return $this->redirect()->toRoute('notes/create',['type'=>$type,'date'=>$date_string]);
+                } else {
+                    // ?
+                }
+            }
+            return ['date'=> $note->getDate(),'type'=>$type, 'note'=>$note];
+        }
+        $inputFilter = $this->notesService->getInputFilter();
+        echo get_class($inputFilter);
     }
 
     public function createAction()
     {
+        $type = $this->params()->fromRoute('type');
+        $date_string = $this->params()->fromRoute('date');
+        if ($this->getRequest()->isGet()) {
+            // see if one already exists
+
+            return ['date'=>new \DateTime($date_string),'type'=>$type];
+        }
+        $inputFilter = $this->notesService->getInputFilter();
+        // $inputFilter->setData(['content'=>'']);
+        // if (! $inputFilter->isValid()) {
+        //     print_r($inputFilter->getMessages());
+        // }
 
     }
 }

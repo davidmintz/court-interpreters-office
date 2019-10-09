@@ -22,7 +22,7 @@ $style .= "width:{$size['width']};height:{$size['height']}";
     <div class="card-footer">
       <a href="<?php
       echo $this->motd ?
-        $this->url('notes/edit',['type'=>'motd','id'=> $this->motd->getId()])
+        $this->url('notes/edit',['type'=>'motd','id'=> $this->motd->getId(),'date'=>$this->motd->getDate()->format('Y-m-d')])
         :  $this->url('notes/create',['type'=>'motd','date'=> $date_obj->format('Y-m-d')]);
         ?>" class="btn btn-primary btn-sm"><span class="fas fa-edit mr-1"></span>edit</a>
     </div>
@@ -55,7 +55,7 @@ endif;
     ?></div>
     <div class="card-footer d-flex align-items-end">
       <a href="<?php  echo $this->motw ?
-        $this->url('notes/edit',['type'=>'motw','id'=> $this->motw->getId()])
+        $this->url('notes/edit',['type'=>'motw','id'=> $this->motw->getId(),'date'=>$monday->format('Y-m-d')])
         :  $this->url('notes/create',['type'=>'motw','date'=>$monday->format('Y-m-d')]);
         ?>" class="btn btn-primary btn-sm"><span class="fas fa-edit mr-1"></span>edit</a>
     </div>

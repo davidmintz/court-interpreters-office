@@ -154,12 +154,13 @@ return [
                     'edit' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/edit/:type/:id',
+                            'route' => '/edit/:type/:id/date/:date',
                             'defaults' => [
                                 'action' => 'edit',
                                 'constraints' => [
                                     'id' => '[1-9]\d*',
                                     'type' => 'mot[dw]',
+                                    'date' =>  '^\d{4}-\d{2}-\d{2}$',
                                 ],
                             ],
                         ],
