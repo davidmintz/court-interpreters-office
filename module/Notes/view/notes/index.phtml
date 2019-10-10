@@ -1,15 +1,24 @@
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php
+<?php $settings = $this->layout()->note_settings;
+$date_obj = new \DateTime($settings['date']);
+?>
+<h4><?php echo $date_obj->format('D d-M-Y')?></h4>
 
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="day-tab" data-toggle="tab" href="#day" role="tab" aria-controls="day" aria-selected="true">MOTD</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="week-tab" data-toggle="tab" href="#week" role="tab" aria-controls="week" aria-selected="false">MOTW</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane show active" id="motd" role="tabpanel" aria-labelledby="day-tab">here is your MOTD
+<pre><?php print_r($settings['motd'])?></pre>
 
-$what = $this->MOTD ? 'MOTD':'MOTW';
-if ($this->$what) : ?>
-<h2>
-    <?php echo $this->{$what}->getDate()->format('D d-M-Y') ?>
-</h2>
-    <?php echo $this->{$what}->getContent()?>
-<?php endif;
+  </div>
+  <div class="tab-pane" id="week" role="tabpanel" aria-labelledby="week-tab">fuck you: MOTW
 
-if ($this->motd):
-echo "yes.";
-endif;
+<pre><?php print_r($settings['motw'])?></pre>
+  </div>
+</div>

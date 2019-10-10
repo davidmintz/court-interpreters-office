@@ -45,6 +45,8 @@ class NotesController extends AbstractRestfulController
         $this->notesService = $notesService;
     }
 
+
+
     /**
      * updates entity
      *
@@ -122,7 +124,12 @@ class NotesController extends AbstractRestfulController
         return new JsonModel($this->notesService->getSession()->settings);
     }
 
-    public function indexAction()
+    /**
+     * equivalent of indexAction
+     * 
+     * @return ViewModel
+     */
+    public function getList()
     {
 
     }
