@@ -30,7 +30,7 @@ return [
                 'pages' => [
                     [
                         'label' => 'manage',
-                        'uri'   => '#',
+                        'uri'   => 'notes',
                         'title' => 'view, edit, add, delete notes',
                     ],
                     [

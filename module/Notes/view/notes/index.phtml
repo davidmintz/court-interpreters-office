@@ -1,9 +1,9 @@
+<?php $this->headTitle("MOTD|MOTW");?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php $settings = $this->layout()->note_settings;
 $date_obj = new \DateTime($settings['date']);
 ?>
 <h4><?php echo $date_obj->format('D d-M-Y')?></h4>
-
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="day-tab" data-toggle="tab" href="#day" role="tab" aria-controls="day" aria-selected="true">MOTD</a>
@@ -13,12 +13,26 @@ $date_obj = new \DateTime($settings['date']);
   </li>
 </ul>
 <div class="tab-content" id="myTabContent">
-  <div class="tab-pane show active" id="motd" role="tabpanel" aria-labelledby="day-tab">here is your MOTD
-<pre><?php print_r($settings['motd'])?></pre>
-
+  <div class="tab-pane pt-2 show active" id="day" role="tabpanel" aria-labelledby="day-tab">
+    <?php
+    if ($this->notes['motd']): echo $this->notes['motd']->getContent();
+    ?><button id="btn-edit-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">edit</span></button><?php
+    else:
+        ?><em>no MOTD for this date</em><?php
+    endif;?>
   </div>
-  <div class="tab-pane" id="week" role="tabpanel" aria-labelledby="week-tab">fuck you: MOTW
-
-<pre><?php print_r($settings['motw'])?></pre>
+  <div class="tab-pane pt-2" id="week" role="tabpanel" aria-labelledby="week-tab">
+    <?php if ($this->notes['motw']): echo $this->notes['motw']->getContent();
+    else:
+        ?><em>no MOTW for this week</em><?php
+    endif;?>
   </div>
 </div>
+<script>
+    var btn = document.getElementById('btn-edit-motd');
+    btn.addEventListener("click",(e)=>{
+        console.log("click!");
+        console.log(typeof $);
+    }
+    );
+</script>

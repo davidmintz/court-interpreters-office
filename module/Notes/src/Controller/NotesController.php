@@ -110,7 +110,7 @@ class NotesController extends AbstractRestfulController
             }
             return new $view_class([$type => $message]);
         } else {
-            $messages = $service->findAllForDate($date_obj);
+            $messages = $service->getAllForDate($date_obj);
 
             return new $view_class($messages);
         }
@@ -119,19 +119,24 @@ class NotesController extends AbstractRestfulController
     public function updateSettingsAction()
     {
         $params = $this->params()->fromPost();
-        $this->notesService->updateSettings($params);
+         $this->notesService->updateSettings($params);
 
         return new JsonModel($this->notesService->getSession()->settings);
     }
 
     /**
      * equivalent of indexAction
-     * 
+     *
      * @return ViewModel
      */
     public function getList()
     {
-
+        $date = $this->notesService->getSession()->settings['date'];
+        $notes = $this->notesService->getAllForDate(new \DateTime($date));
+        foreach($notes as $n) {
+            $n->setContent($this->notesService->parseDown($n->getContent()));
+        }
+        return (['notes' => $notes,]);
     }
 
     /**

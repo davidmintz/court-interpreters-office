@@ -16,6 +16,8 @@ use Zend\Validator;
 use Zend\Filter;
 use InterpretersOffice\Entity;
 
+use Parsedown;
+
 /**
  * manages MOTW|MOTDs
  */
@@ -86,7 +88,11 @@ class NotesService
      */
     private $inputFilter;
 
-
+    /**
+     * Parsedown
+     * @var Parsedown
+     */
+    private $parseDown;
 
     /**
      * constructor
@@ -320,4 +326,17 @@ class NotesService
     {
         return $this->getRepository()->getAllForDate($date);
     }
+
+    public function parsedown(string $content) : string
+    {
+        if (! $this->parseDown) {
+            $this->parseDown = new Parsedown();
+        }
+        return $this->parseDown->text(
+            // nl2br(
+                $content
+            // )
+        );
+    }
+
 }
