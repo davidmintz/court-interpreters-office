@@ -9,7 +9,7 @@ $method = $action == 'create'?'POST':'PUT'?>
 if ('edit' == $action and ! $this->note):
     ?>
     <div class="alert alert-warning border border-danger">
-        Shit was not found.
+        The <?php echo $type ?> was not found in the database.
     </div>
 <div>
     <?php return;
@@ -27,12 +27,14 @@ endif;
             <label class="col-sm-2 col-form-label text-md-right pr-1" for="content">text of <?php echo $type ?></label>
             <div class="col">
                 <textarea class="form-control" name="content" id="note-content" placeholder="Enter text here. You can use markdown" rows="6" cols="60"><?php
-                    echo strip_tags($this->note->getContent())
+                    if ($this->note) : echo $this->note->getContent(); endif;
                 ?></textarea>
             </div>
         </div>
         <div class="form-row">
             <div class="col offset-sm-2 pt-2">
+                <input type="hidden" name="modified" value="<?php echo $this->note ? $this->note->getModified()->format('Y-m-d H:i:s'):''?>">
+                <input id="csrf" type="hidden" name="csrf" value="<?php echo $this->csrf ?>">
                 <button type="button" class="btn btn-success">save</button>
             </div>
         </div>

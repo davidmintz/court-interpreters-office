@@ -67,10 +67,10 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
      * @param  DateTime $date
      * @return NoteInterface|null
      */
-    public function findByDate(DateTime $date, string $type = 'MOTD') : ? NoteInterface
+    public function findByDate(DateTime $date, string $type) : ? NoteInterface
     {
         $qb = $this->getBaseQuery($type);
-        if ($type == 'MOTW') {
+        if (\strtoupper($type) == 'MOTW') {
             $column = 'week_of';
             $day_of_week = (int)$date->format('N');
             if (1 != $day_of_week) {

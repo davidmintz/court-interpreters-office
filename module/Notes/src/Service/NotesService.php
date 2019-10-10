@@ -12,10 +12,9 @@ use DateTime;
 use Zend\Session\Container as SessionContainer;
 
 use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\Input;
 use Zend\Validator;
-use Zend\Validator\NotEmpty;
-//use Zend\Validator\NotEmpty;
+use Zend\Filter;
+use InterpretersOffice\Entity;
 
 /**
  * manages MOTW|MOTDs
@@ -34,7 +33,7 @@ class NotesService
      *
      * @var stdClass $user
      */
-    private $auth;
+    private $user;
 
     /**
      * Notes repository
@@ -118,10 +117,22 @@ class NotesService
                                     Validator\NotEmpty::IS_EMPTY => "some message text is required",
                                 ]
                             ],
+                            'break_chain_on_failure' => true,
                         ],
+                        [
+                            'name' => Validator\StringLength::class,
+                            'options' => [
+                                'min' => 5, 'max' => 1800,
+                                'messages' => [
+                                     Validator\StringLength::TOO_SHORT => 'message has to be a minimum of %min% characters',
+                                     Validator\StringLength::TOO_LONG => 'message cannot exceed a maximum of %max% characters',
+                                ]
+                            ]
+                        ]
                     ],
                     'filters' => [
-
+                        [ 'name' => Filter\StringTrim::class,],
+                        [ 'name' => Filter\StripTags::class,],
                     ],
                 ]
             );
@@ -129,9 +140,43 @@ class NotesService
                 [
                     'name' => 'csrf',
                     'required' => true,
-                    // etc
+                    'validators' => [
+                        [
+                            'name' => Validator\NotEmpty::class,
+                            'options' => [
+                                'messages' => [
+                                    Validator\NotEmpty::IS_EMPTY => "required security token is missing",
+                                ]
+                            ],
+                        ],
+                        [
+                            'name' => Validator\Csrf::class,
+                            'options' => [
+                                'messages' =>
+                                    [
+                                        'notSame' => 'Security error: invalid/expired CSRF token.'
+                                        .' Please reload the page and try again.',
+                                    ],
+                                'timeout' => 600,
+                            ],
+                        ],
+                    ]
                 ]
             );
+            $inputFilter->add([
+                'name' => 'modified',
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => Validator\NotEmpty::class,
+                        'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => "required modification timestamp is missing",
+                            ]
+                        ],
+                    ],
+                ],
+            ]);
             $this->inputFilter = $inputFilter;
         }
 
@@ -204,7 +249,7 @@ class NotesService
     /**
      * updates MOT[DW]
      *
-     * work in progress. still have to update meta.
+     * work in progress. still need to check modification timestamp.
      *
      * @param  string $type MOTD|MOTW
      * @param  int    $id
@@ -213,18 +258,30 @@ class NotesService
      */
     public function update(string $type, int $id, Array $data)
     {
-        $entity = $this->{'get'.\strtoupper($type)}($id);
+        $entity = $this->{'get'.\strtoupper($type)}($id); // legible, huh?
         if (!$entity) {
             return [
                 'status' => 'error',
                 'message' => "$type with id $id not found",
             ];
         }
-        $entity->setContent($data['content']);
+        $content_before = $entity->getContent();
+        if ($data['content'] == $content_before) {
+            return [$type => $entity, 'status'=>'success','message'=>'not modified'];
+        }
+        if ($entity->getModified() &&
+            $entity->getModified()->format('Y-m-d H:i:s') != $data['modified'])
+        {
+            return [$type => $entity,'status' => 'error',
+            'message'=> "This $type has been modified by another process in the time since you loaded this form."];
+        }
+        $user = $this->em->getRepository(Entity\User::class)->find($this->user->id);
+        $entity->setContent($data['content'])
+            ->setModifiedBy($user)
+            ->setModified(new DateTime());
         $this->em->flush();
+
         return [$type => $entity, 'status'=>'success'];
-
-
     }
 
     /**

@@ -11,7 +11,7 @@ $(function(){
     var btn = $("#notes-form button.btn-success");
     btn.on("click",function(e){
         e.preventDefault();
-        console.log(form.attr("method"));
+        
 
     });
 });

@@ -72,29 +72,17 @@ class NotesController extends AbstractRestfulController
             $service->update($type, (int)$id, $inputFilter->getValues())
         );
 
-        // $note = $service->{'get'.\strtoupper($type)}($id)
-        //     ->setContent($inputFilter->get('content')->getValue());
-        // $type =  strtoupper($this->params()->fromRoute('type'));
-        // $repository = $this->em->getRepository(MOTD::class);
-        // $entity = $repository->find($id);
-        // $before = $entity->getContent();
-        // $mod_before_by = $entity->getModifiedBy()->getId();
-        // $entity->setContent($data['content']);
-        // if ($before != $data['content']) {
-        //     $entity->setModified(new \DateTime());
-        //     if ($this->user->id != $mod_before_by) {
-        //         $user_entity = $this->em->getRepository(User::class)
-        //             ->getUser($this->user->id);
-        //         $entity->setModifiedBy($user_entity);
-        //     }
-        // }
-        // $this->em->flush();
-        //return new JsonModel([$type=>$entity]);
     }
 
+    /**
+     * creates MOT[DW]
+     *
+     * @param  array $data
+     * @return JsonModel
+     */
     public function create($data)
     {
-
+        // to be continued
     }
 
     /**
@@ -169,7 +157,7 @@ class NotesController extends AbstractRestfulController
         if ($this->getRequest()->isGet()) {
             $method = 'get'.\strtoupper($type);
             $note = $this->notesService->$method($id);
-            // find the entity
+            // find the entity to populate the form
             if (! $note && $date_string) {
                 if ($date_string) {
                     return $this->redirect()->toRoute('notes/create',['type'=>$type,'date'=>$date_string]);
@@ -177,7 +165,12 @@ class NotesController extends AbstractRestfulController
                     // ?
                 }
             }
-            return ['date'=> $note->getDate(),'type'=>$type, 'note'=>$note];
+            return ['date'=> $note->getDate(), 'type'=>$type, 'note'=>$note,
+                'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()
+            ];
+        } else {
+            // should not happen. we are for GET requests only.
+            return false;
         }
     }
 
@@ -186,15 +179,7 @@ class NotesController extends AbstractRestfulController
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
         if ($this->getRequest()->isGet()) {
-            // to do: first see if one already exists
-
             return ['date'=>new \DateTime($date_string),'type'=>$type];
         }
-        $inputFilter = $this->notesService->getInputFilter();
-        // $inputFilter->setData(['content'=>'']);
-        // if (! $inputFilter->isValid()) {
-        //     print_r($inputFilter->getMessages());
-        // }
-
     }
 }
