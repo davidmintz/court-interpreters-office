@@ -290,6 +290,26 @@ class NotesService
         return [$type => $entity, 'status'=>'success'];
     }
 
+    public function create(Array $data) : Array
+    {
+
+        $class = 'InterpretersOffice\\Admin\\Notes\\Entity\\'.strtoupper($data['type']);
+        $entity = new $class;
+        $user = $this->em->getRepository(Entity\User::class)->find($this->user->id);
+        $now = new DateTime();
+        $entity->setContent($data['content'])
+            ->setCreated($now)
+            ->setDate(new DateTime($data['date']))
+            ->setCreatedBy($user)
+            ->setModifiedBy($user)
+            ->setModified($now);
+        $this->em->persist($entity);
+        $this->em->flush();
+
+        return [$data['type'] => $entity, 'status'=>'success'];
+
+    }
+
     /**
      * gets Repository
      *

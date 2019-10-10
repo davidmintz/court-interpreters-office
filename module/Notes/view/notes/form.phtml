@@ -16,12 +16,12 @@ if ('edit' == $action and ! $this->note):
 endif;
 ?>
     <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?> <?php echo $type?></h2>
-    <form data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $action?>" method="<?php echo $method?>">
-        <div class="row">
-            <div class="col offset-sm-2">
-                <h4><?php printf('%s for %s',$type,$this->date->format('D d-M-Y'))?></h4>
-            </div>
+    <div class="row">
+        <div class="col offset-sm-2">
+            <h4><?php printf('%s for %s',$type,$this->date->format('D d-M-Y'))?></h4>
         </div>
+    </div>
+    <form data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $action?>" method="<?php echo $method?>">
         <div class="form-row">
             <label class="col-sm-2 col-form-label text-md-right pr-1" for="content">text of <?php echo $type ?></label>
             <div class="col">
@@ -33,6 +33,10 @@ endif;
         <div class="form-row">
             <div class="col offset-sm-2 pt-2">
                 <input type="hidden" name="modified" value="<?php echo $this->note ? $this->note->getModified()->format('Y-m-d H:i:s'):''?>">
+                <input type="hidden" name="type" value="<?php echo $this->type ?>">
+                <input type="hidden" name="date" value="<?php echo $this->date->format('Y-m-d')?>">
+                <input type="hidden" name="type" value="<?php echo $this->type ?>">
+                <input type="hidden" name="id" value="<?php echo $this->note ? $this->note->getId():''?>">
                 <input id="csrf" type="hidden" name="csrf" value="<?php echo $this->csrf ?>">
                 <button type="button" class="btn btn-success">save</button>
             </div>

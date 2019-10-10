@@ -84,7 +84,18 @@ class NotesController extends AbstractRestfulController
      */
     public function create($data)
     {
-        // to be continued
+        $service = $this->notesService;
+        $inputFilter = $service->getInputFilter();
+        $inputFilter->remove('modified');
+        $inputFilter->setData($data);
+        if (! $inputFilter->isValid()) {
+            $errors = $inputFilter->getMessages();
+            return new JsonModel([
+                'validation_errors' => $errors,
+            ]);
+        }
+
+        return new JsonModel($service->create($data));
     }
 
     /**
@@ -134,7 +145,9 @@ class NotesController extends AbstractRestfulController
         $date = $this->notesService->getSession()->settings['date'];
         $notes = $this->notesService->getAllForDate(new \DateTime($date));
         foreach($notes as $n) {
-            $n->setContent($this->notesService->parseDown($n->getContent()));
+            if ($n) {
+                $n->setContent($this->notesService->parseDown($n->getContent()));
+            }
         }
         return (['notes' => $notes,]);
     }
@@ -190,8 +203,14 @@ class NotesController extends AbstractRestfulController
     {
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
+        // make sure someone didn't already create one
+        $existing = $this->notesService->getNoteByDate(new \DateTime($date_string),$type);
+        if ($existing) {
+            return $this->redirect()->toRoute('notes/edit',['type'=>$type,'id'=>$existing->getId(),  'date'=>$date_string]);
+        }
         if ($this->getRequest()->isGet()) {
-            return ['date'=>new \DateTime($date_string),'type'=>$type];
+            return ['date'=>new \DateTime($date_string),'type'=>$type,
+            'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()];
         }
     }
 }

@@ -126,6 +126,17 @@ return [
                             ],
                         ]
                     ],
+                    'post' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/create/:type',
+                            'defaults' => [
+                                'constraints' => [
+                                    'type' => 'mot[dw]',
+                                ],
+                            ],
+                        ]
+                    ],
                     // and this one is for the conventional id
                     'get_by_id' => [
                         'type' => Segment::class,

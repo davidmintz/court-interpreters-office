@@ -132,12 +132,22 @@ class MOTW implements \JsonSerializable, NoteInterface
 
      /**
       * implements NoteInterface
-      * 
+      *
       * @return DateTime
       */
      public function getDate() : DateTime
      {
          return $this->getWeekOf();
+     }
+
+     /**
+      * sets the "week_of"
+      * @param  DateTime      $date
+      * @return NoteInterface
+      */
+     public function setDate(DateTime $date) : NoteInterface
+     {
+         return $this->setWeekOf($date);
      }
 
      /**
