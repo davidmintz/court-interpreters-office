@@ -12,16 +12,22 @@ $date_obj = new \DateTime($settings['date']);
     <a class="nav-link" id="week-tab" data-toggle="tab" href="#week" role="tab" aria-controls="week" aria-selected="false">MOTW</a>
   </li>
 </ul>
-<div class="tab-content" id="myTabContent">
+<div class="tab-content " id="myTabContent">
   <div class="tab-pane pt-2 show active" id="day" role="tabpanel" aria-labelledby="day-tab">
-    <?php
-    if ($this->notes['motd']): echo $this->notes['motd']->getContent();
-    ?><button id="btn-edit-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">edit</span></button><?php
-    else:
-        ?><em>no MOTD for this date</em><?php
-    endif;?>
-  </div>
-  <div class="tab-pane pt-2" id="week" role="tabpanel" aria-labelledby="week-tab">
+      <div class="row">
+          <div class="col">
+              <?php
+              if ($this->notes['motd']): echo $this->notes['motd']->getContent();
+              ?><button id="btn-edit-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">edit</span></button><?php
+          else:
+              ?><em>no MOTD for this date</em><?php
+          endif;?>
+      </div>
+      <div id="calendar-motd" class="col"></div>
+      </div>
+</div>
+<!--  ===============================================================-->
+ <div class="tab-pane pt-2" id="week" role="tabpanel" aria-labelledby="week-tab">
     <?php if ($this->notes['motw']): echo $this->notes['motw']->getContent();
     else:
         ?><em>no MOTW for this week</em><?php
