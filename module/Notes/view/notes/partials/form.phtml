@@ -1,3 +1,4 @@
+<?php $method = $this->action == 'create'?'POST':'PUT'?>
 <form data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $action?>" method="<?php echo $method?>">
     <div class="form-row">
         <!-- <label class="col-sm-2 col-form-label text-md-right pr-1" for="content">content</label> -->

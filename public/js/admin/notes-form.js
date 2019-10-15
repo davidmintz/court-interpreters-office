@@ -7,8 +7,12 @@ global $, fail, displayValidationErrors
 */
 
 $(function(){
+    $("#tab-content-notes").on("click","#btn-edit-motd",function(e){
+        e.preventDefault();
+        console.warn("do shit: "+this.href);
+    });
     // var btn = $("#notes-form button.btn-success");
-    $("body .container").on("click","#notes-form button.btn-success",function(e){
+    $("#tab-content-notes").on("click","#notes-form button.btn-success",function(e){
         var form = $("#notes-form");
         e.preventDefault();
         var type = $("input[name='type']").val();

@@ -8,7 +8,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/notes-form.js'));?>
 $date_obj = new \DateTime($settings['date']);
 ?>
 <h4><?php echo $date_obj->format('D d-M-Y')?></h4>
-<ul class="nav nav-tabs" id="myTab" role="tablist">
+<ul class="nav nav-tabs" id="tabs-notes" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="day-tab" data-toggle="tab" href="#day" role="tab" aria-controls="day" aria-selected="true">MOTD</a>
   </li>
@@ -16,7 +16,7 @@ $date_obj = new \DateTime($settings['date']);
     <a class="nav-link" id="week-tab" data-toggle="tab" href="#week" role="tab" aria-controls="week" aria-selected="false">MOTW</a>
   </li>
 </ul>
-<div class="tab-content " id="myTabContent">
+<div class="tab-content" id="tab-content-notes">
   <div class="tab-pane pt-2 show active" id="day" role="tabpanel" aria-labelledby="day-tab">
       <div class="row">
           <div class="col">
@@ -24,14 +24,15 @@ $date_obj = new \DateTime($settings['date']);
       if (in_array($action,['edit','create'])):
           echo $this->partial('notes/partials/form.phtml',[
               'date'=>$this->date,'type'=>$this->type,'note'=> $this->note,
-               'csrf'=>$this->csrf
+               'csrf'=>$this->csrf,'action' =>$action,
           ]);
       else:
 
-          if ($this->notes['motd']): echo $this->notes['motd']->getContent();
-          ?><button id="btn-edit-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">edit</span></button><?php
+          if ($this->notes['motd']): $motd = $this->notes['motd']; echo $motd->getContent();
+          ?><a href="<?php echo $this->url('notes/edit',['type'=>'motd','date'=>$motd->getDate()->format('Y-m-d') , 'id'=>$motd->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
             else:
-          ?><em>no MOTD for this date</em><?php
+          ?><em>no MOTD for this date</em><br>
+          button id="btn-create-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">create</span></button<?php
             endif;
     endif;?>
       </div>
