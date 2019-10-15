@@ -142,6 +142,8 @@ class NotesController extends AbstractRestfulController
      */
     public function getList()
     {
+        // $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+        // $log->debug("fuck you");
         $date = $this->notesService->getSession()->settings['date'];
         $notes = $this->notesService->getAllForDate(new \DateTime($date));
         foreach($notes as $n) {
@@ -149,7 +151,7 @@ class NotesController extends AbstractRestfulController
                 $n->setContent($this->notesService->parseDown($n->getContent()));
             }
         }
-        return (['notes' => $notes,]);
+        return ['notes' => $notes,];
     }
 
     /**
@@ -176,6 +178,7 @@ class NotesController extends AbstractRestfulController
      */
     public function editAction()
     {
+        
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
         $id = $this->params()->fromRoute('id');

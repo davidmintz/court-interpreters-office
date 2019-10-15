@@ -1,0 +1,20 @@
+<form data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $action?>" method="<?php echo $method?>">
+    <div class="form-row">
+        <!-- <label class="col-sm-2 col-form-label text-md-right pr-1" for="content">content</label> -->
+        <div class="col">
+            <textarea class="form-control" name="content" id="note-content" placeholder="Enter text here (you can use markdown)" rows="6" cols="60"><?php
+                if ($this->note) : echo $this->note->getContent(); endif;
+            ?></textarea>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col pt-2"><!-- offset-sm-2 -->
+            <input type="hidden" name="modified" value="<?php echo $this->note ? $this->note->getModified()->format('Y-m-d H:i:s'):''?>">
+            <input type="hidden" name="type" value="<?php echo $this->type ?>">
+            <input type="hidden" name="date" value="<?php echo $this->date->format('Y-m-d')?>">
+            <input type="hidden" name="id" value="<?php echo $this->note ? $this->note->getId():''?>">
+            <input id="csrf" type="hidden" name="csrf" value="<?php echo $this->csrf ?>">
+            <button type="button" class="btn btn-success">save</button>
+        </div>
+    </div>
+</form>

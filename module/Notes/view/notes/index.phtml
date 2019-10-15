@@ -1,4 +1,8 @@
-<?php $this->headTitle("MOTD|MOTW");?>
+<?php
+$action = $this->layout()->action;
+$is_index = !in_array($action,['edit','create']);
+$this->headTitle($is_index?"MOTD|MOTW":"$action $type");
+$this->headScript()->appendFile($this->basePath('js/admin/notes-form.js'));?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php $settings = $this->layout()->note_settings;
 $date_obj = new \DateTime($settings['date']);
@@ -16,12 +20,20 @@ $date_obj = new \DateTime($settings['date']);
   <div class="tab-pane pt-2 show active" id="day" role="tabpanel" aria-labelledby="day-tab">
       <div class="row">
           <div class="col">
-              <?php
-              if ($this->notes['motd']): echo $this->notes['motd']->getContent();
-              ?><button id="btn-edit-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">edit</span></button><?php
-          else:
-              ?><em>no MOTD for this date</em><?php
-          endif;?>
+    <?php
+      if (in_array($action,['edit','create'])):
+          echo $this->partial('notes/partials/form.phtml',[
+              'date'=>$this->date,'type'=>$this->type,'note'=> $this->note,
+               'csrf'=>$this->csrf
+          ]);
+      else:
+
+          if ($this->notes['motd']): echo $this->notes['motd']->getContent();
+          ?><button id="btn-edit-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">edit</span></button><?php
+            else:
+          ?><em>no MOTD for this date</em><?php
+            endif;
+    endif;?>
       </div>
       <div id="calendar-motd" class="col"></div>
       </div>
@@ -35,10 +47,10 @@ $date_obj = new \DateTime($settings['date']);
   </div>
 </div>
 <script>
-    var btn = document.getElementById('btn-edit-motd');
-    btn.addEventListener("click",(e)=>{
-        console.log("click!");
-        console.log(typeof $);
-    }
-    );
+    // var btn = document.getElementById('btn-edit-motd');
+    // btn.addEventListener("click",(e)=>{
+    //     console.log("click!");
+    //     console.log(typeof $);
+    // }
+    // );
 </script>
