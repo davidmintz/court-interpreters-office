@@ -30,7 +30,7 @@ return [
                 'pages' => [
                     [
                         'label' => 'manage',
-                        'uri'   => 'notes',
+                        'route'   => 'notes',
                         'title' => 'view, edit, add, delete notes',
                     ],
                     [
@@ -87,12 +87,11 @@ return [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    // 'verb' => 'GET',
                     'route'=>'/admin/notes',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\NotesController::class,
-                        //'action'=>'index',
+                        // 'action'=>'getList',
                     ],
                 ],
                 /**
