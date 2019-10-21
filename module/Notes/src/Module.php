@@ -43,7 +43,7 @@ class Module {
         if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
             $viewModel = $event->getApplication()->getMvcEvent()
                 ->getViewModel();
-            $viewModel->notes_enabled = true;
+            $viewModel->notes_enabled = true; // by default
             $this->viewModel = $viewModel;
             $eventManager = $event->getApplication()->getEventManager();
             $eventManager->attach(MvcEvent::EVENT_RENDER,[$this,'initialize']);
@@ -109,6 +109,12 @@ class Module {
             $this->viewModel->note_settings = $defaults;
             $session->settings = $defaults;
             //$log->debug(print_r($defaults,true));
+        }
+        // maybe move this block up, and return early if it's true?
+        if (__NAMESPACE__ == $this->viewModel->module) {
+            // if we're in the Notes admin area, don't display
+            $event->getApplication()->getMvcEvent()
+               ->getViewModel()->notes_enabled = false;
         }
     }
 }
