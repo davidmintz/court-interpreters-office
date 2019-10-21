@@ -1,51 +1,70 @@
 <?php
 $action = $this->layout()->action;
 $is_index = !in_array($action,['edit','create']);
-$this->headTitle($is_index?"MOTD|MOTW":"$action $type");
+$this->headTitle($is_index?"MOTD|MOTW":"$action $this->type");
 $this->headScript()->appendFile($this->basePath('js/admin/notes-form.js'));?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php $settings = $this->layout()->note_settings;
 $date_obj = new \DateTime($settings['date']);
 ?>
 <h4><?php echo $date_obj->format('D d-M-Y')?></h4>
+<pre>type:  <?php var_dump($this->type) ?>
+    action: <?php var_dump($action) ?>
+    $this->notes['motd'] is a : <?php echo gettype($this->notes['motd']) ?>
+</pre>
 <ul class="nav nav-tabs" id="tabs-notes" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="day-tab" data-toggle="tab" href="#day" role="tab" aria-controls="day" aria-selected="true">MOTD</a>
+    <a class="nav-link<?php if (!$this->type or 'motd' == $this->type):?> active<?php endif ?>" id="day-tab" data-toggle="_tab" href="#day" role="tab" aria-controls="day" aria-selected="true">MOTD</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="week-tab" data-toggle="tab" href="#week" role="tab" aria-controls="week" aria-selected="false">MOTW</a>
+    <a class="nav-link<?php if ('motw' == $this->type): ?> active<?php endif ?>" id="week-tab" data-toggle="_tab" href="#week" role="tab" aria-controls="week" aria-selected="false">MOTW</a>
   </li>
 </ul>
 <div class="tab-content" id="tab-content-notes">
-  <div class="tab-pane pt-2 show active" id="day" role="tabpanel" aria-labelledby="day-tab">
+  <div class="tab-pane pt-2<?php if (!$this->type or 'motd' == $this->type):?> show active<?php endif?>" id="day" role="tabpanel" aria-labelledby="day-tab">
       <div class="row">
-          <div class="col">
-    <?php
-      if (in_array($action,['edit','create'])):
-          echo $this->partial('notes/partials/form.phtml',[
-              'date'=>$this->date,'type'=>$this->type,'note'=> $this->note,
-               'csrf'=>$this->csrf,'action' =>$action,
-          ]);
-      else:
-
-          if ($this->notes['motd']): $motd = $this->notes['motd']; echo $motd->getContent();
-          ?><a href="<?php echo $this->url('notes/edit',['type'=>'motd','date'=>$motd->getDate()->format('Y-m-d') , 'id'=>$motd->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
-            else:
-          ?><em>no MOTD for this date</em><br>
-          button id="btn-create-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">create</span></button<?php
-            endif;
-    endif;?>
-      </div>
-      <div id="calendar-motd" class="col"></div>
-      </div>
+         <div class="col">
+            <?php
+              if (!$is_index && $this->type=='motd'):
+                  echo $this->partial('notes/partials/form.phtml',[
+                      'date'=>$this->date,'type'=>$this->type,'note'=> $this->{$this->type},
+                       'csrf'=>$this->csrf,'action' =>$action,
+                  ]);
+              else:
+                  if ($this->notes['motd']): $motd = $this->notes['motd']; echo $motd->getContent();
+                  ?><a href="<?php echo $this->url('notes/edit',['type'=>'motd','date'=>$motd->getDate()->format('Y-m-d') , 'id'=>$motd->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
+                    else:
+                  ?><p class="font-italic no-note">no MOTD for this date</p><br>
+                  <button id="btn-create-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">create</span></button<?php
+                    endif;
+            endif;?>
+        </div>
+        <div class="notes-calendar" id="calendar-motd" class="col"></div>
+    </div>
 </div>
 <!--  ===============================================================-->
- <div class="tab-pane pt-2" id="week" role="tabpanel" aria-labelledby="week-tab">
-    <?php if ($this->notes['motw']): echo $this->notes['motw']->getContent();
-    else:
-        ?><em>no MOTW for this week</em><?php
-    endif;?>
-  </div>
+<div class="tab-pane pt-2<?php if ('motw' == $this->type):?> show active<?php endif?>" id="week" role="tabpanel" aria-labelledby="week-tab">
+    <div class="row">
+        <div class="col"><?php
+        if (!$is_index && $this->type=='motw'):
+            echo $this->partial('notes/partials/form.phtml',[
+                'date'=>$this->date,'type'=>$this->type,
+                'note'=> $this->{$this->type},
+                'csrf'=>$this->csrf,'action' =>$action,
+            ]);
+        else:
+            if ($this->notes['motw']): $motw = $this->notes['motw']; echo $motw->getContent();
+            ?><a href="<?php echo $this->url('notes/edit',['type'=>'motw','date'=>$motw->getDate()->format('Y-m-d') , 'id'=>$motd->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
+              else:
+            ?><p class="font-italic no-note">no MOTW for this week</p>
+                <button id="btn-create-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">create</span></button><?php
+              endif;
+          endif;?>
+
+        </div>
+        <div class="notes-calendar" id="calendar-motw" class="col"></div>
+    </div>
+</div>
 </div>
 <script>
     // var btn = document.getElementById('btn-edit-motd');

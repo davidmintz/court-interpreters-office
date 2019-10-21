@@ -142,9 +142,10 @@ class NotesController extends AbstractRestfulController
      */
     public function getList()
     {
-        // $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
-        // $log->debug("fuck you");
+        $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+        $log->debug("fuck you");
         $date = $this->notesService->getSession()->settings['date'];
+        $log->debug($date);
         $notes = $this->notesService->getAllForDate(new \DateTime($date));
         foreach($notes as $n) {
             if ($n) {
@@ -178,7 +179,7 @@ class NotesController extends AbstractRestfulController
      */
     public function editAction()
     {
-        
+
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
         $id = $this->params()->fromRoute('id');
@@ -193,7 +194,7 @@ class NotesController extends AbstractRestfulController
                     // ?
                 }
             }
-            return ['date'=> $note->getDate(), 'type'=>$type, 'note'=>$note,
+            return ['date'=> $note->getDate(), 'type'=>$type, $type=>$note,
                 'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()
             ];
         } else {

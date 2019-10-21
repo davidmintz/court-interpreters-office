@@ -7,6 +7,7 @@ global $, fail, displayValidationErrors
 */
 
 $(function(){
+    $(".notes-calendar").datepicker({});
     $("#tab-content-notes").on("click","#btn-edit-motd",function(e){
         e.preventDefault();
         console.warn("do shit: "+this.href);
@@ -36,4 +37,20 @@ $(function(){
             console.log(res);
         });
     });
+    $("#tabs-notes .nav-link").on("click",function(e){
+        e.preventDefault();
+        if ($(this).hasClass("active")) {
+           console.debug("this one is active already");
+           return;
+        }
+        /**
+         * to do here:
+         * figure out which tab we're dealing with
+         * check whether there is a MOT[DW] loaded
+         * if not, try to fetch it via xhr
+         * then call show
+         */
+        $(this).tab("show");
+    });
+
 });

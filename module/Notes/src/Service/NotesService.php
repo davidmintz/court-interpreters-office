@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Zend\Authentication\AuthenticationServiceInterface as AuthService;
 use InterpretersOffice\Admin\Notes\Entity\NoteInterface;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
+use InterpretersOffice\Admin\Notes\Entity\MOTW;
 use InterpretersOffice\Admin\Notes\Entity\MOTDRepository;
 use DateTime;
 use Zend\Session\Container as SessionContainer;
@@ -248,7 +249,7 @@ class NotesService
 
     public function getMOTW($id)
     {
-        return $this->getEntityManager()->getRepository(MOTW::class)
+        return $this->em->getRepository(MOTW::class)
             ->find($id);
     }
 

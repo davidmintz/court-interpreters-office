@@ -103,9 +103,12 @@ class Module {
             } // else {log->debug("fetch neither motd nor motw for {$settings['date']}");}
             $service->setSession($session);
         } else { // inject default Notes config into view
+            //$log->debug("no existing session settings for Notes");
             $defaults = Service\NotesService::$default_settings;
             $defaults['date'] = $default_date ?: date('Y-m-d');
             $this->viewModel->note_settings = $defaults;
+            $session->settings = $defaults;
+            //$log->debug(print_r($defaults,true));
         }
     }
 }
