@@ -9,7 +9,11 @@ $date_obj = new \DateTime($settings['date']);
 ?>
 <h4><?php echo $date_obj->format('D d-M-Y')?></h4>
 <pre>type:  <?php var_dump($this->type) ?>
+    module? <?php var_dump($this->layout()->module)?>
     action: <?php var_dump($action) ?>
+    notes_display (layout): <?php var_dump($this->layout()->display_notes) ?>
+    notes_display: <?php var_dump($this->display_notes) ?>
+    date setting is <?php echo $settings['date'] ?>
     $this->notes['motd'] is a : <?php echo gettype($this->notes['motd']) ?>
 </pre>
 <ul class="nav nav-tabs" id="tabs-notes" role="tablist">
@@ -31,15 +35,18 @@ $date_obj = new \DateTime($settings['date']);
                        'csrf'=>$this->csrf,'action' =>$action,
                   ]);
               else:
-                  if ($this->notes['motd']): $motd = $this->notes['motd']; echo $motd->getContent();
-                  ?><a href="<?php echo $this->url('notes/edit',['type'=>'motd','date'=>$motd->getDate()->format('Y-m-d') , 'id'=>$motd->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
-                    else:
-                  ?><p class="font-italic no-note">no MOTD for this date</p><br>
-                  <button id="btn-create-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">create</span></button<?php
-                    endif;
+                if ($this->notes['motd']): $motd = $this->notes['motd']; echo $motd->getContent();
+                  ?>
+                  <a href="<?php echo $this->url('notes/edit',['type'=>'motd','date'=>$motd->getDate()->format('Y-m-d') ,
+                    'id'=>$motd->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
+                else:
+                  ?><p class="font-italic no-note">no MOTD for this date</p>
+                  <button id="btn-create-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">create</span></button><?php
+                endif;
             endif;?>
         </div>
-        <div class="notes-calendar" id="calendar-motd" class="col"></div>
+        <div class="notes-calendar" id="calendar-motd" class="col">
+        </div>
     </div>
 </div>
 <!--  ===============================================================-->
@@ -54,7 +61,7 @@ $date_obj = new \DateTime($settings['date']);
             ]);
         else:
             if ($this->notes['motw']): $motw = $this->notes['motw']; echo $motw->getContent();
-            ?><a href="<?php echo $this->url('notes/edit',['type'=>'motw','date'=>$motw->getDate()->format('Y-m-d') , 'id'=>$motd->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
+            ?><a href="<?php echo $this->url('notes/edit',['type'=>'motw','date'=>$motw->getDate()->format('Y-m-d') , 'id'=>$motw->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
               else:
             ?><p class="font-italic no-note">no MOTW for this week</p>
                 <button id="btn-create-motd" class="btn btn-primary fas fa-edit"><span class="sr-only">create</span></button><?php
