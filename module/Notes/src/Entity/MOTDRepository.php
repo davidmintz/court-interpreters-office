@@ -24,6 +24,13 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
     protected $cache_namespace = 'motd';
 
     /**
+     * the Monday of the week in question
+     * @var \DateTime
+     */
+    protected $monday;
+
+
+    /**
      * constructor
      *
      * @param \Doctrine\ORM\EntityManager  $em    The EntityManager to use.
@@ -34,6 +41,11 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
         parent::__construct($em, $class);
         $this->cache = $em->getConfiguration()->getResultCacheImpl();
         $this->cache->setNamespace($this->cache_namespace);
+    }
+
+    public function getMonday()
+    {
+        return $this->monday;
     }
 
     /**
@@ -57,6 +69,7 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
         return [
             'motd' => $this->findByDate($date,'MOTD'),
             'motw' => $this->findByDate($date,'MOTW'),
+
         ];
     }
 
@@ -77,9 +90,11 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
                 $interval = sprintf('P%sD',$day_of_week - 1);
                 $date->sub(new \DateInterval($interval));
             }
+            $this->monday = $date;
         } else {
             $column = 'date';
         }
+
         $qb->where("m.{$column} = :{$column}")
             ->setParameters([$column => $date]);
 

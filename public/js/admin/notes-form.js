@@ -7,7 +7,15 @@ global $, fail, displayValidationErrors
 */
 
 $(function(){
-    $(".notes-calendar").datepicker({});
+    var motd_default_date =
+    $("#calendar-motd").datepicker({
+        dateFormat:"yy-mm-dd",
+        defaultDate : $("#calendar-motd").data("date")
+    });
+    $("#calendar-motw").datepicker({
+        dateFormat:"yy-mm-dd",
+        defaultDate : $("#calendar-motw").data("date")
+    });
     $("#tab-content-notes").on("click","#btn-edit-motd",function(e){
         e.preventDefault();
         console.warn("do shit: "+this.href);

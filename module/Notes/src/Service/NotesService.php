@@ -348,6 +348,15 @@ class NotesService
         return $this->getRepository()->getAllForDate($date);
     }
 
+    /**
+     * gets the Monday preceding
+     * @return \DateTime
+     */
+    public function getMonday() : \DateTime
+    {
+        return $this->getRepository()->getMonday();
+    }
+
     public function parsedown(string $content) : string
     {
         if (! $this->parseDown) {

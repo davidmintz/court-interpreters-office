@@ -8,12 +8,14 @@ $this->headScript()->appendFile($this->basePath('js/admin/notes-form.js'));?>
 $date_obj = new \DateTime($settings['date']);
 ?>
 <h4><?php echo $date_obj->format('D d-M-Y')?></h4>
-<pre>type:  <?php var_dump($this->type) ?>
+<pre hidden>
+    type:  <?php var_dump($this->type) ?>
     module? <?php var_dump($this->layout()->module)?>
     action: <?php var_dump($action) ?>
+    monday: <?php print_r($this->monday) ?>
     notes_display (layout): <?php var_dump($this->layout()->display_notes) ?>
     notes_display: <?php var_dump($this->display_notes) ?>
-    date setting is <?php echo $settings['date'] ?>
+    date setting is <?php echo $settings['date'] ?> -->
     $this->notes['motd'] is a : <?php echo gettype($this->notes['motd']) ?>
 </pre>
 <ul class="nav nav-tabs" id="tabs-notes" role="tablist">
@@ -27,7 +29,7 @@ $date_obj = new \DateTime($settings['date']);
 <div class="tab-content" id="tab-content-notes">
   <div class="tab-pane pt-2<?php if (!$this->type or 'motd' == $this->type):?> show active<?php endif?>" id="day" role="tabpanel" aria-labelledby="day-tab">
       <div class="row">
-         <div class="col">
+         <div class="col-md-8">
             <?php
               if (!$is_index && $this->type=='motd'):
                   echo $this->partial('notes/partials/form.phtml',[
@@ -35,7 +37,8 @@ $date_obj = new \DateTime($settings['date']);
                        'csrf'=>$this->csrf,'action' =>$action,
                   ]);
               else:
-                if ($this->notes['motd']): $motd = $this->notes['motd']; echo $motd->getContent();
+                if ($this->notes['motd']): $motd = $this->notes['motd'];
+                    echo $motd->getContent();
                   ?>
                   <a href="<?php echo $this->url('notes/edit',['type'=>'motd','date'=>$motd->getDate()->format('Y-m-d') ,
                     'id'=>$motd->getId()])?>" role="button" id="btn-edit-motd" class="btn btn-primary fas fa-edit text-light"><span class="sr-only">edit</span></a><?php
@@ -45,14 +48,14 @@ $date_obj = new \DateTime($settings['date']);
                 endif;
             endif;?>
         </div>
-        <div class="notes-calendar" id="calendar-motd" class="col">
+        <div class="notes-calendar" data-date="<?php echo $settings['date']?>" id="calendar-motd" class="col">
         </div>
     </div>
 </div>
 <!--  ===============================================================-->
 <div class="tab-pane pt-2<?php if ('motw' == $this->type):?> show active<?php endif?>" id="week" role="tabpanel" aria-labelledby="week-tab">
     <div class="row">
-        <div class="col"><?php
+        <div class="col-md-8"><?php
         if (!$is_index && $this->type=='motw'):
             echo $this->partial('notes/partials/form.phtml',[
                 'date'=>$this->date,'type'=>$this->type,
@@ -69,7 +72,7 @@ $date_obj = new \DateTime($settings['date']);
           endif;?>
 
         </div>
-        <div class="notes-calendar" id="calendar-motw" class="col"></div>
+        <div class="notes-calendar" data-date="<?php if ($this->notes['motw']): echo $motw->getDate()->format('Y-m-d'); else : echo $this->monday->format('Y-m-d'); endif?>" id="calendar-motw" class="col"></div>
     </div>
 </div>
 </div>
