@@ -114,7 +114,7 @@ class Module {
         if (__NAMESPACE__ == $this->viewModel->module) {
             // if we're in the Notes admin area, don't display
             $event->getApplication()->getMvcEvent()
-               ->getViewModel()->notes_enabled = false;
+                ->getViewModel()->display_notes = false;
         }
     }
 }

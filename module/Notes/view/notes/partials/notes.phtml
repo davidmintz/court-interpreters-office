@@ -2,12 +2,17 @@
 /*
 renders the MOTW and/or MOTW
  */
+if (!$this->display_notes) {
+    //echo "FUCK!";
+    //$this->config['motd']['visible'] = false;
+    //$this->config['motw']['visible'] = false;
+}
 $date_obj = new DateTime($this->config['date']);
 $format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
 $motd_cfg = $this->config['motd'];
 $pos = $motd_cfg['position'];
 $size = $motd_cfg['size'];
-$display = $motd_cfg['visible'] ? 'flex':'none';
+$display = $this->display_notes && $motd_cfg['visible'] ? 'flex':'none';
 $style = sprintf($format,$display,$pos['top'],$pos['left']);
 $style .= "width:{$size['width']};height:{$size['height']}";
 ?>
@@ -30,7 +35,7 @@ $style .= "width:{$size['width']};height:{$size['height']}";
 $motw_cfg = $this->config['motw'];
 $pos = $motw_cfg['position'];
 $size = $motw_cfg['size'];
-$display = $motw_cfg['visible'] ? 'flex':'none';
+$display = $this->display_notes && $motw_cfg['visible'] ? 'flex':'none';
 $style = sprintf($format,$display,$pos['top'],$pos['left']);
 $style .= "width:{$size['width']};height:{$size['height']}";
 if ($this->motw):
