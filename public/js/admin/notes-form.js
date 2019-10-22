@@ -7,7 +7,7 @@ global $, fail, displayValidationErrors
 */
 
 $(function(){
-    var motd_default_date =
+    //var motd_default_date =
     $("#calendar-motd").datepicker({
         dateFormat:"yy-mm-dd",
         defaultDate : $("#calendar-motd").data("date")
