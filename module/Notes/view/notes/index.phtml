@@ -5,7 +5,12 @@ $this->headTitle($is_index?"MOTD|MOTW":"$action $this->type");
 $this->headScript()->appendFile($this->basePath('js/admin/notes-form.js'));?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php $settings = $this->layout()->note_settings;
-$date_obj = new \DateTime($settings['date']);
+$date_obj = new \DateTimeImmutable($settings['date']);
+$dow = (int)$date_obj->format('w');
+if ($dow != 1) {
+    $interval = sprintf('P%sD',$dow - 1);
+    $this->monday = $date_obj->sub(new \DateInterval($interval));
+}
 ?>
 <h4><?php echo $date_obj->format('D d-M-Y')?></h4>
 <pre hidden>
@@ -72,7 +77,8 @@ $date_obj = new \DateTime($settings['date']);
           endif;?>
 
         </div>
-        <div class="notes-calendar" data-date="<?php if ($this->notes['motw']): echo $motw->getDate()->format('Y-m-d'); else : echo $this->monday->format('Y-m-d'); endif?>" id="calendar-motw" class="col"></div>
+        <div class="notes-calendar" data-date="<?php if ($this->notes['motw']): echo $this->notes['motw']->getDate()->format('Y-m-d');
+        else : echo $this->monday->format('Y-m-d'); endif?>" id="calendar-motw" class="col"></div>
     </div>
 </div>
 </div>

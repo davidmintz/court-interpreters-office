@@ -96,7 +96,7 @@ class Module {
                 foreach (['motd','motw']  as $type) {
                     if ($settings[$type]['visible']) {
                         $this->viewModel->$type = $service->getNoteByDate($date,$type);
-                        $log->debug("fetched $type for {$settings['date']}: ".gettype($this->viewModel->$type));
+                        $log->debug("Notes module bootstrap: we fetched $type for {$settings['date']}: ".gettype($this->viewModel->$type));
                         break;
                     }
                 }

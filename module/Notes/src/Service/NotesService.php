@@ -194,10 +194,13 @@ class NotesService
      * sets session container
      *
      * @param SessionContainer $session
+     * @return NotesService
      */
-    public function setSession(SessionContainer $session)
+    public function setSession(SessionContainer $session) : NotesService
     {
         $this->session = $session;
+
+        return $this;
     }
 
     /**
@@ -346,15 +349,6 @@ class NotesService
     public function getAllForDate(DateTime $date) : Array
     {
         return $this->getRepository()->getAllForDate($date);
-    }
-
-    /**
-     * gets the Monday preceding
-     * @return \DateTime
-     */
-    public function getMonday() : \DateTime
-    {
-        return $this->getRepository()->getMonday();
     }
 
     public function parsedown(string $content) : string

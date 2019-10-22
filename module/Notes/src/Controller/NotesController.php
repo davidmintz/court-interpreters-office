@@ -152,7 +152,7 @@ class NotesController extends AbstractRestfulController
                 $n->setContent($this->notesService->parseDown($n->getContent()));
             }
         }
-        return ['notes' => $notes,'monday'=> $this->notesService->getMonday()];
+        return ['notes' => $notes,];
     }
 
     /**
