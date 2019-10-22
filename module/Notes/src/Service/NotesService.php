@@ -357,9 +357,9 @@ class NotesService
             $this->parseDown = new Parsedown();
         }
         return $this->parseDown->text(
-            // nl2br(
+            nl2br(
                 $content
-            // )
+            )
         );
     }
 
