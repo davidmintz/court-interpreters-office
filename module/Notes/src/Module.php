@@ -28,6 +28,7 @@ class Module {
      * @var ViewModel
      */
     private $viewModel;
+
     /**
      * onBootstrap listener
      *
@@ -60,10 +61,13 @@ class Module {
         $container =  $event->getApplication()->getMvcEvent()->getApplication()
             ->getServiceManager();
         $request = $event->getRequest();
+        $log = $container->get('log');
+        $route = $event->getRouteMatch()->getMatchedRouteName();
+        $log->debug("route is $route");
         if ($request->isXMLHttpRequest()) {
             return;
         }
-        $log = $container->get('log');
+        //$log->debug(print_r($event->getApplication()->getMvcEvent()->getR))
         $default_date = null;
         $session = new Container('notes');
         //$session->settings = null;
@@ -85,22 +89,28 @@ class Module {
             }
         }
         $service = $container->get(Service\NotesService::class);
+        // check if this blows up on 404
+        $route = $event->getRouteMatch()->getMatchedRouteName();
+        $render_markdown = 'notes/edit' != $route;
+        $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
+
         if ($session->settings) { // inject Notes config from session into view
             $this->viewModel->note_settings = $session->settings;
             $settings = $session->settings;
             $date = new \DateTime($settings['date']);
+            // we eager-load this into the view because we know we will need it
             if ($settings['motd']['visible'] && $settings['motw']['visible']) {
-                $this->viewModel->setVariables($service->getAllForDate($date));
-                $log->debug("fetched both motd and motw for {$settings['date']}");
+                $log->debug("fetching both motd and motw for {$settings['date']}");
+                $this->viewModel->setVariables($service->getAllForDate($date, $render_markdown));
             } elseif ($settings['motd']['visible'] xor $settings['motw']['visible']) {
                 foreach (['motd','motw']  as $type) {
                     if ($settings[$type]['visible']) {
-                        $this->viewModel->$type = $service->getNoteByDate($date,$type);
+                        $this->viewModel->$type = $service->getNoteByDate($date,$type, $render_markdown);
                         $log->debug("Notes module bootstrap: we fetched $type for {$settings['date']}: ".gettype($this->viewModel->$type));
                         break;
                     }
                 }
-            } // else {log->debug("fetch neither motd nor motw for {$settings['date']}");}
+            } else { $log->debug("fetched neither motd nor motw for {$settings['date']}");}
             $service->setSession($session);
         } else { // inject default Notes config into view
             //$log->debug("no existing session settings for Notes");

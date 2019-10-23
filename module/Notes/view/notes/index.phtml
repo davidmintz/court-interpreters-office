@@ -40,31 +40,36 @@ if ($dow != 1) {
             <div class="col-md-7">
                 <h5 class="mb-3 border-bottom px-2 py-2"><?php echo $date_obj->format('l d-M-Y')?></h5>
                 <div id="motd-content">
-                    <?php
-                      if (!$is_index && $this->type == 'motd'):// render edit form
-                          echo $this->partial('notes/partials/form.phtml',[
-                              'date'=>$this->date,'type'=>$this->type,'note'=> $this->note,
-                               'csrf'=>$this->csrf,'action' =>$action,
-                          ]),'</div>';
-                      else: // render note content, if it exists
-                        if ($this->notes['motd']): $motd = $this->notes['motd'];
-                            $button_url = $this->url('notes/edit', [
-                                'type'=>'motd', 'date'=>$motd->getDate()->format('Y-m-d'),
-                                'id'=>$motd->getId()
-                            ]);
-                            $button_text = 'edit';
-                            echo $motd->getContent();
-
-                        else:
-                            $button_url = $this->url('notes/create', [
-                                'type'=>'motd', 'date'=>$settings['date'],
-                            ]);
-                            $button_text = 'create';
-                          ?><p class="font-italic no-note">no MOTD for this date</p>
-                    <?php endif;?>
-                </div><!-- #motd-content -->
-                <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="<?= $button_url ?>"><span class="sr-only"><?= $button_text ?></span></a>
-                <?php endif;?>
+            <?php
+                if ($this->notes['motd']):
+                    $motd = $this->notes['motd'];
+                    $button_url = $this->url('notes/edit', [
+                        'type'=>'motd', 'date'=>$motd->getDate()->format('Y-m-d'),
+                        'id'=>$motd->getId()
+                    ]);
+                    $button_text = 'edit';
+                else:
+                    $button_url = $this->url('notes/create', [
+                        'type'=>'motd', 'date'=>$settings['date'],
+                    ]);
+                    $button_text = 'create';
+                endif;
+                if (!$is_index && $this->type == 'motd'):// render edit form
+                  $hide_button = true;
+                  echo $this->partial('notes/partials/form.phtml',[
+                      'date'=>$this->date,'type'=>$this->type,'note'=> $this->note,
+                       'csrf'=>$this->csrf,'action' =>$action,
+                  ]);
+                else: // render note content, if it exists
+                    if ($this->notes['motd']):
+                        echo $motd->getContent();
+                    else:
+                      ?><p class="font-italic no-note">no MOTD for this date</p><?php
+                    endif;
+                    $hide_button = false;
+                endif;?>
+                </div>
+                <a <?php if ($hide_button):?>style="display:none" <?php endif; ?>class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="<?= $button_url ?>"><span class="sr-only"><?= $button_text ?></span></a>
             </div>
             <div class="col notes-calendar" data-date="<?php echo $settings['date']?>" id="calendar-motd">
             </div>
@@ -76,26 +81,38 @@ if ($dow != 1) {
             <div class="col-md-7">
                 <h5 class="mb-3 border-bottom px-2 py-2">week of <?php echo $this->monday->format('l d-M-Y')?></h5>
                 <div id="motw-content"><?php
+                if ($this->notes['motw']):
+                    $motd = $this->notes['motw'];
+                    $button_url = $this->url('notes/edit', [
+                        'type'=>'motd', 'date'=>$motdw->getDate()->format('Y-m-d'),
+                        'id'=>$motw->getId()
+                    ]);
+                    $button_text = 'edit';
+                else:
+                    $button_url = $this->url('notes/create', [
+                        'type'=>'motw', 'date'=>$settings['date'],
+                    ]);
+                    $button_text = 'create';
+                endif;
                 if (!$is_index && $this->type == 'motw'):
+                     $hide_button = true;
                     echo $this->partial('notes/partials/form.phtml',[
                         'date'=>$this->date,'type'=>$this->type,
+                        //'note'=> $this->{$this->type},
                         'note'=> $this->{$this->type},
                         'csrf'=>$this->csrf,'action' =>$action,
-                    ]),'</div>';
+                    ]);
                 else:
                     if ($this->notes['motw']):
-                        $motw = $this->notes['motw'];
-                        $button_url = $this->url('notes/edit',['type'=>'motw','date'=>$motw->getDate()->format('Y-m-d') ,'id'=>$motw->getId()]);
-                        $button_text = 'edit';
                         echo $motw->getContent();
                     else:
-                        $button_url = $this->url('notes/create',['type'=>'motd','date'=>$this->monday->format('Y-m-d'),]);
-                        $button_text = 'create';
                     ?><p class="font-italic no-note">no MOTW for this week</p>
-                <?php endif; ?>
+                <?php
+                    endif;
+                    $hide_button = false;
+                endif;?>
                 </div>
                 <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="<?= $button_url ?>"><span class="sr-only"><?= $button_text ?></span></a>
-          <?php endif;?>
             </div>
             <div class="col notes-calendar" data-date="<?php if ($this->notes['motw']): echo $this->notes['motw']->getDate()->format('Y-m-d');
             else : echo $this->monday->format('Y-m-d'); endif?>" id="calendar-motw"></div>

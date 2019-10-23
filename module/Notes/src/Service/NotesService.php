@@ -334,14 +334,15 @@ class NotesService
      *
      * @param  DateTime $date
      * @param  string   $type
+     * @param boolean $render_markdown
      * @return NoteInterface|null
      */
-    public function getNoteByDate(DateTime $date, string $type) :? NoteInterface
+    public function getNoteByDate(DateTime $date, string $type, bool $render_markdown = true) :? NoteInterface
     {
         $entity = $this->getRepository()->findByDate($date,$type);
-        if ($entity) {
-            // $content = $entity->getContent();
-            // $entity->setContent($this->parsedown($content));
+        if ($entity && $render_markdown) {
+            $content = $entity->getContent();
+            $entity->setContent($this->parsedown($content));
         }
 
         return $entity;
@@ -351,11 +352,19 @@ class NotesService
      * gets both MOTD and MOTW for $date
      *
      * @param  DateTime $date
+     * @param boolean $render_markdown
      * @return Array
      */
-    public function getAllForDate(DateTime $date) : Array
+    public function getAllForDate(DateTime $date, bool $render_markdown = true) : Array
     {
-        return $this->getRepository()->getAllForDate($date);
+        $notes = $this->getRepository()->getAllForDate($date);
+        if ($render_markdown) {
+            foreach ($notes as $type => $entity) {
+                if (! $entity) { continue; }
+                $entity->setContent($this->parsedown($entity->getContent()));
+            }
+        }
+        return $notes;
     }
 
     public function parsedown(string $content) : string
@@ -364,9 +373,8 @@ class NotesService
             $this->parseDown = new Parsedown();
         }
         return $this->parseDown->text(
-            nl2br(
-                $content
-            )
+            //nl2br($content)
+            $content
         );
     }
 
