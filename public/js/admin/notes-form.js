@@ -6,7 +6,6 @@
 global $, fail, displayValidationErrors, moment
 */
 /*
-
 onSelect
 Type: Function( String dateText, Object inst )
 Default: null
@@ -20,10 +19,17 @@ $(function(){
         changeMonth : true,
         changeYear : true,
         onSelect :  function(dateText,instance) {
+            // type of note: either 'motd' or 'motw'
             var type = instance.id.substring(9);
+            // url to get note
             var url = `/admin/notes/date/${dateText}/${type}`;
+            // div to put it in
             var content_div = $(`#${type}-content`);
+            // JSON response looks like { MOTD: { ... }}
             var key = type.toUpperCase();
+            // button for loading form
+            var form_button = $(`#btn-editor-${type}`);
+            // url for loading form
             var form_url;
             $.getJSON(url)
             .then(function(res){
@@ -31,11 +37,12 @@ $(function(){
                     content_div
                         .html(res[key].content)
                         .prev("h5").text(res[key].date || `week of ${res[key].week_of}`);
-                        //https://office.localhost/admin/notes/edit/motd/4581/date/2019-10-23
+                    // e.g., https://office.localhost/admin/notes/edit/motd/4581/date/2019-10-23
                     form_url = `/admin/notes/edit/${type}/${res[key].id}/date/${dateText}`;
                 } else {  // fuck, so much effort!
                     var h5, date = moment(dateText,'YYYY-MM-DD');
                     if (key === "MOTW") {
+                        // figure out most recent Monday
                         var dow = parseInt(date.format("E"));
                         if (dow !== 1) {
                             date.subtract(dow - 1, "days");
@@ -49,7 +56,11 @@ $(function(){
                         .prev("h5").text(h5);
                     form_url = `/admin/notes/create/${type}/${dateText}`;
                 }
-                console.log(form_url+ " is where button should point");
+                var verbiage = form_url.indexOf("edit") > -1 ? "edit this":"create a";
+                form_button.attr({href:form_url, title:`${verbiage} ${type}`});
+                if (! form_button.is(":visible")) {
+                    form_button.show();
+                }
             });
         }
     };
@@ -62,7 +73,13 @@ $(function(){
     /** handler for loading edit|create form */
     $("#tab-content-notes").on("click","#btn-editor-motd, #btn-editor-motw",function(e){
         e.preventDefault();
-        console.warn("do shit: load form for "+this.href);
+        console.warn("doing shit: load form for "+this.href);
+        var btn = $(this);
+        var content_div = btn.prev("div");
+        $.get(this.href).then(function(html){
+            btn.hide();
+            content_div.html(html);
+        });
     });
     /** form submission handler for edit|create form */
     $("#tab-content-notes").on("click","#notes-form button.btn-success",function(e){
@@ -84,6 +101,7 @@ $(function(){
         }
         $.ajax({url, method, data : form.serialize()
         }).then((res)=>{
+            console.warn("success. to do: do something!");
             console.log(res);
         }).fail((res)=>{
             console.log(res);

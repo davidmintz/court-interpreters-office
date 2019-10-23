@@ -194,9 +194,14 @@ class NotesController extends AbstractRestfulController
                     // ?
                 }
             }
-            return ['date'=> $note->getDate(), 'type'=>$type, $type=>$note,
+            $data = ['date'=> $note->getDate(), 'action'=>'edit','type'=>$type, 'note'=>$note,
                 'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()
             ];
+            $view = new ViewModel($data);
+            if ($this->getRequest()->isXMLHttpRequest()) {
+                $view->setTerminal(true)->setTemplate('notes/partials/form');
+            }
+            return $view;
         } else {
             // should not happen. we are for GET requests only.
             return false;
