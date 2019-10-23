@@ -43,7 +43,7 @@ if ($dow != 1) {
                     <?php
                       if (!$is_index && $this->type == 'motd'):// render edit form
                           echo $this->partial('notes/partials/form.phtml',[
-                              'date'=>$this->date,'type'=>$this->type,'note'=> $this->{$this->type},
+                              'date'=>$this->date,'type'=>$this->type,'note'=> $this->note,
                                'csrf'=>$this->csrf,'action' =>$action,
                           ]),'</div>';
                       else: // render note content, if it exists

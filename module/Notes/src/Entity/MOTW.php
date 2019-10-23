@@ -115,7 +115,7 @@ class MOTW implements \JsonSerializable, NoteInterface
       *
       * @return Array
       */
-     public function jsonSerialize()
+     public function jsonSerialize() : Array
      {
          $data = ['content' => $this->getContent()];
          $data['id'] = $this->id;
@@ -181,7 +181,7 @@ class MOTW implements \JsonSerializable, NoteInterface
       *
       * @return MOTD
       */
-     public function setCreated(\DateTime $created)
+     public function setCreated(\DateTime $created) : NoteInterface
      {
          $this->created = $created;
 
@@ -205,7 +205,7 @@ class MOTW implements \JsonSerializable, NoteInterface
       *
       * @return MOTD
       */
-     public function setModified(\DateTime $modified = null) : MOTD
+     public function setModified(\DateTime $modified = null) : NoteInterface
      {
          $this->modified = $modified;
 
@@ -229,7 +229,7 @@ class MOTW implements \JsonSerializable, NoteInterface
       *
       * @return MOTD
       */
-     public function setCreatedBy(\InterpretersOffice\Entity\User $createdBy)
+     public function setCreatedBy(\InterpretersOffice\Entity\User $createdBy) : NoteInterface
      {
          $this->createdBy = $createdBy;
 
@@ -253,7 +253,7 @@ class MOTW implements \JsonSerializable, NoteInterface
       *
       * @return MOTD
       */
-     public function setModifiedBy(User $modifiedBy = null) :? User
+     public function setModifiedBy(User $modifiedBy = null) : NoteInterface
      {
          $this->modifiedBy = $modifiedBy;
 
@@ -265,7 +265,7 @@ class MOTW implements \JsonSerializable, NoteInterface
       *
       * @return User|null
       */
-     public function getModifiedBy() : ?User
+     public function getModifiedBy() :? User
      {
          return $this->modifiedBy;
      }

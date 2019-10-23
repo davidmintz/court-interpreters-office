@@ -101,8 +101,32 @@ $(function(){
         }
         $.ajax({url, method, data : form.serialize()
         }).then((res)=>{
-            console.warn("success. to do: do something!");
-            console.log(res);
+
+            if (res.status === "success") {
+                // implies a needless http request but it's expedient as hell
+                $(`#calendar-${type} a.ui-state-active`).trigger("click");
+                // $(`#btn-editor-${type}`).show();
+                // form.replaceWith(res[type].content);
+                console.warn("it worked");
+            }
+            if (res.validation_errors) {
+                return displayValidationErrors(res.validation_errors);
+            }
+            if (res.status === "error") {
+                var error_div = $(`<div>`).addClass("alert alert-warning validation-error");
+                // a modification timestamp mismatch?
+                var ours = $(`input[name="modified"]`).val();
+                var theirs = res.modified || null;
+                if (theirs && theirs !== ours) {
+                    error_div.text(`${res.message} Please try again.`);
+                    $(`input[name="modified"]`).val(theirs);
+                    $("textarea#content").text(res[type].content);
+                } else {
+                    error_div.text(res.message);
+                }
+                form.prepend(error_div);
+            }
+
         }).fail((res)=>{
             console.log(res);
         });

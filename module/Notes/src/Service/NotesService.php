@@ -283,6 +283,7 @@ class NotesService
             $entity->getModified()->format('Y-m-d H:i:s') != $data['modified'])
         {
             return [$type => $entity,'status' => 'error',
+            'modified' => $entity->getModified()->format('Y-m-d H:i:s'),
             'message'=> "This $type has been modified by another process in the time since you loaded this form."];
         }
         $user = $this->em->getRepository(Entity\User::class)->find($this->user->id);
@@ -337,7 +338,13 @@ class NotesService
      */
     public function getNoteByDate(DateTime $date, string $type) :? NoteInterface
     {
-        return $this->getRepository()->findByDate($date,$type);
+        $entity = $this->getRepository()->findByDate($date,$type);
+        if ($entity) {
+            // $content = $entity->getContent();
+            // $entity->setContent($this->parsedown($content));
+        }
+
+        return $entity;
     }
 
     /**

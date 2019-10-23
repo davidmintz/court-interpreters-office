@@ -117,7 +117,7 @@ class NotesController extends AbstractRestfulController
         if ('ALL' != $type) {
             $message = $service->getNoteByDate($date_obj, $type);
             if ($message) {
-                $message->setContent((new Parsedown())->text(nl2br($message->getContent())));
+                //$message->setContent((new Parsedown())->text(nl2br($message->getContent())));
             }
             return new $view_class([$type => $message]);
         } else {
