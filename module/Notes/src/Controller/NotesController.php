@@ -143,16 +143,15 @@ class NotesController extends AbstractRestfulController
     {
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         $route = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        $log->debug("fuck you: $route");
-        $date = $this->notesService->getSession()->settings['date'];
-        $log->debug("$date is our date in ".__METHOD__);
+        $date = $this->notesService->getSession()->settings['date'] ?? date('Y-m-d');
         $notes = $this->notesService->getAllForDate(new \DateTime($date));
         foreach($notes as $n) {
             if ($n) {
                 $n->setContent($this->notesService->parseDown($n->getContent()));
             }
         }
-        return ['notes' => $notes,];
+
+        return ['notes' => $notes,];        
     }
 
     /**
