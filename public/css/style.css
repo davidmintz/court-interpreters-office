@@ -204,4 +204,5 @@ a.nav-link:hover,a.dropdown-item:hover { text-decoration : underline;}
      text-decoration : underline;
  }
 #motd, #motw { opacity : .9 ; }
-/* #motd .card-body, #motw .card-body { background-color : #FEFDE1} */
+#motd-content p, #motd .card-body p { white-space: pre-line }
+#motw-content p, #motw .card-body p { white-space: pre-line }

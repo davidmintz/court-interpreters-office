@@ -140,6 +140,14 @@ class NotesService
                     'filters' => [
                         [ 'name' => Filter\StringTrim::class,],
                         [ 'name' => Filter\StripTags::class,],
+                        // strip trailing spaces before line break, and use css for
+                        // linebreaks within block-level elements
+                        ['name' => Filter\PregReplace::class,
+                            'options'=> [
+                                'pattern' => '/( {2,})(\R)/m',
+                                'replacement' => "$2",
+                            ],
+                        ],
                     ],
                 ]
             );
