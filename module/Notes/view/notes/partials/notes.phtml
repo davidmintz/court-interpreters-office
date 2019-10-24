@@ -21,7 +21,7 @@ $style .= "width:{$size['width']};height:{$size['height']}";
     <span aria-hidden="true">&times;</span>
   </button></div>
     <div class="card-body" style="overflow:auto"?><?php
-        echo $this->motd ? nl2br($this->motd->getContent())
+        echo $this->motd ? $this->motd->getContent()
         : '<span class="no-motd font-italic">No MOTD for this date.</span>'
     ?></div>
     <div class="card-footer">
@@ -55,7 +55,7 @@ endif;
     <span aria-hidden="true">&times;</span>
   </button></div>
     <div class="card-body" style="overflow:auto"><?php
-        echo $this->motw ? nl2br($this->motw->getContent())
+        echo $this->motw ? $this->motw->getContent()
         : '<span class="no-motw font-italic">No MOTW for this date.</span>'
     ?></div>
     <div class="card-footer d-flex align-items-end">

@@ -58,20 +58,18 @@ class Module {
      */
     public function initialize(EventInterface $event) {
 
+        if (! $event->getRouteMatch()) {
+            return;
+        }
         $container =  $event->getApplication()->getMvcEvent()->getApplication()
             ->getServiceManager();
         $request = $event->getRequest();
         $log = $container->get('log');
-        $route = $event->getRouteMatch()->getMatchedRouteName();
-        $log->debug("route is $route");
-        if ($request->isXMLHttpRequest()) {
-            return;
-        }
-        //$log->debug(print_r($event->getApplication()->getMvcEvent()->getR))
+        $is_xhr = $request->isXMLHttpRequest();
         $default_date = null;
         $session = new Container('notes');
         //$session->settings = null;
-        if ('schedule' == $this->viewModel->action) {
+        if (! $is_xhr && 'schedule' == $this->viewModel->action) {
             $children = $this->viewModel->getChildren();
             if (count($children)) {
                 $view = $children[0];
@@ -89,7 +87,6 @@ class Module {
             }
         }
         $service = $container->get(Service\NotesService::class);
-        // check if this blows up on 404
         $route = $event->getRouteMatch()->getMatchedRouteName();
         $render_markdown = 'notes/edit' != $route;
         $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));

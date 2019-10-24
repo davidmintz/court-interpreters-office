@@ -122,7 +122,6 @@ class NotesController extends AbstractRestfulController
             return new $view_class([$type => $message]);
         } else {
             $messages = $service->getAllForDate($date_obj);
-
             return new $view_class($messages);
         }
     }

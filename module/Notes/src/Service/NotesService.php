@@ -372,10 +372,8 @@ class NotesService
         if (! $this->parseDown) {
             $this->parseDown = new Parsedown();
         }
-        return $this->parseDown->text(
-            //nl2br($content)
-            $content
-        );
-    }
+        // return nl2br($this->parseDown->text($content));
+        return $this->parseDown->text($content);
 
+    }
 }

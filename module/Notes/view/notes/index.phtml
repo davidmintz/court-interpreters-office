@@ -62,6 +62,7 @@ if ($dow != 1) {
                   ]);
                 else: // render note content, if it exists
                     if ($this->notes['motd']):
+                        // echo nl2br($motd->getContent());
                         echo $motd->getContent();
                     else:
                       ?><p class="font-italic no-note">no MOTD for this date</p><?php
@@ -82,9 +83,9 @@ if ($dow != 1) {
                 <h5 class="mb-3 border-bottom px-2 py-2">week of <?php echo $this->monday->format('l d-M-Y')?></h5>
                 <div id="motw-content"><?php
                 if ($this->notes['motw']):
-                    $motd = $this->notes['motw'];
+                    $motw = $this->notes['motw'];
                     $button_url = $this->url('notes/edit', [
-                        'type'=>'motd', 'date'=>$motdw->getDate()->format('Y-m-d'),
+                        'type'=>'motw', 'date'=>$motw->getDate()->format('Y-m-d'),
                         'id'=>$motw->getId()
                     ]);
                     $button_text = 'edit';
@@ -104,6 +105,7 @@ if ($dow != 1) {
                     ]);
                 else:
                     if ($this->notes['motw']):
+                        //echo nl2br($motw->getContent());
                         echo $motw->getContent();
                     else:
                     ?><p class="font-italic no-note">no MOTW for this week</p>
