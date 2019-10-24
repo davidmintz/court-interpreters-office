@@ -142,7 +142,8 @@ class NotesController extends AbstractRestfulController
     public function getList()
     {
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
-        $log->debug("fuck you");
+        $route = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $log->debug("fuck you: $route");
         $date = $this->notesService->getSession()->settings['date'];
         $log->debug("$date is our date in ".__METHOD__);
         $notes = $this->notesService->getAllForDate(new \DateTime($date));
@@ -178,7 +179,6 @@ class NotesController extends AbstractRestfulController
      */
     public function editAction()
     {
-
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
         $id = $this->params()->fromRoute('id');
@@ -187,11 +187,7 @@ class NotesController extends AbstractRestfulController
             $note = $this->notesService->$method($id);
             // find the entity to populate the form
             if (! $note && $date_string) {
-                if ($date_string) {
-                    return $this->redirect()->toRoute('notes/create',['type'=>$type,'date'=>$date_string]);
-                } else {
-                    // ?
-                }
+                return $this->redirect()->toRoute('notes/create',['type'=>$type,'date'=>$date_string]);
             }
             $data = ['date'=> $note->getDate(), 'action'=>'edit','type'=>$type, 'note'=>$note,
                 'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()
@@ -199,6 +195,11 @@ class NotesController extends AbstractRestfulController
             $view = new ViewModel($data);
             if ($this->getRequest()->isXMLHttpRequest()) {
                 $view->setTerminal(true)->setTemplate('notes/partials/form');
+            } else {
+                // inject the other note into the view
+                $other_type = $type == 'motd' ? 'motw':'motd';
+                $other_note = $this->notesService->getNoteByDate(new \DateTime($date_string),$other_type,true);
+                $view->notes = [$other_type => $other_note];
             }
             return $view;
         } else {

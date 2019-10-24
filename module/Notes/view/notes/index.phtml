@@ -41,7 +41,7 @@ if ($dow != 1) {
                 <h5 class="mb-3 border-bottom px-2 py-2"><?php echo $date_obj->format('l d-M-Y')?></h5>
                 <div id="motd-content">
             <?php
-                if ($this->notes['motd']):
+                if (!empty($this->notes['motd'])):
                     $motd = $this->notes['motd'];
                     $button_url = $this->url('notes/edit', [
                         'type'=>'motd', 'date'=>$motd->getDate()->format('Y-m-d'),
@@ -61,7 +61,7 @@ if ($dow != 1) {
                        'csrf'=>$this->csrf,'action' =>$action,
                   ]);
                 else: // render note content, if it exists
-                    if ($this->notes['motd']):
+                    if (!empty($this->notes['motd'])):
                         // echo nl2br($motd->getContent());
                         echo $motd->getContent();
                     else:
@@ -82,7 +82,7 @@ if ($dow != 1) {
             <div class="col-md-7">
                 <h5 class="mb-3 border-bottom px-2 py-2">week of <?php echo $this->monday->format('l d-M-Y')?></h5>
                 <div id="motw-content"><?php
-                if ($this->notes['motw']):
+                if (!empty($this->notes['motw'])):
                     $motw = $this->notes['motw'];
                     $button_url = $this->url('notes/edit', [
                         'type'=>'motw', 'date'=>$motw->getDate()->format('Y-m-d'),
@@ -104,7 +104,7 @@ if ($dow != 1) {
                         'csrf'=>$this->csrf,'action' =>$action,
                     ]);
                 else:
-                    if ($this->notes['motw']):
+                    if (!empty($this->notes['motw'])):
                         //echo nl2br($motw->getContent());
                         echo $motw->getContent();
                     else:
