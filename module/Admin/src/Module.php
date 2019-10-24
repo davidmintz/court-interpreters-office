@@ -115,6 +115,7 @@ class Module
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
                 $viewModel->setVariables($routeMatch->getParams());
+                // really? not sure why we need this...
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
             }
         });
