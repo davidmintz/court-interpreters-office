@@ -15,7 +15,7 @@ echo $this->doctype();
         ->appendStylesheet($this->basePath('css/font-awesome/css/fontawesome-all.min.css'));
 echo $this->headStyle();?>
 </head>
-<body><?php if ($this->layout()->notes_enabled):?>
+<body><?php if ($this->layout()->notes_enabled): // the Notes [a/k/a MOT[DW] feature]?>
     <?php echo $this->partial('notes/partials/notes.phtml',
     ['config'=>$this->layout()->note_settings,
     'motd'=>$this->motd,'motw'=>$this->motw,
@@ -46,7 +46,6 @@ echo $this->headStyle();?>
       </nav>
     <?php  echo $this->content; ?>
     </div>
-    <!-- <pre><?php print_r($this->layout()->note_settings)?></pre> -->
     <div class="container">
         <footer class="border-top border-bottom mt-4 text-center text-muted"><?php
             echo
@@ -65,7 +64,6 @@ echo $this->headStyle();?>
         <?php
         if ($this->layout()->notes_enabled) :?>
         <script src="<?php echo $this->basePath('js/admin/notes.js')?>"></script>
-
         <?php  endif; ?>
         <?php echo $this->headScript()?>
         <?php echo $this->inlineScript() ?>
