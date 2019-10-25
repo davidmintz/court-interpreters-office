@@ -62,7 +62,6 @@ if ($dow != 1) {
                   ]);
                 else: // render note content, if it exists
                     if (!empty($this->notes['motd'])):
-                        // echo nl2br($motd->getContent());
                         echo $motd->getContent();
                     else:
                       ?><p class="font-italic no-note">no MOTD for this date</p><?php
@@ -96,8 +95,9 @@ if ($dow != 1) {
                     $button_text = 'create';
                 endif;
                 if (!$is_index && $this->type == 'motw'):
-                     $hide_button = true;
-                    echo $this->partial('notes/partials/form.phtml',[
+                    $hide_button = true;
+                    echo $this->partial('notes/partials/form.phtml',
+                    [
                         'date'=>$this->date,'type'=>$this->type,
                         //'note'=> $this->{$this->type},
                         'note'=> $this->{$this->type},
@@ -114,7 +114,7 @@ if ($dow != 1) {
                     $hide_button = false;
                 endif;?>
                 </div>
-                <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="<?= $button_url ?>"><span class="sr-only"><?= $button_text ?></span></a>
+                <a <?php if ($hide_button):?>style="display:none" <?php endif;?>class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="<?= $button_url ?>"><span class="sr-only"><?= $button_text ?></span></a>
             </div>
             <div class="col notes-calendar" data-date="<?php if ($this->notes['motw']): echo $this->notes['motw']->getDate()->format('Y-m-d');
             else : echo $this->monday->format('Y-m-d'); endif?>" id="calendar-motw"></div>
