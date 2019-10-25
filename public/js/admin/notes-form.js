@@ -22,7 +22,7 @@ $(function(){
             // type of note: either 'motd' or 'motw'
             var type = instance.id.substring(9);
             // url to get note
-            var url = `/admin/notes/date/${dateText}/${type}`;
+            var url = `/${window.basePath}admin/notes/date/${dateText}/${type}`;
             // div to put it in
             var content_div = $(`#${type}-content`);
             // JSON response looks like { MOTD: { ... }}
@@ -38,7 +38,7 @@ $(function(){
                         .html(res[key].content)
                         .prev("h5").text(res[key].date || `week of ${res[key].week_of}`);
                     // e.g., https://office.localhost/admin/notes/edit/motd/4581/date/2019-10-23
-                    form_url = `/admin/notes/edit/${type}/${res[key].id}/date/${dateText}`;
+                    form_url = `/${window.basePath}admin/notes/edit/${type}/${res[key].id}/date/${dateText}`;
                 } else {  // fuck, so much effort!
                     var h5, date = moment(dateText,'YYYY-MM-DD');
                     if (key === "MOTW") {
@@ -54,7 +54,7 @@ $(function(){
                     content_div
                         .html(`<p class="font-italic no-note">no ${key} for this date</p>`)
                         .prev("h5").text(h5);
-                    form_url = `/admin/notes/create/${type}/${dateText}`;
+                    form_url = `/${window.basePath}admin/notes/create/${type}/${dateText}`;
                 }
                 var verbiage = form_url.indexOf("edit") > -1 ? "edit this":"create a";
                 form_button.attr({href:form_url, title:`${verbiage} ${type}`});
