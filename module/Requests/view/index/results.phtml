@@ -4,11 +4,19 @@ if (!count($this->results)):?>
     <p class="mx-auto border border-warning px-3 py-1" style="max-width:400px">We found no records matching the above criteria.</p>
     <?php return; endif;?>
 <p>
-    <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>\
+    <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?>
 </p>
 <table id="requests-table" data-csrf="<?php echo $this->csrf?>" data-deadline="<?php echo $this->deadline->format('Y-m-d h:i')?>" class="table table-sm">
+    <thead class="text-info">
+        <th class="font-weight-normal">date</th>
+        <th class="font-weight-normal">language</th>
+        <th class="font-weight-normal">type</th>
+        <th class="font-weight-normal">docket</th>
+        <th class="font-weight-normal">judge</th>
+        <th  class="font-weight-normal" colspan="2">defendants</th>
+    </thead>
     <tbody>
-        <?php  $view = $this; foreach ($this->results as $r): $r['id'] = $r[0]['id']?>
+        <?php $view = $this; foreach ($this->results as $r): $r['id'] = $r[0]['id']?>
             <tr <?php printf(
                 'data-submitter_id="%s" data-category="%s" data-judge_id="%s" data-request_id="%s"',
                 $r['submitter_id'],$r['category'],$r['judge_id'], $r['id'])?>>
@@ -22,7 +30,7 @@ if (!count($this->results)):?>
                     $defts = $r[0]['defendants'];
                     if ($defts) :
                         $this->defendants = [$r['id']=>$defts];
-                        echo $this->defendants($r['id']);                    
+                        echo $this->defendants($r['id']);
                     endif;
                 ?></td>
                 <td class="dropdown">

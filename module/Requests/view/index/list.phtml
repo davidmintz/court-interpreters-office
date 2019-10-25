@@ -28,9 +28,20 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
     ?><p>
         <?php echo $this->paginationControl($this->paginator, null, 'partials/pagination_head');?>
     </p>
-<table id="requests-table" data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s') ?>" data-csrf="<?php echo $this->csrf ?>" class="table table-sm">
-    <caption class="sr-only">list of interpreter requests</caption>
-    <thead></thead>
+<table id="requests-table" data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s') ?>" data-csrf="<?php echo $this->csrf ?>" class="table table-sm table-hover">
+    <!-- <caption class="sr-only">list of interpreter requests</caption> -->
+    <thead>
+        <tr>
+            <th class="text-info font-weight-normal">date</th>
+            <th class="text-info font-weight-normal d-md-none d-lg-table-cell">time</th>
+            <th class="text-info font-weight-normal">language</th>
+            <th class="text-info font-weight-normal">type</th>
+            <th class="text-info font-weight-normal d-md-none d-lg-table-cell">location</th>
+            <th class="text-info font-weight-normal d-md-none d-lg-table-cell">docket</th>
+            <th class="text-info font-weight-normal">judge</th>
+            <th class="text-info font-weight-normal" colspan="2">defendants</th>
+        </tr>
+    </thead>
     <tbody>
     <?php
         foreach ($this->paginator as $r):
@@ -50,7 +61,7 @@ if ($this->paginator && $this->paginator->getTotalItemCount()):
             <td class="d-md-none d-lg-table-cell time"><?php echo $r['time']->format('g:i a')?></td>
             <td class="language"><?php echo $this->escapeHtml($r['language']) ?></td>
             <td class="event-type"><?php echo $this->escapeHtml($r['type'])?></td>
-            <td><?php echo $this->escapeHtml($r['location']) ?></td>
+            <td class="d-md-none d-lg-table-cell"><?php echo $this->escapeHtml($r['location']) ?></td>
             <td class="d-md-none d-lg-table-cell"><?php echo $this->escapeHtml($docket) ?></td>
             <td><?php echo $r['judge']?></td>
             <td><?php echo $this->defendants($r['id']),$xtra_defts?></td>
