@@ -151,7 +151,7 @@ class NotesController extends AbstractRestfulController
             }
         }
 
-        return ['notes' => $notes,];        
+        return ['notes' => $notes,];
     }
 
     /**
@@ -216,9 +216,13 @@ class NotesController extends AbstractRestfulController
         if ($existing) {
             return $this->redirect()->toRoute('notes/edit',['type'=>$type,'id'=>$existing->getId(),  'date'=>$date_string]);
         }
+        $view = new ViewModel(['date'=>new \DateTime($date_string),'type'=>$type,
+        'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()]);
         if ($this->getRequest()->isGet()) {
-            return ['date'=>new \DateTime($date_string),'type'=>$type,
-            'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()];
+            if ($this->getRequest()->isXMLHttpRequest()) {
+                $view->setTerminal(true)->setTemplate('notes/partials/form');
+            }
+            return $view;
         }
     }
 }
