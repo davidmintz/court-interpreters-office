@@ -7,4 +7,4 @@ SET e.submitter_id = p.id,
 e.anonymous_submitter_id = NULL
 WHERE h.name = "Magistrates"
 AND e.submitter_id IS NULL
-AND e.comments REGEXP '([[:<:]]|^)mag(i?s(trates?)?)? +cal(endar)?([[:<:]]|$)';
+AND e.comments REGEXP '([[:<:]]|^)mag(i?s(trates?)?)? +cal(; *|endar)?([[:<:]]|$)';
