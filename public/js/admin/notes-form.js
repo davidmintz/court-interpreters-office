@@ -13,6 +13,7 @@ Called when the datepicker is selected. The function receives the selected date 
 'this' refers to the associated input field.
 */
 $(function(){
+    var base_url =
     dp_defaults = {
         dateFormat:"yy-mm-dd",
         showOtherMonths : true,
@@ -22,7 +23,7 @@ $(function(){
             // type of note: either 'motd' or 'motw'
             var type = instance.id.substring(9);
             // url to get note
-            var url = `/${window.basePath}admin/notes/date/${dateText}/${type}`;
+            var url = `/admin/notes/date/${dateText}/${type}`;
             // div to put it in
             var content_div = $(`#${type}-content`);
             // JSON response looks like { MOTD: { ... }}
@@ -38,7 +39,7 @@ $(function(){
                         .html(res[key].content)
                         .prev("h5").text(res[key].date || `week of ${res[key].week_of}`);
                     // e.g., https://office.localhost/admin/notes/edit/motd/4581/date/2019-10-23
-                    form_url = `/${window.basePath}admin/notes/edit/${type}/${res[key].id}/date/${dateText}`;
+                    form_url = `${window.basePath}/admin/notes/edit/${type}/${res[key].id}/date/${dateText}`;
                 } else {  // fuck, so much effort!
                     var h5, date = moment(dateText,'YYYY-MM-DD');
                     if (key === "MOTW") {
@@ -54,7 +55,7 @@ $(function(){
                     content_div
                         .html(`<p class="font-italic no-note">no ${key} for this date</p>`)
                         .prev("h5").text(h5);
-                    form_url = `/${window.basePath}admin/notes/create/${type}/${dateText}`;
+                    form_url = `${window.basePath}/admin/notes/create/${type}/${dateText}`;
                 }
                 var verbiage = form_url.indexOf("edit") > -1 ? "edit this":"create a";
                 form_button.attr({href:form_url, title:`${verbiage} ${type}`});
@@ -73,10 +74,11 @@ $(function(){
     /** handler for loading edit|create form */
     $("#tab-content-notes").on("click","#btn-editor-motd, #btn-editor-motw",function(e){
         e.preventDefault();
-        console.warn("doing shit: load form for "+this.href);
         var btn = $(this);
+        var path = this.href.split("/").slice(3).join("/");
+        console.warn("doing shit: load form for "+`/${path}`);
         var content_div = btn.prev("div");
-        $.get(this.href).then(function(html){
+        $.get(`/${path}`).then(function(html){
             btn.hide();
             content_div.html(html);
         });
@@ -91,12 +93,12 @@ $(function(){
         if (id) {
             // update
             console.log("doing an update ");
-            url = `/${window.basePath}admin/notes/update/${type}/${id}`;
+            url = `/admin/notes/update/${type}/${id}`;
             method = 'PUT';
         } else {
             // create
             console.log("do a create");
-            url = `/${window.basePath}admin/notes/create/${type}`;
+            url = `/admin/notes/create/${type}`;
             method = 'POST';
         }
         $.ajax({url, method, data : form.serialize()
