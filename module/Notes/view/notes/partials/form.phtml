@@ -3,9 +3,10 @@
     <div class="form-row">
         <!-- <label class="col-sm-2 col-form-label text-md-right pr-1" for="content">content</label> -->
         <div class="col">
-            <textarea class="form-control" name="content" id="content" placeholder="Enter text here (you can use markdown)" rows="6" cols="60"><?php
+            <textarea class="form-control" name="content" id="content" placeholder="Enter text here" rows="6" cols="60"><?php
                 if ($this->note) : echo $this->note->getContent(); endif;
             ?></textarea>
+            <span class="text-muted">You can use <a target="__blank" href="https://www.markdownguide.org/basic-syntax">Markdown</a> for formatting</span>
         </div>
     </div>
     <div class="form-row">
