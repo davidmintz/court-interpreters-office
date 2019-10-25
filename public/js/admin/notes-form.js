@@ -91,12 +91,12 @@ $(function(){
         if (id) {
             // update
             console.log("doing an update ");
-            url = `/admin/notes/update/${type}/${id}`;
+            url = `/${window.basePath}admin/notes/update/${type}/${id}`;
             method = 'PUT';
         } else {
             // create
             console.log("do a create");
-            url = `/admin/notes/create/${type}`;
+            url = `/${window.basePath}admin/notes/create/${type}`;
             method = 'POST';
         }
         $.ajax({url, method, data : form.serialize()
