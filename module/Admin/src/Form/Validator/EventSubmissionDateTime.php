@@ -105,7 +105,7 @@ class EventSubmissionDateTime extends AbstractValidator
         // compare our diff in minutes to the allowed interval
         $minutes_diff = abs(($event_datetime->getTimestamp() -
                 $submission_datetime->getTimestamp()) / 60);
-        if ($minutes_diff > $this->max_negative_minutes) {
+        if ($context['time'] && $minutes_diff > $this->max_negative_minutes) {
             $this->error(self::EVENT_PRECEDES_SUBMISSION_BY_TOO_MUCH);
             return false;
         }
