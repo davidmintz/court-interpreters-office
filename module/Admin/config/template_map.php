@@ -42,6 +42,7 @@ return [
     'interpreters-office/admin/events/add' => __DIR__ . '/../view/events/form.phtml',
     'interpreters-office/admin/event-types/index' => __DIR__ . '/../view/event-types/index.phtml',
     'interpreters-office/admin/event-types/add' => __DIR__ . '/../view/event-types/form.phtml',
+    'interpreters-office/admin/event-types/edit' => __DIR__ . '/../view/event-types/form.phtml',
     'interpreters-office/admin/normalization/index' => __DIR__ . '/../view/normalization/index.phtml',
     'interpreters-office/admin/search/search' => __DIR__ . '/../view/search/search.phtml',
     'interpreters-office/admin/search/docket-search' => __DIR__ . '/../view/search/docket-search.phtml',
