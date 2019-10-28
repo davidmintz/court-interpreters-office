@@ -22,12 +22,6 @@ $(function(){
            $('#btn-search-name').trigger("click");
         }
     });
-    if (document.referrer.indexOf('interpreters/language')!== -1 ||
-        document.referrer.indexOf("admin/people") !== -1) {
-        var btn_back = $(`<a class="btn btn-outline-secondary" role="button" title="back to ${document.referrer}"/>`)
-            .attr({href:document.referrer}).text("back");
-        $("#btn-edit").after(btn_back);
-    }
     $('#btn-search-name').on("click",function(event){
         event.preventDefault();
         var name = nameElement.val().trim();
