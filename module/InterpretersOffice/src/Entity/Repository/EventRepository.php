@@ -483,14 +483,13 @@ DQL;
             }
             $qb->andWhere($qb->expr()->in('e.id',$qb2->getDQL()));
         }
-        if (! empty($query['judge'])) {
-            $qb->andWhere('j.id = :judge_id');
-            $params['judge_id'] = $query['judge'];
-        } elseif (! empty($query['pseudo_judge'])) {
+        if (! empty($query['pseudo_judge'])) {
             $qb->andWhere('aj.id = :judge_id');
             $params['judge_id'] = $query['judge'];
+        } elseif (! empty($query['judge'])) {
+            $qb->andWhere('j.id = :judge_id');
+            $params['judge_id'] = $query['judge'];
         }
-
         if (! empty($query['eventType'])) {
             $qb->andWhere('t.id = :event_type_id');
             $params[':event_type_id'] = $query['eventType'];
