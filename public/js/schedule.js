@@ -2,13 +2,28 @@
 /* global  $:false, fail:false, moment:false; */
 /* eslint-disable no-console */
 
+/**
+ * intervals for refreshing schedule, in seconds
+ *
+ * If the date being displayed is equal or later than the current date, the
+ * schedule is considered "current" and we refresh it at frequent intervals.
+ * Otherwise, it's historical and there's no need to reload so often.
+ *
+ * @type {Object}
+ */
+const schedule_refresh_intervals = { current : 20, historical : 240 };
 
+/**
+ * returns HTML for interpreter-editing popover
+ *
+ * @return {string}
+ */
 const renderInterpreterEditor = function(){
 
     var assigned = $(this).parent().prev().children();
     var html = $(".interpreter-editor-wrapper").html();
     var event_id = $(this).closest("tr").data().id;
-    var interpreters = "<form><ul class=\"list-group\">";
+    var interpreters = `<form><ul class="list-group">`;
     if (assigned.length) {
         assigned.each(function(i){
             var name = $(this).text();
@@ -21,6 +36,15 @@ const renderInterpreterEditor = function(){
     return interpreters + html;
 };
 
+/**
+ * helper for rendering HTML for an interpreter
+ *
+ * @param  {string} index          array index to submit to server
+ * @param  {string} name           interpreter name
+ * @param  {string} interpreter_id
+ * @param  {string} event_id
+ * @return {string}
+ */
 const renderInterpreter = function(index,name,interpreter_id,event_id) {
     return `<li class="list-group-item pr-1 py-1">
         <input name="event[interpreterEvents][${index}][interpreter]" type="hidden" value="${interpreter_id}">
@@ -31,6 +55,11 @@ const renderInterpreter = function(index,name,interpreter_id,event_id) {
     </li>`;
 };
 
+/**
+ * reloads schedule data table
+ * @param  {string} url for fetching data
+ * @return object
+ */
 const reload_schedule = function(url){
     url = url || document.location.pathname;
     return $.get(url)
@@ -213,17 +242,16 @@ $(function() {
     });
 
     /*
-    compute interval for reloading the schedule data: 15 seconds if we are
-    looking a date >= today; otherwise, 180 seconds for historical data
+    decide interval for reloading the schedule data
     */
     var schedule_date = new moment($(".display-date").text(),"DD MMM YYYY");
     var now = new moment();
     var is_current = schedule_date.format("YYYYMMDD") >= now.format("YYYYMMDD");
 
     if (is_current) {
-        interval = 15 * 1000;
+        interval = schedule_refresh_intervals.current * 1000;
     } else {
-        interval = 180 * 1000;
+        interval = schedule_refresh_intervals.historical * 1000;
     }
     console.debug(`refresh interval: ${interval/1000} seconds`);
 
