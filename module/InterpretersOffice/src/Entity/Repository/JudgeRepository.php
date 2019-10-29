@@ -165,7 +165,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
      * @param array $options
      * @return array
      */
-    public function getJudgeOptions($options = [])
+    public function getJudgeOptions(Array $options = [])
     {
         $params = [];
         if (isset($options['judge_id'])) {
@@ -178,9 +178,13 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         $dql .= ' j.id, j.lastname, j.firstname, j.middlename, f.flavor '
                 . ', l.id AS location, pl.id AS parent_location'
                 . ' FROM InterpretersOffice\Entity\Judge j JOIN j.flavor f '
-                . 'LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation pl '
-                . ' WHERE j.active = true '. $or;
-
+                . 'LEFT JOIN j.defaultLocation l LEFT JOIN l.parentLocation pl ';
+                //. ' WHERE j.active = true '. $or;
+        if (empty($options['include_inactive'])) {
+            $dql .= " WHERE j.active = true $or";
+        } else {
+            $dql .= ' WHERE j.id > 0'; // cheap shot
+        }
         if (isset($options['user_judge_ids'])) {
             $dql .= ' AND j.id IN (:user_judge_ids)';
             $params['user_judge_ids'] = $options['user_judge_ids'];

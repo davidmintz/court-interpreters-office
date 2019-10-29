@@ -103,7 +103,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         ]);
         /** @var $repository \InterpretersOffice\Entity\Repository\JudgeRepository */
         $repository = $this->getObjectManager()->getRepository(Entity\Judge::class);
-        $opts = ['include_pseudo_judges' => true];
+        $opts = ['include_pseudo_judges' => true, 'include_inactive'=> true,];
         $value_options = $repository->getJudgeOptions($opts);
         array_unshift(
             $value_options,
