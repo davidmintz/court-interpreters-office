@@ -37,10 +37,10 @@ else: ?> <em>not assigned</em> <?php endif;
     endif;
 ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">status</div><div id="request-status" class="col-md-10"><?php
-    if ($r->getPending()):
+if ($r->isCancelled()) :
+    ?><strong>cancelled</strong> <?php echo "by {$mod_by_person->getFullName()}";
+    elseif ($r->getPending()):
         ?>pending<?php
-    elseif ($r->isCancelled()) :
-        ?><strong>cancelled</strong> <?php echo "by {$mod_by_person->getFullName()}";
     elseif ($r->getEvent() && $r->getEvent()->getDeleted()):
         ?><strong>deleted</strong> from Interpreters schedule<?php
     elseif ($r->getEvent()) :
