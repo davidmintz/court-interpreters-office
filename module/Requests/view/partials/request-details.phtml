@@ -30,14 +30,17 @@ else: ?> <em>not assigned</em> <?php endif;
 ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">updated</div><div class="col-md-10"><?php
     if ($r->getCreated() != $r->getModified()):
-        $mod_by = $r->getModifiedBy()->getPerson();
-        echo $this->escapeHtml("{$r->getModified()->format('d-M-Y g:i a')}  by {$mod_by->getFullName()}, {$mod_by->getHat()}");
+        $mod_by_person = $r->getModifiedBy()->getPerson();
+        $update_meta = $this->escapeHtml("{$r->getModified()->format('d-M-Y g:i a')}  by {$mod_by_person->getFullName()}, {$mod_by_person->getHat()}");
+        echo $update_meta;
     else: ?>(n/a)<?php
     endif;
 ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">status</div><div id="request-status" class="col-md-10"><?php
     if ($r->getPending()):
         ?>pending<?php
+    elseif ($r->isCancelled()) :
+        ?><strong>cancelled</strong> <?php echo "by {$mod_by_person->getFullName()}";
     elseif ($r->getEvent() && $r->getEvent()->getDeleted()):
         ?><strong>deleted</strong> from Interpreters schedule<?php
     elseif ($r->getEvent()) :
