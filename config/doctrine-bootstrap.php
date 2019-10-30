@@ -33,6 +33,7 @@ $entitiesPath = [
     __DIR__.'/../module/InterpretersOffice/src/Entity/',
     __DIR__.'/../module/Requests/src/Entity/',
     __DIR__.'/../module/Notes/src/Entity/',
+    __DIR__.'/../module/Rotation/src/Entity/',
 ];
 $config = Setup::createAnnotationMetadataConfiguration($entitiesPath, true, null, null, false);
 $em = EntityManager::create($dbParams, $config);

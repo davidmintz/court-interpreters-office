@@ -19,6 +19,7 @@ $modules = [
     'InterpretersOffice',
     'InterpretersOffice\Admin',
     'InterpretersOffice\Admin\Notes',
+    'InterpretersOffice\Admin\Rotation',
     'InterpretersOffice\Requests',
     'Sandbox'
 ];
