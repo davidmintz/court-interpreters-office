@@ -40,7 +40,13 @@ $(function(){
     if (docket_input.val()) {
         docket_input.trigger("change");
     }
-    $("input.date").datepicker({});
+    $("input.date").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        yearRange : "-20:+4",
+        selectOtherMonths : true,
+        showOtherMonths : true,
+    });
     $("#defendant-name").autocomplete(deft_autocomplete_opts)
     var btn = $("#btn-submit");
     var form = btn.closest("form");

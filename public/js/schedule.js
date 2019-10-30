@@ -261,6 +261,7 @@ $(function() {
         defaultDate: schedule_date.toDate(),
         changeMonth: true,
         changeYear: true,
+        yearRange : "-20:+4",
         selectOtherMonths : true,
         showOtherMonths : true,
         // go to selected date when they choose from the datepicker

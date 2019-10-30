@@ -90,7 +90,12 @@ $(function(){
         init(window.user);
     }, seconds * 1000);
     $("input.docket").on("change",formatDocketElement);
-    $("input.date").datepicker({});
+    $("input.date").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        yearRange : "-20:+4",
+        selectOtherMonths : true,
+        showOtherMonths : true,});
     $("#defendant-name").autocomplete(deft_autocomplete_opts)
     var btn = $("#btn-submit");
     var form = btn.closest("form");
