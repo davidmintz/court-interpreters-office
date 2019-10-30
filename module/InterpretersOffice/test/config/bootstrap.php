@@ -25,6 +25,7 @@ $entitiesPath = [
     __DIR__.'/../../../InterpretersOffice/src/Entity/',
     __DIR__ .'/../../../Requests/src/Entity/',
     __DIR__ .'/../../../Notes/src/Entity/',
+    __DIR__ .'/../../../Rotation/src/Entity/',
 
 ];
 
