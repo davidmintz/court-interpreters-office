@@ -36,7 +36,8 @@ class MOTD implements JsonSerializable, NoteInterface
     /**
      * content
      *
-     * @var @ORM\Column(type="string",nullable=false,length=2000)
+     * @ORM\Column(type="string",nullable=false,length=2000)
+     * @var string
      */
     private $content;
 
