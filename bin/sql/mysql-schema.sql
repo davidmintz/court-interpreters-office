@@ -670,6 +670,27 @@ CREATE TABLE `roles` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `rotation_substitutions`
+--
+
+DROP TABLE IF EXISTS `rotation_substitutions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `rotation_substitutions` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `task_id` smallint(5) unsigned DEFAULT NULL,
+  `person_id` smallint(5) unsigned DEFAULT NULL,
+  `date` date NOT NULL,
+  `duration` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `IDX_727F34018DB60186` (`task_id`),
+  KEY `IDX_727F3401217BBB47` (`person_id`),
+  CONSTRAINT `FK_727F3401217BBB47` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`),
+  CONSTRAINT `FK_727F34018DB60186` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `rotations`
 --
 
@@ -788,4 +809,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-30 15:50:59
+-- Dump completed on 2019-10-30 16:26:08
