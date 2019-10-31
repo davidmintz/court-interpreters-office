@@ -14,10 +14,10 @@ use DateTime;
 use JsonSerializable;
 
 /**
- * Entity class representing MOTD
+ * Entity class representing a rotating Task
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Rotation\Entity\RotationRepository")
- * @ORM\Table(name="tasks")
+ * @ORM\Table(name="tasks",uniqueConstraints={@ORM\UniqueConstraint(name="unique_name",columns={"name"})})
  * @ORM\HasLifecycleCallbacks
  */
 class Task
@@ -112,7 +112,7 @@ class Task
      *
      * @return Task
      */
-    public function setDescription($description) : Rotation
+    public function setDescription($description) : Task
     {
         $this->description = $description;
 
@@ -136,7 +136,7 @@ class Task
      *
      * @return Task
      */
-    public function setDuration($duration) : Rotation
+    public function setDuration($duration) : Task
     {
         $this->duration = $duration;
 
@@ -161,7 +161,7 @@ class Task
      *
      * @return Task
      */
-    public function addRotation(Rotation $rotation)
+    public function addRotation(Rotation $rotation) : Task
     {
         $this->rotations[] = $rotation;
 
