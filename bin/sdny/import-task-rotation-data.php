@@ -94,16 +94,56 @@ while ($row = $old_rotations->fetch(\PDO::FETCH_OBJ)) {
 printf("rotations imported: %d\n",$rotations_inserted);
 printf("rotation_members imported: %d\n",$rotation_members_inserted);
 
-/*
-+------------+----------------------+------+-----+---------+----------------+
-| Field      | Type                 | Null | Key | Default | Extra          |
-+------------+----------------------+------+-----+---------+----------------+
-| id         | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |
-| task_id    | smallint(5) unsigned | YES  | MUL | NULL    |                |
-| start_date | date                 | NO   |     | NULL    |                |
-+------------+----------------------+------+-----+---------+----------------+
+$old_subs = $old_db->query('SELECT * FROM rotation_substitutions');
+$sub_ins = $db->prepare('INSERT INTO rotation_substitutions (id, task_id, person_id, date, duration)
+    VALUES (:id, :task_id, :person_id, :date, :duration)');
+$i = 0;
+$subs_inserted = 0;
+while ($row = $old_subs->fetch(\PDO::FETCH_OBJ)) {
+    $params = [
+        'id'=>++$i,
+        'task_id'=>$row->task_id,
+        'person_id' =>$person_map[strtolower($row->who)],
+        'date' => $row->date,
+        'duration' => $row->duration,
+    ];
+    try {
+        $sub_ins->execute($params);
+        $subs_inserted++;
+    } catch (\PDOException $e) {
+        if (23000 != $e->getCode()) {
+            throw $e;
+        }
+    }
+}
+printf("substitutions imported: %d\n",$subs_inserted);
 
- */
+
+/*
+mysql> explain rotation_substitutions;
++-----------+----------------------+------+-----+---------+----------------+
+| Field     | Type                 | Null | Key | Default | Extra          |
++-----------+----------------------+------+-----+---------+----------------+
+| id        | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| task_id   | smallint(5) unsigned | YES  | MUL | NULL    |                |
+| person_id | smallint(5) unsigned | YES  | MUL | NULL    |                |
+| date      | date                 | NO   |     | NULL    |                |
+| duration  | varchar(5)           | NO   |     | NULL    |                |
++-----------+----------------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> explain dev_interpreters.rotation_substitutions;
++----------+----------------------------+------+-----+---------+----------------+
+| Field    | Type                       | Null | Key | Default | Extra          |
++----------+----------------------------+------+-----+---------+----------------+
+| id       | mediumint(8) unsigned      | NO   | PRI | NULL    | auto_increment |
+| date     | date                       | NO   | MUL | NULL    |                |
+| task_id  | mediumint(8) unsigned      | NO   |     | NULL    |                |
+| duration | enum('WEEK','DAY','MONTH') | NO   |     | DAY     |                |
+| who      | varchar(30)                | NO   |     | NULL    |                |
++----------+----------------------------+------+-----+---------+----------------+
+*/
+
 
 /*
 mysql> explain task_rotations;
@@ -115,8 +155,19 @@ mysql> explain task_rotations;
 | rotation   | varchar(300)          | YES  |     | NULL    |       |
 +------------+-----------------------+------+-----+---------+-------+
 3 rows in set (0.00 sec)
-
 mysql> explain rotation_substitutions;
++-----------+----------------------+------+-----+---------+----------------+
+| Field     | Type                 | Null | Key | Default | Extra          |
++-----------+----------------------+------+-----+---------+----------------+
+| id        | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |
+| task_id   | smallint(5) unsigned | YES  | MUL | NULL    |                |
+| person_id | smallint(5) unsigned | YES  | MUL | NULL    |                |
+| date      | date                 | NO   |     | NULL    |                |
+| duration  | varchar(5)           | NO   |     | NULL    |                |
++-----------+----------------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> explain dev_interpreters.rotation_substitutions;
 +----------+----------------------------+------+-----+---------+----------------+
 | Field    | Type                       | Null | Key | Default | Extra          |
 +----------+----------------------------+------+-----+---------+----------------+
