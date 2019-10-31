@@ -10,9 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 use InterpretersOffice\Entity\User;
 use DateTime;
 use JsonSerializable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
- * Entity class representing MOTD
+ * Entity class representing the rotation for a task
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Rotation\Entity\RotationRepository")
  * @ORM\Table(name="rotations")
@@ -44,13 +46,16 @@ class Rotation
     private $start_date;
 
     /**
-     * JSON array of person_ids
+     * @ORM\OneToMany(targetEntity="RotationMember",mappedBy="rotation",cascade={"persist"})
      *
-     * order is significant
-     * @ORM\Column(type="string",nullable=false,length=600)
-     * @var string
+     * @var ArrayCollection
      */
-    private $rotation;
+    private $members;
+
+    public function __construct()
+    {
+        $this->members = new ArrayCollection();
+    }
 
 
     /**
@@ -87,29 +92,6 @@ class Rotation
         return $this->start_date;
     }
 
-    /**
-     * Set rotation.
-     *
-     * @param string $rotation
-     *
-     * @return Rotation
-     */
-    public function setRotation($rotation) : Rotation
-    {
-        $this->rotation = $rotation;
-
-        return $this;
-    }
-
-    /**
-     * Get rotation.
-     *
-     * @return string
-     */
-    public function getRotation() : string
-    {
-        return $this->rotation;
-    }
 
     /**
      * Set task.
@@ -133,5 +115,42 @@ class Rotation
     public function getTask() : Task
     {
         return $this->task;
+    }
+
+
+    /**
+     * Add member.
+     *
+     * @param RotationMember $member
+     *
+     * @return Rotation
+     */
+    public function addMember(RotationMember $member) : Rotation
+    {
+        $this->members[] = $member;
+
+        return $this;
+    }
+
+    /**
+     * Remove member.
+     *
+     * @param RotationMember $member
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeMember(RotationMember $member) : bool
+    {
+        return $this->members->removeElement($member);
+    }
+
+    /**
+     * Get members.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMembers() : Collection
+    {
+        return $this->members;
     }
 }
