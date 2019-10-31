@@ -236,7 +236,7 @@ var eventForm = (function () {
             return;
         }
         $.getJSON("/admin/schedule/interpreter-options?language_id="+language_id)
-            .success(
+            .then(
                 function(data){
                     var options = data.map(function(item){
                         return $("<option>").val(item.value).text(item.label);
