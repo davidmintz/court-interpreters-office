@@ -149,11 +149,8 @@ class EventsController extends AbstractActionController
         $data = $request->getPost();
         $input = $data->get('event');
         $form->bind($event);
-        $this->getEventManager()->trigger(
-            'pre.validate',
-            $this,
-            ['input' => $data,]
-        );
+        $this->getEventManager()->trigger('pre.validate', $this,
+            ['input' => $data,]);
         $form->setData($data);
         if (! $form->isValid()) {
             return new JsonModel(
@@ -167,13 +164,10 @@ class EventsController extends AbstractActionController
         $date = $event->getDate();
         $this->flashMessenger()->addSuccessMessage(sprintf(
             'This event has been added to the schedule for <a href="%s">%s</a>',
-            $url . $date->format('/Y/m/d'),
-            $date->format('l d-M-Y')
+            $url . $date->format('/Y/m/d'), $date->format('l d-M-Y')
         ));
 
-        return new JsonModel(
-            ['status' => 'success','id' => $event->getId()]
-        );
+        return new JsonModel(['status' => 'success','id' => $event->getId()]);
     }
 
     /**
