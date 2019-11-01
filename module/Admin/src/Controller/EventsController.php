@@ -194,8 +194,7 @@ class EventsController extends AbstractActionController
             return ['errorMessage' => "No event with id $id was found in the database.",'header' => 'event not found'];
         }
         $form = new Form\EventForm(
-            $this->entityManager,
-            ['action' => 'update','object' => $entity,]
+            $this->entityManager, ['action' => 'update','object' => $entity,]
         );
         $view = $this->getViewModel(['id' => $id,'form' => $form]);
         $events = $this->getEventManager();
@@ -203,9 +202,7 @@ class EventsController extends AbstractActionController
         $modified_before = $entity->getModified()->format('Y-m-d h:i:s');
         $form->bind($entity);
 
-        $events->trigger(
-            'pre.populate',
-            $this,
+        $events->trigger('pre.populate', $this,
             ['entity' => $entity, 'form' => $form]
         );
         if ($this->getRequest()->isGet()) {
@@ -233,12 +230,10 @@ class EventsController extends AbstractActionController
         $this->flashMessenger()->addSuccessMessage(sprintf(
             "This event has been $verbiage on the "
             .'schedule for <a href="%s">%s</a>.',
-            $url . $date->format('/Y/m/d'),
-            $date->format('l d-M-Y')
+            $url . $date->format('/Y/m/d'), $date->format('l d-M-Y')
         ));
 
         return new JsonModel(['status' => 'success', 'id' => $id]);
-
     }
 
     /**
