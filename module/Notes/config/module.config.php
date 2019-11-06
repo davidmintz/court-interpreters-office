@@ -6,6 +6,7 @@ use Zend\Router\Http\Segment;
 use Zend\Router\Http\Method;
 
 return [
+    
     'doctrine' => [
         'driver' => [
             'application_annotation_driver' => [
@@ -208,5 +209,7 @@ return [
             Service\NotesService::class => Service\NotesServiceFactory::class,
         ],
     ],
+
+
 
 ];

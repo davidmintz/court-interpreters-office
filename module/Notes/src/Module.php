@@ -90,7 +90,8 @@ class Module {
         $route = $event->getRouteMatch()->getMatchedRouteName();
         $render_markdown = 'notes/edit' != $route;
         $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
-
+        $config = $container->get('config');
+        $log->debug(print_r($config['notes'] ??"shit",true));
         if ($session->settings) { // inject Notes config from session into view
             $this->viewModel->note_settings = $session->settings;
             $settings = $session->settings;

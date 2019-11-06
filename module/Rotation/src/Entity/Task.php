@@ -47,6 +47,22 @@ class Task
     private $description = '';
 
     /**
+     * permitted values for frequency, duration
+     * @var array
+     */
+    private $values = ['DAY', 'WEEK', 'MONTH'];
+
+    /**
+     * frequency
+     *
+     * How frequently task-assignment recurs. This can be one of:
+     * 'DAY', 'WEEK', 'MONTH'
+     * @ORM\Column(type="string",nullable=false,length=5)
+     * @var string
+     */
+    private $frequency;
+
+    /**
      * duration
      *
      * How long the task-assignment lasts. This can be one of:
@@ -58,7 +74,7 @@ class Task
 
     /**
      * rotations
-     * @ORM\OneToMany(targetEntity="Rotation",mappedBy="task")
+     * @ORM\OneToMany(targetEntity="Rotation",mappedBy="task",cascade={"persist"})
      * @var Rotation[]
      */
     private $rotations;
@@ -133,16 +149,42 @@ class Task
      * Set duration.
      *
      * @param string $description
-     *
+     * @throws \InvalidArgumentException
      * @return Task
      */
-    public function setDuration($duration) : Task
+    public function setDuration(string $duration) : Task
     {
+        if (! in_array($duration,$this->values)) {
+            throw new \InvalidArgumentException(
+                "invalid duration $duration, must be one of 'DAY','WEEK', or 'MONTH'");
+        }
         $this->duration = $duration;
 
         return $this;
     }
 
+    /**
+     * Sets frequency.
+     *
+     * @param string $frequency
+     * @throws \InvalidArgumentException
+     * @return Task
+     */
+    public function setFrequency(string $frequency) : Task
+    {
+        if (! in_array($frequency,$this->values)) {
+            throw new \InvalidArgumentException(
+                "invalid duration $frequency, must be one of 'DAY','WEEK', or 'MONTH'");
+        }
+        $this->frequency = $frequency;
+
+        return $this;
+    }
+
+    public function getFrequency() : string
+    {
+        return $this->frequency;
+    }
     /**
      * Get description.
      *

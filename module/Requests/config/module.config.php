@@ -23,6 +23,10 @@ $event_configuration_file = file_exists(
 
 
 return [
+    /** @todo move 'event_listeners' to a config/autoload that reads the JSON config */
+    // for configuring the behavior of ScheduleUpdateManager
+    'event_listeners' => json_decode(file_get_contents($event_configuration_file),true),
+
     'controllers' => [
         'factories' => [
            Controller\IndexController::class => Controller\Factory\RequestsControllerFactory::class,
@@ -375,8 +379,4 @@ return [
             'configCheckbox' => 'InterpretersOffice\Requests\View\Helper\ConfigCheckbox',
         ],
     ],
-    // for configuring the behavior of ScheduleUpdateManager
-    'event_listeners' => json_decode(file_get_contents($event_configuration_file),true),
-
-
 ];
