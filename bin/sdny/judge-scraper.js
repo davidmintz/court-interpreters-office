@@ -12,17 +12,19 @@ const jsdom = require("jsdom");
 const https = require("https");
 const { JSDOM } = jsdom;
 const httpsAgent = new https.Agent({
-    // unfortunate, but couldn't avoid...
+    // unfortunate, but...
     rejectUnauthorized : false
     // ...because I couldn't solve the site's certificate errors
 });
-
-const base = "https://nysd.uscourts.gov";
+const client = axios.create({
+    httpsAgent,
+    baseURL : "https://nysd.uscourts.gov"
+});
 
 const get_judge_links = function(flavor){
     return new Promise(
         resolve => {
-            axios.get(`${base}/judges/${flavor}-judges`,{httpsAgent})
+            client.get(`/judges/${flavor}-judges`,{httpsAgent})
             .then((response) => {
                 var dom = new JSDOM(response.data);
                 var links = dom.window.document.querySelectorAll(".judges-view-result a");
@@ -32,10 +34,11 @@ const get_judge_links = function(flavor){
         }
     );
 };
+
 const parse_judge_info = function(url){
     return new Promise(
         resolve => {
-            axios.get(`${base}${url}`,{httpsAgent}).then((response)=>{
+            client.get(url,{httpsAgent}).then((response)=>{
                 var dom = new JSDOM(response.data);
                 var elements = dom.window.document
                     .querySelectorAll(".judge-detail-left, .courthouse-info");
@@ -56,20 +59,24 @@ const parse_judge_info = function(url){
         }
     );
 };
+
 var data = {USMJ: {}, USDJ: {}};
+
 (async function() {
     var usdj_links = await get_judge_links("district");
     for (var i = 0; i < usdj_links.length; i++) {
-        var name = usdj_links[i].textContent.trim();
+        var name = usdj_links[i].textContent.trim().replace(/^Hon. /,"");
         var url = usdj_links[i].href;
-        //console.log(`fetching ${url} for: ${name}, USDJ`);
+        // alas, there is no reliable way of parsing out first, middle and
+        // last names any longer. it formerly was '<surnames>, <forenames and/or initials>'
+        console.error(`fetching ${url} for: ${name}, USDJ`);
         data.USDJ[name] = await parse_judge_info(url);
     }
     var usmj_links = await get_judge_links("magistrate");
     for (var i = 0; i < usmj_links.length; i++) {
-        var name = usmj_links[i].textContent.trim();
+        var name = usmj_links[i].textContent.trim().replace(/^Hon. /,"");
         var url = usmj_links[i].href;
-        //console.log(`fetching ${url} for: ${name}, USMJ`);
+        console.error(`fetching ${url} for: ${name}, USMJ`);
         data.USMJ[name] = await parse_judge_info(url);
     }
     console.log(JSON.stringify(data));
