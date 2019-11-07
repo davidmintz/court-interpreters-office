@@ -8,7 +8,8 @@ use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity\Person;
 //
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
-use DateTime, DateTimeImmutable;
+use PHPUnit\Util\Log\TeamCity;
+use DateTime, DateInterval;
 
 /**
  * Rotation repository
@@ -56,7 +57,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
     }
     /**
      * gets default and substitute Person entities assigned to $task on $date
-     * 
+     *
      * @param  Task     $task
      * @param  DateTime $date
      * @throws \RuntimeException
@@ -67,6 +68,12 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $frequency = $task->getFrequency();
         if ('WEEK' != $frequency) {
             throw new \RuntimeException("only Tasks of frequency 'WEEK' are currently supported");
+        }
+        $dow = $task->getDayOfWeek();
+        $w = $date->format('w');
+        if ($dow && $dow != $w) {
+            $n = 6 - $w;
+            $date->add(new DateInterval("P{$n}D"));
         }
         $q = $this->getEntityManager()->createQuery(
             'SELECT s FROM '.Substitution::class. ' s
@@ -96,44 +103,39 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         }
         // get the most recently begun rotation
         $em = $this->getEntityManager();
+        $dow = $task->getDayOfWeek();
+        $w = $date->format('w');
+        if ($dow && $dow != $w) {
+            // push date up to the appropriate day of the week
+            $n = 6 - $w;
+            $date->add(new DateInterval("P{$n}D"));
+        }
         $q = $em->createQuery('SELECT r FROM '.Rotation::class. ' r
-            JOIN r.task t WHERE t.id = :task_id AND r.start_date <= :date ORDER BY r.start_date DESC
-        ')
+            JOIN r.task t WHERE t.id = :task_id AND r.start_date <= :date
+            ORDER BY r.start_date DESC')
             ->setMaxResults(1)
             ->setParameters(['date'=>$date, 'task_id' => $task->getId()])
             ->useResultCache(true);
         $rotation = $q->getOneOrNullResult();
         if (!$rotation) { return null; }
         $members = $rotation->getMembers();
+        // DEBUG City!
+        // if ($rotation->getId() == 14) {
+        //     $j = 0;
+        //     printf("rotation id is: %d\n",$rotation->getId());
+        //     foreach ($members as $m) {
+        //         printf("\n===============\n$j: %s in position %d\n",$m->getPerson()->getFirstName(), $m->getOrder());
+        //         $j++;
+        //     }
+        // }
         $monday = $this->getMondayPreceding($date);
         $start_date = $this->getMondayPreceding($rotation->getStartDate());
-        // DEBUG
-        // printf(
-        //     "\nmonday is %s; start is %s",$monday->format('D d-M-Y'),$start_date->format('D d-M-Y')
-        // );
         $diff = $monday->diff($start_date);
         $weeks = $diff->format('%a') / 7;
         $i = $weeks % $members->count();
-        //printf("\nweeks is $weeks, \$i is %s\n",$i);
-        $person = null;
-        foreach($members as $m) {
-            if ($m->getOrder() == $i) {
-                $person = $m->getPerson();
-                break;
-            }
-        }
 
-        return $person;
+        return $members[$i]->getPerson();
     }
-/*
-        $diff = $monday_preceeding_date->diff($monday_preceeding_start);
-        $weeks = $diff->format('%a') / 7;
-        $names = json_decode($rotation->rotation);
-        $i = $weeks % count($names);
-        return ['who' => $names[$i],'when' =>  $monday_preceeding_date , 'rotation' => $names];
-
-
- */
 
 /*
 SELECT t.name, p.firstname, m.* FROM people p JOIN task_rotation_members m ON p.id = m.person_id

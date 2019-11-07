@@ -49,8 +49,12 @@ foreach ($this->container as $page) :
              $active = false;
          endif;
 
-        ?><a <?php if ($child->id): printf('id="%s" ',$child->id); endif;?>title="<?php if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; ?>" href="<?php echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
-    <?php endforeach; ?>
+        ?><a <?php if ($child->id): printf('id="%s" ',$child->id); endif;?>title="<?php
+            if ($child->title): echo $child->title; endif ?>" class="dropdown-item<?php if ($active): ?> active<?php endif; ?>" href="<?php
+                echo $child->getHref() ?>"><?php echo $child->getLabel() ?></a>
+    <?php
+        if ($child->divider) : ?><div class="dropdown-divider"></div><?php endif;
+    endforeach; ?>
     </div>
 </li>
 <?php endif; ?>

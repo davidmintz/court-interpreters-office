@@ -6,7 +6,7 @@ use InterpretersOffice\Entity\Person;
 use PHPUnit\Framework\TestCase;
 
 /**
- * runs against our mysql dev database
+ * depends on our mysql dev database, ergo doesn't work without out it
  */
 class RotationEntityTest extends TestCase
 {
@@ -36,14 +36,12 @@ class RotationEntityTest extends TestCase
              }
              $this->em->remove($task);
              $this->em->flush();
-            // echo "\nsetup() removed task '$task_name'\n";
         }
     }
 
 
     public function testCreateTask()
     {
-        //$this->assertTrue(true); return;
         $repo = $this->em->getRepository(Entity\Rotation::class);
         $count = $repo->count([]);
         $task = new Entity\Task();
@@ -69,7 +67,7 @@ class RotationEntityTest extends TestCase
 
         $this->assertEquals(++$count, $repo->count([]));
 
-        return $task;
+        //return $task;
 
     }
     /**
@@ -105,8 +103,39 @@ class RotationEntityTest extends TestCase
         $repo = $this->em->getRepository(Entity\Rotation::class);
         $example_date = new DateTime('2019-10-25');
         $actual = $repo->getAssignedPerson($task,$example_date);
-        // printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
         $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
         $this->assertEquals("Mirta",$actual['default']->getFirstName());
+    }
+
+    public function testGetDefaultSaturdayVictim()
+    {
+        $task = $this->em->createQuery('SELECT t FROM '.Entity\Task::class. ' t WHERE t.name LIKE :name')
+            ->setParameters(['name'=>'%saturday%'])->getOneOrNullResult();
+        $this->assertTrue($task instanceof Entity\Task);
+        $repo = $this->em->getRepository(Entity\Rotation::class);
+        $example_date = new \DateTime('2019-11-06');
+        $default = $repo->getDefaultAssignedPerson($task,$example_date);
+        $this->assertEquals("Erika",$default->getFirstName());
+
+    }
+
+    public function testGetActualSaturdayVictimWhenSubstitutionOccurs()
+    {
+        $task = $this->em->createQuery('SELECT t FROM '.Entity\Task::class. ' t WHERE t.name LIKE :name')
+            ->setParameters(['name'=>'%saturday%'])->getOneOrNullResult();
+
+        $repo = $this->em->getRepository(Entity\Rotation::class);
+        $example_date = new DateTime('2019-11-02');
+        $actual = $repo->getAssignedPerson($task,$example_date);
+        //printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
+        $this->assertEquals("Mirta",$actual['default']->getFirstName());
+        $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
+
+        $example_date = new DateTime('2019-10-30');
+        $actual = $repo->getAssignedPerson($task,$example_date);
+        //printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
+        $this->assertEquals("Mirta",$actual['default']->getFirstName());
+        $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
+
     }
 }

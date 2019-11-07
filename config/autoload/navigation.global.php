@@ -200,6 +200,13 @@ return [
                 'title' => 'main admin page',
                 'order' => -10,
                 'resource' => Admin\IndexController::class,
+                // 'pages' => [
+                //     [
+                //         'label' => 'overview',
+                //         'route' => 'admin',
+                //         'title' => 'main admin page',
+                //     ]
+                // ]
             ],
             [
                 'label' => 'schedule',
@@ -213,16 +220,6 @@ return [
                 'resource' => Admin\EventsController::class,
 
             ],
-            // [
-            //     'label' => 'add event',
-            //     'route' => 'events/add',
-            //     'route_matches'=>[
-            //         'events/add',
-            //     ],
-            //     'title' => 'create a new event on the schedule',
-            //     'resource' => Admin\EventsController::class,
-            //     'privilege' => 'add',
-            // ],
             [
                 'label' => 'search',
                 'route' => 'search',

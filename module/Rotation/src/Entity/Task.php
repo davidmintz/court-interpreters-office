@@ -46,6 +46,7 @@ class Task
      */
     private $description = '';
 
+
     /**
      * permitted values for frequency, duration
      * @var array
@@ -71,6 +72,14 @@ class Task
      * @var string
      */
     private $duration;
+
+    /**
+     * day of week
+     *
+     * @ORM\Column(type="smallint",nullable=true,options={"unsigned":true})
+     * @var int
+     */
+    private $day_of_week;
 
     /**
      * rotations
@@ -181,10 +190,42 @@ class Task
         return $this;
     }
 
+    /**
+     * gets frequency
+     *
+     * @return string
+     */
     public function getFrequency() : string
     {
         return $this->frequency;
     }
+
+    /**
+     * gets day_of_week
+     *
+     * @return int ranging from 1 - 7
+     */
+    public function getDayOfWeek() : ?int
+    {
+        return $this->day_of_week;
+    }
+
+    /**
+     * sets day of week
+     * @param  int  $dow
+     * @throws \InvalidArgumentException
+     * @return Task
+     */
+    public function setDayOfWeek(int $dow) : Task
+    {
+        if (! in_array($dow,range(0,6))) {
+            throw new \InvalidArgumentException("invalid value for day_of_week: $dow");
+        }
+        $this->day_of_week = $dow;
+
+        return $this;
+    }
+
     /**
      * Get description.
      *

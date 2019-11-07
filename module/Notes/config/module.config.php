@@ -6,7 +6,7 @@ use Zend\Router\Http\Segment;
 use Zend\Router\Http\Method;
 
 return [
-    
+
     'doctrine' => [
         'driver' => [
             'application_annotation_driver' => [
@@ -32,7 +32,9 @@ return [
                     [
                         'label' => 'manage',
                         'route'   => 'notes',
+                        'route_matches' => ['notes'],
                         'title' => 'view, edit, add, delete notes',
+                        'divider' => true,
                     ],
                     [
                         'label' => 'MOTD',
@@ -48,14 +50,6 @@ return [
                     ],
                 ]
             ],
-            'tools' => [
-                 'pages' => [
-                     [
-                         'label' => 'notes',
-                         'uri' => '#',
-                     ],
-                 ],
-             ],
         ],
         'admin_breadcrumbs' =>  [
             [
