@@ -701,10 +701,28 @@ CREATE TABLE `rotations` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `task_id` smallint(5) unsigned DEFAULT NULL,
   `start_date` date NOT NULL,
-  `rotation` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_D19D71198DB60186` (`task_id`),
   CONSTRAINT `FK_D19D71198DB60186` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `task_rotation_members`
+--
+
+DROP TABLE IF EXISTS `task_rotation_members`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `task_rotation_members` (
+  `rotation_id` smallint(5) unsigned NOT NULL,
+  `person_id` smallint(5) unsigned NOT NULL,
+  `rotation_order` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`rotation_id`,`person_id`),
+  KEY `IDX_FEC6F7C4326CE1FB` (`rotation_id`),
+  KEY `IDX_FEC6F7C4217BBB47` (`person_id`),
+  CONSTRAINT `FK_FEC6F7C4217BBB47` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`),
+  CONSTRAINT `FK_FEC6F7C4326CE1FB` FOREIGN KEY (`rotation_id`) REFERENCES `rotations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -720,7 +738,10 @@ CREATE TABLE `tasks` (
   `name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `description` varchar(400) COLLATE utf8_unicode_ci NOT NULL,
   `duration` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  `frequency` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
+  `day_of_week` smallint(5) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -809,4 +830,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-30 16:26:08
+-- Dump completed on 2019-11-08  9:48:17
