@@ -6,10 +6,7 @@ use InterpretersOffice\Entity\Person;
 use PHPUnit\Framework\TestCase;
 
 /**
- * crude initial test to prove Doctrine wiring is OK
- *
- * should not be run against dev database unless you want to delete whatever
- * task-rotation data happens to be in there
+ * depends on our mysql dev database, ergo doesn't work without out it
  */
 class RotationEntityTest extends TestCase
 {
@@ -23,14 +20,23 @@ class RotationEntityTest extends TestCase
 
     public function setUp()
     {
-        // mysql development database
-        $this->em = require __DIR__.'/../../../config/doctrine-bootstrap.php';
-        // sqlite test database
-        //$this->em = require __DIR__.'/../../InterpretersOffice/test/config/bootstrap.php';
-        $this->em->createQuery('DELETE '.Entity\RotationMember::class. ' m')->getResult();
-        $this->em->createQuery('DELETE '.Entity\Rotation::class. ' r')->getResult();
-        $this->em->createQuery('DELETE '.Entity\Task::class. ' t')->getResult();
 
+        $task_name = 'Some Shit';
+        $this->em = require __DIR__.'/../../../config/doctrine-bootstrap.php';
+        $task = $this->em->createQuery('SELECT t FROM ' .Entity\Task::class. ' t WHERE t.name = :name')
+        ->setParameters(['name'=>$task_name])->getOneOrNullResult();
+        if ($task) {
+            $rotations = $this->em->createQuery('SELECT r FROM '.Entity\Rotation::class. ' r
+             JOIN r.task t WHERE t.name = :name')->setParameters(['name'=>$task_name])
+             ->getResult();
+             if ($rotations) {
+                 foreach($rotations as $r) {
+                    $this->em->remove($r);
+                 }
+             }
+             $this->em->remove($task);
+             $this->em->flush();
+        }
     }
 
 
@@ -39,9 +45,9 @@ class RotationEntityTest extends TestCase
         $repo = $this->em->getRepository(Entity\Rotation::class);
         $count = $repo->count([]);
         $task = new Entity\Task();
-        $task->setName('schedule management')
+        $task->setName('Some Shit')
             ->setDescription('bla bla')
-            ->setDuration('WEEK');
+            ->setDuration('WEEK')->setFrequency('WEEK');
         $rotation = new Entity\Rotation();
         $rotation->setStartDate(new \DateTime('2015-05-18'))->setTask($task);
 
@@ -51,14 +57,85 @@ class RotationEntityTest extends TestCase
             $person = $person_repo->find($id);
             $member->setPerson($person)->setRotation($rotation)->setOrder($order);
             $rotation->addMember($member);
+            $this->em->persist($member);
         }
-
+        $task->addRotation($rotation);
         $em = $this->em;
         $em->persist($rotation);
         $em->persist($task);
         $em->flush();
 
         $this->assertEquals(++$count, $repo->count([]));
+
+        //return $task;
+
+    }
+    /**
+     *
+     *
+     */
+    public function testGetDefaultSchedulingVictim()
+    {
+        $task = $this->em->createQuery('SELECT t FROM '.Entity\Task::class. ' t WHERE t.name LIKE :name')
+            ->setParameters(['name'=>'%scheduling%'])->getOneOrNullResult();
+        $this->assertTrue($task instanceof Entity\Task);
+        $repo = $this->em->getRepository(Entity\Rotation::class);
+        $example_date = new \DateTime('2019-11-06');
+        $assigned = $repo->getDefaultAssignedPerson($task,$example_date);
+        $this->assertTrue(is_object($assigned),"expected \$assigned to be object, got ".gettype($assigned));
+        $this->assertTrue($assigned instanceof Person, "expected instance of Person, got ".get_class($assigned));
+        $this->assertEquals("Paula",$assigned->getFirstName(),'expected "Paula", got '.$assigned->getFirstName());
+        //printf("\ndate %s, assigned: %s\n",$example_date->format('D d-M-Y'),$assigned->getFirstName());
+        // Mirta is default, Humberto is sub
+        $example_date = new DateTime('2019-10-25');
+        $default = $repo->getDefaultAssignedPerson($task,$example_date);
+        //printf("\ndate %s; default: %s\n",$example_date->format('D d-M-Y'),$default->getFirstName());
+        $example_date = new DateTime('2019-10-25');
+        $actual = $repo->getAssignedPerson($task,$example_date);
+        // printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
+    }
+
+    public function testGetActualSchedulingVictimWhenSubstitutionOccurs()
+    {
+        $task = $this->em->createQuery('SELECT t FROM '.Entity\Task::class. ' t WHERE t.name LIKE :name')
+            ->setParameters(['name'=>'%scheduling%'])->getOneOrNullResult();
+
+        $repo = $this->em->getRepository(Entity\Rotation::class);
+        $example_date = new DateTime('2019-10-25');
+        $actual = $repo->getAssignedPerson($task,$example_date);
+        $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
+        $this->assertEquals("Mirta",$actual['default']->getFirstName());
+    }
+
+    public function testGetDefaultSaturdayVictim()
+    {
+        $task = $this->em->createQuery('SELECT t FROM '.Entity\Task::class. ' t WHERE t.name LIKE :name')
+            ->setParameters(['name'=>'%saturday%'])->getOneOrNullResult();
+        $this->assertTrue($task instanceof Entity\Task);
+        $repo = $this->em->getRepository(Entity\Rotation::class);
+        $example_date = new \DateTime('2019-11-06');
+        $default = $repo->getDefaultAssignedPerson($task,$example_date);
+        $this->assertEquals("Erika",$default->getFirstName());
+
+    }
+
+    public function testGetActualSaturdayVictimWhenSubstitutionOccurs()
+    {
+        $task = $this->em->createQuery('SELECT t FROM '.Entity\Task::class. ' t WHERE t.name LIKE :name')
+            ->setParameters(['name'=>'%saturday%'])->getOneOrNullResult();
+
+        $repo = $this->em->getRepository(Entity\Rotation::class);
+        $example_date = new DateTime('2019-11-02');
+        $actual = $repo->getAssignedPerson($task,$example_date);
+        //printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
+        $this->assertEquals("Mirta",$actual['default']->getFirstName());
+        $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
+
+        $example_date = new DateTime('2019-10-30');
+        $actual = $repo->getAssignedPerson($task,$example_date);
+        //printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
+        $this->assertEquals("Mirta",$actual['default']->getFirstName());
+        $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
 
     }
 }

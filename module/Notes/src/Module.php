@@ -90,7 +90,13 @@ class Module {
         $route = $event->getRouteMatch()->getMatchedRouteName();
         $render_markdown = 'notes/edit' != $route;
         $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
-
+        $config = $container->get('config');
+        $rotation_config = $config['rotation'] ?? null;
+        if ($rotation_config) {
+            $log->debug("found configuration for displaying rotation in mot[dw]: "
+            .print_r($rotation_config,true));
+            /** @todo now get the current rotation-assignments and inject into view */
+        }
         if ($session->settings) { // inject Notes config from session into view
             $this->viewModel->note_settings = $session->settings;
             $settings = $session->settings;

@@ -46,6 +46,23 @@ class Task
      */
     private $description = '';
 
+
+    /**
+     * permitted values for frequency, duration
+     * @var array
+     */
+    private $values = ['DAY', 'WEEK', 'MONTH'];
+
+    /**
+     * frequency
+     *
+     * How frequently task-assignment recurs. This can be one of:
+     * 'DAY', 'WEEK', 'MONTH'
+     * @ORM\Column(type="string",nullable=false,length=5)
+     * @var string
+     */
+    private $frequency;
+
     /**
      * duration
      *
@@ -57,8 +74,16 @@ class Task
     private $duration;
 
     /**
+     * day of week
+     *
+     * @ORM\Column(type="smallint",nullable=true,options={"unsigned":true})
+     * @var int
+     */
+    private $day_of_week;
+
+    /**
      * rotations
-     * @ORM\OneToMany(targetEntity="Rotation",mappedBy="task")
+     * @ORM\OneToMany(targetEntity="Rotation",mappedBy="task",cascade={"persist"})
      * @var Rotation[]
      */
     private $rotations;
@@ -133,12 +158,70 @@ class Task
      * Set duration.
      *
      * @param string $description
-     *
+     * @throws \InvalidArgumentException
      * @return Task
      */
-    public function setDuration($duration) : Task
+    public function setDuration(string $duration) : Task
     {
+        if (! in_array($duration,$this->values)) {
+            throw new \InvalidArgumentException(
+                "invalid duration $duration, must be one of 'DAY','WEEK', or 'MONTH'");
+        }
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    /**
+     * Sets frequency.
+     *
+     * @param string $frequency
+     * @throws \InvalidArgumentException
+     * @return Task
+     */
+    public function setFrequency(string $frequency) : Task
+    {
+        if (! in_array($frequency,$this->values)) {
+            throw new \InvalidArgumentException(
+                "invalid duration $frequency, must be one of 'DAY','WEEK', or 'MONTH'");
+        }
+        $this->frequency = $frequency;
+
+        return $this;
+    }
+
+    /**
+     * gets frequency
+     *
+     * @return string
+     */
+    public function getFrequency() : string
+    {
+        return $this->frequency;
+    }
+
+    /**
+     * gets day_of_week
+     *
+     * @return int ranging from 1 - 7
+     */
+    public function getDayOfWeek() : ?int
+    {
+        return $this->day_of_week;
+    }
+
+    /**
+     * sets day of week
+     * @param  int  $dow
+     * @throws \InvalidArgumentException
+     * @return Task
+     */
+    public function setDayOfWeek(int $dow) : Task
+    {
+        if (! in_array($dow,range(0,6))) {
+            throw new \InvalidArgumentException("invalid value for day_of_week: $dow");
+        }
+        $this->day_of_week = $dow;
 
         return $this;
     }

@@ -32,7 +32,7 @@ class Rotation
     /**
      * task
      *
-     * @ORM\ManyToOne(targetEntity="Task",inversedBy="rotations")
+     * @ORM\ManyToOne(targetEntity="Task",inversedBy="rotations",cascade={"persist"})
      * @var Task
      */
     private $task;
@@ -46,7 +46,8 @@ class Rotation
     private $start_date;
 
     /**
-     * @ORM\OneToMany(targetEntity="RotationMember",mappedBy="rotation",cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="RotationMember",mappedBy="rotation",cascade={"persist","remove"},orphanRemoval=true)
+     * @ORM\OrderBy({"order"="ASC"})
      *
      * @var ArrayCollection
      */
