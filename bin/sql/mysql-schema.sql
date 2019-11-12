@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.7.27, for Linux (x86_64)
+-- MySQL dump 10.16  Distrib 10.1.41-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.27-0ubuntu0.18.04.1
+-- Server version	10.1.41-MariaDB-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -701,10 +701,28 @@ CREATE TABLE `rotations` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `task_id` smallint(5) unsigned DEFAULT NULL,
   `start_date` date NOT NULL,
-  `rotation` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_D19D71198DB60186` (`task_id`),
   CONSTRAINT `FK_D19D71198DB60186` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `task_rotation_members`
+--
+
+DROP TABLE IF EXISTS `task_rotation_members`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `task_rotation_members` (
+  `rotation_id` smallint(5) unsigned NOT NULL,
+  `person_id` smallint(5) unsigned NOT NULL,
+  `rotation_order` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`rotation_id`,`person_id`),
+  KEY `IDX_FEC6F7C4326CE1FB` (`rotation_id`),
+  KEY `IDX_FEC6F7C4217BBB47` (`person_id`),
+  CONSTRAINT `FK_FEC6F7C4217BBB47` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`),
+  CONSTRAINT `FK_FEC6F7C4326CE1FB` FOREIGN KEY (`rotation_id`) REFERENCES `rotations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -720,7 +738,10 @@ CREATE TABLE `tasks` (
   `name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `description` varchar(400) COLLATE utf8_unicode_ci NOT NULL,
   `duration` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  `frequency` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
+  `day_of_week` smallint(5) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -772,21 +793,23 @@ DROP TABLE IF EXISTS `view_locations`;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE VIEW `view_locations` AS SELECT 
- 1 AS `id`,
- 1 AS `type_id`,
- 1 AS `parent_location_id`,
- 1 AS `name`,
- 1 AS `comments`,
- 1 AS `active`,
- 1 AS `parent`,
- 1 AS `category`*/;
+/*!50001 CREATE TABLE `view_locations` (
+  `id` tinyint NOT NULL,
+  `type_id` tinyint NOT NULL,
+  `parent_location_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `comments` tinyint NOT NULL,
+  `active` tinyint NOT NULL,
+  `parent` tinyint NOT NULL,
+  `category` tinyint NOT NULL
+) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
 --
 -- Final view structure for view `view_locations`
 --
 
+/*!50001 DROP TABLE IF EXISTS `view_locations`*/;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -809,4 +832,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-30 16:26:08
+-- Dump completed on 2019-11-12 14:08:21

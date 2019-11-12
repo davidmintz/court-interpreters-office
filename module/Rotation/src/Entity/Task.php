@@ -61,7 +61,7 @@ class Task
      * @ORM\Column(type="string",nullable=false,length=5)
      * @var string
      */
-    private $frequency;
+    private $frequency = 'WEEK';
 
     /**
      * duration
