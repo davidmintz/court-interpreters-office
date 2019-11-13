@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * SDNY judge screen-scraper for node.js
  *
@@ -6,7 +8,6 @@
  * data.
  *
  */
-
 const axios = require("axios");
 const jsdom = require("jsdom");
 const https = require("https");
