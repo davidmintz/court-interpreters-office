@@ -45,9 +45,13 @@ const parse_judge_info = function(url){
                 var courthouse, courtroom, match;
                 elements.forEach(function(el){
                     var text = el.textContent.trim();
-                    match = text.match(/courtroom:? *(\S+)\s+/i);
+                    match = text.match(/courtroom:? *([a-z0-9-]+)\s+/i);
                     if (match) {
                         courtroom = match[1];
+                        if (url.includes('goldberg')) {
+                            console.error("courtroom match: "+courtroom);
+                            console.error(text);
+                        }
                     }
                     match = text.match(/(500 Pearl|40 Foley|White Plains)/);
                     if (match) {
