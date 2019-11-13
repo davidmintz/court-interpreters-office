@@ -70,6 +70,7 @@ class Module {
         $session = new Container('notes');
         //$session->settings = null;
         if (! $is_xhr && 'schedule' == $this->viewModel->action) {
+            // take the date from the currently-displayed schedule
             $children = $this->viewModel->getChildren();
             if (count($children)) {
                 $view = $children[0];
@@ -90,13 +91,7 @@ class Module {
         $route = $event->getRouteMatch()->getMatchedRouteName();
         $render_markdown = 'notes/edit' != $route;
         $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
-        $config = $container->get('config');
-        $rotation_config = $config['rotation'] ?? null;
-        if ($rotation_config) {
-            $log->debug("found configuration for displaying rotation in mot[dw]: "
-            .print_r($rotation_config,true));
-            /** @todo now get the current rotation-assignments and inject into view */
-        }
+
         if ($session->settings) { // inject Notes config from session into view
             $this->viewModel->note_settings = $session->settings;
             $settings = $session->settings;
@@ -122,6 +117,32 @@ class Module {
             $this->viewModel->note_settings = $defaults;
             $session->settings = $defaults;
             //$log->debug(print_r($defaults,true));
+        }
+
+        $config = $container->get('config');
+        $rotation_config = $config['rotation'] ?? null;
+        if ($rotation_config && isset($rotation_config['display_rotating_assignments'])) {
+            $log->debug("found config for displaying rotation in mot[dw]: "
+            .print_r($rotation_config,true)); //,[ 'date' => $defaults['date ']);
+            $display = $rotation_config['display_rotating_assignments'];
+            foreach (['motd','motw'] as $note) {
+
+            }
+            /** @todo now get the current rotation-assignments and inject into view */
+            /*[display_rotating_assignments] => Array
+        (
+            [motd] => Array
+                (
+                    [0] => 2
+                )
+
+            [motw] => Array
+                (
+                    [0] => 1
+                )
+
+                )
+            */
         }
         // maybe move this block up, and return early if it's true?
         if (__NAMESPACE__ == $this->viewModel->module) {
