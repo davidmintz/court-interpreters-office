@@ -18,6 +18,7 @@ use Zend\Filter;
 use InterpretersOffice\Entity;
 
 use Parsedown;
+use Zend\Filter\HtmlEntities;
 
 /**
  * manages MOTW|MOTDs
@@ -43,6 +44,13 @@ class NotesService
      * @var MOTDRepository
      */
     private $noteRepository;
+
+    /**
+     * htmlentity filter
+     *
+     * @var Filter\HtmlEntities
+     */
+    private $htmlentity_filter;
 
     /**
      * session settings
@@ -107,6 +115,20 @@ class NotesService
         $this->user = $auth->getIdentity();
     }
 
+    /**
+     * escapes $content
+     *
+     * @return string
+     */
+    private function escape(string $content) : string
+    {
+        if (! $this->htmlentity_filter) {
+            $this->htmlentity_filter = new Filter\HtmlEntities();
+        }
+
+        return $this->htmlentity_filter->filter($content);
+    }
+
     public function getInputFilter() : InputFilter
     {
 
@@ -139,7 +161,7 @@ class NotesService
                     ],
                     'filters' => [
                         [ 'name' => Filter\StringTrim::class,],
-                        [ 'name' => Filter\StripTags::class,],
+                        //[ 'name' => Filter\StripTags::class,],
                         // strip trailing spaces before line break, and use css for
                         // linebreaks within block-level elements
                         ['name' => Filter\PregReplace::class,
@@ -295,7 +317,7 @@ class NotesService
             'message'=> "This $type has been modified by another process in the time since you loaded this form."];
         }
         $user = $this->em->getRepository(Entity\User::class)->find($this->user->id);
-        $entity->setContent($data['content'])
+        $entity->setContent($this->escape($data['content']))
             ->setModifiedBy($user)
             ->setModified(new DateTime());
         $this->em->flush();
@@ -310,7 +332,7 @@ class NotesService
         $entity = new $class;
         $user = $this->em->getRepository(Entity\User::class)->find($this->user->id);
         $now = new DateTime();
-        $entity->setContent($data['content'])
+        $entity->setContent($this->escape($data['content']))
             ->setCreated($now)
             ->setDate(new DateTime($data['date']))
             ->setCreatedBy($user)
@@ -380,7 +402,7 @@ class NotesService
         if (! $this->parseDown) {
             $this->parseDown = new Parsedown();
         }
-        // return nl2br($this->parseDown->text($content));
+
         return $this->parseDown->text($content);
 
     }
