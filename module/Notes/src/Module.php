@@ -122,8 +122,8 @@ class Module {
         $config = $container->get('config');
         $rotation_config = $config['rotation'] ?? null;
         if ($rotation_config && isset($rotation_config['display_rotating_assignments'])) {
-            $log->debug("found config for displaying rotation in mot[dw]: "
-            .print_r($rotation_config,true)); //,[ 'date' => $defaults['date ']);
+            $log->debug("found config for displaying rotation in mot[dw], date is "
+                . ($default_date ?: date('Y-m-d') ) );
             $display = $rotation_config['display_rotating_assignments'];
             foreach (['motd','motw'] as $note) {
 
