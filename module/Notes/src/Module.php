@@ -66,7 +66,7 @@ class Module {
         $log = $container->get('log');
         $log->debug("here's Johnny! ".__METHOD__);
         $is_xhr = $event->getRequest()->isXMLHttpRequest();
-        $default_date = null;
+        $default_date = date('Y-m-d');
         $session = new Container('notes');
         // if they are loading the schedule, non-xhr...
         if (! $is_xhr && 'schedule' == $this->viewModel->action) {
@@ -90,9 +90,11 @@ class Module {
         $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
         $render_notes = false;
         if ($session->settings) { // inject Notes configuration and data from session into view
+            $session->settings['date'] = $default_date;
             $this->viewModel->note_settings = $session->settings;
             $settings = $session->settings;
-            $date = new \DateTime($settings['date']);
+            // $date = new \DateTime($settings['date']);
+            $date = new \DateTime($default_date);
             if (! $is_xhr) {
                 // we eager-load this into the view because we know we will need it
                 if ($settings['motd']['visible'] && $settings['motw']['visible']) {
