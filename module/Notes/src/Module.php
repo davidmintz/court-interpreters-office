@@ -54,8 +54,6 @@ class Module {
     /**
      * initializes MOTD, MOTW (a/k/a Notes) on MvcEvent::EVENT_RENDER
      *
-     * @todo move some or all of this into the Service class ?
-     *
      * @param  EventInterface $event
      */
     public function initialize(EventInterface $event) {
@@ -68,7 +66,7 @@ class Module {
         $log = $container->get('log');
         $log->debug("here's Johnny! ".__METHOD__);
         $is_xhr = $event->getRequest()->isXMLHttpRequest();
-        $default_date = null;
+        $default_date = date('Y-m-d');
         $session = new Container('notes');
         // if they are loading the schedule, non-xhr...
         if (! $is_xhr && 'schedule' == $this->viewModel->action) {
@@ -90,16 +88,21 @@ class Module {
         $route = $event->getRouteMatch()->getMatchedRouteName();
         $render_markdown = 'notes/edit' != $route;
         $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
+        $render_notes = false;
         if ($session->settings) { // inject Notes configuration and data from session into view
+            $session->settings['date'] = $default_date;
             $this->viewModel->note_settings = $session->settings;
             $settings = $session->settings;
-            $date = new \DateTime($settings['date']);
+            // $date = new \DateTime($settings['date']);
+            $date = new \DateTime($default_date);
             if (! $is_xhr) {
                 // we eager-load this into the view because we know we will need it
                 if ($settings['motd']['visible'] && $settings['motw']['visible']) {
+                    $render_notes = true;
                     $log->debug("fetching both motd and motw for {$settings['date']}");
                     $this->viewModel->setVariables($service->getAllForDate($date, $render_markdown));
                 } elseif ($settings['motd']['visible'] xor $settings['motw']['visible']) {
+                    $render_notes = true;
                     foreach (['motd','motw']  as $type) {
                         if ($settings[$type]['visible']) {
                             $this->viewModel->$type = $service->getNoteByDate($date,$type, $render_markdown);
@@ -107,6 +110,65 @@ class Module {
                             break;
                         }
                     }
+                    /*
+                    //should we inject task-rotation stuff?
+                    $config = $container->get('config');
+                    $rotation_config = $config['rotation'] ?? null;
+                    if ($render_notes && $rotation_config && isset($rotation_config['display_rotating_assignments'])) {
+                        $log->debug("found config for displaying rotation in mot[dw], date is "
+                            . ($default_date ?: date('Y-m-d') ) );
+                        $task_config = $rotation_config['display_rotating_assignments'];
+                        foreach (['motd','motw'] as $note_type) {
+                            if (!$settings[$note_type]['visible']) {
+                                $log->debug("$note_type display is off, moving on...");
+                                continue;
+                            }
+                            if (isset($task_config[$note_type])) {
+                                if (! is_array($task_config[$note_type])) {
+                                    throw new \RuntimeException(
+                                        "Invalid configuration for Rotation module. Each entry under 'display_rotating_assignments' should be an array.
+                                        Please check your configuration in module/Rotation/config/config.json or through the web interface"
+                                    );
+                                }
+                                foreach($task_config[$note_type] as $task_id) {
+                                    $date = $default_date ?: date('Y-m-d');
+                                    $log->debug("need to fetch assignment for task id $task_id for $note_type");
+                                    // this definitely needs to be factored out
+                                    $repo = $container->get('entity-manager')
+                                        ->getRepository(\InterpretersOffice\Admin\Rotation\Entity\Task::class);
+                                    $task = $repo->find($task_id);
+                                    if (! $task) {
+                                        $log->warn("task id not found",['method'=>__METHOD__,]);
+                                    } else {
+                                        $shit = $repo->getAssignedPerson($task, new \DateTime($date));
+                                        $log->debug(
+                                            sprintf(
+                                                'task is %s; assigned: %s; default: %s',
+                                                    $task->getName(),
+                                                    $shit['assigned']->getFirstName(),
+                                                    $shit['default']->getFirstName()
+                                                )
+                                        );
+                                    }
+                                }
+                            }
+                        }*/
+                        /** @todo now get the current rotation-assignments and inject into view */
+                        /*[display_rotating_assignments] => Array
+                    (
+                        [motd] => Array
+                            (
+                                [0] => 2
+                            )
+
+                        [motw] => Array
+                            (
+                                [0] => 1
+                            )
+
+                            )
+                        */
+                    //}
 
                 } else { $log->debug("fetched neither motd nor motw for {$settings['date']}");}
                 $service->setSession($session);
@@ -118,8 +180,9 @@ class Module {
             $defaults['date'] = $default_date ?: date('Y-m-d');
             $this->viewModel->note_settings = $defaults;
             $session->settings = $defaults;
-
+            //$log->debug(print_r($defaults,true));
         }
+
 
         // maybe move this block up, and return early if it's true?
         if (__NAMESPACE__ == $this->viewModel->module) {
