@@ -36,12 +36,25 @@ class Module {
      */
     public function onBootstrap(EventInterface $event)
     {
-        // $log = $event->getApplication()->getServiceManager()->get('log');
-        // $log->debug("welcome to ".__NAMESPACE__);
-        // $config = $event->getApplication()->getServiceManager()->get('config');
-        // $debug = print_r($config['rotations'],true);
-        // $log->debug($debug);
+        $container =  $event->getApplication()->getMvcEvent()->getApplication()
+            ->getServiceManager();
+        $auth = $container->get('auth');
+        if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
+            $viewModel = $event->getApplication()->getMvcEvent()
+                ->getViewModel();
+            $viewModel->notes_enabled = true; // by default
+            $this->viewModel = $viewModel;
+            $eventManager = $event->getApplication()->getEventManager();
+            $eventManager->attach(MvcEvent::EVENT_RENDER,[$this,'initialize'],10);
+        }
 
     }
 
+    public function initialize(EventInterface $event)
+    {
+        $container =  $event->getApplication()->getMvcEvent()->getApplication()
+            ->getServiceManager();
+        $log = $container->get('log');
+        $log->debug("here's Johnny! ".__METHOD__);
+    }
 }

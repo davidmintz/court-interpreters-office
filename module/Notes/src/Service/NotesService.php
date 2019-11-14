@@ -288,8 +288,6 @@ class NotesService
     /**
      * updates MOT[DW]
      *
-     * work in progress. still need to check modification timestamp.
-     *
      * @param  string $type MOTD|MOTW
      * @param  int    $id
      * @param  Array  $data

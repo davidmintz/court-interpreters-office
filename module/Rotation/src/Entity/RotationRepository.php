@@ -56,7 +56,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         return $date;
     }
     /**
-     * gets default and substitute Person entities assigned to $task on $date
+     * gets default and assigned Person entities assigned to $task on $date
      *
      * @param  Task     $task
      * @param  DateTime $date
