@@ -21,13 +21,6 @@ class Module {
         return include __DIR__.'/../config/module.config.php';
     }
 
-    /*
-     * ViewModel
-     *
-     * @var ViewModel
-     */
-    //private $viewModel;
-
     /**
      * onBootstrap listener
      *
@@ -40,25 +33,15 @@ class Module {
             ->getServiceManager();
         $auth = $container->get('auth');
         if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
-            $viewModel = $event->getApplication()->getMvcEvent()
-                ->getViewModel();
-            $viewModel->notes_enabled = true; // by default
-            $this->viewModel = $viewModel;
-            // $eventManager = $event->getApplication()->getEventManager();
-            // $eventManager->attach(MvcEvent::EVENT_RENDER,[$this,'initialize'],10);
             $log = $container->get('log');
-
             $event->getApplication()->getEventManager()->getSharedManager()
-            // $container->get('SharedEventManager')
-            ->attach(
-                'Notes','NOTES_RENDER',[$this,'initialize']
-            );
-            $log->debug("shit has been attached!");
+                ->attach('Notes','NOTES_RENDER',[$this,'initialize']);
+            $log->debug("attached NOTES_RENDER listener in ".__METHOD__);
         }
-
     }
+
     /**
-     * possibly stupid idea...
+     * possibly foolish idea...
      *
      * @param  EventInterface $event
      * @return void
@@ -68,9 +51,9 @@ class Module {
         $event = $event->getParam('event');
         $container =  $event->getApplication()->getServiceManager();
         $log = $container->get('log');
+        $log->debug("here's Johnny in ".__METHOD__);
         $log->debug("shit was triggered by ".get_class($event->getTarget()));
-        $log->debug("here's Johnny in ".__METHOD__
-        . "! now figure out whether to inject Task stuff into the view");
+        $log->debug("now figure out whether to inject Task stuff into the view");
         $viewModel = $event->getApplication()->getMvcEvent()
             ->getViewModel();
         $log->debug("template? ",['template'=>$viewModel->getTemplate()]);

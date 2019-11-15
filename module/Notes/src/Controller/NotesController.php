@@ -161,7 +161,7 @@ class NotesController extends AbstractRestfulController
      *
      * @return JsonModel|ViewModel
      */
-    public function getByIdAction()
+    public function __getByIdAction()
     {
         $id = $this->params()->fromRoute('id');
         $type =  strtoupper($this->params()->fromRoute('type'));
