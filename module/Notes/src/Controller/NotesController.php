@@ -116,9 +116,6 @@ class NotesController extends AbstractRestfulController
         }
         if ('ALL' != $type) {
             $message = $service->getNoteByDate($date_obj, $type);
-            if ($message) {
-                //$message->setContent((new Parsedown())->text(nl2br($message->getContent())));
-            }
             return new $view_class([$type => $message]);
         } else {
             $messages = $service->getAllForDate($date_obj);
@@ -145,11 +142,6 @@ class NotesController extends AbstractRestfulController
         $route = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $date = $this->notesService->getSession()->settings['date'] ?? date('Y-m-d');
         $notes = $this->notesService->getAllForDate(new \DateTime($date));
-        foreach($notes as $n) {
-            if ($n) {
-                $n->setContent($this->notesService->parseDown($n->getContent()));
-            }
-        }
 
         return ['notes' => $notes,];
     }

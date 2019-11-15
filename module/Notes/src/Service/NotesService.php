@@ -60,6 +60,13 @@ class NotesService
     private $session;
 
     /**
+     * whether to fetch task-assignments with MOT[DW]
+     *
+     * @var book
+     */
+    private $include_task_rotation;
+
+    /**
      * default settings for MOTD|MOTW
      *
      * @var array
@@ -104,15 +111,34 @@ class NotesService
     private $parseDown;
 
     /**
+     * for configuring optional behavior
+     *
+     * @var array
+     */
+    private $options;
+
+    /**
      * constructor
      *
      * @param EntityManagerInterface $em
      * @param AuthService            $auth
+     * @param Array $options
      */
-    public function __construct(EntityManagerInterface $em, AuthService $auth)
+    public function __construct(EntityManagerInterface $em, AuthService $auth, Array $options = [])
     {
         $this->em = $em;
         $this->user = $auth->getIdentity();
+        $this->options = $options;
+    }
+
+    /**
+     * gets options
+     *
+     * @return array
+     */
+    public function getOptions() : Array
+    {
+        return $this->options;
     }
 
     /**
@@ -371,6 +397,9 @@ class NotesService
             $content = $entity->getContent();
             $entity->setContent($this->parsedown($content));
         }
+        if ($this->options['display_rotating_assignments'][strtolower($type)]) {
+            $entity->setTaskAssignments(['shit'=>'somebody']);
+        }
 
         return $entity;
     }
@@ -389,11 +418,21 @@ class NotesService
             foreach ($notes as $type => $entity) {
                 if (! $entity) { continue; }
                 $entity->setContent($this->parsedown($entity->getContent()));
+                if ($this->options['display_rotating_assignments'][$type]) {
+                    $entity->setTaskAssignments(['shit'=>'somebody']);
+                }
             }
         }
+
         return $notes;
     }
 
+    /**
+     * renders markdown as HTML
+     *
+     * @param  string $content
+     * @return string
+     */
     public function parsedown(string $content) : string
     {
         if (! $this->parseDown) {
@@ -401,6 +440,27 @@ class NotesService
         }
 
         return $this->parseDown->text($content);
+    }
 
+    /**
+     * sets $include_task_rotation
+     *
+     * @var bool
+     */
+    public function setIncludeTaskRotation(bool $flag) : NotesService
+    {
+        $this->include_task_rotation = $flag;
+
+        return $this;
+    }
+
+    /**
+     * sets $include_task_rotation flag
+     *
+     * @return bool
+     */
+    public function getIncludeTaskRotation() : bool
+    {
+        return $this->include_task_rotation ? true : false;
     }
 }

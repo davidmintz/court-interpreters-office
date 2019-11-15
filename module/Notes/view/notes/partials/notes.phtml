@@ -2,11 +2,7 @@
 /*
 renders the MOTW and/or MOTW
  */
-if (!$this->display_notes) {
-    //echo "FUCK!";
-    //$this->config['motd']['visible'] = false;
-    //$this->config['motw']['visible'] = false;
-}
+
 $date_obj = new DateTime($this->config['date']);
 $format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
 $motd_cfg = $this->config['motd'];
@@ -22,7 +18,11 @@ $style .= "width:{$size['width']};height:{$size['height']}";
   </button></div>
     <div class="card-body" style="overflow:auto"?><?php
         echo $this->motd ? $this->motd->getContent()
-        : '<span class="no-motd font-italic">No MOTD for this date.</span>'
+        : '<span class="no-motd font-italic">No MOTD for this date.</span>';
+        if ($this->motd && $this->motd->getTaskAssignments()): ?>
+            <pre><?php print_r($this->motd->getTaskAssignments())?></pre>
+            <?php
+        endif;
     ?></div>
     <div class="card-footer">
       <a href="<?php
@@ -56,7 +56,11 @@ endif;
   </button></div>
     <div class="card-body" style="overflow:auto"><?php
         echo $this->motw ? $this->motw->getContent()
-        : '<span class="no-motw font-italic">No MOTW for this date.</span>'
+        : '<span class="no-motw font-italic">No MOTW for this date.</span>';
+        if ($this->motw && $this->motw->getTaskAssignments()): ?>
+            <pre><?php print_r($this->motw->getTaskAssignments())?></pre>
+            <?php
+        endif;
     ?></div>
     <div class="card-footer d-flex align-items-end">
       <a href="<?php  echo $this->motw ?
