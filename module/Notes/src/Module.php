@@ -71,16 +71,19 @@ class Module {
         // if they are loading the schedule, non-xhr...
         if (! $is_xhr && 'schedule' == $this->viewModel->action) {
             // ...then we take the date from the currently-displayed schedule
-            $view =  $this->viewModel->getChildren()[0];
-            if ($view->date) {
-                $default_date = $view->date->format('Y-m-d');
-                if (!$session->settings) {
-                    $session->settings = array_merge(
-                        Service\NotesService::$default_settings,
-                        ['date' => $default_date]
-                    );
-                } else {
-                    $session->settings['date'] = $default_date;
+            $children = $this->viewModel->getChildren();
+            if ($children)  {
+                $view = $children[0];
+                if ($view->date) {
+                    $default_date = $view->date->format('Y-m-d');
+                    if (!$session->settings) {
+                        $session->settings = array_merge(
+                            Service\NotesService::$default_settings,
+                            ['date' => $default_date]
+                        );
+                    } else {
+                        $session->settings['date'] = $default_date;
+                    }
                 }
             }
         }
