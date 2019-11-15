@@ -44,23 +44,36 @@ class Module {
                 ->getViewModel();
             $viewModel->notes_enabled = true; // by default
             $this->viewModel = $viewModel;
-            $eventManager = $event->getApplication()->getEventManager();
-            $eventManager->attach(MvcEvent::EVENT_RENDER,[$this,'initialize'],10);
+            // $eventManager = $event->getApplication()->getEventManager();
+            // $eventManager->attach(MvcEvent::EVENT_RENDER,[$this,'initialize'],10);
+            $log = $container->get('log');
+
+            $event->getApplication()->getEventManager()->getSharedManager()
+            // $container->get('SharedEventManager')
+            ->attach(
+                'Notes','NOTES_RENDER',[$this,'initialize']
+            );
+            $log->debug("shit has been attached!");
         }
 
     }
-
+    /**
+     * possibly stupid idea...
+     *
+     * @param  EventInterface $event
+     * @return void
+     */
     public function initialize(EventInterface $event)
     {
-        $container =  $event->getApplication()->getMvcEvent()->getApplication()
-            ->getServiceManager();
+        $event = $event->getParam('event');
+        $container =  $event->getApplication()->getServiceManager();
         $log = $container->get('log');
+        $log->debug("shit was triggered by ".get_class($event->getTarget()));
         $log->debug("here's Johnny in ".__METHOD__
-        . "! now your job is to figure out whether to inject Task stuff into the view");
+        . "! now figure out whether to inject Task stuff into the view");
         $viewModel = $event->getApplication()->getMvcEvent()
             ->getViewModel();
         $log->debug("template? ",['template'=>$viewModel->getTemplate()]);
-        $log->debug("note settings? ",['note_settings'=>$viewModel->note_settings]);
 
     }
 }
