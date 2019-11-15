@@ -23,7 +23,7 @@ class Module {
 
     /**
      * onBootstrap listener
-     *
+     * @todo decide if we're going to go this way or not. see below.
      * @param  EventInterface $event
      * @return void
      */
@@ -33,15 +33,21 @@ class Module {
             ->getServiceManager();
         $auth = $container->get('auth');
         if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
-            $log = $container->get('log');
             $event->getApplication()->getEventManager()->getSharedManager()
                 ->attach('Notes','NOTES_RENDER',[$this,'initialize']);
+            $log = $container->get('log');
             $log->debug("attached NOTES_RENDER listener in ".__METHOD__);
         }
     }
 
     /**
-     * possibly foolish idea...
+     * Conditionally injects Rotation data into view.
+     *
+     * possibly foolish idea under consideration. Have the Notes module trigger
+     * an event when it renders a MOT[DW]; have a listener inject Rotation (Task)
+     * data into the view to go along. The disadvantage is it won't work for xhr
+     * requests. Might make more sense just to make the NotesService somehow
+     * Rotation-aware.
      *
      * @param  EventInterface $event
      * @return void
@@ -52,7 +58,7 @@ class Module {
         $container =  $event->getApplication()->getServiceManager();
         $log = $container->get('log');
         $log->debug("here's Johnny in ".__METHOD__);
-        $log->debug("shit was triggered by ".get_class($event->getTarget()));
+        $log->debug("shit was triggered");
         $log->debug("now figure out whether to inject Task stuff into the view");
         $viewModel = $event->getApplication()->getMvcEvent()
             ->getViewModel();

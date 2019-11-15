@@ -96,10 +96,9 @@ class Module {
             $session->settings['date'] = $default_date;
             $this->viewModel->note_settings = $session->settings;
             $settings = $session->settings;
-            // $date = new \DateTime($settings['date']);
             $date = new \DateTime($default_date);
             if (! $is_xhr) {
-                // we eager-load this into the view because we know we will need it
+                // eager-load this into the view because we know we will need it
                 if ($settings['motd']['visible'] && $settings['motw']['visible']) {
                     $render_notes = true;
                     $log->debug("fetching both motd and motw for {$settings['date']}");
@@ -109,7 +108,8 @@ class Module {
                     foreach (['motd','motw']  as $type) {
                         if ($settings[$type]['visible']) {
                             $this->viewModel->$type = $service->getNoteByDate($date,$type, $render_markdown);
-                            $log->debug("Notes module bootstrap: we fetched $type for {$settings['date']}: ".gettype($this->viewModel->$type));
+                            $log->debug("Notes module bootstrap: we fetched $type for {$settings['date']}: "
+                                .gettype($this->viewModel->$type));
                             break;
                         }
                     }

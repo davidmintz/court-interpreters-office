@@ -155,24 +155,6 @@ class NotesController extends AbstractRestfulController
     }
 
     /**
-     * gets MOTD or MOTW by date
-     *
-     * // to be continued
-     *
-     * @return JsonModel|ViewModel
-     */
-    public function __getByIdAction()
-    {
-        $id = $this->params()->fromRoute('id');
-        $type =  strtoupper($this->params()->fromRoute('type'));
-        $class = $type == 'MOTD' ? MOTD::class : MOTW::class;
-        $view_class = $this->getRequest()->isXMLHttpRequest() ?
-            JsonModel::class : ViewModel::class;
-
-        return new $view_class(['motd'=>'boink']);
-    }
-
-    /**
      * renders form for MOTD
      *
      */
