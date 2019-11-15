@@ -10,6 +10,7 @@ use InterpretersOffice\Entity\User;
 use DateTime;
 use JsonSerializable;
 
+
 /**
  * Entity class representing MOTD
  *
@@ -129,6 +130,7 @@ class MOTD implements JsonSerializable, NoteInterface
          $data['date'] = $this->getDate()->format('l d-M-Y');
          $data['id'] = $this->id;
          $data['task_assignments'] = $this->getTaskAssignmentsJson();
+
          return $data;
      }
 

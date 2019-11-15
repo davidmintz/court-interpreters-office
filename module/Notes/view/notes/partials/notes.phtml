@@ -20,7 +20,11 @@ $style .= "width:{$size['width']};height:{$size['height']}";
         echo $this->motd ? $this->motd->getContent()
         : '<span class="no-motd font-italic">No MOTD for this date.</span>';
         if ($this->motd && $this->motd->getTaskAssignments()): ?>
-            <pre><?php print_r($this->motd->getTaskAssignments())?></pre>
+            <p class="border-top">
+            <?php foreach ($this->motd->getTaskAssignments() as $task => $assignment) :
+                echo "$task: ",$assignment['assigned']->getFirstName(),'<br>';
+            endforeach ?>
+            </p>
             <?php
         endif;
     ?></div>
