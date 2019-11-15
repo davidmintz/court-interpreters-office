@@ -66,8 +66,9 @@ cat bin/sdny/parent-locations.sql bin/sdny/more-locations.sql | mysql office
 OK;
 
 if [[ ! -z $SCRAPE_JUDGES ]]; then
-    echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
-    /opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
+    #echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
+    #/opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
+    # no more
     OK;
 fi;
 
@@ -115,6 +116,9 @@ bin/sdny/import-requests.php
 OK;
 echo "importing MOTD|MOTW..."
 bin/sdny/motd-import.php
+OK;
+echo "importing tasks and rotations..."
+bin/sdny/import-task-rotation-data.php
 OK;
 echo "success!"
 echo completed at $(date);

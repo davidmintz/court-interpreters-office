@@ -154,14 +154,14 @@ class NotesController extends AbstractRestfulController
         return ['notes' => $notes,];
     }
 
-    /*
+    /**
      * gets MOTD or MOTW by date
      *
-     * // to be continued? or abandoned?
+     * // to be continued
      *
      * @return JsonModel|ViewModel
      */
-    public function __getByIdAction()
+    public function getByIdAction()
     {
         $id = $this->params()->fromRoute('id');
         $type =  strtoupper($this->params()->fromRoute('type'));
