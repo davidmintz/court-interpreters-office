@@ -47,6 +47,9 @@ $(function(){
                     if (res[key]) {
                         var note = res[key];
                         div.children(".card-body").html(note.content);
+                        if (note.task_assignments) {
+                            console.log(note.task_assignments);
+                        }
                         div.data({id:note.id});
                         var edit_btn = div.find(".card-footer a");
                         edit_btn.attr({ href:

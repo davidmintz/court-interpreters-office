@@ -116,9 +116,6 @@ class NotesController extends AbstractRestfulController
         }
         if ('ALL' != $type) {
             $message = $service->getNoteByDate($date_obj, $type);
-            if ($message) {
-                //$message->setContent((new Parsedown())->text(nl2br($message->getContent())));
-            }
             return new $view_class([$type => $message]);
         } else {
             $messages = $service->getAllForDate($date_obj);
@@ -145,31 +142,8 @@ class NotesController extends AbstractRestfulController
         $route = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         $date = $this->notesService->getSession()->settings['date'] ?? date('Y-m-d');
         $notes = $this->notesService->getAllForDate(new \DateTime($date));
-        foreach($notes as $n) {
-            if ($n) {
-                $n->setContent($this->notesService->parseDown($n->getContent()));
-            }
-        }
 
         return ['notes' => $notes,];
-    }
-
-    /**
-     * gets MOTD or MOTW by date
-     *
-     * // to be continued
-     *
-     * @return JsonModel|ViewModel
-     */
-    public function getByIdAction()
-    {
-        $id = $this->params()->fromRoute('id');
-        $type =  strtoupper($this->params()->fromRoute('type'));
-        $class = $type == 'MOTD' ? MOTD::class : MOTW::class;
-        $view_class = $this->getRequest()->isXMLHttpRequest() ?
-            JsonModel::class : ViewModel::class;
-
-        return new $view_class(['motd'=>'boink']);
     }
 
     /**

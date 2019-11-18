@@ -19,9 +19,18 @@ class NotesServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new NotesService(
+        $rotation_cfg = $container->get('config')['rotation'] ?? [];
+        $service = new NotesService(
             $container->get('entity-manager'),
-            $container->get('auth')
+            $container->get('auth'),
+            $rotation_cfg
         );
+        if ($rotation_cfg
+            && isset($rotation_cfg['display_rotating_assignments'])) {
+                $service->setIncludeTaskRotation(true);
+        }
+        //$container->get('log')->debug(sprintf('NotesService has options: %s',print_r($service->getOptions(),true)));
+
+        return $service;
     }
 }

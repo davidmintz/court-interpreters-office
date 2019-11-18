@@ -108,8 +108,10 @@ final class FixtureManager
         $event_entity_listener->setAuth(new FakeAuth());
         $resolver = $entityManager->getConfiguration()->getEntityListenerResolver();
         $resolver->register($listener);
-        $requestEntityListener = $container->get(RequestEntityListener::class);
-        $resolver->register($requestEntityListener);
+        if ($container->has(RequestEntityListener::class)) {
+            $requestEntityListener = $container->get(RequestEntityListener::class);
+            $resolver->register($requestEntityListener);
+        }
         // looks like we need to be authenticated before EventListenerFactory
         // injects auth in ScheduleUpdateManager, hence...
 
