@@ -100,11 +100,11 @@ class Module {
             if (! $is_xhr) {
                 // eager-load this into the view because we know we will need it
                 if ($settings['motd']['visible'] && $settings['motw']['visible']) {
-                    $render_notes = true;
+                    // $render_notes = true;
                     $log->debug("fetching both motd and motw for {$settings['date']}");
                     $this->viewModel->setVariables($service->getAllForDate($date, $render_markdown));
                 } elseif ($settings['motd']['visible'] xor $settings['motw']['visible']) {
-                    $render_notes = true;
+                    // $render_notes = true;
                     foreach (['motd','motw']  as $type) {
                         if ($settings[$type]['visible']) {
                             $this->viewModel->$type = $service->getNoteByDate($date,$type, $render_markdown);
@@ -120,9 +120,9 @@ class Module {
                     // this may be a stupid idea... trigger an event that the Rotation module is observing
                     // so it can inject shit into the view to go with the MOT[DW]. the drawback is that it doesn't
                     // help in the case of xhr calls.
-                    $events = $event->getApplication()->getEventManager();
-                    $events->addIdentifiers(['Notes']);
-                    $events->trigger('NOTES_RENDER','Notes',['event'=>$event]);
+                    // $events = $event->getApplication()->getEventManager();
+                    // $events->addIdentifiers(['Notes']);
+                    // $events->trigger('NOTES_RENDER','Notes',['event'=>$event]);
                 }
                 $service->setSession($session);
             }
