@@ -91,7 +91,7 @@ class Module {
         $route = $event->getRouteMatch()->getMatchedRouteName();
         $render_markdown = 'notes/edit' != $route;
         $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
-        $render_notes = false;
+        //$render_notes = false;
         if ($session->settings) { // inject Notes configuration and data from session into view
             $session->settings['date'] = $default_date;
             $this->viewModel->note_settings = $session->settings;
@@ -110,20 +110,24 @@ class Module {
                             $this->viewModel->$type = $service->getNoteByDate($date,$type, $render_markdown);
                             $log->debug("Notes module bootstrap: we fetched $type for {$settings['date']}: "
                                 .gettype($this->viewModel->$type));
+                            if (!$this->viewModel->$type) :
+                                /** @todo conditionally fetch task data into view */
+                                $log->debug("$type is null, need fetch task data if applicable?");
+                            endif;
                             break;
                         }
                     }
                 } else {
                     $log->debug("fetched neither motd nor motw for {$settings['date']}");
                 }
-                if ($render_notes) {
+                //if ($render_notes) {
                     // this may be a stupid idea... trigger an event that the Rotation module is observing
                     // so it can inject shit into the view to go with the MOT[DW]. the drawback is that it doesn't
                     // help in the case of xhr calls.
                     // $events = $event->getApplication()->getEventManager();
                     // $events->addIdentifiers(['Notes']);
                     // $events->trigger('NOTES_RENDER','Notes',['event'=>$event]);
-                }
+                //}
                 $service->setSession($session);
             }
 
