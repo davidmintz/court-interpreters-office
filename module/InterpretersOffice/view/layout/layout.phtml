@@ -18,7 +18,8 @@ echo $this->headStyle();?>
 <body><?php if ($this->layout()->notes_enabled): // the Notes [a/k/a MOT[DW] feature]?>
     <?php echo $this->partial('notes/partials/notes.phtml',
     ['config'=>$this->layout()->note_settings,
-    'motd'=>$this->motd,'motw'=>$this->motw,
+    'motd'=>$this->motd,
+    'motw'=>$this->motw,
     'display_notes'=> $this->layout()->display_notes === false ? false:true]
     ) ?>
 <?php endif ?>
@@ -60,7 +61,6 @@ echo $this->headStyle();?>
         <script src="<?php echo $this->basePath('js/common.js')?>"></script>
         <script src="<?php echo $this->basePath('js/form-utilities.js')?>"></script>
         <script src="<?php echo $this->basePath('js/nav.js')?>"></script>
-
         <?php
         if ($this->layout()->notes_enabled) :?>
         <script src="<?php echo $this->basePath('js/admin/notes.js')?>"></script>
