@@ -91,7 +91,7 @@ class Module {
         $route = $event->getRouteMatch()->getMatchedRouteName();
         $render_markdown = 'notes/edit' != $route;
         $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
-        //$render_notes = false;
+        $render_notes = false;
         if ($session->settings) { // inject Notes configuration and data from session into view
             $session->settings['date'] = $default_date;
             $this->viewModel->note_settings = $session->settings;
@@ -100,11 +100,11 @@ class Module {
             if (! $is_xhr) {
                 // eager-load this into the view because we know we will need it
                 if ($settings['motd']['visible'] && $settings['motw']['visible']) {
-                    // $render_notes = true;
+                    $render_notes = true;
                     $log->debug("fetching both motd and motw for {$settings['date']}");
                     $this->viewModel->setVariables($service->getAllForDate($date, $render_markdown));
                 } elseif ($settings['motd']['visible'] xor $settings['motw']['visible']) {
-                    // $render_notes = true;
+                    $render_notes = true;
                     foreach (['motd','motw']  as $type) {
                         if ($settings[$type]['visible']) {
                             $this->viewModel->$type = $service->getNoteByDate($date,$type, $render_markdown);
