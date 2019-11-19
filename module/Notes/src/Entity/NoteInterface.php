@@ -13,4 +13,10 @@ interface NoteInterface
 
     public function getDate(): DateTime;
 
+    public function setTaskAssignments(Array $tasks) : object;
+
+    public function getTaskAssignments() : Array ;
+
+    public function  getTaskAssignmentsJson() : string;
+
 }

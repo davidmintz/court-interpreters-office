@@ -9,6 +9,7 @@ use InterpretersOffice\Admin\Notes\Entity\NoteInterface;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
 use InterpretersOffice\Admin\Notes\Entity\MOTW;
 use InterpretersOffice\Admin\Notes\Entity\MOTDRepository;
+use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
 use DateTime;
 use Zend\Session\Container as SessionContainer;
 
@@ -60,6 +61,13 @@ class NotesService
     private $session;
 
     /**
+     * whether to fetch task-assignments with MOT[DW]
+     *
+     * @var book
+     */
+    private $include_task_rotation;
+
+    /**
      * default settings for MOTD|MOTW
      *
      * @var array
@@ -104,15 +112,34 @@ class NotesService
     private $parseDown;
 
     /**
+     * for configuring optional behavior
+     *
+     * @var array
+     */
+    private $options;
+
+    /**
      * constructor
      *
      * @param EntityManagerInterface $em
      * @param AuthService            $auth
+     * @param Array $options
      */
-    public function __construct(EntityManagerInterface $em, AuthService $auth)
+    public function __construct(EntityManagerInterface $em, AuthService $auth, Array $options = [])
     {
         $this->em = $em;
         $this->user = $auth->getIdentity();
+        $this->options = $options;
+    }
+
+    /**
+     * gets options
+     *
+     * @return array
+     */
+    public function getOptions() : Array
+    {
+        return $this->options;
     }
 
     /**
@@ -370,6 +397,9 @@ class NotesService
         if ($entity && $render_markdown) {
             $content = $entity->getContent();
             $entity->setContent($this->parsedown($content));
+            if ($this->options['display_rotating_assignments'][strtolower($type)]) {
+                $this->injectTaskAssignments($entity,$date);
+            }
         }
 
         return $entity;
@@ -389,11 +419,45 @@ class NotesService
             foreach ($notes as $type => $entity) {
                 if (! $entity) { continue; }
                 $entity->setContent($this->parsedown($entity->getContent()));
+                if ($this->options['display_rotating_assignments'][strtolower($type)]) {
+                    $this->injectTaskAssignments($entity,$date);
+                }
             }
         }
+
         return $notes;
     }
 
+    /**
+     * helper to set the task assignment on $entity
+     * 
+     * @param  NoteInterface $entity
+     * @param  DateTime      $date
+     * @return NoteInterface
+     */
+    private function injectTaskAssignments(NoteInterface $entity, DateTime $date) : NoteInterface
+    {
+        /** @var InterpretersOffice\Admin\Rotation\Entity\RotationRepository */
+        $task_repo = $this->em->getRepository('InterpretersOffice\Admin\Rotation\Entity\Rotation');
+        $assignments = [];
+        $type = strstr(get_class($entity),'MOTD') ? 'motd': 'motw';
+        $ids = $this->options['display_rotating_assignments'][$type];
+        foreach ($ids as $task_id) {
+            $task = $this->em->find('InterpretersOffice\Admin\Rotation\Entity\Task',$task_id);
+            $assignment = $task_repo->getAssignedPerson($task, $date);
+            $assignments[$task->getName()] = $assignment;
+        }
+        $entity->setTaskAssignments($assignments);
+
+        return $entity;
+    }
+
+    /**
+     * renders markdown as HTML
+     *
+     * @param  string $content
+     * @return string
+     */
     public function parsedown(string $content) : string
     {
         if (! $this->parseDown) {
@@ -401,6 +465,27 @@ class NotesService
         }
 
         return $this->parseDown->text($content);
+    }
 
+    /**
+     * sets $include_task_rotation
+     *
+     * @var bool
+     */
+    public function setIncludeTaskRotation(bool $flag) : NotesService
+    {
+        $this->include_task_rotation = $flag;
+
+        return $this;
+    }
+
+    /**
+     * sets $include_task_rotation flag
+     *
+     * @return bool
+     */
+    public function getIncludeTaskRotation() : bool
+    {
+        return $this->include_task_rotation ? true : false;
     }
 }
