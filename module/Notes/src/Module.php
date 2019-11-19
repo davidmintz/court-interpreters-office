@@ -116,24 +116,24 @@ class Module {
                 } else {
                     $log->debug("fetched neither motd nor motw for {$settings['date']}");
                 }
-                if ($render_notes) {
-                    // this may be a stupid idea... trigger an event that the Rotation module is observing
-                    // so it can inject shit into the view to go with the MOT[DW]. the drawback is that it doesn't
-                    // help in the case of xhr calls.
-                    $events = $event->getApplication()->getEventManager();
-                    $events->addIdentifiers(['Notes']);
-                    $events->trigger('NOTES_RENDER','Notes',['event'=>$event]);
-                }
+                // if ($render_notes) {
+                //     // this may be a stupid idea... trigger an event that the Rotation module is observing
+                //     // so it can inject shit into the view to go with the MOT[DW]. the drawback is that it doesn't
+                //     // help in the case of xhr calls.
+                //     $events = $event->getApplication()->getEventManager();
+                //     $events->addIdentifiers(['Notes']);
+                //     $events->trigger('NOTES_RENDER','Notes',['event'=>$event]);
+                // }
                 $service->setSession($session);
             }
 
-        } else { // inject default Notes config (and no data) into view
-            //$log->debug("no existing session settings for Notes");
+        } else { // inject default Notes config (and not data) into view
+
             $defaults = Service\NotesService::$default_settings;
             $defaults['date'] = $default_date ?: date('Y-m-d');
             $this->viewModel->note_settings = $defaults;
             $session->settings = $defaults;
-            //$log->debug(print_r($defaults,true));
+
         }
 
 
