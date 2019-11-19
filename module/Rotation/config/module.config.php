@@ -25,6 +25,11 @@ return [
             Controller\IndexController::class => Controller\IndexControllerFactory::class,
         ],
     ],
+    'service_manager' => [
+        'factories' => [
+            Service\TaskRotationService::class => Service\TaskRotationServiceFactory::class,
+        ],
+    ],
     'acl' => [
         'resources' => [
             Controller\IndexController::class => 'InterpretersOffice\Admin\Controller\EventsController',

@@ -1,7 +1,7 @@
 <?php /**  module/Notes/view/notes/partials/notes.phtml  */
 /*
 renders the MOTW and/or MOTW
- */
+*/
 
 $date_obj = new DateTime($this->config['date']);
 $format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
@@ -11,36 +11,29 @@ $size = $motd_cfg['size'];
 $display = $this->display_notes && $motd_cfg['visible'] ? 'flex':'none';
 $style = sprintf($format,$display,$pos['top'],$pos['left']);
 $style .= "width:{$size['width']};height:{$size['height']}";
-if ($this->motd) :
-    $motd_tasks = $this->motd->getTaskAssignments();
-else:
-    $motd_tasks = [];
-endif;
+
 ?>
 <div <?php if ($this->motd): printf(' data-id="%d"',$this->motd->getId()); endif;?>id="motd" class="card" style="<?php echo $style;?>" data-date="<?php echo $date_obj->format('Y-m-d')?>">
     <div class="card-header">MOTD: <?php echo $date_obj->format('D d-M-Y')?><button type="button" class="close" data-hide="motd" aria-label="close">
     <span aria-hidden="true">&times;</span>
   </button></div>
-    <div class="card-body" style="overflow:auto"?><?php
+    <div class="card-body" style="overflow:auto"?>
+        <?php if ($this->assignments && isset($this->assignments['motd'])):
+            ?><div class="border px-2 py-1"><?php
+            foreach($this->assignments['motd'] as $task => $assignment):
+                echo $this->escapeHtml("$task: ");
+                $victim = $this->escapeHtml($assignment['assigned']->getFirstName());
+                $default = $this->escapeHtml($assignment['default']->getFirstName());
+                if ($victim != $default) : ?>
+                    <span style="text-decoration:line-through"><?= $default ?></span>
+                    <?php
+                endif;
+                echo "$victim<br>";
+            endforeach;
+            ?></div><?php
+        endif;
         echo $this->motd ? $this->motd->getContent()
         : '<span class="no-motd font-italic">No MOTD for this date.</span>';
-        //--------------------------------------------
-        ?>
-        <div <?php if (! $motd_tasks): ?>style:"display:none"<?php endif?>class="motd-tasks">
-            <?php
-            if ($motd_tasks): foreach($motd_tasks as $task => $assignment):
-                echo $this->escapeHtml($task), ': ';
-                if ($assignment['assigned'] != $assignment['default']) :
-                    ?><span style="text-decoration:line-through"><?php
-                        echo $this->escapeHtml($assignment['default']->getFirstName());
-                    ?></span> <?php
-                endif;
-                echo $this->escapeHtml($assignment['assigned']->getFirstName());
-            endforeach; endif;
-            ?>
-        </div>
-
-        <?php //--------------------------------------------
     ?></div>
     <div class="card-footer">
       <a href="<?php
@@ -72,13 +65,23 @@ endif;
     <div class="card-header">MOTW: <?php echo $monday->format('D d-M-Y') ?><button type="button" class="close" data-hide="motw" aria-label="close">
     <span aria-hidden="true">&times;</span>
   </button></div>
-    <div class="card-body" style="overflow:auto"><?php
+    <div class="card-body" style="overflow:auto">
+    <?php if ($this->assignments && isset($this->assignments['motw'])):
+        ?><div class="border px-2 py-1"><?php
+        foreach($this->assignments['motw'] as $task => $assignment):
+            echo $this->escapeHtml("$task: ");
+            $victim = $this->escapeHtml($assignment['assigned']->getFirstName());
+            $default = $this->escapeHtml($assignment['default']->getFirstName());
+            if ($victim != $default) : ?>
+                <span style="text-decoration:line-through"><?= $default ?></span>
+                <?php
+            endif;
+            echo "$victim<br>";
+        endforeach;
+        ?></div><?php
+    endif;
         echo $this->motw ? $this->motw->getContent()
         : '<span class="no-motw font-italic">No MOTW for this date.</span>';
-        if ($this->motw && $this->motw->getTaskAssignments()): ?>
-            <pre><?php //print_r($this->motw->getTaskAssignments())?></pre>
-            <?php
-        endif;
     ?></div>
     <div class="card-footer d-flex align-items-end">
       <a href="<?php  echo $this->motw ?

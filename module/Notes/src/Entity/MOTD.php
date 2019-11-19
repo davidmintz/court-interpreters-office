@@ -20,7 +20,6 @@ use JsonSerializable;
  */
 class MOTD implements JsonSerializable, NoteInterface
 {
-    use TaskAssignmentTrait;
 
     /**
      * entity id.
@@ -129,7 +128,6 @@ class MOTD implements JsonSerializable, NoteInterface
             $this->getModified()->format('D d-M-Y g:i a') : null;
          $data['date'] = $this->getDate()->format('l d-M-Y');
          $data['id'] = $this->id;
-         $data['task_assignments'] = $this->getTaskAssignmentsJson();
 
          return $data;
      }

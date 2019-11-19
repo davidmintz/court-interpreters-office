@@ -19,8 +19,6 @@ use DateTime;
 class MOTW implements \JsonSerializable, NoteInterface
 {
 
-    use TaskAssignmentTrait;
-
     /**
      * entity id.
      *
@@ -128,7 +126,6 @@ class MOTW implements \JsonSerializable, NoteInterface
             $this->getModifiedBy()->getUserName() : null;
          $data['modified'] = $this->getModified() ?
             $this->getModified()->format('D d-M-Y g:i a') : null;
-         $data['task_assignments'] = $this->getTaskAssignmentsJson();
 
          return $data;
      }

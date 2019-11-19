@@ -47,7 +47,28 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $cache->deleteAll();
     }
 
-    public function getMondayPreceding(DateTime $date) {
+    public function getTask($id)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('t, r, m, p')->from(Task::class, 't')
+        ->join('t.rotations','r')
+        ->leftJoin('r.members','m')
+        ->leftJoin('m.person','p')
+        ->where('t.id = :id')
+        ->setParameters(['id'=>$id]);
+        $q = $qb->getQuery()->useResultCache(true);
+
+        return $q->getOneOrNullResult();
+    }
+
+    /**
+     * helper to rewind date back to preceding Monday
+     *
+     * @param  DateTime $date
+     * @return Date
+     */
+    public function getMondayPreceding(DateTime $date) : DateTime
+    {
         $dow = (int)$date->format('N');
         if (1 == $dow) { return $date; }
         $interval = sprintf('P%sD',$dow - 1);
@@ -55,6 +76,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
 
         return $date;
     }
+
     /**
      * gets default and assigned Person entities assigned to $task on $date
      *
@@ -76,7 +98,8 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
             $date->add(new DateInterval("P{$n}D"));
         }
         $q = $this->getEntityManager()->createQuery(
-            'SELECT s FROM '.Substitution::class. ' s
+            'SELECT s, p, h FROM '.Substitution::class. ' s
+            LEFT JOIN s.person p LEFT JOIN p.hat h
             WHERE s.task = :task AND s.date = :date'
         )   ->useResultCache(true)
             ->setParameters(compact('task','date'));
@@ -110,8 +133,12 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
             $n = 6 - $w;
             $date->add(new DateInterval("P{$n}D"));
         }
-        $q = $em->createQuery('SELECT r FROM '.Rotation::class. ' r
-            JOIN r.task t WHERE t.id = :task_id AND r.start_date <= :date
+        //, p, h, role LEFT JOIN m.person p LEFT JOIN p.hat h LEFT JOIN h.role role
+        $q = $em->createQuery('SELECT r, t, m, p FROM '.Rotation::class. ' r
+            JOIN r.task t
+            LEFT JOIN r.members m
+            LEFT JOIN m.person p
+            WHERE t.id = :task_id AND r.start_date <= :date
             ORDER BY r.start_date DESC')
             ->setMaxResults(1)
             ->setParameters(['date'=>$date, 'task_id' => $task->getId()])

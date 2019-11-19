@@ -29,41 +29,65 @@ class Module {
      */
     public function onBootstrap(EventInterface $event)
     {
-        // $container =  $event->getApplication()->getMvcEvent()->getApplication()
-        //     ->getServiceManager();
-        // $auth = $container->get('auth');
-        // if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
-        //     $event->getApplication()->getEventManager()->getSharedManager()
-        //         ->attach('Notes','NOTES_RENDER',[$this,'initialize']);
-        //     $log = $container->get('log');
-        //     $log->debug("attached NOTES_RENDER listener in ".__METHOD__);
-        // }
+        $container =  $event->getApplication()->getMvcEvent()->getApplication()
+            ->getServiceManager();
+        $auth = $container->get('auth');
+        if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
+            $event->getApplication()->getEventManager()->getSharedManager()
+                ->attach('Notes','NOTES_RENDER',[$this,'initializeView']);
+            $log = $container->get('log');
+            $log->debug("attached NOTES_RENDER listener in ".__METHOD__);
+        }
     }
 
     /**
      * Conditionally injects Rotation data into view.
      *
-     * possibly foolish idea under consideration. Have the Notes module trigger
-     * an event when it renders a MOT[DW]; have a listener inject Rotation (Task)
-     * data into the view to go along. The disadvantage is it won't work for xhr
-     * requests. Might make more sense just to make the NotesService somehow
-     * Rotation-aware.
+     * Listener for NOTES_RENDER (MOT[DW]) inject s Rotation (Task)
+     * data into the view. The disadvantage is it won't work for xhr
+     * requests.  or does it?
      *
      * @param  EventInterface $event
      * @return void
      */
-    public function initialize(EventInterface $event)
+    public function initializeView(EventInterface $e)
     {
-        // $event = $event->getParam('event');
-        // $container =  $event->getApplication()->getServiceManager();
-        // $log = $container->get('log');
-        // $log->debug("here's Johnny in ".__METHOD__);
-        // $log->debug("shit was triggered");
-        // $log->debug("now figure out whether to inject Task stuff into the view");
-        // $viewModel = $event->getApplication()->getMvcEvent()
+
+        $mvcEvent = $e->getParam('event');
+        $date = $e->getParam('date');
+        $settings = $e->getParam('settings');
+        $container =  $mvcEvent->getApplication()->getServiceManager();
+        $log = $container->get('log');
+        $log->debug("here's Johnny in ".__METHOD__ . " where shit was triggered");
+        $log->debug("inject Task stuff into the view?");
+        // $viewModel = $mvcEvent->getApplication()->getMvcEvent()
         //     ->getViewModel();
         // $log->debug("template? ",['template'=>$viewModel->getTemplate()]);
-
+        $rotation_config = $container->get('config')['rotation'] ?? null;
+        if (! $rotation_config or !isset($rotation_config['display_rotating_assignments'])) {
+            $log->debug("no task-rotation config, returning");
+            return;
+        }
+        $note_types = [];
+        foreach (['motd','motw'] as $type) {
+            if ($settings[$type]['visible']) {
+                $note_types[] = $type;
+            }
+        }
+        $service = $container->get(Service\TaskRotationService::class);
+        $assignment_notes = $service->getAssignmentsForNotes($note_types,$date);
+        if ($assignment_notes) {
+            $log->debug(count($assignment_notes) . ' assignment notes found');
+            $viewModel = $mvcEvent->getApplication()->getMvcEvent()->getViewModel();
+            $viewModel->assignment_notes = $assignment_notes;
+            // $view = $viewModel->getChildren()[0] ?? null;
+            // if ($view) {
+            //     $view->assignment_notes = $assignment_notes;
+            //     $log->warn("FUCK? shit was assigned to ".$view->getTemplate());
+            // } else {
+            //     $log->warn("FUCK?");
+            // }
+        }
     }
 }
 /*
