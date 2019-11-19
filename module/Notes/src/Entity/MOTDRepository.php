@@ -57,7 +57,6 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
         return [
             'motd' => $this->findByDate($date,'MOTD'),
             'motw' => $this->findByDate($date,'MOTW'),
-
         ];
     }
 

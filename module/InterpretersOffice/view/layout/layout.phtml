@@ -19,7 +19,7 @@ echo $this->headStyle();?>
     <?php echo $this->partial('notes/partials/notes.phtml',
     ['config'=>$this->layout()->note_settings,
     'motd'=>$this->motd,
-    'motw'=>$this->motw,
+    'motw'=>$this->motw, 'assignments' => $this->assignment_notes,
     'display_notes'=> $this->layout()->display_notes === false ? false:true]
     ) ?>
 <?php endif ?>
