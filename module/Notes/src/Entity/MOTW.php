@@ -19,8 +19,6 @@ use DateTime;
 class MOTW implements \JsonSerializable, NoteInterface
 {
 
-    use TaskAssignmentTrait;
-
     /**
      * entity id.
      *

@@ -29,15 +29,15 @@ class Module {
      */
     public function onBootstrap(EventInterface $event)
     {
-        $container =  $event->getApplication()->getMvcEvent()->getApplication()
-            ->getServiceManager();
-        $auth = $container->get('auth');
-        if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
-            $event->getApplication()->getEventManager()->getSharedManager()
-                ->attach('Notes','NOTES_RENDER',[$this,'initialize']);
-            $log = $container->get('log');
-            $log->debug("attached NOTES_RENDER listener in ".__METHOD__);
-        }
+        // $container =  $event->getApplication()->getMvcEvent()->getApplication()
+        //     ->getServiceManager();
+        // $auth = $container->get('auth');
+        // if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
+        //     $event->getApplication()->getEventManager()->getSharedManager()
+        //         ->attach('Notes','NOTES_RENDER',[$this,'initialize']);
+        //     $log = $container->get('log');
+        //     $log->debug("attached NOTES_RENDER listener in ".__METHOD__);
+        // }
     }
 
     /**
@@ -54,15 +54,17 @@ class Module {
      */
     public function initialize(EventInterface $event)
     {
-        $event = $event->getParam('event');
-        $container =  $event->getApplication()->getServiceManager();
-        $log = $container->get('log');
-        $log->debug("here's Johnny in ".__METHOD__);
-        $log->debug("shit was triggered");
-        $log->debug("now figure out whether to inject Task stuff into the view");
-        $viewModel = $event->getApplication()->getMvcEvent()
-            ->getViewModel();
-        $log->debug("template? ",['template'=>$viewModel->getTemplate()]);
+        // forget it
+        return;
+        // $event = $event->getParam('event');
+        // $container =  $event->getApplication()->getServiceManager();
+        // $log = $container->get('log');
+        // $log->debug("here's Johnny in ".__METHOD__);
+        // $log->debug("shit was triggered");
+        // $log->debug("now figure out whether to inject Task stuff into the view");
+        // $viewModel = $event->getApplication()->getMvcEvent()
+        //     ->getViewModel();
+        // $log->debug("template? ",['template'=>$viewModel->getTemplate()]);
 
     }
 }

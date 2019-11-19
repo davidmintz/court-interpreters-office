@@ -20,7 +20,6 @@ use JsonSerializable;
  */
 class MOTD implements JsonSerializable, NoteInterface
 {
-    use TaskAssignmentTrait;
 
     /**
      * entity id.

@@ -1,7 +1,7 @@
 <?php /**  module/Notes/view/notes/partials/notes.phtml  */
 /*
 renders the MOTW and/or MOTW
- */
+*/
 
 $date_obj = new DateTime($this->config['date']);
 $format = 'z-index:1000;display:%s;position:absolute;top:%s;left:%s;';
@@ -19,14 +19,6 @@ $style .= "width:{$size['width']};height:{$size['height']}";
     <div class="card-body" style="overflow:auto"?><?php
         echo $this->motd ? $this->motd->getContent()
         : '<span class="no-motd font-italic">No MOTD for this date.</span>';
-        if ($this->motd && $this->motd->getTaskAssignments()): ?>
-            <p class="border-top">
-            <?php foreach ($this->motd->getTaskAssignments() as $task => $assignment) :
-                echo "$task: ",$assignment['assigned']->getFirstName(),'<br>';
-            endforeach ?>
-            </p>
-            <?php
-        endif;
     ?></div>
     <div class="card-footer">
       <a href="<?php
@@ -61,10 +53,6 @@ endif;
     <div class="card-body" style="overflow:auto"><?php
         echo $this->motw ? $this->motw->getContent()
         : '<span class="no-motw font-italic">No MOTW for this date.</span>';
-        if ($this->motw && $this->motw->getTaskAssignments()): ?>
-            <pre><?php print_r($this->motw->getTaskAssignments())?></pre>
-            <?php
-        endif;
     ?></div>
     <div class="card-footer d-flex align-items-end">
       <a href="<?php  echo $this->motw ?

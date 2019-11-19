@@ -397,9 +397,7 @@ class NotesService
         if ($entity && $render_markdown) {
             $content = $entity->getContent();
             $entity->setContent($this->parsedown($content));
-            if ($this->options['display_rotating_assignments'][strtolower($type)]) {
-                $this->injectTaskAssignments($entity,$date);
-            }
+
         }
 
         return $entity;
@@ -419,38 +417,13 @@ class NotesService
             foreach ($notes as $type => $entity) {
                 if (! $entity) { continue; }
                 $entity->setContent($this->parsedown($entity->getContent()));
-                if ($this->options['display_rotating_assignments'][strtolower($type)]) {
-                    $this->injectTaskAssignments($entity,$date);
-                }
+
             }
         }
 
         return $notes;
     }
 
-    /**
-     * helper to set the task assignment on $entity
-     * 
-     * @param  NoteInterface $entity
-     * @param  DateTime      $date
-     * @return NoteInterface
-     */
-    private function injectTaskAssignments(NoteInterface $entity, DateTime $date) : NoteInterface
-    {
-        /** @var InterpretersOffice\Admin\Rotation\Entity\RotationRepository */
-        $task_repo = $this->em->getRepository('InterpretersOffice\Admin\Rotation\Entity\Rotation');
-        $assignments = [];
-        $type = strstr(get_class($entity),'MOTD') ? 'motd': 'motw';
-        $ids = $this->options['display_rotating_assignments'][$type];
-        foreach ($ids as $task_id) {
-            $task = $this->em->find('InterpretersOffice\Admin\Rotation\Entity\Task',$task_id);
-            $assignment = $task_repo->getAssignedPerson($task, $date);
-            $assignments[$task->getName()] = $assignment;
-        }
-        $entity->setTaskAssignments($assignments);
-
-        return $entity;
-    }
 
     /**
      * renders markdown as HTML
