@@ -55,8 +55,11 @@ class TaskRotationService
             $result[$type] = [];
             foreach($display_config[$type] as $task_id) {
                 $task = $repo->getTask($task_id);
-                $assignment = $repo->getAssignedPerson($task, $date);
-                $result[$type][$task->getName()] = $assignment;
+                /** @todo if this is going to be like this, log a warning */
+                if ($task) {
+                    $assignment = $repo->getAssignedPerson($task, $date);
+                    $result[$type][$task->getName()] = $assignment;
+                }
             }
         }
 
