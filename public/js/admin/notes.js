@@ -43,19 +43,36 @@ $(function(){
                 console.log(`now trying to get ${type} for ${div.data().date}`);
                 $.get(`/admin/notes/date/${div.data().date}/${type}`)
                 .then((res)=>{
+
                     var key = type.toUpperCase();
                     if (res[key]) {
                         var note = res[key];
                         div.children(".card-body").html(note.content);
-                        if (note.task_assignments) {
-                            console.log(note.task_assignments);
-                        }
                         div.data({id:note.id});
                         var edit_btn = div.find(".card-footer a");
                         edit_btn.attr({ href:
                             `${window.basePath}/admin/notes/edit/${type}/${note.id}/date/${div.data('date')}`
                         });
-                    } // else {console.debug(`hmm, still no ${type}`);}
+                    }
+                    if (res.assignment_notes) {
+                        var html = "";
+                        var assignments = res.assignment_notes[type];
+                        Object.keys(assignments).forEach(
+                            task => {
+                                html += `${task}: `;
+                                var assigned = assignments[task].assigned;
+                                var $default  = assignments[task]["default"];
+                                if (assigned !== $default) {
+                                    html += `<span style="text-decoration:line-through">${$default}</span> `;
+                                }
+                                html += `${assigned}<br>`;
+                            }
+                        );
+                        div.children(".card-body").prepend(
+                            `<div class="border px-2 py-1 mt-0 mb-1">${html}</div>`
+                        );
+                    }
+
                     div.slideDown(()=>link.text("hide "+type.toUpperCase()));
                 }).fail(fail);
             } else {
