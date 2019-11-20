@@ -15,19 +15,19 @@ const STAFF_COURT_INTERPRETER = 1;
 
 $tasks = [
     SATURDAY_DUTY => [
-        'Saturday duty','','DAY','WEEK'
+        'Saturday duty','','DAY','WEEK',6
     ],
     SCHEDULING_MANAGER => [
-        'Scheduling','','WEEK','WEEK'
+        'Scheduling','','WEEK','WEEK',null
     ],
 ];
 // populate "tasks" table
-$sql = 'INSERT INTO tasks (id, name, description, duration, frequency) VALUES (:id,:name,:description,:duration, :frequency)';
+$sql = 'INSERT INTO tasks (id, name, description, duration, frequency, day_of_week) VALUES (:id,:name,:description,:duration, :frequency, :day_of_week)';
 $task_ins = $db->prepare($sql);
 foreach ($tasks as $id => $data) {
     try {
         $params = ['id'=>$id, 'name'=>$data[0],'description'=>$data[1],
-          'frequency'=>$data[2], 'duration'=>$data[3]  ];
+        'duration'=>$data[2], 'frequency'=>$data[3], 'day_of_week'=>$data[4] ];
         $task_ins->execute($params);
     } catch (\PDOException $e) {
         if (23000 != $e->getCode()) {
