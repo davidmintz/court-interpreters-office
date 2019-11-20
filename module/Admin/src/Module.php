@@ -103,6 +103,7 @@ class Module
         }
         $db_writer = $container->get(DbWriter::class);
         $log = $container->get('log');
+        $log->debug("\n----------------------------------------\n");
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function($e) use ($log,$db_writer){
             $log->addWriter($db_writer);
@@ -219,6 +220,7 @@ class Module
             $session->last_access = time();
         }
     }
+
     /**
      * checks authorization
      *
@@ -297,8 +299,7 @@ class Module
     public function getRedirectionResponse(MvcEvent $event)
     {
         $container = $event->getApplication()->getServiceManager();
-        $log = $container->get('log');
-        $log->debug("this is ".__METHOD__);
+        $log = $container->get('log')->debug("this is ".__METHOD__);
         $response = $event->getResponse();
         $baseUrl = $event->getRequest()->getBaseurl();
         $response->getHeaders()

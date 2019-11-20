@@ -7,6 +7,7 @@ use Zend\EventManager\EventInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\View\ViewModel;
 use Zend\Session\Container;
+use Zend\View\Model\JsonModel;
 use function \date;
 /**
  * Module class for our InterpretersOffice\Admin\Rotation module.
@@ -33,10 +34,15 @@ class Module {
             ->getServiceManager();
         $auth = $container->get('auth');
         if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
+
             $event->getApplication()->getEventManager()->getSharedManager()
-                ->attach('Notes','NOTES_RENDER',[$this,'initializeView']);
+                ->attach('Notes','NOTES_RENDER',
+                [
+                // $this,
+                $service = $container->get(Service\TaskRotationService::class),
+                'initializeView']);
             $log = $container->get('log');
-            $log->debug("attached NOTES_RENDER listener in ".__METHOD__);
+            $log->warn("we have attached NOTES_RENDER listener in ".__METHOD__);
         }
     }
 
@@ -55,11 +61,9 @@ class Module {
 
         $mvcEvent = $e->getParam('event');
         $date = $e->getParam('date');
-        $settings = $e->getParam('settings');
         $container =  $mvcEvent->getApplication()->getServiceManager();
         $log = $container->get('log');
         $log->debug("heeeeeeeeere's Johnny in ".__METHOD__ . " where shit was triggered");
-        $log->debug("inject Task stuff into the view?");
         $rotation_config = $container->get('config')['rotation'] ?? null;
         if (! $rotation_config or !isset($rotation_config['display_rotating_assignments'])) {
             $log->debug("no task-rotation config, returning");
@@ -67,20 +71,26 @@ class Module {
         }
         $note_types = $e->getParam('note_types',[]);
         if (! $note_types) {
+            $settings = $e->getParam('settings');
             foreach (['motd','motw'] as $type) {
                 if ($settings[$type]['visible']) {
                     $note_types[] = $type;
                 }
             }
         }
-        
+
         $service = $container->get(Service\TaskRotationService::class);
         $assignment_notes = $service->getAssignmentsForNotes($note_types,$date);
         if ($assignment_notes) {
             $log->debug(count($assignment_notes) . ' assignment notes found');
-            $viewModel = $mvcEvent->getApplication()->getMvcEvent()->getViewModel();
-            //$log->debug("WTF? \$viewModel is a ".get_class($viewModel));
-            $viewModel->assignment_notes = $assignment_notes;
+            $view = $e->getParam('view') ?:
+                $mvcEvent->getApplication()->getMvcEvent()->getViewModel();
+            if ($view instanceof JsonModel) {
+                $log->debug("HA! need to inject JSON data");
+                $view->assignment_notes = json_encode(['foo' => 'boink']);
+            } else {
+                $view->assignment_notes = $assignment_notes;
+            }
         }
     }
 }

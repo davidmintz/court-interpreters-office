@@ -61,11 +61,19 @@ class Module {
         if (! $event->getRouteMatch()) {
             return;
         }
+        $is_xhr = $event->getRequest()->isXMLHttpRequest();
+        // maybe move this block up, and return early if it's true?
+        if (__NAMESPACE__ == $this->viewModel->module) {
+            // if we're in the Notes admin area, don't display
+            $event->getApplication()->getMvcEvent()
+                ->getViewModel()->display_notes = false;
+            return;
+        }
         $container =  $event->getApplication()->getMvcEvent()->getApplication()
             ->getServiceManager();
         $log = $container->get('log');
         $log->debug("here's Johnny! ".__METHOD__);
-        $is_xhr = $event->getRequest()->isXMLHttpRequest();
+
         $default_date = date('Y-m-d');
         $session = new Container('notes');
         // if they are loading the schedule, non-xhr...
@@ -90,7 +98,7 @@ class Module {
         $service = $container->get(Service\NotesService::class);
         $route = $event->getRouteMatch()->getMatchedRouteName();
         $render_markdown = 'notes/edit' != $route;
-        $log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
+        //$log->debug("$route is our route. render markdown? ".($render_markdown ? "true":"false"));
         $render_notes = false;
         if ($session->settings) { // inject Notes configuration and data from session into view
             $session->settings['date'] = $default_date;
@@ -117,12 +125,13 @@ class Module {
                     $log->debug("fetched neither motd nor motw for {$settings['date']}");
                 }
                 if ($render_notes) {
+                    $log->warn("\$render_notes: TRUE, triggering NOTES_RENDER in ".__METHOD__);
                     // i.e., we are rendering a view that includes MOT[DW]
                     // and so give the Rotations listener an opportunity
                     $events = $event->getApplication()->getEventManager();
                     $events->addIdentifiers(['Notes']);
                     $events->trigger('NOTES_RENDER','Notes',compact('event','date','settings'));
-                }
+                } else { $log->debug("\$render_notes is deemed to be FALSE");}
                 $service->setSession($session);
             }
 
@@ -137,10 +146,10 @@ class Module {
 
 
         // maybe move this block up, and return early if it's true?
-        if (__NAMESPACE__ == $this->viewModel->module) {
-            // if we're in the Notes admin area, don't display
-            $event->getApplication()->getMvcEvent()
-                ->getViewModel()->display_notes = false;
-        }
+        // if (__NAMESPACE__ == $this->viewModel->module) {
+        //     // if we're in the Notes admin area, don't display
+        //     $event->getApplication()->getMvcEvent()
+        //         ->getViewModel()->display_notes = false;
+        // }
     }
 }
