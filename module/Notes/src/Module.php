@@ -13,6 +13,7 @@ use function \date;
  * Module class for our InterpretersOffice\Admin\Notes module.
  */
 class Module {
+    
     /**
      * returns this module's configuration.
      * @return array
@@ -62,13 +63,7 @@ class Module {
             return;
         }
         $is_xhr = $event->getRequest()->isXMLHttpRequest();
-        // maybe move this block up, and return early if it's true?
-        if (__NAMESPACE__ == $this->viewModel->module) {
-            // if we're in the Notes admin area, don't display
-            $event->getApplication()->getMvcEvent()
-                ->getViewModel()->display_notes = false;
-            // return true;
-        }
+
         $container =  $event->getApplication()->getMvcEvent()->getApplication()
             ->getServiceManager();
         $log = $container->get('log');
@@ -139,15 +134,13 @@ class Module {
             $defaults['date'] = $default_date ?: date('Y-m-d');
             $this->viewModel->note_settings = $defaults;
             $session->settings = $defaults;
-
         }
 
-
         // maybe move this block up, and return early if it's true?
-        // if (__NAMESPACE__ == $this->viewModel->module) {
-        //     // if we're in the Notes admin area, don't display
-        //     $event->getApplication()->getMvcEvent()
-        //         ->getViewModel()->display_notes = false;
-        // }
+        if (__NAMESPACE__ == $this->viewModel->module) {
+            // if we're in the Notes admin area, don't display
+            $event->getApplication()->getMvcEvent()
+                ->getViewModel()->display_notes = false;
+        }
     }
 }
