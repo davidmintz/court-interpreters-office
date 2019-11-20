@@ -116,11 +116,26 @@ class NotesController extends AbstractRestfulController
         }
         if ('ALL' != $type) {
             $message = $service->getNoteByDate($date_obj, $type);
-            return new $view_class([$type => $message]);
+            $return = new $view_class([$type => $message]);
         } else {
             $messages = $service->getAllForDate($date_obj);
-            return new $view_class($messages);
+            $return = new $view_class($messages);
         }
+        $events = $this->getEventManager();
+        /** @todo addIdentifiers() just once e.g., in an onBootstrap */
+        $events->addIdentifiers(['Notes']);
+        //---------------------------------
+        // nice try
+        $this->getEvent()->getApplication()->getServiceManager()->get('log')->debug('triggering NOTES_RENDER in NotesController');
+        $note_types = $type == 'ALL' ? ['motd','motw'] : [strtolower($type)];
+        $events->trigger('NOTES_RENDER','Notes',[
+            'date' => new \DateTime($date),
+            'event' => $this->getEvent(),
+            'settings' => $service->getSession()->settings,
+            'note_types' => $note_types,
+        ]);
+
+        return $return;
     }
 
     public function updateSettingsAction()
