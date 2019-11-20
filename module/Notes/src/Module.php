@@ -67,7 +67,7 @@ class Module {
             // if we're in the Notes admin area, don't display
             $event->getApplication()->getMvcEvent()
                 ->getViewModel()->display_notes = false;
-            return;
+            // return true;
         }
         $container =  $event->getApplication()->getMvcEvent()->getApplication()
             ->getServiceManager();
@@ -121,9 +121,7 @@ class Module {
                             break;
                         }
                     }
-                } else {
-                    $log->debug("fetched neither motd nor motw for {$settings['date']}");
-                }
+                } //else {$log->debug("fetched neither motd nor motw for {$settings['date']}");}
                 if ($render_notes) {
                     $log->warn("\$render_notes: TRUE, triggering NOTES_RENDER in ".__METHOD__);
                     // i.e., we are rendering a view that includes MOT[DW]
