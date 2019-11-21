@@ -23,6 +23,7 @@ return [
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => Controller\IndexControllerFactory::class,
+            Controller\RestController::class => Controller\IndexControllerFactory::class,
         ],
     ],
     'service_manager' => [
@@ -33,7 +34,19 @@ return [
     'acl' => [
         'resources' => [
             Controller\IndexController::class => 'InterpretersOffice\Admin\Controller\EventsController',
+            Controller\RestController::class => null,
         ],
+        'deny' => [
+            'manager' => [
+                Controller\RestController::class => null,
+                Controller\IndexController::class => null,
+            ],
+        ],
+        'allow' => [
+            'manager' => [
+                Controller\IndexController::class => ['index','view'],
+            ]
+        ]
     ],
     'navigation' => [
         'admin_breadcrumbs' => [
@@ -52,8 +65,8 @@ return [
                             [
                                 'label' => 'create',
                                 'route' => 'task/create'
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -85,6 +98,7 @@ return [
                             ],
                         ],
                     ],
+                    // for the form presentation
                     'create' => [
                         'type' => Segment::class,
                         'options' => [
@@ -94,14 +108,12 @@ return [
                             ],
                         ],
                     ],
-                ]
+                ],
             ],
         ],
     ],
     'view_manager' => [
         'template_map' => include(__DIR__.'/template_map.php'),
-        'template_path_stack' => [
-            __DIR__.'/../view',
-        ],
+        //'template_path_stack' => [ __DIR__.'/../view', ],
     ],
 ];

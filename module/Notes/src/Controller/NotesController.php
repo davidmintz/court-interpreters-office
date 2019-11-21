@@ -122,12 +122,12 @@ class NotesController extends AbstractRestfulController
             $view = new $view_class($messages);
         }
         if ($view_class == JsonModel::class) {
-
+            // trigger event so that, e.g., TaskRotationService can
+            // inject relevant data into view
+            //---------------------------------
             $events = $this->getEventManager();
             /** @todo addIdentifiers() just once e.g., in an onBootstrap */
             $events->addIdentifiers(['Notes']);
-            //---------------------------------
-            // nice try
             $this->getEvent()->getApplication()->getServiceManager()
                 ->get('log')->warn('triggering NOTES_RENDER in NotesController');
             $note_types = $type == 'ALL' ? ['motd','motw'] : [strtolower($type)];
@@ -143,10 +143,18 @@ class NotesController extends AbstractRestfulController
         return $view;
     }
 
+    /**
+     * Updates the users MOT[DW] settings.
+     *
+     * When the user modifies the visibility, size or position of the MOT[DW]
+     * element, we get an xhr request so we can persist the new settings.
+     *
+     * @return JsonModel
+     */
     public function updateSettingsAction()
     {
         $params = $this->params()->fromPost();
-         $this->notesService->updateSettings($params);
+        $this->notesService->updateSettings($params);
 
         return new JsonModel($this->notesService->getSession()->settings);
     }

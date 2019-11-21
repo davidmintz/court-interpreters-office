@@ -1,11 +1,33 @@
-<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-
-<?php if ($this->tasks): ?>
-    <?php foreach ($this->tasks as $t): ?>
-        <?= $this->escapeHtml($t->getName()) ?><br>
-
-    <?php endforeach ?>
-<?php else: ?>
-
-
-<?php endif ?>
+<?php
+$this->headTitle('admin | rotating tasks');
+$is_admin = $this->layout()->user->role == 'administrator'?>
+<div style="max-width:800px" class="mx-auto">
+    <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    <?php if ($this->tasks): ?>
+        <div class="list-group mt-3" style="max-width:400px">
+        <?php foreach ($this->tasks as $t): ?>
+            <a class="list-group-item" href="<?= $this->url('rotations/view',['id' => $t->getId()])?>">
+            <?= $this->escapeHtml($t->getName()) ?></a>
+            <br>
+        <?php endforeach ?>
+        </div>
+    <?php else: ?>
+        <p class="alert alert-warning rounded border border-warning mt-4">
+            There are no rotating tasks set up in your database.
+            <?php
+                if (! $is_admin) :
+                    ?>
+                    <br><br>
+                    Your user account is not authorized to create or modify these database records.
+                    Please see an administrator if you need assistance.
+                    <?php
+                endif;
+            ?>
+        </p>
+    <?php endif ?>
+    <?php if ($is_admin):?>
+        <p class="mt-3">
+            <a href="<?= $this->url('rotations/create')?>">create a new task</a>
+        </p>
+    <?php endif ?>
+</div>

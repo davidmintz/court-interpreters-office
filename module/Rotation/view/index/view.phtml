@@ -1,4 +1,5 @@
 <?php
+$this->headScript()->appendFile($this->basePath('js/admin/tasks.js'));
 $this->headTitle('admin| rotations | view details');
 if ($this->task):
     $header = $this->escapeHtml($this->task->getName());
@@ -7,39 +8,46 @@ else:
     $header = 'view';
 endif;
 ?>
-<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() . $header?></h2>
-<div id="calendar" class="float-right">
-[calendar thing hereabouts]
-</div>
-<div class="row">
-    <div class="col-md-3 pr-1"><div class="float-md-right">name</div>
-    </div>
-    <div class="col-md-9">
-        <?php echo $this->escapeHtml($this->task->getName()) ?>
-    </div>
-    <div class="col-md-3 pr-1"><div class="float-md-right">description</div>
-    </div>
-    <div class="col-md-9">
-        <?php echo $this->escapeHtml($this->task->getDescription())?:'<span class="text-muted">(none)</span>' ?>
-    </div>
-    <div class="col-md-3 pr-1"><div class="float-md-right">sequence</div>
-    </div>
-    <div class="col-md-9"><?php
-            $current = $rotations->get(0);
-            if ($current):
-                foreach($current->getMembers() as $m):
-                    echo $this->escapeHtml($m->getPerson()->getFullName()),'<br>';
-                endforeach;
-            else:
-                ?><span class="text-muted">(none)</span><?php
-            endif;
-    ?></div>
-    <div class="col-md-3 pr-1"><div class="float-md-right">start date</div>
-    </div>
-    <div class="col-md-9"><?php if ($current): echo $current->getStartDate()->format('d M Y');
-else: ?><span class="text-muted">(n/a)</span><?php endif;
-    ?></div>
-    <div class="offset-md-3 col-md-9">
-        [buttons]
+<div style="max-width:800px" class="mx-auto">
+    <h2 class="mb-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() . $header?></h2>
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col-md-3 pr-1"><div class="float-md-right">name</div>
+                </div>
+                <div class="col-md-9">
+                    <?php echo $this->escapeHtml($this->task->getName()) ?>
+                </div>
+                <div class="col-md-3 pr-1"><div class="float-md-right">description</div>
+                </div>
+                <div class="col-md-9">
+                    <?php echo $this->escapeHtml($this->task->getDescription())?:'<span class="text-muted">(none)</span>' ?>
+                </div>
+                <div class="col-md-3 pr-1"><div class="float-md-right">sequence</div>
+                </div>
+                <div class="col-md-9"><?php
+                        $current = $rotations->get(0);
+                        if ($current):
+                            foreach($current->getMembers() as $m):
+                                echo $this->escapeHtml($m->getPerson()->getFullName()),'<br>';
+                            endforeach;
+                        else:
+                            ?><span class="text-muted">(none)</span><?php
+                        endif;
+                ?></div>
+                <div class="col-md-3 pr-1">
+                    <div class="float-md-right">start date</div>
+                </div>
+                <div class="col-md-9"><?php if ($current): echo $current->getStartDate()->format('d M Y');
+            else: ?><span class="text-muted">(n/a)</span><?php endif;
+                ?></div>
+                <div class="offset-md-3 col-md-9">
+                    [buttons]
+                </div>
+            </div>
+        </div>
+        <div class="col"><div id="calendar"></div>
+        yadda
+        </div>
     </div>
 </div>

@@ -1,0 +1,6 @@
+$(function(){
+    $("#calendar").datepicker(
+      {}
+    );
+
+});
