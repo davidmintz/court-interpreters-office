@@ -35,6 +35,26 @@ return [
             Controller\IndexController::class => 'InterpretersOffice\Admin\Controller\EventsController',
         ],
     ],
+    'navigation' => [
+        'admin_breadcrumbs' => [
+            [
+                'label' => 'admin',
+                'route' => 'admin',
+                'pages' => [
+                    [
+                        'label' => 'task rotations',
+                        'route' => 'rotations',
+                        'pages' => [
+                            [
+                                'label' => '',
+                                'route' => 'rotations/view'
+                            ]
+                        ]
+                    ],
+                ],
+            ],
+        ],
+    ],
     'router' => [
         'routes' => [
             'rotations' => [
@@ -48,6 +68,20 @@ return [
                         'action'=>'index',
                     ],
                 ],
+                'child_routes' => [
+                    'view' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/view/:id',
+                            'defaults' => [
+                                'action' => 'view',
+                                'constraints' => [
+                                    'id' => '[1-9]\d*',
+                                ],
+                            ],
+                        ],
+                    ]
+                ]
             ],
         ],
     ],

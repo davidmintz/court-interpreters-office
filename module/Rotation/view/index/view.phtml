@@ -1,0 +1,36 @@
+<?php
+$this->headTitle('admin| rotations | view details');
+if ($this->task):
+    $header = $this->escapeHtml($this->task->getName());
+    $rotations = $this->task->getRotations();
+else:
+    $header = 'view';
+endif;
+?>
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() . $header?></h2>
+
+<div class="row">
+    <div class="col-md-3 pr-1"><div class="float-md-right">name</div>
+    </div>
+    <div class="col-md-9">
+        <?php echo $this->escapeHtml($this->task->getName()) ?>
+    </div>
+    <div class="col-md-3 pr-1"><div class="float-md-right">description</div>
+    </div>
+    <div class="col-md-9">
+        <?php echo $this->escapeHtml($this->task->getDescription())?:'<span class="text-muted">(none)</span>' ?>
+    </div>
+    <div class="col-md-3 pr-1"><div class="float-md-right">sequence</div>
+    </div>
+    <div class="col-md-9"><?php
+            $current = $rotations->get(0);
+            foreach($current->getMembers() as $m):
+                echo $this->escapeHtml($m->getPerson()->getFullName()),'<br>';
+            endforeach;
+    ?></div>
+    <div class="col-md-3 pr-1"><div class="float-md-right">start date</div>
+    </div>
+    <div class="col-md-9"><?php  echo $current->getStartDate()->format('d M Y');
+    ?></div>
+
+</div>

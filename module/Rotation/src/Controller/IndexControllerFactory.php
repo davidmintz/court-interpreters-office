@@ -5,6 +5,7 @@ namespace InterpretersOffice\Admin\Rotation\Controller;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Rotation\Controller\IndexController;
+use InterpretersOffice\Admin\Rotation\Service\TaskRotationService;
 
 class IndexControllerFactory implements FactoryInterface
 {
@@ -16,6 +17,6 @@ class IndexControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new IndexController($container->get(\Doctrine\ORM\EntityManager::class));
+        return new IndexController($container->get(TaskRotationService::class));
     }
 }

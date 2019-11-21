@@ -6,6 +6,7 @@ namespace InterpretersOffice\Admin\Rotation\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTime;
 use InterpretersOffice\Admin\Rotation\Entity;
+use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
 use Zend\EventManager\EventInterface;
 use Zend\View\Model\JsonModel;
 
@@ -26,6 +27,13 @@ class TaskRotationService
      * @var array
      */
     private $config;
+
+    /**
+     * repository
+     *
+     * @var Entity\RotationRepository
+     */
+    private $repo;
 
     public function __construct(EntityManagerInterface $em, Array $config)
     {
@@ -66,6 +74,36 @@ class TaskRotationService
 
         return $result;
     }
+
+    /**
+     * lazy-gets repository
+     *
+     * @return Entity\RotationRepository
+     */
+    public function getRepository()
+    {
+        if ($this->repo) {
+            return $this->repo;
+        }
+        $this->repo = $this->em->getRepository(Entity\Rotation::class);
+        return $this->repo;
+    }
+
+    /**
+     * proxies to  Entity\RotationRepository::getTask()
+     *
+     * note to self: maybe remove the repo method and do the work here and
+     * update all the client code...
+     *
+     * @param  int    $id
+     * @return Entity\Task|null
+     */
+    public function getTask(int $id) : ? Entity\Task
+    {
+        return $repo = $this->getRepository()->getTask($id);
+
+    }
+
 
     /**
      * Conditionally injects Rotation data into view.
@@ -116,6 +154,7 @@ class TaskRotationService
 
     /**
      * helper to return JSON-friendlier representation
+     *
      * @param  Array $assignment_notes
      * @return Array
      */
@@ -133,5 +172,15 @@ class TaskRotationService
         }
 
         return $return;
+    }
+
+    /**
+     * gets entity manager
+     *
+     * @return EntityManagerInterface
+     */
+    public function getEntityManager() : EntityManagerInterface
+    {
+        return $this->em;
     }
 }

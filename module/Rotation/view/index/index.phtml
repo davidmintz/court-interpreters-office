@@ -1,3 +1,11 @@
-<p>
-    hello, fuckin' world.
-</p>
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+
+<?php if ($this->tasks): ?>
+    <?php foreach ($this->tasks as $t): ?>
+        <?= $this->escapeHtml($t->getName()) ?><br>
+
+    <?php endforeach ?>
+<?php else: ?>
+
+
+<?php endif ?>
