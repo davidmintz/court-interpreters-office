@@ -38,6 +38,11 @@ class IndexController extends AbstractActionController
 
     }
 
+    public function createTaskAction()
+    {
+    //    return false;
+    }
+
     /**
      * entry point for rotating task admin
      */

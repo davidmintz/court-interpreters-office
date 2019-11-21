@@ -48,6 +48,10 @@ return [
                             [
                                 'label' => '',
                                 'route' => 'rotations/view'
+                            ],
+                            [
+                                'label' => 'create',
+                                'route' => 'task/create'
                             ]
                         ]
                     ],
@@ -80,7 +84,16 @@ return [
                                 ],
                             ],
                         ],
-                    ]
+                    ],
+                    'create' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/task/create',
+                            'defaults' => [
+                                'action' => 'create-task',
+                            ],
+                        ],
+                    ],
                 ]
             ],
         ],

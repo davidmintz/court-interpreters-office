@@ -8,7 +8,9 @@ else:
 endif;
 ?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() . $header?></h2>
-
+<div id="calendar" class="float-right">
+[calendar thing hereabouts]
+</div>
 <div class="row">
     <div class="col-md-3 pr-1"><div class="float-md-right">name</div>
     </div>
@@ -24,13 +26,20 @@ endif;
     </div>
     <div class="col-md-9"><?php
             $current = $rotations->get(0);
-            foreach($current->getMembers() as $m):
-                echo $this->escapeHtml($m->getPerson()->getFullName()),'<br>';
-            endforeach;
+            if ($current):
+                foreach($current->getMembers() as $m):
+                    echo $this->escapeHtml($m->getPerson()->getFullName()),'<br>';
+                endforeach;
+            else:
+                ?><span class="text-muted">(none)</span><?php
+            endif;
     ?></div>
     <div class="col-md-3 pr-1"><div class="float-md-right">start date</div>
     </div>
-    <div class="col-md-9"><?php  echo $current->getStartDate()->format('d M Y');
+    <div class="col-md-9"><?php if ($current): echo $current->getStartDate()->format('d M Y');
+else: ?><span class="text-muted">(n/a)</span><?php endif;
     ?></div>
-
+    <div class="offset-md-3 col-md-9">
+        [buttons]
+    </div>
 </div>
