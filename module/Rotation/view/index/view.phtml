@@ -1,5 +1,6 @@
 <?php
-$this->headScript()->appendFile($this->basePath('js/admin/tasks.js'));
+$this->headScript()->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+->appendFile($this->basePath('js/admin/tasks.js'));
 $this->headTitle('admin| rotations | view details');
 if ($this->task):
     $header = $this->escapeHtml($this->task->getName());
@@ -12,11 +13,42 @@ endif;
     <h2 class="mb-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() . $header?></h2>
     <div class="row">
         <div class="col">
-            <div class="row">
+            <div class="row task" data-task_id="<?= $this->task->getId()?>"
+              data-dow="<?=  $this->escapeHtml($this->task->getDayOfWeek())?>"
+              data-task_frequency="<?php echo $this->escapeHtml($this->task->getFrequency()) ?>">
                 <div class="col-md-3 pr-1"><div class="float-md-right">name</div>
                 </div>
                 <div class="col-md-9">
                     <?php echo $this->escapeHtml($this->task->getName()) ?>
+                </div>
+                <div class="col-md-3 pr-1 py-1"><div class="float-md-right">assigned</div>
+                </div>
+                <div class="col-md-9 current-assignment">
+                    <div class="border border-warning rounded px-2 py-1">
+                <?php
+                if ($this->current) :
+                    $date = $this->current['date'];
+                    if (!$date instanceof \DateTimeInterface) :
+                        $date = (new \DateTime($date))->format('D d-M-Y');
+                    endif;
+                    ?>
+                    <span class="assignment-date"><?= $date ?>:</span>
+                    <span class="assignment-person">
+                    <?php
+                    if ($this->current['assigned'] != $this->current['default']):
+                        ?><span style="text-decoration:line-through"><?= $this->escapeHtml($this->current['default'])?></span>
+                    <?php
+                    endif;
+                    echo  $this->escapeHtml($this->current['assigned']);
+                    ?>
+                    </span>
+                <?php
+            else: ?>
+            <span class="assignment-date"></span>
+            <span class="assignment-person text-muted">(nobody)</span>
+            <?php
+                endif;?>
+                </div>
                 </div>
                 <div class="col-md-3 pr-1"><div class="float-md-right">description</div>
                 </div>
@@ -26,28 +58,31 @@ endif;
                 <div class="col-md-3 pr-1"><div class="float-md-right">sequence</div>
                 </div>
                 <div class="col-md-9"><?php
-                        $current = $rotations->get(0);
-                        if ($current):
-                            foreach($current->getMembers() as $m):
-                                echo $this->escapeHtml($m->getPerson()->getFullName()),'<br>';
-                            endforeach;
-                        else:
-                            ?><span class="text-muted">(none)</span><?php
-                        endif;
+                    $current = $rotations->get(0);
+                    if ($current):
+                        foreach($current->getMembers() as $m):
+                            echo $this->escapeHtml($m->getPerson()->getFullName()),'<br>';
+                        endforeach;
+                    else:
+                        ?><span class="text-muted">(none)</span><?php
+                    endif;
                 ?></div>
                 <div class="col-md-3 pr-1">
                     <div class="float-md-right">start date</div>
                 </div>
-                <div class="col-md-9"><?php if ($current): echo $current->getStartDate()->format('d M Y');
-            else: ?><span class="text-muted">(n/a)</span><?php endif;
+                <div class="col-md-9"><?php
+                  if ($current): echo $current->getStartDate()->format('d M Y');
+                  else: ?><span class="text-muted">(n/a)</span><?php
+                  endif;
                 ?></div>
                 <div class="offset-md-3 col-md-9">
                     [buttons]
                 </div>
             </div>
         </div>
-        <div class="col"><div id="calendar"></div>
-        yadda
+        <div class="col">
+          <span class="text-muted">see who is assigned for a given date</span>
+          <div id="calendar"></div>
         </div>
     </div>
 </div>

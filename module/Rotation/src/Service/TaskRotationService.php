@@ -6,6 +6,7 @@ namespace InterpretersOffice\Admin\Rotation\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTime;
 use InterpretersOffice\Admin\Rotation\Entity;
+use InterpretersOffice\Entity\Person;
 use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
 use Zend\EventManager\EventInterface;
 use Zend\View\Model\JsonModel;
@@ -76,6 +77,31 @@ class TaskRotationService
     }
 
     /**
+     * gets assignment for task $task_id on $date
+     *
+     * @param  string $date
+     * @param  int    $task_id
+     * @throws \InvalidArgumentException
+     * @return Array
+     */
+    public function getAssignment(string $date, int $task_id) : Array
+    {
+        try {
+            $date_obj = new DateTime($date);
+        } catch (\Throwable $e) {
+            throw new InvalidArgumentException("invalid date parameter: {$e->getMessage()}");
+        }
+        $task = $this->getTask($task_id);
+        if (! $task) {
+            throw new InvalidArgumentException("no task entity with id $task_id was found",404);
+        }
+
+        $result = $this->getRepository()->getAssignedPerson($task,$date_obj);
+
+        return $this->assignmentToArray($result);
+    }
+
+    /**
      * lazy-gets repository
      *
      * @return Entity\RotationRepository
@@ -86,6 +112,7 @@ class TaskRotationService
             return $this->repo;
         }
         $this->repo = $this->em->getRepository(Entity\Rotation::class);
+
         return $this->repo;
     }
 
@@ -101,8 +128,8 @@ class TaskRotationService
     public function getTask(int $id) : ? Entity\Task
     {
         return $repo = $this->getRepository()->getTask($id);
-
     }
+
 
 
     /**
@@ -144,7 +171,7 @@ class TaskRotationService
                 $mvcEvent->getApplication()->getMvcEvent()->getViewModel();
             if ($view instanceof JsonModel) {
                 $log->debug("HA! need to inject JSON data");
-                $view->assignment_notes = $this->assignmentNotesToJson($assignment_notes);
+                $view->assignment_notes = $this->assignmentNotesToArray($assignment_notes);
             } else {
                 $log->debug("NOT a JsonModel?");
                 $view->assignment_notes = $assignment_notes;
@@ -158,7 +185,7 @@ class TaskRotationService
      * @param  Array $assignment_notes
      * @return Array
      */
-    public function assignmentNotesToJson(Array $assignment_notes): Array
+    public function assignmentNotesToArray(Array $assignment_notes): Array
     {
         $return = [];
         foreach ($assignment_notes as $note_type => $data) {
@@ -172,6 +199,23 @@ class TaskRotationService
         }
 
         return $return;
+    }
+
+    /**
+     * returns JSON-friendlier representation of $assignment
+     *
+     * @param  Array  $assignment
+     * @return Array
+     */
+    public function assignmentToArray(Array $assignment)
+    {
+        foreach($assignment as $key => $person) {
+            if ($assignment[$key] instanceof Person) {
+                $assignment[$key] = $assignment[$key]->getFirstName();
+            }
+        }
+
+        return $assignment;
     }
 
     /**

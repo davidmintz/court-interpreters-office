@@ -22,8 +22,8 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            Controller\IndexController::class => Controller\IndexControllerFactory::class,
-            Controller\RestController::class => Controller\IndexControllerFactory::class,
+            Controller\IndexController::class => Controller\Factory::class,
+            Controller\RestController::class => Controller\Factory::class,
         ],
     ],
     'service_manager' => [
@@ -74,6 +74,21 @@ return [
     ],
     'router' => [
         'routes' => [
+            'restful_rotations' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route'=>'/admin/rotations/assignments/:date/:id',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\RestController::class,
+                        'constraints' => [
+                            'id' => '[1-9]\d*',
+                            'date' => 'd{4}-\d\d-\d\d',
+                        ],
+                    ],
+                ],
+            ],
             'rotations' => [
                 'type' => Segment::class,
                 'may_terminate' => true,

@@ -42,7 +42,7 @@ class Module {
                 $service = $container->get(Service\TaskRotationService::class),
                 'initializeView']);
             $log = $container->get('log');
-            $log->warn("we have attached NOTES_RENDER listener in ".__METHOD__);
+            $log->debug("we have attached NOTES_RENDER listener in ".__METHOD__);
         }
     }
 
@@ -50,8 +50,7 @@ class Module {
      * Conditionally injects Rotation data into view.
      *
      * Listener for NOTES_RENDER (MOT[DW]) inject s Rotation (Task)
-     * data into the view. The disadvantage is it won't work for xhr
-     * requests.  or does it?
+     * data into the view.
      *
      * @param  EventInterface $event
      * @return void

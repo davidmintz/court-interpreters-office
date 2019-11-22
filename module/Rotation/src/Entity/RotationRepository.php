@@ -9,7 +9,7 @@ use InterpretersOffice\Entity\Person;
 //
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use PHPUnit\Util\Log\TeamCity;
-use DateTime, DateInterval;
+use DateTime, DateInterval, DateTimeImmutable, DateTimeInterface;
 
 /**
  * Rotation repository
@@ -65,14 +65,18 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
      * helper to rewind date back to preceding Monday
      *
      * @param  DateTime $date
-     * @return Date
+     * @return DateTimeInterface
      */
-    public function getMondayPreceding(DateTime $date) : DateTime
+    public function getMondayPreceding(DateTime $date) : DateTimeInterface
     {
         $dow = (int)$date->format('N');
-        if (1 == $dow) { return $date; }
-        $interval = sprintf('P%sD',$dow - 1);
-        $date->sub(new \DateInterval($interval));
+        if (1 == $dow) {
+            return $date;
+        } else {
+            $date = DateTimeImmutable::createFromMutable($date);
+            $interval = sprintf('P%sD',$dow - 1);
+            $date->sub(new DateInterval($interval));
+        }
 
         return $date;
     }
@@ -106,6 +110,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $substitution = $q->getOneOrNullResult();
         $default = $this->getDefaultAssignedPerson($task, $date);
         return [
+            'date'  => $date->format('Y-m-d'),
             'default' => $default,
             'assigned' => $substitution ? $substitution->getPerson() : $default
         ];

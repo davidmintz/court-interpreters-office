@@ -33,8 +33,9 @@ class IndexController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
         $task = $this->service->getTask($id);
+        $current = $this->service->getAssignment(date('Y-m-d'),$id);
 
-        return ['task' => $task ];
+        return ['task' => $task, 'current'=>$current ];
 
     }
 

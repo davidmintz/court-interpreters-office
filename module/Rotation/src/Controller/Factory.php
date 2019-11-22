@@ -7,7 +7,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Rotation\Controller\IndexController;
 use InterpretersOffice\Admin\Rotation\Service\TaskRotationService;
 
-class IndexControllerFactory implements FactoryInterface
+class Factory implements FactoryInterface
 {
     /**
      * @param ContainerInterface $container
