@@ -50,8 +50,6 @@ class NotesController extends AbstractRestfulController
     /**
      * updates entity
      *
-     * work in progress.
-     *
      * @param  $id  entity id
      * @param  array $data
      *

@@ -1,3 +1,9 @@
+/**  public/js/admin/tasks.js */
+
+/*
+global $, fail, moment
+*/
+
 $(function(){
     $("#calendar").datepicker({
         dateFormat : "yy-mm-dd",
@@ -6,7 +12,7 @@ $(function(){
            $.get(`/admin/rotations/assignments/${date}/${task_id}`)
            .then((res)=>{
                var formatted = new moment(res.date,"YYYY-MM-DD").format("ddd DD-MMM-YYYY");
-               $(".assignment-date").text(formatted);
+               $(".assignment-date").text(`${formatted}: `);
                var html = "";
                var $default  = res["default"];
                if (res.assigned !== $default) {
@@ -19,4 +25,11 @@ $(function(){
            );
         }
     });
+    // $(".current-assignment button").on("click",(event)=>{
+    //     console.log("boink");
+    // });
+    $("#dialog").on("show.bs.modal",(e)=> {
+        var date = $(".assignment-date").text().replace(":","");
+        $("#dialog .modal-title").append(date);
+    })
 });

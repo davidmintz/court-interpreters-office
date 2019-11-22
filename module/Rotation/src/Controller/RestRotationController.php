@@ -1,5 +1,5 @@
 <?php
-/** module/Rotation/src/Controller/RestController.php */
+/** module/Rotation/src/Controller/RestRotationController.php */
 
 namespace InterpretersOffice\Admin\Rotation\Controller;
 
@@ -11,7 +11,7 @@ use InterpretersOffice\Admin\Rotation\Entity\Task;
 /**
  * RESTful controller for Tasks/Rotations
  */
-class RestController extends AbstractRestfulController
+class RestRotationController extends AbstractRestfulController
 {
     /**
      * task-rotation service
@@ -30,9 +30,15 @@ class RestController extends AbstractRestfulController
         $this->service = $service;
     }
 
+    /**
+     * creates a new task rotation
+     *
+     * @param  Array $data
+     * @return JsonModel
+     */
     public function create($data)
     {
-
+        return new JsonModel(['status' => 'yet to be implemented']);
     }
 
     /**
@@ -45,5 +51,18 @@ class RestController extends AbstractRestfulController
         $date = $this->params()->fromRoute('date');
 
         return new JsonModel($this->service->getAssignment($date,(int)$id));
+    }
+
+    /**
+     * updates
+     *
+     * @param  $id  entity id
+     * @param  array $data
+     *
+     * @return JsonModel
+     */
+    public function update($id, $data)
+    {
+        return new JsonModel(['status' => 'yet to be implemented']);
     }
 }

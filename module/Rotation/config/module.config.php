@@ -23,7 +23,7 @@ return [
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => Controller\Factory::class,
-            Controller\RestController::class => Controller\Factory::class,
+            Controller\RestRotationController::class => Controller\Factory::class,
         ],
     ],
     'service_manager' => [
@@ -34,11 +34,11 @@ return [
     'acl' => [
         'resources' => [
             Controller\IndexController::class => 'InterpretersOffice\Admin\Controller\EventsController',
-            Controller\RestController::class => null,
+            Controller\RestRotationController::class => null,
         ],
         'deny' => [
             'manager' => [
-                Controller\RestController::class => null,
+                Controller\RestRotationController::class => null,
                 Controller\IndexController::class => null,
             ],
         ],
@@ -81,7 +81,7 @@ return [
                     'route'=>'/admin/rotations/assignments/:date/:id',
                     'defaults' => [
                         'module' => __NAMESPACE__,
-                        'controller' => Controller\RestController::class,
+                        'controller' => Controller\RestRotationController::class,
                         'constraints' => [
                             'id' => '[1-9]\d*',
                             'date' => 'd{4}-\d\d-\d\d',
