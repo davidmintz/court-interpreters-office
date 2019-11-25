@@ -76,15 +76,54 @@ return [
         'routes' => [
             'restful_rotations' => [
                 'type' => Segment::class,
-                'may_terminate' => true,
+                'may_terminate' => false,
                 'options' => [
-                    'route'=>'/admin/rotations/assignments/:date/:id',
+                    'route'=>'/admin/rotations/assignments',
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\RestRotationController::class,
-                        'constraints' => [
-                            'id' => '[1-9]\d*',
-                            'date' => 'd{4}-\d\d-\d\d',
+
+                    ],
+                ],
+                'child_routes' => [
+                    'get'=> [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options'=> [
+                            'route' => '/:date/:id',
+                            'defaults' => [
+                                'constraints' => [
+                                    'id' => '[1-9]\d*',
+                                    'date' => 'd{4}-\d\d-\d\d',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'post' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options'=> [
+                            'route' => '/create',
+                        ],
+                    ],
+                    'put' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options'=> [
+                            'route' => '/update/:id',
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                    'delete' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options'=> [
+                            'route' => '/delete/:id',
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
                         ],
                     ],
                 ],

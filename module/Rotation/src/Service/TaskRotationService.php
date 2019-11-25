@@ -11,6 +11,10 @@ use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
 use Zend\EventManager\EventInterface;
 use Zend\View\Model\JsonModel;
 
+use Zend\InputFilter\InputFilter;
+use Zend\Validator;
+use Zend\Filter;
+
 /**
  * TaskRotationService
  */
@@ -30,6 +34,13 @@ class TaskRotationService
     private $config;
 
     /**
+     * inputfilter
+     *
+     * @var InputFilter
+     */
+    private $inputFilter;
+
+    /**
      * repository
      *
      * @var Entity\RotationRepository
@@ -40,6 +51,87 @@ class TaskRotationService
     {
         $this->em = $em;
         $this->config = $config;
+    }
+
+    public function getRotationInputFilter() : InputFilter
+    {
+        if ($this->inputFilter) {
+            return $this->inputFilter;
+        }
+        $inputFilter = new InputFilter();
+        $em = $this->em;
+        $inputFilter->add(
+            [
+                'name' => 'members',
+                'type' => ArrayInput::class,
+                'required' => true,
+                'validators' =>[
+                    [
+                        'name' => 'Digits',
+                        'options' => [
+                            'messages' => [
+                                'notDigits' =>
+                                '"members" input must be only digits, got: %value%'
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callBack' => function($value, $context) use ($em) {
+                                $person = $em->find('InterpretersOffice\Entity\Person',$value);
+                                return $person && $person->getActive() ?: false;
+                            },
+                            'messages' => [
+                                'callbackValue' => '%value% is not the id of an active person',
+                            ],
+                        ],
+                    ],
+
+                ],
+                'filters' =>[
+                    [
+                        'name' => 'StringTrim'
+                    ],
+                ],
+            ]
+        );
+        $inputFilter->add([
+            'name' => 'countable',
+            //'type' => ArrayInput::class,
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => IsCountable::class,
+                    'options' => [
+                        'min' => 2,
+                        'messages' => [
+                            'lessThan' => "a minimum %min% persons required",
+                            'notCountable' => '"countable" has to be a countable data type',
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value) {
+                            $unique = \array_unique($value);
+                            return count($value) == count($unique);
+                        },
+                        'messages' => [
+                            'callbackValue' => 'each person in the rotation must be unique (no duplicates)',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'start_date',
+            'required' => true,
+            'validators' => [
+            ]
+        ]);
     }
 
     /**

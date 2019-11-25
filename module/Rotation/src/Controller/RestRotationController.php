@@ -38,11 +38,13 @@ class RestRotationController extends AbstractRestfulController
      */
     public function create($data)
     {
-        return new JsonModel(['status' => 'yet to be implemented']);
+        return new JsonModel(['status' => 'create() has yet to be implemented']);
     }
 
     /**
      * gets task assignment
+     *
+     * mapped to '/admin/rotations/assignments/:date/:id'
      *
      * @return JsonModel
      */
@@ -63,6 +65,6 @@ class RestRotationController extends AbstractRestfulController
      */
     public function update($id, $data)
     {
-        return new JsonModel(['status' => 'yet to be implemented']);
+        return new JsonModel(['status' => 'UPDATE has yet to be implemented']);
     }
 }
