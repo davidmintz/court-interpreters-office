@@ -89,12 +89,15 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
      * @throws \RuntimeException
      * @return Array
      */
-    public function getAssignedPerson(Task $task, DateTime $date) : Array
+    public function getAssignment(Task $task, DateTime $date) : Array
     {
         $frequency = $task->getFrequency();
         if ('WEEK' != $frequency) {
             throw new \RuntimeException("only Tasks of frequency 'WEEK' are currently supported");
         }
+        // if the Task has a day-of-week
+        // and the $date we've been passed is for a different day-of-the-week
+        // then we crank up the date
         $dow = $task->getDayOfWeek();
         $w = $date->format('w');
         if ($dow && $dow != $w) {
@@ -108,11 +111,14 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         )   ->useResultCache(true)
             ->setParameters(compact('task','date'));
         $substitution = $q->getOneOrNullResult();
-        $default = $this->getDefaultAssignedPerson($task, $date);
+        $result = $this->getDefaultAssignment($task, $date);
+        
         return [
             'date'  => $date->format('Y-m-d'),
-            'default' => $default,
-            'assigned' => $substitution ? $substitution->getPerson() : $default
+            'default' => $result['default'],
+            'assigned' => $substitution ? $substitution->getPerson() : $result['default'],
+            'rotation' => $result['rotation'],
+            'start_date' => $result['start_date'],
         ];
     }
 
@@ -123,7 +129,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
      * @throws \RuntimeException
      * @return Person
      */
-    public function getDefaultAssignedPerson(Task $task, DateTime $date) :?Person
+    public function getDefaultAssignment(Task $task, DateTime $date) :?Array
     {
         $frequency = $task->getFrequency();
         if ('WEEK' != $frequency) {
@@ -151,7 +157,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $rotation = $q->getOneOrNullResult();
         if (!$rotation) { return null; }
         $members = $rotation->getMembers();
-        // DEBUG City!
+        // debuggery
         // if ($rotation->getId() == 14) {
         //     $j = 0;
         //     printf("rotation id is: %d\n",$rotation->getId());
@@ -166,7 +172,11 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $weeks = $diff->format('%a') / 7;
         $i = $weeks % $members->count();
 
-        return $members[$i]->getPerson();
+        return [
+            'start_date' => $rotation->getStartDate(),
+            'rotation' =>$members,
+            'default'=> $members[$i]->getPerson()
+        ];
     }
 
 /*

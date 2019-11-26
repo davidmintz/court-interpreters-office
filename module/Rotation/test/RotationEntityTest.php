@@ -119,10 +119,14 @@ class RotationEntityTest extends TestCase
         // Mirta is default, Humberto is sub
         $example_date = new DateTime('2019-10-25');
         $default = $repo->getDefaultAssignedPerson($task,$example_date);
-        //printf("\ndate %s; default: %s\n",$example_date->format('D d-M-Y'),$default->getFirstName());
+        // printf("\ndate %s; default scheduler: %s\n",$example_date->format('D d-M-Y'),$default->getFirstName());
         $example_date = new DateTime('2019-10-25');
         $actual = $repo->getAssignedPerson($task,$example_date);
-        // printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
+        // printf("\ndate %s; default scheduler: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
+        $example_date = new DateTime('2019-12-01'); // a Sunday
+        $actual = $repo->getAssignedPerson($task,$example_date);
+        // printf("\ndate %s; default scheduler: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
+
     }
 
     public function testGetActualSchedulingVictimWhenSubstitutionOccurs()

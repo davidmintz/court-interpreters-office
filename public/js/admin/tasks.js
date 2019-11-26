@@ -6,6 +6,9 @@ global $, fail, moment
 
 $(function(){
     $("#calendar").datepicker({
+        showOtherMonths : true,
+        changeMonth : true,
+        changeYear : true,
         dateFormat : "yy-mm-dd",
         onSelect : function(date, instance){
            var task_id = $(".task").data("task_id");
@@ -20,6 +23,9 @@ $(function(){
                }
                html += `${res.assigned}`;
                $(".assignment-person").html(html);
+               $(".rotation").html(res.rotation.map(e=>e.name).join("<br>"));
+               var start_date = new moment(res.start_date,"YYYY-MM-DD");
+               $(".start_date").text(start_date.format("ddd DD-MMM-YYYY"))
            }).fail(
                (res)=>{console.log("shit happened?"); fail(res)}
            );

@@ -34,19 +34,25 @@ return [
     'acl' => [
         'resources' => [
             Controller\IndexController::class => 'InterpretersOffice\Admin\Controller\EventsController',
-            Controller\RestRotationController::class => null,
+            Controller\RestRotationController::class => Controller\IndexController::class,
         ],
-        'deny' => [
-            'manager' => [
-                Controller\RestRotationController::class => null,
-                Controller\IndexController::class => null,
-            ],
-        ],
+        // 'deny' => [
+        //     'staff' => [
+        //         Controller\RestRotationController::class => ['update','delete','create'],
+        //         //Controller\IndexController::class => null,
+        //     ],
+        // ],
         'allow' => [
             'manager' => [
                 Controller\IndexController::class => ['index','view'],
-            ]
-        ]
+                Controller\RestRotationController::class => ['get'],
+            ],
+            'staff' => [
+                Controller\IndexController::class => ['index','view'],
+                Controller\RestRotationController::class => ['get'],
+            ],
+        ],
+
     ],
     'navigation' => [
         'admin_breadcrumbs' => [

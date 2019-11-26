@@ -17,9 +17,10 @@ use Doctrine\Common\Collections\Collection;
  * Entity class representing the rotation for a task
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Rotation\Entity\RotationRepository")
- * @ORM\Table(name="rotations")
+ * @ORM\Table(name="rotations",uniqueConstraints={@ORM\UniqueConstraint(name="uniq_rotation",columns={"task_id","start_date"})})
  * //ORM\HasLifecycleCallbacks
  */
+//uniqueConstraints={@ORM\UniqueConstraint(name="uniq_person_role", columns={"person_id", "role_id"})})
 class Rotation
 {
     /**

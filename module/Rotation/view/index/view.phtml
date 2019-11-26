@@ -56,7 +56,7 @@ endif;
                 </div>
                 <div class="col-md-3 pr-1"><div class="float-md-right">sequence</div>
                 </div>
-                <div class="col-md-9"><?php
+                <div class="col-md-9 rotation"><?php
                     $current = $rotations->get(0);
                     if ($current):
                         foreach($current->getMembers() as $m):
@@ -69,7 +69,7 @@ endif;
                 <div class="col-md-3 pr-1">
                     <div class="float-md-right">start date</div>
                 </div>
-                <div class="col-md-9"><?php
+                <div class="col-md-9 start_date"><?php
                   if ($current): echo $current->getStartDate()->format('d M Y');
                   else: ?><span class="text-muted">(n/a)</span><?php
                   endif;

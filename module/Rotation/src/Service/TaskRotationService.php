@@ -128,9 +128,66 @@ class TaskRotationService
         ]);
         $inputFilter->add([
             'name' => 'start_date',
-            'required' => true,
             'validators' => [
-            ]
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => [
+                            'isEmpty' => 'start date is required'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Date',
+                    'options' => [
+                        'messages' => [
+                            'dateInvalidDate' => '"%value%" is not a valid date'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) use ($em) {
+                            $task_id = $context['task'] ?? null;
+                            if (! $task_id) {
+                                return true; // another validator will handle it
+                            }
+                            $task = $em->find(Entity\Task::class,$context['task']);
+                            if (! $task) { return true; } // same as above
+                            // what is the task duration?
+                            $frequency = $task->getFrequency();
+                            $date = new \DateTime($value);
+                            $dow = $date->format('N');
+                            if  ('WEEK' == $frequency && $dow != 1) {
+                                return false;
+                            }
+                            return true;
+                        },
+                        'messages' => [
+                            'callbackValue' => 'start date for weekly task rotations should be a Monday',
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($date, $context) use ($em) {
+                            if (! isset($context['task'])) { return true; }
+                            $task = $em->find(Entity\Task::class,$context['task']);
+                            $today = new \DateTime();
+                            return  $date >= $today;
+
+                        },
+                        'messages' => [
+                            'callbackValue' => 'retroactive creation or modification of task rotations is not supported',
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -188,7 +245,7 @@ class TaskRotationService
             throw new InvalidArgumentException("no task entity with id $task_id was found",404);
         }
 
-        $result = $this->getRepository()->getAssignedPerson($task,$date_obj);
+        $result = $this->getRepository()->getAssignment($task,$date_obj);
 
         return $this->assignmentToArray($result);
     }
@@ -306,6 +363,16 @@ class TaskRotationService
                 $assignment[$key] = $assignment[$key]->getFirstName();
             }
         }
+        // will this work, or fuck up the sequence?
+        $people = array_map(function ($p){
+            return [
+                'id' => $p->getPerson()->getId(),
+                'name' => $p->getPerson()->getFullName(),
+            ];
+        },$assignment['rotation']->toArray());
+
+        $assignment['rotation'] = $people;
+        $assignment['start_date'] = $assignment['start_date']->format('Y-m-d');
 
         return $assignment;
     }
