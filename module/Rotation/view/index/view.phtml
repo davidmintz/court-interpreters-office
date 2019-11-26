@@ -16,7 +16,7 @@ endif;
             <div class="row task" data-task_id="<?= $this->task->getId()?>"
               data-dow="<?=  $this->escapeHtml($this->task->getDayOfWeek())?>"
               data-task_frequency="<?php echo $this->escapeHtml($this->task->getFrequency()) ?>">
-                <div class="col-md-3 pr-1"><div class="float-md-right">name</div>
+                <div class="col-md-3 pr-1"><div class="float-md-right">task</div>
                 </div>
                 <div class="col-md-9">
                     <?php echo $this->escapeHtml($this->task->getName()) ?>
@@ -26,16 +26,16 @@ endif;
                 <div class="col-md-9 current-assignment border border-warning rounded pl-3 pr-1 py-1">
                 <?php
                 if ($this->current['assigned']) :
-                    $name = $this->escapeHtml($this->current['assigned']);
+                    $name = $this->escapeHtml($this->current['assigned']['name']);
                     $date = $this->current['date'];
                     if (!$date instanceof \DateTimeInterface) :
                         $date = (new \DateTime($date))->format('D d-M-Y');
                     endif;
                     ?>
                     <span class="assignment-date"><?= $date ?>:</span>
-                    <span class="assignment-person"><?php
-                    if ($this->current['assigned'] != $this->current['default']):
-                        ?><span style="text-decoration:line-through"><?= $this->escapeHtml($this->current['default'])?></span>
+                    <span data-id="<?= $this->current['assigned']['id'] ?>" class="assignment-person"><?php
+                    if ($this->current['assigned']['id'] != $this->current['default']['id']):
+                        ?><span style="text-decoration:line-through"><?= $this->escapeHtml($this->current['default']['name'])?></span>
                     <?php
                     endif;
                     echo  $name
@@ -94,22 +94,34 @@ endif;
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="dialog-label">edit assignment: <span class="task-assignment"><?= $this->escapeHtml($this->task->getName())?> </span></h5>
+        <h5 class="modal-title" id="dialog-label">edit assignment: <?= $this->escapeHtml($this->task->getName())?><span class="assignment-date"></span></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        Replace <span class="assignment-person"><?= $name ?></span> with:
-         <select class="" name="">
-             <option value="eenie">eenie</option>
-             <option value="meenie">meenie</option>
-             <option value="mienie">mienie</option>
-         </select>
-      </div>
-      <div class="modal-footer">
+          <label class="">
+              Replace <span class="assignment-person"><?= $name ?></span> with:
+          </label>
+            <div class="input-group">
+              <select class="custom-select" id="rotation-people">
+                 <option value=""></option>
+                 <option value="other">other... </option>
+              </select>
+              <input value=""  id="rotation-autocomplete" hidden>
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button">OK</button>
+                <button class="btn btn-outline-secondary cancel-autocomplete" type="button" hidden>cancel</button>
+              </div>
+          </div>
+                  <!-- <select id="rotation-people" class="custom-select" style="max-length:50px" name="">
+                      <option value="other">other... </option>
+                  </select><input value=""  id="rotation-autocomplete" hidden><button type="button" id="btn-person-select" class="btn btn-sm btn-primary">OK</button>
+               -->
+        </div>
+        <div class="modal-footer">
           <button type="button" class="btn btn-primary">save</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
       </div>
     </div>
   </div>

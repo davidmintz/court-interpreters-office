@@ -216,7 +216,7 @@ class TaskRotationService
                 $task = $repo->getTask($task_id);
                 /** @todo if this is going to be like this, log a warning */
                 if ($task) {
-                    $assignment = $repo->getAssignedPerson($task, $date);
+                    $assignment = $repo->getAssignment($task, $date);
                     $result[$type][$task->getName()] = $assignment;
                 }
             }
@@ -238,11 +238,11 @@ class TaskRotationService
         try {
             $date_obj = new DateTime($date);
         } catch (\Throwable $e) {
-            throw new InvalidArgumentException("invalid date parameter: {$e->getMessage()}");
+            throw new \InvalidArgumentException("invalid date parameter: {$e->getMessage()}");
         }
         $task = $this->getTask($task_id);
         if (! $task) {
-            throw new InvalidArgumentException("no task entity with id $task_id was found",404);
+            throw new \InvalidArgumentException("no task entity with id $task_id was found",404);
         }
 
         $result = $this->getRepository()->getAssignment($task,$date_obj);
@@ -341,12 +341,25 @@ class TaskRotationService
             $return[$note_type] = [];
             foreach($data as $task => $people) {
                 $return[$note_type][$task] = [
-                    'assigned' => $people['assigned']->getFirstName(),
-                    'default' => $people['default']->getFirstName(),
+                    // 'assigned' => $people['assigned']->getFirstName(),
+                    // 'default' => $people['default']->getFirstName(),
+                    'assigned' => [
+                        'name' => $people['assigned']->getFirstName(),
+                        'id'   => $people['assigned']->getId(),
+                    ],
+                    'default' => [
+                        'name' => $people['assigned']->getFirstName(),
+                        'id'   => $people['assigned']->getId(),],//$people['default']->getFirstName(),
                 ];
             }
         }
-
+        // 'assigned' => [
+        //     'name' => $people['assigned']->getFirstName(),
+        //     'id'   => $people['assigned']->getId(),
+        // ],
+        // 'default' => [
+        //     'name' => $people['assigned']->getFirstName(),
+        //     'id'   => $people['assigned']->getId(),],//$people['default']->getFirstName(),
         return $return;
     }
 
@@ -360,7 +373,10 @@ class TaskRotationService
     {
         foreach($assignment as $key => $person) {
             if ($assignment[$key] instanceof Person) {
-                $assignment[$key] = $assignment[$key]->getFirstName();
+                $assignment[$key] = $assignment[$key] = [
+                    'name' => $assignment[$key]->getFirstName(),
+                    'id'   =>  $assignment[$key]->getId(),
+                ];
             }
         }
         // will this work, or fuck up the sequence?

@@ -60,10 +60,10 @@ $(function(){
                         Object.keys(assignments).forEach(
                             task => {
                                 html += `${task}: `;
-                                var assigned = assignments[task].assigned;
+                                var assigned = assignments[task].assigned.name;
                                 var $default  = assignments[task]["default"];
-                                if (assigned !== $default) {
-                                    html += `<span style="text-decoration:line-through">${$default}</span> `;
+                                if (assigned.id !== $default.id) {
+                                    html += `<span style="text-decoration:line-through">${$default.name}</span> `;
                                 }
                                 html += `${assigned}<br>`;
                             }
