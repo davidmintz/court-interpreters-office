@@ -1,4 +1,11 @@
 <?php
+$this->headStyle()->captureStart();
+?>
+.ui-autocomplete {
+  z-index: 1060;
+}
+<?php
+$this->headStyle()->captureEnd();
 $this->headScript()->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
 ->appendFile($this->basePath('js/admin/tasks.js'));
 $this->headTitle('admin| rotations | view details');
@@ -30,10 +37,10 @@ endif;
                     $name = $this->escapeHtml($this->current['assigned']['name']);
                     $date = $this->current['date'];
                     if (!$date instanceof \DateTimeInterface) :
-                        $date = (new \DateTime($date))->format('D d-M-Y');
+                        $date = new \DateTime($date);  //->format('D d-M-Y');
                     endif;
                     ?>
-                    <span class="assignment-date"><?= $date ?>:</span>
+                    <span data-date="<?= $date->format('Y-m-d')?>" class="assignment-date"><?= $date->format('D d-M-Y') ?>:</span>
                     <span data-id="<?= $this->current['assigned']['id'] ?>" class="assignment-person"><?php
                     if ($this->current['assigned']['id'] != $this->current['default']['id']):
                         ?><span style="text-decoration:line-through"><?= $this->escapeHtml($this->current['default']['name'])?></span>
@@ -120,23 +127,24 @@ endif;
             <?php endforeach; ?>
                 <div class="border px-2 py-1">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="person" id="person-<?= $p->getId()?>" value="option1">
-                        <label class="form-check-label" for="person-xx">
+                        <input class="form-check-input" type="radio" name="person" id="person-autocomplete" value="">
+                        <label class="form-check-label" for="person-autocomplete">
                             other:
                         </label>
-                        <div class="input-group">
+                        <!-- <div class="input-group">    </div> -->
                             <input name="person_name" class="form-control" value="" id="rotation-autocomplete">
-                            <div class="input-group-append">
+                            <!-- <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button">OK</button>
-                                <!-- <button class="btn btn-outline-secondary cancel-autocomplete" type="button">cancel</button> -->
                             </div>
-                        </div>
+                            -->
+
                     </div>
 
                 </div>
             <?php endif ?>
         </div>
         <div class="modal-footer">
+        <div class="alert alert-warning validation-error" hidden></div>
           <button type="button" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
       </div>
