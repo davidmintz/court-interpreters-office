@@ -68,12 +68,17 @@ endif;
                 ?></div>
                 <div class="col-md-3 pr-1">
                     <div class="float-md-right">start date</div>
+                </div><?php
+                if ($current):
+                    $text = $current->getStartDate()->format('d M Y');
+                    $date = $current->getStartDate()->format('Y-m-d');
+                else :
+                    $text = '<span class="text-muted">(n/a)</span>';
+                    $date = '';
+                endif;?>
+                <div data-start_date="<?= $date ?>" class="col-md-9 start_date">
+                    <?= $text ?>
                 </div>
-                <div class="col-md-9 start_date"><?php
-                  if ($current): echo $current->getStartDate()->format('d M Y');
-                  else: ?><span class="text-muted">(n/a)</span><?php
-                  endif;
-                ?></div>
                 <div class="offset-md-3 col-md-9 pt-2">
                     <button type="button" data-toggle="modal" data-target="#dialog" class="btn btn-outline-primary btn-sm">do shit</button>
                 </div>
@@ -84,40 +89,51 @@ endif;
           <div id="calendar"></div>
         </div>
     </div>
-</div><!-- Button trigger modal -->
-<!-- <button type="button" class="btn btn-primary" >
-  Launch demo modal
-</button> -->
-
+</div>
 <!-- Modal -->
 <div class="modal" id="dialog" tabindex="-1" role="dialog" aria-labelledby="dialog-label" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="dialog-label">edit assignment: <?= $this->escapeHtml($this->task->getName())?><span class="assignment-date"></span></h5>
+        <h4 class="modal-title text" id="dialog-label">edit assignment:<br><?= $this->escapeHtml($this->task->getName())?><span class="assignment-date"></span>
+        </h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-          <label class="">
+          <p class="subtitle">
               Replace <span class="assignment-person"><?= $name ?></span> with:
-          </label>
-            <div class="input-group">
-              <select class="custom-select" id="rotation-people">
-                 <option value=""></option>
-                 <option value="other">other... </option>
-              </select>
-              <input value=""  id="rotation-autocomplete" hidden>
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button">OK</button>
-                <button class="btn btn-outline-secondary cancel-autocomplete" type="button" hidden>cancel</button>
-              </div>
-          </div>
-                  <!-- <select id="rotation-people" class="custom-select" style="max-length:50px" name="">
-                      <option value="other">other... </option>
-                  </select><input value=""  id="rotation-autocomplete" hidden><button type="button" id="btn-person-select" class="btn btn-sm btn-primary">OK</button>
-               -->
+          </p>
+            <?php if ($current):
+                $members = $current->getMembers();
+                foreach ($members as $m): $p = $m->getPerson()?>
+                <div class="person-wrapper border border-bottom-0 px-2 py-1">
+                    <div class="form-check">
+                        <input data-id="<?=$p->getId()?>" class="form-check-input person" type="radio" name="person" id="person-<?= $p->getId()?>" value="person" <?php if ($p->getId() == $this->current['assigned']['id']):?> disabled<?php endif ?>>
+                        <label class="form-check-label" for="person-<?= $p->getId()?>">
+                            <?= $this->escapeHtml($p->getFullName())?>
+                        </label>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+                <div class="border px-2 py-1">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="substitute" id="person-<?= $p->getId()?>" value="option1">
+                        <label class="form-check-label" for="person-xx">
+                            other:
+                        </label>
+                        <div class="input-group">
+                            <input name="person-other" class="form-control" value="" id="rotation-autocomplete">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button">OK</button>
+                                <!-- <button class="btn btn-outline-secondary cancel-autocomplete" type="button">cancel</button> -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            <?php endif ?>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary">save</button>

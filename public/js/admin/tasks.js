@@ -27,6 +27,7 @@ $(function(){
                $(".rotation").html(res.rotation.map(e=>e.name).join("<br>"));
                var start_date = new moment(res.start_date,"YYYY-MM-DD");
                $(".start_date").text(start_date.format("ddd DD-MMM-YYYY"))
+               $(".start_date").data({start_date:res.start_date});
            }).fail(fail);
         }
     });
@@ -34,29 +35,53 @@ $(function(){
     /**
      * initialize dialog for overriding currently assigned person
      */
-    $("#dialog").on("show.bs.modal",(e)=> {
-        var date = $(".current-assignment .assignment-date").text().replace(":","");
-        var formatted_date = new moment(date, "ddd DD-MMM-YYYY").format("YYYY-MM-DD");
+    $("#dialog").data({rotation_start_date: $(".start_date").data("start_date")})
+    .on("show.bs.modal",(e)=> {
+        var pretty_date = $(".current-assignment .assignment-date").text().replace(":","");
+        var date = new moment(pretty_date, "ddd DD-MMM-YYYY").format("YYYY-MM-DD");
         var task_id = $(".task").data("task_id");
-        $.get(`/admin/rotations/assignments/${formatted_date}/${task_id}`)
+        $.get(`/admin/rotations/assignments/${date}/${task_id}`)
         .then(
             res => {
-                $(`#rotation-people option:not([value="other"])`).remove();
-                var opts = res.rotation.map(p => `<option value="${p.id}">${p.name}</option>`);
-                opts.unshift(`<option value="" selected></option>`);
-                $("#rotation-people").prepend(opts.join(""));
-                var current = $(".assignment-person").data("id");
-                $("#rotation-people").children(`[value="${current}"]`).attr({disabled:true});
+                console.warn(`${res.start_date} is start date of the newly-fetched rotation`);
+                if (res.start_date !== $("#dialog").data("rotation_start_date")) {
+                    console.warn("which differs from that currently displayed");
+                    var n = $("#dialog .form-check").length - 1;
+                    slice = $("#dialog .person-wrapper").slice(0,n);
+                    let html = "";
+                    res.rotation.forEach((p, i)=>{
+                        html += `<div class="person-wrapper border border-bottom-0 px-2 py-1">
+                            <div class="form-check">
+                                <input data-id="${p.id}" class="form-check-input person" type="radio" name="person" id="person-${p.id}" value="person">
+                                <label class="form-check-label" for="person-${p.id}">
+                                    ${p.name}
+                                </label>
+                            </div>
+                        </div>`;
+                    })
+                    $("#dialog p.subtitle").after(html);
+                    slice.remove();
+                    $("#dialog").data({rotation_start_date:res.start_date});
+                } else {
+                    console.log("start dates match");
+                }
+                var current = $(".assignment-person");
+                var disabled = $(".person:disabled");
+                if (current.data("id") !== disabled.data("id")) {
+                    // need to enable/disabled yadda
+                    disabled.removeAttr("disabled");
+                    $(`#dialog .person[data-id=${res.assigned.id}]`).attr({disabled:true});
+                }
             }
         );
-        console.warn(date);
-        $("#dialog .modal-title .assignment-date").text(`, ${date}`);
+        $("#dialog .modal-title .assignment-date").text(`, ${pretty_date}`);
 
     })
     .on("click",`option[value="other"]`,
         (e)=>{
             console.log("shit was clicked, display input for autocompletion etc");
-            //$("#dialog select").attr({hidden: true}); etc
+            $("#dialog select").attr({hidden: true});
+            $("#dialog input").removeAttr("hidden");
         }
     );
 
