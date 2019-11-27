@@ -15,7 +15,8 @@ endif;
         <div class="col">
             <div class="row task" data-task_id="<?= $this->task->getId()?>"
               data-dow="<?=  $this->escapeHtml($this->task->getDayOfWeek())?>"
-              data-task_frequency="<?php echo $this->escapeHtml($this->task->getFrequency()) ?>">
+              data-task_duration="<?= $this->escapeHtml($this->task->getDuration())?>"
+              data-task_frequency="<?= $this->escapeHtml($this->task->getFrequency()) ?>">
                 <div class="col-md-3 pr-1"><div class="float-md-right">task</div>
                 </div>
                 <div class="col-md-9">
@@ -110,7 +111,7 @@ endif;
                 foreach ($members as $m): $p = $m->getPerson()?>
                 <div class="person-wrapper border border-bottom-0 px-2 py-1">
                     <div class="form-check">
-                        <input data-id="<?=$p->getId()?>" class="form-check-input person" type="radio" name="person" id="person-<?= $p->getId()?>" value="person" <?php if ($p->getId() == $this->current['assigned']['id']):?> disabled<?php endif ?>>
+                        <input data-id="<?=$p->getId()?>" class="form-check-input person" value="<?= $p->getId()?>" type="radio" name="person" id="person-<?= $p->getId()?>" value="person" <?php if ($p->getId() == $this->current['assigned']['id']):?> disabled<?php endif ?>>
                         <label class="form-check-label" for="person-<?= $p->getId()?>">
                             <?= $this->escapeHtml($p->getFullName())?>
                         </label>
@@ -119,12 +120,12 @@ endif;
             <?php endforeach; ?>
                 <div class="border px-2 py-1">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="substitute" id="person-<?= $p->getId()?>" value="option1">
+                        <input class="form-check-input" type="radio" name="person" id="person-<?= $p->getId()?>" value="option1">
                         <label class="form-check-label" for="person-xx">
                             other:
                         </label>
                         <div class="input-group">
-                            <input name="person-other" class="form-control" value="" id="rotation-autocomplete">
+                            <input name="person_name" class="form-control" value="" id="rotation-autocomplete">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button">OK</button>
                                 <!-- <button class="btn btn-outline-secondary cancel-autocomplete" type="button">cancel</button> -->
