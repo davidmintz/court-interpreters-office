@@ -60,12 +60,12 @@ $(function(){
                         Object.keys(assignments).forEach(
                             task => {
                                 html += `${task}: `;
-                                var assigned = assignments[task].assigned.name;
+                                var assigned = assignments[task].assigned;
                                 var $default  = assignments[task]["default"];
                                 if (assigned.id !== $default.id) {
                                     html += `<span style="text-decoration:line-through">${$default.name}</span> `;
                                 }
-                                html += `${assigned}<br>`;
+                                html += `${assigned.name}<br>`;
                             }
                         );
                         div.children(".card-body").prepend(
