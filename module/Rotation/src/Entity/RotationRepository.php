@@ -75,10 +75,8 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         } else {
             $date = DateTimeImmutable::createFromMutable($date);
             $interval = sprintf('P%sD',$dow - 1);
-            $date->sub(new DateInterval($interval));
+            return $date->sub(new DateInterval($interval));
         }
-
-        return $date;
     }
 
     /**
@@ -99,20 +97,34 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         // and the $date we've been passed is for a different day-of-the-week
         // then we crank up the date
         $dow = $task->getDayOfWeek();
-        $w = $date->format('w');
-        if ($dow && $dow != $w) {
-            $n = 6 - $w;
-            $date->add(new DateInterval("P{$n}D"));
+        $N = $date->format('N');
+        if ($dow && $dow != $N) {
+            $d = $N > $dow ? 8 - $N : abs($N - $dow);
+            // printf("\nDEBUG: task %s dow is: %s, adding %s\n",$task->getName(),$dow, $d);
+            $date->add(new DateInterval("P{$d}D"));
+            // printf("\nDEBUG: date dow is now: %s\n",$date->format("D"));
         }
-        $q = $this->getEntityManager()->createQuery(
-            'SELECT s, p, h FROM '.Substitution::class. ' s
-            LEFT JOIN s.person p LEFT JOIN p.hat h
-            WHERE s.task = :task AND s.date = :date'
-        )   ->useResultCache(true)
-            ->setParameters(compact('task','date'));
-        $substitution = $q->getOneOrNullResult();
+        /**
+         * @var \Doctrine\ORM\QueryBuilder $qb
+         */
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $monday = $this->getMondayPreceding($date);
+        $params = compact('task','date','monday');
+        $qb->select('s, p, h')->from(Substitution::class, 's')
+             ->leftJoin('s.person','p')
+             ->leftJoin('p.hat','h')
+             ->where('s.task = :task');
+        $qb->andWhere(
+            '(s.date = :date OR (s.date = :monday AND s.duration = \'WEEK\'))'
+        );
+        $monday = $this->getMondayPreceding($date);
+        $params = compact('task','date','monday');
+        $qb->setParameters($params);
+        $substitution = $qb->getQuery()
+            ->useResultCache(true)->getOneOrNullResult();
         $result = $this->getDefaultAssignment($task, $date);
-        
+
         return [
             'date'  => $date->format('Y-m-d'),
             'default' => $result['default'],

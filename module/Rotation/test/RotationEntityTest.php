@@ -142,10 +142,10 @@ class RotationEntityTest extends TestCase
         $this->assertEquals("Mirta",$actual['default']->getFirstName());
 
         // again
-        // $example_date =  new DateTime('2019-06-11');
-        // $actual = $repo->getAssignment($task,$example_date);
-        // $this->assertEquals("Humberto",$actual['default']->getFirstName());
-        // $this->assertEquals("Mirta",$actual['assigned']->getFirstName());
+        $example_date =  new DateTime('2019-06-11');
+        $actual = $repo->getAssignment($task,$example_date);
+        $this->assertEquals("Humberto",$actual['default']->getFirstName());
+        $this->assertEquals("Mirta",$actual['assigned']->getFirstName());
     }
 
     public function testGetDefaultSaturdayVictim()
