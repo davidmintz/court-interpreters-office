@@ -111,20 +111,20 @@ class RotationEntityTest extends TestCase
         $this->assertTrue($task instanceof Entity\Task);
         $repo = $this->em->getRepository(Entity\Rotation::class);
         $example_date = new \DateTime('2019-11-06');
-        $assigned = $repo->getDefaultAssignedPerson($task,$example_date);
-        $this->assertTrue(is_object($assigned),"expected \$assigned to be object, got ".gettype($assigned));
-        $this->assertTrue($assigned instanceof Person, "expected instance of Person, got ".get_class($assigned));
-        $this->assertEquals("Paula",$assigned->getFirstName(),'expected "Paula", got '.$assigned->getFirstName());
+        $result = $repo->getDefaultAssignment($task,$example_date);
+        $this->assertTrue(is_array($result),"expected \$assigned to be array, got ".gettype($result));
+        $this->assertTrue($result['default'] instanceof Person, "expected instance of Person, got ".get_class($result['default']));
+        $this->assertEquals("Paula",$result['default']->getFirstName(),'expected "Paula", got '.$result['default']->getFirstName());
         //printf("\ndate %s, assigned: %s\n",$example_date->format('D d-M-Y'),$assigned->getFirstName());
         // Mirta is default, Humberto is sub
         $example_date = new DateTime('2019-10-25');
-        $default = $repo->getDefaultAssignedPerson($task,$example_date);
+        $default = $repo->getDefaultAssignment($task,$example_date);
         // printf("\ndate %s; default scheduler: %s\n",$example_date->format('D d-M-Y'),$default->getFirstName());
         $example_date = new DateTime('2019-10-25');
-        $actual = $repo->getAssignedPerson($task,$example_date);
+        $actual = $repo->getAssignment($task,$example_date);
         // printf("\ndate %s; default scheduler: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
         $example_date = new DateTime('2019-12-01'); // a Sunday
-        $actual = $repo->getAssignedPerson($task,$example_date);
+        $actual = $repo->getAssignment($task,$example_date);
         // printf("\ndate %s; default scheduler: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
 
     }
@@ -137,9 +137,15 @@ class RotationEntityTest extends TestCase
             ->setParameters(['name'=>'%scheduling%'])->getSingleScalarResult();
         $task = $repo->getTask($id);
         $example_date = new DateTime('2019-10-25');
-        $actual = $repo->getAssignedPerson($task,$example_date);
+        $actual = $repo->getAssignment($task,$example_date);
         $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
         $this->assertEquals("Mirta",$actual['default']->getFirstName());
+
+        // again
+        // $example_date =  new DateTime('2019-06-11');
+        // $actual = $repo->getAssignment($task,$example_date);
+        // $this->assertEquals("Humberto",$actual['default']->getFirstName());
+        // $this->assertEquals("Mirta",$actual['assigned']->getFirstName());
     }
 
     public function testGetDefaultSaturdayVictim()
@@ -150,8 +156,8 @@ class RotationEntityTest extends TestCase
             ->setParameters(['name'=>'%saturday%'])->getSingleScalarResult();
         $task = $repo->getTask($id);
         $example_date = new \DateTime('2019-11-06');
-        $default = $repo->getDefaultAssignedPerson($task,$example_date);
-        $this->assertEquals("Erika",$default->getFirstName());
+        $default = $repo->getDefaultAssignment($task,$example_date);
+        $this->assertEquals("Erika",$default['default']->getFirstName());
 
     }
 
@@ -163,13 +169,13 @@ class RotationEntityTest extends TestCase
             ->setParameters(['name'=>'%saturday%'])->getSingleScalarResult();
         $task = $repo->getTask($id);
         $example_date = new DateTime('2019-11-02');
-        $actual = $repo->getAssignedPerson($task,$example_date);
+        $actual = $repo->getAssignment($task,$example_date);
         //printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
         $this->assertEquals("Mirta",$actual['default']->getFirstName());
         $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
 
         $example_date = new DateTime('2019-10-30');
-        $actual = $repo->getAssignedPerson($task,$example_date);
+        $actual = $repo->getAssignment($task,$example_date);
         //printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
         $this->assertEquals("Mirta",$actual['default']->getFirstName());
         $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
