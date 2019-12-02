@@ -136,6 +136,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
 
     /**
      * gets default Person assigned to $task on $date
+     * 
      * @param  Task     $task
      * @param  DateTime $date
      * @throws \RuntimeException
@@ -156,7 +157,6 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
             $n = 6 - $w;
             $date->add(new DateInterval("P{$n}D"));
         }
-        //, p, h, role LEFT JOIN m.person p LEFT JOIN p.hat h LEFT JOIN h.role role
         $q = $em->createQuery('SELECT r, t, m, p FROM '.Rotation::class. ' r
             JOIN r.task t
             LEFT JOIN r.members m

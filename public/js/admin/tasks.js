@@ -123,13 +123,16 @@ $(function(){
             ).removeAttr("hidden");
             return;
         }
+        var duration = $(".task").data('task_frequency') === 'WEEK' ?
+            $("#duration input:checked").val() : 'DAY';
+
         // pull together data
         data = {
             date:  $(".assignment-date").data("date"),
             task : $(".task").data("task_id"),
-            person
+            person, duration
         };
-        
+
         console.warn(data);
     });
 });

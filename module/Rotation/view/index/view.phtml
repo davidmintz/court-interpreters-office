@@ -131,17 +131,16 @@ endif;
                         <label class="form-check-label" for="person-autocomplete">
                             other:
                         </label>
-                        <!-- <div class="input-group">    </div> -->
                             <input name="person_name" class="form-control" value="" id="rotation-autocomplete">
-                            <!-- <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button">OK</button>
-                            </div>
-                            -->
-
                     </div>
-
                 </div>
             <?php endif ?>
+            <!--  $this->task->getDuration() -->
+            <div id="duration" class="form-check form-check-inline mt-2 pl-2 pr-3 py-1"<?php if ('WEEK' != $this->task->getDuration()): ?> hidden<?php endif ?>>
+                Duration:
+                <input type="radio"  class="ml-2 form-check-input" name="duration" id="duration-day" value="DAY" checked><label  class="form-check-label" for="duration-day">this one day</label>
+                <input type="radio"  class="ml-3 form-check-input" name="duration" id="duration-week"  value="WEEK"><label  class="form-check-label" for="duration-week">all week</label>
+            </div>
         </div>
         <div class="modal-footer">
         <div class="alert alert-warning validation-error" hidden></div>
