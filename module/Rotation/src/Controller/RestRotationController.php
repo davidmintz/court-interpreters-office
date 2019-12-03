@@ -39,9 +39,10 @@ class RestRotationController extends AbstractRestfulController
      */
     public function create($data)
     {
-        $filter = $this->service->getSubstitionInputFilter();
+        $filter = $this->service->getSubstitutionInputFilter();
         $filter->setData($data);
         if ($filter->isValid()) {
+            // lots of work to be completed 
 
         } else {
             return new JsonModel(['validation_errors'=> $filter->getMessages()]);

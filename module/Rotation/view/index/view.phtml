@@ -99,6 +99,17 @@ endif;
     </div>
 </div>
 <!-- Modal -->
+<?php
+/*
+fields that may have errors:
+csrf :isEmpty :	required security token is missing
+date : isEmpty :	date is required
+task : isEmpty :	task entity id is required
+person : isEmpty :	person entity id is required
+duration : isEmpty :	"duration" field is required
+rotation_id	 : isEmpty :	rotation entity id is required
+*/
+?>
 <div class="modal" id="dialog" tabindex="-1" role="dialog" aria-labelledby="dialog-label" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

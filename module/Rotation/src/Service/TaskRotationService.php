@@ -210,7 +210,7 @@ class TaskRotationService
      *
      * @return InputFilter\InputFilter
      */
-    public function getSubstitionInputFilter() : InputFilter\InputFilter
+    public function getSubstitutionInputFilter() : InputFilter\InputFilter
     {
         if ($this->substitutionInputFilter) {
             return $this->substitutionInputFilter;
@@ -244,17 +244,51 @@ class TaskRotationService
             'name' => 'date',
             'validators' => [
                 [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> "date is required"],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
                     'name' => 'Date',
                     'options' => [
                         'messages' => ['dateInvalidDate'=>'invalid/malformed date: "%value%"'],
                     ],
                     'break_chain_on_failure' => true,
-                ]
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) use ($em) {
+                            $rotation_id = $context['rotation_id'] ?? null;
+                            if (! $rotation_id) {
+                                return true; // to be handled elsewhere
+                            }
+                            $rotation = $em->find(Entity\Rotation::class, $rotation_id);
+                            if (! $rotation_id) {
+                                return true; // same as as above
+                            }
+
+                            return $value >=  $rotation->getStartDate()->format('Y-m-d');
+                        },
+                        'messages' => [
+                            'callbackValue' => 'submitted date predates the start date of the rotation',
+                        ],
+                    ],
+                ],
             ],
         ]);
         $inputFilter->add([
             'name' => 'task',
             'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> "task entity id is required"],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
                 [
                     'name' => 'Digits',
                     'options' => ['messages' => [
@@ -283,9 +317,16 @@ class TaskRotationService
             'name' => 'person',
             'validators' => [
                 [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> "person entity id is required"],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
                     'name' => 'Digits',
                     'options' => ['messages' => [
-                        'notDigits' => 'invalid valid person entity id: "%value%"'
+                        'notDigits' => 'invalid person entity id: "%value%"'
                     ]],
                     'break_chain_on_failure' => true,
                 ],
@@ -307,6 +348,13 @@ class TaskRotationService
             'name' => 'duration',
             'required' => true,
             'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> '"duration" field is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
                 [
                     'name' => 'InArray',
                     'options' => [
@@ -350,7 +398,15 @@ class TaskRotationService
             'name' => 'substitution',
             'required' => true,
             'allow_empty' => true,
+
             'validators' => [
+                // [
+                //     'name' => 'NotEmpty',
+                //     'options' => [
+                //         'messages' => ['isEmpty'=> "substitution is required"],
+                //     ],
+                //     'break_chain_on_failure' => true,
+                // ],
                 [
                     'name' => 'Callback',
                     'options' => [
@@ -365,7 +421,41 @@ class TaskRotationService
                 ],
             ],
         ]);
-        // to be continued
+
+        $inputFilter->add([
+            'name' => 'rotation_id',
+            'required' => true,
+            'allow_empty' => false,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> "rotation entity id is required"],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Digits',
+                    'options' => ['messages' => [
+                        'notDigits' => 'invalid rotation entity id: "%value%"'
+                    ]],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) use ($em) {
+                            $rotation = $em->find(Entity\Rotation::class,$value);
+                            return $rotation ? true : false;
+                        },
+                        'messages' => [
+                            'callbackValue' => 'no task rotation with id %value% was found.',
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+            ],
+        ]);
 
 
         $this->substitutionInputFilter = $inputFilter;

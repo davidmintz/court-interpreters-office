@@ -91,8 +91,10 @@ $(function(){
                     $("#dialog").data({rotation_start_date:res.start_date});
 
                 }
+                // maybe just stuff the whole response object into a .data() attr?
                 $("#dialog").data({
                     csrf: res.csrf,
+                    rotation_id : res.rotation_id,
                     substitution_id: res.substitution_id,
                     substitution_duration: res.substitution_duration
                 });
@@ -139,6 +141,7 @@ $(function(){
         data = {
             date:  $(".assignment-date").data("date"),
             task : $(".task").data("task_id"),
+            rotation_id : $("#dialog").data("rotation_id"),
             substitution : $("#dialog").data("substitution_id"),
             person, duration, csrf
         };
