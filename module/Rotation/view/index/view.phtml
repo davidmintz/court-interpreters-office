@@ -127,7 +127,7 @@ endif;
             <?php endforeach; ?>
                 <div class="border px-2 py-1">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="person" id="person-autocomplete" value="">
+                        <input class="form-check-input person" type="radio" name="person" id="person-autocomplete" value="">
                         <label class="form-check-label" for="person-autocomplete">
                             other:
                         </label>
@@ -138,8 +138,8 @@ endif;
             <!--  $this->task->getDuration() -->
             <div id="duration" class="form-check form-check-inline mt-2 pl-2 pr-3 py-1"<?php if ('WEEK' != $this->task->getDuration()): ?> hidden<?php endif ?>>
                 Duration:
-                <input type="radio"  class="ml-2 form-check-input" name="duration" id="duration-day" value="DAY" checked><label  class="form-check-label" for="duration-day">this one day</label>
-                <input type="radio"  class="ml-3 form-check-input" name="duration" id="duration-week"  value="WEEK"><label  class="form-check-label" for="duration-week">all week</label>
+                <input type="radio"  class="ml-2 form-check-input duration" name="duration" id="duration-day" value="DAY" checked><label  class="form-check-label" for="duration-day">this one day</label>
+                <input type="radio"  class="ml-3 form-check-input duration" name="duration" id="duration-week"  value="WEEK"><label  class="form-check-label" for="duration-week">all week</label>
             </div>
         </div>
         <div class="modal-footer">

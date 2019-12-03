@@ -5,6 +5,7 @@ namespace InterpretersOffice\Admin\Rotation\Controller;
 
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
+use Zend\Validator\Csrf;
 use InterpretersOffice\Admin\Rotation\Service\TaskRotationService;
 use InterpretersOffice\Admin\Rotation\Entity\Task;
 
@@ -38,7 +39,14 @@ class RestRotationController extends AbstractRestfulController
      */
     public function create($data)
     {
-        return new JsonModel(['status' => 'create() has yet to be implemented']);
+        $filter = $this->service->getSubstitionInputFilter();
+        $filter->setData($data);
+        if ($filter->isValid()) {
+
+        } else {
+            return new JsonModel(['validation_errors'=> $filter->getMessages()]);
+        }
+        return new JsonModel(['status' => 'valid. nice job']);
     }
 
     /**
@@ -51,8 +59,10 @@ class RestRotationController extends AbstractRestfulController
     public function get($id)
     {
         $date = $this->params()->fromRoute('date');
+        $data = $this->service->getAssignment($date,(int)$id) ;
+        $data['csrf'] = (new Csrf())->getHash();
 
-        return new JsonModel($this->service->getAssignment($date,(int)$id));
+        return new JsonModel($data);
     }
 
     /**

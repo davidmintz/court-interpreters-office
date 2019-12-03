@@ -129,14 +129,16 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
             'date'  => $date->format('Y-m-d'),
             'default' => $result['default'],
             'assigned' => $substitution ? $substitution->getPerson() : $result['default'],
+            'substitution' => $substitution ?: null,
             'rotation' => $result['rotation'],
+            'rotation_id' => $result['rotation_id'],
             'start_date' => $result['start_date'],
         ];
     }
 
     /**
      * gets default Person assigned to $task on $date
-     * 
+     *
      * @param  Task     $task
      * @param  DateTime $date
      * @throws \RuntimeException
@@ -186,6 +188,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
 
         return [
             'start_date' => $rotation->getStartDate(),
+            'rotation_id' => $rotation->getId(),
             'rotation' =>$members,
             'default'=> $members[$i]->getPerson()
         ];

@@ -24,13 +24,16 @@ $(function(){
         changeMonth : true,
         changeYear : true,
         dateFormat : "yy-mm-dd",
+        // when they click a date, fetch the assignment data for that date
         onSelect : function(date, instance){
            var task_id = $(".task").data("task_id");
-           var refresh_rotation = false;
-           if (date < $(".start_date").data("start_date")) {
-               console.log("selected date predates start of currently displayed rotation");
-               refresh_rotation = true;
-           }
+           // var refresh_rotation = false;
+           // if the rotation we've fetched has a start date different from one
+           // being displayed, update the dialog
+           // if (date !== $(".start_date").data("start_date")) {
+           //     console.debug("selected date differs from start of currently displayed rotation");
+           //     refresh_rotation = true;
+           // }
            $.get(`/admin/rotations/assignments/${date}/${task_id}`)
            .then((res)=>{
                var formatted = new moment(res.date,"YYYY-MM-DD").format("ddd DD-MMM-YYYY");
@@ -42,9 +45,9 @@ $(function(){
                }
                html += `${res.assigned.name}`;
                $(".assignment-person").html(html).data({id:res.assigned.id});
-               if (refresh_rotation) {
+               // if (refresh_rotation) {
                    $(".rotation").html(res.rotation.map(e=>e.name).join("<br>"));
-               }
+               // }
                var start_date = new moment(res.start_date,"YYYY-MM-DD");
                $(".start_date").text(start_date.format("ddd DD-MMM-YYYY"))
                $(".start_date").data({start_date:res.start_date});
@@ -86,7 +89,13 @@ $(function(){
                     $("#dialog p.subtitle").after(html);
                     slice.remove();
                     $("#dialog").data({rotation_start_date:res.start_date});
+
                 }
+                $("#dialog").data({
+                    csrf: res.csrf,
+                    substitution_id: res.substitution_id,
+                    substitution_duration: res.substitution_duration
+                });
                 var current = $(".assignment-person");
                 var disabled = $(".person:disabled");
                 if (current.data("id") !== disabled.data("id")) {
@@ -116,7 +125,7 @@ $(function(){
 
     $("#dialog .modal-footer > .btn-primary").on("click",(e)=>{
         console.warn("rock and ROLL!");
-        var person = $("#dialog input:checked").val();
+        var person = $("#dialog input.person:checked").val();
         if (! person) {
             $("#dialog .modal-footer .alert").text(
                 "Please select a person, or else cancel."
@@ -125,14 +134,19 @@ $(function(){
         }
         var duration = $(".task").data('task_frequency') === 'WEEK' ?
             $("#duration input:checked").val() : 'DAY';
-
+        var csrf =  $("#dialog").data("csrf");
         // pull together data
         data = {
             date:  $(".assignment-date").data("date"),
             task : $(".task").data("task_id"),
-            person, duration
+            substitution : $("#dialog").data("substitution_id"),
+            person, duration, csrf
         };
-
+        $.post("/admin/rotations/assignments/create",data).then(res => {
+            if (res.validation_errors) {
+                console.warn(res.validation_errors);
+            }
+        }).fail(fail);
         console.warn(data);
     });
 });

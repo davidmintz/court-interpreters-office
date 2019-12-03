@@ -11,7 +11,7 @@ use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
 use Zend\EventManager\EventInterface;
 use Zend\View\Model\JsonModel;
 
-use Zend\InputFilter\InputFilter;
+use Zend\InputFilter;
 use Zend\Validator;
 use Zend\Filter;
 
@@ -34,11 +34,18 @@ class TaskRotationService
     private $config;
 
     /**
-     * inputfilter
+     * rotation inputfilter
      *
      * @var InputFilter
      */
-    private $inputFilter;
+    private $rotationInputFilter;
+
+    /**
+     * substitution inputfilter
+     *
+     * @var InputFilter
+     */
+    private $substitutionInputFilter;
 
     /**
      * repository
@@ -53,17 +60,22 @@ class TaskRotationService
         $this->config = $config;
     }
 
-    public function getRotationInputFilter() : InputFilter
+    /**
+     * returns input filter for Rotation entity
+     *
+     * @return InputFilter\InputFilter
+     */
+    public function getRotationInputFilter() : InputFilter\InputFilter
     {
-        if ($this->inputFilter) {
-            return $this->inputFilter;
+        if ($this->rotationInputFilter) {
+            return $this->rotationInputFilter;
         }
-        $inputFilter = new InputFilter();
+        $inputFilter = new InputFilter\InputFilter();
         $em = $this->em;
         $inputFilter->add(
             [
                 'name' => 'members',
-                'type' => ArrayInput::class,
+                'type' => InputFilter\ArrayInput::class,
                 'required' => true,
                 'validators' =>[
                     [
@@ -98,11 +110,10 @@ class TaskRotationService
         );
         $inputFilter->add([
             'name' => 'countable',
-            //'type' => ArrayInput::class,
             'required' => true,
             'validators' => [
                 [
-                    'name' => IsCountable::class,
+                    'name' => Validator\IsCountable::class,
                     'options' => [
                         'min' => 2,
                         'messages' => [
@@ -183,12 +194,183 @@ class TaskRotationService
 
                         },
                         'messages' => [
-                            'callbackValue' => 'retroactive creation or modification of task rotations is not supported',
+                            'callbackValue' => 'retroactive creation or modification of tasks and rotations is not supported',
                         ],
                     ],
                 ],
             ],
         ]);
+        $this->rotationInputFilter = $inputFilter;
+
+        return $inputFilter;
+    }
+
+    /**
+     * gets input filter for Substitution entity
+     *
+     * @return InputFilter\InputFilter
+     */
+    public function getSubstitionInputFilter() : InputFilter\InputFilter
+    {
+        if ($this->substitutionInputFilter) {
+            return $this->substitutionInputFilter;
+        }
+        $inputFilter = new InputFilter\InputFilter();
+        $em = $this->em;
+        $inputFilter->add([
+            'name' => 'csrf',
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => [
+                            'isEmpty' => 'required security token is missing'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Csrf',
+                    'options' => [
+                        'messages' => [
+                            'notSame' =>
+                            'Invalid or expired security token. Please reload this page and try again.'
+                    ]],
+                ],
+            ],
+        ]);
+
+        $inputFilter->add([
+            'name' => 'date',
+            'validators' => [
+                [
+                    'name' => 'Date',
+                    'options' => [
+                        'messages' => ['dateInvalidDate'=>'invalid/malformed date: "%value%"'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ]
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'task',
+            'validators' => [
+                [
+                    'name' => 'Digits',
+                    'options' => ['messages' => [
+                        'notDigits' => 'invalid valid task entity id: "%value%"'
+                    ]],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) {
+                            $task = $this->getTask((int)$value);
+                            if (! $task) {
+                                return false;
+                            }
+                            return true;
+                        },
+                        'messages' => [
+                            'callbackValue' => '%value% is not the id of any task',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'person',
+            'validators' => [
+                [
+                    'name' => 'Digits',
+                    'options' => ['messages' => [
+                        'notDigits' => 'invalid valid person entity id: "%value%"'
+                    ]],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) use ($em) {
+                            $person = $em->find('InterpretersOffice\Entity\Person',$value);
+                            return $person && $person->isActive() ? true : false;
+                        },
+                        'messages' => [
+                            'callbackValue' => '%value% is not the id of any active person',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'duration',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'InArray',
+                    'options' => [
+                        'haystack' => [ "DAY", "WEEK"],
+                        'messages' => [
+                            'notInArray' => 'the only supported options for duration are "DAY" and "WEEK"'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) {
+                            if ($value == 'DAY') {
+                                return true; // shouldn't be a problem
+                            }
+                            if (! isset($context['task'])) {
+                                return true; // someone else's problem
+                            }
+                            $task = $this->getTask((int)$context['task']);
+                            if (! $task) {
+                                return true; // ditto; another validator will handle it
+                            }
+                            return $task->getDuration() != 'DAY';
+
+                        },
+                        'messages' => [
+                            'callbackValue' => 'the duration for this substitution is inconsistent with the duration of the task',
+                        ],
+                    ],
+                ],
+            ],
+            'filters' => [
+                [
+                    'name' => 'StringToUpper'
+                ]
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'substitution',
+            'required' => true,
+            'allow_empty' => true,
+            'validators' => [
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) use ($em) {
+                            $substitution = $em->find(Entity\Substitution::class,$value);
+                            return $substitution ? true : false;
+                        },
+                        'messages' => [
+                            'callbackValue' => 'no substitution with id %value% was found.',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        // to be continued
+
+
+        $this->substitutionInputFilter = $inputFilter;
+
+        return $inputFilter;
     }
 
     /**
@@ -389,6 +571,16 @@ class TaskRotationService
 
         $assignment['rotation'] = $people;
         $assignment['start_date'] = $assignment['start_date']->format('Y-m-d');
+        if (!empty($assignment['substitution'])) {
+            $sub = $assignment['substitution'];
+            $assignment['substitution_id'] = $sub->getId();
+            $assignment['substitution_duration'] = $sub->getDuration();
+
+        } else {
+            $assignment['substitution_id'] = null;
+            $assignment['substitution_duration'] = null;
+        }
+        unset($assignment['substitution']);
 
         return $assignment;
     }

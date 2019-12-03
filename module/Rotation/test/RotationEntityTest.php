@@ -3,7 +3,9 @@
 
 use InterpretersOffice\Admin\Rotation\Entity;
 use InterpretersOffice\Entity\Person;
+use InterpretersOffice\Admin\Rotation\Service\TaskRotationService;
 use PHPUnit\Framework\TestCase;
+
 
 /**
  * depends on our mysql dev database, ergo doesn't work without out it
@@ -179,6 +181,42 @@ class RotationEntityTest extends TestCase
         //printf("\ndate %s; actually assigned: %s\n",$example_date->format('D d-M-Y'),$actual['assigned']->getFirstName());
         $this->assertEquals("Mirta",$actual['default']->getFirstName());
         $this->assertEquals("Humberto",$actual['assigned']->getFirstName());
+
+    }
+
+    public function testRotationServiceCanCreateSubstitutionForSingleDayScheduling()
+    {
+        $service = new TaskRotationService($this->em, []);
+        $this->assertTrue(is_object($service));
+        // figure out the default whom we are overriding
+        $date = new DateTime("next Monday +36 weeks");
+        /** @var $repo InterpretersOffice\Admin\Rotation\Entity|RotationRepository */
+        $repo = $this->em->getRepository(Entity\Rotation::class);
+        $id = $this->em->createQuery('SELECT t.id FROM '.Entity\Task::class. ' t WHERE t.name LIKE :name')
+            ->setParameters(['name'=>'%schedul%'])->getSingleScalarResult();
+        $task = $repo->getTask($id);
+        //$task =
+        $assignment = $service->getAssignment($date->format('Y-m-d'),$id);
+        $this->assertTrue(is_array($assignment));
+        // $this->assertTrue(is_object($assignment['assigned']));
+        $this->assertTrue(key_exists('assigned',$assignment), 'no key "assigned" in array returned by getAssignment()');
+        $this->assertTrue(key_exists('default',$assignment), 'no key "default" in array returned by getAssignment()');
+        // we assume. otherwise test can't continue
+        $this->assertEquals($assignment['default']['id'],$assignment['assigned']['id']) ;
+        $rotation = $assignment['rotation'];
+        $default = $assignment['default']['id'];
+        $person = null;
+        // get first person who is NOT the default
+        foreach ($rotation as $p) {
+            if ($p['id'] != $default) {
+                $person = $p['id'];
+                break;
+            }
+        }
+        // { date: "2020-12-15", task: 2, person: "198", duration: "DAY" }
+        $csrf = (new \Zend\Validate\Csrf)->getHash();
+        $post = [ 'date' => $date->format('Y-m-d'),'task' => 2, 'person' => 2, 'duration' => 'DAY', 'csrf'=> $csrf];
+        // to do: CSRF!
 
     }
 }
