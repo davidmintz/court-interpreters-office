@@ -121,9 +121,14 @@ rotation_id	 : isEmpty :	rotation entity id is required
         </button>
       </div>
       <div class="modal-body">
+          <div class="alert alert-warning border border-danger rounded shadow-sm" style="display:none">
+              <p id="error-message">eat shit.</p>
+              <button class="mx-auto mt-0 text-center d-block btn btn-sm btn-outline-success reload" hidden>reload</button>
+          </div>
           <p class="subtitle">
               Replace <span class="assignment-person"><?= $name ?></span> with:
           </p>
+          <p id="error_person" class="mt-0 alert alert-warning validation-error" style="display:none"></p>
             <?php if ($current):
                 $members = $current->getMembers();
                 foreach ($members as $m): $p = $m->getPerson()?>
@@ -147,6 +152,7 @@ rotation_id	 : isEmpty :	rotation entity id is required
                 </div>
             <?php endif ?>
             <!--  $this->task->getDuration() -->
+            <div id="error_duration" class="mt-1 mb-0 alert alert-warning validation-error" style="display:none"></div>
             <div id="duration" class="form-check form-check-inline mt-2 pl-2 pr-3 py-1"<?php if ('WEEK' != $this->task->getDuration()): ?> hidden<?php endif ?>>
                 Duration:
                 <input type="radio"  class="ml-2 form-check-input duration" name="duration" id="duration-day" value="DAY" checked><label  class="form-check-label" for="duration-day">this one day</label>

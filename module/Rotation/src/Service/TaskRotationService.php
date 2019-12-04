@@ -538,6 +538,29 @@ class TaskRotationService
     }
 
     /**
+     * creates|updates a Substitution for a Task on $data['date']
+     * @param  Array $data [description]
+     * @return Array       [description]
+     */
+    public function createSubstitution(Array $data) : Array
+    {
+        /*
+        date	2019-12-04
+        task	2
+        person	198
+        duration	DAY
+        substitution
+        rotation_id	14
+        */
+        /*  is there already a Substitution? if that's the case, we edit (or delete) */
+
+        /* is it for the week or for the day? */
+
+        
+        return $data;
+    }
+
+    /**
      * proxies to  Entity\RotationRepository::getTask()
      *
      * note to self: maybe remove the repo method and do the work here and

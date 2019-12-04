@@ -147,9 +147,33 @@ $(function(){
         };
         $.post("/admin/rotations/assignments/create",data).then(res => {
             if (res.validation_errors) {
-                console.warn(res.validation_errors);
+                // kind of a special case. only a CSRF error is expected. anything else
+                // if likely a bug
+                //[ "csrf", "date", "task", "person", "duration", "substitution", "rotation_id" ]
+                for (var prop in res.validation_errors) {
+                    if (prop === "csrf") {
+                        $("#error-message").html(res.validation_errors.csrf);
+                        $("#dialog button.reload").removeAttr("hidden");
+                        $("#error-message").parent().show();
+                        break;
+                    }
+                    // should not happen, unless they are manipulating shit themselves:
+                    if ([ "date", "task","substitution", "rotation_id" ].includes(prop)) {
+                        $("#error-message").html(`Sorry, we encountered an unexpected problem processing this request.
+                            Please reload the page and try again. If the problem persists, you should report
+                            this issue to the application developer.`);
+                        $("#error-message").parent().show();
+                        break;
+                    }
+                    displayValidationErrors(res.validation_errors);
+                }
+                return;
             }
+            // else, all good
+            console.warn("looks good");
         }).fail(fail);
-        console.warn(data);
+
+
+        $("button.reload").on("click",()=>location.reload());
     });
 });

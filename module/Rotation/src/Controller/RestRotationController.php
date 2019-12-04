@@ -32,7 +32,7 @@ class RestRotationController extends AbstractRestfulController
     }
 
     /**
-     * creates a new task rotation
+     * creates a new task substitution
      *
      * @param  Array $data
      * @return JsonModel
@@ -42,12 +42,13 @@ class RestRotationController extends AbstractRestfulController
         $filter = $this->service->getSubstitutionInputFilter();
         $filter->setData($data);
         if ($filter->isValid()) {
-            // lots of work to be completed 
+            // lots of work to be completed
+            $result = $this->service->createSubstitution($filter->getValues());
+            return new JsonModel($result);
 
         } else {
             return new JsonModel(['validation_errors'=> $filter->getMessages()]);
         }
-        return new JsonModel(['status' => 'valid. nice job']);
     }
 
     /**
