@@ -12,9 +12,11 @@ use DateTime;
 
 /**
  * Entity class representing a Person substitution for a Task
- * @ORM\Entity
- * @ORM\Table(name="rotation_substitutions")
- * //ORM\HasLifecycleCallbacks
+ *
+ * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Rotation\Entity\SubstitutionRepository")
+ * @ORM\Table(name="rotation_substitutions",
+ * uniqueConstraints={@ORM\UniqueConstraint(name="subst_idx", columns={"date","task_id","duration"})})
+ * @ORM\HasLifecycleCallbacks
  */
 
 class Substitution
@@ -58,6 +60,45 @@ class Substitution
      * @var Person
      */
     private $person;
+
+    /**
+     *
+     * @ORM\prePersist
+     */
+    public function prePersist()
+    {
+        $this->checkDate();
+    }
+    /**
+     *
+     * @ORM\preUpdate
+     */
+    public function preUpdate()
+    {
+        $this->checkDate();
+    }
+
+    /**
+     * Tests whether $this->date is a monday when duration is a week
+     *
+     * We could silently reset the date instead of throwing an exception,
+     * but the thinking here is that we don't know the intentions, or which
+     * field might be wrong, so we don't assume.
+     *
+     * @throws \RuntimeException
+     * @return void
+     */
+    public function checkDate()
+    {
+        if ('WEEK' == $this->getDuration()) {
+            $date = $this->getDate();
+            if ($date && $date->format('N') != 1) {
+                throw new \RuntimeException(
+                    'For substitutions lasting a week, the date must be a Monday'
+                );
+            }
+        }
+    }
 
     /**
      * Get id.
@@ -164,4 +205,5 @@ class Substitution
     {
         return $this->person;
     }
+
 }

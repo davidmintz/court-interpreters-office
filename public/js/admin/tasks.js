@@ -67,7 +67,6 @@ $(function(){
         $.get(`/admin/rotations/assignments/${date}/${task_id}`)
         .then(res =>
             {
-                console.warn(`${res.start_date} is start date of the newly-fetched rotation`);
                 if (res.start_date !== $("#dialog").data("rotation_start_date")) {
                     console.warn("which differs from that currently displayed");
                     var n = $("#dialog .form-check").length - 1;
@@ -152,14 +151,15 @@ $(function(){
                 //[ "csrf", "date", "task", "person", "duration", "substitution", "rotation_id" ]
                 for (var prop in res.validation_errors) {
                     if (prop === "csrf") {
-                        $("#error-message").html(res.validation_errors.csrf);
+                        var error = res.validation_errors.csrf[Object.keys(res.validation_errors.csrf)[0]];
+                        $("#error-message").text(error);
                         $("#dialog button.reload").removeAttr("hidden");
                         $("#error-message").parent().show();
                         break;
                     }
                     // should not happen, unless they are manipulating shit themselves:
                     if ([ "date", "task","substitution", "rotation_id" ].includes(prop)) {
-                        $("#error-message").html(`Sorry, we encountered an unexpected problem processing this request.
+                        $("#error-message").html(`Sorry, we encountered an unexpected problem while processing this request.
                             Please reload the page and try again. If the problem persists, you should report
                             this issue to the application developer.`);
                         $("#error-message").parent().show();
@@ -170,7 +170,7 @@ $(function(){
                 return;
             }
             // else, all good
-            console.warn("looks good");
+            console.warn("looks good!");
         }).fail(fail);
 
 

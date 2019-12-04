@@ -212,7 +212,7 @@ class UpdateListener implements
             );
         } else {
             $this->logger->debug(
-                "$class does not implement CacheDeletionInterface, not clearing"
+                "$class repository does not implement CacheDeletionInterface, not clearing"
             );
         }
     }

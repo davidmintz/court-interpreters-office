@@ -6,9 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity\Person;
-//
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
-use PHPUnit\Util\Log\TeamCity;
 use DateTime, DateInterval, DateTimeImmutable, DateTimeInterface;
 
 /**
@@ -93,9 +91,8 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         if ('WEEK' != $frequency) {
             throw new \RuntimeException("only Tasks of frequency 'WEEK' are currently supported");
         }
-        // if the Task has a day-of-week
-        // and the $date we've been passed is for a different day-of-the-week
-        // then we crank up the date
+        // if the Task has a day-of-week and the $date we've been passed
+        // is for a different day-of-the-week, then we crank up the date
         $dow = $task->getDayOfWeek();
         $N = $date->format('N');
         if ($dow && $dow != $N) {
@@ -114,7 +111,8 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $qb->select('s, p, h')->from(Substitution::class, 's')
              ->leftJoin('s.person','p')
              ->leftJoin('p.hat','h')
-             ->where('s.task = :task');
+             ->where('s.task = :task')
+             ->orderBy('s.duration');
         $qb->andWhere(
             '(s.date = :date OR (s.date = :monday AND s.duration = \'WEEK\'))'
         );

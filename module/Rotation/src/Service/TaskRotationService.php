@@ -539,12 +539,12 @@ class TaskRotationService
 
     /**
      * creates|updates a Substitution for a Task on $data['date']
-     * @param  Array $data [description]
-     * @return Array       [description]
+     * @param  Array $data
+     * @return Array
      */
     public function createSubstitution(Array $data) : Array
     {
-        /*
+        /* e.g.,
         date	2019-12-04
         task	2
         person	198
@@ -552,12 +552,72 @@ class TaskRotationService
         substitution
         rotation_id	14
         */
-        /*  is there already a Substitution? if that's the case, we edit (or delete) */
+       $assignment = $this->getAssignment($data['date'], (int)$data['task']);
+       // we have a "substitution" key, which, if not null, means there is/was already
+       // a sub, but we might as well check anyway
+       $debug = '';
+      // $result = [];
+       if ($data['substitution']) {
+           $debug .= "substitution param was provided.\n";
+       }
+       if (!$assignment['substitution_id']) {
+           $debug .= "NO existing substitution found\n";
+       } else {
+           $debug .= "existing substitution found: {$assignment['substitution_id']}\n";
+       }
 
-        /* is it for the week or for the day? */
 
-        
-        return $data;
+       /*  is there already a Substitution? if that's the case, we update (or delete) */
+       if ($assignment['substitution_id']) {
+
+           $sub = $this->em->find(Entity\Substitution::class,$assignment['substitution_id']);
+
+           $is_same_duration = $sub->getDuration() == $data['duration'];
+
+           // are they are setting it back to the default person?
+           if ($data['person'] == $assignment['default']['id']) {
+               // are they modifying the duration?
+               // all we need to do is delete the substitution
+               $this->em->remove($sub);
+
+               $debug .= "found existing sub, same duration, default person same as submitted; deleted substitution\n";
+               unset($assignment['substitution_duration']);
+               unset($assignment['substitution_id']);
+               $assignment['assigned'] = $assignment['default'];
+               if (!$is_same_duration) {
+                   $notice = 'Your modification to the duration of this substitution has no effect because
+                   the person assigned is the default, so substitution was deleted.';
+               }
+           } else {
+               $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
+               $sub->setPerson($person)->setDuration($data['duration']);
+           }
+       } else {
+           $sub = new Entity\Substitution();
+           $repo = $this->getRepository();
+           $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
+           if ($data['duration'] == 'WEEK') {
+               $date = $repo->getMondayPreceding(new \DateTime($data['date']));
+           } else {
+               $date = new \DateTime($data['date']);
+           }
+           $sub->setPerson($person)
+            ->setDate($date)
+            ->setDuration($data['duration'])
+            ->setTask($this->getRepository()->getTask($data['task']));
+            $this->em->persist($sub);
+
+       }
+       $this->em->flush();
+       $assignment['substitution_id'] = isset($sub) ? $sub->getId() : null;
+       if (isset($person)) {
+           $assignment['assigned'] = [
+               'id' => $person->getId(),
+               'name' => $person->getFirstname(),
+           ];
+       }
+
+       return ['debug'=>$debug,'assignment'=>$assignment,'notice'=>$notice ?? null];
     }
 
     /**
