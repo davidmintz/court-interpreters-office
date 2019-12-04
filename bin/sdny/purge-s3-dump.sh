@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FILES=($(s3cmd -c $HOME/.dh-sdny.s3cfg  ls s3://sdny/office*sql.gz|awk '{ print $4}'))
+FILES=($(s3cmd -c $HOME/.dh-sdny.s3cfg  ls s3://sdny/office|grep sql.gz|awk '{ print $4}'))
 count=${#FILES[@]}
 echo "we have ${count} files."
 if [ ${#FILES[@]} > 4 ];
