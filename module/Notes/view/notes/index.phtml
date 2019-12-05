@@ -8,7 +8,7 @@ $this->headScript()
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php $settings = $this->layout()->note_settings;
 $date_obj = new \DateTimeImmutable($settings['date']);
-$dow = (int)$date_obj->format('w');
+$dow = (int)$date_obj->format('N');
 if ($dow != 1) {
     $interval = sprintf('P%sD',$dow - 1);
     $this->monday = $date_obj->sub(new \DateInterval($interval));
@@ -16,6 +16,7 @@ if ($dow != 1) {
     $this->monday = $date_obj;
 }
 ?>
+<?php if (false):?>
 <pre hidden>
     type:  <?php var_dump($this->type) ?>
     module? <?php var_dump($this->layout()->module)?>
@@ -26,6 +27,7 @@ if ($dow != 1) {
     date setting is <?php echo $settings['date'] ?> -->
     $this->notes['motd'] is a : <?php echo gettype($this->notes['motd']) ?>
 </pre>
+<?php endif ?>
 <ul class="nav nav-tabs" id="tabs-notes" role="tablist">
   <li class="nav-item">
     <a class="nav-link<?php if (!$this->type or 'motd' == $this->type):?> active<?php endif ?>" id="day-tab" data-toggle="_tab" href="#day" role="tab" aria-controls="day" aria-selected="true">MOTD</a>

@@ -1,0 +1,170 @@
+<?php
+$this->headStyle()->captureStart();
+?>
+.ui-autocomplete {
+  z-index: 1060;
+}
+<?php
+$this->headStyle()->captureEnd();
+$this->headScript()->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+->appendFile($this->basePath('js/admin/tasks.js'));
+$this->headTitle('admin| rotations | view details');
+if ($this->task):
+    $header = $this->escapeHtml($this->task->getName());
+    $rotations = $this->task->getRotations();
+else:
+    $header = 'view';
+endif;
+?>
+<div style="max-width:800px" class="mx-auto">
+    <h2 class="mb-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() . $header?></h2>
+    <div class="row">
+        <div class="col">
+            <div class="row task" data-task_id="<?= $this->task->getId()?>"
+              data-dow="<?=  $this->escapeHtml($this->task->getDayOfWeek())?>"
+              data-task_duration="<?= $this->escapeHtml($this->task->getDuration())?>"
+              data-task_frequency="<?= $this->escapeHtml($this->task->getFrequency()) ?>">
+                <div class="col-md-3 pr-1"><div class="float-md-right">task</div>
+                </div>
+                <div class="col-md-9">
+                    <?php echo $this->escapeHtml($this->task->getName()) ?>
+                </div>
+                <div class="col-md-3 pr-1 py-1"><div class="float-md-right">assigned</div>
+                </div>
+                <div class="col-md-9 current-assignment border border-warning rounded pl-3 pr-1 py-1">
+                <?php
+                if ($this->current['assigned']) :
+                    $name = $this->escapeHtml($this->current['assigned']['name']);
+                    $date = $this->current['date'];
+                    if (!$date instanceof \DateTimeInterface) :
+                        $date = new \DateTime($date);  //->format('D d-M-Y');
+                    endif;
+                    ?>
+                    <span data-date="<?= $date->format('Y-m-d')?>" class="assignment-date"><?= $date->format('D d-M-Y') ?>:</span>
+                    <span data-id="<?= $this->current['assigned']['id'] ?>" class="assignment-person"><?php
+                    if ($this->current['assigned']['id'] != $this->current['default']['id']):
+                        ?><span style="text-decoration:line-through"><?= $this->escapeHtml($this->current['default']['name'])?></span>
+                    <?php
+                    endif;
+                    echo  $name
+                    ?>
+                    </span>
+                <?php
+            else: $name = ''?>
+            <span class="assignment-date"></span>
+            <span class="assignment-person text-muted">(nobody)</span>
+            <?php
+                endif;?>
+                <button data-toggle="modal" data-target="#dialog" class="btn btn-primary btn-sm float-right py-0"><span class="fas fa-edit"></span><span class="sr-only"></span></button>
+                </div>
+                <div class="col-md-3 pr-1"><div class="float-md-right">description</div>
+                </div>
+                <div class="col-md-9">
+                    <?php echo $this->escapeHtml($this->task->getDescription())?:'<span class="text-muted">(none)</span>' ?>
+                </div>
+                <div class="col-md-3 pr-1"><div class="float-md-right">sequence</div>
+                </div>
+                <div class="col-md-9 rotation"><?php
+                    $current = $rotations->get(0);
+                    if ($current):
+                        foreach($current->getMembers() as $m):
+                            echo $this->escapeHtml($m->getPerson()->getFullName()),'<br>';
+                        endforeach;
+                    else:
+                        ?><span class="text-muted">(none)</span><?php
+                    endif;
+                ?></div>
+                <div class="col-md-3 pr-1">
+                    <div class="float-md-right">start date</div>
+                </div><?php
+                if ($current):
+                    $text = $current->getStartDate()->format('d M Y');
+                    $date = $current->getStartDate()->format('Y-m-d');
+                else :
+                    $text = '<span class="text-muted">(n/a)</span>';
+                    $date = '';
+                endif;?>
+                <div data-start_date="<?= $date ?>" class="col-md-9 start_date">
+                    <?= $text ?>
+                </div>
+                <div class="offset-md-3 col-md-9 pt-2">
+                    <button type="button" data-toggle="modal" data-target="#dialog" class="btn btn-outline-primary btn-sm">do shit</button>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+          <span class="text-muted">see who is assigned for a given date</span>
+          <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<?php
+/*
+fields that may have errors:
+csrf :isEmpty :	required security token is missing
+date : isEmpty :	date is required
+task : isEmpty :	task entity id is required
+person : isEmpty :	person entity id is required
+duration : isEmpty :	"duration" field is required
+rotation_id	 : isEmpty :	rotation entity id is required
+*/
+?>
+<div class="modal" id="dialog" tabindex="-1" role="dialog" aria-labelledby="dialog-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text" id="dialog-label">edit assignment:<br><?= $this->escapeHtml($this->task->getName())?><span class="assignment-date"></span>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="alert alert-warning border border-danger rounded shadow-sm" style="display:none">
+              <p id="error-message">eat shit.</p>
+              <button class="mx-auto mt-0 text-center d-block btn btn-sm btn-outline-success reload" hidden>reload</button>
+          </div>
+          <p class="subtitle">
+              Replace <span class="assignment-person"><?= $name ?></span> with:
+          </p>
+          <p id="error_person" class="mt-0 alert alert-warning validation-error" style="display:none"></p>
+            <?php if ($current):
+                $members = $current->getMembers();
+                foreach ($members as $m): $p = $m->getPerson()?>
+                <div class="person-wrapper border border-bottom-0 px-2 py-1">
+                    <div class="form-check">
+                        <input data-id="<?=$p->getId()?>" class="form-check-input person" value="<?= $p->getId()?>" type="radio" name="person" id="person-<?= $p->getId()?>" value="person" <?php if ($p->getId() == $this->current['assigned']['id']):?> disabled<?php endif ?>>
+                        <label class="form-check-label" for="person-<?= $p->getId()?>">
+                            <?= $this->escapeHtml($p->getFullName())?>
+                        </label>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+                <div class="border px-2 py-1">
+                    <div class="form-check">
+                        <input class="form-check-input person" type="radio" name="person" id="person-autocomplete" value="">
+                        <label class="form-check-label" for="person-autocomplete">
+                            other:
+                        </label>
+                            <input name="person_name" class="form-control" value="" id="rotation-autocomplete">
+                    </div>
+                </div>
+            <?php endif ?>
+            <!--  $this->task->getDuration() -->
+            <div id="error_duration" class="mt-1 mb-0 alert alert-warning validation-error" style="display:none"></div>
+            <div id="duration" class="form-check form-check-inline mt-2 pl-2 pr-3 py-1"<?php if ('WEEK' != $this->task->getDuration()): ?> hidden<?php endif ?>>
+                Duration:
+                <input type="radio"  class="ml-2 form-check-input duration" name="duration" id="duration-day" value="DAY" checked><label  class="form-check-label" for="duration-day">this one day</label>
+                <input type="radio"  class="ml-3 form-check-input duration" name="duration" id="duration-week"  value="WEEK"><label  class="form-check-label" for="duration-week">all week</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+        <div class="alert alert-warning validation-error" hidden></div>
+         
+          <button type="button" class="btn btn-primary">save</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

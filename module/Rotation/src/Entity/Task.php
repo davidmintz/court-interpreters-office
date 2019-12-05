@@ -84,6 +84,7 @@ class Task
     /**
      * rotations
      * @ORM\OneToMany(targetEntity="Rotation",mappedBy="task",cascade={"persist"})
+     * @ORM\OrderBy({"start_date" = "DESC"})
      * @var Rotation[]
      */
     private $rotations;

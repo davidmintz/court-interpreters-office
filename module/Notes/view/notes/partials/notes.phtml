@@ -52,7 +52,7 @@ $style .= "width:{$size['width']};height:{$size['height']}";
 if ($this->motw):
     $monday = $this->motw->getDate();
 else :
-    $dow = (int)$date_obj->format('w');
+    $dow = (int)$date_obj->format('N');
     if ($dow != 1) :
         $diff = $dow - 1;
         $monday = new DateTime("{$this->config['date']} - $diff days");

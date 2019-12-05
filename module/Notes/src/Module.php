@@ -13,7 +13,7 @@ use function \date;
  * Module class for our InterpretersOffice\Admin\Notes module.
  */
 class Module {
-    
+
     /**
      * returns this module's configuration.
      * @return array
@@ -63,12 +63,9 @@ class Module {
             return;
         }
         $is_xhr = $event->getRequest()->isXMLHttpRequest();
-
         $container =  $event->getApplication()->getMvcEvent()->getApplication()
             ->getServiceManager();
         $log = $container->get('log');
-        $log->debug("here's Johnny! ".__METHOD__);
-
         $default_date = date('Y-m-d');
         $session = new Container('notes');
         // if they are loading the schedule, non-xhr...
@@ -128,7 +125,7 @@ class Module {
                     $events = $event->getApplication()->getEventManager();
                     $events->addIdentifiers(['Notes']);
                     $events->trigger('NOTES_RENDER','Notes',compact('event','date','settings'));
-                } else { $log->debug("\$render_notes is deemed to be FALSE");}
+                } //else { $log->debug("\$render_notes is deemed FALSE");}
                 $service->setSession($session);
             }
 
