@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace InterpretersOffice\Admin\Rotation\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use DateTime;
 use InterpretersOffice\Admin\Rotation\Entity;
 use InterpretersOffice\Entity\Person;
@@ -18,6 +19,17 @@ use Zend\Filter;
 
 /**
  * TaskRotationService
+ */
+
+/*
+handy snippet
+SELECT t.name task, rs.*, p.firstname AS assigned,
+(select p.firstname FROM people p JOIN task_rotation_members m ON p.id = m.person_id
+    JOIN rotations r ON m.rotation_id = r.id
+    WHERE m.rotation_order =
+        floor(datediff(rs.date,'2015-05-18')/7) % (SELECT COUNT(*) FROM task_rotation_members WHERE rotation_id = 14)
+        AND r.id = 14 ) AS `default`
+FROM rotation_substitutions rs JOIN people p on rs.person_id = p.id JOIN tasks t ON rs.task_id = t.id where rs.date >= '2019-10-01' AND t.name LIKE '%schedul%' ORDER BY rs.date;
  */
 class TaskRotationService
 {
@@ -613,8 +625,8 @@ class TaskRotationService
                    $debug .= "existing sub, person is same as default; duration is different; create new Sub entity?\n";
                    $sub = $this->doCreate($data);
                }
-           } else {
-               $debug .= "found existing sub, person submitted is the default, duration is different: updating sub\n";
+           } else { // not setting back to the default person.
+               $debug .= "found existing sub, person submitted is NOT the default, duration is different: updating sub\n";
                $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
                $sub->setPerson($person)->setDuration($data['duration']);
            }
@@ -622,7 +634,43 @@ class TaskRotationService
             $debug .= "no existing subsitution was found. creating new\n";
             $sub = $this->doCreate($data);
        }
-       $this->em->flush();
+       try {
+//Doctrine\DBAL\Exception\UniqueConstraintViolationException
+           $this->em->flush();
+       } catch (UniqueConstraintViolationException $e) {
+           // find the offending row, and update that one instead
+           //UNIQUE KEY `subst_idx` (`date`,`task_id`,`duration`),
+           /* ERR (3): An exception occurred while executing
+            'UPDATE rotation_substitutions SET duration = ?, person_id = ? WHERE id = ?'
+            with params ["WEEK", 862, 161]:
+            */
+           $debug .= "caught duplicate entry, looking for existing row\n";
+           $repo = $this->getRepository();
+           $date = new DateTime($data['date']);
+           $entity = $this->getRepository()->findOneBy([
+                'task'=>$repo->getTask($data['task']),
+                'duration' => $data['duration'],
+                'date' =>  $data['duration'] == 'WEEK' ?
+                        $repo->getMondayPreceding($date)
+                        : $date,
+            ]);
+            if (!isset($person)) {
+                $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
+            }
+            $entity->setPerson($person);
+            $this->em->flush();
+            $assignment['substitution_id'] = $entity->getId();
+            $debug .= sprintf("set %s to substitution id %d, duration %s\n",
+                $person->getFirstname(), $entity->getId(),$data['duration']
+            );
+            /*
+            SQLSTATE[23000]: Integrity constraint violation: 1062
+            Duplicate entry '2019-12-09-2-WEEK' for key 'subst_idx'
+
+            | 161 |       2 |       198 | 2019-12-09 | DAY
+            | 160 |       2 |       840 | 2019-12-09 | WEEK
+            */
+       }
        $assignment['substitution_id'] = isset($sub) ? $sub->getId() : null;
        if (isset($person)) {
            $assignment['assigned'] = [
