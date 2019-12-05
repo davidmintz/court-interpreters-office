@@ -120,20 +120,19 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $params = compact('task','date','monday');
         $qb->setParameters($params);
         $substitution = $qb->getQuery()
-            ->useResultCache(true)->getOneOrNullResult();
+            ->setMaxResults(1)->useResultCache(true)->getOneOrNullResult();
         $result = $this->getDefaultAssignment($task, $date);
 
         return [
             'date'  => $date->format('Y-m-d'),
             'default' => $result['default'],
             'assigned' => $substitution ? $substitution->getPerson() : $result['default'],
-            'substitution' => $substitution ?: null,
+            'substitution' => $substitution ?: [],
             'rotation' => $result['rotation'],
             'rotation_id' => $result['rotation_id'],
             'start_date' => $result['start_date'],
         ];
     }
-
     /**
      * gets default Person assigned to $task on $date
      *

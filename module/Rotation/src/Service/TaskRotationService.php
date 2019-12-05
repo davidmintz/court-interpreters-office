@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use DateTime;
 use InterpretersOffice\Admin\Rotation\Entity;
 use InterpretersOffice\Entity\Person;
+use InterpretersOffice\Admin\Rotation\Entity\Substitution;
 use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
 use Zend\EventManager\EventInterface;
 use Zend\View\Model\JsonModel;
@@ -536,9 +537,34 @@ class TaskRotationService
 
         return $this->repo;
     }
+    /**
+     * does actual insertion of new Substitution
+     *
+     * @param  Array $data
+     * @return Entity\Substitution
+     */
+    private function doCreate(Array $data) : Entity\Substitution
+    {
+        $sub = new Entity\Substitution();
+        $repo = $this->getRepository();
+        $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
+        if ($data['duration'] == 'WEEK') {
+            $date = $repo->getMondayPreceding(new \DateTime($data['date']));
+        } else {
+            $date = new \DateTime($data['date']);
+        }
+        $sub->setPerson($person)
+         ->setDate($date)
+         ->setDuration($data['duration'])
+         ->setTask($this->getRepository()->getTask($data['task']));
+         $this->em->persist($sub);
+
+         return $sub;
+    }
 
     /**
-     * creates|updates a Substitution for a Task on $data['date']
+     * handles Substitution for a Task on $data['date']
+     *
      * @param  Array $data
      * @return Array
      */
@@ -569,44 +595,32 @@ class TaskRotationService
 
        /*  is there already a Substitution? if that's the case, we update (or delete) */
        if ($assignment['substitution_id']) {
-
+           /** @var Entity\Substitution $sub */
            $sub = $this->em->find(Entity\Substitution::class,$assignment['substitution_id']);
-
-           $is_same_duration = $sub->getDuration() == $data['duration'];
 
            // are they are setting it back to the default person?
            if ($data['person'] == $assignment['default']['id']) {
                // are they modifying the duration?
-               // all we need to do is delete the substitution
-               $this->em->remove($sub);
-
-               $debug .= "found existing sub, same duration, default person same as submitted; deleted substitution\n";
-               unset($assignment['substitution_duration']);
-               unset($assignment['substitution_id']);
-               $assignment['assigned'] = $assignment['default'];
-               if (!$is_same_duration) {
-                   $notice = 'Your modification to the duration of this substitution has no effect because
-                   the person assigned is the default, so substitution was deleted.';
+               $is_same_duration = $sub->getDuration() == $data['duration'];
+               if ($is_same_duration) {
+                   $this->em->remove($sub);
+                   $debug .= "found existing sub, default person and duration same as submitted; deleted substitution\n";
+                   unset($assignment['substitution_duration']);
+                   unset($assignment['substitution_id']);
+                   $assignment['assigned'] = $assignment['default'];
+               } else {
+                   // different duration; need a new Substitution entity
+                   $debug .= "existing sub, person is same as default; duration is different; create new Sub entity?\n";
+                   $sub = $this->doCreate($data);
                }
            } else {
+               $debug .= "found existing sub, person submitted is the default, duration is different: updating sub\n";
                $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
                $sub->setPerson($person)->setDuration($data['duration']);
            }
        } else {
-           $sub = new Entity\Substitution();
-           $repo = $this->getRepository();
-           $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
-           if ($data['duration'] == 'WEEK') {
-               $date = $repo->getMondayPreceding(new \DateTime($data['date']));
-           } else {
-               $date = new \DateTime($data['date']);
-           }
-           $sub->setPerson($person)
-            ->setDate($date)
-            ->setDuration($data['duration'])
-            ->setTask($this->getRepository()->getTask($data['task']));
-            $this->em->persist($sub);
-
+            $debug .= "no existing subsitution was found. creating new\n";
+            $sub = $this->doCreate($data);
        }
        $this->em->flush();
        $assignment['substitution_id'] = isset($sub) ? $sub->getId() : null;
@@ -624,7 +638,7 @@ class TaskRotationService
      * proxies to  Entity\RotationRepository::getTask()
      *
      * note to self: maybe remove the repo method and do the work here and
-     * update all the client code...
+     * update all the client code?
      *
      * @param  int    $id
      * @return Entity\Task|null
@@ -746,9 +760,15 @@ class TaskRotationService
         $assignment['start_date'] = $assignment['start_date']->format('Y-m-d');
         if (!empty($assignment['substitution'])) {
             $sub = $assignment['substitution'];
+            // $subs = array_map(function($s){
+            //     return [
+            //         'substitution_id' => $sub->getId(),
+            //         'substitution_duration' => $sub->getDuration(),
+            //     ];
+            // },$assignment['substitution']);//)$assignment['substitution'];
             $assignment['substitution_id'] = $sub->getId();
             $assignment['substitution_duration'] = $sub->getDuration();
-
+            unset($assignment['substitution']);// = $sub;
         } else {
             $assignment['substitution_id'] = null;
             $assignment['substitution_duration'] = null;

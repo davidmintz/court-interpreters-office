@@ -4,6 +4,29 @@
 global $, fail, moment
 */
 
+const load_task_assignment = function(date){
+    var task_id = $(".task").data("task_id");
+    $.get(`/admin/rotations/assignments/${date}/${task_id}`)
+    .then((res)=>{
+          var formatted = new moment(res.date,"YYYY-MM-DD").format("ddd DD-MMM-YYYY");
+          $(".task .assignment-date").text(`${formatted}: `).data({date:res.date});
+          var html = "";
+          var $default  = res["default"];
+          if (res.assigned.id !== $default.id) {
+              html += `<span style="text-decoration:line-through">${$default.name}</span> `;
+          }
+          html += `${res.assigned.name}`;
+          $(".assignment-person").html(html).data({id:res.assigned.id});
+          // if (refresh_rotation) {
+          $(".rotation").html(res.rotation.map(e=>e.name).join("<br>"));
+          // }
+          var start_date = new moment(res.start_date,"YYYY-MM-DD");
+          $(".start_date").text(start_date.format("ddd DD-MMM-YYYY"))
+          $(".start_date").data({start_date:res.start_date});
+      }).fail(fail);
+
+};
+
 $(function(){
     var autocomplete_field = $("#rotation-autocomplete");
     autocomplete_field.autocomplete({
@@ -24,34 +47,9 @@ $(function(){
         changeMonth : true,
         changeYear : true,
         dateFormat : "yy-mm-dd",
-        // when they click a date, fetch the assignment data for that date
+        // when they click a date, fetch and display assignment data for that date
         onSelect : function(date, instance){
-           var task_id = $(".task").data("task_id");
-           // var refresh_rotation = false;
-           // if the rotation we've fetched has a start date different from one
-           // being displayed, update the dialog
-           // if (date !== $(".start_date").data("start_date")) {
-           //     console.debug("selected date differs from start of currently displayed rotation");
-           //     refresh_rotation = true;
-           // }
-           $.get(`/admin/rotations/assignments/${date}/${task_id}`)
-           .then((res)=>{
-               var formatted = new moment(res.date,"YYYY-MM-DD").format("ddd DD-MMM-YYYY");
-               $(".task .assignment-date").text(`${formatted}: `).data({date:res.date});
-               var html = "";
-               var $default  = res["default"];
-               if (res.assigned.id !== $default.id) {
-                   html += `<span style="text-decoration:line-through">${$default.name}</span> `;
-               }
-               html += `${res.assigned.name}`;
-               $(".assignment-person").html(html).data({id:res.assigned.id});
-               // if (refresh_rotation) {
-                   $(".rotation").html(res.rotation.map(e=>e.name).join("<br>"));
-               // }
-               var start_date = new moment(res.start_date,"YYYY-MM-DD");
-               $(".start_date").text(start_date.format("ddd DD-MMM-YYYY"))
-               $(".start_date").data({start_date:res.start_date});
-           }).fail(fail);
+            load_task_assignment(date);
         }
     });
 
@@ -114,6 +112,7 @@ $(function(){
         if (error_div.text()) {
             error_div.attr({hidden:true});
         }
+        $(".modal-body .alert-warning").hide();
     });
 
 
@@ -157,7 +156,7 @@ $(function(){
                         $("#error-message").parent().show();
                         break;
                     }
-                    // should not happen, unless they are manipulating shit themselves:
+                    // should not happen, unless they manipulate shit themselves:
                     if ([ "date", "task","substitution", "rotation_id" ].includes(prop)) {
                         $("#error-message").html(`Sorry, we encountered an unexpected problem while processing this request.
                             Please reload the page and try again. If the problem persists, you should report
@@ -170,7 +169,12 @@ $(function(){
                 return;
             }
             // else, all good
-            console.warn("looks good!");
+            // $("#dialog").modal("hide");
+            $(".modal-body").prepend(`<div id="success-message" class="alert alert-success"><span class="fas fa-check"></span> saved</div>`);
+            window.setTimeout(()=>{
+                $("#dialog").slideUp(()=>{$("#dialog").modal("hide");load_task_assignment(data.date);});
+                $("#success-message").remove();
+                }, 1500);
         }).fail(fail);
 
 
