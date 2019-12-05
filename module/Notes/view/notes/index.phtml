@@ -118,7 +118,7 @@ if ($dow != 1) {
                 </div>
                 <a <?php if ($hide_button):?>style="display:none" <?php endif;?>class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="<?= $button_url ?>"><span class="sr-only"><?= $button_text ?></span></a>
             </div>
-            <div class="col notes-calendar" data-date="<?php if ($this->notes['motw']): echo $this->notes['motw']->getDate()->format('Y-m-d');
+            <div class="col notes-calendar" data-date="<?php if ($this->notes && isset($this->notes['motw'])): echo $this->notes['motw']->getDate()->format('Y-m-d');
             else : echo $this->monday->format('Y-m-d'); endif?>" id="calendar-motw"></div>
         </div>
     </div>
