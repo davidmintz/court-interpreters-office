@@ -110,6 +110,10 @@ class Module {
                             $this->viewModel->$type = $service->getNoteByDate($date,$type, $render_markdown);
                             $log->debug("Notes module bootstrap: we fetched $type for {$settings['date']}: "
                                 .gettype($this->viewModel->$type));
+                            // if (!$this->viewModel->$type) {
+                            //     /** @todo conditionally fetch task data into view? */
+                            //     $log->debug("$type is null, need fetch task data if applicable?");
+                            // }
                             break;
                         }
                     }
