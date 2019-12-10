@@ -574,13 +574,10 @@ class TaskRotationService
         } else {
             $date = new \DateTime($data['date']);
         }
-        $sub->setPerson($person)
-         ->setDate($date)
-         ->setDuration($data['duration'])
-         ->setTask($this->getRepository()->getTask($data['task']));
-         $this->em->persist($sub);
+        $sub->setPerson($person)->setDate($date)->setDuration($data['duration']);
+        $this->em->persist($sub);
 
-         return $sub;
+        return $sub;
     }
 
     /**

@@ -36,16 +36,6 @@ class Substitution
     private $date;
 
     /**
-     * task
-     *
-     * this was a mistake and will be removed.
-     *
-     * @ORM\ManyToOne(targetEntity="Task")
-     * @var Task
-     */
-    private $task;
-
-    /**
      * the Rotation whose default Person is substituted
      *
      * @ORM\ManyToOne(targetEntity="Rotation")
@@ -204,30 +194,6 @@ class Substitution
     public function getDuration() : string
     {
         return $this->duration;
-    }
-
-    /**
-     * Set task.
-     * @deprecated
-     * @param \InterpretersOffice\Admin\Rotation\Task|null $task
-     *
-     * @return Substitution
-     */
-    public function setTask(Task $task) : Substitution
-    {
-        $this->task = $task;
-
-        return $this;
-    }
-
-    /**
-     * Get task.
-     * @deprecated
-     * @return Task
-     */
-    public function getTask() : Task
-    {
-        return $this->task;
     }
 
     /**
