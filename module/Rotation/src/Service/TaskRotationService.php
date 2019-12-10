@@ -22,15 +22,21 @@ use Zend\Filter;
  */
 
 /*
-handy snippet
-SELECT t.name task, rs.*, p.firstname AS assigned,
-(select p.firstname FROM people p JOIN task_rotation_members m ON p.id = m.person_id
+handy snippet:
+SELECT s.id, t.name AS task, s.date,
+(SELECT p.firstname FROM people p
+    JOIN task_rotation_members m ON p.id = m.person_id
     JOIN rotations r ON m.rotation_id = r.id
-    WHERE m.rotation_order =
-        floor(datediff(rs.date,'2015-05-18')/7) % (SELECT COUNT(*) FROM task_rotation_members WHERE rotation_id = 14)
-        AND r.id = 14 ) AS `default`
-FROM rotation_substitutions rs JOIN people p on rs.person_id = p.id JOIN tasks t ON rs.task_id = t.id where rs.date >= '2019-10-01' AND t.name LIKE '%schedul%' ORDER BY rs.date;
- */
+WHERE m.rotation_order =  FLOOR(DATEDIFF(s.date,r.start_date)/7) %
+    (SELECT COUNT(*) FROM task_rotation_members m
+    WHERE m.rotation_id = s.rotation_id)
+    AND m.rotation_id = s.rotation_id
+) AS `default`,
+p.firstname AS assigned
+FROM rotation_substitutions s JOIN people p ON s.person_id = p.id
+JOIN rotations r ON r.id = s.rotation_id JOIN tasks t ON r.task_id = t.id
+ORDER BY s.date;
+*/
 class TaskRotationService
 {
     /**

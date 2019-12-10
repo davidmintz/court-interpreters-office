@@ -8,14 +8,13 @@ namespace InterpretersOffice\Admin\Rotation\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use InterpretersOffice\Entity\Person;
 use DateTime;
-//use JsonSerializable;
 
 /**
  * Entity class representing a Person substitution for a Task
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Rotation\Entity\SubstitutionRepository")
  * @ORM\Table(name="rotation_substitutions",
- * uniqueConstraints={@ORM\UniqueConstraint(name="subst_idx", columns={"date","task_id","duration"})})
+ * uniqueConstraints={@ORM\UniqueConstraint(name="subst_idx", columns={"date","rotation_id","duration"})})
  * @ORM\HasLifecycleCallbacks
  */
 
@@ -39,10 +38,21 @@ class Substitution
     /**
      * task
      *
+     * this was a mistake and will be removed.
+     *
      * @ORM\ManyToOne(targetEntity="Task")
      * @var Task
      */
     private $task;
+
+    /**
+     * the Rotation whose default Person is substituted
+     *
+     * @ORM\ManyToOne(targetEntity="Rotation")
+     * @ORM\JoinColumn(nullable=false)
+     * @var Rotation
+     */
+    private $rotation;
 
     /**
      * duration
@@ -79,7 +89,8 @@ class Substitution
     }
 
     /**
-     * Tests whether $this->date is a monday when duration is a week
+     * Tests whether $this->date is a monday when duration is a week, and
+     * ensures $this->date does not precede the Rotation start date.
      *
      * We could silently reset the date instead of throwing an exception,
      * but the thinking here is that we don't know the intentions, or which
@@ -98,7 +109,38 @@ class Substitution
                 );
             }
         }
+        // maybe...
+        $start = $this->getRotation()->getStartDate();
+        if ($this->date < $start) {
+            throw new \RuntimeException(
+                'The date of the substition cannot precede the start date of the rotation'
+            );
+        }
     }
+
+    /**
+     * sets Rotation
+     *
+     * @param  Rotation
+     * @return Substitution
+     */
+    public function setRotation(Rotation $rotation) : Substitution
+    {
+        $this->rotation = $rotation;
+
+        return $this;
+    }
+
+    /**
+     * Get Rotation.
+     *
+     * @return Rotation
+     */
+    public function getRotation() : Rotation
+    {
+        return $this->rotation;
+    }
+
 
     /**
      * Get id.
@@ -160,7 +202,7 @@ class Substitution
 
     /**
      * Set task.
-     *
+     * @deprecated
      * @param \InterpretersOffice\Admin\Rotation\Task|null $task
      *
      * @return Substitution
@@ -174,7 +216,7 @@ class Substitution
 
     /**
      * Get task.
-     *
+     * @deprecated
      * @return Task
      */
     public function getTask() : Task
