@@ -96,14 +96,24 @@ printf("rotations imported: %d\n",$rotations_inserted);
 printf("rotation_members imported: %d\n",$rotation_members_inserted);
 
 $old_subs = $old_db->query('SELECT * FROM rotation_substitutions');
-$sub_ins = $db->prepare('INSERT INTO rotation_substitutions (id, task_id, person_id, date, duration)
-    VALUES (:id, :task_id, :person_id, :date, :duration)');
+$sub_ins = $db->prepare('INSERT INTO rotation_substitutions (id, rotation_id, person_id, date, duration)
+    VALUES (:id, :rotation_id, :person_id, :date, :duration)');
+
+$find_rotation = $pdo->prepare(
+    'SELECT id FROM rotations WHERE task_id = :task_id AND start_date <= :date ORDER BY start_date DESC limit 1'
+);
+
 $i = 0;
 $subs_inserted = 0;
 while ($row = $old_subs->fetch(\PDO::FETCH_OBJ)) {
+    $find_rotation->execute([
+        'task_id' => $row['task_id'],
+        'date' => $row['date'],
+    ]);
+    $rotation_id = $find_rotation->fetch(\PDO::FETCH_COLUMN);
     $params = [
         'id'=>++$i,
-        'task_id'=>$row->task_id,
+        'rotation_id'=>$rotation_id,
         'person_id' =>$person_map[strtolower($row->who)],
         'date' => $row->date,
         'duration' => $row->duration,
@@ -120,65 +130,5 @@ while ($row = $old_subs->fetch(\PDO::FETCH_OBJ)) {
 printf("substitutions imported: %d\n",$subs_inserted);
 
 
-/*
-mysql> explain rotation_substitutions;
-+-----------+----------------------+------+-----+---------+----------------+
-| Field     | Type                 | Null | Key | Default | Extra          |
-+-----------+----------------------+------+-----+---------+----------------+
-| id        | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |
-| task_id   | smallint(5) unsigned | YES  | MUL | NULL    |                |
-| person_id | smallint(5) unsigned | YES  | MUL | NULL    |                |
-| date      | date                 | NO   |     | NULL    |                |
-| duration  | varchar(5)           | NO   |     | NULL    |                |
-+-----------+----------------------+------+-----+---------+----------------+
-5 rows in set (0.00 sec)
-
-mysql> explain dev_interpreters.rotation_substitutions;
-+----------+----------------------------+------+-----+---------+----------------+
-| Field    | Type                       | Null | Key | Default | Extra          |
-+----------+----------------------------+------+-----+---------+----------------+
-| id       | mediumint(8) unsigned      | NO   | PRI | NULL    | auto_increment |
-| date     | date                       | NO   | MUL | NULL    |                |
-| task_id  | mediumint(8) unsigned      | NO   |     | NULL    |                |
-| duration | enum('WEEK','DAY','MONTH') | NO   |     | DAY     |                |
-| who      | varchar(30)                | NO   |     | NULL    |                |
-+----------+----------------------------+------+-----+---------+----------------+
-*/
-
-
-/*
-mysql> explain task_rotations;
-+------------+-----------------------+------+-----+---------+-------+
-| Field      | Type                  | Null | Key | Default | Extra |
-+------------+-----------------------+------+-----+---------+-------+
-| task_id    | mediumint(8) unsigned | NO   | PRI | NULL    |       |
-| start_date | date                  | NO   | PRI | NULL    |       |
-| rotation   | varchar(300)          | YES  |     | NULL    |       |
-+------------+-----------------------+------+-----+---------+-------+
-3 rows in set (0.00 sec)
-mysql> explain rotation_substitutions;
-+-----------+----------------------+------+-----+---------+----------------+
-| Field     | Type                 | Null | Key | Default | Extra          |
-+-----------+----------------------+------+-----+---------+----------------+
-| id        | smallint(5) unsigned | NO   | PRI | NULL    | auto_increment |
-| task_id   | smallint(5) unsigned | YES  | MUL | NULL    |                |
-| person_id | smallint(5) unsigned | YES  | MUL | NULL    |                |
-| date      | date                 | NO   |     | NULL    |                |
-| duration  | varchar(5)           | NO   |     | NULL    |                |
-+-----------+----------------------+------+-----+---------+----------------+
-5 rows in set (0.00 sec)
-
-mysql> explain dev_interpreters.rotation_substitutions;
-+----------+----------------------------+------+-----+---------+----------------+
-| Field    | Type                       | Null | Key | Default | Extra          |
-+----------+----------------------------+------+-----+---------+----------------+
-| id       | mediumint(8) unsigned      | NO   | PRI | NULL    | auto_increment |
-| date     | date                       | NO   | MUL | NULL    |                |
-| task_id  | mediumint(8) unsigned      | NO   |     | NULL    |                |
-| duration | enum('WEEK','DAY','MONTH') | NO   |     | DAY     |                |
-| who      | varchar(30)                | NO   |     | NULL    |                |
-+----------+----------------------------+------+-----+---------+----------------+
-5 rows in set (0.00 sec)
-*/
 
 exit(0);
