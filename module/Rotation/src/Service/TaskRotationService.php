@@ -298,6 +298,7 @@ class TaskRotationService
                 ],
             ],
         ]);
+        /** @todo remove this */
         $inputFilter->add([
             'name' => 'task',
             'validators' => [
@@ -563,8 +564,10 @@ class TaskRotationService
      */
     private function doCreate(Array $data) : Entity\Substitution
     {
-        $sub = new Entity\Substitution();
+        //print_r($data);exit();
         $repo = $this->getRepository();
+        $rotation = $repo->find($data['rotation_id']);
+        $sub = new Entity\Substitution($rotation);
         $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
         if ($data['duration'] == 'WEEK') {
             $date = $repo->getMondayPreceding(new \DateTime($data['date']));
@@ -596,6 +599,7 @@ class TaskRotationService
         substitution
         rotation_id	14
         */
+       //print_r($data);
        $assignment = $this->getAssignment($data['date'], (int)$data['task']);
        // we have a "substitution" key, which, if not null, means there is/was already
        // a sub, but we might as well check anyway
@@ -611,17 +615,18 @@ class TaskRotationService
        }
 
 
+       $deleted_sub = false;
        /*  is there already a Substitution? if that's the case, we update (or delete) */
        if ($assignment['substitution_id']) {
            /** @var Entity\Substitution $sub */
            $sub = $this->em->find(Entity\Substitution::class,$assignment['substitution_id']);
-
            // are they are setting it back to the default person?
            if ($data['person'] == $assignment['default']['id']) {
                // are they modifying the duration?
                $is_same_duration = $sub->getDuration() == $data['duration'];
                if ($is_same_duration) {
                    $this->em->remove($sub);
+                   $deleted_sub = true;
                    $debug .= "found existing sub, default person and duration same as submitted; deleted substitution\n";
                    unset($assignment['substitution_duration']);
                    unset($assignment['substitution_id']);
@@ -641,7 +646,7 @@ class TaskRotationService
             $sub = $this->doCreate($data);
        }
        try {
-//Doctrine\DBAL\Exception\UniqueConstraintViolationException
+           //Doctrine\DBAL\Exception\UniqueConstraintViolationException
            $this->em->flush();
        } catch (UniqueConstraintViolationException $e) {
            // find the offending row, and update that one instead
@@ -653,7 +658,7 @@ class TaskRotationService
            $debug .= "caught duplicate entry, looking for existing row\n";
            $repo = $this->getRepository();
            $date = new DateTime($data['date']);
-           $entity = $this->getRepository()->findOneBy([
+           $sub = $this->getRepository()->findOneBy([
                 'task'=>$repo->getTask($data['task']),
                 'duration' => $data['duration'],
                 'date' =>  $data['duration'] == 'WEEK' ?
@@ -663,11 +668,11 @@ class TaskRotationService
             if (!isset($person)) {
                 $person = $this->em->find('InterpretersOffice\Entity\Person',$data['person']);
             }
-            $entity->setPerson($person);
+            $sub->setPerson($person);
             $this->em->flush();
-            $assignment['substitution_id'] = $entity->getId();
+            $assignment['substitution_id'] = $sub->getId();
             $debug .= sprintf("set %s to substitution id %d, duration %s\n",
-                $person->getFirstname(), $entity->getId(),$data['duration']
+                $person->getFirstname(), $sub->getId(),$data['duration']
             );
             /*
             SQLSTATE[23000]: Integrity constraint violation: 1062
@@ -677,13 +682,23 @@ class TaskRotationService
             | 160 |       2 |       840 | 2019-12-09 | WEEK
             */
        }
-       $assignment['substitution_id'] = isset($sub) ? $sub->getId() : null;
-       if (isset($person)) {
+       //if
+       // $assignment['substitution_id'] = isset($sub) ? $sub->getId() : null;
+       // $assignment['substitution_duration'] = isset($sub) ? $sub->getDuration() : null;
+       if (! $deleted_sub) {
+           $assignment['substitution_id'] = $sub->getId();
+           $assignment['substitution_duration'] =  $sub->getDuration();
            $assignment['assigned'] = [
-               'id' => $person->getId(),
-               'name' => $person->getFirstname(),
+               'id' => $sub->getPerson()->getId(),
+               'name' => $sub->getPerson()->getFirstname(),
            ];
        }
+       // if (isset($person)) {
+       //     $assignment['assigned'] = [
+       //         'id' => $person->getId(),
+       //         'name' => $person->getFirstname(),
+       //     ];
+       // }
 
        return ['debug'=>$debug,'assignment'=>$assignment,'notice'=>$notice ?? null];
     }
@@ -811,6 +826,7 @@ class TaskRotationService
         },$assignment['rotation']->toArray());
 
         $assignment['rotation'] = $people;
+        //$assignment['rotation_id'] =
         $assignment['start_date'] = $assignment['start_date']->format('Y-m-d');
         if (!empty($assignment['substitution'])) {
             $sub = $assignment['substitution'];
@@ -822,6 +838,7 @@ class TaskRotationService
             // },$assignment['substitution']);//)$assignment['substitution'];
             $assignment['substitution_id'] = $sub->getId();
             $assignment['substitution_duration'] = $sub->getDuration();
+            // echo "DEBUG: HELLO! duration is ".$sub->getDuration()."\n";
             unset($assignment['substitution']);// = $sub;
         } else {
             $assignment['substitution_id'] = null;

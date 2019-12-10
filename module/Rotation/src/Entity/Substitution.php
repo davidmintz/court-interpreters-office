@@ -71,6 +71,12 @@ class Substitution
      */
     private $person;
 
+
+    public function __construct(Rotation $rotation)
+    {
+        $this->rotation = $rotation;
+    }
+
     /**
      *
      * @ORM\prePersist
