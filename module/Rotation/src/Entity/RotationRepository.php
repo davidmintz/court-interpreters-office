@@ -103,8 +103,9 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $params = compact('task','date','monday');
         $qb->select('s, p, h')->from(Substitution::class, 's')
              ->leftJoin('s.person','p')
+             ->join('s.rotation','r')
              ->leftJoin('p.hat','h')
-             ->where('s.task = :task')
+             ->where('r.task = :task')
              ->orderBy('s.duration');
         $qb->andWhere(
             's.date = :date OR (s.date = :monday AND s.duration = \'WEEK\')'

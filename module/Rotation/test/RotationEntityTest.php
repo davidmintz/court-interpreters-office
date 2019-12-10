@@ -22,9 +22,17 @@ class RotationEntityTest extends TestCase
 
     public function setUp()
     {
+        $this->em = require __DIR__.'/../../../config/doctrine-bootstrap.php';
+        $date = new DateTime("next Monday +36 weeks");
+        $sub  = $this->em->createQuery('SELECT s FROM '.Entity\Substitution::class .' s
+        JOIN s.rotation r JOIN r.task t WHERE s.date = :date AND t.name LIKE :task')
+            ->setParameters(['task'=>'%schedul%','date'=>$date])->getOneOrNullResult();
+
+        if ($sub) {
+            $this->em->remove($sub);
+        }
 
         $task_name = 'Some Shit';
-        $this->em = require __DIR__.'/../../../config/doctrine-bootstrap.php';
         $task = $this->em->createQuery('SELECT t FROM ' .Entity\Task::class. ' t WHERE t.name = :name')
         ->setParameters(['name'=>$task_name])->getOneOrNullResult();
         if ($task) {
@@ -37,8 +45,11 @@ class RotationEntityTest extends TestCase
                  }
              }
              $this->em->remove($task);
-             $this->em->flush();
+
         }
+        $this->em->flush();
+
+
     }
 
 
@@ -214,9 +225,14 @@ class RotationEntityTest extends TestCase
             }
         }
         // { date: "2020-12-15", task: 2, person: "198", duration: "DAY" }
-        $csrf = (new \Zend\Validate\Csrf)->getHash();
-        $post = [ 'date' => $date->format('Y-m-d'),'task' => 2, 'person' => 2, 'duration' => 'DAY', 'csrf'=> $csrf];
+        $csrf = (new \Zend\Validator\Csrf)->getHash();
+        $post = [ 'date' => $date->format('Y-m-d'),'task' => 2, //'person' => $per,
+            'substitution' => $person,'person' => $default,
+            'rotation_id' => $assignment['rotation_id'],
+            'duration' => 'DAY', 'csrf'=> $csrf];
         // to do: CSRF!
+        $result = $service->createSubstitution($post);
 
+        print_r($result);
     }
 }
