@@ -1,5 +1,7 @@
 <?php /** module/Rotation/src/Entity/RotationRepository.php */
 
+declare(strict_types=1);
+
 namespace InterpretersOffice\Admin\Rotation\Entity;
 
 use Doctrine\ORM\EntityRepository;
@@ -45,7 +47,13 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $cache->deleteAll();
     }
 
-    public function getTask($id)
+    /**
+     * gets well-hydrated Task entity
+     *
+     * @param  int $id
+     * @return Task|null
+     */
+    public function getTask(int $id) :? Task
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('t, r, m, p')->from(Task::class, 't')
@@ -127,62 +135,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
             'start_date' => $result['start_date'],
         ];
     }
-    /**
-     * gets default and assigned Person entities assigned to $task on $date
-     *
-     * @param  Task     $task
-     * @param  DateTime $date
-     * @throws \RuntimeException
-     * @return Array
-     */
-    public function _getAssignment(Task $task, DateTime $date) : Array
-    {
-        $frequency = $task->getFrequency();
-        if ('WEEK' != $frequency) {
-            throw new \RuntimeException("only Tasks of frequency 'WEEK' are currently supported");
-        }
-        // if the Task has a day-of-week and the $date we've been passed
-        // is for a different day-of-the-week, then we crank up the date
-        $dow = $task->getDayOfWeek();
-        $N = $date->format('N');
-        if ($dow && $dow != $N) {
-            $d = $N > $dow ? 8 - $N : abs($N - $dow);
-            // printf("\nDEBUG: task %s dow is: %s, adding %s\n",$task->getName(),$dow, $d);
-            $date->add(new DateInterval("P{$d}D"));
-            // printf("\nDEBUG: date dow is now: %s\n",$date->format("D"));
-        }
-        /**
-         * @var \Doctrine\ORM\QueryBuilder $qb
-         */
-        $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $monday = $this->getMondayPreceding($date);
-        $params = compact('task','date','monday');
-        $qb->select('s, p, h')->from(Substitution::class, 's')
-             ->leftJoin('s.person','p')
-             ->leftJoin('p.hat','h')
-             ->where('s.task = :task')
-             ->orderBy('s.duration');
-        $qb->where(
-            's.date = :date OR (s.date = :monday AND s.duration = \'WEEK\')'
-        );
-        $monday = $this->getMondayPreceding($date);
-        $params = compact('task','date','monday');
-        $qb->setParameters($params);
-        $substitution = $qb->getQuery()->setMaxResults(1)
-            ->useResultCache(true)->getOneOrNullResult();
-        $result = $this->getDefaultAssignment($task, $date);
-
-        return [
-            'date'  => $date->format('Y-m-d'),
-            'default' => $result['default'],
-            'assigned' => $substitution ? $substitution->getPerson() : $result['default'],
-            'substitution' => $substitution ?: [],
-            'rotation' => $result['rotation'],
-            'rotation_id' => $result['rotation_id'],
-            'start_date' => $result['start_date'],
-        ];
-    }
     /**
      * gets default Person assigned to $task on $date
      *
@@ -197,7 +150,6 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         if ('WEEK' != $frequency) {
             throw new \RuntimeException("only Tasks of frequency 'WEEK' are currently supported");
         }
-        // get the most recently begun rotation
         $em = $this->getEntityManager();
         $dow = $task->getDayOfWeek();
         $w = $date->format('w');
@@ -206,6 +158,7 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
             $n = 6 - $w;
             $date->add(new DateInterval("P{$n}D"));
         }
+        // get the most recently begun rotation
         $q = $em->createQuery('SELECT r, t, m, p FROM '.Rotation::class. ' r
             JOIN r.task t
             LEFT JOIN r.members m
@@ -218,15 +171,6 @@ class RotationRepository extends EntityRepository implements CacheDeletionInterf
         $rotation = $q->getOneOrNullResult();
         if (!$rotation) { return null; }
         $members = $rotation->getMembers();
-        // debuggery
-        // if ($rotation->getId() == 14) {
-        //     $j = 0;
-        //     printf("rotation id is: %d\n",$rotation->getId());
-        //     foreach ($members as $m) {
-        //         printf("\n===============\n$j: %s in position %d\n",$m->getPerson()->getFirstName(), $m->getOrder());
-        //         $j++;
-        //     }
-        // }
         $monday = $this->getMondayPreceding($date);
         $start_date = $this->getMondayPreceding($rotation->getStartDate());
         $diff = $monday->diff($start_date);
