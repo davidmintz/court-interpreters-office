@@ -146,7 +146,7 @@ $(function(){
         $.post("/admin/rotations/assignments/create",data).then(res => {
             if (res.validation_errors) {
                 // kind of a special case. only a CSRF error is expected. anything else
-                // if likely a bug
+                // if is likely a bug, or someone playing games
                 //[ "csrf", "date", "task", "person", "duration", "substitution", "rotation_id" ]
                 for (var prop in res.validation_errors) {
                     if (prop === "csrf") {
@@ -169,10 +169,14 @@ $(function(){
                 return;
             }
             // else, all good
-            // $("#dialog").modal("hide");
+            // show a confirmation, close dialog
             $(".modal-body").prepend(`<div id="success-message" class="alert alert-success"><span class="fas fa-check"></span> saved</div>`);
             window.setTimeout(()=>{
-                $("#dialog").slideUp(()=>{$("#dialog").modal("hide");load_task_assignment(data.date);});
+                $("#dialog").slideUp(()=>{
+                    $("#dialog").modal("hide");
+                    $("input.person:checked").prop({checked:false});
+                    load_task_assignment(data.date);
+                });
                 $("#success-message").remove();
                 }, 1500);
         }).fail(fail);
