@@ -241,10 +241,14 @@ class Module
         }
 
         $resource  = $match->getParam('controller');
-        // really ?
-        //$controllerName = substr($controllerFQCN, strrpos($controllerFQCN, '\\') + 1, -10);
-        //$resource = strtolower((new \Zend\Filter\Word\CamelCaseToDash)->filter($controllerName));
-        $privilege = $match->getParam('action');
+        $privilege = $match->getParam('action', \strtolower($event->getRequest()->getMethod()));
+        $log = $event->getApplication()->getServiceManager()->get('log');
+        // $log->warn("WTF? action is '$privilege'");
+        $log->debug(
+            sprintf(__METHOD__." checking role %s access to resource %s, privilege %s",
+            $role, is_object($resource) ? get_class($resource):$resource, $privilege
+            )
+        );
         $acl = $event->getApplication()->getServiceManager()->get('acl');
         return $acl->isAllowed($role, $resource, $privilege);
     }
