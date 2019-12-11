@@ -143,7 +143,7 @@ $(function(){
             substitution : $("#dialog").data("substitution_id"),
             person, duration, csrf
         };
-        $.post("/admin/rotations/assignments/create",data).then(res => {
+        $.post("/admin/rotations/assignments/substitute",data).then(res => {
             if (res.validation_errors) {
                 // kind of a special case. only a CSRF error is expected. anything else
                 // if is likely a bug, or someone playing games

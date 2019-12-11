@@ -36,12 +36,7 @@ return [
             Controller\IndexController::class => 'InterpretersOffice\Admin\Controller\EventsController',
             Controller\RestRotationController::class => Controller\IndexController::class,
         ],
-        // 'deny' => [
-        //     'staff' => [
-        //         Controller\RestRotationController::class => ['update','delete','create'],
-        //         //Controller\IndexController::class => null,
-        //     ],
-        // ],
+
         'allow' => [
             'manager' => [
                 Controller\IndexController::class => ['index','view'],
@@ -52,6 +47,12 @@ return [
                 Controller\RestRotationController::class => ['get'],
             ],
         ],
+        // 'deny' => [
+        //     'staff' => [
+        //         Controller\RestRotationController::class => ['update','delete','create'],
+        //         //Controller\IndexController::class => null,
+        //     ],
+        // ],
 
     ],
     'navigation' => [
@@ -92,6 +93,16 @@ return [
                     ],
                 ],
                 'child_routes' => [
+                    'substitute' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options'=> [
+                            'route' => '/substitute',
+                            'defaults' => [
+                                'action' => 'create-substitution',
+                            ],
+                        ],
+                    ],
                     'get'=> [
                         'type' => Segment::class,
                         'may_terminate' => true,
