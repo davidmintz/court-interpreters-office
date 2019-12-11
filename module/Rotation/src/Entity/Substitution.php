@@ -55,13 +55,18 @@ class Substitution
     private $duration = 'DAY';
 
     /**
+     * person substituting for default
      *
      * @ORM\ManyToOne(targetEntity="InterpretersOffice\Entity\Person")
      * @var Person
      */
     private $person;
 
-
+    /**
+     * constructor
+     *
+     * @param Rotation $rotation
+     */
     public function __construct(Rotation $rotation)
     {
         $this->rotation = $rotation;
@@ -75,6 +80,7 @@ class Substitution
     {
         $this->checkDate();
     }
+    
     /**
      *
      * @ORM\preUpdate
