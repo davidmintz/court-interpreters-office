@@ -87,6 +87,10 @@ return [
                                 'label' => 'create',
                                 'route' => 'task/create'
                             ],
+                            [
+                                'label' => 'create',
+                                'route' => 'rotations/create_rotation'
+                            ],
                         ],
                     ],
                 ],
@@ -193,12 +197,24 @@ return [
                             ],
                         ],
                     ],
+                    'create_rotation' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '[/task/:task_id]/create',
+                            'defaults' => [
+                                'action' => 'create-rotation',
+                                'constraints' => [
+                                    'task_id' => '[1-9]\d*',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
     ],
     'view_manager' => [
         'template_map' => include(__DIR__.'/template_map.php'),
-        //'template_path_stack' => [ __DIR__.'/../view', ],
+        'template_path_stack' => [ __DIR__.'/../view', ],
     ],
 ];

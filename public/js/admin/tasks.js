@@ -180,8 +180,7 @@ $(function(){
                 $("#success-message").remove();
                 }, 1500);
         }).fail(fail);
-
-
+        
         $("button.reload").on("click",()=>location.reload());
     });
 });
