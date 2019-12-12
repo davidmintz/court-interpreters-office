@@ -31,7 +31,9 @@ echo $this->headStyle();?>
             </button>
           <div class="collapse navbar-collapse" id="navbar-collapse">
             <?php if ($this->layout()->navigation_menu):
-                echo $this->navigation($this->layout()->navigation_menu)->menu()->setPartial('partials/navbar.phtml'); endif;?>
+                echo $this->navigation($this->layout()->navigation_menu)->menu()->setPartial('partials/navbar.phtml');
+                //->setPartial('partials/navbar.phtml');
+                endif;?>
             <?php $user = $this->layout()->user ?: false; if ($user) :?>
                 <div class="dropdown">
                     <a class="btn btn-link dropdown-toggle" role="button" id="btn-user-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

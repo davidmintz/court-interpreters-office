@@ -88,7 +88,7 @@ endif;
                     <?= $text ?>
                 </div>
                 <div class="offset-md-3 col-md-9 pt-2">
-                    <button type="button" data-toggle="modal" data-target="#dialog" class="btn btn-outline-primary btn-sm">do shit</button>
+                    <a role="button" class="btn btn-outline-primary btn-sm">new rotation</a>
                 </div>
             </div>
         </div>
@@ -99,17 +99,6 @@ endif;
     </div>
 </div>
 <!-- Modal -->
-<?php
-/*
-fields that may have errors:
-csrf :isEmpty :	required security token is missing
-date : isEmpty :	date is required
-task : isEmpty :	task entity id is required
-person : isEmpty :	person entity id is required
-duration : isEmpty :	"duration" field is required
-rotation_id	 : isEmpty :	rotation entity id is required
-*/
-?>
 <div class="modal" id="dialog" tabindex="-1" role="dialog" aria-labelledby="dialog-label" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -161,7 +150,7 @@ rotation_id	 : isEmpty :	rotation entity id is required
         </div>
         <div class="modal-footer">
         <div class="alert alert-warning validation-error" hidden></div>
-         
+
           <button type="button" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
       </div>

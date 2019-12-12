@@ -37,7 +37,14 @@ foreach ($this->container as $page) :
 ?><li class="nav-item dropdown">
     <a title="<?php if ($page->title): echo $page->title; endif ?>" href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><?php echo $page->getLabel() ?> <b class="caret"></b></a>
     <div class="dropdown-menu"><?php
-     foreach ($page->getPages() as $child) : ?>
+     //echo "fuck? ",count($page->getPages());
+     /** sort the pages */
+     $child_pages = $page->getPages();
+     usort($child_pages, function($a,$b){
+         if ($a->order == $b->order) { return 1; }
+         return ($a->order < $b->order) ? -1 : 1;
+     });
+     foreach ($child_pages as $child) : ?>
         <?php
         if (!$child->isVisible() || !$this->navigation()->accept($child)) :
             continue;

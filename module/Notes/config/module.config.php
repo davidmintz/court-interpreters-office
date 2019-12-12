@@ -31,18 +31,21 @@ return [
                 'pages' => [
                     [
                         'label' => 'manage',
+                        'order' => -100,
                         'route'   => 'notes',
                         'route_matches' => ['notes'],
                         'title' => 'view, edit, add, delete notes',
                         'divider' => true,
                     ],
                     [
+                        'order' => 1,
                         'label' => 'MOTD',
                         'uri'   => '#',
                         'title' => 'toggle display of MOTD',
                         'id'    => 'btn-motd',
                     ],
                     [
+                        'order' => 2,
                         'label' => 'MOTW',
                         'uri'   => '#',
                         'title' => 'toggle display of MOTW',

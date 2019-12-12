@@ -183,7 +183,7 @@ return [
                 'route' => 'admin-requests',
                 'route_matches' => ['admin-requests',],
                 'title' =>  'manage incoming requests',
-                'order' => 200,
+                'order' => 10,
                 'expand' => false,
             ],
         ],

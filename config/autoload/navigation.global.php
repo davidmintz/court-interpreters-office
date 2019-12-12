@@ -194,22 +194,94 @@ return [
         ],
         // main navigation menu
         'default' => [
-            [
+            // the string key is necessary for other module configs to merge
+            'admin'=>[
                 'label' => 'admin',
                 'route' => 'admin',
                 'title' => 'main admin page',
-                'order' => -10,
+                'order' => -100,
                 'resource' => Admin\IndexController::class,
-                // 'pages' => [
-                //     [
-                //         'label' => 'overview',
-                //         'route' => 'admin',
-                //         'title' => 'main admin page',
-                //     ]
-                // ]
+                'pages' => [
+                    [
+                        'order' => 1,
+                        'label' => 'overview',
+                        'route' => 'admin',
+                        'title' => 'main menu page for all functions',
+                        'route' => 'admin',
+                        'divider' => true,
+                    ],
+                    [
+                        'order' => 20,
+                        'label' => 'people',
+                        'title' => 'search across categories of people',
+                        'route' => 'people',
+                        'route_matches'=>['people/edit','people/add'],
+                        'resource' => Admin\PeopleController::class,
+                    ],
+                    [
+                        'order' => 35,
+                        'label' => 'judges',
+                        'title' => 'roster of judges',
+                        'route_matches'=>['judges/edit','judges/add'],
+                        'route' => 'judges',
+                    ],
+                    [
+                        'order' => 25,
+                        'label' => 'users',
+                        'title' => 'user account administration',
+                        'route' => 'users',
+                        'route_matches'=>['users/edit','users/add'],
+
+                    ],
+                    [
+                        'order' => 30,
+                        'label' => 'defendant names',
+                        'title' => 'names of consumers of interpreting services',
+                        'route' => 'admin-defendants',
+                        'route_matches'=>[
+                             'admin-defendants',
+                        ],
+                        'resource' => Admin\DefendantsController::class,
+                    ],
+                    [
+                        'order' => 60,
+                        'title' => 'languages used in your court',
+                        'label' => 'languages',
+                        'route' => 'languages',
+                        'route_matches'=>['languages/edit','languages/add'],
+                    ],
+                    [
+                        'order' => 80,
+                        'resource' => Admin\EventTypesController::class,
+                        'label' => 'event-types',
+                        'title' => 'types of interpreted events',
+                        'route_matches'=>['event-types/edit','event-types/add',],
+                        'route' => 'event-types',
+
+                    ],
+                    [
+                        'order' => 70,
+                        'title' => 'locations where interpreting services are provided',
+                        'label' => 'locations',
+                        'route' => 'locations',
+                        'route_matches'=>['locations/edit','locations/add'],
+                    ],
+
+                    [
+                        'resource' => Admin\CourtClosingsController::class,
+                        'order' => 150,
+                        'title' => 'holidays and ad-hoc closings of your court',
+                        'label' => 'court closings',
+                        'route' => 'court-closings',
+                        'route_matches'=>[
+                              'court-closings',
+                        ],
+                    ],
+                ],
             ],
             [
-                'label' => 'schedule',
+                'order' => 0,
+                'label' => 'scheduling',
                 'title' => 'view the interpreters\' schedule',
                 'route' => 'events',
                 'route_matches'=>[
@@ -221,17 +293,16 @@ return [
 
             ],
             [
+                'order' => 20,
                 'label' => 'search',
                 'route' => 'search',
                 'resource' => Admin\SearchController::class,
-                'order' => 20,
                 //'css_class' => 'd-none d-xl-inline',
-
             ],
             [
+                'order' => 15,
                 'label' => 'interpreters',
                 'route' => 'interpreters',
-                'order' => 30,
                 'route_matches'=>[
                     'interpreters/find_by_language',
                     'interpreters/find_by_name',
@@ -240,93 +311,35 @@ return [
                 'resource' => Admin\InterpretersController::class,
                 //'order' => 6000,
             ],
-
-            [
-                'label' => 'other data',
-                'route' => 'admin',
-                'title' => 'manage other data entities',
-                'resource' => Admin\IndexController::class,
-                'order' => 500,
-                'pages' => [
-                    [
-                        'label' => 'languages',
-                        'route' => 'languages',
-                        'route_matches'=>['languages/edit','languages/add'],
-                    ],
-                    [
-                        'label' => 'locations',
-                        'route' => 'locations',
-                        'route_matches'=>['locations/edit','locations/add'],
-                    ],
-                    [
-                        'label' => 'judges',
-                        'route_matches'=>['judges/edit','judges/add'],
-                        'route' => 'judges',
-                    ],
-                    [
-                        'label' => 'users',
-                        'route' => 'users',
-                        'route_matches'=>['users/edit','users/add'],
-
-                    ],
-                    [
-                        'label' => 'people',
-                        'route' => 'people',
-                        'route_matches'=>['people/edit','people/add'],
-                        'resource' => Admin\PeopleController::class,
-                    ],
-                    [
-                        'resource' => Admin\EventTypesController::class,
-                        'label' => 'event-types',
-                        'route_matches'=>['event-types/edit','event-types/add',],
-                        'route' => 'event-types',
-
-                    ],
-                    [
-                        'label' => 'defendants',
-                        'route' => 'admin-defendants',
-                        'route_matches'=>[
-                             'admin-defendants',
-                        ],
-                        'foo'  => 'boink',
-                        'resource' => Admin\DefendantsController::class,
-                    ],
-                    [
-                        'resource' => Admin\CourtClosingsController::class,
-                        'label' => 'court closings',
-                        'route' => 'court-closings',
-                        'route_matches'=>[
-                              'court-closings',
-                        ],
-                    ],
-                ],
-            ],
             'tools'=>
             [
                 'label' => 'tools',
                 'title' => 'yadda',
-                'order' => 700,
+                'order' => 200,
                 'uri' => '/',
                 //'resource' => Admin\EventsController::class,
                 'pages' => [
                     [
                         'label' => 'search',
                         'route' => 'search',
-                        //'order' => 50000,
+                        'order' => 1,
                         //'css_class' => 'd-none d-sm-block',
                     ],
                     [
                         'label' => 'reports',
                         'uri' => '#',
+                        'order' => 2,
                         //'order' => 20,
                     ],
                     [
+                        'order' => 3,
                         'label' => 'email',
                         'route' => 'email/templates',
                         'resource' => Admin\EmailController::class,
                     ],
                     [
-                        'label' => 'help',
+                        'order' => 4,
+                        'label' => 'support',
                         'uri' => '#',
                     ],
                 ]

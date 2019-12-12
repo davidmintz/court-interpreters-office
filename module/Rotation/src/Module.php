@@ -8,6 +8,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\View\ViewModel;
 use Zend\Session\Container;
 use Zend\View\Model\JsonModel;
+use Zend\Navigation\Navigation;
 use function \date;
 /**
  * Module class for our InterpretersOffice\Admin\Rotation module.
@@ -33,17 +34,34 @@ class Module {
         $container =  $event->getApplication()->getMvcEvent()->getApplication()
             ->getServiceManager();
         $auth = $container->get('auth');
+        $log = $container->get('log');
         if ($auth->hasIdentity() && $auth->getIdentity()->role != 'submitter') {
 
             $event->getApplication()->getEventManager()->getSharedManager()
                 ->attach('Notes','NOTES_RENDER',
                 [
-                // $this,
                 $service = $container->get(Service\TaskRotationService::class),
                 'initializeView']);
-            $log = $container->get('log');
             $log->debug("we have attached NOTES_RENDER listener in ".__METHOD__);
         }
+        $eventManager = $event->getApplication()->getEventManager();
+        // $eventManager->attach(MvcEvent::EVENT_ROUTE, function($e) use ($log,$container){
+        //     $log->debug("event ROUTE listener running in ".__NAMESPACE__);
+        //     /** @var Zend\Navigation\Navigation $nav */
+        //     $nav = $container->get('Zend\Navigation\Default');
+        //     /** @var  Zend\Navigation\Page\Mvc $menu */
+        //     $menu = $nav->findOneBy('label', 'admin');
+        //
+        //     $menu->addPage([
+        //         'label' => 'shit',
+        //         'uri' => '#',
+        //     ]);
+        //     $shit = $menu->getPages();
+        //     foreach ($shit as $k => $v) {$log->debug("we now have a page with title: ".$v->getLabel());
+        //     // $log->debug($menu->render());
+        // }
+        //     $log->debug('page count is now '.count($menu->getPages()));
+        // },1000);
     }
 
     /**

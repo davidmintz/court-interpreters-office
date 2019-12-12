@@ -34,13 +34,13 @@ return [
     'acl' => [
         'resources' => [
             Controller\IndexController::class => 'InterpretersOffice\Admin\Controller\EventsController',
-            Controller\RestRotationController::class => Controller\IndexController::class,
+            Controller\RestRotationController::class => null,//Controller\IndexController::class,
         ],
 
         'allow' => [
             'manager' => [
                 Controller\IndexController::class => ['index','view'],
-                Controller\RestRotationController::class => ['get'],
+                Controller\RestRotationController::class => ['get','create-substitution'],
             ],
             'staff' => [
                 Controller\IndexController::class => ['index','view'],
@@ -56,6 +56,20 @@ return [
 
     ],
     'navigation' => [
+        'default' => [
+            'admin' => [
+                 'pages' => [
+                    [
+                        'order' => 4000,
+                        'label' => 'task rotations',
+                        'route' => 'rotations',
+                        'title' => 'management of Interpreters\' rotating tasks',
+                        'route_matches' => ['rotations'],
+                     ],
+                 ],
+            ],
+        ],
+
         'admin_breadcrumbs' => [
             [
                 'label' => 'admin',

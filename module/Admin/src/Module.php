@@ -46,6 +46,12 @@ class Module
     public function onBootstrap(\Zend\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
+        // $eventManager = $event->getApplication()->getEventManager();
+        // $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($container) {
+        //     $log = $container->get('log');
+        //     $log->debug("an EVENT_ROUTE listener running in ".__NAMESPACE__);
+        // });
+        // 
         // $log = $container->get('log');
         //$log->addWriter($container->get(DbWriter::class));
         /*
