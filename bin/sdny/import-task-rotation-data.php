@@ -99,7 +99,7 @@ $old_subs = $old_db->query('SELECT * FROM rotation_substitutions');
 $sub_ins = $db->prepare('INSERT INTO rotation_substitutions (id, rotation_id, person_id, date, duration)
     VALUES (:id, :rotation_id, :person_id, :date, :duration)');
 
-$find_rotation = $pdo->prepare(
+$find_rotation = $db->prepare(
     'SELECT id FROM rotations WHERE task_id = :task_id AND start_date <= :date ORDER BY start_date DESC limit 1'
 );
 
@@ -107,8 +107,8 @@ $i = 0;
 $subs_inserted = 0;
 while ($row = $old_subs->fetch(\PDO::FETCH_OBJ)) {
     $find_rotation->execute([
-        'task_id' => $row['task_id'],
-        'date' => $row['date'],
+        'task_id' => $row->task_id,
+        'date' => $row->date,
     ]);
     $rotation_id = $find_rotation->fetch(\PDO::FETCH_COLUMN);
     $params = [
