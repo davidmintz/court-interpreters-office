@@ -11,7 +11,13 @@ $(function(){
         minLength: 2,
         select: function( event, ui ) {
             event.preventDefault();
-            console.log(`${ui.item.label}, id ${ui.item.value}`);
+            console.log("fuck is going on?");
+            console.log(`append: ${ui.item.label}, id ${ui.item.value}`);
+            if ($(`#members input[value="${ui.item.value}"]`).length) {
+                //alert("You already have this person in the rotation");
+                $(this).val("");
+                return;
+            }
             $("#members").append(
                 `<li class="list-group-item pr-1 py-1"><span class="float-left deft-name align-middle pt-1">${ui.item.label}</span>
                 <input name="members[]" value="${ui.item.value}" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
@@ -25,17 +31,18 @@ $(function(){
             event.preventDefault();
             $(this).val(ui.item.label);
         }
-    });
+    })// prevent unwanted, mysterious click event from firing on .btn-remove
+    .on("keypress",(e)=>{ if (e.which === 13) { e.preventDefault();} });
+
     autocomplete_field.autocomplete("instance")._renderItem =
      function(ul, item) {
         return $( "<li>" )
-            .attr( "data-hat", item.hat )
-            .attr("title",item.hat)
-            .attr("data-id",item.id)
             .append( $( "<div>" ).html( `${item.label} <span class="text-muted">${item.hat}</span>` ) )
             .appendTo( ul );
      };
-    $("#datepicker_start_date").datepicker({
+    $("#datepicker_start_date")
+
+    .datepicker({
         showOtherMonths : true,
         changeMonth : true,
         changeYear : true,
@@ -48,10 +55,13 @@ $(function(){
             console.log(date);
         }
     });
-    $("#members").sortable()
-    .on("click",".btn-remove-item",function(e){
+    $("#members").on("click","button.btn-remove-item",function(e){
+        e.stopPropagation();
         e.preventDefault();
+        console.log("excuse me?");
+        console.log(e.target);
         $(this).parent().remove();
         $("#member-sort-help").attr({hidden:()=>$("#members li").length < 2});
-    });
+    })
+    .sortable();
 });
