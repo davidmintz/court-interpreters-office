@@ -1,5 +1,5 @@
 $(function(){
-    console.debug("gack");
+
     var autocomplete_field = $("#autocomplete-members");
     autocomplete_field.autocomplete({
         source: (request,response) => {
@@ -40,9 +40,7 @@ $(function(){
             .append( $( "<div>" ).html( `${item.label} <span class="text-muted">${item.hat}</span>` ) )
             .appendTo( ul );
      };
-    $("#datepicker_start_date")
-
-    .datepicker({
+    $("#datepicker_start_date").datepicker({
         showOtherMonths : true,
         changeMonth : true,
         changeYear : true,
@@ -50,18 +48,27 @@ $(function(){
         constrainInput : true,
         altField: "#start_date",
         altFormat : "yy-mm-dd",
-        dateFormat : "DD dd-M yy",
-        onSelect : function(date, instance){
-            console.log(date);
-        }
+        dateFormat : "DD dd-M yy"//,
+        // onSelect : function(date, instance){
+        //     console.log(date);
+        // }
     });
     $("#members").on("click","button.btn-remove-item",function(e){
-        e.stopPropagation();
         e.preventDefault();
-        console.log("excuse me?");
-        console.log(e.target);
-        $(this).parent().remove();
-        $("#member-sort-help").attr({hidden:()=>$("#members li").length < 2});
+        var div = $(this).parent();
+        div.slideUp(()=>{
+            div.remove();
+            $("#member-sort-help").attr({hidden:()=>$("#members li").length < 2});
+        });
     })
     .sortable();
+
+    $("#btn-save").on("click",function(e){
+        e.preventDefault();
+        var form = $(this).closest("form");
+        url = form.attr("action");
+        $.post(url,form.serialize()).then(
+            res=>{console.log(res);}
+        );
+    });
 });

@@ -208,7 +208,7 @@ class TaskRotationService
                         'callBack' => function($date, $context) use ($em) {
                             if (! isset($context['task'])) { return true; }
                             $task = $em->find(Entity\Task::class,$context['task']);
-                            $today = new \DateTime();
+                            $today = date('Y-m-d');
                             return  $date >= $today;
 
                         },

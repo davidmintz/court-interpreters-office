@@ -2,14 +2,14 @@
 $this->headTitle('admin | rotations');
 $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
 ?>
-<div class="mx-auto" style="max-width:600px">
+<div class="mx-auto" style="max-width:800px">
     <h2 class="mb-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
-    <form action="<?= $this->basePath()?>/admin/rotations/create" method="post">
+    <form id="rotation-form" action="<?= $this->basePath()?>/admin/rotations/assignments/create" method="post">
         <div class="form-group row">
             <label class="col-form-label col-sm-3" for="task">
                 task
             </label>
-            <div class="col-sm-9">
+            <div class="col-sm-6">
                 <select id="task" name="task" class="form-control">
                     <option label="" value=""></option>
                     <?php foreach ($this->tasks as $t) :?>
@@ -21,6 +21,12 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
             </div>
         </div>
         <?php echo $this->partial('partials/rotation-components.phtml',[])?>
+        <div class="form-group row">
+            <div class="offset-sm-3 pl-3">
+                <button type="button" id="btn-save" name="button" class="btn btn-success">save</button>
+            </div>
+
+        </div>
         <?php $hash = (new \Zend\Validator\Csrf(['timeout'=>6000]))->getHash() ?>
         <input type="hidden" name="csrf" value="<?=$hash?>">
     </form>
