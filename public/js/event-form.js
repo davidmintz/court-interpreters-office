@@ -590,7 +590,9 @@ var eventForm = (function () {
         /* ============  stuff related to defendant names =======================*/
 
         /** deft name autocompletion */
-        $("#defendant-search").autocomplete(deftname_autocomplete_options);
+        $("#defendant-search")
+            .on("keypress",(e)=>{ if (e.which === 13) { e.preventDefault();} })
+            .autocomplete(deftname_autocomplete_options);
 
         /** =========  display defendant-name search results   ==============*/
         $("#btn-defendant-search").on("click",deftNameSearchButtonClick);
