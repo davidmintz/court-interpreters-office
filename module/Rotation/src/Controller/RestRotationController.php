@@ -39,6 +39,7 @@ class RestRotationController extends AbstractRestfulController
      */
     public function create($data)
     {
+
         $result = $this->service->createRotation($data);
 
         return new JsonModel($result);

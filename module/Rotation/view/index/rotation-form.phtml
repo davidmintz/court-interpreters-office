@@ -4,7 +4,10 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
 ?>
 <div class="mx-auto" style="max-width:800px">
     <h2 class="mb-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
-    <form id="rotation-form" action="<?= $this->basePath()?>/admin/rotations/assignments/create" method="post">
+    <div class="alert alert-warning" style="display:none">
+        <p id="error-message"></p>
+    </div>
+    <form class="task-rotation" id="rotation-form" action="<?= $this->basePath()?>/admin/rotations/assignments/create" method="post">
         <div class="form-group row">
             <label class="col-form-label col-sm-3" for="task">
                 task
@@ -30,4 +33,30 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
         <?php $hash = (new \Zend\Validator\Csrf(['timeout'=>6000]))->getHash() ?>
         <input type="hidden" name="csrf" value="<?=$hash?>">
     </form>
+    <div class="row">
+        <div class="col-sm-7 offset-sm-2 alert alert-info">
+            <strong>Please note:</strong> This feature should be used with care. There is presently
+            no means of modifying or removing task rotations once they have been created, short of
+            editing the underlying database directly.
+        </div>
+    </div>
+</div>
+<div id="dialog" aria-labelledby="dialog-title" style="display:none" class="modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="dialog-title">please confirm rotation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-confirm" class="btn btn-primary">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
 </div>
