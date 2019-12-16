@@ -24,6 +24,12 @@ $(function(){
                 <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li>`
             );
             $(this).val("");
+            if ($("#error_members").is(":visible")) {
+                $("#error_members").hide();
+            }
+            if ($("#error_countable").is(":visible")) {
+                $("#error_countable").hide();
+            }
             // var hidden =  $("#members li").length < 2;
             $("#member-sort-help").attr({hidden:()=>$("#members li").length < 2});
         },
@@ -48,10 +54,12 @@ $(function(){
         constrainInput : true,
         altField: "#start_date",
         altFormat : "yy-mm-dd",
-        dateFormat : "DD dd-M yy"//,
-        // onSelect : function(date, instance){
-        //     console.log(date);
-        // }
+        dateFormat : "DD dd-M-yy",
+        onSelect : function(date, instance){
+            if ($("#error_start_date:visible").length) {
+                $("#error_start_date").hide();
+            }
+        }
     });
     $("#members").on("click","button.btn-remove-item",function(e){
         e.preventDefault();
@@ -68,7 +76,12 @@ $(function(){
         var form = $(this).closest("form");
         url = form.attr("action");
         $.post(url,form.serialize()).then(
-            res=>{console.log(res);}
+            res=>{
+            console.log(res);
+                if (res.validation_errors) {
+                    displayValidationErrors(res.validation_errors);
+                }
+            }
         );
     });
 });

@@ -39,24 +39,9 @@ class RestRotationController extends AbstractRestfulController
      */
     public function create($data)
     {
-        $inputFilter = $this->service->getRotationInputFilter();
-        $data['countable'] = $data['members'] ?? null;
-        $inputFilter->setData($data);
-        $valid = $inputFilter->isValid();
-        if (! $valid) {
-            return new JsonModel(
-                [
-                    'validation_errors' => $inputFilter->getMessages(),
-                    'valid' => false,
-                ]
-            );
-        }
-        return new JsonModel([
-            'status'=>'OK',
-            'valid' => $valid,
-            'info' => 'not yet implemented',
-            'data' => $inputFilter->getValues(),
-        ]);
+        $result = $this->service->createRotation($data);
+
+        return new JsonModel($result);
     }
 
     /**
