@@ -38,6 +38,11 @@ class IndexController extends AbstractActionController
         return ['task' => $task, 'current'=>$current ];
 
     }
+    public function createRotationAction()
+    {
+        $tasks = $this->service->getEntityManager()->getRepository(Task::class)->findAll();
+        return ['tasks' => $tasks,'task_id'=>$this->params()->fromRoute('task_id') ];
+    }
 
     public function createTaskAction()
     {

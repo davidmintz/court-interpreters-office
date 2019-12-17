@@ -39,7 +39,12 @@ class RestRotationController extends AbstractRestfulController
      */
     public function create($data)
     {
-        return new JsonModel(['status'=>'OK','info'=>'yet to be implemented']);
+
+        $result = $this->service->createRotation($data);
+        if (isset($result['status']) && 'success' == $result['status']) {
+            $this->flashMessenger()->addSuccessMessage('A new rotation has been created.');
+        }
+        return new JsonModel($result);
     }
 
     /**

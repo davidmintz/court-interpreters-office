@@ -17,6 +17,8 @@ use Zend\InputFilter;
 use Zend\Validator;
 use Zend\Filter;
 
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+
 /**
  * TaskRotationService
  */
@@ -91,12 +93,43 @@ class TaskRotationService
         }
         $inputFilter = new InputFilter\InputFilter();
         $em = $this->em;
+        $inputFilter->add([
+            'name' => 'csrf',
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => [
+                            'isEmpty' => 'required security token is missing'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Csrf',
+                    'options' => [
+                        'messages' => [
+                            'notSame' =>
+                            'Invalid or expired security token. Please reload this page and try again.'
+                    ]],
+                ],
+            ],
+        ]);
         $inputFilter->add(
             [
                 'name' => 'members',
                 'type' => InputFilter\ArrayInput::class,
                 'required' => true,
                 'validators' =>[
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'rotation (names of people) is required'
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
                     [
                         'name' => 'Digits',
                         'options' => [
@@ -131,6 +164,15 @@ class TaskRotationService
             'name' => 'countable',
             'required' => true,
             'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => [
+                            'isEmpty' => 'rotation (names of people) is required'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
                 [
                     'name' => Validator\IsCountable::class,
                     'options' => [
@@ -208,7 +250,7 @@ class TaskRotationService
                         'callBack' => function($date, $context) use ($em) {
                             if (! isset($context['task'])) { return true; }
                             $task = $em->find(Entity\Task::class,$context['task']);
-                            $today = new \DateTime();
+                            $today = date('Y-m-d');
                             return  $date >= $today;
 
                         },
@@ -219,6 +261,38 @@ class TaskRotationService
                 ],
             ],
         ]);
+        $inputFilter->add(
+            [
+                'name'=>'task',
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                'isEmpty' => 'task is required'
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callBack' => function($value, $context) use ($em) {
+
+                                $task = $em->find(Entity\Task::class,$value);
+                                if (! $task) { return false; }
+                                return true;
+                            },
+                            'messages' => [
+                                'callbackValue' => 'no such Task was found in the database',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+            ]
+        );
         $this->rotationInputFilter = $inputFilter;
 
         return $inputFilter;
@@ -481,6 +555,57 @@ class TaskRotationService
         $this->substitutionInputFilter = $inputFilter;
 
         return $inputFilter;
+    }
+
+    /**
+     * attempts to create a new Rotation
+     * @param Array
+     * @return Array
+     */
+    public function createRotation(Array $data)
+    {
+        $inputFilter = $this->getRotationInputFilter();
+        // 'countable' is sort of a pseudo-input, same data as 'members'.
+        // This hack is designed to get validators to run the way we want
+        $data['countable'] = $data['members'] ?? null;
+        $inputFilter->setData($data);
+        $valid = $inputFilter->isValid();
+        if (! $valid) {
+            // but could result in silly duplicate error messages
+            $errors = $inputFilter->getMessages();
+            if (key_exists('countable',$errors) && key_exists('members',$errors)) {
+                if (isset($errors['countable']['isEmpty']) && isset($errors['members']['isEmpty']))
+                {
+                    unset($errors['countable']);
+                }
+            }
+            return
+                [
+                    'validation_errors' => $errors,
+                    'valid' => false,
+                ];
+        }
+        $values = $inputFilter->getValues();
+        $task = $this->em->find(Entity\Task::class,$values['task']);
+        $rotation = new Entity\Rotation();
+        $rotation->setTask($task)->setStartDate(new DateTime($values['start_date']));
+        $dql = 'SELECT p FROM InterpretersOffice\Entity\Person p WHERE p.id IN (:ids)';
+        $people = $this->em->createQuery($dql)
+            ->setParameters(['ids'=> $values['members']])->getResult();
+        $reverse_ids = array_flip($values['members']);
+        foreach ($people as $m) {
+            $member = new Entity\RotationMember();
+            $member->setRotation($rotation)->setPerson($m)
+                ->setOrder($reverse_ids[$m->getId()]);
+            $rotation->addMember($member);
+        }
+        $this->em->persist($rotation);
+        $this->em->flush();
+        return [
+            'status'=>'success',
+            'valid' => true,
+            'rotation' => $inputFilter->getValues(),
+        ];
     }
 
     /**

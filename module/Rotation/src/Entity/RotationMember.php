@@ -26,12 +26,14 @@ class RotationMember
      * rotation of which this entity is a member
      *
      * @ORM\ManyToOne(targetEntity="Rotation",inversedBy="members") @ORM\Id
+     *
      * @var Rotation
      */
     private $rotation;
 
     /**
      * @ORM\ManyToOne(targetEntity="InterpretersOffice\Entity\Person") @ORM\Id
+     * 
      * @var Person
      */
     private $person;
@@ -75,7 +77,7 @@ class RotationMember
      *
      * @return RotationMember
      */
-    public function setRotation(Rotation $rotation) : RotationMember
+    public function setRotation(Rotation $rotation = null) : RotationMember
     {
         $this->rotation = $rotation;
 

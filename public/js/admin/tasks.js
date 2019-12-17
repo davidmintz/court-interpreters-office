@@ -46,6 +46,7 @@ $(function(){
         showOtherMonths : true,
         changeMonth : true,
         changeYear : true,
+        selectOtherMonths: true,
         dateFormat : "yy-mm-dd",
         // when they click a date, fetch and display assignment data for that date
         onSelect : function(date, instance){
@@ -180,7 +181,6 @@ $(function(){
                 $("#success-message").remove();
                 }, 1500);
         }).fail(fail);
-
 
         $("button.reload").on("click",()=>location.reload());
     });

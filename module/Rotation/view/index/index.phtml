@@ -3,6 +3,7 @@ $this->headTitle('admin | rotating tasks');
 $is_admin = $this->layout()->user->role == 'administrator'?>
 <div style="max-width:800px" class="mx-auto">
     <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    
     <?php if ($this->tasks): ?>
         <div class="list-group mt-3" style="max-width:400px">
         <?php foreach ($this->tasks as $t): ?>

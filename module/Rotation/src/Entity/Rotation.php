@@ -155,4 +155,20 @@ class Rotation
     {
         return $this->members;
     }
+
+    public function addMembers(Collection $members)
+    {
+        foreach ($members as $m) {
+            $m->setRotation($this);
+            $this->members->add($m);
+        }
+    }
+
+    public function removeMembers(Collection $members)
+    {
+        foreach ($members as $m) {
+            $m->setRotation(null);
+            $this->members->removeElement($m);
+        }
+    }
 }
