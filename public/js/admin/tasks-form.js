@@ -1,3 +1,6 @@
+/*
+global $, fail, displayValidationErrors
+*/
 $(function(){
 
     var autocomplete_field = $("#autocomplete-members");
@@ -11,7 +14,6 @@ $(function(){
         minLength: 2,
         select: function( event, ui ) {
             event.preventDefault();
-            console.log("fuck is going on?");
             console.log(`append: ${ui.item.label}, id ${ui.item.value}`);
             if ($(`#members input[value="${ui.item.value}"]`).length) {
                 //alert("You already have this person in the rotation");
@@ -79,11 +81,11 @@ $(function(){
         var form = $("form.task-rotation");
         // if it looks like it will validate, display a confirmation
         if ($("#task").val()!= "" && $("#start_date").val() != "" && $("#members li").length > 1) {
-            render_dialog_confirmation(form);
+            render_rotation_confirmation(form);
             $("#dialog").modal({});
             return;
         } else {
-            console.log("doing shit -- does not look valid");
+            // let it get submitted (and fail validation)
             submit_task_rotation_form(form);
         }
 
@@ -106,7 +108,8 @@ var dummy = function(){
                     <input name="members[]" value="881" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
                     <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li>`);
 };
-const render_dialog_confirmation = function(form) {
+
+const render_rotation_confirmation = function(form) {
     var task = $("#task option:selected").text();
     var date = $("#datepicker_start_date").val();
     var list = "<ol>";
@@ -128,7 +131,8 @@ const submit_task_rotation_form = function(form){
         if (res.validation_errors) {
             displayValidationErrors(res.validation_errors);
         }
-        console.warn("success!");
+        var url = `${window.basePath}/admin/rotations/view/${$("#task").val()}`;
+        document.location = url;
     }
     ).fail((res) => {$("#dialog").modal("hide"); fail(res);});
 };

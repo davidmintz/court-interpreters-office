@@ -18,7 +18,12 @@ endif;
 ?>
 <div style="max-width:800px" class="mx-auto">
     <h2 class="mb-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() . $header?></h2>
-    <div class="row">
+    <?php
+    $messenger = $this->flashMessenger();
+    if ($messenger->hasSuccessMessages()) :
+        echo $messenger->render('success', ['alert','alert-success',], false);
+    endif;
+    ?>    <div class="row">
         <div class="col">
             <div class="row task" data-task_id="<?= $this->task->getId()?>"
               data-dow="<?=  $this->escapeHtml($this->task->getDayOfWeek())?>"

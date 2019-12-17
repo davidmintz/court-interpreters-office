@@ -602,7 +602,7 @@ class TaskRotationService
         $this->em->persist($rotation);
         $this->em->flush();
         return [
-            'status'=>'OK',
+            'status'=>'success',
             'valid' => true,
             'rotation' => $inputFilter->getValues(),
         ];

@@ -9,14 +9,15 @@ global $, fail, displayValidationErrors, moment
 onSelect
 Type: Function( String dateText, Object inst )
 Default: null
-Called when the datepicker is selected. The function receives the selected date as text and the datepicker instance as parameters.
-'this' refers to the associated input field.
+Called when the datepicker is selected. The function receives the selected date
+as text and the datepicker instance as parameters.'this' refers to the associated
+input field.
 */
 $(function(){
-    var base_url =
-    dp_defaults = {
+    var dp_defaults = {
         dateFormat:"yy-mm-dd",
         showOtherMonths : true,
+        selectOtherMonths : true,
         changeMonth : true,
         changeYear : true,
         onSelect :  function(dateText,instance) {
@@ -109,7 +110,7 @@ $(function(){
                 $(`#calendar-${type} a.ui-state-active`).trigger("click");
                 // $(`#btn-editor-${type}`).show();
                 // form.replaceWith(res[type].content);
-                console.warn("it worked");
+                console.warn("it actually worked!");
             }
             if (res.validation_errors) {
                 return displayValidationErrors(res.validation_errors);
