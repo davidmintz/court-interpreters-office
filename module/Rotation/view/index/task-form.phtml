@@ -1,1 +1,38 @@
-hello
+<?php
+$this->headTitle('admin | tasks');
+$this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
+?>
+<div class="mx-auto" style="max-width:800px">
+    <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    <form class="task-rotation" id="task-form" action="<?php echo $this->url('restful_tasks/post')?>" method="post">
+        <div class="row">
+            <label class="col-form-label col-sm-3" for="task">
+                name of task
+            </label>
+            <div class="col-sm-6">
+                <input id="name" name="name" class="form-control" placeholder="terse name for compact display">
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-form-label col-sm-3" for="description">
+                description
+            </label>
+            <div class="col-sm-6">
+                <textarea id="description" name="description" class="form-control" rows="3" placeholder="more verbose description"></textarea>
+            </div>
+        </div>
+        <fieldset class="form-group">
+            <div class="row">
+                <legend class="col offset-sm-3">rotation</legend>
+            </div>
+            <?php echo $this->partial('partials/rotation-components.phtml')?>
+        </fieldset>
+        <div class="form-group row">
+            <div class="offset-sm-3 pl-3">
+                <button type="button" id="btn-save" name="button" class="btn btn-success">save</button>
+            </div>
+        </div>
+        <?php $hash = (new \Zend\Validator\Csrf(['timeout'=>6000]))->getHash() ?>
+        <input type="hidden" name="csrf" value="<?=$hash?>">
+    </form>
+</div>
