@@ -113,3 +113,8 @@ const fail = function(response) {
 $(".alert button[data-hide]").on("click",function(e){
     $(this).parent().slideUp();
 });
+
+/* cat picture? */
+// if (43 === parseInt(Math.random()*1000)) {
+//
+// }
