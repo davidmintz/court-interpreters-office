@@ -31,15 +31,24 @@ return [
             Service\TaskRotationService::class => Service\TaskRotationServiceFactory::class,
         ],
     ],
+    /*
+        permissions for Rotation module
+    */
     'acl' => [
         'resources' => [
-            Controller\IndexController::class => 'InterpretersOffice\Admin\Controller\EventsController',
-            Controller\RestRotationController::class => null,//Controller\IndexController::class,
+            Controller\IndexController::class => null, //'InterpretersOffice\Admin\Controller\EventsController',
+            Controller\RestRotationController::class => null, //Controller\IndexController::class,
         ],
 
         'allow' => [
             'manager' => [
+                // resource (controller) => privileges (actions)
                 Controller\IndexController::class => ['index','view'],
+                /*
+                if you want to allow the "manager" role to create Rotation and/or Task
+                entities, add string 'create-rotation' and/or 'create-task'
+                to the array below
+                */
                 Controller\RestRotationController::class => ['get','create-substitution'],
             ],
             'staff' => [
@@ -47,13 +56,6 @@ return [
                 Controller\RestRotationController::class => ['get'],
             ],
         ],
-        // 'deny' => [
-        //     'staff' => [
-        //         Controller\RestRotationController::class => ['update','delete','create'],
-        //         //Controller\IndexController::class => null,
-        //     ],
-        // ],
-
     ],
     'navigation' => [
         'default' => [

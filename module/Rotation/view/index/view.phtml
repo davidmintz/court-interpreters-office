@@ -92,9 +92,11 @@ endif;
                 <div data-start_date="<?= $date ?>" class="col-md-9 start_date">
                     <?= $text ?>
                 </div>
-                <div class="offset-md-3 col-md-9 pt-2">
-                    <a role="button" href="<?= $this->basePath()?>/admin/rotations/task/<?=$this->task->getId()?>/create" class="btn btn-outline-primary btn-sm">new rotation</a>
-                </div>
+                <?php if ($this->permissions && $this->permissions['create-rotation']):?>
+                    <div class="offset-md-3 col-md-9 pt-2">
+                        <a role="button" href="<?= $this->basePath()?>/admin/rotations/task/<?=$this->task->getId()?>/create" class="btn btn-outline-primary btn-sm">new rotation</a>
+                    </div>
+                <?php endif ?>
             </div>
         </div>
         <div class="col">
