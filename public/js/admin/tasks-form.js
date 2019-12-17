@@ -79,6 +79,9 @@ $(function(){
     $("#btn-save").on("click",function(e){
         e.preventDefault();
         var form = $("form.task-rotation");
+        if (form.attr("id")==="task-form") {
+            return console.warn("yet to be implemented");
+        }
         // if it looks like it will validate, display a confirmation
         if ($("#task").val()!= "" && $("#start_date").val() != "" && $("#members li").length > 1) {
             render_rotation_confirmation(form);
@@ -129,7 +132,7 @@ const submit_task_rotation_form = function(form){
     $.post(url,form.serialize())
     .then(res=>{
         if (res.validation_errors) {
-            displayValidationErrors(res.validation_errors);
+            return displayValidationErrors(res.validation_errors);
         }
         var url = `${window.basePath}/admin/rotations/view/${$("#task").val()}`;
         document.location = url;

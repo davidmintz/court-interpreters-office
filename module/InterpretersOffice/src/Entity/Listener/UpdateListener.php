@@ -131,6 +131,8 @@ class UpdateListener implements
                 $entity_class = Entity\Event::class;
                 $channel = 'scheduling';
                 break;
+            case 'InterpretersOffice\Admin\Rotation\Entity\RotationMember':
+                $channel = 'rotations';
             default:
                 $basename = strtolower(substr($entity_class, strrpos($entity_class, '\\') + 1));
                 $channel = "{$basename}s";
@@ -147,8 +149,7 @@ class UpdateListener implements
         }
 
         $this->logger->info(
-            $message,
-            compact('entity_id', 'entity_class','channel')
+            $message, compact('entity_id', 'entity_class','channel')
         );
         $this->clearCache($args);
     }

@@ -24,6 +24,7 @@ return [
         'factories' => [
             Controller\IndexController::class => Controller\Factory::class,
             Controller\RestRotationController::class => Controller\Factory::class,
+            Controller\RestTaskController::class => Controller\Factory::class,
         ],
     ],
     'service_manager' => [
@@ -38,6 +39,7 @@ return [
         'resources' => [
             Controller\IndexController::class => null, //'InterpretersOffice\Admin\Controller\EventsController',
             Controller\RestRotationController::class => null, //Controller\IndexController::class,
+            Controller\RestTaskController::class => null, //Controller\IndexController::class,
         ],
 
         'allow' => [
@@ -45,7 +47,7 @@ return [
                 // resource (controller) => privileges (actions)
                 Controller\IndexController::class => ['index','view'],
                 /*
-                if you want to allow the "manager" role to create Rotation and/or Task
+                to allow the "manager" role to create Rotation and/or Task
                 entities, add string 'create-rotation' and/or 'create-task'
                 to the array below
                 */
@@ -86,8 +88,8 @@ return [
                                 'route' => 'rotations/view'
                             ],
                             [
-                                'label' => 'create',
-                                'route' => 'task/create'
+                                'label' => 'create task',
+                                'route' => 'rotations/create'
                             ],
                             [
                                 'label' => 'create',
@@ -101,6 +103,27 @@ return [
     ],
     'router' => [
         'routes' => [
+            'restful_tasks' => [
+                'type' => Segment::class,
+                'may_terminate' => false,
+                'options' => [
+                    'route'=>'/admin/tasks',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\RestTaskController::class,
+                    ],
+
+                ],
+                'child_routes' => [
+                    'post' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options'=> [
+                            'route' => '/create',
+                        ],
+                    ],
+                ],
+            ],
             'restful_rotations' => [
                 'type' => Segment::class,
                 'may_terminate' => false,
