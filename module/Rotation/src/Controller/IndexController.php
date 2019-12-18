@@ -66,7 +66,7 @@ class IndexController extends AbstractActionController
 
     public function createTaskAction()
     {
-    //    return false;
+        
     }
 
     /**

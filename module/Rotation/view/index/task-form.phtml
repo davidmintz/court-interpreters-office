@@ -5,7 +5,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
 <div class="mx-auto" style="max-width:800px">
     <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
     <form class="task-rotation" id="task-form" action="<?php echo $this->url('restful_tasks/post')?>" method="post">
-        <div class="row">
+        <div class="form-group form-row">
             <label class="col-form-label col-sm-3" for="task">
                 name of task
             </label>
@@ -13,12 +13,35 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
                 <input id="name" name="name" class="form-control" placeholder="terse name for compact display">
             </div>
         </div>
-        <div class="row">
+        <div class="form-group form-row">
             <label class="col-form-label col-sm-3" for="description">
                 description
             </label>
             <div class="col-sm-6">
                 <textarea id="description" name="description" class="form-control" rows="3" placeholder="more verbose description"></textarea>
+            </div>
+        </div>
+        <div class="form-group form-row">
+            <label class="col-form-label col-sm-3" for="frequency">
+                frequency
+            </label>
+            <div class="col-sm-6">
+                <select class="custom-select" aria-describedby="frequency-help" class="" name="frequency"><option value="WEEK" label="weekly">weekly</option>
+                </select>
+                <small id="frequency-help" class="form-text text-muted">"weekly" is the only frequency that is currently supported</small>
+            </div>
+        </div>
+        <div class="form-group form-row">
+            <label class="col-form-label col-sm-3" for="duration">
+                duration
+            </label>
+            <div class="col-sm-6">
+                <select class="custom-select"  name="duration">
+                    <option value="DAY" label="one day">one day</option>
+                    <option value="WEEK" label="one week">one week</option>
+                    <!-- <option value="MONTH" label="month">month</option> -->
+                </select>
+                <!-- <small id="duration-help" class="form-text text-muted">"weekly" is the only frequency that is currently supported</small> -->
             </div>
         </div>
         <fieldset class="form-group">

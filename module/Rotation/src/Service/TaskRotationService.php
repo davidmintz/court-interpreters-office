@@ -81,6 +81,94 @@ class TaskRotationService
         $this->config = $config;
     }
 
+
+    public function getTaskInputFilter()
+    {
+        $inputFilter = new InputFilter\InputFilter();
+        $inputFilter->add([
+            'type'=>'Zend\InputFilter\InputFilter',
+            'rotations'=>$this->getRotationInputFilter(),
+        ]);
+        $inputFilter->add([
+            'name' => 'frequency',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> '"frequency" field is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'InArray',
+                    'options' => [
+                        'haystack' => [ "WEEK"], //"DAY",...
+                        'messages' => [
+                            'notInArray' => 'the only supported frequency is weekly'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+            ]
+        ]);
+        $inputFilter->add([
+            'name' => 'name',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> 'a name for the task is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                // .....
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'description',
+            'required' => true,
+            'allow_empty' => true,
+            'validators' => [
+                //...
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'day_of_week',
+            'required' => true,
+            'allow_empty' => true,
+            'validators' => [
+                //...
+            ],
+        ]);
+
+        $inputFilter->add([
+            'name' => 'duration',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> '"duration" field is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'InArray',
+                    'options' => [
+                        'haystack' => [ "DAY", "WEEK"],
+                        'messages' => [
+                            'notInArray' => 'the only supported options for duration are "DAY" and "WEEK"'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+            ]
+        ]);
+
+        return $inputFilter;
+    }
     /**
      * returns input filter for Rotation entity
      *
