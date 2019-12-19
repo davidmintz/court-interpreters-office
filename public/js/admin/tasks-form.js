@@ -83,8 +83,8 @@ $(function(){
             return submit_task_form(form);
         }
         // if it looks like it will validate, display a confirmation
-        if ($("#task").val()!= "" && $("#start_date").val() != "" && $("#members li").length > 1) {
-            render_rotation_confirmation(form);
+        if (looks_valid(form)) {
+            render_form_confirmation(form);
             $("#dialog").modal({});
             return;
         } else {
@@ -96,7 +96,11 @@ $(function(){
     $("#btn-confirm").on("click",function(e){
         e.preventDefault();
         var form = $("form.task-rotation");
-        submit_task_rotation_form(form);
+        if (form.attr("id")==="rotation-form") {
+            submit_task_rotation_form(form);
+        } else {
+            submit_task_form(form,true);
+        }
         $("dialog").modal("hide");
     });
 
@@ -108,50 +112,93 @@ $(function(){
         if (disabled) {dow.val("");}
         dow.attr({disabled});
     }).trigger("change");
-
-
 });
+
+var looks_valid = function(form) {
+    if (form.attr("id") === "task-form") {
+        var ok = $("#start_date").val().trim() != ""
+            &&  $("#members li").length > 1
+            && $("#name").val()
+            && $("#frequency").val()
+            && $("#duration").val();
+        if (! ok) { return false; }
+        if ($("#duration").val() !== "WEEK" && !$("#day_of_week").val()) {
+            return false;
+        }
+        return true;
+    } else {
+        return  $("#task").val().trim() != ""
+            && $("#start_date").val().trim() != ""
+            && $("#members li").length > 1;
+    }
+}
+
 var dummy = function(){
-    $("#members").append(`<li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">Anderson, Peter</span>
-                    <input name="rotation[members][]" value="548" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
-                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li><li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">Garcia, Humberto</span>
-                    <input name="rotation[members][]" value="862" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
-                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li><li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">de los Ríos, Erika</span>
-                    <input name="rotation[members][]" value="881" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
-                    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li>`);
+    $("#members").append(
+        `<li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">Anderson, Peter</span>
+        <input name="rotation[members][]" value="548" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
+        <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li><li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">Garcia, Humberto</span>
+        <input name="rotation[members][]" value="862" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
+        <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li><li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">de los Ríos, Erika</span>
+        <input name="rotation[members][]" value="881" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
+        <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li>`);
 };
 
-const render_rotation_confirmation = function(form) {
-    var task = $("#task option:selected").text();
+const render_form_confirmation = function(form) {
+    var task = $("#task option:selected").text() || $("#name").val();
     var date = $("#datepicker_start_date").val();
     var list = "<ol>";
     $(".person-name").each(function(){
         list += `<li>${$(this).text()}</li>`;
     });
     list += "</ol>";
-    var html = `<p>You are about to set the following rotation for
-    <strong>${task}</strong> effective as of <strong>${date}</strong>:</p>
-    ${list} <p>Continue?</p>`
-    $("#dialog .modal-body").html(html);
+    if (form.attr("id")=== "rotation-form") {
+        var html = `<p>You are about to set the following rotation for
+        <strong>${task}</strong> effective as of <strong>${date}</strong>:</p>
+        ${list} <p>Continue?</p>`
 
+    } else {
+        var description = $("#description").val().trim() ?
+            `<strong>${$("#description").val().trim()}</strong>`:"<em>(none)</em>";
+        html = "<p>You are about to create the following rotating task</p>";
+        html += `Name: <strong>${task}</strong><br>`;
+        html += `Description: ${description}<br>`;
+        html += `Rotation starts: <strong>${date}</strong><br>`;
+        html += `Rotation members: ${list} <p>Continue?</p>`;
+    }
+    $("#dialog .modal-body").html(html);
 };
 
-const submit_task_form = function(form){
-    var url = form.attr("action");
-    
-    $.post(url,form.serialize()).then(res=>{console.log(res);})
-    return console.warn("yet to be implemented");
+const submit_task_form = function(form,confirmed){
+    if (confirmed) {
+        $("#dialog").modal("hide");
+    }
+    if (looks_valid(form) && !confirmed) {
+        console.log("looks valid");
+        render_form_confirmation(form);
+        $("#dialog").modal({});
+    } else {
+        console.log("looks NOT valid, or it is confirmed");
+        var url = form.attr("action");
+        $.post(url,form.serialize()).then(res=>{
+            if (res.validation_errors) {
+                return displayValidationErrors(res.validation_errors);
+            } // else
+            var redirect = `${window.basePath}/admin/rotations`;
+            console.log(res);
+        }).fail((res)=>{ fail(res); });
+    }
 };
 
 const submit_task_rotation_form = function(form){
-    url = form.attr("action");
+    var url = form.attr("action");
     $.post(url,form.serialize())
     .then(res=>{
         if (res.validation_errors) {
             return displayValidationErrors(res.validation_errors);
         }
-        var url = `${window.basePath}/admin/rotations/view/${$("#task").val()}`;
-        document.location = url;
+        var redirect = `${window.basePath}/admin/rotations/view/${$("#task").val()}`;
+        document.location = redirect;
     }
     ).fail((res) => {$("#dialog").modal("hide"); fail(res);});
 };

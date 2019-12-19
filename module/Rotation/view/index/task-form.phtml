@@ -56,7 +56,6 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
                 </select>
             </div>
         </div>
-
         <fieldset class="form-group">
             <div class="row">
                 <legend class="col offset-sm-3">rotation</legend>
@@ -71,4 +70,23 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
         <?php $hash = (new \Zend\Validator\Csrf(['timeout'=>6000]))->getHash() ?>
         <input type="hidden" name="csrf" value="<?=$hash?>">
     </form>
+</div>
+<div id="dialog" aria-labelledby="dialog-title" style="display:none" class="modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="dialog-title">please confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-confirm" class="btn btn-primary">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
 </div>

@@ -749,20 +749,24 @@ class TaskRotationService
         $inputFilter->setData($data);
         $valid = $inputFilter->isValid();
         $result['valid'] = $valid;
+        $result['debug'] = '';
         if (! $valid) {
             // but could result in silly duplicate error messages
             $errors = $inputFilter->getMessages();
             if (isset($errors['rotation'])) {
                 if (key_exists('countable',$errors['rotation']) && key_exists('members',$errors['rotation'])) {
+                    $result['debug'] .= "fucking yes...";
                     if (isset($errors['rotation']['countable']['isEmpty']) && isset($errors['rotation']['members']['isEmpty']))
                     {
+                        $result['debug'] .= "fucking yes again...";
                         unset($errors['rotation']['countable']);
                     }
                 }
             }
-            $result['validation_errors'] = $inputFilter->getMessages();
+            $result['validation_errors'] = $errors;
             return $result;
-        }
+        } // else ...
+        
 
         $result['data'] = $inputFilter->getValues();
 
