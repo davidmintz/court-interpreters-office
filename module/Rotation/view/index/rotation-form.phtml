@@ -8,12 +8,12 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
         <p id="error-message"></p>
     </div>
     <form class="task-rotation" id="rotation-form" action="<?= $this->basePath()?>/admin/rotations/assignments/create" method="post">
-        <div class="form-group form-row">
+        <div class="form-group row">
             <label class="col-form-label col-sm-3" for="task">
                 task
             </label>
             <div class="col-sm-6">
-                <select id="task" name="task" class="form-control">
+                <select id="task" name="rotation[task]" class="form-control">
                     <option label="" value=""></option>
                     <?php foreach ($this->tasks as $t) :?>
                     <option label="<?= $this->escapeHtml($t->getName()) ?>" value="<?=$t->getId()?>"<?php
@@ -24,7 +24,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
             </div>
         </div>
         <?php echo $this->partial('partials/rotation-components.phtml',[])?>
-        <div class="form-group form-row">
+        <div class="form-group row">
             <div class="offset-sm-3 pl-3">
                 <button type="button" id="btn-save" name="button" class="btn btn-success">save</button>
             </div>
@@ -33,7 +33,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
         <?php $hash = (new \Zend\Validator\Csrf(['timeout'=>6000]))->getHash() ?>
         <input type="hidden" name="csrf" value="<?=$hash?>">
     </form>
-    <div class="form-group form-row">
+    <div class="row">
         <div class="col-sm-7 offset-sm-2 alert alert-info">
             <strong>Please note:</strong> This feature should be used with care. There is presently
             no means of modifying or removing task rotations once they have been created, short of

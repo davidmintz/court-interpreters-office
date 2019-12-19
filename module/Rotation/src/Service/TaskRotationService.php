@@ -85,7 +85,7 @@ class TaskRotationService
     public function getTaskInputFilter()
     {
         $inputFilter = new InputFilter\InputFilter();
-        //$inputFilter->add($this->getRotationInputFilter(), 'rotation');
+        $inputFilter->add($this->getRotationInputFilter(), 'rotation');
         $inputFilter->add([
             'name' => 'frequency',
             'required' => true,
@@ -686,11 +686,13 @@ class TaskRotationService
      */
     public function createRotation(Array $data)
     {
+        $input = $data['rotation'] ?? [];
+        $input['csrf'] = $data['csrf'] ?? '';
         $inputFilter = $this->getRotationInputFilter();
         // 'countable' is sort of a pseudo-input, same data as 'members'.
         // This hack is designed to get validators to run the way we want
-        $data['countable'] = $data['members'] ?? null;
-        $inputFilter->setData($data);
+        $input['countable'] = $input['members'] ?? null;
+        $inputFilter->setData($input);
         $valid = $inputFilter->isValid();
         if (! $valid) {
             // but could result in silly duplicate error messages
@@ -737,19 +739,18 @@ class TaskRotationService
         if (isset($data['duration']) && $data['duration'] == 'WEEK') {
             $inputFilter->remove('day_of_week');
         }
-        $rotationFilter = $this->getRotationInputFilter();
-        $rotationFilter->remove('task');
-        $rotationFilter->setData($data['rotation']??[]);
+        $inputFilter->get('rotation')->remove('task');
+        // $rotationFilter->setData($data);
         $valid = true;
         $inputFilter->setData($data);
         if (! $inputFilter->isValid()) {
             $valid = false;
             $result['validation_errors'] = $inputFilter->getMessages();
         }
-        if (! $rotationFilter->isValid()) {
-            $valid = false;
-            $result['validation_errors']['rotation'] = $rotationFilter->getMessages();
-        }
+        // if (! $rotationFilter->isValid()) {
+        //     $valid = false;
+        //     $result['validation_errors']['rotation'] = $rotationFilter->getMessages();
+        // }
         if (!$valid) {
             $result['valid'] = false;
             //return $result;

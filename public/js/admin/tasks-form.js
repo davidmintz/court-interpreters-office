@@ -22,7 +22,7 @@ $(function(){
             }
             $("#members").append(
                 `<li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">${ui.item.label}</span>
-                <input name="members[]" value="${ui.item.value}" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
+                <input name="rotation[members][]" value="${ui.item.value}" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
                 <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li>`
             );
             $(this).val("");
@@ -113,11 +113,11 @@ $(function(){
 });
 var dummy = function(){
     $("#members").append(`<li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">Anderson, Peter</span>
-                    <input name="members[]" value="548" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
+                    <input name="rotation[members][]" value="548" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
                     <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li><li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">Garcia, Humberto</span>
-                    <input name="members[]" value="862" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
+                    <input name="rotation[members][]" value="862" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
                     <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li><li class="list-group-item pr-1 py-1"><span class="float-left person-name align-middle pt-1">de los Ríos, Erika</span>
-                    <input name="members[]" value="881" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
+                    <input name="rotation[members][]" value="881" type="hidden"><button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove from rotation">
                     <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></li>`);
 };
 
