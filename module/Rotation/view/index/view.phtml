@@ -42,7 +42,7 @@ endif;
                     $name = $this->escapeHtml($this->current['assigned']['name']);
                     $date = $this->current['date'];
                     if (!$date instanceof \DateTimeInterface) :
-                        $date = new \DateTime($date);  //->format('D d-M-Y');
+                        $date = new \DateTime($date);
                     endif;
                     ?>
                     <span data-date="<?= $date->format('Y-m-d')?>" class="assignment-date"><?= $date->format('D d-M-Y') ?>:</span>
@@ -60,14 +60,14 @@ endif;
             <span class="assignment-person text-muted">(nobody)</span>
             <?php
                 endif;?>
-                <button data-toggle="modal" data-target="#dialog" class="btn btn-primary btn-sm float-right py-0"><span class="fas fa-edit"></span><span class="sr-only"></span></button>
+                <button data-toggle="modal" data-target="#dialog" class="btn btn-primary btn-sm float-right py-0"<?php if (!$name):?> style="display:none"<?php endif ?>><span class="fas fa-edit"></span><span class="sr-only"></span></button>
                 </div>
                 <div class="col-md-3 pr-1"><div class="float-md-right">description</div>
                 </div>
                 <div class="col-md-9">
                     <?php echo $this->escapeHtml($this->task->getDescription())?:'<span class="text-muted">(none)</span>' ?>
                 </div>
-                <div class="col-md-3 pr-1"><div class="float-md-right">sequence</div>
+                <div class="col-md-3 pr-1"><div class="float-md-right">rotation</div>
                 </div>
                 <div class="col-md-9 rotation"><?php
                     $current = $rotations->get(0);

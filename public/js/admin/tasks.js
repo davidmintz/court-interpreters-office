@@ -13,8 +13,10 @@ const load_task_assignment = function(date){
           if (! res.assigned) {
               $(".assignment-person").html(`<span class="text-muted">nobody</span>`)
               .data({id:null});
+              $(".current-assignment button").hide();
               return;
           }
+          $(".current-assignment button").show();
           var html = "";
           var $default  = res["default"];
           if (res.assigned.id !== $default.id) {
