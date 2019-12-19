@@ -736,26 +736,36 @@ class TaskRotationService
     {
         $result = ['info' => 'not yet implemented','validation_errors'=>[]];
         $inputFilter = $this->getTaskInputFilter();
-        if (isset($data['duration']) && $data['duration'] == 'WEEK') {
-            $inputFilter->remove('day_of_week');
+        // 'countable' is sort of a pseudo-input, same data as 'members'.
+        // This hack is designed to get validators to run the way we want
+        if (isset($data['rotation']) && is_array($data['rotation'])) {
+            $data['rotation']['countable'] = $data['rotation']['members'] ?? null;
+            $data['rotation']['csrf'] = $data['csrf'] ?? null;
+            if (isset($data['duration']) && $data['duration'] == 'WEEK') {
+                $inputFilter->remove('day_of_week');
+            }
         }
         $inputFilter->get('rotation')->remove('task');
-        // $rotationFilter->setData($data);
-        $valid = true;
         $inputFilter->setData($data);
-        if (! $inputFilter->isValid()) {
-            $valid = false;
+        $valid = $inputFilter->isValid();
+        $result['valid'] = $valid;
+        if (! $valid) {
+            // but could result in silly duplicate error messages
+            $errors = $inputFilter->getMessages();
+            if (isset($errors['rotation'])) {
+                if (key_exists('countable',$errors['rotation']) && key_exists('members',$errors['rotation'])) {
+                    if (isset($errors['rotation']['countable']['isEmpty']) && isset($errors['rotation']['members']['isEmpty']))
+                    {
+                        unset($errors['rotation']['countable']);
+                    }
+                }
+            }
             $result['validation_errors'] = $inputFilter->getMessages();
+            return $result;
         }
-        // if (! $rotationFilter->isValid()) {
-        //     $valid = false;
-        //     $result['validation_errors']['rotation'] = $rotationFilter->getMessages();
-        // }
-        if (!$valid) {
-            $result['valid'] = false;
-            //return $result;
-        }
-        //$result['data'] = $data['rotation'];
+
+        $result['data'] = $inputFilter->getValues();
+
         return $result;
     }
 

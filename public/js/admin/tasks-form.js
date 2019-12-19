@@ -138,19 +138,7 @@ const render_rotation_confirmation = function(form) {
 
 const submit_task_form = function(form){
     var url = form.attr("action");
-    // yadda yadda, bad idea. change the rotation-components.phtml instead
-    $("#start_date, #members input").each(function(){
-        var el = $(this);
-        var name;
-        if (! el.attr("name").includes("rotation")) {
-            if (el.attr("name") === "start_date") {
-                name = "rotation[start_date]";
-            } else {
-                name = "rotation[members][]";
-            }
-            el.attr({name});
-        }
-    });
+    
     $.post(url,form.serialize()).then(res=>{console.log(res);})
     return console.warn("yet to be implemented");
 };
