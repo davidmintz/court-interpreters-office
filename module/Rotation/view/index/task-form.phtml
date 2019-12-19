@@ -18,7 +18,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
                 description
             </label>
             <div class="col-sm-6">
-                <textarea id="description" name="description" class="form-control" rows="3" placeholder="more verbose description"></textarea>
+                <textarea id="description" name="description" class="form-control" rows="2" placeholder="more verbose description"></textarea>
             </div>
         </div>
         <div class="form-group form-row">
@@ -26,7 +26,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
                 frequency
             </label>
             <div class="col-sm-6">
-                <select class="custom-select" aria-describedby="frequency-help" class="" name="frequency"><option value="WEEK" label="weekly">weekly</option>
+                <select class="custom-select" aria-describedby="frequency-help" id="frequency" name="frequency"><option value="WEEK" label="weekly">weekly</option>
                 </select>
                 <small id="frequency-help" class="form-text text-muted">"weekly" is the only frequency that is currently supported</small>
             </div>
@@ -36,14 +36,27 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
                 duration
             </label>
             <div class="col-sm-6">
-                <select class="custom-select"  name="duration">
-                    <option value="DAY" label="one day">one day</option>
+                <select class="custom-select"  id="duration" name="duration">
                     <option value="WEEK" label="one week">one week</option>
+                    <option value="DAY" label="one day">one day</option>
                     <!-- <option value="MONTH" label="month">month</option> -->
                 </select>
                 <!-- <small id="duration-help" class="form-text text-muted">"weekly" is the only frequency that is currently supported</small> -->
             </div>
         </div>
+        <div class="form-group form-row">
+            <label class="col-form-label col-sm-3" for="day_of_weel">
+                day of week
+            </label>
+            <div class="col-sm-6">
+                <select class="custom-select"  id="day_of_week" name="day_of_week" disabled>
+                    <?php foreach([''=>'',1=>'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as $val=>$label):?>
+                        <option value="<?=$val?>"><?=$label?></option>
+                    <?php endforeach ?>
+                </select>
+            </div>
+        </div>
+
         <fieldset class="form-group">
             <div class="row">
                 <legend class="col offset-sm-3">rotation</legend>

@@ -85,10 +85,7 @@ class TaskRotationService
     public function getTaskInputFilter()
     {
         $inputFilter = new InputFilter\InputFilter();
-        $inputFilter->add([
-            'type'=>'Zend\InputFilter\InputFilter',
-            'rotations'=>$this->getRotationInputFilter(),
-        ]);
+        //$inputFilter->add($this->getRotationInputFilter(), 'rotation');
         $inputFilter->add([
             'name' => 'frequency',
             'required' => true,
@@ -123,23 +120,60 @@ class TaskRotationService
                     ],
                     'break_chain_on_failure' => true,
                 ],
+                [
+                    'name' => Validator\StringLength::class,
+                    'options' => [
+                        'min' => 4, 'max' =>30,
+                        'messages' => [
+                             Validator\StringLength::TOO_SHORT => 'task name has to be a minimum of %min% characters',
+                             Validator\StringLength::TOO_LONG => 'task name cannot exceed a maximum of %max% characters',
+                        ]
+                    ],
+                    'break_chain_on_failure' => true,
+                ]
                 // .....
             ],
         ]);
         $inputFilter->add([
             'name' => 'description',
-            'required' => true,
-            'allow_empty' => true,
+            'required' => false,
+            //'allow_empty' => true,
             'validators' => [
-                //...
+                [
+                    'name' => Validator\StringLength::class,
+                    'options' => [
+                        'min' => 12, 'max' =>400,
+                        'messages' => [
+                             Validator\StringLength::TOO_SHORT => 'task description has to be a minimum of %min% characters',
+                             Validator\StringLength::TOO_LONG => 'task description cannot exceed a maximum of %max% characters',
+                        ]
+                    ],
+                    'break_chain_on_failure' => true,
+                ]
             ],
         ]);
         $inputFilter->add([
             'name' => 'day_of_week',
             'required' => true,
-            'allow_empty' => true,
+            //'allow_empty' => false,
             'validators' => [
-                //...
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> 'day of week is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'InArray',
+                    'options' => [
+                        'haystack' => range(0,6), //"DAY",...
+                        'messages' => [
+                            'notInArray' => 'day of week has be a value between 0 and 6',
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
             ],
         ]);
 
@@ -695,6 +729,35 @@ class TaskRotationService
             'rotation' => $inputFilter->getValues(),
         ];
     }
+
+    public function createTask(Array $data)
+    {
+        $result = ['info' => 'not yet implemented','validation_errors'=>[]];
+        $inputFilter = $this->getTaskInputFilter();
+        if (isset($data['duration']) && $data['duration'] == 'WEEK') {
+            $inputFilter->remove('day_of_week');
+        }
+        $rotationFilter = $this->getRotationInputFilter();
+        $rotationFilter->remove('task');
+        $rotationFilter->setData($data['rotation']??[]);
+        $valid = true;
+        $inputFilter->setData($data);
+        if (! $inputFilter->isValid()) {
+            $valid = false;
+            $result['validation_errors'] = $inputFilter->getMessages();
+        }
+        if (! $rotationFilter->isValid()) {
+            $valid = false;
+            $result['validation_errors']['rotation'] = $rotationFilter->getMessages();
+        }
+        if (!$valid) {
+            $result['valid'] = false;
+            //return $result;
+        }
+        //$result['data'] = $data['rotation'];
+        return $result;
+    }
+
 
     /**
      * gets assignments for a date

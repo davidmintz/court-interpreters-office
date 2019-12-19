@@ -39,10 +39,19 @@ class RestTaskController extends AbstractRestfulController
      */
     public function create($data)
     {
-
-        $inputFilter = $this->service->getTaskInputFilter();
+        // /** @var Zend\InputFilter\InputFilter */
+        // $inputFilter = $this->service->getTaskInputFilter();
+        // /** @var Zend\InputFilter\Input $dow */
+        // if (isset($data['duration']) && $data['duration'] == 'WEEK') {
+        //     $inputFilter->remove('day_of_week');
+        // }
+        // $result = ['status'=> "not yet implemented",];
+        // $inputFilter->setData($data);
+        // if (! $inputFilter->isValid()) {
+        //     $result['validation_errors'] = $inputFilter->getMessages();
+        // }
+        $result = $this->service->createTask($data);
         
-        $result = ['status'=> "not yet implemented"];
         if (isset($result['status']) && 'success' == $result['status']) {
             $this->flashMessenger()->addSuccessMessage('A new task has been created.');
         }

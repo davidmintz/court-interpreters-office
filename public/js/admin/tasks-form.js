@@ -80,7 +80,7 @@ $(function(){
         e.preventDefault();
         var form = $("form.task-rotation");
         if (form.attr("id")==="task-form") {
-            return console.warn("yet to be implemented");
+            return submit_task_form(form);
         }
         // if it looks like it will validate, display a confirmation
         if ($("#task").val()!= "" && $("#start_date").val() != "" && $("#members li").length > 1) {
@@ -99,6 +99,15 @@ $(function(){
         submit_task_rotation_form(form);
         $("dialog").modal("hide");
     });
+
+    /* for Task form */
+    var dow = $("#day_of_week");
+    var duration = $("#duration")
+    duration.on("change",()=>{
+        var disabled = duration.val() === "WEEK";
+        if (disabled) {dow.val("");}
+        dow.attr({disabled});
+    }).trigger("change");
 
 
 });
@@ -125,6 +134,25 @@ const render_rotation_confirmation = function(form) {
     ${list} <p>Continue?</p>`
     $("#dialog .modal-body").html(html);
 
+};
+
+const submit_task_form = function(form){
+    var url = form.attr("action");
+    // yadda yadda, bad idea. change the rotation-components.phtml instead
+    $("#start_date, #members input").each(function(){
+        var el = $(this);
+        var name;
+        if (! el.attr("name").includes("rotation")) {
+            if (el.attr("name") === "start_date") {
+                name = "rotation[start_date]";
+            } else {
+                name = "rotation[members][]";
+            }
+            el.attr({name});
+        }
+    });
+    $.post(url,form.serialize()).then(res=>{console.log(res);})
+    return console.warn("yet to be implemented");
 };
 
 const submit_task_rotation_form = function(form){
